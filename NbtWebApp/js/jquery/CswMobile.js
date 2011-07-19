@@ -37,7 +37,6 @@ CswAppMode.mode = 'mobile';
         if (!isNullOrEmpty($li)) {
             $li.unbind('click');
             $ret = $li.find('li a').bind('click', function() {
-                $.mobile.hidePageLoadingMsg();
                 var dataurl = $(this).CswAttrXml('data-url');
                 var $thisPage = $('#' + dataurl);
                 $thisPage.doChangePage();
@@ -93,7 +92,7 @@ CswAppMode.mode = 'mobile';
                 level: 1,
                 HideRefreshButton: false,
                 HideSearchButton: false,
-                onPageShow: function(p) {
+                onPageShow: function() {
                 }
             };
 
@@ -102,7 +101,6 @@ CswAppMode.mode = 'mobile';
 
             $div.unbind('pageshow');
             $ret = $div.bind('pageshow', function() {
-                $.mobile.showPageLoadingMsg();
                 if (p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
                 if($('#logindiv')) $('#logindiv').remove();
@@ -333,7 +331,6 @@ CswAppMode.mode = 'mobile';
             if ($.mobile.activePage === $logindiv) {
                 $sorrycharliediv.doPage(); // doChangePage();
             }
-            $.mobile.hidePageLoadingMsg();
         }
 
         function setOnline(reloadViewsPage) {
@@ -445,7 +442,6 @@ CswAppMode.mode = 'mobile';
                 var $logDiv = _addPageDivToBody(params);
                 $logDiv.bindJqmEvents(params);
                 $logDiv.doChangePage();
-                $.mobile.hidePageLoadingMsg();
             }
         }
 
@@ -455,8 +451,8 @@ CswAppMode.mode = 'mobile';
 
         function _loadDivContents(params) {
             var logger = new profileMethod('loadDivContents');
-            $.mobile.showPageLoadingMsg();
 
+            startLoadingMsg();
             kickStartAutoSync();
             
             var p = {
@@ -629,7 +625,7 @@ CswAppMode.mode = 'mobile';
 
             _resetPendingChanges();
             
-            $.mobile.hidePageLoadingMsg();
+            stopLoadingMsg();
             if(!mobileStorage.stayOffline()) {
                 _toggleOffline(false);
             }
@@ -699,7 +695,6 @@ CswAppMode.mode = 'mobile';
             }
             
             $retLI.bind('click', function() {
-                $.mobile.showPageLoadingMsg();
                 var par = {ParentId: p.DivId,
                     parentlevel: p.parentlevel,
                     level: p.parentlevel + 1,
@@ -1426,33 +1421,25 @@ CswAppMode.mode = 'mobile';
             $div.find('#' + DivId + '_searchopen')
                 .unbind('click')
                 .bind('click', function() {
-                    $.mobile.showPageLoadingMsg();
-                    onSearchOpen(DivId);
-                    return false;
+                    return startLoadingMsg( function () { onSearchOpen(DivId); });
                 })
                 .end()
                 .find('#' + DivId + '_gosyncstatus')
                 .unbind('click')
                 .bind('click', function() {
-                    $.mobile.showPageLoadingMsg();
-                    onSyncStatusOpen(DivId);
-                    return false;
+                    return startLoadingMsg( function () { onSyncStatusOpen(DivId); });
                 })
                 .end()
                 .find('#' + DivId + '_refresh')
                 .unbind('click')
                 .bind('click', function() {
-                    $.mobile.showPageLoadingMsg();
-                    onRefresh();
-                    return false;
+                    return startLoadingMsg( function () { onRefresh(); });
                 })
                 .end()
                 .find('#' + DivId + '_help')
                 .unbind('click')
                 .bind('click', function() {
-                    $.mobile.showPageLoadingMsg();
-                    onHelp(DivId, ParentId);
-                    return false;
+                    return startLoadingMsg( function () { onHelp(DivId, ParentId); });
                 })
 //                .end()
 //                .find('textarea')
@@ -1504,9 +1491,7 @@ CswAppMode.mode = 'mobile';
                    
             $retDiv.find('#ss_forcesync')
                     .bind('click', function() {
-                        $.mobile.showPageLoadingMsg();
-                        _processChanges(false);
-                        return false;
+                        return startLoadingMsg( function () { _processChanges(false); });
                     })
                     .end()
                     .find('#ss_gooffline')
@@ -1519,9 +1504,7 @@ CswAppMode.mode = 'mobile';
                     .end()
                     .find('#ss_logout')
                     .bind('click', function() {
-                        $.mobile.showPageLoadingMsg();
-                        onLogout();
-                        return false;
+                        return startLoadingMsg( function () { onLogout(); });
                     })
                     .end()
                     .find('#ss_debuglog')
@@ -1589,7 +1572,6 @@ CswAppMode.mode = 'mobile';
         function _checkNoPendingChanges() {
             var pendingChanges = (!_pendingChanges() ||
                 confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
-            $.mobile.hidePageLoadingMsg();
             return pendingChanges;
         }
 
@@ -1647,10 +1629,47 @@ CswAppMode.mode = 'mobile';
             return $retDiv;
         }
 
-        // ------------------------------------------------------------------------------------
-        // Events
-        // ------------------------------------------------------------------------------------
+        //#region Events
 
+        function onLoginFail(text) {
+            Logout(false);
+            _addToDivHeaderText($logindiv, text);
+            localStorage['loginFailure'] = text;
+        }
+
+        function onLogout() {
+            Logout(true);
+        }
+
+        function onError() {
+            stopLoadingMsg();
+        }
+        
+        function Logout(reloadWindow) {
+            if ( _checkNoPendingChanges() ) {
+                
+                var loginFailure = tryParseString(localStorage['loginFailure'], '');
+                var onlineStatus = amOnline();
+                
+                _clearStorage();
+                
+                amOnline(onlineStatus,loginFailure);
+                // reloading browser window is the easiest way to reset
+                if (reloadWindow) {
+                    window.location.href = window.location.pathname;
+                }
+            }
+        }
+
+        function _clearStorage() {
+            sessionStorage.clear();
+            localStorage.clear();
+        }
+
+        //#endregion Events
+        
+        //#region Button Bindings
+        
         function onLoginSubmit() {
             if (amOnline()) {
                 var UserName = $('#login_username').val();
@@ -1684,50 +1703,14 @@ CswAppMode.mode = 'mobile';
             }
 
         } //onLoginSubmit() 
-
-        function onLoginFail(text) {
-            Logout(false);
-            $.mobile.hidePageLoadingMsg();
-            _addToDivHeaderText($logindiv, text);
-            localStorage['loginFailure'] = text;
-        }
-
-        function onLogout() {
-            Logout(true);
-        }
-
-        function onError() {
-            $.mobile.hidePageLoadingMsg();
-        }
         
-        function Logout(reloadWindow) {
-            if ( _checkNoPendingChanges() ) {
-                
-                var loginFailure = tryParseString(localStorage['loginFailure'], '');
-                var onlineStatus = amOnline();
-                
-                _clearStorage();
-                
-                amOnline(onlineStatus,loginFailure);
-                // reloading browser window is the easiest way to reset
-                if (reloadWindow) {
-                    window.location.href = window.location.pathname;
-                }
-            }
-            $.mobile.hidePageLoadingMsg();
-        }
-
-        function _clearStorage() {
-            sessionStorage.clear();
-            localStorage.clear();
-        }
-
         function onRefresh() {
-            $.mobile.showPageLoadingMsg();
             var DivId = currentViewId();
-            if (amOnline() && 
-                _checkNoPendingChanges() &&
-                !isNullOrEmpty(DivId) ) {
+            if(isNullOrEmpty(DivId)) {
+                window.location.reload();
+            }
+            else if (amOnline() && 
+                _checkNoPendingChanges() ) {
                 
                 var HeaderText = _getDivHeaderText(DivId);
                 var jsonData = {
@@ -1756,15 +1739,18 @@ CswAppMode.mode = 'mobile';
                                 HideSearchButton: false,
                                 HideBackButton: false
                             };
-                            params.onPageShow = function() { return _loadDivContents(params); };
-                            $.mobile.changePage( _loadDivContents(params) );
+                            params.onPageShow = function() {
+                                var $ret = _loadDivContents(params);
+                                stopLoadingMsg();
+                                return $ret;
+                            };
+                            _loadDivContents(params).doChangePage();
                         }, // success
                         error: function () {
                             onError();
                         }
                     });
             }
-            $.mobile.hidePageLoadingMsg();
         }
 
         function onSyncStatusOpen() {
@@ -1776,6 +1762,8 @@ CswAppMode.mode = 'mobile';
             $help.doChangePage({ transition: 'slideup' });
         }
 
+        //#endregion Button Bindings
+        
         function onPropertyChange(DivId, eventObj, inputVal, inputId, inputPropId) {
             var logger = new profileMethod('onPropertyChange');
             var $elm = $(eventObj.target);
@@ -1847,8 +1835,7 @@ CswAppMode.mode = 'mobile';
                 $wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
                                                 .CswAttrXml({ 'data-role': 'button' })
                                                 .bind('click', function() {
-                                                    onSearchSubmit(DivId);
-                                                    return false;
+                                                    return startLoadingMsg( function () { onSearchSubmit(DivId); });
                                                 });
                 $wrapper.CswDiv('init', { ID: DivId + '_searchresults' });
 
@@ -1869,7 +1856,6 @@ CswAppMode.mode = 'mobile';
         }
 
         function onSearchSubmit(DivId) {
-            $.mobile.showPageLoadingMsg();
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
             var $resultsDiv = $('#' + DivId + '_searchresults')
@@ -1908,9 +1894,28 @@ CswAppMode.mode = 'mobile';
                 }
                 $content.page();
             }
-            $.mobile.hidePageLoadingMsg();
+            stopLoadingMsg();
         } // onSearchSubmit()
 
+        // ------------------------------------------------------------------------------------
+        // UI functions
+        // ------------------------------------------------------------------------------------
+        
+        function startLoadingMsg(onSuccess) {
+            log('start called',true);
+            $.mobile.showPageLoadingMsg();
+            if( arguments.length === 1 && !isNullOrEmpty(onSuccess) ) {
+                onSuccess();
+            }
+            log('start exec');
+            return false;
+        }
+        
+        function stopLoadingMsg() {
+            $.mobile.hidePageLoadingMsg();
+            log('stopped',true);
+        }
+        
         // ------------------------------------------------------------------------------------
         // Persistance functions
         // ------------------------------------------------------------------------------------
@@ -2183,11 +2188,8 @@ CswAppMode.mode = 'mobile';
                                 data: dataJson,
                                 onloginfail: function(text) {
                                     setOnline(false);
-                                    if (perpetuateTimer) {
-                                        _waitForData();
-                                    }
                                     onLoginFail(text);
-                                    $.mobile.hidePageLoadingMsg();
+                                    processChangesLoop(perpetuateTimer);
                                 },
                                 success: function(data) {
                                     logger.setAjaxSuccess();
@@ -2198,35 +2200,31 @@ CswAppMode.mode = 'mobile';
                                     
                                     _resetPendingChanges(true);
                                     
-                                    if (perpetuateTimer) {
-                                        _waitForData();
-                                    }
-                                    $.mobile.hidePageLoadingMsg();
+                                    processChangesLoop(perpetuateTimer);
                                 },
-                                error: function(data) {
-                                    if (perpetuateTimer) {
-                                        _waitForData();
-                                    }
-                                    $.mobile.hidePageLoadingMsg();
+                                error: function() {
+                                    processChangesLoop(perpetuateTimer);
                                 }
                             });
                     } else {
-                        if (perpetuateTimer) {
-                            _waitForData();
-                        }
-                        $.mobile.hidePageLoadingMsg();
+                        processChangesLoop(perpetuateTimer);
                     }
                 }); // _getModifiedView();
             } else {
                 _resetPendingChanges(true);
-                if (perpetuateTimer) {
-                    _waitForData();
-                }
-                $.mobile.hidePageLoadingMsg();
+                
             } // if(SessionId != '') 
             cacheLogInfo(logger);
         } //_processChanges()
 
+        function processChangesLoop(perpetuateTimer) {
+            if (perpetuateTimer) {
+                    _waitForData();
+            } else { //we called this manually
+                stopLoadingMsg();
+            }
+        }
+        
         // For proper chaining support
         return this;
     };
