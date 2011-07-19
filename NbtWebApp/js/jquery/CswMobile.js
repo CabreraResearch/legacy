@@ -1191,10 +1191,7 @@ CswAppMode.mode = 'mobile';
                 HideHelpButton: false,
                 HideCloseButton: true,
                 HideBackButton: false,
-                HideHeaderOnlineButton: true,
-                dataRel: 'page',
-                backicon: undefined,
-                backtransition: undefined
+                HideHeaderOnlineButton: true
             };
 
             if (params) {
@@ -1209,8 +1206,6 @@ CswAppMode.mode = 'mobile';
             var $syncstatusBtn = $('#' + p.DivId + '_gosyncstatus');
             var $refreshBtn = $('#' + p.DivId + '_refresh');
             var $helpBtn = $('#' + p.DivId + '_help');
-            var $closeBtn = $('#' + p.DivId + '_close');
-            var $backlink = $('#' + p.DivId + '_back');
             var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
             var $headerTitle = $('#' + p.DivId + '_header_title');
             if (isNullOrEmpty($pageDiv) || $pageDiv.length === 0) {
@@ -1219,7 +1214,7 @@ CswAppMode.mode = 'mobile';
                                         'data-role': 'page',
                                         'data-url': p.DivId,
                                         'data-title': p.HeaderText,
-                                        'data-rel': p.dataRel,
+                                        'data-rel': 'page',
                                         'data-add-back-btn': !isTrue(p.HideBackButton)              
                                     });
 
@@ -1230,41 +1225,6 @@ CswAppMode.mode = 'mobile';
                                               'data-position': 'fixed',
                                               'data-id': 'csw_header'
                                           });
-                $backlink = $header.CswLink('init', {
-                                                'href': 'javascript:void(0)',
-                                                ID: p.DivId + '_back',
-                                                cssclass: 'ui-btn-left',
-                                                value: 'Back'
-                                            })
-                                                .CswAttrXml({
-                                                'data-identity': p.DivId + '_back', 
-                                                'data-rel': 'back',
-                                                'data-direction': 'reverse'
-                                            });
-
-                $closeBtn = $header.CswLink('init', {
-                                               href: 'javascript:void(0)',
-                                               ID: p.DivId + '_close',
-                                               cssclass: 'ui-btn-left'
-                                           })
-                                               .CswAttrXml({
-                                               'data-identity': p.DivId + '_close',
-                                               'data-icon': 'delete',
-                                               'data-rel': 'back',
-                                               'data-iconpos': 'notext',
-                                               'data-direction': 'reverse',
-                                               'title': 'Close'
-                                           });
-
-                if (!isNullOrEmpty(p.backtransition)) {
-                    $backlink.CswAttrXml('data-transition', p.backtransition);
-                }
-
-                if (!isNullOrEmpty(p.backicon)) {
-                    $backlink.CswAttrXml('data-icon', p.backicon);
-                } else {
-                    $backlink.CswAttrXml('data-icon', 'arrow-l');
-                }
 
                 $headerTitle = $('<h1 id="' + p.DivId + '_header_title"></h1>').appendTo($header);                
 
@@ -1285,9 +1245,9 @@ CswAppMode.mode = 'mobile';
                                                   ID: p.DivId + '_headeronline',
                                                   cssclass: 'ui-btn-right onlineStatus online',
                                                   value: 'Online'
-                                              })
+                                                    })
                                                   .CswAttrDom({ 'disabled': 'disabled' })
-                    .hide();
+                                                  .hide();
 
                 $header.CswDiv('init', { cssclass: 'toolbar' })
                                .append(p.$toolbar)
@@ -1391,16 +1351,6 @@ CswAppMode.mode = 'mobile';
                 $headerOnlineBtn.css('display', 'none').hide();
             } else {
                 $headerOnlineBtn.css('display', '').show();
-            }
-            if (p.dataRel === 'dialog' && !p.HideCloseButton) {
-                $closeBtn.css('display', '').show();
-            } else {
-                $closeBtn.css('display', 'none').hide();
-            }
-            if (!p.HideBackButton) {
-                $backlink.css('display', '').show();
-            } else {
-                $backlink.css('display', 'none').hide();
             }
 
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
