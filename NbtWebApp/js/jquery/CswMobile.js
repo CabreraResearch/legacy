@@ -144,7 +144,6 @@ CswAppMode.mode = 'mobile';
         debugOn(debug);
         
         var ForMobile = true;
-        var rootid;
 
         var mobileStorage = new CswMobileStorage();
         
@@ -478,9 +477,8 @@ CswAppMode.mode = 'mobile';
             };
             if (params) $.extend(p, params);
 
-            if (p.level === 1) {
-                rootid = p.DivId;
-            }
+            var viewId = (p.level === 1) ? currentViewId(p.DivId) : currentViewId();
+            
             var $retDiv = $('#' + p.DivId);
 
             if (isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1) {
@@ -495,7 +493,7 @@ CswAppMode.mode = 'mobile';
                     }
                 } else if (p.level === 1) {
                     // case 20354 - try cached first
-                    var cachedJson = _fetchCachedViewJson(rootid);
+                    var cachedJson = _fetchCachedViewJson(viewId);
                     p.PageType = 'node';
                     if (!isNullOrEmpty(cachedJson)) {
                         p.json = currentViewJson(cachedJson);
@@ -553,10 +551,14 @@ CswAppMode.mode = 'mobile';
                         setOnline(false);
                         logger.setAjaxSuccess();
 
-                        p.json = currentViewJson( data, params.level );    
+                        p.json = currentViewJson( data, params.level );
+                        var searchJson = { };
+                        if( params.level === 1) {
+                            searchJson = data['searches'];
+                        }
                         
                         if( params.level < 2) {
-                            _storeViewJson(p.DivId, p.HeaderText, p.json, params.level);
+                            _storeViewJson(p.DivId, p.HeaderText, p.json, params.level, searchJson);
                         }
                         $retDiv = _loadDivContentsJson(p);
                     },
@@ -662,43 +664,43 @@ CswAppMode.mode = 'mobile';
             var $retLI = $('');
 
             switch (p.PageType) {
-            case "search":
-                    // ignore this
-                break;
-            case "node":
-                $retLI = _makeObjectClassContent(p)
-                                        .appendTo($list);
-                break;
-            case "prop":
-                {
-                    var $tab;
-                    var tab = p.json['value']['tab'];
-
-                    if (currenttab !== tab) {
-                        //should be separate ULs eventually
-                        $tab = $('</ul><li data-role="list-divider">' + tab + '</li><ul>')
-                                                .appendTo($list);
-                        currenttab = tab;
-                    }
-                    var $prop = _FieldTypeJsonToHtml(p.json, id)
-                                    .appendTo($list);
-                    break;   
-                } // case 'prop':
-            default:
-                {
-                    $retLI = $('<li></li>');
-                    if (IsDiv) {
-                        $retLI.CswLink('init', { href: 'javascript:void(0);', value: text })
-                                          .css('white-space', 'normal')
-                                          .CswAttrXml({
-                                          'data-identity': id,
-                                          'data-url': id
-                                      });
-                    } else {
-                        $retLI.val(text);
-                    }
+                case "search":
+                        // ignore this
                     break;
-                }// default:
+                case "node":
+                    $retLI = _makeObjectClassContent(p)
+                                            .appendTo($list);
+                    break;
+                case "prop":
+                    {
+                        var $tab;
+                        var tab = p.json['value']['tab'];
+
+                        if (currenttab !== tab) {
+                            //should be separate ULs eventually
+                            $tab = $('</ul><li data-role="list-divider">' + tab + '</li><ul>')
+                                                    .appendTo($list);
+                            currenttab = tab;
+                        }
+                        var $prop = _FieldTypeJsonToHtml(p.json, id)
+                                        .appendTo($list);
+                        break;   
+                    } // case 'prop':
+                default:
+                    {
+                        $retLI = $('<li></li>');
+                        if (IsDiv) {
+                            $retLI.CswLink('init', { href: 'javascript:void(0);', value: text })
+                                              .css('white-space', 'normal')
+                                              .CswAttrXml({
+                                              'data-identity': id,
+                                              'data-url': id
+                                          });
+                        } else {
+                            $retLI.val(text);
+                        }
+                        break;
+                    }// default:
             }
             
             $retLI.bind('click', function() {
@@ -1522,7 +1524,6 @@ CswAppMode.mode = 'mobile';
                     .end()
                     .find('#ss_logout')
                     .bind('click', function() {
-                        alert(1);
                         $.mobile.showPageLoadingMsg();
                         onLogout();
                         return false;
@@ -1728,7 +1729,7 @@ CswAppMode.mode = 'mobile';
 
         function onRefresh() {
             $.mobile.showPageLoadingMsg();
-            var DivId = localStorage['currentviewid'];
+            var DivId = currentViewId();
             if (amOnline() && 
                 _checkNoPendingChanges() &&
                 !isNullOrEmpty(DivId) ) {
@@ -1819,20 +1820,28 @@ CswAppMode.mode = 'mobile';
         } // onPropertyChange()
 
         function onSearchOpen(DivId) {
-            var searchJson = _fetchCachedViewJson(rootid);
+            var viewId = currentViewId();
+            var searchJson = _fetchCachedViewJson(viewId,'search');
             if (!isNullOrEmpty(searchJson)) {
                 var $wrapper = $('<div></div>');
                 var $fieldCtn = $('<div data-role="fieldcontain"></div>')
                                             .appendTo($wrapper);
-                var $select = $('<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop" class="csw_prop_select">')
-                                            .appendTo($fieldCtn)
+                var values = [];
+                var selected;
+                
+                for(var key in searchJson ) {
+                    if( !selected ) selected = key;
+                    values.push({ 'value': key, 'display': searchJson[key]});
+                }
+                
+                var $select = $fieldCtn.CswSelect('init',  {
+                                                ID: DivId + '_searchprop',
+                                                selected: selected,
+                                                cssclass: 'csw_search_select',
+                                                values: values
+                                            })
                                             .CswAttrXml({ 'data-native-menu': 'false' });
 
-                for(var i=0; i < searchJson.length; i++ ) {
-                    var search = searchJson[i];
-                    $('<option value="' + search.id + '">' + search.name + '</option>')
-                        .appendTo($select);
-                }
                 var $searchCtn = $('<div data-role="fieldcontain"></div>')
                                             .appendTo($wrapper);
                 $searchCtn.CswInput('init', { type: CswInput_Types.search, ID: DivId + '_searchfor' })
@@ -1850,7 +1859,7 @@ CswAppMode.mode = 'mobile';
 
                 var $searchDiv = _addPageDivToBody({
                         ParentId: DivId,
-                        DivId: 'CswMobile_SearchDiv' + rootid,
+                        DivId: 'CswMobile_SearchDiv' + viewId,
                         HeaderText: 'Search',
                         $content: $wrapper,
                         HideSearchButton: true,
@@ -1870,24 +1879,29 @@ CswAppMode.mode = 'mobile';
             var searchfor = $('#' + DivId + '_searchfor').val();
             var $resultsDiv = $('#' + DivId + '_searchresults')
                 .empty();
-            var search = _fetchCachedViewJson(rootid);
-            if (!isNullOrEmpty(search)) {
+            
+            var viewId = currentViewId();
+            var searchJson = _fetchCachedViewJson(viewId);
+            
+            if (!isNullOrEmpty(searchJson)) {
                 var $content = $resultsDiv.makeUL(DivId + '_searchresultslist', { 'data-filter': false })
                                                     .append($('<li data-role="list divider">Results</li>'));
 
                 var hitcount = 0;
-                for(var i=0; i<search.length; i++ )
+                for(var key in searchJson)
                 {
-                    var node = search[i].node;
+                    var node = searchJson[key];
                     if (!isNullOrEmpty(node[searchprop])) {
                         if (node[searchprop].toLowerCase().indexOf(searchfor.toLowerCase()) >= 0) {
                             hitcount++;
+                            var nodeJson = { id: key, value: node};
                             $content.append(
                                 _makeListItemFromJson($content, {
                                     ParentId: DivId + '_searchresults',
                                     DivId: DivId + '_searchresultslist',
                                     HeaderText: 'Results',
-                                    json: node,
+                                    PageType: 'node',
+                                    json: nodeJson,
                                     parentlevel: 1 }
                                     )
                                 );
@@ -1954,7 +1968,33 @@ CswAppMode.mode = 'mobile';
             };
         }
         
-        function _storeViewJson(rootid, rootname, viewJson, level) {
+        function currentViewId(viewId)
+        {
+            /// <summary>
+            ///   Persists the current NBT ViewId. 
+            /// </summary>
+            /// <param name="viewId" type="String">Optional. An NBT ViewId</param>
+            var ret = '';
+            if (arguments.length === 1 && viewId)
+            {
+                ret = viewId;
+                localStorage['currentviewid'] = viewId;
+            }
+            if (isNullOrEmpty(ret)) {
+                ret = localStorage['currentviewid'];
+            }
+            return ret;
+        }
+
+        function _storeViewJson(viewId, viewName, viewJson, level, viewSearch) {
+            /// <summary>
+            ///   Stores a view in localStorage
+            /// </summary>
+            /// <param name="viewId" type="String">An NBT ViewId</param>
+            /// <param name="viewName" type="String">Human readable view name</param>
+            /// <param name="viewJson" type="JSON">JSON representation of the nodes of the view</param>
+            /// <param name="level" type="Number">Number indicating tree depth</param>
+            /// <param name="viewSearch" type="JSON">JSON representation of the possible mobile searches on this view</param>
             var logger = new profileMethod('storeViewJson');
             if(level === 0)
             {
@@ -1967,33 +2007,47 @@ CswAppMode.mode = 'mobile';
             }
             else {
                 //no need to cache the viewsdiv
-                localStorage[rootid] = JSON.stringify({ name: rootname, json: viewJson });
+                localStorage[viewId] = JSON.stringify({ 'name': viewName, 'json': viewJson, 'search': viewSearch });
             }
             cacheLogInfo(logger);
         }
 
-        function _updateStoredViewJson(viewid, viewJson, wasmodified) {
-            if (!isNullOrEmpty(localStorage[viewid]) && !isNullOrEmpty(viewJson)) {
-                var view = JSON.parse(localStorage[viewid]);
+        function _updateStoredViewJson(viewId, viewJson, wasModified) {
+            /// <summary>
+            ///   Updates a view in localStorage
+            /// </summary>
+            /// <param name="viewId" type="String">An NBT ViewId</param>
+            /// <param name="viewName" type="String">Human readable view name</param>
+            /// <param name="wasModified" type="Boolean">Indicates whether this update modifies the view</param>
+            if (!isNullOrEmpty(localStorage[viewId]) && !isNullOrEmpty(viewJson)) {
+                var view = JSON.parse(localStorage[viewId]);
                 view['json'] = viewJson;
-                if( wasmodified ) {
+                if( wasModified ) {
                     view['wasmodified'] = true;
                 } else {
                     delete view['wasmodified'];
                 }
-                localStorage[viewid] = JSON.stringify(view);
+                localStorage[viewId] = JSON.stringify(view);
             }
             return viewJson;
         }
 
-        function _updateStoredNodeJson(nodeid, nodeJson, wasmodified) {
-            var currentViewId = localStorage.currentviewid;
-            if (!isNullOrEmpty(localStorage[currentViewId]) && !isNullOrEmpty(nodeJson)) {
-                var view = JSON.parse(localStorage[currentViewId]);
-                view['json'][nodeid] = nodeJson;
+        
+        
+        function _updateStoredNodeJson(nodeId, nodeJson, wasModified) {
+            /// <summary>
+            ///   Updates a node in view in localStorage
+            /// </summary>
+            /// <param name="nodeId" type="String">An NBT NodeId</param>
+            /// <param name="nodeJson" type="JSON">JSON representation of the node</param>
+            /// <param name="wasModified" type="Boolean">Indicates whether this update modifies the view</param>
+            var viewId = currentViewId();
+            if (!isNullOrEmpty(localStorage[viewId]) && !isNullOrEmpty(nodeJson)) {
+                var view = JSON.parse(localStorage[viewId]);
+                view['json'][nodeId] = nodeJson;
                 //view['json'][nodeid]['wasmodified'] = true; //one day we'll want to update in smaller pushes
-                view['wasmodified'] = wasmodified;
-                localStorage[currentViewId] = JSON.stringify(view);
+                view['wasmodified'] = wasModified;
+                localStorage[viewId] = JSON.stringify(view);
             }
             return nodeJson;
         }
@@ -2022,24 +2076,35 @@ CswAppMode.mode = 'mobile';
             }
         }
 
-        function _fetchCachedViewJson(rootid) {
+        function _fetchCachedViewJson(viewId,viewObj) {
+            /// <summary>
+            ///   Retrieve a view from localStorage
+            /// </summary>
+            /// <param name="viewId" type="String">An NBT ViewId</param>
+            /// <param name="viewObj" type="String">Optional. The JSON property to retrieve. 'json' if omitted.</param>
             var ret = {};
-            if (!isNullOrEmpty(localStorage[rootid])) {
-                //View is JSON: {name: '', json: '', wasmodified: ''}
-                var rootObj = JSON.parse(localStorage[rootid]);
-                ret = rootObj['json'];
+            if (!isNullOrEmpty(localStorage[viewId])) {
+                var rootObj = JSON.parse(localStorage[viewId]);
+                var jProp = 'json';
+                if(arguments.length === 2 && viewObj ) {
+                    jProp = viewObj;
+                }
+                ret = rootObj[jProp];
             }
             return ret;
         }
         
-        function _fetchCachedNodeJson(nodeid) {
+        function _fetchCachedNodeJson(nodeId) {
+            /// <summary>
+            ///   Retrieve a node from the current view
+            /// </summary>
+            /// <param name="nodeId" type="String">An NBT NodeId</param>
             var ret = {};
-            if (!isNullOrEmpty(localStorage.currentviewid)) {
-                //View is JSON: {name: '', json: '', wasmodified: ''}
-                var currentViewId = localStorage.currentviewid;
-                var currentView = JSON.parse(localStorage[currentViewId]);
+            var viewId = currentViewId();
+            if (viewId) {
+                var currentView = JSON.parse(localStorage[viewId]);
                 var viewJson = currentViewJson( currentView['json'] );
-                ret = viewJson[nodeid];
+                ret = viewJson[nodeId];
             }
             return ret;
         }
