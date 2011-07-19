@@ -1459,20 +1459,20 @@ CswAppMode.mode = 'mobile';
                     onHelp(DivId, ParentId);
                     return false;
                 })
-                .end()
-                .find('textarea')
-                .unbind('change')
-                .bind('change', function(eventObj) {
-                    var $this = $(this);
-                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
-                })
-                .end()
-                .find('.csw_prop_select')
-                .unbind('change')
-                .bind('change', function(eventObj) {
-                    var $this = $(this);
-                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
-                })
+//                .end()
+//                .find('textarea')
+//                .unbind('change')
+//                .bind('change', function(eventObj) {
+//                    var $this = $(this);
+//                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
+//                })
+//                .end()
+//                .find('.csw_prop_select')
+//                .unbind('change')
+//                .bind('change', function(eventObj) {
+//                    var $this = $(this);
+//                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
+//                })
                 .end();
         }
 
