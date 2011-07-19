@@ -253,8 +253,7 @@ CswAppMode.mode = 'mobile';
             }
             
             $('#loginsubmit').bind('click', function() {
-                $.mobile.showPageLoadingMsg();
-                onLoginSubmit();
+                return startLoadingMsg(function() { onLoginSubmit(); });
             });
             $('#login_customerid').clickOnEnter($('#loginsubmit'));
             $('#login_username').clickOnEnter($('#loginsubmit'));
@@ -695,16 +694,18 @@ CswAppMode.mode = 'mobile';
             }
             
             $retLI.bind('click', function() {
-                var par = {ParentId: p.DivId,
-                    parentlevel: p.parentlevel,
-                    level: p.parentlevel + 1,
-                    DivId: id,
-                    persistBindEvent: true,
-                    HeaderText: text  };
-                var $div = _addPageDivToBody(par);
-                par.onPageShow = function() { _loadDivContents(par); };
-                $div.bindJqmEvents(par);
-                $div.doChangePage({reloadPage: true});
+                return startLoadingMsg(function() {
+                    var par = {ParentId: p.DivId,
+                        parentlevel: p.parentlevel,
+                        level: p.parentlevel + 1,
+                        DivId: id,
+                        persistBindEvent: true,
+                        HeaderText: text  };
+                    var $div = _addPageDivToBody(par);
+                    par.onPageShow = function() { _loadDivContents(par); };
+                    $div.bindJqmEvents(par);
+                    $div.doChangePage({ reloadPage: true });
+                });
             });
             
             return $retLI;
