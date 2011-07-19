@@ -100,24 +100,44 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 EncryptedPassword = _CswEncryption.getMd5Hash( value );
+				ChangedDate = DateTime.Now;
             }
         }
+
+		public bool IsExpired
+		{
+			get
+			{
+				Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "passwordexpiry_days" ) );
+				return ( ChangedDate == DateTime.MinValue ||
+						 ChangedDate.AddDays( PasswordExpiryDays ).Date <= DateTime.Now.Date );
+			}
+		}
 
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode EncryptedPWNode = CswXmlDocument.AppendXmlNode( ParentNode, _EncryptedPasswordSubField.ToXmlNodeName(), EncryptedPassword.ToString() );
 
             // We don't provide the raw password, but we do provide a node in which someone can set a new password for saving
-            XmlNode RawPWNode = CswXmlDocument.AppendXmlNode( ParentNode, "newpassword", "" );
-        }
+			CswXmlDocument.AppendXmlNode( ParentNode, "newpassword", "" );
+			CswXmlDocument.AppendXmlNode( ParentNode, "isexpired", IsExpired.ToString().ToLower() );
+			CswXmlDocument.AppendXmlNode( ParentNode, "isadmin", _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower() );
+		}
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             EncryptedPassword = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _EncryptedPasswordSubField.ToXmlNodeName() );
-            string NewPw = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" );
-            if( NewPw != string.Empty )
-                Password = NewPw;
-        }
+
+			bool inIsExpired = CswXmlDocument.ChildXmlNodeValueAsBoolean( XmlNode, "isexpired" );
+			if( inIsExpired && !IsExpired )
+			{
+				ChangedDate = DateTime.MinValue;
+			}
+	
+			string NewPw = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" );
+			if( NewPw != string.Empty )
+				Password = NewPw;
+		}
 
         public override void ToXElement( XElement ParentNode )
         {
