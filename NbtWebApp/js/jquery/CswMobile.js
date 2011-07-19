@@ -612,7 +612,7 @@ CswAppMode.mode = 'mobile';
                 $.extend(item, p);
                 item.json = { id: key, value: p.json[key]};
                 _makeListItemFromJson($list, item)
-                    //.CswAttrXml('data-icon', false)
+                    .CswAttrXml('data-icon', false) //hides the arrow
                     .appendTo($list);
             }
 
@@ -620,14 +620,12 @@ CswAppMode.mode = 'mobile';
             try {
                 $('.csw_collapsible').page();
                 $('.csw_fieldset').page();
-//                $('.csw_answer').page();
                 $('.csw_listview').page();
             }
             catch(e) //this is hackadelic, but it works. 
             {
                 $('.csw_collapsible').page();
                 $('.csw_fieldset').page();
-//                $('.csw_answer').page();
                 $('.csw_listview').page();
             }
             $content.page();
@@ -1177,7 +1175,6 @@ CswAppMode.mode = 'mobile';
                             $li.removeClass('OOC');
                         }
                     }
-
                     setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName, IdStr); }, 1);
 
                     return false;
