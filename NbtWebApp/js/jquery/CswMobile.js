@@ -1905,18 +1905,15 @@ CswAppMode.mode = 'mobile';
         // ------------------------------------------------------------------------------------
         
         function startLoadingMsg(onSuccess) {
-            log('start called',true);
             $.mobile.showPageLoadingMsg();
             if( arguments.length === 1 && !isNullOrEmpty(onSuccess) ) {
                 onSuccess();
             }
-            log('start exec');
             return false;
         }
         
         function stopLoadingMsg() {
             $.mobile.hidePageLoadingMsg();
-            log('stopped',true);
         }
         
         // ------------------------------------------------------------------------------------
