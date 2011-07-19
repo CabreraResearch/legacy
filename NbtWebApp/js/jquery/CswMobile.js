@@ -1469,7 +1469,7 @@ CswAppMode.mode = 'mobile';
             content += '<p>Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt + '</span></p>';
             content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
             content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
-            content += '<br/><br/>';
+            content += '<br/>';
             content += '<a id="ss_logout" data-identity="ss_logout" data-url="ss_logout" href="javascript:void(0)" data-role="button">Logout</a>';
             if( debugOn() ) {
                 content += '<a id="ss_debuglog" class="debug" data-identity="ss_debuglog" data-url="ss_debuglog" href="javascript:void(0)" data-role="button">Start Logging</a>';
@@ -1520,6 +1520,7 @@ CswAppMode.mode = 'mobile';
         function _toggleOffline(doWaitForData) {
 
             var $onlineBtn = $('#ss_gooffline span').find('span.ui-btn-text');
+            var $logoutBtn = $('#ss_logout');
             if (amOnline() || $onlineBtn.text() === 'Go Online') {
                 setOnline(false);
                 if (doWaitForData) {
@@ -1527,6 +1528,7 @@ CswAppMode.mode = 'mobile';
                     _waitForData();
                 }
                 $onlineBtn.text('Go Offline');
+                $logoutBtn.show();
                 $('.refresh').each(function(){
                     var $this = $(this);
                     $this.css({'display': ''}).show();
@@ -1538,6 +1540,7 @@ CswAppMode.mode = 'mobile';
                     _clearWaitForData();
                 }
                 $onlineBtn.text('Go Online');
+                $logoutBtn.hide();
                 $('.refresh').each(function(){
                     var $this = $(this);
                     $this.css({'display': 'none'}).hide();
@@ -1727,7 +1730,7 @@ CswAppMode.mode = 'mobile';
                         onloginfail: function(text) { onLoginFail(text); },
                         success: function(data) {
                             setOnline(false);
-                       
+
                             var params = {
                                 ParentId: 'viewsdiv',
                                 DivId: DivId,
