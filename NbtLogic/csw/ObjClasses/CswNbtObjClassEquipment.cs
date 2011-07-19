@@ -113,6 +113,10 @@ namespace ChemSW.Nbt.ObjClasses
                     this.Parts.YValues = PartsString;
                 }
             }
+
+			// case 21809
+			SynchEquipmentToAssembly();
+
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -189,6 +193,8 @@ namespace ChemSW.Nbt.ObjClasses
                                 EquipProp.copy( AssemblyProp );
                                 EquipProp.ReadOnly = true;
                                 FoundMatch = true;
+								// case 21809
+								EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
                             }
                         }
                         if( !FoundMatch )

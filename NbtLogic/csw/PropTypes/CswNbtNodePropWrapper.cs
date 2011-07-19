@@ -126,6 +126,28 @@ namespace ChemSW.Nbt.PropTypes
 
 		public bool AuditChanged { get { return _CswNbtNodePropData.AuditChanged; } }
 
+		// case 21809
+		private string _HelpText = string.Empty;
+		public string HelpText
+		{
+			get
+			{
+				string ret = NodeTypeProp.HelpText;
+				if( _HelpText != string.Empty && NodeTypeProp.HelpText != string.Empty )
+				{
+					ret += " ";
+				}
+				if( _HelpText != string.Empty )
+				{
+					ret += _HelpText;
+				}
+				return ret;
+			}
+			set { _HelpText = value; }
+		}
+	
+
+
 
         /// <summary>
         /// Returns defined Field Type attributes/subfields as XmlDocument class XmlNode
