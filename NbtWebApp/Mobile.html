@@ -2,8 +2,7 @@
 <html> <!-- manifest="Mobile.manifest"> <!--Still not ready for primetime-->
 <head>
     <base href="Mobile.html"/>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1" />
     <title>Main</title>
     <link rel="shortcut icon" href="images/favicon.ico" />
     <!--#include file="Mobile_Includes_Head.html" -->
@@ -49,7 +48,7 @@
 		        $(document).ready(function ()
 		        {
 
-		            $(window).bind("orientationchange resize pageshow", function() { fixGeometry(); });
+		            $(window).bind("pageshow", function() { fixGeometry(); });
 
 		            $('body').CswMobile({
 		                'Theme': 'b'
@@ -78,9 +77,9 @@
 
             var viewport_height = $(window).height();
             var content_height = viewport_height - header.outerHeight() - footer.outerHeight();
-            if ((content.outerHeight() + header.outerHeight() + footer.outerHeight()) <= viewport_height)
+            if ((content.outerHeight() - header.outerHeight() - footer.outerHeight()) <= viewport_height)
             {
-                content_height -= (content.outerHeight() - content.height() + 1);
+                content_height -= (content.outerHeight() - content.height() );
                 content.height(content_height);
             } /* Trim margin/border/padding height */
         };
