@@ -1735,7 +1735,7 @@ CswAppMode.mode = 'mobile';
                                 ParentId: 'viewsdiv',
                                 DivId: DivId,
                                 HeaderText: HeaderText,
-                                json: _updateStoredViewJson(DivId, currentViewJson(data, 0)),
+                                json: _updateStoredViewJson(DivId, currentViewJson(data, 1)),
                                 parentlevel: 0,
                                 level: 1,
                                 HideRefreshButton: false,
