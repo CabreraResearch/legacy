@@ -119,10 +119,6 @@ CswAppMode.mode = 'mobile';
         var $body = this;
 
         var opts = {
-            DBShortName: 'Mobile.html',
-            DBVersion: '1.0',
-            DBDisplayName: 'Mobile.html',
-            DBMaxSize: 65536,
             ViewsListUrl: '/NbtWebApp/wsNBT.asmx/GetViewsList',
             ViewUrl: '/NbtWebApp/wsNBT.asmx/GetView',
             ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
@@ -133,7 +129,6 @@ CswAppMode.mode = 'mobile';
             SendLogUrl: '/NbtWebApp/wsNBT.asmx/collectClientLogInfo',
             Theme: 'a',
             PollingInterval: 30000,
-            DivRemovalDelay: 1,
             RandomConnectionFailure: false
         };
 
@@ -2032,8 +2027,6 @@ CswAppMode.mode = 'mobile';
             return viewJson;
         }
 
-        
-        
         function _updateStoredNodeJson(nodeId, nodeJson, wasModified) {
             /// <summary>
             ///   Updates a node in view in localStorage
