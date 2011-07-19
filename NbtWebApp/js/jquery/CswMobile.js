@@ -648,7 +648,7 @@ CswAppMode.mode = 'mobile';
             if (params) $.extend(p, params);
 
             var id = makeSafeId({ ID: p.json['id'] });
-            var text = tryParseString(p.json['value']['prop_name'], p.json['value']);
+            var text = tryParseString(p.json['value']['node_name'], p.json['value']);
 
             var IsDiv = (!isNullOrEmpty(id));
 
