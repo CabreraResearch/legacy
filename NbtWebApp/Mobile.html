@@ -48,7 +48,7 @@
 		        $(document).ready(function ()
 		        {
 
-		            $(window).bind("pageshow", function() { fixGeometry(); });
+		            $(window).bind("orientationchange resize pageshow", function () { fixGeometry(); });
 
 		            $('body').CswMobile({
 		                'Theme': 'b'
