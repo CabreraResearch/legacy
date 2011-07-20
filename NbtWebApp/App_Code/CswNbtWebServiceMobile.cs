@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtResources = CswNbtResources;
             _ForMobile = ForMobile;
-            string PageSize = _CswNbtResources.getConfigVariableValue( CswNbtResources.ConfigurationVariables.mobileview_resultlimit.ToString() );
+            string PageSize = _CswNbtResources.getConfigVariableValue( CswNbtResources.ConfigurationVariables.mobileview_resultlim.ToString() );
             if( CswTools.IsInteger( PageSize ) )
             {
                 _MobilePageSize = CswConvert.ToInt32( PageSize );
