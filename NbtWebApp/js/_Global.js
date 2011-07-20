@@ -1449,10 +1449,15 @@ function getCallStack()
     return stack;
 }
 
-function errorHandler(error, includeCallStack, includeLocalStorage, toCswStorage)
+function errorHandler(error, includeCallStack, includeLocalStorage, doAlert)
 {
-    if( hasWebStorage() && includeLocalStorage) log(localStorage);
-    log('Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack, toCswStorage);
+    if (hasWebStorage() && includeLocalStorage) log(localStorage);
+    if( doAlert ) {
+        alert('Error: ' + error.message + ' (Code ' + error.code + ')');
+    }
+    else {
+        log('Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack);
+    }
 }
 
 //#region Persistent Logging
