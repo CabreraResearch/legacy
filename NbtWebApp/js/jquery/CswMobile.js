@@ -1168,7 +1168,7 @@ CswAppMode.mode = 'mobile';
                             $li.removeClass('OOC');
                         }
                     }
-                    setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName, IdStr); }, 1);
+                    onPropertyChange(ParentId, eventObj, thisAnswer, answerName, IdStr);
 
                     return false;
                 });
@@ -1948,7 +1948,7 @@ CswAppMode.mode = 'mobile';
             /// <param name="level" type="Number">Number indicating tree depth</param>
             /// <param name="viewSearch" type="JSON">JSON representation of the possible mobile searches on this view</param>
             var logger = new profileMethod('storeViewJson');
-            if(level === 0)
+            if(level === 0 && !isNullOrEmpty(viewJson))
             {
                 storedViews = {}; //the viewnames may have changed. clear to be sure.
                 for(var view in viewJson)
