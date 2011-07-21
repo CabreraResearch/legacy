@@ -88,13 +88,13 @@
 
         function cswPage(e) {
             var $content = $.mobile.activePage;
-            if( $content.length === 0 || isNullOrEmpty($content) ) {
+            if (isNullOrEmpty($content) || $content.length === 0) {
                 $content = $("div[data-role='page']:visible:visible");
             }
-            if ($content.length === 0 || isNullOrEmpty($content)) {
+            if (isNullOrEmpty($content) || $content.length === 0) {
                 $content = $('#' + e.target.id);
             }
-            if ($content.length === 0 || isNullOrEmpty($content)) {
+            if (isNullOrEmpty($content) || $content.length === 0) {
                 $content = $('#' + $.mobile.getPath());
             }
 
