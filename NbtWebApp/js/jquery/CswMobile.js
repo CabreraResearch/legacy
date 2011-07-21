@@ -160,7 +160,7 @@ CswAppMode.mode = 'mobile';
                 }
             }
            
-            if( isNullOrEmpty(ret)
+            if( isNullOrEmpty(ret) )
             {
                 var storedView = getStoredLocalString('currentViewJson');
                 if (!isNullOrEmpty(storedView))
