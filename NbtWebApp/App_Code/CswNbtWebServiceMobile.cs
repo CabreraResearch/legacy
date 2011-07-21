@@ -162,31 +162,38 @@ namespace ChemSW.Nbt.WebServices
 
         private static void _runProperties( CswNbtNode Node, ref JObject SubItemsJProp )
         {
-            //JArray PropArray = new JArray();
-            foreach( CswNbtMetaDataNodeTypeProp Prop in from CswNbtMetaDataNodeTypeTab Tab
-                                                            in Node.NodeType.NodeTypeTabs
-                                                        from CswNbtMetaDataNodeTypeProp Prop
-                                                            in Tab.NodeTypePropsByDisplayOrder
-                                                        where !Prop.HideInMobile &&
-                                                            Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
-                                                            Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid
-                                                        select Prop )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
             {
-                CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-                string ReadOnly = ( Node.ReadOnly || Prop.ReadOnly ) ? "true" : "false";
-                JProperty ThisProp = new JProperty( PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId.ToString() );
-                JObject ThisPropAttr = new JObject(
-                                            new JProperty( "prop_name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
-                                            new JProperty( "tab", CswTools.SafeJavascriptParam( Prop.NodeTypeTab.TabName ) ),
-                                            new JProperty( "isreadonly", ReadOnly ),
-                                            new JProperty( "fieldtype", Prop.FieldType.FieldType.ToString() ),
-                                            new JProperty( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
-                                            new JProperty( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) )
-                                       );
+                JProperty TabProp = new JProperty( Tab.TabName );
+                SubItemsJProp.Add( TabProp );
 
-                PropWrapper.ToJSON( ThisPropAttr );
-                ThisProp.Value = ThisPropAttr;
-                SubItemsJProp.Add( ThisProp );
+                JObject TabObj = new JObject();
+                TabProp.Value = TabObj;
+
+                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder
+                                                                .Cast<CswNbtMetaDataNodeTypeProp>()
+                                                                .Where( Prop => !Prop.HideInMobile &&
+                                                                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
+                                                                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) )
+                {
+                    CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
+                    string ReadOnly = ( Node.ReadOnly || Prop.ReadOnly ) ? "true" : "false";
+
+                    JProperty ThisProp = new JProperty( PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId );
+                    TabObj.Add( ThisProp );
+
+                    JObject ThisPropAttr = new JObject(
+                                                new JProperty( "prop_name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
+                                                new JProperty( "isreadonly", ReadOnly ),
+                                                new JProperty( "fieldtype", Prop.FieldType.FieldType.ToString() ),
+                                                new JProperty( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
+                                                new JProperty( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) )
+                                           );
+
+                    PropWrapper.ToJSON( ThisPropAttr );
+                    ThisProp.Value = ThisPropAttr;
+                }
+
             }
         }
 

@@ -13,34 +13,22 @@ CswAppMode.mode = 'mobile';
 ;(function($) {
     /// <param name="$" type="jQuery" />
 
-    $.fn.makeUL = function(id, params) {
+    $.fn.makeUL = function(params) {
         var p = {
+            'id': '',
             'data-filter': false,
             'data-role': 'listview',
-            'data-inset': true
+            'data-inset': true,
+            'cssclass': ''
         };
         if (params) $.extend(p, params);
 
         var $div = $(this);
         var $ret = undefined;
         if (!isNullOrEmpty($div)) {
-            $ret = $('<ul class="csw_listview" id="' + tryParseString(id, '') + '"></ul>')
+            $ret = $('<ul class="' + p.cssclass + '" id="' + tryParseString(p.id, '') + '"></ul>')
                                                     .appendTo($div)
                                                     .CswAttrXml(p);
-        }
-        return $ret;
-    };
-
-    $.fn.bindLI = function() {
-        var $li = $(this);
-        var $ret = undefined;
-        if (!isNullOrEmpty($li)) {
-            $li.unbind('click');
-            $ret = $li.find('li a').bind('click', function() {
-                var dataurl = $(this).CswAttrXml('data-url');
-                var $thisPage = $('#' + dataurl);
-                $thisPage.doChangePage();
-            });
         }
         return $ret;
     };
@@ -64,7 +52,9 @@ CswAppMode.mode = 'mobile';
         if (!isNullOrEmpty($div)) {
             var $page = $.mobile.activePage;
             var id = (isNullOrEmpty($page)) ? 'no ID' : $page.CswAttrDom('id');
-            if(debugOn()) log('changePage from ' + $page.CswAttrDom('id') + ' to ' + $div.CswAttrDom('id'), true);
+            if(debugOn()) {
+                log('changePage from ' + $page.CswAttrDom('id') + ' to ' + $div.CswAttrDom('id'), true);
+            }
             if (id !== $div.CswAttrDom('id')) ret = $.mobile.changePage($div, o);
         }
         return ret;
@@ -328,7 +318,7 @@ CswAppMode.mode = 'mobile';
             $viewsdiv = reloadViews(); //no changePage
             
             if ($.mobile.activePage === $logindiv) {
-                $sorrycharliediv.doPage(); // doChangePage();
+                $sorrycharliediv.doPage(); 
             }
         }
 
@@ -351,7 +341,7 @@ CswAppMode.mode = 'mobile';
                 }
             }
             if ($.mobile.activePage === $sorrycharliediv) {
-                $logindiv.doPage(); //doChangePage();
+                $logindiv.doPage(); 
             }
         }
 
@@ -595,7 +585,7 @@ CswAppMode.mode = 'mobile';
 
             var $content = $retDiv.find('div:jqmData(role="content")').empty();
 
-            var $list = $content.makeUL();
+            var $list = $content.makeUL({cssclass: 'csw_listview'});
             currenttab = '';
 
             for(var key in p.json)
@@ -609,18 +599,12 @@ CswAppMode.mode = 'mobile';
             }
 
             logger.setAjaxSuccess();
-//            try {
-//                $('.csw_collapsible').page();
-//                $('.csw_fieldset').page();
-//                $('.csw_listview').page();
-//            }
-//            catch(e) //this is hackadelic, but it works. 
-//            {
-//                $('.csw_collapsible').page();
-//                $('.csw_fieldset').page();
-//                $('.csw_listview').page();
-//            }
-           // $content.page();
+            $content.page();
+            $('.csw_listview').page();
+            $('.csw_answer').checkboxradio('refresh');
+            $('.csw_fieldset').page();
+            
+            
 
             _resetPendingChanges();
             
@@ -666,7 +650,15 @@ CswAppMode.mode = 'mobile';
                     {
                         text = id;
                         var $tab = $('<li id="' + p.DivId + '_' + id + '">' + text + '</li>' )
-                                        .appendTo($list);
+                                        .appendTo($list)
+                                        .bind('click', function () {
+                                            var $this = $(this);
+                                            $this.page();
+                                            $this.find('li').page()
+                                            $this.find('.csw_collapsible').page();
+                                            $this.find('.csw_fieldset').page();
+                                            $this.find('.csw_answer').checkboxradio('refresh');
+                                        });
                         var $propList = $tab.makeUL();
                         for(var key in p.json['value'])
                         {
@@ -1209,14 +1201,15 @@ CswAppMode.mode = 'mobile';
             var $helpBtn = $('#' + p.DivId + '_help');
             var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
             var $headerTitle = $('#' + p.DivId + '_header_title');
+            var $backlink = $('#' + p.DivId + '_back');
+            
             if (isNullOrEmpty($pageDiv) || $pageDiv.length === 0) {
                 $pageDiv = $body.CswDiv('init', { ID: p.DivId })
                                         .CswAttrXml({
                                         'data-role': 'page',
                                         'data-url': p.DivId,
                                         'data-title': p.HeaderText,
-                                        'data-rel': 'page',
-                                        'data-add-back-btn': !isTrue(p.HideBackButton)              
+                                        'data-rel': 'page'
                                     });
 
                 var $header = $pageDiv.CswDiv('init', { ID: p.DivId + '_header' })
@@ -1226,7 +1219,18 @@ CswAppMode.mode = 'mobile';
                                               'data-position': 'fixed',
                                               'data-id': 'csw_header'
                                           });
-
+                $backlink = $header.CswLink('init', {
+                                                'href': 'javascript:void(0)',
+                                                ID: p.DivId + '_back',
+                                                cssclass: 'ui-btn-left',
+                                                value: 'Back'
+                                            })
+                                                .CswAttrXml({
+                                                'data-identity': p.DivId + '_back', 
+                                                'data-rel': 'back',
+                                                'data-direction': 'reverse'
+                                            });
+                
                 $headerTitle = $('<h1 id="' + p.DivId + '_header_title"></h1>').appendTo($header);                
 
                 $searchBtn = $header.CswLink('init', {
@@ -1313,7 +1317,7 @@ CswAppMode.mode = 'mobile';
                                              'data-url': p.DivId + '_help',
                                              'data-transition': 'pop',
                                              'data-rel': 'dialog',
-                                              'data-icon': 'info'
+                                             'data-icon': 'info'
                                       })
                                       .css('display', '')
                                       .appendTo($footerCtn);
@@ -1322,6 +1326,11 @@ CswAppMode.mode = 'mobile';
             //case 22323
             $headerTitle.text(p.HeaderText);
             
+            if (!p.HideBackButton) {
+                $backlink.css('display', '').show();
+            } else {
+                $backlink.css('display', 'none').hide();
+            }
             if (p.HideOnlineButton) {
                 $syncstatusBtn.css('display', 'none').hide();
             } else {
@@ -1821,8 +1830,8 @@ CswAppMode.mode = 'mobile';
             var searchJson = _fetchCachedViewJson(viewId);
             
             if (!isNullOrEmpty(searchJson)) {
-                var $content = $resultsDiv.makeUL(DivId + '_searchresultslist', { 'data-filter': false })
-                                                    .append($('<li data-role="list divider">Results</li>'));
+                var $content = $resultsDiv.makeUL({id: DivId + '_searchresultslist', 'data-filter': false })
+                                          .append($('<li data-role="list divider">Results</li>'));
 
                 var hitcount = 0;
                 for(var key in searchJson)
