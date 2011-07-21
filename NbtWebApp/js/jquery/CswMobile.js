@@ -91,7 +91,7 @@ CswAppMode.mode = 'mobile';
 
             //$div.unbind('pageshow');
             $ret = $div.bind('pageshow', function() {
-                if (p.level === 1) localStorage['currentviewid'] = p.DivId;
+                if (p.level === 1) storeLocalData('currentviewid', p.DivId);
                 p.onPageShow(p);
                 if($('#logindiv')) $('#logindiv').remove();
             });
@@ -129,11 +129,11 @@ CswAppMode.mode = 'mobile';
 
         var mobileStorage = new CswMobileStorage();
         
-        if (!localStorage["sessionid"]) {
+        var SessionId = getStoredLocalString('sessionid');
+        if(isNullOrEmpty(SessionId)) {
             Logout();
         }
         
-        var SessionId = localStorage["sessionid"];
         function currentViewJson(json,level) {
 
             var ret = { };
@@ -155,24 +155,23 @@ CswAppMode.mode = 'mobile';
                 else {
                     ret = json;
                 }
-                if(ret) {
-                    localStorage.currentViewJson = JSON.stringify(ret);
+                if( !isNullOrEmpty(ret) ) {
+                    storeLocalData('currentViewJson', ret);
                 }
             }
            
-            if( isNullOrEmpty(ret) && 
-                localStorage.currentViewJson && 
-                'undefined' !== localStorage.currentViewJson ) {
-                ret = JSON.parse(localStorage.currentViewJson);
+            if( isNullOrEmpty(ret)
+            {
+                var storedView = getStoredLocalString('currentViewJson');
+                if (!isNullOrEmpty(storedView))
+                {
+                    ret = storedView;
+                }
             }
             return ret;
         }
-        
 
-        var storedViews = {};
-        if (localStorage.storedViews) {
-            storedViews = JSON.parse(localStorage['storedviews']);
-        }
+        var storedViews = getStoredLocalJSON('storedViews');
 
         var $logindiv = _loadLoginDiv();
         var $viewsdiv = reloadViews();
@@ -184,10 +183,10 @@ CswAppMode.mode = 'mobile';
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
         if (!isNullOrEmpty(SessionId)) {
             $.mobile.path.set('#viewsdiv');
-            localStorage['refreshPage'] = 'viewsdiv';
+            storeLocalData('refreshPage', 'viewsdiv');
         } else {
             $.mobile.path.set('#logindiv');
-            localStorage['refreshPage'] = 'logindiv';
+            storeLocalData('refreshPage', 'logindiv' );
         }
               
         window.onload = function() {
@@ -237,9 +236,10 @@ CswAppMode.mode = 'mobile';
                     HideBackButton: true,
                     dataRel: 'dialog'
                 });
-            
-            if( !isNullOrEmpty(localStorage['loginFailure']) ) {
-                _addToDivHeaderText($retDiv, localStorage['loginFailure']);
+
+            var loginFailure = getStoredLocalString('loginFailure');
+            if( !isNullOrEmpty(loginFailure) ) {
+                _addToDivHeaderText($retDiv, loginFailure);
             }
             
             $('#loginsubmit').bind('click', function() {
@@ -325,7 +325,7 @@ CswAppMode.mode = 'mobile';
         function setOnline(reloadViewsPage) {
             
             amOnline(true);
-            localStorage.removeItem('loginFailure');
+            removeStoredLocalData('loginFailure');
             if( !mobileStorage.stayOffline() )
             {
                 $('.onlineStatus').removeClass('offline')
@@ -347,12 +347,12 @@ CswAppMode.mode = 'mobile';
 
         function amOnline(amOnline,loginFailure) {
             if(arguments.length > 0 ) {
-                localStorage['online'] = isTrue(amOnline);
+                storeLocalData('online', isTrue(amOnline) );
             }
             if(loginFailure) {
-                localStorage['loginFailure'] = loginFailure;
+                storeLocalData('loginFailure',loginFailure );
             }
-            var ret = ( isTrue(localStorage['online']) && !mobileStorage.stayOffline());
+            var ret = ( isTrue(getStoredLocalString('online')) && !mobileStorage.stayOffline());
             return ret;
         }
 
@@ -398,9 +398,9 @@ CswAppMode.mode = 'mobile';
 
                 var dataJson = {
                     'Context': 'CswMobile',
-                    'UserName': localStorage['username'],
-                    'CustomerId': localStorage['customerid'],
-                    'LogInfo': sessionStorage['debuglog']
+                    'UserName': getStoredLocalString('username'),
+                    'CustomerId': getStoredLocalString('customerid'),
+                    'LogInfo': getStoredLocalString('debuglog')
                 };
 
 //                CswAjaxJSON({
@@ -1408,7 +1408,7 @@ CswAppMode.mode = 'mobile';
 
         function _makeSyncStatusDiv() {
             var content = '';
-            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + tryParseString(localStorage.unSyncedChanges,'0') + '</span></p>';
+            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + tryParseString(getStoredLocalString('unSyncedChanges'),'0') + '</span></p>';
             content += '<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess + '</span></p>';
             var hideFailure = isNullOrEmpty(mobileStorage.lastSyncAttempt) ? '' : 'none';
             content += '<p style="display:' + hideFailure + ' ;">Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt + '</span></p>';
@@ -1494,7 +1494,7 @@ CswAppMode.mode = 'mobile';
         }
 
         function _resetPendingChanges(setlastsyncnow) {
-            $('#ss_pendingchangecnt').text( tryParseString(localStorage.unSyncedChanges,'0') );
+            $('#ss_pendingchangecnt').text( tryParseString(getStoredLocalString('unSyncedChanges'),'0') );
             if ( _pendingChanges() ) {
                 $('.onlineStatus').addClass('pendingchanges')
                                   .find('span.ui-btn-text')
@@ -1524,7 +1524,7 @@ CswAppMode.mode = 'mobile';
         }
 
         function _pendingChanges() {
-            var changes = new Number(tryParseString(localStorage.unSyncedChanges,'0'))
+            var changes = new Number(tryParseString(getStoredLocalString('unSyncedChanges'),'0'))
             return (changes > 0);
         }
 
@@ -1582,7 +1582,7 @@ CswAppMode.mode = 'mobile';
         function onLoginFail(text) {
             Logout(false);
             _addToDivHeaderText($logindiv, text);
-            localStorage['loginFailure'] = text;
+            storeLocalData('loginFailure', text);
         }
 
         function onLogout() {
@@ -1596,10 +1596,10 @@ CswAppMode.mode = 'mobile';
         function Logout(reloadWindow) {
             if ( _checkNoPendingChanges() ) {
                 
-                var loginFailure = tryParseString(localStorage['loginFailure'], '');
+                var loginFailure = tryParseString(getStoredLocalString('loginFailure'), '');
                 var onlineStatus = amOnline();
                 
-                _clearStorage();
+                clearStorage();
                 
                 amOnline(onlineStatus,loginFailure);
                 // reloading browser window is the easiest way to reset
@@ -1607,11 +1607,6 @@ CswAppMode.mode = 'mobile';
                     window.location.href = window.location.pathname;
                 }
             }
-        }
-
-        function _clearStorage() {
-            sessionStorage.clear();
-            localStorage.clear();
         }
 
         //#endregion Events
@@ -1864,51 +1859,51 @@ CswAppMode.mode = 'mobile';
         // ------------------------------------------------------------------------------------
         // Persistance functions
         // ------------------------------------------------------------------------------------
-
+        
         function _cacheSession(sessionid, username, customerid) {
             setOnline(false);
-            localStorage['username'] = username;
-            localStorage['customerid'] = customerid;
-            localStorage['sessionid'] = sessionid;
+            storeLocalData('username',username);
+            storeLocalData('customerid',customerid);
+            storeLocalData('sessionid',sessionid);
         } //_cacheSession()
 
         function CswMobileStorage() {
             this.lastSyncSuccess = function() {
                 var now = new Date();
                 var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-                localStorage['lastSyncSuccess'] = ret;
-                localStorage['lastSyncAttempt'] = ''; //clear last failed on next success
-                localStorage['lastSyncTime'] = now;
+                storeLocalData('lastSyncSuccess', ret);
+                removeStoredLocalData('lastSyncAttempt'); //clear last failed on next success
+                storeLocalData('lastSyncTime',now);
                 return ret;
             };
             this.lastSyncSuccess.toString = function() {
-                return tryParseString(localStorage['lastSyncSuccess'],'');
+                return getStoredLocalString('lastSyncSuccess');
             };
             this.lastSyncAttempt = function() {
                 var now = new Date();
                 var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-                localStorage['lastSyncAttempt'] = ret;
-                localStorage['lastSyncTime'] = now;
+                storeLocalData('lastSyncAttempt', ret);
+                storeLocalData('lastSyncTime', now);
                 return ret;
             };
             this.lastSyncAttempt.toString = function() {
-                return tryParseString(localStorage['lastSyncAttempt'], '');
+                return getStoredLocalString('lastSyncAttempt');
             };
-            this.lastSyncTime = tryParseString(localStorage['lastSyncTime'], '');
+            this.lastSyncTime = getStoredLocalString('lastSyncTime');
             this.addUnsyncedChange = function() {
-                var unSyncedChanges = tryParseNumber(localStorage['unSyncedChanges'], '0');
+                var unSyncedChanges = tryParseNumber(getStoredLocalString('unSyncedChanges'), '0');
                 unSyncedChanges++;
-                localStorage['unSyncedChanges'] = unSyncedChanges;
+                storeLocalData('unSyncedChanges', unSyncedChanges);
                 return unSyncedChanges;
             };
             this.clearUnsyncedChanges = function() {
-                localStorage['unSyncedChanges'] = '0';
+                getStoredLocalString('unSyncedChanges', '0');
             };
             this.stayOffline = function(value) {
                 if(arguments.length === 1) {
-                    localStorage['stayOffline'] = isTrue(value);
+                    storeLocalData('stayOffline', isTrue(value) );
                 }
-                var ret = isTrue(localStorage['stayOffline']);
+                var ret = isTrue(getStoredLocalString('stayOffline'));
                 return ret;
             };
         }
@@ -1923,10 +1918,10 @@ CswAppMode.mode = 'mobile';
             if (arguments.length === 1 && viewId)
             {
                 ret = viewId;
-                localStorage['currentviewid'] = viewId;
+                storeLocalData('currentviewid', viewId );
             }
             if (isNullOrEmpty(ret)) {
-                ret = localStorage['currentviewid'];
+                ret = getStoredLocalString('currentviewid');
             }
             return ret;
         }
@@ -1948,11 +1943,11 @@ CswAppMode.mode = 'mobile';
                 {
                     storedViews[view] = viewJson[view]; 
                 }
-                localStorage["storedviews"] = JSON.stringify(storedViews);
+                storeLocalData("storedviews", storedViews);
             }
             else {
                 //no need to cache the viewsdiv
-                localStorage[viewId] = JSON.stringify({ 'name': viewName, 'json': viewJson, 'search': viewSearch });
+                storeLocalData(viewId, { 'name': viewName, 'json': viewJson, 'search': viewSearch });
             }
             cacheLogInfo(logger);
         }
@@ -1964,15 +1959,16 @@ CswAppMode.mode = 'mobile';
             /// <param name="viewId" type="String">An NBT ViewId</param>
             /// <param name="viewName" type="String">Human readable view name</param>
             /// <param name="wasModified" type="Boolean">Indicates whether this update modifies the view</param>
-            if (!isNullOrEmpty(localStorage[viewId]) && !isNullOrEmpty(viewJson)) {
-                var view = JSON.parse(localStorage[viewId]);
+            
+            if (!isNullOrEmpty(viewId) && !isNullOrEmpty(viewJson)) {
+                var view = getStoredLocalJSON(viewId);
                 view['json'] = viewJson;
                 if( wasModified ) {
                     view['wasmodified'] = true;
                 } else {
                     delete view['wasmodified'];
                 }
-                localStorage[viewId] = JSON.stringify(view);
+                storeLocalData(viewId, view);
             }
             return viewJson;
         }
@@ -1985,12 +1981,13 @@ CswAppMode.mode = 'mobile';
             /// <param name="nodeJson" type="JSON">JSON representation of the node</param>
             /// <param name="wasModified" type="Boolean">Indicates whether this update modifies the view</param>
             var viewId = currentViewId();
-            if (!isNullOrEmpty(localStorage[viewId]) && !isNullOrEmpty(nodeJson)) {
-                var view = JSON.parse(localStorage[viewId]);
+            var storedView = getStoredLocalJSON(viewId);
+            if (!isNullOrEmpty(storedView) && !isNullOrEmpty(nodeJson)) {
+                var view = storedView;
                 view['json'][nodeId] = nodeJson;
                 //view['json'][nodeid]['wasmodified'] = true; //one day we'll want to update in smaller pushes
                 view['wasmodified'] = wasModified;
-                localStorage[viewId] = JSON.stringify(view);
+                storeLocalData(viewId, view);
             }
             return nodeJson;
         }
@@ -1998,12 +1995,12 @@ CswAppMode.mode = 'mobile';
         function _getModifiedView(onSuccess) {
             var modified = false;
             if (isNullOrEmpty(storedViews)) {
-                storedViews = JSON.parse(localStorage['storedviews']);
+                storedViews = getStoredLocalJSON('storedviews');
             }
             if( !isNullOrEmpty(storedViews)) {
                 for (var viewid in storedViews) {
-                    if (!isNullOrEmpty(localStorage[viewid])) {
-                        var view = JSON.parse(localStorage[viewid]);
+                    var view = getStoredLocalJSON(viewid);
+                    if (!isNullOrEmpty(view)) {
                         if (view.wasmodified) {
                             modified = true;
                             var viewJson = view.json;
@@ -2026,8 +2023,8 @@ CswAppMode.mode = 'mobile';
             /// <param name="viewId" type="String">An NBT ViewId</param>
             /// <param name="viewObj" type="String">Optional. The JSON property to retrieve. 'json' if omitted.</param>
             var ret = {};
-            if (!isNullOrEmpty(localStorage[viewId])) {
-                var rootObj = JSON.parse(localStorage[viewId]);
+            var rootObj = getStoredLocalJSON(viewId);
+            if (!isNullOrEmpty(rootObj)) {
                 var jProp = 'json';
                 if(arguments.length === 2 && viewObj ) {
                     jProp = viewObj;
@@ -2044,8 +2041,8 @@ CswAppMode.mode = 'mobile';
             /// <param name="nodeId" type="String">An NBT NodeId</param>
             var ret = {};
             var viewId = currentViewId();
-            if (viewId) {
-                var currentView = JSON.parse(localStorage[viewId]);
+            if ( !isNullOrEmpty(viewId)) {
+                var currentView = getStoredLocalJSON(v);
                 var viewJson = currentViewJson( currentView['json'] );
                 ret = viewJson[nodeId];
             }

@@ -1541,3 +1541,124 @@ function hasWebStorage(localOnly)
     var ret = (Modernizr.localstorage && (localOnly || Modernizr.sessionstorage)); 
     return ret;
 }
+
+//#region LocalStorage
+
+var storedInMemory = {};
+
+function storeLocalData(key, value)
+{
+    /// <summary>
+    ///   Stores a key/value pair in localStorage. 
+    ///   If localStorage is full, use sessionStorage. 
+    ///   if sessionStorage is full, store in memory.
+    ///   Returns a JSON representation of value.
+    /// </summary>
+    /// <param name="key" type="String">The property name to store.</param>
+    /// <param name="value" type="String">The property value to store. If not a string, JSON.stringify will be called.</param>
+    var ret = {};
+    if (!isNullOrEmpty(key))
+    {
+        var stringToStore = value;
+        if (typeof value !== 'string')
+        {
+            ret = value;
+            stringToStore = JSON.stringify(value);
+        }
+        else
+        {
+            ret = JSON.parse(value);
+        }
+        try
+        {
+            localStorage[key] = stringToStore;
+        } catch (e)
+        {
+            try
+            {
+                localStorage.removeItem(key);
+                sessionStorage[key] = stringToStore;
+            } catch (e)
+            {
+                sessionStorage.removeItem(key);
+                storedInMemory[key] = ret;
+                errorHandler(e);
+            }
+        }
+    }
+    return ret;
+}
+
+function getStoredLocalJSON(key)
+{
+    /// <summary>
+    ///   Fetches a value from localStorage. 
+    ///   Attempts both localStorage and sessionStorage.
+    ///   Returns a JSON representation of value.
+    /// </summary>
+    /// <param name="key" type="String">The property name to store.</param>
+    var ret = {};
+    if (!isNullOrEmpty(key))
+    {
+        var storedString = tryParseString(localStorage[key], '');
+        if (isNullOrEmpty(storedString) || storedString === 'undefined')
+        {
+            storedString = tryParseString(localStorage[key], '');
+        }
+        if (!isNullOrEmpty(storedString) && storedString !== 'undefined')
+        {
+            ret = JSON.parse(storedString);
+        }
+        else if (!isNullOrEmpty(storedInMemory[key]))
+        {
+            ret = storedInMemory[key];
+        }
+    }
+    return ret;
+}
+
+function getStoredLocalString(key)
+{
+    /// <summary>
+    ///   Fetches a value from localStorage. 
+    ///   Attempts both localStorage and sessionStorage.
+    ///   Returns a string.
+    /// </summary>
+    /// <param name="key" type="String">The property name to store.</param>
+    var ret = '';
+    if (!isNullOrEmpty(key))
+    {
+        var storedString = tryParseString(localStorage[key], '');
+        if (isNullOrEmpty(storedString) || storedString === 'undefined')
+        {
+            storedString = tryParseString(localStorage[key], '');
+        }
+        if (!isNullOrEmpty(storedString) && storedString !== 'undefined')
+        {
+            ret = storedString;
+        }
+        else if (!isNullOrEmpty(storedInMemory[key]))
+        {
+            ret = JSON.stringify(storedInMemory[key]);
+        }
+    }
+    return ret;
+}
+
+function removeStoredLocalData(key)
+{
+    //these are all null safe
+    delete storedInMemory[key];
+    localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
+}
+
+
+function clearStorage()
+{
+    sessionStorage.clear();
+    localStorage.clear();
+    storedInMemory = {};
+}
+
+//#endregion LocalStorage
