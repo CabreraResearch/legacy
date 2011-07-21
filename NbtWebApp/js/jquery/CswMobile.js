@@ -638,7 +638,7 @@ CswAppMode.mode = 'mobile';
                         for(var key in p.json['value'])
                         {
                             var prop = p.json['value'][key];
-                            _FieldTypeJsonToHtml(prop, p.ParentId, key)
+                            _FieldTypeJsonToHtml(prop, p.DivId, key)
                                 .appendTo($propList);
                         }
                         break;   
@@ -855,7 +855,7 @@ CswAppMode.mode = 'mobile';
                         break;
                     case "Question":
                         addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
-
+                        debugger;
                         _makeQuestionAnswerFieldSet(ParentId, IdStr, sf_allowedanswers, sf_answer, sf_compliantanswers)
                                                         .appendTo($fieldcontain);
                         var hideComments = true;
@@ -1695,23 +1695,22 @@ CswAppMode.mode = 'mobile';
                 
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
                 var nodeJson = _fetchCachedNodeJson(nodeId);
-                
-                //we're only updating one prop--don't iterate them all.
-                var prop;
-                if( !isNullOrEmpty(inputPropId) &&
-                    !isNullOrEmpty(nodeJson['subitems'][inputPropId]) ) {
-                    prop = nodeJson['subitems'][inputPropId];
-                    _FieldTypeHtmlToJson(prop, name, inputPropId, value);
-                }
-                else { //remove else as soon as we can verify we never need to enter here
+
+                if( !isNullOrEmpty(inputPropId) )
+                {
                     for (var key in nodeJson['subitems'])
                     {
-                        if( key === inputPropId )
-                        {
-                            prop = nodeJson['subitems'][key];
+                        var tab = nodeJson['subitems'][key];
+                        if (!isNullOrEmpty(tab[inputPropId])) {
+                            var prop = tab[inputPropId];
                             _FieldTypeHtmlToJson(prop, name, inputPropId, value);
+                            //we're only updating one prop--don't iterate them all.
+                            break;
                         }
                     }
+                }
+                else { //remove else as soon as we can verify we never need to enter here
+                    errorHandler('Could not find a prop to update');
                 }
                 _updateStoredNodeJson(nodeId, nodeJson, '1');
             }
