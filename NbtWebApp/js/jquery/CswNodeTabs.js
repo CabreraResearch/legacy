@@ -28,6 +28,7 @@
             onBeforeTabSelect: function (tabid) { return true; },
             onTabSelect: function (tabid) { },
             onPropertyChange: function(propid, propname) { },
+			onInitFinish: function() { },
             ShowCheckboxes: false,
 			ShowAsReport: true,
             NodeCheckTreeId: '',
@@ -158,34 +159,34 @@
                     var $form = $tabcontentdiv.children('form');
                     $form.contents().remove();
 
-                    if(o.title !== '')
-                        $form.append(o.title);
+					if(o.title !== '')
+						$form.append(o.title);
 
 					var $savetab;
-                    var $layouttable = $form.CswLayoutTable('init', {
-                        'ID': o.ID + '_props',
-                        'OddCellRightAlign': true,
-                        'ReadOnly': (o.EditMode === 'PrintReport'),
-                        'cellset': {
-                            rows: 1,
-                            columns: 2
-                        },
-                        'onSwap': function (e, onSwapData)
-                        {
-                            onSwap(onSwapData);
-                        },
-                        'showConfigButton': (isNullOrEmpty(o.date) && o.filterToPropId === '' && isTrue($tabcontentdiv.data('canEditLayout'))),
-                        'onConfigOn': function($buttontable) { 
-                            $xml.children().each(function ()
-                            {
-                                var $propxml = $(this);
-                                var $subtable = $layouttable.find('#' + $propxml.CswAttrXml('id') + '_subproptable');
+					var $layouttable = $form.CswLayoutTable('init', {
+						'ID': o.ID + '_props',
+						'OddCellRightAlign': true,
+						'ReadOnly': (o.EditMode === 'PrintReport'),
+						'cellset': {
+							rows: 1,
+							columns: 2
+						},
+						'onSwap': function (e, onSwapData)
+						{
+							onSwap(onSwapData);
+						},
+						'showConfigButton': (isNullOrEmpty(o.date) && o.filterToPropId === '' && isTrue($tabcontentdiv.data('canEditLayout'))),
+						'onConfigOn': function($buttontable) { 
+							$xml.children().each(function ()
+							{
+								var $propxml = $(this);
+								var $subtable = $layouttable.find('#' + $propxml.CswAttrXml('id') + '_subproptable');
 								var $parentcell = $subtable.parent().parent();
-                                var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
-                                var $propcell = _getPropertyCell($cellset);
+								var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
+								var $propcell = _getPropertyCell($cellset);
 
-                                if($subtable.length > 0)
-                                {
+								if($subtable.length > 0)
+								{
 									var fieldOpt = {
 										'fieldtype': $propxml.CswAttrXml('fieldtype'),
 										'nodeid': o.nodeid,
@@ -198,21 +199,21 @@
 										'cswnbtnodekey': o.cswnbtnodekey
 									};
                                 
-                                    _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, true, $savetab);
-                                }
-                            }); // each()
-                        }, // onConfigOn
-                        'onConfigOff': function($buttontable) { 
-                            $xml.children().each(function ()
-                            {
-                                var $propxml = $(this);
-                                var $subtable = $layouttable.find('#' + $propxml.CswAttrXml('id') + '_subproptable');
+									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, true, $savetab);
+								}
+							}); // each()
+						}, // onConfigOn
+						'onConfigOff': function($buttontable) { 
+							$xml.children().each(function ()
+							{
+								var $propxml = $(this);
+								var $subtable = $layouttable.find('#' + $propxml.CswAttrXml('id') + '_subproptable');
 								var $parentcell = $subtable.parent().parent();
-                                var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
-                                var $propcell = _getPropertyCell($cellset);
+								var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
+								var $propcell = _getPropertyCell($cellset);
 
-                                if($subtable.length > 0)
-                                {
+								if($subtable.length > 0)
+								{
 									var fieldOpt = {
 										'fieldtype': $propxml.CswAttrXml('fieldtype'),
 										'nodeid': o.nodeid,
@@ -225,45 +226,53 @@
 										'cswnbtnodekey': o.cswnbtnodekey
 									};
 
-                                    _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false, $savetab);
-                                }
-                            }); // each()
-                        } // onConfigOff
+									_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, $propxml.CswAttrXml('id'), o.nodetypeid, $propxml, $propcell, $tabcontentdiv, tabid, false, $savetab);
+								}
+							}); // each()
+						} // onConfigOff
 
-                    }); // CswLayoutTable()
+					}); // CswLayoutTable()
 
-                    var i = 0;
+					var i = 0;
 
-                    if(o.EditMode !== EditMode.PrintReport.Name)
-                    {
-                        $savetab = $form.CswButton({ID: 'SaveTab', 
-                                                enabledText: 'Save Changes', 
-                                                disabledText: 'Saving...', 
-                                                onclick: function () { Save($form, $layouttable, $xml, $savetab); }
-                                                });
-                    }
-                    _handleProps($layouttable, $xml, $tabcontentdiv, tabid, false, $savetab);
+					if(o.EditMode !== EditMode.PrintReport.Name)
+					{
+						$savetab = $form.CswButton({ID: 'SaveTab', 
+												enabledText: 'Save Changes', 
+												disabledText: 'Saving...', 
+												onclick: function () { Save($form, $layouttable, $xml, $savetab); }
+												});
+					}
+					_handleProps($layouttable, $xml, $tabcontentdiv, tabid, false, $savetab);
 
 
-                    // Validation
-                    $form.validate({
-                        highlight: function (element, errorClass)
-                        {
-                            var $elm = $(element);
-                            $elm.CswAttrDom('csw_invalid', '1');
-                            $elm.animate({ backgroundColor: '#ff6666' });
-                        },
-                        unhighlight: function (element, errorClass)
-                        {
-                            var $elm = $(element);
-                            if($elm.CswAttrDom('csw_invalid') === '1')  // only unhighlight where we highlighted
-                            {
-                                $elm.css('background-color', '#66ff66');
-                                $elm.CswAttrDom('csw_invalid', '0')
-                                setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
-                            }
-                        }
-                    });
+					// Validation
+					$form.validate({
+						highlight: function (element, errorClass)
+						{
+							var $elm = $(element);
+							$elm.CswAttrDom('csw_invalid', '1');
+							$elm.animate({ backgroundColor: '#ff6666' });
+						},
+						unhighlight: function (element, errorClass)
+						{
+							var $elm = $(element);
+							if($elm.CswAttrDom('csw_invalid') === '1')  // only unhighlight where we highlighted
+							{
+								$elm.css('background-color', '#66ff66');
+								$elm.CswAttrDom('csw_invalid', '0')
+								setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+							}
+						}
+					}); // validate()
+
+					// case 8494
+					if($xml.children().length <= 0 && o.EditMode == EditMode.AddInPopup.name)
+					{
+						Save($form, $layouttable, $xml, $savetab);
+					} else {
+						o.onInitFinish();
+					}
                 } // success{}
             }); // ajax
         } // getProps()
