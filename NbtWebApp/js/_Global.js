@@ -1552,23 +1552,17 @@ function storeLocalData(key, value)
     ///   Stores a key/value pair in localStorage. 
     ///   If localStorage is full, use sessionStorage. 
     ///   if sessionStorage is full, store in memory.
-    ///   Returns a JSON representation of value.
     /// </summary>
     /// <param name="key" type="String">The property name to store.</param>
     /// <param name="value" type="String">The property value to store. If not a string, JSON.stringify will be called.</param>
-    var ret = {};
     if (!isNullOrEmpty(key))
     {
         var stringToStore = value;
-        if (typeof value !== 'string')
+        if (typeof value === 'object')
         {
-            ret = value;
             stringToStore = JSON.stringify(value);
         }
-        else
-        {
-            ret = JSON.parse(value);
-        }
+        
         try
         {
             localStorage[key] = stringToStore;
@@ -1581,12 +1575,11 @@ function storeLocalData(key, value)
             } catch (e)
             {
                 sessionStorage.removeItem(key);
-                storedInMemory[key] = ret;
+                storedInMemory[key] = stringToStore;
                 errorHandler(e);
             }
         }
     }
-    return ret;
 }
 
 function getStoredLocalJSON(key)
