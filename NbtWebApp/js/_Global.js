@@ -1600,7 +1600,13 @@ function getStoredLocalJSON(key)
         }
         if (!isNullOrEmpty(storedString) && storedString !== 'undefined')
         {
-            ret = JSON.parse(storedString);
+            try
+            {
+                ret = JSON.parse(storedString);
+            }
+            catch(e) {
+                ret = storedString;
+            }
         }
         else if (!isNullOrEmpty(storedInMemory[key]))
         {

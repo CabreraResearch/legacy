@@ -50,8 +50,6 @@
 
 		            $(window).bind("orientationchange resize pageshow", function () { fixGeometry(); });
 
-		            $(window).bind("pageshow", function (e) { cswPage(e); });
-
 		            $('body').CswMobile({
 		                'Theme': 'b'
 		            });
@@ -85,26 +83,7 @@
                 content.height(content_height);
             } /* Trim margin/border/padding height */
         };
-
-        function cswPage(e) {
-            var $content = $.mobile.activePage;
-            if (isNullOrEmpty($content) || $content.length === 0) {
-                $content = $("div[data-role='page']:visible:visible");
-            }
-            if (isNullOrEmpty($content) || $content.length === 0) {
-                $content = $('#' + e.target.id);
-            }
-            if (isNullOrEmpty($content) || $content.length === 0) {
-                $content = $('#' + $.mobile.getPath());
-            }
-
-            $content.page();
-            
-            $content.find('ul').page();
-            $('.csw_listview').page();
-            $('.csw_answer').page();
-        }
-        
+       
     </script>
 </body>
 </html>

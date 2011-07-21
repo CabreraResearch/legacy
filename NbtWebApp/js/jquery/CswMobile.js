@@ -13,7 +13,7 @@ CswAppMode.mode = 'mobile';
 ;(function($) {
     /// <param name="$" type="jQuery" />
 
-    $.fn.makeUL = function(params) {
+    $.fn.cswUL = function(params) {
         var p = {
             'id': '',
             'data-filter': false,
@@ -33,7 +33,7 @@ CswAppMode.mode = 'mobile';
         return $ret;
     };
 
-    $.fn.doChangePage = function(options) {
+    $.fn.cswChangePage = function(options) {
         var o = {
             transition: 'fade'
             //reverse: false,
@@ -50,17 +50,15 @@ CswAppMode.mode = 'mobile';
         var $div = $(this);
         var ret = false;
         if (!isNullOrEmpty($div)) {
-            var $page = $.mobile.activePage;
-            var id = (isNullOrEmpty($page)) ? 'no ID' : $page.CswAttrDom('id');
             if(debugOn()) {
-                log('changePage from ' + $page.CswAttrDom('id') + ' to ' + $div.CswAttrDom('id'), true);
+                log('changePage from ' + $.mobile.path.get() + ' to ' + $div.CswAttrDom('id'), true);
             }
-            if (id !== $div.CswAttrDom('id')) ret = $.mobile.changePage($div, o);
+            ret = $.mobile.changePage($div, o);
         }
         return ret;
     };
 
-    $.fn.doPage = function() {
+    $.fn.cswPage = function() {
         var $div = $(this);
         var ret = false;
         if (!isNullOrEmpty($div)) {
@@ -204,16 +202,14 @@ CswAppMode.mode = 'mobile';
                         if( !$logindiv || $logindiv.length === 0 ) {
                             $logindiv = _loadLoginDiv();
                         }
-                        $logindiv.doPage();
-                        $logindiv.doChangePage();
+                        $logindiv.cswChangePage();
                     },
                     function() {
                         // offline
                         if( !$sorrycharliediv || $sorrycharliediv.length === 0 ) {
                             $sorrycharliediv = _loadSorryCharlieDiv();
                         }
-                        $sorrycharliediv.doPage();
-                        $sorrycharliediv.doChangePage();
+                        $sorrycharliediv.cswChangePage();
                     }
                 );
             }
@@ -269,7 +265,7 @@ CswAppMode.mode = 'mobile';
                 $viewsdiv = _addPageDivToBody(params);
             }
             params.onPageShow = function() { return _loadDivContents(params); };
-            $viewsdiv.doPage();
+
             $viewsdiv.bindJqmEvents(params);
             return $viewsdiv;
         }
@@ -316,10 +312,6 @@ CswAppMode.mode = 'mobile';
             $('.refresh').css('visibility', 'hidden');
 
             $viewsdiv = reloadViews(); //no changePage
-            
-            if ($.mobile.activePage === $logindiv) {
-                $sorrycharliediv.doPage(); 
-            }
         }
 
         function setOnline(reloadViewsPage) {
@@ -339,9 +331,6 @@ CswAppMode.mode = 'mobile';
                 if (reloadViewsPage) {
                     $viewsdiv = reloadViews(); //no changePage
                 }
-            }
-            if ($.mobile.activePage === $sorrycharliediv) {
-                $logindiv.doPage(); 
             }
         }
 
@@ -430,7 +419,7 @@ CswAppMode.mode = 'mobile';
                 };
                 var $logDiv = _addPageDivToBody(params);
                 $logDiv.bindJqmEvents(params);
-                $logDiv.doChangePage();
+                $logDiv.cswChangePage();
             }
         }
 
@@ -484,10 +473,10 @@ CswAppMode.mode = 'mobile';
                     }
                 } else  // Level 2 and up
                 {
-                    var cachedJson = _fetchCachedNodeJson(p.ParentId, p.DivId);
+                    var cachedJson = _fetchCachedNodeJson(p.DivId);
                     p.PageType = 'prop';
                     if( isNullOrEmpty(cachedJson) ) {
-                        cachedJson = currentViewJson()[p.DivId];
+                        cachedJson = currentViewJson(null, 2)[p.DivId];
                     }
                     if( !isNullOrEmpty(cachedJson) ) {
                         p.json = cachedJson['subitems'];
@@ -585,7 +574,7 @@ CswAppMode.mode = 'mobile';
 
             var $content = $retDiv.find('div:jqmData(role="content")').empty();
 
-            var $list = $content.makeUL({cssclass: 'csw_listview'});
+            var $list = $content.cswUL({cssclass: 'csw_listview'});
             currenttab = '';
 
             for(var key in p.json)
@@ -599,13 +588,7 @@ CswAppMode.mode = 'mobile';
             }
 
             logger.setAjaxSuccess();
-            $content.page();
-            $('.csw_listview').page();
-            $('.csw_answer').checkboxradio('refresh');
-            $('.csw_fieldset').page();
             
-            
-
             _resetPendingChanges();
             
             stopLoadingMsg();
@@ -649,21 +632,13 @@ CswAppMode.mode = 'mobile';
                 case "prop":
                     {
                         text = id;
-                        var $tab = $('<li id="' + p.DivId + '_' + id + '">' + text + '</li>' )
-                                        .appendTo($list)
-                                        .bind('click', function () {
-                                            var $this = $(this);
-                                            $this.page();
-                                            $this.find('li').page()
-                                            $this.find('.csw_collapsible').page();
-                                            $this.find('.csw_fieldset').page();
-                                            $this.find('.csw_answer').checkboxradio('refresh');
-                                        });
-                        var $propList = $tab.makeUL();
+                        var $tab = $('<li id="' + p.DivId + '_' + id + '">' + text + '</li>')
+                            .appendTo($list);
+                        var $propList = $tab.cswUL();
                         for(var key in p.json['value'])
                         {
                             var prop = p.json['value'][key];
-                            _FieldTypeJsonToHtml(prop, key)
+                            _FieldTypeJsonToHtml(prop, p.ParentId, key)
                                 .appendTo($propList);
                         }
                         break;   
@@ -697,7 +672,7 @@ CswAppMode.mode = 'mobile';
                     var $div = _addPageDivToBody(par);
                     par.onPageShow = function() { _loadDivContents(par); };
                     $div.bindJqmEvents(par);
-                    $div.doChangePage({ reloadPage: true });
+                    $div.cswChangePage({ reloadPage: true });
                 });
             });
             
@@ -778,14 +753,14 @@ CswAppMode.mode = 'mobile';
             return $retHtml;
         }
 
-        function _FieldTypeJsonToHtml(json, ParentId) {
+        function _FieldTypeJsonToHtml(json, ParentId, IdStr) {
             /// <summary>
             ///   Converts JSON into DOM content
             /// </summary>
             /// <param name="json" type="Object">A JSON Object</param>
-            /// <param name="ParentId" type="String">The ElementID of the parent control (should be a node)</param>
+            /// <param name="ParentId" type="String">The ElementID of the parent control (should be a prop)</param>
+            /// <param name="IdStr" type="String">The ElementID of the child control</param>
             
-            var IdStr = makeSafeId({ ID: json['id'] });
             var FieldType = json['fieldtype'];
             var PropName = json['prop_name'];
             var ReadOnly = isTrue(json['isreadonly']);
@@ -860,7 +835,7 @@ CswAppMode.mode = 'mobile';
                         break;
                     case "Logical":
                         addChangeHandler = false; //_makeLogicalFieldSet() does this for us
-                        $prop = _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
+                        _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
                                                         .appendTo($fieldcontain);
                         break;
                     case "Memo":
@@ -880,7 +855,8 @@ CswAppMode.mode = 'mobile';
                         break;
                     case "Question":
                         addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
-                        var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, sf_allowedanswers, sf_answer, sf_compliantanswers)
+
+                        _makeQuestionAnswerFieldSet(ParentId, IdStr, sf_allowedanswers, sf_answer, sf_compliantanswers)
                                                         .appendTo($fieldcontain);
                         var hideComments = true;
                         if (!isNullOrEmpty(sf_answer) && 
@@ -909,7 +885,7 @@ CswAppMode.mode = 'mobile';
                             onPropertyChange(ParentId, eventObj, $cor.val(), IdStr + '_cor', IdStr);
                         });
 
-                        var $comments = $('<textarea name="' + IdStr + '_input" id="' + IdStr + '_input" placeholder="Comments">' + sf_comments + '</textarea>')
+                        $('<textarea name="' + IdStr + '_input" id="' + IdStr + '_input" placeholder="Comments">' + sf_comments + '</textarea>')
                                                     .appendTo($prop)
                                                     .bind('change',function (eventObj) {
                                                         var $com = $(this);
@@ -1119,7 +1095,6 @@ CswAppMode.mode = 'mobile';
                 if (Answer === answers[i]) {
                      $answer.CswAttrDom('checked', 'checked');
                 }
-                
                 $answer.unbind('change');
                 $answer.bind('change', function(eventObj) {
 
@@ -1149,7 +1124,6 @@ CswAppMode.mode = 'mobile';
                     return false;
                 });
             } // for (var i = 0; i < answers.length; i++)
-
             return $fieldset;
         } // _makeQuestionAnswerFieldSet()
         
@@ -1637,7 +1611,7 @@ CswAppMode.mode = 'mobile';
                             SessionId = $.CswCookie('get', CswCookieName.SessionId);
                             _cacheSession(SessionId, UserName, AccessId);
                             $viewsdiv = reloadViews();
-                            $viewsdiv.doChangePage();
+                            $viewsdiv.cswChangePage();
                         },
                         error: function() {
                             onError();
@@ -1687,7 +1661,7 @@ CswAppMode.mode = 'mobile';
                                 stopLoadingMsg();
                                 return $ret;
                             };
-                            _loadDivContents(params).doChangePage();
+                            _loadDivContents(params).cswChangePage();
                         }, // success
                         error: function () {
                             onError();
@@ -1697,12 +1671,12 @@ CswAppMode.mode = 'mobile';
         }
 
         function onSyncStatusOpen() {
-            $syncstatus.doChangePage({ transition: 'slideup' });
+            $syncstatus.cswChangePage({ transition: 'slideup' });
         }
 
         function onHelp() {
             $help = _makeHelpDiv();
-            $help.doChangePage({ transition: 'slideup' });
+            $help.cswChangePage({ transition: 'slideup' });
         }
 
         //#endregion Button Bindings
@@ -1794,7 +1768,7 @@ CswAppMode.mode = 'mobile';
                         HideCloseButton: true,
                         HideBackButton: false
                     });
-                $searchDiv.doChangePage({ transition: 'slideup' });
+                $searchDiv.cswChangePage({ transition: 'slideup' });
             }
         }
 
@@ -1808,7 +1782,7 @@ CswAppMode.mode = 'mobile';
             var searchJson = _fetchCachedViewJson(viewId);
             
             if (!isNullOrEmpty(searchJson)) {
-                var $content = $resultsDiv.makeUL({id: DivId + '_searchresultslist', 'data-filter': false })
+                var $content = $resultsDiv.cswUL({id: DivId + '_searchresultslist', 'data-filter': false })
                                           .append($('<li data-role="list divider">Results</li>'));
 
                 var hitcount = 0;
@@ -1835,7 +1809,7 @@ CswAppMode.mode = 'mobile';
                 if (hitcount === 0) {
                     $content.append($('<li>No Results</li>'));
                 }
-                $content.page();
+                $content.cswPage();
             }
             stopLoadingMsg();
         } // onSearchSubmit()
@@ -1854,6 +1828,8 @@ CswAppMode.mode = 'mobile';
         
         function stopLoadingMsg() {
             $.mobile.hidePageLoadingMsg();
+            var $currentDiv = $("div[data-role='page']:visible:visible");
+            $currentDiv.find('.csw_listview').cswPage();
         }
         
         // ------------------------------------------------------------------------------------
@@ -2042,7 +2018,7 @@ CswAppMode.mode = 'mobile';
             var ret = {};
             var viewId = currentViewId();
             if ( !isNullOrEmpty(viewId)) {
-                var currentView = getStoredLocalJSON(v);
+                var currentView = getStoredLocalJSON(viewId);
                 var viewJson = currentViewJson( currentView['json'] );
                 ret = viewJson[nodeId];
             }
