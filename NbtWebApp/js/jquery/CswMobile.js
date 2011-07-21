@@ -1,4 +1,4 @@
-/// <reference path="../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../thirdparty/jquery/core/jquery-1.6.2-vsdoc.js" />
 /// <reference path="../thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.js" />
 /// <reference path="../thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
 /// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
@@ -99,7 +99,7 @@ CswAppMode.mode = 'mobile';
             if (params) $.extend(p, params);
             p.level = (p.parentlevel === p.level) ? p.parentlevel + 1 : p.level;
 
-            $div.unbind('pageshow');
+            //$div.unbind('pageshow');
             $ret = $div.bind('pageshow', function() {
                 if (p.level === 1) localStorage['currentviewid'] = p.DivId;
                 p.onPageShow(p);
@@ -113,7 +113,6 @@ CswAppMode.mode = 'mobile';
         /// <summary>
         ///   Generates the Nbt Mobile page
         /// </summary>
-
         var $body = this;
 
         var opts = {
@@ -143,6 +142,7 @@ CswAppMode.mode = 'mobile';
         if (!localStorage["sessionid"]) {
             Logout();
         }
+        
         var SessionId = localStorage["sessionid"];
         function currentViewJson(json,level) {
 
@@ -609,18 +609,18 @@ CswAppMode.mode = 'mobile';
             }
 
             logger.setAjaxSuccess();
-            try {
-                $('.csw_collapsible').page();
-                $('.csw_fieldset').page();
-                $('.csw_listview').page();
-            }
-            catch(e) //this is hackadelic, but it works. 
-            {
-                $('.csw_collapsible').page();
-                $('.csw_fieldset').page();
-                $('.csw_listview').page();
-            }
-            $content.page();
+//            try {
+//                $('.csw_collapsible').page();
+//                $('.csw_fieldset').page();
+//                $('.csw_listview').page();
+//            }
+//            catch(e) //this is hackadelic, but it works. 
+//            {
+//                $('.csw_collapsible').page();
+//                $('.csw_fieldset').page();
+//                $('.csw_listview').page();
+//            }
+           // $content.page();
 
             _resetPendingChanges();
             
@@ -647,7 +647,7 @@ CswAppMode.mode = 'mobile';
             if (params) $.extend(p, params);
 
             var id = makeSafeId({ ID: p.json['id'] });
-            var text = tryParseString(p.json['value']['node_name'], p.json['value']);
+            var text = '';
 
             var IsDiv = (!isNullOrEmpty(id));
 
@@ -658,26 +658,27 @@ CswAppMode.mode = 'mobile';
                         // ignore this
                     break;
                 case "node":
+                    text = p.json['value']['node_name'];
                     $retLI = _makeObjectClassContent(p)
                                             .appendTo($list);
                     break;
                 case "prop":
                     {
-                        var $tab;
-                        var tab = p.json['value']['tab'];
-
-                        if (currenttab !== tab) {
-                            //should be separate ULs eventually
-                            $tab = $('</ul><li data-role="list-divider">' + tab + '</li><ul>')
-                                                    .appendTo($list);
-                            currenttab = tab;
-                        }
-                        var $prop = _FieldTypeJsonToHtml(p.json, id)
+                        text = id;
+                        var $tab = $('<li id="' + p.DivId + '_' + id + '">' + text + '</li>' )
                                         .appendTo($list);
+                        var $propList = $tab.makeUL();
+                        for(var key in p.json['value'])
+                        {
+                            var prop = p.json['value'][key];
+                            _FieldTypeJsonToHtml(prop, key)
+                                .appendTo($propList);
+                        }
                         break;   
                     } // case 'prop':
                 default:
                     {
+                        text = p.json['value'];
                         $retLI = $('<li></li>');
                         if (IsDiv) {
                             $retLI.CswLink('init', { href: 'javascript:void(0);', value: text })
@@ -810,24 +811,24 @@ CswAppMode.mode = 'mobile';
             /// <param name="ParentId" type="String">The ElementID of the parent control (should be a node)</param>
             
             var IdStr = makeSafeId({ ID: json['id'] });
-            var FieldType = json['value']['fieldtype'];
-            var PropName = json['value']['prop_name'];
-            var ReadOnly = isTrue(json['value']['isreadonly']);
+            var FieldType = json['fieldtype'];
+            var PropName = json['prop_name'];
+            var ReadOnly = isTrue(json['isreadonly']);
 
             // Subfield values
-            var sf_text = tryParseString(json['value']['text'], '');
-            var sf_value = tryParseString(json['value']['value'], '');
-            var sf_href = tryParseString(json['value']['href'], '');
-            var sf_checked = tryParseString(json['value']['checked'], '');
+            var sf_text = tryParseString(json['text'], '');
+            var sf_value = tryParseString(json['value'], '');
+            var sf_href = tryParseString(json['href'], '');
+            var sf_checked = tryParseString(json['checked'], '');
             //var sf_relationship = tryParseString(json['value']['name'], '');
-            var sf_required = tryParseString(json['value']['required'], '');
-            var sf_units = tryParseString(json['value']['units'], '');
-            var sf_answer = tryParseString(json['value']['answer'], '');
-            var sf_allowedanswers = tryParseString(json['value']['allowedanswers'], '');
-            var sf_correctiveaction = tryParseString(json['value']['correctiveaction'], '');
-            var sf_comments = tryParseString(json['value']['comments'], '');
-            var sf_compliantanswers = tryParseString(json['value']['compliantanswers'], '');
-            var sf_options = tryParseString(json['value']['options'], '');
+            var sf_required = tryParseString(json['required'], '');
+            var sf_units = tryParseString(json['units'], '');
+            var sf_answer = tryParseString(json['answer'], '');
+            var sf_allowedanswers = tryParseString(json['allowedanswers'], '');
+            var sf_correctiveaction = tryParseString(json['correctiveaction'], '');
+            var sf_comments = tryParseString(json['comments'], '');
+            var sf_compliantanswers = tryParseString(json['compliantanswers'], '');
+            var sf_options = tryParseString(json['options'], '');
 
             var $retLi = $('<li id="' + IdStr + '_li"></li>')
                                 .CswAttrXml('data-icon', false);
@@ -854,104 +855,104 @@ CswAppMode.mode = 'mobile';
                 var addChangeHandler = true;
                 
                 switch (FieldType) {
-                case "Date":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.date, ID: propId, value: sf_value });
-                    break;
-                case "Link":
-                    $prop = $propDiv.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text});
-                    break;
-                case "List":
-                    $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
-                                                .appendTo($propDiv)
-                                                .selectmenu();
-                    var selectedvalue = sf_value;
-                    var optionsstr = sf_options;
-                    var options = optionsstr.split(',');
-                    for (var i = 0; i < options.length; i++) {
-                        var $option = $('<option value="' + options[i] + '"></option>')
-                                                    .appendTo($prop);
-                        if (selectedvalue === options[i]) {
-                            $option.CswAttrDom('selected', 'selected');
+                    case "Date":
+                        $prop = $propDiv.CswInput('init', { type: CswInput_Types.date, ID: propId, value: sf_value });
+                        break;
+                    case "Link":
+                        $prop = $propDiv.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text});
+                        break;
+                    case "List":
+                        $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
+                                                    .appendTo($propDiv)
+                                                    .selectmenu();
+                        var selectedvalue = sf_value;
+                        var optionsstr = sf_options;
+                        var options = optionsstr.split(',');
+                        for (var i = 0; i < options.length; i++) {
+                            var $option = $('<option value="' + options[i] + '"></option>')
+                                                        .appendTo($prop);
+                            if (selectedvalue === options[i]) {
+                                $option.CswAttrDom('selected', 'selected');
+                            }
+
+                            if (!isNullOrEmpty(options[i])) {
+                                $option.val(options[i]);
+                            } else {
+                                $option.valueOf('[blank]');
+                            }
                         }
-
-                        if (!isNullOrEmpty(options[i])) {
-                            $option.val(options[i]);
-                        } else {
-                            $option.valueOf('[blank]');
-                        }
-                    }
-                    $prop.selectmenu('refresh');
-                    break;
-                case "Logical":
-                    addChangeHandler = false; //_makeLogicalFieldSet() does this for us
-                    $prop = _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
-                                                    .appendTo($fieldcontain);
-                    break;
-                case "Memo":
-                    $prop = $('<textarea name="' + propId + '">' + sf_text + '</textarea>')
-                                                    .appendTo($propDiv);
-                    break;
-                case "Number":
-                    sf_value = tryParseNumber(sf_value, '');
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.number, ID: propId, value: sf_value });
-                    break;
-                case "Password":
-                        //nada
-                    break;
-                case "Quantity":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value })
-                                                .append(sf_units);
-                    break;
-                case "Question":
-                    addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
-                    var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, sf_allowedanswers, sf_answer, sf_compliantanswers)
-                                                    .appendTo($fieldcontain);
-                    var hideComments = true;
-                    if (!isNullOrEmpty(sf_answer) && 
-                        (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && 
-                        isNullOrEmpty(sf_correctiveaction)) {
-                        $label.addClass('OOC');
-                        hideComments = false;
-                    }
-
-                    $prop = $('<div data-role="collapsible" class="csw_collapsible" data-collapsed="' + hideComments + '"><h3>Comments</h3></div>')
-                                                    .appendTo($retLi);
-                        
-                    var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
-                                                .appendTo($prop);
-
-                    if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
-                        $corAction.css('display', 'none');
-                    }
-                    $corAction.bind('change', function(eventObj) {
-                        var $cor = $(this);
-                        if ($cor.val() === '') {
+                        $prop.selectmenu('refresh');
+                        break;
+                    case "Logical":
+                        addChangeHandler = false; //_makeLogicalFieldSet() does this for us
+                        $prop = _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
+                                                        .appendTo($fieldcontain);
+                        break;
+                    case "Memo":
+                        $prop = $('<textarea name="' + propId + '">' + sf_text + '</textarea>')
+                                                        .appendTo($propDiv);
+                        break;
+                    case "Number":
+                        sf_value = tryParseNumber(sf_value, '');
+                        $prop = $propDiv.CswInput('init', { type: CswInput_Types.number, ID: propId, value: sf_value });
+                        break;
+                    case "Password":
+                            //nada
+                        break;
+                    case "Quantity":
+                        $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value })
+                                                    .append(sf_units);
+                        break;
+                    case "Question":
+                        addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
+                        var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, sf_allowedanswers, sf_answer, sf_compliantanswers)
+                                                        .appendTo($fieldcontain);
+                        var hideComments = true;
+                        if (!isNullOrEmpty(sf_answer) && 
+                            (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && 
+                            isNullOrEmpty(sf_correctiveaction)) {
                             $label.addClass('OOC');
-                        } else {
-                            $label.removeClass('OOC');
+                            hideComments = false;
                         }
-                        onPropertyChange(ParentId, eventObj, $cor.val(), IdStr + '_cor', IdStr);
-                    });
 
-                    var $comments = $('<textarea name="' + IdStr + '_input" id="' + IdStr + '_input" placeholder="Comments">' + sf_comments + '</textarea>')
-                                                .appendTo($prop)
-                                                .bind('change',function (eventObj) {
-                                                    var $com = $(this);
-                                                    onPropertyChange(ParentId, eventObj, $com.val(), IdStr + '_com', IdStr);
-                                                });
-                    break;
-                case "Static":
-                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + sf_text + '</p>'));
-                    break;
-                case "Text":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
-                    break;
-                case "Time":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.time, ID: propId, value: sf_value });
-                    break;
-                default:
-                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['value']['gestalt'] + '</p>'));
-                    break;
+                        $prop = $('<div data-role="collapsible" class="csw_collapsible" data-collapsed="' + hideComments + '"><h3>Comments</h3></div>')
+                                                        .appendTo($retLi);
+                        
+                        var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
+                                                    .appendTo($prop);
+
+                        if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
+                            $corAction.css('display', 'none');
+                        }
+                        $corAction.bind('change', function(eventObj) {
+                            var $cor = $(this);
+                            if ($cor.val() === '') {
+                                $label.addClass('OOC');
+                            } else {
+                                $label.removeClass('OOC');
+                            }
+                            onPropertyChange(ParentId, eventObj, $cor.val(), IdStr + '_cor', IdStr);
+                        });
+
+                        var $comments = $('<textarea name="' + IdStr + '_input" id="' + IdStr + '_input" placeholder="Comments">' + sf_comments + '</textarea>')
+                                                    .appendTo($prop)
+                                                    .bind('change',function (eventObj) {
+                                                        var $com = $(this);
+                                                        onPropertyChange(ParentId, eventObj, $com.val(), IdStr + '_com', IdStr);
+                                                    });
+                        break;
+                    case "Static":
+                        $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + sf_text + '</p>'));
+                        break;
+                    case "Text":
+                        $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
+                        break;
+                    case "Time":
+                        $prop = $propDiv.CswInput('init', { type: CswInput_Types.time, ID: propId, value: sf_value });
+                        break;
+                    default:
+                        $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['gestalt'] + '</p>'));
+                        break;
                 } // switch (FieldType)
 
                 if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
@@ -961,7 +962,7 @@ CswAppMode.mode = 'mobile';
                     });
                 }
             } else {
-                $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['value']['gestalt'] + '</p>'));
+                $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['gestalt'] + '</p>'));
             }
             if($propDiv.children().length > 0) {
                 $fieldcontain.append($propDiv);
