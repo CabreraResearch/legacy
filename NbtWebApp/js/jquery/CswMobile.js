@@ -731,27 +731,10 @@ CswAppMode.mode = 'mobile';
             {
                 switch (ObjectClass) {
                 case "InspectionDesignClass":
-                    var DueDate = '';
-                    var Location = '';
-                    var MountPoint = '';
-                    var Status = '';
-                    for(var key in p.json['value']['subitems']) {
-                        var prop = p.json['value']['subitems'][key];
-                        switch(prop['ocpname']) {
-                            case 'Location':
-                                Location = prop['gestalt'];
-                                break;
-                            case 'Target':
-                                MountPoint = prop['gestalt'];
-                                break;
-                            case 'Due Date':
-                                DueDate = prop['gestalt'];
-                                break;
-                            case 'Status':
-                                Status = prop['gestalt'];
-                                break;
-                        }
-                    }
+                    var DueDate = tryParseString(p.json['value']['duedate'],'' );
+                    var Location = tryParseString(p.json['value']['location'],'' );
+                    var MountPoint = tryParseString(p.json['value']['target'],'' );
+                    var Status = tryParseString(p.json['value']['status'],'' );
 //Case 22579: just remove for now
 //                var UnansweredCnt = 0;
 

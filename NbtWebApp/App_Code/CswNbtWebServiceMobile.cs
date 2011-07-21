@@ -119,37 +119,39 @@ namespace ChemSW.Nbt.WebServices
                         _runProperties( ThisNode, ref ThisSubItems );
                     }
 
-                    JProperty NodeWrap = null;
-                    JObject NodeProps = null;
-                    if( _ForMobile )
+                    JProperty NodeWrap = new JProperty( NodeIdPrefix + ThisNodeId );
+                    JObject NodeProps = new JObject();
+                    NodeWrap.Value = NodeProps;
+
+                    if( NodeSpecies.More == ThisNodeKey.NodeSpecies )
                     {
-                        if( NodeSpecies.More == ThisNodeKey.NodeSpecies )
-                        {
-                            ThisNodeName = "Results Truncated at " + _MobilePageSize;
-                        }
-                        NodeWrap = new JProperty( NodeIdPrefix + ThisNodeId );
-                        NodeProps = new JObject(
-                            new JProperty( "node_name", CswTools.SafeJavascriptParam( ThisNodeName ) ),
-                            new JProperty( "nodetype", CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) ),
-                            new JProperty( "objectclass", CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) ),
-                            new JProperty( "iconfilename", CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) ),
-                            new JProperty( "nodespecies", CswTools.SafeJavascriptParam( ThisNodeKey.NodeSpecies.ToString() ) ),
-                            ThisJProp );
-                        NodeWrap.Value = NodeProps;
+                        ThisNodeName = "Results Truncated at " + _MobilePageSize;
                     }
 
-                    // case 20083 - search values
-                    if( null != NodeProps )
+                    NodeProps.Add(  new JProperty( "node_name", CswTools.SafeJavascriptParam( ThisNodeName ) ) );
+                    NodeProps.Add( new JProperty( "nodetype", CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) ) );
+                    NodeProps.Add( new JProperty( "objectclass", CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) ) );
+                    NodeProps.Add( new JProperty( "nodespecies", CswTools.SafeJavascriptParam( ThisNodeKey.NodeSpecies.ToString() ) ) );
+                    NodeProps.Add(ThisJProp );
+                    
+                    if( !string.IsNullOrEmpty( ThisNode.NodeType.IconFileName ) )
                     {
-                        foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps.Cast<CswNbtMetaDataNodeTypeProp>().Where( MetaDataProp => MetaDataProp.MobileSearch ) )
-                        {
-                            NodeProps.Add( ( MetaDataProp.ObjectClassProp != null ) ?
-                                    new JProperty( "search_ocp_" + MetaDataProp.ObjectClassPropId,
-                                        CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) ) :
-                                    new JProperty( "search_ntp_" + MetaDataProp.PropId,
-                                        CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) ) );
-                        }
+                        NodeProps.Add( new JProperty( "iconfilename", CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) ) );
                     }
+
+                    _addObjectClassProps( ThisNode, ref NodeProps );
+
+                    foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps
+                                                                            .Cast<CswNbtMetaDataNodeTypeProp>()
+                                                                            .Where( MetaDataProp => MetaDataProp.MobileSearch ) )
+                    {
+                        NodeProps.Add( ( MetaDataProp.ObjectClassProp != null ) ?
+                                new JProperty( "search_ocp_" + MetaDataProp.ObjectClassPropId,
+                                    CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) ) :
+                                new JProperty( "search_ntp_" + MetaDataProp.PropId,
+                                    CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) ) );
+                    }
+                    
                     ParentJsonO.Add( NodeWrap );
                 } // if( Tree.getNodeShowInTreeForCurrentPosition() )
                 else
@@ -159,6 +161,25 @@ namespace ChemSW.Nbt.WebServices
                 Tree.goToParentNode();
             }
         } // _runTreeNodesRecursive()
+
+        private static void _addObjectClassProps( CswNbtNode Node, ref JObject NodeProps )
+        {
+            switch( Node.ObjectClass.ObjectClass )
+            {
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
+                    {
+                        string Location = Node.Properties[CswNbtObjClassInspectionDesign.LocationPropertyName].Gestalt;
+                        string DueDate = Node.Properties[CswNbtObjClassInspectionDesign.DatePropertyName].Gestalt;
+                        string Status = Node.Properties[CswNbtObjClassInspectionDesign.StatusPropertyName].Gestalt;
+                        string Target = Node.Properties[CswNbtObjClassInspectionDesign.TargetPropertyName].Gestalt;
+                        NodeProps.Add( new JProperty( "location", Location ) );
+                        NodeProps.Add( new JProperty( "duedate", DueDate ) );
+                        NodeProps.Add( new JProperty( "status", Status ) );
+                        NodeProps.Add( new JProperty( "target", Target ) );
+                        break;
+                    }
+            }
+        }
 
         private static void _runProperties( CswNbtNode Node, ref JObject SubItemsJProp )
         {
@@ -177,19 +198,21 @@ namespace ChemSW.Nbt.WebServices
                                                                         Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) )
                 {
                     CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
-                    string ReadOnly = ( Node.ReadOnly || Prop.ReadOnly ) ? "true" : "false";
+
 
                     JProperty ThisProp = new JProperty( PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId );
                     TabObj.Add( ThisProp );
 
                     JObject ThisPropAttr = new JObject(
                                                 new JProperty( "prop_name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
-                                                new JProperty( "isreadonly", ReadOnly ),
                                                 new JProperty( "fieldtype", Prop.FieldType.FieldType.ToString() ),
                                                 new JProperty( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
                                                 new JProperty( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) )
                                            );
-
+                    if( Node.ReadOnly || Prop.ReadOnly )
+                    {
+                        ThisPropAttr.Add( new JProperty( "isreadonly", true ) );
+                    }
                     PropWrapper.ToJSON( ThisPropAttr );
                     ThisProp.Value = ThisPropAttr;
                 }
