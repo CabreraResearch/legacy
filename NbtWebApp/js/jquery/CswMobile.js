@@ -639,7 +639,7 @@ CswAppMode.mode = 'mobile';
                 case 'tab':
                     {
                         text = id;
-                        id = p.DivId + '_' + id.replace(' ', '');
+                        id = makeSafeId({prefix: id.replace(' ', ''), ID: p.DivId }); //we prefer nodeid_ to be at the end
                         $retLI = $('<li></li>')
                                     .appendTo($list);
                         $retLI.CswLink('init', { href: 'javascript:void(0);', value: text })
@@ -651,7 +651,7 @@ CswAppMode.mode = 'mobile';
                         
                         setTimeout(function() {
                             _processViewJson({
-                                ParentId: p.ParentId,
+                                ParentId: p.DivId,
                                 DivId: id,
                                 HeaderText: text,
                                 json: p.json['value'],
