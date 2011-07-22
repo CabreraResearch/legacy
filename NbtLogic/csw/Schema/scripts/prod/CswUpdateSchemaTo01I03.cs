@@ -77,6 +77,39 @@ namespace ChemSW.Nbt.Schema
 			FieldTypeTable.Rows.Add( NewFTRow );
 			FieldTypesUpdate.update( FieldTypeTable );
 
+			
+			// case 8179
+			// create 'Version' property
+			CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+			
+			CswTableUpdate OCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate("01I-03_OCP_Update", "object_class_props");
+			DataTable OCPTable = OCPUpdate.getEmptyTable();
+			_CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, InspectionDesignOC, CswNbtObjClassInspectionDesign.VersionPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Text, false, true, false, string.Empty, Int32.MinValue, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue );
+			OCPUpdate.update( OCPTable );
+
+			_CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+
+			// set value of Version property
+			foreach( CswNbtMetaDataNodeType InspectionDesignNT in InspectionDesignOC.NodeTypes )
+			{
+				CswNbtMetaDataNodeTypeProp VersionNTP = InspectionDesignNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.VersionPropertyName );
+				VersionNTP.UseNumbering = false;
+
+				CswNbtMetaDataNodeTypeTab DetailTab = InspectionDesignNT.getNodeTypeTab( "Detail" );
+				if( DetailTab != null )
+				{
+					VersionNTP.NodeTypeTab = DetailTab;
+					VersionNTP.DisplayRow = DetailTab.getCurrentMaxDisplayRow() + 1;
+					VersionNTP.DisplayColumn = 1;
+				}
+
+				foreach( CswNbtNode Node in InspectionDesignNT.getNodes( false, true ) )
+				{
+					CswNbtObjClassInspectionDesign InspectionNode = CswNbtNodeCaster.AsInspectionDesign( Node );
+					InspectionNode.Version.Text = InspectionDesignNT.NodeTypeName + " v" + InspectionDesignNT.VersionNo.ToString();
+					InspectionNode.postChanges( false );
+				}
+			}
 
 
         } // Update()
