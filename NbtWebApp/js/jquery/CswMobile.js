@@ -28,6 +28,7 @@ CswAppMode.mode = 'mobile';
         if (!isNullOrEmpty($div)) {
             $ret = $('<ul class="' + p.cssclass + '" id="' + tryParseString(p.id, '') + '"></ul>')
                                                     .appendTo($div)
+                                                    .bind('click', function () { $.mobile.showPageLoadingMsg; })
                                                     .CswAttrXml(p);
         }
         return $ret;
@@ -80,8 +81,7 @@ CswAppMode.mode = 'mobile';
                 level: 1,
                 HideRefreshButton: false,
                 HideSearchButton: false,
-                onPageShow: function() {
-                }
+                onPageShow: function() {}
             };
 
             if (params) $.extend(p, params);
@@ -470,11 +470,13 @@ CswAppMode.mode = 'mobile';
                     } else if (amOnline()) {
                         p.url = opts.ViewUrl;
                         $retDiv = _getDivJson(p);
+                    } else {
+                        stopLoadingMsg();
                     }
-                } else  // Level 2 and up
-                {
+                    
+                } else { // Level 2 and up
                     var cachedJson = _fetchCachedNodeJson(p.DivId);
-                    p.PageType = 'prop';
+                    p.PageType = 'tab';
                     if( isNullOrEmpty(cachedJson) ) {
                         cachedJson = currentViewJson(null, 2)[p.DivId];
                     }
@@ -484,6 +486,8 @@ CswAppMode.mode = 'mobile';
                         if (!isNullOrEmpty(p.json)) {
                             $retDiv = _loadDivContentsJson(p);
                         }
+                    } else {
+                        stopLoadingMsg();
                     }
                 }
             }
@@ -549,6 +553,7 @@ CswAppMode.mode = 'mobile';
                 HeaderText: '',
                 json: '',
                 parentlevel: '',
+                PageType: '',
                 level: '',
                 HideSearchButton: false,
                 HideOnlineButton: false,
@@ -591,11 +596,13 @@ CswAppMode.mode = 'mobile';
             
             _resetPendingChanges();
             
-            stopLoadingMsg();
             if(!mobileStorage.stayOffline()) {
                 _toggleOffline(false);
             }
             cacheLogInfo(logger);
+
+            stopLoadingMsg();
+            
             return $retDiv;
         } // _processViewJson()
 
@@ -621,32 +628,49 @@ CswAppMode.mode = 'mobile';
             var $retLI = $('');
 
             switch (p.PageType) {
-                case "search":
+                case 'search':
                         // ignore this
                     break;
-                case "node":
+                case 'node':
                     text = p.json['value']['node_name'];
                     $retLI = _makeObjectClassContent(p)
                                             .appendTo($list);
                     break;
-                case "prop":
+                case 'tab':
                     {
                         text = id;
-                        var $tab = $('<li id="' + p.DivId + '_' + id + '">' + text + '</li>')
-                            .appendTo($list);
-                        var $propList = $tab.cswUL();
-                        for(var key in p.json['value'])
-                        {
-                            var prop = p.json['value'][key];
-                            _FieldTypeJsonToHtml(prop, p.DivId, key)
-                                .appendTo($propList);
-                        }
+                        id = p.DivId + '_' + id.replace(' ', '');
+                        $retLI = $('<li></li>')
+                                    .appendTo($list);
+                        $retLI.CswLink('init', { href: 'javascript:void(0);', value: text })
+                                            .css('white-space', 'normal')
+                                            .CswAttrXml({
+                                            'data-identity': id,
+                                            'data-url': id
+                                        });
+                        
+                        setTimeout(function() {
+                            _processViewJson({
+                                ParentId: p.ParentId,
+                                DivId: id,
+                                HeaderText: text,
+                                json: p.json['value'],
+                                parentlevel: p.level,
+                                level: p.level + 1,
+                                PageType: 'prop'
+                            });
+                        }, 500);
                         break;   
                     } // case 'prop':
+                case 'prop':
+                    {
+                        _FieldTypeJsonToHtml(p.json['value'], p.DivId, p.json['id'])
+                                    .appendTo($list);
+                    }
                 default:
                     {
                         text = p.json['value'];
-                        $retLI = $('<li></li>');
+                        $retLI = $('<li></li>').appendTo($list);
                         if (IsDiv) {
                             $retLI.CswLink('init', { href: 'javascript:void(0);', value: text })
                                               .css('white-space', 'normal')
@@ -670,7 +694,7 @@ CswAppMode.mode = 'mobile';
                         persistBindEvent: true,
                         HeaderText: text  };
                     var $div = _addPageDivToBody(par);
-                    par.onPageShow = function() { _loadDivContents(par); };
+                    par.onPageShow = function() { return _loadDivContents(par); };
                     $div.bindJqmEvents(par);
                     $div.cswChangePage({ reloadPage: true });
                 });
@@ -855,7 +879,6 @@ CswAppMode.mode = 'mobile';
                         break;
                     case "Question":
                         addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
-                        debugger;
                         _makeQuestionAnswerFieldSet(ParentId, IdStr, sf_allowedanswers, sf_answer, sf_compliantanswers)
                                                         .appendTo($fieldcontain);
                         var hideComments = true;
@@ -918,7 +941,6 @@ CswAppMode.mode = 'mobile';
             if($propDiv.children().length > 0) {
                 $fieldcontain.append($propDiv);
             }
-            
             return $retLi;
         }
 
@@ -1185,7 +1207,8 @@ CswAppMode.mode = 'mobile';
                                                 .CswAttrXml({
                                                 'data-identity': p.DivId + '_back', 
                                                 'data-rel': 'back',
-                                                'data-direction': 'reverse'
+                                                'data-direction': 'reverse',
+                                                'data-icon': 'arrow-l'
                                             });
                 
                 $headerTitle = $('<h1 id="' + p.DivId + '_header_title"></h1>').appendTo($header);                
@@ -1656,11 +1679,7 @@ CswAppMode.mode = 'mobile';
                                 HideSearchButton: false,
                                 HideBackButton: false
                             };
-                            params.onPageShow = function() {
-                                var $ret = _loadDivContents(params);
-                                stopLoadingMsg();
-                                return $ret;
-                            };
+                            params.onPageShow = function() { return _loadDivContents(params); };
                             _loadDivContents(params).cswChangePage();
                         }, // success
                         error: function () {
@@ -1692,7 +1711,7 @@ CswAppMode.mode = 'mobile';
             if (!isNullOrEmpty(currentViewJson())) {
                 mobileStorage.addUnsyncedChange();
                 _resetPendingChanges();
-                
+                debugger;                
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
                 var nodeJson = _fetchCachedNodeJson(nodeId);
 
@@ -1825,10 +1844,14 @@ CswAppMode.mode = 'mobile';
             return false;
         }
         
-        function stopLoadingMsg() {
+        function stopLoadingMsg(onSuccess) {
+            if( arguments.length === 1 && !isNullOrEmpty(onSuccess) ) {
+                onSuccess();
+            } 
             $.mobile.hidePageLoadingMsg();
             var $currentDiv = $("div[data-role='page']:visible:visible");
             $currentDiv.find('.csw_listview').cswPage();
+            return false;
         }
         
         // ------------------------------------------------------------------------------------
