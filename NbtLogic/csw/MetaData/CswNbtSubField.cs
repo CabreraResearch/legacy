@@ -67,6 +67,7 @@ namespace ChemSW.Nbt.MetaData
             Value,
             ViewID,
             ChangedDate,
+			Base,
 			Exponent
         }
 

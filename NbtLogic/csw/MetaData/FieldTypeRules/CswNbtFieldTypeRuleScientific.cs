@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources, MetaDataProp );
 
-			BaseSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1_Numeric, CswNbtSubField.SubFieldName.Value );
+			BaseSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1_Numeric, CswNbtSubField.SubFieldName.Base );
 			BaseSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
 										CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
 										CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals |
