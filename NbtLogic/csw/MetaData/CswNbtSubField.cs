@@ -14,8 +14,9 @@ namespace ChemSW.Nbt.MetaData
             Field1,
             Field1_FK,
             Field1_Date,
-            Field1_Numeric,
-            Field2,
+			Field1_Numeric,
+			Field2_Numeric,
+			Field2,
             Field2_Date,
             Field3,
             Field4,
@@ -65,7 +66,8 @@ namespace ChemSW.Nbt.MetaData
             Units,
             Value,
             ViewID,
-            ChangedDate
+            ChangedDate,
+			Exponent
         }
 
         public SubFieldName Name = SubFieldName.Value;

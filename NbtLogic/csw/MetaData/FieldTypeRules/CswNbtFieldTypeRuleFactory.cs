@@ -120,11 +120,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleRelationship( CswNbtFieldResources, MetaDataProp );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
-                    ReturnVal = new CswNbtFieldTypeRuleSequence( CswNbtFieldResources, MetaDataProp );
-                    break;
+				case CswNbtMetaDataFieldType.NbtFieldType.Scientific:
+					ReturnVal = new CswNbtFieldTypeRuleScientific( CswNbtFieldResources, MetaDataProp );
+					break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Static:
+				case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
+					ReturnVal = new CswNbtFieldTypeRuleSequence( CswNbtFieldResources, MetaDataProp );
+					break;
+
+				case CswNbtMetaDataFieldType.NbtFieldType.Static:
                     ReturnVal = new CswNbtFieldTypeRuleStatic( CswNbtFieldResources, MetaDataProp );
                     break;
 

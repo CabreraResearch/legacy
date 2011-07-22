@@ -39,6 +39,7 @@ namespace ChemSW.Nbt.MetaData
             Quantity,
             Question,
             Relationship,
+			Scientific,
             Sequence,
             Static,
             Text,

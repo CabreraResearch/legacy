@@ -446,17 +446,27 @@ namespace ChemSW.Nbt.PropTypes
         }//Relationship
 
 
-        public CswNbtNodePropSequence AsSequence
-        {
-            get
-            {
-                if( !( _CswNbtNodeProp is CswNbtNodePropSequence ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropSequence ) ) ) );
-                return ( (CswNbtNodePropSequence) _CswNbtNodeProp );
-            }
-        }//Sequence
+		public CswNbtNodePropScientific AsScientific
+		{
+			get
+			{
+				if( !( _CswNbtNodeProp is CswNbtNodePropScientific ) )
+					throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropScientific ) ) ) );
+				return ( (CswNbtNodePropScientific) _CswNbtNodeProp );
+			}
+		}//Scientific
 
-        public CswNbtNodePropStatic AsStatic
+		public CswNbtNodePropSequence AsSequence
+		{
+			get
+			{
+				if( !( _CswNbtNodeProp is CswNbtNodePropSequence ) )
+					throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropSequence ) ) ) );
+				return ( (CswNbtNodePropSequence) _CswNbtNodeProp );
+			}
+		}//Sequence
+
+		public CswNbtNodePropStatic AsStatic
         {
             get
             {

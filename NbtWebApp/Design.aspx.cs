@@ -2194,7 +2194,7 @@ namespace ChemSW.Nbt.WebPages
                     //}
 
                     // BZ 8058 - Default Value
-                    if( FieldType.CanHaveDefaultValue() )
+                    if( FieldType.CanHaveDefaultValue() && FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Scientific )
                     {
                         TableRow DefaultValueRow = makeEditPropTableRow( EditPropPlaceHolder );
                         ( (Literal) DefaultValueRow.Cells[0].Controls[0] ).Text = "Default Value:";

@@ -96,6 +96,9 @@ $.CswFieldTypeFactory = function (method)
 				case "Relationship":
 					m.$propdiv.CswFieldTypeRelationship('init', m); //('init', nodeid, $propxml, onchange);
 					break;
+				case "Scientific":
+					m.$propdiv.CswFieldTypeScientific('init', m); //('init', nodeid, $propxml, onchange);
+					break;
 				case "Sequence":
 					m.$propdiv.CswFieldTypeSequence('init', m); //('init', nodeid, $propxml, onchange);
 					break;
@@ -200,6 +203,9 @@ $.CswFieldTypeFactory = function (method)
 					break;
 				case "Relationship":
 					m.$propdiv.CswFieldTypeRelationship('save', m); //('save', $propdiv, $propxml);
+					break;
+				case "Scientific":
+					m.$propdiv.CswFieldTypeScientific('save', m); //('save', $propdiv, $propxml);
 					break;
 				case "Sequence":
 					m.$propdiv.CswFieldTypeSequence('save', m); //('save', $propdiv, $propxml);

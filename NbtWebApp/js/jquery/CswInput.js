@@ -18,7 +18,7 @@
                 'placeholder': '',
                 'cssclass': '',
                 'value': '',
-                'width': '',
+                'size': '',
                 'autofocus': false,
                 'autocomplete': 'on',
                 'onChange': function() {}
@@ -53,11 +53,11 @@
                     $input.val(o.value);
                 }
 
-                o.width = tryParseString( o.width, o.type.defaultwidth);
+                o.size = tryParseString( o.size, o.type.defaultwidth);
             }
-            
+
             if( !isNullOrEmpty( o.cssclass ) ) $input.addClass(o.cssclass);
-            if( !isNullOrEmpty( o.width ) ) $input.css('width', o.width);
+            if( !isNullOrEmpty( o.size ) ) $input.CswAttrDom('size', o.size);
             if( isTrue( o.autofocus ) ) $input.CswAttrDom('autofocus', o.autofocus);
             if( !isNullOrEmpty( o.onChange ) ) $input.change( function () { o.onChange() } );
                                 

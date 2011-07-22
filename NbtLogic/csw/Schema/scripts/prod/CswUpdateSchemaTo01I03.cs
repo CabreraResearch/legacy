@@ -28,6 +28,11 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
+			if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "field2_numeric" ) )
+			{
+				_CswNbtSchemaModTrnsctn.addDoubleColumn( "jct_nodes_props", "field2_numeric", "A second numeric value", false, false, 6 );
+			}
+	
 			// case 21877
 			
 			CswTableUpdate WelcomeUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate("01I-03_Welcome_Update", "welcome");
@@ -58,6 +63,21 @@ namespace ChemSW.Nbt.Schema
 			CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
 			CswNbtMetaDataObjectClassProp MailReportWarningDaysOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.WarningDaysPropertyName );
 			_CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MailReportWarningDaysOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberminvalue, 0 );
+
+
+			// case 8635
+
+			CswTableUpdate FieldTypesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I03_FieldTypes_Update", "field_types" );
+			DataTable FieldTypeTable = FieldTypesUpdate.getEmptyTable();
+			DataRow NewFTRow = FieldTypeTable.NewRow();
+			NewFTRow["auditflag"] = "0";
+			NewFTRow["datatype"] = "double";
+			NewFTRow["deleted"] = CswConvert.ToDbVal(false);
+			NewFTRow["fieldtype"] = CswNbtMetaDataFieldType.NbtFieldType.Scientific.ToString();
+			FieldTypeTable.Rows.Add( NewFTRow );
+			FieldTypesUpdate.update( FieldTypeTable );
+
+
 
         } // Update()
 
