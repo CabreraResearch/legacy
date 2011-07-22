@@ -49,6 +49,16 @@ namespace ChemSW.Nbt.Schema
 
 			WelcomeUpdate.update( WelcomeTable );
 
+
+			// case 21064
+			CswNbtMetaDataObjectClass GeneratorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+			CswNbtMetaDataObjectClassProp GeneratorWarningDaysOCP = GeneratorOC.getObjectClassProp( CswNbtObjClassGenerator.WarningDaysPropertyName );
+			_CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( GeneratorWarningDaysOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberminvalue, 0 );
+
+			CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+			CswNbtMetaDataObjectClassProp MailReportWarningDaysOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.WarningDaysPropertyName );
+			_CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MailReportWarningDaysOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberminvalue, 0 );
+
         } // Update()
 
     }//class CswUpdateSchemaTo01I03
