@@ -128,12 +128,12 @@ namespace ChemSW.Nbt.WebServices
                         ThisNodeName = "Results Truncated at " + _MobilePageSize;
                     }
 
-                    NodeProps.Add(  new JProperty( "node_name", CswTools.SafeJavascriptParam( ThisNodeName ) ) );
+                    NodeProps.Add( new JProperty( "node_name", CswTools.SafeJavascriptParam( ThisNodeName ) ) );
                     NodeProps.Add( new JProperty( "nodetype", CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName ) ) );
                     NodeProps.Add( new JProperty( "objectclass", CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() ) ) );
                     NodeProps.Add( new JProperty( "nodespecies", CswTools.SafeJavascriptParam( ThisNodeKey.NodeSpecies.ToString() ) ) );
-                    NodeProps.Add(ThisJProp );
-                    
+                    NodeProps.Add( ThisJProp );
+
                     if( !string.IsNullOrEmpty( ThisNode.NodeType.IconFileName ) )
                     {
                         NodeProps.Add( new JProperty( "iconfilename", CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName ) ) );
@@ -151,7 +151,7 @@ namespace ChemSW.Nbt.WebServices
                                 new JProperty( "search_ntp_" + MetaDataProp.PropId,
                                     CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) ) );
                     }
-                    
+
                     ParentJsonO.Add( NodeWrap );
                 } // if( Tree.getNodeShowInTreeForCurrentPosition() )
                 else
@@ -253,20 +253,23 @@ namespace ChemSW.Nbt.WebServices
             bool Ret = false;
             Collection<JProperty> Props = new Collection<JProperty>();
 
-            foreach( JProperty NodeProp in from JProp
-                                               in UpdatedNode.Properties()
-                                           select (JObject) JProp.Value
-                                               into NodeAttr
-                                               where null != NodeAttr.Property( "subitems" )
-                                               select (JObject) NodeAttr.Property( "subitems" ).Value
-                                                   into SubItems
-                                                   from NodeProp
-                                                       in SubItems.Properties()
-                                                   let PropAttr = (JObject) NodeProp.Value
+            foreach( JProperty Prop in from Node
+                                           in UpdatedNode.Properties()
+                                       select (JObject) Node.Value
+                                           into NodeAttr
+                                           select (JObject) NodeAttr.Property( "subitems" ).Value
+                                               into SubItems
+                                               from Tab
+                                                   in SubItems.Properties()
+                                               select (JObject) Tab.Value
+                                                   into TabObj
+                                                   from Prop
+                                                       in TabObj.Properties()
+                                                   let PropAttr = (JObject) Prop.Value
                                                    where null != PropAttr.Property( "wasmodified" )
-                                                   select NodeProp )
+                                                   select Prop )
             {
-                Props.Add( NodeProp );
+                Props.Add( Prop );
             }
 
             // post changes once per node, not once per prop            

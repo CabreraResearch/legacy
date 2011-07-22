@@ -666,6 +666,7 @@ CswAppMode.mode = 'mobile';
                     {
                         _FieldTypeJsonToHtml(p.json['value'], p.DivId, p.json['id'])
                                     .appendTo($list);
+                        break;
                     }
                 default:
                     {
@@ -784,67 +785,68 @@ CswAppMode.mode = 'mobile';
             /// <param name="json" type="Object">A JSON Object</param>
             /// <param name="ParentId" type="String">The ElementID of the parent control (should be a prop)</param>
             /// <param name="IdStr" type="String">The ElementID of the child control</param>
-            
-            var FieldType = json['fieldtype'];
-            var PropName = json['prop_name'];
-            var ReadOnly = isTrue(json['isreadonly']);
+            var $retLi = $('');
+            if( !isNullOrEmpty(json)) {
+                var FieldType = json['fieldtype'];
+                var PropName = json['prop_name'];
+                var ReadOnly = isTrue(json['isreadonly']);
 
-            // Subfield values
-            var sf_text = tryParseString(json['text'], '');
-            var sf_value = tryParseString(json['value'], '');
-            var sf_href = tryParseString(json['href'], '');
-            var sf_checked = tryParseString(json['checked'], '');
-            //var sf_relationship = tryParseString(json['value']['name'], '');
-            var sf_required = tryParseString(json['required'], '');
-            var sf_units = tryParseString(json['units'], '');
-            var sf_answer = tryParseString(json['answer'], '');
-            var sf_allowedanswers = tryParseString(json['allowedanswers'], '');
-            var sf_correctiveaction = tryParseString(json['correctiveaction'], '');
-            var sf_comments = tryParseString(json['comments'], '');
-            var sf_compliantanswers = tryParseString(json['compliantanswers'], '');
-            var sf_options = tryParseString(json['options'], '');
+                // Subfield values
+                var sf_text = tryParseString(json['text'], '');
+                var sf_value = tryParseString(json['value'], '');
+                var sf_href = tryParseString(json['href'], '');
+                var sf_checked = tryParseString(json['checked'], '');
+                //var sf_relationship = tryParseString(json['value']['name'], '');
+                var sf_required = tryParseString(json['required'], '');
+                var sf_units = tryParseString(json['units'], '');
+                var sf_answer = tryParseString(json['answer'], '');
+                var sf_allowedanswers = tryParseString(json['allowedanswers'], '');
+                var sf_correctiveaction = tryParseString(json['correctiveaction'], '');
+                var sf_comments = tryParseString(json['comments'], '');
+                var sf_compliantanswers = tryParseString(json['compliantanswers'], '');
+                var sf_options = tryParseString(json['options'], '');
 
-            var $retLi = $('<li id="' + IdStr + '_li"></li>')
-                                .CswAttrXml('data-icon', false);
-            var $label = $('<h2 id="' + IdStr + '_label" style="white-space:normal;" class="csw_prop_label">' + PropName + '</h2>')
-                            .appendTo(($retLi));
-            
-            var $fieldcontain = $('<div class="csw_fieldset" ></div>')
-                                    .appendTo($retLi);
+                $retLi = $('<li id="' + IdStr + '_li"></li>')
+                    .CswAttrXml('data-icon', false);
+                var $label = $('<h2 id="' + IdStr + '_label" style="white-space:normal;" class="csw_prop_label">' + PropName + '</h2>')
+                    .appendTo(($retLi));
 
-            var $propDiv = $('<div></div>');
-            
-            if (FieldType === "Question" &&
-                !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
-                    isNullOrEmpty(sf_correctiveaction)) {
-                $label.addClass('OOC');
-            } else {
-                $label.removeClass('OOC');
-            }
-            
-            var $prop;
-            var propId = IdStr + '_input';
-            
-            if (!ReadOnly) {
-                var addChangeHandler = true;
-                
-                switch (FieldType) {
+                var $fieldcontain = $('<div class="csw_fieldset" ></div>')
+                    .appendTo($retLi);
+
+                var $propDiv = $('<div></div>');
+
+                if (FieldType === "Question" &&
+                    !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
+                        isNullOrEmpty(sf_correctiveaction)) {
+                    $label.addClass('OOC');
+                } else {
+                    $label.removeClass('OOC');
+                }
+
+                var $prop;
+                var propId = IdStr + '_input';
+
+                if (!ReadOnly) {
+                    var addChangeHandler = true;
+
+                    switch (FieldType) {
                     case "Date":
                         $prop = $propDiv.CswInput('init', { type: CswInput_Types.date, ID: propId, value: sf_value });
                         break;
                     case "Link":
-                        $prop = $propDiv.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text});
+                        $prop = $propDiv.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text });
                         break;
                     case "List":
                         $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
-                                                    .appendTo($propDiv)
-                                                    .selectmenu();
+                            .appendTo($propDiv)
+                            .selectmenu();
                         var selectedvalue = sf_value;
                         var optionsstr = sf_options;
                         var options = optionsstr.split(',');
                         for (var i = 0; i < options.length; i++) {
                             var $option = $('<option value="' + options[i] + '"></option>')
-                                                        .appendTo($prop);
+                                .appendTo($prop);
                             if (selectedvalue === options[i]) {
                                 $option.CswAttrDom('selected', 'selected');
                             }
@@ -860,11 +862,11 @@ CswAppMode.mode = 'mobile';
                     case "Logical":
                         addChangeHandler = false; //_makeLogicalFieldSet() does this for us
                         _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
-                                                        .appendTo($fieldcontain);
+                            .appendTo($fieldcontain);
                         break;
                     case "Memo":
                         $prop = $('<textarea name="' + propId + '">' + sf_text + '</textarea>')
-                                                        .appendTo($propDiv);
+                            .appendTo($propDiv);
                         break;
                     case "Number":
                         sf_value = tryParseNumber(sf_value, '');
@@ -875,25 +877,25 @@ CswAppMode.mode = 'mobile';
                         break;
                     case "Quantity":
                         $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value })
-                                                    .append(sf_units);
+                            .append(sf_units);
                         break;
                     case "Question":
                         addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
                         _makeQuestionAnswerFieldSet(ParentId, IdStr, sf_allowedanswers, sf_answer, sf_compliantanswers)
-                                                        .appendTo($fieldcontain);
+                            .appendTo($fieldcontain);
                         var hideComments = true;
-                        if (!isNullOrEmpty(sf_answer) && 
-                            (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && 
-                            isNullOrEmpty(sf_correctiveaction)) {
+                        if (!isNullOrEmpty(sf_answer) &&
+                            (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 &&
+                                isNullOrEmpty(sf_correctiveaction)) {
                             $label.addClass('OOC');
                             hideComments = false;
                         }
 
                         $prop = $('<div data-role="collapsible" class="csw_collapsible" data-collapsed="' + hideComments + '"><h3>Comments</h3></div>')
-                                                        .appendTo($retLi);
-                        
+                            .appendTo($retLi);
+
                         var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
-                                                    .appendTo($prop);
+                            .appendTo($prop);
 
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
                             $corAction.css('display', 'none');
@@ -909,11 +911,11 @@ CswAppMode.mode = 'mobile';
                         });
 
                         $('<textarea name="' + IdStr + '_input" id="' + IdStr + '_input" placeholder="Comments">' + sf_comments + '</textarea>')
-                                                    .appendTo($prop)
-                                                    .bind('change',function (eventObj) {
-                                                        var $com = $(this);
-                                                        onPropertyChange(ParentId, eventObj, $com.val(), IdStr + '_com', IdStr);
-                                                    });
+                            .appendTo($prop)
+                            .bind('change', function(eventObj) {
+                                var $com = $(this);
+                                onPropertyChange(ParentId, eventObj, $com.val(), IdStr + '_com', IdStr);
+                            });
                         break;
                     case "Static":
                         $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + sf_text + '</p>'));
@@ -927,19 +929,20 @@ CswAppMode.mode = 'mobile';
                     default:
                         $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['gestalt'] + '</p>'));
                         break;
-                } // switch (FieldType)
+                    } // switch (FieldType)
 
-                if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
-                    $prop.bind('change', function(eventObj) {
-                        var $this = $(this);
-                        onPropertyChange(ParentId, eventObj, $this.val(), propId, Id);
-                    });
+                    if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
+                        $prop.bind('change', function(eventObj) {
+                            var $this = $(this);
+                            onPropertyChange(ParentId, eventObj, $this.val(), propId, Id);
+                        });
+                    }
+                } else {
+                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['gestalt'] + '</p>'));
                 }
-            } else {
-                $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['gestalt'] + '</p>'));
-            }
-            if($propDiv.children().length > 0) {
-                $fieldcontain.append($propDiv);
+                if ($propDiv.children().length > 0) {
+                    $fieldcontain.append($propDiv);
+                }
             }
             return $retLi;
         }
@@ -1433,7 +1436,9 @@ CswAppMode.mode = 'mobile';
                    
             $retDiv.find('#ss_forcesync')
                     .bind('click', function() {
-                        return startLoadingMsg( function () { _processChanges(false); });
+                        return startLoadingMsg( function () {
+                             _processChanges(false);
+                        });
                     })
                     .end()
                     .find('#ss_gooffline')
@@ -1490,8 +1495,7 @@ CswAppMode.mode = 'mobile';
             }
         }
 
-        function _resetPendingChanges(setlastsyncnow) {
-            $('#ss_pendingchangecnt').text( tryParseString(getStoredLocalString('unSyncedChanges'),'0') );
+        function _resetPendingChanges(succeeded) {
             if ( _pendingChanges() ) {
                 $('.onlineStatus').addClass('pendingchanges')
                                   .find('span.ui-btn-text')
@@ -1503,7 +1507,7 @@ CswAppMode.mode = 'mobile';
             }
             
             if(arguments.length === 1) {
-                if (setlastsyncnow) {
+                if (succeeded) {
                     mobileStorage.clearUnsyncedChanges();
                     $('#ss_lastsync_success').text(mobileStorage.lastSyncSuccess());
                 }
@@ -1711,7 +1715,7 @@ CswAppMode.mode = 'mobile';
             if (!isNullOrEmpty(currentViewJson())) {
                 mobileStorage.addUnsyncedChange();
                 _resetPendingChanges();
-                debugger;                
+                
                 var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
                 var nodeJson = _fetchCachedNodeJson(nodeId);
 
@@ -1892,10 +1896,12 @@ CswAppMode.mode = 'mobile';
                 var unSyncedChanges = tryParseNumber(getStoredLocalString('unSyncedChanges'), '0');
                 unSyncedChanges++;
                 storeLocalData('unSyncedChanges', unSyncedChanges);
+                _updatedUnsyncedChanges();
                 return unSyncedChanges;
             };
             this.clearUnsyncedChanges = function() {
-                getStoredLocalString('unSyncedChanges', '0');
+                storeLocalData('unSyncedChanges', '0');
+                _updatedUnsyncedChanges();
             };
             this.stayOffline = function(value) {
                 if(arguments.length === 1) {
@@ -1904,6 +1910,10 @@ CswAppMode.mode = 'mobile';
                 var ret = isTrue(getStoredLocalString('stayOffline'));
                 return ret;
             };
+        }
+        
+        function _updatedUnsyncedChanges() {
+            $('#ss_pendingchangecnt').text( tryParseString(getStoredLocalString('unSyncedChanges'),'0') );
         }
         
         function currentViewId(viewId)
@@ -2154,6 +2164,7 @@ CswAppMode.mode = 'mobile';
                 _resetPendingChanges(true);
                 
             } // if(SessionId != '') 
+            _updatedUnsyncedChanges();
             cacheLogInfo(logger);
         } //_processChanges()
 
