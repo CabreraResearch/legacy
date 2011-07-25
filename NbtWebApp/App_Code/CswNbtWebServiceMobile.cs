@@ -52,31 +52,33 @@ namespace ChemSW.Nbt.WebServices
 
             // Get the full XML for the entire view
             CswNbtViewId NbtViewId = new CswNbtViewId( ViewId );
-            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( NbtViewId );
-
-            // case 20083
-            if( _ForMobile )
+            if( null != NbtViewId && NbtViewId.isSet() )
             {
-                RetJson.Add( _getSearchNodes( View ) );
-            }
+                CswNbtView View = _CswNbtResources.ViewSelect.restoreView( NbtViewId );
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false, _MobilePageSize );
+                // case 20083
+                if( _ForMobile )
+                {
+                    RetJson.Add( _getSearchNodes( View ) );
+                }
 
-            if( Tree.getChildNodeCount() > 0 )
-            {
-                JProperty ParentNode = new JProperty( "nodes" );
-                JObject Nodes = new JObject();
-                ParentNode.Value = Nodes;
-                _runTreeNodesRecursive( Tree, ref Nodes );
-                RetJson.Add( ParentNode );
-            }
-            else
-            {
-                RetJson.Add( new JProperty( "nodes",
-                                new JObject(
-                                    new JProperty( NodeIdPrefix + Int32.MinValue, "No Results" ) ) ) );
-            }
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false, _MobilePageSize );
 
+                if( Tree.getChildNodeCount() > 0 )
+                {
+                    JProperty ParentNode = new JProperty( "nodes" );
+                    JObject Nodes = new JObject();
+                    ParentNode.Value = Nodes;
+                    _runTreeNodesRecursive( Tree, ref Nodes );
+                    RetJson.Add( ParentNode );
+                }
+                else
+                {
+                    RetJson.Add( new JProperty( "nodes",
+                                                new JObject(
+                                                    new JProperty( NodeIdPrefix + Int32.MinValue, "No Results" ) ) ) );
+                }
+            }
             return RetJson;
         } // Run()
 
@@ -226,51 +228,64 @@ namespace ChemSW.Nbt.WebServices
 
         #region Set
 
-        public bool updateViewProps( string UpdatedViewJson )
+        public void updateViewProps( string UpdatedViewJson )
         {
-            bool Ret;
-            JObject UpdatedView = JObject.Parse( UpdatedViewJson );
-            if( null != UpdatedView.Property( "nodes" ) )
+            JObject UpdatedJSON = JObject.Parse( UpdatedViewJson );
+            if( null != UpdatedJSON.Property( "nodes" ) )
             {
-                JObject Nodes = (JObject) UpdatedView.Property( "nodes" ).Value;
-                Ret = _updateNodesProps( Nodes );
+                // this is a view
+                JObject Nodes = (JObject) UpdatedJSON.Property( "nodes" ).Value;
+                _updateViewProps( Nodes );
             }
-            else // this is already a node collection
+            else if( null != UpdatedJSON.Property( "node_name" ) )
             {
-                Ret = _updateNodesProps( UpdatedView );
+                // this is a node
+                _updateNodeProps( UpdatedJSON );
             }
-            return Ret;
+            else
+            {
+                // this is a node collection
+                _updateViewProps( UpdatedJSON );
+            }
         }
 
-        public bool updateNodesProps( string UpdatedNodeJson )
+        public void updateNodesProps( string UpdatedNodeJson )
         {
             JObject UpdatedNode = JObject.Parse( UpdatedNodeJson );
-            return _updateNodesProps( UpdatedNode );
+            _updateNodeProps( UpdatedNode );
         } // Run()
 
-        private bool _updateNodesProps( JObject UpdatedNode )
+        private void _updateViewProps( JObject UpdatedNode )
         {
-            bool Ret = false;
+            foreach( JObject Node in UpdatedNode.Properties()
+                                                .Select( Prop => (JObject) Prop.Value ) )
+            {
+                _updateNodeProps( Node );
+            }
+        }
+
+        private void _updateNodeProps( JObject NodeObj )
+        {
             Collection<JProperty> Props = new Collection<JProperty>();
 
-            foreach( JProperty Prop in from Node
-                                           in UpdatedNode.Properties()
-                                       select (JObject) Node.Value
-                                           into NodeAttr
-                                           select (JObject) NodeAttr.Property( "subitems" ).Value
-                                               into SubItems
-                                               from Tab
-                                                   in SubItems.Properties()
-                                               select (JObject) Tab.Value
-                                                   into TabObj
-                                                   from Prop
-                                                       in TabObj.Properties()
-                                                   let PropAttr = (JObject) Prop.Value
-                                                   where null != PropAttr.Property( "wasmodified" )
-                                                   select Prop )
+
+            if( null != NodeObj.Property( "subitems" ) )
             {
-                Props.Add( Prop );
+                JObject Tabs = (JObject) NodeObj.Property( "subitems" ).Value;
+                foreach( JProperty Tab in Tabs.Properties() )
+                {
+                    JObject TabProps = (JObject) Tab.Value;
+                    foreach( JProperty Prop in TabProps.Properties() )
+                    {
+                        JObject PropAtr = (JObject) Prop.Value;
+                        if( null != PropAtr.Property( "wasmodified" ) && CswConvert.ToBoolean( PropAtr.Property( "wasmodified" ).Value ) )
+                        {
+                            Props.Add( Prop );
+                        }
+                    }
+                }
             }
+
 
             // post changes once per node, not once per prop            
             Collection<CswNbtNode> NodesToPost = new Collection<CswNbtNode>();
@@ -301,10 +316,7 @@ namespace ChemSW.Nbt.WebServices
             foreach( CswNbtNode Node in NodesToPost )
             {
                 Node.postChanges( false );
-                Ret = true;
             }
-
-            return Ret;
         }
 
         #endregion Set
