@@ -208,8 +208,10 @@ function CswAjaxJSON(options)
             {
 
                 var auth = tryParseString(result['AuthenticationStatus'], 'Unknown');
-    			setExpireTime(tryParseString(result.timeout, ''));
-
+                if (!o.formobile) {
+                    setExpireTime(tryParseString(result.timeout, ''));
+                }
+                
                 delete result['AuthenticationStatus'];
                 delete result['timeout'];
 
@@ -231,7 +233,7 @@ function CswAjaxJSON(options)
             log("Webservice Request (" + o.url + ") Failed: " + textStatus);
             o.error();
         }
-    });                // $.ajax({
+    });                 // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options)
@@ -265,64 +267,66 @@ function CswAjaxXml(options)
     {
     	_ajaxCount++;
     	$.ajax({
-    		type: 'POST',
-    		async: o.async,
-    		url: o.url,
-    		dataType: "text",
-    		//contentType: 'application/json; charset=utf-8',
-    		data: $.param(o.data),     // should be 'field1=value&field2=value'
-    		success: function (data, textStatus, XMLHttpRequest)
-    		{
-    			_ajaxCount--;
-    			//var endtime = new Date();
-    			//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+    	    type: 'POST',
+    	    async: o.async,
+    	    url: o.url,
+    	    dataType: "text",
+    	    //contentType: 'application/json; charset=utf-8',
+    	    data: $.param(o.data),     // should be 'field1=value&field2=value'
+    	    success: function (data, textStatus, XMLHttpRequest)
+    	    {
+    	        _ajaxCount--;
+    	        //var endtime = new Date();
+    	        //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-    			var $realxml;
-    			if ($.browser.msie)
-    			{
-    				// We have to use third-party jquery.xml.js for Internet Explorer to handle non-DOM XML content
-    				$realxml = $.xml(data);
-    			}
-    			else
-    			{
-    				$realxml = $(XMLHttpRequest.responseXML).children().first();
-    			}
+    	        var $realxml;
+    	        if ($.browser.msie)
+    	        {
+    	            // We have to use third-party jquery.xml.js for Internet Explorer to handle non-DOM XML content
+    	            $realxml = $.xml(data);
+    	        }
+    	        else
+    	        {
+    	            $realxml = $(XMLHttpRequest.responseXML).children().first();
+    	        }
 
-    			if ($realxml.first().get(0).nodeName === "error")
-    			{
-    				_handleAjaxError(XMLHttpRequest, {
-    					'display': $realxml.CswAttrXml('display'),
-    					'type': $realxml.CswAttrXml('type'),
-    					'message': $realxml.CswAttrXml('message'),
-    					'detail': $realxml.CswAttrXml('detail')
-    				}, '');
-    				o.error();
-    			}
-    			else
-    			{
-    				var auth = tryParseString($realxml.CswAttrXml('authenticationstatus'), 'Unknown');
-    				setExpireTime($realxml.CswAttrXml('timeout'));
+    	        if ($realxml.first().get(0).nodeName === "error")
+    	        {
+    	            _handleAjaxError(XMLHttpRequest, {
+    	                'display': $realxml.CswAttrXml('display'),
+    	                'type': $realxml.CswAttrXml('type'),
+    	                'message': $realxml.CswAttrXml('message'),
+    	                'detail': $realxml.CswAttrXml('detail')
+    	            }, '');
+    	            o.error();
+    	        }
+    	        else
+    	        {
+    	            var auth = tryParseString($realxml.CswAttrXml('authenticationstatus'), 'Unknown');
+    	            if (!o.formobile) {
+    	                setExpireTime($realxml.CswAttrXml('timeout'));
+    	            }
+    	            
+    	            _handleAuthenticationStatus({
+    	                status: auth,
+    	                success: function () { o.success($realxml) },
+    	                failure: o.onloginfail,
+    	                usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
+    	                usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
+    	                passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), ''),
+    	                ForMobile: o.formobile
+    	            });
+    	        }
 
-    				_handleAuthenticationStatus({
-    					status: auth,
-    					success: function () { o.success($realxml) },
-    					failure: o.onloginfail,
-    					usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
-    					usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
-    					passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), ''),
-    					ForMobile: o.formobile
-    				});
-    			}
-
-    		}, // success{}
-    		error: function (XMLHttpRequest, textStatus, errorThrown)
-    		{
-    			_ajaxCount--;
-    			//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-    			log("Webservice Request (" + o.url + ") Failed: " + textStatus);
-    			o.error();
-    		}
-    	});                              // $.ajax({
+    	    }, // success{}
+    	    error: function (XMLHttpRequest, textStatus, errorThrown)
+    	    {
+    	        _ajaxCount--;
+    	        //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+    	        log("Webservice Request (" + o.url + ") Failed: " + textStatus);
+    	        o.error();
+    	    }
+    	});                               // $.ajax({
     } // if(o.url != '')
 } // CswAjaxXml()
 
