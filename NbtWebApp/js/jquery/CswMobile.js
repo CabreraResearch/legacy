@@ -179,8 +179,9 @@ CswAppMode.mode = 'mobile';
         };
         
         function _loadLoginDiv() {
-            
-            var LoginContent = '<input type="textbox" id="login_customerid" placeholder="Customer Id"/><br>';
+
+            var LoginContent = '<p style="text-align: center;">Login to Mobile Inspection Manager</p>';
+            LoginContent += '<input type="textbox" id="login_customerid" placeholder="Customer Id"/><br>';
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
             LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
             LoginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
@@ -196,8 +197,7 @@ CswAppMode.mode = 'mobile';
                     HideBackButton: true
                 });
 
-            _addToDivHeaderText($retDiv, 'Login to Mobile Inspection Manager');
-                //.prepend( $('<img src="Images/pagelayout/header_logo32.gif" /><br/>') );
+            //.prepend( $('<img src="Images/pagelayout/header_logo32.gif" /><br/>') );
             
             var loginFailure = getStoredLocalString('loginFailure');
             if( !isNullOrEmpty(loginFailure) ) {
