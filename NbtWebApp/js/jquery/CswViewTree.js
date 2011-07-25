@@ -46,8 +46,8 @@
 				success: function ($xml)
 				{
 					var strTypes = $xml.find('types').text();
-					var jsonTypes = JSON.parse(strTypes);
-					var $treexml = $xml.find('tree').children('root')
+					var jsonTypes = $.parseJSON(strTypes);
+				    var $treexml = $xml.find('tree').children('root');
 					var treexmlstring = xmlToString($treexml);
 					
 					$viewsdiv.jstree({

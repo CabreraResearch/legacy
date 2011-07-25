@@ -119,8 +119,8 @@
 						$itemparents.each(function() { initiallyOpen[i] = $(this).CswAttrXml('id'); i++; });
 
 						var strTypes = $xml.find('types').text();
-						var jsonTypes = JSON.parse(strTypes);
-						var $treexml = $xml.find('tree').children('root')
+						var jsonTypes = $.parseJSON(strTypes);
+					    var $treexml = $xml.find('tree').children('root');
 						if($treexml.length > 0)
 						{
 							//var treexmlstring = xmlToString($treexml);
