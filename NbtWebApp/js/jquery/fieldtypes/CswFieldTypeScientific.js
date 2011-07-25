@@ -15,12 +15,12 @@
 			{
 				var $ValueNTB = $Div.CswNumberTextBox({
 					'ID': o.ID + '_val',
-					'Value': o.$propxml.children('value').text().trim(),
+					'Value': o.$propxml.children('base').text().trim(),
 					'Precision': 6,
 					'ReadOnly': o.ReadOnly,
 					'Required': o.Required,
 					'onchange': o.onchange,
-					'size': '10'
+					'width': '60px'
 				});
 				$Div.append('E');
 				var $ExponentNTB = $Div.CswNumberTextBox({
@@ -29,7 +29,7 @@
 					'ReadOnly': o.ReadOnly,
 					'Required': o.Required,
 					'onchange': o.onchange,
-					'size': '5'
+					'width': '25px'
 				});
 
 				if(!isNullOrEmpty($ValueNTB) && $ValueNTB.length > 0)
@@ -43,7 +43,7 @@
 			}
         },
         save: function(o) { //$propdiv, $xml
-				o.$propxml.children('value').text(o.$propdiv.CswNumberTextBox('value', o.ID + '_val'));
+				o.$propxml.children('base').text(o.$propdiv.CswNumberTextBox('value', o.ID + '_val'));
 				o.$propxml.children('exponent').text(o.$propdiv.CswNumberTextBox('value', o.ID + '_exp'));
             }
     };

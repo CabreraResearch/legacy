@@ -24,7 +24,7 @@
 			}
         },
         save: function(o) { //$propdiv, $xml
-				o.$propxml.children('value').text(o.$propdiv.CswNumberTextBox('value'));
+				o.$propxml.children('value').text(o.$propdiv.CswNumberTextBox('value', o.ID));
             }
     };
     

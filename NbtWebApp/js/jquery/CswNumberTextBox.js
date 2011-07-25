@@ -19,7 +19,7 @@
 				'ReadOnly': false,
 				'Required': false,
 				'onchange': function() { },
-				'size': ''
+				'width': ''
 			};
 			if(options) $.extend(o, options);
 
@@ -37,7 +37,7 @@
                                                         value: o.Value,
                                                         cssclass: 'textinput number',
                                                         onChange: o.onchange,
-														size: o.size
+														width: o.width
                                                      }); 
 
 				if (o.MinValue !== undefined)

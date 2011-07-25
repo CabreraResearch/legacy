@@ -40,7 +40,7 @@
 
         },
         save: function(o) {
-				o.$propxml.children('value').text(o.$propdiv.CswNumberTextBox('value'));
+				o.$propxml.children('value').text(o.$propdiv.CswNumberTextBox('value', o.ID + '_qty'));
 				var unit = o.$propdiv.find('#' + o.ID + '_units').val();
 				o.$propxml.children('units').text(unit);
             }
