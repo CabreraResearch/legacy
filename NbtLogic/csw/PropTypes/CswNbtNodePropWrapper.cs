@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -86,10 +87,10 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtMetaDataFieldType FieldType { get { return ( _CswNbtNodeProp.FieldType ); } }
         public CswNbtMetaDataNodeTypeProp NodeTypeProp { get { return ( _CswNbtNodeProp.NodeTypeProp ); } }
 
-		public string GetPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
-		public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetOriginalPropRowValue( Column ); }
-		public void SetPropRowValue( CswNbtSubField.PropColumn Column, object value ) { _CswNbtNodePropData.SetPropRowValue( Column, value ); }
-		public void makePropRow() { _CswNbtNodePropData.makePropRow(); }
+        public string GetPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
+        public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetOriginalPropRowValue( Column ); }
+        public void SetPropRowValue( CswNbtSubField.PropColumn Column, object value ) { _CswNbtNodePropData.SetPropRowValue( Column, value ); }
+        public void makePropRow() { _CswNbtNodePropData.makePropRow(); }
 
         public string PropName { get { return ( _CswNbtNodeProp.PropName ); } }
         public Int32 JctNodePropId { get { return ( _CswNbtNodeProp.JctNodePropId ); } }
@@ -124,7 +125,7 @@ namespace ChemSW.Nbt.PropTypes
         //public bool IsNodeReference( XmlNode PropertyValueNode ) { return _CswNbtNodeProp.IsNodeReference( PropertyValueNode ); }
         //public bool IsNodeTypeReference( XmlNode PropertyValueNode ) { return _CswNbtNodeProp.IsNodeTypeReference( PropertyValueNode ); }
 
-		public bool AuditChanged { get { return _CswNbtNodePropData.AuditChanged; } }
+        public bool AuditChanged { get { return _CswNbtNodePropData.AuditChanged; } }
 
 		// case 21809
 		private string _HelpText = string.Empty;
@@ -165,6 +166,24 @@ namespace ChemSW.Nbt.PropTypes
         {
             _CswNbtNodeProp.ReadXml( Node, NodeMap, NodeTypeMap );
         }
+
+        /// <summary>
+        /// Returns defined Field Type attributes/subfields as JToken class JObject
+        /// </summary>
+        /// <param name="JObject">JToken class JObject</param>
+        public void ToJSON( JObject JObject )
+        {
+            _CswNbtNodeProp.ToJSON( JObject );
+        }
+
+        /// <summary>
+        /// Parses defined Field Type attributes/subfields into a JToken class JObject
+        /// </summary>
+        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            _CswNbtNodeProp.ReadJSON( Object, NodeMap, NodeTypeMap );
+        }
+
         /// <summary>
         /// Returns defined Field Type attributes/subfields as XContainer class XElement
         /// </summary>

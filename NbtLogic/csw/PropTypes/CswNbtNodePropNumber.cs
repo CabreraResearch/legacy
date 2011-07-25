@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -94,13 +95,30 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName() );
-			if( !Double.IsNaN( Value ) )
-			{
-				ValueNode.InnerText = Value.ToString();
-			}
-			CswXmlDocument.AppendXmlAttribute( ValueNode, "minvalue", MinValue.ToString() );
+            if( !Double.IsNaN( Value ) )
+            {
+                ValueNode.InnerText = Value.ToString();
+            }
+            CswXmlDocument.AppendXmlAttribute( ValueNode, "minvalue", MinValue.ToString() );
             CswXmlDocument.AppendXmlAttribute( ValueNode, "maxvalue", MaxValue.ToString() );
             CswXmlDocument.AppendXmlAttribute( ValueNode, "precision", Precision.ToString() );
+        }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _ValueSubField.ToXmlNodeName( true ), ( !Double.IsNaN( Value ) ) ? Value.ToString() : string.Empty,
+                                          new XAttribute( "minvalue", MinValue.ToString() ),
+                                          new XAttribute( "maxvalue", MaxValue.ToString() ),
+                                          new XAttribute( "precision", Precision.ToString() ) ) );
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject.Add( new JProperty( _ValueSubField.ToXmlNodeName( true ), ( !Double.IsNaN( Value ) ) ?
+                Value.ToString() : string.Empty ) );
+            ParentObject.Add( new JProperty( "minvalue", MinValue.ToString() ) );
+            ParentObject.Add( new JProperty( "maxvalue", MaxValue.ToString() ) );
+            ParentObject.Add( new JProperty( "precision", Precision.ToString() ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -108,14 +126,12 @@ namespace ChemSW.Nbt.PropTypes
             Value = CswXmlDocument.ChildXmlNodeValueAsDouble( XmlNode, _ValueSubField.ToXmlNodeName() );
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _ValueSubField.ToXmlNodeName( true ) ) )
+            {
+                Value = CswConvert.ToDouble( XmlNode.Element( _ValueSubField.ToXmlNodeName( true ) ).Value );
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -128,6 +144,13 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _ValueSubField.ToXmlNodeName( true ) ) )
+            {
+                Value = CswConvert.ToDouble( JObject.Property( _ValueSubField.ToXmlNodeName( true ) ).Value );
+            }
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

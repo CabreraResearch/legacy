@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -72,26 +73,36 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-			XmlNode TimeNode = CswXmlDocument.AppendXmlNode( ParentNode, _TimeValueSubField.ToXmlNodeName() );
-			if( TimeValue != DateTime.MinValue )
-			{
-				TimeNode.InnerText = TimeValue.ToShortTimeString();
-			}
+            XmlNode TimeNode = CswXmlDocument.AppendXmlNode( ParentNode, _TimeValueSubField.ToXmlNodeName() );
+            if( TimeValue != DateTime.MinValue )
+            {
+                TimeNode.InnerText = TimeValue.ToShortTimeString();
+            }
         } // ToXml()
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _TimeValueSubField.ToXmlNodeName(true), ( TimeValue != DateTime.MinValue ) ?
+                TimeValue.ToShortTimeString() : string.Empty ) );
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject.Add( new JProperty( _TimeValueSubField.ToXmlNodeName(true), ( TimeValue != DateTime.MinValue ) ?
+                TimeValue.ToShortTimeString() : string.Empty ) );
+        }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             TimeValue = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _TimeValueSubField.ToXmlNodeName() );
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _TimeValueSubField.ToXmlNodeName(true) ) )
+            {
+                TimeValue = CswConvert.ToDateTime( XmlNode.Element( _TimeValueSubField.ToXmlNodeName(true) ).Value );
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -101,6 +112,13 @@ namespace ChemSW.Nbt.PropTypes
                 TimeValue = Convert.ToDateTime( Val );
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _TimeValueSubField.ToXmlNodeName(true) ) )
+            {
+                TimeValue = CswConvert.ToDateTime( JObject.Property( _TimeValueSubField.ToXmlNodeName(true) ).Value );
+            }
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

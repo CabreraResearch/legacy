@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -162,6 +163,15 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override void ToXElement( XElement ParentNode )
+        {
+            //Not yet implemented
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            //Not yet implemented
+        }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
@@ -191,19 +201,19 @@ namespace ChemSW.Nbt.PropTypes
             SelectedNodeTypeIds = NewSelectedNodeTypeIds;
         } // ReadXml()
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            //Not yet implemented
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             SelectedNodeTypeIds.FromString( _HandleReferences( CswTools.XmlRealAttributeName( PropRow[_SelectedNodeTypeIdsSubField.ToXmlNodeName()].ToString() ), NodeTypeMap ) );
+        }
+
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            //Not yet implemented
         }
 
         private string _HandleReferences( string NodeTypeIds, Dictionary<Int32, Int32> NodeTypeMap )
