@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -131,15 +132,25 @@ namespace ChemSW.Nbt.PropTypes
 			Exponent = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ExponentSubField.ToXmlNodeName() );
 		}
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
+		public override void ToXElement( XElement ParentNode )
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            throw new NotImplementedException();
-        }
+		public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void ToJSON( JObject ParentObject )
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+		{
+			throw new NotImplementedException();
+		}
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

@@ -137,18 +137,18 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject.Add( new JProperty( "newpassword" ) );
         }
 
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            EncryptedPassword = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _EncryptedPasswordSubField.ToXmlNodeName() );
-
-		bool inIsExpired = CswXmlDocument.ChildXmlNodeValueAsBoolean( XmlNode, "isexpired" );
-		if( inIsExpired && !IsExpired )
+		public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
 		{
-			ChangedDate = DateTime.MinValue;
-		}
+			EncryptedPassword = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _EncryptedPasswordSubField.ToXmlNodeName() );
 
-	    _saveProp( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" ) );
-        }
+			bool inIsExpired = CswXmlDocument.ChildXmlNodeValueAsBoolean( XmlNode, "isexpired" );
+			if( inIsExpired && !IsExpired )
+			{
+				ChangedDate = DateTime.MinValue;
+			}
+
+			_saveProp( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" ) );
+		}
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {

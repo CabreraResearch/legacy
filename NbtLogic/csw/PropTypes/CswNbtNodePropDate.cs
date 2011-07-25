@@ -82,17 +82,17 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-			XmlNode DateNode = CswXmlDocument.AppendXmlNode( ParentNode, _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) );
+			CswXmlDocument.AppendXmlNode( ParentNode, _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) );
         }
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _DateValueSubField.ToXmlNodeName(true), DateValue.Date.ToShortDateString() ) );
+			ParentNode.Add( new XElement( _DateValueSubField.ToXmlNodeName( true ), DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _DateValueSubField.ToXmlNodeName(true), DateValue.Date.ToShortDateString() ) );
+			ParentObject.Add( new JProperty( _DateValueSubField.ToXmlNodeName( true ), DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
