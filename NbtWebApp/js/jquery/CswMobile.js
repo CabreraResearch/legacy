@@ -1,4 +1,4 @@
-/// <reference path="../thirdparty/jquery/core/jquery-1.6.2-vsdoc.js" />
+/// <reference path="../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.js" />
 /// <reference path="../thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
 /// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />

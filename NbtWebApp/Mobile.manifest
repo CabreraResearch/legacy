@@ -6,7 +6,7 @@ js/CswClasses.js
 js/thirdparty/jquery/core/jquery.mobile/jquery.mobile.2011.5.27.css
 js/thirdparty/jquery/core/jquery.mobile/jquery.mobile.2011.5.27.js
 js/thirdparty/js/gserializer.js
-js/thirdparty/jquery/core/jquery-1.6.2.js
+js/thirdparty/jquery/core/jquery-1.6.1.js
 js/thirdparty/jquery/core/jquery.cookie.js
 js/thirdparty/js/modernizr-2.0.3.js
 
