@@ -191,8 +191,7 @@ CswAppMode.mode = 'mobile';
                     HideOnlineButton: true,
                     HideRefreshButton: true,
                     HideHelpButton: false,
-                    HideBackButton: true,
-                    dataRel: 'dialog'
+                    HideBackButton: true
                 });
 
             var loginFailure = getStoredLocalString('loginFailure');
@@ -241,7 +240,6 @@ CswAppMode.mode = 'mobile';
                 HideBackButton: true,
                 HideRefreshButton: true,
                 HideSearchButton: true,
-                dataRel: 'dialog',
                 $content: 'You must have internet connectivity to login.'
             };
             if (params) $.extend(p, params);
@@ -374,7 +372,6 @@ CswAppMode.mode = 'mobile';
                     HideBackButton: false,
                     HideRefreshButton: true,
                     HideSearchButton: true,
-                    dataRel: 'dialog',
                     $content: $( JSON.parse(sessionStorage['debuglog']))
                 };
                 var $logDiv = _addPageDivToBody(params);
@@ -1380,7 +1377,6 @@ CswAppMode.mode = 'mobile';
                     DivId: 'syncstatus',
                     HeaderText: 'Sync Status',
                     $content: $(content),
-                    dataRel: 'dialog',
                     HideSearchButton: true,
                     HideOnlineButton: true,
                     HideRefreshButton: false,
@@ -1521,7 +1517,6 @@ CswAppMode.mode = 'mobile';
                     DivId: 'help',
                     HeaderText: 'Help',
                     $content: $help,
-                    dataRel: 'dialog',
                     HideSearchButton: true,
                     HideOnlineButton: false,
                     HideRefreshButton: true,
