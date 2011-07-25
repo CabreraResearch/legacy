@@ -79,6 +79,7 @@ namespace ChemSW.Nbt.WebServices
                                                     new JProperty( NodeIdPrefix + Int32.MinValue, "No Results" ) ) ) );
                 }
             }
+
             return RetJson;
         } // Run()
 
@@ -228,44 +229,49 @@ namespace ChemSW.Nbt.WebServices
 
         #region Set
 
-        public void updateViewProps( string UpdatedViewJson )
+        public bool updateViewProps( string UpdatedViewJson )
         {
+            bool Ret = false;
             JObject UpdatedJSON = JObject.Parse( UpdatedViewJson );
             if( null != UpdatedJSON.Property( "nodes" ) )
             {
                 // this is a view
                 JObject Nodes = (JObject) UpdatedJSON.Property( "nodes" ).Value;
-                _updateViewProps( Nodes );
+                Ret = _updateViewProps( Nodes );
             }
             else if( null != UpdatedJSON.Property( "node_name" ) )
             {
                 // this is a node
-                _updateNodeProps( UpdatedJSON );
+                Ret = _updateNodeProps( UpdatedJSON );
             }
             else
             {
                 // this is a node collection
-                _updateViewProps( UpdatedJSON );
+                Ret = _updateViewProps( UpdatedJSON );
             }
+            return Ret;
         }
 
-        public void updateNodesProps( string UpdatedNodeJson )
+        public bool updateNodesProps( string UpdatedNodeJson )
         {
             JObject UpdatedNode = JObject.Parse( UpdatedNodeJson );
-            _updateNodeProps( UpdatedNode );
+            return _updateNodeProps( UpdatedNode );
         } // Run()
 
-        private void _updateViewProps( JObject UpdatedNode )
+        private bool _updateViewProps( JObject UpdatedNode )
         {
+            bool Ret = false;
             foreach( JObject Node in UpdatedNode.Properties()
                                                 .Select( Prop => (JObject) Prop.Value ) )
             {
-                _updateNodeProps( Node );
+                Ret = _updateNodeProps( Node ) || Ret;
             }
+            return Ret;
         }
 
-        private void _updateNodeProps( JObject NodeObj )
+        private bool _updateNodeProps( JObject NodeObj )
         {
+            bool Ret = false;
             Collection<JProperty> Props = new Collection<JProperty>();
 
 
@@ -303,6 +309,20 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
                     CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
+                    //Case 20964. Client needs to know whether the inspection is complete.
+                    if( !Ret && Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
+                    {
+                        CswNbtMetaDataObjectClassProp Finished = Node.ObjectClass.getObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
+                        CswNbtMetaDataObjectClassProp Cancelled = Node.ObjectClass.getObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
+                        if( ( MetaDataProp.ObjectClassProp == Finished &&
+                            Tristate.True == CswConvert.ToTristate( Prop.Value ) ) ||
+                            ( MetaDataProp.ObjectClassProp == Cancelled )
+                            )
+                        {
+                            Ret = true;
+                        }
+                    }
+
                     JObject PropObj = (JObject) Prop.Value;
 
                     Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
@@ -318,6 +338,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 Node.postChanges( false );
             }
+            return Ret;
         }
 
         #endregion Set

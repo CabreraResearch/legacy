@@ -2384,8 +2384,12 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceMobile wsM = new CswNbtWebServiceMobile( _CswNbtResources, ForMobile );
-                    wsM.updateViewProps( UpdatedViewJson );
+                    bool CompletedNodes = wsM.updateViewProps( UpdatedViewJson );
                     ReturnVal = wsM.getView( ParentId, _CswNbtResources.CurrentNbtUser );
+                    if( CompletedNodes )
+                    {
+                        ReturnVal.Add( new JProperty( "completed", true ) );
+                    }
                 }
 
                 _deInitResources();

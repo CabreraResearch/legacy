@@ -1927,7 +1927,8 @@ CswAppMode.mode = 'mobile';
                     viewNodes[nodeId] = viewJson[nodeId];
                     if( wasModified ) {
                         viewNodes[nodeId]['wasmodified'] = true;
-                    } 
+                    }
+                    viewNodes[nodeId]['viewid'] = viewId;
                     storeLocalData(nodeId, viewNodes[nodeId]);
                     delete viewNodes[nodeId]['subitems'];
                 }
@@ -1998,6 +1999,26 @@ CswAppMode.mode = 'mobile';
             }
         }
 
+        function _deleteNode(nodeId,viewId,reloadView) {
+            //remove the cached node JSON
+            removeStoredLocalData(nodeId);
+                                        
+            //remove the Div
+            $('#' + nodeId).remove();
+                                        
+            //remove the node from the View JSON
+            if( !isNullOrEmpty(viewId) ) {
+                var view = getStoredLocalJSON(viewId);
+                if( !isNullOrEmpty(view['json']) ) {
+                    delete view['json'][nodeId];
+                    storeLocalData(viewId, view);
+                }
+                if( reloadView ) {
+                    $('#' + viewId).cswChangePage();
+                }
+            }
+        }
+        
         function _fetchCachedViewJson(viewId,viewObj) {
             /// <summary>
             ///   Retrieve a view from localStorage
@@ -2115,17 +2136,23 @@ CswAppMode.mode = 'mobile';
                                 success: function(data) {
                                     logger.setAjaxSuccess();
                                     setOnline(false);
-                                    if( !isNullOrEmpty(data['nodes']) )
+                                    var completed = isTrue(data['completed']);
+                                    var isView = !isNullOrEmpty(data['nodes']);
+                                    if( isView )
                                     {
                                         var json = data['nodes'];
                                         _updateStoredViewJson(objectId, json, false);
-                                    } else {
+                                    } else if( !completed ) {
                                         _updateStoredNodeJson(objectId, objectJSON, false);
-                                    }
+                                    } 
                                     
                                     _resetPendingChanges(true);
                                     
                                     processChangesLoop(perpetuateTimer);
+                                    var reloadView = !perpetuateTimer;
+                                    if( completed && !isView ) {
+                                        _deleteNode(objectId, objectJSON['viewid'], reloadView);
+                                    }
                                 },
                                 error: function() {
                                     processChangesLoop(perpetuateTimer);
