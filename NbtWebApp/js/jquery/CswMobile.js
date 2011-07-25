@@ -113,7 +113,7 @@ CswAppMode.mode = 'mobile';
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             SendLogUrl: '/NbtWebApp/wsNBT.asmx/collectClientLogInfo',
             Theme: 'a',
-            PollingInterval: 30000,
+            PollingInterval: 30000, //30 seconds
             RandomConnectionFailure: false
         };
 
@@ -406,7 +406,7 @@ CswAppMode.mode = 'mobile';
             };
             if (params) $.extend(p, params);
 
-            var viewId = (p.level === 1) ? currentViewId(p.DivId) : currentViewId();
+            var viewId = (p.level < 2) ? currentViewId(p.DivId) : currentViewId();
             
             var $retDiv = $('#' + p.DivId);
 
@@ -1610,40 +1610,48 @@ CswAppMode.mode = 'mobile';
             else if (amOnline() && 
                 _checkNoPendingChanges() ) {
                 
-                var HeaderText = _getDivHeaderText(DivId);
-                var jsonData = {
-                    SessionId: SessionId,
-                    ParentId: DivId,
-                    ForMobile: ForMobile
-                };
+                if(DivId === 'viewsdiv') {
+                    window.location.reload();
+                }
+                else {
+                    var HeaderText = _getDivHeaderText(DivId);
+                    var jsonData = {
+                        SessionId: SessionId,
+                        ParentId: DivId,
+                        ForMobile: ForMobile
+                    };
 
-                CswAjaxJSON({
-                        formobile: ForMobile,
-                        url: opts.ViewUrl,
-                        data: jsonData,
-                        stringify: false,
-                        onloginfail: function(text) { onLoginFail(text); },
-                        success: function(data) {
-                            setOnline(false);
-
-                            var params = {
-                                ParentId: 'viewsdiv',
-                                DivId: DivId,
-                                HeaderText: HeaderText,
-                                json: _updateStoredViewJson(DivId, data),
-                                parentlevel: 0,
-                                level: 1,
-                                HideRefreshButton: false,
-                                HideSearchButton: false,
-                                HideBackButton: false
-                            };
-                            params.onPageShow = function() { return _loadDivContents(params); };
-                            _loadDivContents(params).cswChangePage();
-                        }, // success
-                        error: function () {
-                            onError();
-                        }
-                    });
+                    CswAjaxJSON({
+                            formobile: ForMobile,
+                            url: opts.ViewUrl,
+                            data: jsonData,
+                            stringify: false,
+                            onloginfail: function(text) { onLoginFail(text); },
+                            success: function(data) {
+                                setOnline(false);
+                                if( !isNullOrEmpty(data['nodes']) ) {
+                                    var viewJSON = data['nodes'];
+                                    
+                                    var params = {
+                                        ParentId: 'viewsdiv',
+                                        DivId: DivId,
+                                        HeaderText: HeaderText,
+                                        json: _updateStoredViewJson(DivId, viewJSON),
+                                        parentlevel: 0,
+                                        level: 1,
+                                        HideRefreshButton: false,
+                                        HideSearchButton: false,
+                                        HideBackButton: false
+                                    };
+                                    params.onPageShow = function() { return _loadDivContents(params); };
+                                    _loadDivContents(params).cswChangePage();
+                                }
+                            }, // success
+                            error: function() {
+                                onError();
+                            }
+                        });
+                }
             }
         }
 
