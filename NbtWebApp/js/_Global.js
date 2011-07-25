@@ -1496,7 +1496,7 @@ function debugOn(value)
 
 function cacheLogInfo(logger, includeCallStack)
 {
-    if ( doLogging() || debug )
+    if ( doLogging() )
     {
         if (hasWebStorage())
         {
