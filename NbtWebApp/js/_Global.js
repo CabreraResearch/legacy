@@ -1568,15 +1568,28 @@ function storeLocalData(key, value)
             localStorage[key] = stringToStore;
         } catch (e)
         {
+            if (debugOn()) {
+                log('localStorage failed:' + e);
+            }
+            
             try
             {
                 localStorage.removeItem(key);
                 sessionStorage[key] = stringToStore;
             } catch (e)
             {
-                sessionStorage.removeItem(key);
-                storedInMemory[key] = stringToStore;
-                errorHandler(e);
+                if (debugOn()) {
+                    log('sessionStorage failed:' + e);
+                }
+                try {
+                    sessionStorage.removeItem(key);
+                    storedInMemory[key] = stringToStore;
+                }
+                catch(e) {
+                    if (debugOn()) {
+                        log('memory storage failed:' + e);
+                    }                    
+                }
             }
         }
     }
