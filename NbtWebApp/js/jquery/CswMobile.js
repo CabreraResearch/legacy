@@ -179,13 +179,15 @@ CswAppMode.mode = 'mobile';
         };
         
         function _loadLoginDiv() {
+            
             var LoginContent = '<input type="textbox" id="login_customerid" placeholder="Customer Id"/><br>';
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
             LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
             LoginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
+            
             var $retDiv = _addPageDivToBody({
                     DivId: 'logindiv',
-                    HeaderText: 'Login to ChemSW Fire Inspection',
+                    HeaderText: 'ChemSW Live',
                     $content: $(LoginContent),
                     HideSearchButton: true,
                     HideOnlineButton: true,
@@ -194,9 +196,13 @@ CswAppMode.mode = 'mobile';
                     HideBackButton: true
                 });
 
+            _addToDivHeaderText($retDiv, 'Login to Mobile Inspection Manager');
+                //.prepend( $('<img src="Images/pagelayout/header_logo32.gif" /><br/>') );
+            
             var loginFailure = getStoredLocalString('loginFailure');
             if( !isNullOrEmpty(loginFailure) ) {
-                _addToDivHeaderText($retDiv, loginFailure);
+                _addToDivHeaderText($retDiv, loginFailure)
+                    .css('color','yellow');
             }
             
             $('#loginsubmit').bind('click', function() {
@@ -1308,10 +1314,14 @@ CswAppMode.mode = 'mobile';
             return $('#' + DivId).find('div:jqmData(role="header") h1').text();
         }
 
-        function _addToDivHeaderText($div, text) {
-            $div.find('div:jqmData(role="header") h1').append($('<p style="color: yellow; white-space: normal;">' + text + '</p>'));
-            $.mobile.loadPage($div);
-            return $div;
+        function _addToDivHeaderText($div, text, style) {
+            var $ret = $('<p white-space: normal;">' + text + '</p>');
+            
+            $div.find('div:jqmData(role="header") h1')
+                .css('white-space','normal')
+                .append($ret);
+            
+            return $ret;
         }
         
         function _bindPageEvents(DivId, ParentId, level, $div) {
@@ -1531,7 +1541,8 @@ CswAppMode.mode = 'mobile';
 
         function onLoginFail(text) {
             Logout(false);
-            _addToDivHeaderText($logindiv, text);
+            _addToDivHeaderText($logindiv, text)
+                .css('color','yellow');
             storeLocalData('loginFailure', text);
         }
 
