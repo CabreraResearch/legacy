@@ -1428,7 +1428,6 @@ CswAppMode.mode = 'mobile';
         function _toggleOffline(doWaitForData) {
 
             var $onlineBtn = $('#ss_gooffline span').find('span.ui-btn-text');
-            var $logoutBtn = $('#ss_logout');
             if (amOnline() || $onlineBtn.text() === 'Go Online') {
                 setOnline(false);
                 if (doWaitForData) {
@@ -1436,7 +1435,6 @@ CswAppMode.mode = 'mobile';
                     _waitForData();
                 }
                 $onlineBtn.text('Go Offline');
-                $logoutBtn.show();
                 $('.refresh').each(function(){
                     var $this = $(this);
                     $this.css({'display': ''}).show();
@@ -1448,7 +1446,6 @@ CswAppMode.mode = 'mobile';
                     _clearWaitForData();
                 }
                 $onlineBtn.text('Go Online');
-                $logoutBtn.hide();
                 $('.refresh').each(function(){
                     var $this = $(this);
                     $this.css({'display': 'none'}).hide();
