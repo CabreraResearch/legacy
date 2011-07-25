@@ -272,17 +272,18 @@ namespace ChemSW.Nbt.WebServices
             if( null != NodeObj.Property( "subitems" ) )
             {
                 JObject Tabs = (JObject) NodeObj.Property( "subitems" ).Value;
-                foreach( JProperty Tab in Tabs.Properties() )
+                foreach( JProperty Prop in from Tab
+                                               in Tabs.Properties()
+                                           select (JObject) Tab.Value
+                                               into TabProps
+                                               from Prop
+                                                   in TabProps.Properties()
+                                               let PropAtr = (JObject) Prop.Value
+                                               where null != PropAtr.Property( "wasmodified" ) &&
+                                                     CswConvert.ToBoolean( PropAtr.Property( "wasmodified" ).Value )
+                                               select Prop )
                 {
-                    JObject TabProps = (JObject) Tab.Value;
-                    foreach( JProperty Prop in TabProps.Properties() )
-                    {
-                        JObject PropAtr = (JObject) Prop.Value;
-                        if( null != PropAtr.Property( "wasmodified" ) && CswConvert.ToBoolean( PropAtr.Property( "wasmodified" ).Value ) )
-                        {
-                            Props.Add( Prop );
-                        }
-                    }
+                    Props.Add( Prop );
                 }
             }
 
