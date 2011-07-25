@@ -131,43 +131,6 @@ CswAppMode.mode = 'mobile';
         if(isNullOrEmpty(SessionId)) {
             Logout();
         }
-        
-        function currentViewJson(json,level) {
-
-            var ret = { };
-            if(json && arguments.length >= 1) {
-                if( !isNullOrEmpty(level) ) {
-                    switch(level) {
-                        case 0:
-                            {
-                                ret = json;
-                                break;
-                            }
-                        default:
-                            {
-                                ret = json.nodes;
-                                break;
-                            }
-                    }
-                }
-                else {
-                    ret = json;
-                }
-                if( !isNullOrEmpty(ret) ) {
-                    storeLocalData('currentViewJson', ret);
-                }
-            }
-           
-            if( isNullOrEmpty(ret) )
-            {
-                var storedView = getStoredLocalString('currentViewJson');
-                if (!isNullOrEmpty(storedView))
-                {
-                    ret = storedView;
-                }
-            }
-            return ret;
-        }
 
         var storedViews = getStoredLocalJSON('storedViews');
 
@@ -454,7 +417,7 @@ CswAppMode.mode = 'mobile';
                 if (p.level === 0) {
                     p.PageType = 'view';
                     if (!amOnline()) {
-                        p.json = currentViewJson( _fetchCachedViewJson(p.DivId), p.level );
+                        p.json = _fetchCachedViewJson(p.DivId);
                         $retDiv = _loadDivContentsJson(p);
                     } else {
                         p.url = opts.ViewsListUrl;
@@ -465,7 +428,7 @@ CswAppMode.mode = 'mobile';
                     var cachedJson = _fetchCachedViewJson(viewId);
                     p.PageType = 'node';
                     if (!isNullOrEmpty(cachedJson)) {
-                        p.json = currentViewJson(cachedJson);
+                        p.json = cachedJson;
                         $retDiv = _loadDivContentsJson(p);
                     } else if (amOnline()) {
                         p.url = opts.ViewUrl;
@@ -477,9 +440,6 @@ CswAppMode.mode = 'mobile';
                 } else { // Level 2 and up
                     var cachedJson = _fetchCachedNodeJson(p.DivId);
                     p.PageType = 'tab';
-                    if( isNullOrEmpty(cachedJson) ) {
-                        cachedJson = currentViewJson(null, 2)[p.DivId];
-                    }
                     if( !isNullOrEmpty(cachedJson) ) {
                         p.json = cachedJson['subitems'];
 
@@ -524,12 +484,14 @@ CswAppMode.mode = 'mobile';
                         setOnline(false);
                         logger.setAjaxSuccess();
 
-                        p.json = currentViewJson( data, params.level );
+                        p.json = data;
                         var searchJson = { };
                         if( params.level === 1) {
                             searchJson = data['searches'];
                         }
-                        
+                        if( params.level !== 0) {
+                            p.json = data['nodes'];    
+                        }
                         if( params.level < 2) {
                             _storeViewJson(p.DivId, p.HeaderText, p.json, params.level, searchJson);
                         }
@@ -1676,7 +1638,7 @@ CswAppMode.mode = 'mobile';
                                 ParentId: 'viewsdiv',
                                 DivId: DivId,
                                 HeaderText: HeaderText,
-                                json: _updateStoredViewJson(DivId, currentViewJson(data, 1)),
+                                json: _updateStoredViewJson(DivId, data),
                                 parentlevel: 0,
                                 level: 1,
                                 HideRefreshButton: false,
@@ -1711,14 +1673,14 @@ CswAppMode.mode = 'mobile';
             var name = tryParseString(inputId, $elm.CswAttrDom('id'));
             var value = tryParseString(inputVal, eventObj.target.innerText);
        
+            var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
+            var nodeJson = _fetchCachedNodeJson(nodeId);
+            
             // update the xml and store it
-            if (!isNullOrEmpty(currentViewJson())) {
+            if (!isNullOrEmpty(nodeId) && !isNullOrEmpty(nodeJson)) {
                 mobileStorage.addUnsyncedChange();
                 _resetPendingChanges();
                 
-                var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
-                var nodeJson = _fetchCachedNodeJson(nodeId);
-
                 if( !isNullOrEmpty(inputPropId) )
                 {
                     for (var key in nodeJson['subitems'])
@@ -1934,7 +1896,7 @@ CswAppMode.mode = 'mobile';
             return ret;
         }
 
-        function _storeViewJson(viewId, viewName, viewJson, level, viewSearch) {
+        function _storeViewJson(viewId, viewName, viewJson, level, viewSearch, wasModified) {
             /// <summary>
             ///   Stores a view in localStorage
             /// </summary>
@@ -1951,11 +1913,23 @@ CswAppMode.mode = 'mobile';
                 {
                     storedViews[view] = viewJson[view]; 
                 }
+                //no need to cache the viewsdiv, just store ViewNames
                 storeLocalData("storedviews", storedViews);
             }
             else {
-                //no need to cache the viewsdiv
-                storeLocalData(viewId, { 'name': viewName, 'json': viewJson, 'search': viewSearch });
+                var viewNodes = { };
+                for(var nodeId in  viewJson) {
+                    viewNodes[nodeId] = viewJson[nodeId];
+                    if( wasModified ) {
+                        viewNodes[nodeId]['wasmodified'] = true;
+                    } 
+                    storeLocalData(nodeId, viewNodes[nodeId]);
+                    delete viewNodes[nodeId]['subitems'];
+                }
+                if( wasModified ) {
+                    viewNodes['wasmodified'] = true;
+                } 
+                storeLocalData(viewId, { 'name': viewName, 'json': viewNodes, 'search': viewSearch });
             }
             cacheLogInfo(logger);
         }
@@ -1969,14 +1943,9 @@ CswAppMode.mode = 'mobile';
             /// <param name="wasModified" type="Boolean">Indicates whether this update modifies the view</param>
             
             if (!isNullOrEmpty(viewId) && !isNullOrEmpty(viewJson)) {
-                var view = getStoredLocalJSON(viewId);
-                view['json'] = viewJson;
-                if( wasModified ) {
-                    view['wasmodified'] = true;
-                } else {
-                    delete view['wasmodified'];
-                }
-                storeLocalData(viewId, view);
+                var currentView = getStoredLocalJSON(viewId);
+                var viewName = currentView['name'];
+                _storeViewJson(viewId, viewName, viewJson, 1, '', wasModified);
             }
             return viewJson;
         }
@@ -1988,19 +1957,19 @@ CswAppMode.mode = 'mobile';
             /// <param name="nodeId" type="String">An NBT NodeId</param>
             /// <param name="nodeJson" type="JSON">JSON representation of the node</param>
             /// <param name="wasModified" type="Boolean">Indicates whether this update modifies the view</param>
-            var viewId = currentViewId();
-            var storedView = getStoredLocalJSON(viewId);
-            if (!isNullOrEmpty(storedView) && !isNullOrEmpty(nodeJson)) {
-                var view = storedView;
-                view['json'][nodeId] = nodeJson;
-                //view['json'][nodeid]['wasmodified'] = true; //one day we'll want to update in smaller pushes
-                view['wasmodified'] = wasModified;
-                storeLocalData(viewId, view);
+            
+            if (!isNullOrEmpty(nodeId) && !isNullOrEmpty(nodeJson)) {
+                if( wasModified ) {
+                    nodeJson['wasmodified'] = true;
+                } else {
+                    delete nodeJson['wasmodified'];
+                }
+                storeLocalData(nodeId, nodeJson);
             }
             return nodeJson;
         }
         
-        function _getModifiedView(onSuccess) {
+        function _processModifiedNodes(onSuccess) {
             var modified = false;
             if (isNullOrEmpty(storedViews)) {
                 storedViews = getStoredLocalJSON('storedviews');
@@ -2009,12 +1978,12 @@ CswAppMode.mode = 'mobile';
                 for (var viewid in storedViews) {
                     var view = getStoredLocalJSON(viewid);
                     if (!isNullOrEmpty(view)) {
-                        if (view.wasmodified) {
-                            modified = true;
-                            var viewJson = view.json;
-                            if (!isNullOrEmpty(viewid) && !isNullOrEmpty(viewJson)) {
-                                onSuccess(viewid, viewJson);
-                            }
+                        for(var nodeId in view['json']) {
+                            var node = getStoredLocalJSON(nodeId);
+                            if (!isNullOrEmpty(node) && node['wasmodified']) {
+                                modified = true;
+                                onSuccess(nodeId, node);
+                            }                            
                         }
                     }
                 }
@@ -2048,11 +2017,8 @@ CswAppMode.mode = 'mobile';
             /// </summary>
             /// <param name="nodeId" type="String">An NBT NodeId</param>
             var ret = {};
-            var viewId = currentViewId();
-            if ( !isNullOrEmpty(viewId)) {
-                var currentView = getStoredLocalJSON(viewId);
-                var viewJson = currentViewJson( currentView['json'] );
-                ret = viewJson[nodeId];
+            if ( !isNullOrEmpty(nodeId)) {
+                ret = getStoredLocalJSON(nodeId);
             }
             return ret;
         }
@@ -2102,13 +2068,13 @@ CswAppMode.mode = 'mobile';
                             setOnline(false);
                             _processChanges(true);
                             if (!isNullOrEmpty(onSuccess)) {
-                                onSuccess(currentViewJson( data ));
+                                onSuccess( data );
                             }
                         },
                         error: function(data) {
                             setOffline();
                             if (!isNullOrEmpty(onFailure)) {
-                                onFailure(currentViewJson( data ));
+                                onFailure( data );
                             }
                             _waitForData();
                         }
@@ -2122,7 +2088,7 @@ CswAppMode.mode = 'mobile';
         function _processChanges(perpetuateTimer) {
             var logger = new profileMethod('processChanges');
             if (!isNullOrEmpty(SessionId) && !mobileStorage.stayOffline() ) {
-                _getModifiedView(function(viewid, viewJson) {
+                _processModifiedNodes(function(viewid, viewJson) {
                     if (!isNullOrEmpty(viewid) && !isNullOrEmpty(viewJson)) {
                         
                         var dataJson = {
@@ -2144,10 +2110,11 @@ CswAppMode.mode = 'mobile';
                                 success: function(data) {
                                     logger.setAjaxSuccess();
                                     setOnline(false);
-                                    
-                                    var json = currentViewJson(data,1);
-                                    _updateStoredViewJson(viewid, json, false);
-                                    
+                                    if( !isNullOrEmpty(data) )
+                                    {
+                                        var json = data['nodes'];
+                                        _updateStoredViewJson(viewid, json, false);
+                                    }
                                     _resetPendingChanges(true);
                                     
                                     processChangesLoop(perpetuateTimer);
