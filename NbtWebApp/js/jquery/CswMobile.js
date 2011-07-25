@@ -191,7 +191,6 @@ CswAppMode.mode = 'mobile';
                     HideOnlineButton: true,
                     HideRefreshButton: true,
                     HideHelpButton: false,
-                    HideCloseButton: true,
                     HideBackButton: true,
                     dataRel: 'dialog'
                 });
@@ -238,7 +237,6 @@ CswAppMode.mode = 'mobile';
                 DivId: 'sorrycharliediv',
                 HeaderText: 'Sorry Charlie!',
                 HideHelpButton: false,
-                HideCloseButton: true,
                 HideOnlineButton: false,
                 HideBackButton: true,
                 HideRefreshButton: true,
@@ -372,7 +370,6 @@ CswAppMode.mode = 'mobile';
                     DivId: 'loginfodiv',
                     HeaderText: 'Log Info',
                     HideHelpButton: false,
-                    HideCloseButton: true,
                     HideOnlineButton: false,
                     HideBackButton: false,
                     HideRefreshButton: true,
@@ -521,7 +518,6 @@ CswAppMode.mode = 'mobile';
                 HideOnlineButton: false,
                 HideRefreshButton: false,
                 HideHelpButton: false,
-                HideCloseButton: true,
                 HideBackButton: false
             };
             if (params) $.extend(p, params);
@@ -535,7 +531,6 @@ CswAppMode.mode = 'mobile';
                     HideOnlineButton: p.HideOnlineButton,
                     HideRefreshButton: p.HideRefreshButton,
                     HideHelpButton: p.HideHelpButton,
-                    HideCloseButton: p.HideCloseButton,
                     HideBackButton: p.HideBackButton
                 });
 
@@ -1126,7 +1121,6 @@ CswAppMode.mode = 'mobile';
                 HideOnlineButton: false,
                 HideRefreshButton: false,
                 HideHelpButton: false,
-                HideCloseButton: true,
                 HideBackButton: false,
                 HideHeaderOnlineButton: true
             };
@@ -1391,7 +1385,6 @@ CswAppMode.mode = 'mobile';
                     HideOnlineButton: true,
                     HideRefreshButton: false,
                     HideHelpButton: false,
-                    HideCloseButton: true,
                     HideBackButton: false,
                     HideHeaderOnlineButton: false
                 });
@@ -1533,7 +1526,6 @@ CswAppMode.mode = 'mobile';
                     HideOnlineButton: false,
                     HideRefreshButton: true,
                     HideHelpButton: true,
-                    HideCloseButton: false,
                     HideBackButton: true
                 });
 
@@ -1749,7 +1741,6 @@ CswAppMode.mode = 'mobile';
                         HideOnlineButton: true,
                         HideRefreshButton: true,
                         HideHelpButton: false,
-                        HideCloseButton: true,
                         HideBackButton: false
                     });
                 $searchDiv.cswChangePage({ transition: 'slideup' });
