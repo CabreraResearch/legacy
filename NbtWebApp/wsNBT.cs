@@ -153,36 +153,48 @@ namespace ChemSW.Nbt.WebServices
          * ends up seeing the authentication node even if it is a peer of the tree and not in the tree. 
          * Please trust me: we're talking major whackadelia. But it works fine as an attribute. 
          */
-        private void _xAddAuthenticationStatus( XElement XElement, AuthenticationStatus AuthenticationStatusIn )
+        private void _xAddAuthenticationStatus( XElement XElement, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
         {
             if( XElement != null )
             {
                 XElement.SetAttributeValue( "authenticationstatus", AuthenticationStatusIn.ToString() );
-                if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+                if( _CswSessionResources != null &&
+                    _CswSessionResources.CswSessionManager != null &&
+                    !ForMobile )
+                {
                     XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+                }
             }
         }//_xAuthenticationStatus()
 
 
-        private void _xAddAuthenticationStatus( XmlDocument XmlDocument, AuthenticationStatus AuthenticationStatusIn )
+        private void _xAddAuthenticationStatus( XmlDocument XmlDocument, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
         {
             if( XmlDocument != null )
             {
                 if( XmlDocument.DocumentElement == null )
                     CswXmlDocument.SetDocumentElement( XmlDocument, "root" );
                 CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "authenticationstatus", AuthenticationStatusIn.ToString() );
-                if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+                if( _CswSessionResources != null &&
+                    _CswSessionResources.CswSessionManager != null &&
+                    !ForMobile )
+                {
                     CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+                }
             }
         }//_xAuthenticationStatus()
 
-        private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn )
+        private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
         {
             if( JObj != null )
             {
                 JObj.Add( new JProperty( "AuthenticationStatus", AuthenticationStatusIn.ToString() ) );
-                if( _CswSessionResources != null && _CswSessionResources.CswSessionManager != null )
+                if( _CswSessionResources != null &&
+                    _CswSessionResources.CswSessionManager != null &&
+                    !ForMobile )
+                {
                     JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
+                }
             }
         }//_jAuthenticationStatus()
 
@@ -2385,12 +2397,12 @@ namespace ChemSW.Nbt.WebServices
             }
 
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus, ForMobile );
 
             return ReturnVal.ToString();
 
         } // UpdateNodeProps()
-        
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string GetViewsList( string SessionId, string ParentId, bool ForMobile )
@@ -2420,7 +2432,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = jError( ex );
             }
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
 
             return ReturnVal.ToString();
         } // GetViews()
@@ -2454,7 +2466,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = jError( ex );
             }
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
 
             return ReturnVal.ToString();
         } // GetViews()
