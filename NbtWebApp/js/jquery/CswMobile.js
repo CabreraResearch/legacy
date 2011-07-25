@@ -407,7 +407,7 @@ CswAppMode.mode = 'mobile';
             if (params) $.extend(p, params);
 
             var viewId = (p.level < 2) ? currentViewId(p.DivId) : currentViewId();
-            
+       
             var $retDiv = $('#' + p.DivId);
 
             if (isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1) {
@@ -480,7 +480,7 @@ CswAppMode.mode = 'mobile';
                     success: function(data) {
                         setOnline(false);
                         logger.setAjaxSuccess();
-
+                        
                         p.json = data;
                         var searchJson = { };
                         if( params.level === 1) {
@@ -2087,13 +2087,13 @@ CswAppMode.mode = 'mobile';
         function _processChanges(perpetuateTimer) {
             var logger = new profileMethod('processChanges');
             if (!isNullOrEmpty(SessionId) && !mobileStorage.stayOffline() ) {
-                _processModifiedNodes(function(viewid, viewJson) {
-                    if (!isNullOrEmpty(viewid) && !isNullOrEmpty(viewJson)) {
+                _processModifiedNodes(function(objectId, objectJSON) {
+                    if (!isNullOrEmpty(objectId) && !isNullOrEmpty(objectJSON)) {
                         
                         var dataJson = {
                             SessionId: SessionId,
-                            ParentId: viewid,
-                            UpdatedViewJson: JSON.stringify(viewJson),
+                            ParentId: objectId,
+                            UpdatedViewJson: JSON.stringify(objectJSON),
                             ForMobile: ForMobile
                         };
 
@@ -2109,11 +2109,14 @@ CswAppMode.mode = 'mobile';
                                 success: function(data) {
                                     logger.setAjaxSuccess();
                                     setOnline(false);
-                                    if( !isNullOrEmpty(data) )
+                                    if( !isNullOrEmpty(data['nodes']) )
                                     {
                                         var json = data['nodes'];
-                                        _updateStoredViewJson(viewid, json, false);
+                                        _updateStoredViewJson(objectId, json, false);
+                                    } else {
+                                        _updateStoredNodeJson(objectId, objectJSON, false);
                                     }
+                                    
                                     _resetPendingChanges(true);
                                     
                                     processChangesLoop(perpetuateTimer);
