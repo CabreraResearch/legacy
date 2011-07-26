@@ -54,9 +54,6 @@ CswAppMode.mode = 'mobile';
         var $div = $(this);
         var ret = false;
         if (!isNullOrEmpty($div)) {
-            if(debugOn()) {
-                log('changePage from ' + $.mobile.path.get() + ' to ' + $div.CswAttrDom('id'), true);
-            }
             ret = $.mobile.changePage($div, o);
         }
         return ret;
