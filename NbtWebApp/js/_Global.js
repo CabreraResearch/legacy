@@ -754,7 +754,7 @@ function deleteNodes(options)
 function jsTreeGetSelected($treediv)
 { /// <param name="$" type="jQuery" />
     var IDPrefix = $treediv.CswAttrDom('id');
-    $SelectedItem = $treediv.jstree('get_selected');
+    var $SelectedItem = $treediv.jstree('get_selected');
     var ret = {
         'iconurl': $SelectedItem.children('a').children('ins').css('background-image'),
         'id': $SelectedItem.CswAttrDom('id').substring(IDPrefix.length),

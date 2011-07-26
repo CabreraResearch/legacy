@@ -1,6 +1,6 @@
-/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="/js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
@@ -18,7 +18,7 @@
         
 		if( typeof name === "object")
         {
-            for( prop in name )
+            for( var prop in name )
             {
                 ret = doProp($Dom,prop,name[prop]);
             }
@@ -78,7 +78,7 @@
 
         if( typeof name === "object")
         {
-            for(prop in name)
+            for(var prop in name)
             {
                 ret = doAttr(X$xml,prop,name[prop]);
             }
