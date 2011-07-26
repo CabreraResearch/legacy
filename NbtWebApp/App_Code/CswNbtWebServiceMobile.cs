@@ -186,15 +186,33 @@ namespace ChemSW.Nbt.WebServices
 
         private static void _runProperties( CswNbtNode Node, ref JObject SubItemsJProp )
         {
+            Collection<CswNbtMetaDataNodeTypeTab> Tabs = new Collection<CswNbtMetaDataNodeTypeTab>();
             foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
             {
-                JProperty TabProp = new JProperty( Tab.TabName );
+                Tabs.Add( Tab );
+            }
+            for( Int32 i = 0; i < Tabs.Count; i++ )
+            {
+                CswNbtMetaDataNodeTypeTab CurrentTab = Tabs[i];
+
+                JProperty TabProp = new JProperty( CurrentTab.TabName );
                 SubItemsJProp.Add( TabProp );
 
                 JObject TabObj = new JObject();
                 TabProp.Value = TabObj;
 
-                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder
+                //if( i > 1 )
+                //{
+                //    CswNbtMetaDataNodeTypeTab PrevTab = Tabs[i - 1];
+                //    TabObj.Add( new JProperty( "prevtab", PrevTab.TabName ) );
+                //}
+                if( i < Tabs.Count - 1 )
+                {
+                    CswNbtMetaDataNodeTypeTab NextTab = Tabs[i + 1];
+                    TabObj.Add( new JProperty( "nexttab", NextTab.TabName ) );
+                }
+
+                foreach( CswNbtMetaDataNodeTypeProp Prop in CurrentTab.NodeTypePropsByDisplayOrder
                                                                 .Cast<CswNbtMetaDataNodeTypeProp>()
                                                                 .Where( Prop => !Prop.HideInMobile &&
                                                                         Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&

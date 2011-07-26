@@ -521,7 +521,9 @@ CswAppMode.mode = 'mobile';
                 HideOnlineButton: false,
                 HideRefreshButton: false,
                 HideHelpButton: false,
-                HideBackButton: false
+                HideBackButton: false,
+                prevTab: '',
+                nextTab: ''
             };
             if (params) $.extend(p, params);
 
@@ -541,17 +543,29 @@ CswAppMode.mode = 'mobile';
 
             var $list = $content.cswUL({cssclass: 'csw_listview'});
             currenttab = '';
-
+            
             for(var key in p.json)
             {
                 var item = { };
                 $.extend(item, p);
-                item.json = { id: key, value: p.json[key]};
+                item.json = { id: key, value: p.json[key] };
                 _makeListItemFromJson($list, item)
                     .CswAttrXml('data-icon', false) //hides the arrow
                     .appendTo($list);
             }
 
+            if( !isNullOrEmpty(p.nextTab) ) {
+                var item = { };
+                $.extend(item, p);
+                item.json = { id: p.nextTab };
+                item.PageType = 'tab';
+                item.DivId = item.ParentId;
+                item.suppressProps = true;
+                _makeListItemFromJson($list, item)
+                    //.CswAttrXml('data-icon', true) //show the arrow
+                    .appendTo($list);
+            }
+            
             logger.setAjaxSuccess();
             
             _resetPendingChanges();
@@ -576,7 +590,9 @@ CswAppMode.mode = 'mobile';
                 parentlevel: '',
                 level: '',
                 HideRefreshButton: false,
-                HideSearchButton: false
+                HideSearchButton: false,
+                nextTab: '',
+                suppressProps: false
             };
             if (params) $.extend(p, params);
 
@@ -609,23 +625,36 @@ CswAppMode.mode = 'mobile';
                                             'data-url': id
                                         });
                         
-                        setTimeout(function() {
-                            _processViewJson({
-                                ParentId: p.DivId,
-                                DivId: id,
-                                HeaderText: text,
-                                json: p.json['value'],
-                                parentlevel: p.level,
-                                level: p.level + 1,
-                                PageType: 'prop'
-                            });
-                        }, 500);
+                        var nextTab = (!isNullOrEmpty(p.json['value'])) ? p.json['value']['nexttab'] : '';
+                        if( !isNullOrEmpty(nextTab)) {
+                            //we're creating a tab link on a prop
+                            delete p.json['value']['nexttab'];
+                        }
+
+                        if( !p.suppressProps) {
+                            //we're creating a tab link which needs child props
+                            setTimeout(function() {
+                                _processViewJson({
+                                        ParentId: p.DivId,
+                                        DivId: id,
+                                        HeaderText: text,
+                                        json: p.json['value'],
+                                        parentlevel: p.level,
+                                        level: p.level + 1,
+                                        PageType: 'prop',
+                                        nextTab: nextTab,
+                                        suppressProps: true
+                                    });
+                            }, 500);
+                        }
                         break;   
                     } // case 'prop':
                 case 'prop':
                     {
-                        _FieldTypeJsonToHtml(p.json['value'], p.DivId, p.json['id'])
-                                    .appendTo($list);
+                        if( !isNullOrEmpty(p.json['value']) && !isNullOrEmpty(p.json['id']) ) {
+                            _FieldTypeJsonToHtml(p.json['value'], p.DivId, p.json['id'])
+                                .appendTo($list);
+                        }
                         break;
                     }
                 default:
