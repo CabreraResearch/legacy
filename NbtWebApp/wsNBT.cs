@@ -338,7 +338,7 @@ namespace ChemSW.Nbt.WebServices
 
                 _CswSessionResources.purgeExpiredSessions(); //bury the overhead of nuking old sessions in the overhead of authenticating
 
-                _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+                _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus, IsMobile );
                 _deInitResources();
             }
             catch( Exception ex )

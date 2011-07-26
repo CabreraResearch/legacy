@@ -477,6 +477,7 @@ CswAppMode.mode = 'mobile';
             };
             CswAjaxJSON({
                     //async: false,   // required so that the link will wait for the content before navigating
+                    formobile: ForMobile,
                     url: p.url,
                     data: jsonData,
                     onloginfail: function(text) { onLoginFail(text); },
