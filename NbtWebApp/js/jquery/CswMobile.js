@@ -521,8 +521,6 @@ CswAppMode.mode = 'mobile';
             return $retDiv;
         }
 
-        var currenttab;
-
         function _processViewJson(params) {
             var logger = new profileMethod('processViewJson');
             var p = {
@@ -558,7 +556,6 @@ CswAppMode.mode = 'mobile';
 
             var showLoading = (p.PageType !== 'prop');
             var $list = $content.cswUL({cssclass: 'csw_listview', showLoading: showLoading});
-            currenttab = '';
             
             for(var key in p.json)
             {
