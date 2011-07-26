@@ -68,8 +68,16 @@ CswAppMode.mode = 'mobile';
         return ret;
     };
 
-    $.fn.bindJqmEvents = function(params) {
+    $.fn.unbindJqmEvents = function() {
         var $div = $(this);
+        if (!isNullOrEmpty($div) && $div.length > 0) {
+            $div.unbind('pageshow');
+        }
+        return $div;
+    };
+
+    $.fn.bindJqmEvents = function(params) {
+        var $div = $(this); 
         var $ret = false;
         if (!isNullOrEmpty($div)) {
             var p = {
@@ -87,7 +95,6 @@ CswAppMode.mode = 'mobile';
             if (params) $.extend(p, params);
             p.level = (p.parentlevel === p.level) ? p.parentlevel + 1 : p.level;
 
-            //$div.unbind('pageshow');
             $ret = $div.bind('pageshow', function() {
                 if (p.level === 1) storeLocalData('currentviewid', p.DivId);
                 p.onPageShow(p);
@@ -233,6 +240,7 @@ CswAppMode.mode = 'mobile';
             }
             params.onPageShow = function() { return _loadDivContents(params); };
 
+            $viewsdiv.unbindJqmEvents();
             $viewsdiv.bindJqmEvents(params);
             return $viewsdiv;
         }
@@ -381,6 +389,7 @@ CswAppMode.mode = 'mobile';
                     $content: $( JSON.parse(sessionStorage['debuglog']))
                 };
                 var $logDiv = _addPageDivToBody(params);
+                $logDiv.unbindJqmEvents();
                 $logDiv.bindJqmEvents(params);
                 $logDiv.cswChangePage();
             }
@@ -475,6 +484,7 @@ CswAppMode.mode = 'mobile';
                 ParentId: p.DivId,
                 ForMobile: ForMobile
             };
+        
             CswAjaxJSON({
                     //async: false,   // required so that the link will wait for the content before navigating
                     formobile: ForMobile,
@@ -685,6 +695,7 @@ CswAppMode.mode = 'mobile';
                         HeaderText: text  };
                     var $div = _addPageDivToBody(par);
                     par.onPageShow = function() { return _loadDivContents(par); };
+                    $div.unbindJqmEvents();
                     $div.bindJqmEvents(par);
                     $div.cswChangePage({ reloadPage: true });
                 });
