@@ -298,10 +298,13 @@ namespace ChemSW.Nbt.WebServices
                 JObject Tabs = (JObject) NodeObj.Property( "subitems" ).Value;
                 foreach( JProperty Prop in from Tab
                                                in Tabs.Properties()
+                                           where ( null != Tab.Value )
                                            select (JObject) Tab.Value
                                                into TabProps
                                                from Prop
                                                    in TabProps.Properties()
+                                               where ( null != Prop.Value &&
+                                                        Prop.Name != "nexttab" )
                                                let PropAtr = (JObject) Prop.Value
                                                where null != PropAtr.Property( "wasmodified" ) &&
                                                      CswConvert.ToBoolean( PropAtr.Property( "wasmodified" ).Value )
