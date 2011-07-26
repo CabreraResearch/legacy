@@ -212,8 +212,10 @@ CswAppMode.mode = 'mobile';
                     .css('color','yellow');
             }
             
-            $('#loginsubmit').bind('click', function() {
-                return startLoadingMsg(function() { onLoginSubmit(); });
+            $('#loginsubmit')
+                .unbind('click')
+                .bind('click', function() {
+                    return startLoadingMsg(function() { onLoginSubmit(); });
             });
             $('#login_customerid').clickOnEnter($('#loginsubmit'));
             $('#login_username').clickOnEnter($('#loginsubmit'));
@@ -684,7 +686,8 @@ CswAppMode.mode = 'mobile';
                         break;
                     }// default:
             }
-            
+
+            $retLI.unbind('click');
             $retLI.bind('click', function() {
                 return startLoadingMsg(function() {
                     var par = {ParentId: p.DivId,
@@ -900,6 +903,7 @@ CswAppMode.mode = 'mobile';
                         if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
                             $corAction.css('display', 'none');
                         }
+                        $corAction.unbind('change');
                         $corAction.bind('change', function(eventObj) {
                             var $cor = $(this);
                             if ($cor.val() === '') {
@@ -912,6 +916,7 @@ CswAppMode.mode = 'mobile';
 
                         $('<textarea name="' + IdStr + '_input" id="' + IdStr + '_input" placeholder="Comments">' + sf_comments + '</textarea>')
                             .appendTo($prop)
+                            .unbind('change')
                             .bind('change', function(eventObj) {
                                 var $com = $(this);
                                 onPropertyChange(ParentId, eventObj, $com.val(), IdStr + '_com', IdStr);
@@ -932,7 +937,7 @@ CswAppMode.mode = 'mobile';
                     } // switch (FieldType)
 
                     if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
-                        $prop.bind('change', function(eventObj) {
+                        $prop.unbind('change').bind('change', function(eventObj) {
                             var $this = $(this);
                             onPropertyChange(ParentId, eventObj, $this.val(), propId, Id);
                         });
@@ -1778,6 +1783,7 @@ CswAppMode.mode = 'mobile';
                                                 });
                 $wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
                                                 .CswAttrXml({ 'data-role': 'button' })
+                                                .unbind('click')
                                                 .bind('click', function() {
                                                     return startLoadingMsg( function () { onSearchSubmit(DivId); });
                                                 });
