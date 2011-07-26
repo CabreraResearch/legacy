@@ -309,9 +309,9 @@ CswAppMode.mode = 'mobile';
             }
         }
 
-        function amOnline(amOnline,loginFailure) {
+        function amOnline(isOnline,loginFailure) {
             if(arguments.length > 0 ) {
-                storeLocalData('online', isTrue(amOnline) );
+                storeLocalData('online', isTrue(isOnline) );
             }
             if(loginFailure) {
                 storeLocalData('loginFailure',loginFailure );
