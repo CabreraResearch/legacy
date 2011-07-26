@@ -257,7 +257,7 @@ namespace ChemSW.Nbt.WebServices
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "id", PropIdAttr.ToString() );
 
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "name", Prop.PropNameWithQuestionNo );
-			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "helptext", Prop.HelpText );
+			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "helptext", PropWrapper.HelpText );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "fieldtype", Prop.FieldType.FieldType.ToString() );
 			if( Prop.ObjectClassProp != null )
 			{

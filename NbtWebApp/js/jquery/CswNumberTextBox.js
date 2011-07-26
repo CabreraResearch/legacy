@@ -18,12 +18,13 @@
 				'Precision': '',
 				'ReadOnly': false,
 				'Required': false,
-				'onchange': function() { }
+				'onchange': function() { },
+				'width': ''
 			};
 			if(options) $.extend(o, options);
 
 			var $Div = $(this);
-			$Div.contents().remove();
+			//$Div.contents().remove();
 
 			if (o.ReadOnly)
 			{
@@ -35,7 +36,8 @@
                                                         type: CswInput_Types.text,
                                                         value: o.Value,
                                                         cssclass: 'textinput number',
-                                                        onChange: o.onchange
+                                                        onChange: o.onchange,
+														width: o.width
                                                      }); 
 
 				if (o.MinValue !== undefined)
@@ -77,16 +79,16 @@
 				return $TextBox;
 			}
 		},
-		value: function ()
+		value: function (id)
 		{
 			var $Div = $(this);
-			var $TextBox = $Div.find('input');
+			var $TextBox = $Div.find('input[id="'+id+'"]');
 			return $TextBox.val();
 		},
-		setValue: function (newvalue)
+		setValue: function (id, newvalue)
 		{
 			var $Div = $(this);
-			var $TextBox = $Div.find('input');
+			var $TextBox = $Div.find('input[id="'+id+'"]');
             if( newvalue !== undefined )
 			{
                 $TextBox.val( newvalue );

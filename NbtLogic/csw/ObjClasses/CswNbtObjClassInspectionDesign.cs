@@ -65,6 +65,10 @@ namespace ChemSW.Nbt.ObjClasses
         /// Location of Inspection's Target
         /// </summary>
         public static string LocationPropertyName { get { return "Location"; } }
+		/// <summary>
+		/// Nodetype Version
+		/// </summary>
+		public static string VersionPropertyName { get { return "Version"; } }
 
         /// <summary>
         /// Possible status values for Inspection. Should match List values on ID Status attribute.
@@ -247,10 +251,13 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-            _CswNbtObjClassDefault.beforeCreateNode();
-        }
 
-        // beforeCreateNode()
+			// case 8179 - set value of Version property
+			CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
+			Version.Text = ThisNodeType.NodeTypeName + " v" + ThisNodeType.VersionNo.ToString();
+
+            _CswNbtObjClassDefault.beforeCreateNode();
+        } // beforeCreateNode()
 
         /// <summary>
         /// Lock Node Type
@@ -543,18 +550,29 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        /// <summary>
-        /// Location of Inspection's Target
-        /// </summary>
-        public CswNbtNodePropPropertyReference Location
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[LocationPropertyName].AsPropertyReference );
-            }
-        }
+		/// <summary>
+		/// Location of Inspection's Target
+		/// </summary>
+		public CswNbtNodePropPropertyReference Location
+		{
+			get
+			{
+				return ( _CswNbtNode.Properties[LocationPropertyName].AsPropertyReference );
+			}
+		}
 
-        #endregion
+		/// <summary>
+		/// Nodetype Version of the Inspection
+		/// </summary>
+		public CswNbtNodePropText Version
+		{
+			get
+			{
+				return ( _CswNbtNode.Properties[VersionPropertyName].AsText );
+			}
+		}
+
+		#endregion
 
 
 

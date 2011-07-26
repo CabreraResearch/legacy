@@ -96,6 +96,9 @@ $.CswFieldTypeFactory = function (method)
 				case "Relationship":
 					m.$propdiv.CswFieldTypeRelationship('init', m); //('init', nodeid, $propxml, onchange);
 					break;
+				case "Scientific":
+					m.$propdiv.CswFieldTypeScientific('init', m); //('init', nodeid, $propxml, onchange);
+					break;
 				case "Sequence":
 					m.$propdiv.CswFieldTypeSequence('init', m); //('init', nodeid, $propxml, onchange);
 					break;
@@ -121,7 +124,13 @@ $.CswFieldTypeFactory = function (method)
 					m.$propdiv.CswFieldTypeViewReference('init', m); //('init', nodeid, $propxml, onchange);
 					break;
 				default:
-					m.$propdiv.append(m.$propxml.CswAttrXml('init', m)); //('gestalt'));
+					m.$propdiv.append(m.$propxml.CswAttrXml('gestalt'));
+					CswError({
+						'type': 'Error',
+						'message': 'Unrecognized Field Type',
+						'detail': 'CswFieldTypeFactory.make: Unrecognized Field Type: ' + m.fieldtype,
+						'display': true
+					});
 					break;
 			} // switch (fieldtype)
 		}, // make
@@ -201,6 +210,9 @@ $.CswFieldTypeFactory = function (method)
 				case "Relationship":
 					m.$propdiv.CswFieldTypeRelationship('save', m); //('save', $propdiv, $propxml);
 					break;
+				case "Scientific":
+					m.$propdiv.CswFieldTypeScientific('save', m); //('save', $propdiv, $propxml);
+					break;
 				case "Sequence":
 					m.$propdiv.CswFieldTypeSequence('save', m); //('save', $propdiv, $propxml);
 					break;
@@ -226,6 +238,12 @@ $.CswFieldTypeFactory = function (method)
 					m.$propdiv.CswFieldTypeViewReference('save', m); //('save', $propdiv, $propxml);
 					break;
 				default:
+					CswError({
+						'type': 'Error',
+						'message': 'Unrecognized Field Type',
+						'detail': 'CswFieldTypeFactory.save: Unrecognized Field Type: ' + m.fieldtype,
+						'display': true
+					});
 					break;
 			} // switch(fieldtype)
 		} // save
@@ -242,4 +260,4 @@ $.CswFieldTypeFactory = function (method)
 	{
 		$.error('Method ' + method + ' does not exist on ' + PluginName);
 	}
-}  // $.CswFieldTypeFactory
+}   // $.CswFieldTypeFactory

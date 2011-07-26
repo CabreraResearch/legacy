@@ -110,6 +110,7 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="js\jquery\fieldtypes\CswFieldTypeScientific.js" />
     <Content Include="Images\favicon.ico" />
     <Content Include="js\jquery\CswMobile.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js" />

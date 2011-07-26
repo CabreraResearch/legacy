@@ -332,20 +332,29 @@ function CswAjaxXml(options)
 
 function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
 {
-	/// <param name="$" type="jQuery" />
-    //	ErrorMessage = "A WebServices Error Occurred: " + textStatus;
-    //	if (null != errorThrown) {
-    //		ErrorMessage += "; Exception: " + errorThrown.toString()
-    //	}
-    var $errorsdiv = $('#ErrorDiv');
-    if ($errorsdiv.length > 0 && isTrue(errorJson.display))
-    {
-        $errorsdiv.CswErrorMessage({ 'type': errorJson.type, 'message': errorJson.message, 'detail': errorJson.detail });
-    } else
-    {
-        log(errorJson.message + '; ' + errorJson.detail);
-    }
+	CswError(errorJson);
 } // _handleAjaxError()
+
+function CswError(errorJson)
+{
+	var e = {
+		'type': '',
+		'message': '',
+		'detail': '',
+		'display': true
+	};
+	if (errorJson) $.extend(e, errorJson);
+
+	var $errorsdiv = $('#ErrorDiv');
+	if ($errorsdiv.length > 0 && isTrue(e.display))
+	{
+		$errorsdiv.CswErrorMessage({ 'type': e.type, 'message': e.message, 'detail': e.detail });
+	} 
+	else
+	{
+		log(e.message + '; ' + e.detail);
+	}
+} // CswError()
 
 function _handleAuthenticationStatus(options)
 {

@@ -13,6 +13,9 @@
             var $Div = $(this);
             $Div.contents().remove();
 
+			var IsExpired = o.$propxml.children('isexpired').text().trim();
+			var IsAdmin = o.$propxml.children('isadmin').text().trim();
+
             if(o.ReadOnly)
             {
                 // show nothing
@@ -27,6 +30,8 @@
                 var $cell12 = $table.CswTable('cell', 1, 2);
                 var $cell21 = $table.CswTable('cell', 2, 1);
                 var $cell22 = $table.CswTable('cell', 2, 2);
+                var $cell31 = $table.CswTable('cell', 3, 1);
+                var $cell32 = $table.CswTable('cell', 3, 2);
 
                 $cell11.append('Set New');
 				var $TextBox1 = $cell12.CswInput('init',{ID: o.ID + '_pwd1',
@@ -40,7 +45,20 @@
                                                          cssclass: 'textinput password2',
                                                          onChange: o.onchange
                                                  }); 
-
+                if(isTrue(IsAdmin))
+				{
+					var $IsExpiredCheck = $cell31.CswInput({ 
+							'id': o.ID + '_exp',
+							'name': o.ID + '_exp',
+							'type': CswInput_Types.checkbox
+						});
+					if(isTrue(IsExpired))
+					{
+						$IsExpiredCheck.CswAttrDom('checked', 'true');
+					}
+					$cell32.append('Expired');
+				}
+                
                 if(o.Required && isNullOrEmpty(o.$propxml.children('password').text()))
                 {
                     $TextBox1.addClass("required");
@@ -54,8 +72,14 @@
             }
         },
         save: function(o) { //$propdiv, $xml
+                var $IsExpiredCheck = o.$propdiv.find('input#' + o.ID + '_exp');
+				if($IsExpiredCheck.length > 0)
+				{
+					o.$propxml.children('isexpired').text($IsExpiredCheck.is(':checked'));
+                }
+				
                 var $TextBox = o.$propdiv.find('input#' + o.ID + '_pwd1');
-                var newpw = $TextBox.val();
+				var newpw = $TextBox.val();
 				if(newpw !== '')
 				{
 					o.$propxml.children('newpassword').text(newpw);

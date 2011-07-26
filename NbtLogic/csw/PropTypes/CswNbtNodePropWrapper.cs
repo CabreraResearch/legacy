@@ -127,6 +127,28 @@ namespace ChemSW.Nbt.PropTypes
 
         public bool AuditChanged { get { return _CswNbtNodePropData.AuditChanged; } }
 
+		// case 21809
+		private string _HelpText = string.Empty;
+		public string HelpText
+		{
+			get
+			{
+				string ret = NodeTypeProp.HelpText;
+				if( _HelpText != string.Empty && NodeTypeProp.HelpText != string.Empty )
+				{
+					ret += " ";
+				}
+				if( _HelpText != string.Empty )
+				{
+					ret += _HelpText;
+				}
+				return ret;
+			}
+			set { _HelpText = value; }
+		}
+	
+
+
 
         /// <summary>
         /// Returns defined Field Type attributes/subfields as XmlDocument class XmlNode
@@ -443,17 +465,27 @@ namespace ChemSW.Nbt.PropTypes
         }//Relationship
 
 
-        public CswNbtNodePropSequence AsSequence
-        {
-            get
-            {
-                if( !( _CswNbtNodeProp is CswNbtNodePropSequence ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropSequence ) ) ) );
-                return ( (CswNbtNodePropSequence) _CswNbtNodeProp );
-            }
-        }//Sequence
+		public CswNbtNodePropScientific AsScientific
+		{
+			get
+			{
+				if( !( _CswNbtNodeProp is CswNbtNodePropScientific ) )
+					throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropScientific ) ) ) );
+				return ( (CswNbtNodePropScientific) _CswNbtNodeProp );
+			}
+		}//Scientific
 
-        public CswNbtNodePropStatic AsStatic
+		public CswNbtNodePropSequence AsSequence
+		{
+			get
+			{
+				if( !( _CswNbtNodeProp is CswNbtNodePropSequence ) )
+					throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropSequence ) ) ) );
+				return ( (CswNbtNodePropSequence) _CswNbtNodeProp );
+			}
+		}//Sequence
+
+		public CswNbtNodePropStatic AsStatic
         {
             get
             {

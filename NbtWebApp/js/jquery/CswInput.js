@@ -55,7 +55,7 @@
 
                 o.width = tryParseString( o.width, o.type.defaultwidth);
             }
-            
+
             if( !isNullOrEmpty( o.cssclass ) ) $input.addClass(o.cssclass);
             if( !isNullOrEmpty( o.width ) ) $input.css('width', o.width);
             if( isTrue( o.autofocus ) ) $input.CswAttrDom('autofocus', o.autofocus);

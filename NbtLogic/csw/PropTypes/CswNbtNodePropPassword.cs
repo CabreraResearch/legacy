@@ -101,16 +101,29 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 EncryptedPassword = _CswEncryption.getMd5Hash( value );
+				ChangedDate = DateTime.Now;
             }
         }
+
+		public bool IsExpired
+		{
+			get
+			{
+				Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "passwordexpiry_days" ) );
+				return ( ChangedDate == DateTime.MinValue ||
+						 ChangedDate.AddDays( PasswordExpiryDays ).Date <= DateTime.Now.Date );
+			}
+		}
 
         public override void ToXml( XmlNode ParentNode )
         {
             CswXmlDocument.AppendXmlNode( ParentNode, _EncryptedPasswordSubField.ToXmlNodeName(), EncryptedPassword );
 
             // We don't provide the raw password, but we do provide a node in which someone can set a new password for saving
-            CswXmlDocument.AppendXmlNode( ParentNode, "newpassword", "" );
-        }
+			CswXmlDocument.AppendXmlNode( ParentNode, "newpassword", "" );
+			CswXmlDocument.AppendXmlNode( ParentNode, "isexpired", IsExpired.ToString().ToLower() );
+			CswXmlDocument.AppendXmlNode( ParentNode, "isadmin", _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower() );
+		}
 
         public override void ToXElement( XElement ParentNode )
         {
@@ -124,12 +137,18 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject.Add( new JProperty( "newpassword" ) );
         }
 
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            EncryptedPassword = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _EncryptedPasswordSubField.ToXmlNodeName() );
-            _saveProp( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" ) );
+		public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+		{
+			EncryptedPassword = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _EncryptedPasswordSubField.ToXmlNodeName() );
 
-        }
+			bool inIsExpired = CswXmlDocument.ChildXmlNodeValueAsBoolean( XmlNode, "isexpired" );
+			if( inIsExpired && !IsExpired )
+			{
+				ChangedDate = DateTime.MinValue;
+			}
+
+			_saveProp( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" ) );
+		}
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {

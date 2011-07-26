@@ -295,7 +295,7 @@ var CswViewEditor_WizardSteps = {
 							}
 							var mode = $currentviewxml.CswAttrXml('mode')
 							$displaymodespan.text(mode);
-							$gridwidthtextboxcell.CswNumberTextBox('setValue', $currentviewxml.CswAttrXml('width'));
+							$gridwidthtextboxcell.CswNumberTextBox('setValue', o.ID + '_gridwidth', $currentviewxml.CswAttrXml('width'));
 							if(mode === "Grid") {
 								$gridwidthlabelcell.show();
 								$gridwidthtextboxcell.show();
@@ -366,7 +366,7 @@ var CswViewEditor_WizardSteps = {
 			}
             var formobile = ($formobilecheckbox.is(':checked') ? 'true' : 'false');
 			$currentviewxml.CswAttrXml('formobile', formobile );
-			$currentviewxml.CswAttrXml('width', $gridwidthtextboxcell.CswNumberTextBox('value'));
+			$currentviewxml.CswAttrXml('width', $gridwidthtextboxcell.CswNumberTextBox('value', o.ID + '_gridwidth'));
         }
 
 		function _handlePrevious($wizard, newstepno)
