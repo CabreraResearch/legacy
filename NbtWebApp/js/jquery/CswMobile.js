@@ -19,7 +19,8 @@ CswAppMode.mode = 'mobile';
             'data-filter': false,
             'data-role': 'listview',
             'data-inset': true,
-            'cssclass': ''
+            'cssclass': '',
+            'showLoading': true
         };
         if (params) $.extend(p, params);
 
@@ -28,8 +29,10 @@ CswAppMode.mode = 'mobile';
         if (!isNullOrEmpty($div)) {
             $ret = $('<ul class="' + p.cssclass + '" id="' + tryParseString(p.id, '') + '"></ul>')
                                                     .appendTo($div)
-                                                    .bind('click', function () { $.mobile.showPageLoadingMsg; })
                                                     .CswAttrXml(p);
+            if(params.showLoading) {
+                $ret.bind('click', function() { $.mobile.showPageLoadingMsg(); });
+            }
         }
         return $ret;
     };
@@ -553,7 +556,8 @@ CswAppMode.mode = 'mobile';
 
             var $content = $retDiv.find('div:jqmData(role="content")').empty();
 
-            var $list = $content.cswUL({cssclass: 'csw_listview'});
+            var showLoading = (p.PageType !== 'prop');
+            var $list = $content.cswUL({cssclass: 'csw_listview', showLoading: showLoading});
             currenttab = '';
             
             for(var key in p.json)
