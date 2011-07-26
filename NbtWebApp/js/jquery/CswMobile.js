@@ -99,6 +99,7 @@ CswAppMode.mode = 'mobile';
                 if (p.level === 1) storeLocalData('currentviewid', p.DivId);
                 p.onPageShow(p);
                 if($('#logindiv')) $('#logindiv').remove();
+                fixGeometry();
             });
         }
         return $ret;
@@ -1147,6 +1148,7 @@ CswAppMode.mode = 'mobile';
                             $li.removeClass('OOC');
                         }
                     }
+                    fixGeometry();
                     onPropertyChange(ParentId, eventObj, thisAnswer, answerName, IdStr);
 
                     return false;
