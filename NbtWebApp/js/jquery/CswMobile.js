@@ -1574,7 +1574,7 @@ CswAppMode.mode = 'mobile';
                     HideOnlineButton: false,
                     HideRefreshButton: true,
                     HideHelpButton: true,
-                    HideBackButton: true
+                    HideBackButton: false
                 });
 
             return $retDiv;
