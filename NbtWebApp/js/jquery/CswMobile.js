@@ -522,7 +522,6 @@ CswAppMode.mode = 'mobile';
                 HideRefreshButton: false,
                 HideHelpButton: false,
                 HideBackButton: false,
-                prevTab: '',
                 nextTab: ''
             };
             if (params) $.extend(p, params);
