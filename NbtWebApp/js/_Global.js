@@ -1549,7 +1549,7 @@ if (typeof String.prototype.trim !== 'function')
     };
 }
 
-function hasWebStorage(localOnly)
+function hasWebStorage()
 {
     var ret = (Modernizr.localstorage || Modernizr.sessionstorage); 
     return ret;
@@ -1565,15 +1565,15 @@ function fixGeometry()
 
     /* Calculate the geometry that our content area should take */
     var $header = $("div[data-role='header']:visible");
-    var footer = $("div[data-role='footer']:visible");
-    var content = $("div[data-role='content']:visible");
+    var $footer = $("div[data-role='footer']:visible");
+    var $content = $("div[data-role='content']:visible");
 
     var viewport_height = $(window).height();
-    var content_height = viewport_height - $header.outerHeight() - footer.outerHeight();
+    var content_height = viewport_height - $header.outerHeight() - $footer.outerHeight();
 
     //if ((content.outerHeight() - header.outerHeight() - footer.outerHeight()) <= viewport_height)
     //{
-    content_height -= (content.outerHeight() - content.height());
-    content.height(content_height);
+    content_height -= ($content.outerHeight() - $content.height());
+    $content.height(content_height);
     //} /* Trim margin/border/padding height */
 };
