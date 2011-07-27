@@ -337,7 +337,7 @@ CswAppMode.mode = 'mobile';
 
         function setStartLog() {
             if (doLogging()) {
-                var logger = new profileMethod('setStartLog');
+                var logger = new CswProfileMethod('setStartLog');
                 cacheLogInfo(logger);
                 $('.debug').removeClass('debug-off')
                             .addClass('debug-on')
@@ -358,7 +358,7 @@ CswAppMode.mode = 'mobile';
                             .addClass('debug-off')
                             .removeClass('debug-on')
                             .end();
-                var logger = new profileMethod('setStopLog');
+                var logger = new CswProfileMethod('setStopLog');
                 cacheLogInfo(logger);
 
                 var dataJson = {
@@ -403,7 +403,7 @@ CswAppMode.mode = 'mobile';
         // ------------------------------------------------------------------------------------
 
         function _loadDivContents(params) {
-            var logger = new profileMethod('loadDivContents');
+            var logger = new CswProfileMethod('loadDivContents');
 
             startLoadingMsg();
             kickStartAutoSync();
@@ -474,7 +474,7 @@ CswAppMode.mode = 'mobile';
         }
 
         function _getDivJson(params) {
-            var logger = new profileMethod('getDivJson');
+            var logger = new CswProfileMethod('getDivJson');
             var $retDiv = undefined;
 
             var p = {
@@ -520,7 +520,7 @@ CswAppMode.mode = 'mobile';
         }
 
         function _processViewJson(params) {
-            var logger = new profileMethod('processViewJson');
+            var logger = new CswProfileMethod('processViewJson');
             var p = {
                 ParentId: '',
                 DivId: '',
@@ -1715,7 +1715,7 @@ CswAppMode.mode = 'mobile';
         //#endregion Button Bindings
         
         function onPropertyChange(DivId, eventObj, inputVal, inputId, inputPropId) {
-            var logger = new profileMethod('onPropertyChange');
+            var logger = new CswProfileMethod('onPropertyChange');
             var $elm = $(eventObj.target);
 
             var name = tryParseString(inputId, $elm.CswAttrDom('id'));
@@ -1953,7 +1953,7 @@ CswAppMode.mode = 'mobile';
             /// <param name="viewJson" type="JSON">JSON representation of the nodes of the view</param>
             /// <param name="level" type="Number">Number indicating tree depth</param>
             /// <param name="viewSearch" type="JSON">JSON representation of the possible mobile searches on this view</param>
-            var logger = new profileMethod('storeViewJson');
+            var logger = new CswProfileMethod('storeViewJson');
             if(level === 0 && !isNullOrEmpty(viewJson))
             {
                 storedViews = {}; //the viewnames may have changed. clear to be sure.
@@ -2155,7 +2155,7 @@ CswAppMode.mode = 'mobile';
         } //_handleDataCheckTimer()
 
         function _processChanges(perpetuateTimer) {
-            var logger = new profileMethod('processChanges');
+            var logger = new CswProfileMethod('processChanges');
             if (!isNullOrEmpty(SessionId) && !mobileStorage.stayOffline() ) {
                 _processModifiedNodes(function(objectId, objectJSON) {
                     if (!isNullOrEmpty(objectId) && !isNullOrEmpty(objectJSON)) {

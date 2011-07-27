@@ -1510,7 +1510,7 @@ function cacheLogInfo(logger, includeCallStack)
         if (hasWebStorage())
         {
             if (undefined !== logger.setEnded) logger.setEnded();
-            var logStorage = new CswStorage(sessionStorage,JSON,true);
+            var logStorage = new CswClientDb(sessionStorage,JSON,true);
             var log = logStorage.getItem('debuglog');
             log += logger.toHtml();
 
