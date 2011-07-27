@@ -1551,7 +1551,7 @@ if (typeof String.prototype.trim !== 'function')
 
 function hasWebStorage(localOnly)
 {
-    var ret = (Modernizr.localstorage && (localOnly || Modernizr.sessionstorage)); 
+    var ret = (Modernizr.localstorage || Modernizr.sessionstorage); 
     return ret;
 }
 
