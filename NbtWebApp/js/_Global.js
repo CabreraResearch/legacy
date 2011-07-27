@@ -1510,7 +1510,7 @@ function cacheLogInfo(logger, includeCallStack)
         if (hasWebStorage())
         {
             if (undefined !== logger.setEnded) logger.setEnded();
-            var logStorage = new CswClientDb(sessionStorage,JSON,true);
+            var logStorage = new CswClientDb();
             var log = logStorage.getItem('debuglog');
             log += logger.toHtml();
 
@@ -1543,10 +1543,10 @@ function purgeLogInfo()
 // for IE 8
 if (typeof String.prototype.trim !== 'function')
 {
-    String.prototype.trim = function ()
+    String.prototype.trim = function()
     {
-        return this.replace(/^\s+|\s+$/g, '');
-    }
+        return this.replace( /^\s+|\s+$/g , '');
+    };
 }
 
 function hasWebStorage(localOnly)
@@ -1565,148 +1565,15 @@ function fixGeometry()
 
     /* Calculate the geometry that our content area should take */
     var $header = $("div[data-role='header']:visible");
-    var $footer = $("div[data-role='footer']:visible");
-    var $content = $("div[data-role='content']:visible");
+    var footer = $("div[data-role='footer']:visible");
+    var content = $("div[data-role='content']:visible");
 
     var viewport_height = $(window).height();
-    var content_height = viewport_height - $header.outerHeight() - $footer.outerHeight();
+    var content_height = viewport_height - $header.outerHeight() - footer.outerHeight();
 
     //if ((content.outerHeight() - header.outerHeight() - footer.outerHeight()) <= viewport_height)
     //{
-    content_height -= ($content.outerHeight() - $content.height());
-    $content.height(content_height);
+    content_height -= (content.outerHeight() - content.height());
+    content.height(content_height);
     //} /* Trim margin/border/padding height */
 };
-
-//#region LocalStorage
-
-var storedInMemory = {};
-
-function storeLocalData(key, value)
-{
-    /// <summary>
-    ///   Stores a key/value pair in localStorage. 
-    ///   If localStorage is full, use sessionStorage. 
-    ///   if sessionStorage is full, store in memory.
-    /// </summary>
-    /// <param name="key" type="String">The property name to store.</param>
-    /// <param name="value" type="String">The property value to store. If not a string, JSON.stringify will be called.</param>
-    if (!isNullOrEmpty(key))
-    {
-        var stringToStore = value;
-        if (typeof value === 'object')
-        {
-            stringToStore = JSON.stringify(value);
-        }
-        
-        try
-        {
-            localStorage[key] = stringToStore;
-        } catch (e)
-        {
-            if (debugOn()) {
-                log('localStorage failed:' + e);
-            }
-            
-            try
-            {
-                localStorage.removeItem(key);
-                sessionStorage[key] = stringToStore;
-            } catch (e)
-            {
-                if (debugOn()) {
-                    log('sessionStorage failed:' + e);
-                }
-                try {
-                    sessionStorage.removeItem(key);
-                    storedInMemory[key] = stringToStore;
-                }
-                catch(e) {
-                    if (debugOn()) {
-                        log('memory storage failed:' + e);
-                    }                    
-                }
-            }
-        }
-    }
-}
-
-function getStoredLocalJSON(key)
-{
-    /// <summary>
-    ///   Fetches a value from localStorage. 
-    ///   Attempts both localStorage and sessionStorage.
-    ///   Returns a JSON representation of value.
-    /// </summary>
-    /// <param name="key" type="String">The property name to store.</param>
-    var ret = {};
-    if (!isNullOrEmpty(key))
-    {
-        var storedString = tryParseString(localStorage[key], '');
-        if (isNullOrEmpty(storedString) || storedString === 'undefined')
-        {
-            storedString = tryParseString(localStorage[key], '');
-        }
-        if (!isNullOrEmpty(storedString) && storedString !== 'undefined')
-        {
-            try
-            {
-                ret = JSON.parse(storedString);
-            }
-            catch(e) {
-                ret = storedString;
-            }
-        }
-        else if (!isNullOrEmpty(storedInMemory[key]))
-        {
-            ret = storedInMemory[key];
-        }
-    }
-    return ret;
-}
-
-function getStoredLocalString(key)
-{
-    /// <summary>
-    ///   Fetches a value from localStorage. 
-    ///   Attempts both localStorage and sessionStorage.
-    ///   Returns a string.
-    /// </summary>
-    /// <param name="key" type="String">The property name to store.</param>
-    var ret = '';
-    if (!isNullOrEmpty(key))
-    {
-        var storedString = tryParseString(localStorage[key], '');
-        if (isNullOrEmpty(storedString) || storedString === 'undefined')
-        {
-            storedString = tryParseString(localStorage[key], '');
-        }
-        if (!isNullOrEmpty(storedString) && storedString !== 'undefined')
-        {
-            ret = storedString;
-        }
-        else if (!isNullOrEmpty(storedInMemory[key]))
-        {
-            ret = JSON.stringify(storedInMemory[key]);
-        }
-    }
-    return ret;
-}
-
-function removeStoredLocalData(key)
-{
-    //these are all null safe
-    delete storedInMemory[key];
-    localStorage.removeItem(key);
-    sessionStorage.removeItem(key);
-}
-
-
-function clearStorage()
-{
-    sessionStorage.clear();
-    localStorage.clear();
-    storedInMemory = {};
-}
-
-//#endregion LocalStorage

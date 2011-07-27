@@ -3,84 +3,144 @@
 ///// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 ///// <reference path="_Global.js" />
 
-//#region CswLocalStorage
-function CswClientDb(nativeStorage, serializer, useJSON)
+//#region CswClientDb
+function CswClientDb()
 {
-    //abstracts localStorage or sessionStorage
-    this.storage = nativeStorage;
-    this.useJSON = useJSON;
-    this.serializer = serializer;
-    if (useJSON)
-    {
-        this.serialize = this.serializer.stringify;
-        this.deserialize = this.serializer.parse;
-    }
-    else
-    {
-        this.serialize = this.serializer.serialize;
-        this.deserialize = this.serializer.deserialize;
-    }
+    //private
+    var storedInMemory = {};
+    var keys = [];
+    
+    var serializer = JSON;
+    var serialize = serializer.stringify;
+    var deserialize = $.parseJSON;
 
-    this.keys = new Array;
+    //priveleged, public
+    this.clear = function() {
+        //nuke the entire storage collection
+        localStorage.clear();
+        sessionStorage.clear();
+        storedInMemory = {};
+        return this;
+    };
+
+    this.getItem = function(key)
+    {
+        var ret = '';
+        if (!isNullOrEmpty(key))
+        {
+            var value = tryParseString(localStorage.getItem(key), '');
+            if (isNullOrEmpty(value) || value === 'undefined')
+            {
+                value = tryParseString(sessionStorage.getItem(key), '');
+            }
+            if (isNullOrEmpty(value) || value === 'undefined')
+            {
+                value = tryParseString( storedInMemory[key], '');
+            }
+            if (!isNullOrEmpty(value) && value !== 'undefined')
+            {
+                try
+                {
+                    ret = deserialize(value);
+                }
+                catch(e)
+                {
+                    ret = value;
+                }
+            }
+        }
+        return ret;
+    };
+
+    this.getKeys = function ()
+    {
+        if (isNullOrEmpty(keys) && localStorage.length > 0)
+        {
+            for (var key in localStorage)
+            {
+                keys.push(key);
+            }
+            if (sessionStorage.length > 0)
+            {
+                for (var key in sessionStorage)
+                {
+                    keys.push(key);
+                }
+            }
+            if (storedInMemory.length > 0)
+            {
+                for (var key in storedInMemory)
+                {
+                    keys.push(key);
+                }
+            }
+        }
+        return keys;
+    };
+
+    this.hasKey = function(key)
+    {
+        var ret = (this.getKeys().indexOf(key) !== -1);
+        return ret;
+    };
+
+    this.removeItem = function(key)
+    {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+        delete storedInMemory[key];
+        delete keys[key];
+    };
+
+    this.setItem = function (key, value)
+    {
+        /// <summary>
+        ///   Stores a key/value pair in localStorage. 
+        ///   If localStorage is full, use sessionStorage. 
+        ///   if sessionStorage is full, store in memory.
+        /// </summary>
+        /// <param name="key" type="String">The property name to store.</param>
+        /// <param name="value" type="String">The property value to store. If not a string, serializer will be called.</param>
+        /// <returns type="Boolean">True if successful</returns>
+        var ret = true;
+        if (!isNullOrEmpty(key))
+        {
+            if (!this.hasKey(key))
+            {
+                keys.push(key);
+            }
+            var val = (typeof value === 'object') ? serialize(value) : value;
+
+            // if localStorage is full, we should fail gracefully into sessionStorage, then memory
+            try {
+                localStorage.setItem(key, val);
+            }
+            catch (locErr) {
+                try {
+                    if (debugOn()) {
+                        log('localStorage failed:' + locErr);
+                    }
+                    localStorage.removeItem(key);
+                    sessionStorage.setItem(key, val);
+                } catch (ssnErr) {
+                    if (debugOn()) {
+                        log('sessionStorage failed:' + ssnErr);
+                    }
+                    try {
+                        sessionStorage.removeItem(key);
+                        storedInMemory[key] = value;
+                    }
+                    catch (memErr) {
+                        if (debugOn()) {
+                            log('memory storage failed:' + memErr);
+                        }
+                        ret = false;
+                    }
+                }
+            }
+        }
+        return ret;
+    };
 }
 
-CswClientDb.prototype = {
-
-    clear: function ()
-    {
-        //only clear the storage consumed by this instance
-        for (var key in this.keys)
-        {
-            var keyName = this.keys[key];
-            this.storage.removeItem(keyName);
-        }
-        return (this);
-    },
-    purgeAllStorage: function ()
-    {
-        //nuke the entire storage collection
-        this.storage.clear();
-        return this;
-    },
-    getItem: function (key, defaultValue)
-    {
-        var ret;
-        var value = this.storage.getItem(key);
-        if (isNullOrEmpty(value))
-        {
-            ret = (!isNullOrEmpty(defaultValue)) ? defaultValue : null;
-        }
-        else
-        {
-            ret = this.deserialize(value);
-        }
-        return ret;
-    },
-    getKeys: function ()
-    {
-        var ret = this.keys;
-        return ret;
-    },
-    hasItem: function (key)
-    {
-        ret = (!isNullOrEmpty(this.storage.getItem(key)));
-        return ret;
-    },
-    removeItem: function (key)
-    {
-        this.storage.removeItem(key);
-        return (this);
-    },
-    setItem: function (key, value)
-    {
-        if (this.keys.indexOf(key) === -1)
-        {
-            this.keys.push(key);
-        }
-        var val = this.serialize(value);
-        this.storage.setItem(key, val);
-        return (this);
-    }
-    //TODO: space evaluation, storage event handlers
-};
-//#endregion CswLocalStorage
+//#endregion CswClientDb
