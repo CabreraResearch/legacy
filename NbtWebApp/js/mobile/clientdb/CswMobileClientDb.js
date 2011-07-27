@@ -95,7 +95,7 @@ function CswMobileClientDb()
         return nodeJson;
     };
 
-    this.deleteNode = function(nodeId, viewId, onSuccess) {
+    this.deleteNode = function(nodeId, viewId) {
         /// <summary>
         ///   Remove a node from localStorage and the DOM
         /// </summary>
@@ -117,11 +117,6 @@ function CswMobileClientDb()
                 delete view['json'][nodeId];
                 this.setItem(viewId, view);
             }
-            //onSuccess
-//            if (reloadView)
-//            {
-//                $('#' + viewId).cswChangePage();
-//            }
         }
     };
 

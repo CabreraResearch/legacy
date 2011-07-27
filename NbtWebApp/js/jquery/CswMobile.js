@@ -1904,9 +1904,12 @@ CswAppMode.mode = 'mobile';
                                     _resetPendingChanges(true);
                                     
                                     processChangesLoop(perpetuateTimer);
-                                    var reloadView = !perpetuateTimer;
+
                                     if( completed && !isView ) {
-                                        _deleteNode(objectId, objectJSON['viewid'], reloadView);
+                                        mobileStorage.deleteNode(objectId, objectJSON['viewid']);
+                                        if( !perpetuateTimer ) {
+                                            $('#' + objectJSON['viewid']).CswChangePage();
+                                        }
                                     }
                                 },
                                 error: function() {
