@@ -6,6 +6,7 @@
 /// <reference path="../CswClientDb.js" />
 /// <reference path="../CswEnums.js" />
 /// <reference path="../CswProfileMethod.js" />
+/// <reference path="../mobile/CswMobileTools.js" />
 
 //var profiler = $createProfiler();
 
@@ -13,98 +14,6 @@ CswAppMode.mode = 'mobile';
 
 ;(function($) {
     /// <param name="$" type="jQuery" />
-
-    $.fn.cswUL = function(params) {
-        var p = {
-            'id': '',
-            'data-filter': false,
-            'data-role': 'listview',
-            'data-inset': true,
-            'cssclass': '',
-            'showLoading': true
-        };
-        if (params) $.extend(p, params);
-
-        var $div = $(this);
-        var $ret = undefined;
-        if (!isNullOrEmpty($div)) {
-            $ret = $('<ul class="' + p.cssclass + '" id="' + tryParseString(p.id, '') + '"></ul>')
-                                                    .appendTo($div)
-                                                    .CswAttrXml(p);
-            if(params.showLoading) {
-                $ret.bind('click', function() { $.mobile.showPageLoadingMsg(); });
-            }
-        }
-        return $ret;
-    };
-
-    $.fn.cswChangePage = function(options) {
-        var o = {
-            transition: 'fade'
-            //reverse: false,
-            //changeHash: true,
-            //role: 'page',
-            //pageContainer: $.mobile.pageContainer,
-            //type: 'get',
-            //data: undefined,
-            //reloadPage: false,
-            //showLoadMsg: true
-        };
-        if (options) $.extend(o, options);
-
-        var $div = $(this);
-        var ret = false;
-        if (!isNullOrEmpty($div)) {
-            ret = $.mobile.changePage($div, o);
-        }
-        return ret;
-    };
-
-    $.fn.cswPage = function() {
-        var $div = $(this);
-        var ret = false;
-        if (!isNullOrEmpty($div)) {
-            ret = $div.page(); 
-        }
-        return ret;
-    };
-
-    $.fn.unbindJqmEvents = function() {
-        var $div = $(this);
-        if (!isNullOrEmpty($div) && $div.length > 0) {
-            $div.unbind('pageshow');
-        }
-        return $div;
-    };
-
-    $.fn.bindJqmEvents = function(params) {
-        var $div = $(this); 
-        var $ret = false;
-        if (!isNullOrEmpty($div)) {
-            var p = {
-                ParentId: '',
-                DivId: '',
-                HeaderText: '',
-                json: '',
-                parentlevel: 0,
-                level: 1,
-                HideRefreshButton: false,
-                HideSearchButton: false,
-                onPageShow: function() {}
-            };
-
-            if (params) $.extend(p, params);
-            p.level = (p.parentlevel === p.level) ? p.parentlevel + 1 : p.level;
-
-            $ret = $div.bind('pageshow', function() {
-                if (p.level === 1) localStorage.setItem('currentviewid', p.DivId);
-                p.onPageShow(p);
-                if($('#logindiv')) $('#logindiv').remove();
-                fixGeometry();
-            });
-        }
-        return $ret;
-    };
 
     $.fn.CswMobile = function(options) {
         /// <summary>
@@ -152,21 +61,21 @@ CswAppMode.mode = 'mobile';
         // case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
         if (!isNullOrEmpty(SessionId)) {
-            $.mobile.path.set('#viewsdiv');
+            
             mobileStorage.setItem('refreshPage', 'viewsdiv');
         } else {
-            $.mobile.path.set('#logindiv');
+            $logindiv.CswSetPath();
             mobileStorage.setItem('refreshPage', 'logindiv' );
         }
               
         window.onload = function() {
             if (!isNullOrEmpty(SessionId)) {
-                $.mobile.path.set('#viewsdiv');
+                $viewsdiv.CswSetPath();
                 $viewsdiv = reloadViews();
                 _waitForData();
             }
             else {
-                $.mobile.path.set('#logindiv');
+                $logindiv.CswSetPath();
                 // this will trigger _waitForData(), but we don't want to wait here
                 _handleDataCheckTimer(
                     function() {
@@ -174,14 +83,14 @@ CswAppMode.mode = 'mobile';
                         if( !$logindiv || $logindiv.length === 0 ) {
                             $logindiv = _loadLoginDiv();
                         }
-                        $logindiv.cswChangePage();
+                        $logindiv.CswChangePage();
                     },
                     function() {
                         // offline
                         if( !$sorrycharliediv || $sorrycharliediv.length === 0 ) {
                             $sorrycharliediv = _loadSorryCharlieDiv();
                         }
-                        $sorrycharliediv.cswChangePage();
+                        $sorrycharliediv.CswChangePage();
                     }
                 );
             }
@@ -244,8 +153,8 @@ CswAppMode.mode = 'mobile';
             }
             params.onPageShow = function() { return _loadDivContents(params); };
 
-            $viewsdiv.unbindJqmEvents();
-            $viewsdiv.bindJqmEvents(params);
+            $viewsdiv.CswUnbindJqmEvents();
+            $viewsdiv.CswBindJqmEvents(params);
             return $viewsdiv;
         }
         
@@ -393,9 +302,9 @@ CswAppMode.mode = 'mobile';
                     $content: mobileStorage.getItem('debuglog')
                 };
                 var $logDiv = _addPageDivToBody(params);
-                $logDiv.unbindJqmEvents();
-                $logDiv.bindJqmEvents(params);
-                $logDiv.cswChangePage();
+                $logDiv.CswUnbindJqmEvents();
+                $logDiv.CswBindJqmEvents(params);
+                $logDiv.CswChangePage();
             }
         }
 
@@ -405,7 +314,9 @@ CswAppMode.mode = 'mobile';
 
         function _loadDivContents(params) {
             var logger = new CswProfileMethod('loadDivContents');
-
+            
+            if($('#logindiv')) $('#logindiv').remove();
+            
             startLoadingMsg();
             kickStartAutoSync();
             
@@ -698,9 +609,9 @@ CswAppMode.mode = 'mobile';
                         HeaderText: text  };
                     var $div = _addPageDivToBody(par);
                     par.onPageShow = function() { return _loadDivContents(par); };
-                    $div.unbindJqmEvents();
-                    $div.bindJqmEvents(par);
-                    $div.cswChangePage({ reloadPage: true });
+                    $div.CswUnbindJqmEvents();
+                    $div.CswBindJqmEvents(par);
+                    $div.CswChangePage({ reloadPage: true });
                 });
             });
             
@@ -1644,7 +1555,7 @@ CswAppMode.mode = 'mobile';
                             mobileStorage.username(UserName); 
                             mobileStorage.customerid(AccessId);
                             $viewsdiv = reloadViews();
-                            $viewsdiv.cswChangePage();
+                            $viewsdiv.CswChangePage();
                         },
                         error: function() {
                             onError();
@@ -1696,7 +1607,7 @@ CswAppMode.mode = 'mobile';
                                         HideBackButton: false
                                     };
                                     params.onPageShow = function() { return _loadDivContents(params); };
-                                    _loadDivContents(params).cswChangePage();
+                                    _loadDivContents(params).CswChangePage();
                                 }
                             }, // success
                             error: function() {
@@ -1708,12 +1619,12 @@ CswAppMode.mode = 'mobile';
         }
 
         function onSyncStatusOpen() {
-            $syncstatus.cswChangePage({ transition: 'slideup' });
+            $syncstatus.CswChangePage({ transition: 'slideup' });
         }
 
         function onHelp() {
             $help = _makeHelpDiv();
-            $help.cswChangePage({ transition: 'slideup' });
+            $help.CswChangePage({ transition: 'slideup' });
         }
 
         //#endregion Button Bindings
@@ -1804,7 +1715,7 @@ CswAppMode.mode = 'mobile';
                         HideHelpButton: false,
                         HideBackButton: false
                     });
-                $searchDiv.cswChangePage({ transition: 'slideup' });
+                $searchDiv.CswChangePage({ transition: 'slideup' });
             }
         }
 
@@ -1845,33 +1756,12 @@ CswAppMode.mode = 'mobile';
                 if (hitcount === 0) {
                     $content.append($('<li>No Results</li>'));
                 }
-                $content.cswPage();
+                $content.CswPage();
             }
             stopLoadingMsg();
         } // onSearchSubmit()
 
-        // ------------------------------------------------------------------------------------
-        // UI functions
-        // ------------------------------------------------------------------------------------
-        
-        function startLoadingMsg(onSuccess) {
-            $.mobile.showPageLoadingMsg();
-            if( arguments.length === 1 && !isNullOrEmpty(onSuccess) ) {
-                onSuccess();
-            }
-            return false;
-        }
-        
-        function stopLoadingMsg(onSuccess) {
-            if( arguments.length === 1 && !isNullOrEmpty(onSuccess) ) {
-                onSuccess();
-            } 
-            $.mobile.hidePageLoadingMsg();
-            var $currentDiv = $("div[data-role='page']:visible:visible");
-            $currentDiv.find('.csw_listview').cswPage();
-            return false;
-        }
-        
+       
         // ------------------------------------------------------------------------------------
         // Persistance functions
         // ------------------------------------------------------------------------------------

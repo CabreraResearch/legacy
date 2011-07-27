@@ -120,6 +120,7 @@
     <Content Include="js\jquery\CswMobile.js" />
     <Content Include="js\mobile\clientdb\CswMobileClientDb.js" />
     <Content Include="js\mobile\clientdb\CswMobileClientDbResources.js" />
+    <Content Include="js\mobile\CswMobileTools.js" />
     <Content Include="js\mobile\sync\CswMobileBackgroundTask.js" />
     <Content Include="js\mobile\sync\CswMobileSync.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js" />
