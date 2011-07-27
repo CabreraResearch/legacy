@@ -112,6 +112,7 @@
     <Content Include="ConfigVars.aspx" />
     <Content Include="js\CswArray.js" />
     <Content Include="js\CswClientDb.js" />
+    <Content Include="js\CswEnums.js" />
     <Content Include="js\CswProfileMethod.js" />
     <Content Include="js\CswString.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeScientific.js" />
@@ -119,6 +120,8 @@
     <Content Include="js\jquery\CswMobile.js" />
     <Content Include="js\mobile\clientdb\CswMobileClientDb.js" />
     <Content Include="js\mobile\clientdb\CswMobileClientDbResources.js" />
+    <Content Include="js\mobile\sync\CswMobileBackgroundTask.js" />
+    <Content Include="js\mobile\sync\CswMobileSync.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-1.6.1.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-1.6.1.min.js" />
@@ -1864,7 +1867,6 @@
     <Folder Include="js\mobile\fieldtypes\" />
     <Folder Include="js\mobile\objectclasses\" />
     <Folder Include="js\mobile\pages\" />
-    <Folder Include="js\mobile\sync\" />
     <Folder Include="temp\" />
   </ItemGroup>
   <ItemGroup>
