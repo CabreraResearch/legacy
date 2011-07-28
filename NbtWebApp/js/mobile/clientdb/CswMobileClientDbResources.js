@@ -2,12 +2,11 @@
 /// <reference path="CswMobileClientDb.js" />
 /// <reference path="../../CswClientDb.js" />
 /// <reference path="../../_Global.js" />
+/// <reference path="../../_CswPrototypeExtensions.js" />
 
 //#region CswMobileClientDbResources
 
-CswMobileClientDbResources.prototype = new CswMobileClientDb;
-CswMobileClientDbResources.prototype.constructor = CswMobileClientDbResources;
-
+CswMobileClientDbResources.inheritsFrom(CswMobileClientDb());
 
 function CswMobileClientDbResources()
 {

@@ -114,6 +114,7 @@
     <Content Include="js\CswClientDb.js" />
     <Content Include="js\CswEnums.js" />
     <Content Include="js\CswProfileMethod.js" />
+    <Content Include="js\_CswPrototypeExtensions.js" />
     <Content Include="js\CswString.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeScientific.js" />
     <Content Include="Images\favicon.ico" />

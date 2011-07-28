@@ -1,9 +1,7 @@
 ﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../js/thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
-/// <reference path="CswClasses.js" />
+/// <reference path="_CswPrototypeExtensions.js" />
 
 // ------------------------------------------------------------------------------------
 // Enums
@@ -1536,18 +1534,7 @@ function purgeLogInfo()
 
 //#endregion Persistent Logging
 
-// ------------------------------------------------------------------------------------
-// Browser Compatibility
-// ------------------------------------------------------------------------------------
-
-// for IE 8
-if (typeof String.prototype.trim !== 'function')
-{
-    String.prototype.trim = function()
-    {
-        return this.replace( /^\s+|\s+$/g , '');
-    };
-}
+//#region Browser Compatibility
 
 function hasWebStorage()
 {
@@ -1577,3 +1564,5 @@ function fixGeometry()
     $content.height(content_height);
     //} /* Trim margin/border/padding height */
 };
+
+//#endregion Browser Compatibility
