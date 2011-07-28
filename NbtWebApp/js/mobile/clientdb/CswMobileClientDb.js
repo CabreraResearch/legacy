@@ -5,10 +5,9 @@
 
 //#region CswMobileClientDb
 
-CswMobileClientDb.inheritsFrom(CswClientDb());
+CswMobileClientDb.inheritsFrom(CswClientDb);
 
-function CswMobileClientDb()
-{
+function CswMobileClientDb() {
     CswClientDb.call(this);
 
     var storedViews = {};

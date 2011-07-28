@@ -6,7 +6,7 @@
 
 //#region CswMobileClientDbResources
 
-CswMobileClientDbResources.inheritsFrom(CswMobileClientDb());
+CswMobileClientDbResources.inheritsFrom(CswMobileClientDb);
 
 function CswMobileClientDbResources()
 {
