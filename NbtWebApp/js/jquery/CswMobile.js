@@ -94,8 +94,8 @@ CswAppMode.mode = 'mobile';
         var $sorrycharliediv = _loadSorryCharlieDiv();
 
         // case 20355 - error on browser refresh
-        // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
         if (!isNullOrEmpty(SessionId)) {
+            $viewsdiv.CswSetPath();
             mobileStorage.setItem('refreshPage', 'viewsdiv');
         } else {
             $logindiv.CswSetPath();
@@ -217,7 +217,6 @@ CswAppMode.mode = 'mobile';
             /// <summary>
             ///   Sets 'Online' button style 'offline',
             /// </summary>
-
             amOnline(false);
             
             $('.onlineStatus').removeClass('online')
@@ -1547,11 +1546,10 @@ CswAppMode.mode = 'mobile';
             if ( _checkNoPendingChanges() ) {
                 
                 var loginFailure = tryParseString(mobileStorage.getItem('loginFailure'), '');
-                var onlineStatus = amOnline();
 
                 mobileStorage.clear();
                 
-                amOnline(onlineStatus,loginFailure);
+                amOnline(true,loginFailure);
                 // reloading browser window is the easiest way to reset
                 if (reloadWindow) {
                     window.location.href = window.location.pathname;
