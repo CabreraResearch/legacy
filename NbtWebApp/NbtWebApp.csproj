@@ -114,6 +114,10 @@
     <Content Include="js\CswClientDb.js" />
     <Content Include="js\CswEnums.js" />
     <Content Include="js\CswProfileMethod.js" />
+    <Content Include="js\mobile\pages\CswMobileMenuButton.js" />
+    <Content Include="js\mobile\pages\CswMobilePageFactory.js" />
+    <Content Include="js\mobile\pages\CswMobilePageFooter.js" />
+    <Content Include="js\mobile\pages\CswMobilePageHeader.js" />
     <Content Include="js\_CswPrototypeExtensions.js" />
     <Content Include="js\CswString.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeScientific.js" />
@@ -1868,7 +1872,6 @@
     <Folder Include="bin\" />
     <Folder Include="js\mobile\fieldtypes\" />
     <Folder Include="js\mobile\objectclasses\" />
-    <Folder Include="js\mobile\pages\" />
     <Folder Include="temp\" />
   </ItemGroup>
   <ItemGroup>
