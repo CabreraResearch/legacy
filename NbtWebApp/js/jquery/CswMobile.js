@@ -7,6 +7,8 @@
 /// <reference path="../CswEnums.js" />
 /// <reference path="../CswProfileMethod.js" />
 /// <reference path="../mobile/CswMobileTools.js" />
+/// <reference path="../mobile/sync/CswMobileBackgroundTask.js" />
+/// <reference path="../mobile/sync/CswMobileSync.js" />
 
 //var profiler = $createProfiler();
 
@@ -21,7 +23,7 @@ CswAppMode.mode = 'mobile';
         /// </summary>
         var $body = this;
 
-        var mobileStorage = new CswMobileClientDbResources(); 
+        //#region Resource Initialization
         
         var opts = {
             ViewsListUrl: '/NbtWebApp/wsNBT.asmx/GetViewsList',
@@ -40,7 +42,9 @@ CswAppMode.mode = 'mobile';
         if (options) {
             $.extend(opts, options);
         }
-
+        
+        var mobileStorage = new CswMobileClientDbResources(); 
+        
         debugOn(debug);
         
         var ForMobile = true;
@@ -51,7 +55,38 @@ CswAppMode.mode = 'mobile';
         }
 
         var storedViews = mobileStorage.getItem('storedViews');
+        
+        var mobileSyncOptions = {
+            onSync: processModifiedNodes,
+            onSuccess: processUpdatedNodes,
+            onError: onError,
+            onLoginFailure: onLoginFail,
+            onComplete: function () {
+                updatedUnsyncedChanges();
+            },
+            syncUrl: opts.UpdateViewUrl,
+            ForMobile: true
+        };
 
+        var mobileSync = new CswMobileSync(mobileSyncOptions, mobileStorage);
+
+        var mobileBackgroundTaskOptions = {
+            onSuccess: function () {
+                setOnline(false);
+            },
+            onError: function () {
+                setOffline();
+            },
+            onLoginFailure: onLoginFail,
+            PollingInterval: opts.PollingInterval,
+            taskUrl: opts.ConnectTestUrl,
+            ForMobile: ForMobile
+        };
+
+        var mobileBgTask = new CswMobileBackgroundTask(mobileStorage, mobileSync, mobileBackgroundTaskOptions);
+        
+        //#endregion Resource Initialization
+        
         var $logindiv = _loadLoginDiv();
         var $viewsdiv = reloadViews();
         var $syncstatus = _makeSyncStatusDiv();
@@ -61,7 +96,6 @@ CswAppMode.mode = 'mobile';
         // case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
         if (!isNullOrEmpty(SessionId)) {
-            
             mobileStorage.setItem('refreshPage', 'viewsdiv');
         } else {
             $logindiv.CswSetPath();
@@ -72,12 +106,11 @@ CswAppMode.mode = 'mobile';
             if (!isNullOrEmpty(SessionId)) {
                 $viewsdiv.CswSetPath();
                 $viewsdiv = reloadViews();
-                _waitForData();
+                //mobileBgTask.start(); we shouldn't need to do this
             }
             else {
                 $logindiv.CswSetPath();
-                // this will trigger _waitForData(), but we don't want to wait here
-                _handleDataCheckTimer(
+                mobileBgTask.start(
                     function() {
                         // online
                         if( !$logindiv || $logindiv.length === 0 ) {
@@ -318,7 +351,7 @@ CswAppMode.mode = 'mobile';
             if($('#logindiv')) $('#logindiv').remove();
             
             startLoadingMsg();
-            kickStartAutoSync();
+            mobileBgTask.reset();
             
             var p = {
                 ParentId: '',
@@ -1355,7 +1388,7 @@ CswAppMode.mode = 'mobile';
             $retDiv.find('#ss_forcesync')
                     .bind('click', function() {
                         return startLoadingMsg( function () {
-                             _processChanges(false);
+                             mobileSync.initSync();
                         });
                     })
                     .end()
@@ -1388,8 +1421,8 @@ CswAppMode.mode = 'mobile';
             if (amOnline() || $onlineBtn.text() === 'Go Online') {
                 setOnline(false);
                 if (doWaitForData) {
-                    _clearWaitForData();
-                    _waitForData();
+                    mobileBgTask.stop();
+                    mobileBgTask.start();
                 }
                 $onlineBtn.text('Go Offline');
                 $('.refresh').each(function(){
@@ -1400,7 +1433,7 @@ CswAppMode.mode = 'mobile';
             else {
                 setOffline();
                 if (doWaitForData) {
-                    _clearWaitForData();
+                    mobileBgTask.stop();
                 }
                 $onlineBtn.text('Go Online');
                 $('.refresh').each(function(){
@@ -1424,7 +1457,7 @@ CswAppMode.mode = 'mobile';
             if(arguments.length === 1) {
                 if (succeeded) {
                     mobileStorage.clearUnsyncedChanges();
-                    _updatedUnsyncedChanges();
+                    updatedUnsyncedChanges();
                     $('#ss_lastsync_success').text(mobileStorage.lastSyncSuccess());
                 }
                 else {
@@ -1499,6 +1532,7 @@ CswAppMode.mode = 'mobile';
             _addToDivHeaderText($logindiv, text)
                 .css('color','yellow');
             mobileStorage.setItem('loginFailure', text);
+            stopLoadingMsg();
         }
 
         function onLogout() {
@@ -1662,7 +1696,7 @@ CswAppMode.mode = 'mobile';
                 }
                 mobileStorage.updateStoredNodeJson(nodeId, nodeJson, '1');
             }
-            kickStartAutoSync();
+            mobileBgTask.reset();
             cacheLogInfo(logger);
         } // onPropertyChange()
 
@@ -1762,179 +1796,83 @@ CswAppMode.mode = 'mobile';
         } // onSearchSubmit()
 
        
-        // ------------------------------------------------------------------------------------
-        // Persistance functions
-        // ------------------------------------------------------------------------------------
         
-        function _updatedUnsyncedChanges() {
+        function updatedUnsyncedChanges() {
             $('#ss_pendingchangecnt').text( tryParseString(mobileStorage.getItem('unSyncedChanges'),'0') );
         }
-        
-        
+
         
         
         // ------------------------------------------------------------------------------------
-        // Synchronization
+        //#region Synchronization
         // ------------------------------------------------------------------------------------
 
-        function _processModifiedNodes(onSuccess)
+        function processModifiedNodes(onSuccess)
         {
-            var modified = false;
-            if (isNullOrEmpty(storedViews))
-            {
-                storedViews = mobileStorage.getItem('storedviews');
-            }
-            if (!isNullOrEmpty(storedViews))
-            {
-                for (var viewid in storedViews)
+            if(!isNullOrEmpty(onSuccess)) {
+                var modified = false;
+                if (isNullOrEmpty(storedViews))
                 {
-                    var view = mobileStorage.getItem(viewid);
-                    if (!isNullOrEmpty(view))
+                    storedViews = mobileStorage.getItem('storedviews');
+                }
+                if (!isNullOrEmpty(storedViews))
+                {
+                    for (var viewid in storedViews)
                     {
-                        for (var nodeId in view['json'])
+                        var view = mobileStorage.getItem(viewid);
+                        if (!isNullOrEmpty(view))
                         {
-                            var node = mobileStorage.getItem(nodeId);
-                            if (!isNullOrEmpty(node) && node['wasmodified'])
+                            for (var nodeId in view['json'])
                             {
-                                modified = true;
-                                onSuccess(nodeId, node);
-                            }
-                        }
-                    }
-                }
-                if (!modified)
-                {
-                    onSuccess();
-                }
-            }
-        }
-        
-        var _waitForData_TimeoutId;
-
-        function _waitForData() {
-            _waitForData_TimeoutId = setTimeout( function() {
-                                        _handleDataCheckTimer();
-                                     }, 
-                                     opts.PollingInterval); //30 seconds
-        }
-
-        function _clearWaitForData() {
-            clearTimeout(_waitForData_TimeoutId);
-        }
-
-        function kickStartAutoSync() {
-            var now = new Date().getTime();
-            var last = new Date(mobileStorage.lastSyncTime).getTime();
-            var lastSync = now - last;
-            
-            if( lastSync > opts.PollingInterval * 3 ) {//90 seconds
-                _clearWaitForData();
-                _waitForData();
-            }
-        }
-        
-        function _handleDataCheckTimer(onSuccess, onFailure) {
-            var url = opts.ConnectTestUrl;
-            if (opts.RandomConnectionFailure) {
-                url = opts.ConnectTestRandomFailUrl;
-            }
-            if( !mobileStorage.stayOffline() ) {
-                CswAjaxJSON({
-                        formobile: ForMobile,
-                        url: url,
-                        data: {  },
-                        stringify: false,
-                        onloginfail: function(text) { onLoginFail(text); },
-                        success: function(data) {
-                            setOnline(false);
-                            _processChanges(true);
-                            if (!isNullOrEmpty(onSuccess)) {
-                                onSuccess( data );
-                            }
-                        },
-                        error: function(data) {
-                            setOffline();
-                            if (!isNullOrEmpty(onFailure)) {
-                                onFailure( data );
-                            }
-                            _waitForData();
-                        }
-                    });
-            } // if(amOnline())
-            else {
-                _waitForData();
-            }
-        } //_handleDataCheckTimer()
-
-        function _processChanges(perpetuateTimer) {
-            var logger = new CswProfileMethod('processChanges');
-            if (!isNullOrEmpty(SessionId) && !mobileStorage.stayOffline() ) {
-                _processModifiedNodes(function(objectId, objectJSON) {
-                    if (!isNullOrEmpty(objectId) && !isNullOrEmpty(objectJSON)) {
-                        
-                        var dataJson = {
-                            SessionId: SessionId,
-                            ParentId: objectId,
-                            UpdatedViewJson: JSON.stringify(objectJSON),
-                            ForMobile: ForMobile
-                        };
-
-                        CswAjaxJSON({
-                                formobile: ForMobile,
-                                url: opts.UpdateViewUrl,
-                                data: dataJson,
-                                onloginfail: function(text) {
-                                    setOnline(false);
-                                    onLoginFail(text);
-                                    processChangesLoop(perpetuateTimer);
-                                },
-                                success: function(data) {
-                                    logger.setAjaxSuccess();
-                                    setOnline(false);
-                                    var completed = isTrue(data['completed']);
-                                    var isView = !isNullOrEmpty(data['nodes']);
-                                    if( isView )
-                                    {
-                                        var json = data['nodes'];
-                                        mobileStorage.updateStoredViewJson(objectId, json, false);
-                                    } else if( !completed ) {
-                                        mobileStorage.updateStoredNodeJson(objectId, objectJSON, false);
-                                    } 
-                                    
-                                    _resetPendingChanges(true);
-                                    
-                                    processChangesLoop(perpetuateTimer);
-
-                                    if( completed && !isView ) {
-                                        mobileStorage.deleteNode(objectId, objectJSON['viewid']);
-                                        if( !perpetuateTimer ) {
-                                            $('#' + objectJSON['viewid']).CswChangePage();
-                                        }
-                                    }
-                                },
-                                error: function() {
-                                    processChangesLoop(perpetuateTimer);
+                                var node = mobileStorage.getItem(nodeId);
+                                if (!isNullOrEmpty(node) && node['wasmodified'])
+                                {
+                                    modified = true;
+                                    onSuccess(nodeId, node);
                                 }
-                            });
-                    } else {
-                        processChangesLoop(perpetuateTimer);
+                            }
+                        }
                     }
-                }); // _getModifiedView();
+                    if (!modified)
+                    {
+                        onSuccess();
+                    }
+                }
             } else {
                 _resetPendingChanges(true);
-                
-            } // if(SessionId != '') 
-            _updatedUnsyncedChanges();
-            cacheLogInfo(logger);
-        } //_processChanges()
-
-        function processChangesLoop(perpetuateTimer) {
-            if (perpetuateTimer) {
-                    _waitForData();
-            } else { //we called this manually
-                stopLoadingMsg();
             }
         }
+        
+        function processUpdatedNodes(data,objectId,objectJSON,isBackgroundTask) {
+            
+            setOnline(false);
+            
+            var completed = isTrue(data['completed']);
+            var isView = !isNullOrEmpty(data['nodes']);
+            if (isView)
+            {
+                var json = data['nodes'];
+                mobileStorage.updateStoredViewJson(objectId, json, false);
+            } else if (!completed)
+            {
+                mobileStorage.updateStoredNodeJson(objectId, objectJSON, false);
+            }
+
+            _resetPendingChanges(true);
+
+            if (completed && !isView)
+            {
+                mobileStorage.deleteNode(objectId, objectJSON['viewid']);
+                if (!isBackgroundTask)
+                {
+                    $('#' + objectJSON['viewid']).CswChangePage();
+                }
+            }
+        }
+        
+        // ------------------------------------------------------------------------------------
+        //#endregion Synchronization
+        // ------------------------------------------------------------------------------------
         
         // For proper chaining support
         return this;
