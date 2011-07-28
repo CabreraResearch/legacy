@@ -1,11 +1,12 @@
 /// <reference path="../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.js" />
-/// <reference path="../thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
-/// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../_Global.js" />
-/// <reference path="../CswClasses.js" />
-/// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
+/// <reference path="../mobile/clientdb/CswMobileClientDb.js" />
+/// <reference path="../mobile/clientdb/CswMobileClientDbResources.js" />
+/// <reference path="../CswClientDb.js" />
+/// <reference path="../CswEnums.js" />
+/// <reference path="../CswProfileMethod.js" />
+/// <reference path="../mobile/CswMobileTools.js" />
 
 //var profiler = $createProfiler();
 
@@ -14,127 +15,25 @@ CswAppMode.mode = 'mobile';
 ;(function($) {
     /// <param name="$" type="jQuery" />
 
-    $.fn.makeUL = function(id, params) {
-        var p = {
-            'data-filter': false,
-            'data-role': 'listview',
-            'data-inset': true
-        };
-        if (params) $.extend(p, params);
-
-        var $div = $(this);
-        var $ret = undefined;
-        if (!isNullOrEmpty($div)) {
-            $ret = $('<ul class="csw_listview" id="' + tryParseString(id, '') + '"></ul>')
-                                                    .appendTo($div)
-                                                    .CswAttrXml(p);
-        }
-        return $ret;
-    };
-
-    $.fn.bindLI = function() {
-        var $li = $(this);
-        var $ret = undefined;
-        if (!isNullOrEmpty($li)) {
-            $li.unbind('click');
-            $ret = $li.find('li a').bind('click', function() {
-                $.mobile.hidePageLoadingMsg();
-                var dataurl = $(this).CswAttrXml('data-url');
-                var $thisPage = $('#' + dataurl);
-                $thisPage.doChangePage();
-            });
-        }
-        return $ret;
-    };
-
-    $.fn.doChangePage = function(options) {
-        var o = {
-            transition: 'fade'
-            //reverse: false,
-            //changeHash: true,
-            //role: 'page',
-            //pageContainer: $.mobile.pageContainer,
-            //type: 'get',
-            //data: undefined,
-            //reloadPage: false,
-            //showLoadMsg: true
-        };
-        if (options) $.extend(o, options);
-
-        var $div = $(this);
-        var ret = false;
-        if (!isNullOrEmpty($div)) {
-            var $page = $.mobile.activePage;
-            var id = (isNullOrEmpty($page)) ? 'no ID' : $page.CswAttrDom('id');
-            if(debugOn()) log('changePage from ' + $page.CswAttrDom('id') + ' to ' + $div.CswAttrDom('id'), true);
-            if (id !== $div.CswAttrDom('id')) ret = $.mobile.changePage($div, o);
-        }
-        return ret;
-    };
-
-    $.fn.doPage = function() {
-        var $div = $(this);
-        var ret = false;
-        if (!isNullOrEmpty($div)) {
-            ret = $div.page(); 
-        }
-        return ret;
-    };
-
-    $.fn.bindJqmEvents = function(params) {
-        var $div = $(this);
-        var $ret = false;
-        if (!isNullOrEmpty($div)) {
-            var p = {
-                ParentId: '',
-                DivId: '',
-                HeaderText: '',
-                $xml: '',
-                parentlevel: 0,
-                level: 1,
-                HideRefreshButton: false,
-                HideSearchButton: false,
-                onPageShow: function(p) {
-                }
-            };
-
-            if (params) $.extend(p, params);
-            p.level = (p.parentlevel === p.level) ? p.parentlevel + 1 : p.level;
-
-            $div.unbind('pageshow');
-            $ret = $div.bind('pageshow', function() {
-                $.mobile.showPageLoadingMsg();
-                if (p.level === 1) localStorage['currentviewid'] = p.DivId;
-                p.onPageShow(p);
-                if($('#logindiv')) $('#logindiv').remove();
-            });
-        }
-        return $ret;
-    };
-
     $.fn.CswMobile = function(options) {
         /// <summary>
         ///   Generates the Nbt Mobile page
         /// </summary>
-
         var $body = this;
 
+        var mobileStorage = new CswMobileClientDbResources(); 
+        
         var opts = {
-            DBShortName: 'Mobile.html',
-            DBVersion: '1.0',
-            DBDisplayName: 'Mobile.html',
-            DBMaxSize: 65536,
             ViewsListUrl: '/NbtWebApp/wsNBT.asmx/GetViewsList',
             ViewUrl: '/NbtWebApp/wsNBT.asmx/GetView',
             ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
             ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
-            UpdateUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
+            UpdateViewUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
             MainPageUrl: '/NbtWebApp/Mobile.html',
             AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
             SendLogUrl: '/NbtWebApp/wsNBT.asmx/collectClientLogInfo',
             Theme: 'a',
-            PollingInterval: 30000,
-            DivRemovalDelay: 1,
+            PollingInterval: 30000, //30 seconds
             RandomConnectionFailure: false
         };
 
@@ -145,19 +44,13 @@ CswAppMode.mode = 'mobile';
         debugOn(debug);
         
         var ForMobile = true;
-        var rootid;
-
-        var mobileStorage = new CswMobileStorage();
         
-        var UserName = localStorage["username"];
-        if (!localStorage["sessionid"]) {
+        var SessionId = mobileStorage.sessionid();
+        if(isNullOrEmpty(SessionId)) {
             Logout();
         }
-        var SessionId = localStorage["sessionid"];
-        var $currentViewXml;
 
-        var storedViews = [];
-        if (localStorage.storedViews) storedViews = JSON.parse(localStorage['storedviews']); // {name: '', rootid: ''}
+        var storedViews = mobileStorage.getItem('storedViews');
 
         var $logindiv = _loadLoginDiv();
         var $viewsdiv = reloadViews();
@@ -168,21 +61,21 @@ CswAppMode.mode = 'mobile';
         // case 20355 - error on browser refresh
         // there is a problem if you refresh with #viewsdiv where we'll generate a 404 error, but the app will continue to function
         if (!isNullOrEmpty(SessionId)) {
-            $.mobile.path.set('#viewsdiv');
-            localStorage['refreshPage'] = 'viewsdiv';
+            
+            mobileStorage.setItem('refreshPage', 'viewsdiv');
         } else {
-            $.mobile.path.set('#logindiv');
-            localStorage['refreshPage'] = 'logindiv';
+            $logindiv.CswSetPath();
+            mobileStorage.setItem('refreshPage', 'logindiv' );
         }
               
         window.onload = function() {
             if (!isNullOrEmpty(SessionId)) {
-                $.mobile.path.set('#viewsdiv');
+                $viewsdiv.CswSetPath();
                 $viewsdiv = reloadViews();
                 _waitForData();
             }
             else {
-                $.mobile.path.set('#logindiv');
+                $logindiv.CswSetPath();
                 // this will trigger _waitForData(), but we don't want to wait here
                 _handleDataCheckTimer(
                     function() {
@@ -190,47 +83,50 @@ CswAppMode.mode = 'mobile';
                         if( !$logindiv || $logindiv.length === 0 ) {
                             $logindiv = _loadLoginDiv();
                         }
-                        $logindiv.doPage();
-                        $logindiv.doChangePage();
+                        $logindiv.CswChangePage();
                     },
                     function() {
                         // offline
                         if( !$sorrycharliediv || $sorrycharliediv.length === 0 ) {
                             $sorrycharliediv = _loadSorryCharlieDiv();
                         }
-                        $sorrycharliediv.doPage();
-                        $sorrycharliediv.doChangePage();
+                        $sorrycharliediv.CswChangePage();
                     }
                 );
             }
         };
         
         function _loadLoginDiv() {
-            var LoginContent = '<input type="textbox" id="login_customerid" placeholder="Customer Id"/><br>';
+
+            var LoginContent = '<p style="text-align: center;">Login to Mobile Inspection Manager</p>';
+            LoginContent += '<input type="textbox" id="login_customerid" placeholder="Customer Id"/><br>';
             LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
             LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
             LoginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
+            
             var $retDiv = _addPageDivToBody({
                     DivId: 'logindiv',
-                    HeaderText: 'Login to ChemSW Fire Inspection',
+                    HeaderText: 'ChemSW Live',
                     $content: $(LoginContent),
                     HideSearchButton: true,
                     HideOnlineButton: true,
                     HideRefreshButton: true,
-                    HideLogoutButton: true,
                     HideHelpButton: false,
-                    HideCloseButton: true,
-                    HideBackButton: true,
-                    dataRel: 'dialog'
+                    HideBackButton: true
                 });
+
+            //.prepend( $('<img src="Images/pagelayout/header_logo32.gif" /><br/>') );
             
-            if( !isNullOrEmpty(localStorage['loginFailure']) ) {
-                _addToDivHeaderText($retDiv, localStorage['loginFailure']);
+            var loginFailure = mobileStorage.getItem('loginFailure');
+            if( !isNullOrEmpty(loginFailure) ) {
+                _addToDivHeaderText($retDiv, loginFailure)
+                    .css('color','yellow');
             }
             
-            $('#loginsubmit').bind('click', function() {
-                $.mobile.showPageLoadingMsg();
-                onLoginSubmit();
+            $('#loginsubmit')
+                .unbind('click')
+                .bind('click', function() {
+                    return startLoadingMsg(function() { onLoginSubmit(); });
             });
             $('#login_customerid').clickOnEnter($('#loginsubmit'));
             $('#login_username').clickOnEnter($('#loginsubmit'));
@@ -240,6 +136,9 @@ CswAppMode.mode = 'mobile';
         }
 
         function reloadViews() {
+            /// <summary>
+            ///   Refreshes the viewsdiv
+            /// </summary>
             var params = {
                 parentlevel: -1,
                 level: 0,
@@ -253,8 +152,9 @@ CswAppMode.mode = 'mobile';
                 $viewsdiv = _addPageDivToBody(params);
             }
             params.onPageShow = function() { return _loadDivContents(params); };
-            $viewsdiv.doPage();
-            $viewsdiv.bindJqmEvents(params);
+
+            $viewsdiv.CswUnbindJqmEvents();
+            $viewsdiv.CswBindJqmEvents(params);
             return $viewsdiv;
         }
         
@@ -263,13 +163,10 @@ CswAppMode.mode = 'mobile';
                 DivId: 'sorrycharliediv',
                 HeaderText: 'Sorry Charlie!',
                 HideHelpButton: false,
-                HideCloseButton: true,
                 HideOnlineButton: false,
                 HideBackButton: true,
                 HideRefreshButton: true,
-                HideLogoutButton: true,
                 HideSearchButton: true,
-                dataRel: 'dialog',
                 $content: 'You must have internet connectivity to login.'
             };
             if (params) $.extend(p, params);
@@ -284,7 +181,10 @@ CswAppMode.mode = 'mobile';
         // ------------------------------------------------------------------------------------
 
         function setOffline() {
-            
+            /// <summary>
+            ///   Sets 'Online' button style 'offline',
+            /// </summary>
+
             amOnline(false);
             
             $('.onlineStatus').removeClass('online')
@@ -298,17 +198,12 @@ CswAppMode.mode = 'mobile';
             $('.refresh').css('visibility', 'hidden');
 
             $viewsdiv = reloadViews(); //no changePage
-            
-            if ($.mobile.activePage === $logindiv) {
-                $sorrycharliediv.doPage(); // doChangePage();
-            }
-            $.mobile.hidePageLoadingMsg();
         }
 
         function setOnline(reloadViewsPage) {
             
             amOnline(true);
-            localStorage.removeItem('loginFailure');
+            mobileStorage.removeItem('loginFailure');
             if( !mobileStorage.stayOffline() )
             {
                 $('.onlineStatus').removeClass('offline')
@@ -323,19 +218,16 @@ CswAppMode.mode = 'mobile';
                     $viewsdiv = reloadViews(); //no changePage
                 }
             }
-            if ($.mobile.activePage === $sorrycharliediv) {
-                $logindiv.doPage(); //doChangePage();
-            }
         }
 
-        function amOnline(amOnline,loginFailure) {
+        function amOnline(isOnline,loginFailure) {
             if(arguments.length > 0 ) {
-                localStorage['online'] = isTrue(amOnline);
+                mobileStorage.setItem('online', isTrue(isOnline) );
             }
             if(loginFailure) {
-                localStorage['loginFailure'] = loginFailure;
+                mobileStorage.setItem('loginFailure',loginFailure );
             }
-            var ret = ( isTrue(localStorage['online']) && !mobileStorage.stayOffline());
+            var ret = ( isTrue(mobileStorage.getItem('online')) && !mobileStorage.stayOffline());
             return ret;
         }
 
@@ -355,37 +247,35 @@ CswAppMode.mode = 'mobile';
 
         function setStartLog() {
             if (doLogging()) {
-                var logger = new profileMethod('setStartLog');
+                var logger = new CswProfileMethod('setStartLog');
                 cacheLogInfo(logger);
-                var $loggingBtn = $('.debug')
-                                       .removeClass('debug-off')
-                                       .addClass('debug-on')
-                                       .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                       .text('Sync Log')
-                                       .addClass('debug-on')
-                                       .removeClass('debug-off')
-                                       .end();
+                $('.debug').removeClass('debug-off')
+                            .addClass('debug-on')
+                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                            .text('Sync Log')
+                            .addClass('debug-on')
+                            .removeClass('debug-off')
+                            .end();
             }
         }
 
         function setStopLog() {
             if (!doLogging()) {
-                var $loggingBtn = $('.debug')
-                                       .removeClass('debug-on')
-                                       .addClass('debug-off')
-                                       .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-                                       .text('Sync Log')
-                                       .addClass('debug-off')
-                                       .removeClass('debug-on')
-                                       .end();
-                var logger = new profileMethod('setStopLog');
+                $('.debug').removeClass('debug-on')
+                            .addClass('debug-off')
+                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                            .text('Sync Log')
+                            .addClass('debug-off')
+                            .removeClass('debug-on')
+                            .end();
+                var logger = new CswProfileMethod('setStopLog');
                 cacheLogInfo(logger);
 
                 var dataJson = {
                     'Context': 'CswMobile',
-                    'UserName': localStorage['username'],
-                    'CustomerId': localStorage['customerid'],
-                    'LogInfo': sessionStorage['debuglog']
+                    'UserName': mobileStorage.username(),
+                    'CustomerId': mobileStorage.customerid(),
+                    'LogInfo': mobileStorage.getItem('debuglog')
                 };
 
 //                CswAjaxJSON({
@@ -405,19 +295,16 @@ CswAppMode.mode = 'mobile';
                     DivId: 'loginfodiv',
                     HeaderText: 'Log Info',
                     HideHelpButton: false,
-                    HideCloseButton: true,
                     HideOnlineButton: false,
                     HideBackButton: false,
                     HideRefreshButton: true,
-                    HideLogoutButton: true,
                     HideSearchButton: true,
-                    dataRel: 'dialog',
-                    $content: $( JSON.parse(sessionStorage['debuglog']))
+                    $content: mobileStorage.getItem('debuglog')
                 };
                 var $logDiv = _addPageDivToBody(params);
-                $logDiv.bindJqmEvents(params);
-                $logDiv.doChangePage();
-                $.mobile.hidePageLoadingMsg();
+                $logDiv.CswUnbindJqmEvents();
+                $logDiv.CswBindJqmEvents(params);
+                $logDiv.CswChangePage();
             }
         }
 
@@ -426,9 +313,11 @@ CswAppMode.mode = 'mobile';
         // ------------------------------------------------------------------------------------
 
         function _loadDivContents(params) {
-            var logger = new profileMethod('loadDivContents');
-            $.mobile.showPageLoadingMsg();
-
+            var logger = new CswProfileMethod('loadDivContents');
+            
+            if($('#logindiv')) $('#logindiv').remove();
+            
+            startLoadingMsg();
             kickStartAutoSync();
             
             var p = {
@@ -438,53 +327,51 @@ CswAppMode.mode = 'mobile';
                 HeaderText: '',
                 HideRefreshButton: false,
                 HideSearchButton: false,
-                $xml: '',
-                SessionId: SessionId
+                json: '',
+                SessionId: SessionId,
+                PageType: 'search'
             };
             if (params) $.extend(p, params);
 
-            if (p.level === 1) {
-                rootid = p.DivId;
-            }
+            var viewId = (p.level < 2) ? mobileStorage.currentViewId(p.DivId) : mobileStorage.currentViewId();
+       
             var $retDiv = $('#' + p.DivId);
 
             if (isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1) {
                 if (p.level === 0) {
+                    p.PageType = 'view';
                     if (!amOnline()) {
-                        p.$xml = _fetchCachedViewXml(p.DivId);
-                        $currentViewXml = p.$xml;
-                        $retDiv = _loadDivContentsXml(p);
+                        p.json = mobileStorage.fetchCachedViewJson(p.DivId);
+                        $retDiv = _loadDivContentsJson(p);
                     } else {
                         p.url = opts.ViewsListUrl;
-                        $retDiv = _getDivXml(p);
+                        $retDiv = _getDivJson(p);
                     }
                 } else if (p.level === 1) {
                     // case 20354 - try cached first
-                    var $xmlstr = _fetchCachedViewXml(rootid);
-
-                    if (!isNullOrEmpty($xmlstr)) {
-                        $currentViewXml = $xmlstr;
-                        p.$xml = $currentViewXml;
-                        $retDiv = _loadDivContentsXml(p);
+                    var cachedJson = mobileStorage.fetchCachedViewJson(viewId);
+                    p.PageType = 'node';
+                    if (!isNullOrEmpty(cachedJson)) {
+                        p.json = cachedJson;
+                        $retDiv = _loadDivContentsJson(p);
                     } else if (amOnline()) {
                         p.url = opts.ViewUrl;
-                        $retDiv = _getDivXml(p);
+                        $retDiv = _getDivJson(p);
+                    } else {
+                        stopLoadingMsg();
                     }
-                } else  // Level 2 and up
-                {
-                    var $xml = $(localStorage[p.DivId]);
-                    if( !isNullOrEmpty($xml) && $xml.length > 0 ) {
-                        p.$xml = $xml.children('subitems')
-                                     .first();
-                    }
-                    else if (!isNullOrEmpty($currentViewXml)) {
-                        p.$xml = $currentViewXml.find('#' + p.DivId)
-                                                .children('subitems')
-                                                .first()
-                                                .clone();
-                    }
-                    if (!isNullOrEmpty(p.$xml)) {
-                        $retDiv = _loadDivContentsXml(p);
+                    
+                } else { // Level 2 and up
+                    var cachedJson = mobileStorage.fetchCachedNodeJson(p.DivId);
+                    p.PageType = 'tab';
+                    if( !isNullOrEmpty(cachedJson) ) {
+                        p.json = cachedJson['subitems'];
+
+                        if (!isNullOrEmpty(p.json)) {
+                            $retDiv = _loadDivContentsJson(p);
+                        }
+                    } else {
+                        stopLoadingMsg();
                     }
                 }
             }
@@ -492,14 +379,14 @@ CswAppMode.mode = 'mobile';
             return $retDiv;
         } // _loadDivContents()
 
-        function _loadDivContentsXml(params) {
+        function _loadDivContentsJson(params) {
             params.parentlevel = params.level;
-            var $retDiv = _processViewXml(params);
+            var $retDiv = _processViewJson(params);
             return $retDiv;
         }
 
-        function _getDivXml(params) {
-            var logger = new profileMethod('getDivXml');
+        function _getDivJson(params) {
+            var logger = new CswProfileMethod('getDivJson');
             var $retDiv = undefined;
 
             var p = {
@@ -507,26 +394,34 @@ CswAppMode.mode = 'mobile';
             };
             $.extend(p, params);
 
-            var dataXml = {
+            var jsonData = {
                 SessionId: p.SessionId,
                 ParentId: p.DivId,
-                formobile: ForMobile
+                ForMobile: ForMobile
             };
-            CswAjaxXml({
+        
+            CswAjaxJSON({
                     //async: false,   // required so that the link will wait for the content before navigating
+                    formobile: ForMobile,
                     url: p.url,
-                    data: dataXml,
+                    data: jsonData,
                     onloginfail: function(text) { onLoginFail(text); },
-                    success: function($xml) {
+                    success: function(data) {
                         setOnline(false);
                         logger.setAjaxSuccess();
-                        $currentViewXml = $xml;
-                        p.$xml = $currentViewXml;
                         
-                        if( params.level < 2) {
-                            _storeViewXml(p.DivId, p.HeaderText, $currentViewXml, params.level);
+                        p.json = data;
+                        var searchJson = { };
+                        if( params.level === 1) {
+                            searchJson = data['searches'];
                         }
-                        $retDiv = _loadDivContentsXml(p);
+                        if( params.level !== 0) {
+                            p.json = data['nodes'];    
+                        }
+                        if( params.level < 2) {
+                            mobileStorage.storeViewJson(p.DivId, p.HeaderText, p.json, params.level, searchJson);
+                        }
+                        $retDiv = _loadDivContentsJson(p);
                     },
                     error: function() {
                         onError();
@@ -536,25 +431,22 @@ CswAppMode.mode = 'mobile';
             return $retDiv;
         }
 
-        var currenttab;
-
-        function _processViewXml(params) {
-            var logger = new profileMethod('processViewXml');
+        function _processViewJson(params) {
+            var logger = new CswProfileMethod('processViewJson');
             var p = {
                 ParentId: '',
                 DivId: '',
                 HeaderText: '',
-                $xml: '',
-                $xmlitem: '',
+                json: '',
                 parentlevel: '',
+                PageType: '',
                 level: '',
                 HideSearchButton: false,
                 HideOnlineButton: false,
                 HideRefreshButton: false,
-                HideLogoutButton: false,
                 HideHelpButton: false,
-                HideCloseButton: true,
-                HideBackButton: false
+                HideBackButton: false,
+                nextTab: ''
             };
             if (params) $.extend(p, params);
 
@@ -566,134 +458,172 @@ CswAppMode.mode = 'mobile';
                     HideSearchButton: p.HideSearchButton,
                     HideOnlineButton: p.HideOnlineButton,
                     HideRefreshButton: p.HideRefreshButton,
-                    HideLogoutButton: p.HideLogoutButton,
                     HideHelpButton: p.HideHelpButton,
-                    HideCloseButton: p.HideCloseButton,
                     HideBackButton: p.HideBackButton
                 });
 
             var $content = $retDiv.find('div:jqmData(role="content")').empty();
 
-            var $list = $content.makeUL();
-            currenttab = '';
-
-            p.$xml.children().each(function() {
-                p.$xmlitem = $(this).clone();
-                _makeListItemFromXml($list, p)
-                    .CswAttrXml('data-icon', false)
-                    .appendTo($list);
-            });
-            logger.setAjaxSuccess();
-            try {
-                $('.csw_collapsible').page();
-                $('.csw_fieldset').page();
-//                $('.csw_answer').page();
-                $('.csw_listview').page();
-            }
-            catch(e) //this is hackadelic, but it works. 
+            var showLoading = (p.PageType !== 'prop');
+            var $list = $content.cswUL({cssclass: 'csw_listview', showLoading: showLoading});
+            
+            for(var key in p.json)
             {
-                $('.csw_collapsible').page();
-                $('.csw_fieldset').page();
-//                $('.csw_answer').page();
-                $('.csw_listview').page();
+                var item = { };
+                $.extend(item, p);
+                item.json = { id: key, value: p.json[key] };
+                _makeListItemFromJson($list, item)
+                    .CswAttrXml('data-icon', false) //hides the arrow
+                    .appendTo($list);
             }
-            $content.page();
 
+            if( !isNullOrEmpty(p.nextTab) ) {
+                var item = { };
+                $.extend(item, p);
+                item.json = { id: p.nextTab };
+                item.PageType = 'tab';
+                item.DivId = item.ParentId;
+                item.suppressProps = true;
+                _makeListItemFromJson($list, item)
+                    //.CswAttrXml('data-icon', true) //show the arrow
+                    .appendTo($list);
+            }
+            
+            logger.setAjaxSuccess();
+            
             _resetPendingChanges();
             
-            $.mobile.hidePageLoadingMsg();
             if(!mobileStorage.stayOffline()) {
                 _toggleOffline(false);
             }
             cacheLogInfo(logger);
-            return $retDiv;
-        } // _processViewXml()
 
-        function _makeListItemFromXml($list, params) {
+            stopLoadingMsg();
+            
+            return $retDiv;
+        } // _processViewJson()
+
+        function _makeListItemFromJson($list, params) {
             var p = {
                 ParentId: '',
                 DivId: '',
                 HeaderText: '',
-                $xmlitem: '',
+                json: '',
+                PageType: '',
                 parentlevel: '',
                 level: '',
                 HideRefreshButton: false,
-                HideSearchButton: false
+                HideSearchButton: false,
+                nextTab: '',
+                suppressProps: false
             };
             if (params) $.extend(p, params);
 
-            var id = makeSafeId({ ID: p.$xmlitem.CswAttrXml('id') });
-            var text = p.$xmlitem.CswAttrXml('name');
+            var id = makeSafeId({ ID: p.json['id'] });
+            var text = '';
 
             var IsDiv = (!isNullOrEmpty(id));
-            var PageType = tryParseString(p.$xmlitem.get(0).nodeName, '').toLowerCase();
 
             var $retLI = $('');
 
-            switch (PageType) {
-            case "search":
-                    // ignore this
-                break;
-            case "node":
-                $retLI = _makeObjectClassContent(p)
-                                        .appendTo($list);
-                break;
-            case "prop":
-                {
-                    var $tab;
-                    var tab = p.$xmlitem.CswAttrXml('tab');
-
-                    if (currenttab !== tab) {
-                        //should be separate ULs eventually
-                        $tab = $('</ul><li data-role="list-divider">' + tab + '</li><ul>')
-                                                .appendTo($list);
-                        currenttab = tab;
-                    }
-
-                    var $prop = _FieldTypeXmlToHtml(p.$xmlitem, id)
-                                    .appendTo($list);
-                    break;   
-                } // case 'prop':
-            default:
-                {
-                    $retLI = $('<li></li>');
-                    if (IsDiv) {
-                        $retLI.CswLink('init', { href: 'javascript:void(0);', value: text })
-                                          .css('white-space', 'normal')
-                                          .CswAttrXml({
-                                          'data-identity': id,
-                                          'data-url': id
-                                      });
-                    } else {
-                        $retLI.val(text);
-                    }
+            switch (p.PageType) {
+                case 'search':
+                        // ignore this
                     break;
-                }// default:
+                case 'node':
+                    text = p.json['value']['node_name'];
+                    $retLI = _makeObjectClassContent(p)
+                                            .appendTo($list);
+                    break;
+                case 'tab':
+                    {
+                        text = id;
+                        id = makeSafeId({prefix: id.replace(' ', ''), ID: p.DivId }); //we prefer nodeid_ to be at the end
+                        $retLI = $('<li></li>')
+                                    .appendTo($list);
+                        $retLI.CswLink('init', { href: 'javascript:void(0);', value: text })
+                                            .css('white-space', 'normal')
+                                            .CswAttrXml({
+                                            'data-identity': id,
+                                            'data-url': id
+                                        });
+                        
+                        var nextTab = (!isNullOrEmpty(p.json['value'])) ? p.json['value']['nexttab'] : '';
+                        if( !isNullOrEmpty(nextTab)) {
+                            //we're creating a tab link on a prop
+                            delete p.json['value']['nexttab'];
+                        }
+
+                        if( !p.suppressProps) {
+                            //we're creating a tab link which needs child props
+                            setTimeout(function() {
+                                _processViewJson({
+                                        ParentId: p.DivId,
+                                        DivId: id,
+                                        HeaderText: text,
+                                        json: p.json['value'],
+                                        parentlevel: p.level,
+                                        level: p.level + 1,
+                                        PageType: 'prop',
+                                        nextTab: nextTab,
+                                        suppressProps: true
+                                    });
+                            }, 500);
+                        }
+                        break;   
+                    } // case 'prop':
+                case 'prop':
+                    {
+                        if( !isNullOrEmpty(p.json['value']) && !isNullOrEmpty(p.json['id']) ) {
+                            _FieldTypeJsonToHtml(p.json['value'], p.DivId, p.json['id'])
+                                .appendTo($list);
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        text = p.json['value'];
+                        $retLI = $('<li></li>').appendTo($list);
+                        if (IsDiv) {
+                            $retLI.CswLink('init', { href: 'javascript:void(0);', value: text })
+                                              .css('white-space', 'normal')
+                                              .CswAttrXml({
+                                              'data-identity': id,
+                                              'data-url': id
+                                          });
+                        } else {
+                            $retLI.val(text);
+                        }
+                        break;
+                    }// default:
             }
-            
+
+            $retLI.unbind('click');
             $retLI.bind('click', function() {
-                $.mobile.showPageLoadingMsg();
-                var par = {ParentId: p.DivId,
-                    parentlevel: p.parentlevel,
-                    level: p.parentlevel + 1,
-                    DivId: id,
-                    persistBindEvent: true,
-                    HeaderText: text  };
-                var $div = _addPageDivToBody(par);
-                par.onPageShow = function() { _loadDivContents(par); };
-                $div.bindJqmEvents(par);
-                $div.doChangePage({reloadPage: true});
+                return startLoadingMsg(function() {
+                    var par = {ParentId: p.DivId,
+                        parentlevel: p.parentlevel,
+                        level: p.parentlevel + 1,
+                        DivId: id,
+                        persistBindEvent: true,
+                        HeaderText: text  };
+                    var $div = _addPageDivToBody(par);
+                    par.onPageShow = function() { return _loadDivContents(par); };
+                    $div.CswUnbindJqmEvents();
+                    $div.CswBindJqmEvents(par);
+                    $div.CswChangePage({ reloadPage: true });
+                });
             });
             
             return $retLI;
-        }// _makeListItemFromXml()
+        }// _makeListItemFromJson()
 
         function _makeObjectClassContent(params) {
             var p = {
                 ParentId: '',
                 DivId: '',
                 HeaderText: '',
-                $xmlitem: '',
+                json: '',
                 parentlevel: '',
                 HideRefreshButton: false,
                 HideSearchButton: false
@@ -702,23 +632,23 @@ CswAppMode.mode = 'mobile';
 
             var $retHtml;
             var Html = '';
-            var id = makeSafeId({ ID: p.$xmlitem.CswAttrXml('id') });
-            var nodeSpecies = p.$xmlitem.CswAttrXml('nodespecies');
-            var NodeName = p.$xmlitem.CswAttrXml('name');
+            var id = makeSafeId({ ID: p.json['id'] });
+            var nodeSpecies = p.json['value']['nodespecies'];
+            var NodeName = p.json['value']['node_name'];
             var icon = '';
-            if (!isNullOrEmpty(p.$xmlitem.CswAttrXml('iconfilename'))) {
-                icon = 'images/icons/' + p.$xmlitem.CswAttrXml('iconfilename');
+            if (!isNullOrEmpty(p.json['value']['iconfilename'])) {
+                icon = 'images/icons/' + p.json['value']['iconfilename'];
             }
-            var ObjectClass = p.$xmlitem.CswAttrXml('objectclass');
-            debugger;
+            var ObjectClass = p.json['value']['objectclass'];
+
             if( nodeSpecies !== 'More' )
             {
                 switch (ObjectClass) {
                 case "InspectionDesignClass":
-                    var DueDate = p.$xmlitem.find('prop[ocpname="Due Date"]').CswAttrXml('gestalt');
-                    var Location = p.$xmlitem.find('prop[ocpname="Location"]').CswAttrXml('gestalt');
-                    var MountPoint = p.$xmlitem.find('prop[ocpname="Target"]').CswAttrXml('gestalt');
-                    var Status = p.$xmlitem.find('prop[ocpname="Status"]').CswAttrXml('gestalt');
+                    var DueDate = tryParseString(p.json['value']['duedate'],'' );
+                    var Location = tryParseString(p.json['value']['location'],'' );
+                    var MountPoint = tryParseString(p.json['value']['target'],'' );
+                    var Status = tryParseString(p.json['value']['status'],'' );
 //Case 22579: just remove for now
 //                var UnansweredCnt = 0;
 
@@ -762,240 +692,270 @@ CswAppMode.mode = 'mobile';
             return $retHtml;
         }
 
-        function _FieldTypeXmlToHtml($xmlitem, ParentId) {
-            var IdStr = makeSafeId({ ID: $xmlitem.CswAttrXml('id') });
-            var FieldType = $xmlitem.CswAttrXml('fieldtype');
-            var PropName = $xmlitem.CswAttrXml('name');
-            var ReadOnly = isTrue($xmlitem.CswAttrXml('isreadonly'));
+        function _FieldTypeJsonToHtml(json, ParentId, IdStr) {
+            /// <summary>
+            ///   Converts JSON into DOM content
+            /// </summary>
+            /// <param name="json" type="Object">A JSON Object</param>
+            /// <param name="ParentId" type="String">The ElementID of the parent control (should be a prop)</param>
+            /// <param name="IdStr" type="String">The ElementID of the child control</param>
+            var $retLi = $('');
+            if( !isNullOrEmpty(json)) {
+                var FieldType = json['fieldtype'];
+                var PropName = json['prop_name'];
+                var ReadOnly = isTrue(json['isreadonly']);
 
-            // Subfield values
-            var sf_text = tryParseString($xmlitem.children('text').text(), '');
-            var sf_value = tryParseString($xmlitem.children('value').text(), '');
-            var sf_href = tryParseString($xmlitem.children('href').text(), '');
-            var sf_checked = tryParseString($xmlitem.children('checked').text(), '');
-            var sf_required = tryParseString($xmlitem.children('required').text(), '');
-            var sf_units = tryParseString($xmlitem.children('units').text(), '');
-            var sf_answer = tryParseString($xmlitem.children('answer').text(), '');
-            var sf_allowedanswers = tryParseString($xmlitem.children('allowedanswers').text(), '');
-            var sf_correctiveaction = tryParseString($xmlitem.children('correctiveaction').text(), '');
-            var sf_comments = tryParseString($xmlitem.children('comments').text(), '');
-            var sf_compliantanswers = tryParseString($xmlitem.children('compliantanswers').text(), '');
-            var sf_options = tryParseString($xmlitem.children('options').text(), '');
+                // Subfield values
+                var sf_text = tryParseString(json['text'], '');
+                var sf_value = tryParseString(json['value'], '');
+                var sf_href = tryParseString(json['href'], '');
+                var sf_checked = tryParseString(json['checked'], '');
+                //var sf_relationship = tryParseString(json['value']['name'], '');
+                var sf_required = tryParseString(json['required'], '');
+                var sf_units = tryParseString(json['units'], '');
+                var sf_answer = tryParseString(json['answer'], '');
+                var sf_allowedanswers = tryParseString(json['allowedanswers'], '');
+                var sf_correctiveaction = tryParseString(json['correctiveaction'], '');
+                var sf_comments = tryParseString(json['comments'], '');
+                var sf_compliantanswers = tryParseString(json['compliantanswers'], '');
+                var sf_options = tryParseString(json['options'], '');
 
-            var $retLi = $('<li id="' + IdStr + '_li"></li>')
-                                .CswAttrXml('data-icon', false);
-            var $label = $('<h2 id="' + IdStr + '_label" style="white-space:normal;" class="csw_prop_label">' + PropName + '</h2>')
-                            .appendTo(($retLi));
-            
-            var $fieldcontain = $('<div class="csw_fieldset" ></div>')
-                                    .appendTo($retLi);
+                $retLi = $('<li id="' + IdStr + '_li"></li>')
+                    .CswAttrXml('data-icon', false);
+                var $label = $('<h2 id="' + IdStr + '_label" style="white-space:normal;" class="csw_prop_label">' + PropName + '</h2>')
+                    .appendTo(($retLi));
 
-            var $propDiv = $('<div></div>');
-            
-            if (FieldType === "Question" &&
-                !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
-                    isNullOrEmpty(sf_correctiveaction)) {
-                $label.addClass('OOC');
-            } else {
-                $label.removeClass('OOC');
-            }
-            
-            var $prop;
-            var propId = IdStr + '_input';
-            
-            if (!ReadOnly) {
-                var addChangeHandler = true;
-                
-                switch (FieldType) {
-                case "Date":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.date, ID: propId, value: sf_value });
-                    break;
-                case "Link":
-                    $prop = $propDiv.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text});
-                    break;
-                case "List":
-                    $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
-                                                .appendTo($propDiv)
-                                                .selectmenu();
-                    var selectedvalue = sf_value;
-                    var optionsstr = sf_options;
-                    var options = optionsstr.split(',');
-                    for (var i = 0; i < options.length; i++) {
-                        var $option = $('<option value="' + options[i] + '"></option>')
-                                                    .appendTo($prop);
-                        if (selectedvalue === options[i]) {
-                            $option.CswAttrDom('selected', 'selected');
-                        }
+                var $fieldcontain = $('<div class="csw_fieldset" ></div>')
+                    .appendTo($retLi);
 
-                        if (!isNullOrEmpty(options[i])) {
-                            $option.val(options[i]);
-                        } else {
-                            $option.valueOf('[blank]');
-                        }
-                    }
-                    $prop.selectmenu('refresh');
-                    break;
-                case "Logical":
-                    addChangeHandler = false; //_makeLogicalFieldSet() does this for us
-                    $prop = _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
-                                                    .appendTo($fieldcontain);
-                    break;
-                case "Memo":
-                    $prop = $('<textarea name="' + propId + '">' + sf_text + '</textarea>')
-                                                    .appendTo($propDiv);
-                    break;
-                case "Number":
-                    sf_value = tryParseNumber(sf_value, '');
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.number, ID: propId, value: sf_value });
-                    break;
-                case "Password":
-                        //nada
-                    break;
-                case "Quantity":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value })
-                                                .append(sf_units);
-                    break;
-                case "Question":
-                    addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
-                    var $question = _makeQuestionAnswerFieldSet(ParentId, IdStr, sf_allowedanswers, sf_answer, sf_compliantanswers)
-                                                    .appendTo($fieldcontain);
-                    var hideComments = true;
-                    if (!isNullOrEmpty(sf_answer) && 
-                        (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 && 
+                var $propDiv = $('<div></div>');
+
+                if (FieldType === "Question" &&
+                    !(sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) &&
                         isNullOrEmpty(sf_correctiveaction)) {
-                        $label.addClass('OOC');
-                        hideComments = false;
-                    }
-
-                    $prop = $('<div data-role="collapsible" class="csw_collapsible" data-collapsed="' + hideComments + '"><h3>Comments</h3></div>')
-                                                    .appendTo($retLi);
-                        
-                    var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
-                                                .appendTo($prop);
-
-                    if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
-                        $corAction.css('display', 'none');
-                    }
-                    $corAction.bind('change', function(eventObj) {
-                        var $cor = $(this);
-                        if ($cor.val() === '') {
-                            $label.addClass('OOC');
-                        } else {
-                            $label.removeClass('OOC');
-                        }
-                        onPropertyChange(ParentId, eventObj, $cor.val(), IdStr + '_cor');
-                    });
-
-                    var $comments = $('<textarea name="' + IdStr + '_input" id="' + IdStr + '_input" placeholder="Comments">' + sf_comments + '</textarea>')
-                                                .appendTo($prop)
-                                                .bind('change',function (eventObj) {
-                                                    var $com = $(this);
-                                                    onPropertyChange(ParentId, eventObj, $com.val(), IdStr + '_com');
-                                                });
-                    break;
-                case "Static":
-                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + sf_text + '</p>'));
-                    break;
-                case "Text":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
-                    break;
-                case "Time":
-                    $prop = $propDiv.CswInput('init', { type: CswInput_Types.time, ID: propId, value: sf_value });
-                    break;
-                default:
-                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
-                    break;
-                } // switch (FieldType)
-
-                if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
-                    $prop.bind('change', function(eventObj) {
-                        var $this = $(this);
-                        onPropertyChange(ParentId, eventObj, $this.val(), propId);
-                    });
+                    $label.addClass('OOC');
+                } else {
+                    $label.removeClass('OOC');
                 }
-            } else {
-                $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + $xmlitem.CswAttrXml('gestalt') + '</p>'));
+
+                var $prop;
+                var propId = IdStr + '_input';
+
+                if (!ReadOnly) {
+                    var addChangeHandler = true;
+
+                    switch (FieldType) {
+                    case "Date":
+                        $prop = $propDiv.CswInput('init', { type: CswInput_Types.date, ID: propId, value: sf_value });
+                        break;
+                    case "Link":
+                        $prop = $propDiv.CswLink('init', { ID: propId, href: sf_href, rel: 'external', value: sf_text });
+                        break;
+                    case "List":
+                        $prop = $('<select class="csw_prop_select" name="' + propId + '" id="' + propId + '"></select>')
+                            .appendTo($propDiv)
+                            .selectmenu();
+                        var selectedvalue = sf_value;
+                        var optionsstr = sf_options;
+                        var options = optionsstr.split(',');
+                        for (var i = 0; i < options.length; i++) {
+                            var $option = $('<option value="' + options[i] + '"></option>')
+                                .appendTo($prop);
+                            if (selectedvalue === options[i]) {
+                                $option.CswAttrDom('selected', 'selected');
+                            }
+
+                            if (!isNullOrEmpty(options[i])) {
+                                $option.val(options[i]);
+                            } else {
+                                $option.valueOf('[blank]');
+                            }
+                        }
+                        $prop.selectmenu('refresh');
+                        break;
+                    case "Logical":
+                        addChangeHandler = false; //_makeLogicalFieldSet() does this for us
+                        _makeLogicalFieldSet(ParentId, IdStr, sf_checked, sf_required)
+                            .appendTo($fieldcontain);
+                        break;
+                    case "Memo":
+                        $prop = $('<textarea name="' + propId + '">' + sf_text + '</textarea>')
+                            .appendTo($propDiv);
+                        break;
+                    case "Number":
+                        sf_value = tryParseNumber(sf_value, '');
+                        $prop = $propDiv.CswInput('init', { type: CswInput_Types.number, ID: propId, value: sf_value });
+                        break;
+                    case "Password":
+                            //nada
+                        break;
+                    case "Quantity":
+                        $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_value })
+                            .append(sf_units);
+                        break;
+                    case "Question":
+                        addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
+                        _makeQuestionAnswerFieldSet(ParentId, IdStr, sf_allowedanswers, sf_answer, sf_compliantanswers)
+                            .appendTo($fieldcontain);
+                        var hideComments = true;
+                        if (!isNullOrEmpty(sf_answer) &&
+                            (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') < 0 &&
+                                isNullOrEmpty(sf_correctiveaction)) {
+                            $label.addClass('OOC');
+                            hideComments = false;
+                        }
+
+                        $prop = $('<div data-role="collapsible" class="csw_collapsible" data-collapsed="' + hideComments + '"><h3>Comments</h3></div>')
+                            .appendTo($retLi);
+
+                        var $corAction = $('<textarea id="' + IdStr + '_cor" name="' + IdStr + '_cor" placeholder="Corrective Action">' + sf_correctiveaction + '</textarea>')
+                            .appendTo($prop);
+
+                        if (sf_answer === '' || (',' + sf_compliantanswers + ',').indexOf(',' + sf_answer + ',') >= 0) {
+                            $corAction.css('display', 'none');
+                        }
+                        $corAction.unbind('change');
+                        $corAction.bind('change', function(eventObj) {
+                            var $cor = $(this);
+                            if ($cor.val() === '') {
+                                $label.addClass('OOC');
+                            } else {
+                                $label.removeClass('OOC');
+                            }
+                            onPropertyChange(ParentId, eventObj, $cor.val(), IdStr + '_cor', IdStr);
+                        });
+
+                        $('<textarea name="' + IdStr + '_input" id="' + IdStr + '_input" placeholder="Comments">' + sf_comments + '</textarea>')
+                            .appendTo($prop)
+                            .unbind('change')
+                            .bind('change', function(eventObj) {
+                                var $com = $(this);
+                                onPropertyChange(ParentId, eventObj, $com.val(), IdStr + '_com', IdStr);
+                            });
+                        break;
+                    case "Static":
+                        $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + sf_text + '</p>'));
+                        break;
+                    case "Text":
+                        $prop = $propDiv.CswInput('init', { type: CswInput_Types.text, ID: propId, value: sf_text });
+                        break;
+                    case "Time":
+                        $prop = $propDiv.CswInput('init', { type: CswInput_Types.time, ID: propId, value: sf_value });
+                        break;
+                    default:
+                        $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['gestalt'] + '</p>'));
+                        break;
+                    } // switch (FieldType)
+
+                    if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
+                        $prop.unbind('change').bind('change', function(eventObj) {
+                            var $this = $(this);
+                            onPropertyChange(ParentId, eventObj, $this.val(), propId, Id);
+                        });
+                    }
+                } else {
+                    $propDiv.append($('<p style="white-space:normal;" id="' + propId + '">' + json['gestalt'] + '</p>'));
+                }
+                if ($propDiv.children().length > 0) {
+                    $fieldcontain.append($propDiv);
+                }
             }
-            if($propDiv.children().length > 0) {
-                $fieldcontain.append($propDiv);
-            }
-            
             return $retLi;
         }
 
-        function _FieldTypeHtmlToXml($xmlitem, id, value) {
-            var name = new CswString(id);
-            var IdStr = makeSafeId({ ID: $xmlitem.CswAttrXml('id') });
-            var fieldtype = $xmlitem.CswAttrXml('fieldtype');
-            var propname = $xmlitem.CswAttrXml('name');
+        function _FieldTypeHtmlToJson(json, elementId, propId, value) {
+            /// <summary>
+            ///   Converts DOM content back to JSON
+            /// </summary>
+            /// <param name="json" type="Object">A JSON Object</param>
+            /// <param name="elementId" type="String">The id of the DOM element</param>
+            /// <param name="propId" type="String">The id of the property</param>
+            /// <param name="value" type="String">The stored value</param>
+            
+            var elementName = new CswString(elementId);
+            var propName = tryParseString(makeSafeId({ ID: json['id'] }), propId);
+            var fieldtype = json['fieldtype'];
+            //var propname = json.name;
 
             // subfield nodes
-            var $sf_text = $xmlitem.children('text');
-            var $sf_value = $xmlitem.children('value');
-            var $sf_href = $xmlitem.children('href');
-            var $sf_options = $xmlitem.children('options');
-            var $sf_checked = $xmlitem.children('checked');
-            var $sf_required = $xmlitem.children('required');
-            var $sf_units = $xmlitem.children('units');
-            var $sf_answer = $xmlitem.children('answer');
-            var $sf_allowedanswers = $xmlitem.children('allowedanswers');
-            var $sf_correctiveaction = $xmlitem.children('correctiveaction');
-            var $sf_comments = $xmlitem.children('comments');
-            var $sf_compliantanswers = $xmlitem.children('compliantanswers');
+            var sf_text = 'text';
+            var sf_value = 'value';
+            //var $sf_href = json.href;
+            //var $sf_options = json.options;
+            var sf_checked = 'checked';
+            //var $sf_required = json.required;
+            //var $sf_units = json.units;
+            var sf_answer = 'answer';
+            //var $sf_allowedanswers = json.allowedanswers;
+            var sf_correctiveaction = 'correctiveaction';
+            var sf_comments = 'comments';
+            //var $sf_compliantanswers = json.compliantanswers;
 
-            var $sftomodify = null;
+            var propToUpdate = '';
             switch (fieldtype) {
-            case "Date":
-                if (name.contains(IdStr)) $sftomodify = $sf_value;
-                break;
-            case "Link":
-                break;
-            case "List":
-                if (name.contains(IdStr)) $sftomodify = $sf_value;
-                break;
-            case "Logical":
-                if (name.contains(makeSafeId({ ID: IdStr, suffix: 'ans' }))) {
-                    $sftomodify = $sf_checked;
-                }
-                break;
-            case "Memo":
-                if (name.contains(IdStr)) $sftomodify = $sf_text;
-                break;
-            case "Number":
-                if (name.contains(IdStr)) $sftomodify = $sf_value;
-                break;
-            case "Password":
-                break;
-            case "Quantity":
-                if (name.contains(IdStr)) $sftomodify = $sf_value;
-                break;
-            case "Question":
-                if (name.contains(makeSafeId({ ID: IdStr, suffix: 'com' }))) {
-                    $sftomodify = $sf_comments;
-                } 
-                else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'ans' }))) {
-                    $sftomodify = $sf_answer;
-                } 
-                else if (name.contains(makeSafeId({ ID: IdStr, suffix: 'cor' }))) {
-                    $sftomodify = $sf_correctiveaction;
-                }
-                break;
-            case "Static":
-                break;
-            case "Text":
-                if (name.contains(IdStr)) $sftomodify = $sf_text;
-                break;
-            case "Time":
-                if (name.contains(IdStr)) $sftomodify = $sf_value;
-                break;
-            default:
-                break;
+                case "Date":
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_value;
+                    }
+                    break;
+                case "Link":
+                    break;
+                case "List":
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_value;
+                    }
+                    break;
+                case "Logical":
+                    if (elementName.contains(makeSafeId({ ID: propName, suffix: 'ans' }))) {
+                        propToUpdate = sf_checked;
+                    }
+                    break;
+                case "Memo":
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_text;
+                    }
+                    break;
+                case "Number":
+                    if (elementName.contains(propName)) propToUpdate = sf_value;
+                    break;
+                case "Password":
+                    break;
+                case "Quantity":
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_value;
+                    }
+                    break;
+                case "Question":
+                    if (elementName.contains(makeSafeId({ ID: propName, suffix: 'com' }))) {
+                        propToUpdate = sf_comments;
+                    } 
+                    else if (elementName.contains(makeSafeId({ ID: propName, suffix: 'ans' }))) {
+                        propToUpdate = sf_answer;
+                    } 
+                    else if (elementName.contains(makeSafeId({ ID: propName, suffix: 'cor' }))) {
+                        propToUpdate = sf_correctiveaction;
+                    }
+                    break;
+                case "Static":
+                    break;
+                case "Text":
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_text;
+                    }
+                    break;
+                case "Time":
+                    if (elementName.contains(propName)) {
+                        propToUpdate = sf_value;
+                    }
+                    break;
+                default:
+                    break;
             }
-            if (!isNullOrEmpty($sftomodify)) {
-                $sftomodify.text(value);
-                $xmlitem.CswAttrXml('wasmodified', '1');
+            if (!isNullOrEmpty(propToUpdate)) {
+                json[propToUpdate] = value;
+                json['wasmodified'] = '1';
             }
-        }// _FieldTypeHtmlToXml()
+        }// _FieldTypeHtmlToJson()
 
         function _makeLogicalFieldSet(ParentId, IdStr, Checked, Required) {
             var Suffix = 'ans';
@@ -1008,15 +968,15 @@ CswAppMode.mode = 'mobile';
                                          'data-role': 'controlgroup',
                                          'data-type': 'horizontal'
                                      });
-                                        
-            var answers = ['Null', 'True', 'False'];
-            if (isTrue(Required)) {
-                answers = ['True', 'False'];
+                                     
+            var answers = ['True', 'False'];
+            if ( !isTrue(Required)) {
+                answers.push = 'Null';
             }
             var inputName = makeSafeId({ prefix: IdStr, ID: Suffix }); //Name needs to be non-unique and shared
 
             for (var i = 0; i < answers.length; i++) {
-                var answertext;
+                var answertext = '';
                 switch (answers[i]) {
                 case 'Null':
                     answertext = '?';
@@ -1045,7 +1005,7 @@ CswAppMode.mode = 'mobile';
                 $input.bind('change', function(eventObj) {
                     var $this = $(this);
                     var thisInput = $this.val();
-                    onPropertyChange(ParentId, eventObj, thisInput, inputId);
+                    onPropertyChange(ParentId, eventObj, thisInput, inputId, IdStr);
                     return false;
                 });
             } // for (var i = 0; i < answers.length; i++)
@@ -1076,7 +1036,6 @@ CswAppMode.mode = 'mobile';
                 if (Answer === answers[i]) {
                      $answer.CswAttrDom('checked', 'checked');
                 }
-                
                 $answer.unbind('change');
                 $answer.bind('change', function(eventObj) {
 
@@ -1101,13 +1060,12 @@ CswAppMode.mode = 'mobile';
                             $li.removeClass('OOC');
                         }
                     }
-
-                    setTimeout( function () { onPropertyChange(ParentId, eventObj, thisAnswer, answerName); }, 1);
+                    fixGeometry();
+                    onPropertyChange(ParentId, eventObj, thisAnswer, answerName, IdStr);
 
                     return false;
                 });
             } // for (var i = 0; i < answers.length; i++)
-
             return $fieldset;
         } // _makeQuestionAnswerFieldSet()
         
@@ -1122,14 +1080,9 @@ CswAppMode.mode = 'mobile';
                 HideSearchButton: false,
                 HideOnlineButton: false,
                 HideRefreshButton: false,
-                HideLogoutButton: false,
                 HideHelpButton: false,
-                HideCloseButton: true,
                 HideBackButton: false,
-                HideHeaderOnlineButton: true,
-                dataRel: 'page',
-                backicon: undefined,
-                backtransition: undefined
+                HideHeaderOnlineButton: true
             };
 
             if (params) {
@@ -1143,21 +1096,18 @@ CswAppMode.mode = 'mobile';
             var $searchBtn = $('#' + p.DivId + '_searchopen');
             var $syncstatusBtn = $('#' + p.DivId + '_gosyncstatus');
             var $refreshBtn = $('#' + p.DivId + '_refresh');
-            var $logoutBtn = $('#' + p.DivId + '_logout');
             var $helpBtn = $('#' + p.DivId + '_help');
-            var $closeBtn = $('#' + p.DivId + '_close');
-            var $backlink = $('#' + p.DivId + '_back');
             var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
-            var $loggingBtn = $('#' + p.DivId + '_debuglog');
             var $headerTitle = $('#' + p.DivId + '_header_title');
+            var $backlink = $('#' + p.DivId + '_back');
+            
             if (isNullOrEmpty($pageDiv) || $pageDiv.length === 0) {
                 $pageDiv = $body.CswDiv('init', { ID: p.DivId })
                                         .CswAttrXml({
                                         'data-role': 'page',
                                         'data-url': p.DivId,
                                         'data-title': p.HeaderText,
-                                        'data-rel': p.dataRel,
-                                        'data-add-back-btn': !isTrue(p.HideBackButton)              
+                                        'data-rel': 'page'
                                     });
 
                 var $header = $pageDiv.CswDiv('init', { ID: p.DivId + '_header' })
@@ -1176,33 +1126,10 @@ CswAppMode.mode = 'mobile';
                                                 .CswAttrXml({
                                                 'data-identity': p.DivId + '_back', 
                                                 'data-rel': 'back',
-                                                'data-direction': 'reverse'
-                                            })
-
-                $closeBtn = $header.CswLink('init', {
-                                               href: 'javascript:void(0)',
-                                               ID: p.DivId + '_close',
-                                               cssclass: 'ui-btn-left'
-                                           })
-                                               .CswAttrXml({
-                                               'data-identity': p.DivId + '_close',
-                                               'data-icon': 'delete',
-                                               'data-rel': 'back',
-                                               'data-iconpos': 'notext',
-                                               'data-direction': 'reverse',
-                                               'title': 'Close'
-                                           });
-
-                if (!isNullOrEmpty(p.backtransition)) {
-                    $backlink.CswAttrXml('data-transition', p.backtransition);
-                }
-
-                if (!isNullOrEmpty(p.backicon)) {
-                    $backlink.CswAttrXml('data-icon', p.backicon);
-                } else {
-                    $backlink.CswAttrXml('data-icon', 'arrow-l');
-                }
-
+                                                'data-direction': 'reverse',
+                                                'data-icon': 'arrow-l'
+                                            });
+                
                 $headerTitle = $('<h1 id="' + p.DivId + '_header_title"></h1>').appendTo($header);                
 
                 $searchBtn = $header.CswLink('init', {
@@ -1222,9 +1149,9 @@ CswAppMode.mode = 'mobile';
                                                   ID: p.DivId + '_headeronline',
                                                   cssclass: 'ui-btn-right onlineStatus online',
                                                   value: 'Online'
-                                              })
+                                                    })
                                                   .CswAttrDom({ 'disabled': 'disabled' })
-                    .hide();
+                                                  .hide();
 
                 $header.CswDiv('init', { cssclass: 'toolbar' })
                                .append(p.$toolbar)
@@ -1241,25 +1168,27 @@ CswAppMode.mode = 'mobile';
                                               'data-id': 'csw_footer'
                                           });
 
-                var $footerCtn = $('<div data-role="navbar">')
-                                            .appendTo($footer);
+                var $footerNav = $('<div data-role="navbar">').appendTo($footer);
+                var $footerCtn = $('<ul></ul>').appendTo($footerNav);
                 var onlineValue = (!amOnline()) ? 'Offline' : 'Online';
 
-                $syncstatusBtn = $footerCtn.CswLink('init', {
+                $syncstatusBtn = $('<li></li>').CswLink('init', {
                                                         'href': 'javascript:void(0)',
                                                         ID: p.DivId + '_gosyncstatus',
-                                                        cssclass: 'onlineStatus ' + onlineValue.toLowerCase(), 
+                                                        cssclass: 'ui-btn-active onlineStatus ' + onlineValue.toLowerCase(), 
                                                         value: onlineValue
                                                     })
                                                         .CswAttrXml({
                                                         'data-identity': p.DivId + '_gosyncstatus',
                                                         'data-url': p.DivId + '_gosyncstatus',
                                                         'data-transition': 'pop',
-                                                        'data-rel': 'dialog'
+                                                        'data-rel': 'dialog',
+                                                        'data-icon': 'gear'
                                                     })
-                                                    .css('display', '');
+                                                    .css('display', '')
+                                                    .appendTo($footerCtn);
 
-                $refreshBtn = $footerCtn.CswLink('init', {
+                $refreshBtn = $('<li></li>').CswLink('init', {
                                                            'href': 'javascript:void(0)',
                                                            ID: p.DivId + '_refresh',
                                                            value: 'Refresh',
@@ -1267,28 +1196,17 @@ CswAppMode.mode = 'mobile';
                                                        }) 
                                                            .CswAttrXml({
                                                            'data-identity': p.DivId + '_refresh',
-                                                           'data-url': p.DivId + '_refresh'
+                                                           'data-url': p.DivId + '_refresh',
+                                                           'data-icon': 'refresh'
                                                        })
-                                                       .css('display', '');
+                                                       .css('display', '')
+                                                       .appendTo($footerCtn);
 
-                $logoutBtn = $footerCtn.CswLink('init', {
-                                                        'href': 'javascript:void(0)',
-                                                        ID: p.DivId + '_logout',
-                                                        value: 'Logout'
-                                                    })
-                                                        .CswAttrXml({
-                                                        'data-identity': p.DivId + '_logout',
-                                                        'data-url': p.DivId + '_logout',
-                                                        'data-transition': 'flip'
-                                                    })
-                                                        .css('display', '');
+                $('<li></li>').CswLink('init', { href: 'Main.html', rel: 'external', ID: p.DivId + '_main', value: 'Full Site' })
+                              .CswAttrXml({ 'data-transition': 'pop', 'data-icon': 'home' })
+                              .appendTo($footerCtn);
 
-
-                $footerCtn.CswLink('init', { href: 'Main.html', rel: 'external', ID: p.DivId + '_main', value: 'Full Site' })
-                          .CswAttrXml({ 'data-transition': 'pop' });
-
-
-                $helpBtn = $footerCtn.CswLink('init', {
+                $helpBtn = $('<li></li>').CswLink('init', {
                                              'href': 'javascript:void(0)',
                                              ID: p.DivId + '_help',
                                              value: 'Help'
@@ -1297,25 +1215,21 @@ CswAppMode.mode = 'mobile';
                                              'data-identity': p.DivId + '_help',
                                              'data-url': p.DivId + '_help',
                                              'data-transition': 'pop',
-                                             'data-rel': 'dialog'
+                                             'data-rel': 'dialog',
+                                             'data-icon': 'info'
                                       })
-                                      .css('display', '');
-
-                if( debugOn() )
-                {
-                    $loggingBtn = $footerCtn.CswLink('init', {
-                                                         'href': 'javascript:void(0)',
-                                                         ID: p.DivId + '_debuglog',
-                                                         value: doLogging() ? 'Sync Log' : 'Start Log',
-                                                         cssclass: 'debug'
-                                                     })
-                                                     .addClass(doLogging() ? 'debug-on' : 'debug-off');
-                }
+                                      .css('display', '')
+                                      .appendTo($footerCtn);
             }
 
             //case 22323
             $headerTitle.text(p.HeaderText);
             
+            if (!p.HideBackButton) {
+                $backlink.css('display', '').show();
+            } else {
+                $backlink.css('display', 'none').hide();
+            }
             if (p.HideOnlineButton) {
                 $syncstatusBtn.css('display', 'none').hide();
             } else {
@@ -1332,11 +1246,6 @@ CswAppMode.mode = 'mobile';
             } else {
                 $helpBtn.css('display', '').show();
             }
-            if (p.HideLogoutButton) {
-                $logoutBtn.css('display', 'none').hide();
-            } else {
-                $logoutBtn.css('display', '').show();
-            }
             if (p.HideRefreshButton || !amOnline() ) {
                 $refreshBtn.css('display', 'none').hide();
             } else {
@@ -1352,19 +1261,6 @@ CswAppMode.mode = 'mobile';
             } else {
                 $headerOnlineBtn.css('display', '').show();
             }
-            if (p.dataRel === 'dialog' && !p.HideCloseButton) {
-                $closeBtn.css('display', '').show();
-            } else {
-                $closeBtn.css('display', 'none').hide();
-            }
-            if (!p.HideBackButton) {
-                $backlink.css('display', '').show();
-            } else {
-                $backlink.css('display', 'none').hide();
-            }
-            if (debugOn()) {
-                $loggingBtn.css({ 'display': '' }).show();
-            }
 
             _bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
             return $pageDiv;
@@ -1375,73 +1271,54 @@ CswAppMode.mode = 'mobile';
             return $('#' + DivId).find('div:jqmData(role="header") h1').text();
         }
 
-        function _addToDivHeaderText($div, text) {
-            $div.find('div:jqmData(role="header") h1').append($('<p style="color: yellow; white-space: normal;">' + text + '</p>'));
-            $.mobile.loadPage($div);
-            return $div;
+        function _addToDivHeaderText($div, text, style) {
+            var $ret = $('<p white-space: normal;">' + text + '</p>');
+            
+            $div.find('div:jqmData(role="header") h1')
+                .css('white-space','normal')
+                .append($ret);
+            
+            return $ret;
         }
         
         function _bindPageEvents(DivId, ParentId, level, $div) {
             $div.find('#' + DivId + '_searchopen')
                 .unbind('click')
                 .bind('click', function() {
-                    $.mobile.showPageLoadingMsg();
-                    onSearchOpen(DivId);
-                    return false;
+                    return startLoadingMsg( function () { onSearchOpen(DivId); });
                 })
                 .end()
                 .find('#' + DivId + '_gosyncstatus')
                 .unbind('click')
                 .bind('click', function() {
-                    $.mobile.showPageLoadingMsg();
-                    onSyncStatusOpen(DivId);
-                    return false;
+                    return startLoadingMsg( function () { onSyncStatusOpen(DivId); });
                 })
                 .end()
                 .find('#' + DivId + '_refresh')
                 .unbind('click')
                 .bind('click', function() {
-                    $.mobile.showPageLoadingMsg();
-                    onRefresh();
-                    return false;
-                })
-                .end()
-                .find('#' + DivId + '_logout')
-                .unbind('click')
-                .bind('click', function(e) {
-                    $.mobile.showPageLoadingMsg();
-                    onLogout(DivId, e);
-                    return false;
+                    return startLoadingMsg( function () { onRefresh(); });
                 })
                 .end()
                 .find('#' + DivId + '_help')
                 .unbind('click')
                 .bind('click', function() {
-                    $.mobile.showPageLoadingMsg();
-                    onHelp(DivId, ParentId);
-                    return false;
+                    return startLoadingMsg( function () { onHelp(DivId, ParentId); });
                 })
-                .end()
-                .find('#' + DivId + '_debuglog')
-                .die('click')
-                .live('click', function() {
-                    _toggleLogging();
-                    return false;
-                })
-                .end()
-                .find('textarea')
-                .unbind('change')
-                .bind('change', function(eventObj) {
-                    var $this = $(this);
-                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
-                })
-                .end()
-                .find('.csw_prop_select')
-                .unbind('change')
-                .bind('change', function(eventObj) {
-                    var $this = $(this);
-                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
-                })
+//                .end()
+//                .find('textarea')
+//                .unbind('change')
+//                .bind('change', function(eventObj) {
+//                    var $this = $(this);
+//                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
+//                })
+//                .end()
+//                .find('.csw_prop_select')
+//                .unbind('change')
+//                .bind('change', function(eventObj) {
+//                    var $this = $(this);
+//                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
+//                })
                 .end();
         }
 
@@ -1451,41 +1328,56 @@ CswAppMode.mode = 'mobile';
 
         function _makeSyncStatusDiv() {
             var content = '';
-            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + tryParseString(localStorage.unSyncedChanges,'0') + '</span></p>';
-            content += '<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess + '</span></p>';
-            content += '<p>Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt + '</span></p>';
+            content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + tryParseString(mobileStorage.getItem('unSyncedChanges'),'0') + '</span></p>';
+            content += '<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess() + '</span></p>';
+            var hideFailure = isNullOrEmpty(mobileStorage.lastSyncAttempt()) ? '' : 'none';
+            content += '<p style="display:' + hideFailure + ' ;">Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt() + '</span></p>';
             content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
             content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
-
+            content += '<br/>';
+            content += '<a id="ss_logout" data-identity="ss_logout" data-url="ss_logout" href="javascript:void(0)" data-role="button">Logout</a>';
+            if( debugOn() ) {
+                content += '<a id="ss_debuglog" class="debug" data-identity="ss_debuglog" data-url="ss_debuglog" href="javascript:void(0)" data-role="button">Start Logging</a>';
+            }
+            
             var $retDiv = _addPageDivToBody({
                     DivId: 'syncstatus',
                     HeaderText: 'Sync Status',
                     $content: $(content),
-                    dataRel: 'dialog',
                     HideSearchButton: true,
                     HideOnlineButton: true,
                     HideRefreshButton: false,
-                    HideLogoutButton: false,
                     HideHelpButton: false,
-                    HideCloseButton: true,
                     HideBackButton: false,
                     HideHeaderOnlineButton: false
                 });
                    
             $retDiv.find('#ss_forcesync')
-                            .bind('click', function() {
-                                $.mobile.showPageLoadingMsg();
-                                _processChanges(false);
-                                return false;
-                            })
-                            .end()
-                            .find('#ss_gooffline')
-                            .bind('click', function() {
-                                var stayOffline = !mobileStorage.stayOffline();
-                                mobileStorage.stayOffline(stayOffline);
-                                _toggleOffline(true);
-                                return false;
-                            });
+                    .bind('click', function() {
+                        return startLoadingMsg( function () {
+                             _processChanges(false);
+                        });
+                    })
+                    .end()
+                    .find('#ss_gooffline')
+                    .bind('click', function() {
+                        var stayOffline = !mobileStorage.stayOffline();
+                        mobileStorage.stayOffline(stayOffline);
+                        _toggleOffline(true);
+                        return false;
+                    })
+                    .end()
+                    .find('#ss_logout')
+                    .bind('click', function() {
+                        return startLoadingMsg( function () { onLogout(); });
+                    })
+                    .end()
+                    .find('#ss_debuglog')
+                    .bind('click', function() {
+                        _toggleLogging();
+                        return false;
+                    })
+                    .end();
 
             return $retDiv;
         }
@@ -1518,9 +1410,7 @@ CswAppMode.mode = 'mobile';
             }
         }
 
-        function _resetPendingChanges(setlastsyncnow) {
-
-            $('#ss_pendingchangecnt').text( tryParseString(localStorage.unSyncedChanges,'0') );
+        function _resetPendingChanges(succeeded) {
             if ( _pendingChanges() ) {
                 $('.onlineStatus').addClass('pendingchanges')
                                   .find('span.ui-btn-text')
@@ -1532,7 +1422,9 @@ CswAppMode.mode = 'mobile';
             }
             
             if(arguments.length === 1) {
-                if (setlastsyncnow) {
+                if (succeeded) {
+                    mobileStorage.clearUnsyncedChanges();
+                    _updatedUnsyncedChanges();
                     $('#ss_lastsync_success').text(mobileStorage.lastSyncSuccess());
                 }
                 else {
@@ -1545,12 +1437,11 @@ CswAppMode.mode = 'mobile';
         function _checkNoPendingChanges() {
             var pendingChanges = (!_pendingChanges() ||
                 confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
-            $.mobile.hidePageLoadingMsg();
             return pendingChanges;
         }
 
         function _pendingChanges() {
-            var changes = new Number(tryParseString(localStorage.unSyncedChanges,'0'))
+            var changes = new Number(tryParseString(mobileStorage.getItem('unSyncedChanges'),'0'))
             return (changes > 0);
         }
 
@@ -1591,23 +1482,53 @@ CswAppMode.mode = 'mobile';
                     DivId: 'help',
                     HeaderText: 'Help',
                     $content: $help,
-                    dataRel: 'dialog',
                     HideSearchButton: true,
                     HideOnlineButton: false,
                     HideRefreshButton: true,
-                    HideLogoutButton: false,
                     HideHelpButton: true,
-                    HideCloseButton: false,
-                    HideBackButton: true
+                    HideBackButton: false
                 });
 
             return $retDiv;
         }
 
-        // ------------------------------------------------------------------------------------
-        // Events
-        // ------------------------------------------------------------------------------------
+        //#region Events
 
+        function onLoginFail(text) {
+            Logout(false);
+            _addToDivHeaderText($logindiv, text)
+                .css('color','yellow');
+            mobileStorage.setItem('loginFailure', text);
+        }
+
+        function onLogout() {
+            Logout(true);
+        }
+
+        function onError() {
+            stopLoadingMsg();
+        }
+        
+        function Logout(reloadWindow) {
+            if ( _checkNoPendingChanges() ) {
+                
+                var loginFailure = tryParseString(mobileStorage.getItem('loginFailure'), '');
+                var onlineStatus = amOnline();
+
+                mobileStorage.clear();
+                
+                amOnline(onlineStatus,loginFailure);
+                // reloading browser window is the easiest way to reset
+                if (reloadWindow) {
+                    window.location.href = window.location.pathname;
+                }
+            }
+        }
+
+        //#endregion Events
+        
+        //#region Button Bindings
+        
         function onLoginSubmit() {
             if (amOnline()) {
                 var UserName = $('#login_username').val();
@@ -1630,9 +1551,11 @@ CswAppMode.mode = 'mobile';
                         },
                         success: function(data) {
                             SessionId = $.CswCookie('get', CswCookieName.SessionId);
-                            _cacheSession(SessionId, UserName, AccessId);
+                            mobileStorage.sessionid(SessionId);
+                            mobileStorage.username(UserName); 
+                            mobileStorage.customerid(AccessId);
                             $viewsdiv = reloadViews();
-                            $viewsdiv.doChangePage();
+                            $viewsdiv.CswChangePage();
                         },
                         error: function() {
                             onError();
@@ -1641,141 +1564,130 @@ CswAppMode.mode = 'mobile';
             }
 
         } //onLoginSubmit() 
-
-        function onLoginFail(text) {
-            Logout(false);
-            $.mobile.hidePageLoadingMsg();
-            _addToDivHeaderText($logindiv, text);
-            localStorage['loginFailure'] = text;
-        }
-
-        function onLogout() {
-            Logout(true);
-        }
-
-        function onError() {
-            $.mobile.hidePageLoadingMsg();
-        }
         
-        function Logout(reloadWindow) {
-            if ( _checkNoPendingChanges() ) {
+        function onRefresh() {
+            var DivId = mobileStorage.currentViewId();
+            if(isNullOrEmpty(DivId)) {
+                window.location.reload();
+            }
+            else if (amOnline() && 
+                _checkNoPendingChanges() ) {
                 
-                var loginFailure = tryParseString(localStorage['loginFailure'], '');
-                var onlineStatus = amOnline();
-                
-                _clearStorage();
-                
-                amOnline(onlineStatus,loginFailure);
-                // reloading browser window is the easiest way to reset
-                if (reloadWindow) {
-                    window.location.href = window.location.pathname;
+                if(DivId === 'viewsdiv') {
+                    window.location.reload();
+                }
+                else {
+                    var HeaderText = _getDivHeaderText(DivId);
+                    var jsonData = {
+                        SessionId: SessionId,
+                        ParentId: DivId,
+                        ForMobile: ForMobile
+                    };
+
+                    CswAjaxJSON({
+                            formobile: ForMobile,
+                            url: opts.ViewUrl,
+                            data: jsonData,
+                            stringify: false,
+                            onloginfail: function(text) { onLoginFail(text); },
+                            success: function(data) {
+                                setOnline(false);
+                                if( !isNullOrEmpty(data['nodes']) ) {
+                                    var viewJSON = data['nodes'];
+                                    
+                                    var params = {
+                                        ParentId: 'viewsdiv',
+                                        DivId: DivId,
+                                        HeaderText: HeaderText,
+                                        json: mobileStorage.updateStoredViewJson(DivId, viewJSON),
+                                        parentlevel: 0,
+                                        level: 1,
+                                        HideRefreshButton: false,
+                                        HideSearchButton: false,
+                                        HideBackButton: false
+                                    };
+                                    params.onPageShow = function() { return _loadDivContents(params); };
+                                    _loadDivContents(params).CswChangePage();
+                                }
+                            }, // success
+                            error: function() {
+                                onError();
+                            }
+                        });
                 }
             }
-            $.mobile.hidePageLoadingMsg();
-        }
-
-        function _clearStorage() {
-            sessionStorage.clear();
-            localStorage.clear();
-        }
-
-        function onRefresh() {
-            $.mobile.showPageLoadingMsg();
-            var DivId = localStorage['currentviewid'];
-            if (amOnline() && 
-                _checkNoPendingChanges() &&
-                !isNullOrEmpty(DivId) ) {
-                
-                var HeaderText = _getDivHeaderText(DivId);
-                var dataXml = {
-                    SessionId: SessionId,
-                    ParentId: DivId,
-                    ForMobile: ForMobile
-                };
-
-                CswAjaxXml({
-                        async: false,   // required so that the link will wait for the content before navigating
-                        formobile: ForMobile,
-                        url: opts.ViewUrl,
-                        data: dataXml,
-                        stringify: false,
-                        onloginfail: function(text) { onLoginFail(text); },
-                        success: function(xml) {
-                            setOnline(false);
-                            $currentViewXml = $(xml);
-                            _updateStoredViewXml(DivId, $currentViewXml, '0');
-
-                            var params = {
-                                ParentId: 'viewsdiv',
-                                DivId: DivId,
-                                HeaderText: HeaderText,
-                                '$xml': $currentViewXml,
-                                parentlevel: 0,
-                                level: 1,
-                                HideRefreshButton: false,
-                                HideSearchButton: false,
-                                HideBackButton: false
-                            };
-                            params.onPageShow = function() { return _loadDivContents(params); }
-                            $.mobile.changePage( _loadDivContents(params) );
-                        }, // success
-                        error: function () {
-                            onError(); //setOffline();
-                        }
-                    });
-            }
-            $.mobile.hidePageLoadingMsg();
         }
 
         function onSyncStatusOpen() {
-            $syncstatus.doChangePage({ transition: 'slideup' });
+            $syncstatus.CswChangePage({ transition: 'slideup' });
         }
 
-        function onHelp(DivId) {
+        function onHelp() {
             $help = _makeHelpDiv();
-            $help.doChangePage({ transition: 'slideup' });
+            $help.CswChangePage({ transition: 'slideup' });
         }
 
-        function onPropertyChange(DivId, eventObj, inputVal, inputId) {
-            var logger = new profileMethod('onPropertyChange');
+        //#endregion Button Bindings
+        
+        function onPropertyChange(DivId, eventObj, inputVal, inputId, inputPropId) {
+            var logger = new CswProfileMethod('onPropertyChange');
             var $elm = $(eventObj.target);
 
-            var name = tryParseString(inputId,$elm.CswAttrDom('id'))
+            var name = tryParseString(inputId, $elm.CswAttrDom('id'));
             var value = tryParseString(inputVal, eventObj.target.innerText);
        
+            var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
+            var nodeJson = mobileStorage.fetchCachedNodeJson(nodeId);
+            
             // update the xml and store it
-            if (!isNullOrEmpty($currentViewXml)) {
+            if (!isNullOrEmpty(nodeId) && !isNullOrEmpty(nodeJson)) {
                 mobileStorage.addUnsyncedChange();
-                _resetPendingChanges(false);
+                _resetPendingChanges();
                 
-                var nodeId = DivId.substr(DivId.indexOf('nodeid_nodes_'),DivId.length);
-                var $nodeXml = $( localStorage[nodeId] );
-                $nodeXml.children(DivId).andSelf().find('prop').each(function() {
-                    var $fieldtype = $(this);
-                    _FieldTypeHtmlToXml($fieldtype, name, value);
-                });
-                $currentViewXml.find('#' + nodeId).html($nodeXml);
-                _updateStoredViewXml(rootid, $currentViewXml, '1');
+                if( !isNullOrEmpty(inputPropId) )
+                {
+                    for (var key in nodeJson['subitems'])
+                    {
+                        var tab = nodeJson['subitems'][key];
+                        if (!isNullOrEmpty(tab[inputPropId])) {
+                            var prop = tab[inputPropId];
+                            _FieldTypeHtmlToJson(prop, name, inputPropId, value);
+                            //we're only updating one prop--don't iterate them all.
+                            break;
+                        }
+                    }
+                }
+                else { //remove else as soon as we can verify we never need to enter here
+                    errorHandler('Could not find a prop to update');
+                }
+                mobileStorage.updateStoredNodeJson(nodeId, nodeJson, '1');
             }
             kickStartAutoSync();
             cacheLogInfo(logger);
         } // onPropertyChange()
 
         function onSearchOpen(DivId) {
-            var $xmlstr = _fetchCachedViewXml(rootid);
-            if (!isNullOrEmpty($xmlstr)) {
+            var viewId = mobileStorage.currentViewId();
+            var searchJson = mobileStorage.fetchCachedViewJson(viewId,'search');
+            if (!isNullOrEmpty(searchJson)) {
                 var $wrapper = $('<div></div>');
                 var $fieldCtn = $('<div data-role="fieldcontain"></div>')
                                             .appendTo($wrapper);
-                var $select = $('<select id="' + DivId + '_searchprop" name="' + DivId + '_searchprop" class="csw_prop_select">')
-                                            .appendTo($fieldCtn)
+                var values = [];
+                var selected;
+                
+                for(var key in searchJson ) {
+                    if( !selected ) selected = key;
+                    values.push({ 'value': key, 'display': searchJson[key]});
+                }
+                
+                var $select = $fieldCtn.CswSelect('init',  {
+                                                ID: DivId + '_searchprop',
+                                                selected: selected,
+                                                cssclass: 'csw_search_select',
+                                                values: values
+                                            })
                                             .CswAttrXml({ 'data-native-menu': 'false' });
-
-                $xmlstr.children('search').each(function() {
-                    var $search = $(this).clone();
-                    $('<option value="' + $search.CswAttrXml('id') + '">' + $search.CswAttrXml('name') + '</option>')
-                                            .appendTo($select);
-                });
 
                 var $searchCtn = $('<div data-role="fieldcontain"></div>')
                                             .appendTo($wrapper);
@@ -1786,202 +1698,117 @@ CswAppMode.mode = 'mobile';
                                                 });
                 $wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
                                                 .CswAttrXml({ 'data-role': 'button' })
+                                                .unbind('click')
                                                 .bind('click', function() {
-                                                    onSearchSubmit(DivId);
-                                                    return false;
+                                                    return startLoadingMsg( function () { onSearchSubmit(DivId); });
                                                 });
                 $wrapper.CswDiv('init', { ID: DivId + '_searchresults' });
 
                 var $searchDiv = _addPageDivToBody({
                         ParentId: DivId,
-                        DivId: 'CswMobile_SearchDiv' + rootid,
+                        DivId: 'CswMobile_SearchDiv' + viewId,
                         HeaderText: 'Search',
                         $content: $wrapper,
                         HideSearchButton: true,
                         HideOnlineButton: true,
                         HideRefreshButton: true,
-                        HideLogoutButton: false,
                         HideHelpButton: false,
-                        HideCloseButton: true,
                         HideBackButton: false
                     });
-                $searchDiv.doChangePage({ transition: 'slideup' });
+                $searchDiv.CswChangePage({ transition: 'slideup' });
             }
         }
 
         function onSearchSubmit(DivId) {
-            $.mobile.showPageLoadingMsg();
             var searchprop = $('#' + DivId + '_searchprop').val();
             var searchfor = $('#' + DivId + '_searchfor').val();
             var $resultsDiv = $('#' + DivId + '_searchresults')
                 .empty();
-            var $xmlstr = _fetchCachedViewXml(rootid);
-            if (!isNullOrEmpty($xmlstr)) {
-                var $content = $resultsDiv.makeUL(DivId + '_searchresultslist', { 'data-filter': false })
-                                                    .append($('<li data-role="list divider">Results</li>'));
+            
+            var viewId = mobileStorage.currentViewId();
+            var searchJson = mobileStorage.fetchCachedViewJson(viewId);
+            
+            if (!isNullOrEmpty(searchJson)) {
+                var $content = $resultsDiv.cswUL({id: DivId + '_searchresultslist', 'data-filter': false })
+                                          .append($('<li data-role="list divider">Results</li>'));
 
                 var hitcount = 0;
-                $xmlstr.find('node').each(function() {
-                    var $node = $(this).clone();
-                    if (!isNullOrEmpty($node.CswAttrXml(searchprop))) {
-                        if ($node.CswAttrXml(searchprop).toLowerCase().indexOf(searchfor.toLowerCase()) >= 0) {
+                for(var key in searchJson)
+                {
+                    var node = searchJson[key];
+                    if (!isNullOrEmpty(node[searchprop])) {
+                        if (node[searchprop].toLowerCase().indexOf(searchfor.toLowerCase()) >= 0) {
                             hitcount++;
+                            var nodeJson = { id: key, value: node};
                             $content.append(
-                                        _makeListItemFromXml($content, {
-                                                ParentId: DivId + '_searchresults',
-                                                DivId: DivId + '_searchresultslist',
-                                                HeaderText: 'Results',
-                                                $xmlitem: $node,
-                                                parentlevel: 1 }
-                                        )
-                                    );
+                                _makeListItemFromJson($content, {
+                                    ParentId: DivId + '_searchresults',
+                                    DivId: DivId + '_searchresultslist',
+                                    HeaderText: 'Results',
+                                    PageType: 'node',
+                                    json: nodeJson,
+                                    parentlevel: 1 }
+                                    )
+                                );
                         }
                     }
-                });
+                }
                 if (hitcount === 0) {
                     $content.append($('<li>No Results</li>'));
                 }
-                $content.page();
+                $content.CswPage();
             }
-            $.mobile.hidePageLoadingMsg();
+            stopLoadingMsg();
         } // onSearchSubmit()
 
+       
         // ------------------------------------------------------------------------------------
         // Persistance functions
         // ------------------------------------------------------------------------------------
-
-        function _cacheSession(sessionid, username, customerid) {
-            setOnline(false);
-            localStorage['username'] = username;
-            localStorage['customerid'] = customerid;
-            localStorage['sessionid'] = sessionid;
-        } //_cacheSession()
-
-        function CswMobileStorage() {
-            this.lastSyncSuccess = function() {
-                var now = new Date();
-                var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-                localStorage['lastSyncSuccess'] = ret;
-                localStorage['lastSyncAttempt'] = ''; //clear last failed on next success
-                localStorage['lastSyncTime'] = now;
-                return ret;
-            };
-            this.lastSyncSuccess.toString = function() {
-                return tryParseString(localStorage['lastSyncSuccess'],'');
-            };
-            this.lastSyncAttempt = function() {
-                var now = new Date();
-                var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-                localStorage['lastSyncAttempt'] = ret;
-                localStorage['lastSyncTime'] = now;
-                return ret;
-            };
-            this.lastSyncAttempt.toString = function() {
-                return tryParseString(localStorage['lastSyncAttempt'], '');
-            };
-            this.lastSyncTime = tryParseString(localStorage['lastSyncTime'], '');
-            this.addUnsyncedChange = function() {
-                var unSyncedChanges = tryParseNumber(localStorage['unSyncedChanges'], '0');
-                unSyncedChanges++;
-                localStorage['unSyncedChanges'] = unSyncedChanges;
-                return unSyncedChanges;
-            };
-            this.clearUnsyncedChanges = function() {
-                localStorage['unSyncedChanges'] = '0';
-            };
-            this.stayOffline = function(value) {
-                if(arguments.length === 1) {
-                    localStorage['stayOffline'] = isTrue(value);
-                }
-                var ret = isTrue(localStorage['stayOffline']);
-                return ret;
-            };
+        
+        function _updatedUnsyncedChanges() {
+            $('#ss_pendingchangecnt').text( tryParseString(mobileStorage.getItem('unSyncedChanges'),'0') );
         }
         
-        function _storeViewXml(rootid, rootname, $viewxml, level) {
-            var logger = new profileMethod('storeViewXml');
-            if(level === 0)
-            {
-                var viewsCache = tryParseString(localStorage["storedviews"], '');
-                $viewxml.children('view').each(function() {
-                    var $this = $(this);
-                    var viewid = $this.CswAttrXml('id');
-                    var viewname = $this.CswAttrXml('name');
-                    if (viewsCache.indexOf('"rootid":"' + viewid + '"') === -1) {
-                        storedViews.push({ rootid: viewid, name: viewname });
-                    }
-                });
-                localStorage["storedviews"] = JSON.stringify(storedViews);
-            }
-            localStorage[rootid] = JSON.stringify({ name: rootname, xml: xmlToString($viewxml), wasmodified: false });
-            
-            $viewxml.andSelf().find('node').each(function() {
-                var $nodeXml = $(this).clone();
-                var nodeId = $nodeXml.CswAttrXml('id');
-                var nodeStr = xmlToString($nodeXml);
-                localStorage[nodeId] = nodeStr;
-            });
-            
-            cacheLogInfo(logger);
-        }
-
-        function _updateStoredViewXml(rootid, $viewxml, wasmodified) {
-            if (!isNullOrEmpty(localStorage[rootid]) && !isNullOrEmpty($viewxml)) {
-                var view = JSON.parse(localStorage[rootid]);
-                var update = { xml: xmlToString($viewxml), wasmodified: wasmodified };
-                if (view) $.extend(view, update);
-                localStorage[rootid] = JSON.stringify(view);
-                
-                $viewxml.andSelf().find('node').each(function() {
-                    var $nodeXml = $(this).clone();
-                    var nodeId = $nodeXml.CswAttrXml('id');
-                    var nodeStr = xmlToString($nodeXml);
-                    localStorage[nodeId] = nodeStr;
-                });
-            }
-        }
-
-        function _getModifiedView(onSuccess) {
-            var modified = false;
-            if (!isNullOrEmpty(localStorage['storedviews'])) {
-                var storedViews = JSON.parse(localStorage['storedviews']);
-
-                for (var i = 0; i < storedViews.length; i++) {
-                    stored = storedViews[i];
-                    if (!isNullOrEmpty(localStorage[stored.rootid])) {
-                        var view = JSON.parse(localStorage[stored.rootid]);
-                        if (view.wasmodified) {
-                            modified = true;
-                            var rootid = stored.rootid;
-                            var viewxml = view.xml;
-                            if (!isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml)) {
-                                onSuccess(rootid, viewxml);
-                            }
-                        }
-                    }
-                }
-                if (!modified) {
-                    _resetPendingChanges(true);
-                    onSuccess();
-                }
-            }
-        }
-
-        function _fetchCachedViewXml(rootid) {
-            var $view;
-            if (!isNullOrEmpty(localStorage[rootid])) {
-                //View is JSON: {name: '', xml: '', wasmodified: ''}
-                var rootObj = JSON.parse(localStorage[rootid]);
-                var rootXml = rootObj.xml;
-                $view = $(rootXml);
-            }
-            return $view;
-        }
+        
+        
         
         // ------------------------------------------------------------------------------------
         // Synchronization
         // ------------------------------------------------------------------------------------
 
+        function _processModifiedNodes(onSuccess)
+        {
+            var modified = false;
+            if (isNullOrEmpty(storedViews))
+            {
+                storedViews = mobileStorage.getItem('storedviews');
+            }
+            if (!isNullOrEmpty(storedViews))
+            {
+                for (var viewid in storedViews)
+                {
+                    var view = mobileStorage.getItem(viewid);
+                    if (!isNullOrEmpty(view))
+                    {
+                        for (var nodeId in view['json'])
+                        {
+                            var node = mobileStorage.getItem(nodeId);
+                            if (!isNullOrEmpty(node) && node['wasmodified'])
+                            {
+                                modified = true;
+                                onSuccess(nodeId, node);
+                            }
+                        }
+                    }
+                }
+                if (!modified)
+                {
+                    onSuccess();
+                }
+            }
+        }
+        
         var _waitForData_TimeoutId;
 
         function _waitForData() {
@@ -2012,24 +1839,23 @@ CswAppMode.mode = 'mobile';
                 url = opts.ConnectTestRandomFailUrl;
             }
             if( !mobileStorage.stayOffline() ) {
-                CswAjaxXml({
+                CswAjaxJSON({
                         formobile: ForMobile,
                         url: url,
                         data: {  },
                         stringify: false,
                         onloginfail: function(text) { onLoginFail(text); },
-                        success: function($xml) {
+                        success: function(data) {
                             setOnline(false);
                             _processChanges(true);
                             if (!isNullOrEmpty(onSuccess)) {
-                                onSuccess($xml);
+                                onSuccess( data );
                             }
                         },
-                        error: function(xml) {
+                        error: function(data) {
                             setOffline();
-                            var $xml = $(xml);
                             if (!isNullOrEmpty(onFailure)) {
-                                onFailure($xml);
+                                onFailure( data );
                             }
                             _waitForData();
                         }
@@ -2041,66 +1867,75 @@ CswAppMode.mode = 'mobile';
         } //_handleDataCheckTimer()
 
         function _processChanges(perpetuateTimer) {
-            var logger = new profileMethod('processChanges');
+            var logger = new CswProfileMethod('processChanges');
             if (!isNullOrEmpty(SessionId) && !mobileStorage.stayOffline() ) {
-                _getModifiedView(function(rootid, viewxml) {
-                    if (!isNullOrEmpty(rootid) && !isNullOrEmpty(viewxml)) {
+                _processModifiedNodes(function(objectId, objectJSON) {
+                    if (!isNullOrEmpty(objectId) && !isNullOrEmpty(objectJSON)) {
+                        
                         var dataJson = {
                             SessionId: SessionId,
-                            ParentId: rootid,
-                            UpdatedViewXml: viewxml,
+                            ParentId: objectId,
+                            UpdatedViewJson: JSON.stringify(objectJSON),
                             ForMobile: ForMobile
                         };
 
                         CswAjaxJSON({
                                 formobile: ForMobile,
-                                url: opts.UpdateUrl,
+                                url: opts.UpdateViewUrl,
                                 data: dataJson,
-                                stringify: true,
                                 onloginfail: function(text) {
                                     setOnline(false);
-                                    if (perpetuateTimer) {
-                                        _waitForData();
-                                    }
                                     onLoginFail(text);
-                                    $.mobile.hidePageLoadingMsg();
+                                    processChangesLoop(perpetuateTimer);
                                 },
                                 success: function(data) {
                                     logger.setAjaxSuccess();
                                     setOnline(false);
-                                    var $xml = $(data.xml);
-                                    _updateStoredViewXml(rootid, $xml, '0');
-                                    mobileStorage.clearUnsyncedChanges();
+                                    var completed = isTrue(data['completed']);
+                                    var isView = !isNullOrEmpty(data['nodes']);
+                                    if( isView )
+                                    {
+                                        var json = data['nodes'];
+                                        mobileStorage.updateStoredViewJson(objectId, json, false);
+                                    } else if( !completed ) {
+                                        mobileStorage.updateStoredNodeJson(objectId, objectJSON, false);
+                                    } 
+                                    
                                     _resetPendingChanges(true);
-                                    if (perpetuateTimer) {
-                                        _waitForData();
+                                    
+                                    processChangesLoop(perpetuateTimer);
+
+                                    if( completed && !isView ) {
+                                        mobileStorage.deleteNode(objectId, objectJSON['viewid']);
+                                        if( !perpetuateTimer ) {
+                                            $('#' + objectJSON['viewid']).CswChangePage();
+                                        }
                                     }
-                                    $.mobile.hidePageLoadingMsg();
                                 },
-                                error: function(data) {
-                                    setOffline();
-                                    if (perpetuateTimer) {
-                                        _waitForData();
-                                    }
-                                    $.mobile.hidePageLoadingMsg();
+                                error: function() {
+                                    processChangesLoop(perpetuateTimer);
                                 }
                             });
                     } else {
-                        if (perpetuateTimer) {
-                            _waitForData();
-                        }
-                        $.mobile.hidePageLoadingMsg();
+                        processChangesLoop(perpetuateTimer);
                     }
                 }); // _getModifiedView();
             } else {
-                if (perpetuateTimer) {
-                    _waitForData();
-                }
-                $.mobile.hidePageLoadingMsg();
+                _resetPendingChanges(true);
+                
             } // if(SessionId != '') 
+            _updatedUnsyncedChanges();
             cacheLogInfo(logger);
         } //_processChanges()
 
+        function processChangesLoop(perpetuateTimer) {
+            if (perpetuateTimer) {
+                    _waitForData();
+            } else { //we called this manually
+                stopLoadingMsg();
+            }
+        }
+        
         // For proper chaining support
         return this;
     };

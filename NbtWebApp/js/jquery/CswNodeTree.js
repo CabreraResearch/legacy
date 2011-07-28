@@ -1,6 +1,6 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
+/// <reference path="/js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
@@ -120,7 +120,7 @@
 
 						var strTypes = $xml.find('types').text();
 						var jsonTypes = $.parseJSON(strTypes);
-						var $treexml = $xml.find('tree').children('root')
+					    var $treexml = $xml.find('tree').children('root');
 						if($treexml.length > 0)
 						{
 							//var treexmlstring = xmlToString($treexml);

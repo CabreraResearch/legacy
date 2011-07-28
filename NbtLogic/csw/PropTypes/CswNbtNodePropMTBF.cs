@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -189,28 +190,45 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode StartDateNode = CswXmlDocument.AppendXmlNode( ParentNode, _StartDateTimeSubField.ToXmlNodeName() );
-            if(StartDateTime != DateTime.MinValue)
-				StartDateNode.InnerText = StartDateTime.ToShortDateString();
-			XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName(), CachedValue.ToString() );
-            XmlNode UnitsNode = CswXmlDocument.AppendXmlNode( ParentNode, _UnitsSubField.ToXmlNodeName(), Units );
+            if( StartDateTime != DateTime.MinValue )
+                StartDateNode.InnerText = StartDateTime.ToShortDateString();
+            CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName(), CachedValue.ToString() );
+            CswXmlDocument.AppendXmlNode( ParentNode, _UnitsSubField.ToXmlNodeName(), Units );
+        }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _StartDateTimeSubField.ToXmlNodeName(true), ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty ),
+                new XElement( _ValueSubField.ToXmlNodeName(true), CachedValue.ToString() ),
+                new XElement( _UnitsSubField.ToXmlNodeName(true), Units ) );
+        }
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject.Add( new JProperty( _StartDateTimeSubField.ToXmlNodeName(true), ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty ) );
+            ParentObject.Add( new JProperty( _ValueSubField.ToXmlNodeName(true), CachedValue.ToString() ) );
+            ParentObject.Add( new JProperty( _UnitsSubField.ToXmlNodeName(true), Units ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             StartDateTime = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _StartDateTimeSubField.ToXmlNodeName() );
             Units = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _UnitsSubField.ToXmlNodeName() );
-			//PendingUpdate = true;
-			RefreshCachedValue();
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
+            //PendingUpdate = true;
+            RefreshCachedValue();
         }
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _StartDateTimeSubField.ToXmlNodeName(true) ) )
+            {
+                StartDateTime = CswConvert.ToDateTime( XmlNode.Element( _StartDateTimeSubField.ToXmlNodeName(true) ).Value );
+            }
+            if( null != XmlNode.Element( _UnitsSubField.ToXmlNodeName(true) ) )
+            {
+                Units = XmlNode.Element( _UnitsSubField.ToXmlNodeName(true) ).Value;
+            }
+            //PendingUpdate = true;
+            RefreshCachedValue();
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -222,9 +240,19 @@ namespace ChemSW.Nbt.PropTypes
             PendingUpdate = true;
         }
 
-
-
-
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _StartDateTimeSubField.ToXmlNodeName(true) ) )
+            {
+                StartDateTime = CswConvert.ToDateTime( JObject.Property( _StartDateTimeSubField.ToXmlNodeName(true) ).Value );
+            }
+            if( null != JObject.Property( _UnitsSubField.ToXmlNodeName(true) ) )
+            {
+                Units = (string) JObject.Property( _UnitsSubField.ToXmlNodeName(true) ).Value;
+            }
+            //PendingUpdate = true;
+            RefreshCachedValue();
+        }
     }//CswNbtNodePropMTBF
 
 }//namespace ChemSW.Nbt.PropTypes

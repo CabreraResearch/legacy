@@ -25,11 +25,11 @@
                 var $table = $TopDiv.CswTable('init', { ID: o.ID + '_tbl' });
                 $table.CswAttrDom('width', '100%');
         
-                $cell1 = $table.CswTable('cell', 1, 1);
+                var $cell1 = $table.CswTable('cell', 1, 1);
                 $cell1.CswAttrDom('width', '100%');
                 $cell1.append(o.TopContent);
         
-                $cell2 = $table.CswTable('cell', 1, 2);
+                var $cell2 = $table.CswTable('cell', 1, 2);
                 $cell2.addClass( "CswComboBox_ImageCell" );
 
                 var $ChildDiv = $('<div id="' + o.ID +'_child" class="CswComboBox_ChildDiv">')

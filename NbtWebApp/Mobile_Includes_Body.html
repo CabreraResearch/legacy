@@ -1,17 +1,27 @@
 ﻿<script type="text/javascript">
     var debug = false;
-
-    $(document).bind("mobileinit", function ()
-    {
-        $.mobile.page.prototype.options.addBackBtn = true;
-    });
-    
+   
     document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.min.js"><\/script>');
     
     if(debug) {
+        //Main JavaScript Classes
+        document.write('<script type="text/javascript" src="js/CswArray.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/CswString.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/CswClientDb.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/CswProfileMethod.js"><\/script>');
+        
+        //Mobile JavaScript Classes
+        document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileClientDb.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileClientDbResources.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileSync.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileBackgroundTask.js"><\/script>');
+        document.write('<script type="text/javascript" src="js/mobile/js/mobile/CswMobileTools.js"><\/script>');
+
+        //Global
         document.write('<script type="text/javascript" src="js/_Global.js"><\/script>');
+        
+        //Plugins
         document.write('<script type="text/javascript" src="js/jquery/CswMobile.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/CswClasses.js"><\/script>');
         document.write('<script type="text/javascript" src="js/jquery/CswAttr.js"><\/script>');
         document.write('<script type="text/javascript" src="js/jquery/CswButton.js"><\/script>');
         document.write('<script type="text/javascript" src="js/jquery/CswCookie.js"><\/script>');

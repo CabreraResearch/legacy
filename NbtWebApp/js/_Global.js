@@ -10,13 +10,13 @@
 // ------------------------------------------------------------------------------------
 
 var EditMode = {
-	Edit: { name: 'Edit' },
-	AddInPopup: { name: 'AddInPopup' },
-	EditInPopup: { name: 'EditInPopup' },
-	Demo: { name: 'Demo' },
-	PrintReport: { name: 'PrintReport' },
-	DefaultValue: { name: 'DefaultValue' },
-	AuditHistoryInPopup: { name: 'AuditHistoryInPopup' }
+    Edit: { name: 'Edit' },
+    AddInPopup: { name: 'AddInPopup' },
+    EditInPopup: { name: 'EditInPopup' },
+    Demo: { name: 'Demo' },
+    PrintReport: { name: 'PrintReport' },
+    DefaultValue: { name: 'DefaultValue' },
+    AuditHistoryInPopup: { name: 'AuditHistoryInPopup' }
 };
 
 // for CswInput
@@ -181,54 +181,59 @@ function CswAjaxJSON(options)
     //var starttime = new Date();
     _ajaxCount++;
     $.ajax({
-    	type: 'POST',
-    	async: o.async,
-    	url: o.url,
-    	dataType: "json",
-    	contentType: 'application/json; charset=utf-8',
-    	data: JSON.stringify(o.data),
-    	success: function (data, textStatus, XMLHttpRequest)
-    	{
-    		_ajaxCount--;
-    		//var endtime = new Date();
-    		//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
-    		var result = $.parseJSON(data.d);
+        type: 'POST',
+        async: o.async,
+        url: o.url,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(o.data),
+        success: function (data, textStatus, XMLHttpRequest)
+        {
+            _ajaxCount--;
+            //var endtime = new Date();
+            //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+            var result = $.parseJSON(data.d);
 
-    		if (result.error !== undefined)
-    		{
-    			_handleAjaxError(XMLHttpRequest, {
-    				'display': result.error.display,
-    				'type': result.error.type,
-    				'message': result.error.message,
-    				'detail': result.error.detail
-    			}, '');
-    			o.error();
-    		}
-    		else
-    		{
+            if (result.error !== undefined)
+            {
+                _handleAjaxError(XMLHttpRequest, {
+                    'display': result.error.display,
+                    'type': result.error.type,
+                    'message': result.error.message,
+                    'detail': result.error.detail
+                }, '');
+                o.error();
+            }
+            else
+            {
 
-    			var auth = tryParseString(result.AuthenticationStatus, 'Unknown');
-    			setExpireTime(tryParseString(result.timeout, ''));
+                var auth = tryParseString(result['AuthenticationStatus'], 'Unknown');
+                if (!o.formobile) {
+                    setExpireTime(tryParseString(result.timeout, ''));
+                }
+                
+                delete result['AuthenticationStatus'];
+                delete result['timeout'];
 
-    			_handleAuthenticationStatus({
-    				status: auth,
-    				success: function () { o.success(result); },
-    				failure: o.onloginfail,
-    				usernodeid: result.nodeid,
-    				usernodekey: result.cswnbtnodekey,
-    				passwordpropid: result.passwordpropid,
-    				ForMobile: o.formobile
-    			});
-    		}
-    	}, // success{}
-    	error: function (XMLHttpRequest, textStatus, errorThrown)
-    	{
-    		_ajaxCount--;
-    		//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-    		log("Webservice Request (" + o.url + ") Failed: " + textStatus);
-    		o.error();
-    	}
-    });             // $.ajax({
+                _handleAuthenticationStatus({
+                    status: auth,
+                    success: function () { o.success(result); },
+                    failure: o.onloginfail,
+                    usernodeid: result.nodeid,
+                    usernodekey: result.cswnbtnodekey,
+                    passwordpropid: result.passwordpropid,
+                    ForMobile: o.formobile
+                });
+            }
+        }, // success{}
+        error: function (XMLHttpRequest, textStatus, errorThrown)
+        {
+            _ajaxCount--;
+            //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+            log("Webservice Request (" + o.url + ") Failed: " + textStatus);
+            o.error();
+        }
+    });                 // $.ajax({
 } // CswAjaxXml()
 
 function CswAjaxXml(options)
@@ -262,83 +267,94 @@ function CswAjaxXml(options)
     {
     	_ajaxCount++;
     	$.ajax({
-    		type: 'POST',
-    		async: o.async,
-    		url: o.url,
-    		dataType: "text",
-    		//contentType: 'application/json; charset=utf-8',
-    		data: $.param(o.data),     // should be 'field1=value&field2=value'
-    		success: function (data, textStatus, XMLHttpRequest)
-    		{
-    			_ajaxCount--;
-    			//var endtime = new Date();
-    			//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+    	    type: 'POST',
+    	    async: o.async,
+    	    url: o.url,
+    	    dataType: "text",
+    	    //contentType: 'application/json; charset=utf-8',
+    	    data: $.param(o.data),     // should be 'field1=value&field2=value'
+    	    success: function (data, textStatus, XMLHttpRequest)
+    	    {
+    	        _ajaxCount--;
+    	        //var endtime = new Date();
+    	        //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-    			var $realxml;
-    			if ($.browser.msie)
-    			{
-    				// We have to use third-party jquery.xml.js for Internet Explorer to handle non-DOM XML content
-    				$realxml = $.xml(data);
-    			}
-    			else
-    			{
-    				$realxml = $(XMLHttpRequest.responseXML).children().first();
-    			}
+    	        var $realxml;
+    	        if ($.browser.msie)
+    	        {
+    	            // We have to use third-party jquery.xml.js for Internet Explorer to handle non-DOM XML content
+    	            $realxml = $.xml(data);
+    	        }
+    	        else
+    	        {
+    	            $realxml = $(XMLHttpRequest.responseXML).children().first();
+    	        }
 
-    			if ($realxml.first().get(0).nodeName === "error")
-    			{
-    				_handleAjaxError(XMLHttpRequest, {
-    					'display': $realxml.CswAttrXml('display'),
-    					'type': $realxml.CswAttrXml('type'),
-    					'message': $realxml.CswAttrXml('message'),
-    					'detail': $realxml.CswAttrXml('detail')
-    				}, '');
-    				o.error();
-    			}
-    			else
-    			{
-    				var auth = tryParseString($realxml.CswAttrXml('authenticationstatus'), 'Unknown');
-    				setExpireTime($realxml.CswAttrXml('timeout'));
+    	        if ($realxml.first().get(0).nodeName === "error")
+    	        {
+    	            _handleAjaxError(XMLHttpRequest, {
+    	                'display': $realxml.CswAttrXml('display'),
+    	                'type': $realxml.CswAttrXml('type'),
+    	                'message': $realxml.CswAttrXml('message'),
+    	                'detail': $realxml.CswAttrXml('detail')
+    	            }, '');
+    	            o.error();
+    	        }
+    	        else
+    	        {
+    	            var auth = tryParseString($realxml.CswAttrXml('authenticationstatus'), 'Unknown');
+    	            if (!o.formobile) {
+    	                setExpireTime($realxml.CswAttrXml('timeout'));
+    	            }
+    	            
+    	            _handleAuthenticationStatus({
+    	                status: auth,
+    	                success: function () { o.success($realxml) },
+    	                failure: o.onloginfail,
+    	                usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
+    	                usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
+    	                passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), ''),
+    	                ForMobile: o.formobile
+    	            });
+    	        }
 
-    				_handleAuthenticationStatus({
-    					status: auth,
-    					success: function () { o.success($realxml) },
-    					failure: o.onloginfail,
-    					usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
-    					usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
-    					passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), ''),
-    					ForMobile: o.formobile
-    				});
-    			}
-
-    		}, // success{}
-    		error: function (XMLHttpRequest, textStatus, errorThrown)
-    		{
-    			_ajaxCount--;
-    			//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-    			log("Webservice Request (" + o.url + ") Failed: " + textStatus);
-    			o.error();
-    		}
-    	});                              // $.ajax({
+    	    }, // success{}
+    	    error: function (XMLHttpRequest, textStatus, errorThrown)
+    	    {
+    	        _ajaxCount--;
+    	        //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+    	        log("Webservice Request (" + o.url + ") Failed: " + textStatus);
+    	        o.error();
+    	    }
+    	});                               // $.ajax({
     } // if(o.url != '')
 } // CswAjaxXml()
 
 function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
 {
-	/// <param name="$" type="jQuery" />
-    //	ErrorMessage = "A WebServices Error Occurred: " + textStatus;
-    //	if (null != errorThrown) {
-    //		ErrorMessage += "; Exception: " + errorThrown.toString()
-    //	}
-    var $errorsdiv = $('#ErrorDiv');
-    if ($errorsdiv.length > 0 && isTrue(errorJson.display))
-    {
-        $errorsdiv.CswErrorMessage({ 'type': errorJson.type, 'message': errorJson.message, 'detail': errorJson.detail });
-    } else
-    {
-        log(errorJson.message + '; ' + errorJson.detail);
-    }
+	CswError(errorJson);
 } // _handleAjaxError()
+
+function CswError(errorJson)
+{
+	var e = {
+		'type': '',
+		'message': '',
+		'detail': '',
+		'display': true
+	};
+	if (errorJson) $.extend(e, errorJson);
+
+	var $errorsdiv = $('#ErrorDiv');
+	if ($errorsdiv.length > 0 && isTrue(e.display))
+	{
+		$errorsdiv.CswErrorMessage({ 'type': e.type, 'message': e.message, 'detail': e.detail });
+	} 
+	else
+	{
+		log(e.message + '; ' + e.detail);
+	}
+} // CswError()
 
 function _handleAuthenticationStatus(options)
 {
@@ -747,7 +763,7 @@ function deleteNodes(options)
 function jsTreeGetSelected($treediv)
 { /// <param name="$" type="jQuery" />
     var IDPrefix = $treediv.CswAttrDom('id');
-    $SelectedItem = $treediv.jstree('get_selected');
+    var $SelectedItem = $treediv.jstree('get_selected');
     var ret = {
         'iconurl': $SelectedItem.children('a').children('ins').css('background-image'),
         'id': $SelectedItem.CswAttrDom('id').substring(IDPrefix.length),
@@ -1446,10 +1462,15 @@ function getCallStack()
     return stack;
 }
 
-function errorHandler(error, includeCallStack, includeLocalStorage, toCswStorage)
+function errorHandler(error, includeCallStack, includeLocalStorage, doAlert)
 {
-    if( hasWebStorage() && includeLocalStorage) log(localStorage);
-    log('Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack, toCswStorage);
+    if (hasWebStorage() && includeLocalStorage) log(localStorage);
+    if( doAlert ) {
+        alert('Error: ' + error.message + ' (Code ' + error.code + ')');
+    }
+    else {
+        log('Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack);
+    }
 }
 
 //#region Persistent Logging
@@ -1484,12 +1505,12 @@ function debugOn(value)
 
 function cacheLogInfo(logger, includeCallStack)
 {
-    if ( doLogging() || debug )
+    if ( doLogging() )
     {
         if (hasWebStorage())
         {
             if (undefined !== logger.setEnded) logger.setEnded();
-            var logStorage = new CswStorage(sessionStorage,JSON,true);
+            var logStorage = new CswClientDb();
             var log = logStorage.getItem('debuglog');
             log += logger.toHtml();
 
@@ -1522,14 +1543,37 @@ function purgeLogInfo()
 // for IE 8
 if (typeof String.prototype.trim !== 'function')
 {
-    String.prototype.trim = function ()
+    String.prototype.trim = function()
     {
-        return this.replace(/^\s+|\s+$/g, '');
-    }
+        return this.replace( /^\s+|\s+$/g , '');
+    };
 }
 
-function hasWebStorage(localOnly)
+function hasWebStorage()
 {
-    var ret = (Modernizr.localstorage && (localOnly || Modernizr.sessionstorage)); 
+    var ret = (Modernizr.localstorage || Modernizr.sessionstorage); 
     return ret;
 }
+
+// for Mobile Safari
+function fixGeometry()
+{
+    //thanks to: http://www.semicomplete.com/blog/geekery/jquery-mobile-full-height-content.html
+    /* Some orientation changes leave the scroll position at something
+    * that isn't 0,0. This is annoying for user experience. */
+    scroll(0, 0);
+
+    /* Calculate the geometry that our content area should take */
+    var $header = $("div[data-role='header']:visible");
+    var $footer = $("div[data-role='footer']:visible");
+    var $content = $("div[data-role='content']:visible");
+
+    var viewport_height = $(window).height();
+    var content_height = viewport_height - $header.outerHeight() - $footer.outerHeight();
+
+    //if ((content.outerHeight() - header.outerHeight() - footer.outerHeight()) <= viewport_height)
+    //{
+    content_height -= ($content.outerHeight() - $content.height());
+    $content.height(content_height);
+    //} /* Trim margin/border/padding height */
+};

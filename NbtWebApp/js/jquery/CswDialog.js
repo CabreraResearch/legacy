@@ -143,10 +143,12 @@
 									$div.dialog('close');
 									o.onAddNode(nodeid, cswnbtnodekey);
 								},
+								'onInitFinish': function() {
+									_openDiv($div, 800, 600);
+								},
 								'ShowAsReport': false
 							});
 
-							_openDiv($div, 800, 600);
 						},
 
 		'EditNodeDialog': function (options)

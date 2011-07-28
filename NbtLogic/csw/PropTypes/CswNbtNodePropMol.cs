@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -56,19 +57,27 @@ namespace ChemSW.Nbt.PropTypes
             CswXmlDocument.SetInnerTextAsCData( MolNode, Mol );
         }
 
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _MolSubField.ToXmlNodeName(true), Mol ) );
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject.Add( new JProperty( _MolSubField.ToXmlNodeName(true), Mol ) );
+        }
+
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             Mol = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _MolSubField.ToXmlNodeName() );
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _MolSubField.ToXmlNodeName(true) ) )
+            {
+                Mol = XmlNode.Element( _MolSubField.ToXmlNodeName(true) ).Value;
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -76,7 +85,13 @@ namespace ChemSW.Nbt.PropTypes
             Mol = CswTools.XmlRealAttributeName( PropRow[_MolSubField.ToXmlNodeName()].ToString() );
         }
 
-
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _MolSubField.ToXmlNodeName(true) ) )
+            {
+                Mol = (string) JObject.Property( _MolSubField.ToXmlNodeName(true) ).Value;
+            }
+        }
     }//CswNbtNodePropMol
 
 }//namespace ChemSW.Nbt.PropTypes
