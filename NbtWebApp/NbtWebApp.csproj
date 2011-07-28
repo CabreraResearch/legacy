@@ -122,7 +122,7 @@
     <Content Include="js\CswString.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeScientific.js" />
     <Content Include="Images\favicon.ico" />
-    <Content Include="js\jquery\CswMobile.js" />
+    <Content Include="js\mobile\CswMobile.js" />
     <Content Include="js\mobile\clientdb\CswMobileClientDb.js" />
     <Content Include="js\mobile\clientdb\CswMobileClientDbResources.js" />
     <Content Include="js\mobile\CswMobileTools.js" />
@@ -518,28 +518,28 @@
     <Content Include="js\CswAll.min.js" />
     <Content Include="js\jquery\CswAuditHistoryGrid.js" />
     <Content Include="js\jquery\CswInspectionStatus.js" />
-    <Content Include="js\jquery\CswAttr.js" />
+    <Content Include="js\jquery\common\CswAttr.js" />
     <Content Include="js\jquery\CswButton.js" />
     <Content Include="js\jquery\CswCheckBoxArray.js" />
     <Content Include="js\jquery\CswComboBox.css" />
     <Content Include="js\jquery\CswComboBox.js" />
-    <Content Include="js\jquery\CswCookie.js" />
+    <Content Include="js\jquery\common\CswCookie.js" />
     <Content Include="js\jquery\CswDashboard.js" />
     <Content Include="js\jquery\CswDialog.js" />
-    <Content Include="js\jquery\CswDiv.js" />
+    <Content Include="js\jquery\common\CswDiv.js" />
     <Content Include="js\jquery\CswErrorMessage.css" />
     <Content Include="js\jquery\CswErrorMessage.js" />
     <Content Include="js\jquery\CswImageButton.js" />
-    <Content Include="js\jquery\CswInput.js" />
+    <Content Include="js\jquery\common\CswInput.js" />
     <Content Include="js\jquery\CswLayoutTable.css" />
     <Content Include="js\jquery\CswLayoutTable.js" />
-    <Content Include="js\jquery\CswLink.js" />
+    <Content Include="js\jquery\common\CswLink.js" />
     <Content Include="js\jquery\CswLogin.js" />
     <Content Include="js\jquery\CswMenu.css" />
     <Content Include="js\jquery\CswMenu.js" />
     <Content Include="js\jquery\CswMenuHeader.js" />
     <Content Include="js\jquery\CswMenuMain.js" />
-    <Content Include="js\jquery\CswMobile.css" />
+    <Content Include="js\mobile\CswMobile.css" />
     <Content Include="js\jquery\CswNodeGrid.js" />
     <Content Include="js\jquery\CswNodeSelect.js" />
     <Content Include="js\jquery\CswNodeTabs.js" />
@@ -550,10 +550,10 @@
     <Content Include="js\jquery\CswQuickLaunch.js" />
     <Content Include="js\jquery\CswSearch.css" />
     <Content Include="js\jquery\CswSearch.js" />
-    <Content Include="js\jquery\CswSelect.js" />
-    <Content Include="js\jquery\CswSpan.js" />
+    <Content Include="js\jquery\common\CswSelect.js" />
+    <Content Include="js\jquery\common\CswSpan.js" />
     <Content Include="js\jquery\CswTable.js" />
-    <Content Include="js\jquery\CswTools.js" />
+    <Content Include="js\jquery\common\CswTools.js" />
     <Content Include="js\jquery\CswTristateCheckBox.js" />
     <Content Include="js\jquery\CswViewEditor.css" />
     <Content Include="js\jquery\CswViewEditor.js" />
@@ -1817,6 +1817,7 @@
     <None Include="jmol\cefixime_syn.mol" />
     <None Include="jmol\JmolApplet.properties" />
     <None Include="jmol\test.mol" />
+    <None Include="js\_compileMobile.pl" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\demo\captcha\fonts\Anorexia.ttf" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\demo\captcha\images\.htaccess" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\demo\captcha\images\button.psd" />
@@ -1921,7 +1922,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>call $(ProjectDir)js\_compile.pl</PostBuildEvent>
+    <PostBuildEvent>call $(ProjectDir)js\_compile.pl
+call $(ProjectDir)js\_compileMobile.pl</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
