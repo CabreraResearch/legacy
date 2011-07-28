@@ -11,25 +11,22 @@ CswMobileClientDbResources.inheritsFrom(CswMobileClientDb);
 function CswMobileClientDbResources()
 {
     CswMobileClientDb.call(this);
-
-    var dataStore = new CswMobileClientDb();
     
-    this.currentViewId = function(viewId)
-    {
+    //var this = new CswMobileClientDb();
+    
+    this.currentViewId = function(viewId) {
         /// <summary>
         ///   Persists the current NBT ViewId. 
         /// </summary>
         /// <param name="viewId" type="String">Optional. An NBT ViewId</param>
         /// <returns type="String">Stored viewid</returns>
         var ret = '';
-        if (arguments.length === 1 && viewId)
-        {
+        if (arguments.length === 1 && viewId) {
             ret = viewId;
-            dataStore.setItem('currentviewid', viewId);
+            this.setItem('currentviewid', viewId);
         }
-        if (isNullOrEmpty(ret))
-        {
-            ret = dataStore.getItem('currentviewid');
+        if (isNullOrEmpty(ret)) {
+            ret = this.getItem('currentviewid');
         }
         return ret;
     };
@@ -43,13 +40,12 @@ function CswMobileClientDbResources()
         /// <returns type="String">Stored username</returns>
         var ret = username;
         if(!isNullOrEmpty(username)) {
-            dataStore.setItem('username',ret);
+            this.setItem('username',ret);
         } else {
-            ret = dataStore.getItem('username');
+            ret = this.getItem('username');
         }
         return ret;
     };
-    //this.username.toString = function () { return this.username(); };
 
     this.customerid = function (customerid)
     {
@@ -60,13 +56,12 @@ function CswMobileClientDbResources()
         /// <returns type="String">Stored userid</returns>
         var ret = customerid;
         if (!isNullOrEmpty(customerid)) {
-            dataStore.setItem('customerid', ret);
+            this.setItem('customerid', ret);
         } else {
-            ret = dataStore.getItem('customerid');
+            ret = this.getItem('customerid');
         }
         return ret;
     };
-    //this.customerid.toString = function () { return this.customerid(); };
 
     this.sessionid = function (sessionid)
     {
@@ -77,9 +72,9 @@ function CswMobileClientDbResources()
         /// <returns type="String">Stored sessionid</returns>
         var ret = sessionid;
         if (!isNullOrEmpty(sessionid)) {
-            dataStore.setItem('sessionid', ret);
+            this.setItem('sessionid', ret);
         } else {
-            ret = dataStore.getItem('sessionid');
+            ret = this.getItem('sessionid');
         }
         return ret;
     };
@@ -91,9 +86,9 @@ function CswMobileClientDbResources()
         /// <returns type="String">Now, as human-readable string</returns>
         var now = new Date();
         var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-        dataStore.setItem('lastSyncSuccess', ret);
+        this.setItem('lastSyncSuccess', ret);
         this.removeItem('lastSyncAttempt'); //clear last failed on next success
-        dataStore.setItem('lastSyncTime', now);
+        this.setItem('lastSyncTime', now);
         return ret;
     };
     
@@ -104,21 +99,21 @@ function CswMobileClientDbResources()
         /// <returns type="String">Now, as human-readable string</returns>
         var now = new Date();
         var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-        dataStore.setItem('lastSyncAttempt', ret);
-        dataStore.setItem('lastSyncTime', now);
+        this.setItem('lastSyncAttempt', ret);
+        this.setItem('lastSyncTime', now);
         return ret;
     };
     
-    this.lastSyncTime = dataStore.getItem('lastSyncTime');
+    this.lastSyncTime = this.getItem('lastSyncTime');
     
     this.addUnsyncedChange = function () {
         /// <summary>
         ///   Increments the number of pending, unsyced changes 
         /// </summary>
         /// <returns type="String">Number of unsynced changes</returns>
-        var unSyncedChanges = tryParseNumber(dataStore.getItem('unSyncedChanges'), '0');
+        var unSyncedChanges = tryParseNumber(this.getItem('unSyncedChanges'), '0');
         unSyncedChanges++;
-        dataStore.setItem('unSyncedChanges', unSyncedChanges);
+        this.setItem('unSyncedChanges', unSyncedChanges);
         return unSyncedChanges;
     };
     
@@ -127,7 +122,7 @@ function CswMobileClientDbResources()
         ///   Resets number of unsynced changes to 0. 
         /// </summary>
         /// <returns type="void"></returns>
-        dataStore.setItem('unSyncedChanges', '0');
+        this.setItem('unSyncedChanges', '0');
     };
     
     this.stayOffline = function (value) {
@@ -137,12 +132,11 @@ function CswMobileClientDbResources()
         /// <returns type="Boolean">True if the user elected to go offline.</returns>
         if (arguments.length === 1)
         {
-            dataStore.setItem('stayOffline', isTrue(value));
+            this.setItem('stayOffline', isTrue(value));
         }
-        var ret = isTrue(dataStore.getItem('stayOffline'));
+        var ret = isTrue(this.getItem('stayOffline'));
         return ret;
     };
-    
 }
 
 //#endregion CswMobileClientDbResources
