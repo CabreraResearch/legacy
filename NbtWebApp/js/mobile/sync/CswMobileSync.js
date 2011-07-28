@@ -100,7 +100,7 @@ function CswMobileSync(options,mobileStorage) {
         } else
         {
             if (!isNullOrEmpty(o.onSuccess)) {
-                o.onSuccess(data);
+                o.onSuccess();
             }
 
         } // if(SessionId != '') 
