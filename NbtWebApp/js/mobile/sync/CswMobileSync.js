@@ -44,17 +44,12 @@ function CswMobileSync(options,mobileStorage) {
     
     //#region public, priveleged
 
-    this.initSync = function(mobileBgTask) {
+    this.initSync = function() {
         /// <summary>
         ///   Initiates a sync event  
         /// </summary>
-        /// <param name="mobileBgTask" type="CswMobileBackgroundTask">Optional. A Csw Mobile background task object.</param>
         /// <returns type="void"></returns>
         
-        if(false) { //this enables Intellisense
-            mobileBgTask = new CswMobileBackgroundTask();
-        }
-        var isBackgroundTask = !isNullOrEmpty(mobileBgTask);
         var sessionId = mobileStorage.sessionid();
         if (!isNullOrEmpty(o.onSync) &&
             !isNullOrEmpty(sessionId) &&
@@ -85,7 +80,7 @@ function CswMobileSync(options,mobileStorage) {
                             success: function(data)
                             {
                                 if (!isNullOrEmpty(o.onSuccess)) {
-                                    o.onSuccess(data,objectId,objectJSON,isBackgroundTask);
+                                    o.onSuccess(data,objectId,objectJSON,false);
                                 }
                             },
                             error: function()
@@ -105,9 +100,6 @@ function CswMobileSync(options,mobileStorage) {
 
         } // if(SessionId != '') 
 
-        if (isBackgroundTask) {
-            mobileBgTask.start();
-        }
         if (!isNullOrEmpty(o.onComplete)) {
             o.onComplete();
         }

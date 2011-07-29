@@ -16,8 +16,6 @@ function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
     /// <returns type="CswMobileBackgroundTask">Returns an instance of itself.</returns>
 
     //#region private
-    var thisScheduler = this;
-    
     var o = {
         onSuccess: function () { },
         onError: function () { },
@@ -57,7 +55,7 @@ function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
                 success: function (data)
                 {
                     if(!isNullOrEmpty(mobileSync)) {
-                        mobileSync.initSync(thisScheduler);
+                        mobileSync.initSync();
                     }
                     if (!isNullOrEmpty(onSuccessOveride))
                     {
@@ -65,6 +63,8 @@ function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
                     } else if (!isNullOrEmpty(o.onSuccess)) {
                         o.onSuccess(data);
                     }
+                    //we don't want to start the next iteration until ajax completes
+                    _startBackgroundTask();
                 },
                 error: function (data)
                 {
