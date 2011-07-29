@@ -10,7 +10,7 @@ function CswMobilePageFooter(footerDef, $parent) {
     /// <summary>
     ///   Footer class. Responsible for generating a Mobile page footer.
     /// </summary>
-    /// <param name="buttonDef" type="Object">JSON definition of buttons to display</param>
+    /// <param name="footerDef" type="Object">JSON definition of buttons to display</param>
     /// <param name="$parent" type="jQuery">Parent element to attach to.</param>
     /// <returns type="CswMobilePageFooter">Instance of itself. Must instance with 'new' keyword.</returns>
 
@@ -52,7 +52,6 @@ function CswMobilePageFooter(footerDef, $parent) {
     //let's make these buttons accessible by name
     var buttonCnt = 0;
     for( var button in o.buttons) {
-        debugger;
         buttonCnt++;
         switch(buttonCnt) {
             case 1:
