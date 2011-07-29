@@ -4,27 +4,30 @@
 	document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.min.js"><\/script>');
 	
 	if(debug) {
-		//Prototype Extensions
+		// Prototype Extensions
 		document.write('<script type="text/javascript" src="js/_CswPrototypeExtensions.js"><\/script>');
-		
-		//Main JavaScript Classes
+
+	    //Global
+		document.write('<script type="text/javascript" src="js/_Global.js"><\/script>');
+	    
+		// Main JavaScript Classes
 		document.write('<script type="text/javascript" src="js/CswArray.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/CswString.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/CswClientDb.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/CswProfileMethod.js"><\/script>');
 		
-		//Mobile JavaScript Classes
-		document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileClientDb.js"><\/script>');
+		// Mobile JavaScript Classes
+		// Client DB
+	    document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileClientDb.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileClientDbResources.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/sync/CswMobileSync.js"><\/script>');
+		// Sync
+	    document.write('<script type="text/javascript" src="js/mobile/sync/CswMobileSync.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/mobile/sync/CswMobileBackgroundTask.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/CswMobileTools.js"><\/script>');
-
-		//Global
-		document.write('<script type="text/javascript" src="js/_Global.js"><\/script>');
-		
+	    // Pages
+	    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageFooter.js"><\/script>');
+	    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobileMenuButton.js"><\/script>');
 		//Mobile
-		document.write('<script type="text/javascript" src="js/mobile/CswMobile.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/mobile/CswMobileTools.js"><\/script>');
 		
 		//Plugins
 		document.write('<script type="text/javascript" src="js/jquery/common/CswAttr.js"><\/script>');
@@ -35,6 +38,8 @@
 		document.write('<script type="text/javascript" src="js/jquery/common/CswSelect.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/common/CswSpan.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/common/CswTools.js"><\/script>');   
+	    
+	    document.write('<script type="text/javascript" src="js/mobile/CswMobile.js"><\/script>');
 	}
 	else {
 		document.write('<script type="text/javascript" src="js/mobile/CswAllMobile.min.js"><\/script>');
