@@ -8,8 +8,12 @@
 
 CswMobileClientDbResources.inheritsFrom(CswMobileClientDb);
 
-function CswMobileClientDbResources()
-{
+function CswMobileClientDbResources() {
+    /// <summary>
+    ///   Resources class to encapsulate common Mobile persistence methods.
+    ///   Inherits from CswMobileClientDb.
+    /// </summary>
+    /// <returns type="CswMobileClientDbResources">Instance of itself. Must instance with 'new' keyword.</returns>
     CswMobileClientDb.call(this);
     
     //var this = new CswMobileClientDb();

@@ -8,6 +8,11 @@
 CswMobileClientDb.inheritsFrom(CswClientDb);
 
 function CswMobileClientDb() {
+    /// <summary>
+    ///   Mobile client db class to encapsulate JSON fetch/store/update methods.
+    ///   Inherits from CswClientDb.
+    /// </summary>
+    /// <returns type="CswMobileClientDb">Instance of itself. Must instance with 'new' keyword.</returns>
     CswClientDb.call(this);
 
     var storedViews = {};
