@@ -1,4 +1,7 @@
-﻿; (function ($)
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../_Global.js" />
+
+; (function ($)
 {
 	var PluginName = "CswNodeTypeSelect";
 
@@ -28,7 +31,7 @@
 				CswAjaxXml({
 						url: o.NodeTypesUrl,
 						data: {},
-                        stringify: false,
+						stringify: false,
 						success: function ($xml)
 						{
 							$xml.children('nodetype').each(function() {

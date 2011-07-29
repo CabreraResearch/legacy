@@ -1,6 +1,4 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
@@ -12,7 +10,7 @@
 		{
 			var o = {
 				'ID': '',
-                'prefix': '',
+				'prefix': '',
 				'Checked': '',
 				'ReadOnly': false,
 				'Required': false,
@@ -21,13 +19,13 @@
 			if(options) $.extend(o, options);
 
 			var $parent = $(this);
-            $parent.empty();
-            var elementId = makeId({prefix: o.prefix, ID: o.ID});
-            
-            //Case 21769
-            var tristateVal = tryParseString(o.Checked,"null").toLowerCase();
+			$parent.empty();
+			var elementId = makeId({prefix: o.prefix, ID: o.ID});
+			
+			//Case 21769
+			var tristateVal = tryParseString(o.Checked,"null").toLowerCase();
 
-            if(o.ReadOnly)
+			if(o.ReadOnly)
 			{
 				switch(tristateVal)
 				{
@@ -46,7 +44,7 @@
 				}
 
 				$parent.CswImageButton({ ID: elementId,  
-                                        ButtonType: thisButtonType, 
+										ButtonType: thisButtonType, 
 										AlternateText: tristateVal,
 										onClick: function($ImageDiv) {
 													var newvalue = onClick($ImageDiv, o.Required);
@@ -60,14 +58,14 @@
 		{
 			var $CheckboxImage = $(this);
 			var Checked = $CheckboxImage.CswAttrDom('alt');
-            return Checked;
+			return Checked;
 		}
  
 	};
 
-    function onClick($ImageDiv, Required)
+	function onClick($ImageDiv, Required)
 	{
-        var currentValue = $ImageDiv.CswAttrDom('alt');
+		var currentValue = $ImageDiv.CswAttrDom('alt');
 		var newValue = CswImageButton_ButtonType.CheckboxNull;
 		var newAltText = "null";
 		if (currentValue === "null") {
@@ -86,7 +84,7 @@
 			newAltText = "false";
 		}
 		$ImageDiv.CswAttrDom('alt', newAltText);
-        return newValue;
+		return newValue;
 	} // onClick()
 
 	// Method calling logic

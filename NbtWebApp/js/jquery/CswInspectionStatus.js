@@ -1,6 +1,4 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../_Global.js" />
 
 ;  (function ($) { /// <param name="$" type="jQuery" />
@@ -31,14 +29,14 @@
 
 					var mygridopts = {
 						'autowidth': true,
-                        'datatype': 'local', 
+						'datatype': 'local', 
 						'height': 180,
 						'pager': $gridPager,
-				        'emptyrecords': 'No Results',
-                        'loadtext': 'Loading...',
-				        'multiselect': false,
+						'emptyrecords': 'No Results',
+						'loadtext': 'Loading...',
+						'multiselect': false,
 						'rowList': [10,25,50],  
-				        'rowNum': 10
+						'rowNum': 10
 					} 
 					
 					var optNav = {
@@ -69,7 +67,7 @@
 					};
 					$.extend(gridJson, mygridopts);
 
-                    $grid.jqGrid(gridJson)
+					$grid.jqGrid(gridJson)
 						 .navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, {}, {} ); 
 					$grid.jqGrid(gridJson)
 						.hideCol('NODEID')

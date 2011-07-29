@@ -1,6 +1,4 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="/js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="/js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
@@ -9,8 +7,8 @@
 		var o = {
 			ViewUrl: '/NbtWebApp/wsNBT.asmx/getViewTree',
 			viewid: '',
-            issearchable: false,
-            usesession: true,
+			issearchable: false,
+			usesession: true,
 			onSelect: function (optSelect) { 
 							var o = {
 								$item: '',
@@ -33,21 +31,21 @@
 		}
 
 		var $viewsdiv = $(this);
-        
-        var dataXml = {
-            IsSearchable: o.issearchable,
-            UseSession: o.usesession
-        };
-        				
+		
+		var dataXml = {
+			IsSearchable: o.issearchable,
+			UseSession: o.usesession
+		};
+						
 		CswAjaxXml({
 				url: o.ViewUrl,
 				data: dataXml,
-                stringify: false,
+				stringify: false,
 				success: function ($xml)
 				{
 					var strTypes = $xml.find('types').text();
 					var jsonTypes = $.parseJSON(strTypes);
-				    var $treexml = $xml.find('tree').children('root');
+					var $treexml = $xml.find('tree').children('root');
 					var treexmlstring = xmlToString($treexml);
 					
 					$viewsdiv.jstree({
