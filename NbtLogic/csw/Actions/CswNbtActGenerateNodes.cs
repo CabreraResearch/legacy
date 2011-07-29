@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Actions
 
         public bool MarkFuture = false;
 
-        private CswNbtNode _getTargetNodeForGenerator( CswNbtNode CswNbtNodeGenerator, CswPrimaryKey ParentPk, DateTime TargetDueDate )
+        private CswNbtNode _getTargetNodeForGenerator( CswNbtNode CswNbtNodeGenerator, CswPrimaryKey ParentPk, CswDateTime TargetDueDate )
         {
             CswNbtNode ReturnVal = null;
 
@@ -81,14 +81,14 @@ namespace ChemSW.Nbt.Actions
 
         public bool makeNode( CswNbtNode CswNbtNodeGenerator )
         {
-            return makeNode( CswNbtNodeGenerator, DateTime.MinValue );
+			return makeNode( CswNbtNodeGenerator, new CswDateTime( _CswNbtResources ) );
         }
 
         /// <summary>
         /// Generates a future IGeneratorTarget node.  If an existing node has the same due date, no node is generated.
         /// </summary>
         /// <returns>True if a future node was generated</returns>
-        public bool makeNode( CswNbtNode CswNbtNodeGenerator, DateTime DueDate )
+        public bool makeNode( CswNbtNode CswNbtNodeGenerator, CswDateTime DueDate )
         {
             bool ret = false;
 
@@ -101,9 +101,9 @@ namespace ChemSW.Nbt.Actions
                 throw ( new CswDniException( "Generator node " + CswNbtNodeGenerator.NodeName + " (" + CswNbtNodeGenerator.NodeId.ToString() + ") does not have a valid nodetypeid" ) );
             }
 
-            if ( DueDate == DateTime.MinValue )
-                DueDate = GeneratorNode.NextDueDate.DateValue.Date;
-            if ( DueDate == DateTime.MinValue )
+            if ( DueDate.IsNull() )
+                DueDate = GeneratorNode.NextDueDate.DateValue;
+			if( DueDate.IsNull() )
                 DueDate = GeneratorNode.DueDateInterval.getStartDate();
 
             Collection<CswPrimaryKey> Parents = new Collection<CswPrimaryKey>();
@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.Actions
                     }
                     else
                     {
-                        if ( DateTime.Now.Date >= ExistingNodeAsGeneratorTarget.GeneratedDate.DateValue.Date )
+                        if ( DateTime.Now.Date >= ExistingNodeAsGeneratorTarget.GeneratedDate.DateValue.ToDateTime().Date )
                         {
                             ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
                         }

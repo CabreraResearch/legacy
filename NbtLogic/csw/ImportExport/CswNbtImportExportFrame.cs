@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.ImportExport
             _RootNode = CswXmlDocument.SetDocumentElement( _XmlDoc, _Element_NbtData );
             CswXmlDocument.AppendXmlNode( _RootNode, _Element_AccessId, _CswNbtResources.AccessId.ToString() );
             CswXmlDocument.AppendXmlNode( _RootNode, _Element_UserName, _CswNbtResources.CurrentUser.Username );
-            CswXmlDocument.AppendXmlNode( _RootNode, _Element_DateTime, DateTime.Now.ToString() );
+			CswXmlDocument.AppendXmlNode( _RootNode, _Element_DateTime, new CswDateTime( _CswNbtResources, DateTime.Now ).ToXmlDateTimeFormat() );
             CswXmlDocument.AppendXmlNode( _RootNode, _Element_Version, _Version.ToString() );
         }
 

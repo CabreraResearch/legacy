@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             string ValueColumn = "jnp." + Column.ToString();
             string ReturnVal = string.Empty;
 
-            DateTime FilterValue = DateTime.MinValue;
+			CswDateTime FilterValue = new CswDateTime( CswNbtFieldResources.CswNbtResources );
 			string Value = CswNbtViewPropertyFilterIn.Value.ToLower().Trim();
 			if( Value.Substring( 0, "today".Length ) == "today" )
 			{
@@ -34,10 +34,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 							PlusDays = PlusDays * -1;
 					}
 				}
-				FilterValue = DateTime.Now.AddDays( PlusDays ).Date;
+				FilterValue.FromDateTime( DateTime.Now.AddDays( PlusDays ).Date );
 			}
 			else
 			{
+				FilterValue.FromClientString( CswNbtViewPropertyFilterIn.Value );
 				FilterValue = CswConvert.ToDateTime( CswNbtViewPropertyFilterIn.Value ).Date;
 			}
 

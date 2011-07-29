@@ -165,7 +165,7 @@ namespace ChemSW.Nbt
         {
             _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical );
 
-            _DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
+            _DebugID = Guid.NewGuid().ToString();
             logMessage( "CswNbtResources CREATED GUID: " + _DebugID );
 
             _ExcludeDisabledModules = ExcludeDisabledModules;
@@ -235,11 +235,11 @@ namespace ChemSW.Nbt
             get { return _CswNbtNodeCollection; }
         }
 
-        public CswNbtNode getNode( CswNbtNodeKey NodeKey, DateTime Date )
+        public CswNbtNode getNode( CswNbtNodeKey NodeKey, CswDateTime Date )
         {
             return _CswNbtNodeCollection.GetNode( NodeKey.NodeId, Date );
         }
-        public CswNbtNode getNode( CswPrimaryKey NodePk, DateTime Date )
+        public CswNbtNode getNode( CswPrimaryKey NodePk, CswDateTime Date )
         {
             return _CswNbtNodeCollection.GetNode( NodePk, Date );
         }
@@ -520,7 +520,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Stores the datetime that this class was cached
         /// </summary>
-        public DateTime CachedDateTime
+        public CswDateTime CachedDateTime
         {
             get { return _CswResources.CachedDateTime; }
         }
@@ -941,7 +941,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Converts a date into a platform-specific date format
         /// </summary>
-        public string getDbNativeDate( DateTime DateTimeVal ) { return _CswResources.getDbNativeDate( DateTimeVal ); }
+        public string getDbNativeDate( CswDateTime DateTimeVal ) { return _CswResources.getDbNativeDate( DateTimeVal ); }
         /// <summary>
         /// Provides meta data information about tables and columns, from data_dictionary
         /// </summary>
