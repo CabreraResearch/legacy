@@ -115,6 +115,7 @@
     <Content Include="js\CswEnums.js" />
     <Content Include="js\CswProfileMethod.js" />
     <Content Include="js\mobile\pages\CswMobileMenuButton.js" />
+    <Content Include="js\mobile\pages\CswMobilePage.js" />
     <Content Include="js\mobile\pages\CswMobilePageFactory.js" />
     <Content Include="js\mobile\pages\CswMobilePageFooter.js" />
     <Content Include="js\mobile\pages\CswMobilePageHeader.js" />
