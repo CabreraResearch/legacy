@@ -2,54 +2,67 @@
 /// <reference path="../../_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
-	$.fn.CswAttrDom = function (name, value) {
+	$.fn.CswAttrDom = function (name, value)
+	{
 		/// <summary>
 		///   Gets or sets a DOM attribute
 		/// </summary>
 		/// <param name="name" type="String">The name of the attribute</param>
 		/// <param name="value" type="String">The value of the attribute</param>
-		/// <returns type=Object>Either the value of the attribute (get) or this (set) for chaining</returns> 
+		/// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
 		
 		var $Dom = $(this);
+		var ret = $Dom;
 		
-		if( typeof name === "object") {
+		if( typeof name === "object")
+		{
 			for( var prop in name )
 			{
 				doProp($Dom,prop,name[prop]);
 			}
-		} else {
-			doProp($Dom,name,value);
+		}
+		else
+		{
+			ret = doProp($Dom,name,value);
 		}
 
-		return $Dom;
+		return ret;
 
 	}; // function(options) {
 
-	function doProp($Dom,name,value) {
-	    var propVal;
-	    if(arguments.length === 2) {
-			propVal = $Dom.prop(name);
-		} else {
-			propVal = $Dom.prop(name, value);
+	function doProp($Dom,name,value)
+	{
+		var ret;
+
+		if(arguments.length === 2)
+		{
+			ret = $Dom.prop(name);
+		}
+		else
+		{
+			ret = $Dom.prop(name, value);
 		}
 
 		// special cases
-		if( propVal === undefined ||
+		if( ret === undefined ||
 			name === 'href' ||
 			name === 'cellpadding' || 
 			name === 'cellspacing' ||
 			name === 'rowspan' ||
 			name === 'colspan' )
 		{
-			if(arguments.length === 2) {
-			    $Dom.attr(name);
-			} else {
-			    $Dom.attr(name, value);
-			}
+			if(arguments.length === 2)
+				ret = $Dom.attr(name);
+			else
+				ret = $Dom.attr(name,value);
 		}
+
+		return ret;
 	}
 
-	$.fn.CswAttrXml = function (name, value) {
+	$.fn.CswAttrXml = function (name, value)
+	{
+		
 		/// <summary>
 		///   Gets or sets an Xml attribute
 		/// </summary>
@@ -58,35 +71,45 @@
 		/// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
 
 		var X$xml = $(this);
+		var ret = X$xml;
 
-		if( typeof name === "object") {
-			for(var prop in name) {
+		if( typeof name === "object")
+		{
+			for(var prop in name)
+			{
 				doAttr(X$xml,prop,name[prop]);
 			}
-		} else {
-			doAttr(X$xml,name,value);
+		}
+		else
+		{
+			ret = doAttr(X$xml,name,value);
 		}
 		// For proper chaining support
-		return X$xml;
+		return ret;
 
 	}; // function(options) {
 
-	function doAttr(X$xml,name,value) {
-		switch( arguments.length ) {
+	function doAttr(X$xml,name,value)
+	{
+		var ret = X$xml;
+
+		switch( arguments.length )
+		{
 			case 2:
 			{
-				X$xml.attr(name);
+				ret = X$xml.attr(name);
 				break;
 			}
 			case 3:
 			{
-				X$xml.attr(name, value);
+				ret = X$xml.attr(name, value);
 				break;
 			}
 		}
+		// For proper chaining support
+		return ret;
 	}
 
 })(jQuery);
 
 
- 
