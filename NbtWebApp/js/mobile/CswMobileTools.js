@@ -1,5 +1,6 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../_Global.js" />
+/// <reference path="clientdb/CswMobileClientDbResources.js" />
 
 //#region plugins
 
@@ -135,6 +136,10 @@
 //#region functions
 
 function startLoadingMsg(onSuccess) {
+    /// <summary> Starts the JQM "loading.." message and executes a function.
+	/// </summary>
+	/// <param name="onSuccess" type="Function">Function to execute.</param>
+	/// <returns type="Boolean">False (to support 'click' events)</returns>
     $.mobile.showPageLoadingMsg();
     if( arguments.length === 1 && !isNullOrEmpty(onSuccess) ) {
         onSuccess();
@@ -143,6 +148,10 @@ function startLoadingMsg(onSuccess) {
 }
         
 function stopLoadingMsg(onSuccess) {
+    /// <summary> Stops the JQM "loading.." message and executes a function.
+	/// </summary>
+	/// <param name="onSuccess" type="Function">Function to execute.</param>
+	/// <returns type="Boolean">False (to support 'click' events)</returns>
     if( arguments.length === 1 && !isNullOrEmpty(onSuccess) ) {
         onSuccess();
     } 
@@ -150,6 +159,50 @@ function stopLoadingMsg(onSuccess) {
     var $currentDiv = $("div[data-role='page']:visible:visible");
     $currentDiv.find('.csw_listview').CswPage();
     return false;
+}
+
+function onError() {
+	/// <summary> Stops the JQM "loading.." message on error. </summary> 
+    stopLoadingMsg();
+}
+
+function onLoginFail(text,mobileStorage) {
+	/// <summary> On login failure event </summary>
+	/// <param name="text" type="String">Login failure text</param>
+    /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
+	/// <returns type="void"></returns>
+    Logout(false);
+	mobileStorage.setItem('loginFailure', text);
+	stopLoadingMsg();
+}
+
+function onLogout(mobileStorage) {
+	/// <summary> Calls Logout() </summary>
+    /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
+	/// <returns type="Boolean">false, for use in 'click' event.</returns>
+    Logout(mobileStorage,true);
+    return false;
+}
+
+	
+function Logout(mobileStorage,reloadWindow) {
+	/// <summary> On login failure event </summary>
+	/// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
+    /// <param name="reloadWindow" type="Boolean">If true, reload the login page.</param>
+    /// <returns type="void"></returns>
+    
+    if ( mobileStorage.checkNoPendingChanges() ) {
+				
+		var loginFailure = tryParseString(mobileStorage.getItem('loginFailure'), '');
+
+		mobileStorage.clear();
+				
+		mobileStorage.amOnline(true,loginFailure);
+		// reloading browser window is the easiest way to reset
+		if (reloadWindow) {
+			window.location.href = window.location.pathname;
+		}
+	}
 }
 
 //#endregion functions

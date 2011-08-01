@@ -9,11 +9,17 @@
 /// <reference path="../mobile/CswMobileTools.js" />
 /// <reference path="../mobile/sync/CswMobileBackgroundTask.js" />
 /// <reference path="../mobile/sync/CswMobileSync.js" />
-/// <reference path="pages/CswMobileMenuButton.js" />
-/// <reference path="pages/CswMobilePageHeader.js" />
-/// <reference path="pages/CswMobilePage.js" />
+/// <reference path="controls/CswMobileMenuButton.js" />
+/// <reference path="controls/ICswMobileWebControls.js" />
+/// <reference path="controls/CswMobilePageFooter.js" />
+/// <reference path="controls/CswMobilePageHeader.js" />
 /// <reference path="pages/CswMobilePageFactory.js" />
-/// <reference path="pages/CswMobilePageFooter.js" />
+/// <reference path="pages/CswMobilePageViews.js" />
+/// <reference path="pages/CswMobilePageHelp.js" />
+/// <reference path="pages/CswMobilePageLogin.js" />
+/// <reference path="pages/CswMobilePageOnline.js" />
+/// <reference path="pages/CswMobilePageSearch.js" />
+
 
 //var profiler = $createProfiler();
 
@@ -27,6 +33,7 @@ CswAppMode.mode = 'mobile';
 		///   Generates the Nbt Mobile page
 		/// </summary>
 		var $body = this;
+	    $body.CswAttrXml('data-theme', 'b');
 
 		//#region Resource Initialization
 		
@@ -37,7 +44,7 @@ CswAppMode.mode = 'mobile';
 			ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
 			UpdateViewUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
 			MainPageUrl: '/NbtWebApp/Mobile.html',
-			AuthenticateUrl: '/NbtWebApp/wsNBT.asmx/Authenticate',
+			AuthenticateUrl: '',
 			SendLogUrl: '/NbtWebApp/wsNBT.asmx/collectClientLogInfo',
 			Theme: 'a',
 			PollingInterval: 30000, //30 seconds
@@ -56,7 +63,7 @@ CswAppMode.mode = 'mobile';
 		
 		var SessionId = mobileStorage.sessionid();
 		if(isNullOrEmpty(SessionId)) {
-			Logout();
+			Logout(mobileStorage);
 		}
 
 		var storedViews = mobileStorage.getItem('storedViews');
@@ -136,39 +143,16 @@ CswAppMode.mode = 'mobile';
 		
 		function _loadLoginDiv() {
 
-			var LoginContent = '<p style="text-align: center;">Login to Mobile Inspection Manager</p>';
-			LoginContent += '<input type="textbox" id="login_customerid" placeholder="Customer Id"/><br>';
-			LoginContent += '<input type="textbox" id="login_username" placeholder="User Name"/><br>';
-			LoginContent += '<input type="password" id="login_password" placeholder="Password"/><br>';
-			LoginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
-			
-			var $retDiv = _addPageDivToBody({
-					DivId: 'logindiv',
-					HeaderText: 'ChemSW Live',
-					$content: $(LoginContent),
-					HideSearchButton: true,
-					HideOnlineButton: true,
-					HideRefreshButton: true,
-					HideHelpButton: false,
-					HideBackButton: true
-				});
-
-			//.prepend( $('<img src="Images/pagelayout/header_logo32.gif" /><br/>') );
-			
-			var loginFailure = mobileStorage.getItem('loginFailure');
-			if( !isNullOrEmpty(loginFailure) ) {
-				_addToDivHeaderText($retDiv, loginFailure)
-					.css('color','yellow');
-			}
-			
-			$('#loginsubmit')
-				.unbind('click')
-				.bind('click', function() {
-					return startLoadingMsg(function() { onLoginSubmit(); });
-			});
-			$('#login_customerid').clickOnEnter($('#loginsubmit'));
-			$('#login_username').clickOnEnter($('#loginsubmit'));
-			$('#login_password').clickOnEnter($('#loginsubmit'));
+		    var loginDef = { theme: opts.Theme };
+		    var loginDiv = new CswMobilePageLogin(loginDef, $body, mobileStorage, function (data,userName,accessId) {
+		            SessionId = $.CswCookie('get', CswCookieName.SessionId);
+					mobileStorage.sessionid(SessionId);
+					mobileStorage.username(userName); 
+					mobileStorage.customerid(accessId);
+					$viewsdiv = reloadViews();
+					$viewsdiv.CswChangePage();  
+		        });
+		    var $retDiv = loginDiv.$pageDiv;
 
 			return $retDiv;
 		}
@@ -222,7 +206,7 @@ CswAppMode.mode = 'mobile';
 			/// <summary>
 			///   Sets 'Online' button style 'offline',
 			/// </summary>
-			amOnline(false);
+			mobileStorage.amOnline(false);
 			
 			$('.onlineStatus').removeClass('online')
 							  .addClass('offline')
@@ -239,7 +223,7 @@ CswAppMode.mode = 'mobile';
 
 		function setOnline(reloadViewsPage) {
 			
-			amOnline(true);
+			mobileStorage.amOnline(true);
 			mobileStorage.removeItem('loginFailure');
 			if( !mobileStorage.stayOffline() )
 			{
@@ -257,16 +241,7 @@ CswAppMode.mode = 'mobile';
 			}
 		}
 
-		function amOnline(isOnline,loginFailure) {
-			if(arguments.length > 0 ) {
-				mobileStorage.setItem('online', isTrue(isOnline) );
-			}
-			if(loginFailure) {
-				mobileStorage.setItem('loginFailure',loginFailure );
-			}
-			var ret = ( isTrue(mobileStorage.getItem('online')) && !mobileStorage.stayOffline());
-			return ret;
-		}
+		
 
 		// ------------------------------------------------------------------------------------
 		// Logging Button
@@ -377,7 +352,7 @@ CswAppMode.mode = 'mobile';
 			if (isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1) {
 				if (p.level === 0) {
 					p.PageType = 'view';
-					if (!amOnline()) {
+					if (!mobileStorage.amOnline()) {
 						p.json = mobileStorage.fetchCachedViewJson(p.DivId);
 						$retDiv = _loadDivContentsJson(p);
 					} else {
@@ -391,7 +366,7 @@ CswAppMode.mode = 'mobile';
 					if (!isNullOrEmpty(cachedJson)) {
 						p.json = cachedJson;
 						$retDiv = _loadDivContentsJson(p);
-					} else if (amOnline()) {
+					} else if (mobileStorage.amOnline()) {
 						p.url = opts.ViewUrl;
 						$retDiv = _getDivJson(p);
 					} else {
@@ -442,7 +417,7 @@ CswAppMode.mode = 'mobile';
 					formobile: ForMobile,
 					url: p.url,
 					data: jsonData,
-					onloginfail: function(text) { onLoginFail(text); },
+					onloginfail: function(text) { onLoginFail(text, mobileStorage); },
 					success: function(data) {
 						setOnline(false);
 						logger.setAjaxSuccess();
@@ -1169,7 +1144,7 @@ CswAppMode.mode = 'mobile';
 					.append(p.$content);
 			}
 
-			var onlineValue = (!amOnline()) ? 'Offline' : 'Online';
+			var onlineValue = (!mobileStorage.amOnline()) ? 'Offline' : 'Online';
 			var footerDef = {
 				buttons: {
 					online: { ID: p.DivId + '_gosyncstatus',
@@ -1196,24 +1171,20 @@ CswAppMode.mode = 'mobile';
 			var mobileFooter = new CswMobilePageFooter(footerDef, $pageDiv);
 
 			mobileFooter.online.visible(!p.HideOnlineButton);
-			mobileFooter.refresh.visible(!p.HideRefreshButton && amOnline());
+			mobileFooter.refresh.visible(!p.HideRefreshButton && mobileStorage.amOnline());
 			mobileFooter.help.visible(!p.HideHelpButton);
 			
-			if( _pendingChanges() ) {
+			if( mobileStorage.pendingChanges() ) {
 				mobileFooter.online.addCssClass('pendingchanges');
 			}
 			else {
 				mobileFooter.online.removeCssClass('pendingchanges');
 			}
 			
-			_bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv, mobileFooter, mobileHeader);
+			//_bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv, mobileFooter, mobileHeader);
 			return $pageDiv;
 
 		}// _addPageDivToBody()
-
-		function _getDivHeaderText(DivId) {
-			return $('#' + DivId).find('div:jqmData(role="header") h1').text();
-		}
 
 		function _addToDivHeaderText($div, text, style) {
 			var $ret = $('<p white-space: normal;">' + text + '</p>');
@@ -1225,45 +1196,6 @@ CswAppMode.mode = 'mobile';
 			return $ret;
 		}
 		
-		function _bindPageEvents(DivId, ParentId, level, $div, mobileFooter, mobileHeader) {
-
-			mobileFooter.online.setEvent(CswDomElementEvent.click, function() {
-				 return startLoadingMsg(function() { onSyncStatusOpen(DivId); });
-			});
-			mobileFooter.online.bindEvents(CswDomElementEvent.click);
-			
-			mobileFooter.refresh.setEvent(CswDomElementEvent.click, function() {
-				 return startLoadingMsg(function() { onRefresh(); });
-			});
-			mobileFooter.refresh.bindEvents(CswDomElementEvent.click);
-			
-			mobileFooter.help.setEvent(CswDomElementEvent.click, function() {
-				 return startLoadingMsg(function() { onHelp(DivId, ParentId); });
-			});
-			mobileFooter.help.bindEvents(CswDomElementEvent.click);
-			
-		    mobileHeader.search.setEvent(CswDomElementEvent.click, function() {
-					return startLoadingMsg( function () { onSearchOpen(DivId); });
-	        });
-			mobileHeader.search.bindEvents(CswDomElementEvent.click);
-		    
-//			$div.
-//                .find('textarea')
-//                .unbind('change')
-//                .bind('change', function(eventObj) {
-//                    var $this = $(this);
-//                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
-//                })
-//                .end()
-//                .find('.csw_prop_select')
-//                .unbind('change')
-//                .bind('change', function(eventObj) {
-//                    var $this = $(this);
-//                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
-//                })
-//				.end();
-		}
-
 		// ------------------------------------------------------------------------------------
 		// Sync Status Div
 		// ------------------------------------------------------------------------------------
@@ -1311,7 +1243,7 @@ CswAppMode.mode = 'mobile';
 					.end()
 					.find('#ss_logout')
 					.bind('click', function() {
-						return startLoadingMsg( function () { onLogout(); });
+						return startLoadingMsg( function () { onLogout(mobileStorage); });
 					})
 					.end()
 					.find('#ss_debuglog')
@@ -1327,7 +1259,7 @@ CswAppMode.mode = 'mobile';
 		function _toggleOffline(doWaitForData) {
 
 			var $onlineBtn = $('#ss_gooffline span').find('span.ui-btn-text');
-			if (amOnline() || $onlineBtn.text() === 'Go Online') {
+			if (mobileStorage.amOnline() || $onlineBtn.text() === 'Go Online') {
 				setOnline(false);
 				if (doWaitForData) {
 					mobileBgTask.stop();
@@ -1353,7 +1285,7 @@ CswAppMode.mode = 'mobile';
 		}
 
 		function _resetPendingChanges(succeeded) {
-			if ( _pendingChanges() ) {
+			if ( mobileStorage.pendingChanges() ) {
 				$('.onlineStatus').addClass('pendingchanges')
 								  .find('span.ui-btn-text')
 								  .addClass('pendingchanges');
@@ -1376,16 +1308,7 @@ CswAppMode.mode = 'mobile';
 		}
 
 		// returns true if no pending changes or user is willing to lose them
-		function _checkNoPendingChanges() {
-			var pendingChanges = (!_pendingChanges() ||
-				confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
-			return pendingChanges;
-		}
-
-		function _pendingChanges() {
-			var changes = new Number(tryParseString(mobileStorage.getItem('unSyncedChanges'),'0'))
-			return (changes > 0);
-		}
+		
 
 		// ------------------------------------------------------------------------------------
 		// Help Div
@@ -1436,90 +1359,24 @@ CswAppMode.mode = 'mobile';
 
 		//#region Events
 
-		function onLoginFail(text) {
-			Logout(false);
-			_addToDivHeaderText($logindiv, text)
-				.css('color','yellow');
-			mobileStorage.setItem('loginFailure', text);
-			stopLoadingMsg();
-		}
-
-		function onLogout() {
-			Logout(true);
-		}
-
-		function onError() {
-			stopLoadingMsg();
-		}
 		
-		function Logout(reloadWindow) {
-			if ( _checkNoPendingChanges() ) {
-				
-				var loginFailure = tryParseString(mobileStorage.getItem('loginFailure'), '');
-
-				mobileStorage.clear();
-				
-				amOnline(true,loginFailure);
-				// reloading browser window is the easiest way to reset
-				if (reloadWindow) {
-					window.location.href = window.location.pathname;
-				}
-			}
-		}
 
 		//#endregion Events
 		
 		//#region Button Bindings
-		
-		function onLoginSubmit() {
-			if (amOnline()) {
-				var UserName = $('#login_username').val();
-				var AccessId = $('#login_customerid').val();
-
-				var ajaxData = {
-					'AccessId': AccessId, //We're displaying "Customer ID" but processing "AccessID"
-					'UserName': UserName,
-					'Password': $('#login_password').val(),
-					ForMobile: ForMobile
-				};
-
-				CswAjaxJSON({
-						formobile: ForMobile,
-						async: false,
-						url: opts.AuthenticateUrl,
-						data: ajaxData,
-						onloginfail: function(text) {
-							onLoginFail(text);
-						},
-						success: function(data) {
-							SessionId = $.CswCookie('get', CswCookieName.SessionId);
-							mobileStorage.sessionid(SessionId);
-							mobileStorage.username(UserName); 
-							mobileStorage.customerid(AccessId);
-							$viewsdiv = reloadViews();
-							$viewsdiv.CswChangePage();
-						},
-						error: function() {
-							onError();
-						}
-					});
-			}
-
-		} //onLoginSubmit() 
 		
 		function onRefresh() {
 			var DivId = mobileStorage.currentViewId();
 			if(isNullOrEmpty(DivId)) {
 				window.location.reload();
 			}
-			else if (amOnline() && 
-				_checkNoPendingChanges() ) {
+			else if (mobileStorage.amOnline() && 
+				mobileStorage.checkNoPendingChanges() ) {
 				
 				if(DivId === 'viewsdiv') {
 					window.location.reload();
 				}
 				else {
-					var HeaderText = _getDivHeaderText(DivId);
 					var jsonData = {
 						SessionId: SessionId,
 						ParentId: DivId,
@@ -1531,7 +1388,7 @@ CswAppMode.mode = 'mobile';
 							url: opts.ViewUrl,
 							data: jsonData,
 							stringify: false,
-							onloginfail: function(text) { onLoginFail(text); },
+							onloginfail: function(text) { onLoginFail(text, mobileStorage); },
 							success: function(data) {
 								setOnline(false);
 								if( !isNullOrEmpty(data['nodes']) ) {
