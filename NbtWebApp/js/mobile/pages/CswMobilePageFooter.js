@@ -2,6 +2,7 @@
 /// <reference path="../../_Global.js" />
 /// <reference path="../../_CswPrototypeExtensions.js" />
 /// <reference path="CswMobileMenuButton.js" />
+/// <reference path="ICswMobileWebControls.js" />
 
 
 //#region CswMobilePageFooter
@@ -15,6 +16,8 @@ function CswMobilePageFooter(footerDef, $parent) {
     /// <returns type="CswMobilePageFooter">Instance of itself. Must instance with 'new' keyword.</returns>
 
     //#region private
+
+    ICswMobileWebControls.call(this);
     
     var o = {
         buttons: { button1: { ID: '', text: '', 'data-icon': '', cssclass: '' } },
@@ -53,21 +56,28 @@ function CswMobilePageFooter(footerDef, $parent) {
     var buttonCnt = 0;
     for( var button in o.buttons) {
         buttonCnt++;
+
+        var thisButton = o.buttons[button];
+        var $buttonWrp = $footerCtn.find('#' + thisButton.ID + '_li');
+        if( isNullOrEmpty($buttonWrp) || $buttonWrp.length === 0) {
+            $buttonWrp = $('<li id="' +  thisButton.ID + '_li"></li>');
+        }
+        
         switch(buttonCnt) {
             case 1:
-                button1 = new CswMobileMenuButton(o.buttons[button], $footerCtn);
+                button1 = new CswMobileMenuButton(thisButton, $buttonWrp.appendTo($footerCtn));
                 this[button] = button1;
                 break;
             case 2:
-                button2 = new CswMobileMenuButton(o.buttons[button], $footerCtn);
+                button2 = new CswMobileMenuButton(thisButton, $buttonWrp.appendTo($footerCtn));
                 this[button] = button2;
                 break;
             case 3:
-                button3 = new CswMobileMenuButton(o.buttons[button], $footerCtn);
+                button3 = new CswMobileMenuButton(thisButton, $buttonWrp.appendTo($footerCtn)); 
                 this[button] = button3;
                 break;
             case 4:
-                button4 = new CswMobileMenuButton(o.buttons[button], $footerCtn);
+                button4 = new CswMobileMenuButton(thisButton, $buttonWrp.appendTo($footerCtn));
                 this[button] = button4;
                 break;
         } 
@@ -77,7 +87,7 @@ function CswMobilePageFooter(footerDef, $parent) {
     
     //#region public, priveleged
     this.ID = o.ID;
-    this.footer = $footer;
+    this.$content = $footer;
     
     //in case we don't know the button names, we can fetch and query
     this.button1 = button1;

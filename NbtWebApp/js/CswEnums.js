@@ -100,4 +100,11 @@ var ViewBuilder_CssClasses = {
 	metadatatype_static: { name: 'csw_viewbuilder_metadatatype_static' }
 };
 
+var CswDomElementEvent = {
+	click: {name: 'click'},
+	change: {name: 'change'},
+	vclick: {name: 'vclick'},
+	tap: {name: 'tap'}
+};
+
 //#endregion Global

@@ -1130,73 +1130,43 @@ CswAppMode.mode = 'mobile';
 
 			var $pageDiv = $('#' + p.DivId);
 
-			var $searchBtn = $('#' + p.DivId + '_searchopen');
-			var $syncstatusBtn = $('#' + p.DivId + '_gosyncstatus');
-			var $refreshBtn = $('#' + p.DivId + '_refresh');
-			var $helpBtn = $('#' + p.DivId + '_help');
-			var $headerOnlineBtn = $('#' + p.DivId + '_headeronline');
-			var $headerTitle = $('#' + p.DivId + '_header_title');
-			var $backlink = $('#' + p.DivId + '_back');
+			var firstInit = (isNullOrEmpty($pageDiv) || $pageDiv.length === 0);
 			
-			if (isNullOrEmpty($pageDiv) || $pageDiv.length === 0) {
+			if (firstInit) {
 				$pageDiv = $body.CswDiv('init', { ID: p.DivId })
-										.CswAttrXml({
-										'data-role': 'page',
-										'data-url': p.DivId,
-										'data-title': p.HeaderText,
-										'data-rel': 'page'
-									});
+					.CswAttrXml({
+							'data-role': 'page',
+							'data-url': p.DivId,
+							'data-title': p.HeaderText,
+							'data-rel': 'page'
+						});
+			}
+			var headerDef = {
+				buttons: {
+					back: { ID: p.DivId + '_back',
+								text: 'Back',
+								cssClass: 'ui-btn-left',
+								dataDir: 'reverse',
+								dataIcon: 'arrow-l' },
+					search: { ID: p.DivId + '_searchopen',
+								text: 'Search',
+								cssClass: 'ui-btn-right' }
+				},
+				ID: p.DivId,
+			    text: p.HeaderText,
+				dataId: 'csw_header',
+				dataTheme: opts.Theme
+			};
+			var mobileHeader = new CswMobilePageHeader(headerDef, $pageDiv);
 
-				var $header = $pageDiv.CswDiv('init', { ID: p.DivId + '_header' })
-											  .CswAttrXml({
-											  'data-role': 'header',
-											  'data-theme': opts.Theme,
-											  'data-position': 'fixed',
-											  'data-id': 'csw_header'
-										  });
-				$backlink = $header.CswLink('init', {
-												'href': 'javascript:void(0)',
-												ID: p.DivId + '_back',
-												cssclass: 'ui-btn-left',
-												value: 'Back'
-											})
-												.CswAttrXml({
-												'data-identity': p.DivId + '_back', 
-												'data-rel': 'back',
-												'data-direction': 'reverse',
-												'data-icon': 'arrow-l'
-											});
+			mobileHeader.back.visible(!p.HideBackButton);
+			mobileHeader.search.visible(!p.HideSearchButton);
 				
-				$headerTitle = $('<h1 id="' + p.DivId + '_header_title"></h1>').appendTo($header);                
 
-				$searchBtn = $header.CswLink('init', {
-											  'href': 'javascript:void(0)',
-											  ID: p.DivId + '_searchopen',
-											  cssclass: 'ui-btn-right',
-											  value: 'Search'
-										  })
-											  .CswAttrXml({
-											  'data-identity': p.DivId + '_searchopen',
-											  'data-url': p.DivId + '_searchopen',
-											  'data-transition': 'pop',
-											  'data-rel': 'dialog'
-										  });
-
-				$headerOnlineBtn = $header.CswLink('init', {
-												  ID: p.DivId + '_headeronline',
-												  cssclass: 'ui-btn-right onlineStatus online',
-												  value: 'Online'
-													})
-												  .CswAttrDom({ 'disabled': 'disabled' })
-												  .hide();
-
-				$header.CswDiv('init', { cssclass: 'toolbar' })
-							   .append(p.$toolbar)
-							   .CswAttrXml({ 'data-role': 'header', 'data-type': 'horizontal', 'data-theme': opts.Theme });
-
+			if(firstInit) {
 				$pageDiv.CswDiv('init', { ID: p.DivId + '_content' })
-											   .CswAttrXml({ 'data-role': 'content', 'data-theme': opts.Theme })
-											   .append(p.$content);
+					.CswAttrXml({ 'data-role': 'content', 'data-theme': opts.Theme })
+					.append(p.$content);
 			}
 
 			var onlineValue = (!amOnline()) ? 'Offline' : 'Online';
@@ -1225,15 +1195,6 @@ CswAppMode.mode = 'mobile';
 			};
 			var mobileFooter = new CswMobilePageFooter(footerDef, $pageDiv);
 
-			//case 22323
-			$headerTitle.text(p.HeaderText);
-			
-			if (!p.HideBackButton) {
-				$backlink.css('display', '').show();
-			} else {
-				$backlink.css('display', 'none').hide();
-			}
-
 			mobileFooter.online.visible(!p.HideOnlineButton);
 			mobileFooter.refresh.visible(!p.HideRefreshButton && amOnline());
 			mobileFooter.help.visible(!p.HideHelpButton);
@@ -1245,18 +1206,7 @@ CswAppMode.mode = 'mobile';
 				mobileFooter.online.removeCssClass('pendingchanges');
 			}
 			
-			if (p.HideSearchButton) {
-				$searchBtn.css('display', 'none').hide();
-			} else {
-				$searchBtn.css('display', '').show();
-			}
-			if (p.HideHeaderOnlineButton) {
-				$headerOnlineBtn.css('display', 'none').hide();
-			} else {
-				$headerOnlineBtn.css('display', '').show();
-			}
-			
-			_bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv);
+			_bindPageEvents(p.DivId, p.ParentId, p.level, $pageDiv, mobileFooter, mobileHeader);
 			return $pageDiv;
 
 		}// _addPageDivToBody()
@@ -1275,31 +1225,29 @@ CswAppMode.mode = 'mobile';
 			return $ret;
 		}
 		
-		function _bindPageEvents(DivId, ParentId, level, $div) {
-			$div.find('#' + DivId + '_searchopen')
-				.unbind('click')
-				.bind('click', function() {
+		function _bindPageEvents(DivId, ParentId, level, $div, mobileFooter, mobileHeader) {
+
+			mobileFooter.online.setEvent(CswDomElementEvent.click, function() {
+				 return startLoadingMsg(function() { onSyncStatusOpen(DivId); });
+			});
+			mobileFooter.online.bindEvents(CswDomElementEvent.click);
+			
+			mobileFooter.refresh.setEvent(CswDomElementEvent.click, function() {
+				 return startLoadingMsg(function() { onRefresh(); });
+			});
+			mobileFooter.refresh.bindEvents(CswDomElementEvent.click);
+			
+			mobileFooter.help.setEvent(CswDomElementEvent.click, function() {
+				 return startLoadingMsg(function() { onHelp(DivId, ParentId); });
+			});
+			mobileFooter.help.bindEvents(CswDomElementEvent.click);
+			
+		    mobileHeader.search.setEvent(CswDomElementEvent.click, function() {
 					return startLoadingMsg( function () { onSearchOpen(DivId); });
-				})
-				.end()
-				.find('#' + DivId + '_gosyncstatus')
-				.unbind('click')
-				.bind('click', function() {
-					return startLoadingMsg( function () { onSyncStatusOpen(DivId); });
-				})
-				.end()
-				.find('#' + DivId + '_refresh')
-				.unbind('click')
-				.bind('click', function() {
-					return startLoadingMsg( function () { onRefresh(); });
-				})
-				.end()
-				.find('#' + DivId + '_help')
-				.unbind('click')
-				.bind('click', function() {
-					return startLoadingMsg( function () { onHelp(DivId, ParentId); });
-				})
-//                .end()
+	        });
+			mobileHeader.search.bindEvents(CswDomElementEvent.click);
+		    
+//			$div.
 //                .find('textarea')
 //                .unbind('change')
 //                .bind('change', function(eventObj) {
@@ -1313,7 +1261,7 @@ CswAppMode.mode = 'mobile';
 //                    var $this = $(this);
 //                    onPropertyChange(DivId, eventObj, $this.val(), $this.CswAttrDom('id'));
 //                })
-				.end();
+//				.end();
 		}
 
 		// ------------------------------------------------------------------------------------
