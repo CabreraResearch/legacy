@@ -168,6 +168,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassUnitOfMeasure( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass:
+                    ReturnVal = new CswNbtObjClassUnitType(CswNbtResources, Node);
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.UserClass:
                     ReturnVal = new CswNbtObjClassUser( CswNbtResources, Node );
                     break;
@@ -328,6 +332,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass:
                     ReturnVal = new CswNbtObjClassUnitOfMeasure( CswNbtResources );
+                    break;
+
+                case CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass:
+                    ReturnVal = new CswNbtObjClassUnitType(CswNbtResources);
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.UserClass:
