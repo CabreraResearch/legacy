@@ -229,6 +229,58 @@ namespace ChemSW.Nbt.PropTypes
             return ( "Current class is not of type " + CurrentType.ToString() );
         }
 
+		/// <summary>
+		/// Set the default value specified by the nodetype prop
+		/// </summary>
+		public void SetDefaultValue()
+		{
+			bool DoCopy = false;
+			switch( this.FieldType.FieldType )
+			{
+				case CswNbtMetaDataFieldType.NbtFieldType.Date:
+					CswNbtNodePropDate PropAsDate = this.AsDate;
+					if( PropAsDate.DefaultToToday )
+					{
+						PropAsDate.DateValue = DateTime.Now;
+					}
+					break;
+				case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
+					CswNbtNodePropMTBF PropAsMTBF = this.AsMTBF;
+					if( PropAsMTBF.DefaultToToday )
+					{
+						PropAsMTBF.StartDateTime = DateTime.Now;
+					}
+					break;
+				case CswNbtMetaDataFieldType.NbtFieldType.Location:
+					// This will default to Top.  Setting the Parent might change this later.
+					this.AsLocation.SelectedNodeId = null;
+					DoCopy = true;
+					break;
+				case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
+					if( this.DefaultValue.AsBarcode.Barcode != CswNbtNodePropBarcode.AutoSignal )
+					{
+						DoCopy = true;
+					}
+					break;
+				case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
+					if( this.DefaultValue.AsSequence.Sequence != CswNbtNodePropBarcode.AutoSignal )
+					{
+						DoCopy = true;
+					}
+					break;
+				default:
+					DoCopy = true;
+					break;
+			} // switch( Prop.FieldType.FieldType )
+
+			if( DoCopy && this.HasDefaultValue() )
+			{
+				this.copy( this.DefaultValue );
+			}
+
+		} // SetDefaultValue()
+
+
 
         public CswNbtNodePropBarcode AsBarcode
         {
@@ -555,6 +607,8 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//View
 
-    }//CswNbtNodePropWrapper
+
+
+	}//CswNbtNodePropWrapper
 
 }//namespace ChemSW.Nbt.PropTypes
