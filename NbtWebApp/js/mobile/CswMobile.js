@@ -33,7 +33,6 @@ CswAppMode.mode = 'mobile';
 		///   Generates the Nbt Mobile page
 		/// </summary>
 		var $body = this;
-	    $body.CswAttrXml('data-theme', 'b');
 
 		//#region Resource Initialization
 		
