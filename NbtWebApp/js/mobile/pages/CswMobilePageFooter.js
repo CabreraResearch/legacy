@@ -4,8 +4,9 @@
 /// <reference path="CswMobileMenuButton.js" />
 /// <reference path="ICswMobileWebControls.js" />
 
-
 //#region CswMobilePageFooter
+
+CswMobilePageFooter.inheritsFrom(ICswMobileWebControls);
 
 function CswMobilePageFooter(footerDef, $parent) {
     /// <summary>
@@ -28,7 +29,8 @@ function CswMobilePageFooter(footerDef, $parent) {
     
     if(footerDef) $.extend(o, footerDef);
 
-    var button1, button2, button3, button4, $footerCtn;
+    var $footerCtn;
+    var buttonNames = [];
     var footerId = o.ID + '_footer';
 
     var $footer = $parent.find('div:jqmData(role="footer")');
@@ -54,32 +56,19 @@ function CswMobilePageFooter(footerDef, $parent) {
     
     //let's make these buttons accessible by name
     var buttonCnt = 0;
-    for( var button in o.buttons) {
+    for( var buttonName in o.buttons) {
         buttonCnt++;
 
-        var thisButton = o.buttons[button];
+        var thisButton = o.buttons[buttonName];
         var $buttonWrp = $footerCtn.find('#' + thisButton.ID + '_li');
         if( isNullOrEmpty($buttonWrp) || $buttonWrp.length === 0) {
             $buttonWrp = $('<li id="' +  thisButton.ID + '_li"></li>');
         }
         
-        switch(buttonCnt) {
-            case 1:
-                button1 = new CswMobileMenuButton(thisButton, $buttonWrp.appendTo($footerCtn));
-                this[button] = button1;
-                break;
-            case 2:
-                button2 = new CswMobileMenuButton(thisButton, $buttonWrp.appendTo($footerCtn));
-                this[button] = button2;
-                break;
-            case 3:
-                button3 = new CswMobileMenuButton(thisButton, $buttonWrp.appendTo($footerCtn)); 
-                this[button] = button3;
-                break;
-            case 4:
-                button4 = new CswMobileMenuButton(thisButton, $buttonWrp.appendTo($footerCtn));
-                this[button] = button4;
-                break;
+        if(buttonCnt <= 4) {
+            var button = new CswMobileMenuButton(thisButton, $buttonWrp.appendTo($footerCtn));
+            buttonNames.push(buttonName);
+            this[buttonName] = button;
         } 
     }
     
@@ -90,10 +79,7 @@ function CswMobilePageFooter(footerDef, $parent) {
     this.$content = $footer;
     
     //in case we don't know the button names, we can fetch and query
-    this.button1 = button1;
-    this.button2 = button2;
-    this.button3 = button3;
-    this.button4 = button4;
+    this.buttonNames = buttonNames;
     //#endregion public, priveleged
     
 }

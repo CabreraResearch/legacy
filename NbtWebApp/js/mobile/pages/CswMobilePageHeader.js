@@ -6,6 +6,8 @@
 
 //#region CswMobilePageHeader
 
+CswMobilePageHeader.inheritsFrom(ICswMobileWebControls);
+
 function CswMobilePageHeader(headerDef, $parent) {
     /// <summary>
     ///   Header class. Responsible for generating a Mobile page header.
@@ -28,7 +30,7 @@ function CswMobilePageHeader(headerDef, $parent) {
     
     if(headerDef) $.extend(o, headerDef);
 
-    var button1, button2;
+    var buttonNames = [];
     var headerId = o.ID + '_header';
 
     var $header = $parent.find('div:jqmData(role="header")');
@@ -67,20 +69,15 @@ function CswMobilePageHeader(headerDef, $parent) {
     
     //let's make these buttons accessible by name
     var buttonCnt = 0;
-    for( var button in o.buttons) {
+    for( var buttonName in o.buttons) {
         buttonCnt++;
 
-        var thisButton = o.buttons[button];
+        var thisButton = o.buttons[buttonName];
         
-        switch(buttonCnt) {
-            case 1:
-                button1 = new CswMobileMenuButton(thisButton, $parent);
-                this[button] = button1;
-                break;
-            case 2:
-                button2 = new CswMobileMenuButton(thisButton, $parent);
-                this[button] = button2;
-                break;
+        if( buttonCnt <= 2 ) {
+            var button = new CswMobileMenuButton(thisButton, $header);
+            buttonNames.push(buttonName);
+            this[buttonName] = button;
         } 
     }
     
@@ -91,8 +88,7 @@ function CswMobilePageHeader(headerDef, $parent) {
     this.$content = $header;
     
     //in case we don't know the button names, we can fetch and query
-    this.button1 = button1;
-    this.button2 = button2;
+    this.buttonNames = buttonNames;
 
     this.pageHeader = _pageHeader;
     
