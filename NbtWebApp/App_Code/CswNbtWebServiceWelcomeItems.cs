@@ -122,6 +122,12 @@ namespace ChemSW.Nbt.WebServices
                                 if( WelcomeRow["displaytext"].ToString() != string.Empty )
                                 {
                                     LinkText = WelcomeRow["displaytext"].ToString();
+                                    // FogBugz case 9552, Keith Baldwin 7/27/2011
+                                    ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView(ThisView, false, true, false, false);
+                                    if (null != CswNbtTree)
+                                    {
+                                        LinkText += " (" + CswNbtTree.getChildNodeCount().ToString() + ")";
+                                    }
                                 }
                                 else
                                 {

@@ -46,7 +46,8 @@ namespace ChemSW.Nbt.MetaData
             UnitOfMeasureClass,
             UserClass,
             Unknown,
-            VendorClass
+            VendorClass,
+            UnitTypeClass
         };
 
         public static NbtObjectClass getObjectClassFromString( string ObjectClassName )
