@@ -3,7 +3,6 @@
 /// <reference path="../../jquery/common/CswAttr.js" />
 /// <reference path="ICswMobileWebControls.js" />
 
-
 //#region CswMobileMenuButton
 
 CswMobileMenuButton.inheritsFrom(ICswMobileWebControls);
@@ -60,8 +59,7 @@ function CswMobileMenuButton(buttonDef, $parent) {
             value: o.text,
             cssclass: o.cssClass
         };
-
-
+        
         var $button = $parent.find('#' + buttonId);
 
         if (isNullOrEmpty($button) || $button.length === 0) {

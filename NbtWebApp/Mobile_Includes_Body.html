@@ -1,5 +1,5 @@
 ﻿<script type="text/javascript">
-	var debug = false;
+	var debug = true;
    
 	document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.min.js"><\/script>');
 
@@ -25,12 +25,16 @@
 		// Sync
 		document.write('<script type="text/javascript" src="js/mobile/sync/CswMobileSync.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/mobile/sync/CswMobileBackgroundTask.js"><\/script>');
+		// Controls
+		document.write('<script type="text/javascript" src="js/mobile/controls/ICswMobileWebControls.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/mobile/controls/CswMobilePageHeader.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/mobile/controls/CswMobilePageFooter.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/mobile/controls/CswMobileMenuButton.js"><\/script>');
 		// Pages
-		document.write('<script type="text/javascript" src="js/mobile/pages/ICswMobileWebControls.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageHeader.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageFooter.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/pages/CswMobileMenuButton.js"><\/script>');
-		//Mobile
+	    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageFactory.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageLogin.js"><\/script>');
+		
+	    //Mobile
 		document.write('<script type="text/javascript" src="js/mobile/CswMobileTools.js"><\/script>');
 		
 		//Plugins

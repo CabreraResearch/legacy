@@ -9,6 +9,7 @@ $param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js");
 $param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\jquery\\common");
 $param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile");
 $param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\clientdb");
+$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\controls");
 $param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\fieldtypes");
 $param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\objectclasses");
 $param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\pages");
