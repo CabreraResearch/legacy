@@ -67,7 +67,7 @@ function CswMobilePageLogin(loginDef,$parent,mobileStorage,loginSuccess) {
     			
 	var loginFailure = mobileStorage.getItem('loginFailure');
 	if( !isNullOrEmpty(loginFailure) ) {
-		loginHeader.pageHeader(loginFailure)
+		loginHeader.addToHeader(loginFailure)
 			       .css('color','yellow');
 	}
 			
@@ -98,7 +98,7 @@ function CswMobilePageLogin(loginDef,$parent,mobileStorage,loginSuccess) {
 					url: authenticateUrl,
 					data: ajaxData,
 					onloginfail: function(text) {
-						onLoginFail(text);
+						onLoginFail(text, mobileStorage);
 					},
 					success: function(data) {
 					    if( !isNullOrEmpty(loginSuccess) ) {

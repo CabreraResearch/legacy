@@ -52,7 +52,7 @@ function CswMobilePageHeader(headerDef, $parent) {
         var ret;
         var $headerText = $header.find('#' + headerId + '_text');
         if( isNullOrEmpty($headerText) || $headerText.length === 0) {
-            $headerText = $('<h1 id="' + headerId + '_text"></h1>')
+            $headerText = $('<h1 style="white-space: normal;" id="' + headerId + '_text"></h1>')
                             .appendTo($header);
         }
         if(arguments.length === 1) {
@@ -91,7 +91,14 @@ function CswMobilePageHeader(headerDef, $parent) {
     this.buttonNames = buttonNames;
 
     this.pageHeader = _pageHeader;
-    
+    this.addToHeader = function(text) {
+        var $ret = $();
+        if(text) {
+            $ret = $('<p style="text-align: center; white-space: normal;">' + text + '</p>')
+                .appendTo($header);
+        }
+        return $ret;
+    };
     //#endregion public, priveleged
     
 }

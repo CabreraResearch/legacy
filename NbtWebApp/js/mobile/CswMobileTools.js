@@ -171,7 +171,7 @@ function onLoginFail(text,mobileStorage) {
 	/// <param name="text" type="String">Login failure text</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
 	/// <returns type="void"></returns>
-    Logout(false);
+    Logout(mobileStorage,true);
 	mobileStorage.setItem('loginFailure', text);
 	stopLoadingMsg();
 }
