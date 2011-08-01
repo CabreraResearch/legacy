@@ -1608,29 +1608,29 @@ CswAppMode.mode = 'mobile';
 		}
 		
 		function processUpdatedNodes(data,objectId,objectJSON,isBackgroundTask) {
-			
-			setOnline(false);
-			
-			var completed = isTrue(data['completed']);
-			var isView = !isNullOrEmpty(data['nodes']);
-			if (isView)
-			{
-				var json = data['nodes'];
-				mobileStorage.updateStoredViewJson(objectId, json, false);
-			} else if (!completed)
-			{
-				mobileStorage.updateStoredNodeJson(objectId, objectJSON, false);
-			}
+			if( !isNullOrEmpty(data) ) {
+			    setOnline(false);
+			    var completed = isTrue(data['completed']);
+			    var isView = !isNullOrEmpty(data['nodes']);
+			    if (isView)
+			    {
+			        var json = data['nodes'];
+			        mobileStorage.updateStoredViewJson(objectId, json, false);
+			    } else if (!completed)
+			    {
+			        mobileStorage.updateStoredNodeJson(objectId, objectJSON, false);
+			    }
 
-			_resetPendingChanges(true);
+			    _resetPendingChanges(true);
 
-			if (completed && !isView)
-			{
-				mobileStorage.deleteNode(objectId, objectJSON['viewid']);
-				if (!isBackgroundTask)
-				{
-					$('#' + objectJSON['viewid']).CswChangePage();
-				}
+			    if (completed && !isView)
+			    {
+			        mobileStorage.deleteNode(objectId, objectJSON['viewid']);
+			        if (!isBackgroundTask)
+			        {
+			            $('#' + objectJSON['viewid']).CswChangePage();
+			        }
+			    }
 			}
 		}
 		
