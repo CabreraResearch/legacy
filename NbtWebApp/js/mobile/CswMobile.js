@@ -1184,17 +1184,7 @@ CswAppMode.mode = 'mobile';
 			return $pageDiv;
 
 		}// _addPageDivToBody()
-
-		function _addToDivHeaderText($div, text, style) {
-			var $ret = $('<p white-space: normal;">' + text + '</p>');
-			
-			$div.find('div:jqmData(role="header") h1')
-				.css('white-space','normal')
-				.append($ret);
-			
-			return $ret;
-		}
-		
+	
 		// ------------------------------------------------------------------------------------
 		// Sync Status Div
 		// ------------------------------------------------------------------------------------
