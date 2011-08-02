@@ -84,9 +84,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleMTBF( CswNbtFieldResources, MetaDataProp );
                     break;
 
-                //case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
-                //    ReturnVal = new CswNbtFieldTypeRuleMultiRelationship( CswNbtFieldResources );
-                //    break;
+				//case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
+				//    ReturnVal = new CswNbtFieldTypeRuleMultiRelationship( CswNbtFieldResources );
+				//    break;
+
+				case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
+					ReturnVal = new CswNbtFieldTypeRuleMultiList( CswNbtFieldResources, MetaDataProp );
+					break;
 
                 //case CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions:
                 //    ReturnVal = new CswNbtFieldTypeRuleNodeTypePermissions( CswNbtFieldResources );

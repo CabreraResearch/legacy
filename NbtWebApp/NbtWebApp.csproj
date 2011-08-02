@@ -114,6 +114,7 @@
     <Content Include="js\CswClientDb.js" />
     <Content Include="js\CswEnums.js" />
     <Content Include="js\CswProfileMethod.js" />
+    <Content Include="js\jquery\fieldtypes\CswFieldTypeMultiList.js" />
     <Content Include="js\mobile\pages\CswMobileMenuButton.js" />
     <Content Include="js\mobile\pages\CswMobilePage.js" />
     <Content Include="js\mobile\pages\CswMobilePageFactory.js" />

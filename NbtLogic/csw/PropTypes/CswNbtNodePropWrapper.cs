@@ -435,16 +435,27 @@ namespace ChemSW.Nbt.PropTypes
 
         }//AsMTBF
 
-        //public CswNbtNodePropMultiRelationship AsMultiRelationship
-        //{
-        //    get
-        //    {
-        //        if( !( _CswNbtNodeProp is CswNbtNodePropMultiRelationship ) )
-        //            throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMultiRelationship ) ) ) );
-        //        return ( (CswNbtNodePropMultiRelationship) _CswNbtNodeProp );
-        //    }
+		//public CswNbtNodePropMultiRelationship AsMultiRelationship
+		//{
+		//    get
+		//    {
+		//        if( !( _CswNbtNodeProp is CswNbtNodePropMultiRelationship ) )
+		//            throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMultiRelationship ) ) ) );
+		//        return ( (CswNbtNodePropMultiRelationship) _CswNbtNodeProp );
+		//    }
 
-        //}//AsMultiRelationship
+		//}//AsMultiRelationship
+
+		public CswNbtNodePropMultiList AsMultiList
+		{
+			get
+			{
+				if( !( _CswNbtNodeProp is CswNbtNodePropMultiList ) )
+					throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMultiList ) ) ) );
+				return ( (CswNbtNodePropMultiList) _CswNbtNodeProp );
+			}
+
+		}//AsMultiList
 
         public CswNbtNodePropNodeTypeSelect AsNodeTypeSelect
         {

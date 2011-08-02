@@ -75,6 +75,9 @@ $.CswFieldTypeFactory = function (method)
 				case "MTBF":
 					m.$propdiv.CswFieldTypeMTBF('init', m); //'init', nodeid, $propxml, onchange
 					break;
+				case "MultiList":
+					m.$propdiv.CswFieldTypeMultiList('init', m); //'init', nodeid, $propxml, onchange
+					break;
 				case "NodeTypeSelect":
 					m.$propdiv.CswFieldTypeNodeTypeSelect('init', m); //'init', nodeid, $propxml, onchange
 					break;
@@ -188,6 +191,9 @@ $.CswFieldTypeFactory = function (method)
 					break;
 				case "MTBF":
 					m.$propdiv.CswFieldTypeMTBF('save', m); //('save', $propdiv, $propxml);
+					break;
+				case "MultiList":
+					m.$propdiv.CswFieldTypeMultiList('save', m); //('save', $propdiv, $propxml);
 					break;
 				case "NodeTypeSelect":
 					m.$propdiv.CswFieldTypeNodeTypeSelect('save', m); //('save', $propdiv, $propxml);
