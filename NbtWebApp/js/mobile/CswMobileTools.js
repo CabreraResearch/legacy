@@ -205,4 +205,46 @@ function Logout(mobileStorage,reloadWindow) {
 	}
 }
 
+function setOffline(mobileStorage,onComplete) {
+	/// <summary>
+	///   Sets 'Online' button style 'offline',
+	/// </summary>
+	mobileStorage.amOnline(false);
+			
+	$('.onlineStatus').removeClass('online')
+						.addClass('offline')
+						.find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+						.text('Offline')
+						.removeClass('online')
+						.addClass('offline')
+						.end();
+			
+	$('.refresh').css('visibility', 'hidden');
+
+    if(onComplete) {
+        onComplete();
+    }
+	//$viewsdiv = reloadViews(); //no changePage
+}
+
+function setOnline(mobileStorage,onComplete) {
+			
+	mobileStorage.amOnline(true);
+	mobileStorage.removeItem('loginFailure');
+	if( !mobileStorage.stayOffline() )
+	{
+		$('.onlineStatus').removeClass('offline')
+							.addClass('online')
+							.find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+							.text('Online')
+							.removeClass('offline')
+							.addClass('online')
+							.end();
+		$('.refresh').css('visibility', '');
+		if (onComplete) {
+		    onComplete();
+		}
+	}
+}
+
 //#endregion functions

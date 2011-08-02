@@ -19,6 +19,7 @@
 /// <reference path="pages/CswMobilePageLogin.js" />
 /// <reference path="pages/CswMobilePageOnline.js" />
 /// <reference path="pages/CswMobilePageSearch.js" />
+/// <reference path="pages/CswMobilePageOffline.js" />
 
 
 //var profiler = $createProfiler();
@@ -41,11 +42,9 @@ CswAppMode.mode = 'mobile';
 			ViewUrl: '/NbtWebApp/wsNBT.asmx/GetView',
 			ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
 			ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
-			UpdateViewUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
+			//UpdateViewUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
 			MainPageUrl: '/NbtWebApp/Mobile.html',
-			AuthenticateUrl: '',
-			SendLogUrl: '/NbtWebApp/wsNBT.asmx/collectClientLogInfo',
-			Theme: 'a',
+			Theme: 'b',
 			PollingInterval: 30000, //30 seconds
 			RandomConnectionFailure: false
 		};
@@ -70,12 +69,9 @@ CswAppMode.mode = 'mobile';
 		var mobileSyncOptions = {
 			onSync: processModifiedNodes,
 			onSuccess: processUpdatedNodes,
-			onError: onError,
-			onLoginFailure: onLoginFail,
 			onComplete: function () {
 				updatedUnsyncedChanges();
 			},
-			syncUrl: opts.UpdateViewUrl,
 			ForMobile: true
 		};
 
@@ -83,7 +79,7 @@ CswAppMode.mode = 'mobile';
 
 		var mobileBackgroundTaskOptions = {
 			onSuccess: function () {
-				setOnline(false);
+				setOnline();
 			},
 			onError: function () {
 				setOffline();
@@ -117,7 +113,6 @@ CswAppMode.mode = 'mobile';
 			if (!isNullOrEmpty(SessionId)) {
 				$viewsdiv.CswSetPath();
 				$viewsdiv = reloadViews();
-				//mobileBgTask.start(); we shouldn't need to do this
 			}
 			else {
 				$logindiv.CswSetPath();
@@ -180,146 +175,15 @@ CswAppMode.mode = 'mobile';
 		}
 		
 		function _loadSorryCharlieDiv(params) {
-			var p = {
-				DivId: 'sorrycharliediv',
-				HeaderText: 'Sorry Charlie!',
-				HideHelpButton: false,
-				HideOnlineButton: false,
-				HideBackButton: true,
-				HideRefreshButton: true,
-				HideSearchButton: true,
-				$content: 'You must have internet connectivity to login.'
+			var offlineDef = {
+				theme: opts.Theme
 			};
-			if (params) $.extend(p, params);
-			var $retDiv = _addPageDivToBody(p);
+		    var offlinePage = new CswMobilePageOffline(offlineDef, $body, mobileStorage);
+		    var $retDiv = offlinePage.$pageDiv;
 			return $retDiv;
 		}
 
-	   
-
-		// ------------------------------------------------------------------------------------
-		// Online indicator
-		// ------------------------------------------------------------------------------------
-
-		function setOffline() {
-			/// <summary>
-			///   Sets 'Online' button style 'offline',
-			/// </summary>
-			mobileStorage.amOnline(false);
-			
-			$('.onlineStatus').removeClass('online')
-							  .addClass('offline')
-							  .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-							  .text('Offline')
-							  .removeClass('online')
-							  .addClass('offline')
-							  .end();
-			
-			$('.refresh').css('visibility', 'hidden');
-
-			$viewsdiv = reloadViews(); //no changePage
-		}
-
-		function setOnline(reloadViewsPage) {
-			
-			mobileStorage.amOnline(true);
-			mobileStorage.removeItem('loginFailure');
-			if( !mobileStorage.stayOffline() )
-			{
-				$('.onlineStatus').removeClass('offline')
-									.addClass('online')
-									.find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-									.text('Online')
-									.removeClass('offline')
-									.addClass('online')
-									.end();
-				$('.refresh').css('visibility', '');
-				if (reloadViewsPage) {
-					$viewsdiv = reloadViews(); //no changePage
-				}
-			}
-		}
-
-		
-
-		// ------------------------------------------------------------------------------------
-		// Logging Button
-		// ------------------------------------------------------------------------------------
-
-		function _toggleLogging() {
-			var logging = !doLogging();
-			doLogging(logging);
-			if (logging) {
-				setStartLog();
-			} else {
-				setStopLog();
-			}
-		}
-
-		function setStartLog() {
-			if (doLogging()) {
-				var logger = new CswProfileMethod('setStartLog');
-				cacheLogInfo(logger);
-				$('.debug').removeClass('debug-off')
-							.addClass('debug-on')
-							.find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-							.text('Sync Log')
-							.addClass('debug-on')
-							.removeClass('debug-off')
-							.end();
-			}
-		}
-
-		function setStopLog() {
-			if (!doLogging()) {
-				$('.debug').removeClass('debug-on')
-							.addClass('debug-off')
-							.find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-							.text('Sync Log')
-							.addClass('debug-off')
-							.removeClass('debug-on')
-							.end();
-				var logger = new CswProfileMethod('setStopLog');
-				cacheLogInfo(logger);
-
-				var dataJson = {
-					'Context': 'CswMobile',
-					'UserName': mobileStorage.username(),
-					'CustomerId': mobileStorage.customerid(),
-					'LogInfo': mobileStorage.getItem('debuglog')
-				};
-
-//                CswAjaxJSON({
-//                        url: opts.SendLogUrl,
-//                        data: dataJson,
-//                        success: function() {
-//                            $loggingBtn.removeClass('debug-on')
-//                                            .addClass('debug-off')
-//                                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-//                                            .text('Start Log')
-//                                .end();
-//                            purgeLogInfo();
-//                        }
-//                    });
-
-				var params = {
-					DivId: 'loginfodiv',
-					HeaderText: 'Log Info',
-					HideHelpButton: false,
-					HideOnlineButton: false,
-					HideBackButton: false,
-					HideRefreshButton: true,
-					HideSearchButton: true,
-					$content: mobileStorage.getItem('debuglog')
-				};
-				var $logDiv = _addPageDivToBody(params);
-				$logDiv.CswUnbindJqmEvents();
-				$logDiv.CswBindJqmEvents(params);
-				$logDiv.CswChangePage();
-			}
-		}
-
-		// ------------------------------------------------------------------------------------
+	    // ------------------------------------------------------------------------------------
 		// List items fetching
 		// ------------------------------------------------------------------------------------
 
@@ -418,7 +282,7 @@ CswAppMode.mode = 'mobile';
 					data: jsonData,
 					onloginfail: function(text) { onLoginFail(text, mobileStorage); },
 					success: function(data) {
-						setOnline(false);
+						setOnline();
 						logger.setAjaxSuccess();
 						
 						p.json = data;
@@ -1190,88 +1054,16 @@ CswAppMode.mode = 'mobile';
 		// ------------------------------------------------------------------------------------
 
 		function _makeSyncStatusDiv() {
-			var content = '';
-			content += '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + tryParseString(mobileStorage.getItem('unSyncedChanges'),'0') + '</span></p>';
-			content += '<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess() + '</span></p>';
-			var hideFailure = isNullOrEmpty(mobileStorage.lastSyncAttempt()) ? '' : 'none';
-			content += '<p style="display:' + hideFailure + ' ;">Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt() + '</span></p>';
-			content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
-			content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
-			content += '<br/>';
-			content += '<a id="ss_logout" data-identity="ss_logout" data-url="ss_logout" href="javascript:void(0)" data-role="button">Logout</a>';
-			if( debugOn() ) {
-				content += '<a id="ss_debuglog" class="debug" data-identity="ss_debuglog" data-url="ss_debuglog" href="javascript:void(0)" data-role="button">Start Logging</a>';
-			}
-			
-			var $retDiv = _addPageDivToBody({
-					DivId: 'syncstatus',
-					HeaderText: 'Sync Status',
-					$content: $(content),
-					HideSearchButton: true,
-					HideOnlineButton: true,
-					HideRefreshButton: false,
-					HideHelpButton: false,
-					HideBackButton: false,
-					HideHeaderOnlineButton: false
-				});
-				   
-			$retDiv.find('#ss_forcesync')
-					.bind('click', function() {
-						return startLoadingMsg( function () {
-							 mobileSync.initSync();
-						});
-					})
-					.end()
-					.find('#ss_gooffline')
-					.bind('click', function() {
-						var stayOffline = !mobileStorage.stayOffline();
-						mobileStorage.stayOffline(stayOffline);
-						_toggleOffline(true);
-						return false;
-					})
-					.end()
-					.find('#ss_logout')
-					.bind('click', function() {
-						return startLoadingMsg( function () { onLogout(mobileStorage); });
-					})
-					.end()
-					.find('#ss_debuglog')
-					.bind('click', function() {
-						_toggleLogging();
-						return false;
-					})
-					.end();
 
-			return $retDiv;
+		    var onlineDef = {
+                theme: opts.Theme
+		    };
+		    var onlinePage = new CswMobilePageOnline(onlineDef, $body, mobileStorage, mobileSync);
+		    var $ret = onlinePage.$pageDiv;
+		    return $ret;
 		}
 
-		function _toggleOffline(doWaitForData) {
-
-			var $onlineBtn = $('#ss_gooffline span').find('span.ui-btn-text');
-			if (mobileStorage.amOnline() || $onlineBtn.text() === 'Go Online') {
-				setOnline(false);
-				if (doWaitForData) {
-					mobileBgTask.stop();
-					mobileBgTask.start();
-				}
-				$onlineBtn.text('Go Offline');
-				$('.refresh').each(function(){
-					var $this = $(this);
-					$this.css({'display': ''}).show();
-				});
-			}
-			else {
-				setOffline();
-				if (doWaitForData) {
-					mobileBgTask.stop();
-				}
-				$onlineBtn.text('Go Online');
-				$('.refresh').each(function(){
-					var $this = $(this);
-					$this.css({'display': 'none'}).hide();
-				});
-			}
-		}
+		
 
 		function _resetPendingChanges(succeeded) {
 			if ( mobileStorage.pendingChanges() ) {
@@ -1299,59 +1091,17 @@ CswAppMode.mode = 'mobile';
 		// returns true if no pending changes or user is willing to lose them
 		
 
-		// ------------------------------------------------------------------------------------
-		// Help Div
-		// ------------------------------------------------------------------------------------
-
 		function _makeHelpDiv() {
-			var $help = $('<p>Help</p>');
+			var helpDef = {
+                theme: opts.Theme
+		    };
+		    var helpPage = new CswMobilePageHelp(helpDef, $body, mobileStorage);
+		    var $ret = helpPage.$pageDiv;
 
-			if (debugOn()) //this is set onLoad based on the includes variable 'debug'
-			{
-				$help.append('</br></br></br>');
-				var $logLevelDiv = $help.CswDiv('init')
-										.CswAttrXml({ 'data-role': 'fieldcontain' });
-				$('<label for="mobile_log_level">Logging</label>')
-										.appendTo($logLevelDiv);
-
-				$logLevelDiv.CswSelect('init', {
-												ID: 'mobile_log_level',
-												selected: debugOn() ? 'on' : 'off',
-												values: [{ value: 'off', display: 'Logging Disabled' },
-													{ value: 'on', display: 'Logging Enabled' }],
-												onChange: function($select) {
-													if ($select.val() === 'on') {
-														debugOn(true);
-														$('.debug').css('display', '').show();
-													} else {
-														debugOn(false);
-														$('.debug').css('diplay', 'none').hide();
-													}
-												}
-											})
-											.CswAttrXml({ 'data-role': 'slider' });
-
-			}
-			var $retDiv = _addPageDivToBody({
-					DivId: 'help',
-					HeaderText: 'Help',
-					$content: $help,
-					HideSearchButton: true,
-					HideOnlineButton: false,
-					HideRefreshButton: true,
-					HideHelpButton: true,
-					HideBackButton: false
-				});
-
-			return $retDiv;
+			return $ret;
 		}
 
-		//#region Events
-
-		
-
-		//#endregion Events
-		
+	
 		//#region Button Bindings
 		
 		function onRefresh() {
@@ -1379,7 +1129,7 @@ CswAppMode.mode = 'mobile';
 							stringify: false,
 							onloginfail: function(text) { onLoginFail(text, mobileStorage); },
 							success: function(data) {
-								setOnline(false);
+								setOnline();
 								if( !isNullOrEmpty(data['nodes']) ) {
 									var viewJSON = data['nodes'];
 									
@@ -1406,14 +1156,6 @@ CswAppMode.mode = 'mobile';
 			}
 		}
 
-		function onSyncStatusOpen() {
-			$syncstatus.CswChangePage({ transition: 'slideup' });
-		}
-
-		function onHelp() {
-			$help = _makeHelpDiv();
-			$help.CswChangePage({ transition: 'slideup' });
-		}
 
 		//#endregion Button Bindings
 		
@@ -1454,100 +1196,7 @@ CswAppMode.mode = 'mobile';
 			cacheLogInfo(logger);
 		} // onPropertyChange()
 
-		function onSearchOpen(DivId) {
-			var viewId = mobileStorage.currentViewId();
-			var searchJson = mobileStorage.fetchCachedViewJson(viewId,'search');
-			if (!isNullOrEmpty(searchJson)) {
-				var $wrapper = $('<div></div>');
-				var $fieldCtn = $('<div data-role="fieldcontain"></div>')
-											.appendTo($wrapper);
-				var values = [];
-				var selected;
-				
-				for(var key in searchJson ) {
-					if( !selected ) selected = key;
-					values.push({ 'value': key, 'display': searchJson[key]});
-				}
-				
-				var $select = $fieldCtn.CswSelect('init',  {
-												ID: DivId + '_searchprop',
-												selected: selected,
-												cssclass: 'csw_search_select',
-												values: values
-											})
-											.CswAttrXml({ 'data-native-menu': 'false' });
-
-				var $searchCtn = $('<div data-role="fieldcontain"></div>')
-											.appendTo($wrapper);
-				$searchCtn.CswInput('init', { type: CswInput_Types.search, ID: DivId + '_searchfor' })
-													.CswAttrXml({
-													'placeholder': 'Search',
-													'data-placeholder': 'Search'
-												});
-				$wrapper.CswLink('init', { type: 'button', ID: DivId + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
-												.CswAttrXml({ 'data-role': 'button' })
-												.unbind('click')
-												.bind('click', function() {
-													return startLoadingMsg( function () { onSearchSubmit(DivId); });
-												});
-				$wrapper.CswDiv('init', { ID: DivId + '_searchresults' });
-
-				var $searchDiv = _addPageDivToBody({
-						ParentId: DivId,
-						DivId: 'CswMobile_SearchDiv' + viewId,
-						HeaderText: 'Search',
-						$content: $wrapper,
-						HideSearchButton: true,
-						HideOnlineButton: true,
-						HideRefreshButton: true,
-						HideHelpButton: false,
-						HideBackButton: false
-					});
-				$searchDiv.CswChangePage({ transition: 'slideup' });
-			}
-		}
-
-		function onSearchSubmit(DivId) {
-			var searchprop = $('#' + DivId + '_searchprop').val();
-			var searchfor = $('#' + DivId + '_searchfor').val();
-			var $resultsDiv = $('#' + DivId + '_searchresults')
-				.empty();
-			
-			var viewId = mobileStorage.currentViewId();
-			var searchJson = mobileStorage.fetchCachedViewJson(viewId);
-			
-			if (!isNullOrEmpty(searchJson)) {
-				var $content = $resultsDiv.cswUL({id: DivId + '_searchresultslist', 'data-filter': false })
-										  .append($('<li data-role="list divider">Results</li>'));
-
-				var hitcount = 0;
-				for(var key in searchJson)
-				{
-					var node = searchJson[key];
-					if (!isNullOrEmpty(node[searchprop])) {
-						if (node[searchprop].toLowerCase().indexOf(searchfor.toLowerCase()) >= 0) {
-							hitcount++;
-							var nodeJson = { id: key, value: node};
-							$content.append(
-								_makeListItemFromJson($content, {
-									ParentId: DivId + '_searchresults',
-									DivId: DivId + '_searchresultslist',
-									HeaderText: 'Results',
-									PageType: 'node',
-									json: nodeJson,
-									parentlevel: 1 }
-									)
-								);
-						}
-					}
-				}
-				if (hitcount === 0) {
-					$content.append($('<li>No Results</li>'));
-				}
-				$content.CswPage();
-			}
-			stopLoadingMsg();
-		} // onSearchSubmit()
+		
 
 	   
 		
@@ -1555,11 +1204,38 @@ CswAppMode.mode = 'mobile';
 			$('#ss_pendingchangecnt').text( tryParseString(mobileStorage.getItem('unSyncedChanges'),'0') );
 		}
 
-		
-		
-		// ------------------------------------------------------------------------------------
+        //#region Page Construction		
+		function bindMenuButtons(mobilePage) {
+		    if (!isNullOrEmpty(mobilePage)) {
+		        var header = mobilePage.mobileHeader;
+		        if (!isNullOrEmpty(header)) {
+		            for (var headBtnName in header.buttonNames) {
+		                switch(headBtnName) {
+		                    case 'back':
+		                        break;
+		                    case 'search':
+		                        break;
+		                }
+		            }
+		        }
+		        var footer = mobilePage.mobileFooter;
+		        if (!isNullOrEmpty(footer)) {
+		            for (var footBtnName in footer.buttonNames) {
+		                switch(footBtnName) {
+		                    case 'online':
+		                        break;
+		                    case 'refresh':
+		                        break;
+		                    case 'help':
+		                        break;
+		                }
+		            }
+		        }
+		    }
+		}
+	    //#endregion Page Construction
+	    
 		//#region Synchronization
-		// ------------------------------------------------------------------------------------
 
 		function processModifiedNodes(onSuccess)
 		{
@@ -1599,7 +1275,7 @@ CswAppMode.mode = 'mobile';
 		
 		function processUpdatedNodes(data,objectId,objectJSON,isBackgroundTask) {
 			if( !isNullOrEmpty(data) ) {
-			    setOnline(false);
+			    setOnline();
 			    var completed = isTrue(data['completed']);
 			    var isView = !isNullOrEmpty(data['nodes']);
 			    if (isView)
@@ -1624,9 +1300,7 @@ CswAppMode.mode = 'mobile';
 			}
 		}
 		
-		// ------------------------------------------------------------------------------------
 		//#endregion Synchronization
-		// ------------------------------------------------------------------------------------
 		
 		// For proper chaining support
 		return this;

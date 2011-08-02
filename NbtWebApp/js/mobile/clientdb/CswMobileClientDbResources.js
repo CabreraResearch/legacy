@@ -167,6 +167,14 @@ function CswMobileClientDbResources() {
 	    return ret;
     };
 
+    this.onlineStatus = function() {
+        /// <summary>Evaluates the user's online status for display.</summary>
+	    /// <returns type="String">'Online' or 'Offline'</returns>
+        var mobileStorage = this;
+        var ret = ( !mobileStorage.amOnline() || mobileStorage.stayOffline() ) ? 'Offline' : 'Online';
+        return ret;
+    };
+    
     this.checkNoPendingChanges = function() {
         var mobileStorage = this;
         var pendingChanges = (!mobileStorage.pendingChanges() ||
