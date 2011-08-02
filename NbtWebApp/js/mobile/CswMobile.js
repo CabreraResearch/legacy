@@ -94,11 +94,11 @@ CswAppMode.mode = 'mobile';
 		
 		//#endregion Resource Initialization
 		
-		var $logindiv = _loadLoginDiv();
-		var $viewsdiv = reloadViews();
-		var onlinePage = _makeSyncStatusDiv();
-		var $helpdiv = _makeHelpDiv();
-		var $sorrycharliediv = _loadSorryCharlieDiv();
+		var $logindiv = makeLoginPage();
+		var $viewsdiv = makeViewsPage();
+		//var onlinePage = _makeSyncStatusDiv();
+		//var $helpdiv = _makeHelpDiv();
+		var $sorrycharliediv = makeOfflinePage();
 
 		// case 20355 - error on browser refresh
 		if (!isNullOrEmpty(SessionId)) {
@@ -111,23 +111,21 @@ CswAppMode.mode = 'mobile';
 			  
 		window.onload = function() {
 			if (!isNullOrEmpty(SessionId)) {
-				$viewsdiv.CswSetPath();
-				$viewsdiv = reloadViews();
+				$viewsdiv = makeViewsPage();
 			}
 			else {
-				$logindiv.CswSetPath();
 				mobileBgTask.start(
 					function() {
 						// online
 						if( !$logindiv || $logindiv.length === 0 ) {
-							$logindiv = _loadLoginDiv();
+							$logindiv = makeLoginPage();
 						}
 						$logindiv.CswChangePage();
 					},
 					function() {
 						// offline
 						if( !$sorrycharliediv || $sorrycharliediv.length === 0 ) {
-							$sorrycharliediv = _loadSorryCharlieDiv();
+							$sorrycharliediv = makeOfflinePage();
 						}
 						$sorrycharliediv.CswChangePage();
 					}
@@ -135,15 +133,17 @@ CswAppMode.mode = 'mobile';
 			}
 		};
 		
-		function _loadLoginDiv() {
-
+	    //#region Page Creation
+	    
+		function makeLoginPage() {
+            ///<summary>Create a Mobile login page</summary>
 		    var loginDef = { theme: opts.Theme };
 		    var loginDiv = new CswMobilePageLogin(loginDef, $body, mobileStorage, function (data,userName,accessId) {
 		            SessionId = $.CswCookie('get', CswCookieName.SessionId);
 					mobileStorage.sessionid(SessionId);
 					mobileStorage.username(userName); 
 					mobileStorage.customerid(accessId);
-					$viewsdiv = reloadViews();
+					$viewsdiv = makeViewsPage();
 					$viewsdiv.CswChangePage();  
 		        });
 		    var $retDiv = loginDiv.$pageDiv;
@@ -151,10 +151,8 @@ CswAppMode.mode = 'mobile';
 			return $retDiv;
 		}
 
-		function reloadViews() {
-			/// <summary>
-			///   Refreshes the viewsdiv
-			/// </summary>
+		function makeViewsPage() {
+			///<summary>Create a Mobile views page</summary>
 			var params = {
 				parentlevel: -1,
 				level: 0,
@@ -174,15 +172,126 @@ CswAppMode.mode = 'mobile';
 			return $viewsdiv;
 		}
 		
-		function _loadSorryCharlieDiv(params) {
-			var offlineDef = {
-				theme: opts.Theme
+		function makeOfflinePage() {
+			///<summary>Create a Mobile offline (Sorry Charlie) page</summary>
+		    var offlineDef = {
+				theme: opts.Theme,
+			    onHelpClick: onHelpClick
 			};
 		    var offlinePage = new CswMobilePageOffline(offlineDef, $body, mobileStorage);
-		    var $retDiv = offlinePage.$pageDiv;
-			return $retDiv;
+			return offlinePage;
 		}
 
+	    function makeOnlinePage() {
+            ///<summary>Create a Mobile online (Sync Status) page</summary>
+		    var syncDef = {
+                theme: opts.Theme,
+		        onRefreshClick: onRefreshClick,
+                onHelpClick: onHelpClick
+		    };
+		    var syncPage = new CswMobilePageOnline(syncDef, $body, mobileStorage, mobileSync);
+		    return syncPage;
+		}
+	    
+	    function makeHelpPage() {
+			///<summary>Create a Mobile help page</summary>
+	        var helpDef = {
+                theme: opts.Theme,
+			    onOnlineClick: onOnlineClick,
+			    onRefreshClick: onRefreshClick
+		    };
+		    var helpPage = new CswMobilePageHelp(helpDef, $body, mobileStorage);
+			return helpPage;
+		}
+	    
+	    function makeSearchPage() {
+			///<summary>Create a Mobile search page</summary>
+	        var searchDef = {
+                ParentId: mobileStorage.currentViewId(),
+			    theme: opts.Theme,
+			    onOnlineClick: onOnlineClick
+		    };
+	        var helpPage = new CswMobilePageSearch(searchDef, $body, mobileStorage);
+			return helpPage;
+		}
+	    
+	    //#endregion Page Creation
+	    
+		//#region Button Bindings
+		
+		function onRefreshClick() {
+			///<summary>Event to fire on 'Refresh' button click.</summary>
+		    var DivId = mobileStorage.currentViewId();
+			if(isNullOrEmpty(DivId)) {
+				window.location.reload();
+			}
+			else if (mobileStorage.amOnline() && 
+				mobileStorage.checkNoPendingChanges() ) {
+				
+				if(DivId === 'viewsdiv') {
+					window.location.reload();
+				}
+				else {
+					var jsonData = {
+						SessionId: SessionId,
+						ParentId: DivId,
+						ForMobile: ForMobile
+					};
+
+					CswAjaxJSON({
+							formobile: ForMobile,
+							url: opts.ViewUrl,
+							data: jsonData,
+							stringify: false,
+							onloginfail: function(text) { onLoginFail(text, mobileStorage); },
+							success: function(data) {
+								setOnline(mobileStorage);
+								if( !isNullOrEmpty(data['nodes']) ) {
+									var viewJSON = data['nodes'];
+									
+									var params = {
+										ParentId: 'viewsdiv',
+										DivId: DivId,
+										HeaderText: HeaderText,
+										json: mobileStorage.updateStoredViewJson(DivId, viewJSON),
+										parentlevel: 0,
+										level: 1,
+										HideRefreshButton: false,
+										HideSearchButton: false,
+										HideBackButton: false
+									};
+									params.onPageShow = function() { return _loadDivContents(params); };
+									_loadDivContents(params).CswChangePage();
+								}
+							}, // success
+							error: function() {
+								onError();
+							}
+						});
+				}
+			}
+		}
+
+        function onOnlineClick() {
+            ///<summary>Event to fire on 'Online' button click.</summary>
+            var onlinePage = makeOnlinePage();
+            onlinePage.$pageDiv.CswChangePage();
+        }
+	    
+	    function onHelpClick() {
+	        ///<summary>Event to fire on 'Help' button click.</summary>
+	        var helpPage = makeHelpPage();
+	        helpPage.$pageDiv.CswChangePage();
+	    }
+	    
+	    function onSearchClick() {
+	        ///<summary>Event to fire on 'Search' button click.</summary>
+	        var searchPage = makeSearchPage();
+	        searchPage.$pageDiv.CswChangePage();
+	    }
+	    
+		//#endregion Button Bindings
+	    
 	    // ------------------------------------------------------------------------------------
 		// List items fetching
 		// ------------------------------------------------------------------------------------
@@ -981,14 +1090,8 @@ CswAppMode.mode = 'mobile';
 			}
 			var headerDef = {
 				buttons: {
-					back: { ID: p.DivId + '_back',
-								text: 'Back',
-								cssClass: 'ui-btn-left',
-								dataDir: 'reverse',
-								dataIcon: 'arrow-l' },
-					search: { ID: p.DivId + '_searchopen',
-								text: 'Search',
-								cssClass: 'ui-btn-right' }
+					back: makeHeaderButtonDef(CswMobileHeaderButtons.back, p.DivId),
+					search: makeHeaderButtonDef(CswMobileHeaderButtons.search, p.DivId, onSearchClick)
 				},
 				ID: p.DivId,
 			    text: p.HeaderText,
@@ -1007,25 +1110,12 @@ CswAppMode.mode = 'mobile';
 					.append(p.$content);
 			}
 
-			var onlineValue = (!mobileStorage.amOnline()) ? 'Offline' : 'Online';
 			var footerDef = {
 				buttons: {
-					online: { ID: p.DivId + '_gosyncstatus',
-								text: onlineValue,
-								cssClass: 'ui-btn-active onlineStatus ' + onlineValue.toLowerCase(),
-								dataIcon: 'gear' },
-					refresh: { ID: p.DivId + '_refresh',
-								text: 'Refresh',
-								cssClass: 'refresh',
-								dataIcon: 'refresh' },
-					fullsite: { ID: p.DivId + '_main',
-								text: 'Full Site',
-								href: 'Main.html', 
-								rel: 'external',
-								dataIcon: 'home' },
-					help: { ID: p.DivId + '_help',
-								text: 'Help',
-								dataIcon: 'info' }
+					online: makeFooterButtonDef(CswMobileFooterButtons.online, p.DivId, onOnlineClick, mobileStorage ),
+					refresh: makeFooterButtonDef(CswMobileFooterButtons.refresh, p.DivId, onRefreshClick),
+					fullsite: makeFooterButtonDef(CswMobileFooterButtons.fullsite, p.DivId ),
+					help: makeFooterButtonDef(CswMobileFooterButtons.help, p.DivId, onHelpClick )
 				},
 				ID: p.DivId,
 				dataId: 'csw_footer',
@@ -1049,114 +1139,8 @@ CswAppMode.mode = 'mobile';
 
 		}// _addPageDivToBody()
 	
-		// ------------------------------------------------------------------------------------
-		// Sync Status Div
-		// ------------------------------------------------------------------------------------
-
-		function _makeSyncStatusDiv() {
-
-		    var syncDef = {
-                theme: opts.Theme
-		    };
-		    var syncPage = new CswMobilePageOnline(syncDef, $body, mobileStorage, mobileSync);
-		    return syncPage;
-		}
-
 		
-
-		function _resetPendingChanges(succeeded) {
-			if ( mobileStorage.pendingChanges() ) {
-				$('.onlineStatus').addClass('pendingchanges')
-								  .find('span.ui-btn-text')
-								  .addClass('pendingchanges');
-			} else {
-				$('.onlineStatus').removeClass('pendingchanges')
-								  .find('span.ui-btn-text')
-								  .removeClass('pendingchanges');
-			}
-			
-			if(arguments.length === 1) {
-				if (succeeded) {
-					mobileStorage.clearUnsyncedChanges();
-					updatedUnsyncedChanges();
-					$('#ss_lastsync_success').text(mobileStorage.lastSyncSuccess());
-				}
-				else {
-					$('#ss_lastsync_attempt').text(mobileStorage.lastSyncAttempt());
-				}
-			}
-		}
-
-		// returns true if no pending changes or user is willing to lose them
-		
-
-		function _makeHelpDiv() {
-			var helpDef = {
-                theme: opts.Theme
-		    };
-		    var helpPage = new CswMobilePageHelp(helpDef, $body, mobileStorage);
-		    var $ret = helpPage.$pageDiv;
-
-			return $ret;
-		}
-
 	
-		//#region Button Bindings
-		
-		function onRefresh() {
-			var DivId = mobileStorage.currentViewId();
-			if(isNullOrEmpty(DivId)) {
-				window.location.reload();
-			}
-			else if (mobileStorage.amOnline() && 
-				mobileStorage.checkNoPendingChanges() ) {
-				
-				if(DivId === 'viewsdiv') {
-					window.location.reload();
-				}
-				else {
-					var jsonData = {
-						SessionId: SessionId,
-						ParentId: DivId,
-						ForMobile: ForMobile
-					};
-
-					CswAjaxJSON({
-							formobile: ForMobile,
-							url: opts.ViewUrl,
-							data: jsonData,
-							stringify: false,
-							onloginfail: function(text) { onLoginFail(text, mobileStorage); },
-							success: function(data) {
-								setOnline(mobileStorage);
-								if( !isNullOrEmpty(data['nodes']) ) {
-									var viewJSON = data['nodes'];
-									
-									var params = {
-										ParentId: 'viewsdiv',
-										DivId: DivId,
-										HeaderText: HeaderText,
-										json: mobileStorage.updateStoredViewJson(DivId, viewJSON),
-										parentlevel: 0,
-										level: 1,
-										HideRefreshButton: false,
-										HideSearchButton: false,
-										HideBackButton: false
-									};
-									params.onPageShow = function() { return _loadDivContents(params); };
-									_loadDivContents(params).CswChangePage();
-								}
-							}, // success
-							error: function() {
-								onError();
-							}
-						});
-				}
-			}
-		}
-
-
-		//#endregion Button Bindings
 		
 		function onPropertyChange(DivId, eventObj, inputVal, inputId, inputPropId) {
 			var logger = new CswProfileMethod('onPropertyChange');
@@ -1196,46 +1180,35 @@ CswAppMode.mode = 'mobile';
 		} // onPropertyChange()
 
 		
+		//#region Synchronization
 
-	   
-		
-		function updatedUnsyncedChanges() {
+  		function updatedUnsyncedChanges() {
 			$('#ss_pendingchangecnt').text( tryParseString(mobileStorage.getItem('unSyncedChanges'),'0') );
 		}
 
-        //#region Page Construction		
-		function bindMenuButtons(mobilePage) {
-		    if (!isNullOrEmpty(mobilePage)) {
-		        var header = mobilePage.mobileHeader;
-		        if (!isNullOrEmpty(header)) {
-		            for (var headBtnName in header.buttonNames) {
-		                switch(headBtnName) {
-		                    case 'back':
-		                        break;
-		                    case 'search':
-		                        break;
-		                }
-		            }
-		        }
-		        var footer = mobilePage.mobileFooter;
-		        if (!isNullOrEmpty(footer)) {
-		            for (var footBtnName in footer.buttonNames) {
-		                switch(footBtnName) {
-		                    case 'online':
-		                        break;
-		                    case 'refresh':
-		                        break;
-		                    case 'help':
-		                        break;
-		                }
-		            }
-		        }
-		    }
+	    function _resetPendingChanges(succeeded) {
+			if ( mobileStorage.pendingChanges() ) {
+				$('.onlineStatus').addClass('pendingchanges')
+								  .find('span.ui-btn-text')
+								  .addClass('pendingchanges');
+			} else {
+				$('.onlineStatus').removeClass('pendingchanges')
+								  .find('span.ui-btn-text')
+								  .removeClass('pendingchanges');
+			}
+			
+			if(arguments.length === 1) {
+				if (succeeded) {
+					mobileStorage.clearUnsyncedChanges();
+					updatedUnsyncedChanges();
+					$('#ss_lastsync_success').text(mobileStorage.lastSyncSuccess());
+				}
+				else {
+					$('#ss_lastsync_attempt').text(mobileStorage.lastSyncAttempt());
+				}
+			}
 		}
-	    //#endregion Page Construction
 	    
-		//#region Synchronization
-
 		function processModifiedNodes(onSuccess)
 		{
 			if(!isNullOrEmpty(onSuccess)) {

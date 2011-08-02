@@ -48,31 +48,13 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
     delete pageDef.onRefreshClick;
     delete pageDef.onHelpClick;
 
-    var onlineValue = mobileStorage.onlineStatus();
-    
-    if( isNullOrEmpty(p.footerDef)) {
-        pageDef.footerDef = {
-		    buttons: {
-					online: { ID: p.DivId + '_gosyncstatus',
-								text: onlineValue,
-								cssClass: 'ui-btn-active onlineStatus ' + onlineValue.toLowerCase(),
-								dataIcon: 'gear',
-					            onClick: p.onOnlineClick
-					},
-		            fullsite: { ID: p.DivId + '_main',
-	                    text: 'Full Site',
-	                    href: 'Main.html',
-	                    rel: 'external',
-	                    dataIcon: 'home'
-	                },
-		            help: { ID: p.DivId + '_help',
-							text: 'Help',
-							dataIcon: 'info',
-					        onClick: p.onHelpClick
-					}
-	        }
-	    };
-	}
+    if( isNullOrEmpty(pageDef.footerDef)) {
+        pageDef.footerDef = { };
+        pageDef.footerDef.buttons = { };
+        pageDef.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, p.DivId, null, mobileStorage);
+        pageDef.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, p.DivId);
+        pageDef.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, p.DivId, p.onHelpClick);
+    }
 
 	var offlinePage = new CswMobilePageFactory(pageDef, $parent);
 	var offlineHeader = offlinePage.mobileHeader;

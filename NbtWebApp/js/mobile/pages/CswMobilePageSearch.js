@@ -54,35 +54,18 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
     var pageDef = p;
     delete pageDef.onHelpClick;
     
-	if (isNullOrEmpty(pageDef.footerDef)) {
-	    pageDef.footerDef = {
-	        buttons: {
-	            fullsite: { ID: p.DivId + '_main',
-	                text: 'Full Site',
-	                href: 'Main.html',
-	                rel: 'external',
-	                dataIcon: 'home'
-	            },
-	            help: { ID: p.DivId + '_help',
-	                text: 'Help',
-	                dataIcon: 'info',
-	                onClick: p.onHelpClick
-	            }
-	        }
-	    };
-	}
-
-	if (isNullOrEmpty(pageDef.headerDef)) {
-	    pageDef.headerDef = {
-	        buttons: {
-	            back: { ID: p.DivId + '_back',
-	                text: 'Back',
-	                cssClass: 'ui-btn-left',
-	                dataDir: 'reverse',
-	                dataIcon: 'arrow-l' }
-	        }
-	    };
-	}
+	if( isNullOrEmpty(pageDef.footerDef)) {
+        pageDef.footerDef = { };
+        pageDef.footerDef.buttons = { };
+        pageDef.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, p.DivId);
+        pageDef.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, p.DivId, p.onHelpClick);
+    }
+    
+    if( isNullOrEmpty(pageDef.headerDef)) {
+        pageDef.headerDef = { };
+        pageDef.headerDef.buttons = { };
+        pageDef.headerDef.buttons.back = makeHeaderButtonDef(CswMobileHeaderButtons.back, p.DivId);
+    }
 
 	var onlinePage = new CswMobilePageFactory(pageDef, $parent);
 	var onlineHeader = onlinePage.mobileHeader;

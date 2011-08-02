@@ -124,7 +124,7 @@ function ICswMobileWebControls(controlDef, $parent) {
 
     this.bindEvents = function(event) {
         /// <summary>Binds defined events to the control</summary>
-        /// <param name="event" type="CswDomElementEvent">Event name</param>
+        /// <param name="event" type="CswDomElementEvent">CswDomElementEvent Event enum</param>
         /// <returns type="void"></returns>
         _$control = this.$control;
         
@@ -135,13 +135,11 @@ function ICswMobileWebControls(controlDef, $parent) {
                 _$control.bind(event.name, methods[method]);
             }
         }
-        
-        _$control.bind('click', function() { alert('clicked!'); });
     };
     
     this.unbindEvents = function(event) {
         /// <summary>Unbinds all defined events from the control</summary>
-        /// <param name="event" type="CswDomElementEvent">Event name</param>
+        /// <param name="event" type="CswDomElementEvent">CswDomElementEvent Event enum</param>
         /// <returns type="void"></returns>
         _$control = this.$control;
         
@@ -150,7 +148,7 @@ function ICswMobileWebControls(controlDef, $parent) {
     
     this.setEvent = function(event, method) {
         /// <summary>Defines events available for binding to the control</summary>
-        /// <param name="event" type="CswDomElementEvent">Event name</param>
+        /// <param name="event" type="CswDomElementEvent">CswDomElementEvent event enum</param>
         /// <param name="method" type="Function">Event method</param>
         /// <returns type="void"></returns>
         _$control = this.$control;

@@ -74,45 +74,20 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
     var pageDef = p;
     delete pageDef.onOnlineClick;
     delete pageDef.onRefreshClick;
-    
-    var onlineValue = mobileStorage.onlineStatus();
-    
+   
     if( isNullOrEmpty(pageDef.footerDef)) {
-        pageDef.footerDef = {
-		    buttons: {
-					online: { ID: p.DivId + '_gosyncstatus',
-								text: onlineValue,
-								cssClass: 'ui-btn-active onlineStatus ' + onlineValue.toLowerCase(),
-								dataIcon: 'gear',
-					            onClick: p.onOnlineClick
-					},
-		            refresh: { ID: p.DivId + '_refresh',
-								text: 'Refresh',
-								cssClass: 'refresh',
-								dataIcon: 'refresh',
-		                        onClick: p.onRefreshClick
-		            },
-	                fullsite: { ID: p.DivId + '_main',
-	                    text: 'Full Site',
-	                    href: 'Main.html',
-	                    rel: 'external',
-	                    dataIcon: 'home'
-	                }
-	        }
-	    };
-	}
-
-	if (isNullOrEmpty(pageDef.headerDef)) {
-	    pageDef.headerDef = {
-	        buttons: {
-	            back: { ID: p.DivId + '_back',
-	                text: 'Back',
-	                cssClass: 'ui-btn-left',
-	                dataDir: 'reverse',
-	                dataIcon: 'arrow-l' }
-	        }
-	    };
-	}
+        pageDef.footerDef = { };
+        pageDef.footerDef.buttons = { };
+        pageDef.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, p.DivId, null, mobileStorage);
+        pageDef.footerDef.buttons.refresh = makeFooterButtonDef(CswMobileFooterButtons.refresh, p.DivId, p.onRefreshClick);
+        pageDef.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, p.DivId);
+    }
+    
+    if( isNullOrEmpty(pageDef.headerDef)) {
+        pageDef.headerDef = { };
+        pageDef.headerDef.buttons = { };
+        pageDef.headerDef.buttons.back = makeHeaderButtonDef(CswMobileHeaderButtons.back, p.DivId);
+    }
 
 	var helpPage = new CswMobilePageFactory(pageDef, $parent);
 	var helpHeader = helpPage.mobileHeader;

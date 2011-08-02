@@ -48,22 +48,10 @@ function CswMobilePageLogin(loginDef,$parent,mobileStorage,loginSuccess) {
     delete pageDef.onHelpClick;
     
     if( isNullOrEmpty(pageDef.footerDef)) {
-        
-		pageDef.footerDef = {
-		    buttons: {
-					fullsite: { ID: p.DivId + '_main',
-								text: 'Full Site',
-								href: 'Main.html', 
-								rel: 'external',
-								dataIcon: 'home' 
-					},
-					help: { ID: p.DivId + '_help',
-								text: 'Help',
-								dataIcon: 'info',
-					            onClick: p.onHelpClick
-					}
-				}
-		};
+        pageDef.footerDef = { };
+        pageDef.footerDef.buttons = { };
+        pageDef.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, p.DivId);
+        pageDef.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, p.DivId, p.onHelpClick);
     }
     
     var loginDiv = new CswMobilePageFactory(pageDef, $parent);

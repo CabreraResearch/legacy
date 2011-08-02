@@ -78,12 +78,6 @@ function CswMobileMenuButton(buttonDef, $parent) {
         _o = o;
         _classes = classes;
         _$control = $button;
-        
-        if( !isNullOrEmpty(o.onClick) ) {
-            this.unbindEvents();
-            this.setEvent(CswDomElementEvent.click, o.onClick);
-            this.bindEvents(CswDomElementEvent.click);
-        }
     }
 
     Constructor();
@@ -92,9 +86,14 @@ function CswMobileMenuButton(buttonDef, $parent) {
     //#region public, priveleged
 
     this.$control = _$control;
-    
     this.classes = _classes;
    
+    if( !isNullOrEmpty(_o.onClick) ) {
+        this.unbindEvents(CswDomElementEvent.click);
+        this.setEvent(CswDomElementEvent.click, _o.onClick);
+        this.bindEvents(CswDomElementEvent.click);
+    }    
+    
     //#region ICswMobileWebControls Overrides
     this.enable = function(enable) {
         /// <summary>Enables or disables the control.</summary>

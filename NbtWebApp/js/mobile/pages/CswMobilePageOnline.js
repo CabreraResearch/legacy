@@ -58,58 +58,28 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
 		HeaderText: 'Sync Status',
         theme: 'b',
         $content: $(content),
-        onSuccess: function() {},
         onRefreshClick: function () {},
         onHelpClick: function () {}
     };
     if(onlineDef) $.extend(p, onlineDef);
 
     var pageDef = p;
-    delete pageDef.onSuccess;
     delete pageDef.onRefreshClick;
     delete pageDef.onHelpClick;
     
-    var onlineValue = mobileStorage.onlineStatus();
-    
     if( isNullOrEmpty(pageDef.footerDef)) {
-        pageDef.footerDef = {
-		    buttons: {
-					online: { ID: p.DivId + '_gosyncstatus',
-								text: onlineValue,
-								cssClass: 'ui-btn-active onlineStatus ' + onlineValue.toLowerCase(),
-								dataIcon: 'gear'
-					},
-		            refresh: { ID: p.DivId + '_refresh',
-								text: 'Refresh',
-								cssClass: 'refresh',
-								dataIcon: 'refresh',
-		                        onClick: p.onRefreshClick
-		            },
-		            fullsite: { ID: p.DivId + '_main',
-								text: 'Full Site',
-								href: 'Main.html', 
-								rel: 'external',
-								dataIcon: 'home' 
-		            },
-					help: { ID: p.DivId + '_help',
-								text: 'Help',
-								dataIcon: 'info',
-					            onClick: p.onHelpClick
-					}
-				}
-		};
+        pageDef.footerDef = { };
+        pageDef.footerDef.buttons = { };
+        pageDef.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, p.DivId, null, mobileStorage);
+        pageDef.footerDef.buttons.refresh = makeFooterButtonDef(CswMobileFooterButtons.refresh, p.DivId, p.onRefreshClick);
+        pageDef.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, p.DivId);
+        pageDef.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, p.DivId, p.onHelpClick);
     }
     
     if( isNullOrEmpty(pageDef.headerDef)) {
-        pageDef.headerDef = {
-		    buttons: {
-					back: { ID: p.DivId + '_back',
-								text: 'Back',
-								cssClass: 'ui-btn-left',
-								dataDir: 'reverse',
-								dataIcon: 'arrow-l' }
-				}
-		};
+        pageDef.headerDef = { };
+        pageDef.headerDef.buttons = { };
+        pageDef.headerDef.buttons.back = makeHeaderButtonDef(CswMobileHeaderButtons.back, p.DivId);
     }
     
     var onlinePage = new CswMobilePageFactory(pageDef, $parent);
