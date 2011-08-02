@@ -228,7 +228,10 @@ function setOffline(mobileStorage,onComplete) {
 }
 
 function setOnline(mobileStorage,onComplete) {
-			
+	if(isNullOrEmpty(mobileStorage)) {
+	    mobileStorage = new CswMobileClientDbResources();
+	}
+    
 	mobileStorage.amOnline(true);
 	mobileStorage.removeItem('loginFailure');
 	if( !mobileStorage.stayOffline() )

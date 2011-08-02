@@ -79,7 +79,7 @@ CswAppMode.mode = 'mobile';
 
 		var mobileBackgroundTaskOptions = {
 			onSuccess: function () {
-				setOnline();
+				setOnline(mobileStorage);
 			},
 			onError: function () {
 				setOffline();
@@ -282,7 +282,7 @@ CswAppMode.mode = 'mobile';
 					data: jsonData,
 					onloginfail: function(text) { onLoginFail(text, mobileStorage); },
 					success: function(data) {
-						setOnline();
+						setOnline(mobileStorage);
 						logger.setAjaxSuccess();
 						
 						p.json = data;
@@ -1129,7 +1129,7 @@ CswAppMode.mode = 'mobile';
 							stringify: false,
 							onloginfail: function(text) { onLoginFail(text, mobileStorage); },
 							success: function(data) {
-								setOnline();
+								setOnline(mobileStorage);
 								if( !isNullOrEmpty(data['nodes']) ) {
 									var viewJSON = data['nodes'];
 									
@@ -1275,7 +1275,7 @@ CswAppMode.mode = 'mobile';
 		
 		function processUpdatedNodes(data,objectId,objectJSON,isBackgroundTask) {
 			if( !isNullOrEmpty(data) ) {
-			    setOnline();
+			    setOnline(mobileStorage);
 			    var completed = isTrue(data['completed']);
 			    var isView = !isNullOrEmpty(data['nodes']);
 			    if (isView)
