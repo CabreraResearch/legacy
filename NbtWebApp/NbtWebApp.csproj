@@ -1923,8 +1923,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>call $(ProjectDir)js\_compile.pl
-call $(ProjectDir)js\_compileMobile.pl</PostBuildEvent>
+    <PostBuildEvent>call $(ProjectDir)js\_compile.pl $(ProjectDir)
+call $(ProjectDir)js\_compileMobile.pl $(ProjectDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
