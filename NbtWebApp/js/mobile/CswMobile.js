@@ -38,7 +38,6 @@ CswAppMode.mode = 'mobile';
 		//#region Resource Initialization
 		
 		var opts = {
-			ViewsListUrl: '/NbtWebApp/wsNBT.asmx/GetViewsList',
 			ViewUrl: '/NbtWebApp/wsNBT.asmx/GetView',
 			//UpdateViewUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
 			MainPageUrl: '/NbtWebApp/Mobile.html',
@@ -55,10 +54,10 @@ CswAppMode.mode = 'mobile';
 		
 		debugOn(debug);
 		
-		var ForMobile = true;
+		var forMobile = true;
 		
-		var SessionId = mobileStorage.sessionid();
-		if(isNullOrEmpty(SessionId)) {
+		var sessionId = mobileStorage.sessionid();
+		if(isNullOrEmpty(sessionId)) {
 			Logout(mobileStorage);
 		}
 
@@ -84,7 +83,7 @@ CswAppMode.mode = 'mobile';
 			},
 			onLoginFailure: onLoginFail,
 			PollingInterval: opts.PollingInterval,
-			ForMobile: ForMobile
+			ForMobile: forMobile
 		};
 
 		var mobileBgTask = new CswMobileBackgroundTask(mobileStorage, mobileSync, mobileBackgroundTaskOptions);
@@ -98,7 +97,7 @@ CswAppMode.mode = 'mobile';
 		var $sorrycharliediv = makeOfflinePage();
 
 		// case 20355 - error on browser refresh
-		if (!isNullOrEmpty(SessionId)) {
+		if (!isNullOrEmpty(sessionId)) {
 			$viewsdiv.CswSetPath();
 			mobileStorage.setItem('refreshPage', 'viewsdiv');
 		} else {
@@ -107,7 +106,7 @@ CswAppMode.mode = 'mobile';
 		}
 			  
 		window.onload = function() {
-			if (!isNullOrEmpty(SessionId)) {
+			if (!isNullOrEmpty(sessionId)) {
 				$viewsdiv = makeViewsPage();
 			}
 			else {
@@ -134,10 +133,11 @@ CswAppMode.mode = 'mobile';
 	    
 		function makeLoginPage() {
             ///<summary>Create a Mobile login page</summary>
+		    ///<returns type="CswMobilePageLogin">CswMobilePageLogin page.</returns>
 		    var loginDef = { theme: opts.Theme };
 		    var loginDiv = new CswMobilePageLogin(loginDef, $body, mobileStorage, function (data,userName,accessId) {
-		            SessionId = $.CswCookie('get', CswCookieName.SessionId);
-					mobileStorage.sessionid(SessionId);
+		            sessionId = $.CswCookie('get', CswCookieName.SessionId);
+					mobileStorage.sessionid(sessionId);
 					mobileStorage.username(userName); 
 					mobileStorage.customerid(accessId);
 					$viewsdiv = makeViewsPage();
@@ -150,27 +150,20 @@ CswAppMode.mode = 'mobile';
 
 		function makeViewsPage() {
 			///<summary>Create a Mobile views page</summary>
-			var params = {
-				parentlevel: -1,
-				level: 0,
-				DivId: 'viewsdiv',
-				HeaderText: 'Views',
-				HideRefreshButton: true,
-				HideSearchButton: true,
-				HideBackButton: true
-			};
-			if (!$viewsdiv) {
-				$viewsdiv = _addPageDivToBody(params);
-			}
-			params.onPageShow = function() { return _loadDivContents(params); };
-
-			$viewsdiv.CswUnbindJqmEvents();
-			$viewsdiv.CswBindJqmEvents(params);
-			return $viewsdiv;
+		    ///<returns type="CswMobilePageViews">CswMobilePageViews page.</returns>
+		    var viewsDef = {
+		        theme: opts.Theme,
+		        onHelpClick: onHelpClick,
+		        onOnlineClick: onOnlineClick,
+		        onRefreshClick: onRefreshClick
+		    };
+		    var viewsPage = new CswMobilePageViews(viewsDef, $body, mobileStorage);
+			return viewsPage;
 		}
 		
 		function makeOfflinePage() {
 			///<summary>Create a Mobile offline (Sorry Charlie) page</summary>
+		    ///<returns type="CswMobilePageOffline">CswMobilePageOffline page.</returns>
 		    var offlineDef = {
 				theme: opts.Theme,
 			    onHelpClick: onHelpClick
@@ -181,6 +174,7 @@ CswAppMode.mode = 'mobile';
 
 	    function makeOnlinePage() {
             ///<summary>Create a Mobile online (Sync Status) page</summary>
+	        ///<returns type="CswMobilePageOnline">CswMobilePageOnline page.</returns>
 		    var syncDef = {
                 theme: opts.Theme,
 		        onRefreshClick: onRefreshClick,
@@ -192,6 +186,7 @@ CswAppMode.mode = 'mobile';
 	    
 	    function makeHelpPage() {
 			///<summary>Create a Mobile help page</summary>
+	        ///<returns type="CswMobilePageHelp">CswMobilePageHelp page.</returns>
 	        var helpDef = {
                 theme: opts.Theme,
 			    onOnlineClick: onOnlineClick,
@@ -203,6 +198,7 @@ CswAppMode.mode = 'mobile';
 	    
 	    function makeSearchPage() {
 			///<summary>Create a Mobile search page</summary>
+	        ///<returns type="CswMobilePageSearch">CswMobilePageSearch page.</returns>
 	        var searchDef = {
                 ParentId: mobileStorage.currentViewId(),
 			    theme: opts.Theme,
@@ -218,25 +214,25 @@ CswAppMode.mode = 'mobile';
 		
 		function onRefreshClick() {
 			///<summary>Event to fire on 'Refresh' button click.</summary>
-		    var DivId = mobileStorage.currentViewId();
-			if(isNullOrEmpty(DivId)) {
+		    var divId = mobileStorage.currentViewId();
+			if(isNullOrEmpty(divId)) {
 				window.location.reload();
 			}
 			else if (mobileStorage.amOnline() && 
 				mobileStorage.checkNoPendingChanges() ) {
 				
-				if(DivId === 'viewsdiv') {
+				if(divId === 'viewsdiv') {
 					window.location.reload();
 				}
 				else {
 					var jsonData = {
-						SessionId: SessionId,
-						ParentId: DivId,
-						ForMobile: ForMobile
+						SessionId: sessionId,
+						ParentId: divId,
+						ForMobile: forMobile
 					};
 
 					CswAjaxJSON({
-							formobile: ForMobile,
+							formobile: forMobile,
 							url: opts.ViewUrl,
 							data: jsonData,
 							stringify: false,
@@ -248,9 +244,9 @@ CswAppMode.mode = 'mobile';
 									
 									var params = {
 										ParentId: 'viewsdiv',
-										DivId: DivId,
+										DivId: divId,
 										HeaderText: HeaderText,
-										json: mobileStorage.updateStoredViewJson(DivId, viewJSON),
+										json: mobileStorage.updateStoredViewJson(divId, viewJSON),
 										parentlevel: 0,
 										level: 1,
 										HideRefreshButton: false,
@@ -309,7 +305,7 @@ CswAppMode.mode = 'mobile';
 				HideRefreshButton: false,
 				HideSearchButton: false,
 				json: '',
-				SessionId: SessionId,
+				SessionId: sessionId,
 				PageType: 'search'
 			};
 			if (params) $.extend(p, params);
@@ -319,41 +315,39 @@ CswAppMode.mode = 'mobile';
 			var $retDiv = $('#' + p.DivId);
 
 			if (isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1) {
-				if (p.level === 0) {
-					p.PageType = 'view';
-					if (!mobileStorage.amOnline()) {
-						p.json = mobileStorage.fetchCachedViewJson(p.DivId);
-						$retDiv = _loadDivContentsJson(p);
-					} else {
-						p.url = opts.ViewsListUrl;
-						$retDiv = _getDivJson(p);
-					}
-				} else if (p.level === 1) {
-					// case 20354 - try cached first
-					var cachedJson = mobileStorage.fetchCachedViewJson(viewId);
-					p.PageType = 'node';
-					if (!isNullOrEmpty(cachedJson)) {
-						p.json = cachedJson;
-						$retDiv = _loadDivContentsJson(p);
-					} else if (mobileStorage.amOnline()) {
-						p.url = opts.ViewUrl;
-						$retDiv = _getDivJson(p);
-					} else {
-						stopLoadingMsg();
-					}
-					
-				} else { // Level 2 and up
-					var cachedJson = mobileStorage.fetchCachedNodeJson(p.DivId);
-					p.PageType = 'tab';
-					if( !isNullOrEmpty(cachedJson) ) {
-						p.json = cachedJson['subitems'];
+				switch(p.level) {
+					case 0: //views
+					    var viewsPage = makeViewsPage();
+					    $retDiv = viewsPage.$pageDiv;
+					    break;
+				    case 1: //nodes
+				        
+					    // case 20354 - try cached first
+					    var cachedJson = mobileStorage.fetchCachedViewJson(viewId);
+					    p.PageType = 'node';
+					    if (!isNullOrEmpty(cachedJson)) {
+						    p.json = cachedJson;
+						    $retDiv = _loadDivContentsJson(p);
+					    } else if (mobileStorage.amOnline()) {
+						    p.url = opts.ViewUrl;
+						    $retDiv = _getDivJson(p);
+					    } else {
+						    stopLoadingMsg();
+					    }
+				        break;
+				    default: // Level 2 and up
+					    var cachedJson = mobileStorage.fetchCachedNodeJson(p.DivId);
+					    p.PageType = 'tab';
+					    if( !isNullOrEmpty(cachedJson) ) {
+						    p.json = cachedJson['subitems'];
 
-						if (!isNullOrEmpty(p.json)) {
-							$retDiv = _loadDivContentsJson(p);
-						}
-					} else {
-						stopLoadingMsg();
-					}
+						    if (!isNullOrEmpty(p.json)) {
+							    $retDiv = _loadDivContentsJson(p);
+						    }
+					    } else {
+						    stopLoadingMsg();
+					    }
+				        break;
 				}
 			}
 			cacheLogInfo(logger);
@@ -378,12 +372,12 @@ CswAppMode.mode = 'mobile';
 			var jsonData = {
 				SessionId: p.SessionId,
 				ParentId: p.DivId,
-				ForMobile: ForMobile
+				ForMobile: forMobile
 			};
 		
 			CswAjaxJSON({
 					//async: false,   // required so that the link will wait for the content before navigating
-					formobile: ForMobile,
+					formobile: forMobile,
 					url: p.url,
 					data: jsonData,
 					onloginfail: function(text) { onLoginFail(text, mobileStorage); },
@@ -431,17 +425,7 @@ CswAppMode.mode = 'mobile';
 			};
 			if (params) $.extend(p, params);
 
-			var $retDiv = _addPageDivToBody({
-					ParentId: p.ParentId,
-					level: p.parentlevel,
-					DivId: p.DivId,
-					HeaderText: p.HeaderText,
-					HideSearchButton: p.HideSearchButton,
-					HideOnlineButton: p.HideOnlineButton,
-					HideRefreshButton: p.HideRefreshButton,
-					HideHelpButton: p.HideHelpButton,
-					HideBackButton: p.HideBackButton
-				});
+		    var $retDiv = $('#' + p.DivId);
 
 			var $content = $retDiv.find('div:jqmData(role="content")').empty();
 
@@ -472,7 +456,7 @@ CswAppMode.mode = 'mobile';
 			
 			logger.setAjaxSuccess();
 			
-			_resetPendingChanges();
+			resetPendingChanges();
 			
 			if(!mobileStorage.stayOffline()) {
 			    toggleOnline(mobileStorage);
@@ -1152,7 +1136,7 @@ CswAppMode.mode = 'mobile';
 			// update the xml and store it
 			if (!isNullOrEmpty(nodeId) && !isNullOrEmpty(nodeJson)) {
 				mobileStorage.addUnsyncedChange();
-				_resetPendingChanges();
+				resetPendingChanges();
 				
 				if( !isNullOrEmpty(inputPropId) )
 				{
@@ -1180,10 +1164,11 @@ CswAppMode.mode = 'mobile';
 		//#region Synchronization
 
   		function updatedUnsyncedChanges() {
-			$('#ss_pendingchangecnt').text( tryParseString(mobileStorage.getItem('unSyncedChanges'),'0') );
+			///<summary> Updates the count of unsynced changes on the Online page.</summary>
+  		    $('#ss_pendingchangecnt').text( tryParseString(mobileStorage.getItem('unSyncedChanges'),'0') );
 		}
 
-	    function _resetPendingChanges(succeeded) {
+	    function resetPendingChanges(succeeded) {
 			if ( mobileStorage.pendingChanges() ) {
 				$('.onlineStatus').addClass('pendingchanges')
 								  .find('span.ui-btn-text')
@@ -1206,8 +1191,7 @@ CswAppMode.mode = 'mobile';
 			}
 		}
 	    
-		function processModifiedNodes(onSuccess)
-		{
+		function processModifiedNodes(onSuccess) {
 			if(!isNullOrEmpty(onSuccess)) {
 				var modified = false;
 				if (isNullOrEmpty(storedViews))
@@ -1238,7 +1222,7 @@ CswAppMode.mode = 'mobile';
 					}
 				}
 			} else {
-				_resetPendingChanges(true);
+				resetPendingChanges(true);
 			}
 		}
 		
@@ -1256,7 +1240,7 @@ CswAppMode.mode = 'mobile';
 			        mobileStorage.updateStoredNodeJson(objectId, objectJSON, false);
 			    }
 
-			    _resetPendingChanges(true);
+			    resetPendingChanges(true);
 
 			    if (completed && !isView)
 			    {

@@ -62,8 +62,11 @@ function CswMobilePageFactory(pageDef, $parent) {
 	
 	mobileHeader = new CswMobilePageHeader(headerDef, $pageDiv);
 
-	if(firstInit) {
-		$content = $pageDiv.CswDiv('init', { ID: p.DivId + '_content' })
+    $content = $pageDiv.find('div:jqmData(role="content")');
+    
+	if( !isNullOrEmpty($content) && $content.length > 0) {
+	    $content.empty();
+	    $content = $pageDiv.CswDiv('init', { ID: p.DivId + '_content' })
 			.CswAttrXml({ 'data-role': 'content', 'data-theme': p.theme })
 			.append(p.$content);
 	}
@@ -77,7 +80,7 @@ function CswMobilePageFactory(pageDef, $parent) {
 	if(p.footerDef) $.extend(footerDef, p.footerDef);
 	
 	mobileFooter = new CswMobilePageFooter(footerDef, $pageDiv);
-			
+	
 	//#endregion private	
 	
 	//#region public, priveleged

@@ -36,7 +36,7 @@ function CswMobileMenuButton(buttonDef, $parent) {
             dataIcon: '',
             href: 'javascript:void(0)',
             rel: '',
-            onClick: function() {}
+            onClick: '' // function() {}
         };
 
         if (buttonDef) $.extend(o, buttonDef);

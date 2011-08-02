@@ -115,6 +115,7 @@
     <Content Include="js\CswClientDb.js" />
     <Content Include="js\CswEnums.js" />
     <Content Include="js\CswProfileMethod.js" />
+    <Content Include="js\mobile\controls\CswMobileListView.js" />
     <Content Include="js\mobile\CswMobileResources.js" />
     <Content Include="js\mobile\pages\CswMobilePageOffline.js" />
     <Content Include="js\mobile\pages\CswMobilePageHelp.js" />
