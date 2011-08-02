@@ -1,4 +1,6 @@
-﻿/// <reference path="_CswPrototypeExtensions.js" />
+﻿/// <reference path="thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+/// <reference path="_CswPrototypeExtensions.js" />
 /// <reference path="CswProfileMethod.js" />
 /// <reference path="CswArray.js" />
 /// <reference path="CswClientDb.js" />
@@ -1195,7 +1197,7 @@ function isNullOrEmpty(obj)
 	/// <summary> Returns true if the input is null, undefined, or ''</summary>
 	/// <param name="obj" type="Object"> Object to test</param>
 	/// <returns type="Boolean" />
-	var ret = false;
+    var ret;
 	if (!isFunction(obj))
 	{
 		ret = $.isPlainObject(obj) && $.isEmptyObject(obj);
@@ -1203,6 +1205,8 @@ function isNullOrEmpty(obj)
 		{
 			ret = (trim(obj) === '');
 		}
+	} else {
+	    ret = (obj.toString().replace(/ /gi,'') === 'function(){}'); 
 	}
 	return ret;
 }
