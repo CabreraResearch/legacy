@@ -28,7 +28,11 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-            // This script is reserved for object class changes 
+			// add audit columns for certain tables.  will be revisited in 01H-39
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "object_class" );
+			_CswNbtSchemaModTrnsctn.makeTableAuditable( "object_class_props" );
+			
+			// This script is reserved for object class changes 
             // which need to take place before any other changes can be made.
 
             // Because of changes in tables in previous script

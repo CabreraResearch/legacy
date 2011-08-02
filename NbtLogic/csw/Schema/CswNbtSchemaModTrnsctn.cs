@@ -534,10 +534,15 @@ namespace ChemSW.Nbt.Schema
 
             // Grant permission to Administrator
             CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
-            _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode ), true );
-            CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" );
-            _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
-
+			if( RoleNode != null )
+			{
+				_CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode ), true );
+			}
+			CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" );
+			if( RoleNode2 != null )
+			{
+				_CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
+			}
             return NewActionId;
         }
 

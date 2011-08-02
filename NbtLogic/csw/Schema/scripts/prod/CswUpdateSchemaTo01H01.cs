@@ -2,6 +2,7 @@
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Audit;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -30,7 +31,17 @@ namespace ChemSW.Nbt.Schema
             // such as adding tables or columns, 
             // which need to take place before any other changes can be made.
 
-            // BZ 9754
+			// eliminate existing audit tables since they cause problems until the new auditing system is in place in 01H-39
+			CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+			foreach( string Tablename in _CswNbtSchemaModTrnsctn.CswDataDictionary.getTableNames() )
+			{
+				if( false == CswAuditMetaData.isAuditTable( Tablename ) )
+				{
+					_CswNbtSchemaModTrnsctn.makeTableNotAuditable( Tablename );
+				}
+			}
+
+			// BZ 9754
             _CswNbtSchemaModTrnsctn.addBooleanColumn( "object_class_props", "isglobalunique", "Globally unique property value among all nodetypes", false, false );
 
             // BZ 10319
@@ -66,18 +77,18 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.jct_modules_actions.ToString(), CswSchemaVersion.JctModulesActionsColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.jct_modules_nodetypes.ToString(), CswSchemaVersion.JctModulesNodeTypesColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.jct_nodes_props.ToString(), CswSchemaVersion.JctNodesPropsColumns.isdemo.ToString(), DemoColumnDescription, true, false );
-            _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.jct_nodes_props_audit.ToString(), CswSchemaVersion.JctNodesPropsAuditColumns.isdemo.ToString(), DemoColumnDescription, true, false );
+            //_CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.jct_nodes_props_audit.ToString(), CswSchemaVersion.JctNodesPropsAuditColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.license_accept.ToString(), CswSchemaVersion.LicenseAcceptColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.locations.ToString(), CswSchemaVersion.LocationsColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.materials.ToString(), CswSchemaVersion.MaterialsColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.materials_subclass.ToString(), CswSchemaVersion.MaterialsSubclassColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.materials_synonyms.ToString(), CswSchemaVersion.MaterialsSynonymsColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.nodes.ToString(), CswSchemaVersion.NodesColumns.isdemo.ToString(), DemoColumnDescription, true, false );
-            _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.nodes_audit.ToString(), CswSchemaVersion.NodesAuditColumns.isdemo.ToString(), DemoColumnDescription, true, false );
+            //_CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.nodes_audit.ToString(), CswSchemaVersion.NodesAuditColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.nodetypes.ToString(), CswSchemaVersion.NodeTypesColumns.isdemo.ToString(), DemoColumnDescription, true, false );
-            _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.nodetypes_audit.ToString(), CswSchemaVersion.NodeTypesAuditColumns.isdemo.ToString(), DemoColumnDescription, true, false );
+            //_CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.nodetypes_audit.ToString(), CswSchemaVersion.NodeTypesAuditColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.nodetype_props.ToString(), CswSchemaVersion.NodeTypePropsColumns.isdemo.ToString(), DemoColumnDescription, true, false );
-            _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.nodetype_props_audit.ToString(), CswSchemaVersion.NodeTypePropsAuditColumns.isdemo.ToString(), DemoColumnDescription, true, false );
+            //_CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.nodetype_props_audit.ToString(), CswSchemaVersion.NodeTypePropsAuditColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.nodetype_tabset.ToString(), CswSchemaVersion.NodeTypeTabsetColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.node_views.ToString(), CswSchemaVersion.NodeViewsColumns.isdemo.ToString(), DemoColumnDescription, true, false );
             _CswNbtSchemaModTrnsctn.addBooleanColumn( CswSchemaVersion.NbtTables.packages.ToString(), CswSchemaVersion.PackagesColumns.isdemo.ToString(), DemoColumnDescription, true, false );
@@ -120,6 +131,9 @@ namespace ChemSW.Nbt.Schema
 			{
 				_CswNbtSchemaModTrnsctn.addBooleanColumn( "nodes", "readonly", "Whether the node and all of its properties are read only", false, false );
 			}
+
+
+
         }//Update()
 
     }//class CswUpdateSchemaTo01H01
