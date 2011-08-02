@@ -1,55 +1,58 @@
-﻿; (function ($) {
-    $.fn.CswMenuHeader = function (options) {
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../_Global.js" />
 
-        var o = {
-            Url: '/NbtWebApp/wsNBT.asmx/getHeaderMenu',
-            onLogout: function() { },
+; (function ($) {
+	$.fn.CswMenuHeader = function (options) {
+
+		var o = {
+			Url: '/NbtWebApp/wsNBT.asmx/getHeaderMenu',
+			onLogout: function() { },
 			onSuccess: function() { }
-        };
+		};
 
-        if (options) {
-            $.extend(o, options);
-        }
+		if (options) {
+			$.extend(o, options);
+		}
 
-        var $MenuDiv = $(this);
+		var $MenuDiv = $(this);
 
-        CswAjaxXml({
-            url: o.Url,
-            data: {},
-            stringify: false,
-            success: function ($xml) {
-                var $ul = $('<ul class="topnav"></ul>');
+		CswAjaxXml({
+			url: o.Url,
+			data: {},
+			stringify: false,
+			success: function ($xml) {
+				var $ul = $('<ul class="topnav"></ul>');
 
-                $MenuDiv.text('')
-                        .append($ul);
+				$MenuDiv.text('')
+						.append($ul);
 
-                $xml.children().each(function() {
-                    var $this = $(this);
-                    if($this.CswAttrXml('text') !== undefined)
-                    {
+				$xml.children().each(function() {
+					var $this = $(this);
+					if($this.CswAttrXml('text') !== undefined)
+					{
 						var $li = HandleMenuItem({ '$ul': $ul, '$itemxml': $this, 'onLogout': o.onLogout});
-                        
-                        if($this.children().length > 1) {
-                            var $subul = $('<ul class="subnav"></ul>')
-                                            .appendTo($li);
-                            $this.children().each(function() {
+						
+						if($this.children().length > 1) {
+							var $subul = $('<ul class="subnav"></ul>')
+											.appendTo($li);
+							$this.children().each(function() {
 								HandleMenuItem({ '$ul': $subul, '$itemxml': $(this), 'onLogout': o.onLogout});
-                            });
-                        }
-                    }
+							});
+						}
+					}
 
-                });
+				});
 
-                $ul.CswMenu();
+				$ul.CswMenu();
 
 				o.onSuccess();
 
-            } // success{}
-        }); // $.ajax({
+			} // success{}
+		}); // $.ajax({
 
-        // For proper chaining support
-        return this;
+		// For proper chaining support
+		return this;
 
-    }; // function(options) {
+	}; // function(options) {
 })(jQuery);
 

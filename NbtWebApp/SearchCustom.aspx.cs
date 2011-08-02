@@ -11,7 +11,6 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
-using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Security;
 

@@ -231,7 +231,7 @@ namespace ChemSW.Cis.Sched
         }
 
 
-        ICswSchedItemTiming _CswSchedItemTiming = null;
+        //ICswSchedItemTiming _CswSchedItemTiming = null;
         public bool doesItemRunNow()
         {
             return ( false );
@@ -240,7 +240,7 @@ namespace ChemSW.Cis.Sched
 
         public void update()
         {
-            bool UpdateOccured = false;
+            //bool UpdateOccured = false;
             try
             {
                 //if( null != _BgTasksDataTable )

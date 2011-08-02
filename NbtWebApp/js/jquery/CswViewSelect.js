@@ -1,4 +1,7 @@
-﻿; (function ($) {
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../_Global.js" />
+
+; (function ($) {
 	var PluginName = "CswViewSelect";
 
 	var methods = {
@@ -23,8 +26,8 @@
 					},
 					onSuccess: function() {},
 					ClickDelay: 300,
-                    issearchable: false,
-                    usesession: true
+					issearchable: false,
+					usesession: true
 				};
 
 				if (options) {
@@ -60,8 +63,8 @@
 																});
 												}, 
 											'onSuccess': o.onSuccess,
-                                            'issearchable': o.issearchable,
-                                            'usesession': o.usesession 
+											'issearchable': o.issearchable,
+											'usesession': o.usesession 
 										});
 				return $selectdiv;
 			},
@@ -112,7 +115,7 @@
 		}
 
 		var $newTopContent = $('<div></div>');
-        var $table = $newTopContent.CswTable('init', { ID: x.ID + 'selectedtbl' });
+		var $table = $newTopContent.CswTable('init', { ID: x.ID + 'selectedtbl' });
 		var $cell1 = $table.CswTable('cell', 1, 1);
 		var $icondiv = $('<div />').appendTo($cell1);
 		$icondiv.css('background-image', x.iconurl);

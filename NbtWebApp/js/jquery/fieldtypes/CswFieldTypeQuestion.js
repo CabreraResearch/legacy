@@ -106,14 +106,14 @@
 		}
 		if(isCompliant)
 		{
-			$AnswerSel.removeClass('CswFieldTypeQuestion_OOC')
+		    $AnswerSel.removeClass('CswFieldTypeQuestion_OOC');
 			if(CorrectiveAction === '')
 			{
 				$CorrectiveActionLabel.hide();
 				$CorrectiveActionTextBox.hide();
 			}
 		} else {
-			$AnswerSel.addClass('CswFieldTypeQuestion_OOC')
+		    $AnswerSel.addClass('CswFieldTypeQuestion_OOC');
 			$CorrectiveActionLabel.show();
 			$CorrectiveActionTextBox.show();
 		}

@@ -60,8 +60,8 @@ namespace ChemSW.Nbt.Schema
         private ICswLogger _CswLogger = null;
         private CswNbtResources _CswNbtResources = null;
         private CswSchemaUpdater _CswSchemaUpdater;
-        private CswNbtObjClassFactory _CswNbtObjClassFactory;
-        private CswNbtMetaDataEvents _CswNbtMetaDataEvents = null;
+        //private CswNbtObjClassFactory _CswNbtObjClassFactory;
+        //private CswNbtMetaDataEvents _CswNbtMetaDataEvents = null;
 
 
         private CswSchemaScriptsProd _CswSchemaScriptsProd = null;

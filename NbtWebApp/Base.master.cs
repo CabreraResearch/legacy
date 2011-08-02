@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.WebPages
             if( CswSessionManager.IsAuthenticated() )
             {
                 ReturnVal = true;
-                CswSessionManager.updateLastAccess();
+                CswSessionManager.updateLastAccess(false);
             }
 
             return ( ReturnVal );

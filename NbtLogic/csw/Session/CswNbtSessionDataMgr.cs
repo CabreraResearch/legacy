@@ -190,7 +190,7 @@ namespace ChemSW.Nbt
             {
                 CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_update", SessionDataTableName );
                 DataTable SessionDataTable = SessionDataUpdate.getTable( SessionDataColumn_PrimaryKey, SessionDataId.get() );
-                DataRow SessionDataRow = null;
+                //DataRow SessionDataRow = null;
                 if( SessionDataTable.Rows.Count > 0 )
                 {
                     SessionDataTable.Rows[0].Delete();

@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -19,7 +20,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.List )
             {
-				throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
                                             "CswNbtNodePropList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
             }
 
@@ -86,8 +87,20 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName(), Value );
-            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "Options", Options.ToString() );
+            CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName(), Value );
+            CswXmlDocument.AppendXmlNode( ParentNode, "Options", Options.ToString() );
+        }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _ValueSubField.ToXmlNodeName(true), Value ),
+                new XElement( "options", Options.ToString() ) );
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject.Add( new JProperty( _ValueSubField.ToXmlNodeName(true), Value ) );
+            ParentObject.Add( new JProperty( "options", Options.ToString() ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -95,14 +108,12 @@ namespace ChemSW.Nbt.PropTypes
             Value = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ValueSubField.ToXmlNodeName() );
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _ValueSubField.ToXmlNodeName(true) ) )
+            {
+                Value = XmlNode.Element( _ValueSubField.ToXmlNodeName(true) ).Value;
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -110,7 +121,13 @@ namespace ChemSW.Nbt.PropTypes
             Value = CswTools.XmlRealAttributeName( PropRow[_ValueSubField.ToXmlNodeName()].ToString() );
         }
 
-
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _ValueSubField.ToXmlNodeName(true) ) )
+            {
+                Value = (string) JObject.Property( _ValueSubField.ToXmlNodeName(true) ).Value;
+            }
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

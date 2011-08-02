@@ -13,7 +13,7 @@ namespace ChemSW.Nbt
     public class CswSessionResourcesNbt
     {
 		public CswNbtResources CswNbtResources = null;
-        private CswNbtMetaDataEvents _CswNbtMetaDataEvents;
+        //private CswNbtMetaDataEvents _CswNbtMetaDataEvents;
         public CswSessionManager CswSessionManager = null;
         public CswNbtStatisticsEvents CswNbtStatisticsEvents = null;
         private CswNbtStatistics _CswNbtStatistics = null;
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt
 
 
         public AuthenticationStatus attemptRefresh() { return ( CswSessionManager.attemptRefresh() ); }
-        public void endSession() { CswSessionManager.updateLastAccess(); }
+        public void endSession() { CswSessionManager.updateLastAccess(false); }
 
         public void purgeExpiredSessions() { CswSessionManager.SessionsList.purgeExpiredSessions(); }
 

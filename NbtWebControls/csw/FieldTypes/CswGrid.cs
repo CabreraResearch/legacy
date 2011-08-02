@@ -43,7 +43,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             }
         }
 
-        private string _AddNodeActionPre = "addnode_";
+        //private string _AddNodeActionPre = "addnode_";
 
 
         public override void Save()

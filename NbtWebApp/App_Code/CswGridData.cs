@@ -131,12 +131,12 @@ namespace ChemSW.Nbt.WebServices
 			JArray JColumnDefs = new JArray();
 			foreach( DataColumn Column in Data.Columns )
 			{
-				bool IsPrimaryKey = false;
-				foreach( DataColumn PkCol in Data.PrimaryKey )
-				{
-					if( PkCol == Column )
-						IsPrimaryKey = true;
-				}
+				//bool IsPrimaryKey = false;
+				//foreach( DataColumn PkCol in Data.PrimaryKey )
+				//{
+				//    if( PkCol == Column )
+				//        IsPrimaryKey = true;
+				//}
 
 				JColumnNames.Add( Column.ColumnName.ToUpperInvariant() );
 				JObject ThisColumnDef = new JObject();

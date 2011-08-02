@@ -21,13 +21,14 @@ namespace ChemSW.Nbt.ObjClasses
         public static string QuickLaunchViewsPropertyName { get { return "Quick Launch Views"; } }
         public static string QuickLaunchActionsPropertyName { get { return "Quick Launch Actions"; } }
         public static string EmailPropertyName { get { return "Email"; } }
-        public static string PageSizePropertyName { get { return "Page Size"; } }
+		public static string PageSizePropertyName { get { return "Page Size"; } }
+		public static string DateFormatPropertyName { get { return "Date Format"; } }
 
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtObjClassRole _RoleNodeObjClass = null;
         private CswNbtNode _RoleNode = null;
-        private CswNbtNode _UserNode = null;
+        //private CswNbtNode _UserNode = null;
 
         public CswNbtObjClassUser( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
@@ -76,7 +77,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//ctor()
 
-        public void postChanges( bool ForceUpdate ) //bz# 5446
+        public new void postChanges( bool ForceUpdate ) //bz# 5446
         {
             _CswNbtNode.postChanges( ForceUpdate );
             _RoleNodeObjClass.postChanges( ForceUpdate );
@@ -232,8 +233,8 @@ namespace ChemSW.Nbt.ObjClasses
         public string Rolename { get { return _RoleNodeObjClass.Name.Text; } }
         public Int32 RoleTimeout { get { return CswConvert.ToInt32( _RoleNodeObjClass.Timeout.Value ); } }
 
-        public CswNbtNodePropRelationship Role { get { return ( _CswNbtNode.Properties[RolePropertyName].AsRelationship ); } }
-        public CswNbtNodePropLogical AccountLocked { get { return ( _CswNbtNode.Properties[AccountLockedPropertyName].AsLogical ); } }
+		public CswNbtNodePropRelationship Role { get { return ( _CswNbtNode.Properties[RolePropertyName].AsRelationship ); } }
+		public CswNbtNodePropLogical AccountLocked { get { return ( _CswNbtNode.Properties[AccountLockedPropertyName].AsLogical ); } }
         public CswNbtNodePropNumber FailedLoginCount { get { return ( _CswNbtNode.Properties[FailedLoginCountPropertyName].AsNumber ); } }
         public CswNbtNodePropPassword PasswordProperty { get { return ( _CswNbtNode.Properties[PasswordPropertyName].AsPassword ); } }
         public CswNbtNodePropText UsernameProperty { get { return ( _CswNbtNode.Properties[UsernamePropertyName].AsText ); } }
@@ -247,6 +248,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogicalSet QuickLaunchActions { get { return _CswNbtNode.Properties[QuickLaunchActionsPropertyName].AsLogicalSet; } }
         public CswNbtNodePropText EmailProperty { get { return _CswNbtNode.Properties[EmailPropertyName].AsText; } }
         public string Email { get { return EmailProperty.Text; } }
+		public string DateFormat { get { return DateFormatProperty.Value; } }
+		public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[DateFormatPropertyName].AsList ); } }
 
         public string EncryptedPassword { get { return PasswordProperty.EncryptedPassword; } }
 
@@ -261,6 +264,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+	
         #endregion
 
 

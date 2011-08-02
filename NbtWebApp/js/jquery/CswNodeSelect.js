@@ -1,4 +1,7 @@
-﻿; (function ($)
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../_Global.js" />
+
+; (function ($)
 {
 	var PluginName = "CswNodeSelect";
 
@@ -26,16 +29,16 @@
 								.appendTo($parent);
 				$select.change(function(event) { o.onSelect( $select.val() ); });
 
-                var dataXml = {
-                    NodeTypeId: o.nodetypeid,
-                    ObjectClassId: o.objectclassid,
-                    ObjectClass: o.objectclass
-                };
+				var dataXml = {
+					NodeTypeId: o.nodetypeid,
+					ObjectClassId: o.objectclassid,
+					ObjectClass: o.objectclass
+				};
 
 				CswAjaxXml({
 						url: o.NodesUrl,
 						data: dataXml,
-                        stringify: false,
+						stringify: false,
 						success: function ($xml)
 						{
 							$xml.children('node').each(function() {

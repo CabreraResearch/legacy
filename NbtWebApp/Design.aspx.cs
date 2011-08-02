@@ -1692,7 +1692,19 @@ namespace ChemSW.Nbt.WebPages
                             MTBFDateTodayRow.Cells[1].Controls.Add( MTBFDateTodayValue );
                             break;
 
-                        //case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
+						case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
+							TableRow MOptionsRow = makeEditPropTableRow( EditPropPlaceHolder );
+							( (Literal) MOptionsRow.Cells[0].Controls[0] ).Text = "Options:";
+							TextBox MOptionsValue = new TextBox();
+							if( DerivesFromObjectClassProp && ObjectClassProp.ListOptions != String.Empty )
+								MOptionsValue.Enabled = false;
+							MOptionsValue.CssClass = "textinput";
+							MOptionsValue.ID = "EditProp_OptionsValue" + SelectedNodeTypeProp.PropId.ToString();
+							MOptionsValue.Text = SelectedNodeTypeProp.ListOptions;
+							MOptionsRow.Cells[1].Controls.Add( MOptionsValue );
+							break;
+
+						//case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
                         //    TableRow MultiTargetRow = makeEditPropTableRow( EditPropPlaceHolder );
                         //    ( (Literal) MultiTargetRow.Cells[0].Controls[0] ).Text = "Target:";
                         //    DropDownList MultiTargetValue = new DropDownList();
@@ -2194,8 +2206,10 @@ namespace ChemSW.Nbt.WebPages
                     //}
 
                     // BZ 8058 - Default Value
-                    if( FieldType.CanHaveDefaultValue() )
-                    {
+                    if( FieldType.CanHaveDefaultValue() &&
+						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Scientific &&   // temporary until ported into new UI
+						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MultiList )     // temporary until ported into new UI
+					{
                         TableRow DefaultValueRow = makeEditPropTableRow( EditPropPlaceHolder );
                         ( (Literal) DefaultValueRow.Cells[0].Controls[0] ).Text = "Default Value:";
 
@@ -2216,8 +2230,8 @@ namespace ChemSW.Nbt.WebPages
                         //case CswNbtMetaDataFieldType.NbtFieldType.File:
                         //case CswNbtMetaDataFieldType.NbtFieldType.Image:
                         case CswNbtMetaDataFieldType.NbtFieldType.Link:
-                        case CswNbtMetaDataFieldType.NbtFieldType.List:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Location:
+						case CswNbtMetaDataFieldType.NbtFieldType.List:
+						case CswNbtMetaDataFieldType.NbtFieldType.Location:
                         case CswNbtMetaDataFieldType.NbtFieldType.Logical:
                         case CswNbtMetaDataFieldType.NbtFieldType.MOL:
                         case CswNbtMetaDataFieldType.NbtFieldType.Memo:

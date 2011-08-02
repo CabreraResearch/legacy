@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.MetaData
         {
             CswNbtMetaDataNodeTypeProp ret = null;
             ICollection Props = NodeTypePropsByDisplayOrder;
-            bool GetNext = false;
+            //bool GetNext = false;
             foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
             {
                 if( Prop == NextProp )

@@ -1,7 +1,5 @@
-﻿/// <reference path="../jquery/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../jquery/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../jquery/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="_Global.js" />
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	var PluginName = "CswWelcome";
@@ -25,14 +23,14 @@
 				}
 				var $this = $(this);
 
-                var dataXml = {
-                    RoleId: ''
-                };
+				var dataXml = {
+					RoleId: ''
+				};
 
 				CswAjaxXml({
 					url: o.Url,
 					data: dataXml,
-                    stringify: false,
+					stringify: false,
 					success: function ($xml) {
 						var $WelcomeDiv = $('<div id="welcomediv"></div>')
 											.appendTo($this)
@@ -99,10 +97,10 @@
 								$imagecell.find('a').click(function() { _clickItem(clickopts); return false; });
 							}
 
-                            var $welcomehidden = $textcell.CswInput('init',{ID: $item.CswAttrXml('welcomeid'),
-                                                                            type: CswInput_Types.hidden
-                                                                     });
-                            $welcomehidden.CswAttrDom('welcomeid',$item.CswAttrXml('welcomeid'));                                            
+							var $welcomehidden = $textcell.CswInput('init',{ID: $item.CswAttrXml('welcomeid'),
+																			type: CswInput_Types.hidden
+																	 });
+							$welcomehidden.CswAttrDom('welcomeid',$item.CswAttrXml('welcomeid'));                                            
 						}); // each
 				
 					} // success{}
@@ -135,19 +133,19 @@
 										.appendTo($table.CswTable('cell', 2, 1))
 										.hide();
 				var $viewselectcell = $table.CswTable('cell', 2, 2).CswTable('init', { ID: 'viewselecttable' });
-                var $viewselect = $viewselectcell.CswTable('cell', 1, 1).CswViewSelect({
+				var $viewselect = $viewselectcell.CswTable('cell', 1, 1).CswViewSelect({
 																				'ID': 'welcome_viewsel'
 																				//'viewid': '',
 																				//'onSelect': function(optSelect) { },
 																			})
 										.hide();
 
-                var $searchviewselect = $viewselectcell.CswTable('cell', 2, 1).CswViewSelect({
+				var $searchviewselect = $viewselectcell.CswTable('cell', 2, 1).CswViewSelect({
 																'ID': 'welcome_searchviewsel',
 																'issearchable': true,
-                                                                'usesession': false
+																'usesession': false
 															})
-						                .hide();
+										.hide();
 
 				var $ntselect_label = $('<span>Add New:</span>')
 										.appendTo($table.CswTable('cell', 3, 1))
@@ -157,10 +155,10 @@
 
 				var $welcometext_label = $('<span>Text:</span>')
 										.appendTo($table.CswTable('cell', 4, 1))
-                var $welcometextcell = $table.CswTable('cell', 4, 2);
+				var $welcometextcell = $table.CswTable('cell', 4, 2);
 				var $welcometext = $welcometextcell.CswInput('init',{ID: 'welcome_text',
-                                                                  type: CswInput_Types.text
-                                                                });
+																  type: CswInput_Types.text
+																});
 				var $buttonsel_label = $('<span>Use Button:</span>')
 										.appendTo($table.CswTable('cell', 5, 1))
 				var $buttonsel = $('<select id="welcome_button" />')
@@ -171,39 +169,39 @@
 										.appendTo( $table.CswTable('cell', 6, 2) );
 
 				var $addbutton = $table.CswTable('cell', 7, 2).CswButton({ID: 'welcome_add', 
-                                                        enabledText: 'Add', 
-                                                        disabledText: 'Adding', 
-                                                        onclick: function() { 
-										                        var viewtype = '';
-										                        var viewvalue = '';
+														enabledText: 'Add', 
+														disabledText: 'Adding', 
+														onclick: function() { 
+																var viewtype = '';
+																var viewvalue = '';
 																var selectedView = '';
-                                                                if( !$viewselect.is(':hidden') )
-                                                                {
+																if( !$viewselect.is(':hidden') )
+																{
 																	selectedView = $viewselect.CswViewSelect('value');
 																	viewtype = selectedView.type;
 																	viewvalue = selectedView.value;
-                                                                }
-                                                                else if( !$searchviewselect.is(':hidden') )
-                                                                {
+																}
+																else if( !$searchviewselect.is(':hidden') )
+																{
 																	selectedView = $searchviewselect.CswViewSelect('value');
 																	viewtype = selectedView.type;
 																	viewvalue = selectedView.value;
-                                                                }
-                                                                
-                                                                _addItem({ 
-													                    'AddWelcomeItemUrl': o.AddWelcomeItemUrl,
-													                    'type': $typeselect.val(),
-													                    'viewtype': viewtype,
-													                    'viewvalue': viewvalue,
-													                    'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
-													                    'text': $welcometext.val(),
-													                    'iconfilename': $buttonsel.val(),
-													                    'onSuccess': o.onAdd,
+																}
+																
+																_addItem({ 
+																		'AddWelcomeItemUrl': o.AddWelcomeItemUrl,
+																		'type': $typeselect.val(),
+																		'viewtype': viewtype,
+																		'viewvalue': viewvalue,
+																		'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
+																		'text': $welcometext.val(),
+																		'iconfilename': $buttonsel.val(),
+																		'onSuccess': o.onAdd,
 																		'onError': function() { $addbutton.CswButton('enable'); }
-												                    });
-									                            }
-                                                    });
-                $table.CswTable('cell', 7, 2).append($addbutton);
+																	});
+																}
+													});
+				$table.CswTable('cell', 7, 2).append($addbutton);
 
 				$buttonsel.change(function(event) { 
 					$buttonimg.CswAttrDom('src', 'Images/biggerbuttons/' + $buttonsel.val()); 
@@ -217,7 +215,7 @@
 											'$typeselect': $typeselect,
 											'$viewselect_label': $viewselect_label,
 											'$viewselect': $viewselect,
-                                            '$searchviewselect': $searchviewselect,
+											'$searchviewselect': $searchviewselect,
 											'$ntselect_label': $ntselect_label,
 											'$ntselect': $ntselect,
 //											'$welcometext_label': $welcometext_label,
@@ -317,15 +315,15 @@
 		if(removedata) {
 			$.extend(r, removedata);
 		}
-        var $textcell = $(r.cellset[2][1]);
-        if($textcell.length > 0)
-        {
-            var welcomeid = $textcell.find('input').CswAttrDom('welcomeid');
-		    
-            var dataJson = {
-                RoleId: '', 
-                WelcomeId: welcomeid
-            };
+		var $textcell = $(r.cellset[2][1]);
+		if($textcell.length > 0)
+		{
+			var welcomeid = $textcell.find('input').CswAttrDom('welcomeid');
+			
+			var dataJson = {
+				RoleId: '', 
+				WelcomeId: welcomeid
+			};
 
 			CswAjaxJSON({
 				url: r.RemoveWelcomeItemUrl,
@@ -334,7 +332,7 @@
 					{
 						r.onSuccess();
 					}
-	        });
+			});
 
 		} // if($textcell.length > 0)
 	} // _removeItem()
@@ -356,30 +354,30 @@
 			$.extend(a, addoptions);
 		}
 
-        var dataJson = { 
-            RoleId: '', 
-            Type: a.type,
-            ViewType: a.viewtype, 
-            ViewValue: a.viewvalue, 
-            NodeTypeId: a.nodetypeid, 
-            Text: a.text, 
-            IconFileName: a.iconfilename
-        };
+		var dataJson = { 
+			RoleId: '', 
+			Type: a.type,
+			ViewType: a.viewtype, 
+			ViewValue: a.viewvalue, 
+			NodeTypeId: a.nodetypeid, 
+			Text: a.text, 
+			IconFileName: a.iconfilename
+		};
 
-        CswAjaxJSON({
+		CswAjaxJSON({
 			url: a.AddWelcomeItemUrl,
 			data: dataJson,
 			success: function (result) 
 				{
 					a.onSuccess();
-                },
+				},
 			error: a.onError
-        });
+		});
 
 	} // _addItem()
 
-    function _onSwap(onSwapData)
-    {
+	function _onSwap(onSwapData)
+	{
 		var s = {
 					cellset: '',
 					row: '',
@@ -393,17 +391,17 @@
 			$.extend(s, onSwapData);
 		}
 
-        _moveItem(s.MoveWelcomeItemUrl, s.cellset, s.swaprow, s.swapcolumn);
-        _moveItem(s.MoveWelcomeItemUrl, s.swapcellset, s.row, s.column);
-    } // onSwap()
+		_moveItem(s.MoveWelcomeItemUrl, s.cellset, s.swaprow, s.swapcolumn);
+		_moveItem(s.MoveWelcomeItemUrl, s.swapcellset, s.row, s.column);
+	} // onSwap()
 
-    function _moveItem(MoveWelcomeItemUrl, cellset, newrow, newcolumn)
-    {
-        var $textcell = $(cellset[2][1]);
-        if($textcell.length > 0)
-        {
-            var welcomeid = $textcell.find('input').CswAttrDom('welcomeid');
-            if(!isNullOrEmpty(welcomeid))
+	function _moveItem(MoveWelcomeItemUrl, cellset, newrow, newcolumn)
+	{
+		var $textcell = $(cellset[2][1]);
+		if($textcell.length > 0)
+		{
+			var welcomeid = $textcell.find('input').CswAttrDom('welcomeid');
+			if(!isNullOrEmpty(welcomeid))
 			{
 				var dataJson = {
 					RoleId: '', 
@@ -411,15 +409,15 @@
 					NewRow: newrow, 
 					NewColumn: newcolumn
 				};
-            
+			
 				CswAjaxJSON({
 					url: MoveWelcomeItemUrl,
 					data: dataJson,
 					success: function (result) {}
 				});
 			}
-        }
-    } // _moveItem()
+		}
+	} // _moveItem()
 
 	function _onTypeChange(options)
 	{
@@ -429,7 +427,7 @@
 			$typeselect: '',
 			$viewselect_label: '', 
 			$viewselect: '',
-            $searchviewselect: '',
+			$searchviewselect: '',
 			$ntselect_label: '',
 			$ntselect: '',
 //			$welcometext_label: '',
@@ -448,7 +446,7 @@
 			case "Add":
 				o.$viewselect_label.hide();
 				o.$viewselect.hide();
-                o.$searchviewselect.hide();
+				o.$searchviewselect.hide();
 				o.$ntselect_label.show();
 				o.$ntselect.show();
 				o.$buttonsel_label.show();
@@ -457,8 +455,8 @@
 				break;
 			case "Link":
 				o.$viewselect_label.show();
-                o.$viewselect.show();
-                o.$searchviewselect.hide();
+				o.$viewselect.show();
+				o.$searchviewselect.hide();
 				o.$ntselect_label.hide();
 				o.$ntselect.hide();
 				o.$buttonsel_label.show();
@@ -468,7 +466,7 @@
 			case "Search":
 				o.$viewselect_label.show();
 				o.$viewselect.hide();
-                o.$searchviewselect.show();                
+				o.$searchviewselect.show();                
 				o.$ntselect_label.hide();
 				o.$ntselect.hide();
 				o.$buttonsel_label.show();
@@ -478,7 +476,7 @@
 			case "Text":
 				o.$viewselect_label.hide();
 				o.$viewselect.hide();
-                o.$searchviewselect.hide();
+				o.$searchviewselect.hide();
 				o.$ntselect_label.hide();
 				o.$ntselect.hide();
 				o.$buttonsel_label.hide();

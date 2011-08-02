@@ -273,7 +273,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
 
-        private CswNbtMetaDataNodeType _NodeType = null;
+        //private CswNbtMetaDataNodeType _NodeType = null;
         public CswNbtMetaDataNodeType NodeType
         {
             get { return _CswNbtResources.MetaData.getNodeType( NodeTypeId ); }

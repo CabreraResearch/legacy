@@ -84,9 +84,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleMTBF( CswNbtFieldResources, MetaDataProp );
                     break;
 
-                //case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
-                //    ReturnVal = new CswNbtFieldTypeRuleMultiRelationship( CswNbtFieldResources );
-                //    break;
+				//case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
+				//    ReturnVal = new CswNbtFieldTypeRuleMultiRelationship( CswNbtFieldResources );
+				//    break;
+
+				case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
+					ReturnVal = new CswNbtFieldTypeRuleMultiList( CswNbtFieldResources, MetaDataProp );
+					break;
 
                 //case CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions:
                 //    ReturnVal = new CswNbtFieldTypeRuleNodeTypePermissions( CswNbtFieldResources );
@@ -120,11 +124,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleRelationship( CswNbtFieldResources, MetaDataProp );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
-                    ReturnVal = new CswNbtFieldTypeRuleSequence( CswNbtFieldResources, MetaDataProp );
-                    break;
+				case CswNbtMetaDataFieldType.NbtFieldType.Scientific:
+					ReturnVal = new CswNbtFieldTypeRuleScientific( CswNbtFieldResources, MetaDataProp );
+					break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Static:
+				case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
+					ReturnVal = new CswNbtFieldTypeRuleSequence( CswNbtFieldResources, MetaDataProp );
+					break;
+
+				case CswNbtMetaDataFieldType.NbtFieldType.Static:
                     ReturnVal = new CswNbtFieldTypeRuleStatic( CswNbtFieldResources, MetaDataProp );
                     break;
 
@@ -154,7 +162,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
                 default:
                     throw( new CswDniException( "There is no field rule class for field type " + MetaDataProp.FieldType.FieldType.ToString() ) );
-                    break;
+                    //break;
             }//switch
 
 

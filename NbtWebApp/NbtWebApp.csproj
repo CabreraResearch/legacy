@@ -14,6 +14,7 @@
     <AssemblyName>NbtWebApp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
+    <JSLintSkip>\fp_client\fpspread\4_0_3505_2008\HTC\fpspreadmac.js|\fp_client\fpspread\4_0_3505_2008\HTC\fpspread.js|\fp_client\fpspread\4_0_3505_2008\HTC\multicolumncombobox.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq-vsdoc.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.min.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq.min.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq-vsdoc.js|\js\thirdparty\js\modernizr-2.0.3.min.js|\js\thirdparty\js\modernizr-2.0.3.js|\js\thirdparty\js\gserializer.js|\js\thirdparty\js\jblas-profiler\profiler.js|\js\thirdparty\js\jblas-profiler\profiler-dump.js|\js\thirdparty\jquery\core\jquery.cookie.js|\js\thirdparty\jquery\core\jquery-1.6.2.min.js|\js\thirdparty\jquery\core\jquery-1.6.2.js|\js\thirdparty\jquery\core\jquery-1.6.2-vsdoc.js|\js\thirdparty\jquery\core\jquery-1.6.1.min.js|\js\thirdparty\jquery\core\jquery-1.6.1.js|\js\thirdparty\jquery\core\jquery.cookie.min.js|\js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.css|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css|\js\thirdparty\jquery\core\jquery-ui-1.8.12\jquery-1.5.1.js|\js\thirdparty\jquery\plugins\fileuploader.js|\js\thirdparty\jquery\plugins\fileuploader.css|\js\thirdparty\jquery\plugins\jquery.xml.js|\js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.min.js|\js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.min.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery-1.4.4.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.min.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.min.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\additional-methods.min.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\additional-methods.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate.min.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate-vsdoc.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-HK.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-CN.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-vi.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-uk.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-tr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-tj.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-th.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ta.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sv.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sr-SR.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sq.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sk.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ru.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ro.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-rm.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pt.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pt-BR.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-no.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-nl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ms.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ml.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-lv.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-lt.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-kz.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ko.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ja.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-it.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-is.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-id.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hy.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hu.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-he.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-gl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fr-CH.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fo.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fi.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fa.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-eu.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-et.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-es.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-eo.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-NZ.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-GB.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-AU.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-el.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-de.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-da.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-cs.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ca.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-bs.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-bg.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-az.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ar.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ar-DZ.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-af.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-TW.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery-ui-i18n.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\jquery-ui.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\jquery-ui.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-HK.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-CN.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-vi.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-uk.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-tr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-tj.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-th.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ta.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sv.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sr-SR.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sq.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sk.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ru.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ro.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-rm.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pt.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pt-BR.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-no.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-nl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ms.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ml.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-lv.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-lt.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-kz.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ko.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ja.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-it.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-is.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-id.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hy.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hu.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-he.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-gl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fr-CH.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fo.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fi.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fa.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-eu.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-et.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-es.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-eo.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-NZ.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-GB.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-AU.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-el.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-de.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-da.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-cs.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ca.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-bs.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-bg.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-az.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ar.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ar-DZ.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-af.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-TW.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery-ui-i18n.min.js|\iphone.html|\Main.js|\jmol\Jmol.js</JSLintSkip>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -109,6 +110,55 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="js\CswArray.js" />
+    <Content Include="js\CswClientDb.js" />
+    <Content Include="js\CswEnums.js" />
+    <Content Include="js\CswProfileMethod.js" />
+    <Content Include="js\jquery\fieldtypes\CswFieldTypeMultiList.js" />
+    <Content Include="js\mobile\pages\CswMobileMenuButton.js" />
+    <Content Include="js\mobile\pages\CswMobilePage.js" />
+    <Content Include="js\mobile\pages\CswMobilePageFactory.js" />
+    <Content Include="js\mobile\pages\CswMobilePageFooter.js" />
+    <Content Include="js\mobile\pages\CswMobilePageHeader.js" />
+    <Content Include="js\_CswPrototypeExtensions.js" />
+    <Content Include="js\CswString.js" />
+    <Content Include="js\jquery\fieldtypes\CswFieldTypeScientific.js" />
+    <Content Include="Images\favicon.ico" />
+    <Content Include="js\mobile\CswMobile.js" />
+    <Content Include="js\mobile\clientdb\CswMobileClientDb.js" />
+    <Content Include="js\mobile\clientdb\CswMobileClientDbResources.js" />
+    <Content Include="js\mobile\CswMobileTools.js" />
+    <Content Include="js\mobile\sync\CswMobileBackgroundTask.js" />
+    <Content Include="js\mobile\sync\CswMobileSync.js" />
+    <Content Include="js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js" />
+    <Content Include="js\thirdparty\jquery\core\jquery-1.6.1.js" />
+    <Content Include="js\thirdparty\jquery\core\jquery-1.6.1.min.js" />
+    <Content Include="js\thirdparty\jquery\core\jquery-1.6.2-vsdoc.js" />
+    <Content Include="js\thirdparty\jquery\core\jquery-1.6.2.js" />
+    <Content Include="js\thirdparty\jquery\core\jquery-1.6.2.min.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.min.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\apple\bg.jpg" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\apple\d.png" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\apple\dot_for_ie.gif" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\apple\style.css" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\apple\throbber.gif" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\classic\d.png" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\classic\dot_for_ie.gif" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\classic\style.css" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\classic\throbber.gif" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default-rtl\d.gif" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default-rtl\d.png" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default-rtl\dots.gif" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default-rtl\style.css" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default-rtl\throbber.gif" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default\d.gif" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default\d.png" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default\style.css" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default\throbber.gif" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.cookie.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.js" />
     <Content Include="NewMain.html" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.js" />
@@ -125,7 +175,6 @@
     <Content Include="etc\TelerikRadGrid.xsl" />
     <Content Include="etc\TelerikRadGridProperty.xsl" />
     <Content Include="etc\TelerikRadTreeView.xsl" />
-    <Content Include="favicon.ico" />
     <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\button.htc" />
     <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\checkboxeditor.htc" />
     <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\checkboxrender.htc" />
@@ -469,32 +518,30 @@
     <Content Include="jmol\Jmol.js" />
     <Content Include="jmol\JmolApplet.jar" />
     <Content Include="js\CswAll.min.js" />
-    <Content Include="js\CswClasses.js" />
     <Content Include="js\jquery\CswAuditHistoryGrid.js" />
     <Content Include="js\jquery\CswInspectionStatus.js" />
-    <Content Include="js\jquery\CswAttr.js" />
+    <Content Include="js\jquery\common\CswAttr.js" />
     <Content Include="js\jquery\CswButton.js" />
     <Content Include="js\jquery\CswCheckBoxArray.js" />
     <Content Include="js\jquery\CswComboBox.css" />
     <Content Include="js\jquery\CswComboBox.js" />
-    <Content Include="js\jquery\CswCookie.js" />
+    <Content Include="js\jquery\common\CswCookie.js" />
     <Content Include="js\jquery\CswDashboard.js" />
     <Content Include="js\jquery\CswDialog.js" />
-    <Content Include="js\jquery\CswDiv.js" />
+    <Content Include="js\jquery\common\CswDiv.js" />
     <Content Include="js\jquery\CswErrorMessage.css" />
     <Content Include="js\jquery\CswErrorMessage.js" />
     <Content Include="js\jquery\CswImageButton.js" />
-    <Content Include="js\jquery\CswInput.js" />
+    <Content Include="js\jquery\common\CswInput.js" />
     <Content Include="js\jquery\CswLayoutTable.css" />
     <Content Include="js\jquery\CswLayoutTable.js" />
-    <Content Include="js\jquery\CswLink.js" />
+    <Content Include="js\jquery\common\CswLink.js" />
     <Content Include="js\jquery\CswLogin.js" />
     <Content Include="js\jquery\CswMenu.css" />
     <Content Include="js\jquery\CswMenu.js" />
     <Content Include="js\jquery\CswMenuHeader.js" />
     <Content Include="js\jquery\CswMenuMain.js" />
-    <Content Include="js\jquery\CswMobile.css" />
-    <Content Include="js\jquery\CswMobile.js" />
+    <Content Include="js\mobile\CswMobile.css" />
     <Content Include="js\jquery\CswNodeGrid.js" />
     <Content Include="js\jquery\CswNodeSelect.js" />
     <Content Include="js\jquery\CswNodeTabs.js" />
@@ -505,10 +552,10 @@
     <Content Include="js\jquery\CswQuickLaunch.js" />
     <Content Include="js\jquery\CswSearch.css" />
     <Content Include="js\jquery\CswSearch.js" />
-    <Content Include="js\jquery\CswSelect.js" />
-    <Content Include="js\jquery\CswSpan.js" />
+    <Content Include="js\jquery\common\CswSelect.js" />
+    <Content Include="js\jquery\common\CswSpan.js" />
     <Content Include="js\jquery\CswTable.js" />
-    <Content Include="js\jquery\CswTools.js" />
+    <Content Include="js\jquery\common\CswTools.js" />
     <Content Include="js\jquery\CswTristateCheckBox.js" />
     <Content Include="js\jquery\CswViewEditor.css" />
     <Content Include="js\jquery\CswViewEditor.js" />
@@ -550,9 +597,6 @@
     <Content Include="js\jquery\fieldtypes\CswFieldTypeViewReference.js" />
     <Content Include="js\jquery\fieldtypes\_CswFieldTypeFactory.js" />
     <Content Include="js\jquery\fieldtypes\_CswFieldTypes.css" />
-    <Content Include="js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js" />
-    <Content Include="js\thirdparty\jquery\core\jquery-1.6.1.js" />
-    <Content Include="js\thirdparty\jquery\core\jquery-1.6.1.min.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-ui-1.8.12\AUTHORS.txt" />
     <Content Include="js\thirdparty\jquery\core\jquery-ui-1.8.12\external\jquery.bgiframe-2.1.2.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-ui-1.8.12\external\jquery.cookie.js" />
@@ -1031,68 +1075,6 @@
     <Content Include="js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.js" />
     <Content Include="js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.min.js" />
     <Content Include="js\thirdparty\jquery\plugins\jquery.xml.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\apple\bg.jpg" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\apple\d.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\apple\dot_for_ie.gif" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\apple\style.css" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\apple\throbber.gif" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\classic\d.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\classic\dot_for_ie.gif" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\classic\style.css" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\classic\throbber.gif" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default-rtl\d.gif" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default-rtl\d.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default-rtl\dots.gif" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default-rtl\style.css" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default-rtl\throbber.gif" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default\d.gif" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default\d.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default\style.css" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\default\throbber.gif" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_demo\file.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_demo\folder.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_demo\index.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_demo\root.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_demo\_dump.sql" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_demo\_install.txt" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\!style.css" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\checkbox.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\contextmenu.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\cookies.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\core.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\crrm.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\dnd.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\hotkeys.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\html_data.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\index.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\json_data.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\languages.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\search.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\sort.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\syntax\!script.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\syntax\!style.css" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\syntax\clipboard.swf" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\syntax\help.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\syntax\magnifier.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\syntax\page_white_code.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\syntax\page_white_copy.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\syntax\printer.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\syntax\wrapping.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\themeroller.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\themes.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\types.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\ui.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\unique.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\xml_data.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\_drive.png" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\_html_data.html" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\_xml_flat.xml" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\_xml_nest.xml" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.cookie.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.js" />
     <Content Include="js\thirdparty\jquery\plugins\loading.gif" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\bg_fallback.png" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\icon_sprite.png" />
@@ -1476,8 +1458,7 @@
     <Compile Include="App_Code\CswNbtWebServiceHeader.cs" />
     <Compile Include="App_Code\CswNbtWebServiceMainMenu.cs" />
     <Compile Include="App_Code\CswNbtWebServiceMetaData.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceMobileUpdateProperties.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceMobileView.cs" />
+    <Compile Include="App_Code\CswNbtWebServiceMobile.cs" />
     <Compile Include="App_Code\CswNbtWebServiceNode.cs" />
     <Compile Include="App_Code\CswNbtWebServicePrintLabels.cs" />
     <Compile Include="App_Code\CswNbtWebServiceQuickLaunchItems.cs" />
@@ -1838,6 +1819,7 @@
     <None Include="jmol\cefixime_syn.mol" />
     <None Include="jmol\JmolApplet.properties" />
     <None Include="jmol\test.mol" />
+    <None Include="js\_compileMobile.pl" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\demo\captcha\fonts\Anorexia.ttf" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\demo\captcha\images\.htaccess" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\demo\captcha\images\button.psd" />
@@ -1859,14 +1841,6 @@
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\test\users.php" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\test\users2.php" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\todo" />
-    <None Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_demo\config.php" />
-    <None Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_demo\server.php" />
-    <None Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_demo\_inc\class.tree.php" />
-    <None Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_demo\_inc\class._database.php" />
-    <None Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_demo\_inc\class._database_i.php" />
-    <None Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\_json_data.json" />
-    <None Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\_search_data.json" />
-    <None Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_docs\_search_result.json" />
     <None Include="js\thirdparty\jquery\themes\theme-aristo\icons.psd" />
     <None Include="js\thirdparty\jquery\themes\theme-aristo\README.rdoc" />
     <None Include="js\thirdparty\js\jblas-profiler\README.md" />
@@ -1899,6 +1873,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
+    <Folder Include="js\mobile\fieldtypes\" />
+    <Folder Include="js\mobile\objectclasses\" />
     <Folder Include="temp\" />
   </ItemGroup>
   <ItemGroup>
@@ -1948,7 +1924,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>call $(ProjectDir)js\_compile.pl</PostBuildEvent>
+    <PostBuildEvent>call $(ProjectDir)js\_compile.pl $(ProjectDir)
+call $(ProjectDir)js\_compileMobile.pl $(ProjectDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

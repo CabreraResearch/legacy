@@ -170,7 +170,7 @@ foreach my $component (@components)
 #&runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
 
 &runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
-            "devenv ". $repopaths{"Nbt"} ."/Nbt.sln /Build \"Release\"");
+            "devenv ". $repopaths{"Nbt"} ."/Nbt.sln /Rebuild \"Release\"");
 
 &runCommand( "net start \"ChemSW Log Service\"");
 

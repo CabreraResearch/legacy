@@ -47,26 +47,36 @@
 		document.write('<script type="text/javascript" src="js/thirdparty/js/gserializer.js"><\/script>');
 
 		// ChemSW 
-		document.write('<script type="text/javascript" src="js/jquery/CswAttr.js"><\/script>');
+	    // load first (because order matters)
+	    document.write('<script type="text/javascript" src="js/CswEnums.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/_CswPrototypeExtensions.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/_Global.js"><\/script>');
+	    
+		// Csw Common (both Main and Mobile)
+		document.write('<script type="text/javascript" src="js/jquery/common/CswAttr.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/jquery/common/CswCookie.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/jquery/common/CswDiv.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/jquery/common/CswInput.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/jquery/common/CswLink.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/jquery/common/CswSelect.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/jquery/common/CswSpan.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/jquery/common/CswTools.js"><\/script>');
+		
+		// Csw jQuery 
 		document.write('<script type="text/javascript" src="js/jquery/CswAuditHistoryGrid.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswButton.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswCheckBoxArray.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswComboBox.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswCookie.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswDashboard.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswDialog.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswDiv.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswErrorMessage.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswImageButton.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswInput.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswInspectionStatus.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswLayoutTable.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswLink.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswLogin.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswMenu.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswMenuHeader.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswMenuMain.js"><\/script>');
-		//document.write('<script type="text/javascript" src="js/jquery/CswMobile.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswNodeGrid.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswNodeSelect.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswNodeTabs.js"><\/script>');
@@ -76,10 +86,7 @@
 		document.write('<script type="text/javascript" src="js/jquery/CswQueryString.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswQuickLaunch.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswSearch.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswSelect.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswSpan.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswTable.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswTools.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswTristateCheckBox.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswViewEditor.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswViewPropFilter.js"><\/script>');
@@ -87,9 +94,12 @@
 		document.write('<script type="text/javascript" src="js/jquery/CswViewTree.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswWelcome.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswWizard.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/_Global.js"><\/script>');
-		//document.write('<script type="text/javascript" src="js/CswAll.min.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/CswClasses.js"><\/script>');
+
+		//JavaScript Classes
+		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswArray.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswString.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswClientDb.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswProfileMethod.js"><\/script>');
 
 		// Field Types
 		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/_CswFieldTypeFactory.js"><\/script>');
@@ -115,6 +125,7 @@
 		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswFieldTypeQuantity.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswFieldTypeQuestion.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswFieldTypeRelationship.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswFieldTypeScientific.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswFieldTypeSequence.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswFieldTypeStatic.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswFieldTypeText.js"><\/script>');
@@ -123,7 +134,6 @@
 		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswFieldTypeUserSelect.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswFieldTypeViewPickList.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/CswFieldTypeViewReference.js"><\/script>');
-
 	}
 	else
 	{
@@ -148,7 +158,7 @@
 		// ChemSW
 		document.write('<script type="text/javascript" src="js/CswAll.min.js"><\/script>');
 	}
-        
+		
 </script>
 
 

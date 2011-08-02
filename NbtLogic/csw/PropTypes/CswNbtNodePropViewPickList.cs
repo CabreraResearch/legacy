@@ -11,6 +11,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.Security;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -24,7 +25,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewPickList )
             {
-				throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
                                             "CswNbtNodePropViewPickList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
             }
 
@@ -87,10 +88,10 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// True if the SelectedViewIds contains the given ViewId
         /// </summary>
-		public bool ContainsViewId( CswNbtViewId ViewIdToFind )
-		{
-			return SelectedViewIds.Contains( ViewIdToFind.get().ToString() );
-		}
+        public bool ContainsViewId( CswNbtViewId ViewIdToFind )
+        {
+            return SelectedViewIds.Contains( ViewIdToFind.get().ToString() );
+        }
 
         /// <summary>
         /// Removes a ViewId from the SelectedViewIds
@@ -145,22 +146,22 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( SelectMode != PropertySelectMode.Multiple && CswConvert.ToInt32( SelectedViewIds[0] ) > 0 )
                 {
-				//    DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
-				//    if( ViewTable != null && ViewTable.Rows.Count > 0 )
-				//        CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
-					CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( SelectedViewIds[0] ) ) );
-					CachedViewNames.Add( ThisView.ViewName );
-				}
+                    //    DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
+                    //    if( ViewTable != null && ViewTable.Rows.Count > 0 )
+                    //        CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
+                    CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( SelectedViewIds[0] ) ) );
+                    CachedViewNames.Add( ThisView.ViewName );
+                }
                 else
                 {
                     Collection<Int32> SelectedViewIdCollection = SelectedViewIds.ToIntCollection();
                     foreach( Int32 ViewId in SelectedViewIdCollection )
                     {
-						//DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
-						//if( ViewTable != null && ViewTable.Rows.Count > 0 )
-						//    CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
-						CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( SelectedViewIds[0] ) ) );
-						CachedViewNames.Add( ThisView.ViewName );
+                        //DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
+                        //if( ViewTable != null && ViewTable.Rows.Count > 0 )
+                        //    CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
+                        CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( SelectedViewIds[0] ) ) );
+                        CachedViewNames.Add( ThisView.ViewName );
                     } // foreach( Int32 ViewId in SelectedViewIdCollection )
 
                 } // if-else( SelectMode != PropertySelectMode.Multiple && CswConvert.ToInt32( SelectedViewIds[0] ) > 0 )
@@ -184,28 +185,28 @@ namespace ChemSW.Nbt.PropTypes
             set { _User = value; }
         }
 
-		private Collection<CswNbtView> _Views = null;
-		/// <summary>
+        private Collection<CswNbtView> _Views = null;
+        /// <summary>
         /// Collection of Views to select
         /// </summary>
         public Collection<CswNbtView> Views
         {
             get
             {
-				if( _Views == null )
-				{
-					if( NodeId != null )
-					{
-						// Use the User's visible views
-						_Views = _CswNbtResources.ViewSelect.getVisibleViews( User, false );
-					}
-					else
-					{
-						// else 
-						// Creating a new user, don't pick a default view (BZ 7055)
-						_Views = new Collection<CswNbtView>();
-					}
-				}
+                if( _Views == null )
+                {
+                    if( NodeId != null )
+                    {
+                        // Use the User's visible views
+                        _Views = _CswNbtResources.ViewSelect.getVisibleViews( User, false );
+                    }
+                    else
+                    {
+                        // else 
+                        // Creating a new user, don't pick a default view (BZ 7055)
+                        _Views = new Collection<CswNbtView>();
+                    }
+                }
                 return _Views;
             }
         }
@@ -268,6 +269,16 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override void ToXElement( XElement ParentNode )
+        {
+            //Not yet implemented
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            //Not yet implemented
+        }
+
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             //SelectedViewIds.FromString( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedViewIdsSubField.ToXmlNodeName() ) );
@@ -299,14 +310,9 @@ namespace ChemSW.Nbt.PropTypes
             RefreshViewName();
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            //Not yet implemented
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -315,8 +321,10 @@ namespace ChemSW.Nbt.PropTypes
             PendingUpdate = true;
         }
 
-
-
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            //Not yet implemented
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

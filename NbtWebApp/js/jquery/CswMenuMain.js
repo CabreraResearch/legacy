@@ -1,24 +1,22 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
-    $.fn.CswMenuMain = function (options) {
-    /// <summary>
-    ///   Generates an action menu for the current view
-    /// </summary>
-    /// <param name="options" type="Object">
-    ///     A JSON Object
-    ///     &#10;1 - options.viewid: a viewid
-    ///     &#10;2 - options.nodeid: nodeid
-    ///     &#10;3 - options.cswnbtnodekey: a node key
-    ///     &#10;4 - options.onAddNode: function() {}
-    ///     &#10;5 - options.onMultiEdit: function() {}
-    ///     &#10;6 - options.onSearch: { onViewSearch: function() {}, onGenericSearch: function() {} }
-    ///     &#10;7 - options.onEditView: function() {}
-    /// </param>
+	$.fn.CswMenuMain = function (options) {
+	/// <summary>
+	///   Generates an action menu for the current view
+	/// </summary>
+	/// <param name="options" type="Object">
+	///     A JSON Object
+	///     &#10;1 - options.viewid: a viewid
+	///     &#10;2 - options.nodeid: nodeid
+	///     &#10;3 - options.cswnbtnodekey: a node key
+	///     &#10;4 - options.onAddNode: function() {}
+	///     &#10;5 - options.onMultiEdit: function() {}
+	///     &#10;6 - options.onSearch: { onViewSearch: function() {}, onGenericSearch: function() {} }
+	///     &#10;7 - options.onEditView: function() {}
+	/// </param>
 		var o = {
 			Url: '/NbtWebApp/wsNBT.asmx/getMainMenu',
 			viewid: '',
@@ -27,7 +25,7 @@
 			propid: '',
 			onAddNode: function(nodeid, cswnbtnodekey) { },
 			onMultiEdit: function() { },
-            onSearch: { onViewSearch: function() {}, onGenericSearch: function() {} },
+			onSearch: { onViewSearch: function() {}, onGenericSearch: function() {} },
 			onEditView: function(viewid) { },
 			onSaveView: function(newviewid) { },
 			Multi: false,
@@ -37,16 +35,16 @@
 
 		var $MenuDiv = $(this);
 
-        var dataXml = {
-            ViewId: o.viewid,
-            SafeNodeKey: o.cswnbtnodekey,
+		var dataXml = {
+			ViewId: o.viewid,
+			SafeNodeKey: o.cswnbtnodekey,
 			PropIdAttr: o.propid
-        };
+		};
 
 		CswAjaxXml({
 			url: o.Url,
 			data: dataXml,
-            stringify: false,
+			stringify: false,
 			success: function ($xml) {
 				var $ul = $('<ul class="topnav"></ul>');
 

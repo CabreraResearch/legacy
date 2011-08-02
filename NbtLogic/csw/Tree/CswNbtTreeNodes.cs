@@ -60,7 +60,7 @@ namespace ChemSW.Nbt
         private static string _AttrName_NodeTypeName = "nodetypename";
         private static string _AttrName_ObjectClass = "objectclassname";
         private static string _AttrName_ObjectClassId = "objectclassid";
-        private static string _AttrName_ParentNodeId = "parentnodeid";
+        //private static string _AttrName_ParentNodeId = "parentnodeid";
         private static string _AttrName_Selectable = "selectable";
         //private static string _AttrName_ShowInGrid = "showingrid";
         private static string _AttrName_ShowInTree = "showintree";

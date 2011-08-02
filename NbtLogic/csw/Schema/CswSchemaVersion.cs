@@ -80,7 +80,16 @@ namespace ChemSW.Nbt.Schema
 
         #region IComparable<CswSchemaVersion> Members
 
-        int IComparable<CswSchemaVersion>.CompareTo( CswSchemaVersion other )
+		public static bool operator <( CswSchemaVersion ver1, CswSchemaVersion ver2 )
+		{
+			return ver1.CompareTo( ver2 ) < 0;
+		}
+		public static bool operator >( CswSchemaVersion ver1, CswSchemaVersion ver2 )
+		{
+			return ver1.CompareTo( ver2 ) > 0;
+		}
+		
+		public Int32 CompareTo( CswSchemaVersion other )
         {
             Int32 ret = 0;
             if( this.CycleIteration != other.CycleIteration )
@@ -402,7 +411,8 @@ namespace ChemSW.Nbt.Schema
             field1_date,
             field1_numeric,
             field2_date,
-            objectclasspropid,
+			field2_numeric,
+			objectclasspropid,
             isdemo
         }
 
