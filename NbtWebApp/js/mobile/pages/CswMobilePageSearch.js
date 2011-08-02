@@ -46,12 +46,16 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
 	    DivId: 'CswMobile_SearchDiv' + viewId,       // required
 	    HeaderText: 'Search',
 	    theme: 'b',
-	    $content: $searchContent
+	    $content: $searchContent,
+        onHelpClick: function () {}
 	};
 	if (searchDef) $.extend(p, searchDef);
 
-	if (isNullOrEmpty(p.footerDef)) {
-	    p.footerDef = {
+    var pageDef = p;
+    delete pageDef.onHelpClick;
+    
+	if (isNullOrEmpty(pageDef.footerDef)) {
+	    pageDef.footerDef = {
 	        buttons: {
 	            fullsite: { ID: p.DivId + '_main',
 	                text: 'Full Site',
@@ -61,14 +65,15 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
 	            },
 	            help: { ID: p.DivId + '_help',
 	                text: 'Help',
-	                dataIcon: 'info'
+	                dataIcon: 'info',
+	                onClick: p.onHelpClick
 	            }
 	        }
 	    };
 	}
 
-	if (isNullOrEmpty(p.headerDef)) {
-	    p.headerDef = {
+	if (isNullOrEmpty(pageDef.headerDef)) {
+	    pageDef.headerDef = {
 	        buttons: {
 	            back: { ID: p.DivId + '_back',
 	                text: 'Back',
@@ -79,7 +84,7 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
 	    };
 	}
 
-	var onlinePage = new CswMobilePageFactory(p, $parent);
+	var onlinePage = new CswMobilePageFactory(pageDef, $parent);
 	var onlineHeader = onlinePage.mobileHeader;
 	var onlineFooter = onlinePage.mobileFooter;
 	var $content = onlinePage.$content;

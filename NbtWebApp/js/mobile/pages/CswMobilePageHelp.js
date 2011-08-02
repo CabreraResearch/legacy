@@ -65,24 +65,32 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
 	    DivId: 'helpdiv',       // required
 	    HeaderText: 'Help',
 	    theme: 'b',
-	    $content: $help
+	    $content: $help,
+        onOnlineClick: function () {},
+        onRefreshClick: function () {}
 	};
 	if (helpDef) $.extend(p, helpDef);
 
+    var pageDef = p;
+    delete pageDef.onOnlineClick;
+    delete pageDef.onRefreshClick;
+    
     var onlineValue = mobileStorage.onlineStatus();
     
-    if( isNullOrEmpty(p.footerDef)) {
-        p.footerDef = {
+    if( isNullOrEmpty(pageDef.footerDef)) {
+        pageDef.footerDef = {
 		    buttons: {
 					online: { ID: p.DivId + '_gosyncstatus',
 								text: onlineValue,
 								cssClass: 'ui-btn-active onlineStatus ' + onlineValue.toLowerCase(),
-								dataIcon: 'gear'
+								dataIcon: 'gear',
+					            onClick: p.onOnlineClick
 					},
 		            refresh: { ID: p.DivId + '_refresh',
 								text: 'Refresh',
 								cssClass: 'refresh',
-								dataIcon: 'refresh' 
+								dataIcon: 'refresh',
+		                        onClick: p.onRefreshClick
 		            },
 	                fullsite: { ID: p.DivId + '_main',
 	                    text: 'Full Site',
@@ -94,8 +102,8 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
 	    };
 	}
 
-	if (isNullOrEmpty(p.headerDef)) {
-	    p.headerDef = {
+	if (isNullOrEmpty(pageDef.headerDef)) {
+	    pageDef.headerDef = {
 	        buttons: {
 	            back: { ID: p.DivId + '_back',
 	                text: 'Back',
@@ -106,7 +114,7 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
 	    };
 	}
 
-	var helpPage = new CswMobilePageFactory(p, $parent);
+	var helpPage = new CswMobilePageFactory(pageDef, $parent);
 	var helpHeader = helpPage.mobileHeader;
 	var helpFooter = helpPage.mobileFooter;
 	var $content = helpPage.$content;

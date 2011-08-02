@@ -56,16 +56,23 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
 		level: -1,
 		DivId: 'syncstatus',       // required
 		HeaderText: 'Sync Status',
-        onSuccess: function() {},
         theme: 'b',
-        $content: $(content)
+        $content: $(content),
+        onSuccess: function() {},
+        onRefreshClick: function () {},
+        onHelpClick: function () {}
     };
     if(onlineDef) $.extend(p, onlineDef);
 
+    var pageDef = p;
+    delete pageDef.onSuccess;
+    delete pageDef.onRefreshClick;
+    delete pageDef.onHelpClick;
+    
     var onlineValue = mobileStorage.onlineStatus();
     
-    if( isNullOrEmpty(p.footerDef)) {
-        p.footerDef = {
+    if( isNullOrEmpty(pageDef.footerDef)) {
+        pageDef.footerDef = {
 		    buttons: {
 					online: { ID: p.DivId + '_gosyncstatus',
 								text: onlineValue,
@@ -75,7 +82,8 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
 		            refresh: { ID: p.DivId + '_refresh',
 								text: 'Refresh',
 								cssClass: 'refresh',
-								dataIcon: 'refresh' 
+								dataIcon: 'refresh',
+		                        onClick: p.onRefreshClick
 		            },
 		            fullsite: { ID: p.DivId + '_main',
 								text: 'Full Site',
@@ -85,14 +93,15 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
 		            },
 					help: { ID: p.DivId + '_help',
 								text: 'Help',
-								dataIcon: 'info' 
+								dataIcon: 'info',
+					            onClick: p.onHelpClick
 					}
 				}
 		};
     }
     
-    if( isNullOrEmpty(p.headerDef)) {
-        p.headerDef = {
+    if( isNullOrEmpty(pageDef.headerDef)) {
+        pageDef.headerDef = {
 		    buttons: {
 					back: { ID: p.DivId + '_back',
 								text: 'Back',
@@ -103,7 +112,7 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
 		};
     }
     
-    var onlinePage = new CswMobilePageFactory(p, $parent);
+    var onlinePage = new CswMobilePageFactory(pageDef, $parent);
     var onlineHeader = onlinePage.mobileHeader;
     var onlineFooter = onlinePage.mobileFooter;
     var $content = onlinePage.$content;

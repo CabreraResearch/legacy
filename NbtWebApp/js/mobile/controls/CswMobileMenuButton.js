@@ -2,6 +2,7 @@
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../../jquery/common/CswAttr.js" />
 /// <reference path="ICswMobileWebControls.js" />
+/// <reference path="../../CswEnums.js" />
 
 //#region CswMobileMenuButton
 
@@ -77,6 +78,12 @@ function CswMobileMenuButton(buttonDef, $parent) {
         _o = o;
         _classes = classes;
         _$control = $button;
+        
+        if( !isNullOrEmpty(o.onClick) ) {
+            this.unbindEvents();
+            this.setEvent(CswDomElementEvent.click, o.onClick);
+            this.bindEvents(CswDomElementEvent.click);
+        }
     }
 
     Constructor();

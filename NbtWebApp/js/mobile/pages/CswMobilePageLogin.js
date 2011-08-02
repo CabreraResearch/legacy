@@ -38,29 +38,35 @@ function CswMobilePageLogin(loginDef,$parent,mobileStorage,loginSuccess) {
 		DivId: 'logindiv',       // required
 		HeaderText: 'ChemSW Live',
         headerDef: { },
-        onSuccess: function() {},
         theme: 'b',
-        $content: $(loginContent)
+        $content: $(loginContent),
+        onHelpClick: function () {}
     };
     if(loginDef) $.extend(p, loginDef);
 
-    if( isNullOrEmpty(p.footerDef)) {
+    var pageDef = p;
+    delete pageDef.onHelpClick;
+    
+    if( isNullOrEmpty(pageDef.footerDef)) {
         
-		p.footerDef = {
+		pageDef.footerDef = {
 		    buttons: {
 					fullsite: { ID: p.DivId + '_main',
 								text: 'Full Site',
 								href: 'Main.html', 
 								rel: 'external',
-								dataIcon: 'home' },
+								dataIcon: 'home' 
+					},
 					help: { ID: p.DivId + '_help',
 								text: 'Help',
-								dataIcon: 'info' }
+								dataIcon: 'info',
+					            onClick: p.onHelpClick
+					}
 				}
 		};
     }
     
-    var loginDiv = new CswMobilePageFactory(p, $parent);
+    var loginDiv = new CswMobilePageFactory(pageDef, $parent);
     var loginHeader = loginDiv.mobileHeader;
     var loginFooter = loginDiv.mobileFooter;
     var $content = loginDiv.$content;

@@ -38,36 +38,43 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
 	    DivId: 'sorrycharliediv',       // required
 	    HeaderText: 'Sorry Charlie!',
 	    theme: 'b',
-	    $content: $offline
-	};
-	if (offlineDef) $.extend(p, offlineDef);
+	    $content: $offline,
+	    onHelpClick: function () {},
+        onOnlineClick: function () {}
+    };
+    if(offlineDef) $.extend(p, offlineDef);
+
+    var pageDef = p;
+    delete pageDef.onRefreshClick;
+    delete pageDef.onHelpClick;
 
     var onlineValue = mobileStorage.onlineStatus();
     
     if( isNullOrEmpty(p.footerDef)) {
-        p.footerDef = {
+        pageDef.footerDef = {
 		    buttons: {
 					online: { ID: p.DivId + '_gosyncstatus',
 								text: onlineValue,
 								cssClass: 'ui-btn-active onlineStatus ' + onlineValue.toLowerCase(),
-								dataIcon: 'gear'
+								dataIcon: 'gear',
+					            onClick: p.onOnlineClick
 					},
-		            refresh: { ID: p.DivId + '_refresh',
-								text: 'Refresh',
-								cssClass: 'refresh',
-								dataIcon: 'refresh' 
-		            },
-	                fullsite: { ID: p.DivId + '_main',
+		            fullsite: { ID: p.DivId + '_main',
 	                    text: 'Full Site',
 	                    href: 'Main.html',
 	                    rel: 'external',
 	                    dataIcon: 'home'
-	                }
+	                },
+		            help: { ID: p.DivId + '_help',
+							text: 'Help',
+							dataIcon: 'info',
+					        onClick: p.onHelpClick
+					}
 	        }
 	    };
 	}
 
-	var offlinePage = new CswMobilePageFactory(p, $parent);
+	var offlinePage = new CswMobilePageFactory(pageDef, $parent);
 	var offlineHeader = offlinePage.mobileHeader;
 	var offlineFooter = offlinePage.mobileFooter;
 	var $content = offlinePage.$content;
