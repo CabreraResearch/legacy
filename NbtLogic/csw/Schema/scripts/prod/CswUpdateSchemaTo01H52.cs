@@ -33,7 +33,11 @@ namespace ChemSW.Nbt.Schema
 			// New Site nodetype
 
 			CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-			CswNbtMetaDataNodeType SiteNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( LocationOC.ObjectClassId, "Site", "Locations" );
+			CswNbtMetaDataNodeType SiteNT =_CswNbtSchemaModTrnsctn.MetaData.getNodeType("Site");
+			if( SiteNT == null )
+			{
+				SiteNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( LocationOC.ObjectClassId, "Site", "Locations" );
+			}
 			SiteNT.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassLocation.NamePropertyName );
 			SiteNT.IconFileName = "flag.gif";
 
