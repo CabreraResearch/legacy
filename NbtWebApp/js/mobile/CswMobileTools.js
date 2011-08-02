@@ -206,10 +206,15 @@ function Logout(mobileStorage,reloadWindow) {
 }
 
 function setOffline(mobileStorage,onComplete) {
-	/// <summary>
-	///   Sets 'Online' button style 'offline',
+    /// <summary>
+	///   Sets 'Online' button style 'offline'
 	/// </summary>
-	mobileStorage.amOnline(false);
+    /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
+    /// <param name="onComplete" type="Function">Event to fire on complete.</param>
+	if(isNullOrEmpty(mobileStorage)) {
+	    mobileStorage = new CswMobileClientDbResources();
+	}
+    mobileStorage.amOnline(false);
 			
 	$('.onlineStatus').removeClass('online')
 						.addClass('offline')
@@ -219,7 +224,14 @@ function setOffline(mobileStorage,onComplete) {
 						.addClass('offline')
 						.end();
 			
-	$('.refresh').css('visibility', 'hidden');
+	$('.refresh').each(function(){
+		var $this = $(this);
+		try { //we'd prefer to simply disable it, but it might not be initialized yet.
+		    $this.button('disable');
+		} catch (e) {
+		    $this.css({ display: 'none', visibility: 'hidden' }).hide();
+		}
+	});
 
     if(onComplete) {
         onComplete();
@@ -228,7 +240,12 @@ function setOffline(mobileStorage,onComplete) {
 }
 
 function setOnline(mobileStorage,onComplete) {
-	if(isNullOrEmpty(mobileStorage)) {
+	/// <summary>
+	///   Sets 'Online' button style 'online'
+	/// </summary>
+    /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
+    /// <param name="onComplete" type="Function">Event to fire on complete.</param>
+    if(isNullOrEmpty(mobileStorage)) {
 	    mobileStorage = new CswMobileClientDbResources();
 	}
     
@@ -243,11 +260,35 @@ function setOnline(mobileStorage,onComplete) {
 							.removeClass('offline')
 							.addClass('online')
 							.end();
-		$('.refresh').css('visibility', '');
-		if (onComplete) {
+		$('.refresh').each(function(){
+			var $this = $(this);
+		    try { //we may not be initialized
+		        $this.removeAttr('display').removeAttr('visibility').show();
+		        $this.button('enable');
+		    } catch (e) {
+		        //suppress error
+		    }
+		});
+	    if (onComplete) {
 		    onComplete();
 		}
 	}
 }
 
+function toggleOnline(mobileStorage,onComplete) {
+    /// <summary>
+	///   Toggles the online status displayed in UI according to actual status.
+	/// </summary>
+    /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
+    /// <param name="onComplete" type="Function">Event to fire on complete.</param>
+    if( isNullOrEmpty(mobileStorage)) {
+        mobileStorage = new CswMobileClientDbResources();
+    }
+    
+    if(mobileStorage.amOnline()) {
+        setOnline(mobileStorage,onComplete);
+    } else {
+        setOffline(mobileStorage,onComplete);
+    }
+}
 //#endregion functions

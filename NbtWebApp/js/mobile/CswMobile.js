@@ -96,7 +96,7 @@ CswAppMode.mode = 'mobile';
 		
 		var $logindiv = _loadLoginDiv();
 		var $viewsdiv = reloadViews();
-		var $syncstatus = _makeSyncStatusDiv();
+		var onlinePage = _makeSyncStatusDiv();
 		var $helpdiv = _makeHelpDiv();
 		var $sorrycharliediv = _loadSorryCharlieDiv();
 
@@ -369,7 +369,7 @@ CswAppMode.mode = 'mobile';
 			_resetPendingChanges();
 			
 			if(!mobileStorage.stayOffline()) {
-				_toggleOffline(false);
+			    toggleOnline(mobileStorage);
 			}
 			cacheLogInfo(logger);
 
@@ -1055,12 +1055,11 @@ CswAppMode.mode = 'mobile';
 
 		function _makeSyncStatusDiv() {
 
-		    var onlineDef = {
+		    var syncDef = {
                 theme: opts.Theme
 		    };
-		    var onlinePage = new CswMobilePageOnline(onlineDef, $body, mobileStorage, mobileSync);
-		    var $ret = onlinePage.$pageDiv;
-		    return $ret;
+		    var syncPage = new CswMobilePageOnline(syncDef, $body, mobileStorage, mobileSync);
+		    return syncPage;
 		}
 
 		

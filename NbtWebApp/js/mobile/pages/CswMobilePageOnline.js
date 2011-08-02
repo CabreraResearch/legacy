@@ -139,17 +139,13 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
 	function _toggleOffline(doWaitForData) {
 		///<summary>Changes the Online status style of all mobile online buttons. Sets the Go Online/Offline button text.</summary>
 	    ///<param name="doWaitForData" type="Boolean">True if background task(s) should be restarted.</param>
-	    var $onlineBtn = onlinePage.mobileHeader.online.$control.find('span.ui-btn-text');
+	    var $onlineBtn = onlinePage.mobileFooter.online.$control.find('span.ui-btn-text');
 		if (mobileStorage.amOnline() || $onlineBtn.text() === 'Go Online') {
 			setOnline();
 			if (doWaitForData) {
 			    mobileBgTask.reset();
 			}
 			$onlineBtn.text('Go Offline');
-			$('.refresh').each(function(){
-				var $this = $(this);
-				$this.css({'display': ''}).show();
-			});
 		}
 		else {
 			setOffline();
@@ -157,10 +153,6 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
 				mobileBgTask.reset();
 			}
 			$onlineBtn.text('Go Online');
-			$('.refresh').each(function(){
-				var $this = $(this);
-				$this.css({'display': 'none'}).hide();
-			});
 		}
 	}
 	
