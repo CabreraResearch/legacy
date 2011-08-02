@@ -40,8 +40,6 @@ CswAppMode.mode = 'mobile';
 		var opts = {
 			ViewsListUrl: '/NbtWebApp/wsNBT.asmx/GetViewsList',
 			ViewUrl: '/NbtWebApp/wsNBT.asmx/GetView',
-			ConnectTestUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest',
-			ConnectTestRandomFailUrl: '/NbtWebApp/wsNBT.asmx/ConnectTestRandomFail',
 			//UpdateViewUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
 			MainPageUrl: '/NbtWebApp/Mobile.html',
 			Theme: 'b',
@@ -86,7 +84,6 @@ CswAppMode.mode = 'mobile';
 			},
 			onLoginFailure: onLoginFail,
 			PollingInterval: opts.PollingInterval,
-			taskUrl: opts.ConnectTestUrl,
 			ForMobile: ForMobile
 		};
 
