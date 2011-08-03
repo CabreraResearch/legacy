@@ -85,7 +85,8 @@ function CswMobileListView(listDef, $parent) {
         /// <param name="options" type="Object">JSON options to append.</param>
         /// <returns type="jQuery">The list item created.</returns>
         var o = {
-            'data-icon': false
+            'data-icon': false,
+            'data-url': id
         };
         if(options) $.extend(o, options);
 
@@ -109,7 +110,7 @@ function CswMobileListView(listDef, $parent) {
         /// <returns type="jQuery">The list item created.</returns>
         var o = {
             'data-icon': false,
-            onClick: null // function () { }
+            'data-url': id
         };
         if (options) $.extend(o, options);
 
@@ -132,7 +133,7 @@ function CswMobileListView(listDef, $parent) {
         /// <returns type="jQuery">The list item created.</returns>
         var o = {
             'data-icon': false,
-            onClick: null // function () { }
+            'data-url': id
         };
         if(options) $.extend(o, options);
 
@@ -151,7 +152,7 @@ function CswMobileListView(listDef, $parent) {
         /// <returns type="jQuery">The list item created.</returns>
         var o = {
             'data-icon': false,
-            onClick: null // function () { }
+            'data-url': id
         };
         if(options) $.extend(o, options);
 
