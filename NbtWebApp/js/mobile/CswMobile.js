@@ -14,13 +14,6 @@
 /// <reference path="controls/CswMobilePageFooter.js" />
 /// <reference path="controls/CswMobilePageHeader.js" />
 /// <reference path="pages/CswMobilePageFactory.js" />
-/// <reference path="pages/CswMobilePageViews.js" />
-/// <reference path="pages/CswMobilePageHelp.js" />
-/// <reference path="pages/CswMobilePageLogin.js" />
-/// <reference path="pages/CswMobilePageOnline.js" />
-/// <reference path="pages/CswMobilePageSearch.js" />
-/// <reference path="pages/CswMobilePageOffline.js" />
-
 
 //var profiler = $createProfiler();
 
@@ -91,14 +84,14 @@ CswAppMode.mode = 'mobile';
 		//#endregion Resource Initialization
 		
 		var loginPage = makeLoginPage();
-		var viewsPage;// = makeViewsPage();
-		//var onlinePage = _makeSyncStatusDiv();
-		//var $helpdiv = _makeHelpDiv();
-		//var offlinePage = makeOfflinePage();
+		var viewsPage, offlinePage, helpPage, onlinePage;
 
 		// case 20355 - error on browser refresh
 		if (!isNullOrEmpty(sessionId)) {
-			viewsPage.CswSetPath();
+			if( isNullOrEmpty(viewsPage)) {
+			    viewsPage = makeViewsPage();
+			}
+		    viewsPage.CswSetPath();
 			mobileStorage.setItem('refreshPage', 'viewsdiv');
 		} else {
 			loginPage.CswSetPath();
@@ -173,7 +166,7 @@ CswAppMode.mode = 'mobile';
 				theme: opts.Theme,
 			    onHelpClick: onHelpClick
 			};
-		    var offlinePage = new CswMobilePageOffline(offlineDef, $body, mobileStorage);
+		    var offlinePage = new CswMobilePageFactory(CswMobilePage_Type.offline, offlineDef, $body, mobileStorage);
 			return offlinePage;
 		}
 
@@ -185,7 +178,7 @@ CswAppMode.mode = 'mobile';
 		        onRefreshClick: onRefreshClick,
                 onHelpClick: onHelpClick
 		    };
-		    var syncPage = new CswMobilePageOnline(syncDef, $body, mobileStorage, mobileSync);
+		    var syncPage = new CswMobilePageFactory(CswMobilePage_Type.online, syncDef, $body, mobileStorage, mobileSync);
 		    return syncPage;
 		}
 	    
@@ -197,7 +190,7 @@ CswAppMode.mode = 'mobile';
 			    onOnlineClick: onOnlineClick,
 			    onRefreshClick: onRefreshClick
 		    };
-		    var helpPage = new CswMobilePageHelp(helpDef, $body, mobileStorage);
+		    var helpPage = new CswMobilePageFactory(CswMobilePage_Type.help, helpDef, $body, mobileStorage);
 			return helpPage;
 		}
 	    
@@ -209,7 +202,7 @@ CswAppMode.mode = 'mobile';
 			    theme: opts.Theme,
 			    onOnlineClick: onOnlineClick
 		    };
-	        var helpPage = new CswMobilePageSearch(searchDef, $body, mobileStorage);
+	        var helpPage = new CswMobilePageFactory(CswMobilePage_Type.search, searchDef, $body, mobileStorage);
 			return helpPage;
 		}
 	    
