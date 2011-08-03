@@ -45,9 +45,10 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },
             theme: 'b',
-            onHelpClick: function() {},
-            onOnlineClick: function() {},
-            onRefreshClick: function() {},
+            onHelpClick: null, // function () {}
+            onOnlineClick: null, // function () {}
+            onRefreshClick: null, // function () {}
+            onListItemSelect: null, // function (opts) {}
             PageType: CswMobilePage_Type.views
         };
         if (viewsDef) $.extend(p, viewsDef);
@@ -140,7 +141,16 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 		    var text = viewJson[key];
 		    function onClick() {
 		        //we know the next level is going to be nodes. 
-		        //onClick should trigger new CswMobilePageNodes
+		        var $this = $(this);
+		        pageDef.onListItemSelect({
+		                ParentId: id,
+		                DivId: $this.CswAttrXml('data-url'),
+		                level: 1,
+		                onHelpClick: pageDef.onHelpClick,
+		                onOnlineClick: pageDef.onOnlineClick,
+		                onRefreshClick: pageDef.onRefreshClick,
+		                mobileStorage: mobileStorage
+		            });
 		    }
 		    listView.addListItemLink(key, text, onClick);
 		}
@@ -160,8 +170,6 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
     this.$content = $content;
     this.pageDef = pageDef;
     this.title = title;
-    this.refreshViewContent = refreshViewContent;
-    this.refreshViewJson = refreshViewJson;
     this.getContent = getContent;
     //#endregion public, priveleged
 }

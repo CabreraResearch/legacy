@@ -22,6 +22,9 @@ function CswMobileListView(listDef, $parent) {
     ICswMobileWebControls.call(this);
     
     var _o, _$control, _classes, _styles, _cssClass, _enabled, _visible;
+    var liSuffix = '_li';
+    var ulSuffix = '_ul';
+    var aSuffix = '_a';
     
     //ctor
     (function() {
@@ -43,9 +46,9 @@ function CswMobileListView(listDef, $parent) {
             throw ('Cannot create a list view without a parent');
         }
 
-        var $ul = $parent.find('#' + p.ID + '_ul');
+        var $ul = $parent.find('#' + p.ID + ulSuffix);
         if (isNullOrEmpty($ul) || $ul.length === 0) {
-            $ul = $('<ul id="' + p.ID + '_ul"></ul>').appendTo($parent);
+            $ul = $('<ul id="' + p.ID + ulSuffix + '"></ul>').appendTo($parent);
         }
 
         var ulAttr = {
@@ -73,15 +76,82 @@ function CswMobileListView(listDef, $parent) {
         _$control = $ul;
     })();
     
-    function addListItemLink(id,text,options) {
+    function addListItemLink(id,text,onClick,options) {
         /// <summary>
         ///   Add a list item to the UL
         /// </summary>
         /// <param name="id" type="String">Element Id</param>
         /// <param name="text" type="String">Text to display</param>
+        /// <param name="options" type="Object">JSON options to append.</param>
         /// <returns type="jQuery">The list item created.</returns>
         var o = {
             'data-icon': false
+        };
+        if(options) $.extend(o, options);
+
+        var $li = addListItem(id, '', onClick, o);
+        $li.CswLink('init', { ID: id + aSuffix, href: 'javascript:void(0);', value: text })
+											  .css('white-space', 'normal')
+											  .CswAttrXml({
+											  'data-identity': id,
+											  'data-url': id
+										  });
+        return $li;
+    }
+    
+    function addListItemLinkHtml(id,$html,onClick,options) {
+        /// <summary>
+        ///   Add a list item to the UL
+        /// </summary>
+        /// <param name="id" type="String">Element Id</param>
+        /// <param name="$html" type="jQuery">HTML to append</param>
+        /// <param name="options" type="Object">JSON options to append.</param>
+        /// <returns type="jQuery">The list item created.</returns>
+        var o = {
+            'data-icon': false,
+            onClick: null // function () { }
+        };
+        if (options) $.extend(o, options);
+
+        var $li = addListItemLink(id, '', onClick, o);
+        var $a = $li.find('#' + id + aSuffix);
+        if (!isNullOrEmpty($a) && $a.length !== 0) {
+            $a.append($html);
+        }
+
+        return $li;
+    }
+    
+    function addListItemHtml(id,$html,onClick, options) {
+        /// <summary>
+        ///   Add a list item to the UL
+        /// </summary>
+        /// <param name="id" type="String">Element Id</param>
+        /// <param name="$html" type="jQuery">HTML to append</param>
+        /// <param name="options" type="Object">JSON options to append.</param>
+        /// <returns type="jQuery">The list item created.</returns>
+        var o = {
+            'data-icon': false,
+            onClick: null // function () { }
+        };
+        if(options) $.extend(o, options);
+
+        var $li = addListItem(id, '', onClick, o);
+        $li.append($html);
+        return $li;
+    }
+    
+    function addListItem(id, text, onClick, options) {
+        /// <summary>
+        ///   Add a list item to the UL
+        /// </summary>
+        /// <param name="id" type="String">Element Id</param>
+        /// <param name="text" type="String">Text to display</param>
+        /// <param name="options" type="Object">JSON options to append.</param>
+        /// <returns type="jQuery">The list item created.</returns>
+        var o = {
+            'data-icon': false,
+            onClick: null // function () { }
         };
         if(options) $.extend(o, options);
 
@@ -89,16 +159,17 @@ function CswMobileListView(listDef, $parent) {
         if( !isNullOrEmpty($li) && $li.length > 0) {
             $li.empty();
         } else {
-            $li = $('<li></li>')
+            $li = $('<li id="' + id + liSuffix + '"></li>')
                         .appendTo(_$control);
         }
         $li.CswAttrXml(o);
-        $li.CswLink('init', { href: 'javascript:void(0);', value: text })
-											  .css('white-space', 'normal')
-											  .CswAttrXml({
-											  'data-identity': id,
-											  'data-url': id
-										  });
+        if(!isNullOrEmpty(text)) {
+            $li.text(text);
+        }
+        if(onClick) {
+            $li.bind('click', onClick);
+        }
+        
         return $li;
     }
     
@@ -116,7 +187,8 @@ function CswMobileListView(listDef, $parent) {
     }
 
     this.addListItemLink = addListItemLink;
-
+    this.addListItemLinkHtml = addListItemLinkHtml;
+    this.addListItem = addListItem;
     //#endregion public, priveleged
 }
 
