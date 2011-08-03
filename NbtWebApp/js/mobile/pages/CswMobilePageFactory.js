@@ -26,6 +26,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
 	/// <summary>
 	///   Page factory class. Responsible for generating a Mobile page.
 	/// </summary>
+    /// <param name="pageType" type="CswMobilePage_Type">CswMobilePage_Type enum value.</param>
 	/// <param name="pageDef" type="Object">JSON definition of content to display, including header/footerDef properties.</param>
 	/// <param name="$parent" type="jQuery">Parent element to attach to.</param>
 	/// <returns type="CswMobilePageFactory">Instance of itself. Must instance with 'new' keyword.</returns>
@@ -63,30 +64,36 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
         }
         
         if(isNullOrEmpty(p.DivId)) {
-            p.DivId = pageType.name + 'div';
+            p.DivId = pageType.id;
         }
         id = makeSafeId({ ID: p.DivId });
+
+        if(isNullOrEmpty(p.title)) {
+            title = p.title = pageType.title;
+        }
+        
+        var $page = getPageDiv(p.title, p.theme);
         
         var cswMobilePage;
         switch (pageType.name) {
             case CswMobilePage_Type.help.name:
                 {
-                    cswMobilePage = new CswMobilePageHelp(p, $parent, p.mobileStorage);
+                    cswMobilePage = new CswMobilePageHelp(p, $page, p.mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.login.name:
                 {
-                    cswMobilePage = new CswMobilePageLogin(p, $parent, p.mobileStorage, p.onSuccess);
+                    cswMobilePage = new CswMobilePageLogin(p, $page, p.mobileStorage, p.onSuccess);
                     break;
                 }
             case CswMobilePage_Type.nodes.name:
                 {
-                    cswMobilePage = new CswMobilePageNodes(p, $parent, mobileStorage);
+                    cswMobilePage = new CswMobilePageNodes(p, $page, mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.offline.name:
                 {
-                    cswMobilePage = new CswMobilePageOffline(p, $parent, p.mobileStorage);
+                    cswMobilePage = new CswMobilePageOffline(p, $page, p.mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.online.name:
@@ -96,22 +103,23 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
                 }
             case CswMobilePage_Type.props.name:
                 {
-                    cswMobilePage = new CswMobilePageProps(p, $parent, mobileStorage);
+                    cswMobilePage = new CswMobilePageProps(p, $page, mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.search.name:
                 {
-                    cswMobilePage = new CswMobilePageSearch(p, $parent, p.mobileStorage);
+                    cswMobilePage = new CswMobilePageSearch(p, $page, p.mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.tabs.name:
                 {
-                    cswMobilePage = new CswMobilePageTabs(, p, $parent, mobileStorage);
+                    cswMobilePage = new CswMobilePageTabs(p, $page, mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.views.name:
                 {
-                    cswMobilePage = new CswMobilePageViews(p, $parent, p.mobileStorage);
+                    debugger;
+                    cswMobilePage = new CswMobilePageViews(p, $page, p.mobileStorage);
                     break;
                 }
             default:
@@ -209,6 +217,9 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
     };
     this.CswPage = function() {
         $pageDiv.CswPage();
+    };
+    this.CswSetPath = function() {
+        $pageDiv.CswSetPath();
     };
 	//#region public, priveleged
 }
