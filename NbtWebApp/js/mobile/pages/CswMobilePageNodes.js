@@ -62,7 +62,7 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
             p.title = title;
         }
         
-        viewid = tryParseString(p.ParentId,mobileStorage.currentViewId());
+        viewid = tryParseString(p.DivId,mobileStorage.currentViewId());
         level = tryParseNumber(p.level, 1);
         
         var buttons = { };
@@ -147,24 +147,26 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
             onClick: function () {}
         };
         var listView = new CswMobileListView(ulDef, $content);
-        	
-		for(var key in viewJson)
-		{
-		    var nodeJson = { ID: key, value: viewJson[key] };
-		    var nodeOc = makeOcContent(nodeJson);
-		    
-		    function onClick() {
-		        //the next level will either be nodes or props
-		    }
-		    
-		    if( nodeOc.isLink ) {
-		        listView.addListItemLinkHtml(key, nodeOc.$html, onClick);
-		    } else {
-		        listView.addListItemHtml(key, nodeOc.$html, onClick);
-		    }
-		}
-			
-		if(!mobileStorage.stayOffline()) {
+        if( !isNullOrEmpty(viewJson)) {
+            for (var key in viewJson)
+            {
+                var nodeJson = { ID: key, value: viewJson[key] };
+                var nodeOc = makeOcContent(nodeJson);
+
+                function onClick() {
+                    //the next level will either be nodes or props
+                }
+
+                if (nodeOc.isLink) {
+                    listView.addListItemLinkHtml(key, nodeOc.$html, onClick);
+                } else {
+                    listView.addListItemHtml(key, nodeOc.$html, onClick);
+                }
+            }
+        } else {
+            listView.addListItem('-1', 'No Results');
+        }
+        if(!mobileStorage.stayOffline()) {
 			toggleOnline(mobileStorage);
 		}
         if (!isNullOrEmpty(onSuccess)) {
