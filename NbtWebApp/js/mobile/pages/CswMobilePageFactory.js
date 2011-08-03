@@ -16,6 +16,9 @@
 /// <reference path="../sync/CswMobileBackgroundTask.js" />
 /// <reference path="../sync/CswMobileSync.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
+/// <reference path="CswMobilePageTabs.js" />
+/// <reference path="CswMobilePageProps.js" />
+/// <reference path="CswMobilePageNodes.js" />
 
 //#region CswMobilePageFactory
 
@@ -78,7 +81,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
                 }
             case CswMobilePage_Type.nodes.name:
                 {
-                    cswMobilePage = new CswMobilePageTabs(p)
+                    cswMobilePage = new CswMobilePageNodes(p, $parent, mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.offline.name:
@@ -93,6 +96,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
                 }
             case CswMobilePage_Type.props.name:
                 {
+                    cswMobilePage = new CswMobilePageProps(p, $parent, mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.search.name:
@@ -102,6 +106,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
                 }
             case CswMobilePage_Type.tabs.name:
                 {
+                    cswMobilePage = new CswMobilePageTabs(, p, $parent, mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.views.name:

@@ -21,7 +21,7 @@ function CswMobileListView(listDef, $parent) {
 
     ICswMobileWebControls.call(this);
     
-    var _o, _$control, _classes;
+    var _o, _$control, _classes, _styles, _cssClass, _enabled, _visible;
     
     //ctor
     (function() {
@@ -60,7 +60,7 @@ function CswMobileListView(listDef, $parent) {
         var classes = p.cssClass.split(' ');
 
         if (classes.length > 0) {
-            $ul.addClass(cssClass);
+            $ul.addClass(p.cssClass);
         }
 
         if (p.showLoading) {
@@ -69,6 +69,7 @@ function CswMobileListView(listDef, $parent) {
 
         _o = p;
         _classes = classes;
+        _cssClass = p.cssClass;
         _$control = $ul;
     })();
     
