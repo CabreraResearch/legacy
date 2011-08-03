@@ -277,34 +277,49 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 while( UpdateSucceeded && CurrentVersion != _CswSchemaUpdater.LatestVersion )
                 {
                     CswSchemaVersion UpdateFromVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration );
-                    CswSchemaVersion UpdateToVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
-                    string UpdateDescription = _CswSchemaUpdater.getDriver( UpdateToVersion ).Description;
-                    //                    _CswConsoleOutput.write( "Updating AccessId " + AccessId + " to schema version " + UpdateToVersion.ToString() );
-                    _CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema operation -- " + UpdateDescription );
-                    _CswSchemaUpdateThread.start();
-                    while( UpdateState.Running == _CswSchemaUpdateThread.UpdateState )
-                    {
-                        _CswConsoleOutput.write( " ." );
-                        Thread.Sleep( 1000 );
-                    }
 
-                    UpdateSucceeded = ( UpdateState.Succeeded == _CswSchemaUpdateThread.UpdateState );
-                    string MessageStem = "AccessId " + AccessId + ": ";
-                    //" from schema version " + UpdateFromVersion.ToString() + " to schema version " + UpdateToVersion.ToString();
-                    if( UpdateSucceeded )
-                    {
+					if( CurrentVersion < _CswSchemaUpdater.MinimumVersion )
+					{
+						UpdateSucceeded = false;
+						_CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema operation -- " );
+						_CswConsoleOutput.write( " failed: Schema version (" + CurrentVersion.ToString() + ") is below minimum version (" + _CswSchemaUpdater.MinimumVersion.ToString() + ")" + _Separator_NuLine + _Separator_NuLine );
+					}
+					else
+					{
+						CswSchemaVersion UpdateToVersion = null;
+						if( CurrentVersion == _CswSchemaUpdater.MinimumVersion )
+						{
+							UpdateToVersion = new CswSchemaVersion( _CswSchemaUpdater.LatestVersion.CycleIteration, _CswSchemaUpdater.LatestVersion.ReleaseIdentifier, 1 );
+						}
+						else
+						{
+							UpdateToVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
+						}
 
-                        //                        _CswConsoleOutput.write( _Separator_NuLine + MessageStem + " succeeded." + _Separator_NuLine + _Separator_NuLine );
-                        _CswConsoleOutput.write( " succeeded." + _Separator_NuLine + _Separator_NuLine );
-                    }
-                    else
-                    {
-                        //                        _CswConsoleOutput.write( _Separator_NuLine + MessageStem + " failed: " + _CswSchemaUpdateThread.Message + _Separator_NuLine + _Separator_NuLine );
-                        _CswConsoleOutput.write( " failed: " + _CswSchemaUpdateThread.Message + _Separator_NuLine + _Separator_NuLine );
-                    }
+						string UpdateDescription = _CswSchemaUpdater.getDriver( UpdateToVersion ).Description;
+						//                    _CswConsoleOutput.write( "Updating AccessId " + AccessId + " to schema version " + UpdateToVersion.ToString() );
+						_CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema operation -- " + UpdateDescription );
+						_CswSchemaUpdateThread.start();
+						while( UpdateState.Running == _CswSchemaUpdateThread.UpdateState )
+						{
+							_CswConsoleOutput.write( " ." );
+							Thread.Sleep( 1000 );
+						}
 
-                    CurrentVersion = _CswSchemaUpdater.CurrentVersion;
+						UpdateSucceeded = ( UpdateState.Succeeded == _CswSchemaUpdateThread.UpdateState );
+						string MessageStem = "AccessId " + AccessId + ": ";
+						if( UpdateSucceeded )
+						{
 
+							_CswConsoleOutput.write( " succeeded." + _Separator_NuLine + _Separator_NuLine );
+						}
+						else
+						{
+							_CswConsoleOutput.write( " failed: " + _CswSchemaUpdateThread.Message + _Separator_NuLine + _Separator_NuLine );
+						}
+
+						CurrentVersion = _CswSchemaUpdater.CurrentVersion;
+					} // if( CurrentVersion < _CswSchemaUpdater.MinimumVersion )
                 }//iterate updates
 
             }
