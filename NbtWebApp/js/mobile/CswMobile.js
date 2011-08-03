@@ -140,10 +140,8 @@ CswAppMode.mode = 'mobile';
 		        },
 		        mobileStorage: mobileStorage
 		    };
-		    var loginDiv = new CswMobilePageFactory(CswMobilePage_Type.login, loginDef, $body);
-		    var $retDiv = loginDiv.$pageDiv;
-
-			return $retDiv;
+		    loginPage = new CswMobilePageFactory(CswMobilePage_Type.login, loginDef, $body);
+			return loginPage;
 		}
 
 		function makeViewsPage() {
@@ -153,9 +151,10 @@ CswAppMode.mode = 'mobile';
 		        theme: opts.Theme,
 		        onHelpClick: onHelpClick,
 		        onOnlineClick: onOnlineClick,
-		        onRefreshClick: onRefreshClick
+		        onRefreshClick: onRefreshClick,
+		        mobileStorage: mobileStorage
 		    };
-		    var viewsPage = new CswMobilePageFactory(CswMobilePage_Type.views, viewsDef, $body, mobileStorage);
+		    viewsPage = new CswMobilePageFactory(CswMobilePage_Type.views, viewsDef, $body );
 			return viewsPage;
 		}
 		
@@ -164,9 +163,10 @@ CswAppMode.mode = 'mobile';
 		    ///<returns type="CswMobilePageOffline">CswMobilePageOffline page.</returns>
 		    var offlineDef = {
 				theme: opts.Theme,
-			    onHelpClick: onHelpClick
+			    onHelpClick: onHelpClick,
+		        mobileStorage: mobileStorage
 			};
-		    var offlinePage = new CswMobilePageFactory(CswMobilePage_Type.offline, offlineDef, $body, mobileStorage);
+		    offlinePage = new CswMobilePageFactory(CswMobilePage_Type.offline, offlineDef, $body);
 			return offlinePage;
 		}
 
@@ -176,10 +176,12 @@ CswAppMode.mode = 'mobile';
 		    var syncDef = {
                 theme: opts.Theme,
 		        onRefreshClick: onRefreshClick,
-                onHelpClick: onHelpClick
+                onHelpClick: onHelpClick,
+		        mobileStorage: mobileStorage,
+		        mobileSync: mobileSync
 		    };
-		    var syncPage = new CswMobilePageFactory(CswMobilePage_Type.online, syncDef, $body, mobileStorage, mobileSync);
-		    return syncPage;
+		    onlinePage = new CswMobilePageFactory(CswMobilePage_Type.online, syncDef, $body );
+		    return onlinePage;
 		}
 	    
 	    function makeHelpPage() {
@@ -188,9 +190,10 @@ CswAppMode.mode = 'mobile';
 	        var helpDef = {
                 theme: opts.Theme,
 			    onOnlineClick: onOnlineClick,
-			    onRefreshClick: onRefreshClick
+			    onRefreshClick: onRefreshClick,
+	            mobileStorage: mobileStorage
 		    };
-		    var helpPage = new CswMobilePageFactory(CswMobilePage_Type.help, helpDef, $body, mobileStorage);
+		    helpPage = new CswMobilePageFactory(CswMobilePage_Type.help, helpDef, $body );
 			return helpPage;
 		}
 	    
@@ -200,10 +203,11 @@ CswAppMode.mode = 'mobile';
 	        var searchDef = {
                 ParentId: mobileStorage.currentViewId(),
 			    theme: opts.Theme,
-			    onOnlineClick: onOnlineClick
+			    onOnlineClick: onOnlineClick,
+	            mobileStorage: mobileStorage
 		    };
-	        var helpPage = new CswMobilePageFactory(CswMobilePage_Type.search, searchDef, $body, mobileStorage);
-			return helpPage;
+	        var searchPage = new CswMobilePageFactory(CswMobilePage_Type.search, searchDef, $body );
+			return searchPage;
 		}
 	    
 	    //#endregion Page Creation
