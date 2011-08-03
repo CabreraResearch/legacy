@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( ThisNode );
                 string ReportFileName = ReportNode.RPTFile.FileName;
 
-                FileStream ReportFileStream = File.OpenRead( "..\\Reports\\" + ReportFileName );
+                FileStream ReportFileStream = File.OpenRead( "c:\\kiln\\Nbt\\Nbt\\NbtSchemaUpdater\\bin\\Reports\\" + ReportFileName );
                 BinaryReader BReader = new BinaryReader( ReportFileStream, System.Text.Encoding.Default );
                 byte[] ReportData = new byte[ReportFileStream.Length];
                 BReader.Read( ReportData, 0, (Int32) ReportFileStream.Length );
