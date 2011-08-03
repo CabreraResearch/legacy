@@ -25,96 +25,121 @@ function CswMobilePageLogin(loginDef,$parent,mobileStorage,loginSuccess) {
 
 	//#region private
 
-    var loginContent = '<p style="text-align: center;">Login to Mobile Inspection Manager</p>';
-	loginContent += '<input type="textbox" id="login_customerid" placeholder="Customer Id" /><br>';
-	loginContent += '<input type="textbox" id="login_username" placeholder="User Name" /><br>';
-	loginContent += '<input type="password" id="login_password" placeholder="Password" /><br>';
-	loginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
+    var $content = '';
+    var pageDef = { };
+    var id = 'logindiv';
+    var title = 'ChemSW Live';
     
-    var authenticateUrl = '/NbtWebApp/wsNBT.asmx/Authenticate';
+    //ctor
+    (function() {
+        
+        var p = {
+            level: -1,
+            DivId: '',
+            title: '',
+            headerDef: { buttons: {} },
+            footerDef: { buttons: {} },
+            theme: CswMobileGlobal_Config.theme,
+            onHelpClick: null // function () {}
+        };
+        if (loginDef) $.extend(p, loginDef);
+        
+        if(!isNullOrEmpty(p.DivId)) {
+            id = p.DivId;
+        } else {
+            p.DivId = id;
+        }
+        if( !isNullOrEmpty(p.title)) {
+            title = p.title;
+        } else {
+            p.title = title;
+        }
+        
+        if( isNullOrEmpty(p.footerDef) ) {
+            p.footerDef = { buttons: { } };
+        }
+        if (isNullOrEmpty(p.footerDef.buttons)) {
+            p.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, id);
+            p.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, id, p.onHelpClick);
+        }
+       
+        pageDef = p;
+        
+        getContent();
+    })(); //ctor
     
-    var p = {
-		level: -1,
-		DivId: 'logindiv',       // required
-		HeaderText: 'ChemSW Live',
-        headerDef: { },
-        theme: 'b',
-        $content: $(loginContent),
-        onHelpClick: function () {}
-    };
-    if(loginDef) $.extend(p, loginDef);
+    function getContent() {
+        var $contentPage = $parent.find('#' + id).find('div:jqmData(role="content")');
+        $contentPage.empty();
+        
+        var loginContent = '<p style="text-align: center;">Login to Mobile Inspection Manager</p>';
+        loginContent += '<input type="textbox" id="login_customerid" placeholder="Customer Id" /><br>';
+        loginContent += '<input type="textbox" id="login_username" placeholder="User Name" /><br>';
+        loginContent += '<input type="password" id="login_password" placeholder="Password" /><br>';
+        loginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
+        
+        $content = $(loginContent);
+        if( !isNullOrEmpty($contentPage) && $contentPage.length > 0 ) {
+            $contentPage.append($content);
+        }
+        
+        var $loginBtn = $content.find('#loginsubmit')
+                                .unbind('click')
+                                .bind('click', function() {
+                                    return startLoadingMsg(function() { onLoginSubmit(); });
+                                });
+        
+        $content.find('#login_customerid').clickOnEnter($loginBtn);
+        $content.find('#login_username').clickOnEnter($loginBtn);
+        $content.find('#login_password').clickOnEnter($loginBtn);
 
-    var pageDef = p;
-    delete pageDef.onHelpClick;
-    
-    if( isNullOrEmpty(pageDef.footerDef)) {
-        pageDef.footerDef = { };
-        pageDef.footerDef.buttons = { };
-        pageDef.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, p.DivId);
-        pageDef.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, p.DivId, p.onHelpClick);
+        function onLoginSubmit() {
+            var authenticateUrl = '/NbtWebApp/wsNBT.asmx/Authenticate';
+            
+            if (mobileStorage.amOnline()) {
+                var userName = $('#login_username').val();
+                var accessId = $('#login_customerid').val();
+
+                var ajaxData = {
+                    'AccessId': accessId, //We're displaying "Customer ID" but processing "AccessID"
+                    'UserName': userName,
+                    'Password': $('#login_password').val(),
+                    ForMobile: true
+                };
+
+                CswAjaxJSON({
+                        formobile: true,
+					    //async: false,
+                        url: authenticateUrl,
+                        data: ajaxData,
+                        onloginfail: function(text) {
+                            onLoginFail(text, mobileStorage);
+                        },
+                        success: function(data) {
+                            if (!isNullOrEmpty(loginSuccess)) {
+                                loginSuccess(data, userName, accessId);
+                            }
+                        },
+                        error: function() {
+                            onError();
+                        }
+                    });
+            }
+
+        } //onLoginSubmit() 
+        return $content;
     }
     
-    var loginDiv = new CswMobilePageFactory(pageDef, $parent);
-    var loginHeader = loginDiv.mobileHeader;
-    var loginFooter = loginDiv.mobileFooter;
-    var $content = loginDiv.$content;
-    			
-	var loginFailure = mobileStorage.getItem('loginFailure');
-	if( !isNullOrEmpty(loginFailure) ) {
-		loginHeader.addToHeader(loginFailure)
-			       .css('color','yellow');
-	}
-			
-	$('#loginsubmit')
-		.unbind('click')
-		.bind('click', function() {
-			return startLoadingMsg(function() { onLoginSubmit(); });
-	});
-	$('#login_customerid').clickOnEnter($('#loginsubmit'));
-	$('#login_username').clickOnEnter($('#loginsubmit'));
-	$('#login_password').clickOnEnter($('#loginsubmit'));
-	
-	function onLoginSubmit() {
-		if (mobileStorage.amOnline()) {
-			var userName = $('#login_username').val();
-			var accessId = $('#login_customerid').val();
-
-			var ajaxData = {
-				'AccessId': accessId, //We're displaying "Customer ID" but processing "AccessID"
-				'UserName': userName,
-				'Password': $('#login_password').val(),
-				ForMobile: true
-			};
-
-			CswAjaxJSON({
-					formobile: true,
-					//async: false,
-					url: authenticateUrl,
-					data: ajaxData,
-					onloginfail: function(text) {
-						onLoginFail(text, mobileStorage);
-					},
-					success: function(data) {
-					    if( !isNullOrEmpty(loginSuccess) ) {
-					        loginSuccess(data, userName, accessId);
-					    }
-					},
-					error: function() {
-						onError();
-					}
-				});
-		}
-
-	} //onLoginSubmit() 
-	
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
-    this.mobileHeader = loginHeader;
-    this.mobileFooter = loginFooter;
-    this.$pageDiv = loginDiv.$pageDiv;
+    this.pageDef = pageDef;
+    this.id = id;
+    this.title = title;
+    this.getContent = getContent;
+
     //#endregion public, priveleged
 }
 

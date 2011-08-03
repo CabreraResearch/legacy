@@ -27,85 +27,95 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
 
 	//#region private
 
-    if(isNullOrEmpty(mobileStorage)) {
-        mobileStorage = new CswMobileClientDbResources();
-    }
+    var $content = '';
+    var pageDef = { };
+    var id = 'helpdiv';
+    var title = 'Help';
     
-    var $help = $('<p>Help</p>');
-
-	if (debugOn()) //this is set onLoad based on the includes variable 'debug'
-	{
-		$help.append('</br></br></br>');
-		var $logLevelDiv = $help.CswDiv('init')
-								.CswAttrXml({ 'data-role': 'fieldcontain' });
-		$('<label for="mobile_log_level">Logging</label>')
-								.appendTo($logLevelDiv);
-
-		$logLevelDiv.CswSelect('init', {
-										ID: 'mobile_log_level',
-										selected: debugOn() ? 'on' : 'off',
-										values: [{ value: 'off', display: 'Logging Disabled' },
-											{ value: 'on', display: 'Logging Enabled' }],
-										onChange: function($select) {
-											if ($select.val() === 'on') {
-												debugOn(true);
-												$('.debug').css('display', '').show();
-											} else {
-												debugOn(false);
-												$('.debug').css('diplay', 'none').hide();
-											}
-										}
-									})
-									.CswAttrXml({ 'data-role': 'slider' });
-
-	}
+    //ctor
+    (function() {
+        if(isNullOrEmpty(mobileStorage)) {
+            mobileStorage = new CswMobileClientDbResources();
+        }
 	
-    var p = {
-	    level: -1,
-	    DivId: 'helpdiv',       // required
-	    HeaderText: 'Help',
-	    theme: 'b',
-	    $content: $help,
-        onOnlineClick: function () {},
-        onRefreshClick: function () {}
-	};
-	if (helpDef) $.extend(p, helpDef);
+        var p = {
+	        level: -1,
+	        DivId: 'helpdiv',       // required
+	        title: 'Help',
+	        theme: CswMobileGlobal_Config.theme,
+            headerDef: { buttons: {} },
+            footerDef: { buttons: {} },
+            onOnlineClick: function () {},
+            onRefreshClick: function () {}
+	    };
+	    if (helpDef) $.extend(p, helpDef);
 
-    var pageDef = p;
-    delete pageDef.onOnlineClick;
-    delete pageDef.onRefreshClick;
-   
-    if( isNullOrEmpty(pageDef.footerDef)) {
-        pageDef.footerDef = { };
-        pageDef.footerDef.buttons = { };
-        pageDef.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, p.DivId, null, mobileStorage);
-        pageDef.footerDef.buttons.refresh = makeFooterButtonDef(CswMobileFooterButtons.refresh, p.DivId, p.onRefreshClick);
-        pageDef.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, p.DivId);
+        if( isNullOrEmpty(p.footerDef.buttons)) {
+            p.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, p.DivId, null, mobileStorage);
+            p.footerDef.buttons.refresh = makeFooterButtonDef(CswMobileFooterButtons.refresh, p.DivId, p.onRefreshClick);
+            p.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, p.DivId);
+        }
+    
+        if( isNullOrEmpty(p.headerDef.buttons)) {
+            p.headerDef.buttons.back = makeHeaderButtonDef(CswMobileHeaderButtons.back, p.DivId);
+        }
+
+        if(!isNullOrEmpty(p.DivId)) {
+            id = p.DivId;
+        } else {
+            p.DivId = id;
+        }
+        if( !isNullOrEmpty(p.title)) {
+            title = p.title;
+        } else {
+            p.title = title;
+        }
+        pageDef = p;
+        
+        $content = getContent();
+    })();
+	
+    function getContent() {
+        var $help = $('<p>Help</p>');
+
+	    if (debugOn()) //this is set onLoad based on the includes variable 'debug'
+	    {
+		    $help.append('</br></br></br>');
+		    var $logLevelDiv = $help.CswDiv('init')
+								    .CswAttrXml({ 'data-role': 'fieldcontain' });
+		    $('<label for="mobile_log_level">Logging</label>')
+								    .appendTo($logLevelDiv);
+
+		    $logLevelDiv.CswSelect('init', {
+										    ID: 'mobile_log_level',
+										    selected: debugOn() ? 'on' : 'off',
+										    values: [{ value: 'off', display: 'Logging Disabled' },
+											    { value: 'on', display: 'Logging Enabled' }],
+										    onChange: function($select) {
+											    if ($select.val() === 'on') {
+												    debugOn(true);
+												    $('.debug').css('display', '').show();
+											    } else {
+												    debugOn(false);
+												    $('.debug').css('diplay', 'none').hide();
+											    }
+										    }
+									    })
+									    .CswAttrXml({ 'data-role': 'slider' });
+
+	    }
+        return $help;
     }
     
-    if( isNullOrEmpty(pageDef.headerDef)) {
-        pageDef.headerDef = { };
-        pageDef.headerDef.buttons = { };
-        pageDef.headerDef.buttons.back = makeHeaderButtonDef(CswMobileHeaderButtons.back, p.DivId);
-    }
-
-	var helpPage = new CswMobilePageFactory(pageDef, $parent);
-	var helpHeader = helpPage.mobileHeader;
-	var helpFooter = helpPage.mobileFooter;
-	var $content = helpPage.$content;
-    
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
-    this.mobileHeader = helpHeader;
-    this.mobileFooter = helpFooter;
-    this.$pageDiv = helpPage.$pageDiv;
-
-    this.onPageOpen = function() {
-        this.$pageDiv.CswChangePage({ transition: 'slideup' });
-    };
+    this.pageDef = pageDef;
+    this.id = id;
+    this.title = title;
+    this.getContent = getContent;
     
     //#endregion public, priveleged
 }

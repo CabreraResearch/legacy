@@ -97,7 +97,7 @@
             var p = {
                 ParentId: '',
                 DivId: '',
-                HeaderText: '',
+                title: '',
                 json: '',
                 parentlevel: 0,
                 level: 1,

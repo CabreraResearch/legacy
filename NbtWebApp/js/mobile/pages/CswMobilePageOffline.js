@@ -18,61 +18,75 @@
 
 function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
 	/// <summary>
-	///   Help Page class. Responsible for generating a Mobile help page.
+	///   Offline Page class. Responsible for generating a Mobile offline page.
 	/// </summary>
-    /// <param name="helpDef" type="Object">Help definitional data.</param>
+    /// <param name="offlineDef" type="Object">Offline definitional data.</param>
 	/// <param name="$parent" type="jQuery">Parent element to attach to.</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
 	/// <returns type="CswMobilePageOffline">Instance of itself. Must instance with 'new' keyword.</returns>
 
 	//#region private
 
-    if(isNullOrEmpty(mobileStorage)) {
-        mobileStorage = new CswMobileClientDbResources();
+    var $content = '';
+    var pageDef = { };
+    var id = 'offlinediv';
+    var title = 'Sorry Charlie!';
+    
+    //ctor
+    (function(){
+    
+        if(isNullOrEmpty(mobileStorage)) {
+            mobileStorage = new CswMobileClientDbResources();
+        }
+        
+        var p = {
+	        level: -1,
+	        DivId: 'sorrycharliediv',       // required
+	        title: 'Sorry Charlie!',
+	        theme: CswMobileGlobal_Config.theme,
+            headerDef: { buttons: {} },
+            footerDef: { buttons: {} },
+	        onHelpClick: function () {},
+            onOnlineClick: function () {}
+        };
+        if(offlineDef) $.extend(p, offlineDef);
+
+        if(!isNullOrEmpty(p.DivId)) {
+            id = p.DivId;
+        } else {
+            p.DivId = id;
+        }
+        if( !isNullOrEmpty(p.title)) {
+            title = p.title;
+        } else {
+            p.title = title;
+        }
+
+        if( isNullOrEmpty(p.footerDef.buttons)) {
+            p.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, id, null, mobileStorage);
+            p.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, id);
+            p.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, id, p.onHelpClick);
+        }
+        
+        pageDef = p;
+        
+        $content = getContent();
+    })();
+    
+    function getContent() {
+        var $offline = $('<p>You must have internet connectivity to login.</p>');
+        return $offline;
     }
-
-    var $offline = $('<p>You must have internet connectivity to login.</p>');
-
-    var p = {
-	    level: -1,
-	    DivId: 'sorrycharliediv',       // required
-	    HeaderText: 'Sorry Charlie!',
-	    theme: 'b',
-	    $content: $offline,
-	    onHelpClick: function () {},
-        onOnlineClick: function () {}
-    };
-    if(offlineDef) $.extend(p, offlineDef);
-
-    var pageDef = p;
-    delete pageDef.onRefreshClick;
-    delete pageDef.onHelpClick;
-
-    if( isNullOrEmpty(pageDef.footerDef)) {
-        pageDef.footerDef = { };
-        pageDef.footerDef.buttons = { };
-        pageDef.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, p.DivId, null, mobileStorage);
-        pageDef.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, p.DivId);
-        pageDef.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, p.DivId, p.onHelpClick);
-    }
-
-	var offlinePage = new CswMobilePageFactory(pageDef, $parent);
-	var offlineHeader = offlinePage.mobileHeader;
-	var offlineFooter = offlinePage.mobileFooter;
-	var $content = offlinePage.$content;
     
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
-    this.mobileHeader = offlineHeader;
-    this.mobileFooter = offlineFooter;
-    this.$pageDiv = offlinePage.$pageDiv;
-
-    this.onPageOpen = function() {
-        this.$pageDiv.CswChangePage({ transition: 'slideup' });
-    };
+    this.pageDef = pageDef;
+    this.id = id;
+    this.title = title;
+    this.getContent = getContent;
     
     //#endregion public, priveleged
 }

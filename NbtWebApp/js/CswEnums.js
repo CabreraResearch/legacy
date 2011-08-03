@@ -153,4 +153,18 @@ var CswMobileFooterButtons = {
 		   dataIcon: 'info'
     }
 };
+var CswMobilePage_Type = {
+    login: { name: 'login' },
+    help: { name: 'help' },
+    nodes: { name: 'nodes' },
+    offline: {name: 'offline' },
+    online: { name: 'online' },
+    props: { name: 'props' },
+    search: { name: 'search' },
+    tabs: { name: 'tabs' },
+    views: { name: 'views' }
+};
+var CswMobileGlobal_Config = {
+    theme: 'b'
+};
 //#endregion Mobile

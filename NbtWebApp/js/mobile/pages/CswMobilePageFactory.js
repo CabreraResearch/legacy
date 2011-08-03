@@ -7,10 +7,19 @@
 /// <reference path="../controls/CswMobileMenuButton.js" />
 /// <reference path="../../CswEnums.js" />
 /// <reference path="../CswMobileTools.js" />
+/// <reference path="CswMobilePageViews.js" />
+/// <reference path="CswMobilePageHelp.js" />
+/// <reference path="CswMobilePageLogin.js" />
+/// <reference path="CswMobilePageOffline.js" />
+/// <reference path="CswMobilePageOnline.js" />
+/// <reference path="CswMobilePageSearch.js" />
+/// <reference path="../sync/CswMobileBackgroundTask.js" />
+/// <reference path="../sync/CswMobileSync.js" />
+/// <reference path="../clientdb/CswMobileClientDbResources.js" />
 
 //#region CswMobilePageFactory
 
-function CswMobilePageFactory(pageDef, $parent) {
+function CswMobilePageFactory(pageType, pageDef, $parent ) {
 	/// <summary>
 	///   Page factory class. Responsible for generating a Mobile page.
 	/// </summary>
@@ -19,69 +28,169 @@ function CswMobilePageFactory(pageDef, $parent) {
 	/// <returns type="CswMobilePageFactory">Instance of itself. Must instance with 'new' keyword.</returns>
 
 	//#region private
-	var mobileHeader, mobileFooter, $content;
-	
-	var p = {
-		ParentId: undefined,
-		level: 1,
-		DivId: '',       // required
-		HeaderText: '',
-		$content: $(''),
-		headerDef: { },
-		footerDef: { },
-	    theme: 'b'
-	};
+	var mobileHeader, mobileFooter, $content, $pageDiv, id, title, getContent;
 
-	if (pageDef) {
-		$.extend(p, pageDef);
-	}
+    //ctor
+    (function() {
+        var p = {
+            ParentId: undefined,
+            level: 1,
+            DivId: '',       // required
+            title: '',
+            $content: $(''),
+            headerDef: { buttons: {} },
+            footerDef: { buttons: {} },
+            theme: CswMobileGlobal_Config.theme,
+            onHelpClick: null, //function () {}
+            onOnlineClick: null, //function () {}
+            onRefreshClick: null, //function () {}
+            onSearchClick: null, //function () {}
+            mobileStorage: null,
+            mobileSync: null,
+            mobileBgTask: null,
+            onSuccess: null //function () {}
+        };
 
-	p.DivId = makeSafeId({ ID: p.DivId });
+        if (pageDef) {
+            $.extend(p, pageDef);
+        }
 
-	var $pageDiv = $('#' + p.DivId);
+        if( isNullOrEmpty(p.mobileStorage)) {
+            p.mobileStorage = new CswMobileClientDbResources();
+        }
+        
+        if(isNullOrEmpty(p.DivId)) {
+            p.DivId = pageType.name + 'div';
+        }
+        id = makeSafeId({ ID: p.DivId });
+        
+        var cswMobilePage;
+        switch (pageType.name) {
+            case CswMobilePage_Type.help.name:
+                {
+                    cswMobilePage = new CswMobilePageHelp(p, $parent, p.mobileStorage);
+                    break;
+                }
+            case CswMobilePage_Type.login.name:
+                {
+                    cswMobilePage = new CswMobilePageLogin(p, $parent, p.mobileStorage, p.onSuccess);
+                    break;
+                }
+            case CswMobilePage_Type.nodes.name:
+                {
+                    cswMobilePage = new CswMobilePageTabs(p)
+                    break;
+                }
+            case CswMobilePage_Type.offline.name:
+                {
+                    cswMobilePage = new CswMobilePageOffline(p, $parent, p.mobileStorage);
+                    break;
+                }
+            case CswMobilePage_Type.online.name:
+                {
+                    cswMobilePage = new CswMobilePageOnline(p, $parent, p.mobileStorage, p.mobileSync, p.mobileBgTask);
+                    break;
+                }
+            case CswMobilePage_Type.props.name:
+                {
+                    break;
+                }
+            case CswMobilePage_Type.search.name:
+                {
+                    cswMobilePage = new CswMobilePageSearch(p, $parent, p.mobileStorage);
+                    break;
+                }
+            case CswMobilePage_Type.tabs.name:
+                {
+                    break;
+                }
+            case CswMobilePage_Type.views.name:
+                {
+                    cswMobilePage = new CswMobilePageViews(p, $parent, p.mobileStorage);
+                    break;
+                }
+            default:
+                {
+                    throw ('CswMobilePageFactory initialized without CswMobilePage_Type');
+                }
+        }
+        if (cswMobilePage) {
 
-	var firstInit = (isNullOrEmpty($pageDiv) || $pageDiv.length === 0);
-			
-	if (firstInit) {
-		$pageDiv = $parent.CswDiv('init', { ID: p.DivId })
-			.CswAttrXml({
-					'data-role': 'page',
-					'data-url': p.DivId,
-					'data-title': p.HeaderText,
-					'data-rel': 'page'
-				});
-	}
-	var headerDef = {
-		buttons: { },
-		ID: p.DivId,
-		text: p.HeaderText,
-		dataId: 'csw_header',
-		dataTheme: p.theme
-	};
-	if(p.headerDef) $.extend(headerDef, p.headerDef);
-	
-	mobileHeader = new CswMobilePageHeader(headerDef, $pageDiv);
+            title = cswMobilePage.title;
+            $.extend(p, cswMobilePage.pageDef);
+        
+	        $pageDiv = getPageDiv(title, p.theme);
+            mobileHeader = getMenuHeader(p.headerDef);
+            $content = getContentDiv(cswMobilePage);
+            mobileFooter = getMenuFooter(p.footerDef);
 
-    $content = $pageDiv.find('div:jqmData(role="content")');
+            getContent = cswMobilePage.getContent;
+            
+            $pageDiv.page();
+        }
+    })(); //ctor
     
-	if( !isNullOrEmpty($content) && $content.length > 0) {
-	    $content.empty();
-	    $content = $pageDiv.CswDiv('init', { ID: p.DivId + '_content' })
-			.CswAttrXml({ 'data-role': 'content', 'data-theme': p.theme })
-			.append(p.$content);
-	}
+    function getPageDiv(headerText, theme) {
+        var $ret = $('#' + id);
 
-	var footerDef = {
-		buttons: { },
-		ID: p.DivId,
-		dataId: 'csw_footer',
-		dataTheme: p.theme
-	};
-	if(p.footerDef) $.extend(footerDef, p.footerDef);
-	
-	mobileFooter = new CswMobilePageFooter(footerDef, $pageDiv);
-	
-	//#endregion private	
+        var firstInit = (isNullOrEmpty($ret) || $ret.length === 0);
+			
+	    if (firstInit) {
+		    $ret = $parent.CswDiv('init', { ID: id })
+			                .CswAttrXml({
+					                'data-role': 'page',
+					                'data-url': id,
+					                'data-title': headerText,
+					                'data-rel': 'page',
+			                        'data-theme': theme
+				                });
+	    }
+        return $ret;
+    }
+    
+    function getMenuHeader(options) {
+        var ret;
+        var headerDef = {
+            dataId: 'csw_header',
+            text: title
+        };
+        if (options) {
+            $.extend(headerDef, options);
+        }
+        ret = new CswMobilePageHeader(headerDef, $pageDiv);
+        return ret;
+    }
+    
+    function getMenuFooter(options) {
+        var ret;
+        var footerDef = {
+            dataId: 'csw_footer'
+        };
+        if (options) {
+            $.extend(footerDef, options);
+        }
+        ret = new CswMobilePageFooter(footerDef, $pageDiv);
+        return ret;
+    }
+    
+    function getContentDiv(cswMobilePage) {
+        var $ret = $pageDiv.find('div:jqmData(role="content")');
+
+        if (!isNullOrEmpty($ret) && $ret.length > 0) {
+            $ret.empty();
+        } else {
+            $ret = $pageDiv.CswDiv('init', { ID: id + '_content' })
+                .CswAttrXml({ 'data-role': 'content' });
+        }
+        if (cswMobilePage.$content) {
+            $ret.append(cswMobilePage.$content);
+        } else {
+            $ret.append(cswMobilePage.getContent());
+        }
+        return $ret;
+    }
+    
+    //#endregion private	
 	
 	//#region public, priveleged
 
@@ -89,7 +198,13 @@ function CswMobilePageFactory(pageDef, $parent) {
 	this.mobileFooter = mobileFooter;
 	this.$content = $content;
     this.$pageDiv = $pageDiv;
-	
+    this.getContent = getContent;
+    this.CswChangePage = function(options) {
+        $pageDiv.CswChangePage(options);
+    };
+    this.CswPage = function() {
+        $pageDiv.CswPage();
+    };
 	//#region public, priveleged
 }
 

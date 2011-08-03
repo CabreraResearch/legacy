@@ -90,40 +90,40 @@ CswAppMode.mode = 'mobile';
 		
 		//#endregion Resource Initialization
 		
-		var $logindiv = makeLoginPage();
-		var $viewsdiv = makeViewsPage();
+		var loginPage = makeLoginPage();
+		var viewsPage;// = makeViewsPage();
 		//var onlinePage = _makeSyncStatusDiv();
 		//var $helpdiv = _makeHelpDiv();
-		var $sorrycharliediv = makeOfflinePage();
+		//var offlinePage = makeOfflinePage();
 
 		// case 20355 - error on browser refresh
 		if (!isNullOrEmpty(sessionId)) {
-			$viewsdiv.CswSetPath();
+			viewsPage.CswSetPath();
 			mobileStorage.setItem('refreshPage', 'viewsdiv');
 		} else {
-			$logindiv.CswSetPath();
+			loginPage.CswSetPath();
 			mobileStorage.setItem('refreshPage', 'logindiv' );
 		}
 			  
 		window.onload = function() {
 			if (!isNullOrEmpty(sessionId)) {
-				$viewsdiv = makeViewsPage();
+				viewsPage = makeViewsPage();
 			}
 			else {
 				mobileBgTask.start(
 					function() {
 						// online
-						if( !$logindiv || $logindiv.length === 0 ) {
-							$logindiv = makeLoginPage();
+						if( !loginPage || loginPage.length === 0 ) {
+							loginPage = makeLoginPage();
 						}
-						$logindiv.CswChangePage();
+						loginPage.CswChangePage();
 					},
 					function() {
 						// offline
-						if( !$sorrycharliediv || $sorrycharliediv.length === 0 ) {
-							$sorrycharliediv = makeOfflinePage();
+						if( !offlinePage || offlinePage.length === 0 ) {
+							offlinePage = makeOfflinePage();
 						}
-						$sorrycharliediv.CswChangePage();
+						offlinePage.CswChangePage();
 					}
 				);
 			}
@@ -134,15 +134,20 @@ CswAppMode.mode = 'mobile';
 		function makeLoginPage() {
             ///<summary>Create a Mobile login page</summary>
 		    ///<returns type="CswMobilePageLogin">CswMobilePageLogin page.</returns>
-		    var loginDef = { theme: opts.Theme };
-		    var loginDiv = new CswMobilePageLogin(loginDef, $body, mobileStorage, function (data,userName,accessId) {
+		    var loginDef = {
+		        theme: opts.Theme,
+		        onHelpClick: onHelpClick,
+		        onSuccess: function (data,userName,accessId) {
 		            sessionId = $.CswCookie('get', CswCookieName.SessionId);
 					mobileStorage.sessionid(sessionId);
 					mobileStorage.username(userName); 
 					mobileStorage.customerid(accessId);
-					$viewsdiv = makeViewsPage();
-					$viewsdiv.CswChangePage();  
-		        });
+					viewsPage = makeViewsPage();
+					viewsPage.CswChangePage();  
+		        },
+		        mobileStorage: mobileStorage
+		    };
+		    var loginDiv = new CswMobilePageFactory(CswMobilePage_Type.login, loginDef, $body);
 		    var $retDiv = loginDiv.$pageDiv;
 
 			return $retDiv;
@@ -157,7 +162,7 @@ CswAppMode.mode = 'mobile';
 		        onOnlineClick: onOnlineClick,
 		        onRefreshClick: onRefreshClick
 		    };
-		    var viewsPage = new CswMobilePageViews(viewsDef, $body, mobileStorage);
+		    var viewsPage = new CswMobilePageFactory(CswMobilePage_Type.views, viewsDef, $body, mobileStorage);
 			return viewsPage;
 		}
 		
@@ -245,7 +250,7 @@ CswAppMode.mode = 'mobile';
 									var params = {
 										ParentId: 'viewsdiv',
 										DivId: divId,
-										HeaderText: HeaderText,
+										title: title,
 										json: mobileStorage.updateStoredViewJson(divId, viewJSON),
 										parentlevel: 0,
 										level: 1,
@@ -301,7 +306,7 @@ CswAppMode.mode = 'mobile';
 				ParentId: '',
 				level: 1,
 				DivId: '',
-				HeaderText: '',
+				title: '',
 				HideRefreshButton: false,
 				HideSearchButton: false,
 				json: '',
@@ -394,7 +399,7 @@ CswAppMode.mode = 'mobile';
 							p.json = data['nodes'];    
 						}
 						if( params.level < 2) {
-							mobileStorage.storeViewJson(p.DivId, p.HeaderText, p.json, params.level, searchJson);
+							mobileStorage.storeViewJson(p.DivId, p.title, p.json, params.level, searchJson);
 						}
 						$retDiv = _loadDivContentsJson(p);
 					},
@@ -411,7 +416,7 @@ CswAppMode.mode = 'mobile';
 			var p = {
 				ParentId: '',
 				DivId: '',
-				HeaderText: '',
+				title: '',
 				json: '',
 				parentlevel: '',
 				PageType: '',
@@ -472,7 +477,7 @@ CswAppMode.mode = 'mobile';
 			var p = {
 				ParentId: '',
 				DivId: '',
-				HeaderText: '',
+				title: '',
 				json: '',
 				PageType: '',
 				parentlevel: '',
@@ -525,7 +530,7 @@ CswAppMode.mode = 'mobile';
 								_processViewJson({
 										ParentId: p.DivId,
 										DivId: id,
-										HeaderText: text,
+										title: text,
 										json: p.json['value'],
 										parentlevel: p.level,
 										level: p.level + 1,
@@ -571,7 +576,7 @@ CswAppMode.mode = 'mobile';
 						level: p.parentlevel + 1,
 						DivId: id,
 						persistBindEvent: true,
-						HeaderText: text  };
+						title: text  };
 					var $div = _addPageDivToBody(par);
 					par.onPageShow = function() { return _loadDivContents(par); };
 					$div.CswUnbindJqmEvents();
@@ -587,7 +592,7 @@ CswAppMode.mode = 'mobile';
 			var p = {
 				ParentId: '',
 				DivId: '',
-				HeaderText: '',
+				title: '',
 				json: '',
 				parentlevel: '',
 				HideRefreshButton: false,
@@ -1039,7 +1044,7 @@ CswAppMode.mode = 'mobile';
 				ParentId: undefined,
 				level: 1,
 				DivId: '',       // required
-				HeaderText: '',
+				title: '',
 				$toolbar: $(''),
 				$content: $(''),
 				HideSearchButton: false,
@@ -1065,7 +1070,7 @@ CswAppMode.mode = 'mobile';
 					.CswAttrXml({
 							'data-role': 'page',
 							'data-url': p.DivId,
-							'data-title': p.HeaderText,
+							'data-title': p.title,
 							'data-rel': 'page'
 						});
 			}
@@ -1075,7 +1080,7 @@ CswAppMode.mode = 'mobile';
 					search: makeHeaderButtonDef(CswMobileHeaderButtons.search, p.DivId, onSearchClick)
 				},
 				ID: p.DivId,
-			    text: p.HeaderText,
+			    text: p.title,
 				dataId: 'csw_header',
 				dataTheme: opts.Theme
 			};
