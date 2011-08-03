@@ -167,4 +167,7 @@ var CswMobilePage_Type = {
 var CswMobileGlobal_Config = {
     theme: 'b'
 };
+var CswMobileCssClasses = {
+    listview: { name: 'csw_listview' }
+};
 //#endregion Mobile
