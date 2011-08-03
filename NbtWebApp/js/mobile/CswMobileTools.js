@@ -377,4 +377,63 @@ function makeHeaderButtonDef(name,id,onClick) {
     }
     return ret;
 }
+
+function makeMenuButtonDef(pageDef,id,buttonNames,mobileStorage) {
+    /// <summary>Generate the JSON definition for a Mobile button header and footer</summary>
+    /// <param name="pageDef" type="Object">JSON page defintion to extend</param>
+    /// <param name="id" type="String">Page ID</param>
+    /// <param name="buttonNames" type="Object">JSON collection of buttons: { name: onClick }</param>
+    /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
+    /// <returns type="Object">JSON for consumption by CswMobilePageFactory</returns>
+    var newPageDef = {
+        headerDef: { buttons: { } },
+        footerDef: { buttons: { } }
+    };
+    if(pageDef) {
+        $.extend(newPageDef, pageDef);
+    }
+    if( isNullOrEmpty(newPageDef.footerDef)) {
+        newPageDef.footerDef = { buttons: { } };
+    }
+    if( isNullOrEmpty(newPageDef.headerDef)) {
+        newPageDef.headerDef = { buttons: { } };
+    }
+    var onClick;
+    for (var name in buttonNames ) {
+        onClick = buttonNames[name];
+        switch(name) {
+            case CswMobileHeaderButtons.back.name:
+                {
+                    newPageDef.headerDef.buttons.back = makeHeaderButtonDef(CswMobileHeaderButtons.back, id, onClick);
+                    break;
+                }
+            case CswMobileHeaderButtons.search.name:
+                {
+                    newPageDef.headerDef.buttons.search = makeHeaderButtonDef(CswMobileHeaderButtons.search, id, onClick);
+                    break;
+                }
+            case CswMobileFooterButtons.fullsite.name:
+                {
+                    newPageDef.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, id);
+                    break;
+                }
+            case CswMobileFooterButtons.help.name:
+                {
+                    newPageDef.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, id, onClick);
+                    break;
+                }
+            case CswMobileFooterButtons.online.name:
+                {
+                    newPageDef.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, id, onClick, mobileStorage);
+                    break;
+                }
+            case CswMobileFooterButtons.refresh.name:
+                {
+                    newPageDef.footerDef.buttons.refresh = makeFooterButtonDef(CswMobileFooterButtons.refresh, id, onClick);
+                    break;
+                }
+        }
+    }
+    return newPageDef;
+}
 //#endregion functions

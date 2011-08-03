@@ -62,13 +62,12 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
             p.title = title;
         }
 
-        if( isNullOrEmpty(p.footerDef.buttons)) {
-            p.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, id, null, mobileStorage);
-            p.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, id);
-            p.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, id, p.onHelpClick);
-        }
-        
-        pageDef = p;
+        var buttons = { };
+        buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
+        buttons[CswMobileFooterButtons.fullsite.name] = '';
+        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
+
+        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
         $content = getContent();
     })();

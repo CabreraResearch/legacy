@@ -13,22 +13,24 @@
 
 //#region CswMobilePageLogin
 
-function CswMobilePageLogin(loginDef,$parent,mobileStorage,loginSuccess) {
+function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
 	/// <summary>
 	///   Login Page class. Responsible for generating a Mobile login page.
 	/// </summary>
     /// <param name="loginDef" type="Object">Login definitional data.</param>
-	/// <param name="$parent" type="jQuery">Parent element to attach to.</param>
+	/// <param name="$page" type="jQuery">Parent page element to attach to.</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="loginSuccess" type="Function">Function to execute on login success.</param>
 	/// <returns type="CswMobilePageLogin">Instance of itself. Must instance with 'new' keyword.</returns>
 
 	//#region private
 
-    var $content = '';
     var pageDef = { };
     var id = CswMobilePage_Type.login.id;
     var title = CswMobilePage_Type.login.title;
+    var loginSuffix = '_login';
+    var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
+    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + loginSuffix);
     
     //ctor
     (function() {
@@ -55,22 +57,21 @@ function CswMobilePageLogin(loginDef,$parent,mobileStorage,loginSuccess) {
             p.title = title;
         }
         
-        if( isNullOrEmpty(p.footerDef) ) {
-            p.footerDef = { buttons: { } };
-        }
-        if (isNullOrEmpty(p.footerDef.buttons)) {
-            p.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, id);
-            p.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, id, p.onHelpClick);
-        }
-       
-        pageDef = p;
+        var buttons = { };
+        buttons[CswMobileFooterButtons.fullsite.name] = '';
+        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
+        
+        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
         getContent();
     })(); //ctor
     
     function getContent() {
-        var $contentPage = $parent.find('#' + id).find('div:jqmData(role="content")');
-        $contentPage.empty();
+        if( isNullOrEmpty($content) || $content.length === 0) {
+            $content = $('<div id="' + id + loginSuffix + '"></div>');
+        } else {
+            $content.empty();
+        }
         
         var loginContent = '<p style="text-align: center;">Login to Mobile Inspection Manager</p>';
         loginContent += '<input type="textbox" id="login_customerid" placeholder="Customer Id" /><br>';
@@ -78,7 +79,7 @@ function CswMobilePageLogin(loginDef,$parent,mobileStorage,loginSuccess) {
         loginContent += '<input type="password" id="login_password" placeholder="Password" /><br>';
         loginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
         
-        $content = $(loginContent);
+        $content.append( $(loginContent) );
         if( !isNullOrEmpty($contentPage) && $contentPage.length > 0 ) {
             $contentPage.append($content);
         }
@@ -95,7 +96,6 @@ function CswMobilePageLogin(loginDef,$parent,mobileStorage,loginSuccess) {
 
         function onLoginSubmit() {
             var authenticateUrl = '/NbtWebApp/wsNBT.asmx/Authenticate';
-            
             if (mobileStorage.amOnline()) {
                 var userName = $('#login_username').val();
                 var accessId = $('#login_customerid').val();

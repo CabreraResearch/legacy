@@ -63,17 +63,13 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
         } else {
             p.title = title;
         }
-        
-        if (isNullOrEmpty(p.footerDef)) {
-            p.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, id);
-            p.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, id, p.onHelpClick);
-        }
+       
+        var buttons = { };
+        buttons[CswMobileFooterButtons.fullsite.name] = '';
+        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
+        buttons[CswMobileHeaderButtons.back.name] = '';
 
-        if (isNullOrEmpty(p.headerDef)) {
-            p.headerDef.buttons.back = makeHeaderButtonDef(CswMobileHeaderButtons.back, id);
-        }
-        
-        pageDef = p;
+        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
         $content = getContent();
         

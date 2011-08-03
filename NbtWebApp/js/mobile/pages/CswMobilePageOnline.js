@@ -73,18 +73,14 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
             p.title = title;
         }
         
-        if (isNullOrEmpty(p.footerDef.buttons)) {
-            p.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, id, null, mobileStorage);
-            p.footerDef.buttons.refresh = makeFooterButtonDef(CswMobileFooterButtons.refresh, id, p.onRefreshClick);
-            p.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, id);
-            p.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, id, p.onHelpClick);
-        }
+        var buttons = { };
+        buttons[CswMobileFooterButtons.online.name] = '';
+        buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
+        buttons[CswMobileFooterButtons.fullsite.name] = '';
+        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
+        buttons[CswMobileHeaderButtons.back.name] = '';
 
-        if (isNullOrEmpty(p.headerDef.buttons)) {
-            p.headerDef.buttons.back = makeHeaderButtonDef(CswMobileHeaderButtons.back, id);
-        }
-        
-        pageDef = p;
+        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
         $content = getContent();
     })(); //ctor

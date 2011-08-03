@@ -49,17 +49,7 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
             onRefreshClick: function () {}
 	    };
 	    if (helpDef) $.extend(p, helpDef);
-
-        if( isNullOrEmpty(p.footerDef.buttons)) {
-            p.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, p.DivId, null, mobileStorage);
-            p.footerDef.buttons.refresh = makeFooterButtonDef(CswMobileFooterButtons.refresh, p.DivId, p.onRefreshClick);
-            p.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, p.DivId);
-        }
-    
-        if( isNullOrEmpty(p.headerDef.buttons)) {
-            p.headerDef.buttons.back = makeHeaderButtonDef(CswMobileHeaderButtons.back, p.DivId);
-        }
-
+        
         if(!isNullOrEmpty(p.DivId)) {
             id = p.DivId;
         } else {
@@ -70,7 +60,14 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
         } else {
             p.title = title;
         }
-        pageDef = p;
+        
+        var buttons = { };
+        buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
+        buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
+        buttons[CswMobileFooterButtons.fullsite.name] = '';
+        buttons[CswMobileHeaderButtons.back.name] = '';
+
+        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
         $content = getContent();
     })();

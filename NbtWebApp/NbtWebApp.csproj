@@ -117,6 +117,9 @@
     <Content Include="js\CswProfileMethod.js" />
     <Content Include="js\mobile\controls\CswMobileListView.js" />
     <Content Include="js\mobile\CswMobileResources.js" />
+    <Content Include="js\mobile\pages\CswMobilePageNodes.js" />
+    <Content Include="js\mobile\pages\CswMobilePageProps.js" />
+    <Content Include="js\mobile\pages\CswMobilePageTabs.js" />
     <Content Include="js\mobile\pages\CswMobilePageOffline.js" />
     <Content Include="js\mobile\pages\CswMobilePageHelp.js" />
     <Content Include="js\mobile\pages\CswMobilePageLogin.js" />

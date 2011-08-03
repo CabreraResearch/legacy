@@ -64,19 +64,16 @@ function CswMobilePageProps(propsDef,$parent,mobileStorage) {
             p.title = title;
         }
 
-        if( isNullOrEmpty(p.footerDef.buttons)) {
-            p.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, id, null, mobileStorage);
-            p.footerDef.buttons.refresh = makeFooterButtonDef(CswMobileFooterButtons.refresh, id, p.onRefreshClick);
-            p.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, id);
-            p.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, id, p.onHelpClick);
-        }
+        var buttons = { };
+        buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
+        buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
+        buttons[CswMobileFooterButtons.fullsite.name] = '';
+        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
+        buttons[CswMobileHeaderButtons.back.name] = '';
+        buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
-        if( isNullOrEmpty(p.headerDef.buttons)) {
-            p.headerDef.buttons.back = makeHeaderButtonDef(CswMobileHeaderButtons.back, id);
-            p.headerDef.buttons.search = makeHeaderButtonDef(CswMobileHeaderButtons.search, id, p.onSearchClick);
-        }
+        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
-        pageDef = p;
         $content = getContent();
     })(); //ctor
     
