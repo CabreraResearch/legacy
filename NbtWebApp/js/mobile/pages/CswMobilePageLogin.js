@@ -27,8 +27,8 @@ function CswMobilePageLogin(loginDef,$parent,mobileStorage,loginSuccess) {
 
     var $content = '';
     var pageDef = { };
-    var id = 'logindiv';
-    var title = 'ChemSW Live';
+    var id = CswMobilePage_Type.login.id;
+    var title = CswMobilePage_Type.login.title;
     
     //ctor
     (function() {

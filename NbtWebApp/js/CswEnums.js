@@ -154,15 +154,15 @@ var CswMobileFooterButtons = {
     }
 };
 var CswMobilePage_Type = {
-    login: { name: 'login' },
-    help: { name: 'help' },
-    nodes: { name: 'nodes' },
-    offline: {name: 'offline' },
-    online: { name: 'online' },
-    props: { name: 'props' },
-    search: { name: 'search' },
-    tabs: { name: 'tabs' },
-    views: { name: 'views' }
+    login: { name: 'login', id: 'logindiv', title: 'ChemSW Live' },
+    help: { name: 'help', id: 'helpdiv', title: 'Help' },
+    nodes: { name: 'nodes', id: 'nodesdiv', title: 'Nodes' },
+    offline: {name: 'offline', id: 'offlinediv', title: 'Sorry Charlie!' },
+    online: { name: 'online', id: 'onlinediv', title: 'Sync Status' },
+    props: { name: 'props', id: 'propsdiv', title: 'Properties' },
+    search: { name: 'search', id: 'searchdiv', title: 'Search' },
+    tabs: { name: 'tabs', id: 'tabsdiv', title: 'Tabs' },
+    views: { name: 'views', id: 'viewsdiv', title: 'Views' }
 };
 var CswMobileGlobal_Config = {
     theme: 'b'

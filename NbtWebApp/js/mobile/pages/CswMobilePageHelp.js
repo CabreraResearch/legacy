@@ -29,8 +29,8 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
 
     var $content = '';
     var pageDef = { };
-    var id = 'helpdiv';
-    var title = 'Help';
+    var id = CswMobilePage_Type.help.id;
+    var title = CswMobilePage_Type.help.title;
     
     //ctor
     (function() {
@@ -40,8 +40,8 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
 	
         var p = {
 	        level: -1,
-	        DivId: 'helpdiv',       // required
-	        title: 'Help',
+	        DivId: '',
+	        title: '',
 	        theme: CswMobileGlobal_Config.theme,
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },

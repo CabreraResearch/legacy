@@ -29,8 +29,8 @@ function CswMobilePageNodes(nodesDef,$parent,mobileStorage) {
 
     var $content = '';
     var pageDef = { };
-    var id = 'nodesdiv';
-    var title = 'Nodes';
+    var id = CswMobilePage_Type.nodes.id;
+    var title = CswMobilePage_Type.nodes.title;
     
     //ctor
     (function(){
@@ -41,7 +41,7 @@ function CswMobilePageNodes(nodesDef,$parent,mobileStorage) {
         
         var p = {
 	        level: 1,
-	        DivId: '',       // required
+	        DivId: '', 
 	        title: '',
 	        theme: CswMobileGlobal_Config.theme,
             headerDef: { buttons: {} },

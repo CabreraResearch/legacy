@@ -29,8 +29,8 @@ function CswMobilePageProps(propsDef,$parent,mobileStorage) {
 
     var $content = '';
     var pageDef = { };
-    var id = 'propsdiv';
-    var title = 'Properties';
+    var id = CswMobilePage_Type.props.id;
+    var title = CswMobilePage_Type.props.title;
     
     //ctor
     (function(){
@@ -41,7 +41,7 @@ function CswMobilePageProps(propsDef,$parent,mobileStorage) {
         
         var p = {
 	        level: 3,
-	        DivId: '',       // required
+	        DivId: '', 
 	        title: '',
 	        theme: CswMobileGlobal_Config.theme,
             headerDef: { buttons: {} },

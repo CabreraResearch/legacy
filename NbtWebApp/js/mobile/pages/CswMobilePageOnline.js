@@ -32,8 +32,8 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
 
     var $content = '';
     var pageDef = { };
-    var id = 'syncstatus';
-    var title = 'Sync Status';
+    var id = CswMobilePage_Type.online.id;
+    var title = CswMobilePage_Type.online.title;
 
     var $onlineBtn, $syncBtn, $logoutBtn, $logBtn;
     
@@ -52,8 +52,8 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
 
         var p = {
             level: -1,
-            DivId: 'syncstatus',       // required
-            title: 'Sync Status',
+            DivId: '',
+            title: '',
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },
             theme: CswMobileGlobal_Config.theme,

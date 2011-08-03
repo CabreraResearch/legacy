@@ -26,8 +26,8 @@ function CswMobilePageViews(viewsDef,$parent,mobileStorage) {
     var $content = '';
     var pageDef = { };
     var pageJson = { };
-    var id = 'viewsdiv';
-    var title = 'Views';
+    var id = CswMobilePage_Type.views.id;
+    var title = CswMobilePage_Type.views.title;
     
     //ctor
     (function() {
@@ -39,8 +39,8 @@ function CswMobilePageViews(viewsDef,$parent,mobileStorage) {
             parentlevel: -1,
             level: -1,
             ParentId: '',
-            DivId: 'viewsdiv',       // required
-            title: 'Views',
+            DivId: '', 
+            title: '',
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },
             theme: 'b',

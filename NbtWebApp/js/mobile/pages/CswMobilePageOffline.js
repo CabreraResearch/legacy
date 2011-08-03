@@ -29,8 +29,8 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
 
     var $content = '';
     var pageDef = { };
-    var id = 'offlinediv';
-    var title = 'Sorry Charlie!';
+    var id = CswMobilePage_Type.offline.id;
+    var title = CswMobilePage_Type.offline.title;
     
     //ctor
     (function(){
@@ -41,8 +41,8 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
         
         var p = {
 	        level: -1,
-	        DivId: 'sorrycharliediv',       // required
-	        title: 'Sorry Charlie!',
+	        DivId: '', 
+	        title: '',
 	        theme: CswMobileGlobal_Config.theme,
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },

@@ -29,8 +29,8 @@ function CswMobilePageTabs(tabsDef,$parent,mobileStorage) {
 
     var $content = '';
     var pageDef = { };
-    var id = 'tabsdiv';
-    var title = 'Tabs';
+    var id = CswMobilePage_Type.tabs.id;
+    var title = CswMobilePage_Type.tabs.title;
     
     //ctor
     (function(){
@@ -41,7 +41,7 @@ function CswMobilePageTabs(tabsDef,$parent,mobileStorage) {
         
         var p = {
 	        level: 2,
-	        DivId: '',       // required
+	        DivId: '',
 	        title: '',
 	        theme: CswMobileGlobal_Config.theme,
             headerDef: { buttons: {} },

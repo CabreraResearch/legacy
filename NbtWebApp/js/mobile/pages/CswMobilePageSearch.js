@@ -29,8 +29,8 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
 
     var $content = '';
     var pageDef = { };
-    var id = 'CswMobile_SearchDiv';
-    var title = 'Search';
+    var id = CswMobilePage_Type.search.id;
+    var title = CswMobilePage_Type.search.title;
     
     //ctor
     (function() {
@@ -44,8 +44,8 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
         var p = {
             level: -1,
             ParentId: '',
-            DivId: 'CswMobile_SearchDiv' + viewId,       // required
-            title: 'Search',
+            DivId: CswMobilePage_Type.search.id + viewId,
+            title: '',
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },
             theme: CswMobileGlobal_Config.theme,
