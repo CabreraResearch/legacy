@@ -87,7 +87,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
                 }
             case CswMobilePage_Type.nodes.name:
                 {
-                    cswMobilePage = new CswMobilePageNodes(p, $page, mobileStorage);
+                    cswMobilePage = new CswMobilePageNodes(p, $page, p.mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.offline.name:
@@ -102,7 +102,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
                 }
             case CswMobilePage_Type.props.name:
                 {
-                    cswMobilePage = new CswMobilePageProps(p, $page, mobileStorage);
+                    cswMobilePage = new CswMobilePageProps(p, $page, p.mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.search.name:
@@ -112,7 +112,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
                 }
             case CswMobilePage_Type.tabs.name:
                 {
-                    cswMobilePage = new CswMobilePageTabs(p, $page, mobileStorage);
+                    cswMobilePage = new CswMobilePageTabs(p, $page, p.mobileStorage);
                     break;
                 }
             case CswMobilePage_Type.views.name:
