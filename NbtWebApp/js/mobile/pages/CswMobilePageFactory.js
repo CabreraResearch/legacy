@@ -118,7 +118,6 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
                 }
             case CswMobilePage_Type.views.name:
                 {
-                    debugger;
                     cswMobilePage = new CswMobilePageViews(p, $page, p.mobileStorage);
                     break;
                 }
