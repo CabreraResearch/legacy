@@ -25,7 +25,7 @@
 			$errordiv.addClass('CswErrorMessage_Error');
 		}
 
-	 	var $tbl = $errordiv.CswTable('init', {
+		var $tbl = $errordiv.CswTable('init', {
 												'id': makeId({ 
 														'prefix': id, 
 														'id': 'tbl' 
@@ -46,10 +46,10 @@
 		$cell21.hide();
 
 		$cell12.CswImageButton({
-		    ButtonType: CswImageButton_ButtonType.Delete,
-            AlternateText: 'Hide',
-            ID: makeId({ 'prefix': id, 'id': 'hidebtn' }),
-            onClick: function ($ImageDiv) { 
+			ButtonType: CswImageButton_ButtonType.Delete,
+			AlternateText: 'Hide',
+			ID: makeId({ 'prefix': id, 'id': 'hidebtn' }),
+			onClick: function ($ImageDiv) { 
 				$errordiv.remove();
 				if($parentdiv.children().length === 0)
 					$parentdiv.hide();

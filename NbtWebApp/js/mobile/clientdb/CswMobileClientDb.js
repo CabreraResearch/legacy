@@ -1,14 +1,18 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../../CswClientDb.js" />
 /// <reference path="../../_Global.js" />
+/// <reference path="../../_CswPrototypeExtensions.js" />
 
 //#region CswMobileClientDb
 
-CswMobileClientDb.prototype = new CswClientDb;
-CswMobileClientDb.prototype.constructor = CswMobileClientDb;
+CswMobileClientDb.inheritsFrom(CswClientDb);
 
-function CswMobileClientDb()
-{
+function CswMobileClientDb() {
+    /// <summary>
+    ///   Mobile client db class to encapsulate JSON fetch/store/update methods.
+    ///   Inherits from CswClientDb.
+    /// </summary>
+    /// <returns type="CswMobileClientDb">Instance of itself. Must instance with 'new' keyword.</returns>
     CswClientDb.call(this);
 
     var storedViews = {};

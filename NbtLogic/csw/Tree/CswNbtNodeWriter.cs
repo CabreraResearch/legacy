@@ -118,43 +118,13 @@ namespace ChemSW.Nbt
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )
             {
                 Prop.NodeId = Node.NodeId;
-                // Only set values for unmodified properties
-                // This is important for nodes created through workflows
-                if( !Prop.WasModified )
-                {
-                    if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Date && Prop.AsDate.DefaultToToday )
-                    {
-                        CswNbtNodePropDate PropAsDate = Prop.AsDate;
-                        PropAsDate.DateValue = DateTime.Now;
-                    }
-                    else if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MTBF && Prop.AsMTBF.DefaultToToday )
-                    {
-                        CswNbtNodePropMTBF PropAsMTBF = Prop.AsMTBF;
-                        PropAsMTBF.StartDateTime = DateTime.Now;
-                    }
-                    else if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
-                    {
-                        // This will default to Top.  Setting the Parent might change this later.
-                        Prop.AsLocation.SelectedNodeId = null;
-                        if( Prop.HasDefaultValue() )
-                            Prop.copy( Prop.DefaultValue );
-                    }
-                    else if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
-                    {
-                        if( Prop.HasDefaultValue() && Prop.DefaultValue.AsBarcode.Barcode != CswNbtNodePropBarcode.AutoSignal )
-                            Prop.copy( Prop.DefaultValue );
-                    }
-                    else if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence )
-                    {
-                        if( Prop.HasDefaultValue() && Prop.DefaultValue.AsSequence.Sequence != CswNbtNodePropBarcode.AutoSignal )
-                            Prop.copy( Prop.DefaultValue );
-                    }
-                    else if( Prop.HasDefaultValue() )
-                    {
-                        Prop.copy( Prop.DefaultValue );
-                    }
-                } // if( !Prop.WasModified )
-            } // foreach( CswNbtNodePropWrapper Prop in Node.Properties )
+				// Only set values for unmodified properties
+				// This is important for nodes created through workflows
+				if( !Prop.WasModified )
+				{
+					Prop.SetDefaultValue();
+				}
+			} // foreach( CswNbtNodePropWrapper Prop in Node.Properties )
         } // setDefaultPropertyValues()
 
         public void setSequenceValues( CswNbtNode Node )

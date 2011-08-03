@@ -1,6 +1,4 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
@@ -17,7 +15,7 @@
 						if (options) $.extend(o, options);
 
 						var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
-                        if( !isNullOrEmpty(ThisSessionId) )
+						if( !isNullOrEmpty(ThisSessionId) )
 						{
 							o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
 						}
@@ -27,10 +25,10 @@
 												'  <form>' +  
 												'    <table>' +
 												'    <tr>' +
-                                                '      <td align="right"></td>' +
-                                                '      <td id="loginmsg" style="display: none;"></td>' +
-                                                '    </tr>' +
-                                                '    <tr>' +
+												'      <td align="right"></td>' +
+												'      <td id="loginmsg" style="display: none;"></td>' +
+												'    </tr>' +
+												'    <tr>' +
 												'      <td align="right">Customer ID:</td>' +
 												'      <td><input type="text" name="login_accessid" id="login_accessid" /></td>' +
 												'    </tr>' +
@@ -51,12 +49,12 @@
 												'      <td></td>' +
 												'      <td></td>' +
 												'    </tr>' + 
-                                                '  </table>' +
+												'  </table>' +
 												' </form>' +
 												' </div>' +
 												' <br/><br/><br/>' +
 												' <div id="assemblydiv" width="100%" align="right"></div>')
-                                            .appendTo($(this));
+											.appendTo($(this));
 
 							$('#assemblydiv').load('_Assembly.txt');
 							
@@ -66,7 +64,7 @@
 														enabledText: 'Login', 
 														disabledText: 'Logging in...', 
 														onclick: function() {
-                                                            $('#loginmsg').hide()
+															$('#loginmsg').hide()
 																	.children().remove();
 
 															var AccessId = $('#login_accessid').val();
@@ -80,12 +78,12 @@
 																o.onAuthenticate(UserName);
 															}
 
-                                                            var dataJson = {
-                                                                AccessId: AccessId, 
-                                                                UserName: UserName, 
-                                                                Password: Password,
-                                                                ForMobile: false
-                                                            };
+															var dataJson = {
+																AccessId: AccessId, 
+																UserName: UserName, 
+																Password: Password,
+																ForMobile: false
+															};
 
 															CswAjaxJSON({
 																		url: o.AuthenticateUrl,
@@ -108,11 +106,11 @@
 											} // onclick
 							}); // button
 
-                            $('#login_accessid').clickOnEnter($loginbutton);
-                            $('#login_username').clickOnEnter($loginbutton);
-                            $('#login_password').clickOnEnter($loginbutton);
+							$('#login_accessid').clickOnEnter($loginbutton);
+							$('#login_username').clickOnEnter($loginbutton);
+							$('#login_password').clickOnEnter($loginbutton);
 
-                        } // if-else(ThisSessionId !== null)
+						} // if-else(ThisSessionId !== null)
 					}  // login
 		};
 

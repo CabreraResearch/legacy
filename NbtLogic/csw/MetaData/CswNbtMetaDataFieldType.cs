@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.MetaData
             MOL,
             MTBF,
             //MultiRelationship,
+			MultiList,
             //NodeTypePermissions,
             NodeTypeSelect,
             Number,

@@ -4,8 +4,12 @@
 ///// <reference path="_Global.js" />
 
 //#region CswClientDb
-function CswClientDb()
-{
+function CswClientDb() {
+    /// <summary>
+    ///   Client db class to encapsulate get/set/update and delete methods against the localStorage object.
+    /// </summary>
+    /// <returns type="CswClientDb">Instance of itself. Must instance with 'new' keyword.</returns>
+    
     //private
     var storedInMemory = {};
     var keys = [];

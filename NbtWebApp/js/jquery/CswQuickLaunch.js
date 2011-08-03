@@ -1,4 +1,7 @@
-﻿; (function ($) {
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../_Global.js" />
+
+; (function ($) {
 	$.fn.CswQuickLaunch = function (options) {
 
 		var o = {
@@ -13,14 +16,14 @@
 		}
 		var $this = $(this);
 
-        var dataXml = {
-            UserId: ''
-        }
+		var dataXml = {
+			UserId: ''
+		}
 
 		CswAjaxXml({
 			url: o.Url,
 			data: dataXml,
-            stringify: false,
+			stringify: false,
 			success: function ($xml) {
 				var $QuickLaunchDiv = $('<div id="quicklaunchdiv"><ul id="launchitems"></ul></div>')
 									.appendTo($this);
@@ -40,7 +43,7 @@
 
 					switch(launchtype.toLowerCase()) //webservice converts to lower case
 					{
-                        case 'view':
+						case 'view':
 							$('<a href="#' + text + '_' + launchtype + '_' + viewmode + '_' + viewid +'">' + text + '</a>')
 								 .appendTo($li) 
 								 .click(function() { o.onViewClick(viewid, viewmode); return false; });

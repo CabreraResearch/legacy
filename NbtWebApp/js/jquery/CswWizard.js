@@ -1,4 +1,7 @@
-﻿; (function ($) {
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../_Global.js" />
+
+; (function ($) {
 	var PluginName = "CswWizard";
 
 	var methods = {

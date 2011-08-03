@@ -1,6 +1,4 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="/js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="/js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="../_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
@@ -16,8 +14,8 @@
 					NodeTreeUrl: '/NbtWebApp/wsNBT.asmx/getTreeOfNode',
 					viewid: '',       // loads an arbitrary view
 					viewmode: '',
-                    showempty: false, // if true, shows an empty tree (primarily for search)
-                    forsearch: false, // if true, used to override default behavior of list views
+					showempty: false, // if true, shows an empty tree (primarily for search)
+					forsearch: false, // if true, used to override default behavior of list views
 					nodeid: '',       // if viewid are not supplied, loads a view of this node
 					cswnbtnodekey: '',
 					IncludeNodeRequired: false,
@@ -49,18 +47,18 @@
 
 				var url = o.ViewTreeUrl;
 				var dataParam = { 
-                    'UsePaging': o.UsePaging,
-                    'ViewId': o.viewid,
-                    'IDPrefix': IDPrefix,
-                    'IsFirstLoad': true,
-                    'ParentNodeKey': '',
-                    'IncludeNodeRequired': o.IncludeNodeRequired,
-                    'IncludeNodeKey': tryParseString(o.cswnbtnodekey, ''),
-                    'ShowEmpty': o.showempty,
-                    'ForSearch': o.forsearch,
-                    'NodePk': tryParseString(o.nodeid,''),
+					'UsePaging': o.UsePaging,
+					'ViewId': o.viewid,
+					'IDPrefix': IDPrefix,
+					'IsFirstLoad': true,
+					'ParentNodeKey': '',
+					'IncludeNodeRequired': o.IncludeNodeRequired,
+					'IncludeNodeKey': tryParseString(o.cswnbtnodekey, ''),
+					'ShowEmpty': o.showempty,
+					'ForSearch': o.forsearch,
+					'NodePk': tryParseString(o.nodeid,''),
 					'IncludeInQuickLaunch': o.IncludeInQuickLaunch
-                };
+				};
 
 				if( isNullOrEmpty( o.viewid ) )
 				{
@@ -70,7 +68,7 @@
 				CswAjaxXml({
 					url: url,
 					data: dataParam,
-                    stringify: false,
+					stringify: false,
 					success: function ($xml) {
 						var selectid = '';
 						//var treePlugins = ["themes", "xml_data", "ui", "types", "crrm"];
@@ -120,7 +118,7 @@
 
 						var strTypes = $xml.find('types').text();
 						var jsonTypes = $.parseJSON(strTypes);
-					    var $treexml = $xml.find('tree').children('root');
+						var $treexml = $xml.find('tree').children('root');
 						if($treexml.length > 0)
 						{
 							//var treexmlstring = xmlToString($treexml);
@@ -206,19 +204,19 @@
 													{
 														var nodekey = $nodeOpening.CswAttrXml('cswnbtnodekey');
 														var retDataParam = {
-                                                            'UsePaging': o.UsePaging,
-                                                            'ViewId': o.viewid,
-                                                            'IDPrefix': IDPrefix,
-                                                            'IsFirstLoad': false,
-                                                            'ParentNodeKey': nodekey,
-                                                            'IncludeNodeRequired': false,
-                                                            'IncludeNodeKey': '',
-                                                            'ShowEmpty': false,
-                                                            'ForSearch': o.forsearch,
-                                                            'NodePk': tryParseString(o.nodeid,''),
+															'UsePaging': o.UsePaging,
+															'ViewId': o.viewid,
+															'IDPrefix': IDPrefix,
+															'IsFirstLoad': false,
+															'ParentNodeKey': nodekey,
+															'IncludeNodeRequired': false,
+															'IncludeNodeKey': '',
+															'ShowEmpty': false,
+															'ForSearch': o.forsearch,
+															'NodePk': tryParseString(o.nodeid,''),
 															'IncludeInQuickLaunch': false
-                                                        };
-                                                        return $.param(retDataParam);
+														};
+														return $.param(retDataParam);
 													},
 												"success": function(data, textStatus, XMLHttpRequest) 
 													{
@@ -345,7 +343,7 @@
 			{
 				ParentNodeKey = tryParseString(Parent.CswAttrDom('cswnbtnodekey'),'');
 			}
-                                                    
+													
 			var nextDataParam = { 
 				'UsePaging': m.UsePaging,
 				'ViewId': m.viewid,
