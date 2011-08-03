@@ -24,7 +24,6 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 
 	//#region private
     var pageDef = { };
-    var pageJson = { };
     var id = CswMobilePage_Type.views.id;
     var title = CswMobilePage_Type.views.title;
     var divSuffix = '_views';
@@ -72,23 +71,24 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
-        getContent();
+        //getContent();
     })(); //ctor
     
-    function getContent() {
+    function getContent(onSuccess) {
+        startLoadingMsg();
         var now = new Date();
+        var lastSync = new Date(mobileStorage.lastSyncTime);
         if (!mobileStorage.amOnline() || 
-            ( now - mobileStorage.lastSyncSuccess() < 300000 ) ) //it's been less than 5 minutes since the last sync
+            ( now.getTime() - lastSync.getTime() < 300000 ) ) //it's been less than 5 minutes since the last sync
         {
-            pageJson = mobileStorage.fetchCachedViewJson(id);
-            refreshViewContent(); 
+            refreshViewContent('', onSuccess); 
         } else {
-            refreshViewJson();
+            refreshViewJson(onSuccess);
         }
         return $content;
     }
     
-    function refreshViewJson() {
+    function refreshViewJson(onSuccess) {
         ///<summary>Fetches the current views list from the web server and rebuilds the list.</summary>
 		var getViewsUrl = '/NbtWebApp/wsNBT.asmx/GetViewsList';
 		
@@ -106,10 +106,10 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 				onloginfail: function(text) { onLoginFail(text, mobileStorage); },
 				success: function(data) {
 					setOnline(mobileStorage);
-					pageJson = data;
-					mobileStorage.storeViewJson(id, title, pageJson, 0);
 
-				    refreshViewContent(pageJson);
+					mobileStorage.storeViewJson(id, title, data, 0);
+
+				    refreshViewContent(data,onSuccess);
 				},
 				error: function() {
 					onError();
@@ -117,9 +117,12 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 			});
     }
     
-    function refreshViewContent(viewJson) {
+    function refreshViewContent(viewJson,onSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
+        if (isNullOrEmpty(viewJson)) {
+            viewJson = mobileStorage.fetchCachedViewJson(id);
+        }
         if( isNullOrEmpty($content) || $content.length === 0) {
             $content = $('<div id="' + id + divSuffix + '"></div>');
         } else {
@@ -145,6 +148,9 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 		if(!mobileStorage.stayOffline()) {
 			toggleOnline(mobileStorage);
 		}
+        if (!isNullOrEmpty(onSuccess)) {
+            onSuccess($content);
+        }
     }
     
 	//#endregion private
@@ -153,7 +159,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 
     this.$content = $content;
     this.pageDef = pageDef;
-
+    this.title = title;
     this.refreshViewContent = refreshViewContent;
     this.refreshViewJson = refreshViewJson;
     this.getContent = getContent;

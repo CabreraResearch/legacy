@@ -83,8 +83,7 @@ CswAppMode.mode = 'mobile';
 		
 		//#endregion Resource Initialization
 		
-		var loginPage = makeLoginPage();
-		var viewsPage, offlinePage, helpPage, onlinePage;
+		var loginPage, viewsPage, offlinePage, helpPage, onlinePage;
 
 		// case 20355 - error on browser refresh
 		if (!isNullOrEmpty(sessionId)) {
@@ -92,35 +91,32 @@ CswAppMode.mode = 'mobile';
 			    viewsPage = makeViewsPage();
 			}
 		    viewsPage.CswSetPath();
-			mobileStorage.setItem('refreshPage', 'viewsdiv');
+			mobileStorage.setItem('refreshPage', CswMobilePage_Type.views.id);
 		} else {
-			loginPage.CswSetPath();
-			mobileStorage.setItem('refreshPage', 'logindiv' );
-		}
-			  
-		window.onload = function() {
-			if (!isNullOrEmpty(sessionId)) {
-				viewsPage = makeViewsPage();
+			if( isNullOrEmpty(loginPage)) {
+			    loginPage = makeLoginPage();
 			}
-			else {
-				mobileBgTask.start(
-					function() {
-						// online
-						if( !loginPage || loginPage.length === 0 ) {
-							loginPage = makeLoginPage();
-						}
-						loginPage.CswChangePage();
-					},
-					function() {
-						// offline
-						if( !offlinePage || offlinePage.length === 0 ) {
-							offlinePage = makeOfflinePage();
-						}
-						offlinePage.CswChangePage();
+		    mobileBgTask.start(
+				function() {
+					// online
+					if( isNullOrEmpty(loginPage) ) {
+						loginPage = makeLoginPage();
 					}
-				);
-			}
-		};
+					loginPage.CswSetPath();
+			        mobileStorage.setItem('refreshPage', CswMobilePage_Type.login.id );
+					loginPage.CswChangePage();
+				},
+				function() {
+					// offline
+					if( isNullOrEmpty(offlinePage) ) {
+						offlinePage = makeOfflinePage();
+					}
+				    offlinePage.CswSetPath();
+			        mobileStorage.setItem('refreshPage', CswMobilePage_Type.offline.id );
+					offlinePage.CswChangePage();
+				}
+			);
+		}
 		
 	    //#region Page Creation
 	    
@@ -465,8 +461,6 @@ CswAppMode.mode = 'mobile';
 			}
 			cacheLogInfo(logger);
 
-			stopLoadingMsg();
-			
 			return $retDiv;
 		} // _processViewJson()
 

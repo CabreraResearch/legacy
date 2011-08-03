@@ -33,7 +33,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
 
 	//#region private
 	var mobileHeader, mobileFooter, $content, $pageDiv, id, title, getContent;
-
+    var cswMobilePage;
     //ctor
     (function() {
         var p = {
@@ -73,8 +73,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
         }
         
         var $page = getPageDiv(p.title, p.theme);
-        
-        var cswMobilePage;
+
         switch (pageType.name) {
             case CswMobilePage_Type.help.name:
                 {
@@ -133,7 +132,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
         
 	        $pageDiv = getPageDiv(title, p.theme);
             mobileHeader = getMenuHeader(p.headerDef);
-            $content = getContentDiv(cswMobilePage);
+            $content = getContentDiv(p.theme);
             mobileFooter = getMenuFooter(p.footerDef);
 
             getContent = cswMobilePage.getContent;
@@ -185,23 +184,43 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
         return ret;
     }
     
-    function getContentDiv(cswMobilePage) {
-        var $ret = $pageDiv.find('div:jqmData(role="content")');
+    function getContentDiv(theme,forceRefresh) {
+        /// <summary> Refreshes the content of a page.</summary>
+        /// <param name="theme" type="String">JQM theme to style content.</param>
+	    /// <param name="forceRefresh" type="Boolean">True to force a refresh from the page class, false to load from memory.</param>
+	    /// <returns type="void"></returns>
+        
+        $content = $pageDiv.find('div:jqmData(role="content")');
 
-        if (!isNullOrEmpty($ret) && $ret.length > 0) {
-            $ret.empty();
+        if (!isNullOrEmpty($content) && $content.length > 0) {
+            $content.empty();
         } else {
-            $ret = $pageDiv.CswDiv('init', { ID: id + '_content' })
-                .CswAttrXml({ 'data-role': 'content' });
+            $content = $pageDiv.CswDiv('init', { ID: id + '_content' })
+                .CswAttrXml({ 'data-role': 'content', 'data-theme': theme });
         }
-        if (cswMobilePage.$content) {
-            $ret.append(cswMobilePage.$content);
+        if (cswMobilePage.$content && !forceRefresh) {
+            $content.append(cswMobilePage.$content);
+            onPageComplete();
         } else {
-            $ret.append(cswMobilePage.getContent());
+            $content.append(cswMobilePage.getContent(refreshPageContent));
         }
-        return $ret;
+        return $content;
     }
     
+    function refreshPageContent($newContent) {
+        onPageInit();
+        $content.append($newContent);
+        onPageComplete();
+    }
+    
+    function onPageInit(onSuccess) {
+        startLoadingMsg(onSuccess);
+    }
+    
+    function onPageComplete(onSuccess) {
+        $content.CswPage();
+        stopLoadingMsg(onSuccess);
+    }
     //#endregion private	
 	
 	//#region public, priveleged
@@ -211,6 +230,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent ) {
 	this.$content = $content;
     this.$pageDiv = $pageDiv;
     this.getContent = getContent;
+    
     this.CswChangePage = function(options) {
         $pageDiv.CswChangePage(options);
     };
