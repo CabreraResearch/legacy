@@ -1415,7 +1415,7 @@ function log(s, includeCallStack)
 	var extendedLog = '';
 	if (isTrue(includeCallStack))
 	{
-		extendedLog = getCallStack();
+		extendedLog = console.trace();
 	}
 
 	try
@@ -1429,24 +1429,6 @@ function log(s, includeCallStack)
 		alert(s);
 		if (!isNullOrEmpty(extendedLog)) alert(extendedLog);
 	}
-}
-
-function getCallStack()
-{
-	var stack = '';
-	var callername = arguments.callee.caller.name;
-	var caller = arguments.callee.caller;
-	while (!isNullOrEmpty(callername))
-	{
-		if (callername != 'log')
-		{
-			stack += "Called by function " + callername + "() \n";
-		}
-		caller = caller.caller;
-		callername = (!isNullOrEmpty(caller)) ? caller.name : '';
-	}
-
-	return stack;
 }
 
 function errorHandler(error, includeCallStack, includeLocalStorage, doAlert)
@@ -1540,9 +1522,9 @@ function fixGeometry()
 	scroll(0, 0);
 
 	/* Calculate the geometry that our content area should take */
-	var $header = $("div[data-role='header']:visible");
-	var $footer = $("div[data-role='footer']:visible");
-	var $content = $("div[data-role='content']:visible");
+	var $header = $('div:jqmData(role="header"):visible');
+	var $footer = $('div:jqmData(role="footer"):visible');
+	var $content = $('div:jqmData(role="content"):visible');
 
 	var viewport_height = $(window).height();
 	var content_height = viewport_height - $header.outerHeight() - $footer.outerHeight();
