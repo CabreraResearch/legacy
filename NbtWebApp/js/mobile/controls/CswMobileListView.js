@@ -22,7 +22,7 @@ function CswMobileListView(listDef, $parent) {
 
     ICswMobileWebControls.call(this);
     
-    var o, $control, classes, styles, cssClass, enabled, visible;
+    var o, $control, classes, styles, cssClass, enabled, visible, listId;
     var liSuffix = '_li';
     var ulSuffix = '_ul';
     var aSuffix = '_a';
@@ -46,10 +46,10 @@ function CswMobileListView(listDef, $parent) {
         if (isNullOrEmpty($parent)) {
             throw ('Cannot create a list view without a parent');
         }
-
-        var $ul = $parent.find('#' + p.ID + ulSuffix);
+        listId = p.ID + ulSuffix;
+        var $ul = $parent.find('#' + listId);
         if (isNullOrEmpty($ul) || $ul.length === 0) {
-            $ul = $('<ul id="' + p.ID + ulSuffix + '"></ul>').appendTo($parent);
+            $ul = $('<ul id="' + listId + '"></ul>').appendTo($parent);
         }
 
         var ulAttr = {
@@ -73,7 +73,7 @@ function CswMobileListView(listDef, $parent) {
 
         o = p;
         cssClass = p.cssClass;
-        $control = $ul;
+        $control = $ul.trigger('create');
     })(); //ctor
     
     function addListItemLink(id,text,onClick,options) {
@@ -97,6 +97,7 @@ function CswMobileListView(listDef, $parent) {
 											  'data-identity': id,
 											  'data-url': id
 										  });
+        $control.trigger('create');
         return $li;
     }
     
@@ -119,7 +120,7 @@ function CswMobileListView(listDef, $parent) {
         if (!isNullOrEmpty($a) && $a.length !== 0) {
             $a.append($html);
         }
-
+        $control.trigger('create');
         return $li;
     }
     
@@ -139,6 +140,7 @@ function CswMobileListView(listDef, $parent) {
 
         var $li = addListItem(id, '', onClick, p);
         $li.append($html);
+        $control.trigger('create');
         return $li;
     }
     
@@ -170,9 +172,7 @@ function CswMobileListView(listDef, $parent) {
         if(onClick) {
             $li.bind('click', onClick);
         }
-        if(o.showLoading) {
-            $li.bind('click', startLoadingMsg);
-        }
+        $control.trigger('create');
         return $li;
     }
     
