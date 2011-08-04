@@ -1,10 +1,11 @@
 ﻿<script type="text/javascript">
 	var debug = false;
-   
-	document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.min.js"><\/script>');
 
 	if(debug) {
-		document.write('<script type="text/javascript" src="js/CswEnums.js"><\/script>');
+		//JQM
+	    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.js"><\/script>');
+	    
+	    document.write('<script type="text/javascript" src="js/CswEnums.js"><\/script>');
 		
 		// Prototype Extensions
 		document.write('<script type="text/javascript" src="js/_CswPrototypeExtensions.js"><\/script>');
@@ -59,6 +60,7 @@
 		document.write('<script type="text/javascript" src="js/mobile/CswMobile.js"><\/script>');
 	}
 	else {
-		document.write('<script type="text/javascript" src="js/mobile/CswAllMobile.min.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.min.js"><\/script>');
+	    document.write('<script type="text/javascript" src="js/mobile/CswAllMobile.min.js"><\/script>');
 	}
 </script>
