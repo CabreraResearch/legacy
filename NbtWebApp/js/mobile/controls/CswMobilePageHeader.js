@@ -8,51 +8,55 @@
 
 CswMobilePageHeader.inheritsFrom(ICswMobileWebControls);
 
-function CswMobilePageHeader(headerDef, $parent) {
+function CswMobilePageHeader(headerDef, $page) {
     /// <summary>
     ///   Header class. Responsible for generating a Mobile page header.
     /// </summary>
     /// <param name="headerDef" type="Object">JSON definition of header to display</param>
     /// <param name="$parent" type="jQuery">Parent element to attach to.</param>
     /// <returns type="CswMobilePageFooter">Instance of itself. Must instance with 'new' keyword.</returns>
-    
+
     ICswMobileWebControls.call(this);
+
+    var id, $header, buttonNames;
     
     //#region private
-    
-    var o = {
-        buttons: { button1: { ID: '', text: '', 'data-icon': '', cssclass: '' } },
-        ID: '',
-        text: '',
-        dataId: 'csw_header',
-        dataTheme: 'b'
-    };
-    
-    if(headerDef) $.extend(o, headerDef);
+    //ctor
+    (function() {
+        var o = {
+            buttons: { button1: { ID: '', text: '', 'data-icon': '', cssclass: '' } },
+            ID: '',
+            text: '',
+            dataId: 'csw_header',
+            dataTheme: 'b'
+        };
 
-    var buttonNames = [];
-    var headerId = o.ID + '_header';
+        if (headerDef) $.extend(o, headerDef);
 
-    var $header = $parent.find('div:jqmData(role="header")');
+        buttonNames = [];
+        id = o.ID + '_header';
+        $header = $page.find('div:jqmData(role="header")');
 
-    if( isNullOrEmpty($header) || $header.length === 0 )
-    {
-        $header = $parent.CswDiv('init', { ID: headerId });
-    } 
-    $header.CswAttrXml({
+        if (isNullOrEmpty($header) || $header.length === 0)
+        {
+            $header = $page.CswDiv('init', { ID: id });
+        }
+        $header.CswAttrXml({
                 'data-role': 'header',
                 'data-position': 'fixed',
                 'data-id': o.dataId,
                 'data-theme': o.dataTheme
             });
 
-    _pageHeader(o.text);
+        pageHeader(o.text);
+        makeButtons(o.buttons);
+    })(); //ctor
     
-    function _pageHeader(text) {
+    function pageHeader(text) {
         var ret;
-        var $headerText = $header.find('#' + headerId + '_text');
+        var $headerText = $header.find('#' + id + '_text');
         if( isNullOrEmpty($headerText) || $headerText.length === 0) {
-            $headerText = $('<h1 style="white-space: normal;" id="' + headerId + '_text"></h1>')
+            $headerText = $('<h1 style="white-space: normal;" id="' + id + '_text"></h1>')
                             .appendTo($header);
         }
         if(arguments.length === 1) {
@@ -67,30 +71,27 @@ function CswMobilePageHeader(headerDef, $parent) {
     
     //#region sheol
     
-    //let's make these buttons accessible by name
-    var buttonCnt = 0;
-    for( var buttonName in o.buttons) {
-        buttonCnt++;
+    function makeButtons(buttons) {
+        var buttonCnt = 0;
+        for (var buttonName in buttons) {
+            buttonCnt++;
 
-        var thisButton = o.buttons[buttonName];
-        
-        if( buttonCnt <= 2 ) {
-            var button = new CswMobileMenuButton(thisButton, $header);
-            buttonNames.push(buttonName);
-            this[buttonName] = button;
-        } 
+            var thisButton = buttons[buttonName];
+
+            if (buttonCnt <= 2) {
+                var button = new CswMobileMenuButton(thisButton, $header);
+                buttonNames.push(buttonName);
+                this[buttonName] = button;
+            }
+        }
     }
-    
     //#endregion sheol
     
     //#region public, priveleged
-    this.ID = o.ID;
+    this.ID = id;
     this.$content = $header;
-    
-    //in case we don't know the button names, we can fetch and query
     this.buttonNames = buttonNames;
-
-    this.pageHeader = _pageHeader;
+    this.pageHeader = pageHeader;
     this.addToHeader = function(text) {
         var $ret = $();
         if(text) {
