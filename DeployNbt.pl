@@ -213,7 +213,8 @@ foreach my $component (@components)
 {
 	my $path = $repopaths{$component};
 	&runCommand("hg commit -R $path -m \"Automated commit for release: $assemblyno\"");
-	&runCommand("hg tag -R $path \"$component $datestr.$increment\"");
+      # &runCommand("hg tag -R $path \"$component $datestr.$increment\"");
+	&runCommand("hg tag -R $path \"$assemblyno\"");
 	&runCommand("hg push -R $path");
 }
 
