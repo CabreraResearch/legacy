@@ -86,28 +86,32 @@ CswAppMode.mode = 'mobile';
 
 		// case 20355 - error on browser refresh
 		if (!isNullOrEmpty(sessionId)) {
-			if( isNullOrEmpty(viewsPage)) {
+			if (isNullOrEmpty(viewsPage)) {
 			    viewsPage = makeViewsPage();
 			}
 		    viewsPage.CswSetPath();
-			mobileStorage.setItem('refreshPage', CswMobilePage_Type.views.id);
+		    stopLoadingMsg();
+		    viewsPage.fillContent(false,stopLoadingMsg);
+		    mobileStorage.setItem('refreshPage', CswMobilePage_Type.views.id);
 		} else {
-			if( isNullOrEmpty(loginPage)) {
+			if (isNullOrEmpty(loginPage)) {
 			    loginPage = makeLoginPage();
 			}
 		    mobileBgTask.start(
 				function() {
 					// online
-					if( isNullOrEmpty(loginPage) ) {
-						loginPage = makeLoginPage();
+					if (isNullOrEmpty(mobileStorage.sessionid())) {
+					    if (isNullOrEmpty(loginPage)) {
+					        loginPage = makeLoginPage();
+					    }
+					    loginPage.CswSetPath();
+					    mobileStorage.setItem('refreshPage', CswMobilePage_Type.login.id);
+					    loginPage.CswChangePage();
 					}
-					loginPage.CswSetPath();
-			        mobileStorage.setItem('refreshPage', CswMobilePage_Type.login.id );
-					loginPage.CswChangePage();
 				},
 				function() {
 					// offline
-					if( isNullOrEmpty(offlinePage) ) {
+					if (isNullOrEmpty(offlinePage) ) {
 						offlinePage = makeOfflinePage();
 					}
 				    offlinePage.CswSetPath();
@@ -122,16 +126,21 @@ CswAppMode.mode = 'mobile';
 		function makeLoginPage() {
             ///<summary>Create a Mobile login page</summary>
 		    ///<returns type="CswMobilePageLogin">CswMobilePageLogin page.</returns>
+		    
 		    var loginDef = {
 		        theme: x.Theme,
 		        onHelpClick: onHelpClick,
 		        onSuccess: function (data,userName,accessId) {
+		            startLoadingMsg();
 		            sessionId = $.CswCookie('get', CswCookieName.SessionId);
 					mobileStorage.sessionid(sessionId);
 					mobileStorage.username(userName); 
 					mobileStorage.customerid(accessId);
-					viewsPage = makeViewsPage();
-					viewsPage.CswChangePage();  
+		            viewsPage = makeViewsPage();
+		            viewsPage.CswChangePage();
+		            startLoadingMsg();
+		            viewsPage.fillContent(false,stopLoadingMsg);
+		            loginPage = loginPage.remove();
 		        },
 		        mobileStorage: mobileStorage
 		    };
@@ -144,13 +153,16 @@ CswAppMode.mode = 'mobile';
 		    ///<returns type="CswMobilePageViews">CswMobilePageViews page.</returns>
 		    var viewsDef = {
 		        theme: x.Theme,
-		        onHelpClick: onHelpClick,
+		        onHelpClick: onHelpClick,   
 		        onOnlineClick: onOnlineClick,
 		        onRefreshClick: onRefreshClick,
 		        mobileStorage: mobileStorage,
 		        onListItemSelect: function(opts) {
 		            var nodePage = makeNodesPage(opts);
 		            nodePage.CswChangePage();
+		            setTimeout(function() {
+		                nodePage.fillContent(false, stopLoadingMsg);
+		            }, 500);
 		        }
 		    };
 		    viewsPage = new CswMobilePageFactory(CswMobilePage_Type.views, viewsDef, $body );
@@ -316,7 +328,7 @@ CswAppMode.mode = 'mobile';
 			
 			if($('#logindiv')) $('#logindiv').remove();
 			
-			startLoadingMsg();
+			
 			mobileBgTask.reset();
 			
 			var p = {
@@ -508,7 +520,7 @@ CswAppMode.mode = 'mobile';
 
 			$retLI.unbind('click');
 			$retLI.bind('click', function() {
-				return startLoadingMsg(function() {
+			    return startLoadingMsg(function() {
 					var par = {ParentId: p.DivId,
 						parentlevel: p.parentlevel,
 						level: p.parentlevel + 1,
