@@ -28,8 +28,12 @@
 			{
 				var $TextBox = $('<a href="'+ Href +'" target="_blank"><img src="' + Href + '" alt="' + FileName + '" width="'+ Width +'" height="'+ Height +'"/></a>')
 									.appendTo($cell11);
-				$cell21.append('<a href="'+ Href +'" target="_blank">'+ FileName +'</a>');
-			}
+			    $cell21.append('<a href="'+ Href +'" target="_blank">'+ FileName +'</a>');
+            }
+            else{
+			    $cell21.append('(no image selected)');
+            }
+
 
             if(!o.ReadOnly && o.EditMode != EditMode.AddInPopup.name)
             {
