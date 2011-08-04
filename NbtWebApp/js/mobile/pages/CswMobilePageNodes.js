@@ -74,7 +74,7 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
         buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
-        $content = getContent();
+        //$content = getContent();
     })(); //ctor
     
     function getContent(onSuccess) {
@@ -146,6 +146,7 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
             cssclass: CswMobileCssClasses.listview.name,
             onClick: function () {}
         };
+        
         var listView = new CswMobileListView(ulDef, $content);
         if( !isNullOrEmpty(viewJson)) {
             for (var key in viewJson)
