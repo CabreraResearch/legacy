@@ -21,16 +21,16 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 	/// <param name="$page" type="jQuery">Mobile page element to attach to.</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
 	/// <returns type="CswMobilePageViews">Instance of itself. Must instance with 'new' keyword.</returns>
-
+    
 	//#region private
     var pageDef = { };
     var id = CswMobilePage_Type.views.id;
     var title = CswMobilePage_Type.views.title;
     var divSuffix = '_views';
     var ulSuffix = '_list';
-    var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
-    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + divSuffix);
-    
+    function $contentPage() { return $page.find('div:jqmData(role="content")'); };
+    var $content = (isNullOrEmpty($contentPage()) || $contentPage().length === 0) ? null : $contentPage().find('#' + id + divSuffix);
+
     //ctor
     (function() {
         if (isNullOrEmpty(mobileStorage)) {
@@ -76,7 +76,6 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
     })(); //ctor
     
     function getContent(onSuccess) {
-        startLoadingMsg();
         var now = new Date();
         var lastSync = new Date(mobileStorage.lastSyncTime);
         if (!mobileStorage.amOnline() || 
@@ -86,7 +85,6 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         } else {
             refreshViewJson(onSuccess);
         }
-        return $content;
     }
     
     function refreshViewJson(onSuccess) {
@@ -134,7 +132,8 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
             cssclass: CswMobileCssClasses.listview.name
         };
         var listView = new CswMobileListView(ulDef, $content);
-        	
+
+        var viewCount = 0;
 		for(var viewId in viewJson)
 		{
 		    if(viewJson.hasOwnProperty(viewId)) {
@@ -152,11 +151,14 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 		        };
 
 		        var onClick = makeDelegate(pageDef.onListItemSelect,opts);
-
-		        listView.addListItemLink(viewId, viewName, onClick);
+                listView.addListItemLink(viewId, viewName, onClick);
+		        viewCount++;
 		    }
 		}
-			
+        if(viewCount === 0) {
+            listView.addListItemLink('no_results', 'No Mobile Views to Display');
+        }
+        
 		if(!mobileStorage.stayOffline()) {
 			toggleOnline(mobileStorage);
 		}
