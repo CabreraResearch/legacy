@@ -1386,12 +1386,7 @@ function makeDelegate(method, options) {
 	/// <param name="method" type="Function"> A function to delegate. </param>
     /// <param name="options" type="Object"> A single parameter to hand the delegate function.</param>
 	/// <returns type="Function">A delegate function.</returns>
-    return (function(opts) {
-        var delegateFunction = function() {
-            method(opts);
-        };
-        return delegateFunction;
-    })(options);
+    return function() { method(options); };
 }
 
 // ------------------------------------------------------------------------------------
