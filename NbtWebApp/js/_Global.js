@@ -1378,6 +1378,22 @@ function trim(str)
 	return $.trim(str);
 }
 
+function makeDelegate(method, options) {
+    /// <summary>
+    /// Returns a function with the argument parameter of the value of the current instance of the object.
+    /// <para>For example, in a "for(i=0;i<10;i++)" loop, makeDelegate will capture the value of "i" for a given function.</para>
+    /// </summary>
+	/// <param name="method" type="Function"> A function to delegate. </param>
+    /// <param name="options" type="Object"> A single parameter to hand the delegate function.</param>
+	/// <returns type="Function">A delegate function.</returns>
+    return (function(opts) {
+        var delegateFunction = function() {
+            method(opts);
+        };
+        return delegateFunction;
+    })(options);
+}
+
 // ------------------------------------------------------------------------------------
 // for debug
 // ------------------------------------------------------------------------------------

@@ -131,28 +131,30 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         }
         var ulDef = {
             ID: id + ulSuffix,
-            cssclass: CswMobileCssClasses.listview.name,
-            onClick: function () {}
+            cssclass: CswMobileCssClasses.listview.name
         };
         var listView = new CswMobileListView(ulDef, $content);
         	
-		for(var key in viewJson)
+		for(var viewId in viewJson)
 		{
-		    var text = viewJson[key];
-		    function onClick() {
-		        //we know the next level is going to be nodes. 
-		        var $this = $(this);
-		        pageDef.onListItemSelect({
-		                ParentId: id,
-		                DivId: $this.CswAttrXml('data-url'),
-		                level: 1,
-		                onHelpClick: pageDef.onHelpClick,
-		                onOnlineClick: pageDef.onOnlineClick,
-		                onRefreshClick: pageDef.onRefreshClick,
-		                mobileStorage: mobileStorage
-		            });
+		    if(viewJson.hasOwnProperty(viewId)) {
+		        var viewName = viewJson[viewId];
+		        var opts = {
+		            ParentId: id,
+		            DivId: viewId,
+		            level: 1,
+		            title: viewName,
+		            onHelpClick: pageDef.onHelpClick,
+		            onOnlineClick: pageDef.onOnlineClick,
+		            onRefreshClick: pageDef.onRefreshClick,
+		            mobileStorage: mobileStorage,
+		            doChangePage: true
+		        };
+
+		        var onClick = makeDelegate(pageDef.onListItemSelect,opts);
+
+		        listView.addListItemLink(viewId, viewName, onClick);
 		    }
-		    listView.addListItemLink(key, text, onClick);
 		}
 			
 		if(!mobileStorage.stayOffline()) {
