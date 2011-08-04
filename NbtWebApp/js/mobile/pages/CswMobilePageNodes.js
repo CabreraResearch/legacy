@@ -77,30 +77,23 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
         //$content = getContent();
     })(); //ctor
     
-    function getContent(onSuccess) {
-        startLoadingMsg();
-        var now = new Date();
-        var lastSync = new Date(mobileStorage.lastSyncTime);
-        if (!mobileStorage.amOnline() || 
-            ( now.getTime() - lastSync.getTime() < 300000 ) ) //it's been less than 5 minutes since the last sync
-        {
-            refreshNodeContent('', onSuccess); 
-        } else {
-            refreshNodeJson(onSuccess);
-        }
+    function getContent(onSuccess,postSuccess) {
+        //var now = new Date();
+        //var lastSync = new Date(mobileStorage.lastSyncTime);
+        //( now.getTime() - lastSync.getTime() < 300000 ) ) //it's been less than 5 minutes since the last sync
         
         var cachedJson = mobileStorage.fetchCachedViewJson(viewid);
 
 		if (!isNullOrEmpty(cachedJson)) {
-			refreshNodeContent(cachedJson, onSuccess);
+			refreshNodeContent(cachedJson, onSuccess, postSuccess);
 		} else if (mobileStorage.amOnline()) {
-			refreshNodeJson(onSuccess);
+			refreshNodeJson(onSuccess, postSuccess);
 		} else {
 			stopLoadingMsg();
 		}
     }
     
-    function refreshNodeJson(onSuccess) {
+    function refreshNodeJson(onSuccess, postSuccess) {
         ///<summary>Fetches the nodes from the selected view from the web server and rebuilds the list.</summary>
 		var getView = '/NbtWebApp/wsNBT.asmx/GetView';
 		
@@ -122,7 +115,7 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
 				    var nodesJson = data['nodes'];
 					mobileStorage.storeViewJson(id, title, nodesJson, level, searchJson);
 			    
-				    refreshNodeContent(nodesJson,onSuccess);
+				    refreshNodeContent(nodesJson,onSuccess,postSuccess);
 				},
 				error: function() {
 					onError();
@@ -130,7 +123,7 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
 			});
     }
     
-    function refreshNodeContent(viewJson,onSuccess) {
+    function refreshNodeContent(viewJson,onSuccess, postSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         if (isNullOrEmpty(viewJson)) {
@@ -143,35 +136,48 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
         }
         var ulDef = {
             ID: id + ulSuffix,
-            cssclass: CswMobileCssClasses.listview.name,
-            onClick: function () {}
+            cssclass: CswMobileCssClasses.listview.name
         };
         
         var listView = new CswMobileListView(ulDef, $content);
         if( !isNullOrEmpty(viewJson)) {
             for (var key in viewJson)
             {
-                var nodeJson = { ID: key, value: viewJson[key] };
-                var nodeOc = makeOcContent(nodeJson);
+                if(viewJson.hasOwnProperty(key)) {
+                    var nodeKey = key.split('_');
+                    if(nodeKey.hasOwnProperty(1)) {
+                        var nodeId = nodeKey[1];
+                    }
+                    if(Int32MinVal === nodeId || 'No Results' === viewJson[key]) {
+                        listView.addListItemLink('no_results', 'No Results');
+                    } else {
 
-                function onClick() {
-                    //the next level will either be nodes or props
-                }
+                        var nodeJson = { ID: key, value: viewJson[key] };
+                        var nodeOc = makeOcContent(nodeJson);
 
-                if (nodeOc.isLink) {
-                    listView.addListItemLinkHtml(key, nodeOc.$html, onClick);
-                } else {
-                    listView.addListItemHtml(key, nodeOc.$html, onClick);
+                        function onClick() {
+                            //the next level will either be nodes or props
+                        }
+
+                        if (nodeOc.isLink) {
+                            listView.addListItemLinkHtml(key, nodeOc.$html, onClick);
+                        } else {
+                            listView.addListItemHtml(key, nodeOc.$html, onClick);
+                        }
+                    }
                 }
             }
         } else {
-            listView.addListItem('-1', 'No Results');
+            listView.addListItemLink('no_results', 'No Results');
         }
         if(!mobileStorage.stayOffline()) {
 			toggleOnline(mobileStorage);
 		}
-        if (!isNullOrEmpty(onSuccess)) {
+        if (isFunction(onSuccess)) {
             onSuccess($content);
+        }
+        if (isFunction(postSuccess)) {
+            postSuccess();
         }
     }
     

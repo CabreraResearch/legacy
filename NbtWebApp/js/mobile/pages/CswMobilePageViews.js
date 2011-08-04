@@ -75,19 +75,19 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         //getContent();
     })(); //ctor
     
-    function getContent(onSuccess) {
+    function getContent(onSuccess,postSuccess) {
         var now = new Date();
         var lastSync = new Date(mobileStorage.lastSyncTime);
         if (!mobileStorage.amOnline() || 
             ( now.getTime() - lastSync.getTime() < 300000 ) ) //it's been less than 5 minutes since the last sync
         {
-            refreshViewContent('', onSuccess); 
+            refreshViewContent('', onSuccess,postSuccess); 
         } else {
-            refreshViewJson(onSuccess);
+            refreshViewJson(onSuccess,postSuccess);
         }
     }
     
-    function refreshViewJson(onSuccess) {
+    function refreshViewJson(onSuccess,postSuccess) {
         ///<summary>Fetches the current views list from the web server and rebuilds the list.</summary>
 		var getViewsUrl = '/NbtWebApp/wsNBT.asmx/GetViewsList';
 		
@@ -108,7 +108,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 
 					mobileStorage.storeViewJson(id, title, data, 0);
 
-				    refreshViewContent(data,onSuccess);
+				    refreshViewContent(data,onSuccess,postSuccess);
 				},
 				error: function() {
 					onError();
@@ -116,7 +116,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 			});
     }
     
-    function refreshViewContent(viewJson,onSuccess) {
+    function refreshViewContent(viewJson,onSuccess,postSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         if (isNullOrEmpty(viewJson)) {
@@ -155,15 +155,18 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 		        viewCount++;
 		    }
 		}
-        if(viewCount === 0) {
+        if (viewCount === 0) {
             listView.addListItemLink('no_results', 'No Mobile Views to Display');
         }
         
-		if(!mobileStorage.stayOffline()) {
+		if (!mobileStorage.stayOffline()) {
 			toggleOnline(mobileStorage);
 		}
-        if (!isNullOrEmpty(onSuccess)) {
+        if (isFunction(onSuccess)) {
             onSuccess($content);
+        }
+        if (isFunction(postSuccess)) {
+            postSuccess();
         }
     }
     
