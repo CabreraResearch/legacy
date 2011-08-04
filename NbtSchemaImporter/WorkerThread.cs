@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Schema
                 _AccessId = value;
                 _InitSessionResources();
                 _CswNbtResources.AccessId = value;
-                _CswNbtResources.refreshDataDictionary();
+                _CswNbtResources.refresh();
             }
         }
 

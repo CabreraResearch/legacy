@@ -273,7 +273,7 @@ namespace ChemSW.Nbt.Sched
 
 
             _CswNbtResources.AccessId = AccessId;
-            _CswNbtResources.refreshDataDictionary();
+            _CswNbtResources.refresh();
             //_CswNbtResources.CurrentUser = CswNbtNodeCaster.AsUser( _CswNbtResources.Nodes.makeUserNodeFromUsername( "ScheduleRunner" ) );
             //_CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchedItemRunnerUser" );
 			_CswNbtResources.InitCurrentUser = InitUser;

@@ -900,7 +900,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Refreshes data dictionary content stored in cache
         /// </summary>
-        public void refreshDataDictionary() { _CswResources.refreshDataDictionary(); }
+        public void refresh() { _CswResources.refresh(); }
         /// <summary>
         /// Table factory used to create datatables
         /// </summary>
