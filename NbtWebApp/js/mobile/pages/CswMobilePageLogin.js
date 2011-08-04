@@ -68,42 +68,46 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
     
     function getContent() {
         if( isNullOrEmpty($content) || $content.length === 0) {
-            $content = $('<div id="' + id + loginSuffix + '"></div>');
+            $content = $('<div data-theme="' + pageDef.theme + '" style="text-align: left;" id="' + id + loginSuffix + '"></div>');
         } else {
             $content.empty();
         }
         
-        var loginContent = '<p style="text-align: center;">Login to Mobile Inspection Manager</p>';
-        loginContent += '<input type="textbox" id="login_customerid" placeholder="Customer Id" /><br>';
-        loginContent += '<input type="textbox" id="login_username" placeholder="User Name" /><br>';
-        loginContent += '<input type="password" id="login_password" placeholder="Password" /><br>';
-        loginContent += '<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>';
+        $content.append('<p style="text-align: center;">Login to Mobile Inspection Manager</p><br/>');
+        var $customerId = $('<input type="text" id="login_customerid" placeholder="Customer Id" />')
+                            .appendTo($content);
+        $content.append('<br/>');
+        var $username = $('<input type="text" id="login_username" placeholder="User Name" />')
+                            .appendTo($content);
+        $content.append('<br/>');
+        var $password = $('<input type="password" id="login_password" placeholder="Password" />')
+                            .appendTo($content);
+        $content.append('<br/>');
+        var $loginBtn = $('<a id="loginsubmit" data-role="button" data-identity="loginsubmit" data-url="loginsubmit" href="javascript:void(0);">Continue</a>')
+                            .appendTo($content)
+                            .unbind('click')
+                            .bind('click', function() {
+                                return startLoadingMsg(function() { onLoginSubmit(); });
+                            });
         
-        $content.append( $(loginContent) );
         if( !isNullOrEmpty($contentPage) && $contentPage.length > 0 ) {
             $contentPage.append($content);
         }
         
-        var $loginBtn = $content.find('#loginsubmit')
-                                .unbind('click')
-                                .bind('click', function() {
-                                    return startLoadingMsg(function() { onLoginSubmit(); });
-                                });
-        
-        $content.find('#login_customerid').clickOnEnter($loginBtn);
-        $content.find('#login_username').clickOnEnter($loginBtn);
-        $content.find('#login_password').clickOnEnter($loginBtn);
+        $customerId.clickOnEnter($loginBtn);
+        $username.clickOnEnter($loginBtn);
+        $password.clickOnEnter($loginBtn);
 
         function onLoginSubmit() {
             var authenticateUrl = '/NbtWebApp/wsNBT.asmx/Authenticate';
             if (mobileStorage.amOnline()) {
-                var userName = $('#login_username').val();
-                var accessId = $('#login_customerid').val();
+                var userName = $username.val();
+                var accessId = $customerId.val();
 
                 var ajaxData = {
                     'AccessId': accessId, //We're displaying "Customer ID" but processing "AccessID"
                     'UserName': userName,
-                    'Password': $('#login_password').val(),
+                    'Password': $password.val(),
                     ForMobile: true
                 };
 
