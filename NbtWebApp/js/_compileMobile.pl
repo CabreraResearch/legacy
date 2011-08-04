@@ -1,21 +1,22 @@
 use strict;
 
-my $destfile = "\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\CswAllMobile.min.js";
+my $dir = $ARGV[0];
+my $destfile = "$dir\\js\\mobile\\CswAllMobile.min.js";
 
 unlink($destfile);
 
 my $param = "";
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js");
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\jquery\\common");
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile");
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\clientdb");
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\controls");
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\fieldtypes");
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\objectclasses");
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\pages");
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\mobile\\sync");
+$param .= extract("$dir\\js");
+$param .= extract("$dir\\js\\jquery\\common");
+$param .= extract("$dir\\js\\mobile");
+$param .= extract("$dir\\js\\mobile\\clientdb");
+$param .= extract("$dir\\js\\mobile\\controls");
+$param .= extract("$dir\\js\\mobile\\fieldtypes");
+$param .= extract("$dir\\js\\mobile\\objectclasses");
+$param .= extract("$dir\\js\\mobile\\pages");
+$param .= extract("$dir\\js\\mobile\\sync");
 
-`java -jar "\\kiln\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
+`java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
 
 sub extract
 {

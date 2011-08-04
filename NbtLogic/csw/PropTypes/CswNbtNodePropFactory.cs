@@ -73,10 +73,13 @@ namespace ChemSW.Nbt.PropTypes
                 case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
                     InnerProperty = new CswNbtNodePropMTBF( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;
-                //case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
-                //    InnerProperty = new CswNbtNodePropMultiRelationship( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
-                //    break;
-                //case CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions:
+				//case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
+				//    InnerProperty = new CswNbtNodePropMultiRelationship( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
+				//    break;
+				case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
+					InnerProperty = new CswNbtNodePropMultiList( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
+					break;
+				//case CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions:
                 //    InnerProperty = new CswNbtNodePropNodeTypePermissions(CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp);
                 //    break;
                 case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:

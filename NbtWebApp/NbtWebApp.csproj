@@ -116,6 +116,7 @@
     <Content Include="js\CswEnums.js" />
     <Content Include="js\CswProfileMethod.js" />
     <Content Include="js\mobile\controls\CswMobileListView.js" />
+    <Content Include="js\jquery\fieldtypes\CswFieldTypeMultiList.js" />
     <Content Include="js\mobile\CswMobileResources.js" />
     <Content Include="js\mobile\pages\CswMobilePageNodes.js" />
     <Content Include="js\mobile\pages\CswMobilePageProps.js" />
@@ -1935,8 +1936,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>call $(ProjectDir)js\_compile.pl
-call $(ProjectDir)js\_compileMobile.pl</PostBuildEvent>
+    <PostBuildEvent>call $(ProjectDir)js\_compile.pl $(ProjectDir)
+call $(ProjectDir)js\_compileMobile.pl $(ProjectDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

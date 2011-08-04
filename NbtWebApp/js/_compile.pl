@@ -1,16 +1,17 @@
 use strict;
 
-my $destfile = "\\kiln\\nbt\\nbt\\nbtwebapp\\js\\CswAll.min.js";
+my $dir = $ARGV[0];
+my $destfile = "$dir\\js\\CswAll.min.js";
 
 unlink($destfile);
 
 my $param = "";
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js");
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\jquery");
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\jquery\\common");
-$param .= extract("\\kiln\\nbt\\nbt\\nbtwebapp\\js\\jquery\\fieldtypes");
+$param .= extract("$dir\\js");
+$param .= extract("$dir\\js\\jquery");
+$param .= extract("$dir\\js\\jquery\\common");
+$param .= extract("$dir\\js\\jquery\\fieldtypes");
 
-`java -jar "\\kiln\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
+`java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
 
 sub extract
 {
