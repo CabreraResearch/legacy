@@ -77,28 +77,35 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
 //        if (p.doChangePage) {
 //            $pageDiv.CswChangePage();
 //        }
+
+        var fillContentNow = false;
         
         switch (pageType.name) {
             case CswMobilePage_Type.help.name:
                 cswMobilePage = new CswMobilePageHelp(p, $pageDiv, p.mobileStorage);
+                fillContentNow = true;
                 break;
             case CswMobilePage_Type.login.name:
                 cswMobilePage = new CswMobilePageLogin(p, $pageDiv, p.mobileStorage, p.onSuccess);
+                fillContentNow = true;
                 break;
             case CswMobilePage_Type.nodes.name:
                 cswMobilePage = new CswMobilePageNodes(p, $pageDiv, p.mobileStorage);
                 break;
             case CswMobilePage_Type.offline.name:
                 cswMobilePage = new CswMobilePageOffline(p, $pageDiv, p.mobileStorage);
+                fillContentNow = true;
                 break;
             case CswMobilePage_Type.online.name:
                 cswMobilePage = new CswMobilePageOnline(p, $pageDiv, p.mobileStorage, p.mobileSync, p.mobileBgTask);
+                fillContentNow = true;
                 break;
             case CswMobilePage_Type.props.name:
                 cswMobilePage = new CswMobilePageProps(p, $pageDiv, p.mobileStorage);
                 break;
             case CswMobilePage_Type.search.name:
                 cswMobilePage = new CswMobilePageSearch(p, $pageDiv, p.mobileStorage);
+                fillContentNow = true;
                 break;
             case CswMobilePage_Type.tabs.name:
                 cswMobilePage = new CswMobilePageTabs(p, $pageDiv, p.mobileStorage);
@@ -116,8 +123,11 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
             mobileHeader = getMenuHeader(p.headerDef);
             $contentRole = getContentDiv(p.theme);
             mobileFooter = getMenuFooter(p.footerDef);
-            
             getContent = cswMobilePage.getContent;
+            if(fillContentNow) {
+                $contentRole = fillContent();
+            }
+            log($pageDiv);
         }
     })(); //ctor
     
@@ -164,7 +174,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         return ret;
     }
     
-    function getContentDiv(theme, forceRefresh) {
+    function getContentDiv(theme) {
         /// <summary> Refreshes the content of a page.</summary>
         /// <param name="theme" type="String">JQM theme to style content.</param>
 	    /// <param name="forceRefresh" type="Boolean">True to force a refresh from the page class, false to load from memory.</param>
@@ -178,13 +188,17 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
             $contentRole = $pageDiv.CswDiv('init', { ID: id + '_content' })
                 .CswAttrXml({ 'data-role': 'content', 'data-theme': theme });
         }
+        return $contentRole;
+    }
+    
+    function fillContent(forceRefresh,onSuccess) {
         if (cswMobilePage.$content && !forceRefresh) {
             $contentRole.append(cswMobilePage.$content);
-            onPageComplete();
+            onPageComplete(onSuccess);
         } else {
-            $contentRole.append(cswMobilePage.getContent(refreshPageContent));
+            $contentRole.append(cswMobilePage.getContent(refreshPageContent,onSuccess));
         }
-        return $contentRole;
+        return $contentRole;        
     }
     
     function refreshPageContent($newContent) {
@@ -194,13 +208,18 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     }
     
     function onPageInit(onSuccess) {
-        startLoadingMsg(onSuccess);
     }
     
     function onPageComplete(onSuccess) {
         fixGeometry();
-        $contentRole.CswPage();
-        stopLoadingMsg(onSuccess);
+        if (pageType === CswMobilePage_Type.views ||
+            pageType === CswMobilePage_Type.nodes
+            ) {
+            $contentRole.trigger('create');
+        }
+        if (isFunction(onSuccess)) {
+            onSuccess();
+        }
     }
     //#endregion private	
 	
@@ -210,7 +229,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
 	this.mobileFooter = mobileFooter;
 	this.$content = $contentRole;
     this.$pageDiv = $pageDiv;
-    this.getContent = getContent;
+    this.fillContent = fillContent;
     this.remove = function() {
         $pageDiv.remove();
         return null;
