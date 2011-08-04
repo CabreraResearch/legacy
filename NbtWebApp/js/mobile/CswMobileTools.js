@@ -40,24 +40,31 @@
         /// <param name="options" type="JSON">JQM options for the $.mobile.changePage() method</param>
         /// <returns type="void"></returns>
         var ret = false;
-        $(document).ready(function() {
-            var o = {
-                transition: 'fade'
-            };
-            if (options) $.extend(o, options);
-
-            var $div = $(this);
-            if (!isNullOrEmpty($div)) {
+        
+        var o = {
+            transition: 'fade'
+        };
+        if (options) $.extend(o, options);
+        var $div = $(this);
+        if (!isNullOrEmpty($div)) {
+            try {
+                $(document).ready(function() {
+                        ret = $.mobile.changePage($div, o);
+                    });
+            } catch (e) {
                 try {
-                    ret = $.mobile.changePage($div, o);
-                } catch (e) {
                     if(debugOn()) {
-                        log('Change page failed.');
+                        log('changePage() failed.',true);
+                    }
+                    ret = $.mobile.changePage($div, o);
+                } catch(e) {
+                    if(debugOn()) {
+                        log('document.ready changePage failed.',true);
                     }
                 }
             }
-            return ret;
-        });
+        }
+        return ret;
     };
 
     $.fn.CswPage = function() {
@@ -68,7 +75,22 @@
         var $div = $(this);
         var ret = false;
         if (!isNullOrEmpty($div)) {
-            ret = $div.page(); 
+            try {
+                ret = $div.page();
+            } catch (e) {
+                try {
+                    if(debugOn()) {
+                        log('page() failed.');
+                    }
+                    $(document).ready(function() {
+                        ret = $div.page();
+                    });
+                } catch (e) {
+                    if(debugOn()) {
+                        log('document.ready page() failed.');
+                    }
+                }
+            }
         }
         return ret;
     };
@@ -148,17 +170,21 @@ function startLoadingMsg(onSuccess) {
     return false;
 }
         
-function stopLoadingMsg(onSuccess) {
+function stopLoadingMsg(onSuccess,mobilePage) {
     /// <summary> Stops the JQM "loading.." message and executes a function.
 	/// </summary>
 	/// <param name="onSuccess" type="Function">Function to execute.</param>
+    /// <param name="mobilePage" type="CswMobilePageFactory">A Csw Mobile Page</param>
 	/// <returns type="Boolean">False (to support 'click' events)</returns>
-    if( arguments.length === 1 && isFunction(onSuccess) ) {
+    if (isFunction(onSuccess)) {
         onSuccess();
     } 
-    $.mobile.hidePageLoadingMsg();
-    var $currentDiv = $("div[data-role='page']:visible:visible");
-    $currentDiv.find('.csw_listview').CswPage();
+    if (isNullOrEmpty(mobilePage)) {
+        $.mobile.hidePageLoadingMsg();    
+    } else {
+        $.mobile.hidePageLoadingMsg();
+        setTimeout($.mobile.hidePageLoadingMsg, 1500);
+    }
     return false;
 }
 
@@ -389,14 +415,20 @@ function makeMenuButtonDef(pageDef,id,buttonNames,mobileStorage) {
         headerDef: { buttons: { } },
         footerDef: { buttons: { } }
     };
-    if(pageDef) {
+    if (pageDef) {
         $.extend(newPageDef, pageDef);
     }
-    if( isNullOrEmpty(newPageDef.footerDef)) {
+    if (isNullOrEmpty(newPageDef.footerDef)) {
         newPageDef.footerDef = { buttons: { } };
     }
-    if( isNullOrEmpty(newPageDef.headerDef)) {
+    if (isNullOrEmpty(newPageDef.headerDef)) {
         newPageDef.headerDef = { buttons: { } };
+    }
+    if (isNullOrEmpty(newPageDef.headerDef.ID)) {
+        newPageDef.headerDef.ID = id;
+    }
+    if (isNullOrEmpty(newPageDef.footerDef.ID)) {
+        newPageDef.footerDef.ID = id;
     }
     var onClick;
     for (var name in buttonNames ) {
