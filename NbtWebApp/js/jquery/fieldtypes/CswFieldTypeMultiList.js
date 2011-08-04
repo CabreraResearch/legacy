@@ -35,28 +35,8 @@
 				var $HiddenValue = $('<input type="hidden" name="' + o.ID + '_value" id="' + o.ID + '_value" value="'+ Value +'"/>')
                                     .appendTo($Div);
 
-                var SplitOptions = Options.split(',');
-                for(var i = 0; i < SplitOptions.length; i++)
-                {
-                    $SelectBox.append('<option value="' + SplitOptions[i] + '">' + SplitOptions[i] + '</option>');
-                }
 
-                if(!isNullOrEmpty(Value))
-				{
-					var SplitValue = Value.split(',');
-					for(var i = 0; i < SplitValue.length; i++)
-					{
-						_addValue(SplitValue[i], false);
-					}
-				} else {
-					$ValueTableDiv.hide();
-				}
-
-//                if(o.Required)
-//                {
-//                    $SelectBox.addClass("required");
-//                }
-
+				// ClosureCompiler broke if I didn't define these functions first
 				function _handleOnChange()
 				{
 					var valuetext = $SelectBox.val();
@@ -118,6 +98,28 @@
 						}
 					})
 				} // _addValue()
+
+                var SplitOptions = Options.split(',');
+                for(var i = 0; i < SplitOptions.length; i++)
+                {
+                    $SelectBox.append('<option value="' + SplitOptions[i] + '">' + SplitOptions[i] + '</option>');
+                }
+
+                if(!isNullOrEmpty(Value))
+				{
+					var SplitValue = Value.split(',');
+					for(var i = 0; i < SplitValue.length; i++)
+					{
+						_addValue(SplitValue[i], false);
+					}
+				} else {
+					$ValueTableDiv.hide();
+				}
+
+//                if(o.Required)
+//                {
+//                    $SelectBox.addClass("required");
+//                }
 
             } // if-else(o.ReadOnly)
         },
