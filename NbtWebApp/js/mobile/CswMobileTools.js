@@ -39,25 +39,25 @@
         /// </summary>
         /// <param name="options" type="JSON">JQM options for the $.mobile.changePage() method</param>
         /// <returns type="void"></returns>
-        var o = {
-            transition: 'fade'
-            //reverse: false,
-            //changeHash: true,
-            //role: 'page',
-            //pageContainer: $.mobile.pageContainer,
-            //type: 'get',
-            //data: undefined,
-            //reloadPage: false,
-            //showLoadMsg: true
-        };
-        if (options) $.extend(o, options);
-
-        var $div = $(this);
         var ret = false;
-        if (!isNullOrEmpty($div)) {
-            ret = $.mobile.changePage($div, o);
-        }
-        return ret;
+        $(document).ready(function() {
+            var o = {
+                transition: 'fade'
+            };
+            if (options) $.extend(o, options);
+
+            var $div = $(this);
+            if (!isNullOrEmpty($div)) {
+                try {
+                    ret = $.mobile.changePage($div, o);
+                } catch (e) {
+                    if(debugOn()) {
+                        log('Change page failed.');
+                    }
+                }
+            }
+            return ret;
+        });
     };
 
     $.fn.CswPage = function() {
@@ -142,7 +142,7 @@ function startLoadingMsg(onSuccess) {
 	/// <param name="onSuccess" type="Function">Function to execute.</param>
 	/// <returns type="Boolean">False (to support 'click' events)</returns>
     $.mobile.showPageLoadingMsg();
-    if( arguments.length === 1 && !isNullOrEmpty(onSuccess) ) {
+    if( arguments.length === 1 && isFunction(onSuccess) ) {
         onSuccess();
     }
     return false;
@@ -153,7 +153,7 @@ function stopLoadingMsg(onSuccess) {
 	/// </summary>
 	/// <param name="onSuccess" type="Function">Function to execute.</param>
 	/// <returns type="Boolean">False (to support 'click' events)</returns>
-    if( arguments.length === 1 && !isNullOrEmpty(onSuccess) ) {
+    if( arguments.length === 1 && isFunction(onSuccess) ) {
         onSuccess();
     } 
     $.mobile.hidePageLoadingMsg();
