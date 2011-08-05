@@ -14,6 +14,7 @@
 /// <reference path="controls/CswMobilePageFooter.js" />
 /// <reference path="controls/CswMobilePageHeader.js" />
 /// <reference path="pages/CswMobilePageFactory.js" />
+/// <reference path="objectclasses/CswMobileObjectClassFactory.js" />
 
 //var profiler = $createProfiler();
 

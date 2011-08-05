@@ -11,7 +11,7 @@
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
 /// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../controls/CswMobileListView.js" />
-
+/// <reference path="../objectclasses/CswMobileObjectClassFactory.js" />
 
 //#region CswMobilePageSearch
 

@@ -120,6 +120,11 @@ var CswDomElementEvent = {
 	tap: {name: 'tap'}
 };
 
+var CswObjectClasses = {
+    GenericClass: { name: 'Generic' },
+    InspectionDesignClass: { name: 'Inspection Design' }
+};
+
 //#endregion Global
 
 //#region Mobile
