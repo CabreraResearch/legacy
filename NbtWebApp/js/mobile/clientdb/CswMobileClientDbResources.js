@@ -15,10 +15,8 @@ function CswMobileClientDbResources() {
     /// </summary>
     /// <returns type="CswMobileClientDbResources">Instance of itself. Must instance with 'new' keyword.</returns>
     CswMobileClientDb.call(this);
-    
-    //var this = new CswMobileClientDb();
-    
-    this.currentViewId = function(viewId) {
+   
+    this.currentViewId = function (viewId) {
         /// <summary>
         ///   Persists the current NBT ViewId. 
         /// </summary>
@@ -35,8 +33,25 @@ function CswMobileClientDbResources() {
         }
         return ret;
     };
-    //this.currentViewId.toString = function () { return this.currentViewId(); };
-
+    
+    this.currentNodeId = function (nodeId) {
+        /// <summary>
+        ///   Persists the current NBT NodeId. 
+        /// </summary>
+        /// <param name="nodeId" type="String">Optional. An NBT NodeId</param>
+        /// <returns type="String">Stored nodeid</returns>
+        var mobileStorage = this;
+        var ret = '';
+        if (arguments.length === 1 && nodeId) {
+            ret = nodeId;
+            mobileStorage.setItem('currentnodeid', nodeId);
+        }
+        if (isNullOrEmpty(ret)) {
+            ret = mobileStorage.getItem('currentnodeid');
+        }
+        return ret;
+    };
+    
     this.username = function (username) {
         /// <summary>
         ///   Persists the current NBT user's username. 
@@ -151,38 +166,38 @@ function CswMobileClientDbResources() {
         return ret;
     };
 
-    this.amOnline = function(isOnline,loginFailure) {
+    this.amOnline = function (isOnline, loginFailure) {
         /// <summary>Evaluates or sets the user's online status.</summary>
 	    /// <param name="isOnline" type="Boolean">True if online.</param>
 	    /// <param name="loginFailure" type="String">Text of login failure, if any.</param>
 	    /// <returns type="Boolean">True if online. False otherwise.</returns>
         var mobileStorage = this;
-        if(arguments.length > 0 ) {
+        if (arguments.length > 0 ) {
 		    mobileStorage.setItem('online', isTrue(isOnline) );
 	    } 
-	    if(loginFailure) {
-		    mobileStorage.setItem('loginFailure',loginFailure );
+	    if (loginFailure) {
+		    mobileStorage.setItem('loginFailure', loginFailure );
 	    }
-	    var ret = ( isTrue(mobileStorage.getItem('online')) && !mobileStorage.stayOffline());
+	    var ret = (isTrue(mobileStorage.getItem('online')) && !mobileStorage.stayOffline());
 	    return ret;
     };
 
-    this.onlineStatus = function() {
+    this.onlineStatus = function () {
         /// <summary>Evaluates the user's online status for display.</summary>
 	    /// <returns type="String">'Online' or 'Offline'</returns>
         var mobileStorage = this;
-        var ret = ( !mobileStorage.amOnline() || mobileStorage.stayOffline() ) ? 'Offline' : 'Online';
+        var ret = (!mobileStorage.amOnline() || mobileStorage.stayOffline()) ? 'Offline' : 'Online';
         return ret;
     };
     
-    this.checkNoPendingChanges = function() {
+    this.checkNoPendingChanges = function () {
         var mobileStorage = this;
         var pendingChanges = (!mobileStorage.pendingChanges() ||
             confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
         return pendingChanges;
     };
 
-    this.pendingChanges = function() {
+    this.pendingChanges = function () {
         var mobileStorage = this;
         var changes = new Number(tryParseString(mobileStorage.getItem('unSyncedChanges'), '0'));
         return (changes > 0);
