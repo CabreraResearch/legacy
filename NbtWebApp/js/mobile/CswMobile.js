@@ -26,7 +26,6 @@ CswAppMode.mode = 'mobile';
 		/// <summary>
 		///   Generates the Nbt Mobile page
 		/// </summary>
-		var $body = this;
 
 		//#region Resource Initialization
 		
@@ -119,7 +118,7 @@ CswAppMode.mode = 'mobile';
 			);
 		}
 		
-	    //#region Page Creation
+	    //#region Static Page Creation
 	    
 		function makeLoginPage() {
             ///<summary>Create a Mobile login page</summary>
@@ -136,14 +135,72 @@ CswAppMode.mode = 'mobile';
 					mobileStorage.customerid(accessId);
 		            viewsPage = makeViewsPage();
 		            viewsPage.CswChangePage();
-		            loginPage = loginPage.remove();
+		            setTimeout(function() {
+		                loginPage = loginPage.remove();  
+		            }, 10000);
 		        },
 		        mobileStorage: mobileStorage
 		    };
-		    loginPage = new CswMobilePageFactory(CswMobilePage_Type.login, loginDef, $body);
+		    loginPage = new CswMobilePageFactory(CswMobilePage_Type.login, loginDef, $('body'));
 			return loginPage;
 		}
+	    
+	    function makeOfflinePage() {
+			///<summary>Create a Mobile offline (Sorry Charlie) page</summary>
+		    ///<returns type="CswMobilePageOffline">CswMobilePageOffline page.</returns>
+		    var offlineDef = {
+				theme: x.Theme,
+			    onHelpClick: onHelpClick,
+		        mobileStorage: mobileStorage
+			};
+		    offlinePage = new CswMobilePageFactory(CswMobilePage_Type.offline, offlineDef, $('body'));
+			return offlinePage;
+		}
 
+	    function makeOnlinePage() {
+            ///<summary>Create a Mobile online (Sync Status) page</summary>
+	        ///<returns type="CswMobilePageOnline">CswMobilePageOnline page.</returns>
+		    var syncDef = {
+                theme: x.Theme,
+		        onRefreshClick: onRefreshClick,
+                onHelpClick: onHelpClick,
+		        mobileStorage: mobileStorage,
+		        mobileSync: mobileSync
+		    };
+		    onlinePage = new CswMobilePageFactory(CswMobilePage_Type.online, syncDef, $('body') );
+		    return onlinePage;
+		}
+	    
+	    function makeHelpPage() {
+			///<summary>Create a Mobile help page</summary>
+	        ///<returns type="CswMobilePageHelp">CswMobilePageHelp page.</returns>
+	        var helpDef = {
+                theme: x.Theme,
+			    onOnlineClick: onOnlineClick,
+			    onRefreshClick: onRefreshClick,
+	            mobileStorage: mobileStorage
+		    };
+		    helpPage = new CswMobilePageFactory(CswMobilePage_Type.help, helpDef, $('body') );
+			return helpPage;
+		}
+	    
+	    function makeSearchPage() {
+			///<summary>Create a Mobile search page</summary>
+	        ///<returns type="CswMobilePageSearch">CswMobilePageSearch page.</returns>
+	        var searchDef = {
+                ParentId: mobileStorage.currentViewId(),
+			    theme: x.Theme,
+			    onOnlineClick: onOnlineClick,
+	            mobileStorage: mobileStorage
+		    };
+	        var searchPage = new CswMobilePageFactory(CswMobilePage_Type.search, searchDef, $('body') );
+			return searchPage;
+		}
+
+	    //#endregion Static Page Creation
+	    
+	    //#region Dynamic Page Creation
+	    
 		function makeViewsPage() {
 			///<summary>Create a Mobile views page</summary>
 		    ///<returns type="CswMobilePageViews">CswMobilePageViews page.</returns>
@@ -158,65 +215,13 @@ CswAppMode.mode = 'mobile';
 		            nodePage.CswChangePage();
 		        }
 		    };
-		    viewsPage = new CswMobilePageFactory(CswMobilePage_Type.views, viewsDef, $body );
+		    viewsPage = new CswMobilePageFactory(CswMobilePage_Type.views, viewsDef, $('body') );
 			return viewsPage;
 		}
 		
-		function makeOfflinePage() {
-			///<summary>Create a Mobile offline (Sorry Charlie) page</summary>
-		    ///<returns type="CswMobilePageOffline">CswMobilePageOffline page.</returns>
-		    var offlineDef = {
-				theme: x.Theme,
-			    onHelpClick: onHelpClick,
-		        mobileStorage: mobileStorage
-			};
-		    offlinePage = new CswMobilePageFactory(CswMobilePage_Type.offline, offlineDef, $body);
-			return offlinePage;
-		}
-
-	    function makeOnlinePage() {
-            ///<summary>Create a Mobile online (Sync Status) page</summary>
-	        ///<returns type="CswMobilePageOnline">CswMobilePageOnline page.</returns>
-		    var syncDef = {
-                theme: x.Theme,
-		        onRefreshClick: onRefreshClick,
-                onHelpClick: onHelpClick,
-		        mobileStorage: mobileStorage,
-		        mobileSync: mobileSync
-		    };
-		    onlinePage = new CswMobilePageFactory(CswMobilePage_Type.online, syncDef, $body );
-		    return onlinePage;
-		}
-	    
-	    function makeHelpPage() {
-			///<summary>Create a Mobile help page</summary>
-	        ///<returns type="CswMobilePageHelp">CswMobilePageHelp page.</returns>
-	        var helpDef = {
-                theme: x.Theme,
-			    onOnlineClick: onOnlineClick,
-			    onRefreshClick: onRefreshClick,
-	            mobileStorage: mobileStorage
-		    };
-		    helpPage = new CswMobilePageFactory(CswMobilePage_Type.help, helpDef, $body );
-			return helpPage;
-		}
-	    
-	    function makeSearchPage() {
-			///<summary>Create a Mobile search page</summary>
-	        ///<returns type="CswMobilePageSearch">CswMobilePageSearch page.</returns>
-	        var searchDef = {
-                ParentId: mobileStorage.currentViewId(),
-			    theme: x.Theme,
-			    onOnlineClick: onOnlineClick,
-	            mobileStorage: mobileStorage
-		    };
-	        var searchPage = new CswMobilePageFactory(CswMobilePage_Type.search, searchDef, $body );
-			return searchPage;
-		}
-	    
 	    function makeNodesPage(opts) {
 	        ///<summary>Create a Mobile nodes page</summary>
-		    ///<returns type="CswMobilePageViews">CswMobilePageViews page.</returns>
+		    ///<returns type="CswMobilePageNodes">CswMobilePageNodes page.</returns>
 		    var nodesDef = {
 		        ParentId: '',
 		        DivId: '',
@@ -226,16 +231,70 @@ CswAppMode.mode = 'mobile';
 		        onHelpClick: onHelpClick,
 		        onOnlineClick: onOnlineClick,
 		        onRefreshClick: onRefreshClick,
-		        mobileStorage: mobileStorage
+		        mobileStorage: mobileStorage,
+		        onListItemSelect: function(param) {
+		            var tabsPage = makeTabsPage(param);
+		            tabsPage.CswChangePage();
+		        }
 		    };
 	        if(opts) {
 	            $.extend(nodesDef, opts);
 	        }
-		    var nodesPage = new CswMobilePageFactory(CswMobilePage_Type.nodes, nodesDef, $body );
+		    var nodesPage = new CswMobilePageFactory(CswMobilePage_Type.nodes, nodesDef, $('body') );
 			return nodesPage;
 	    }
 	    
-	    //#endregion Page Creation
+	    function makeTabsPage(opts) {
+	        ///<summary>Create a Mobile tabs page</summary>
+		    ///<returns type="CswMobilePageTabs">CswMobilePageTabs page.</returns>
+		    var tabsDef = {
+		        ParentId: '',
+		        DivId: '',
+		        level: 1,
+		        json: '',
+		        theme: x.Theme,
+		        onHelpClick: onHelpClick,
+		        onOnlineClick: onOnlineClick,
+		        onRefreshClick: onRefreshClick,
+		        mobileStorage: mobileStorage,
+		        onListItemSelect: function(param) {
+		            var propsPage = makePropsPage(param);
+		            propsPage.CswChangePage();
+		        }
+		    };
+	        if(opts) {
+	            $.extend(tabsDef, opts);
+	        }
+		    var tabsPage = new CswMobilePageFactory(CswMobilePage_Type.tabs, tabsDef, $('body') );
+			return tabsPage;
+	    }
+	    
+	    function makePropsPage(opts) {
+	        ///<summary>Create a Mobile nodes page</summary>
+		    ///<returns type="CswMobilePageViews">CswMobilePageViews page.</returns>
+		    var propsDef = {
+		        ParentId: '',
+		        DivId: '',
+		        level: 1,
+		        json: '',
+		        theme: x.Theme,
+		        onHelpClick: onHelpClick,
+		        onOnlineClick: onOnlineClick,
+		        onRefreshClick: onRefreshClick,
+		        mobileStorage: mobileStorage,
+		        onListItemSelect: function(param) {
+		            var nextPropsPage = makePropsPage(param);
+		            nextPropsPage.CswChangePage();
+		        }
+		    };
+	        if(opts) {
+	            $.extend(propsDef, opts);
+	        }
+		    var propsPage = new CswMobilePageFactory(CswMobilePage_Type.props, propsDef, $('body') );
+			return propsPage;
+	    }
+	    
+	    //#endregion Dynamic Page Creation
 	    
 		//#region Button Bindings
 		
@@ -316,70 +375,6 @@ CswAppMode.mode = 'mobile';
 		// List items fetching
 		// ------------------------------------------------------------------------------------
 
-		function _loadDivContents(params) {
-			var logger = new CswProfileMethod('loadDivContents');
-			
-			if($('#logindiv')) $('#logindiv').remove();
-			
-			
-			mobileBgTask.reset();
-			
-			var p = {
-				ParentId: '',
-				level: 1,
-				DivId: '',
-				title: '',
-				HideRefreshButton: false,
-				HideSearchButton: false,
-				json: '',
-				SessionId: sessionId,
-				PageType: 'search'
-			};
-			if (params) $.extend(p, params);
-
-			var viewId = (p.level < 2) ? mobileStorage.currentViewId(p.DivId) : mobileStorage.currentViewId();
-	   
-			var $retDiv = $('#' + p.DivId);
-
-			if (isNullOrEmpty($retDiv) || $retDiv.length === 0 || $retDiv.find('div:jqmData(role="content")').length === 1) {
-				switch(p.level) {
-					case 0: //views
-					    var viewsPage = makeViewsPage();
-					    $retDiv = viewsPage.$pageDiv;
-					    break;
-				    case 1: //nodes
-				        var nodesPage = makeNodesPage({
-				                ParentId: viewId,
-				                DivId: p.DivId,
-				                level: p.level
-				            });
-				        $retDiv = nodesPage.$pageDiv;
-				        break;
-				    default: // Level 2 and up
-					    var cachedJson = mobileStorage.fetchCachedNodeJson(p.DivId);
-					    p.PageType = 'tab';
-					    if( !isNullOrEmpty(cachedJson) ) {
-						    p.json = cachedJson['subitems'];
-
-						    if (!isNullOrEmpty(p.json)) {
-							    $retDiv = _loadDivContentsJson(p);
-						    }
-					    } else {
-						    stopLoadingMsg();
-					    }
-				        break;
-				}
-			}
-			cacheLogInfo(logger);
-			return $retDiv;
-		} // _loadDivContents()
-
-		function _loadDivContentsJson(params) {
-			params.parentlevel = params.level;
-			var $retDiv = _processViewJson(params);
-			return $retDiv;
-		}
-        
 		function _processViewJson(params) {
 			var logger = new CswProfileMethod('processViewJson');
 			var p = {
@@ -935,7 +930,7 @@ CswAppMode.mode = 'mobile';
 			var firstInit = (isNullOrEmpty($pageDiv) || $pageDiv.length === 0);
 			
 			if (firstInit) {
-				$pageDiv = $body.CswDiv('init', { ID: p.DivId })
+				$pageDiv = $('body').CswDiv('init', { ID: p.DivId })
 					.CswAttrXml({
 							'data-role': 'page',
 							'data-url': p.DivId,
