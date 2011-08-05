@@ -37,6 +37,19 @@ var CswInput_Types = {
 	week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' }
 };
 
+// for CswCookie
+var CswCookieName = {
+	SessionId: 'CswSessionId',
+	Username: 'csw_username',
+	CurrentActionName: 'csw_currentactionname',
+	CurrentActionUrl: 'csw_currentactionurl',
+	CurrentViewId: 'csw_currentviewid',
+	CurrentViewMode: 'csw_currentviewmode',
+	CurrentNodeId: 'csw_currentnodeid',
+	CurrentNodeKey: 'csw_currentnodekey',
+	CurrentTabId: 'csw_currenttabid'
+};
+
 var CswAppMode = {
 	mode: 'full'     
 };

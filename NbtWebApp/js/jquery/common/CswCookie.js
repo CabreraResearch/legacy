@@ -1,20 +1,6 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../_Global.js" />
-
-var CswCookieName = {
-	SessionId: 'CswSessionId',
-	Username: 'csw_username',
-	CurrentActionName: 'csw_currentactionname',
-	CurrentActionUrl: 'csw_currentactionurl',
-	CurrentViewId: 'csw_currentviewid',
-	CurrentViewMode: 'csw_currentviewmode',
-	CurrentNodeId: 'csw_currentnodeid',
-	CurrentNodeKey: 'csw_currentnodekey',
-	CurrentTabId: 'csw_currenttabid'
-};
-
+﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../_Global.js" />
+/// <reference path="../../CswEnums.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
 	
