@@ -108,9 +108,14 @@ namespace ChemSW.Nbt.Schema
 				CswNbtMetaDataNodeTypeTab DetailTab = InspectionDesignNT.getNodeTypeTab( "Detail" );
 				if( DetailTab != null )
 				{
-					VersionNTP.NodeTypeTab = DetailTab;
-					VersionNTP.DisplayRow = DetailTab.getCurrentMaxDisplayRow() + 1;
-					VersionNTP.DisplayColumn = 1;
+					// case 23047
+					// Prevent versioning by editing directly
+					//VersionNTP.NodeTypeTab = DetailTab;
+					//VersionNTP.DisplayRow = DetailTab.getCurrentMaxDisplayRow() + 1;
+					//VersionNTP.DisplayColumn = 1;
+					VersionNTP._DataRow["nodetypetabsetid"] = CswConvert.ToDbVal( DetailTab.TabId );
+					VersionNTP._DataRow["display_row"] = CswConvert.ToDbVal( DetailTab.getCurrentMaxDisplayRow() + 1 );
+					VersionNTP._DataRow["display_col"] = CswConvert.ToDbVal( 1 );
 				}
 
 				foreach( CswNbtNode Node in InspectionDesignNT.getNodes( false, true ) )
