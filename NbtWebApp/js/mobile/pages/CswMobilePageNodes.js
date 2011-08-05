@@ -27,7 +27,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     var pageDef = { };
     var id = CswMobilePage_Type.nodes.id;
     var title = CswMobilePage_Type.nodes.title;
-    var viewid, level;
+    var viewId, level;
     var divSuffix = '_nodes';
     var ulSuffix = '_list';
     var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
@@ -41,6 +41,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
 	        ParentId: '',
             DivId: '', 
 	        title: '',
+            viewId: mobileStorage.currentViewId(),
 	        theme: CswMobileGlobal_Config.theme,
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },
@@ -62,7 +63,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
             p.title = title;
         }
         
-        viewid = tryParseString(p.DivId,mobileStorage.currentViewId());
+        viewId = p.viewId;
         level = tryParseNumber(p.level, 1);
         
         var buttons = { };
@@ -74,20 +75,30 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        ensureContent();
     })(); //ctor
+
+    function ensureContent() {
+        if (isNullOrEmpty($content) || $content.length === 0) {
+            $content = $('<div id="' + id + divSuffix + '"></div>');
+        } else {
+            $content.empty();
+        }
+    }    
     
     function getContent(onSuccess, postSuccess) {
         //var now = new Date();
         //var lastSync = new Date(mobileStorage.lastSyncTime);
         //( now.getTime() - lastSync.getTime() < 300000 ) ) //it's been less than 5 minutes since the last sync
-        
-        var cachedJson = mobileStorage.fetchCachedViewJson(viewid);
+        ensureContent();
+        var cachedJson = mobileStorage.fetchCachedViewJson(viewId);
 
 		if (!isNullOrEmpty(cachedJson)) {
 			refreshNodeContent(cachedJson, onSuccess, postSuccess);
 		} else if (mobileStorage.amOnline()) {
 			refreshNodeJson(onSuccess, postSuccess);
 		} else {
+		    makeEmptyListView(null, $content, 'No Results');
 			stopLoadingMsg();
 		}
     }
@@ -98,7 +109,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
 		
 		var jsonData = {
 			SessionId: mobileStorage.sessionid(),
-			ParentId: viewid,
+			ParentId: viewId,
 			ForMobile: true
 		};
 
@@ -128,46 +139,55 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         if (isNullOrEmpty(viewJson)) {
             viewJson = mobileStorage.fetchCachedViewJson(id);
         }
-        if (isNullOrEmpty($content) || $content.length === 0) {
-            $content = $('<div id="' + id + divSuffix + '"></div>');
-        } else {
-            $content.empty();
-        }
         var ulDef = {
             ID: id + ulSuffix,
             cssclass: CswMobileCssClasses.listview.name
         };
         
         var listView = new CswMobileListView(ulDef, $content);
+        var nodeCount = 0;
         if (!isNullOrEmpty(viewJson)) {
-            for (var key in viewJson)
+            for (var nodeKey in viewJson)
             {
-                if(viewJson.hasOwnProperty(key)) {
-                    var nodeKey = key.split('_');
-                    if(nodeKey.hasOwnProperty(1)) {
+                if(viewJson.hasOwnProperty(nodeKey)) {
+                    var nodePk = nodeKey.split('_');
+                    if(nodePk.hasOwnProperty(1)) {
                         var nodeId = nodeKey[1];
                     }
-                    if(Int32MinVal === nodeId || 'No Results' === viewJson[key]) {
-                        listView.addListItemLink('no_results', 'No Results');
+                    if(Int32MinVal === nodeId || 'No Results' === viewJson[nodeKey]) {
+                        makeEmptyListView(listView, null, 'No Results');
                     } else {
 
-                        var nodeJson = { ID: key, value: viewJson[key] };
+                        var nodeJson = { ID: nodeKey, value: viewJson[nodeKey] };
                         var nodeOc = makeOcContent(nodeJson);
 
-                        function onClick() {
-                            //the next level will either be nodes or props
-                        }
+                        var opts = {
+		                    ParentId: id,
+		                    DivId: nodeKey,
+		                    viewId: viewId,
+                            nodeId: mobileStorage.currentNodeId(nodeKey),
+		                    level: 2,
+		                    title: viewJson[nodeKey]['node_name'],
+		                    onHelpClick: pageDef.onHelpClick,
+		                    onOnlineClick: pageDef.onOnlineClick,
+		                    onRefreshClick: pageDef.onRefreshClick,
+		                    mobileStorage: mobileStorage
+		                };
+
+		                var onClick = makeDelegate(pageDef.onListItemSelect,opts);
 
                         if (nodeOc.isLink) {
-                            listView.addListItemLinkHtml(key, nodeOc.$html, onClick);
+                            listView.addListItemLinkHtml(nodeKey, nodeOc.$html, onClick);
                         } else {
-                            listView.addListItemHtml(key, nodeOc.$html, onClick);
+                            listView.addListItemHtml(nodeKey, nodeOc.$html, onClick);
                         }
+                        nodeCount++;
                     }
                 }
             }
-        } else {
-            listView.addListItemLink('no_results', 'No Results');
+        } 
+        if (nodeCount === 0) {
+            makeEmptyListView(listView, null, 'No Results');
         }
         if (!mobileStorage.stayOffline()) {
 			toggleOnline(mobileStorage);
