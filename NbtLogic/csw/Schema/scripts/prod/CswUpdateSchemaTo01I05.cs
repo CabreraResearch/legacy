@@ -116,22 +116,33 @@ namespace ChemSW.Nbt.Schema
 			} // foreach( CswNbtMetaDataNodeType RoleNT in RoleOC.NodeTypes )
 
 			// set new value of permission properties using old value
+			Collection<CswNbtNode> RoleNodes = new Collection<CswNbtNode>();
 			foreach( TempPermission Perm in ExistingPermissions )
 			{
 				CswNbtNode RoleNode = _CswNbtSchemaModTrnsctn.Nodes[Perm.RoleNodeId];
 				CswNbtObjClassRole RoleNodeAsRole = CswNbtNodeCaster.AsRole( RoleNode );
-
-				if(Perm.NodeType != null)
+				
+				if( Perm.NodeType != null )
 				{
-					_CswNbtSchemaModTrnsctn.Permit.set( Perm.Permission, Perm.NodeType, RoleNodeAsRole, true );
+					//_CswNbtSchemaModTrnsctn.Permit.set( Perm.Permission, Perm.NodeType, RoleNodeAsRole, true );
+					RoleNodeAsRole.NodeTypePermissions.AddValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( Perm.NodeType, Perm.Permission ) );
 				}
 				else if( Perm.Action != null )
 				{
-					_CswNbtSchemaModTrnsctn.Permit.set( Perm.Action, RoleNodeAsRole, true );
+					//_CswNbtSchemaModTrnsctn.Permit.set( Perm.Action, RoleNodeAsRole, true );
+					RoleNodeAsRole.ActionPermissions.AddValue( CswNbtObjClassRole.MakeActionPermissionValue( Perm.Action ) );
 				}
-
+				if( !RoleNodes.Contains( RoleNode ) )
+				{
+					RoleNodes.Add( RoleNode );
+				}
 			} // foreach(TempPermission Perm in ExistingPermissions)
 
+			// saving changes at the end is faster
+			foreach( CswNbtNode RoleNode in RoleNodes )
+			{
+				RoleNode.postChanges( false );
+			}
 		} // Update()
 
 
