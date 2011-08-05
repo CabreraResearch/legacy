@@ -10,7 +10,7 @@
 
 //#region CswMobilePageNodes
 
-function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
+function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
 	/// <summary>
 	///   Nodes Page class. Responsible for generating a Mobile nodes page.
 	/// </summary>
@@ -20,21 +20,21 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
 	/// <returns type="CswMobilePageNodes">Instance of itself. Must instance with 'new' keyword.</returns>
 
 	//#region private
-    if(isNullOrEmpty(mobileStorage)) {
+    if (isNullOrEmpty(mobileStorage)) {
         mobileStorage = new CswMobileClientDbResources();
     }
     
     var pageDef = { };
     var id = CswMobilePage_Type.nodes.id;
     var title = CswMobilePage_Type.nodes.title;
-    var viewid,level;
+    var viewid, level;
     var divSuffix = '_nodes';
     var ulSuffix = '_list';
     var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
     var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + divSuffix);
 
     //ctor
-    (function(){
+    (function () {
         
         var p = {
 	        level: 1,
@@ -49,14 +49,14 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
             onRefreshClick: null, //function () {},
             onSearchClick: null //function () {}
         };
-        if(nodesDef) $.extend(p, nodesDef);
+        if (nodesDef) $.extend(p, nodesDef);
 
-        if(!isNullOrEmpty(p.DivId)) {
+        if (!isNullOrEmpty(p.DivId)) {
             id = p.DivId;
         } else {
             p.DivId = id;
         }
-        if( !isNullOrEmpty(p.title)) {
+        if (!isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
             p.title = title;
@@ -74,10 +74,9 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
         buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
-        //$content = getContent();
     })(); //ctor
     
-    function getContent(onSuccess,postSuccess) {
+    function getContent(onSuccess, postSuccess) {
         //var now = new Date();
         //var lastSync = new Date(mobileStorage.lastSyncTime);
         //( now.getTime() - lastSync.getTime() < 300000 ) ) //it's been less than 5 minutes since the last sync
@@ -123,13 +122,13 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
 			});
     }
     
-    function refreshNodeContent(viewJson,onSuccess, postSuccess) {
+    function refreshNodeContent(viewJson, onSuccess, postSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         if (isNullOrEmpty(viewJson)) {
             viewJson = mobileStorage.fetchCachedViewJson(id);
         }
-        if( isNullOrEmpty($content) || $content.length === 0) {
+        if (isNullOrEmpty($content) || $content.length === 0) {
             $content = $('<div id="' + id + divSuffix + '"></div>');
         } else {
             $content.empty();
@@ -140,7 +139,7 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
         };
         
         var listView = new CswMobileListView(ulDef, $content);
-        if( !isNullOrEmpty(viewJson)) {
+        if (!isNullOrEmpty(viewJson)) {
             for (var key in viewJson)
             {
                 if(viewJson.hasOwnProperty(key)) {
@@ -170,7 +169,7 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
         } else {
             listView.addListItemLink('no_results', 'No Results');
         }
-        if(!mobileStorage.stayOffline()) {
+        if (!mobileStorage.stayOffline()) {
 			toggleOnline(mobileStorage);
 		}
         if (isFunction(onSuccess)) {
@@ -196,7 +195,7 @@ function CswMobilePageNodes(nodesDef,$page,mobileStorage) {
 		}
 		var objectClass = json['value']['objectclass'];
 
-		if( nodeSpecies !== 'More' )
+		if (nodeSpecies !== 'More')
 		{
 			if (!isNullOrEmpty(icon)) {
 			    html += '<img src="' + icon + '" class="ui-li-icon"/>';

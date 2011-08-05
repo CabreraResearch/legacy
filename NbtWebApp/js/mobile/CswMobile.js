@@ -90,8 +90,6 @@ CswAppMode.mode = 'mobile';
 			    viewsPage = makeViewsPage();
 			}
 		    viewsPage.CswSetPath();
-		    stopLoadingMsg();
-		    viewsPage.fillContent(false,stopLoadingMsg);
 		    mobileStorage.setItem('refreshPage', CswMobilePage_Type.views.id);
 		} else {
 			if (isNullOrEmpty(loginPage)) {
@@ -138,8 +136,6 @@ CswAppMode.mode = 'mobile';
 					mobileStorage.customerid(accessId);
 		            viewsPage = makeViewsPage();
 		            viewsPage.CswChangePage();
-		            startLoadingMsg();
-		            viewsPage.fillContent(false,stopLoadingMsg);
 		            loginPage = loginPage.remove();
 		        },
 		        mobileStorage: mobileStorage
@@ -160,9 +156,6 @@ CswAppMode.mode = 'mobile';
 		        onListItemSelect: function(opts) {
 		            var nodePage = makeNodesPage(opts);
 		            nodePage.CswChangePage();
-		            setTimeout(function() {
-		                nodePage.fillContent(false, stopLoadingMsg);
-		            }, 500);
 		        }
 		    };
 		    viewsPage = new CswMobilePageFactory(CswMobilePage_Type.views, viewsDef, $body );
@@ -221,26 +214,26 @@ CswAppMode.mode = 'mobile';
 			return searchPage;
 		}
 	    
-	        function makeNodesPage(opts) {
-	            ///<summary>Create a Mobile nodes page</summary>
-		        ///<returns type="CswMobilePageViews">CswMobilePageViews page.</returns>
-		        var nodesDef = {
-		            ParentId: '',
-		            DivId: '',
-		            level: 1,
-		            json: '',
-		            theme: x.Theme,
-		            onHelpClick: onHelpClick,
-		            onOnlineClick: onOnlineClick,
-		            onRefreshClick: onRefreshClick,
-		            mobileStorage: mobileStorage
-		        };
-	            if(opts) {
-	                $.extend(nodesDef, opts);
-	            }
-		        var nodesPage = new CswMobilePageFactory(CswMobilePage_Type.nodes, nodesDef, $body );
-			    return nodesPage;
+	    function makeNodesPage(opts) {
+	        ///<summary>Create a Mobile nodes page</summary>
+		    ///<returns type="CswMobilePageViews">CswMobilePageViews page.</returns>
+		    var nodesDef = {
+		        ParentId: '',
+		        DivId: '',
+		        level: 1,
+		        json: '',
+		        theme: x.Theme,
+		        onHelpClick: onHelpClick,
+		        onOnlineClick: onOnlineClick,
+		        onRefreshClick: onRefreshClick,
+		        mobileStorage: mobileStorage
+		    };
+	        if(opts) {
+	            $.extend(nodesDef, opts);
 	        }
+		    var nodesPage = new CswMobilePageFactory(CswMobilePage_Type.nodes, nodesDef, $body );
+			return nodesPage;
+	    }
 	    
 	    //#endregion Page Creation
 	    
@@ -301,13 +294,13 @@ CswAppMode.mode = 'mobile';
 
         function onOnlineClick() {
             ///<summary>Event to fire on 'Online' button click.</summary>
-            var onlinePage = makeOnlinePage();
+            onlinePage = makeOnlinePage();
             onlinePage.$pageDiv.CswChangePage();
         }
 	    
 	    function onHelpClick() {
 	        ///<summary>Event to fire on 'Help' button click.</summary>
-	        var helpPage = makeHelpPage();
+	        helpPage = makeHelpPage();
 	        helpPage.$pageDiv.CswChangePage();
 	    }
 	    

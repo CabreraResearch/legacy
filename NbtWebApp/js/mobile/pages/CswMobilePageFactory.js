@@ -53,7 +53,6 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
             mobileSync: null,
             mobileBgTask: null,
             onSuccess: null //function () {}
-            //doChangePage: false
         };
 
         if (pageDef) {
@@ -74,38 +73,28 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         }
         
         $pageDiv = getPageDiv(title, p.theme, p.doChangePage);
-//        if (p.doChangePage) {
-//            $pageDiv.CswChangePage();
-//        }
 
-        var fillContentNow = false;
-        
         switch (pageType.name) {
             case CswMobilePage_Type.help.name:
                 cswMobilePage = new CswMobilePageHelp(p, $pageDiv, p.mobileStorage);
-                fillContentNow = true;
                 break;
             case CswMobilePage_Type.login.name:
                 cswMobilePage = new CswMobilePageLogin(p, $pageDiv, p.mobileStorage, p.onSuccess);
-                fillContentNow = true;
                 break;
             case CswMobilePage_Type.nodes.name:
                 cswMobilePage = new CswMobilePageNodes(p, $pageDiv, p.mobileStorage);
                 break;
             case CswMobilePage_Type.offline.name:
                 cswMobilePage = new CswMobilePageOffline(p, $pageDiv, p.mobileStorage);
-                fillContentNow = true;
                 break;
             case CswMobilePage_Type.online.name:
                 cswMobilePage = new CswMobilePageOnline(p, $pageDiv, p.mobileStorage, p.mobileSync, p.mobileBgTask);
-                fillContentNow = true;
                 break;
             case CswMobilePage_Type.props.name:
                 cswMobilePage = new CswMobilePageProps(p, $pageDiv, p.mobileStorage);
                 break;
             case CswMobilePage_Type.search.name:
                 cswMobilePage = new CswMobilePageSearch(p, $pageDiv, p.mobileStorage);
-                fillContentNow = true;
                 break;
             case CswMobilePage_Type.tabs.name:
                 cswMobilePage = new CswMobilePageTabs(p, $pageDiv, p.mobileStorage);
@@ -124,19 +113,14 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
             $contentRole = getContentDiv(p.theme);
             mobileFooter = getMenuFooter(p.footerDef);
             getContent = cswMobilePage.getContent;
-            if(fillContentNow) {
-                $contentRole = fillContent();
-            }
-            log($pageDiv);
+            bindPageEvents();
         }
     })(); //ctor
     
-    function getPageDiv(headerText, theme, doChangePage) {
+    function getPageDiv(headerText, theme) {
         var $ret = $('#' + id);
-
-        var firstInit = (isNullOrEmpty($ret) || $ret.length === 0);
 			
-	    if (firstInit) {
+	    if (isNullOrEmpty($ret) || $ret.length === 0) {
 		    $ret = $parent.CswDiv('init', { ID: id })
 			                .CswAttrXml({
 					                'data-role': 'page',
@@ -191,6 +175,17 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         return $contentRole;
     }
     
+    function bindPageEvents() {
+        $pageDiv.bind('pageshow', function() {
+            startLoadingMsg();
+            setTimeout(function() {
+                fillContent(false, function() {
+                    stopLoadingMsg();
+                });
+            }, 500);
+        });
+    }
+    
     function fillContent(forceRefresh,onSuccess) {
         if (cswMobilePage.$content && !forceRefresh) {
             $contentRole.append(cswMobilePage.$content);
@@ -202,21 +197,12 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     }
     
     function refreshPageContent($newContent) {
-        onPageInit();
         $contentRole.append($newContent);
         onPageComplete();
     }
     
-    function onPageInit(onSuccess) {
-    }
-    
     function onPageComplete(onSuccess) {
-        fixGeometry();
-        if (pageType === CswMobilePage_Type.views ||
-            pageType === CswMobilePage_Type.nodes
-            ) {
-            $contentRole.trigger('create');
-        }
+        $contentRole.trigger('create');
         if (isFunction(onSuccess)) {
             onSuccess();
         }
