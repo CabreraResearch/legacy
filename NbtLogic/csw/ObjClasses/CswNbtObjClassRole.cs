@@ -151,19 +151,19 @@ namespace ChemSW.Nbt.ObjClasses
 
 		public static string MakeNodeTypePermissionValue( CswNbtMetaDataNodeType NodeType, CswNbtPermit.NodeTypePermission Permission )
 		{
-			return "nt_" + NodeType.NodeTypeId.ToString() + "_" + Permission.ToString();
+			return "nt_" + NodeType.FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
 		}
 		public static string MakeNodeTypePermissionText( CswNbtMetaDataNodeType NodeType, CswNbtPermit.NodeTypePermission Permission )
 		{
-			return NodeType.NodeTypeName + ": " + Permission.ToString();
+			return NodeType.LatestVersionNodeType.NodeTypeName + ": " + Permission.ToString();
 		}
 		public static string MakeNodeTypeTabPermissionValue( CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtPermit.NodeTypeTabPermission Permission )
 		{
-			return "nt_" + NodeTypeTab.NodeType.NodeTypeId.ToString() + "_tab_" + NodeTypeTab.TabId + "_" + Permission.ToString();
+			return "nt_" + NodeTypeTab.NodeType.FirstVersionNodeTypeId.ToString() + "_tab_" + NodeTypeTab.TabId + "_" + Permission.ToString();
 		}
 		public static string MakeNodeTypeTabPermissionText( CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtPermit.NodeTypeTabPermission Permission )
 		{
-			return NodeTypeTab.NodeType.NodeTypeName + ", " + NodeTypeTab.TabName + ": " + Permission.ToString();
+			return NodeTypeTab.NodeType.LatestVersionNodeType.NodeTypeName + ", " + NodeTypeTab.TabName + ": " + Permission.ToString();
 		}
 		public static string MakeActionPermissionValue( CswNbtAction Action )
 		{

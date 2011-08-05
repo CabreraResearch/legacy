@@ -53,45 +53,57 @@ namespace ChemSW.Nbt.WebServices
 		public XElement getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId, DateTime Date, string filterToPropId )
 		{
 			XElement TabsNode = new XElement( "tabs" );
-			
+
 			if( EditMode == NodeEditMode.AddInPopup && NodeTypeId != Int32.MinValue )
 			{
 				CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-				TabsNode.Add( new XElement( "tab",
+				if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
+				{
+					TabsNode.Add( new XElement( "tab",
 											new XAttribute( "id", "newtab" ),
 											new XAttribute( "name", "Add New " + NodeType.NodeTypeName ),
 											new XAttribute( "canEditLayout", "false" ) ) );
+				}
 			}
-			else if(filterToPropId != string.Empty)
+			else if( filterToPropId != string.Empty )
 			{
 				CswPropIdAttr PropId = new CswPropIdAttr( filterToPropId );
 				CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-				TabsNode.Add( new XElement( "tab",
+				if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, false, Prop.NodeTypeTab ) )
+				{
+					TabsNode.Add( new XElement( "tab",
 											new XAttribute( "id", Prop.NodeTypeTab.TabId ),
 											new XAttribute( "name", Prop.NodeTypeTab.TabName ),
 											new XAttribute( "canEditLayout", "false" ) ) );
+				}
 			}
-			else 
+			else
 			{
 				CswNbtNode Node = _getNode( NodeId, NodeKey, Date );
 				if( Node != null )
 				{
 					foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
 					{
-						TabsNode.Add( new XElement( "tab",
+						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType, false, Tab ) )
+						{
+							TabsNode.Add( new XElement( "tab",
 											new XAttribute( "id", Tab.TabId ),
 											new XAttribute( "name", Tab.TabName ),
 											new XAttribute( "canEditLayout", _canEditLayout().ToString().ToLower() ) ) );
+						}
 					}
 
 					// History tab
-					if( Date == DateTime.MinValue && 
+					if( Date == DateTime.MinValue &&
 						CswConvert.ToBoolean( _CswNbtResources.getConfigVariableValue( "auditing" ) ) )
 					{
-						TabsNode.Add( new XElement( "tab",
-											new XAttribute( "id", HistoryTabPrefix + NodeId ),
-											new XAttribute( "name", "History" ),
-											new XAttribute( "canEditLayout", "false" ) ) );
+						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType ) )
+						{
+							TabsNode.Add( new XElement( "tab",
+												new XAttribute( "id", HistoryTabPrefix + NodeId ),
+												new XAttribute( "name", "History" ),
+												new XAttribute( "canEditLayout", "false" ) ) );
+						}
 					}
 				} // if( Node != null )
 			} // if-else( EditMode == NodeEditMode.AddInPopup )
@@ -111,7 +123,10 @@ namespace ChemSW.Nbt.WebServices
 			if( TabId.StartsWith( HistoryTabPrefix ) )
 			{
 				CswNbtNode Node = _getNode( NodeId, NodeKey, Date );
-				_getAuditHistoryGridProp( PropXmlDoc.DocumentElement, Node );
+				if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType ) )
+				{
+					_getAuditHistoryGridProp( PropXmlDoc.DocumentElement, Node );
+				}
 			}
 			else
 			{
@@ -119,16 +134,19 @@ namespace ChemSW.Nbt.WebServices
 				{
 					CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
 
-					foreach( CswNbtMetaDataNodeTypeProp Prop in Node.NodeType.NodeTypeProps
+					if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) )
+					{
+						foreach( CswNbtMetaDataNodeTypeProp Prop in Node.NodeType.NodeTypeProps
 																			 .Cast<CswNbtMetaDataNodeTypeProp>()
 																			 .Where( Prop => Prop.EditProp( Node, _ThisUser, true ) ) )
-					{
-						_addProp( PropXmlDoc, EditMode, Node, Prop );
+						{
+							_addProp( PropXmlDoc, EditMode, Node, Prop );
+						}
 					}
 				}
 				else
 				{
-					
+
 					CswNbtNode Node = _getNode( NodeId, NodeKey, Date );
 					if( Node != null )
 					{
@@ -142,11 +160,14 @@ namespace ChemSW.Nbt.WebServices
 						//}
 
 						CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
-						foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder
-																	   .Cast<CswNbtMetaDataNodeTypeProp>()
-																	   .Where( Prop => Prop.ShowProp( Node, _ThisUser ) ) )
+						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType, false, Tab ) )
 						{
-							_addProp( PropXmlDoc, EditMode, Node, Prop );
+							foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder
+																		   .Cast<CswNbtMetaDataNodeTypeProp>()
+																		   .Where( Prop => Prop.ShowProp( Node, _ThisUser ) ) )
+							{
+								_addProp( PropXmlDoc, EditMode, Node, Prop );
+							}
 						}
 					}
 					//}
@@ -269,7 +290,7 @@ namespace ChemSW.Nbt.WebServices
             bool IsReadOnly = ( Prop.ReadOnly ||                  // nodetype_props.readonly
 								PropWrapper.ReadOnly ||           // jct_nodes_props.readonly
 								Node.ReadOnly ||                  // nodes.readonly
-								!_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType.NodeTypeId, Node, Prop ) );
+								!_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, null, null, Node, Prop ) );
 
             CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", IsReadOnly.ToString().ToLower() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "gestalt", PropWrapper.Gestalt.Replace( "\"", "&quot;" ) );
@@ -349,7 +370,7 @@ namespace ChemSW.Nbt.WebServices
 			if( Node != null &&
 				( EditMode == NodeEditMode.AddInPopup &&
 				  _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) ) ||
-				_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Node.NodeType, Node, null ) )
+				_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Node.NodeType, false, null, null, Node, null ) )
 			{
                 foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
 				{
@@ -405,7 +426,7 @@ namespace ChemSW.Nbt.WebServices
 						CopyToNodePk.FromString( NodeIdStr );
 						CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
 						if( CopyToNode != null &&
-							_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.NodeType, CopyToNode, null ) )
+							_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.NodeType, false, null, null, CopyToNode, null ) )
 						{
 							foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
 																					   .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )

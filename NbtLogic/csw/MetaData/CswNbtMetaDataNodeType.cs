@@ -215,7 +215,7 @@ namespace ChemSW.Nbt.MetaData
             get
             {
 				return ( ( !IsLocked || IsLatestVersion ) &&
-						 ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeId ) ) );
+						 ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, this ) ) );
             }
         }
         public bool CanDelete
@@ -223,7 +223,7 @@ namespace ChemSW.Nbt.MetaData
             get
             {
 				return ( ( !IsLocked || IsLatestVersion ) &&
-						 ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, NodeTypeId ) ) );
+						 ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, this ) ) );
             }
         }
 

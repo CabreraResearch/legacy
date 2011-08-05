@@ -62,60 +62,13 @@ namespace ChemSW.Nbt.Security
 		/// <summary>
 		/// Returns true if the user has the appropriate permissions for the nodetype
 		/// </summary>
-		public bool can( NodeTypePermission Permission, Int32 NodeTypeId )
-		{
-			return can( Permission, _CswNbtResources.MetaData.getNodeType( NodeTypeId ) );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, Int32 NodeTypeId, ICswNbtUser User )
-		{
-			return can( Permission, _CswNbtResources.MetaData.getNodeType( NodeTypeId ), User );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, Int32 NodeTypeId, ICswNbtUser User, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
-		{
-			return can( Permission, _CswNbtResources.MetaData.getNodeType( NodeTypeId ), User, Node, Prop );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, Int32 NodeTypeId, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
-		{
-			return can( Permission, _CswNbtResources.MetaData.getNodeType( NodeTypeId ), null, Node, Prop );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType )
-		{
-			return can( Permission, NodeType, null );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User )
-		{
-			return can( Permission, NodeType, User, null, null );
-		}
-
-		public bool can( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
-		{
-			return can( Permission, NodeType, null, Node, Prop );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User, CswNbtNode Node, CswNbtMetaDataNodeTypeProp MetaDataProp )
+		public bool can( NodeTypePermission Permission, 
+						 CswNbtMetaDataNodeType NodeType, 
+						 bool CheckAllTabPermissions = false, 
+						 CswNbtMetaDataNodeTypeTab NodeTypeTab = null, 
+						 ICswNbtUser User = null, 
+						 CswNbtNode Node = null, 
+						 CswNbtMetaDataNodeTypeProp MetaDataProp = null )
 		{
 			bool ret = false;
 
@@ -138,6 +91,24 @@ namespace ChemSW.Nbt.Security
 					{
 						// Base case
 						ret = Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType, Permission ) );
+						
+						// case 8411 - Tab permissions
+						if( ( CheckAllTabPermissions || NodeTypeTab != null ) &&
+							( Permission == NodeTypePermission.View || Permission == NodeTypePermission.Edit ) )
+						{
+							NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypePermission ), Permission.ToString() );
+							if( NodeTypeTab != null )
+							{
+								ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( NodeTypeTab, TabPermission ) );
+							}
+							else if( CheckAllTabPermissions )
+							{
+								foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+								{
+									ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( Tab, TabPermission ) );
+								}
+							}
+						} // if checking tab permissions
 
 						// Only Administrators can edit Roles
 						if( ret &&
