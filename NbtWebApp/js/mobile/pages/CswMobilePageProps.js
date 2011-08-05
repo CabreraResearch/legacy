@@ -133,7 +133,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
             }
         }
         if(propCount === 0) {
-            makeEmptyListView(listView, , 'No Properties to Display');
+            makeEmptyListView(listView, $content, 'No Properties to Display');
         }
         if (!mobileStorage.stayOffline()) {
 			toggleOnline(mobileStorage);

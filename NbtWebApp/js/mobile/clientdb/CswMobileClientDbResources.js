@@ -16,10 +16,9 @@ function CswMobileClientDbResources() {
     /// <returns type="CswMobileClientDbResources">Instance of itself. Must instance with 'new' keyword.</returns>
     CswMobileClientDb.call(this);
    
-    function handleStorageRequest(key,value) {
-        var mobileStorage = this;
+    function handleStorageRequest(key, value, mobileStorage) {
         var ret = '';
-        if (arguments.length === 2 && value) {
+        if (arguments.length === 3 && value) {
             ret = value;
             mobileStorage.setItem(key, value);
         }
@@ -35,7 +34,7 @@ function CswMobileClientDbResources() {
         /// </summary>
         /// <param name="viewId" type="String">Optional. An NBT ViewId</param>
         /// <returns type="String">Stored viewid</returns>
-        return handleStorageRequest('currentviewid', viewId);
+        return handleStorageRequest('currentviewid', viewId, this);
     };
     
     this.currentNodeId = function (nodeId) {
@@ -44,7 +43,7 @@ function CswMobileClientDbResources() {
         /// </summary>
         /// <param name="nodeId" type="String">Optional. An NBT NodeId</param>
         /// <returns type="String">Stored nodeid</returns>
-        return handleStorageRequest('currentnodeid', nodeId);
+        return handleStorageRequest('currentnodeid', nodeId, this);
     };
     
     this.currentTabId = function (tabId) {
@@ -53,7 +52,7 @@ function CswMobileClientDbResources() {
         /// </summary>
         /// <param name="tabId" type="String">Optional. An NBT NodeId</param>
         /// <returns type="String">Stored nodeid</returns>
-        return handleStorageRequest('currenttabid', tabId);
+        return handleStorageRequest('currenttabid', tabId, this);
     };
     
     this.username = function (username) {
@@ -62,7 +61,7 @@ function CswMobileClientDbResources() {
         /// </summary>
         /// <param name="username" type="String">Optional. An NBT username</param>
         /// <returns type="String">Stored username</returns>
-        return handleStorageRequest('username', username);
+        return handleStorageRequest('username', username, this);
     };
 
     this.customerid = function (customerid)
@@ -72,7 +71,7 @@ function CswMobileClientDbResources() {
         /// </summary>
         /// <param name="customerid" type="String">Optional. An NBT customerid</param>
         /// <returns type="String">Stored userid</returns>
-        return handleStorageRequest('customerid', customerid);
+        return handleStorageRequest('customerid', customerid, this);
     };
 
     this.sessionid = function (sessionid)
@@ -82,7 +81,7 @@ function CswMobileClientDbResources() {
         /// </summary>
         /// <param name="sessionid" type="String">Optional. An NBT sessionid</param>
         /// <returns type="String">Stored sessionid</returns>
-        return handleStorageRequest('sessionid', sessionid);
+        return handleStorageRequest('sessionid', sessionid, this);
     };
 
     this.lastSyncSuccess = function () {
