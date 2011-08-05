@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Schema
 					DataTable ActionPermTable = RoleNode.Properties[CswNbtObjClassRole.ActionPermissionsPropertyName].AsLogicalSet.GetDataAsTable( "name", "key" );
 					foreach( DataRow ActionPermRow in ActionPermTable.Rows )
 					{
-						CswNbtAction Action = _CswNbtSchemaModTrnsctn.Actions[CswConvert.ToInt32( ActionPermRow["key"] )];
+						CswNbtAction Action = _CswNbtSchemaModTrnsctn.Actions[CswNbtAction.ActionNameStringToEnum( ActionPermRow["key"].ToString() )];
 						foreach( DataColumn Column in ActionPermTable.Columns )
 						{
 							if( Column.ColumnName != "name" &&

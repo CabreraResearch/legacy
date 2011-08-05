@@ -208,8 +208,8 @@ namespace ChemSW.Nbt.ObjClasses
 				Dictionary<string, string> ActionOptions = new Dictionary<string, string>();
 				foreach( CswNbtAction Action in _CswNbtResources.Actions )
 				{
-					ActionOptions.Add( MakeActionPermissionText( Action ),
-									   MakeActionPermissionValue( Action ) );
+					ActionOptions.Add( MakeActionPermissionValue( Action ),
+									   MakeActionPermissionText( Action ) );
 				}
 				this.ActionPermissions.Options = ActionOptions;
 			}
