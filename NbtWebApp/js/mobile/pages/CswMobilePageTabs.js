@@ -25,8 +25,8 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
     }
     
     var pageDef = { };
-    var id = CswMobilePage_Type.nodes.id;
-    var title = CswMobilePage_Type.nodes.title;
+    var id = CswMobilePage_Type.tabs.id;
+    var title = CswMobilePage_Type.tabs.title;
     var viewId, level, nodeId;
     var divSuffix = '_tabs';
     var ulSuffix = '_list';
@@ -95,15 +95,15 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
     		cachedJson.hasOwnProperty('subitems') &&
 		    !isNullOrEmpty(cachedJson['subitems'])) 
 		{
-			var tabJson = cachedJson['subitems'];
-			refreshTabContent(tabJson, onSuccess, postSuccess);
+			var nodeJson = cachedJson['subitems'];
+			refreshTabContent(nodeJson, onSuccess, postSuccess);
 		} else {
 		    makeEmptyListView(null, $content, 'No Tabs to Display');
 			stopLoadingMsg();
 		}
     }
     
-    function refreshTabContent(tabJson, onSuccess, postSuccess) {
+    function refreshTabContent(nodeJson, onSuccess, postSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         ensureContent();
@@ -114,10 +114,10 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
         
         var listView = new CswMobileListView(ulDef, $content);
         var tabCount = 0;
-        if (!isNullOrEmpty(tabJson)) {
-            for (var tabName in tabJson)
+        if (!isNullOrEmpty(nodeJson)) {
+            for (var tabName in nodeJson)
             {
-                if (tabJson.hasOwnProperty(tabName)) {
+                if (nodeJson.hasOwnProperty(tabName)) {
 					var tabId = makeSafeId({prefix: tabName, ID: nodeId }); 
 					
                     var opts = {
@@ -125,6 +125,8 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
 		                DivId: tabId,
 		                viewId: viewId,
                         nodeId: nodeId,
+                        tabId: tabId,
+                        tabName: tabName,
 		                level: 3,
 		                title: tabName,
 		                onHelpClick: pageDef.onHelpClick,

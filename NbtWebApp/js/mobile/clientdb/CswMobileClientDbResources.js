@@ -16,22 +16,26 @@ function CswMobileClientDbResources() {
     /// <returns type="CswMobileClientDbResources">Instance of itself. Must instance with 'new' keyword.</returns>
     CswMobileClientDb.call(this);
    
+    function handleStorageRequest(key,value) {
+        var mobileStorage = this;
+        var ret = '';
+        if (arguments.length === 2 && value) {
+            ret = value;
+            mobileStorage.setItem(key, value);
+        }
+        if (isNullOrEmpty(ret)) {
+            ret = mobileStorage.getItem(key);
+        }
+        return ret;
+    }
+    
     this.currentViewId = function (viewId) {
         /// <summary>
         ///   Persists the current NBT ViewId. 
         /// </summary>
         /// <param name="viewId" type="String">Optional. An NBT ViewId</param>
         /// <returns type="String">Stored viewid</returns>
-        var mobileStorage = this;
-        var ret = '';
-        if (arguments.length === 1 && viewId) {
-            ret = viewId;
-            mobileStorage.setItem('currentviewid', viewId);
-        }
-        if (isNullOrEmpty(ret)) {
-            ret = mobileStorage.getItem('currentviewid');
-        }
-        return ret;
+        return handleStorageRequest('currentviewid', viewId);
     };
     
     this.currentNodeId = function (nodeId) {
@@ -40,16 +44,16 @@ function CswMobileClientDbResources() {
         /// </summary>
         /// <param name="nodeId" type="String">Optional. An NBT NodeId</param>
         /// <returns type="String">Stored nodeid</returns>
-        var mobileStorage = this;
-        var ret = '';
-        if (arguments.length === 1 && nodeId) {
-            ret = nodeId;
-            mobileStorage.setItem('currentnodeid', nodeId);
-        }
-        if (isNullOrEmpty(ret)) {
-            ret = mobileStorage.getItem('currentnodeid');
-        }
-        return ret;
+        return handleStorageRequest('currentnodeid', nodeId);
+    };
+    
+    this.currentTabId = function (tabId) {
+        /// <summary>
+        ///   Persists the current NBT TabId. 
+        /// </summary>
+        /// <param name="tabId" type="String">Optional. An NBT NodeId</param>
+        /// <returns type="String">Stored nodeid</returns>
+        return handleStorageRequest('currenttabid', tabId);
     };
     
     this.username = function (username) {
@@ -58,14 +62,7 @@ function CswMobileClientDbResources() {
         /// </summary>
         /// <param name="username" type="String">Optional. An NBT username</param>
         /// <returns type="String">Stored username</returns>
-        var mobileStorage = this;
-        var ret = username;
-        if(!isNullOrEmpty(username)) {
-            mobileStorage.setItem('username',ret);
-        } else {
-            ret = mobileStorage.getItem('username');
-        }
-        return ret;
+        return handleStorageRequest('username', username);
     };
 
     this.customerid = function (customerid)
@@ -75,14 +72,7 @@ function CswMobileClientDbResources() {
         /// </summary>
         /// <param name="customerid" type="String">Optional. An NBT customerid</param>
         /// <returns type="String">Stored userid</returns>
-        var mobileStorage = this;
-        var ret = customerid;
-        if (!isNullOrEmpty(customerid)) {
-            mobileStorage.setItem('customerid', ret);
-        } else {
-            ret = mobileStorage.getItem('customerid');
-        }
-        return ret;
+        return handleStorageRequest('customerid', customerid);
     };
 
     this.sessionid = function (sessionid)
@@ -92,14 +82,7 @@ function CswMobileClientDbResources() {
         /// </summary>
         /// <param name="sessionid" type="String">Optional. An NBT sessionid</param>
         /// <returns type="String">Stored sessionid</returns>
-        var mobileStorage = this;
-        var ret = sessionid;
-        if (!isNullOrEmpty(sessionid)) {
-            mobileStorage.setItem('sessionid', ret);
-        } else {
-            ret = mobileStorage.getItem('sessionid');
-        }
-        return ret;
+        return handleStorageRequest('sessionid', sessionid);
     };
 
     this.lastSyncSuccess = function () {

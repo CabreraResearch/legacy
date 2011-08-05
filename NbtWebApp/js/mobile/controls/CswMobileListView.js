@@ -9,13 +9,14 @@
 
 CswMobileListView.inheritsFrom(ICswMobileWebControls);
 
-function CswMobileListView(listDef, $parent) {
+function CswMobileListView(listDef, $parent, bindEvent) {
     /// <summary>
     ///   Menu button class. Responsible for creating Mobile menu buttons suitable for consumption by a header/footer.
     ///   Menu buttons must be tied to static pages to wire their events properly, with the exception of 'Back'.
     /// </summary>
     /// <param name="buttonDef" type="Object">Button definitional data.</param>
     /// <param name="$parent" type="jQuery">Parent element to attach to.</param>
+    /// <param name="bindEvent" type="CswDomElementEvent">Event type to bind an onEvent function.</param>
     /// <returns type="CswMobileListView">Instance of itself. Must instance with 'new' keyword.</returns>
     
     //#region private 
@@ -26,6 +27,10 @@ function CswMobileListView(listDef, $parent) {
     var liSuffix = '_li';
     var ulSuffix = '_ul';
     var aSuffix = '_a';
+    var eventName = CswDomElementEvent.click.name;
+    if (!isNullOrEmpty(bindEvent)) {
+        eventName = bindEvent.name;
+    }
     
     //ctor
     (function() {
@@ -76,7 +81,7 @@ function CswMobileListView(listDef, $parent) {
         $control = $ul.trigger('create');
     })(); //ctor
     
-    function addListItemLink(id,text,onClick,options) {
+    function addListItemLink(id, text, onEvent, options) {
         /// <summary>
         ///   Add a list item to the UL
         /// </summary>
@@ -88,9 +93,9 @@ function CswMobileListView(listDef, $parent) {
             'data-icon': false,
             'data-url': id
         };
-        if(options) $.extend(p, options);
+        if (options) $.extend(p, options);
 
-        var $li = addListItem(id, '', onClick, p);
+        var $li = addListItem(id, '', onEvent, p);
         $li.CswLink('init', { ID: id + aSuffix, href: 'javascript:void(0);', value: text })
 											  .css('white-space', 'normal')
 											  .CswAttrXml({
@@ -101,7 +106,7 @@ function CswMobileListView(listDef, $parent) {
         return $li;
     }
     
-    function addListItemLinkHtml(id,$html,onClick,options) {
+    function addListItemLinkHtml(id, $html, onEvent, options) {
         /// <summary>
         ///   Add a list item to the UL
         /// </summary>
@@ -115,7 +120,7 @@ function CswMobileListView(listDef, $parent) {
         };
         if (options) $.extend(p, options);
 
-        var $li = addListItemLink(id, '', onClick, p);
+        var $li = addListItemLink(id, '', onEvent, p);
         var $a = $li.find('#' + id + aSuffix);
         if (!isNullOrEmpty($a) && $a.length !== 0) {
             $a.append($html);
@@ -124,7 +129,7 @@ function CswMobileListView(listDef, $parent) {
         return $li;
     }
     
-    function addListItemHtml(id,$html,onClick, options) {
+    function addListItemHtml(id,$html, onEvent, options) {
         /// <summary>
         ///   Add a list item to the UL
         /// </summary>
@@ -138,13 +143,13 @@ function CswMobileListView(listDef, $parent) {
         };
         if(options) $.extend(p, options);
 
-        var $li = addListItem(id, '', onClick, p);
+        var $li = addListItem(id, '', onEvent, p);
         $li.append($html);
         $control.trigger('create');
         return $li;
     }
     
-    function addListItem(id, text, onClick, options) {
+    function addListItem(id, text, onEvent, options) {
         /// <summary>
         ///   Add a list item to the UL
         /// </summary>
@@ -169,13 +174,25 @@ function CswMobileListView(listDef, $parent) {
         if(!isNullOrEmpty(text)) {
             $li.text(text);
         }
-        if(onClick) {
-            $li.bind('click', onClick);
-        }
+        doEventBind($li, onEvent);
         $control.trigger('create');
         return $li;
     }
     
+    function doEventBind($li,onEvent) {
+        if (!isNullOrEmpty(onEvent)) {
+            if (isFunction(onEvent)) {
+                $li.bind(eventName, onEvent);
+            }
+            else if (onEvent.hasOwnProperty('name') &&
+                     onEvent.hasOwnProperty('event')) {
+                var name = onEvent.eventname;
+                var event = onEvent.event;
+                $li.bind(name, event);
+            }
+        }
+    }
+
     //#endregion private 
     
     //#region public, priveleged
