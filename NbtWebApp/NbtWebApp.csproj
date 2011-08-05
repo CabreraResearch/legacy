@@ -119,7 +119,7 @@
     <Content Include="js\jquery\fieldtypes\CswFieldTypeMultiList.js" />
     <Content Include="js\mobile\objectclasses\CswMobileInspectionDesignClass.js" />
     <Content Include="js\mobile\objectclasses\CswMobileGenericClass.js" />
-    <Content Include="js\mobile\objectclasses\CswMobileObjectClassFactory.js" />
+    <Content Include="js\mobile\objectclasses\CswMobileNodesFactory.js" />
     <Content Include="js\mobile\pages\CswMobilePageNodes.js" />
     <Content Include="js\mobile\pages\CswMobilePageProps.js" />
     <Content Include="js\mobile\pages\CswMobilePageTabs.js" />

@@ -125,6 +125,11 @@ var CswObjectClasses = {
     InspectionDesignClass: { name: 'Inspection Design' }
 };
 
+var CswNodeSpecies = {
+    Plain: { name: 'Plain' },
+    More: { name: 'More' }
+};
+
 //#endregion Global
 
 //#region Mobile
