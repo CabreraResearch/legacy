@@ -141,13 +141,13 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 		        var opts = {
 		            ParentId: id,
 		            DivId: viewId,
+		            viewId: viewId,
 		            level: 1,
 		            title: viewName,
 		            onHelpClick: pageDef.onHelpClick,
 		            onOnlineClick: pageDef.onOnlineClick,
 		            onRefreshClick: pageDef.onRefreshClick,
-		            mobileStorage: mobileStorage,
-		            doChangePage: true
+		            mobileStorage: mobileStorage
 		        };
 
 		        var onClick = makeDelegate(pageDef.onListItemSelect,opts);
