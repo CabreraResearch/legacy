@@ -120,7 +120,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
                     var $li = listView.addListItem(propId, '');
                     fieldTypeJsonToHtml(propJson, propId, propName, $li);
                 } else {
-                    nextTab = propId;
+                    nextTab = propJson;
                 }
                 propCount++;
             }
