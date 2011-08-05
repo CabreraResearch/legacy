@@ -147,8 +147,8 @@ function CswAjaxJSON(options)
 		url: '',
 		data: {},
 		onloginfail: function () { _finishLogout(); },
-		success: function (result) { },
-		error: function () { },
+		success: null, //function () { },
+		error: null, //function () { },
 		formobile: false,
 		async: true
 	};
@@ -231,7 +231,7 @@ function CswAjaxXml(options)
 		data: {},
 		stringify: false, //in case we need to conditionally apply $.param() instead of JSON.stringify() (or both)
 		onloginfail: function () { _finishLogout(); },
-		success: function ($xml) { },
+		success: function () { },
 		error: function () { },
 		formobile: false,
 		async: true
@@ -370,7 +370,7 @@ function _handleAuthenticationStatus(options)
 					'cswnbtnodekey': o.usernodekey,
 					'filterToPropId': o.passwordpropid,
 					'title': 'Your password has expired.  Please change it now:',
-					'onEditNode': function (nodeid, nodekey) { o.success(); }
+					'onEditNode': function () { o.success(); }
 				});
 			}
 			break;
@@ -1171,7 +1171,7 @@ function makeSafeId(options)
 	if (options) $.extend(o, options);
 
 	var elementId = o.ID;
-	var toReplace = [/'/gi, /\//g];
+	var toReplace = [/'/gi, / /gi, /\//g];
 
 	if (!isNullOrEmpty(o.prefix) && !isNullOrEmpty(elementId))
 	{
@@ -1183,9 +1183,11 @@ function makeSafeId(options)
 	}
 	for (var i = 0; i < toReplace.length; i++)
 	{
-		if (!isNullOrEmpty(elementId))
-		{
-			elementId = elementId.replace(toReplace[i], '');
+		if(toReplace.hasOwnProperty(i)) {
+		    if (!isNullOrEmpty(elementId))
+		    {
+		        elementId = elementId.replace(toReplace[i], '');
+		    }
 		}
 	}
 
