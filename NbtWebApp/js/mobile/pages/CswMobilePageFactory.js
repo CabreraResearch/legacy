@@ -187,13 +187,24 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     }
     
     function fillContent(forceRefresh,onSuccess) {
-        if (cswMobilePage.$content && !forceRefresh) {
-            $contentRole.append(cswMobilePage.$content);
+        $contentRole.append(cswMobilePage.$content);
+        if (contentIsFullyPopulated() && !forceRefresh) {
             onPageComplete(onSuccess);
         } else {
             $contentRole.append(cswMobilePage.getContent(refreshPageContent,onSuccess));
         }
         return $contentRole;        
+    }
+    
+    function contentIsFullyPopulated() {
+        var ret = false;
+        var $div = cswMobilePage.$content;
+        if (!isNullOrEmpty($div) &&
+            $div.length > 0 &&
+            $div.children().length > 0) {
+            ret = true;
+        }
+        return ret;
     }
     
     function refreshPageContent($newContent) {

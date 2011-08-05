@@ -32,7 +32,8 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     var ulSuffix = '_list';
     var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
     var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + divSuffix);
-
+    var contentDivId;
+    
     //ctor
     (function () {
         
@@ -57,6 +58,9 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         } else {
             p.DivId = id;
         }
+
+        contentDivId = id + divSuffix;
+        
         if (!isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
@@ -75,22 +79,14 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
-        ensureContent();
+        $content = ensureContent($content, contentDivId);
     })(); //ctor
 
-    function ensureContent() {
-        if (isNullOrEmpty($content) || $content.length === 0) {
-            $content = $('<div id="' + id + divSuffix + '"></div>');
-        } else {
-            $content.empty();
-        }
-    }    
-    
     function getContent(onSuccess, postSuccess) {
         //var now = new Date();
         //var lastSync = new Date(mobileStorage.lastSyncTime);
         //( now.getTime() - lastSync.getTime() < 300000 ) ) //it's been less than 5 minutes since the last sync
-        ensureContent();
+        $content = ensureContent($content, contentDivId);
         var cachedJson = mobileStorage.fetchCachedViewJson(viewId);
 
 		if (!isNullOrEmpty(cachedJson)) {
@@ -251,6 +247,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     //#region public, priveleged
 
     this.$content = $content;
+    this.contentDivId = contentDivId;
     this.pageDef = pageDef;
     this.id = id;
     this.title = title;

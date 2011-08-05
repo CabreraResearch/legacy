@@ -36,6 +36,7 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     var divSuffix = '_contpage';
     var $content = '';
     var $onlineBtn, $syncBtn, $logoutBtn, $logBtn;
+    var contentDivId;
     
     //ctor
     (function() {
@@ -67,6 +68,9 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
         } else {
             p.DivId = id;
         }
+
+        contentDivId = id + divSuffix;
+        
         if( !isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
@@ -82,19 +86,11 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
-        $content = getContent();
+        $content = ensureContent($content, contentDivId);
     })(); //ctor
     
     function getContent() {
-    
-        var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + divSuffix);
-        if( isNullOrEmpty($content) || $content.length === 0 ) {
-            $content = $('<div id="' + id + divSuffix + '"></div>');
-        } else {
-            $content.empty();
-        }
-        
+        $content = ensureContent($content, contentDivId);
         
         $content.append('<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + tryParseString(mobileStorage.getItem('unSyncedChanges'), '0') + '</span></p>');
         $content.append('<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess() + '</span></p>');
@@ -129,7 +125,6 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
                             return false;
                         });
         }
-        return $content;
     }
     
 	function toggleOffline(doWaitForData) {
@@ -229,6 +224,7 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     //#region public, priveleged
 
     this.$content = $content;
+    this.contentDivId = contentDivId;
     this.pageDef = pageDef;
     this.id = id;
     this.title = title;

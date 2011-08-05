@@ -31,6 +31,8 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
     var pageDef = { };
     var id = CswMobilePage_Type.offline.id;
     var title = CswMobilePage_Type.offline.title;
+    var divSuffix = '_offline';
+    var contentDivId;
     
     //ctor
     (function(){
@@ -56,6 +58,9 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
         } else {
             p.DivId = id;
         }
+
+        contentDivId = id + divSuffix;
+        
         if( !isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
@@ -69,12 +74,12 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
-        $content = getContent();
+        $content = ensureContent($content, contentDivId);
     })();
     
     function getContent() {
-        var $offline = $('<p>You must have internet connectivity to login.</p>');
-        return $offline;
+        $content = ensureContent($content, contentDivId);
+        $content.append($('<p>You must have internet connectivity to login.</p>'));
     }
     
 	//#endregion private
@@ -82,6 +87,7 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
     //#region public, priveleged
 
     this.$content = $content;
+    this.contentDivId = contentDivId;
     this.pageDef = pageDef;
     this.id = id;
     this.title = title;

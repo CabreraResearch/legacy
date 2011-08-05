@@ -31,6 +31,8 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
     var pageDef = { };
     var id = CswMobilePage_Type.help.id;
     var title = CswMobilePage_Type.help.title;
+    var divSuffix = '_help';
+    var contentDivId;
     
     //ctor
     (function() {
@@ -55,6 +57,9 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
         } else {
             p.DivId = id;
         }
+
+        contentDivId = id + divSuffix;
+        
         if( !isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
@@ -69,11 +74,13 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
-        $content = getContent();
+        $content = ensureContent($content, contentDivId);
     })();
 	
     function getContent() {
-        var $help = $('<p>Help</p>');
+        $content = ensureContent($content, contentDivId);
+        
+        var $help = $('<p>Help</p>').appendTo($content);
 
 	    if (debugOn()) //this is set onLoad based on the includes variable 'debug'
 	    {
@@ -84,24 +91,23 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
 								    .appendTo($logLevelDiv);
 
 		    $logLevelDiv.CswSelect('init', {
-										    ID: 'mobile_log_level',
-										    selected: debugOn() ? 'on' : 'off',
-										    values: [{ value: 'off', display: 'Logging Disabled' },
-											    { value: 'on', display: 'Logging Enabled' }],
-										    onChange: function($select) {
-											    if ($select.val() === 'on') {
-												    debugOn(true);
-												    $('.debug').css('display', '').show();
-											    } else {
-												    debugOn(false);
-												    $('.debug').css('diplay', 'none').hide();
-											    }
-										    }
-									    })
-									    .CswAttrXml({ 'data-role': 'slider' });
+								ID: 'mobile_log_level',
+								selected: debugOn() ? 'on' : 'off',
+								values: [{ value: 'off', display: 'Logging Disabled' },
+									{ value: 'on', display: 'Logging Enabled' }],
+								onChange: function($select) {
+									if ($select.val() === 'on') {
+										debugOn(true);
+										$('.debug').css('display', '').show();
+									} else {
+										debugOn(false);
+										$('.debug').css('diplay', 'none').hide();
+									}
+								}
+							})
+							.CswAttrXml({ 'data-role': 'slider' });
 
 	    }
-        return $help;
     }
     
     //#endregion private
@@ -109,6 +115,7 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
     //#region public, priveleged
 
     this.$content = $content;
+    this.contentDivId = contentDivId;
     this.pageDef = pageDef;
     this.id = id;
     this.title = title;

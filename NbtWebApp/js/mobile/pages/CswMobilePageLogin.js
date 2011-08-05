@@ -31,6 +31,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
     var loginSuffix = '_login';
     var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
     var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + loginSuffix);
+    var contentDivId;
     
     //ctor
     (function() {
@@ -51,6 +52,9 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
         } else {
             p.DivId = id;
         }
+        
+        contentDivId = id + loginSuffix;
+        
         if( !isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
@@ -63,15 +67,11 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
         
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
-        getContent();
+        $content = ensureContent($content, contentDivId);
     })(); //ctor
     
     function getContent() {
-        if( isNullOrEmpty($content) || $content.length === 0) {
-            $content = $('<div data-theme="' + pageDef.theme + '" style="text-align: left;" id="' + id + loginSuffix + '"></div>');
-        } else {
-            $content.empty();
-        }
+        $content = ensureContent($content, contentDivId);
         
         $content.append('<p style="text-align: center;">Login to Mobile Inspection Manager</p><br/>');
         var $customerId = $('<input type="text" id="login_customerid" placeholder="Customer Id" />')
@@ -139,6 +139,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
     //#region public, priveleged
 
     this.$content = $content;
+    this.contentDivId = contentDivId;
     this.pageDef = pageDef;
     this.id = id;
     this.title = title;

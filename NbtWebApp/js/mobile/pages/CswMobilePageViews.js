@@ -30,7 +30,8 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
     var ulSuffix = '_list';
     function $contentPage() { return $page.find('div:jqmData(role="content")'); };
     var $content = (isNullOrEmpty($contentPage()) || $contentPage().length === 0) ? null : $contentPage().find('#' + id + divSuffix);
-
+    var contentDivId;
+    
     //ctor
     (function() {
         if (isNullOrEmpty(mobileStorage)) {
@@ -58,6 +59,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         } else {
             p.DivId = id;
         }
+        contentDivId = id + divSuffix;
         if( !isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
@@ -72,7 +74,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
-        //getContent();
+        $content = ensureContent($content, contentDivId);
     })(); //ctor
     
     function getContent(onSuccess,postSuccess) {
@@ -122,11 +124,9 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         if (isNullOrEmpty(viewJson)) {
             viewJson = mobileStorage.fetchCachedViewJson(id);
         }
-        if( isNullOrEmpty($content) || $content.length === 0) {
-            $content = $('<div id="' + id + divSuffix + '"></div>');
-        } else {
-            $content.empty();
-        }
+        
+        $content = ensureContent($content, contentDivId);
+        
         var ulDef = {
             ID: id + ulSuffix,
             cssclass: CswMobileCssClasses.listview.name
@@ -175,6 +175,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
     //#region public, priveleged
 
     this.$content = $content;
+    this.contentDivId = contentDivId;
     this.pageDef = pageDef;
     this.title = title;
     this.getContent = getContent;

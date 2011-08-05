@@ -32,7 +32,8 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
     var ulSuffix = '_list';
     var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
     var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + divSuffix);
-
+    var contentDivId;
+    
     //ctor
     (function () {
         
@@ -58,6 +59,9 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
         } else {
             p.DivId = id;
         }
+
+        contentDivId = id + divSuffix;
+        
         if (!isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
@@ -76,17 +80,9 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
         buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
-        ensureContent();
+        $content = ensureContent($content, contentDivId);
     })(); //ctor
-    
-    function ensureContent() {
-        if (isNullOrEmpty($content) || $content.length === 0) {
-            $content = $('<div id="' + id + divSuffix + '"></div>');
-        } else {
-            $content.empty();
-        }
-    }    
-    
+   
     function getContent(onSuccess, postSuccess) {
         ///<summary>Rebuilds the tabs list from JSON</summary>
         ///<param name="onSuccess" type="Function">A function to execute after the list is built.</param>
@@ -106,7 +102,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
     function refreshTabContent(nodeJson, onSuccess, postSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
-        ensureContent();
+        $content = ensureContent($content, contentDivId);
         var ulDef = {
             ID: id + ulSuffix,
             cssclass: CswMobileCssClasses.listview.name
@@ -127,6 +123,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
                         nodeId: nodeId,
                         tabId: tabId,
                         tabName: tabName,
+                        tabJson: nodeJson[tabName],
 		                level: 3,
 		                title: tabName,
 		                onHelpClick: pageDef.onHelpClick,
@@ -161,6 +158,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
     //#region public, priveleged
 
     this.$content = $content;
+    this.contentDivId = contentDivId;
     this.pageDef = pageDef;
     this.id = id;
     this.title = title;

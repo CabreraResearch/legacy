@@ -432,7 +432,7 @@ function makeEmptyListView(listView, $parent, noResultsText) {
     /// <summary>Generate a 'No Results' list item.</summary>
     /// <param name="listView" type="CswMobileListView">Csw Mobile List View.</param>
     /// <param name="$parent" type="jQuery">Some parent element to attach to, if listView is null.</param>
-    /// <param name="noResultsText" type="Strings">Text to display on empty.</param>
+    /// <param name="noResultsText" type="String">Text to display on empty.</param>
     /// <returns type="void">Simply appends. No return.</returns>
     if (isNullOrEmpty(listView) && !isNullOrEmpty($parent)) {
         var ulDef = {
@@ -449,5 +449,22 @@ function makeEmptyListView(listView, $parent, noResultsText) {
         listView.addListItem(id, text);
     }
 }
+
+function ensureContent($content, contentDivId) {
+    /// <summary>
+    ///    Ensures every page has a valid content Div to insert new HTML.
+    ///    if content is populated, empty it.
+    ///    This is a child element of the JQM 'content' page.
+    /// </summary>
+    /// <param name="$content" type="jQuery">Some content element.</param>
+    /// <param name="contentDivId" type="String">DivId</param>
+    /// <returns type="jQuery">An empty content div.</returns>
+    if (isNullOrEmpty($content) || $content.length === 0) {
+        $content = $('<div id="' + contentDivId + '"></div>');
+    } else {
+        $content.empty();
+    }
+    return $content;
+}    
 
 //#endregion functions
