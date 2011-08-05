@@ -94,7 +94,10 @@ namespace ChemSW.Nbt.Schema
 			Collection<CswNbtMetaDataNodeType> InspectionNodeTypes = new Collection<CswNbtMetaDataNodeType>();
 			foreach( CswNbtMetaDataNodeType InspectionDesignNT in InspectionDesignOC.NodeTypes )
 			{
-				InspectionNodeTypes.Add( InspectionDesignNT );
+				if( InspectionDesignNT.IsLatestVersion )
+				{
+					InspectionNodeTypes.Add( InspectionDesignNT );
+				}
 			}
 
 			foreach( CswNbtMetaDataNodeType InspectionDesignNT in InspectionNodeTypes )
