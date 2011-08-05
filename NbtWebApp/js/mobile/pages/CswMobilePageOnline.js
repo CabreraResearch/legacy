@@ -17,7 +17,7 @@
 
 //#region CswMobilePageOnline
 
-function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBgTask) {
+function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTask) {
 	/// <summary>
 	///   Online Page class. Responsible for generating a Mobile login page.
 	/// </summary>
@@ -30,11 +30,11 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
 
 	//#region private
 
-    var $content = '';
     var pageDef = { };
     var id = CswMobilePage_Type.online.id;
     var title = CswMobilePage_Type.online.title;
-
+    var divSuffix = '_contpage';
+    var $content = '';
     var $onlineBtn, $syncBtn, $logoutBtn, $logBtn;
     
     //ctor
@@ -86,46 +86,50 @@ function CswMobilePageOnline(onlineDef,$parent,mobileStorage,mobileSync,mobileBg
     })(); //ctor
     
     function getContent() {
-        var content = '<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + tryParseString(mobileStorage.getItem('unSyncedChanges'), '0') + '</span></p>';
-        content += '<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess() + '</span></p>';
-        var hideFailure = isNullOrEmpty(mobileStorage.lastSyncAttempt()) ? '' : 'none';
-        content += '<p style="display:' + hideFailure + ' ;">Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt() + '</span></p>';
-        content += '<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>';
-        content += '<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>';
-        content += '<br/>';
-        content += '<a id="ss_logout" data-identity="ss_logout" data-url="ss_logout" href="javascript:void(0)" data-role="button">Logout</a>';
-        if (debugOn()) {
-            content += '<a id="ss_debuglog" class="debug" data-identity="ss_debuglog" data-url="ss_debuglog" href="javascript:void(0)" data-role="button">Start Logging</a>';
+    
+        var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
+        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + divSuffix);
+        if( isNullOrEmpty($content) || $content.length === 0 ) {
+            $content = $('<div id="' + id + divSuffix + '"></div>');
+        } else {
+            $content.empty();
         }
-
-        var $online = $(content);
         
         
-        $syncBtn = $online.find('#ss_forcesync')
-                                .bind('click', function() {
-                                    return startLoadingMsg(function() {
-                                        mobileSync.initSync();
-                                    });
-                                });
-
-        $onlineBtn = $online.find('#ss_gooffline')
-                                .bind('click', function() {
-                                    var stayOffline = !mobileStorage.stayOffline();
-                                    mobileStorage.stayOffline(stayOffline);
-                                    toggleOffline(true);
-                                    return false;
-                                });
-        $logoutBtn = $online.find('#ss_logout')
-                            .bind('click', function() {
-                                return startLoadingMsg(function() { onLogout(mobileStorage); });
+        $content.append('<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + tryParseString(mobileStorage.getItem('unSyncedChanges'), '0') + '</span></p>');
+        $content.append('<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess() + '</span></p>');
+        var hideFailure = isNullOrEmpty(mobileStorage.lastSyncAttempt()) ? '' : 'none';
+        $content.append('<p style="display:' + hideFailure + ' ;">Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt() + '</span></p>');
+        $syncBtn =  $('<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>')
+                        .appendTo($content)
+                        .bind('click', function() {
+                            return startLoadingMsg(function() {
+                                mobileSync.initSync();
                             });
-
-        $logBtn = $online.find('#ss_debuglog')
+                        });
+        $onlineBtn = $('<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>')
+                        .appendTo($content)
+                        .bind('click', function() {
+                            var stayOffline = !mobileStorage.stayOffline();
+                            mobileStorage.stayOffline(stayOffline);
+                            toggleOffline(true);
+                            return false;
+                        });        
+        $content.append('<br/>');
+        $logoutBtn = $('<a id="ss_logout" data-identity="ss_logout" data-url="ss_logout" href="javascript:void(0)" data-role="button">Logout</a>')
+                        .appendTo($content)
+                        .bind('click', function() {
+                            return startLoadingMsg(function() { onLogout(mobileStorage); });
+                        });        
+        if (debugOn()) {
+            $logBtn = $('<a id="ss_debuglog" class="debug" data-identity="ss_debuglog" data-url="ss_debuglog" href="javascript:void(0)" data-role="button">Start Logging</a>')
+                        .appendTo($content)
                         .bind('click', function() {
                             toggleLogging();
                             return false;
                         });
-        return $online;
+        }
+        return $content;
     }
     
 	function toggleOffline(doWaitForData) {
