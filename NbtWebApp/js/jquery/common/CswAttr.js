@@ -14,27 +14,27 @@
 		var $Dom = $(this);
 		var ret = $Dom;
 		
-		if( typeof name === "object")
+		if (typeof name === "object")
 		{
-			for( var prop in name )
+			for (var prop in name)
 			{
-				doProp($Dom,prop,name[prop]);
+				doProp($Dom, prop, name[prop]);
 			}
 		}
 		else
 		{
-			ret = doProp($Dom,name,value);
+			ret = doProp($Dom, name, value);
 		}
 
 		return ret;
 
 	}; // function(options) {
 
-	function doProp($Dom,name,value)
+	function doProp($Dom, name, value)
 	{
 		var ret;
 
-		if(arguments.length === 2)
+		if (arguments.length === 2)
 		{
 			ret = $Dom.prop(name);
 		}
@@ -44,17 +44,17 @@
 		}
 
 		// special cases
-		if( ret === undefined ||
+		if (ret === undefined ||
 			name === 'href' ||
 			name === 'cellpadding' || 
 			name === 'cellspacing' ||
 			name === 'rowspan' ||
-			name === 'colspan' )
+			name === 'colspan')
 		{
-			if(arguments.length === 2)
+			if (arguments.length === 2)
 				ret = $Dom.attr(name);
 			else
-				ret = $Dom.attr(name,value);
+				ret = $Dom.attr(name, value);
 		}
 
 		return ret;
@@ -73,38 +73,31 @@
 		var X$xml = $(this);
 		var ret = X$xml;
 
-		if( typeof name === "object")
+		if (typeof name === "object")
 		{
-			for(var prop in name)
-			{
-				doAttr(X$xml,prop,name[prop]);
+			for (var prop in name) {
+				doAttr(X$xml, prop, name[prop]);
 			}
-		}
-		else
-		{
-			ret = doAttr(X$xml,name,value);
+		} else {
+			ret = doAttr(X$xml, name, value);
 		}
 		// For proper chaining support
 		return ret;
 
 	}; // function(options) {
 
-	function doAttr(X$xml,name,value)
+	function doAttr(X$xml, name, value)
 	{
 		var ret = X$xml;
 
-		switch( arguments.length )
+		switch (arguments.length)
 		{
 			case 2:
-			{
 				ret = X$xml.attr(name);
 				break;
-			}
 			case 3:
-			{
 				ret = X$xml.attr(name, value);
 				break;
-			}
 		}
 		// For proper chaining support
 		return ret;
