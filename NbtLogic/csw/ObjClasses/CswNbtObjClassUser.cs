@@ -196,11 +196,11 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
 				
-				foreach( string YValue in _RoleNodeObjClass.ActionPermissions.YValues )
+				foreach( CswNbtAction Action in _CswNbtResources.Actions )
 				{
-					if( _CswNbtResources.Permit.can( CswNbtAction.ActionNameStringToEnum( YValue ), this ) )
+					if( _CswNbtResources.Permit.can( Action, this ) )
 					{
-						NewYValues.Add( YValue );
+						NewYValues.Add( Action.DisplayName.ToString() );
 					}
 				}
                 this.QuickLaunchActions.YValues = NewYValues;
