@@ -32,7 +32,8 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
     var ulSuffix = '_list';
     var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
     var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + divSuffix);
-
+    var contentDivId;
+    
     //ctor
     (function () {
         
@@ -60,6 +61,9 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         } else {
             p.DivId = id;
         }
+
+        contentDivId = id + divSuffix;
+        
         if (!isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
@@ -81,21 +85,13 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
-        ensureContent();
+        $content = ensureContent($content, contentDivId);
     })(); //ctor
-    
-    function ensureContent() {
-        if (isNullOrEmpty($content) || $content.length === 0) {
-            $content = $('<div id="' + id + divSuffix + '"></div>');
-        } else {
-            $content.empty();
-        }
-    }
-    
+   
     function getContent(onSuccess, postSuccess) {
         ///<summary>Rebuilds the tabs list from JSON</summary>
         ///<param name="onSuccess" type="Function">A function to execute after the list is built.</param>
-        ensureContent();
+        $content = ensureContent($content, contentDivId);
 		if (!isNullOrEmpty(tabJson)) {
 			refreshPropContent(onSuccess, postSuccess);
 		} else {
@@ -114,25 +110,26 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         
         var listView = new CswMobileListView(ulDef, $content, CswDomElementEvent.change);
         var propCount = 0;
+        var nextTab;
         for (var propId in tabJson)
         {
             if(tabJson.hasOwnProperty(propId)) {
                 var propJson = tabJson[propId];
-                var propName = propJson['prop_name'];
-                var changeOpt = {
-                    propId: propId,
-                    propName: propName,
-                    controlId: '',
-                    onSuccess: makeDelegate(pageDef.onPropertyChange)
-                };
-                var onChange = makeDelegate(onPropertyChange, changeOpt);
-
-                var $li = listView.addListItem(propId, propName, onChange);
-                fieldTypeJsonToHtml(propJson, propId, propName, $li);
+                if (!isNullOrEmpty(propJson) && propId !== 'nexttab') {
+                    var propName = propJson['prop_name'];
+                    var $li = listView.addListItem(propId, '');
+                    fieldTypeJsonToHtml(propJson, propId, propName, $li);
+                } else {
+                    nextTab = propId;
+                }
                 propCount++;
             }
         }
-        if(propCount === 0) {
+        if (!isNullOrEmpty(nextTab)) {
+            //remember to wire up click event
+            listView.addListItemLink(makeSafeId({ ID: nextTab }), nextTab);    
+        }
+        if (propCount === 0) {
             makeEmptyListView(listView, $content, 'No Properties to Display');
         }
         if (!mobileStorage.stayOffline()) {
@@ -223,8 +220,8 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 					break;
 				case "Logical":
 					addChangeHandler = false; //_makeLogicalFieldSet() does this for us
-					makeLogicalFieldSet(tabId, propId, sfChecked, sfRequired)
-						.appendTo($fieldcontain);
+					makeLogicalFieldSet(sfChecked, sfRequired, propId, propName)
+						    .appendTo($fieldcontain);
 					break;
 				case "Memo":
 					$prop = $('<textarea name="' + elementId + '">' + sfText + '</textarea>')
@@ -243,8 +240,8 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 					break;
 				case "Question":
 					addChangeHandler = false; //_makeQuestionAnswerFieldSet() does this for us
-					makeQuestionAnswerFieldSet(tabId, propId, sfAllowedanswers, sfAnswer, sfCompliantanswers)
-						.appendTo($fieldcontain);
+					makeQuestionAnswerFieldSet(sfAllowedanswers, sfAnswer, sfCompliantanswers, propId, propName)
+						        .appendTo($fieldcontain);
 					var hideComments = true;
 					if (!isNullOrEmpty(sfAnswer) &&
 						(',' + sfCompliantanswers + ',').indexOf(',' + sfAnswer + ',') < 0 &&
@@ -254,7 +251,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 					}
 
 					$prop = $('<div data-role="collapsible" class="csw_collapsible" data-collapsed="' + hideComments + '"><h3>Comments</h3></div>')
-						.appendTo($retLi);
+						.appendTo($li);
 
 					var $corAction = $('<textarea id="' + propId + '_cor" name="' + propId + '_cor" placeholder="Corrective Action">' + sfCorrectiveaction + '</textarea>')
 						.appendTo($prop);
@@ -296,9 +293,16 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 				} // switch (FieldType)
 
 				if (addChangeHandler && !isNullOrEmpty($prop) && $prop.length !== 0) {
-					$prop.unbind('change').bind('change', function(eventObj) {
+					var changeOpt = {
+                        propId: propId,
+                        propName: propName,
+                        controlId: elementId,
+                        onSuccess: makeDelegate(pageDef.onPropertyChange)
+                    };
+			    
+				    $prop.unbind('change').bind('change', function(eventObj) {
 						var $this = $(this);
-						onPropertyChange(tabId, eventObj, $this.val(), elementId, propId);
+						onPropertyChange(changeOpt);
 					});
 				}
 			} else {
@@ -311,7 +315,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 		return $fieldcontain;
 	}
     
-    function makeLogicalFieldSet(checked, required) {
+    function makeLogicalFieldSet(checked, required, propId, propName) {
 		var Suffix = 'ans';
 		var $fieldset = $('<fieldset class="csw_fieldset"></fieldset>')
 										.CswAttrDom({
@@ -359,14 +363,23 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 			$input.bind('change', function(eventObj) {
 				var $this = $(this);
 				var thisInput = $this.val();
-				onPropertyChange(tabId, eventObj, thisInput, inputId, id);
+			    
+			    var changeOpt = {
+                    propId: propId,
+                    propName: propName,
+			        value: thisInput,
+                    controlId: inputId,
+                    onSuccess: makeDelegate(pageDef.onPropertyChange)
+                };
+
+				onPropertyChange(changeOpt);
 				return false;
 			});
 		} // for (var i = 0; i < answers.length; i++)
 		return $fieldset;
 	}// _makeLogicalFieldSet()
 
-	function makeQuestionAnswerFieldSet(options, answer, compliantAnswers) {
+	function makeQuestionAnswerFieldSet(options, answer, compliantAnswers, propId, propName) {
 		var Suffix = 'ans';
 		var $fieldset = $('<fieldset class="csw_fieldset"></fieldset>')
 									.CswAttrDom({
@@ -415,8 +428,16 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 					}
 				}
 				fixGeometry();
-				onPropertyChange(tabId, eventObj, thisAnswer, answerName, id);
+		    
+			    var changeOpt = {
+                    propId: propId,
+                    propName: propName,
+			        value: thisAnswer,
+                    controlId: answerName,
+                    onSuccess: makeDelegate(pageDef.onPropertyChange)
+                };
 
+				onPropertyChange(changeOpt);
 				return false;
 			});
 		} // for (var i = 0; i < answers.length; i++)
@@ -522,6 +543,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
             propId: '',
 	        propName: '',
 	        controlId: '',
+	        value: '',
 	        onSuccess: ''
 	    };
 		if(options) {
@@ -540,12 +562,11 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 		    }
 		    
 			if (!isNullOrEmpty(prop)) {
-		    	fieldTypeHtmlToJson(prop, o.controlId, o.propId, value);
-			}
-			else { //remove else as soon as we can verify we never need to enter here
+		    	fieldTypeHtmlToJson(prop, o.controlId, o.propId, o.value);
+			    mobileStorage.updateStoredNodeJson(nodeId, nodeJson, '1');
+			} else { //remove else as soon as we can verify we never need to enter here
 				errorHandler('Could not find a prop to update');
 			}
-			mobileStorage.updateStoredNodeJson(nodeId, nodeJson, '1');
 		}
 	    if (isFunction(o.onSuccess)) {
 	        o.onSuccess();
@@ -557,6 +578,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
     //#region public, priveleged
 
     this.$content = $content;
+    this.contentDivId = contentDivId;
     this.pageDef = pageDef;
     this.id = id;
     this.title = title;
