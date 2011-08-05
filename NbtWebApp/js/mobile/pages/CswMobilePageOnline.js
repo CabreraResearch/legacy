@@ -85,8 +85,8 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
         buttons[CswMobileHeaderButtons.back.name] = '';
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
-        
-        $content = ensureContent($content, contentDivId);
+
+        getContent();
     })(); //ctor
     
     function getContent() {

@@ -75,8 +75,8 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
         buttons[CswMobileHeaderButtons.back.name] = '';
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
-        
-        $content = ensureContent($content, contentDivId);
+
+        getContent();
     })(); //ctor
         
     function getContent(viewId) {

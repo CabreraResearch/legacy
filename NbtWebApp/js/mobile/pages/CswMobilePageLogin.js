@@ -66,8 +66,8 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
         buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
         
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
-        
-        $content = ensureContent($content, contentDivId);
+
+        getContent();
     })(); //ctor
     
     function getContent() {

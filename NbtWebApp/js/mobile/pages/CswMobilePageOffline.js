@@ -73,8 +73,8 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
         buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
 
         pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
-        
-        $content = ensureContent($content, contentDivId);
+
+        getContent();
     })();
     
     function getContent() {
