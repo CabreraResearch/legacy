@@ -2,6 +2,7 @@
 /// <reference path="../_Global.js" />
 /// <reference path="clientdb/CswMobileClientDbResources.js" />
 /// <reference path="../CswEnums.js" />
+/// <reference path="controls/CswMobileListView.js" />
 
 //#region plugins
 
@@ -48,19 +49,10 @@
         var $div = $(this);
         if (!isNullOrEmpty($div)) {
             try {
-                $(document).ready(function() {
-                        ret = $.mobile.changePage($div, o);
-                    });
+                ret = $.mobile.changePage($div, o);
             } catch (e) {
-                try {
-                    if(debugOn()) {
-                        log('changePage() failed.',true);
-                    }
-                    ret = $.mobile.changePage($div, o);
-                } catch(e) {
-                    if(debugOn()) {
-                        log('document.ready changePage failed.',true);
-                    }
+                if (debugOn()) {
+                    log('changePage() failed.',true);
                 }
             }
         }
@@ -74,22 +66,11 @@
         /// <returns type="void"></returns>
         var $div = $(this);
         var ret = false;
-        if (!isNullOrEmpty($div)) {
-            try {
-                ret = $div.page();
-            } catch (e) {
-                try {
-                    if(debugOn()) {
-                        log('page() failed.');
-                    }
-                    $(document).ready(function() {
-                        ret = $div.page();
-                    });
-                } catch (e) {
-                    if(debugOn()) {
-                        log('document.ready page() failed.');
-                    }
-                }
+        try {
+            ret = $div.trigger('create');
+        } catch(e) {
+            if (debugOn()) {
+                log('trigger("create") failed.', true);
             }
         }
         return ret;
@@ -164,7 +145,7 @@ function startLoadingMsg(onSuccess) {
 	/// <param name="onSuccess" type="Function">Function to execute.</param>
 	/// <returns type="Boolean">False (to support 'click' events)</returns>
     $.mobile.showPageLoadingMsg();
-    if( arguments.length === 1 && isFunction(onSuccess) ) {
+    if (arguments.length === 1 && isFunction(onSuccess)) {
         onSuccess();
     }
     return false;
@@ -212,19 +193,19 @@ function onLogout(mobileStorage) {
 }
 
 	
-function Logout(mobileStorage,reloadWindow) {
+function Logout(mobileStorage, reloadWindow) {
 	/// <summary> On login failure event </summary>
 	/// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="reloadWindow" type="Boolean">If true, reload the login page.</param>
     /// <returns type="void"></returns>
     
-    if ( mobileStorage.checkNoPendingChanges() ) {
+    if (mobileStorage.checkNoPendingChanges()) {
 				
 		var loginFailure = tryParseString(mobileStorage.getItem('loginFailure'), '');
 
 		mobileStorage.clear();
 				
-		mobileStorage.amOnline(true,loginFailure);
+		mobileStorage.amOnline(true, loginFailure);
 		// reloading browser window is the easiest way to reset
 		if (reloadWindow) {
 			window.location.href = window.location.pathname;
@@ -232,13 +213,13 @@ function Logout(mobileStorage,reloadWindow) {
 	}
 }
 
-function setOffline(mobileStorage,onComplete) {
+function setOffline(mobileStorage, onComplete) {
     /// <summary>
 	///   Sets 'Online' button style 'offline'
 	/// </summary>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="onComplete" type="Function">Event to fire on complete.</param>
-	if(isNullOrEmpty(mobileStorage)) {
+	if (isNullOrEmpty(mobileStorage)) {
 	    mobileStorage = new CswMobileClientDbResources();
 	}
     mobileStorage.amOnline(false);
@@ -251,7 +232,7 @@ function setOffline(mobileStorage,onComplete) {
 						.addClass('offline')
 						.end();
 			
-	$('.refresh').each(function(){
+	$('.refresh').each(function () {
 		var $this = $(this);
 		try { //we'd prefer to simply disable it, but it might not be initialized yet.
 		    $this.button('disable');
@@ -260,25 +241,25 @@ function setOffline(mobileStorage,onComplete) {
 		}
 	});
 
-    if(onComplete) {
+    if (onComplete) {
         onComplete();
     }
 	//$viewsdiv = reloadViews(); //no changePage
 }
 
-function setOnline(mobileStorage,onComplete) {
+function setOnline(mobileStorage, onComplete) {
 	/// <summary>
 	///   Sets 'Online' button style 'online'
 	/// </summary>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="onComplete" type="Function">Event to fire on complete.</param>
-    if(isNullOrEmpty(mobileStorage)) {
+    if (isNullOrEmpty(mobileStorage)) {
 	    mobileStorage = new CswMobileClientDbResources();
 	}
     
 	mobileStorage.amOnline(true);
 	mobileStorage.removeItem('loginFailure');
-	if( !mobileStorage.stayOffline() )
+	if (!mobileStorage.stayOffline())
 	{
 		$('.onlineStatus').removeClass('offline')
 							.addClass('online')
@@ -287,7 +268,7 @@ function setOnline(mobileStorage,onComplete) {
 							.removeClass('offline')
 							.addClass('online')
 							.end();
-		$('.refresh').each(function(){
+		$('.refresh').each(function () {
 			var $this = $(this);
 		    try { //we may not be initialized
 		        $this.removeAttr('display').removeAttr('visibility').show();
@@ -302,24 +283,24 @@ function setOnline(mobileStorage,onComplete) {
 	}
 }
 
-function toggleOnline(mobileStorage,onComplete) {
+function toggleOnline(mobileStorage, onComplete) {
     /// <summary>
 	///   Toggles the online status displayed in UI according to actual status.
 	/// </summary>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="onComplete" type="Function">Event to fire on complete.</param>
-    if( isNullOrEmpty(mobileStorage)) {
+    if (isNullOrEmpty(mobileStorage)) {
         mobileStorage = new CswMobileClientDbResources();
     }
     
-    if(mobileStorage.amOnline()) {
-        setOnline(mobileStorage,onComplete);
+    if (mobileStorage.amOnline()) {
+        setOnline(mobileStorage, onComplete);
     } else {
-        setOffline(mobileStorage,onComplete);
+        setOffline(mobileStorage, onComplete);
     }
 }
 
-function makeFooterButtonDef(name,id,onClick,mobileStorage) {
+function makeFooterButtonDef(name, id, onClick, mobileStorage) {
     /// <summary>Generate the JSON definition for a Mobile footer button</summary>
     /// <param name="name" type="CswMobileFooterButtons">CswMobileFooterButtons enum name for the button</param>
     /// <param name="id" type="String">Proposed Element ID</param>
@@ -327,78 +308,66 @@ function makeFooterButtonDef(name,id,onClick,mobileStorage) {
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <returns type="Object"> JSON for consumption by CswMobileMenuButton</returns>
     var ret = {};
-    switch(name) {
+    switch (name) {
         case CswMobileFooterButtons.online:
-            {
-                if( isNullOrEmpty(mobileStorage) ) {
-                    mobileStorage = new CswMobileClientDbResources();
-                }
-                var onlineValue = mobileStorage.onlineStatus();
-                var online = CswMobileFooterButtons.online;
-                online.ID = id + '_gosyncstatus';
-                online.text = onlineValue;
-                online.cssClass += onlineValue.toLowerCase();
-                
-                ret = online;
-                break;
+            if( isNullOrEmpty(mobileStorage) ) {
+                mobileStorage = new CswMobileClientDbResources();
             }
+            var onlineValue = mobileStorage.onlineStatus();
+            var online = CswMobileFooterButtons.online;
+            online.ID = id + '_gosyncstatus';
+            online.text = onlineValue;
+            online.cssClass += onlineValue.toLowerCase();
+                
+            ret = online;
+            break;
         case CswMobileFooterButtons.refresh:
-            {
-                var refresh = CswMobileFooterButtons.refresh;
-                refresh.ID = id + '_refresh';
+            var refresh = CswMobileFooterButtons.refresh;
+            refresh.ID = id + '_refresh';
 
-                ret = refresh;
-                break;        
-            }
+            ret = refresh;
+            break;        
         case CswMobileFooterButtons.fullsite:
-            {
-                var fullsite = CswMobileFooterButtons.fullsite;
-                fullsite.ID = id + '_main';
+            var fullsite = CswMobileFooterButtons.fullsite;
+            fullsite.ID = id + '_main';
                 
-                ret = fullsite;
-                break;
-            }
+            ret = fullsite;
+            break;
         case CswMobileFooterButtons.help:
-            {
-                var help = CswMobileFooterButtons.help;
-                help.ID = id + '_help';
+            var help = CswMobileFooterButtons.help;
+            help.ID = id + '_help';
 
-                ret = help;
-                break;
-            }
+            ret = help;
+            break;
     }
-    if(ret && !isNullOrEmpty(onClick)) {
+    if (ret && !isNullOrEmpty(onClick)) {
         ret.onClick = onClick;
     }
     return ret;
 }
 
-function makeHeaderButtonDef(name,id,onClick) {
+function makeHeaderButtonDef(name, id, onClick) {
     /// <summary>Generate the JSON definition for a Mobile header button</summary>
     /// <param name="name" type="CswMobileHeaderButtons">CswMobileHeaderButtons enum name for the button</param>
     /// <param name="id" type="String">Proposed Element ID</param>
     /// <param name="onClick" type="Fuction">Function to fire on button click</param>
     /// <returns type="Object"> JSON for consumption by CswMobileMenuButton</returns>
     var ret = {};
-    switch(name) {
+    switch (name) {
         case CswMobileHeaderButtons.back:
-            {
-                var back = CswMobileHeaderButtons.back;
-	            back.ID = id + '_back';
+            var back = CswMobileHeaderButtons.back;
+	        back.ID = id + '_back';
 
-                ret = back;
-                break;
-            }
+            ret = back;
+            break;
         case CswMobileHeaderButtons.search:
-            {
-                var search = CswMobileHeaderButtons.search;
-	            search.ID = id + '_search';
+            var search = CswMobileHeaderButtons.search;
+	        search.ID = id + '_search';
                 
-                ret = search;
-                break;
-            }
+            ret = search;
+            break;
     }
-    if(ret && !isNullOrEmpty(onClick)) {
+    if (ret && !isNullOrEmpty(onClick)) {
         ret.onClick = onClick;
     }
     return ret;
@@ -432,40 +401,53 @@ function makeMenuButtonDef(pageDef,id,buttonNames,mobileStorage) {
     }
     var onClick;
     for (var name in buttonNames ) {
-        onClick = buttonNames[name];
-        switch(name) {
-            case CswMobileHeaderButtons.back.name:
-                {
+        if (buttonNames.hasOwnProperty(name)) {
+            onClick = buttonNames[name];
+            switch (name) {
+                case CswMobileHeaderButtons.back.name:
                     newPageDef.headerDef.buttons.back = makeHeaderButtonDef(CswMobileHeaderButtons.back, id, onClick);
                     break;
-                }
-            case CswMobileHeaderButtons.search.name:
-                {
+                case CswMobileHeaderButtons.search.name:
                     newPageDef.headerDef.buttons.search = makeHeaderButtonDef(CswMobileHeaderButtons.search, id, onClick);
                     break;
-                }
-            case CswMobileFooterButtons.fullsite.name:
-                {
+                case CswMobileFooterButtons.fullsite.name:
                     newPageDef.footerDef.buttons.fullsite = makeFooterButtonDef(CswMobileFooterButtons.fullsite, id);
                     break;
-                }
-            case CswMobileFooterButtons.help.name:
-                {
+                case CswMobileFooterButtons.help.name:
                     newPageDef.footerDef.buttons.help = makeFooterButtonDef(CswMobileFooterButtons.help, id, onClick);
                     break;
-                }
-            case CswMobileFooterButtons.online.name:
-                {
+                case CswMobileFooterButtons.online.name:
                     newPageDef.footerDef.buttons.online = makeFooterButtonDef(CswMobileFooterButtons.online, id, onClick, mobileStorage);
                     break;
-                }
-            case CswMobileFooterButtons.refresh.name:
-                {
+                case CswMobileFooterButtons.refresh.name:
                     newPageDef.footerDef.buttons.refresh = makeFooterButtonDef(CswMobileFooterButtons.refresh, id, onClick);
                     break;
-                }
+            }
         }
     }
     return newPageDef;
 }
+
+function makeEmptyListView(listView, $parent, noResultsText) {
+    /// <summary>Generate a 'No Results' list item.</summary>
+    /// <param name="listView" type="CswMobileListView">Csw Mobile List View.</param>
+    /// <param name="$parent" type="jQuery">Some parent element to attach to, if listView is null.</param>
+    /// <param name="noResultsText" type="Strings">Text to display on empty.</param>
+    /// <returns type="void">Simply appends. No return.</returns>
+    if (isNullOrEmpty(listView) && !isNullOrEmpty($parent)) {
+        var ulDef = {
+            ID: $parent.CswAttrDom('id') + '_noresult',
+            cssclass: CswMobileCssClasses.listview.name
+        };
+
+        listView = new CswMobileListView(ulDef, $parent);
+    }
+    
+    if (!isNullOrEmpty(listView)) {
+        var text = tryParseString(noResultsText, 'No Results');
+        var id = listView.$control.CswAttrDom('id') + '_noresult';
+        listView.addListItem(id, text);
+    }
+}
+
 //#endregion functions
