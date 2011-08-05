@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -90,7 +91,13 @@ namespace ChemSW.Nbt.Schema
 			_CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
 			// set value of Version property
+			Collection<CswNbtMetaDataNodeType> InspectionNodeTypes = new Collection<CswNbtMetaDataNodeType>();
 			foreach( CswNbtMetaDataNodeType InspectionDesignNT in InspectionDesignOC.NodeTypes )
+			{
+				InspectionNodeTypes.Add( InspectionDesignNT );
+			}
+
+			foreach( CswNbtMetaDataNodeType InspectionDesignNT in InspectionNodeTypes )
 			{
 				CswNbtMetaDataNodeTypeProp VersionNTP = InspectionDesignNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.VersionPropertyName );
 				VersionNTP.UseNumbering = false;
