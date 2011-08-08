@@ -131,13 +131,15 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
                     var onChange = makeDelegate(onPropertyChange, {
                         propId: propId,
                         propName: propName,
-                        controlId: prop.$content.CswAttrDom('id'),
+                        controlId: prop.contentDivId,
                         onSuccess: ''
                     });
                     
-                    var $li = listView.addListItemHtml(propId, prop.$content, onChange);
-                    
-                    //fieldTypeJsonToHtml(propJson, propId, propName, $li);
+                    var $li = listView.addListItemHtml(propId, prop.$label);
+                    prop.applyFieldTypeLogicToContent($li);
+                    $li.append(prop.$content);
+                    $li.bind('change', onChange);
+
                 } else {
                     nextTab = propJson;
                 }
@@ -166,7 +168,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 		/// <summary>
 		///   Converts JSON into DOM content
 		/// </summary>
-		/// <param name="json" type="Object">A JSON Object</param>
+		/// <param name="json" type="Object">A JSON Object</param>  
 		/// <param name="ParentId" type="String">The ElementID of the parent control (should be a prop)</param>
 		/// <param name="IdStr" type="String">The ElementID of the child control</param>
         var $label = $('<h2 id="' + propId + '_label" style="white-space:normal;" class="csw_prop_label">' + propName + '</h2>')
