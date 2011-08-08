@@ -160,15 +160,15 @@ namespace ChemSW.Nbt.WebServices
 						//}
 
 						CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
-						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType, false, Tab ) )
-						{
+						//if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType, false, Tab ) )
+						//{
 							foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder
 																		   .Cast<CswNbtMetaDataNodeTypeProp>()
 																		   .Where( Prop => Prop.ShowProp( Node, _ThisUser ) ) )
 							{
 								_addProp( PropXmlDoc, EditMode, Node, Prop );
 							}
-						}
+						//}
 					}
 					//}
 				} // if-else( EditMode == NodeEditMode.AddInPopup )
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.WebServices
             bool IsReadOnly = ( Prop.ReadOnly ||                  // nodetype_props.readonly
 								PropWrapper.ReadOnly ||           // jct_nodes_props.readonly
 								Node.ReadOnly ||                  // nodes.readonly
-								!_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, null, null, Node, Prop ) );
+								!_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, Prop.NodeTypeTab, null, Node, Prop ) );
 
             CswXmlDocument.AppendXmlAttribute( PropXmlNode, "readonly", IsReadOnly.ToString().ToLower() );
 			CswXmlDocument.AppendXmlAttribute( PropXmlNode, "gestalt", PropWrapper.Gestalt.Replace( "\"", "&quot;" ) );
@@ -349,7 +349,7 @@ namespace ChemSW.Nbt.WebServices
 			return ret;
 		} // moveProp()
 
-		public JObject saveProps( NodeEditMode EditMode, string NodeId, string NodeKey, string NewPropsXml, Int32 NodeTypeId, CswNbtView View )
+		public JObject saveProps( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 TabId, string NewPropsXml, Int32 NodeTypeId, CswNbtView View )
 		{
 			JObject ret = null;
 			XmlDocument XmlDoc = new XmlDocument();
@@ -370,11 +370,11 @@ namespace ChemSW.Nbt.WebServices
 			if( Node != null &&
 				( EditMode == NodeEditMode.AddInPopup &&
 				  _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) ) ||
-				_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Node.NodeType, false, null, null, Node, null ) )
+				_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Node.NodeType, false, Node.NodeType.getNodeTypeTab( TabId ), null, Node, null ) )
 			{
-                foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
+				foreach( XmlNode PropNode in XmlDoc.DocumentElement.ChildNodes )
 				{
-                    _applyPropXml( Node, PropNode );
+					_applyPropXml( Node, PropNode );
 				}
 
 				// BZ 8517 - this sets sequences that have setvalonadd = 0
@@ -382,7 +382,7 @@ namespace ChemSW.Nbt.WebServices
 
 				Node.postChanges( false );
 
-				if( NbtNodeKey == null && View != null)
+				if( NbtNodeKey == null && View != null )
 				{
 					// Get the nodekey of this node in the current view
 					ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
