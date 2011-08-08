@@ -59,6 +59,7 @@ function CswMobilePropsFactory(propDef) {
         contentDivId = prop.contentDivId;
         
         $label = $('<h2 id="' + propId + '_label" style="white-space:normal;" class="' + CswMobileCssClasses.proplabel.name + '">' + propName + '</h2>');
+        //prop.applyFieldTypeLogicToContent($label);
         $content = prop.$content;
     })(); //ctor
 

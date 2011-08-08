@@ -230,6 +230,7 @@ var CswMobileCssClasses = {
     fieldset: { name: 'csw_fieldset' },
     answer: { name: 'csw_answer' },
     collapsible: { name: 'csw_collapsible' },
-    proplabel: { name: 'csw_prop_label' }
+    proplabel: { name: 'csw_prop_label' },
+    OOC: { name: 'OOC' }
 };
 //#endregion Mobile

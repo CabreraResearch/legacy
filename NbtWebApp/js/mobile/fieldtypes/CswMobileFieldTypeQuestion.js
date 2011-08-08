@@ -73,21 +73,18 @@ function CswMobileFieldTypeQuestion(ftDef) {
     		        .appendTo($fieldset);
 
 		        if (answer === allowedAnswers[i]) {
-		            $answer.CswAttrDom('checked', 'checked');
+		            $answer.CswAttrXml('checked', 'checked');
 		        }
 		    }
 		}
         var isCompliant = inCompliance(answer,correctiveAction);
-		var $prop = $('<div data-role="collapsible" class="' + CswMobileCssClasses.collapsible.name + '" data-collapsed="' + !isCompliant + '"><h3>Comments</h3></div>')
+		var $prop = $('<div data-role="collapsible" class="' + CswMobileCssClasses.collapsible.name + '" data-collapsed="' + isCompliant + '"><h3>Comments</h3></div>')
 			.appendTo($content);
 
-		var $corAction = $('<textarea id="' + propId + '_cor" name="' + propId + '_cor" placeholder="Corrective Action">' + correctiveAction + '</textarea>')
+		$('<textarea id="' + propId + '_cor" name="' + propId + '_cor" placeholder="Corrective Action">' + correctiveAction + '</textarea>')
 			.appendTo($prop);
         subfields.correctiveaction = propId + '_cor';
-        
-		if (isCompliant) {
-			$corAction.css('display', 'none');
-		}
+
 //		$corAction.unbind('change');
 //		$corAction.bind('change', function(eventObj) {
 //			var $cor = $(this);
@@ -136,7 +133,7 @@ function CswMobileFieldTypeQuestion(ftDef) {
     function inCompliance(currentAnswer,correctiveAction) {
         var ret = true;
         if (isNullOrEmpty(currentAnswer)) {
-            currentAnswer = $content.find('.' + CswMobileCssClasses.answer.name + ' :checked').val();
+            currentAnswer = $content.find('input:checked').val();
         }
         if (isNullOrEmpty(correctiveAction)) {
             correctiveAction = $content.find('#' + propId + '_cor').val();
@@ -150,7 +147,15 @@ function CswMobileFieldTypeQuestion(ftDef) {
     }
     
     function applyFieldTypeLogicToContent($control) {
-        
+        if (!isNullOrEmpty($control)) {
+            if (inCompliance()) {
+                $control.find('#' + propId + '_cor').css('display','none').hide();
+                $control.find('h2').removeClass(CswMobileCssClasses.OOC.name);
+            } else {
+                $control.find('#' + propId + '_cor').css('display','').show();
+                $control.find('h2').addClass(CswMobileCssClasses.OOC.name);
+            }
+        }
     }
     
 	//#endregion private

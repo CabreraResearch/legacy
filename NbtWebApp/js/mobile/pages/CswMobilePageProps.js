@@ -106,7 +106,8 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         var ulDef = {
             ID: id + ulSuffix,
-            cssclass: CswMobileCssClasses.listview.name
+            cssclass: CswMobileCssClasses.listview.name,
+            showLoading: false
         };
         
         var listView = new CswMobileListView(ulDef, $content, CswDomElementEvent.change);
@@ -136,8 +137,8 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
                     });
                     
                     var $li = listView.addListItemHtml(propId, prop.$label);
-                    prop.applyFieldTypeLogicToContent($li);
                     $li.append(prop.$content);
+                    prop.applyFieldTypeLogicToContent($li);
                     $li.bind('change', onChange);
 
                 } else {
