@@ -26,18 +26,13 @@ function CswMobileFieldTypeStatic(ftDef) {
             propname: '',
             gestalt: '',
             value: '',
-            text: '',
-            units: ''
+            text: ''
         };
         if (ftDef) $.extend(p, ftDef);
 
         contentDivId = p.nodekey + divSuffix;
         elementId = p.propId + propSuffix;
         value = tryParseString(p.value,p.text);
-        var units = tryParseString(p.units);
-        if (!isNullOrEmpty(units)) {
-            value += ' ' + units;
-        }
         gestalt = tryParseString(p.gestalt, '');
         propId = p.propid;
         propName = p.propname;
