@@ -9,43 +9,36 @@
 
 //#region CswMobileGenericClass
 
-function CswMobileGenericClass(ocDef, $div, mobileStorage) {
+function CswMobileGenericClass(ocDef) {
 	/// <summary>
-	///   Inspection Design. Responsible for generating nodes according to Object Class rules.
+	///   Generic. Responsible for generating nodes according to Object Class rules.
 	/// </summary>
     /// <param name="ocDef" type="Object">Object Class definitional data.</param>
-	/// <param name="$div" type="jQuery">Parent page element to attach to.</param>
-    /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
 	/// <returns type="CswMobileGenericClass">Instance of itself. Must instance with 'new' keyword.</returns>
 
 	//#region private
 
-    var $content;
-    
-    if (isNullOrEmpty(mobileStorage)) {
-        mobileStorage = new CswMobileClientDbResources();
-    }
+    var $content, contentDivId;
     
     //ctor
     (function () {
         
-        var p = {
+        var p = { 
+            nodekey: '',
+            'node_name': ''
         };
         if (ocDef) $.extend(p, ocDef);
 
-        $content = '';
+        $content = $('<h2 id="' + p.nodekey + '">' + p['node_name'] + '</h2>');
+        contentDivId = p.nodekey;
     })(); //ctor
 
-    function getContent() {
-        
-    }
-   
 	//#endregion private
     
     //#region public, priveleged
 
-    this.getContent = getContent;
-    
+    this.$content = $content;
+    this.contentDivId = contentDivId;
     //#endregion public, priveleged
 }
 

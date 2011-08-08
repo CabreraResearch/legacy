@@ -90,8 +90,11 @@ function CswMobileListView(listDef, $parent, bindEvent) {
         /// <param name="options" type="Object">JSON options to append.</param>
         /// <returns type="jQuery">The list item created.</returns>
         var p = {
-            'data-icon': false,
-            'data-url': id
+            attr: { 
+                'data-icon': false,
+                'data-url': id
+            },
+            icon: ''
         };
         if (options) $.extend(p, options);
 
@@ -115,8 +118,11 @@ function CswMobileListView(listDef, $parent, bindEvent) {
         /// <param name="options" type="Object">JSON options to append.</param>
         /// <returns type="jQuery">The list item created.</returns>
         var p = {
-            'data-icon': false,
-            'data-url': id
+            attr: { 
+                'data-icon': false,
+                'data-url': id
+            },
+            icon: ''
         };
         if (options) $.extend(p, options);
 
@@ -138,8 +144,11 @@ function CswMobileListView(listDef, $parent, bindEvent) {
         /// <param name="options" type="Object">JSON options to append.</param>
         /// <returns type="jQuery">The list item created.</returns>
         var p = {
-            'data-icon': false,
-            'data-url': id
+            attr: { 
+                'data-icon': false,
+                'data-url': id
+            },
+            icon: ''
         };
         if(options) $.extend(p, options);
 
@@ -158,22 +167,29 @@ function CswMobileListView(listDef, $parent, bindEvent) {
         /// <param name="options" type="Object">JSON options to append.</param>
         /// <returns type="jQuery">The list item created.</returns>
         var p = {
-            'data-icon': false,
-            'data-url': id
+            attr: { 
+                'data-icon': false,
+                'data-url': id
+            },
+            icon: ''
         };
         if(options) $.extend(p, options);
 
         var $li = $control.find('#' + id + '_li');
-        if( !isNullOrEmpty($li) && $li.length > 0) {
+        if (!isNullOrEmpty($li) && $li.length > 0) {
             $li.empty();
         } else {
             $li = $('<li id="' + id + liSuffix + '"></li>')
                         .appendTo($control);
         }
-        $li.CswAttrXml(p);
-        if(!isNullOrEmpty(text)) {
+        $li.CswAttrXml(p.attr);
+        if (!isNullOrEmpty(text)) {
             $li.text(text);
         }
+        if (!isNullOrEmpty(p.icon)) {
+            $li.append('<img src="' + p.icon + '" class="ui-li-thumb"/>');
+        }
+        
         doEventBind($li, onEvent);
         $control.trigger('create');
         return $li;

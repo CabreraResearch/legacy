@@ -7,7 +7,7 @@
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
 /// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../controls/CswMobileListView.js" />
-/// <reference path="../objectclasses/CswMobileObjectClassFactory.js" />
+/// <reference path="../objectclasses/CswMobileNodesFactory.js" />
 
 //#region CswMobilePageNodes
 
@@ -147,39 +147,38 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
             for (var nodeKey in viewJson)
             {
                 if(viewJson.hasOwnProperty(nodeKey)) {
-                    var nodePk = nodeKey.split('_');
-                    if(nodePk.hasOwnProperty(1)) {
-                        var nodeId = nodeKey[1];
-                    }
-                    if(Int32MinVal === nodeId || 'No Results' === viewJson[nodeKey]) {
+                    var nodeJson = viewJson[nodeKey];
+                    delete nodeJson.subitems;
+                    var ocDef = { nodeKey: nodeKey };
+                    $.extend(ocDef, nodeJson);
+                    var node = new CswMobileNodesFactory(ocDef);
+                        
+                    if (Int32MinVal === node.nodeId || 'No Results' === node.nodeName) {
                         makeEmptyListView(listView, null, 'No Results');
                     } else {
 
-                        var nodeJson = { ID: nodeKey, value: viewJson[nodeKey] };
-                        var nodeOc = makeOcContent(nodeJson);
-
                         var opts = {
-		                    ParentId: id,
-		                    DivId: nodeKey,
-		                    viewId: viewId,
+                            ParentId: id,
+                            DivId: nodeKey,
+                            viewId: viewId,
                             nodeId: mobileStorage.currentNodeId(nodeKey),
-		                    level: 2,
-		                    title: viewJson[nodeKey]['node_name'],
-		                    onHelpClick: pageDef.onHelpClick,
-		                    onOnlineClick: pageDef.onOnlineClick,
-		                    onRefreshClick: pageDef.onRefreshClick,
-		                    mobileStorage: mobileStorage
-		                };
+                            level: 2,
+                            title: node.nodeName,
+                            onHelpClick: pageDef.onHelpClick,
+                            onOnlineClick: pageDef.onOnlineClick,
+                            onRefreshClick: pageDef.onRefreshClick,
+                            mobileStorage: mobileStorage
+                        };
 
-		                var onClick = makeDelegate(pageDef.onListItemSelect,opts);
+                        var onClick = makeDelegate(pageDef.onListItemSelect, opts);
 
-                        if (nodeOc.isLink) {
-                            listView.addListItemLinkHtml(nodeKey, nodeOc.$html, onClick);
+                        if (node.nodeSpecies !== CswNodeSpecies.More) {
+                            listView.addListItemLinkHtml(nodeKey, node.$content, onClick, { icon: node.icon });
                         } else {
-                            listView.addListItemHtml(nodeKey, nodeOc.$html, onClick);
+                            listView.addListItemHtml(nodeKey, node.$content, null, { icon: node.icon });
                         }
-                        nodeCount++;
                     }
+                    nodeCount++;
                 }
             }
         } 
@@ -195,52 +194,6 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         if (isFunction(postSuccess)) {
             postSuccess();
         }
-    }
-    
-    function makeOcContent(json) {
-		var ret = {
-		    isLink: true,
-		    $html: ''
-		};
-		var html = '';
-		var nodeId = makeSafeId({ ID: json['id'] });
-		var nodeSpecies = json['value']['nodespecies'];
-		var nodeName = json['value']['node_name'];
-		var icon = '';
-		if (!isNullOrEmpty(json['value']['iconfilename'])) {
-			icon = 'images/icons/' + json['value']['iconfilename'];
-		}
-		var objectClass = json['value']['objectclass'];
-
-		if (nodeSpecies !== 'More')
-		{
-			if (!isNullOrEmpty(icon)) {
-			    html += '<img src="' + icon + '" class="ui-li-icon"/>';
-			}
-		    
-		    switch (objectClass) {
-			case "InspectionDesignClass":
-				var dueDate = tryParseString(json['value']['duedate'],'' );
-				var location = tryParseString(json['value']['location'],'' );
-				var mountPoint = tryParseString(json['value']['target'],'' );
-				var status = tryParseString(json['value']['status'],'' );
-
-				html += '<h2>' + nodeName + '</h2>';
-				html += '<p>' + location + '</p>';
-				html += '<p>' + mountPoint + '</p>';
-				html += '<p>';
-				if (!isNullOrEmpty(status)) html += status + ', ';
-				html += 'Due: ' + dueDate + '</p>';
-				break;
-			}
-		} //if( nodeSpecies !== 'More' )
-		else {
-			html += '<h2 id="' + nodeId + '">' + nodeName + '</h2>';
-		    ret.isLink = false;
-		}
-        ret.$html = $(html);
-			
-		return ret;
     }
     
 	//#endregion private

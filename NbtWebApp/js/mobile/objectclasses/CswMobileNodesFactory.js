@@ -20,93 +20,73 @@ function CswMobileNodesFactory(ocDef) {
 
 	//#region private
 
-    var $content, nodeId, nodeSpecies, nodeName, objectClass;
+    var $content, nodeKey, nodeId, nodeSpecies, nodeName, objectClass, icon;
     
     //ctor
     (function () {
         
         var p = {
-            nodeId: '',           
-            objectClass: CswObjectClasses.GenericClass,
-            json: {},
-            onClick: null // function () {}
+            nodeKey: '',
+            'node_name': '',
+            nodespecies: '',
+            iconfilename: ''
+            //ocprops follow
         };
         if (ocDef) $.extend(p, ocDef);
 
-		nodeId = makeSafeId({ ID: p.nodeId });
-		nodeName = ['node_name'];
+		nodeKey = makeSafeId({ ID: p.nodeKey });
+        nodeName = 'No Results';
+        icon = '';
         
-        var icon = '';
-        var species = tryParseString(json.nodespecies,'');
-        switch (species) {
-            case CswNodeSpecies.More.name:
-                nodeSpecies = CswNodeSpecies.More;
-                break;
-            default:
-                nodeSpecies = CswNodeSpecies.Plain;
-		        if (!isNullOrEmpty(p.json.iconfilename)) {
-			        icon = 'images/icons/' + p.json.iconfilename;
-		        }
-                break;
+        var nodePk = nodeKey.split('_');
+        if(nodePk.hasOwnProperty(1)) {
+            nodeId = nodeKey[1];
         }
+        if(Int32MinVal !== nodeId && 'No Results' !== p) {
 
-        var class = p.json.objectclass;
-        var node;		
-        switch (class) {
-            case CswObjectClasses.InspectionDesignClass.name:
-                objectClass = CswObjectClasses.InspectionDesignClass;
-                node = new Cs
-                break;
-            default:
-                objectClass = CswObjectClasses.GenericClass;
-                break;
+            nodeName = p['node_name'];
+            var species = tryParseString(p.nodespecies, '');
+            switch (species) {
+                case CswNodeSpecies.More.name:
+                    nodeSpecies = CswNodeSpecies.More;
+                    break;
+                default:
+                    nodeSpecies = CswNodeSpecies.Plain;
+                    if (!isNullOrEmpty(p.iconfilename)) {
+                        icon = 'images/icons/' + p.iconfilename;
+                    }
+                    break;
+            }
+
+            var oClass = p.objectclass;
+            var node;
+  
+            switch (oClass) {
+                case CswObjectClasses.InspectionDesignClass.name:
+                    objectClass = CswObjectClasses.InspectionDesignClass;
+                    node = new CswMobileInspectionDesignClass(p);
+                    break;
+                default:
+                    objectClass = CswObjectClasses.GenericClass;
+                    node = new CswMobileGenericClass(p);
+                    break;
+            }
+
+            $content = node.$content;
         }
-
-        $content = '';
     })(); //ctor
 
-    function getContent() {
-        
-    }
-    
-//    function makeOcContent(json) {
-//		
-//		    
-//		    switch (objectClass) {
-//			case "InspectionDesignClass":
-//				var dueDate = tryParseString(json['value']['duedate'],'' );
-//				var location = tryParseString(json['value']['location'],'' );
-//				var mountPoint = tryParseString(json['value']['target'],'' );
-//				var status = tryParseString(json['value']['status'],'' );
-
-//				html += '<h2>' + nodeName + '</h2>';
-//				html += '<p>' + location + '</p>';
-//				html += '<p>' + mountPoint + '</p>';
-//				html += '<p>';
-//				if (!isNullOrEmpty(status)) html += status + ', ';
-//				html += 'Due: ' + dueDate + '</p>';
-//				break;
-//			}
-//		} //if( nodeSpecies !== 'More' )
-//		else {
-//			html += '<h2 id="' + nodeId + '">' + nodeName + '</h2>';
-//		    ret.isLink = false;
-//		}
-//        ret.$html = $(html);
-//			
-//		return ret;
-//    }
-    
 	//#endregion private
     
     //#region public, priveleged
 
-    this.getContent = getContent;
     this.$content = $content;
     this.nodeId = nodeId;
+    this.nodeKey = nodeKey;
     this.nodeSpecies = nodeSpecies;
     this.nodeName = nodeName;
     this.objectClass = objectClass;
+    this.icon = icon;
     //#endregion public, priveleged
 }
 

@@ -121,8 +121,8 @@ var CswDomElementEvent = {
 };
 
 var CswObjectClasses = {
-    GenericClass: { name: 'Generic' },
-    InspectionDesignClass: { name: 'Inspection Design' }
+    GenericClass: { name: 'GenericClass' },
+    InspectionDesignClass: { name: 'InspectionDesignClass' }
 };
 
 var CswNodeSpecies = {
@@ -130,6 +130,40 @@ var CswNodeSpecies = {
     More: { name: 'More' }
 };
 
+var CswFieldTypes = {
+    AuditHistoryGrid: { name: 'AuditHistoryGrid', subfields: { } },
+    Barcode: { name: 'Barcode', subfields: { } },
+	Composite: { name: 'Composite', subfields: { } },
+	Date: { name: 'Date', subfields: { } },
+	File: { name: 'File', subfields: { } },
+	Grid: { name: 'Grid', subfields: { } },
+	Image: { name: 'Image', subfields: { } },
+	Link: { name: 'Link', subfields: { } },
+	List: { name: 'List', subfields: { } },
+	Location: { name: 'Location', subfields: { } },
+	LocationContents: { name: 'LocationContents', subfields: { } },
+	Logical: { name: 'Logical', subfields: { } },
+	LogicalSet: { name: 'LogicalSet', subfields: { } },
+	Memo: { name: 'Memo', subfields: { } },
+	MTBF: { name: 'MTBF', subfields: { } },
+	MultiList: { name: 'MultiList', subfields: { } },
+	NodeTypeSelect: { name: 'NodeTypeSelect', subfields: { } },
+	Number: { name: 'Number', subfields: { } },
+	Password: { name: 'Password', subfields: { } },
+	PropertyReference: { name: 'PropertyReference', subfields: { } },
+	Quantity: { name: 'Quantity', subfields: { } },
+	Question: { name: 'Question', subfields: { } },
+	Relationship: { name: 'Relationship', subfields: { } },
+	Scientific: { name: 'Scientific', subfields: { } },
+	Sequence: { name: 'Sequence', subfields: { } },
+	Static: { name: 'Static', subfields: { } },
+	Text: { name: 'Text', subfields: { } },
+	Time: { name: 'Time', subfields: { } },
+	TimeInterval: { name: 'TimeInterval', subfields: { } },
+	UserSelect: { name: 'UserSelect', subfields: { } },
+	ViewPickList: { name: 'ViewPickList', subfields: { } },
+	ViewReference: { name: 'ViewReference', subfields: { } }
+};
 //#endregion Global
 
 //#region Mobile
@@ -191,6 +225,10 @@ var CswMobileGlobal_Config = {
     theme: 'b'
 };
 var CswMobileCssClasses = {
-    listview: { name: 'csw_listview' }
+    listview: { name: 'csw_listview' },
+    select: { name: 'csw_prop_select' },
+    fieldset: { name: 'csw_fieldset' },
+    answer: { name: 'csw_answer' },
+    collapsible: { name: 'csw_collapsible' }
 };
 //#endregion Mobile
