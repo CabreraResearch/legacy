@@ -31,11 +31,8 @@ CswAppMode.mode = 'mobile';
 		//#region Resource Initialization
 		
 		var x = {
-			//UpdateViewUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
-			MainPageUrl: '/NbtWebApp/Mobile.html',
 			Theme: CswMobileGlobal_Config.theme,
-			PollingInterval: 30000, //30 seconds
-			RandomConnectionFailure: false
+			PollingInterval: 30000 //30 seconds
 		};
 
 		if (options) {
@@ -232,6 +229,7 @@ CswAppMode.mode = 'mobile';
 		        onHelpClick: onHelpClick,
 		        onOnlineClick: onOnlineClick,
 		        onRefreshClick: onRefreshClick,
+		        onSearchClick: onSearchClick,
 		        mobileStorage: mobileStorage,
 		        onListItemSelect: function(param) {
 		            var tabsPage = makeTabsPage(param);
@@ -257,6 +255,7 @@ CswAppMode.mode = 'mobile';
 		        onHelpClick: onHelpClick,
 		        onOnlineClick: onOnlineClick,
 		        onRefreshClick: onRefreshClick,
+		        onSearchClick: onSearchClick,
 		        mobileStorage: mobileStorage,
 		        onListItemSelect: function(param) {
 		            var propsPage = makePropsPage(param);
@@ -282,6 +281,7 @@ CswAppMode.mode = 'mobile';
 		        onHelpClick: onHelpClick,
 		        onOnlineClick: onOnlineClick,
 		        onRefreshClick: onRefreshClick,
+		        onSearchClick: onSearchClick,
 		        mobileStorage: mobileStorage,
 		        onListItemSelect: function(param) {
 		            var nextPropsPage = makePropsPage(param);
@@ -316,42 +316,7 @@ CswAppMode.mode = 'mobile';
 					window.location.reload();
 				}
 				else {
-					var jsonData = {
-						SessionId: sessionId,
-						ParentId: divId,
-						ForMobile: forMobile
-					};
-
-					CswAjaxJSON({
-							formobile: forMobile,
-							url: x.ViewUrl,
-							data: jsonData,
-							stringify: false,
-							onloginfail: function(text) { onLoginFail(text, mobileStorage); },
-							success: function(data) {
-								setOnline(mobileStorage);
-								if( !isNullOrEmpty(data['nodes']) ) {
-									var viewJSON = data['nodes'];
-									
-									var params = {
-										ParentId: 'viewsdiv',
-										DivId: divId,
-										title: title,
-										json: mobileStorage.updateStoredViewJson(divId, viewJSON),
-										parentlevel: 0,
-										level: 1,
-										HideRefreshButton: false,
-										HideSearchButton: false,
-										HideBackButton: false
-									};
-									params.onPageShow = function() { return _loadDivContents(params); };
-									_loadDivContents(params).CswChangePage();
-								}
-							}, // success
-							error: function() {
-								onError();
-							}
-						});
+				    makeViewsPage();
 				}
 			}
 		}
