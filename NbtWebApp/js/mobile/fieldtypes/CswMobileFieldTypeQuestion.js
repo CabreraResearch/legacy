@@ -22,10 +22,9 @@ function CswMobileFieldTypeQuestion(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propid: '',
-            propname: '',
+            propId: '',
+            propName: '',
             gestalt: '',
-            value: '',
             answer: '',
             allowedanswers: '',
             compliantanswers: '',
@@ -34,12 +33,12 @@ function CswMobileFieldTypeQuestion(ftDef) {
         };
         if (ftDef) $.extend(p, ftDef);
 
-        contentDivId = p.nodekey + divSuffix;
-        elementId = p.propId + propSuffix;
+        propId = p.propId;
+        propName = p.propName;
+        contentDivId = propId + divSuffix;
+        elementId = propId + propSuffix;
         value = tryParseString(p.value);
         gestalt = tryParseString(p.gestalt, '');
-        propId = p.propid;
-        propName = p.propname;
         subfields = {};
 
         var answer = tryParseString(p.answer);

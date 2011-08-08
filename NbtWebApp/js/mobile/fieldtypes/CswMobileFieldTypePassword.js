@@ -22,23 +22,23 @@ function CswMobileFieldTypePassword(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propid: '',
-            propname: '',
+            propId: '',
+            propName: '',
             gestalt: '',
             value: ''
         };
         if (ftDef) $.extend(p, ftDef);
 
-        contentDivId = p.nodekey + divSuffix;
-        elementId = p.propId + propSuffix;
+        propId = p.propId;
+        propName = p.propName;
+        contentDivId = propId + divSuffix;
+        elementId = propId + propSuffix;
         value = tryParseString(p.value);
         gestalt = tryParseString(p.gestalt);
-        propId = p.propid;
-        propName = p.propname;
         subfields = '';
         
         $content = ensureContent(contentDivId);
-        $content.append($('<p style="white-space:normal;" id="' + elementId + '">' + value + '</p>'));
+        $content.append($('<p style="white-space:normal;" id="' + elementId + '">********</p>'));
     })(); //ctor
         
     function applyFieldTypeLogicToContent($control) {

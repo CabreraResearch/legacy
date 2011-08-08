@@ -24,20 +24,20 @@ function CswMobileFieldTypeLink(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propid: '',
-            propname: '',
+            propId: '',
+            propName: '',
             gestalt: '',
             text: '',
             href: ''
         };
         if (ftDef) $.extend(p, ftDef);
 
-        contentDivId = p.nodekey + divSuffix;
-        elementId = p.propId + propSuffix;
+        propId = p.propId;
+        propName = p.propName;
+        contentDivId = propId + divSuffix;
+        elementId = propId + propSuffix;
         value = tryParseString(p.text);
         gestalt = tryParseString(p.gestalt, '');
-        propId = p.propid;
-        propName = p.propname;
         subfields = '';
         
         $content = ensureContent(contentDivId);

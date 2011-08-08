@@ -31,7 +31,7 @@ function CswMobilePropsFactory(propDef) {
 
 	//#region private
 
-    var $label, $content, contentDivId, nodeId, tabId, viewId, fieldType, propId, propName;
+    var $label, $content, contentDivId, nodeId, tabId, viewId, fieldType, propId, propName, prop;
     
     //ctor
     (function () {
@@ -52,7 +52,7 @@ function CswMobilePropsFactory(propDef) {
         tabId = p.tabId;
         viewId = p.viewId;
         
-        var prop = getPropFromFieldType(field, p);
+        prop = getPropFromFieldType(field, p);
         fieldType = prop.fieldType;
         propId = prop.propId;
         propName = prop.propName;
@@ -174,12 +174,11 @@ function CswMobilePropsFactory(propDef) {
         return ret;
     }
 
-    function applyFieldTypeLogicToContent($control,prop) {
+    function applyFieldTypeLogicToContent($control) {
         /// <summary>
 	    ///   Takes a control which should have some logic (CSS styling, etc.) applied according to Field Type rules and returns it.
 	    /// </summary>
         /// <param name="$control" type="jQuery">A control to modify.</param>
-        /// <param name="prop" type="CswMobilePropsFactory">A prop's factory property</param>
 	    /// <returns type="jQuery">The modified control.</returns>
         var ret = prop.applyFieldTypeLogicToContent($control);
         return ret;
