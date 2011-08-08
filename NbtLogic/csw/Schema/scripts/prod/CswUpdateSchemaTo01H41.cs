@@ -101,8 +101,12 @@ namespace ChemSW.Nbt.Schema
 				CswNbtMetaDataNodeType BuildingNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Building" );
 				if( BuildingNT != null )
 				{
-					CswNbtView EquipByLocView = _CswNbtSchemaModTrnsctn.makeView();
-					EquipByLocView.makeNew( "Equipment By Location", NbtViewVisibility.Global, null, null, null );
+					CswNbtView EquipByLocView = _CswNbtSchemaModTrnsctn.restoreView( "Equipment By Location" );
+					if( EquipByLocView == null )
+					{
+						EquipByLocView = _CswNbtSchemaModTrnsctn.makeView();
+						EquipByLocView.makeNew( "Equipment By Location", NbtViewVisibility.Global, null, null, null );
+					}
 					EquipByLocView.Category = "Equipment";
 
 					//CswNbtMetaDataNodeTypeProp BuildingLocationNTP = BuildingNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
