@@ -1314,7 +1314,10 @@ function tryParseString(inputStr, defaultStr)
 	/// <param name="inputStr" type="String"> String to parse </param>
 	/// <param name="defaultStr" type="String"> Default value if null or empty </param>
 	/// <returns type="String" />
-	var ret = defaultStr;
+    var ret = '';
+    if (defaultStr) {
+        ret = defaultStr;
+    }
 	if (!isNullOrEmpty(inputStr))
 	{
 		ret = inputStr;
