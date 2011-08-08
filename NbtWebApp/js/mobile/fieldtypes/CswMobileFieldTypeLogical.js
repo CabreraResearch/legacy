@@ -90,12 +90,17 @@ function CswMobileFieldTypeLogical(ftDef) {
 		} // for (var i = 0; i < answers.length; i++)
         
     })(); //ctor
-
+        
+    function applyFieldTypeLogicToContent($control) {
+        
+    }
+    
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
+    this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
     this.value = value;
     this.contentDivId = contentDivId;
     this.propId = propId;

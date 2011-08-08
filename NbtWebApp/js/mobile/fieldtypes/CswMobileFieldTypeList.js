@@ -58,12 +58,17 @@ function CswMobileFieldTypeList(ftDef) {
                                 cssclass: CswMobileCssClasses.select.name
                             });
     })(); //ctor
-
+        
+    function applyFieldTypeLogicToContent($control) {
+        
+    }
+    
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
+    this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
     this.value = value;
     this.contentDivId = contentDivId;
     this.propId = propId;

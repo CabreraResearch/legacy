@@ -53,7 +53,7 @@ function CswMobileFieldTypeQuestion(ftDef) {
         var suffix = 'ans';
 		var $fieldset = $('<fieldset class="' + CswMobileCssClasses.fieldset.name + '"></fieldset>')
 								.CswAttrDom({
-									'id': id + '_fieldset'
+									'id': propId + '_fieldset'
 								})
 								.CswAttrXml({
 									'data-role': 'controlgroup',
@@ -62,12 +62,12 @@ function CswMobileFieldTypeQuestion(ftDef) {
 								})
 		                        .appendTo($content);
 
-		var answerName = makeSafeId({ prefix: id, ID: suffix }); //Name needs to be non-unqiue and shared
+		var answerName = makeSafeId({ prefix: propId, ID: suffix }); //Name needs to be non-unqiue and shared
         subfields.answer = answerName;
         
 		for (var i = 0; i < allowedAnswers.length; i++) {
 		    if (allowedAnswers.hasOwnProperty(i)) {
-		        var answerid = makeSafeId({ prefix: id, ID: suffix, suffix: allowedAnswers[i] });
+		        var answerid = makeSafeId({ prefix: propId, ID: suffix, suffix: allowedAnswers[i] });
 
 		        $fieldset.append('<label for="' + answerid + '" id="' + answerid + '_lab">' + allowedAnswers[i] + '</label');
 		        var $answer = $('<input type="radio" name="' + answerName + '" id="' + answerid + '" class="' + CswMobileCssClasses.answer.name + '" value="' + allowedAnswers[i] + '" />')
@@ -143,11 +143,15 @@ function CswMobileFieldTypeQuestion(ftDef) {
             correctiveAction = $content.find('#' + propId + '_cor').val();
         }
         if (!isNullOrEmpty(currentAnswer) &&
-			compliantAnswers.indexOf(answer) === -1 &&
+			compliantAnswers.indexOf(currentAnswer) === -1 &&
 				isNullOrEmpty(correctiveAction)) {
 			ret = false;
 		}
         return ret;
+    }
+    
+    function applyFieldTypeLogicToContent($control) {
+        
     }
     
 	//#endregion private
@@ -155,6 +159,7 @@ function CswMobileFieldTypeQuestion(ftDef) {
     //#region public, priveleged
 
     this.$content = $content;
+    this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
     this.value = value;
     this.gestalt = gestalt;
     this.contentDivId = contentDivId;

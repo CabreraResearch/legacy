@@ -40,12 +40,17 @@ function CswMobileFieldTypeMemo(ftDef) {
         $content = ensureContent(contentDivId);
         $content.append($('<textarea name="' + elementId + '">' + value + '</textarea>'));
     })(); //ctor
-
+        
+    function applyFieldTypeLogicToContent($control) {
+        
+    }
+    
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
+    this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
     this.value = value;
     this.gestalt = gestalt;
     this.contentDivId = contentDivId;

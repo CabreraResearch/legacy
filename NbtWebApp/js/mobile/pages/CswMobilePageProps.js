@@ -7,6 +7,7 @@
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
 /// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../controls/CswMobileListView.js" />
+/// <reference path="../fieldtypes/CswMobilePropFactory.js" />
 
 //#region CswMobilePageProps
 
@@ -117,8 +118,26 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
                 var propJson = tabJson[propId];
                 if (!isNullOrEmpty(propJson) && propId !== 'nexttab') {
                     var propName = propJson['prop_name'];
-                    var $li = listView.addListItem(propId, '');
-                    fieldTypeJsonToHtml(propJson, propId, propName, $li);
+                    var ftDef = {
+                        propId: propId,
+                        propName: propName,
+                        nodeId: nodeId,
+                        tabId: tabId,
+                        viewId: viewId
+                    };
+                    $.extend(ftDef, tabJson[propId]);
+                    var prop = new CswMobilePropsFactory(ftDef);
+
+                    var onChange = makeDelegate(onPropertyChange, {
+                        propId: propId,
+                        propName: propName,
+                        controlId: prop.$content.CswAttrDom('id'),
+                        onSuccess: ''
+                    });
+                    
+                    var $li = listView.addListItemHtml(propId, prop.$content, onChange);
+                    
+                    //fieldTypeJsonToHtml(propJson, propId, propName, $li);
                 } else {
                     nextTab = propJson;
                 }

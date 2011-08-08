@@ -45,12 +45,17 @@ function CswMobileFieldTypeQuantity(ftDef) {
         $content = ensureContent(contentDivId);
         $content.CswInput('init', { type: CswInput_Types.text, ID: elementId, value: value });
     })(); //ctor
-
+            
+    function applyFieldTypeLogicToContent($control) {
+        
+    }
+    
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
+    this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
     this.value = value;
     this.gestalt = gestalt;
     this.contentDivId = contentDivId;

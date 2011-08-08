@@ -41,12 +41,17 @@ function CswMobileFieldTypeStatic(ftDef) {
         $content = ensureContent(contentDivId);
         $content.append($('<p style="white-space:normal;" id="' + elementId + '">' + tryParseString(value,gestalt) + '</p>'));
     })(); //ctor
-
+        
+    function applyFieldTypeLogicToContent($control) {
+        
+    }
+    
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
+    this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
     this.value = value;
     this.gestalt = gestalt;
     this.contentDivId = contentDivId;

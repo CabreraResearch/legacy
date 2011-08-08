@@ -31,32 +31,44 @@ function CswMobilePropsFactory(propDef) {
 
 	//#region private
 
-    var $content, nodeKey, nodeId, nodeSpecies, nodeName, objectClass, icon, fieldType, propId, propName;
+    var $label, $content, contentDivId, nodeId, tabId, viewId, fieldType, propId, propName;
     
     //ctor
     (function () {
         
         var p = {
-            nodeKey: '',
-            'node_name': '',
-            nodespecies: '',
+            nodeId: '',
+            tabId: '',
+            viewId: '',
             propId: '',
             propName: '',
-            fieldType: CswFieldTypes.Static
+            fieldtype: CswFieldTypes.Static.name
             //prop data follows
         };
         if (propDef) $.extend(p, propDef);
 
-        var field = tryParseString(p.fieldType, '');
-        var prop = getPropFromFieldType(field);
+        var field = tryParseString(p.fieldtype, '');
+        nodeId = p.nodeId;
+        tabId = p.tabId;
+        viewId = p.viewId;
+        
+        var prop = getPropFromFieldType(field, p);
         fieldType = prop.fieldType;
         propId = prop.propId;
         propName = prop.propName;
+        contentDivId = prop.contentDivId;
+        
+        $label = $('<h2 id="' + propId + '_label" style="white-space:normal;" class="' + CswMobileCssClasses.proplabel.name + '">' + propName + '</h2>');
         $content = prop.$content;
-
     })(); //ctor
 
     function getPropFromFieldType(field, ftDef) {
+        /// <summary>
+	    ///   Generate a property according to its field type definition.
+	    /// </summary>
+        /// <param name="field" type="String">Field type name.</param>
+        /// <param name="ftDef" type="Object">Field type defintional data.</param>
+	    /// <returns type="CswMobileFieldType<Prop>">A field type prop which implements $content and applyFieldTypeLogicToContent.</returns>
         var ret;
         switch (field) {
             case CswFieldTypes.AuditHistoryGrid.name:
@@ -162,17 +174,31 @@ function CswMobilePropsFactory(propDef) {
         return ret;
     }
 
+    function applyFieldTypeLogicToContent($control,prop) {
+        /// <summary>
+	    ///   Takes a control which should have some logic (CSS styling, etc.) applied according to Field Type rules and returns it.
+	    /// </summary>
+        /// <param name="$control" type="jQuery">A control to modify.</param>
+        /// <param name="prop" type="CswMobilePropsFactory">A prop's factory property</param>
+	    /// <returns type="jQuery">The modified control.</returns>
+        var ret = prop.applyFieldTypeLogicToContent($control);
+        return ret;
+    }
+    
 	//#endregion private
     
     //#region public, priveleged
 
+    this.$label = $label;
     this.$content = $content;
+    this.contentDivId = contentDivId;
+    this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
     this.nodeId = nodeId;
-    this.nodeKey = nodeKey;
-    this.nodeSpecies = nodeSpecies;
-    this.nodeName = nodeName;
-    this.objectClass = objectClass;
-    this.icon = icon;
+    this.tabId = tabId;
+    this.viewId = viewId;
+    this.propId = propId;
+    this.propName = propName;
+    
     //#endregion public, priveleged
 }
 

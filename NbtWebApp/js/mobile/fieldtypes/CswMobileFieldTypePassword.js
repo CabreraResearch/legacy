@@ -14,26 +14,45 @@ function CswMobileFieldTypePassword(ftDef) {
 	/// <returns type="CswMobileFieldTypePassword">Instance of itself. Must instance with 'new' keyword.</returns>
 
 	//#region private
-
-    var $content, contentDivId, propId, propName, subfields;
+    
+    var divSuffix = '_propdiv';
+    var propSuffix = '_input';
+    var $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
     
     //ctor
     (function () {
         var p = { 
             propid: '',
-            propname: ''
+            propname: '',
+            gestalt: '',
+            value: ''
         };
         if (ftDef) $.extend(p, ftDef);
 
-        $content = $('');
-        contentDivId = p.nodekey;
+        contentDivId = p.nodekey + divSuffix;
+        elementId = p.propId + propSuffix;
+        value = tryParseString(p.value);
+        gestalt = tryParseString(p.gestalt);
+        propId = p.propid;
+        propName = p.propname;
+        subfields = '';
+        
+        $content = ensureContent(contentDivId);
+        $content.append($('<p style="white-space:normal;" id="' + elementId + '">' + value + '</p>'));
     })(); //ctor
-
+        
+    function applyFieldTypeLogicToContent($control) {
+        
+    }
+    
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
+    this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
+    this.value = value;
+    this.gestalt = gestalt;
     this.contentDivId = contentDivId;
     this.propId = propId;
     this.propName = propName;

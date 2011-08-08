@@ -43,12 +43,17 @@ function CswMobileFieldTypeLink(ftDef) {
         $content = ensureContent(contentDivId);
         $content.CswLink('init', { ID: elementId, href: p.href, rel: 'external', value: value });
     })(); //ctor
-
+        
+    function applyFieldTypeLogicToContent($control) {
+        
+    }
+    
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
+    this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
     this.contentDivId = contentDivId;
     this.propId = propId;
     this.propName = propName;
