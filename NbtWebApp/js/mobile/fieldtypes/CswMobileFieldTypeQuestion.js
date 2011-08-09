@@ -122,13 +122,13 @@ function CswMobileFieldTypeQuestion(ftDef) {
     
     function updatePropValue(json,id,newValue) {
         var subFieldToUpdate;
-        if (id.contains(makeSafeId({ ID: propName, suffix: 'com' }))) {
+        if (id.contains(makeSafeId({ ID: propId, suffix: 'com' }))) {
             subFieldToUpdate = subfields.Comments.subfield.name;
 		} 
-		else if (id.contains(makeSafeId({ ID: propName, suffix: 'ans' }))) {
+		else if (id.contains(makeSafeId({ ID: propId, suffix: 'ans' }))) {
             subFieldToUpdate = subfields.Answer.subfield.name;
 		} 
-		else if (id.contains(makeSafeId({ ID: propName, suffix: 'cor' }))) {
+		else if (id.contains(makeSafeId({ ID: propId, suffix: 'cor' }))) {
             subFieldToUpdate = subfields.CorrectiveAction.subfield.name;
 		}
         

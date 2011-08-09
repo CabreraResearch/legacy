@@ -54,7 +54,9 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 	        onHelpClick: null, //function () {},
             onOnlineClick: null, //function () {},
             onRefreshClick: null, //function () {},
-            onSearchClick: null //function () {}
+            onSearchClick: null, //function () {}
+            onListItemSelect: null, //function () {}
+            onPropChange: null //function () {}s
         };
         if (propsDef) $.extend(p, propsDef);
 
@@ -134,10 +136,11 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
                     $li.append(prop.$content);
                     prop.applyFieldTypeLogicToContent($li);
                     
-                    var onChange = makeDelegate(onPropertyChange, {
+                    var onChange = makeEventDelegate(onPropertyChange, {
                         prop: prop,
                         control: $li,
-                        onSuccess: prop.applyFieldTypeLogicToContent
+                        onSuccess: prop.applyFieldTypeLogicToContent,
+                        onUpdate: pageDef.onPropChange
                     });
                     
                     $li.bind('change', onChange);
@@ -149,8 +152,30 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
             }
         }
         if (!isNullOrEmpty(nextTab)) {
-            //remember to wire up click event
-            listView.addListItemLink(makeSafeId({ ID: nextTab }), nextTab);    
+            var cachedJson = mobileStorage.fetchCachedNodeJson(nodeId);
+            if (cachedJson.hasOwnProperty('subitems') &&
+                cachedJson.subitems.hasOwnProperty(tabName)) {
+                
+                var newTabJson = cachedJson.subitems[tabName];
+                var opts = {
+		            ParentId: id,
+		            DivId: tabId,
+		            viewId: viewId,
+                    nodeId: nodeId,
+                    tabId: tabId,
+                    tabName: tabName,
+                    tabJson: newTabJson,
+		            level: 3,
+		            title: tabName,
+		            onHelpClick: pageDef.onHelpClick,
+		            onOnlineClick: pageDef.onOnlineClick,
+		            onRefreshClick: pageDef.onRefreshClick,
+		            mobileStorage: mobileStorage
+		        };
+		        var onClick = makeDelegate(pageDef.onListItemSelect, opts);    
+            }
+            
+            listView.addListItemLink(makeSafeId({ ID: nextTab }), nextTab, onClick);    
         }
         if (propCount === 0) {
             makeEmptyListView(listView, $content, 'No Properties to Display');
@@ -166,19 +191,21 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         }
     }
     
-	function onPropertyChange(options) {
+	function onPropertyChange(eventObj,options) {
 	    var o = {
             elementId: '',
 	        prop: '',
 	        control: '',
-	        onSuccess: ''
+	        onSuccess: '',
+	        onUpdate: ''
 	    };
 		if(options) {
 		    $.extend(o, options);
 		}
 		var nodeJson = mobileStorage.fetchCachedNodeJson(nodeId);
 	    var propId = o.prop.propId;
-	    var elementId = new CswString(o.control.CswAttrDom('id'));
+	    var elementId = new CswString(eventObj.target.id);
+	    var value = eventObj.target.value;
 	    
 		if (!isNullOrEmpty(nodeJson)) {
 			mobileStorage.addUnsyncedChange();
@@ -189,9 +216,8 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
     		    nodeJson.subitems[tabName].hasOwnProperty(propId)) {
 		        propJson = nodeJson.subitems[tabName][propId];
 		    }
-		    
 			if (!isNullOrEmpty(propJson)) {
-			    propJson = o.prop.updatePropValue(propJson, elementId, 'new Value here');
+			    propJson = o.prop.updatePropValue(propJson, elementId, value);
 			    nodeJson.subitems[tabName][propId] = propJson;
                 mobileStorage.updateStoredNodeJson(nodeId, nodeJson, '1');
 			} else { 
@@ -201,6 +227,10 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 	    if (isFunction(o.onSuccess)) {
 	        o.onSuccess(o.control);
 	    }
+	    if (isFunction(o.onUpdate)) {
+	        o.onUpdate();
+	    }
+	    
 	} // onPropertyChange()
     
 	//#endregion private

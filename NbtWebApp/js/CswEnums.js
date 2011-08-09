@@ -428,6 +428,8 @@ var CswMobileCssClasses = {
     answer: { name: 'csw_answer' },
     collapsible: { name: 'csw_collapsible' },
     proplabel: { name: 'csw_prop_label' },
-    OOC: { name: 'OOC' }
+    OOC: { name: 'OOC' },
+    onlineStatus: { name: 'onlineStatus' },
+    pendingChanges: { name: 'pendingChanges' }
 };
 //#endregion Mobile

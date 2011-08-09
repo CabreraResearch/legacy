@@ -224,6 +224,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
 
 	this.mobileHeader = mobileHeader;
 	this.mobileFooter = mobileFooter;
+    this.page = cswMobilePage;
 	this.$content = $contentRole;
     this.$pageDiv = $pageDiv;
     this.fillContent = fillContent;

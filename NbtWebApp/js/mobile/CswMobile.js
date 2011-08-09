@@ -16,8 +16,6 @@
 /// <reference path="pages/CswMobilePageFactory.js" />
 /// <reference path="objectclasses/CswMobileNodesFactory.js" />
 
-//var profiler = $createProfiler();
-
 CswAppMode.mode = 'mobile';
 
 ;(function($) {
@@ -62,7 +60,7 @@ CswAppMode.mode = 'mobile';
 		};
 
 		var mobileSync = new CswMobileSync(mobileSyncOptions, mobileStorage);
-
+        
 		var mobileBackgroundTaskOptions = {
 			onSuccess: function () {
 				setOnline(mobileStorage);
@@ -288,6 +286,7 @@ CswAppMode.mode = 'mobile';
 		            nextPropsPage.CswChangePage();
 		        },
 		        onPropChange: function(param) {
+		            mobileSync.initSync();
 		            resetPendingChanges();
 		            mobileBgTask.reset();
 		        }
@@ -345,29 +344,35 @@ CswAppMode.mode = 'mobile';
 
   		function updatedUnsyncedChanges() {
 			///<summary> Updates the count of unsynced changes on the Online page.</summary>
-  		    $('#ss_pendingchangecnt').text( tryParseString(mobileStorage.getItem('unSyncedChanges'),'0') );
-		}
+  		    if (!isNullOrEmpty(onlinePage)) {
+  		        var pendingChngCnt = onlinePage.$content.find('#ss_pendingchangecnt');
+  		        if (!isNullOrEmpty(pendingChngCnt)) {
+  		            pendingChngCnt.text(tryParseString(mobileStorage.getItem('unSyncedChanges'), '0'));
+  		        }
+  		    }
+  		}
 
 	    function resetPendingChanges(succeeded) {
 			if ( mobileStorage.pendingChanges() ) {
-				$('.onlineStatus').addClass('pendingchanges')
-								  .find('span.ui-btn-text')
-								  .addClass('pendingchanges');
+				$('.' + CswMobileCssClasses.onlineStatus.name)
+    				.addClass(CswMobileCssClasses.pendingChanges.name)
+					.find('span.ui-btn-text')
+					.addClass(CswMobileCssClasses.pendingChanges.name);
 			} else {
-				$('.onlineStatus').removeClass('pendingchanges')
-								  .find('span.ui-btn-text')
-								  .removeClass('pendingchanges');
+				$('.' + CswMobileCssClasses.onlineStatus.name)
+    				.removeClass(CswMobileCssClasses.pendingChanges.name)
+					.find('span.ui-btn-text')
+					.removeClass(CswMobileCssClasses.pendingChanges.name);
 			}
 			
 			if(arguments.length === 1) {
 				if (succeeded) {
 					mobileStorage.clearUnsyncedChanges();
 					updatedUnsyncedChanges();
-					$('#ss_lastsync_success').text(mobileStorage.lastSyncSuccess());
 				}
-				else {
-					$('#ss_lastsync_attempt').text(mobileStorage.lastSyncAttempt());
-				}
+			    if (!isNullOrEmpty(onlinePage)) {
+			        onlinePage.page.setLastSync(succeeded);
+			    }
 			}
 		}
 	    
