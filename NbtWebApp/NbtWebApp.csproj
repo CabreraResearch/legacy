@@ -106,7 +106,7 @@
     <Content Include="Act_Receiving.aspx" />
     <Content Include="Act_SplitSamples.aspx" />
     <Compile Include="App_Code\CswNbtWebServiceAuditing.cs" />
-    <Content Include="App_Code\CswNbtWebServiceImportInspectionQuestions.cs" />
+    <Compile Include="App_Code\CswNbtWebServiceImportInspectionQuestions.cs" />
     <Compile Include="App_Code\CswNbtWebServiceInspections.cs" />
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
@@ -115,6 +115,7 @@
     <Content Include="js\CswClientDb.js" />
     <Content Include="js\CswEnums.js" />
     <Content Include="js\CswProfileMethod.js" />
+    <Content Include="js\jquery\CswImportInspectionQuestions.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeMultiList.js" />
     <Content Include="js\mobile\pages\CswMobileMenuButton.js" />
     <Content Include="js\mobile\pages\CswMobilePage.js" />

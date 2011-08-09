@@ -816,17 +816,28 @@
 
 			case 'Import_Inspection_Questions':
 
-				function _setupImport_Inspection_Questions() 
-				{
-					clear({ 'all': true });
+				clear({ 'all': true });
 
-					$('#CenterTopDiv').CswWizard('init', { 
-				        'ID': o.ID + '_wizard',
-				        'Title': 'Import Inspection Questions',
-			        });
-				}
+				var ImportInspectionQuestionsOptions = {
+					'viewid': o.ActionOptions.viewid,
+					'viewmode': o.ActionOptions.viewmode,
+					'onCancel': function ()
+					{
+						clear({ 'all': true });
+						refreshSelected();
+					},
+					'onFinish': function (viewid, viewmode)
+					{
+						clear({ 'all': true });
+						if(isTrue(o.ActionOptions.IgnoreReturn))
+							refreshSelected();
+						else
+							handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+					},
+					'startingStep': o.ActionOptions.startingStep
+				};
 
-				_setupImport_Inspection_Questions();
+				$('#CenterTopDiv').CswImportInspectionQuestions(ImportInspectionQuestionsOptions);
 
 				break;
 
