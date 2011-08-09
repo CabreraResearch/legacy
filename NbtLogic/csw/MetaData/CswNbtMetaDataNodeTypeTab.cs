@@ -91,11 +91,19 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         }
 
-        public Int32 TabId
-        {
-            get { return CswConvert.ToInt32( _NodeTypeTabRow[ "nodetypetabsetid" ].ToString() ); }
-        }
-        public string TabName
+		public Int32 TabId
+		{
+			get { return CswConvert.ToInt32( _NodeTypeTabRow["nodetypetabsetid"].ToString() ); }
+		}
+		public Int32 FirstTabVersionId
+		{
+			get { return CswConvert.ToInt32( _NodeTypeTabRow["firsttabversionid"].ToString() ); }
+		}
+		public Int32 PriorTabVersionId
+		{
+			get { return CswConvert.ToInt32( _NodeTypeTabRow["priortabversionid"].ToString() ); }
+		}
+		public string TabName
         {
             get { return _NodeTypeTabRow[ "tabname" ].ToString(); }
             set

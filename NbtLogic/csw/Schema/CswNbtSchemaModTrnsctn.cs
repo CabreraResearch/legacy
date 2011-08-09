@@ -307,7 +307,7 @@ namespace ChemSW.Nbt.Schema
             {
                 if( _CswNbtMetaDataForSchemaUpdater == null && _CswNbtResources.IsInitializedForDbAccess )
                 {
-                    _CswNbtMetaDataForSchemaUpdater = new CswNbtMetaDataForSchemaUpdater( _CswNbtResources, _CswNbtResources.MetaData._CswNbtMetaDataResources, false );
+                    _CswNbtMetaDataForSchemaUpdater = new CswNbtMetaDataForSchemaUpdater( _CswNbtResources, _CswNbtResources.MetaData._CswNbtMetaDataResources );
                     _CswNbtResources.assignMetaDataEvents( _CswNbtMetaDataForSchemaUpdater );
                 }
                 return _CswNbtMetaDataForSchemaUpdater;

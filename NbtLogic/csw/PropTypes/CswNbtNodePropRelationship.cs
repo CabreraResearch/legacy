@@ -238,10 +238,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
             }
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetId ) )
-            {
-                CswXmlDocument.AppendXmlNode( ParentNode, "allowadd", "true" );
-            }
+			if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
+			{
+				CswXmlDocument.AppendXmlNode( ParentNode, "allowadd", "true" );
+			}
 
             XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
             Dictionary<CswPrimaryKey, string> Options = getOptions();
@@ -271,10 +271,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentNode.Add( new XElement( "nodetypeid", TargetId.ToString() ) );
             }
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetId ) )
-            {
-                ParentNode.Add( new XElement( "allowadd", "true" ) );
-            }
+			if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
+			{
+				ParentNode.Add( new XElement( "allowadd", "true" ) );
+			}
 
             XElement OptionsNode = new XElement( "options" );
             ParentNode.Add( OptionsNode );
@@ -300,10 +300,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject.Add( new JProperty( "nodetypeid", TargetId.ToString() ) );
             }
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetId ) )
-            {
-                ParentObject.Add( new JProperty( "allowadd", "true" ) );
-            }
+			if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
+			{
+				ParentObject.Add( new JProperty( "allowadd", "true" ) );
+			}
 
             JProperty OptionsNode = new JProperty( "options" );
             ParentObject.Add( OptionsNode );

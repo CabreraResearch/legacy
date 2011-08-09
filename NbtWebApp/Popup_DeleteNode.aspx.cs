@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.WebPages
 
                 if( _Node != null )
                 {
-                    if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, _NodeKey.NodeTypeId, _Node, null ) )
+                    if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Master.CswNbtResources.MetaData.getNodeType(_NodeKey.NodeTypeId), false, null, null, _Node, null ) )
                     {
                         deleteError1 = "You do not have permission to delete:";
                         canDelete = false;
@@ -151,7 +151,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-				if( Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, _NodeKey.NodeTypeId, _Node, null ) )
+				if( Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Master.CswNbtResources.MetaData.getNodeType(_NodeKey.NodeTypeId), false, null, null, _Node, null ) )
                 {
                     _Node.delete();
 

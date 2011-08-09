@@ -216,8 +216,9 @@ namespace ChemSW.Nbt
                             Collection<CswNbtNodeKey> ChildKeys = null;
 							if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
 							{
+								CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( CurrentRow["nodetypeid"] ) );
 								if( !RequireViewPermissions ||
-									_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, CswConvert.ToInt32( CurrentRow["nodetypeid"] ), _RunAsUser ) )
+									_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType, true, null, _RunAsUser ) )
 								{
 									NodeIsAllowed = true;
 								}

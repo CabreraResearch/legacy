@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Actions
             Int32 ReturnVal = 0;
 
             // Must have create permissions on this generator's target's nodetype
-			if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetNodeTypeId ) )
+			if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId ) ) )
 			{
 				deleteExistingFutureNodes( CswNbtNodeGenerator );
 

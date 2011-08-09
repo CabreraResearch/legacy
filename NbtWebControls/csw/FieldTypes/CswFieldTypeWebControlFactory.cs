@@ -244,7 +244,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 										 ( EditMode == NodeEditMode.AddInPopup &&
 										   !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, PropWrapper.NodeTypeProp.NodeType ) ) ||
 										 ( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) &&
-										   !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, PropWrapper.NodeTypeProp.NodeType, Node, PropWrapper.NodeTypeProp ) ) ) ) );
+										   !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, PropWrapper.NodeTypeProp.NodeType, false, null, null, Node, PropWrapper.NodeTypeProp ) ) ) ) );
 			}
 
 			// BZ 8307
