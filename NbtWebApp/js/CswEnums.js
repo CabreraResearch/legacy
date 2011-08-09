@@ -130,6 +130,62 @@ var CswNodeSpecies = {
     More: { name: 'More' }
 };
 
+CswSubField_Names = {
+    Unknown: { name: 'unknown' }, 
+    AllowedAnswers: { name: 'allowedanswers' },
+    Answer: { name: 'answer' },
+    Barcode: { name: 'barcode' },
+    Blob: { name: 'blob' },
+    Checked: { name: 'checked' },
+    Column: { name: 'column' },
+    Comments: { name: 'comments' },
+    CompliantAnswers: { name: 'compliantanswers' },
+    ContentType: { name: 'contenttype' },
+    CorrectiveAction: { name: 'correctiveaction' },
+    DateAnswered: { name: 'dateanswered' },
+    DateCorrected: { name: 'datecorrected' },
+    Href: { name: 'href' },
+    Image: { name: 'image' },
+    Interval: { name: 'interval' },
+    IsCompliant: { name: 'iscompliant' },
+    Mol: { name: 'mol' },
+    Name: { name: 'name' },
+    NodeID: { name: 'nodeid' },
+    NodeType: { name: 'nodetype' },
+    Number: { name: 'number' },
+    Password: { name: 'password' },
+    Path: { name: 'path' },
+    Required: { name: 'required' },
+    Row: { name: 'row' },
+    Sequence: { name: 'sequence' },
+    StartDateTime: { name: 'startdatetime' },
+    Text: { name: 'text' },
+    Units: { name: 'units' },
+    Value: { name: 'value' },
+    ViewID: { name: 'viewid' },
+    ChangedDate: { name: 'changeddate' },
+	Base: { name: 'base' },
+	Exponent: { name: 'exponent' }
+};
+
+CswSubFields_PropColumn = {
+    Unknown: { name: 'unknown' },
+    Field1: { name: 'field1' },
+    Field1_FK: { name: 'field1_fk' },
+    Field1_Date: { name: 'field1_date' },
+	Field1_Numeric: { name: 'field1_numeric' },
+	Field2_Numeric: { name: 'field2_numeric' },
+	Field2: { name: 'field2' },
+    Field2_Date: { name: 'field2_date' },
+    Field3: { name: 'field3' },
+    Field4: { name: 'field4' },
+    Field5: { name: 'field5' },
+    Gestalt: { name: 'gestalt' }, 
+    ClobData: { name: 'clobdata' },
+    ReadOnly: { name: 'readonly' },
+    PendingUpdate: { name: 'pendingupdate' }
+};
+
 var CswFieldTypes = {
     AuditHistoryGrid: { name: 'AuditHistoryGrid', subfields: { } },
     Barcode: { 
@@ -305,61 +361,6 @@ var CswFieldTypes = {
 	ViewReference: { name: 'ViewReference', subfields: { } }
 };
 
-CswSubField_Names = {
-    Unknown: { name: 'unknown' }, 
-    AllowedAnswers: { name: 'allowedanswers' },
-    Answer: { name: 'answer' },
-    Barcode: { name: 'barcode' },
-    Blob: { name: 'blob' },
-    Checked: { name: 'checked' },
-    Column: { name: 'column' },
-    Comments: { name: 'comments' },
-    CompliantAnswers: { name: 'compliantanswers' },
-    ContentType: { name: 'contenttype' },
-    CorrectiveAction: { name: 'correctiveaction' },
-    DateAnswered: { name: 'dateanswered' },
-    DateCorrected: { name: 'datecorrected' },
-    Href: { name: 'href' },
-    Image: { name: 'image' },
-    Interval: { name: 'interval' },
-    IsCompliant: { name: 'iscompliant' },
-    Mol: { name: 'mol' },
-    Name: { name: 'name' },
-    NodeID: { name: 'nodeid' },
-    NodeType: { name: 'nodetype' },
-    Number: { name: 'number' },
-    Password: { name: 'password' },
-    Path: { name: 'path' },
-    Required: { name: 'required' },
-    Row: { name: 'row' },
-    Sequence: { name: 'sequence' },
-    StartDateTime: { name: 'startdatetime' },
-    Text: { name: 'text' },
-    Units: { name: 'units' },
-    Value: { name: 'value' },
-    ViewID: { name: 'viewid' },
-    ChangedDate: { name: 'changeddate' },
-	Base: { name: 'base' },
-	Exponent: { name: 'exponent' }
-};
-
-CswSubFields_PropColumn = {
-    Unknown: { name: 'unknown' },
-    Field1: { name: 'field1' },
-    Field1_FK: { name: 'field1_fk' },
-    Field1_Date: { name: 'field1_date' },
-	Field1_Numeric: { name: 'field1_numeric' },
-	Field2_Numeric: { name: 'field2_numeric' },
-	Field2: { name: 'field2' },
-    Field2_Date: { name: 'field2_date' },
-    Field3: { name: 'field3' },
-    Field4: { name: 'field4' },
-    Field5: { name: 'field5' },
-    Gestalt: { name: 'gestalt' }, 
-    ClobData: { name: 'clobdata' },
-    ReadOnly: { name: 'readonly' },
-    PendingUpdate: { name: 'pendingupdate' }
-};
 //#endregion Global
 
 //#region Mobile
