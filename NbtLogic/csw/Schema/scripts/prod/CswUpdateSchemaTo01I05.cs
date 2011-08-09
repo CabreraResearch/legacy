@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.Schema
 
 
             // case 20939
-            _CswNbtSchemaModTrnsctn.createAction(CswNbtActionName.Import_Inspection_Questions, true, string.Empty, "Inspections");
+            _CswNbtSchemaModTrnsctn.createAction(CswNbtActionName.Create_Inspection, true, string.Empty, "Inspections");
         }//Update()
 
     }//class CswUpdateSchemaTo01I05

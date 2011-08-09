@@ -759,8 +759,33 @@
 //				break;
 //			case 'Assign_Tests':
 //				break;
-//			case 'Create_Inspection':
-//				break;
+
+			case 'Create_Inspection':
+				clear({ 'all': true });
+
+				var ImportInspectionQuestionsOptions = {
+					'viewid': o.ActionOptions.viewid,
+					'viewmode': o.ActionOptions.viewmode,
+					'onCancel': function ()
+					{
+						clear({ 'all': true });
+						refreshSelected();
+					},
+					'onFinish': function (viewid, viewmode)
+					{
+						clear({ 'all': true });
+						if(isTrue(o.ActionOptions.IgnoreReturn))
+							refreshSelected();
+						else
+							handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+					},
+					'startingStep': o.ActionOptions.startingStep
+				};
+
+				$('#CenterTopDiv').CswImportInspectionQuestions(ImportInspectionQuestionsOptions);
+
+				break;
+
 //			case 'Design':
 //				break;
 			case 'Edit_View':
@@ -814,32 +839,6 @@
 
 				break;
 
-			case 'Import_Inspection_Questions':
-
-				clear({ 'all': true });
-
-				var ImportInspectionQuestionsOptions = {
-					'viewid': o.ActionOptions.viewid,
-					'viewmode': o.ActionOptions.viewmode,
-					'onCancel': function ()
-					{
-						clear({ 'all': true });
-						refreshSelected();
-					},
-					'onFinish': function (viewid, viewmode)
-					{
-						clear({ 'all': true });
-						if(isTrue(o.ActionOptions.IgnoreReturn))
-							refreshSelected();
-						else
-							handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
-					},
-					'startingStep': o.ActionOptions.startingStep
-				};
-
-				$('#CenterTopDiv').CswImportInspectionQuestions(ImportInspectionQuestionsOptions);
-
-				break;
 
 //			case 'Load_Mobile_Data':
 //				break;
