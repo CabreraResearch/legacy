@@ -61,7 +61,7 @@ var CswImportInspectionQuestions_WizardSteps = {
 			'disableOnClick': true,
 			'onclick': function() {
 					CswAjaxJSON({
-						url: ExcelTemplateUrl
+					    url: o.ExcelTemplateUrl
 					})
 			} // onclick
 		}); //  button
