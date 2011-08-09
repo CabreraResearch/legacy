@@ -8,6 +8,7 @@
 /// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../controls/CswMobileListView.js" />
 /// <reference path="../fieldtypes/CswMobilePropFactory.js" />
+/// <reference path="../../CswString.js" />
 
 //#region CswMobilePageProps
 
@@ -177,7 +178,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 		}
 		var nodeJson = mobileStorage.fetchCachedNodeJson(nodeId);
 	    var propId = o.prop.propId;
-	    var elementId = elementId;
+	    var elementId = new CswString(o.control.CswAttrDom('id'));
 	    
 		if (!isNullOrEmpty(nodeJson)) {
 			mobileStorage.addUnsyncedChange();
