@@ -132,37 +132,233 @@ var CswNodeSpecies = {
 
 var CswFieldTypes = {
     AuditHistoryGrid: { name: 'AuditHistoryGrid', subfields: { } },
-    Barcode: { name: 'Barcode', subfields: { } },
+    Barcode: { 
+        name: 'Barcode', 
+        subfields: {
+            Barcode: { 
+                subfield: CswSubField_Names.Barcode,
+                column: CswSubFields_PropColumn.Field1    
+            },
+            Sequence: {
+                subfield: CswSubField_Names.Number,
+                column: CswSubFields_PropColumn.Field1_Numeric
+            }
+        } 
+    },
 	Composite: { name: 'Composite', subfields: { } },
-	Date: { name: 'Date', subfields: { } },
+	Date: {
+	     name: 'Date', 
+	     subfields: {
+            Value: { 
+                subfield: CswSubField_Names.Value,
+                column: CswSubFields_PropColumn.Field1_Date
+            }
+        } 
+	},
 	File: { name: 'File', subfields: { } },
 	Grid: { name: 'Grid', subfields: { } },
 	Image: { name: 'Image', subfields: { } },
-	Link: { name: 'Link', subfields: { } },
-	List: { name: 'List', subfields: { } },
+	Link: {
+	     name: 'Link', 
+	     subfields: {
+            Text: { 
+                subfield: CswSubField_Names.Text,
+                column: CswSubFields_PropColumn.Field1    
+            },
+            Href: {
+                subfield: CswSubField_Names.Href,
+                column: CswSubFields_PropColumn.Field2
+            }
+        } 
+	},
+	List: {
+	     name: 'List', 
+	     subfields: {
+            Value: { 
+                subfield: CswSubField_Names.Value,
+                column: CswSubFields_PropColumn.Field1    
+            }
+        } 
+	},
 	Location: { name: 'Location', subfields: { } },
 	LocationContents: { name: 'LocationContents', subfields: { } },
-	Logical: { name: 'Logical', subfields: { } },
+	Logical: {
+	     name: 'Logical', 
+	     subfields: {
+            Checked: { 
+                subfield: CswSubField_Names.Checked,
+                column: CswSubFields_PropColumn.Field1    
+            }
+        } 
+	},
 	LogicalSet: { name: 'LogicalSet', subfields: { } },
-	Memo: { name: 'Memo', subfields: { } },
+	Memo: {
+	     name: 'Memo', 
+	     subfields: {
+            Text: { 
+                subfield: CswSubField_Names.Text,
+                column: CswSubFields_PropColumn.Gestalt
+            }
+        } 
+	},
 	MTBF: { name: 'MTBF', subfields: { } },
 	MultiList: { name: 'MultiList', subfields: { } },
 	NodeTypeSelect: { name: 'NodeTypeSelect', subfields: { } },
-	Number: { name: 'Number', subfields: { } },
-	Password: { name: 'Password', subfields: { } },
+	Number: {
+	     name: 'Number', 
+	     subfields: {
+            Value: { 
+                subfield: CswSubField_Names.Value,
+                column: CswSubFields_PropColumn.Field1_Numeric
+            }
+        } 
+	},
+	Password: {
+	     name: 'Password', 
+	     subfields: {
+            Password: { 
+                subfield: CswSubField_Names.Password,
+                column: CswSubFields_PropColumn.Field1    
+            },
+            ChangedDate: {
+                subfield: CswSubField_Names.ChangedDate,
+                column: CswSubFields_PropColumn.Field2
+            }
+        } 
+	},
 	PropertyReference: { name: 'PropertyReference', subfields: { } },
-	Quantity: { name: 'Quantity', subfields: { } },
-	Question: { name: 'Question', subfields: { } },
+	Quantity: {
+	     name: 'Quantity', 
+	     subfields: {
+            Value: { 
+                subfield: CswSubField_Names.Value,
+                column: CswSubFields_PropColumn.Field1_Numeric    
+            },
+            Units: {
+                subfield: CswSubField_Names.Number,
+                column: CswSubFields_PropColumn.Field2
+            }
+        } 
+	},
+	Question: {
+	     name: 'Question', 
+	     subfields: {
+            Answer: { 
+                subfield: CswSubField_Names.Answer,
+                column: CswSubFields_PropColumn.Field1    
+            },
+            CorrectiveAction: {
+                subfield: CswSubField_Names.CorrectiveAction,
+                column: CswSubFields_PropColumn.Field2
+            },
+	        IsCompliant: {
+                subfield: CswSubField_Names.IsCompliant,
+                column: CswSubFields_PropColumn.Field3
+            },
+            Comments: {
+                subfield: CswSubField_Names.Comments,
+                column: CswSubFields_PropColumn.ClobData
+            },
+            DateAnswered: {
+                subfield: CswSubField_Names.DateAnswered,
+                column: CswSubFields_PropColumn.Field1_Date
+            },
+            DateCorrected: {
+                subfield: CswSubField_Names.DateCorrected,
+                column: CswSubFields_PropColumn.Field2_Date
+            }	         
+        } 
+	},
 	Relationship: { name: 'Relationship', subfields: { } },
 	Scientific: { name: 'Scientific', subfields: { } },
 	Sequence: { name: 'Sequence', subfields: { } },
-	Static: { name: 'Static', subfields: { } },
-	Text: { name: 'Text', subfields: { } },
-	Time: { name: 'Time', subfields: { } },
+	Static: {
+	     name: 'Static', 
+	     subfields: {
+            Text: { 
+                subfield: CswSubField_Names.Text,
+                column: CswSubFields_PropColumn.Field1    
+            }
+        } 
+	},
+	Text: {
+	     name: 'Text', 
+	     subfields: {
+            Text: { 
+                subfield: CswSubField_Names.Text,
+                column: CswSubFields_PropColumn.Field1    
+            }
+        } 
+	},
+	Time: {
+	     name: 'Time', 
+	     subfields: {
+            Value: { 
+                subfield: CswSubField_Names.Value,
+                column: CswSubFields_PropColumn.Field1_Date
+            }
+        } 
+	},
 	TimeInterval: { name: 'TimeInterval', subfields: { } },
 	UserSelect: { name: 'UserSelect', subfields: { } },
 	ViewPickList: { name: 'ViewPickList', subfields: { } },
 	ViewReference: { name: 'ViewReference', subfields: { } }
+};
+
+CswSubField_Names = {
+    Unknown: { name: 'unknown' }, 
+    AllowedAnswers: { name: 'allowedanswers' },
+    Answer: { name: 'answer' },
+    Barcode: { name: 'barcode' },
+    Blob: { name: 'blob' },
+    Checked: { name: 'checked' },
+    Column: { name: 'column' },
+    Comments: { name: 'comments' },
+    CompliantAnswers: { name: 'compliantanswers' },
+    ContentType: { name: 'contenttype' },
+    CorrectiveAction: { name: 'correctiveaction' },
+    DateAnswered: { name: 'dateanswered' },
+    DateCorrected: { name: 'datecorrected' },
+    Href: { name: 'href' },
+    Image: { name: 'image' },
+    Interval: { name: 'interval' },
+    IsCompliant: { name: 'iscompliant' },
+    Mol: { name: 'mol' },
+    Name: { name: 'name' },
+    NodeID: { name: 'nodeid' },
+    NodeType: { name: 'nodetype' },
+    Number: { name: 'number' },
+    Password: { name: 'password' },
+    Path: { name: 'path' },
+    Required: { name: 'required' },
+    Row: { name: 'row' },
+    Sequence: { name: 'sequence' },
+    StartDateTime: { name: 'startdatetime' },
+    Text: { name: 'text' },
+    Units: { name: 'units' },
+    Value: { name: 'value' },
+    ViewID: { name: 'viewid' },
+    ChangedDate: { name: 'changeddate' },
+	Base: { name: 'base' },
+	Exponent: { name: 'exponent' }
+};
+
+CswSubFields_PropColumn = {
+    Unknown: { name: 'unknown' },
+    Field1: { name: 'field1' },
+    Field1_FK: { name: 'field1_fk' },
+    Field1_Date: { name: 'field1_date' },
+	Field1_Numeric: { name: 'field1_numeric' },
+	Field2_Numeric: { name: 'field2_numeric' },
+	Field2: { name: 'field2' },
+    Field2_Date: { name: 'field2_date' },
+    Field3: { name: 'field3' },
+    Field4: { name: 'field4' },
+    Field5: { name: 'field5' },
+    Gestalt: { name: 'gestalt' }, 
+    ClobData: { name: 'clobdata' },
+    ReadOnly: { name: 'readonly' },
+    PendingUpdate: { name: 'pendingupdate' }
 };
 //#endregion Global
 

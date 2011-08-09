@@ -35,9 +35,10 @@ function CswMobileFieldTypeLogical(ftDef) {
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
-        value = tryParseString(p.checked);
+
+        subfields = CswFieldTypes.Logical.subfields;
+        value = tryParseString(p[subfields.Checked.subfield.name]);
         gestalt = tryParseString(p.gestalt, '');
-        subfields = '';
         
         $content = ensureContent(contentDivId);
         contentDivId = p.nodekey;
@@ -94,6 +95,14 @@ function CswMobileFieldTypeLogical(ftDef) {
     function applyFieldTypeLogicToContent($control) {
         
     }
+
+    function updatePropValue(json,id,newValue) {
+        if (json.hasOwnProperty(subfields.Checked.subfield.name)) {
+            json[subfields.Checked.subfield.name] = newValue;
+            json.wasmodified = true;
+        }
+        return json;
+    }
     
 	//#endregion private
     
@@ -101,6 +110,7 @@ function CswMobileFieldTypeLogical(ftDef) {
 
     this.$content = $content;
     this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
+    this.updatePropValue = updatePropValue;
     this.value = value;
     this.contentDivId = contentDivId;
     this.propId = propId;

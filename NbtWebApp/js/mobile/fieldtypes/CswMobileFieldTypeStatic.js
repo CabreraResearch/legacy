@@ -34,9 +34,10 @@ function CswMobileFieldTypeStatic(ftDef) {
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
+
+        subfields = CswFieldTypes.Static.subfields; //don't use this yet. Non-implemented Field Types default to Static.
         value = tryParseString(p.value,p.text);
         gestalt = tryParseString(p.gestalt, '');
-        subfields = '';
         
         $content = ensureContent(contentDivId);
         $content.append($('<p style="white-space:normal;" id="' + elementId + '">' + tryParseString(value,gestalt) + '</p>'));
@@ -46,12 +47,17 @@ function CswMobileFieldTypeStatic(ftDef) {
         
     }
     
+    function updatePropValue(json,id,newValue) {
+        return json;
+    }    
+    
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
     this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
+    this.updatePropValue = updatePropValue;
     this.value = value;
     this.gestalt = gestalt;
     this.contentDivId = contentDivId;

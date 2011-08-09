@@ -19,7 +19,7 @@ function CswMobileFieldTypeLink(ftDef) {
 
     var divSuffix = '_propdiv';
     var propSuffix = '_input';
-    var $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
+    var $content, contentDivId, elementId, propId, propName, subfields, value, href, gestalt;
     
     //ctor
     (function () {
@@ -36,9 +36,11 @@ function CswMobileFieldTypeLink(ftDef) {
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
-        value = tryParseString(p.text);
+
+        subfields = CswFieldTypes.Link.subfields;
+        href = tryParseString(subfields.Href.subfield.name);
+        value = tryParseString(subfields.Text.subfield.name);
         gestalt = tryParseString(p.gestalt, '');
-        subfields = '';
         
         $content = ensureContent(contentDivId);
         $content.CswLink('init', { ID: elementId, href: p.href, rel: 'external', value: value });
@@ -48,12 +50,17 @@ function CswMobileFieldTypeLink(ftDef) {
         
     }
     
+    function updatePropValue(json,id,newValue) {
+        return json;
+    }
+    
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
     this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
+    this.updatePropValue = updatePropValue;
     this.contentDivId = contentDivId;
     this.propId = propId;
     this.propName = propName;

@@ -35,11 +35,12 @@ function CswMobileFieldTypeList(ftDef) {
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
-        value = tryParseString(p.value);
+                
+        subfields = CswFieldTypes.List.subfields;
+        value = tryParseString(p[subfields.Value.subfield.name]);
         var optionsstr = p.options;
         gestalt = tryParseString(p.gestalt, '');
-        subfields = '';
-
+        
         var values = [];
         var options = optionsstr.split(',');
 		for (var i = 0; i < options.length; i++) {
@@ -62,6 +63,14 @@ function CswMobileFieldTypeList(ftDef) {
     function applyFieldTypeLogicToContent($control) {
         
     }
+
+    function updatePropValue(json,id,newValue) {
+        if (json.hasOwnProperty(subfields.Value.subfield.name)) {
+            json[subfields.Value.subfield.name] = newValue;
+            json.wasmodified = true;
+        }
+        return json;
+    }
     
 	//#endregion private
     
@@ -69,6 +78,7 @@ function CswMobileFieldTypeList(ftDef) {
 
     this.$content = $content;
     this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
+    this.updatePropValue = updatePropValue;
     this.value = value;
     this.contentDivId = contentDivId;
     this.propId = propId;

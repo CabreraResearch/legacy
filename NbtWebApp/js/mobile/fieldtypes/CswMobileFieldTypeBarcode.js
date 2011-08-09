@@ -22,20 +22,22 @@ function CswMobileFieldTypeBarcode(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propid: '',
-            propname: '',
+            propId: '',
+            propName: '',
             gestalt: '',
             value: ''
         };
         if (ftDef) $.extend(p, ftDef);
 
-        contentDivId = p.nodekey + divSuffix;
-        elementId = p.propId + propSuffix;
-        value = tryParseString(p.value);
-        gestalt = tryParseString(p.gestalt, '');
-        propId = p.propid;
-        propName = p.propname;
-        subfields = '';
+        propId = p.propId;
+        propName = p.propName;
+        contentDivId = propId + divSuffix;
+        elementId = propId + propSuffix;
+
+        subfields = CswFieldTypes.Barcode.subfields;
+        
+        value = tryParseString(p[subfields.Barcode.subfield.name]);
+        gestalt = tryParseString(p.gestalt);
         
         $content = ensureContent(contentDivId);
         $content.CswInput('init', { type: CswInput_Types.text, ID: elementId, value: value });
@@ -45,12 +47,21 @@ function CswMobileFieldTypeBarcode(ftDef) {
         
     }
     
+    function updatePropValue(json,id,newValue) {
+        if (json.hasOwnProperty(subfields.Barcode.subfield.name)) {
+            json[subfields.Barcode.subfield.name] = newValue;
+            json.wasmodified = true;
+        }
+        return json;
+    }
+    
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
     this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
+    this.updatePropValue = updatePropValue;
     this.value = value;
     this.gestalt = gestalt;
     this.contentDivId = contentDivId;

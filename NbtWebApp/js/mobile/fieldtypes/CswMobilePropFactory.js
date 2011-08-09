@@ -185,6 +185,11 @@ function CswMobilePropsFactory(propDef) {
         return ret;
     }
     
+    function updatePropValue(json,id,newValue) {
+        var ret = prop.updatePropValue(json, id, newValue);
+        return ret;
+    }
+    
 	//#endregion private
     
     //#region public, priveleged
@@ -193,6 +198,7 @@ function CswMobilePropsFactory(propDef) {
     this.$content = $content;
     this.contentDivId = contentDivId;
     this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
+    this.updatePropValue = updatePropValue;
     this.nodeId = nodeId;
     this.tabId = tabId;
     this.viewId = viewId;

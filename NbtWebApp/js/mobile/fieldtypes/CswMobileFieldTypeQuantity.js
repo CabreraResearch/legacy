@@ -17,7 +17,7 @@ function CswMobileFieldTypeQuantity(ftDef) {
 
     var divSuffix = '_propdiv';
     var propSuffix = '_input';
-    var $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
+    var $content, contentDivId, elementId, propId, propName, subfields, value, units, gestalt;
     
     //ctor
     (function () {
@@ -34,13 +34,14 @@ function CswMobileFieldTypeQuantity(ftDef) {
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
-        value = tryParseString(p.value);
-        var units = tryParseString(p.units);
+
+        subfields = CswFieldTypes.Quantity.subfields;        
+        value = tryParseString(p[subfields.Value.name]);
+        units = tryParseString(p[subfields.Units.name]);
         if (!isNullOrEmpty(units)) {
             value += ' ' + units;
         }
-        gestalt = tryParseString(p.gestalt, '');
-        subfields = '';
+        gestalt = tryParseString(p.gestalt);
         
         $content = ensureContent(contentDivId);
         $content.CswInput('init', { type: CswInput_Types.text, ID: elementId, value: value });
@@ -49,6 +50,14 @@ function CswMobileFieldTypeQuantity(ftDef) {
     function applyFieldTypeLogicToContent($control) {
         
     }
+
+    function updatePropValue(json,id,newValue) {
+        if (json.hasOwnProperty(subfields.Value.subfield.name)) {
+            json[subfields.Value.subfield.name] = newValue;
+            json.wasmodified = true;
+        }
+        return json;
+    }    
     
 	//#endregion private
     
@@ -56,6 +65,7 @@ function CswMobileFieldTypeQuantity(ftDef) {
 
     this.$content = $content;
     this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
+    this.updatePropValue = updatePropValue;
     this.value = value;
     this.gestalt = gestalt;
     this.contentDivId = contentDivId;

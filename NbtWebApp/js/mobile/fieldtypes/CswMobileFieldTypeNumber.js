@@ -33,9 +33,10 @@ function CswMobileFieldTypeNumber(ftDef) {
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
-        value = tryParseString(p.value);
+
+        subfields = CswFieldTypes.Number.subfields;        
+        value = tryParseString(p[subfields.Value.subfield.name]);
         gestalt = tryParseString(p.gestalt, '');
-        subfields = '';
         
         $content = ensureContent(contentDivId);
         $content.CswInput('init', { type: CswInput_Types.number, ID: elementId, value: value });
@@ -44,13 +45,21 @@ function CswMobileFieldTypeNumber(ftDef) {
     function applyFieldTypeLogicToContent($control) {
         
     }
-    
+
+    function updatePropValue(json,id,newValue) {
+        if (json.hasOwnProperty(subfields.Value.subfield.name)) {
+            json[subfields.Value.subfield.name] = newValue;
+            json.wasmodified = true;
+        }
+        return json;
+    }    
 	//#endregion private
     
     //#region public, priveleged
 
     this.$content = $content;
     this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
+    this.updatePropValue = updatePropValue;
     this.value = value;
     this.gestalt = gestalt;
     this.contentDivId = contentDivId;

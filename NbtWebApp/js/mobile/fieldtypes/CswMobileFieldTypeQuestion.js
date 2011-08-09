@@ -37,10 +37,11 @@ function CswMobileFieldTypeQuestion(ftDef) {
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
-        value = tryParseString(p.value);
-        gestalt = tryParseString(p.gestalt, '');
-        subfields = {};
 
+        subfields = CswFieldTypes.Question.subfields;
+        value = tryParseString(p[subfields.Answer.subfield.name]);
+        gestalt = tryParseString(p.gestalt, '');
+        
         var answer = tryParseString(p.answer);
         var allowedAnswers = tryParseString(p.allowedanswers).split(',');
         compliantAnswers = tryParseString(p.compliantanswers).split(',');
@@ -85,50 +86,10 @@ function CswMobileFieldTypeQuestion(ftDef) {
 			.appendTo($prop);
         subfields.correctiveaction = propId + '_cor';
 
-//		$corAction.unbind('change');
-//		$corAction.bind('change', function(eventObj) {
-//			var $cor = $(this);
-//			if ($cor.val() === '') {
-//				$label.addClass('OOC');
-//			} else {
-//				$label.removeClass('OOC');
-//			}
-//		});
-
         $('<textarea name="' + propId + '_com" id="' + propId + '_com" placeholder="Comments">' + comments + '</textarea>')
             .appendTo($prop);
         subfields.comments = propId + '_com';
     })(); //ctor
-
-    function makeQuestionAnswerFieldSet(answers, answer, compliantAnswers) {
-//			    $answer.bind('change', function(eventObj) {
-
-//			        var thisAnswer = $(this).val();
-
-//			        var correctiveActionId = makeSafeId({ prefix: id, ID: 'cor' });
-//			        var liSuffixId = makeSafeId({ prefix: id, ID: 'label' });
-
-//			        var $cor = $('#' + correctiveActionId);
-//			        var $li = $('#' + liSuffixId);
-
-//			        if (compliantAnswers.indexOf(thisAnswer) >= 0) {
-//			            $cor.css('display', 'none');
-//			            $li.removeClass('OOC');
-
-//			        } else {
-//			            $cor.css('display', '');
-
-//			            if (isNullOrEmpty($cor.val())) {
-//			                $li.addClass('OOC');
-//			            } else {
-//			                $li.removeClass('OOC');
-//			            }
-//			        }
-//			        fixGeometry();
-
-//			        return false;
-//			    });
-	} // _makeQuestionAnswerFieldSet()
     
     function inCompliance(currentAnswer,correctiveAction) {
         var ret = true;
@@ -156,6 +117,27 @@ function CswMobileFieldTypeQuestion(ftDef) {
                 $control.find('h2').addClass(CswMobileCssClasses.OOC.name);
             }
         }
+        fixGeometry();
+    }
+    
+    function updatePropValue(json,id,newValue) {
+        var subFieldToUpdate;
+        if (id.contains(makeSafeId({ ID: propName, suffix: 'com' }))) {
+            subFieldToUpdate = subfields.Comments.subfield.name;
+		} 
+		else if (id.contains(makeSafeId({ ID: propName, suffix: 'ans' }))) {
+            subFieldToUpdate = subfields.Answer.subfield.name;
+		} 
+		else if (id.contains(makeSafeId({ ID: propName, suffix: 'cor' }))) {
+            subFieldToUpdate = subfields.CorrectiveAction.subfield.name;
+		}
+        
+        if ( !isNullOrEmpty(subFieldToUpdate) &&
+            json.hasOwnProperty(subFieldToUpdate)) {
+            json[subFieldToUpdate] = newValue;
+            json.wasmodified = true;
+        }
+        return json;
     }
     
 	//#endregion private
@@ -164,6 +146,7 @@ function CswMobileFieldTypeQuestion(ftDef) {
 
     this.$content = $content;
     this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
+    this.updatePropValue = updatePropValue;
     this.value = value;
     this.gestalt = gestalt;
     this.contentDivId = contentDivId;

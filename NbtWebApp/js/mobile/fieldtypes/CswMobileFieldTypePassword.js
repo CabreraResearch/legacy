@@ -33,9 +33,10 @@ function CswMobileFieldTypePassword(ftDef) {
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
-        value = tryParseString(p.value);
+
+        subfields = CswFieldTypes.Password.subfields;        
+        value = tryParseString(p[subfields.Value.subfield.name]);
         gestalt = tryParseString(p.gestalt);
-        subfields = '';
         
         $content = ensureContent(contentDivId);
         $content.append($('<p style="white-space:normal;" id="' + elementId + '">********</p>'));
@@ -44,6 +45,14 @@ function CswMobileFieldTypePassword(ftDef) {
     function applyFieldTypeLogicToContent($control) {
         
     }
+
+    function updatePropValue(json,id,newValue) {
+        if (json.hasOwnProperty(subfields.Value.subfield.name)) {
+            json[subfields.Value.subfield.name] = newValue;
+            json.wasmodified = true;
+        }
+        return json;
+    }    
     
 	//#endregion private
     
@@ -51,6 +60,7 @@ function CswMobileFieldTypePassword(ftDef) {
 
     this.$content = $content;
     this.applyFieldTypeLogicToContent = applyFieldTypeLogicToContent;
+    this.updatePropValue = updatePropValue;
     this.value = value;
     this.gestalt = gestalt;
     this.contentDivId = contentDivId;
