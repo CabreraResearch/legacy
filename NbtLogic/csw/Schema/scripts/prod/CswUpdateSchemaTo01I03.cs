@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-			if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "field2_numeric" ) )
+			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "jct_nodes_props", "field2_numeric" ) )
 			{
 				_CswNbtSchemaModTrnsctn.addDoubleColumn( "jct_nodes_props", "field2_numeric", "A second numeric value", false, false, 6 );
 			}

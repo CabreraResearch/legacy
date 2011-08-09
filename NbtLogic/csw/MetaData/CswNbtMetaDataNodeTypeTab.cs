@@ -97,7 +97,13 @@ namespace ChemSW.Nbt.MetaData
 		}
 		public Int32 FirstTabVersionId
 		{
-			get { return CswConvert.ToInt32( _NodeTypeTabRow["firsttabversionid"].ToString() ); }
+			get
+			{
+				Int32 ret = CswConvert.ToInt32( _NodeTypeTabRow["firsttabversionid"].ToString() );
+				if( ret == Int32.MinValue )
+					ret = TabId;
+				return ret;
+			}
 		}
 		public Int32 PriorTabVersionId
 		{

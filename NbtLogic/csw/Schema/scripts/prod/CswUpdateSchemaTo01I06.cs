@@ -50,15 +50,20 @@ namespace ChemSW.Nbt.Schema
 			foreach( DataRow TabRow in TabsTable.Rows )
 			{
 				Int32 ThisTabId = CswConvert.ToInt32( TabRow["nodetypetabsetid"] );
+				TabRow["firsttabversionid"] = CswConvert.ToInt32( ThisTabId );  // default
+
 				CswNbtMetaDataNodeType NodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswConvert.ToInt32( TabRow["nodetypeid"] ) );
 
 				CswNbtMetaDataNodeTypeTab FirstTab = NodeType.FirstVersionNodeType.getNodeTypeTab( TabRow["tabname"].ToString() );
-				TabRow["firsttabversionid"] = CswConvert.ToInt32( FirstTab.TabId );
+				if( FirstTab != null )
+				{
+					TabRow["firsttabversionid"] = CswConvert.ToInt32( FirstTab.TabId );
+				}
 
 				if( NodeType.PriorVersionNodeType != null )
 				{
 					CswNbtMetaDataNodeTypeTab PriorTab = NodeType.PriorVersionNodeType.getNodeTypeTab( TabRow["tabname"].ToString() );
-					if( PriorTab.TabId != ThisTabId )
+					if( PriorTab != null && PriorTab.TabId != ThisTabId )
 					{
 						TabRow["priortabversionid"] = CswConvert.ToInt32( PriorTab.TabId );
 					}
