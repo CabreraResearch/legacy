@@ -1309,7 +1309,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string NewPropsXml, string NodeTypeId, string ViewId )
+        public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NewPropsXml, string NodeTypeId, string ViewId )
         {
             JObject ReturnVal = new JObject();
 
@@ -1325,7 +1325,7 @@ namespace ChemSW.Nbt.WebServices
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
                     var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, NewPropsXml, CswConvert.ToInt32( NodeTypeId ), View );
+                    ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32(TabId), NewPropsXml, CswConvert.ToInt32( NodeTypeId ), View );
                 }
 
                 _deInitResources();

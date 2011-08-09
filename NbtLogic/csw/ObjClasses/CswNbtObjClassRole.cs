@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -81,14 +82,13 @@ namespace ChemSW.Nbt.ObjClasses
 						"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit their own action permissions on role: " + _CswNbtNode.NodeName );
 				}
 				// You can only grant action permissions on other roles to which you have access
-				foreach( string ActionNameString in ActionPermissions.YValues )
+				foreach( CswNbtAction Action in _CswNbtResources.Actions )
 				{
-					CswNbtActionName ActionName = CswNbtAction.ActionNameStringToEnum( ActionNameString );
-					if( true == _CswNbtResources.Permit.can( ActionName, this ) &&
-						false == _CswNbtResources.Permit.can( ActionName, _CswNbtResources.CurrentNbtUser ) )
+					if( true == _CswNbtResources.Permit.can( Action, this ) &&
+						false == _CswNbtResources.Permit.can( Action, _CswNbtResources.CurrentNbtUser ) )
 					{
 						throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
-							"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + CswNbtAction.ActionNameEnumToString( ActionName ) + " to role " + _CswNbtNode.NodeName );
+							"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
 					}
 				} // foreach( string ActionNameString in ActionPermissions.YValues )
 			} // if( ActionPermissions.WasModified )
@@ -149,9 +149,81 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
+		public static string MakeNodeTypePermissionValue( CswNbtMetaDataNodeType NodeType, CswNbtPermit.NodeTypePermission Permission )
+		{
+			return "nt_" + NodeType.FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
+		}
+		public static string MakeNodeTypePermissionText( CswNbtMetaDataNodeType NodeType, CswNbtPermit.NodeTypePermission Permission )
+		{
+			return NodeType.LatestVersionNodeType.NodeTypeName + ": " + Permission.ToString();
+		}
+		public static string MakeNodeTypeTabPermissionValue( CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtPermit.NodeTypeTabPermission Permission )
+		{
+			return "nt_" + 
+					NodeTypeTab.NodeType.FirstVersionNodeTypeId.ToString() + 
+					"_tab_" +
+					NodeTypeTab.FirstTabVersionId + 
+					"_" + 
+					Permission.ToString();
+		}
+		public static string MakeNodeTypeTabPermissionText( CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtPermit.NodeTypeTabPermission Permission )
+		{
+			return NodeTypeTab.NodeType.LatestVersionNodeType.NodeTypeName +
+				   ", " +
+				   NodeTypeTab.NodeType.LatestVersionNodeType.getNodeTypeTabByFirstVersionId( NodeTypeTab.FirstTabVersionId ).TabName +
+				   ": " +
+				   Permission.ToString();
+		}
+		public static string MakeActionPermissionValue( CswNbtAction Action )
+		{
+			return "act_" + Action.ActionId.ToString();
+		}
+		public static string MakeActionPermissionText( CswNbtAction Action )
+		{
+			return Action.DisplayName;
+		}
+
         public override void afterPopulateProps()
         {
-            _CswNbtObjClassDefault.afterPopulateProps();
+			// case 8411 - for backwards compatibility
+			if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+			{
+				// set NodeType Permissions options
+				Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
+				foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+				{
+					foreach( CswNbtPermit.NodeTypePermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypePermission ) ) )
+					{
+						NodeTypeOptions.Add( MakeNodeTypePermissionValue( NodeType, Permission ),
+											 MakeNodeTypePermissionText( NodeType, Permission ) );
+					}
+					foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+					{
+						foreach( CswNbtPermit.NodeTypeTabPermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypeTabPermission ) ) )
+						{
+							NodeTypeOptions.Add( MakeNodeTypeTabPermissionValue( Tab, Permission ),
+												 MakeNodeTypeTabPermissionText( Tab, Permission ) );
+						}
+					} // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+				} // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
+				this.NodeTypePermissions.Options = NodeTypeOptions;
+			} // if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+
+
+			// case 8411 - for backwards compatibility
+			if( _CswNbtNode.Properties[ActionPermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+			{
+				// set Action Permissions options
+				Dictionary<string, string> ActionOptions = new Dictionary<string, string>();
+				foreach( CswNbtAction Action in _CswNbtResources.Actions )
+				{
+					ActionOptions.Add( MakeActionPermissionValue( Action ),
+									   MakeActionPermissionText( Action ) );
+				}
+				this.ActionPermissions.Options = ActionOptions;
+			}
+
+			_CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -179,19 +251,19 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropLogicalSet NodeTypePermissions
+        public CswNbtNodePropMultiList NodeTypePermissions
         {
             get
             {
-                return ( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].AsLogicalSet );
+                return ( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].AsMultiList );
             }
         }
 
-        public CswNbtNodePropLogicalSet ActionPermissions
+		public CswNbtNodePropMultiList ActionPermissions
         {
             get
             {
-                return ( _CswNbtNode.Properties[ActionPermissionsPropertyName].AsLogicalSet );
+				return ( _CswNbtNode.Properties[ActionPermissionsPropertyName].AsMultiList );
             }
         }
 

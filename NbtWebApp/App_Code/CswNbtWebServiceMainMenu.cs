@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.WebServices
 			    // COPY
 			    if( null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
 			        View.ViewMode != NbtViewRenderingMode.Grid &&
-			        _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, Node.NodeTypeId ) )
+			        _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) )
 			    {
 			        string BadPropertyName = string.Empty;
 			        if( !Node.NodeType.IsUniqueAndRequired( ref BadPropertyName ) )
@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.WebServices
 			        null != Node &&
 			        View.ViewMode != NbtViewRenderingMode.Grid &&
 			        Node.NodeSpecies == NodeSpecies.Plain &&
-					_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.NodeTypeId, Node, null ) )
+					_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.NodeType, false, null, null, Node, null ) )
 			    {
 
 			        MenuNode.Add( new XElement( "item",

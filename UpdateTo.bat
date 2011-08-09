@@ -12,7 +12,7 @@ set /p TagName=
 echo "Stopping Services..."
 
 net stop "ChemSW Log Service"
-net stop "NbtSchedService"
+net stop "ChemSW NBT Schedule Service"
 
 echo "Services stopped."
 
@@ -81,7 +81,7 @@ pause
 echo "Restarting Services..."
 
 net start "ChemSW Log Service"
-net start "NbtSchedService"
+net start "ChemSW NBT Schedule Service"
 iisreset
 
 echo "Services Restarted."

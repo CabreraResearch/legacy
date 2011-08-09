@@ -264,7 +264,7 @@ namespace ChemSW.Nbt
 
                 if( ( ( ThisView.Root.ChildRelationships.Count > 0 &&
                             ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                                                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId, User ) ).Count() > 0 )
+                                                                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType(R.SecondId), true, null, User ) ).Count() > 0 )
                         ) || IncludeEmptyViews ) &&
                     ThisView.IsFullyEnabled() &&
 					( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&

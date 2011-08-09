@@ -16,23 +16,25 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswNbtNodePropQuestion( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
-            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
-        {
-            if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question )
-            {
-                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-                                            "CswNbtNodePropQuestion() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            }
+		public CswNbtNodePropQuestion( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
+			: base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
+		{
+			if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question )
+			{
+				throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+											"CswNbtNodePropQuestion() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
+			}
 
-            _AnswerSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).AnswerSubField;
-            _CommentsSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CommentsSubField;
-            _CorrectiveActionSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CorrectiveActionSubField;
-            _DateAnsweredSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).DateAnsweredSubField;
-            _DateCorrectedSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).DateCorrectedSubField;
-            _IsCompliantSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).IsCompliantSubField;
+			CswNbtFieldTypeRuleQuestion FieldTypeRuleQuestion = (CswNbtFieldTypeRuleQuestion) _CswNbtMetaDataNodeTypeProp.FieldTypeRule;
 
-        }//ctor
+			_AnswerSubField = FieldTypeRuleQuestion.AnswerSubField;
+			_CommentsSubField = FieldTypeRuleQuestion.CommentsSubField;
+			_CorrectiveActionSubField = FieldTypeRuleQuestion.CorrectiveActionSubField;
+			_DateAnsweredSubField = FieldTypeRuleQuestion.DateAnsweredSubField;
+			_DateCorrectedSubField = FieldTypeRuleQuestion.DateCorrectedSubField;
+			_IsCompliantSubField = FieldTypeRuleQuestion.IsCompliantSubField;
+
+		}//ctor
 
         private CswNbtSubField _AnswerSubField;
         private CswNbtSubField _CommentsSubField;

@@ -25,11 +25,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources, MetaDataProp );
 
-            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Value );
-            ValueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                        CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                        CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                        CswNbtPropFilterSql.PropertyFilterMode.Null;
+            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Value );
+			ValueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Contains |
+										CswNbtPropFilterSql.PropertyFilterMode.NotNull |
+										CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( ValueSubField );
         }//ctor
 
