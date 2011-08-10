@@ -6,18 +6,18 @@
 <link rel="stylesheet" type="text/css" href="js/thirdparty/jquery/plugins/jqGrid-4.0/src/css/ui.multiselect.css" />
 
 <link rel="stylesheet" type="text/css" href="style.css" />
-<link rel="stylesheet" type="text/css" href="js/jquery/CswComboBox.css" />
-<link rel="stylesheet" type="text/css" href="js/jquery/CswErrorMessage.css" />
-<link rel="stylesheet" type="text/css" href="js/jquery/CswMenu.css" />
-<link rel="stylesheet" type="text/css" href="js/jquery/CswLayoutTable.css" />
-<link rel="stylesheet" type="text/css" href="js/jquery/CswSearch.css" />
-<link rel="stylesheet" type="text/css" href="js/jquery/CswViewEditor.css" />
-<link rel="stylesheet" type="text/css" href="js/jquery/CswWizard.css" />
-<link rel="stylesheet" type="text/css" href="js/jquery/fieldtypes/_CswFieldTypes.css" />
+<link rel="stylesheet" type="text/css" href="js/main/controls/CswComboBox.css" />
+<link rel="stylesheet" type="text/css" href="js/main/pagecmp/CswErrorMessage.css" />
+<link rel="stylesheet" type="text/css" href="js/main/pagecmp/CswMenu.css" />
+<link rel="stylesheet" type="text/css" href="js/main/controls/CswLayoutTable.css" />
+<link rel="stylesheet" type="text/css" href="js/main/pagecmp/CswSearch.css" />
+<link rel="stylesheet" type="text/css" href="js/main/view/CswViewEditor.css" />
+<link rel="stylesheet" type="text/css" href="js/main/pagecmp/CswWizard.css" />
+<link rel="stylesheet" type="text/css" href="js/main/fieldtypes/_CswFieldTypes.css" />
 
 
 <script type="text/javascript">
-	var debug = false;
+	var debug = true;
 
 	if (debug)
 	{
@@ -47,59 +47,65 @@
 		document.write('<script type="text/javascript" src="js/thirdparty/js/gserializer.js"><\/script>');
 
 		// ChemSW 
-	    // load first (because order matters)
-	    document.write('<script type="text/javascript" src="js/CswEnums.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/_CswPrototypeExtensions.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/_Global.js"><\/script>');
+	    // Globals: load first (because order matters)
+	    document.write('<script type="text/javascript" src="js/globals/CswEnums.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/globals/CswPrototypeExtensions.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/globals/Global.js"><\/script>');
 	    
-		// Csw Common (both Main and Mobile)
-		document.write('<script type="text/javascript" src="js/jquery/common/CswAttr.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswCookie.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswDiv.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswInput.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswLink.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswSelect.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswSpan.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswTools.js"><\/script>');
+		// Actions
+	    document.write('<script type="text/javascript" src="js/main/actions/CswAuditHistoryGrid.js"><\/script>');
+	    document.write('<script type="text/javascript" src="js/main/actions/CswInspectionStatus.js"><\/script>');
+	    
+	    // Controls
+	    document.write('<script type="text/javascript" src="js/main/controls/CswDiv.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswInput.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswLink.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswSelect.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswSpan.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswButton.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswCheckBoxArray.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswComboBox.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswLayoutTable.js"><\/script>');
+	    document.write('<script type="text/javascript" src="js/main/controls/CswImageButton.js"><\/script>');
+	    document.write('<script type="text/javascript" src="js/main/controls/CswNodeTypeSelect.js"><\/script>');
+	    document.write('<script type="text/javascript" src="js/main/controls/CswNumberTextBox.js"><\/script>');
+	    document.write('<script type="text/javascript" src="js/main/controls/CswTable.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswTristateCheckBox.js"><\/script>');
 		
-		// Csw jQuery 
-		document.write('<script type="text/javascript" src="js/jquery/CswAuditHistoryGrid.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswButton.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswCheckBoxArray.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswComboBox.js"><\/script>');
+	    // Tools
+		document.write('<script type="text/javascript" src="js/main/tools/CswAttr.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/tools/CswCookie.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/tools/CswTools.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/tools/CswQueryString.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/tools/CswArray.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/tools/CswString.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/tools/CswClientDb.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/tools/CswProfileMethod.js"><\/script>');
+	    
+		// PageCmp 
 		document.write('<script type="text/javascript" src="js/jquery/CswDashboard.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswDialog.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswErrorMessage.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswImageButton.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswInspectionStatus.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswLayoutTable.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswLogin.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswMenu.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswMenuHeader.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswMenuMain.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswNodeGrid.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswNodeSelect.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswNodeTabs.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswNodeTree.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswNodeTypeSelect.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswNumberTextBox.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswQueryString.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswQuickLaunch.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswSearch.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswTable.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswTristateCheckBox.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswViewEditor.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswViewPropFilter.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswViewSelect.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswViewTree.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/CswWelcome.js"><\/script>');
+	    document.write('<script type="text/javascript" src="js/jquery/CswSearch.js"><\/script>');
+	    document.write('<script type="text/javascript" src="js/jquery/CswWelcome.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/jquery/CswWizard.js"><\/script>');
-
-		//JavaScript Classes
-		document.write('<script type="text/javascript" src="js/CswArray.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/CswString.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/CswClientDb.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/CswProfileMethod.js"><\/script>');
+	    
+		// Node
+		document.write('<script type="text/javascript" src="js/main/node/CswNodeGrid.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/node/CswNodeSelect.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/node/CswNodeTabs.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/node/CswNodeTree.js"><\/script>');
+		
+	    // View
+	    document.write('<script type="text/javascript" src="js/main/view/CswViewEditor.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/view/CswViewPropFilter.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/view/CswViewSelect.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/view/CswViewTree.js"><\/script>');
 
 		// Field Types
 		document.write('<script type="text/javascript" src="js/jquery/Fieldtypes/_CswFieldTypeFactory.js"><\/script>');

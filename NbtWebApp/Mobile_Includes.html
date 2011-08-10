@@ -10,17 +10,17 @@
 	    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.js"><\/script>');
 	    //JQM
 	    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/CswEnums.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/CswMobileEnums.js"><\/script>');
-		// Prototype Extensions
-		document.write('<script type="text/javascript" src="js/_CswPrototypeExtensions.js"><\/script>');
-		//Global
-		document.write('<script type="text/javascript" src="js/_Global.js"><\/script>');
+	    // Globals (load first)
+	    document.write('<script type="text/javascript" src="js/globals/CswEnums.js"><\/script>');
+	    document.write('<script type="text/javascript" src="js/mobile/globals/CswMobileEnums.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/mobile/globals/CswPrototypeExtensions.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/globals/Global.js"><\/script>');
+	    document.write('<script type="text/javascript" src="js/mobile/globals/CswMobileTools.js"><\/script>');
 		// Main JavaScript Classes
-		document.write('<script type="text/javascript" src="js/CswArray.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/CswString.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/CswClientDb.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/CswProfileMethod.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/tools/CswArray.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/tools/CswString.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/tools/CswClientDb.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/tools/CswProfileMethod.js"><\/script>');
 		// Mobile JavaScript Classes
 		// Client DB
 		document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileClientDb.js"><\/script>');
@@ -64,17 +64,15 @@
 	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeText.js"><\/script>');
 	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeTime.js"><\/script>');
 	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobilePropFactory.js"><\/script>');
-	    //Mobile
-		document.write('<script type="text/javascript" src="js/mobile/CswMobileTools.js"><\/script>');
 		//Plugins
-		document.write('<script type="text/javascript" src="js/jquery/common/CswAttr.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswCookie.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswDiv.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswInput.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswLink.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswSelect.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswSpan.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/jquery/common/CswTools.js"><\/script>');   
+		document.write('<script type="text/javascript" src="js/main/controls/CswAttr.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswCookie.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswDiv.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswInput.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswLink.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswSelect.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswSpan.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/controls/CswTools.js"><\/script>');   
 		document.write('<script type="text/javascript" src="js/mobile/CswMobile.js"><\/script>');
 	}
 	else {
