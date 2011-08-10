@@ -10,11 +10,11 @@ function CswString(string)
     String.call(this);
     
     var value = string;
-    this.val = function (string)
+    this.val = function (newString)
     {
         if (arguments.length === 1)
         {
-            value = string;
+            value = newString;
             return this; //for chaining
         }
         else
@@ -23,8 +23,7 @@ function CswString(string)
         }
     };
     this.contains = function (findString) { return value.indexOf(findString) !== -1; };
+    this.toString = function () { return value; };
 }
-
-CswString.prototype.toString = function () { return this.value; };
 
 //#endregion CswString
