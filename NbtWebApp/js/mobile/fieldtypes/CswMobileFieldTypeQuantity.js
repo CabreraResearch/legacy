@@ -35,7 +35,7 @@ function CswMobileFieldTypeQuantity(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        subfields = CswFieldTypes.Quantity.subfields;        
+        subfields = CswSubFields_Map.Quantity.subfields;        
         value = tryParseString(p[subfields.Value.name]);
         units = tryParseString(p[subfields.Units.name]);
         if (!isNullOrEmpty(units)) {
@@ -52,7 +52,7 @@ function CswMobileFieldTypeQuantity(ftDef) {
     }
 
     function updatePropValue(json,id,newValue) {
-        json = modifyPropJson(json, subfields.Value.subfield.name, newValue);
+        json = modifyPropJson(json, subfields.Value.name, newValue);
         return json;
     }    
     
@@ -69,7 +69,7 @@ function CswMobileFieldTypeQuantity(ftDef) {
     this.propId = propId;
     this.propName = propName;
     this.subfields = subfields;
-    this.fieldType = CswFieldTypes.Quantity;
+    this.fieldType = CswSubFields_Map.Quantity;
     
     //#endregion public, priveleged
 }

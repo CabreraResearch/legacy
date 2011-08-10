@@ -35,7 +35,7 @@ function CswMobileFieldTypeStatic(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        subfields = CswFieldTypes.Static.subfields; //don't use this yet. Non-implemented Field Types default to Static.
+        subfields = CswSubFields_Map.Static.subfields; //don't use this yet. Non-implemented Field Types default to Static.
         value = tryParseString(p.value,p.text);
         gestalt = tryParseString(p.gestalt, '');
         
@@ -64,7 +64,7 @@ function CswMobileFieldTypeStatic(ftDef) {
     this.propId = propId;
     this.propName = propName;
     this.subfields = subfields;
-    this.fieldType = CswFieldTypes.Static;
+    this.fieldType = CswSubFields_Map.Static;
     
     //#endregion public, priveleged
 }

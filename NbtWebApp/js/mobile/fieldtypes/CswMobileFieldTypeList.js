@@ -36,8 +36,8 @@ function CswMobileFieldTypeList(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
                 
-        subfields = CswFieldTypes.List.subfields;
-        value = tryParseString(p[subfields.Value.subfield.name]);
+        subfields = CswSubFields_Map.List.subfields;
+        value = tryParseString(p[subfields.Value.name]);
         var optionsstr = p.options;
         gestalt = tryParseString(p.gestalt, '');
         
@@ -65,7 +65,7 @@ function CswMobileFieldTypeList(ftDef) {
     }
 
     function updatePropValue(json,id,newValue) {
-        json = modifyPropJson(json, subfields.Value.subfield.name, newValue);
+        json = modifyPropJson(json, subfields.Value.name, newValue);
         return json;
     }
     
@@ -81,7 +81,7 @@ function CswMobileFieldTypeList(ftDef) {
     this.propId = propId;
     this.propName = propName;
     this.subfields = subfields;
-    this.fieldType = CswFieldTypes.List;
+    this.fieldType = CswSubFields_Map.List;
     
     //#endregion public, priveleged
 }

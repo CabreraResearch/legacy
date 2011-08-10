@@ -168,26 +168,20 @@ var CswSubField_Names = {
 	Exponent: { name: 'exponent' }
 };
 
-var CswFieldTypes = {
+var CswSubFields_Map = {
     AuditHistoryGrid: { name: 'AuditHistoryGrid', subfields: { } },
     Barcode: { 
         name: 'Barcode', 
         subfields: {
-            Barcode: { 
-                subfield: CswSubField_Names.Barcode
-            },
-            Sequence: {
-                subfield: CswSubField_Names.Number
-            }
+            Barcode: CswSubField_Names.Barcode,
+            Sequence: CswSubField_Names.Number
         } 
     },
 	Composite: { name: 'Composite', subfields: { } },
 	Date: {
 	     name: 'Date', 
 	     subfields: {
-            Value: { 
-                subfield: CswSubField_Names.Value
-            }
+            Value: CswSubField_Names.Value
         } 
 	},
 	File: { name: 'File', subfields: { } },
@@ -196,20 +190,14 @@ var CswFieldTypes = {
 	Link: {
 	     name: 'Link', 
 	     subfields: {
-            Text: { 
-                subfield: CswSubField_Names.Text
-            },
-            Href: {
-                subfield: CswSubField_Names.Href
-            }
+            Text: CswSubField_Names.Text,
+            Href: CswSubField_Names.Href
         } 
 	},
 	List: {
 	     name: 'List', 
 	     subfields: {
-            Value: { 
-                subfield: CswSubField_Names.Value
-            }
+            Value: CswSubField_Names.Value
         } 
 	},
 	Location: { name: 'Location', subfields: { } },
@@ -217,18 +205,14 @@ var CswFieldTypes = {
 	Logical: {
 	     name: 'Logical', 
 	     subfields: {
-            Checked: { 
-                subfield: CswSubField_Names.Checked
-            }
+            Checked: CswSubField_Names.Checked
         } 
 	},
 	LogicalSet: { name: 'LogicalSet', subfields: { } },
 	Memo: {
 	     name: 'Memo', 
 	     subfields: {
-            Text: { 
-                subfield: CswSubField_Names.Text
-            }
+            Text: CswSubField_Names.Text
         } 
 	},
 	MTBF: { name: 'MTBF', subfields: { } },
@@ -237,55 +221,33 @@ var CswFieldTypes = {
 	Number: {
 	     name: 'Number', 
 	     subfields: {
-            Value: { 
-                subfield: CswSubField_Names.Value
-            }
+            Value: CswSubField_Names.Value
         } 
 	},
 	Password: {
 	     name: 'Password', 
 	     subfields: {
-            Password: { 
-                subfield: CswSubField_Names.Password
-            },
-            ChangedDate: {
-                subfield: CswSubField_Names.ChangedDate
-            }
+            Password: CswSubField_Names.Password,
+            ChangedDate: CswSubField_Names.ChangedDate
         } 
 	},
 	PropertyReference: { name: 'PropertyReference', subfields: { } },
 	Quantity: {
 	     name: 'Quantity', 
 	     subfields: {
-            Value: { 
-                subfield: CswSubField_Names.Value
-            },
-            Units: {
-                subfield: CswSubField_Names.Number
-            }
+            Value: CswSubField_Names.Value,
+            Units: CswSubField_Names.Number
         } 
 	},
 	Question: {
 	     name: 'Question', 
 	     subfields: {
-            Answer: { 
-                subfield: CswSubField_Names.Answer
-            },
-            CorrectiveAction: {
-                subfield: CswSubField_Names.CorrectiveAction
-            },
-	        IsCompliant: {
-                subfield: CswSubField_Names.IsCompliant
-            },
-            Comments: {
-                subfield: CswSubField_Names.Comments
-            },
-            DateAnswered: {
-                subfield: CswSubField_Names.DateAnswered
-            },
-            DateCorrected: {
-                subfield: CswSubField_Names.DateCorrected
-            }	         
+            Answer: CswSubField_Names.Answer,
+            CorrectiveAction: CswSubField_Names.CorrectiveAction,
+	        IsCompliant: CswSubField_Names.IsCompliant,
+            Comments: CswSubField_Names.Comments,
+            DateAnswered: CswSubField_Names.DateAnswered,
+            DateCorrected: CswSubField_Names.DateCorrected
         } 
 	},
 	Relationship: { name: 'Relationship', subfields: { } },
@@ -294,25 +256,19 @@ var CswFieldTypes = {
 	Static: {
 	     name: 'Static', 
 	     subfields: {
-            Text: { 
-                subfield: CswSubField_Names.Text
-            }
+            Text: CswSubField_Names.Text
         } 
 	},
 	Text: {
 	     name: 'Text', 
 	     subfields: {
-            Text: { 
-                subfield: CswSubField_Names.Text
-            }
+            Text: CswSubField_Names.Text
         } 
 	},
 	Time: {
 	     name: 'Time', 
 	     subfields: {
-            Value: { 
-                subfield: CswSubField_Names.Value
-            }
+            Value: CswSubField_Names.Value
         } 
 	},
 	TimeInterval: { name: 'TimeInterval', subfields: { } },

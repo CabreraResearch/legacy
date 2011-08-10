@@ -38,15 +38,15 @@ function CswMobileFieldTypeQuestion(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        subfields = CswFieldTypes.Question.subfields;
-        value = tryParseString(p[subfields.Answer.subfield.name]);
+        subfields = CswSubFields_Map.Question.subfields;
+        value = tryParseString(p[subfields.Answer.name]);
         gestalt = tryParseString(p.gestalt, '');
         
         var answer = tryParseString(p.answer);
         var allowedAnswers = tryParseString(p.allowedanswers).split(',');
         compliantAnswers = tryParseString(p.compliantanswers).split(',');
-        var comments = tryParseString(p.comments);
-        var correctiveAction = tryParseString(p.correctiveaction);
+        var comments = tryParseString(p[subfields.Comments.name]);
+        var correctiveAction = tryParseString(p[subfields.CorrectiveAction.name]);
 
         $content = ensureContent($content, contentDivId);
 
@@ -123,13 +123,13 @@ function CswMobileFieldTypeQuestion(ftDef) {
     function updatePropValue(json,id,newValue) {
         var subFieldToUpdate;
         if (id.contains(makeSafeId({ ID: propId, suffix: 'com' }))) {
-            subFieldToUpdate = subfields.Comments.subfield.name;
+            subFieldToUpdate = subfields.Comments.name;
 		} 
 		else if (id.contains(makeSafeId({ ID: propId, suffix: 'ans' }))) {
-            subFieldToUpdate = subfields.Answer.subfield.name;
+            subFieldToUpdate = subfields.Answer.name;
 		} 
 		else if (id.contains(makeSafeId({ ID: propId, suffix: 'cor' }))) {
-            subFieldToUpdate = subfields.CorrectiveAction.subfield.name;
+            subFieldToUpdate = subfields.CorrectiveAction.name;
 		}
 
         json = modifyPropJson(json, subFieldToUpdate, newValue);
@@ -149,7 +149,7 @@ function CswMobileFieldTypeQuestion(ftDef) {
     this.propId = propId;
     this.propName = propName;
     this.subfields = subfields;
-    this.fieldType = CswFieldTypes.Question;
+    this.fieldType = CswSubFields_Map.Question;
 
     this.inCompliance = inCompliance;
     

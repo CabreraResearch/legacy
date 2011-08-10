@@ -34,9 +34,9 @@ function CswMobileFieldTypeBarcode(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        subfields = CswFieldTypes.Barcode.subfields;
+        subfields = CswSubFields_Map.Barcode.subfields;
         
-        value = tryParseString(p[subfields.Barcode.subfield.name]);
+        value = tryParseString(p[subfields.Barcode.name]);
         gestalt = tryParseString(p.gestalt);
         
         $content = ensureContent(contentDivId);
@@ -48,7 +48,7 @@ function CswMobileFieldTypeBarcode(ftDef) {
     }
     
     function updatePropValue(json,id,newValue) {
-        json = modifyPropJson(json, subfields.Barcode.subfield.name, newValue);
+        json = modifyPropJson(json, subfields.Barcode.name, newValue);
         return json;
     }
     
@@ -65,7 +65,7 @@ function CswMobileFieldTypeBarcode(ftDef) {
     this.propId = propId;
     this.propName = propName;
     this.subfields = subfields;
-    this.fieldType = CswFieldTypes.Barcode;
+    this.fieldType = CswSubFields_Map.Barcode;
     
     //#endregion public, priveleged
 }

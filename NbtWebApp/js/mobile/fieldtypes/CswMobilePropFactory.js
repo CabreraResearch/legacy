@@ -42,7 +42,7 @@ function CswMobilePropsFactory(propDef) {
             viewId: '',
             propId: '',
             propName: '',
-            fieldtype: CswFieldTypes.Static.name
+            fieldtype: CswSubFields_Map.Static.name
             //prop data follows
         };
         if (propDef) $.extend(p, propDef);
@@ -72,100 +72,100 @@ function CswMobilePropsFactory(propDef) {
 	    /// <returns type="CswMobileFieldType<Prop>">A field type prop which implements $content and applyFieldTypeLogicToContent.</returns>
         var ret;
         switch (field) {
-            case CswFieldTypes.AuditHistoryGrid.name:
+            case CswSubFields_Map.AuditHistoryGrid.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
                 break;
-            case CswFieldTypes.Barcode.name:
+            case CswSubFields_Map.Barcode.name:
                 ret = new CswMobileFieldTypeBarcode(ftDef);                
                 break;
-	        case CswFieldTypes.Composite.name:
+	        case CswSubFields_Map.Composite.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Date.name:
+	        case CswSubFields_Map.Date.name:
 	            ret = new CswMobileFieldTypeDate(ftDef);
 	            break;
-	        case CswFieldTypes.File.name:
+	        case CswSubFields_Map.File.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Grid.name:
+	        case CswSubFields_Map.Grid.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Image.name:
+	        case CswSubFields_Map.Image.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Link.name:
+	        case CswSubFields_Map.Link.name:
 	            ret = new CswMobileFieldTypeLink(ftDef);
 	            break;
-	        case CswFieldTypes.List.name:
+	        case CswSubFields_Map.List.name:
 	            ret = new CswMobileFieldTypeList(ftDef);
 	            break;
-	        case CswFieldTypes.Location.name:
+	        case CswSubFields_Map.Location.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.LocationContents.name:
+	        case CswSubFields_Map.LocationContents.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Logical.name:
+	        case CswSubFields_Map.Logical.name:
 	            ret = new CswMobileFieldTypeLogical(ftDef);
 	            break;
-	        case CswFieldTypes.LogicalSet.name:
+	        case CswSubFields_Map.LogicalSet.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Memo.name:
+	        case CswSubFields_Map.Memo.name:
 	            ret = new CswMobileFieldTypeMemo(ftDef);
 	            break;
-	        case CswFieldTypes.MTBF.name:
+	        case CswSubFields_Map.MTBF.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.MultiList.name:
+	        case CswSubFields_Map.MultiList.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.NodeTypeSelect.name:
+	        case CswSubFields_Map.NodeTypeSelect.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Number.name:
+	        case CswSubFields_Map.Number.name:
 	            ret = new CswMobileFieldTypeNumber(ftDef);
 	            break;
-	        case CswFieldTypes.Password.name:
+	        case CswSubFields_Map.Password.name:
 	            ret = new CswMobileFieldTypePassword(ftDef);
 	            break;
-	        case CswFieldTypes.PropertyReference.name:
+	        case CswSubFields_Map.PropertyReference.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Quantity.name:
+	        case CswSubFields_Map.Quantity.name:
 	            ret = new CswMobileFieldTypeQuantity(ftDef);
 	            break;
-	        case CswFieldTypes.Question.name:
+	        case CswSubFields_Map.Question.name:
 	            ret = new CswMobileFieldTypeQuestion(ftDef);
 	            break;
-	        case CswFieldTypes.Relationship.name:
+	        case CswSubFields_Map.Relationship.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Scientific.name:
+	        case CswSubFields_Map.Scientific.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Sequence.name:
+	        case CswSubFields_Map.Sequence.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Static.name:
+	        case CswSubFields_Map.Static.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.Text.name:
+	        case CswSubFields_Map.Text.name:
 	            ret = new CswMobileFieldTypeText(ftDef);
 	            break;
-	        case CswFieldTypes.Time.name:
+	        case CswSubFields_Map.Time.name:
 	            ret = new CswMobileFieldTypeTime(ftDef);
 	            break;
-	        case CswFieldTypes.TimeInterval.name:
+	        case CswSubFields_Map.TimeInterval.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.UserSelect.name:
+	        case CswSubFields_Map.UserSelect.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.ViewPickList.name:
+	        case CswSubFields_Map.ViewPickList.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswFieldTypes.ViewReference.name:
+	        case CswSubFields_Map.ViewReference.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
 	        default:

@@ -35,9 +35,9 @@ function CswMobileFieldTypeLink(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        subfields = CswFieldTypes.Link.subfields;
-        href = tryParseString(subfields.Href.subfield.name);
-        value = tryParseString(subfields.Text.subfield.name);
+        subfields = CswSubFields_Map.Link.subfields;
+        href = tryParseString(subfields.Href.name);
+        value = tryParseString(subfields.Text.name);
         gestalt = tryParseString(p.gestalt, '');
         
         $content = ensureContent(contentDivId);
@@ -63,7 +63,7 @@ function CswMobileFieldTypeLink(ftDef) {
     this.propId = propId;
     this.propName = propName;
     this.subfields = subfields;
-    this.fieldType = CswFieldTypes.Link;
+    this.fieldType = CswSubFields_Map.Link;
     
     //#endregion public, priveleged
 }

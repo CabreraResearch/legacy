@@ -34,8 +34,8 @@ function CswMobileFieldTypeTime(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
         
-        subfields = CswFieldTypes.Time.subfields;
-        value = tryParseString(p[subfields.Value.subfield.name]);
+        subfields = CswSubFields_Map.Time.subfields;
+        value = tryParseString(p[subfields.Value.name]);
         gestalt = tryParseString(p.gestalt, '');
         
         $content = ensureContent(contentDivId);
@@ -47,7 +47,7 @@ function CswMobileFieldTypeTime(ftDef) {
     }
     
     function updatePropValue(json,id,newValue) {
-        json = modifyPropJson(json, subfields.Value.subfield.name, newValue);
+        json = modifyPropJson(json, subfields.Value.name, newValue);
         return json;
     }    
     
@@ -64,7 +64,7 @@ function CswMobileFieldTypeTime(ftDef) {
     this.propId = propId;
     this.propName = propName;
     this.subfields = subfields;
-    this.fieldType = CswFieldTypes.Time;
+    this.fieldType = CswSubFields_Map.Time;
     
     //#endregion public, priveleged
 }

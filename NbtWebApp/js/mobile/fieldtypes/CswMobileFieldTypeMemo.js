@@ -34,8 +34,8 @@ function CswMobileFieldTypeMemo(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        subfields = CswFieldTypes.Memo.subfields;        
-        value = tryParseString(p[subfields.Text.subfield.name]);
+        subfields = CswSubFields_Map.Memo.subfields;        
+        value = tryParseString(p[subfields.Text.name]);
         gestalt = tryParseString(p.gestalt, '');
         
         $content = ensureContent(contentDivId);
@@ -47,7 +47,7 @@ function CswMobileFieldTypeMemo(ftDef) {
     }
 
     function updatePropValue(json,id,newValue) {
-        json = modifyPropJson(json, subfields.Text.subfield.name, newValue);
+        json = modifyPropJson(json, subfields.Text.name, newValue);
         return json;
     }
     
@@ -64,7 +64,7 @@ function CswMobileFieldTypeMemo(ftDef) {
     this.propId = propId;
     this.propName = propName;
     this.subfields = subfields;
-    this.fieldType = CswFieldTypes.Memo;
+    this.fieldType = CswSubFields_Map.Memo;
     
     //#endregion public, priveleged
 }
