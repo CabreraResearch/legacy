@@ -168,36 +168,16 @@ var CswSubField_Names = {
 	Exponent: { name: 'exponent' }
 };
 
-var CswSubFields_PropColumn = {
-    Unknown: { name: 'unknown' },
-    Field1: { name: 'field1' },
-    Field1_FK: { name: 'field1_fk' },
-    Field1_Date: { name: 'field1_date' },
-	Field1_Numeric: { name: 'field1_numeric' },
-	Field2_Numeric: { name: 'field2_numeric' },
-	Field2: { name: 'field2' },
-    Field2_Date: { name: 'field2_date' },
-    Field3: { name: 'field3' },
-    Field4: { name: 'field4' },
-    Field5: { name: 'field5' },
-    Gestalt: { name: 'gestalt' }, 
-    ClobData: { name: 'clobdata' },
-    ReadOnly: { name: 'readonly' },
-    PendingUpdate: { name: 'pendingupdate' }
-};
-
 var CswFieldTypes = {
     AuditHistoryGrid: { name: 'AuditHistoryGrid', subfields: { } },
     Barcode: { 
         name: 'Barcode', 
         subfields: {
             Barcode: { 
-                subfield: CswSubField_Names.Barcode,
-                column: CswSubFields_PropColumn.Field1    
+                subfield: CswSubField_Names.Barcode
             },
             Sequence: {
-                subfield: CswSubField_Names.Number,
-                column: CswSubFields_PropColumn.Field1_Numeric
+                subfield: CswSubField_Names.Number
             }
         } 
     },
@@ -206,8 +186,7 @@ var CswFieldTypes = {
 	     name: 'Date', 
 	     subfields: {
             Value: { 
-                subfield: CswSubField_Names.Value,
-                column: CswSubFields_PropColumn.Field1_Date
+                subfield: CswSubField_Names.Value
             }
         } 
 	},
@@ -218,12 +197,10 @@ var CswFieldTypes = {
 	     name: 'Link', 
 	     subfields: {
             Text: { 
-                subfield: CswSubField_Names.Text,
-                column: CswSubFields_PropColumn.Field1    
+                subfield: CswSubField_Names.Text
             },
             Href: {
-                subfield: CswSubField_Names.Href,
-                column: CswSubFields_PropColumn.Field2
+                subfield: CswSubField_Names.Href
             }
         } 
 	},
@@ -231,8 +208,7 @@ var CswFieldTypes = {
 	     name: 'List', 
 	     subfields: {
             Value: { 
-                subfield: CswSubField_Names.Value,
-                column: CswSubFields_PropColumn.Field1    
+                subfield: CswSubField_Names.Value
             }
         } 
 	},
@@ -242,8 +218,7 @@ var CswFieldTypes = {
 	     name: 'Logical', 
 	     subfields: {
             Checked: { 
-                subfield: CswSubField_Names.Checked,
-                column: CswSubFields_PropColumn.Field1    
+                subfield: CswSubField_Names.Checked
             }
         } 
 	},
@@ -252,8 +227,7 @@ var CswFieldTypes = {
 	     name: 'Memo', 
 	     subfields: {
             Text: { 
-                subfield: CswSubField_Names.Text,
-                column: CswSubFields_PropColumn.Gestalt
+                subfield: CswSubField_Names.Text
             }
         } 
 	},
@@ -264,8 +238,7 @@ var CswFieldTypes = {
 	     name: 'Number', 
 	     subfields: {
             Value: { 
-                subfield: CswSubField_Names.Value,
-                column: CswSubFields_PropColumn.Field1_Numeric
+                subfield: CswSubField_Names.Value
             }
         } 
 	},
@@ -273,12 +246,10 @@ var CswFieldTypes = {
 	     name: 'Password', 
 	     subfields: {
             Password: { 
-                subfield: CswSubField_Names.Password,
-                column: CswSubFields_PropColumn.Field1    
+                subfield: CswSubField_Names.Password
             },
             ChangedDate: {
-                subfield: CswSubField_Names.ChangedDate,
-                column: CswSubFields_PropColumn.Field2
+                subfield: CswSubField_Names.ChangedDate
             }
         } 
 	},
@@ -287,12 +258,10 @@ var CswFieldTypes = {
 	     name: 'Quantity', 
 	     subfields: {
             Value: { 
-                subfield: CswSubField_Names.Value,
-                column: CswSubFields_PropColumn.Field1_Numeric    
+                subfield: CswSubField_Names.Value
             },
             Units: {
-                subfield: CswSubField_Names.Number,
-                column: CswSubFields_PropColumn.Field2
+                subfield: CswSubField_Names.Number
             }
         } 
 	},
@@ -300,28 +269,22 @@ var CswFieldTypes = {
 	     name: 'Question', 
 	     subfields: {
             Answer: { 
-                subfield: CswSubField_Names.Answer,
-                column: CswSubFields_PropColumn.Field1    
+                subfield: CswSubField_Names.Answer
             },
             CorrectiveAction: {
-                subfield: CswSubField_Names.CorrectiveAction,
-                column: CswSubFields_PropColumn.Field2
+                subfield: CswSubField_Names.CorrectiveAction
             },
 	        IsCompliant: {
-                subfield: CswSubField_Names.IsCompliant,
-                column: CswSubFields_PropColumn.Field3
+                subfield: CswSubField_Names.IsCompliant
             },
             Comments: {
-                subfield: CswSubField_Names.Comments,
-                column: CswSubFields_PropColumn.ClobData
+                subfield: CswSubField_Names.Comments
             },
             DateAnswered: {
-                subfield: CswSubField_Names.DateAnswered,
-                column: CswSubFields_PropColumn.Field1_Date
+                subfield: CswSubField_Names.DateAnswered
             },
             DateCorrected: {
-                subfield: CswSubField_Names.DateCorrected,
-                column: CswSubFields_PropColumn.Field2_Date
+                subfield: CswSubField_Names.DateCorrected
             }	         
         } 
 	},
@@ -332,8 +295,7 @@ var CswFieldTypes = {
 	     name: 'Static', 
 	     subfields: {
             Text: { 
-                subfield: CswSubField_Names.Text,
-                column: CswSubFields_PropColumn.Field1    
+                subfield: CswSubField_Names.Text
             }
         } 
 	},
@@ -341,8 +303,7 @@ var CswFieldTypes = {
 	     name: 'Text', 
 	     subfields: {
             Text: { 
-                subfield: CswSubField_Names.Text,
-                column: CswSubFields_PropColumn.Field1    
+                subfield: CswSubField_Names.Text
             }
         } 
 	},
@@ -350,8 +311,7 @@ var CswFieldTypes = {
 	     name: 'Time', 
 	     subfields: {
             Value: { 
-                subfield: CswSubField_Names.Value,
-                column: CswSubFields_PropColumn.Field1_Date
+                subfield: CswSubField_Names.Value
             }
         } 
 	},
