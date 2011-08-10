@@ -114,7 +114,14 @@ namespace ChemSW.Nbt.Schema
 
 
             // case 20939
-            _CswNbtSchemaModTrnsctn.createAction(CswNbtActionName.Create_Inspection, true, string.Empty, "Inspections");
+            // Steve says this is no longer required
+            //_CswNbtSchemaModTrnsctn.createAction(CswNbtActionName.Create_Inspection, true, string.Empty, "Inspections");
+            _CswNbtSchemaModTrnsctn.Permit.set(CswNbtActionName.Create_Inspection,
+                                        CswNbtNodeCaster.AsRole(RoleNode),
+                                        true);
+            _CswNbtSchemaModTrnsctn.Permit.set(CswNbtActionName.Create_Inspection,
+                                        CswNbtNodeCaster.AsRole(RoleNode2),
+                                        true);
         }//Update()
 
     }//class CswUpdateSchemaTo01I07

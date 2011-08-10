@@ -12,7 +12,6 @@ var CswImportInspectionQuestions_WizardSteps = {
 	{
 		var o = {
 			ImportFileUrl: '/NbtWebApp/wsNBT.asmx/ImportInspectionQuestions',
-			ExcelTemplateUrl: '/NbtWebApp/wsNBT.asmx/getImportInspectionQuestionsExcelTemplate',
 			viewid: '',
 			viewname: '',
 			viewmode: '',
@@ -55,19 +54,10 @@ var CswImportInspectionQuestions_WizardSteps = {
 
 		// Step 1 - Select file for Upload
 		var $div1 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step1.step);
-        var $downloadbtn = $div1.CswButton({
-			'ID': o.ID + '_downloadbutton',
-			'enabledText': 'Download Template',
-			'disableOnClick': true,
-			'onclick': function() {
-					CswAjaxJSON({
-					    url: o.ExcelTemplateUrl
-					})
-			} // onclick
-		}); //  button
+        var downloadbutton = "<a href=\"/NbtWebApp/etc/InspectionDesign.xls\">Download the Excel template</a>"
+		$div1.append(downloadbutton);
 		var instructions1 = "<br/><br/>Please select your Excel file containing your inspection questions.<br/><br/>";
 		$div1.append(instructions1);
-        //$div1.append(downloadbtn);
 
 		//$wizard.CswWizard('button', 'next', 'disable');
 
