@@ -308,11 +308,11 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus == AuthenticationStatus.Authenticated )
                 {
                     CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
-					//Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "passwordexpiry_days" ) );
+                    //Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "passwordexpiry_days" ) );
 
-					if( _CswNbtResources.CurrentNbtUser.PasswordProperty.IsExpired )
-						//_CswNbtResources.CurrentNbtUser.PasswordProperty.ChangedDate == DateTime.MinValue ||
-						//_CswNbtResources.CurrentNbtUser.PasswordProperty.ChangedDate.AddDays( PasswordExpiryDays ).Date <= DateTime.Now.Date )
+                    if( _CswNbtResources.CurrentNbtUser.PasswordProperty.IsExpired )
+                    //_CswNbtResources.CurrentNbtUser.PasswordProperty.ChangedDate == DateTime.MinValue ||
+                    //_CswNbtResources.CurrentNbtUser.PasswordProperty.ChangedDate.AddDays( PasswordExpiryDays ).Date <= DateTime.Now.Date )
                     {
                         // BZ 9077 - Password expired
                         AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
@@ -409,10 +409,11 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getQuickLaunchItems()
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getQuickLaunchItems()
         {
-            XElement ReturnVal = new XElement( "quicklaunch" );
+            //XElement ReturnVal = new XElement( "quicklaunch" );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -422,10 +423,10 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
-                    var ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources ); //, new CswWebClientStorageCookies( Context.Request, Context.Response ) ); // , Session );
+                    var Ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources ); //, new CswWebClientStorageCookies( Context.Request, Context.Response ) ); // , Session );
                     if( null != UserId )
                     {
-                        ReturnVal.Add( ws.getQuickLaunchItems() );
+                        ReturnVal = Ws.getQuickLaunchItems();
                     }
                 }
 
@@ -433,12 +434,12 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         } // getQuickLaunchItems()
 
@@ -1100,9 +1101,7 @@ namespace ChemSW.Nbt.WebServices
             _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
             return ReturnVal;
-
         }
-
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
@@ -1325,7 +1324,7 @@ namespace ChemSW.Nbt.WebServices
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
                     var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32(TabId), NewPropsXml, CswConvert.ToInt32( NodeTypeId ), View );
+                    ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( TabId ), NewPropsXml, CswConvert.ToInt32( NodeTypeId ), View );
                 }
 
                 _deInitResources();
