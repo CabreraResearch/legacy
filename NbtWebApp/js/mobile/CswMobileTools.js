@@ -9,31 +9,6 @@
 ; (function ($)
 { /// <param name="$" type="jQuery" />
     
-    $.fn.cswUL = function(params) {
-        //this will become CswMobileListView
-        var p = {
-            'id': '',
-            'data-filter': false,
-            'data-role': 'listview',
-            'data-inset': true,
-            'cssclass': '',
-            'showLoading': true
-        };
-        if (params) $.extend(p, params);
-
-        var $div = $(this);
-        var $ret = undefined;
-        if (!isNullOrEmpty($div)) {
-            $ret = $('<ul class="' + p.cssclass + '" id="' + tryParseString(p.id, '') + '"></ul>')
-                                                    .appendTo($div)
-                                                    .CswAttrXml(p);
-            if(params.showLoading) {
-                $ret.bind('click', function() { $.mobile.showPageLoadingMsg(); });
-            }
-        }
-        return $ret;
-    };
-
     $.fn.CswChangePage = function(options) {
         /// <summary>
         ///   Initiates page transition between CswMobilePages
@@ -57,67 +32,6 @@
             }
         }
         return ret;
-    };
-
-    $.fn.CswPage = function() {
-        /// <summary>
-        ///   Calls page styling on a DOM element
-        /// </summary>
-        /// <returns type="void"></returns>
-        var $div = $(this);
-        var ret = false;
-        try {
-            ret = $div.trigger('create');
-        } catch(e) {
-            if (debugOn()) {
-                log('trigger("create") failed.', true);
-            }
-        }
-        return ret;
-    };
-
-    $.fn.CswUnbindJqmEvents = function() {
-        /// <summary>
-        ///   Unbinds the 'pageshow' event from a DOM element
-        /// </summary>
-        /// <returns type="jQuery">Returns self for chaining</returns>
-        var $div = $(this);
-        if (!isNullOrEmpty($div) && $div.length > 0) {
-            $div.unbind('pageshow');
-        }
-        return $div;
-    };
-
-    $.fn.CswBindJqmEvents = function(params) {
-        /// <summary>
-        ///   Binds the 'pageshow' event from a DOM element
-        /// </summary>
-        /// <param name="params" type="JSON">Options for the event binding. Should include an onPageShow() method.</param>
-        /// <returns type="jQuery">Returns self for chaining</returns>
-        var $div = $(this); 
-        var $ret = false;
-        if (!isNullOrEmpty($div)) {
-            var p = {
-                ParentId: '',
-                DivId: '',
-                title: '',
-                json: '',
-                parentlevel: 0,
-                level: 1,
-                HideRefreshButton: false,
-                HideSearchButton: false,
-                onPageShow: function() {}
-            };
-
-            if (params) $.extend(p, params);
-            p.level = (p.parentlevel === p.level) ? p.parentlevel + 1 : p.level;
-
-            $ret = $div.bind('pageshow', function() {
-                p.onPageShow(p);
-                fixGeometry();
-            });
-        }
-        return $ret;
     };
     
     $.fn.CswSetPath = function() {
@@ -466,5 +380,22 @@ function ensureContent($content, contentDivId) {
     }
     return $content;
 }    
+
+function modifyPropJson(json,key,value) {
+    /// <summary> Sets the value of a key on a JSON object, and adds a 'wasmodified' = true property. </summary>
+    /// <param name="json" type="Object">Some JSON object.</param>
+    /// <param name="key" type="String">A JSON property name (key).</param>
+    /// <param name="value" type="Object">A value to set.</param>
+    /// <returns type="Object">The modified JSON</returns>
+    if (!isNullOrEmpty(key) &&
+        json.hasOwnProperty(key)) {
+        var oldValue = json[key];
+        json[key] = value;
+        if (oldValue !== value) {
+            json.wasmodified = true;
+        } 
+    }
+    return json;
+}
 
 //#endregion functions
