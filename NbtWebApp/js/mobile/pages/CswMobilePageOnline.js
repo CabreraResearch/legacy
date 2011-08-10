@@ -214,8 +214,6 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
 //				$content: mobileStorage.getItem('debuglog')
 //			};
 //			var $logDiv = _addPageDivToBody(params);
-//			$logDiv.CswUnbindJqmEvents();
-//			$logDiv.CswBindJqmEvents(params);
 //			$logDiv.CswChangePage();
 		}
 	}
