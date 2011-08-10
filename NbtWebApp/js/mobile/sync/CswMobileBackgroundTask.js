@@ -31,11 +31,7 @@ function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
     {
         mobileStorage = new CswMobileClientDbResources();
     }
-    
-    if(false) { //enables Intellisense
-        mobileSync = new CswMobileSync();
-    }
-    
+   
     var backgroundTaskId;
 
     function handleDataCheckTimer(onSuccessOveride, onFailureOveride) {
