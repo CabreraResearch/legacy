@@ -131,12 +131,8 @@ function CswMobileFieldTypeQuestion(ftDef) {
 		else if (id.contains(makeSafeId({ ID: propId, suffix: 'cor' }))) {
             subFieldToUpdate = subfields.CorrectiveAction.subfield.name;
 		}
-        
-        if ( !isNullOrEmpty(subFieldToUpdate) &&
-            json.hasOwnProperty(subFieldToUpdate)) {
-            json[subFieldToUpdate] = newValue;
-            json.wasmodified = true;
-        }
+
+        json = modifyPropJson(json, subFieldToUpdate, newValue);
         return json;
     }
     

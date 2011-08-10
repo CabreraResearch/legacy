@@ -97,10 +97,7 @@ function CswMobileFieldTypeLogical(ftDef) {
     }
 
     function updatePropValue(json,id,newValue) {
-        if (json.hasOwnProperty(subfields.Checked.subfield.name)) {
-            json[subfields.Checked.subfield.name] = newValue;
-            json.wasmodified = true;
-        }
+        json = modifyPropJson(json, subfields.Checked.subfield.name, newValue);
         return json;
     }
     

@@ -13,8 +13,6 @@ function CswMobileFieldTypeLink(ftDef) {
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
 	/// <returns type="CswMobileFieldTypeLink">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
-
  	//#region private
 
     var divSuffix = '_propdiv';

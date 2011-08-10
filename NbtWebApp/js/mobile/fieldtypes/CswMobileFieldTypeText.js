@@ -47,10 +47,7 @@ function CswMobileFieldTypeText(ftDef) {
     }
     
     function updatePropValue(json,id,newValue) {
-        if (json.hasOwnProperty(subfields.Text.subfield.name)) {
-            json[subfields.Text.subfield.name] = newValue;
-            json.wasmodified = true;
-        }
+        json = modifyPropJson(json, subfields.Text.subfield.name, newValue);
         return json;
     }    
 	//#endregion private

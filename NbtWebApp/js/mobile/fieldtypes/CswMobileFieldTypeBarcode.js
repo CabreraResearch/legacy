@@ -48,10 +48,7 @@ function CswMobileFieldTypeBarcode(ftDef) {
     }
     
     function updatePropValue(json,id,newValue) {
-        if (json.hasOwnProperty(subfields.Barcode.subfield.name)) {
-            json[subfields.Barcode.subfield.name] = newValue;
-            json.wasmodified = true;
-        }
+        json = modifyPropJson(json, subfields.Barcode.subfield.name, newValue);
         return json;
     }
     

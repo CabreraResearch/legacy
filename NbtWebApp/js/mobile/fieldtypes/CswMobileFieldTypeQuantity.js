@@ -52,10 +52,7 @@ function CswMobileFieldTypeQuantity(ftDef) {
     }
 
     function updatePropValue(json,id,newValue) {
-        if (json.hasOwnProperty(subfields.Value.subfield.name)) {
-            json[subfields.Value.subfield.name] = newValue;
-            json.wasmodified = true;
-        }
+        json = modifyPropJson(json, subfields.Value.subfield.name, newValue);
         return json;
     }    
     
