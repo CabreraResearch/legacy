@@ -116,6 +116,7 @@
     <Content Include="js\CswProfileMethod.js" />
     <Content Include="js\mobile\controls\CswMobileListView.js" />
     <Content Include="js\jquery\fieldtypes\CswFieldTypeMultiList.js" />
+    <Content Include="js\mobile\CswMobileEnums.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeBarcode.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeDate.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeLink.js" />
