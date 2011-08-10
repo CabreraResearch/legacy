@@ -66,6 +66,24 @@ namespace ChemSW.Nbt.Sched
 			_CswNbtResources.AuditContext = "Scheduler Task: Generate Email Reports";
         }//init() 
 
+
+		private string makeViewUrl(CswNbtViewId ViewId)
+		{
+			string ret = _CswNbtResources.SetupVbls["MailReportUrlStem"];
+			if( !ret.EndsWith( "/" ) ) ret += "/";
+			ret += "Main.html?viewid=";
+			ret += ViewId.ToString();
+			return ret;
+		}
+		private string makeReportUrl(CswPrimaryKey ReportNodeId)
+		{
+			string ret = _CswNbtResources.SetupVbls["MailReportUrlStem"];
+			if( !ret.EndsWith( "/" ) ) ret += "/";
+			ret += "Main.html?reportid=";
+			ret += ReportNodeId.PrimaryKey.ToString();
+			return ret;
+		}
+
         public void threadCallBack()
         {
             _LogicRunStatus = LogicRunStatus.Running;
@@ -112,16 +130,15 @@ namespace ChemSW.Nbt.Sched
 
                                     CurrentMailReport.LastProcessed.DateValue = DateTime.Now;
 
-                                    string ReportReference = _CswNbtResources.SetupVbls["MailReportUrlStem"] + "Login.aspx?destination=";
+									string ReportLink = string.Empty;
 
                                     if( !CurrentMailReport.Type.Empty )
                                     {
 										CswNbtViewId ViewId = new CswNbtViewId();
-                                        string ReportParameter = string.Empty;
                                         if( "View" == CurrentMailReport.Type.Value )
                                         {
 											ViewId.set( CswConvert.ToInt32( CurrentMailReport.ReportView.SelectedViewIds ) );
-                                            ReportParameter = CswTools.UrlToQueryStringParam( "Main.aspx?ViewId=" + ViewId.ToString() );
+											ReportLink = makeViewUrl( ViewId );
                                         }
                                         else if( "Report" == CurrentMailReport.Type.Value )
                                         {
@@ -130,8 +147,8 @@ namespace ChemSW.Nbt.Sched
                                                 CswNbtNode ReportNode = _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
                                                 CswNbtObjClassReport ReportObjClass = CswNbtNodeCaster.AsReport( ReportNode );
 												ViewId = ReportObjClass.View.ViewId;
-                                                ReportParameter = CswTools.UrlToQueryStringParam( "Report.aspx?reportid=" + ReportNode.NodeId.PrimaryKey.ToString() );
-                                            }
+												ReportLink = makeReportUrl( ReportNode.NodeId );
+											}
                                         }
                                         else
                                         {
@@ -139,10 +156,9 @@ namespace ChemSW.Nbt.Sched
 
                                         }//if-else on format
 
-                                        if( string.Empty != ReportParameter )
+                                        if( string.Empty != ReportLink )
                                         {
-                                            ReportReference += ReportParameter;
-                                            CswNbtMailReportStatus.Link = ReportReference;
+											CswNbtMailReportStatus.Link = ReportLink;
                                         }
 
                                         if( CswNbtMailReportStatus.ReportReadyForQuery )
@@ -170,9 +186,8 @@ namespace ChemSW.Nbt.Sched
                                                             {
                                                                 CswNbtMailReportStatus.ReportDataExist = true;
                                                                 Message = CurrentMailReport.Message.Text + "\r\n";
-                                                                Message += ReportReference;
+																Message += ReportLink;
                                                                 CswNbtMailReportStatus.ReportReason = "The report's view returned data ";
-                                                                //= "Message sent with report link: " + ReportReference;
                                                             }
                                                             else
                                                             {

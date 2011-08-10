@@ -69,12 +69,17 @@
 
 	// handle querystring arguments
 	var qs = $.CswQueryString();
-	if (!isNullOrEmpty(qs.viewid))
+	if (false == isNullOrEmpty(qs.viewid))
 	{
 		setCurrentView(qs.viewid, tryParseString(qs.viewmode, 'tree'));
 		window.location = "Main.html";
 	}
-	else if(!isNullOrEmpty(qs.clear))
+	else if (false == isNullOrEmpty(qs.reportid))
+	{
+		setCurrentReport(qs.reportid);
+		window.location = "Main.html";
+	}
+	else if(false == isNullOrEmpty(qs.clear))
 	{
 		clearCurrent();
 		window.location = "Main.html";
@@ -123,6 +128,13 @@
 						'type': 'action', 
 						'actionname': current.actionname,
 						'actionurl': current.actionurl 
+					});
+				}
+				else if (false === isNullOrEmpty(current.reportid))
+				{
+					handleItemSelect({
+						'type': 'report',
+						'reportid': current.reportid
 					});
 				}
 				else

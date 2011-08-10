@@ -12,7 +12,8 @@ var CswCookieName = {
 	CurrentViewMode: 'csw_currentviewmode',
 	CurrentNodeId: 'csw_currentnodeid',
 	CurrentNodeKey: 'csw_currentnodekey',
-	CurrentTabId: 'csw_currenttabid'
+	CurrentTabId: 'csw_currenttabid',
+	CurrentReportId: 'csw_currentreportid'
 };
 
 
