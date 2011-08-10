@@ -15,10 +15,10 @@ using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Security
 {
-    public class CswNbtAuthenticator : ICswSchemaAuthenticater
+    public class CswNbtSchemaAuthenticator : ICswSchemaAuthenticater
     {
         private CswNbtResources _CswNbtResources;
-        public CswNbtAuthenticator( CswNbtResources Resources )
+        public CswNbtSchemaAuthenticator( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
         }
