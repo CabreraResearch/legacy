@@ -130,7 +130,7 @@ var CswNodeSpecies = {
     More: { name: 'More' }
 };
 
-CswSubField_Names = {
+var CswSubField_Names = {
     Unknown: { name: 'unknown' }, 
     AllowedAnswers: { name: 'allowedanswers' },
     Answer: { name: 'answer' },
@@ -168,7 +168,7 @@ CswSubField_Names = {
 	Exponent: { name: 'exponent' }
 };
 
-CswSubFields_PropColumn = {
+var CswSubFields_PropColumn = {
     Unknown: { name: 'unknown' },
     Field1: { name: 'field1' },
     Field1_FK: { name: 'field1_fk' },
@@ -384,7 +384,7 @@ var CswMobileFooterButtons = {
     online: {name: 'online',
              ID: 'online',
              text: 'Online',
-			 cssClass: 'ui-btn-active onlineStatus ',
+			 cssClass: CswMobileCssClasses.onlineStatus.name + ' ui-btn-active ',
 			 dataIcon: 'gear'
     },
     refresh: {name: 'refresh',
