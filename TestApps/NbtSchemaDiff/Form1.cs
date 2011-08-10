@@ -202,7 +202,7 @@ namespace ChemSW.NbtSchemaDiff
 
                 // get all nodes
                 _CswNbtResourcesLeft.AccessId = _LeftAccessId;
-                _CswNbtResourcesLeft.refreshDataDictionary();
+                _CswNbtResourcesLeft.refresh();
                 _CswNbtResourcesLeft.MetaData.refreshAll();
                 CswTableSelect LeftNodesSelect = _CswNbtResourcesLeft.makeCswTableSelect( "NbtSchemaDiff_Left_nodes_select", "nodes" );
                 DataTable LeftNodesTable = LeftNodesSelect.getTable();
@@ -215,7 +215,7 @@ namespace ChemSW.NbtSchemaDiff
                 }
 
                 _CswNbtResourcesRight.AccessId = _RightAccessId;
-                _CswNbtResourcesRight.refreshDataDictionary();
+                _CswNbtResourcesRight.refresh();
                 _CswNbtResourcesRight.MetaData.refreshAll();
                 CswTableSelect RightNodesSelect = _CswNbtResourcesRight.makeCswTableSelect( "NbtSchemaDiff_Right_nodes_select", "nodes" );
                 DataTable RightNodesTable = RightNodesSelect.getTable();
