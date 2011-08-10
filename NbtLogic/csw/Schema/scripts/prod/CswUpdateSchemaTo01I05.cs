@@ -36,6 +36,15 @@ namespace ChemSW.Nbt.Schema
 			_CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 
 			// case 8411
+			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodetype_tabset", "firsttabversionid" ) )
+			{
+				_CswNbtSchemaModTrnsctn.addForeignKeyColumn( "nodetype_tabset", "firsttabversionid", "Foreign key to original tab version", false, false, "nodetype_tabset", "nodetypetabsetid" );
+			}
+			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodetype_tabset", "priortabversionid" ) )
+			{
+				_CswNbtSchemaModTrnsctn.addForeignKeyColumn( "nodetype_tabset", "priortabversionid", "Foreign key to previous tab version", false, false, "nodetype_tabset", "nodetypetabsetid" );
+			}
+
 
 			CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
 			CswNbtMetaDataObjectClassProp RoleNodeTypePermOCP = RoleOC.getObjectClassProp( CswNbtObjClassRole.NodeTypePermissionsPropertyName );

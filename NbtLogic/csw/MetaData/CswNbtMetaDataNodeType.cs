@@ -325,6 +325,19 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypeId, NodeTypePropId );
         }
+		public CswNbtMetaDataNodeTypeTab getNodeTypeTabByFirstVersionId( Int32 FirstTabVersionId )
+		{
+			CswNbtMetaDataNodeTypeTab ret = null;
+			foreach( CswNbtMetaDataNodeTypeTab Tab in NodeTypeTabs )
+			{
+				if( Tab.FirstTabVersionId == FirstTabVersionId )
+				{
+					ret = Tab;
+					break;
+				}
+			}
+			return ret;
+		} // getNodeTypeTabByFirstVersionId()
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByFirstVersionId( Int32 FirstPropVersionId )
         {
@@ -338,7 +351,7 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             return ret;
-        }
+        } // getNodeTypePropByFirstVersionId()
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassPropName( string ObjectClassPropName )
         {

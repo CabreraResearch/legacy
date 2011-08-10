@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using ChemSW.Nbt.MetaData;
@@ -91,21 +92,37 @@ namespace ChemSW.Nbt.Security
 					{
 						// Base case
 						ret = Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType, Permission ) );
+						if( Permission == NodeTypePermission.View )
+						{
+							// Having 'Edit' grants 'View' automatically
+							ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType, NodeTypePermission.Edit ) );
+						}
 						
 						// case 8411 - Tab permissions
 						if( ( CheckAllTabPermissions || NodeTypeTab != null ) &&
 							( Permission == NodeTypePermission.View || Permission == NodeTypePermission.Edit ) )
 						{
-							NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypePermission ), Permission.ToString() );
+							NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), Permission.ToString() );
+							Collection<CswNbtMetaDataNodeTypeTab> TabsToCheck = new Collection<CswNbtMetaDataNodeTypeTab>();
 							if( NodeTypeTab != null )
 							{
-								ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( NodeTypeTab, TabPermission ) );
+								TabsToCheck.Add( NodeTypeTab );
 							}
 							else if( CheckAllTabPermissions )
 							{
 								foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
 								{
-									ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( Tab, TabPermission ) );
+									TabsToCheck.Add( Tab );
+								}
+							}
+
+							foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToCheck )
+							{
+								ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( Tab, TabPermission ) );
+								if( TabPermission == NodeTypeTabPermission.View )
+								{
+									// Having 'Edit' grants 'View' automatically
+									ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( Tab, NodeTypeTabPermission.Edit ) );
 								}
 							}
 						} // if checking tab permissions
