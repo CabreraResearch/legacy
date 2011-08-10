@@ -107,7 +107,7 @@
 						ViewId: viewid
 					};
 
-					CswAjaxJSON({
+					CswAjaxJson({
 						url: o.CopyViewUrl,
 						data: dataJson,
 						success: function (gridJson) {
@@ -136,7 +136,7 @@
 							ViewId: viewid
 						};
 
-						CswAjaxJSON({
+						CswAjaxJson({
 							url: o.DeleteViewUrl,
 							data: dataJson,
 							success: function (gridJson) {
@@ -440,7 +440,7 @@
 				SelectedViewId: tryParseString(selectedviewid,'')
 			};
 
-			CswAjaxJSON({
+			CswAjaxJson({
 				url: o.ViewGridUrl,
 				data: dataJson,
 				success: function (gridJson) {

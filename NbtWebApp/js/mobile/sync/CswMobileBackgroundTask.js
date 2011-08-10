@@ -47,7 +47,7 @@ function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
         /// <returns type="void"></returns>
         if ( !mobileStorage.stayOffline() )
         {
-            CswAjaxJSON({
+            CswAjaxJson({
                 formobile: o.ForMobile,
                 url: o.taskUrl,
                 data: {},

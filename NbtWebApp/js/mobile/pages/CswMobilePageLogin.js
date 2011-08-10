@@ -111,7 +111,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
                     ForMobile: true
                 };
 
-                CswAjaxJSON({
+                CswAjaxJson({
                         formobile: true,
 					    //async: false,
                         url: authenticateUrl,

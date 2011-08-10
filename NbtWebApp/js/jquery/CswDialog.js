@@ -96,7 +96,7 @@
 																				createData.VisibilityUserId = v.getvisuserselect().val();
 																			}
 
-																			CswAjaxJSON({
+																			CswAjaxJson({
 																				url: '/NbtWebApp/wsNBT.asmx/createView',
 																				data: createData,
 																				success: function(data) {
@@ -412,7 +412,7 @@
 													.appendTo($div);
 							$div.append('<br/>');
 
-							CswAjaxJSON({
+							CswAjaxJson({
 								url: o.GetLicenseUrl,
 								success: function(data)
 								{
@@ -424,7 +424,7 @@
 															enabledText: 'I Accept', 
 															disabledText: 'Accepting...', 
 															onclick: function() {
-																	CswAjaxJSON({
+																	CswAjaxJson({
 																		url: o.AcceptLicenseUrl,
 																		success: function(data) 
 																			{
@@ -471,7 +471,7 @@
 							var $labelsel;
 
 							var jData = { PropId: o.propid }
-							CswAjaxJSON({
+							CswAjaxJson({
 								url: o.GetPrintLabelsUrl,
 								data: jData,
 								success: function(data)
@@ -500,7 +500,7 @@
 																disableOnClick: false,
 																onclick: function() {
 																	var jData2 = { PropId: o.propid, PrintLabelNodeId: $labelsel.val() };
-																	CswAjaxJSON({
+																	CswAjaxJson({
 																		url: o.GetEPLTextUrl,
 																		data: jData2,
 																		success: function(data)

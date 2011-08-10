@@ -16,7 +16,7 @@
 					.appendTo($parent);
 
 		
-		CswAjaxJSON({
+		CswAjaxJson({
 			'url': o.Url,
 			'data': {},
 			'success': function(gridJson) 

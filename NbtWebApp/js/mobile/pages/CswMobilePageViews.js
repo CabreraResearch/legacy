@@ -99,7 +99,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 			ForMobile: true
 		};
 
-        CswAjaxJSON({
+        CswAjaxJson({
 				//async: false,   // required so that the link will wait for the content before navigating
 				formobile: true,
 				url: getViewsUrl,

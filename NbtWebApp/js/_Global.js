@@ -75,7 +75,7 @@ function checkExpireTime()
 		$.CswDialog('ExpireDialog', {
 			'onYes': function ()
 			{
-				CswAjaxJSON({
+				CswAjaxJson({
 					'url': '/NbtWebApp/wsNBT.asmx/RenewSession',
 					'success': function () { }
 				});
@@ -131,7 +131,7 @@ function ajaxInProgress()
 	return (_ajaxCount > 0);
 }
 
-function CswAjaxJSON(options)
+function CswAjaxJson(options)
 { /// <param name="$" type="jQuery" />
 	/// <summary>
 	///   Executes Async webservice request for JSON
@@ -408,7 +408,7 @@ function Logout(options)
 		$.extend(o, options);
 	}
 
-	CswAjaxJSON({
+	CswAjaxJson({
 		url: o.DeauthenticateUrl,
 		data: {},
 		success: function (data)
@@ -652,7 +652,7 @@ function IsAdministrator(options)
 	};
 	if (options) $.extend(o, options);
 
-	CswAjaxJSON({
+	CswAjaxJson({
 		url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
 		success: function (data)
 			{
@@ -687,7 +687,7 @@ function copyNode(options)
 		NodePk: o.nodeid
 	};
 
-	CswAjaxJSON({
+	CswAjaxJson({
 		url: '/NbtWebApp/wsNBT.asmx/CopyNode',
 		data: dataJson,
 		success: function (result)
@@ -716,7 +716,7 @@ function deleteNodes(options)
 		NodeKeys: o.nodekeys
 	};
 
-	CswAjaxJSON({
+	CswAjaxJson({
 		url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',
 		data: jData,
 		success: function (result)

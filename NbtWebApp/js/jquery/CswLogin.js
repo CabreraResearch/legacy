@@ -85,7 +85,7 @@
 																ForMobile: false
 															};
 
-															CswAjaxJSON({
+															CswAjaxJson({
 																		url: o.AuthenticateUrl,
 																		data: dataJson,
 																		success: function (data) 

@@ -748,7 +748,7 @@
 
 		setCurrentAction(o.actionname, o.actionurl);
 
-		CswAjaxJSON({
+		CswAjaxJson({
 			'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
 			'data': { 'ActionName': o.actionname }
 		});

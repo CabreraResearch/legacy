@@ -294,7 +294,7 @@
 					EditMode: o.EditMode
 				};
 
-				CswAjaxJSON({
+				CswAjaxJson({
 					url: o.MovePropUrl,
 					data: dataJson,
 					success: function (result)
@@ -489,7 +489,7 @@
 					'ViewId': $.CswCookie('get', CswCookieName.CurrentViewId)
 				   };
 
-				CswAjaxJSON({
+				CswAjaxJson({
 					url: o.SavePropUrl,
 					//data: "{ EditMode: '" + o.EditMode + "', SafeNodeKey: '" + o.cswnbtnodekey + "', NodeTypeId: '" + o.nodetypeid + "', ViewId: '"+ $.CswCookie('get', CswCookieName.CurrentView.ViewId) +"', NewPropsXml: '" + safeJsonParam(xmlToString($propsxml)) + "' }",
 					data: data,
@@ -519,7 +519,7 @@
 									dataJson.PropIds.push(propid);
 								});
 
-								CswAjaxJSON({
+								CswAjaxJson({
 									url: o.CopyPropValuesUrl,
 									data: dataJson
 								}); // ajax

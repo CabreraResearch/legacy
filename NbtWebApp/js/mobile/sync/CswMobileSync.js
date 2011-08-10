@@ -67,7 +67,7 @@ function CswMobileSync(options,mobileStorage) {
                         ForMobile: o.ForMobile
                     };
 
-                    CswAjaxJSON({
+                    CswAjaxJson({
                             formobile: o.ForMobile,
                             url: o.syncUrl,
                             data: dataJson,

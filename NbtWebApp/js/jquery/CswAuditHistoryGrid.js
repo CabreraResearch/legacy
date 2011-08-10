@@ -24,7 +24,7 @@
 			var $Div = $(this);
 			$Div.contents().remove();
 
-			CswAjaxJSON({
+			CswAjaxJson({
 				'url': o.Url,
 				'data': {
 					'NodeId': o.nodeid, 

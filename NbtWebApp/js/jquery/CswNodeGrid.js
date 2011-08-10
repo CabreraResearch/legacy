@@ -43,7 +43,7 @@
 			
 			var dataJson = {ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty };		
 			
-			CswAjaxJSON({
+			CswAjaxJson({
 				url: o.GridUrl,
 				data: dataJson,
 				success: function (gridJson) {
