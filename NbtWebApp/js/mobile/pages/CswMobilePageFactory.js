@@ -235,9 +235,6 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     this.CswChangePage = function(options) {
         $pageDiv.CswChangePage(options);
     };
-    this.CswPage = function() {
-        $pageDiv.CswPage();
-    };
     this.CswSetPath = function() {
         $pageDiv.CswSetPath();
     };
