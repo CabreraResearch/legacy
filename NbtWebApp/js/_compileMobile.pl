@@ -10,6 +10,7 @@ $param .= extract("$dir\\js");
 $param .= extract("$dir\\js\\jquery\\common");
 $param .= extract("$dir\\js\\mobile");
 $param .= extract("$dir\\js\\mobile\\clientdb");
+$param .= extract("$dir\\js\\mobile\\controls");
 $param .= extract("$dir\\js\\mobile\\fieldtypes");
 $param .= extract("$dir\\js\\mobile\\objectclasses");
 $param .= extract("$dir\\js\\mobile\\pages");

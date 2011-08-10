@@ -1,7 +1,5 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="/js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="/js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../_Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
@@ -28,24 +26,26 @@
             $select.CswAttrDom('id',elementId);
             $select.CswAttrDom('name',elementId);
             
-            if( !isNullOrEmpty( o.cssclass ) ) $select.addClass(o.cssclass);
-            if( !isNullOrEmpty( o.value ) ) $select.text( o.value );
+            if (!isNullOrEmpty( o.cssclass )) $select.addClass(o.cssclass);
+            if (!isNullOrEmpty( o.value )) $select.text( o.value );
 
             for(var key in o.values)
             {
-                var value = o.values[key].value;
-                var display = o.values[key].display;
-                var $opt = $('<option value="' + value + '">' + display + '</option>')
-                                .appendTo($select);
-                if( value === o.selected) {
-                    $opt.CswAttrDom('selected','selected');
-                } 
+                if (o.values.hasOwnProperty(key)) {
+                    var value = o.values[key].value;
+                    var display = o.values[key].display;
+                    var $opt = $('<option value="' + value + '">' + display + '</option>')
+                        .appendTo($select);
+                    if (value === o.selected) {
+                        $opt.CswAttrDom('selected', 'selected');
+                    }
+                }
             }
             
             if( !isNullOrEmpty( o.onChange ) ) {
                  $select.bind('change', function () {
-                    var $select = $(this);
-                    o.onChange($select);
+                    var $this = $(this);
+                    o.onChange($this);
                  });
             }
             

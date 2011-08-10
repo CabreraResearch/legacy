@@ -1,11 +1,10 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../_Global.js" />
+﻿/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../_Global.js" />
+/// <reference path="../../CswEnums.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
-    var PluginName = "CswInput";
+    var pluginName = "CswInput";
     
     var methods = {
 	
@@ -34,7 +33,7 @@
             $input.CswAttrDom('id',o.ID);
             $input.CswAttrDom('name',o.name);
             
-            if( !isNullOrEmpty( o.type ) ) 
+            if (!isNullOrEmpty(o.type)) 
             {
                 $input.CswAttrDom('type', o.type.name);
                 //cannot style placeholder across all browsers yet. Ignore for now.
@@ -42,24 +41,24 @@
                 //{
                 //    $input.CswAttrDom('placeholder',o.placeholder);
                 //}
-                if( o.type.autocomplete === true && o.autocomplete === 'on' )
+                if (o.type.autocomplete === true && o.autocomplete === 'on')
                 {
                     $input.CswAttrDom('autocomplete','on');
                 }
                 
                 o.value = tryParseString(o.value, '');
-                if( isTrue( o.type.value.required ) || ( !isNullOrEmpty( o.value ) ) )
+                if (isTrue(o.type.value.required) || ( !isNullOrEmpty( o.value )))
                 {
                     $input.val(o.value);
                 }
 
-                o.width = tryParseString( o.width, o.type.defaultwidth);
+                o.width = tryParseString(o.width, o.type.defaultwidth);
             }
 
-            if( !isNullOrEmpty( o.cssclass ) ) $input.addClass(o.cssclass);
-            if( !isNullOrEmpty( o.width ) ) $input.css('width', o.width);
-            if( isTrue( o.autofocus ) ) $input.CswAttrDom('autofocus', o.autofocus);
-            if( !isNullOrEmpty( o.onChange ) ) $input.change( function () { o.onChange() } );
+            if (!isNullOrEmpty(o.cssclass)) $input.addClass(o.cssclass);
+            if (!isNullOrEmpty(o.width)) $input.css('width', o.width);
+            if (isTrue(o.autofocus)) $input.CswAttrDom('autofocus', o.autofocus);
+            if (!isNullOrEmpty(o.onChange)) $input.change( function () { o.onChange(); } );
                                 
             $parent.append($input);
             return $input;
@@ -74,7 +73,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
 		}    
     };
 

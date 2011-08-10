@@ -5,10 +5,8 @@
     <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1" />
     <title>Main</title>
     <link rel="shortcut icon" href="images/favicon.ico" />
-    <!--#include file="Mobile_Includes_Head.html" -->
 </head>
-
-<body id="CswMobile_Body">
+<body>
     <!--#include file="Mobile_Includes_Body.html" -->
     <script type="text/javascript">
 
@@ -23,9 +21,9 @@
             {
                 window.location.href = window.location.pathname;
             }
+            onError();
             if (debugOn())
             {
-                alert(e);
                 errorHandler(e, true, true, true);
             }
             else
@@ -33,11 +31,6 @@
                 errorHandler(e);
             }
         }
-
-        window.onerror = function(e)
-        {
-            redirectOnError(e);
-        };
         
         try {
             if( hasWebStorage() ) {
@@ -47,7 +40,7 @@
 
 		        $(document).ready(function ()
 		        {
-		            $(window).bind("orientationchange resize", function () { fixGeometry(); });
+		            $(window).bind("orientationchange resize scrollstart", fixGeometry);
 
 		            $('body').CswMobile({
 		                'Theme': 'b'

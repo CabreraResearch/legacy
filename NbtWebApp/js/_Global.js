@@ -1,7 +1,28 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.js" />
-/// <reference path="../js/thirdparty/jquery/plugins/jquery-validate-1.8/jquery.validate.js" />
+﻿/// <reference path="thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
 /// <reference path="_CswPrototypeExtensions.js" />
+/// <reference path="CswProfileMethod.js" />
+/// <reference path="CswArray.js" />
+/// <reference path="CswClientDb.js" />
+/// <reference path="CswEnums.js" />
+/// <reference path="CswString.js" />
+
+/// <reference path="jquery/common/CswAttr.js" />
+/// <reference path="jquery/common/CswTools.js" />
+/// <reference path="jquery/common/CswCookie.js" />
+/// <reference path="jquery/common/CswDiv.js" />
+/// <reference path="jquery/common/CswInput.js" />
+/// <reference path="jquery/common/CswLink.js" />
+/// <reference path="jquery/common/CswSelect.js" />
+/// <reference path="jquery/common/CswSpan.js" />
+
+/// <reference path="mobile/CswMobileTools.js" />
+
+/// <reference path="mobile/clientdb/CswMobileClientDbResources.js" />
+/// <reference path="mobile/clientdb/CswMobileClientDb.js" />
+
+/// <reference path="mobile/sync/CswMobileSync.js" />
+/// <reference path="mobile/sync/CswMobileBackgroundTask.js" />
 
 // ------------------------------------------------------------------------------------
 // Globals (yuck)
@@ -10,6 +31,7 @@
 "use strict";
 
 var homeUrl = 'Main.html';
+
 
 // ------------------------------------------------------------------------------------
 // Session Expiration
@@ -125,8 +147,8 @@ function CswAjaxJSON(options)
 		url: '',
 		data: {},
 		onloginfail: function () { _finishLogout(); },
-		success: function (result) { },
-		error: function () { },
+		success: null, //function () { },
+		error: null, //function () { },
 		formobile: false,
 		async: true
 	};
@@ -209,7 +231,7 @@ function CswAjaxXml(options)
 		data: {},
 		stringify: false, //in case we need to conditionally apply $.param() instead of JSON.stringify() (or both)
 		onloginfail: function () { _finishLogout(); },
-		success: function ($xml) { },
+		success: function () { },
 		error: function () { },
 		formobile: false,
 		async: true
@@ -348,7 +370,7 @@ function _handleAuthenticationStatus(options)
 					'cswnbtnodekey': o.usernodekey,
 					'filterToPropId': o.passwordpropid,
 					'title': 'Your password has expired.  Please change it now:',
-					'onEditNode': function (nodeid, nodekey) { o.success(); }
+					'onEditNode': function () { o.success(); }
 				});
 			}
 			break;
@@ -1149,7 +1171,7 @@ function makeSafeId(options)
 	if (options) $.extend(o, options);
 
 	var elementId = o.ID;
-	var toReplace = [/'/gi, /\//g];
+	var toReplace = [/'/gi, / /gi, /\//g];
 
 	if (!isNullOrEmpty(o.prefix) && !isNullOrEmpty(elementId))
 	{
@@ -1161,9 +1183,11 @@ function makeSafeId(options)
 	}
 	for (var i = 0; i < toReplace.length; i++)
 	{
-		if (!isNullOrEmpty(elementId))
-		{
-			elementId = elementId.replace(toReplace[i], '');
+		if(toReplace.hasOwnProperty(i)) {
+		    if (!isNullOrEmpty(elementId))
+		    {
+		        elementId = elementId.replace(toReplace[i], '');
+		    }
 		}
 	}
 
@@ -1175,7 +1199,7 @@ function isNullOrEmpty(obj)
 	/// <summary> Returns true if the input is null, undefined, or ''</summary>
 	/// <param name="obj" type="Object"> Object to test</param>
 	/// <returns type="Boolean" />
-	var ret = false;
+    var ret = false;
 	if (!isFunction(obj))
 	{
 		ret = $.isPlainObject(obj) && $.isEmptyObject(obj);
@@ -1183,7 +1207,7 @@ function isNullOrEmpty(obj)
 		{
 			ret = (trim(obj) === '');
 		}
-	}
+	} 
 	return ret;
 }
 
@@ -1290,7 +1314,10 @@ function tryParseString(inputStr, defaultStr)
 	/// <param name="inputStr" type="String"> String to parse </param>
 	/// <param name="defaultStr" type="String"> Default value if null or empty </param>
 	/// <returns type="String" />
-	var ret = defaultStr;
+    var ret = '';
+    if (defaultStr) {
+        ret = defaultStr;
+    }
 	if (!isNullOrEmpty(inputStr))
 	{
 		ret = inputStr;
@@ -1356,6 +1383,27 @@ function trim(str)
 	return $.trim(str);
 }
 
+function makeDelegate(method, options) {
+    /// <summary>
+    /// Returns a function with the argument parameter of the value of the current instance of the object.
+    /// <para>For example, in a "for(i=0;i<10;i++)" loop, makeDelegate will capture the value of "i" for a given function.</para>
+    /// </summary>
+	/// <param name="method" type="Function"> A function to delegate. </param>
+    /// <param name="options" type="Object"> A single parameter to hand the delegate function.</param>
+	/// <returns type="Function">A delegate function: function(options)</returns>
+    return function() { method(options); };
+}
+
+function makeEventDelegate(method, options) {
+    /// <summary>
+    /// Returns a function with the event object as the first parameter, and the current value of options as the second parameter.
+    /// </summary>
+	/// <param name="method" type="Function"> A function to delegate. </param>
+    /// <param name="options" type="Object"> A single parameter to hand the delegate function.</param>
+	/// <returns type="Function">A delegate function: function(eventObj, options)</returns>
+    return function(eventObj) { method(eventObj,options); };
+}
+
 // ------------------------------------------------------------------------------------
 // for debug
 // ------------------------------------------------------------------------------------
@@ -1382,7 +1430,7 @@ function log(s, includeCallStack)
 	var extendedLog = '';
 	if (isTrue(includeCallStack))
 	{
-		extendedLog = getCallStack();
+		extendedLog = console.trace();
 	}
 
 	try
@@ -1396,24 +1444,6 @@ function log(s, includeCallStack)
 		alert(s);
 		if (!isNullOrEmpty(extendedLog)) alert(extendedLog);
 	}
-}
-
-function getCallStack()
-{
-	var stack = '';
-	var callername = arguments.callee.caller.name;
-	var caller = arguments.callee.caller;
-	while (!isNullOrEmpty(callername))
-	{
-		if (callername != 'log')
-		{
-			stack += "Called by function " + callername + "() \n";
-		}
-		caller = caller.caller;
-		callername = (!isNullOrEmpty(caller)) ? caller.name : '';
-	}
-
-	return stack;
 }
 
 function errorHandler(error, includeCallStack, includeLocalStorage, doAlert)
@@ -1507,9 +1537,9 @@ function fixGeometry()
 	scroll(0, 0);
 
 	/* Calculate the geometry that our content area should take */
-	var $header = $("div[data-role='header']:visible");
-	var $footer = $("div[data-role='footer']:visible");
-	var $content = $("div[data-role='content']:visible");
+	var $header = $('div:jqmData(role="header"):visible');
+	var $footer = $('div:jqmData(role="footer"):visible');
+	var $content = $('div:jqmData(role="content"):visible');
 
 	var viewport_height = $(window).height();
 	var content_height = viewport_height - $header.outerHeight() - $footer.outerHeight();

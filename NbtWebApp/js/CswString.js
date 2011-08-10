@@ -1,17 +1,20 @@
 ﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
 /// <reference path="_Global.js" />
+/// <reference path="_CswPrototypeExtensions.js" />
 
 //#region CswString
+CswString.inheritsFrom(String);
+
 function CswString(string)
 {
+    String.call(this);
+    
     var value = string;
-    this.val = function (string)
+    this.val = function (newString)
     {
         if (arguments.length === 1)
         {
-            value = string;
+            value = newString;
             return this; //for chaining
         }
         else
@@ -19,9 +22,8 @@ function CswString(string)
             return value;
         }
     };
-    this.contains = function (string) { return value.indexOf(string) !== -1; };
+    this.contains = function (findString) { return value.indexOf(findString) !== -1; };
+    this.toString = function () { return value; };
 }
-
-CswString.prototype.toString = function () { return this.value; };
 
 //#endregion CswString

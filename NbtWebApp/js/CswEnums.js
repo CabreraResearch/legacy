@@ -37,6 +37,19 @@ var CswInput_Types = {
 	week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' }
 };
 
+// for CswCookie
+var CswCookieName = {
+	SessionId: 'CswSessionId',
+	Username: 'csw_username',
+	CurrentActionName: 'csw_currentactionname',
+	CurrentActionUrl: 'csw_currentactionurl',
+	CurrentViewId: 'csw_currentviewid',
+	CurrentViewMode: 'csw_currentviewmode',
+	CurrentNodeId: 'csw_currentnodeid',
+	CurrentNodeKey: 'csw_currentnodekey',
+	CurrentTabId: 'csw_currenttabid'
+};
+
 var CswAppMode = {
 	mode: 'full'     
 };
@@ -100,4 +113,239 @@ var ViewBuilder_CssClasses = {
 	metadatatype_static: { name: 'csw_viewbuilder_metadatatype_static' }
 };
 
+var CswDomElementEvent = {
+	click: {name: 'click'},
+	change: {name: 'change'},
+	vclick: {name: 'vclick'},
+	tap: {name: 'tap'}
+};
+
+var CswObjectClasses = {
+    GenericClass: { name: 'GenericClass' },
+    InspectionDesignClass: { name: 'InspectionDesignClass' }
+};
+
+var CswNodeSpecies = {
+    Plain: { name: 'Plain' },
+    More: { name: 'More' }
+};
+
+var CswSubField_Names = {
+    Unknown: { name: 'unknown' }, 
+    AllowedAnswers: { name: 'allowedanswers' },
+    Answer: { name: 'answer' },
+    Barcode: { name: 'barcode' },
+    Blob: { name: 'blob' },
+    Checked: { name: 'checked' },
+    Column: { name: 'column' },
+    Comments: { name: 'comments' },
+    CompliantAnswers: { name: 'compliantanswers' },
+    ContentType: { name: 'contenttype' },
+    CorrectiveAction: { name: 'correctiveaction' },
+    DateAnswered: { name: 'dateanswered' },
+    DateCorrected: { name: 'datecorrected' },
+    Href: { name: 'href' },
+    Image: { name: 'image' },
+    Interval: { name: 'interval' },
+    IsCompliant: { name: 'iscompliant' },
+    Mol: { name: 'mol' },
+    Name: { name: 'name' },
+    NodeID: { name: 'nodeid' },
+    NodeType: { name: 'nodetype' },
+    Number: { name: 'number' },
+    Password: { name: 'password' },
+    Path: { name: 'path' },
+    Required: { name: 'required' },
+    Row: { name: 'row' },
+    Sequence: { name: 'sequence' },
+    StartDateTime: { name: 'startdatetime' },
+    Text: { name: 'text' },
+    Units: { name: 'units' },
+    Value: { name: 'value' },
+    ViewID: { name: 'viewid' },
+    ChangedDate: { name: 'changeddate' },
+	Base: { name: 'base' },
+	Exponent: { name: 'exponent' }
+};
+
+var CswSubFields_Map = {
+    AuditHistoryGrid: { name: 'AuditHistoryGrid', subfields: { } },
+    Barcode: { 
+        name: 'Barcode', 
+        subfields: {
+            Barcode: CswSubField_Names.Barcode,
+            Sequence: CswSubField_Names.Number
+        } 
+    },
+	Composite: { name: 'Composite', subfields: { } },
+	Date: {
+	     name: 'Date', 
+	     subfields: {
+            Value: CswSubField_Names.Value
+        } 
+	},
+	File: { name: 'File', subfields: { } },
+	Grid: { name: 'Grid', subfields: { } },
+	Image: { name: 'Image', subfields: { } },
+	Link: {
+	     name: 'Link', 
+	     subfields: {
+            Text: CswSubField_Names.Text,
+            Href: CswSubField_Names.Href
+        } 
+	},
+	List: {
+	     name: 'List', 
+	     subfields: {
+            Value: CswSubField_Names.Value
+        } 
+	},
+	Location: { name: 'Location', subfields: { } },
+	LocationContents: { name: 'LocationContents', subfields: { } },
+	Logical: {
+	     name: 'Logical', 
+	     subfields: {
+            Checked: CswSubField_Names.Checked
+        } 
+	},
+	LogicalSet: { name: 'LogicalSet', subfields: { } },
+	Memo: {
+	     name: 'Memo', 
+	     subfields: {
+            Text: CswSubField_Names.Text
+        } 
+	},
+	MTBF: { name: 'MTBF', subfields: { } },
+	MultiList: { name: 'MultiList', subfields: { } },
+	NodeTypeSelect: { name: 'NodeTypeSelect', subfields: { } },
+	Number: {
+	     name: 'Number', 
+	     subfields: {
+            Value: CswSubField_Names.Value
+        } 
+	},
+	Password: {
+	     name: 'Password', 
+	     subfields: {
+            Password: CswSubField_Names.Password,
+            ChangedDate: CswSubField_Names.ChangedDate
+        } 
+	},
+	PropertyReference: { name: 'PropertyReference', subfields: { } },
+	Quantity: {
+	     name: 'Quantity', 
+	     subfields: {
+            Value: CswSubField_Names.Value,
+            Units: CswSubField_Names.Number
+        } 
+	},
+	Question: {
+	     name: 'Question', 
+	     subfields: {
+            Answer: CswSubField_Names.Answer,
+            CorrectiveAction: CswSubField_Names.CorrectiveAction,
+	        IsCompliant: CswSubField_Names.IsCompliant,
+            Comments: CswSubField_Names.Comments,
+            DateAnswered: CswSubField_Names.DateAnswered,
+            DateCorrected: CswSubField_Names.DateCorrected
+        } 
+	},
+	Relationship: { name: 'Relationship', subfields: { } },
+	Scientific: { name: 'Scientific', subfields: { } },
+	Sequence: { name: 'Sequence', subfields: { } },
+	Static: {
+	     name: 'Static', 
+	     subfields: {
+            Text: CswSubField_Names.Text
+        } 
+	},
+	Text: {
+	     name: 'Text', 
+	     subfields: {
+            Text: CswSubField_Names.Text
+        } 
+	},
+	Time: {
+	     name: 'Time', 
+	     subfields: {
+            Value: CswSubField_Names.Value
+        } 
+	},
+	TimeInterval: { name: 'TimeInterval', subfields: { } },
+	UserSelect: { name: 'UserSelect', subfields: { } },
+	ViewPickList: { name: 'ViewPickList', subfields: { } },
+	ViewReference: { name: 'ViewReference', subfields: { } }
+};
+
 //#endregion Global
+
+//#region Mobile
+
+var CswMobileHeaderButtons = {
+    back: {name: 'back', 
+            ID: 'back',
+	        text: 'Back',
+	        cssClass: 'ui-btn-left',
+	        dataDir: 'reverse',
+	        dataIcon: 'arrow-l',
+            dataRelationship: 'back'
+    },
+    search: {name: 'search',
+             ID: 'search',
+			 text: 'Search',
+			 cssClass: 'ui-btn-right'
+    }
+};
+var CswMobileFooterButtons = {
+    online: {name: 'online',
+             ID: 'online',
+             text: 'Online',
+			 cssClass: CswMobileCssClasses.onlineStatus.name + ' ui-btn-active ',
+			 dataIcon: 'gear'
+    },
+    refresh: {name: 'refresh',
+              ID: 'refresh',
+			  text: 'Refresh',
+		      cssClass: 'refresh',
+			  dataIcon: 'refresh'
+    
+    },
+    fullsite: {name: 'main',
+               ID: 'main',
+	           text: 'Full Site',
+	           href: 'Main.html',
+	           rel: 'external',
+	           dataIcon: 'home'
+    },
+    help: {name: 'help',
+           ID: 'help',
+		   text: 'Help',
+		   dataIcon: 'info'
+    }
+};
+var CswMobilePage_Type = {
+    login: { name: 'login', id: 'logindiv', title: 'ChemSW Live' },
+    help: { name: 'help', id: 'helpdiv', title: 'Help' },
+    nodes: { name: 'nodes', id: 'nodesdiv', title: 'Nodes' },
+    offline: {name: 'offline', id: 'offlinediv', title: 'Sorry Charlie!' },
+    online: { name: 'online', id: 'onlinediv', title: 'Sync Status' },
+    props: { name: 'props', id: 'propsdiv', title: 'Properties' },
+    search: { name: 'search', id: 'searchdiv', title: 'Search' },
+    tabs: { name: 'tabs', id: 'tabsdiv', title: 'Tabs' },
+    views: { name: 'views', id: 'viewsdiv', title: 'Views' }
+};
+var CswMobileGlobal_Config = {
+    theme: 'b'
+};
+var CswMobileCssClasses = {
+    listview: { name: 'csw_listview' },
+    select: { name: 'csw_prop_select' },
+    fieldset: { name: 'csw_fieldset' },
+    answer: { name: 'csw_answer' },
+    collapsible: { name: 'csw_collapsible' },
+    proplabel: { name: 'csw_prop_label' },
+    OOC: { name: 'OOC' },
+    onlineStatus: { name: 'onlineStatus' },
+    pendingChanges: { name: 'pendingChanges' }
+};
+//#endregion Mobile
