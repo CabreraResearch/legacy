@@ -2541,6 +2541,38 @@ namespace ChemSW.Nbt.WebServices
             return View;
         } // _getView()
 
+        #region Import Inspection Questions
+
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string getImportInspectionQuestionsExcelTemplate()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                    ReturnVal = new JObject(new JProperty("exceltemplate", ws.GetExcelTemplate()));
+                }
+                _deInitResources();
+            }
+            catch (Exception Ex)
+            {
+                ReturnVal = jError(Ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+
+        } // getViewGrid()
+
+        #endregion
+
     }//wsNBT
 
 } // namespace ChemSW.WebServices

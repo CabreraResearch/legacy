@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -39,7 +40,8 @@ namespace ChemSW.Nbt.Schema
 			NewFTRow["fieldtype"] = CswNbtMetaDataFieldType.NbtFieldType.MultiList.ToString();
 			FieldTypeTable.Rows.Add( NewFTRow );
 			FieldTypesUpdate.update( FieldTypeTable );
-
+			
+			
 
 		} // Update()
 
