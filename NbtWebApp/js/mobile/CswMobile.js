@@ -411,7 +411,7 @@ CswAppMode.mode = 'mobile';
 			}
 		}
 		
-		function processUpdatedNodes(data,objectId,objectJSON,isBackgroundTask) {
+		function processUpdatedNodes(data,objectId,objectJson,isBackgroundTask) {
 			if( !isNullOrEmpty(data) ) {
 			    setOnline(mobileStorage);
 			    var completed = isTrue(data['completed']);
@@ -422,17 +422,17 @@ CswAppMode.mode = 'mobile';
 			        mobileStorage.updateStoredViewJson(objectId, json, false);
 			    } else if (!completed)
 			    {
-			        mobileStorage.updateStoredNodeJson(objectId, objectJSON, false);
+			        mobileStorage.updateStoredNodeJson(objectId, objectJson, false);
 			    }
 
 			    resetPendingChanges(true);
 
 			    if (completed && !isView)
 			    {
-			        mobileStorage.deleteNode(objectId, objectJSON['viewid']);
+			        mobileStorage.deleteNode(objectId, objectJson['viewid']);
 			        if (!isBackgroundTask)
 			        {
-			            $('#' + objectJSON['viewid']).CswChangePage();
+			            $('#' + objectJson['viewid']).CswChangePage();
 			        }
 			    }
 			}
