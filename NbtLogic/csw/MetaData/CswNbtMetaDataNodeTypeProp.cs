@@ -388,7 +388,7 @@ namespace ChemSW.Nbt.MetaData
             var ret = ( ( !InPopUp || IsOnAdd ) &&
                         FilterNodeTypePropId == Int32.MinValue &&
                         !( Node.Properties[Prop].Hidden ) &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, User, Node, Prop ) );
+                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, null, User, Node, Prop ) );
             return ret;
         }
 
@@ -396,7 +396,7 @@ namespace ChemSW.Nbt.MetaData
         {
             CswNbtMetaDataNodeTypeProp Prop = this;
             var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, User, Node, Prop ) );
+                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, false, Prop.NodeTypeTab, User, Node, Prop ) );
             return ret;
         }
 
@@ -826,23 +826,26 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public Int32 QuestionNo
+		// This should not trigger versioning
+		public Int32 QuestionNo
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["questionno"] ); }
-            set { _setAttribute( "questionno", value, true ); }
+			set { _DataRow["questionno"] = CswConvert.ToDbVal( value ); }
         }
 
-        public Int32 SubQuestionNo
+		// This should not trigger versioning
+		public Int32 SubQuestionNo
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["subquestionno"] ); }
-            set { _setAttribute( "subquestionno", value, true ); }
+			set { _DataRow["subquestionno"] = CswConvert.ToDbVal( value ); }
         }
+        // This should not trigger versioning
         public bool UseNumbering
         {
             get { return CswConvert.ToBoolean( _NodeTypePropRow["usenumbering"] ); }
             set
             {
-                _setAttribute( "usenumbering", value, true );
+				_DataRow["usenumbering"] = CswConvert.ToDbVal( value );
                 if( !value )
                 {
                     QuestionNo = Int32.MinValue;

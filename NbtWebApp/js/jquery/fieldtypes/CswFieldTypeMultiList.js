@@ -9,7 +9,7 @@
             $Div.contents().remove();
 
             var Value = o.$propxml.children('value').text().trim();
-            var Options = o.$propxml.children('options').text().trim();
+            var $OptionsXml = o.$propxml.children('options');
 
             if(o.ReadOnly)
             {
@@ -19,58 +19,128 @@
             {
 				var $SelectBox = $('<select id="'+ o.ID +'" name="'+ o.ID +'" class="selectinput" />"' )
                                     .appendTo($Div)
-                                    .change(function() { _handleOnChange(); });
-                var $ValueTable = $Div.CswTable({
+                                    .change(function() { _handleOnChange(); })
+									.append('<option value="">Select...</option>');
+
+                var $ValueTableDiv = $('<div />')
+									.appendTo($Div)
+									.css('padding', '2px')
+									.css('max-height', '110px')
+									.css('border', '1px solid #336699')
+									.css('overflow', 'auto');
+
+				var $ValueTable = $ValueTableDiv.CswTable({
 										ID: o.ID + '_valtbl'
 									});
-            
-                var SplitOptions = Options.split(',');
-                for(var i = 0; i < SplitOptions.length; i++)
-                {
-                    $SelectBox.append('<option value="' + SplitOptions[i] + '">' + SplitOptions[i] + '</option>');
-                }
-                $SelectBox.val( Value );
 
-                if(o.Required)
-                {
-                    $SelectBox.addClass("required");
-                }
+				var $HiddenValue = $('<input type="hidden" name="' + o.ID + '_value" id="' + o.ID + '_value" value="'+ Value +'"/>')
+                                    .appendTo($Div);
 
+
+				// ClosureCompiler broke if I didn't define these functions first
 				function _handleOnChange()
 				{
-					_addValue($SelectBox.val());
-					$SelectBox.children('option:selected').remove();
-					$SelectBox.val('');
-					o.onchange();
+					var optionvalue = $SelectBox.children('option:selected').CswAttrDom('value');
+					var optiontext = $SelectBox.children('option:selected').text();
+
+					if(!isNullOrEmpty(optionvalue))
+					{
+						$SelectBox.val('');
+
+						var currentvalue = $HiddenValue.val();
+						if(!isNullOrEmpty(currentvalue)) currentvalue += ',';
+						$HiddenValue.val(currentvalue + optionvalue);
+
+						_addValue(optionvalue, optiontext, true);
+
+						o.onchange();
+					}
 				} // _handleOnChange()
 
-				function _addValue(valuetext)
+				function _addValue(optionvalue, optiontext, doAnimation)
 				{
+					$SelectBox.children('option[value="'+ optionvalue +'"]').remove();
+
+					$ValueTableDiv.show();
 					var row = $ValueTable.CswTable('maxrows') + 1;
 					var $cell1 = $ValueTable.CswTable('cell', row, '1');
 					var $cell2 = $ValueTable.CswTable('cell', row, '2');
-					$cell1.parent().hide();
-					var $ThisValue = $('<div id="val_'+ valuetext +'">'+ valuetext + '</div>')
+					$cell1.css('padding-right', '20px');
+
+					if(doAnimation) $cell1.parent().hide();
+					var $ThisValue = $('<div id="val_'+ optionvalue +'">'+ optiontext + '</div>')
 										.appendTo( $cell1 );
-					$cell1.parent().fadeIn('slow');
+					if(doAnimation) $cell1.parent().fadeIn('fast');
+
 					$cell2.CswImageButton({
 						ButtonType: CswImageButton_ButtonType.Delete,
 						AlternateText: 'Remove',
-						ID: makeId({ 'prefix': valuetext, 'id': 'rembtn' }),
+						ID: makeId({ 'prefix': optionvalue, 'id': 'rembtn' }),
 						onClick: function ($ImageDiv) { 
-							$cell1.parent().fadeOut('slow', function() { 
+							$cell1.parent().fadeOut('fast', function() { 
+								$SelectBox.append('<option value="' + optionvalue + '">'+ optiontext + '</option>');
+
+								var currentvalue = $HiddenValue.val();
+								var splitvalue = currentvalue.split(',');
+								var newvalue = '';
+								for(var i = 0; i < splitvalue.length; i++)
+								{
+									if(splitvalue[i] != optionvalue)
+									{
+										if(!isNullOrEmpty(newvalue)) newvalue += ',';
+										newvalue += splitvalue[i];
+									}
+								}
+								$HiddenValue.val(newvalue);
+								if(isNullOrEmpty(newvalue))
+								{
+									$ValueTableDiv.hide();
+								}
 								$ThisValue.remove();
 							});
+							o.onchange();
 							return CswImageButton_ButtonType.None; 
 						}
 					})
 				} // _addValue()
 
+//				var SplitOptions = Options.split(',');
+//                for(i = 0; i < SplitOptions.length; i++)
+//                {
+//                    $SelectBox.append('<option value="' + SplitOptions[i] + '">' + SplitOptions[i] + '</option>');
+//                }
+
+				var SplitValue = Value.split(',');
+
+                $OptionsXml.children().each(function() {
+					var $option = $(this);
+					var thisText = $option.CswAttrXml('text');
+					var thisValue = $option.CswAttrXml('value');
+					var thisSelected = $option.CswAttrXml('selected');
+
+					if(isTrue(thisSelected))
+					{
+						_addValue(thisValue, thisText, false);
+					} else {
+						$SelectBox.append('<option value="' + thisValue + '">' + thisText + '</option>');
+					}
+				}); // each()
+
+                if(isNullOrEmpty(Value))
+				{
+					$ValueTableDiv.hide();
+				}
+
+//                if(o.Required)
+//                {
+//                    $SelectBox.addClass("required");
+//                }
+
             } // if-else(o.ReadOnly)
         },
         save: function(o) { //$propdiv, $xml
-                var $SelectBox = o.$propdiv.find('select');
-                o.$propxml.children('value').text($SelectBox.val());
+                var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
+                o.$propxml.children('value').text($HiddenValue.val());
             }
     };
     

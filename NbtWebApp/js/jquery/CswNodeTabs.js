@@ -238,7 +238,7 @@
 						$savetab = $form.CswButton({ID: 'SaveTab', 
 												enabledText: 'Save Changes', 
 												disabledText: 'Saving...', 
-												onclick: function () { Save($form, $layouttable, $xml, $savetab); }
+												onclick: function () { Save($form, $layouttable, $xml, $savetab, tabid); }
 												});
 					}
 					_handleProps($layouttable, $xml, $tabcontentdiv, tabid, false, $savetab);
@@ -267,7 +267,7 @@
 					// case 8494
 					if($xml.children().length <= 0 && o.EditMode == EditMode.AddInPopup.name)
 					{
-						Save($form, $layouttable, $xml, $savetab);
+						Save($form, $layouttable, $xml, $savetab, tabid);
 					} else {
 						o.onInitFinish();
 					}
@@ -474,7 +474,7 @@
 			});
 		} // _updateSubProps()
 
-		function Save($form, $layouttable, $propsxml, $savebtn)
+		function Save($form, $layouttable, $propsxml, $savebtn, tabid)
 		{
 			if($form.valid())
 			{
@@ -483,6 +483,7 @@
 					'EditMode': o.EditMode,
 					'NodeId': o.nodeid,
 					'SafeNodeKey': o.cswnbtnodekey,
+					'TabId': tabid,
 					'NodeTypeId': o.nodetypeid,
 					'NewPropsXml': xmlToString($propsxml),
 					'ViewId': $.CswCookie('get', CswCookieName.CurrentViewId)

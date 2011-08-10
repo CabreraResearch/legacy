@@ -441,7 +441,7 @@ namespace ChemSW.Nbt.WebServices
                         // Set NextOptions to be all viewable nodetypes and objectclasses
                         foreach( CswNbtMetaDataNodeType LatestNodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
                         {
-							if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, LatestNodeType.NodeTypeId ) )
+							if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, LatestNodeType ) )
                             {
                                 // This is purposefully not the typical way of creating CswNbtViewRelationships.
                                 CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, LatestNodeType.FirstVersionNodeType, false );
@@ -544,7 +544,7 @@ namespace ChemSW.Nbt.WebServices
 						( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
 						  PropRow["fkvalue"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) )
 					{
-						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, FirstVersionNodeType.NodeTypeId ) )
+						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, FirstVersionNodeType ) )
 						{
 							// Special case -- relationship to my own type
 							// We need to create two relationships from this
@@ -605,7 +605,7 @@ namespace ChemSW.Nbt.WebServices
 								R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
 
 							if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-								_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId ) )
+								_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType(R.SecondId ) ))
 							{
 								Relationships.Add( R );
 							}
@@ -625,7 +625,7 @@ namespace ChemSW.Nbt.WebServices
 									R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["typeid"] ) ) );
 
 								if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-									_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId ) )
+									_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType(R.SecondId ) ))
 								{
 									Relationships.Add( R );
 								}
