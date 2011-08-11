@@ -23,6 +23,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Config;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.NbtWebControls;
+using System.Data.OleDb;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -64,6 +65,50 @@ namespace ChemSW.Nbt.WebServices
         {
             return (ImportColumns)Enum.Parse(typeof(ImportColumns), Column.Replace(' ', '_'), true);
         }
+
+        /// <summary>
+        /// Reads an Excel file from the file system and converts it into a ADO.NET data table
+        /// </summary>
+        /// <param name="FullPathAndFileName"></param>
+        /// <returns></returns>
+        public DataTable ConvertExcelFileToDataTable(string FullPathAndFileName)
+        {
+            DataTable ExcelDataTable = null;
+            OleDbConnection ExcelConn = null;
+
+            try
+            {
+                // Microsoft JET engine knows how to read Excel files as a database
+                // Problem is - it is old OLE technology - not newer ADO.NET
+                string ConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FullPathAndFileName + ";Extended Properties=Excel 8.0;";
+                ExcelConn = new OleDbConnection(ConnStr);
+                ExcelConn.Open();
+
+                DataTable ExcelSchemaDT = ExcelConn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                string FirstSheetName = ExcelSchemaDT.Rows[0]["TABLE_NAME"].ToString();
+
+                OleDbDataAdapter DataAdapter = new OleDbDataAdapter();
+                OleDbCommand SelectCommand = new OleDbCommand("SELECT * FROM [" + FirstSheetName + "]", ExcelConn);
+                DataAdapter.SelectCommand = SelectCommand;
+
+                ExcelDataTable = new DataTable();
+                DataAdapter.Fill(ExcelDataTable);
+            } // try
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            finally
+            {
+                if (ExcelConn != null)
+                {
+                    ExcelConn.Close();
+                    ExcelConn.Dispose();
+                }
+            }
+            return ExcelDataTable;
+        } // ConvertExcelFileToDataTable()
+
     }
 
 }

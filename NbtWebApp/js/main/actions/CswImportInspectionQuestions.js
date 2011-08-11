@@ -60,14 +60,12 @@ var CswImportInspectionQuestions_WizardSteps = {
 		$div1.append(instructions1);
 		var $fileuploaddiv = $('<div></div>')
     
+        // define parameters to pass into FileUploader
 		var o = {
-			url: '/NbtWebApp/wsNBT.asmx/fileForCreateInspection',
+			url: '/NbtWebApp/wsNBT.asmx/uploadInspectionFile',
 			params: {},
 			onSuccess: function() { }
 		};
-		if(options) {
-			$.extend(o, options);
-		}
 
 		var uploader = new qq.FileUploader({
 			element: $fileuploaddiv.get(0),
@@ -79,15 +77,6 @@ var CswImportInspectionQuestions_WizardSteps = {
 					o.onSuccess(); 
 				}
 		});
-        /*
-		var $fileuploadcancel = $fileuploaddiv.CswButton({ID: 'fileupload_cancel', 
-												enabledText: 'Cancel', 
-												disabledText: 'Canceling', 
-												onclick: function() {
-															$div.dialog('close');
-												}
-		});
-        */
 		$div1.append($fileuploaddiv);
 
 		//$wizard.CswWizard('button', 'next', 'disable');
