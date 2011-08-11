@@ -1,28 +1,17 @@
-﻿/// <reference path="thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+﻿/// <reference path="CswEnums.js" />
+/// <reference path="CswPrototypeExtensions.js" />
+/// <reference path="../main/tools/CswArray.js" />
+/// <reference path="../main/tools/CswTools.js" />
+/// <reference path="../main/tools/CswAttr.js" />
+/// <reference path="../main/tools/CswClientDb.js" />
+/// <reference path="../main/tools/CswCookie.js" />
+/// <reference path="../main/tools/CswProfileMethod.js" />
+/// <reference path="../main/tools/CswQueryString.js" />
+/// <reference path="../main/tools/CswString.js" />
+/// <reference path="../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../thirdparty/jquery/core/jquery.cookie.js" />
+/// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
 
-/// <reference path="_CswPrototypeExtensions.js" />
-/// <reference path="CswProfileMethod.js" />
-/// <reference path="CswArray.js" />
-/// <reference path="CswClientDb.js" />
-/// <reference path="CswEnums.js" />
-/// <reference path="CswString.js" />
-
-/// <reference path="jquery/common/CswAttr.js" />
-/// <reference path="jquery/common/CswTools.js" />
-/// <reference path="jquery/common/CswCookie.js" />
-/// <reference path="jquery/common/CswDiv.js" />
-/// <reference path="jquery/common/CswInput.js" />
-/// <reference path="jquery/common/CswLink.js" />
-/// <reference path="jquery/common/CswSelect.js" />
-/// <reference path="jquery/common/CswSpan.js" />
-
-/// <reference path="mobile/CswMobileTools.js" />
-
-/// <reference path="mobile/clientdb/CswMobileClientDbResources.js" />
-/// <reference path="mobile/clientdb/CswMobileClientDb.js" />
-
-/// <reference path="mobile/sync/CswMobileSync.js" />
-/// <reference path="mobile/sync/CswMobileBackgroundTask.js" />
 
 // ------------------------------------------------------------------------------------
 // Globals (yuck)
