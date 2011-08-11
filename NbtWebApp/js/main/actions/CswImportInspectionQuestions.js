@@ -58,6 +58,37 @@ var CswImportInspectionQuestions_WizardSteps = {
 		$div1.append(downloadbutton);
 		var instructions1 = "<br/><br/>Please select your Excel file containing your inspection questions.<br/><br/>";
 		$div1.append(instructions1);
+		var $fileuploaddiv = $('<div></div>')
+    
+		var o = {
+			url: '/NbtWebApp/wsNBT.asmx/fileForCreateInspection',
+			params: {},
+			onSuccess: function() { }
+		};
+		if(options) {
+			$.extend(o, options);
+		}
+
+		var uploader = new qq.FileUploader({
+			element: $fileuploaddiv.get(0),
+			action: o.url,
+			params: o.params,
+			debug: false,
+			onComplete: function() 
+				{ 
+					o.onSuccess(); 
+				}
+		});
+        /*
+		var $fileuploadcancel = $fileuploaddiv.CswButton({ID: 'fileupload_cancel', 
+												enabledText: 'Cancel', 
+												disabledText: 'Canceling', 
+												onclick: function() {
+															$div.dialog('close');
+												}
+		});
+        */
+		$div1.append($fileuploaddiv);
 
 		//$wizard.CswWizard('button', 'next', 'disable');
 

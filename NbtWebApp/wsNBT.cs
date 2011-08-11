@@ -2571,6 +2571,68 @@ namespace ChemSW.Nbt.WebServices
 
         } // getViewGrid()
 
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string fileForCreateInspection()
+        {
+            JObject ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+
+                    // putting these in the param list causes the webservice to fail with
+                    // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
+                    string FileName = Context.Request["qqfile"];
+                    string PropId = Context.Request["propid"];
+
+                    if (!string.IsNullOrEmpty(FileName) && !string.IsNullOrEmpty(PropId))
+                    {
+                        // Unfortunately, Context.Request.ContentType is always application/octet-stream
+                        // So we have to detect the content type
+                        string[] SplitFileName = FileName.Split('.');
+                        string Extension = SplitFileName[SplitFileName.Length - 1];
+                        string ContentType = "application/vnd.ms-excel";
+
+                        if (Context.Request.InputStream != null)
+                        {
+                            // Read the binary data
+                            BinaryReader br = new BinaryReader(Context.Request.InputStream);
+                            long Length = Context.Request.InputStream.Length;
+                            byte[] FileData = new byte[Length];
+                            for (long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++)
+                            {
+                                FileData[CurrentIndex] = br.ReadByte();
+                            }
+
+                            // Save the binary data
+                            //CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps(_CswNbtResources);
+                            //bool ret = ws.SetPropBlobValue(FileData, FileName, ContentType, PropId);
+
+                            ReturnVal = new JObject(new JProperty("success", "true"));
+
+                        } // if( Context.Request.InputStream != null )
+
+                    } // if( FileName != string.Empty && PropId != string.Empty )
+
+                }
+                _deInitResources();
+            }
+            catch (Exception ex)
+            {
+                ReturnVal = jError(ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+
+        } // fileForProp()
+
         #endregion
 
     }//wsNBT
