@@ -110,6 +110,7 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="js\globals\CswGlobalTools.js" />
     <Content Include="js\main\tools\CswArray.js" />
     <Content Include="js\main\tools\CswClientDb.js" />
     <Content Include="js\globals\CswEnums.js" />

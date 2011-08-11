@@ -1,5 +1,7 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
@@ -23,11 +25,14 @@
 			nodeid: '',
 			cswnbtnodekey: '',
 			propid: '',
-			onAddNode: function(nodeid, cswnbtnodekey) { },
-			onMultiEdit: function() { },
-			onSearch: { onViewSearch: function() {}, onGenericSearch: function() {} },
-			onEditView: function(viewid) { },
-			onSaveView: function(newviewid) { },
+			onAddNode: null, // function(nodeid, cswnbtnodekey) { },
+			onMultiEdit: null, // function() { },
+			onSearch: {
+			     onViewSearch: null, // function() {}, 
+			     onGenericSearch: null // function() {}
+		    },
+			onEditView: null, // function(viewid) { },
+			onSaveView: null, // function(newviewid) { },
 			Multi: false,
 			NodeCheckTreeId: ''
 		};
@@ -41,50 +46,58 @@
 			PropIdAttr: o.propid
 		};
 
-		CswAjaxXml({
+		CswAjaxJson({
 			url: o.Url,
 			data: dataXml,
 			stringify: false,
-			success: function ($xml) {
-				var $ul = $('<ul class="topnav"></ul>');
+			success: function (data) {
+			    var $ul = $('<ul class="topnav"></ul>');
 
-				$MenuDiv.text('')
-						.append($ul);
+			    $MenuDiv.text('')
+    			    .append($ul);
 
-				$xml.children().each(function() {
-					var $this = $(this);
-					if($this.CswAttrXml('text') !== undefined)
-					{
-						var menuItemOpts = { 
-							'$ul': $ul, 
-							'$itemxml': $this, 
-							'onAlterNode': o.onAddNode, 
-							'onMultiEdit': o.onMultiEdit,
-							'onEditView': o.onEditView,
-							'onSaveView': o.onSaveView,
-							'onSearch': o.onSearch,
-							'Multi': o.Multi, 
-							'NodeCheckTreeId': o.NodeCheckTreeId 
-						};
-						var $li = HandleMenuItem(menuItemOpts);
-						
-						if($this.children().length >= 1) {
-							var $subul = $('<ul class="subnav"></ul>')
-											.appendTo($li);
-							$this.children().each(function() {
-								var subMenuItemOpts = {
-									'$ul': $subul, 
-									'$itemxml': $(this)
-								};
-								$.extend(menuItemOpts, subMenuItemOpts);
-								HandleMenuItem(menuItemOpts);
-							});
-						}
-					}
+			    for (var itemKey in data) {
+			        if (data.hasOwnProperty(itemKey)) {
 
-				});
+			            var menuItem = data[itemKey];
+			            if (!isNullOrEmpty(itemKey))
+			            {
+			                var menuItemOpts = {
+			                    $ul: $ul,
+			                    itemKey: itemKey,
+			                    itemJson: menuItem,
+			                    onAlterNode: o.onAddNode,
+			                    onMultiEdit: o.onMultiEdit,
+			                    onEditView: o.onEditView,
+			                    onSaveView: o.onSaveView,
+			                    onSearch: o.onSearch,
+			                    Multi: o.Multi,
+			                    NodeCheckTreeId: o.NodeCheckTreeId
+			                };
+			                var $li = HandleMenuItem(menuItemOpts);
 
-				$ul.CswMenu();
+			                if (isTrue(menuItem.haschildren)) {
+			                    delete menuItem.haschildren;
+			                    var $subul = $('<ul class="subnav"></ul>')
+    			                    .appendTo($li);
+			                    for (var childItem in menuItem) {
+			                        if (menuItem.hasOwnProperty(childItem)) {
+			                            var thisChild = menuItem[childItem];
+			                            var subMenuItemOpts = {
+			                                $ul: $subul,
+			                                itemKey: childItem,
+			                                itemJson: thisChild
+			                            };
+			                            $.extend(menuItemOpts, subMenuItemOpts);
+			                            HandleMenuItem(menuItemOpts);
+			                        }
+			                    }
+			                }
+			            }
+			        }
+			    }
+
+			    $ul.CswMenu();
 
 			} // success{}
 		}); // $.ajax({

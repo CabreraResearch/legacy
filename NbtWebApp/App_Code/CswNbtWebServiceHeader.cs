@@ -1,21 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Web;
-using System.Web.Services;
-using System.Xml;
-using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Config;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.NbtWebControls;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -43,9 +31,9 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public string getDashboard()
+        public JObject getDashboard()
         {
-            string ret = string.Empty;
+            JObject Ret = new JObject();
             Collection<DashIcon> DashIcons = new Collection<DashIcon>();
             DashIcons.Add( new DashIcon( "IMCS - Instrument Maintenance and Calibration",
                                          "dash_imcs",
@@ -84,47 +72,65 @@ namespace ChemSW.Nbt.WebServices
                                          "",
                                          CswNbtResources.CswNbtModule.NBTManager ) );
 
-            foreach( DashIcon DashIcon in DashIcons )
+            foreach( DashIcon DashIcon in DashIcons.Where( DashIcon => _CswNbtResources.IsModuleEnabled( DashIcon.Module ) || DashIcon.Module != CswNbtResources.CswNbtModule.NBTManager ) )
             {
-                if( _CswNbtResources.IsModuleEnabled( DashIcon.Module ) )
-                {
-                    ret += "<dash id=\"" + DashIcon.Id + "\" text=\"" + DashIcon.Text + "\" href=\"" + DashIcon.Href + "\" />";
-                }
-                else if( DashIcon.Module != CswNbtResources.CswNbtModule.NBTManager )
-                {
-                    ret += "<dash id=\"" + DashIcon.Id + "_off\" text=\"" + DashIcon.Text + "\" href=\"" + DashIcon.Href + "\" />";
-                }
+                Ret.Add( new JProperty( ( _CswNbtResources.IsModuleEnabled( DashIcon.Module ) ) ? DashIcon.Id : DashIcon.Id + "_off",
+                                        new JObject(
+                                            new JProperty( "text", DashIcon.Text ),
+                                            new JProperty( "href", DashIcon.Href )
+                                            )
+                             ) );
             }
 
-            return "<dashboard>" + ret + "</dashboard>";
+            return Ret;
         } // getDashboard()
 
 
-        public string getHeaderMenu()
+        public JObject getHeaderMenu()
         {
-            string ret = string.Empty;
+            JObject Ret = new JObject();
 
-            ret += "<item text=\"Home\" action=\"Home\" />";
-			if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-			{
-				ret += "<item text=\"Admin\">";
-				ret += "  <item text=\"Current User List\" href=\"UserList.aspx\" />";
-				ret += "  <item text=\"View Log\" href=\"DisplayLog.aspx\" />";
-				ret += "  <item text=\"Edit Config Vars\" href=\"ConfigVars.aspx\" />";
-				ret += "  <item text=\"Statistics\" href=\"Statistics.aspx\" />";
-				ret += "</item>";
-			}
-			ret += "<item text=\"Preferences\">";
-			ret += "  <item text=\"Profile\" action=\"Profile\" userid=\"" + _CswNbtResources.CurrentNbtUser.UserNode.NodeId.ToString() + "\" />";
-			ret += "  <item text=\"Subscriptions\" href=\"Subscriptions.aspx\" />";
-            ret += "</item>";
-            ret += "<item text=\"Help\">";
-            ret += "  <item text=\"Help\" popup=\"help/index.htm\" />";
-            ret += "  <item text=\"About\" action=\"About\" />";
-            ret += "</item>";
-            ret += "<item text=\"Logout\" action=\"Logout\" />";
+            Ret["Home"] = new JObject( new JProperty( "action", "Home" ) );
+            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            {
+                Ret["Admin"] = new JObject(
+                                new JProperty( "haschildren", true ),
+                                new JProperty( "Current User List", new JObject(
+                                    new JProperty( "href", "UserList.aspx" )
+                                ) ),
+                                new JProperty( "View Log", new JObject(
+                                    new JProperty( "href", "DisplayLog.aspx" )
+                                ) ),
+                                new JProperty( "Edit Config Vars", new JObject(
+                                    new JProperty( "href", "ConfigVars.aspx" )
+                                ) ),
+                                new JProperty( "Statistics", new JObject(
+                                    new JProperty( "href", "Statistics.aspx" )
+                                ) )
+                        );
+            }
+            Ret["Preferences"] = new JObject(
+                                    new JProperty( "haschildren", true ),
+                                    new JProperty( "Profile", new JObject(
+                                        new JProperty( "action", "Profile" ),
+                                        new JProperty( "userid", _CswNbtResources.CurrentNbtUser.UserNode.NodeId.ToString() )
+                                    ) ),
+                                    new JProperty( "Subscriptions", new JObject(
+                                        new JProperty( "href", "Subscriptions.aspx" )
+                                    ) )
+                        );
+            Ret["Help"] = new JObject(
+                                new JProperty( "haschildren", true ),
+                                new JProperty( "Help", new JObject(
+                                    new JProperty( "popup", "help/index.htm" )
+                                ) ),
+                                new JProperty( "About", new JObject(
+                                    new JProperty( "action", "About" )
+                                ) )
+                        );
+            Ret["Logout"] = new JObject( new JProperty( "action", "Logout" ) );
 
-            return "<menu>" + ret + "</menu>";
+            return Ret;
         }
 
 
@@ -198,7 +204,7 @@ namespace ChemSW.Nbt.WebServices
             ret += " <name>Schema</name>";
             ret += " <version>" + _CswNbtResources.getConfigVariableValue( "schemaversion" ) + "</version>";
             ret += " <copyright>Copyright &copy; ChemSW, Inc. 2005-2011</copyright>";
-            ret += "</component>"; 
+            ret += "</component>";
 
             return "<versions>" + ret + "</versions>";
         } // makeVersionXml()
