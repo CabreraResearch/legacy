@@ -618,11 +618,11 @@ namespace ChemSW.Nbt.WebServices
         /// Generates a tree of nodes from the view
         /// </summary>
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getTreeOfView( string ViewId, string IDPrefix, bool IsFirstLoad, string ParentNodeKey, string IncludeNodeKey, bool IncludeNodeRequired,
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getTreeOfView( string ViewId, string IDPrefix, bool IsFirstLoad, string ParentNodeKey, string IncludeNodeKey, bool IncludeNodeRequired,
                                        bool UsePaging, string ShowEmpty, bool ForSearch, bool IncludeInQuickLaunch )
         {
-            XElement ReturnVal = new XElement( "tree" );
+            JObject ReturnVal = new JObject();
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -658,13 +658,12 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         } // getTreeOfView()
 
@@ -672,10 +671,10 @@ namespace ChemSW.Nbt.WebServices
         /// Generates a tree of nodes from the view
         /// </summary>
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getTreeOfNode( string IDPrefix, string NodePk )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getTreeOfNode( string IdPrefix, string NodePk )
         {
-            XElement ReturnVal = new XElement( "tree" );
+            JObject ReturnVal = new JObject();
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -695,7 +694,7 @@ namespace ChemSW.Nbt.WebServices
                         View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
 
                         var ws = new CswNbtWebServiceTree( _CswNbtResources );
-                        ReturnVal = ws.getTree( View, IDPrefix, true, null, null, false, false, false, false, true );
+                        ReturnVal = ws.getTree( View, IdPrefix, true, null, null, false, false, false, false, true );
                         //CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
                         View.SaveToCache( true );
                     }
@@ -705,13 +704,13 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
 
         } // getTreeOfNode()

@@ -1,5 +1,7 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
@@ -20,18 +22,9 @@
 					cswnbtnodekey: '',
 					IncludeNodeRequired: false,
 					UsePaging: true,
-					onSelectNode: function(optSelect) {
-											var o =  {
-												nodeid: '', 
-												nodename: '', 
-												iconurl: '', 
-												cswnbtnodekey: '',
-												viewid: ''
-											};
-											return o;
-									},
+					onSelectNode: null, // function(optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', cswnbtnodekey: '', viewid: '' }; return o; },
 					onInitialSelectNode: undefined,
-					onViewChange: function(newviewid, newviewmode) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
+					onViewChange: null, // function(newviewid, newviewmode) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
 					SelectFirstChild: true,
 					ShowCheckboxes: false,
 					IncludeInQuickLaunch: true
@@ -41,23 +34,23 @@
 				if(o.onInitialSelectNode === undefined)
 					o.onInitialSelectNode = o.onSelectNode;
 
-				var IDPrefix = o.ID + '_';
-				var $treediv = $('<div id="'+ IDPrefix + '" class="treediv" />')
+				var idPrefix = o.ID + '_';
+				var $treediv = $('<div id="'+ idPrefix + '" class="treediv" />')
 								.appendTo($(this));
 
 				var url = o.ViewTreeUrl;
 				var dataParam = { 
-					'UsePaging': o.UsePaging,
-					'ViewId': o.viewid,
-					'IDPrefix': IDPrefix,
-					'IsFirstLoad': true,
-					'ParentNodeKey': '',
-					'IncludeNodeRequired': o.IncludeNodeRequired,
-					'IncludeNodeKey': tryParseString(o.cswnbtnodekey, ''),
-					'ShowEmpty': o.showempty,
-					'ForSearch': o.forsearch,
-					'NodePk': tryParseString(o.nodeid,''),
-					'IncludeInQuickLaunch': o.IncludeInQuickLaunch
+					UsePaging: o.UsePaging,
+					ViewId: o.viewid,
+					IDPrefix: idPrefix,
+					IsFirstLoad: true,
+					ParentNodeKey: '',
+					IncludeNodeRequired: o.IncludeNodeRequired,
+					IncludeNodeKey: tryParseString(o.cswnbtnodekey),
+					ShowEmpty: o.showempty,
+					ForSearch: o.forsearch,
+					NodePk: tryParseString(o.nodeid),
+					IncludeInQuickLaunch: o.IncludeInQuickLaunch
 				};
 
 				if( isNullOrEmpty( o.viewid ) )
@@ -65,126 +58,124 @@
 					url = o.NodeTreeUrl;
 				}
 
-				CswAjaxXml({
+				CswAjaxJson({
 					url: url,
 					data: dataParam,
 					stringify: false,
-					success: function ($xml) {
+					success: function (data) {
 						var selectid = '';
 						//var treePlugins = ["themes", "xml_data", "ui", "types", "crrm"];
 						var treePlugins = ["themes", "html_data", "ui", "types", "crrm"];
-
-						var treeThemes;
+					    debugger;
+					    var treeThemes;
 						if( !isNullOrEmpty( o.nodeid ) ) 
 						{
-							selectid = IDPrefix + o.nodeid;
+							selectid = idPrefix + o.nodeid;
 						}
 
-						var newviewid = $xml.children('viewid').text();
+						var newviewid = data.viewid;
 						if(o.viewid !== newviewid )
 						{
 							o.onViewChange(newviewid, 'tree');
 							o.viewid = newviewid;
 						}
 
-						var $selecteditem = $xml.find('item[id="'+ selectid + '"]');
-						if(selectid === '' || $selecteditem.length === 0)
-						{
-							if(o.SelectFirstChild)
-							{	
-								if(o.viewmode === 'list' )
-								{
-									selectid = $xml.find('item').first().CswAttrXml('id');
+					    var treeData = data.tree;
+					    var jsonTypes = data.types;
+					    
+						//var $selecteditem = data.find('item[id="'+ selectid + '"]');
+					    var selectLevel = -1;
+					    if (selectid === '') {
+							if (o.SelectFirstChild) {	
+								if (o.viewmode === 'list' ) {
+								    selectLevel = 1;
 									treeThemes = {"dots": false};
-								}
-								else
-								{
-									selectid = $xml.find('item').first().find('item').first().CswAttrXml('id');
+								} else {
+								    selectLevel = 2;
 									treeThemes = {"dots": true};
 								}
-							}
-							else
-							{
-								selectid = IDPrefix + 'root';
+							} else {
+								selectid = idPrefix + 'root';
 							}
 						}
-
-						// make sure selected item is visible
-						$selecteditem = $xml.find('item[id="'+ selectid + '"]');
-						var $itemparents = $selecteditem.parents('item').andSelf();
-						var initiallyOpen = new Array();
-						var i = 0;
-						$itemparents.each(function() { initiallyOpen[i] = $(this).CswAttrXml('id'); i++; });
-
-						var strTypes = $xml.find('types').text();
-						var jsonTypes = $.parseJSON(strTypes);
-						var $treexml = $xml.find('tree').children('root');
-						if($treexml.length > 0)
+					    
+					    var initiallyOpen = selectid;
+					    var hasNodes = false;
+					    function treeXmlToHtml(json,level)
 						{
-							//var treexmlstring = xmlToString($treexml);
-
-							//var $ul = $('<ul></ul>').appendTo($treediv);
-
-							function _treeXmlToHtml($itemxml)
-							{
-								var nodeid = $itemxml.CswAttrXml('id').substring(IDPrefix.length);
-								var nodename = $itemxml.children('content').children('name').text();
-								var treestr = '<li id="'+ $itemxml.CswAttrXml('id') +'" ';
-								treestr += '    rel="'+ $itemxml.CswAttrXml('rel') +'" ';
-								treestr += '    species="'+ $itemxml.CswAttrXml('species') +'" ';
-								treestr += '    class="jstree-'+ $itemxml.CswAttrXml('state') +'" ';
-								if($itemxml.CswAttrXml('cswnbtnodekey') !== undefined)
-								{
-									treestr += '    cswnbtnodekey="'+ $itemxml.CswAttrXml('cswnbtnodekey').replace(/"/g, '&quot;') +'"';
+					        hasNodes = true;
+					        var id = json.attr.id;
+					        if (selectid === id || ( level === selectLevel)) {
+					            initiallyOpen = id;
+					        }
+					        
+					        var nodeid = id.substring(idPrefix.length);
+							var nodename = json.data;
+					        var nbtnodekey = json.attr.cswnbtnodekey;
+					        var rel = json.attr.rel;
+					        
+					        var treestr = '<li id="'+ id +'" ';
+							treestr += '    rel="'+ rel +'" ';
+							treestr += '    species="'+ json.attr.species +'" ';
+							treestr += '    class="jstree-'+ json.attr.state +'" ';
+							if (nbtnodekey !== undefined) {
+								treestr += '    cswnbtnodekey="'+ nbtnodekey.replace(/"/g, '&quot;') +'"';
+							}
+							treestr += '>';
+							if (o.ShowCheckboxes) {
+								treestr += '  <input type="checkbox" class="'+ idPrefix +'check" id="check_'+ nodeid +'" rel="'+ rel +'" nodeid="'+ nodeid +'" nodename="'+ nodename +'"></input>';
+							}
+							treestr += '  <a href="#">'+ nodename +'</a>';
+					        var children = json.children;
+					        for (var child in children) {
+								// recurse
+								if (children.hasOwnProperty(child)) {
+								    var childNode = children[child];
+								    treestr += '<ul>';
+								    treestr += treeXmlToHtml(childNode,2);
+								    treestr += '</ul>';
 								}
-								treestr += '>';
-								if(o.ShowCheckboxes)
-								{
-									treestr += '  <input type="checkbox" class="'+ IDPrefix +'check" id="check_'+ nodeid +'" rel="'+ $itemxml.CswAttrXml('rel') +'" nodeid="'+ nodeid +'" nodename="'+ nodename +'"></input>';
-								}
-								treestr += '  <a href="#">'+ nodename +'</a>';
-								if($itemxml.children('item').length > 0)
-								{
-									// recurse
-									treestr += '<ul>';
-									$itemxml.children('item').each(function() { treestr += _treeXmlToHtml($(this)); });
-									treestr += '</ul>';
-								}
-								treestr += '</li>';
-								return treestr;
-							} // _treeXmlToHtml()
-
-							var treehtmlstring = '<ul>';
-							$treexml.children().each(function() { treehtmlstring += _treeXmlToHtml($(this)); });
-							treehtmlstring += '</ul>';
-
-							$treediv.bind('init_done.jstree', function(event, data) { 
+					        }
+							treestr += '</li>';
+							return treestr;
+						} // _treeXmlToHtml()
+					    
+					    var treehtmlstring = '<ul>';
+					    for (var parent in treeData) {
+					        if (treeData.hasOwnProperty(parent)) {
+					            var parentNode = treeData[parent];
+					            treehtmlstring += treeXmlToHtml(parentNode, 1);
+					        }
+					    }
+                        treehtmlstring += '</ul>';
+log(treehtmlstring);
+					    if(hasNodes) {
+							$treediv.bind('init_done.jstree', function() { 
 
 								// initially_open and initially_select cause multiple event triggers and race conditions.
 								// So we'll do it ourselves instead.
-
+							    debugger;
 								// Open
-								$selecteditem = $xml.find('item[id="'+ selectid + '"]');
-								var $itemparents = $selecteditem.parents('item').andSelf();
-								var initiallyOpen = new Array();
-								var i = 0;
-								$itemparents.each(function() { 
-									$treediv.jstree('open_node', '#' + $(this).CswAttrXml('id') );
-								});
-
-								// Select
+							    if (!isNullOrEmpty(initiallyOpen)) {
+							        var $selecteditem = $treediv.find('#' + initiallyOpen);
+							        var $itemparents = $selecteditem.parent().andSelf();
+							        $itemparents.each(function() {
+							            $treediv.jstree('open_node', '#' + $(this).CswAttrXml('id'));
+							        });
+							    }
+							    // Select
 								$treediv.jstree('select_node', '#' + selectid);
 
-							}).bind('load_node.jstree', function(e, data) {
-								$('.'+ IDPrefix +'check').unbind('click');
-								$('.'+ IDPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
+							}).bind('load_node.jstree', function() {
+								$('.'+ idPrefix +'check').unbind('click');
+								$('.'+ idPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
 
 							}).bind('select_node.jstree', function(e, data) { return _firstSelectNode({
 									e: e, 
 									data: data, 
 									url: url,
 									$treediv: $treediv, 
-									IDPrefix: IDPrefix, 
+									IDPrefix: idPrefix, 
 									onSelectNode: o.onSelectNode,
 									onInitialSelectNode: o.onInitialSelectNode,
 									viewid: o.viewid,
@@ -206,7 +197,7 @@
 														var retDataParam = {
 															'UsePaging': o.UsePaging,
 															'ViewId': o.viewid,
-															'IDPrefix': IDPrefix,
+															'IDPrefix': idPrefix,
 															'IsFirstLoad': false,
 															'ParentNodeKey': nodekey,
 															'IncludeNodeRequired': false,
@@ -224,7 +215,7 @@
 														var $outerxml = $(XMLHttpRequest.responseXML);
 														var $xml = $outerxml.children().first();
 														var childhtmlstr = '';
-														$xml.children().each(function() { childhtmlstr += _treeXmlToHtml($(this)); });
+														$xml.children().each(function() { childhtmlstr += treeXmlToHtml($(this)); });
 														return childhtmlstr;
 													}
 											}
@@ -250,7 +241,7 @@
 							// and thus having an onSuccess() function that changes the selected node will
 							// cause a race condition.
 							
-							$('.'+ IDPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
+							$('.'+ idPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
 							
 							// case 21424 - Manufacture unique IDs on the expand <ins> for automated testing
 							$treediv.find('li').each(function() {
@@ -270,14 +261,14 @@
 
 		'selectNode': function(optSelect) 
 			{
-				var o = {
-					newnodeid: '', 
-					newcswnbtnodekey: ''
-				}
+		        var o = {
+		            newnodeid: '',
+		            newcswnbtnodekey: ''
+		        };  
 				if (optSelect) {
 					$.extend(o, optSelect);
 				}
-				var $treediv = $(this).children('.treediv')
+		        var $treediv = $(this).children('.treediv');
 				var IDPrefix = $treediv.CswAttrDom('id');
 				$treediv.jstree('select_node', '#' + IDPrefix + o.newnodeid);
 			}
