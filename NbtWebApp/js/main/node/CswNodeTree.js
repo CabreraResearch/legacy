@@ -66,7 +66,6 @@
 						var selectid = '';
 						//var treePlugins = ["themes", "xml_data", "ui", "types", "crrm"];
 						var treePlugins = ["themes", "html_data", "ui", "types", "crrm"];
-					    debugger;
 					    var treeThemes;
 						if( !isNullOrEmpty( o.nodeid ) ) 
 						{
@@ -148,13 +147,12 @@
 					        }
 					    }
                         treehtmlstring += '</ul>';
-log(treehtmlstring);
+
 					    if(hasNodes) {
 							$treediv.bind('init_done.jstree', function() { 
 
 								// initially_open and initially_select cause multiple event triggers and race conditions.
 								// So we'll do it ourselves instead.
-							    debugger;
 								// Open
 							    if (!isNullOrEmpty(initiallyOpen)) {
 							        var $selecteditem = $treediv.find('#' + initiallyOpen);
