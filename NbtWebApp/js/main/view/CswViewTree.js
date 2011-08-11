@@ -1,5 +1,5 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	$.fn.CswViewTree = function (options) { 
@@ -32,26 +32,22 @@
 
 		var $viewsdiv = $(this);
 		
-		var dataXml = {
+		var jsonData = {
 			IsSearchable: o.issearchable,
 			UseSession: o.usesession
 		};
 						
-		CswAjaxXml({
+		CswAjaxJson({
 				url: o.ViewUrl,
-				data: dataXml,
+				data: jsonData,
 				stringify: false,
-				success: function ($xml)
+				success: function (data)
 				{
-					var strTypes = $xml.find('types').text();
-					var jsonTypes = $.parseJSON(strTypes);
-					var $treexml = $xml.find('tree').children('root');
-					var treexmlstring = xmlToString($treexml);
-					
+				    var jsonTypes = data.types;
+				    var treeData = data.tree;					
 					$viewsdiv.jstree({
-						"xml_data": {
-							"data": treexmlstring,
-							"xsl": "nest"
+						"json_data": {
+							"data": treeData
 						},
 						"ui": {
 							"select_limit": 1
@@ -62,21 +58,21 @@
 						"types": {
 							"types": jsonTypes
 						},
-						"plugins": ["themes", "xml_data", "ui", "types"]
+						"plugins": ["themes", "json_data", "ui", "types"]
 					}).bind('select_node.jstree', 
-								function (e, data) {
-									var Selected = jsTreeGetSelected($viewsdiv); 
-									var optSelect = {
-												$item: Selected.$item,
-												iconurl: Selected.iconurl,
-												type: Selected.$item.CswAttrXml('viewtype'),
-												viewid: Selected.$item.CswAttrXml('viewid'),
-												viewname: Selected.text,
-												viewmode: Selected.$item.CswAttrXml('viewmode'),
-												actionid: Selected.$item.CswAttrXml('actionid'),
-												actionname: Selected.$item.CswAttrXml('actionname'),
-												actionurl: Selected.$item.CswAttrXml('actionurl'),
-												reportid: Selected.$item.CswAttrXml('reportid')
+								function () {
+									var selected = jsTreeGetSelected($viewsdiv);
+								    var optSelect = {
+												$item: selected.$item,
+												iconurl: selected.iconurl,
+												type: selected.$item.CswAttrXml('viewtype'),
+												viewid: selected.$item.CswAttrXml('viewid'),
+												viewname: selected.text,
+												viewmode: selected.$item.CswAttrXml('viewmode'),
+												actionid: selected.$item.CswAttrXml('actionid'),
+												actionname: selected.$item.CswAttrXml('actionname'),
+												actionurl: selected.$item.CswAttrXml('actionurl'),
+												reportid: selected.$item.CswAttrXml('reportid')
 											};
 									o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
 								});

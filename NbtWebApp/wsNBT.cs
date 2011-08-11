@@ -444,10 +444,11 @@ namespace ChemSW.Nbt.WebServices
         } // getQuickLaunchItems()
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getViewTree( bool IsSearchable, bool UseSession )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getViewTree( bool IsSearchable, bool UseSession )
         {
-            XElement ReturnVal = new XElement( "viewtree" );
+            JObject ReturnVal = new JObject();
+            //XElement ReturnVal = new XElement( "viewtree" );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -458,18 +459,18 @@ namespace ChemSW.Nbt.WebServices
                 {
                     var ws = new CswNbtWebServiceView( _CswNbtResources );
                     //ReturnVal = XElement.Parse( ws.getViewTree( Session, IsSearchable, UseSession ) );
-                    ReturnVal = XElement.Parse( ws.getViewTree( IsSearchable ) );
+                    ReturnVal = ws.getViewTree( IsSearchable );
                     _deInitResources();
                 }
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         } // getViews()
 
