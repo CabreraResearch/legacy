@@ -32,25 +32,24 @@
 
 		var $viewsdiv = $(this);
 		
-		var jsonData = {
+		var dataXml = {
 			IsSearchable: o.issearchable,
 			UseSession: o.usesession
 		};
 						
-		CswAjaxJson({
+		CswAjaxXml({
 				url: o.ViewUrl,
-				data: jsonData,
+				data: dataXml,
 				stringify: false,
-				success: function (data)
+				success: function ($xml)
 				{
-				    log(data);
-				    var strTypes = $xml.find('types').text();
+					var strTypes = $xml.find('types').text();
 					var jsonTypes = $.parseJSON(strTypes);
 					var $treexml = $xml.find('tree').children('root');
 					var treexmlstring = xmlToString($treexml);
 					
 					$viewsdiv.jstree({
-						"json_data": {
+						"xml_data": {
 							"data": treexmlstring,
 							"xsl": "nest"
 						},
@@ -63,7 +62,7 @@
 						"types": {
 							"types": jsonTypes
 						},
-						"plugins": ["themes", "json_data", "ui", "types"]
+						"plugins": ["themes", "xml_data", "ui", "types"]
 					}).bind('select_node.jstree', 
 								function (e, data) {
 									var Selected = jsTreeGetSelected($viewsdiv); 
