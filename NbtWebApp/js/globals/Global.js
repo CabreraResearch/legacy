@@ -730,6 +730,7 @@ function HandleMenuItem(options)
 { /// <param name="$" type="jQuery" />
 	var o = {
 		$ul: '',
+	    itemKey: '',
 		itemJson: '',
 		onLogout: null, // function () { },
 		onAlterNode: null, // function (nodeid, nodekey) { },
@@ -748,30 +749,33 @@ function HandleMenuItem(options)
 		$.extend(o, options);
 	}
 	var $li;
-	if (!isNullOrEmpty(o.itemJson.href))
+    var json = o.itemJson;
+    var href = tryParseString(json.href);
+    var text = tryParseString(o.itemKey);
+    var popup = tryParseString(json.popup);
+    var action = tryParseString(json.action);
+    
+	if (!isNullOrEmpty(href))
 	{
-		$li = $('<li><a href="' + o.itemJson.CswAttrXml('href') + '">' + o.itemJson.CswAttrXml('text') + '</a></li>')
-						.appendTo(o.$ul)
+	    $li = $('<li><a href="' + href + '">' + text + '</a></li>')
+    	    .appendTo(o.$ul);
 	}
-	else if (o.itemJson.CswAttrXml('popup') !== undefined && o.itemJson.CswAttrXml('popup') !== '')
+	else if (!isNullOrEmpty(popup))
 	{
-		$li = $('<li class="headermenu_dialog"><a href="' + o.itemJson.CswAttrXml('popup') + '" target="_blank">' + o.itemJson.CswAttrXml('text') + '</a></li>')
-						.appendTo(o.$ul)
-//						.click(function ()
-//						{
-//						    $.CswDialog('OpenDialog', o.itemJson.CswAttrXml('text'), o.itemJson.CswAttrXml('popup'));
-//						    return false;
-//						})
-						;
+		$li = $('<li class="headermenu_dialog"><a href="' + popup + '" target="_blank">' + text + '</a></li>')
+						.appendTo(o.$ul);
 	}
-	else if (o.itemJson.CswAttrXml('action') !== undefined && o.itemJson.CswAttrXml('action') !== '')
+	else if (!isNullOrEmpty(action))
 	{
-		$li = $('<li><a href="#">' + o.itemJson.CswAttrXml('text') + '</a></li>')
+		$li = $('<li><a href="#">' + text + '</a></li>')
 						.appendTo(o.$ul);
 		var $a = $li.children('a');
-		switch (o.itemJson.CswAttrXml('action'))
+	    var nodeid = tryParseString(json.nodeid);
+	    var nodename = tryParseString(json.nodename);
+	    var viewid = tryParseString(json.viewid);
+	    
+		switch (action)
 		{
-
 			case 'About':
 				$a.click(function () { $.CswDialog('AboutDialog'); return false; });
 				break;
@@ -780,9 +784,9 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('AddNodeDialog', {
-						'nodetypeid': o.itemJson.CswAttrXml('nodetypeid'),
-						'relatednodeid': o.itemJson.CswAttrXml('relatednodeid'), //for Grid Props
-						'onAddNode': o.onAlterNode
+						nodetypeid: tryParseString(json.nodetypeid),
+						relatednodeid: tryParseString(json.relatednodeid), //for Grid Props
+						onAddNode: o.onAlterNode
 					});
 					return false;
 				});
@@ -792,27 +796,27 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('DeleteNodeDialog', {
-						'nodename': o.itemJson.CswAttrXml('nodename'),
-						'nodeid': o.itemJson.CswAttrXml('nodeid'),
-						'onDeleteNode': o.onAlterNode,
-						'NodeCheckTreeId': o.NodeCheckTreeId,
-						'Multi': o.Multi
+						nodename: nodename,
+						nodeid: nodeid,
+						onDeleteNode: o.onAlterNode,
+						NodeCheckTreeId: o.NodeCheckTreeId,
+						Multi: o.Multi
 					});
 					return false;
 				});
 				break;
 
 			case 'editview':
-				$a.click(function () { o.onEditView(o.itemJson.CswAttrXml('viewid')); return false; });
+				$a.click(function () { o.onEditView(viewid); return false; });
 				break;
 
 			case 'CopyNode':
 				$a.click(function ()
 				{
 					$.CswDialog('CopyNodeDialog', {
-						'nodename': o.itemJson.CswAttrXml('nodename'),
-						'nodeid': o.itemJson.CswAttrXml('nodeid'),
-						'onCopyNode': o.onAlterNode
+						nodename: nodename,
+						nodeid: nodeid,
+						onCopyNode: o.onAlterNode
 					});
 					return false;
 				});
@@ -822,8 +826,8 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('PrintLabelDialog', {
-						'nodeid': o.itemJson.CswAttrXml('nodeid'),
-						'propid': o.itemJson.CswAttrXml('propid')
+						'nodeid': nodeid,
+						'propid': tryParseString(json.propid)
 					});
 					return false;
 				});
@@ -841,11 +845,11 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('EditNodeDialog', {
-						'nodeid': o.itemJson.CswAttrXml('userid'),
-						'cswnbtnodekey': '',
-						'filterToPropId': '',
-						'title': 'User Profile',
-						'onEditNode': function (nodeid, nodekey) { }
+						nodeid: nodeid,
+						cswnbtnodekey: '',
+						filterToPropId: '',
+						title: 'User Profile',
+						onEditNode: null // function (nodeid, nodekey) { }
 					});
 					return false;
 				});
@@ -873,9 +877,9 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('AddViewDialog', {
-						'viewid': o.itemJson.CswAttrXml('viewid'),
-						'viewmode': o.itemJson.CswAttrXml('viewmode'),
-						'onAddView': o.onSaveView
+						viewid: viewid,
+						viewmode: tryParseString(json.viewmode),
+						onAddView: o.onSaveView
 					});
 					return false;
 				});
@@ -885,7 +889,7 @@ function HandleMenuItem(options)
 	}
 	else
 	{
-	    $li = $('<li>' + o.itemJson.CswAttrXml('text') + '</li>')
+	    $li = $('<li>' + text + '</li>')
     	    .appendTo(o.$ul);
 	}
 	return $li;

@@ -507,10 +507,10 @@ namespace ChemSW.Nbt.WebServices
         } // getDashboard()
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getHeaderMenu()
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getHeaderMenu()
         {
-            XElement ReturnVal = new XElement( "header" );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -520,19 +520,19 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceHeader( _CswNbtResources );
-                    ReturnVal = XElement.Parse( ws.getHeaderMenu() );
+                    ReturnVal = ws.getHeaderMenu();
                 }
 
                 _deInitResources();
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         } // getHeaderMenu()
 

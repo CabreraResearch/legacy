@@ -1,5 +1,6 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
 
 ; (function ($) {
 	$.fn.CswMenuHeader = function (options) {
@@ -16,34 +17,42 @@
 
 		var $MenuDiv = $(this);
 
-		CswAjaxXml({
+		CswAjaxJson({
 			url: o.Url,
 			data: {},
-			stringify: false,
-			success: function ($xml) {
+			success: function (data) {
 				var $ul = $('<ul class="topnav"></ul>');
-
 				$MenuDiv.text('')
 						.append($ul);
+                
+			    for (var menuItem in data) {
+			        if (data.hasOwnProperty(menuItem)) {
+                        var thisItem = data[menuItem];
+			            if (!isNullOrEmpty(menuItem))
+			            {
+			                var $li = HandleMenuItem({ $ul: $ul, 
+			                                            itemKey: menuItem,
+			                                            itemJson: thisItem, 
+			                                            onLogout: o.onLogout });
 
-				$xml.children().each(function() {
-					var $this = $(this);
-					if($this.CswAttrXml('text') !== undefined)
-					{
-						var $li = HandleMenuItem({ '$ul': $ul, '$itemxml': $this, 'onLogout': o.onLogout});
-						
-						if($this.children().length > 1) {
-							var $subul = $('<ul class="subnav"></ul>')
-											.appendTo($li);
-							$this.children().each(function() {
-								HandleMenuItem({ '$ul': $subul, '$itemxml': $(this), 'onLogout': o.onLogout});
-							});
-						}
-					}
-
-				});
-
-				$ul.CswMenu();
+			                if (isTrue(thisItem.haschildren)) {
+			                    delete thisItem.haschildren;
+			                    var $subul = $('<ul class="subnav"></ul>')
+    			                    .appendTo($li);
+			                    for (var childItem in thisItem) {
+			                        if (thisItem.hasOwnProperty(childItem)) {
+			                            var thisChild = thisItem[childItem];
+			                            HandleMenuItem({ $ul: $subul, 
+			                                             itemKey: childItem,
+			                                             itemJson: thisChild, 
+			                                             onLogout: o.onLogout });
+			                        }
+			                    }
+			                }
+			            }
+			        }
+			    }
+			    $ul.CswMenu();
 
 				o.onSuccess();
 

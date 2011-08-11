@@ -86,31 +86,51 @@ namespace ChemSW.Nbt.WebServices
         } // getDashboard()
 
 
-        public string getHeaderMenu()
+        public JObject getHeaderMenu()
         {
-            string ret = string.Empty;
+            JObject Ret = new JObject();
 
-            ret += "<item text=\"Home\" action=\"Home\" />";
+            Ret["Home"] = new JObject( new JProperty( "action", "Home" ) );
             if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                ret += "<item text=\"Admin\">";
-                ret += "  <item text=\"Current User List\" href=\"UserList.aspx\" />";
-                ret += "  <item text=\"View Log\" href=\"DisplayLog.aspx\" />";
-                ret += "  <item text=\"Edit Config Vars\" href=\"ConfigVars.aspx\" />";
-                ret += "  <item text=\"Statistics\" href=\"Statistics.aspx\" />";
-                ret += "</item>";
+                Ret["Admin"] = new JObject(
+                                new JProperty( "haschildren", true ),
+                                new JProperty( "Current User List", new JObject(
+                                    new JProperty( "href", "UserList.aspx" )
+                                ) ),
+                                new JProperty( "View Log", new JObject(
+                                    new JProperty( "href", "DisplayLog.aspx" )
+                                ) ),
+                                new JProperty( "Edit Config Vars", new JObject(
+                                    new JProperty( "href", "ConfigVars.aspx" )
+                                ) ),
+                                new JProperty( "Statistics", new JObject(
+                                    new JProperty( "href", "Statistics.aspx" )
+                                ) )
+                        );
             }
-            ret += "<item text=\"Preferences\">";
-            ret += "  <item text=\"Profile\" action=\"Profile\" userid=\"" + _CswNbtResources.CurrentNbtUser.UserNode.NodeId.ToString() + "\" />";
-            ret += "  <item text=\"Subscriptions\" href=\"Subscriptions.aspx\" />";
-            ret += "</item>";
-            ret += "<item text=\"Help\">";
-            ret += "  <item text=\"Help\" popup=\"help/index.htm\" />";
-            ret += "  <item text=\"About\" action=\"About\" />";
-            ret += "</item>";
-            ret += "<item text=\"Logout\" action=\"Logout\" />";
+            Ret["Preferences"] = new JObject(
+                                    new JProperty( "haschildren", true ),
+                                    new JProperty( "Profile", new JObject(
+                                        new JProperty( "action", "Profile" ),
+                                        new JProperty( "userid", _CswNbtResources.CurrentNbtUser.UserNode.NodeId.ToString() )
+                                    ) ),
+                                    new JProperty( "Subscriptions", new JObject(
+                                        new JProperty( "href", "Subscriptions.aspx" )
+                                    ) )
+                        );
+            Ret["Help"] = new JObject(
+                                new JProperty( "haschildren", true ),
+                                new JProperty( "Help", new JObject(
+                                    new JProperty( "popup", "help/index.htm" )
+                                ) ),
+                                new JProperty( "About", new JObject(
+                                    new JProperty( "action", "About" )
+                                ) )
+                        );
+            Ret["Logout"] = new JObject( new JProperty( "action", "Logout" ) );
 
-            return "<menu>" + ret + "</menu>";
+            return Ret;
         }
 
 
