@@ -8,6 +8,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -65,7 +66,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns Quick Launch Items including History in Session
         /// </summary>
-        public XElement getQuickLaunchItems()
+        public JObject getQuickLaunchItems()
         {
             CswCommaDelimitedString UserQuickLaunchViews = new CswCommaDelimitedString();
             CswCommaDelimitedString UserQuickLaunchActions = new CswCommaDelimitedString();
@@ -88,7 +89,7 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            return _CswNbtResources.SessionDataMgr.getQuickLaunchXml( UserQuickLaunchViews, UserQuickLaunchActions );
+            return _CswNbtResources.SessionDataMgr.getQuickLaunchJson( UserQuickLaunchViews, UserQuickLaunchActions );
         } // getQuickLaunchItems()
 
     }

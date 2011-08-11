@@ -1,10 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -55,9 +55,9 @@ namespace ChemSW.Nbt
             return ret;
         }
 
-        public XElement getQuickLaunchXml( CswCommaDelimitedString UserQuickLaunchViews, CswCommaDelimitedString UserQuickLaunchActions )
+        public JObject getQuickLaunchJson( CswCommaDelimitedString UserQuickLaunchViews, CswCommaDelimitedString UserQuickLaunchActions )
         {
-            XElement Root = new XElement( "items" );
+            JObject ReturnVal = new JObject();
 
             CswTableSelect SessionDataSelect = _CswNbtResources.makeCswTableSelect( "getQuickLaunchXml_select", "session_data" );
             Collection<OrderByClause> OrderBy = new Collection<OrderByClause>();
@@ -86,23 +86,28 @@ namespace ChemSW.Nbt
 
             foreach( DataRow Row in RowsToProcess )
             {
-                XElement ThisItem = new XElement( "item" );
                 Int32 ItemId = CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] );
-                ThisItem.SetAttributeValue( "launchtype", Row[SessionDataColumn_SessionDataType].ToString() );
-                ThisItem.SetAttributeValue( "text", Row[SessionDataColumn_Name].ToString() );
-                ThisItem.SetAttributeValue( "viewmode", Row[SessionDataColumn_ViewMode].ToString() );
-                ThisItem.SetAttributeValue( "itemid", new CswNbtSessionDataId( ItemId ).ToString() );
+
+                JProperty ThisItem = new JProperty( "item_" + ItemId );
+                JObject ThisItemObj = new JObject();
+                ThisItem.Value = ThisItemObj;
+
+                ThisItemObj["launchtype"] = Row[SessionDataColumn_SessionDataType].ToString();
+                ThisItemObj["text"] = Row[SessionDataColumn_Name].ToString();
+                ThisItemObj["viewmode"] = Row[SessionDataColumn_ViewMode].ToString();
+
+                ThisItemObj["itemid"] = new CswNbtSessionDataId( ItemId ).ToString();
 
                 Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
                 if( ActionId != Int32.MinValue )
                 {
-                    ThisItem.SetAttributeValue( "actionname", _CswNbtResources.Actions[ActionId].Name.ToString() );
-                    ThisItem.SetAttributeValue( "actionurl", _CswNbtResources.Actions[ActionId].Url );
+                    ThisItemObj["actionname"] = _CswNbtResources.Actions[ActionId].Name.ToString();
+                    ThisItemObj["actionurl"] = _CswNbtResources.Actions[ActionId].Url;
                 }
-                Root.Add( ThisItem );
+                ReturnVal.Add( ThisItem );
             }
-            return Root;
-        } // getQuickLaunchXml()
+            return ReturnVal;
+        } // getQuickLaunchJson()
 
         /// <summary>
         /// Save an action to the session data collection.
@@ -206,20 +211,20 @@ namespace ChemSW.Nbt
         {
             if( SessionId != string.Empty )
             {
-				if( _CswNbtResources.IsInitializedForDbAccess )
-				{
-					CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_update", SessionDataTableName );
-					DataTable SessionDataTable = SessionDataUpdate.getTable( "where " + SessionDataColumn_SessionId + " = '" + SessionId + "'" );
-					if( SessionDataTable.Rows.Count > 0 )
-					{
-						Collection<DataRow> DoomedRows = new Collection<DataRow>();
-						foreach( DataRow Row in SessionDataTable.Rows )
-							DoomedRows.Add( Row );
-						foreach( DataRow Row in DoomedRows )
-							Row.Delete();
-						SessionDataUpdate.update( SessionDataTable );
-					}
-				}
+                if( _CswNbtResources.IsInitializedForDbAccess )
+                {
+                    CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_update", SessionDataTableName );
+                    DataTable SessionDataTable = SessionDataUpdate.getTable( "where " + SessionDataColumn_SessionId + " = '" + SessionId + "'" );
+                    if( SessionDataTable.Rows.Count > 0 )
+                    {
+                        Collection<DataRow> DoomedRows = new Collection<DataRow>();
+                        foreach( DataRow Row in SessionDataTable.Rows )
+                            DoomedRows.Add( Row );
+                        foreach( DataRow Row in DoomedRows )
+                            Row.Delete();
+                        SessionDataUpdate.update( SessionDataTable );
+                    }
+                }
             }
         } // removeSessionData()
 
