@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( SelectedViewNode is CswNbtViewRelationship )
                     {
-    s                   if( StepNo == 3 )
+                       if( StepNo == 3 )
                         {
                             // Potential child relationships
 
