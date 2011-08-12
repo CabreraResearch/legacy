@@ -899,10 +899,10 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getViewChildOptions( string ViewXml, string ArbitraryId, string StepNo )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getViewChildOptions( string ViewJson, string ArbitraryId, string StepNo )
         {
-            XElement ReturnVal = new XElement( "result" );
+            JObject ReturnVal = new JObject();
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -914,20 +914,20 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
-                    ReturnVal = ws.getViewChildOptions( ViewXml, ArbitraryId, CswConvert.ToInt32( StepNo ) );
+                    ReturnVal = ws.getViewChildOptions( ViewJson, ArbitraryId, CswConvert.ToInt32( StepNo ) );
                 }
 
                 _deInitResources();
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         } // getViewChildOptions()
 

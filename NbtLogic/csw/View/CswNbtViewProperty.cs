@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -18,6 +19,7 @@ namespace ChemSW.Nbt
         public enum CswNbtPropType { NodeTypePropId, ObjectClassPropId, Unknown };
         public enum PropertySortMethod { Ascending, Descending };
 
+        private const string _FiltersName = "filters";
         private CswNbtViewRelationship _Parent;
         public override CswNbtViewNode Parent
         {
@@ -245,6 +247,108 @@ namespace ChemSW.Nbt
                         CswNbtViewPropertyFilter Filter = new CswNbtViewPropertyFilter( CswNbtResources, _View, ChildNode );
                         this.addFilter( Filter );
                     }
+                }
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewProperty",
+                                          "CswViewProperty.constructor(xmlnode) encountered an invalid filter definition",
+                                          ex );
+            }
+        }
+
+        /// <summary>
+        /// For loading from JSON
+        /// </summary>
+        public CswNbtViewProperty( CswNbtResources CswNbtResources, CswNbtView View, JObject PropObj )
+            : base( CswNbtResources, View )
+        {
+            try
+            {
+                string _Type = CswConvert.ToString( PropObj["type"] );
+                if( !string.IsNullOrEmpty( _Type ) )
+                {
+                    Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), _Type, true );
+                }
+
+                Int32 _Value = CswConvert.ToInt32( PropObj["value"] );
+                if( Int32.MinValue != _Value ) //backwards compatibility
+                {
+                    if( Type == CswNbtPropType.NodeTypePropId )
+                        NodeTypePropId = _Value;
+                    else
+                        ObjectClassPropId = _Value;
+                }
+
+                Int32 _NtPropId = CswConvert.ToInt32( PropObj["nodetypepropid"] );
+                if( Int32.MinValue != _NtPropId )
+                {
+                    NodeTypePropId = _NtPropId;
+                }
+
+                Int32 _OcPropId = CswConvert.ToInt32( PropObj["objectclasspropid"] );
+                if( Int32.MinValue != _OcPropId )
+                {
+                    ObjectClassPropId = _OcPropId;
+                }
+
+                string _Name = CswConvert.ToString( PropObj["name"] );
+                if( !string.IsNullOrEmpty( _Name ) )
+                {
+                    Name = _Name;
+                }
+
+                if( PropObj["sortby"] != null )
+                {
+                    bool _Sort = Convert.ToBoolean( PropObj["sortby"] );
+                    SortBy = _Sort;
+                }
+
+                string _SortedMethod = CswConvert.ToString( PropObj["sortmethod"] );
+                if( !string.IsNullOrEmpty( _SortedMethod ) )
+                {
+                    SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), _SortedMethod, true );
+                }
+
+
+                string _FieldType = CswConvert.ToString( PropObj["fieldtype"] );
+                if( !string.IsNullOrEmpty( _FieldType ) )
+                {
+                    FieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( _FieldType ) );
+                }
+
+                Int32 _Order = CswConvert.ToInt32( PropObj["order"] );
+                if( Int32.MinValue != _Order )
+                {
+                    Order = _Order;
+                }
+
+                Int32 _Width = CswConvert.ToInt32( PropObj["width"] );
+                if( Int32.MinValue != _Width )
+                {
+                    Width = _Width;
+                }
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewProperty",
+                                          "CswViewProperty.constructor(xmlnode) encountered an invalid attribute value",
+                                          ex );
+            }
+            try
+            {
+                JProperty FiltersProp = PropObj.Property( _FiltersName );
+                JObject FiltersObj = (JObject) FiltersProp.Value;
+                foreach( CswNbtViewPropertyFilter Filter in
+                    from FilterProp
+                        in FiltersObj.Properties()
+                    select (JObject) FilterProp.Value
+                        into FilterObj
+                        let NodeName = CswConvert.ToString( FilterObj["nodename"] )
+                        where NodeName == CswNbtViewXmlNodeName.Filter.ToString().ToLower()
+                        select new CswNbtViewPropertyFilter( CswNbtResources, _View, FilterObj ) )
+                {
+                    this.addFilter( Filter );
                 }
             }
             catch( Exception ex )

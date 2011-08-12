@@ -288,9 +288,9 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal;
         } // getViewGrid()
 
-        public XElement getViewChildOptions( string ViewXml, string ArbitraryId, Int32 StepNo )
+        public JObject getViewChildOptions( string ViewXml, string ArbitraryId, Int32 StepNo )
         {
-            XElement ret = new XElement( "options" );
+            JObject ret = new JObject();
 
             CswNbtView View = new CswNbtView( _CswNbtResources );
             View.LoadXml( ViewXml );

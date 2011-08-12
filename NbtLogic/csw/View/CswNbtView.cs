@@ -326,6 +326,24 @@ namespace ChemSW.Nbt
             ViewXmlDoc.LoadXml( ViewXmlAsString );
             return _load( ViewXmlDoc );
         }
+
+        /// <summary>
+        /// Load View JSON into this View (String)
+        /// </summary>
+        public bool LoadJson( string ViewString )
+        {
+            JObject ViewJson = new JObject();
+            try
+            {
+                ViewJson = JObject.Parse( ViewString );
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
+            }
+            return _load( ViewJson );
+        }
+
         /// <summary>
         /// Load View XML into this View (XML)
         /// </summary>
@@ -344,6 +362,12 @@ namespace ChemSW.Nbt
             return true;
         }
 
+        private bool _load( JObject ViewJson )
+        {
+            // This handles the recursive load operation internally
+            Root = new CswNbtViewRoot( _CswNbtResources, this, ViewJson );
+            return true;
+        }
 
         public delegate void BeforeEditViewEventHandler( CswNbtView View );
         public delegate void AfterEditViewEventHandler( CswNbtView View );

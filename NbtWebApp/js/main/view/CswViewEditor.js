@@ -267,7 +267,7 @@
 						data: jsonData,
 						success: function(data) {
 						    currentViewJson = data.TreeView;
-						    log(currentViewJson);
+
 						    $viewnametextbox.val(currentViewJson.viewname);
 							$categorytextbox.val(currentViewJson.category);
 						    var visibility = tryParseString(currentViewJson.visibility);
@@ -400,16 +400,15 @@
 
 			if(processView)
 			{
-				var dataXml = {
+				var jsonData = {
 					ViewId: viewid,
-					ViewXml: xmlToString(currentViewJson)
+					ViewJson: JSON.stringify(currentViewJson)
 				};
 
-				CswAjaxXml({
+				CswAjaxJson({
 					url: o.SaveViewUrl,
-					data: dataXml,
-					stringify: true,
-					success: function ($xml) {
+					data: jsonData,
+					success: function () {
 						o.onFinish(viewid, _getSelectedViewMode($viewgrid));
 					} // success
 				});
@@ -589,7 +588,7 @@
 					var $tbl = $span.CswTable({ 'ID': o.ID + '_propfilttbl' });
 					$tbl.css('display', 'inline-table');
 					$tbl.CswViewPropFilter('init', {
-														viewxml: currentViewJson,
+														viewJson: currentViewJson,
 														proparbitraryid: $span.CswAttrDom('proparbid'),
 														filtarbitraryid: '',
 														viewbuilderpropid: '',
@@ -618,7 +617,7 @@
 										});
 
 							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 
-								viewxml: currentViewJson, 
+								viewJson: currentViewJson, 
 								filtJson: Json, 
 								onSuccess: function($filterxml) {
 									var $propxml = currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]');
@@ -898,7 +897,7 @@
 						var dataJson = {
 							StepNo: stepno,
 							ArbitraryId: arbid,
-							ViewXml: currentViewJson
+							ViewJson: JSON.stringify(currentViewJson)
 						};
 
 						CswAjaxJson({
