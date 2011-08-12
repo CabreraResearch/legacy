@@ -5,8 +5,7 @@
 
 ;  (function ($) { /// <param name="$" type="jQuery" />
 
-	$.fn.CswViewEditor = function (options) 
-	{
+	$.fn.CswViewEditor = function (options) {
 		var o = {
 			ViewGridUrl: '/NbtWebApp/wsNBT.asmx/getViewGrid',
 			ViewInfoUrl: '/NbtWebApp/wsNBT.asmx/getViewInfo',
@@ -125,10 +124,10 @@
 		$copyviewbtn.CswButton('disable');
 
 		var $deleteviewbtn = $div1_btntbl_cell11.CswButton({
-			'ID': o.ID + '_deleteview',
-			'enabledText': 'Delete View',
-			'disableOnClick': true,
-			'onclick': function() {
+			ID: o.ID + '_deleteview',
+			enabledText: 'Delete View',
+			disableOnClick: true,
+			onclick: function() {
 				var viewid = _getSelectedViewId($viewgrid);
 				if( !isNullOrEmpty( viewid ) )
 				{
@@ -141,7 +140,7 @@
 						CswAjaxJson({
 							url: o.DeleteViewUrl,
 							data: dataJson,
-							success: function (gridJson) {
+							success: function () {
 								_getViewsGrid(onViewGridSuccess); 
 								$copyviewbtn.CswButton('disable');
 							},
@@ -259,13 +258,13 @@
 					$wizard.CswWizard('button', 'finish', 'enable');
 					$wizard.CswWizard('button', 'next', 'disable');
 
-					var dataXml = {
+					var jsonData = {
 						ViewId: _getSelectedViewId($viewgrid)
 					};
 
 					CswAjaxJson({
 						url: o.ViewInfoUrl,
-						data: dataXml,
+						data: jsonData,
 						success: function(data) {
 						    currentViewJson = data.TreeView;
 						    log(currentViewJson);
@@ -813,11 +812,12 @@
 			var skipme = false;
 			var skipchildoptions = true;
 			var linkclass = '';
+		    var children = '';
 
 			switch (nodename) {
 		        case 'treeview':
 				    if(stepno === CswViewEditor_WizardSteps.step3.step) skipchildoptions = false;
-
+		            children = 'childrelationships';
 				    arbid = "root";
 				    name = itemJson.viewname;
 				    rel = "root";
@@ -827,7 +827,7 @@
 			    case 'relationship':
 			        if(stepno === CswViewEditor_WizardSteps.step3.step) skipchildoptions = false;
 				    if(stepno === CswViewEditor_WizardSteps.step4.step) skipchildoptions = false;
-
+			        children = 'properties';
 				    name = itemJson.secondname;
 				    var propname = tryParseString(itemJson.propname);
 				    if (!isNullOrEmpty(propname)) {
@@ -844,7 +844,7 @@
 			    case 'property':
 				    if(stepno <= CswViewEditor_WizardSteps.step3.step) skipme = true;
 				    if(stepno === CswViewEditor_WizardSteps.step5.step) skipchildoptions = false;
-
+			        children = 'filters';
 				    name = itemJson.name;
 				    rel = "property";
 				    types.property = { icon: { image: "Images/view/property.gif" } };
@@ -868,19 +868,22 @@
 				treestr += '    class="jstree-open" ';
 				treestr += '>';
 				treestr += ' <a href="#" class="' + linkclass + '" arbid="'+ arbid +'">'+ name +'</a>';
-				if(arbid !== "root")
-				{
+				if (arbid !== "root") {
 					treestr += ' <span style="" class="vieweditor_deletespan" arbid="'+ arbid +'"></span>';
 				}
 
 				treestr += '<ul>';
-				itemJson.children().each(function() { 
-					var childcontent = viewJsonToHtml(stepno, $(this)); 
-					treestr += childcontent.htmlstring;
-					$.extend(types, childcontent.types);
-				});
-
-				if(!skipchildoptions) 
+				if (!isNullOrEmpty(children)) {
+				    var childJson = itemJson[children];
+				    for (var child in childJson) {
+				        if (childJson.hasOwnProperty(child)) {
+                            var childcontent = viewJsonToHtml(stepno, childJson[child]);
+				            treestr += childcontent.htmlstring;
+				            $.extend(types, childcontent.types);				            
+				        }
+				    }
+				}
+			    if(!skipchildoptions) 
 				{
 					if(stepno === CswViewEditor_WizardSteps.step5.step)
 					{ 
@@ -892,22 +895,21 @@
 						// relationships or properties
 						treestr += '<li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li>';
 						
-						var dataXml = {
+						var dataJson = {
 							StepNo: stepno,
 							ArbitraryId: arbid,
 							ViewXml: currentViewJson
 						};
 
-						CswAjaxXml({
+						CswAjaxJson({
 							url: o.ChildOptionsUrl,
-							data: dataXml,
-							stringify: true,
-							success: function($xml) 
+							data: dataJson,
+							success: function(data) 
 							{
 								var $select = $('#' + stepno + '_' + arbid + '_child');
 								$select.empty();
 								$select.append('<option value="">Select...</option>');
-								$xml.children().each(function() {
+								data.children().each(function() {
 									var $optionxml = $(this);
 									var $optionviewxml = $($optionxml.CswAttrXml('value'));
 									var $option = $('<option value="'+ $optionviewxml.CswAttrXml('arbitraryid') +'">'+ $optionxml.CswAttrXml('name') +'</option>')

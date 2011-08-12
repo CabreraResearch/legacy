@@ -839,7 +839,6 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ReturnVal = View.ToJson();
                     }
-
                 }
 
                 _deInitResources();
