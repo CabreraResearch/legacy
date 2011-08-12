@@ -295,7 +295,7 @@ function findObject(obj, key, value) {
 	/// <returns type="Array"> An array of matching objects.</returns>
     var ret = [];
 
-    if(jQuery.isPlainOBject(obj))
+    if(jQuery.isPlainObject(obj))
     {
         if( obj.hasOwnProperty(key) && 
             obj[key] === value) {
@@ -322,7 +322,7 @@ function deleteObject(obj, key, value) {
 	/// <returns type="Boolean"> True if successful.</returns>
     var ret = false;
 
-    if(jQuery.isPlainOBject(obj))
+    if(jQuery.isPlainObject(obj))
     {
         if( obj.hasOwnProperty(key) && 
             obj[key] === value) {
