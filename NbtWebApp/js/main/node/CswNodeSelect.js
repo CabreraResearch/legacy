@@ -48,7 +48,9 @@
 							        $select.append('<option value="' + nodeId + '">' + nodeName + '</option>');
 							    }
 							}
-						    o.onSuccess();
+						    if (isFunction(o.onSuccess)) {
+						        o.onSuccess();
+						    }
 						}
 				});
 

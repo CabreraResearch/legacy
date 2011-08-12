@@ -179,7 +179,7 @@ function CswAjaxJson(options)
 
 				_handleAuthenticationStatus({
 					status: auth,
-					success: function () { o.success(result); },
+					success: function () { if (isFunction(o.success)) { o.success(result); } },
 					failure: o.onloginfail,
 					usernodeid: result.nodeid,
 					usernodekey: result.cswnbtnodekey,
