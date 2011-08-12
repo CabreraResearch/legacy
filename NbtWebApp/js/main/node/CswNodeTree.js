@@ -100,7 +100,7 @@
 					    
 					    var initiallyOpen = selectid;
 					    var hasNodes = false;
-					    function treeXmlToHtml(json,level)
+					    function treeJsonToHtml(json,level)
 						{
 					        hasNodes = true;
 					        var id = json.attr.id;
@@ -108,16 +108,17 @@
 					            initiallyOpen = id;
 					        }
 					        
-					        var nodeid = id.substring(idPrefix.length);
-							var nodename = json.data;
-					        var nbtnodekey = json.attr.cswnbtnodekey;
-					        var rel = json.attr.rel;
+					        var nodeid = tryParseString(id.substring(idPrefix.length));
+							var nodename = tryParseString(json.data);
+					        var nbtnodekey = tryParseString(json.attr.cswnbtnodekey);
+					        var rel = tryParseString(json.attr.rel);
+					        var species = tryParseString(json.attr.species);
 					        
 					        var treestr = '<li id="'+ id +'" ';
 							treestr += '    rel="'+ rel +'" ';
-							treestr += '    species="'+ json.attr.species +'" ';
+							treestr += '    species="'+ species +'" ';
 							treestr += '    class="jstree-'+ json.attr.state +'" ';
-							if (nbtnodekey !== undefined) {
+							if (!isNullOrEmpty(nbtnodekey)) {
 								treestr += '    cswnbtnodekey="'+ nbtnodekey.replace(/"/g, '&quot;') +'"';
 							}
 							treestr += '>';
@@ -131,7 +132,7 @@
 								if (children.hasOwnProperty(child)) {
 								    var childNode = children[child];
 								    treestr += '<ul>';
-								    treestr += treeXmlToHtml(childNode,2);
+								    treestr += treeJsonToHtml(childNode,2);
 								    treestr += '</ul>';
 								}
 					        }
@@ -143,7 +144,7 @@
 					    for (var parent in treeData) {
 					        if (treeData.hasOwnProperty(parent)) {
 					            var parentNode = treeData[parent];
-					            treehtmlstring += treeXmlToHtml(parentNode, 1);
+					            treehtmlstring += treeJsonToHtml(parentNode, 1);
 					        }
 					    }
                         treehtmlstring += '</ul>';
@@ -156,21 +157,21 @@
 								// Open
 							    if (!isNullOrEmpty(initiallyOpen)) {
 							        var $selecteditem = $treediv.find('#' + initiallyOpen);
-							        var $itemparents = $selecteditem.parent().andSelf();
+							        var $itemparents = $selecteditem.parents().andSelf();
 							        $itemparents.each(function() {
 							            $treediv.jstree('open_node', '#' + $(this).CswAttrXml('id'));
 							        });
 							    }
 							    // Select
-								$treediv.jstree('select_node', '#' + selectid);
+								$treediv.jstree('select_node', '#' + initiallyOpen);
 
 							}).bind('load_node.jstree', function() {
 								$('.'+ idPrefix +'check').unbind('click');
-								$('.'+ idPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
+								$('.'+ idPrefix +'check').click(function() { return handleCheck($treediv, $(this)); });
 
-							}).bind('select_node.jstree', function(e, data) { return _firstSelectNode({
+							}).bind('select_node.jstree', function(e, newData) { return firstSelectNode({
 									e: e, 
-									data: data, 
+									data: newData, 
 									url: url,
 									$treediv: $treediv, 
 									IDPrefix: idPrefix, 
@@ -186,43 +187,46 @@
 										"data": treehtmlstring,
 										"ajax":
 											{
-												"type": 'POST',
-												"url": url,
-												"dataType": "xml",
-												"data": function($nodeOpening) 
-													{
-														var nodekey = $nodeOpening.CswAttrXml('cswnbtnodekey');
-														var retDataParam = {
-															'UsePaging': o.UsePaging,
-															'ViewId': o.viewid,
-															'IDPrefix': idPrefix,
-															'IsFirstLoad': false,
-															'ParentNodeKey': nodekey,
-															'IncludeNodeRequired': false,
-															'IncludeNodeKey': '',
-															'ShowEmpty': false,
-															'ForSearch': o.forsearch,
-															'NodePk': tryParseString(o.nodeid,''),
-															'IncludeInQuickLaunch': false
-														};
-														return $.param(retDataParam);
-													},
-												"success": function(data, textStatus, XMLHttpRequest) 
-													{
-														// this is IE compliant
-														var $outerxml = $(XMLHttpRequest.responseXML);
-														var $xml = $outerxml.children().first();
-														var childhtmlstr = '';
-														$xml.children().each(function() { childhtmlstr += treeXmlToHtml($(this)); });
-														return childhtmlstr;
+												type: 'POST',
+												url: url,
+												dataType: "json",
+											    contentType: 'application/json; charset=utf-8',
+												data: function($nodeOpening) {
+												    var nodekey = $nodeOpening.CswAttrXml('cswnbtnodekey');
+													var retDataParam = {
+														UsePaging: o.UsePaging,
+														ViewId: o.viewid,
+														IDPrefix: idPrefix,
+														IsFirstLoad: false,
+														ParentNodeKey: nodekey,
+														IncludeNodeRequired: false,
+														IncludeNodeKey: '',
+														ShowEmpty: false,
+														ForSearch: o.forsearch,
+														NodePk: tryParseString(o.nodeid),
+														IncludeInQuickLaunch: false
+													};
+													return JSON.stringify(retDataParam);
+												},
+												success: function(rawData) {
+												    var newData = JSON.parse(rawData.d);
+												    var nodeData = newData.tree;
+													var childhtmlstr = '';
+													for (var nodeItem in nodeData) {
+														if (nodeData.hasOwnProperty(nodeItem)) {
+														    var thisNode = nodeData[nodeItem];
+														    childhtmlstr += treeJsonToHtml(thisNode);
+														}
 													}
+													return childhtmlstr;
+												}
 											}
 									},
 								"ui": {
 									"select_limit": 1//,
 									//"initially_select": selectid
 								},
-								"themes": treeThemes,
+								"themes": tryParseString(treeThemes),
 								"core": {
 									//"initially_open": initiallyOpen
 								},
@@ -239,7 +243,7 @@
 							// and thus having an onSuccess() function that changes the selected node will
 							// cause a race condition.
 							
-							$('.'+ idPrefix +'check').click(function() { return _handleCheck($treediv, $(this)); });
+							$('.'+ idPrefix +'check').click(function() { return handleCheck($treediv, $(this)); });
 							
 							// case 21424 - Manufacture unique IDs on the expand <ins> for automated testing
 							$treediv.find('li').each(function() {
@@ -267,12 +271,12 @@
 					$.extend(o, optSelect);
 				}
 		        var $treediv = $(this).children('.treediv');
-				var IDPrefix = $treediv.CswAttrDom('id');
-				$treediv.jstree('select_node', '#' + IDPrefix + o.newnodeid);
+				var idPrefix = $treediv.CswAttrDom('id');
+				$treediv.jstree('select_node', '#' + idPrefix + o.newnodeid);
 			}
 	};
 
-	function _firstSelectNode(myoptions)
+	function firstSelectNode(myoptions)
 	{
 		var m = {
 			e: '', 
@@ -280,8 +284,8 @@
 			url: '',
 			$treediv: '', 
 			IDPrefix: '', 
-			onSelectNode: function() {},
-			onInitialSelectNode: function() {},
+			onSelectNode: null, //function() {},
+			onInitialSelectNode: null, //function() {},
 			viewid: '',
 			UsePaging: '',
 			forsearch: ''
@@ -292,14 +296,14 @@
 		var m2 = {};
 		$.extend(m2, m);
 		m2.onSelectNode = m.onInitialSelectNode;
-		_handleSelectNode(m2);
+		handleSelectNode(m2);
 
 		// rebind event for next select
 		m.$treediv.unbind('select_node.jstree');
-		m.$treediv.bind('select_node.jstree', function(e, data) { return _handleSelectNode(m); });
+		m.$treediv.bind('select_node.jstree', function() { return handleSelectNode(m); });
 	}
 
-	function _handleSelectNode(myoptions)
+	function handleSelectNode(myoptions)
 	{
 		var m = {
 			e: '', 
@@ -314,78 +318,79 @@
 		};
 		if(myoptions) $.extend(m, myoptions);
 
-		var Selected = jsTreeGetSelected(m.$treediv);
+		var selected = jsTreeGetSelected(m.$treediv);
 		var optSelect =  {
-			nodeid: Selected.id, 
-			nodename: Selected.text, 
-			iconurl: Selected.iconurl, 
-			cswnbtnodekey: Selected.$item.CswAttrDom('cswnbtnodekey'),
-			nodespecies: Selected.$item.CswAttrDom('species'),
+			nodeid: selected.id, 
+			nodename: selected.text, 
+			iconurl: selected.iconurl, 
+			cswnbtnodekey: selected.$item.CswAttrDom('cswnbtnodekey'),
+			nodespecies: selected.$item.CswAttrDom('species'),
 			viewid: m.viewid
 		};
 												
 		if(optSelect.nodespecies === "More")
 		{
-			var ParentNodeKey = '';
-			var Parent = m.data.inst._get_parent(m.data.rslt.obj);
-			if(Parent !== -1)
+			var parentNodeKey = '';
+			var parent = m.data.inst._get_parent(m.data.rslt.obj);
+			if(parent !== -1)
 			{
-				ParentNodeKey = tryParseString(Parent.CswAttrDom('cswnbtnodekey'),'');
+				parentNodeKey = tryParseString(parent.CswAttrDom('cswnbtnodekey'),'');
 			}
 													
 			var nextDataParam = { 
-				'UsePaging': m.UsePaging,
-				'ViewId': m.viewid,
-				'IDPrefix': m.IDPrefix,
-				'IsFirstLoad': false,
-				'ParentNodeKey': ParentNodeKey,
-				'IncludeNodeRequired': false,
-				'IncludeNodeKey': optSelect.cswnbtnodekey,
-				'ShowEmpty': false,
-				'ForSearch': m.forsearch,
-				'NodePk': Selected.id,
-				'IncludeInQuickLaunch': false
+				UsePaging: m.UsePaging,
+				ViewId: m.viewid,
+				IDPrefix: m.IDPrefix,
+				IsFirstLoad: false,
+				ParentNodeKey: parentNodeKey,
+				IncludeNodeRequired: false,
+				IncludeNodeKey: optSelect.cswnbtnodekey,
+				ShowEmpty: false,
+				ForSearch: m.forsearch,
+				NodePk: selected.id,
+				IncludeInQuickLaunch: false
 			};
 
 			// get next page of nodes
-			CswAjaxXml({
+			CswAjaxJson({
 				url: m.url,
 				data: nextDataParam,
-				success: function ($xml) 
+				success: function (data) 
 					{
-						var AfterNodeId = m.IDPrefix + optSelect.nodeid;
-						var $itemxml = $xml.children().first();
+						var afterNodeId = m.IDPrefix + optSelect.nodeid;
+						var itemJson = data.tree;
 																
 						// we have to do these one at a time in successive OnSuccess callbacks, 
 						// or else they won't end up in the right place on the tree
-						_continue();
+						doContinue();
 
-						function _continue()
+						function doContinue()
 						{
-							if($itemxml.length > 0)
+							if(itemJson.length > 0)
 							{
-								m.$treediv.jstree('create', '#' + AfterNodeId, 'after',
-									{ 
-										'attr': {
-													'id': $itemxml.CswAttrXml('id'), 
-													'rel': $itemxml.CswAttrXml('rel'),
-													'cswnbtnodekey': $itemxml.CswAttrXml('cswnbtnodekey'),
-													'species': $itemxml.CswAttrXml('species')
-												},
-										'data': $itemxml.children('content').children('name').text(), 
-										'state': $itemxml.CswAttrXml('state') 
-									}, 
+								m.$treediv.jstree('create', '#' + afterNodeId, 'after',
+//									{ 
+//										'attr': {
+//													'id': itemJson.CswAttrXml('id'), 
+//													'rel': itemJson.CswAttrXml('rel'),
+//													'cswnbtnodekey': itemJson.CswAttrXml('cswnbtnodekey'),
+//													'species': itemJson.CswAttrXml('species')
+//												},
+//										'data': itemJson.children('content').children('name').text(), 
+//										'state': itemJson.CswAttrXml('state') 
+									    itemJson,
+//									}, 
 									function() 
 									{
 										// remove 'More' node
-										if(AfterNodeId === $itemxml.CswAttrXml('id'))
+										if(afterNodeId === itemJson.attr.id)
 										{
 											m.$treediv.jstree('remove', '#' + m.IDPrefix + optSelect.nodeid + '[species="More"]' );
 										}
 
-										AfterNodeId = $itemxml.CswAttrXml('id');
-										$itemxml = $itemxml.next();
-										_continue();
+										afterNodeId = itemJson.attr.id;
+//										itemJson = itemJson.next();
+//										_continue();
 									}, 
 									true, true);
 
@@ -397,18 +402,18 @@
 		}
 		else 
 		{
-			_clearChecks(m.IDPrefix);
+			clearChecks(m.IDPrefix);
 			m.onSelectNode(optSelect);
 		}
 	}
 
-	function _handleCheck($treediv, $checkbox)
+	function handleCheck($treediv, $checkbox)
 	{
 		var $selected = jsTreeGetSelected($treediv);
 		return ($selected.$item.CswAttrDom('rel') === $checkbox.CswAttrDom('rel'));
 	}
 
-	function _clearChecks(IDPrefix)
+	function clearChecks(IDPrefix)
 	{
 		$('.'+ IDPrefix +'check').CswAttrDom('checked', '');
 	}
