@@ -108,7 +108,7 @@ function getCurrent()
 		'reportid': $.CswCookie('get', CswCookieName.CurrentReportId)
 	};
 }
-//#region Current State
+//#endregion Current State
 
 //#region Ajax
 var _ajaxCount = 0;
