@@ -300,7 +300,7 @@ namespace ChemSW.Nbt
 
                 if( PropObj["sortby"] != null )
                 {
-                    bool _Sort = Convert.ToBoolean( PropObj["sortby"] );
+                    bool _Sort = CswConvert.ToBoolean( PropObj["sortby"] );
                     SortBy = _Sort;
                 }
 
@@ -421,10 +421,15 @@ namespace ChemSW.Nbt
             return NewPropNode;
         }
 
-        public JProperty ToJson()
+        public JProperty ToJson( string PName = null, bool FirstLevelOnly = false )
         {
             JObject FilterObj = new JObject();
-            JProperty PropertyProp = new JProperty( CswNbtViewXmlNodeName.Property.ToString() + "_" + ArbitraryId,
+            if( string.IsNullOrEmpty( PName ) )
+            {
+                PName = CswNbtViewXmlNodeName.Property.ToString() + "_" + ArbitraryId;
+            }
+
+            JProperty PropertyProp = new JProperty( PName,
                                         new JObject(
                                             new JProperty( "nodename", CswNbtViewXmlNodeName.Property.ToString().ToLower() ),
                                             new JProperty( "type", Type.ToString() ),
@@ -440,11 +445,13 @@ namespace ChemSW.Nbt
                                             new JProperty( "filters", FilterObj )
                                         )
             );
-            foreach( CswNbtViewPropertyFilter Filter in this.Filters )
+            if( !FirstLevelOnly )
             {
-                FilterObj.Add( Filter.ToJson() );
+                foreach( CswNbtViewPropertyFilter Filter in this.Filters )
+                {
+                    FilterObj.Add( Filter.ToJson() );
+                }
             }
-
             return PropertyProp;
         }
 

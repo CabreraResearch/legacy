@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -288,23 +286,21 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal;
         } // getViewGrid()
 
-        public JObject getViewChildOptions( string ViewXml, string ArbitraryId, Int32 StepNo )
+        public JObject getViewChildOptions( string ViewJson, string ArbitraryId, Int32 StepNo )
         {
             JObject ret = new JObject();
 
             CswNbtView View = new CswNbtView( _CswNbtResources );
-            View.LoadXml( ViewXml );
+            View.LoadJson( ViewJson );
 
-            XmlDocument RDoc = new XmlDocument();
-
-            if( View != null )
+            if( View.ViewId != null )
             {
                 CswNbtViewNode SelectedViewNode = View.FindViewNodeByArbitraryId( ArbitraryId );
                 if( View.ViewMode != NbtViewRenderingMode.List || View.Root.ChildRelationships.Count == 0 )
                 {
                     if( SelectedViewNode is CswNbtViewRelationship )
                     {
-                        if( StepNo == 3 )
+    s                   if( StepNo == 3 )
                         {
                             // Potential child relationships
 
@@ -353,11 +349,9 @@ namespace ChemSW.Nbt.WebServices
                                     //else
                                     //    R.Selectable = false;
 
-                                    XmlNode RNode = R.ToXml( RDoc );
-                                    ret.Add(
-                                            new XElement( "option",
-                                                new XAttribute( "value", RNode.OuterXml ),
-                                                new XAttribute( "name", Label ) ) );
+
+                                    JProperty RProp = R.ToJson( Label, true );
+                                    ret.Add( RProp );
 
                                 } //  if( !CurrentRelationship.ChildRelationships.Contains( R ) )
                             } // foreach( CswNbtViewRelationship R in Relationships )
@@ -396,11 +390,8 @@ namespace ChemSW.Nbt.WebServices
                                         if( !ThisProp.NodeType.IsLatestVersion )
                                             PropName += "&nbsp;(v" + ThisProp.NodeType.VersionNo + ")";
 
-                                        XmlNode PropNode = ViewProp.ToXml( RDoc );
-                                        ret.Add(
-                                                new XElement( "option",
-                                                    new XAttribute( "value", PropNode.OuterXml ),
-                                                    new XAttribute( "name", PropName ) ) );
+                                        JProperty PropJProp = ViewProp.ToJson( PropName, true );
+                                        ret.Add( PropJProp );
 
                                     } // if( !CurrentRelationship.Properties.Contains( ViewProp ) )
                                 } // if( ThisProp.FieldTypeRule.SearchAllowed )
@@ -432,11 +423,8 @@ namespace ChemSW.Nbt.WebServices
 
                                 if( !IsChildAlready )
                                 {
-                                    XmlNode RNode = R.ToXml( RDoc );
-                                    ret.Add(
-                                            new XElement( "option",
-                                                new XAttribute( "value", RNode.OuterXml ),
-                                                new XAttribute( "name", LatestNodeType.NodeTypeName ) ) );
+                                    JProperty RProp = R.ToJson( LatestNodeType.NodeTypeName, true );
+                                    ret.Add( RProp );
                                 }
                             }
                         }
@@ -454,20 +442,14 @@ namespace ChemSW.Nbt.WebServices
 
                             if( !( (CswNbtViewRoot) SelectedViewNode ).ChildRelationships.Contains( R ) )
                             {
-                                XmlNode RNode = R.ToXml( RDoc );
-                                ret.Add(
-                                        new XElement( "option",
-                                            new XAttribute( "value", RNode.OuterXml ),
-                                            new XAttribute( "name", "Any " + ObjectClass.ObjectClass ) ) );
+                                JProperty RProp = R.ToJson( "Any " + ObjectClass.ObjectClass, true );
+                                ret.Add( RProp );
                             }
                         }
                     } // else if( SelectedViewNode is CswNbtViewRoot )
                     else if( SelectedViewNode is CswNbtViewProperty )
                     {
-                        ret.Add(
-                                new XElement( "option",
-                                    new XAttribute( "value", "" ),
-                                    new XAttribute( "name", "Filters" ) ) );
+                        ret.Add( new JProperty( "filters", "" ) );
                     }
                     else if( SelectedViewNode is CswNbtViewPropertyFilter )
                     {

@@ -950,7 +950,7 @@ namespace ChemSW.Nbt
             return RelationshipNode;
         }
 
-        public JProperty ToJson()
+        public JProperty ToJson( string RPropName = null, bool FirstLevelOnly = false )
         {
             JObject RelationshipObj = new JObject();
 
@@ -1022,22 +1022,29 @@ namespace ChemSW.Nbt
             }
             RelationshipObj.Add( new JProperty( NodeIdFilterOutAttrName, FilterOutString ) );
 
-            // Handle props and propfilters
-            JObject PropObj = new JObject();
-            RelationshipObj.Add( new JProperty( _PropertiesName, PropObj ) );
-            foreach( CswNbtViewProperty Prop in this.Properties )
+            if( !FirstLevelOnly )
             {
-                PropObj.Add( Prop.ToJson() );
-            }
+                // Handle props and propfilters
+                JObject PropObj = new JObject();
+                RelationshipObj.Add( new JProperty( _PropertiesName, PropObj ) );
+                foreach( CswNbtViewProperty Prop in this.Properties )
+                {
+                    PropObj.Add( Prop.ToJson() );
+                }
 
-            // Recurse on child ViewNodes
-            JObject ChildObj = new JObject();
-            RelationshipObj.Add( new JProperty( _ChildRelationshipsName, ChildObj ) );
-            foreach( CswNbtViewRelationship ChildRelationship in this.ChildRelationships )
-            {
-                ChildObj.Add( ChildRelationship.ToJson() );
+                // Recurse on child ViewNodes
+                JObject ChildObj = new JObject();
+                RelationshipObj.Add( new JProperty( _ChildRelationshipsName, ChildObj ) );
+                foreach( CswNbtViewRelationship ChildRelationship in this.ChildRelationships )
+                {
+                    ChildObj.Add( ChildRelationship.ToJson() );
+                }
+                if( string.IsNullOrEmpty( RPropName ) )
+                {
+                    RPropName = CswNbtViewXmlNodeName.Relationship.ToString() + "_" + RelationshipId;
+                }
             }
-            JProperty RelationshipProp = new JProperty( CswNbtViewXmlNodeName.Relationship.ToString() + "_" + RelationshipId, RelationshipObj );
+            JProperty RelationshipProp = new JProperty( RPropName, RelationshipObj );
             return RelationshipProp;
         }
 

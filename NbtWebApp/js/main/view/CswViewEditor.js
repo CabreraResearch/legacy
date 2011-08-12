@@ -555,13 +555,16 @@
 
 			$div.find('.vieweditor_childselect').change(function() {
 				var $select = $(this);
-				var childxml = $select.find('option:selected').data('optionviewxml');
+				var childJson = $select.find('option:selected').data('optionviewjson');
 				if($select.CswAttrDom('arbid') === "root")
 				{
-					currentViewJson.append($(childxml));
+				    $.extend(currentViewJson, childJson);
+				    //currentViewJson.append($(childJson));
 				} else {
-					var $parent = currentViewJson.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]');
-					$parent.append($(childxml));
+				    var parentObj = findObject(currentViewJson, 'arbitraryid', $select.CswAttrDom('arbid'));
+				    $.extend(parentObj, childJson);
+                    //var $parent = currentViewJson.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]');
+					//parentObj.append($(childJson));
 				}
 				_makeViewTree(stepno, $div);
 			}); // child select
@@ -574,7 +577,8 @@
 					ID: $td.CswAttrDom('arbid') + '_delete',
 					onClick: function ($ImageDiv) { 
 						var $span = $ImageDiv.parent();
-						currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('arbid') +'"]').remove();
+					    deleteObject(currentViewJson, 'arbitraryid', $span.CswAttrDom('arbid'));
+					    //currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('arbid') +'"]').remove();
 						_makeViewTree(stepno, $div);
 						return CswImageButton_ButtonType.None; 
 					}
@@ -606,12 +610,16 @@
 						'prefix': o.ID,
 						'enabledText': 'Add',
 						'disabledText': 'Adding',
-						'onclick': function () { 
-							
+						'onclick': function () {
+
+						    var arbProp = findObject(currentViewJson, 'arbitraryid', $span.CswAttrDom('proparbid'));
+						    if (arbProp.hasOwnProperty('fieldtype')) {
+						        var fieldType = arbProp.fieldtype;
+						    }
 							var Json = $tbl.CswViewPropFilter('getFilterJson', { 
 											ID: o.ID,
 											$parent: $span,
-											fieldtype: currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]').CswAttrXml('fieldtype'),
+											fieldtype: fieldType, //currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]').CswAttrXml('fieldtype'),
 											proparbitraryid: $span.CswAttrDom('proparbid'),
 											allowNullFilterValue: true
 										});
@@ -619,9 +627,11 @@
 							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 
 								viewJson: currentViewJson, 
 								filtJson: Json, 
-								onSuccess: function($filterxml) {
-									var $propxml = currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]');
-									$(xmlToString($filterxml)).appendTo($propxml);
+								onSuccess: function(filterJson) {
+								    var propObj = findObject(currentViewJson, 'arbitraryid', $span.CswAttrDom('proparbid'));
+								    propObj.filters[filterJson.arbitraryid] = filterJson;
+								    //var $propxml = currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]');
+									//$(xmlToString($filterxml)).appendTo($propxml);
 									_makeViewTree(stepno, $div);
 								} // onSuccess
 							}); // CswViewPropFilter
@@ -646,7 +656,8 @@
 					$cell.empty();
 					//$cell.append('For ' + $a.text());
 
-					var $viewnodexml = currentViewJson.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
+				    var viewnodejson = findObject(currentViewJson, 'arbitraryid', $a.CswAttrDom('arbid'));  
+					//var viewnodejson = currentViewJson.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
 
 					var $table = $cell.CswTable({ 'ID': o.ID + '_editrel', 'FirstCellRightAlign': true });
 					$table.CswTable('cell', 1, 1).append('Allow Deleting');
@@ -655,38 +666,39 @@
 																  type: CswInput_Types.checkbox
 																});
 
-					if($viewnodexml.CswAttrXml('allowdelete').toLowerCase() == 'true') {
+					if(viewnodejson.allowdelete.toLowerCase() == 'true') {
 						$allowdeletingcheck.CswAttrDom('checked', 'true');
 					}
 
 					$table.CswTable('cell', 2, 1).append('Group By');
 					var $groupbyselect = $('<select id="' + o.ID + '_gbs" />')
 												.appendTo($table.CswTable('cell', 2, 2));
-					var dataXml = {
-						Type: $viewnodexml.CswAttrXml('secondtype'),
-						Id: $viewnodexml.CswAttrXml('secondid')
-					}
+				    var jsonData = {
+				        Type: viewnodejson.secondtype,
+				        Id: viewnodejson.secondid
+				    };
 					
-					CswAjaxXml({
+					CswAjaxJson({
 						url: o.PropNamesUrl,
-						data: dataXml,
-						stringify: false,
-						success: function($xml) {
+						data: jsonData,
+						success: function(data) {
 							$groupbyselect.empty();
 							$('<option value="">[None]</option>')
 								.appendTo($groupbyselect);
-							$xml.children().each(function() {
-								var $prop = $(this);
-								var $option = $('<option value="'+ $prop.CswAttrXml('propid') +'">'+ $prop.CswAttrXml('propname') +'</option>')
-									.appendTo($groupbyselect)
-									.data('propxml', $prop);
-								if($viewnodexml.CswAttrXml('groupbypropid') === $prop.CswAttrXml('propid') &&
-									$viewnodexml.CswAttrXml('groupbyproptype') === $prop.CswAttrXml('proptype') &&
-									$viewnodexml.CswAttrXml('groupbypropname') === $prop.CswAttrXml('propname'))
-								{
-									$option.CswAttrDom('selected', 'true');
-								}
-							}); // each
+							for (var propName in data) {
+							    if (data.hasOwnProperty(propName)) {
+							        var thisProp = data[propName];
+							        var $option = $('<option value="' + thisProp.propid + '">' + propName + '</option>')
+    							        .appendTo($groupbyselect)
+    							        .data('propxml', thisProp);
+							        if (viewnodejson.groupbypropid === thisProp.propid &&
+    							        viewnodejson.groupbyproptype === thisProp.proptype &&
+        							        viewnodejson.groupbypropname === thisProp.propname)
+							        {
+							            $option.CswAttrDom('selected', 'true');
+							        }
+							    }
+							} // each
 						} // success
 					}); // ajax
 
@@ -698,7 +710,7 @@
 						$showtreecheck = $showtreecheckcell.CswInput('init',{ID: o.ID + '_stcb',
 																  type: CswInput_Types.checkbox
 																}); 
-						if($viewnodexml.CswAttrXml('showintree').toLowerCase() == 'true') {
+						if(viewnodejson.CswAttrXml('showintree').toLowerCase() == 'true') {
 							$showtreecheck.CswAttrDom('checked', 'true');
 						}
 					}
@@ -709,17 +721,17 @@
 						'disableOnClick': false,
 						'onclick': function() {
 							if($showtreecheck !== undefined)
-								$viewnodexml.CswAttrXml('showintree', ($showtreecheck.is(':checked')))
-							$viewnodexml.CswAttrXml('allowdelete', ($allowdeletingcheck.is(':checked')))
+								viewnodejson.CswAttrXml('showintree', ($showtreecheck.is(':checked')))
+							viewnodejson.CswAttrXml('allowdelete', ($allowdeletingcheck.is(':checked')))
 							if($groupbyselect.val() !== '') {
 								var $propxml = $groupbyselect.find(':selected').data('propxml');
-								$viewnodexml.CswAttrXml('groupbypropid', $propxml.CswAttrXml('propid'));
-								$viewnodexml.CswAttrXml('groupbyproptype', $propxml.CswAttrXml('proptype'));
-								$viewnodexml.CswAttrXml('groupbypropname', $propxml.CswAttrXml('propname'));
+								viewnodejson.CswAttrXml('groupbypropid', $propxml.CswAttrXml('propid'));
+								viewnodejson.CswAttrXml('groupbyproptype', $propxml.CswAttrXml('proptype'));
+								viewnodejson.CswAttrXml('groupbypropname', $propxml.CswAttrXml('propname'));
 							} else {
-								$viewnodexml.CswAttrXml('groupbypropid', '');
-								$viewnodexml.CswAttrXml('groupbyproptype', '');
-								$viewnodexml.CswAttrXml('groupbypropname', '');
+								viewnodejson.CswAttrXml('groupbypropid', '');
+								viewnodejson.CswAttrXml('groupbyproptype', '');
+								viewnodejson.CswAttrXml('groupbypropname', '');
 							}
 						} // onClick
 					}); // CswButton
@@ -908,14 +920,14 @@
 								var $select = $('#' + stepno + '_' + arbid + '_child');
 								$select.empty();
 								$select.append('<option value="">Select...</option>');
-								data.children().each(function() {
-									var $optionxml = $(this);
-									var $optionviewxml = $($optionxml.CswAttrXml('value'));
-									var $option = $('<option value="'+ $optionviewxml.CswAttrXml('arbitraryid') +'">'+ $optionxml.CswAttrXml('name') +'</option>')
-													.appendTo($select);
-									$option.data('optionviewxml', $optionxml.CswAttrXml('value'));
-								});
-
+								for (var optionName in data) {
+								    if (data.hasOwnProperty(optionName)) {
+								        var thisOpt = data[optionName];
+								        var $option = $('<option value="' + thisOpt.arbitraryid + '">' + optionName + '</option>')
+    								        .appendTo($select);
+								        $option.data('optionviewjson', thisOpt);
+								    }
+								}
 							} // success
 						}); // ajax
 

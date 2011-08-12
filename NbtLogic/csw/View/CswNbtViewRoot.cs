@@ -405,7 +405,7 @@ namespace ChemSW.Nbt
 
                 if( Node["formobile"] != null )
                 {
-                    bool _ForMobile = Convert.ToBoolean( Node["formobile"] );
+                    bool _ForMobile = CswConvert.ToBoolean( Node["formobile"] );
                     ForMobile = _ForMobile;
                 }
             }

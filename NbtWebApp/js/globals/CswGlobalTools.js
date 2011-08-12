@@ -314,6 +314,34 @@ function findObject(obj, key, value) {
     return ret;
 }
 
+function deleteObject(obj, key, value) {
+    /// <summary>Find and delete an object in a JSON object.</summary>
+	/// <param name="obj" type="Object"> Object to search </param>
+    /// <param name="key" type="String"> Property name </param>
+    /// <param name="value" type="Object"> Value to find </param>
+	/// <returns type="Boolean"> True if successful.</returns>
+    var ret = false;
+
+    if(jQuery.isPlainOBject(obj))
+    {
+        if( obj.hasOwnProperty(key) && 
+            obj[key] === value) {
+            delete obj[key];
+            ret = true;
+        }
+        
+        var objects = jQuery.grep(obj, function(elem) {
+            return (jQuery.isArray(elem) || jQuery.isPlainObject(elem));
+        });
+
+        ret.concat(jQuery.map(objects, function(elem){
+            return findObject(elem, key, value);
+        }));
+    }
+
+    return ret;
+}
+
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
 function log(s, includeCallStack)
 {

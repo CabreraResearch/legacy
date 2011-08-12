@@ -109,7 +109,7 @@ namespace ChemSW.Nbt
 
                 if( FilterObj["casesensitive"] != null )
                 {
-                    bool _CaseSensitive = Convert.ToBoolean( FilterObj["casesensitive"] );
+                    bool _CaseSensitive = CswConvert.ToBoolean( FilterObj["casesensitive"] );
                     CaseSensitive = _CaseSensitive;
                 }
 
