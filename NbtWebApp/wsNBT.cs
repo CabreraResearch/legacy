@@ -822,10 +822,10 @@ namespace ChemSW.Nbt.WebServices
         } // getViewGrid()
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XmlDocument getViewInfo( string ViewId )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getViewInfo( string ViewId )
         {
-            XmlDocument ReturnVal = new XmlDocument();
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -837,7 +837,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtView View = _getView( ViewId );
                     if( null != View )
                     {
-                        ReturnVal = View.ToXml();
+                        ReturnVal = View.ToJson();
                     }
 
                 }
@@ -846,11 +846,11 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = xmlError( ex );
+                ReturnVal = jError( ex );
             }
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-            return ReturnVal;
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
         } // getViewInfo()
 
         [WebMethod( EnableSession = false )]

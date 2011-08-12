@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 //using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -231,7 +232,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-				throw new CswDniException( ErrorType.Error, "Misconfigured CswViewProperty",
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewProperty",
                                           "CswViewProperty.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }
@@ -248,7 +249,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-				throw new CswDniException( ErrorType.Error, "Misconfigured CswViewProperty",
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewProperty",
                                           "CswViewProperty.constructor(xmlnode) encountered an invalid filter definition",
                                           ex );
             }
@@ -314,6 +315,33 @@ namespace ChemSW.Nbt
             }
 
             return NewPropNode;
+        }
+
+        public JProperty ToJson()
+        {
+            JObject FilterObj = new JObject();
+            JProperty PropertyProp = new JProperty( CswNbtViewXmlNodeName.Property.ToString() + "_" + ArbitraryId,
+                                        new JObject(
+                                            new JProperty( "nodename", CswNbtViewXmlNodeName.Property.ToString().ToLower() ),
+                                            new JProperty( "type", Type.ToString() ),
+                                            new JProperty( "nodetypepropid", NodeTypePropId.ToString() ),
+                                            new JProperty( "objectclasspropid", ObjectClassPropId.ToString() ),
+                                            new JProperty( "name", Name ),
+                                            new JProperty( "arbitraryid", ArbitraryId ),
+                                            new JProperty( "sortby", SortBy.ToString() ),
+                                            new JProperty( "sortmethod", SortMethod.ToString() ),
+                                            new JProperty( "fieldtype", ( FieldType != null ) ? FieldType.FieldType.ToString() : "" ),
+                                            new JProperty( "order", ( Order != Int32.MinValue ) ? Order.ToString() : "" ),
+                                            new JProperty( "width", ( Width != Int32.MinValue ) ? Width.ToString() : "" ),
+                                            new JProperty( "filters", FilterObj )
+                                        )
+            );
+            foreach( CswNbtViewPropertyFilter Filter in this.Filters )
+            {
+                FilterObj.Add( Filter.ToJson() );
+            }
+
+            return PropertyProp;
         }
 
         public override string ToString()

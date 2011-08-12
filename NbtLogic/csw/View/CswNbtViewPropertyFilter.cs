@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -79,7 +80,7 @@ namespace ChemSW.Nbt
 
             catch( Exception ex )
             {
-				throw new CswDniException( ErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
                                           "CswViewPropertyFilterValue.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }//catch
@@ -205,6 +206,22 @@ namespace ChemSW.Nbt
                                      new XAttribute( "casesensitive", CaseSensitive.ToString() ),
                                      new XAttribute( "arbitraryid", ArbitraryId ),
                                      new XAttribute( "subfieldname", SubfieldName.ToString() )
+                );
+            return PropFilter;
+        }
+
+        public JProperty ToJson()
+        {
+            JProperty PropFilter = new JProperty( CswNbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
+                                            new JObject(
+                                                new JProperty( "nodename", CswNbtViewXmlNodeName.Filter.ToString().ToLower() ),
+                                                new JProperty( "value", Value ),
+                                                new JProperty( "filtermode", FilterMode.ToString() ),
+                                                new JProperty( "casesensitive", CaseSensitive.ToString() ),
+                                                new JProperty( "arbitraryid", ArbitraryId ),
+                                                new JProperty( "subfieldname", SubfieldName.ToString() )
+                                                )
+
                 );
             return PropFilter;
         }
