@@ -110,7 +110,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
 			ForMobile: true
 		};
 
-        CswAjaxJSON({
+        CswAjaxJson({
 				formobile: true,
 				url: getView,
 				data: jsonData,

@@ -190,7 +190,7 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
 				'LogInfo': mobileStorage.getItem('debuglog')
 			};
 
-//                CswAjaxJSON({
+//                CswAjaxJson({
 //                        url: opts.SendLogUrl,
 //                        data: dataJson,
 //                        success: function() {

@@ -325,7 +325,7 @@
 				WelcomeId: welcomeid
 			};
 
-			CswAjaxJSON({
+			CswAjaxJson({
 				url: r.RemoveWelcomeItemUrl,
 				data: dataJson,
 				success: function (result) 
@@ -364,7 +364,7 @@
 			IconFileName: a.iconfilename
 		};
 
-		CswAjaxJSON({
+		CswAjaxJson({
 			url: a.AddWelcomeItemUrl,
 			data: dataJson,
 			success: function (result) 
@@ -410,7 +410,7 @@
 					NewColumn: newcolumn
 				};
 			
-				CswAjaxJSON({
+				CswAjaxJson({
 					url: MoveWelcomeItemUrl,
 					data: dataJson,
 					success: function (result) {}

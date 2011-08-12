@@ -434,7 +434,7 @@
 				var dataJson = {
 					SearchJson: searchOpt
 				};
-				CswAjaxJSON({ 
+				CswAjaxJson({ 
 				'url': searchUrl,
 				'data': dataJson,
 				'success': function(view) { 

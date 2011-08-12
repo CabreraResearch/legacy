@@ -1,5 +1,5 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 
@@ -85,7 +85,7 @@
 																ForMobile: false
 															};
 
-															CswAjaxJSON({
+															CswAjaxJson({
 																		url: o.AuthenticateUrl,
 																		data: dataJson,
 																		success: function (data) 
