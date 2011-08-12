@@ -716,10 +716,10 @@ namespace ChemSW.Nbt.WebServices
         } // getTreeOfNode()
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getNodes( string NodeTypeId, string ObjectClassId, string ObjectClass )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getNodes( string NodeTypeId, string ObjectClassId, string ObjectClass )
         {
-            XElement ReturnVal = new XElement( "nodes" );
+            JObject ReturnVal = new JObject();
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -735,7 +735,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataObjectClass.NbtObjectClass RealObjectClass = CswNbtMetaDataObjectClass.NbtObjectClass.Unknown;
                     Enum.TryParse<CswNbtMetaDataObjectClass.NbtObjectClass>( ObjectClass, true, out RealObjectClass );
 
-                    Collection<CswNbtNode> Nodes = null;
+                    Collection<CswNbtNode> Nodes = new Collection<CswNbtNode>();
                     if( RealNodeTypeId != Int32.MinValue )
                     {
                         CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( RealNodeTypeId );
@@ -745,18 +745,24 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswNbtMetaDataObjectClass MetaDataObjectClass = null;
                         if( RealObjectClassId != Int32.MinValue )
+                        {
                             MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( RealObjectClassId );
+                        }
                         else if( RealObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+                        {
                             MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( RealObjectClass );
-                        Nodes = MetaDataObjectClass.getNodes( true, false );
+                        }
+                        if( null != MetaDataObjectClass )
+                        {
+                            Nodes = MetaDataObjectClass.getNodes( true, false );
+                        }
                     }
 
                     foreach( CswNbtNode Node in Nodes )
                     {
                         ReturnVal.Add(
-                            new XElement( "node",
-                                new XAttribute( "id", Node.NodeId.ToString() ),
-                                new XAttribute( "name", Node.NodeName ) ) );
+                            new JProperty( Node.NodeId.ToString(), Node.NodeName )
+                        );
                     }
 
                 }
@@ -765,13 +771,13 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
 
         } // getNodes()

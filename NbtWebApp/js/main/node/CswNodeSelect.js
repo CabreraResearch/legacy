@@ -1,5 +1,7 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 ; (function ($)
 {
@@ -14,8 +16,8 @@
 					nodetypeid: '',
 					objectclassid: '',
 					objectclass: '',
-					onSelect: function (nodeid) {},
-					onSuccess: function () {}
+					onSelect: null, // function (nodeid) {},
+					onSuccess: null // function () {}
 				};
 
 				if (options)
@@ -27,26 +29,26 @@
 
 				var $select = $('<select id="'+ o.ID +'_nodeselect" />')
 								.appendTo($parent);
-				$select.change(function(event) { o.onSelect( $select.val() ); });
+				$select.change(function() { o.onSelect( $select.val() ); });
 
-				var dataXml = {
+				var jsonData = {
 					NodeTypeId: o.nodetypeid,
 					ObjectClassId: o.objectclassid,
 					ObjectClass: o.objectclass
 				};
 
-				CswAjaxXml({
+				CswAjaxJson({
 						url: o.NodesUrl,
-						data: dataXml,
-						stringify: false,
-						success: function ($xml)
+						data: jsonData,
+						success: function (data)
 						{
-							$xml.children('node').each(function() {
-								var $node = $(this);
-								$select.append('<option value="'+ $node.CswAttrXml('id') +'">'+ $node.CswAttrXml('name') +'</option>');
-							});
-
-							o.onSuccess();
+							for (var nodeId in data) {
+							    if (data.hasOwnProperty(nodeId)) {
+							        var nodeName = data[nodeId];
+							        $select.append('<option value="' + nodeId + '">' + nodeName + '</option>');
+							    }
+							}
+						    o.onSuccess();
 						}
 				});
 
