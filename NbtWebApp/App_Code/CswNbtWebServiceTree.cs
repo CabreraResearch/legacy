@@ -85,9 +85,7 @@ namespace ChemSW.Nbt.WebServices
                     if( IsFirstLoad )
                     {
                         View.SaveToCache( IncludeInQuickLaunch );
-                        //ReturnObj.Add( new JProperty( "tree", RootProp ) );
                         ReturnObj.Add( new JProperty( "viewid", View.SessionViewId.ToString() ) );
-                        ReturnObj.Add( new JProperty( "types", getTypes( View ).ToString() ) );
                     }
                 } // if( Tree.getChildNodeCount() > 0 )
                 else
@@ -123,8 +121,8 @@ namespace ChemSW.Nbt.WebServices
                                                            ) )
 
                                                    ) ) );
-                ReturnObj.Add( Types );
             }
+            ReturnObj.Add( Types );
             return ReturnObj;
         } // getTree()
 
@@ -240,7 +238,8 @@ namespace ChemSW.Nbt.WebServices
                                                     new JProperty( "cswnbtnodekey", ThisNodeKeyString )
                                                   )
                                               ),
-                                          new JProperty( "children", ThisNodeChildren )
+                                          new JProperty( "children", ThisNodeChildren ),
+                                          new JProperty( "state", ThisNodeState )
                                     ) );
                 if( Tree.getChildNodeCount() > 0 )
                 {
