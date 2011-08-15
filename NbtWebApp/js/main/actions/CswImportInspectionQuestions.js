@@ -54,11 +54,16 @@ var CswImportInspectionQuestions_WizardSteps = {
 
 		// Step 1 - Select file for Upload
 		var $div1 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step1.step);
-        var downloadbutton = "<a href=\"/NbtWebApp/etc/InspectionDesign.xls\">Download the Excel template</a>"
+        var downloadbutton = "<a href=\"/NbtWebApp/etc/InspectionDesign.xls\">Download the Excel template</a>";
 		$div1.append(downloadbutton);
+
+        var inspectionname = "<br/><br/>Please enter the name of the new inspection: ";
+        $div1.append(inspectionname);
+        var $TextBox = $div1.CswInput('init',{ID: o.ID + '_inspectionname', type: CswInput_Types.text});
+
 		var instructions1 = "<br/><br/>Please select your Excel file containing your inspection questions.<br/><br/>";
 		$div1.append(instructions1);
-		var $fileuploaddiv = $('<div></div>')
+		var $fileuploaddiv = $('<div></div>');
     
         // define parameters to pass into FileUploader
 		var o = {

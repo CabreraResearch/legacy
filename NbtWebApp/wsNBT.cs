@@ -7,6 +7,7 @@ using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;
 using System.Xml;
 using System.Xml.Linq;
+using System.Data;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -36,11 +37,26 @@ namespace ChemSW.Nbt.WebServices
         private CswNbtResources _CswNbtResources;
         private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
 
+        /// <summary>
+        /// These are files that we want to keep around
+        /// </summary>
         private string _FilesPath
         {
             get
             {
                 return ( System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc" );
+            }
+        }
+
+        /// <summary>
+        /// These are files we do NOT want to keep around after temporarily using them.  There is a function that purges old files.  
+        /// </summary>
+        private string _TempPath
+        {
+            get
+            {
+                // ApplicationPhysicalPath already has \\ at the end
+                return (System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "temp");
             }
         }
 
@@ -2541,6 +2557,142 @@ namespace ChemSW.Nbt.WebServices
             }
             return View;
         } // _getView()
+
+        #region Import Inspection Questions
+
+        //[WebMethod(EnableSession = false)]
+        //[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        //public string getImportInspectionQuestionsExcelTemplate()
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
+        //        if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+        //        {
+        //            CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+        //            ReturnVal = new JObject(new JProperty("exceltemplate", ws.GetExcelTemplate()));
+        //        }
+        //        _deInitResources();
+        //    }
+        //    catch (Exception Ex)
+        //    {
+        //        ReturnVal = jError(Ex);
+        //    }
+
+        //    _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+        //    return ReturnVal.ToString();
+
+        //} // getImportInspectionQuestionsExcelTemplate()
+
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string uploadInspectionFile()
+        {
+            JObject ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            DataTable ExcelDataTable = null;
+
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    PurgeTempFiles("xls");
+
+                    // putting these in the param list causes the webservice to fail with
+                    // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
+                    // These variables seem to work in Google chrome but NOT in IE
+                    string FileName = Context.Request["qqfile"];
+                    string PropId = Context.Request["propid"];
+
+                    if (!string.IsNullOrEmpty(FileName))
+                    {
+                        // Unfortunately, Context.Request.ContentType is always application/octet-stream
+                        // So we have to detect the content type
+                        //string[] SplitFileName = FileName.Split('.');
+                        //string Extension = SplitFileName[SplitFileName.Length - 1];
+                        //string ContentType = "application/vnd.ms-excel";
+
+                        if (Context.Request.InputStream != null)
+                        {
+                            string TempFileName = "excelupload_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString("MMddyyyy_HHmmss") + ".xls";
+                            string FullPathAndFileName = _TempPath + "\\" + TempFileName;
+                            using (FileStream OutputFile = File.Create(FullPathAndFileName))
+                            {
+                                Context.Request.InputStream.CopyTo(OutputFile);
+                            }
+
+                            // Load the excel file into a data table
+                            CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                            ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName);
+
+                            // determine if we were successful or failure
+                            if (ExcelDataTable != null)
+                            {
+                                ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
+                            }
+                            else
+                            {
+                                ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
+                            }
+                        } // if( Context.Request.InputStream != null )
+                    } // if (!string.IsNullOrEmpty(FileName))
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch (Exception ex)
+            {
+                ReturnVal = jError(ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+
+        } // uploadInspectionFile()
+
+        /// <summary>
+        /// Purge files in the temporary directory
+        /// </summary>
+        /// <param name="FileExtension">
+        /// Optional extension type of files to purge.  Default is to purge all files
+        /// </param>
+        /// <param name="HoursToKeepFiles">
+        /// Optional number of hours to keep temporary files around.  Default is 12 hours
+        /// </param>
+        public void PurgeTempFiles(string FileExtension = ".*", int HoursToKeepFiles = 12)
+        {
+            DirectoryInfo myDirectoryInfo = new DirectoryInfo(_TempPath);
+            FileInfo[] myFileInfoArray = myDirectoryInfo.GetFiles();
+
+            FileExtension = FileExtension.ToLower().Trim();
+            if (!FileExtension.StartsWith("."))
+            {
+                FileExtension = "." + FileExtension;
+            }
+            foreach (FileInfo myFileInfo in myFileInfoArray)
+            {
+                if ((FileExtension == "*") || (myFileInfo.Extension.ToString().ToLower() == FileExtension))
+                {
+                    if (DateTime.Now.Subtract(myFileInfo.CreationTime).TotalHours > HoursToKeepFiles)
+                    {
+                        myFileInfo.Delete();
+                    }
+                }
+            }
+        }
+
+
+        #endregion
+
+
 
     }//wsNBT
 
