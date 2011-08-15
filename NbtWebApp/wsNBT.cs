@@ -1080,10 +1080,10 @@ namespace ChemSW.Nbt.WebServices
         } // createView()
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getViewPropFilterUI( string ViewXml, string PropArbitraryId )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getViewPropFilterUI( string ViewJson, string PropArbitraryId )
         {
-            XElement ReturnVal = new XElement( "nodetypeprops" );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1093,19 +1093,19 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new wsViewBuilder( _CswNbtResources );
-                    ReturnVal = ws.getViewBuilderProps( ViewXml, PropArbitraryId );
+                    ReturnVal = ws.getViewBuilderProps( ViewJson, PropArbitraryId );
                 }
 
                 _deInitResources();
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
         }
 
         [WebMethod( EnableSession = false )]
