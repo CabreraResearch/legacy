@@ -1,5 +1,8 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
+
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	var PluginName = "CswWelcome";
@@ -23,15 +26,14 @@
 				}
 				var $this = $(this);
 
-				var dataXml = {
+				var jsonData = {
 					RoleId: ''
 				};
 
-				CswAjaxXml({
+				CswAjaxJson({
 					url: o.Url,
-					data: dataXml,
-					stringify: false,
-					success: function ($xml) {
+					data: jsonData,
+					success: function (data) {
 						var $WelcomeDiv = $('<div id="welcomediv"></div>')
 											.appendTo($this)
 											.css('text-align', 'center')
@@ -70,41 +72,41 @@
 																			}
 																		});
 				
-						$xml.children().each(function() {
+						for (var item in data) {
+						    if (data.hasOwnProperty(item)) {
+						        var thisItem = data[item];
+						        var $cellset = $table.CswLayoutTable('cellset', thisItem.displayrow, thisItem.displaycol);
+						        var $imagecell = $cellset[1][1].children('div');
+						        var $textcell = $cellset[2][1].children('div');
 
-							var $item = $(this);
-							var $cellset = $table.CswLayoutTable('cellset', $item.CswAttrXml('displayrow'), $item.CswAttrXml('displaycol'));
-							var $imagecell = $cellset[1][1].children('div');
-							var $textcell = $cellset[2][1].children('div');
+						        if (!isNullOrEmpty(thisItem.buttonicon))
+						            $imagecell.append($('<a href=""><img border="0" src="' + thisItem.buttonicon + '"/></a>'));
 
-							if($item.CswAttrXml('buttonicon') !== undefined && $item.CswAttrXml('buttonicon') !== '')
-								$imagecell.append( $('<a href=""><img border="0" src="'+ $item.CswAttrXml('buttonicon') +'"/></a>') );
+						        var clickopts = {
+						            itemData: thisItem,
+						            $table: $table,
+						            onAddClick: o.onAddClick,
+						            onLinkClick: o.onLinkClick,
+						            onSearchClick: o.onSearchClick
+						        };
 
-							var clickopts = {
-								'$item': $item,
-								'$table': $table,
-								'onAddClick': o.onAddClick,
-								'onLinkClick': o.onLinkClick,
-								'onSearchClick': o.onSearchClick
-							};
-							
-							if( $item.CswAttrXml('linktype').toLowerCase() === 'text' )
-							{
-								$textcell.append('<span>' + $item.CswAttrXml('text') + '</span>');
-							} else {
-								$textcell.append( $('<a href="">' + $item.CswAttrXml('text') + '</a>') );
-								$textcell.find('a').click(function() { _clickItem(clickopts); return false; });
-								$imagecell.find('a').click(function() { _clickItem(clickopts); return false; });
-							}
+						        if (thisItem.linktype.toLowerCase() === 'text')
+						        {
+						            $textcell.append('<span>' + thisItem.text + '</span>');
+						        } else {
+						            $textcell.append($('<a href="">' + thisItem.text + '</a>'));
+						            $textcell.find('a').click(function() { _clickItem(clickopts); return false; });
+						            $imagecell.find('a').click(function() { _clickItem(clickopts); return false; });
+						        }
 
-							var $welcomehidden = $textcell.CswInput('init',{ID: $item.CswAttrXml('welcomeid'),
-																			type: CswInput_Types.hidden
-																	 });
-							$welcomehidden.CswAttrDom('welcomeid',$item.CswAttrXml('welcomeid'));                                            
-						}); // each
-				
+						        var $welcomehidden = $textcell.CswInput('init', {ID: thisItem.welcomeid,
+						            type: CswInput_Types.hidden
+						        });
+						        $welcomehidden.CswAttrDom('welcomeid', thisItem.CswAttrXml('welcomeid'));
+						    }
+						}
 					} // success{}
-				}); // CswAjaxXml
+				}); // CswAjaxJson
 			}, // initTable
 
 		'getAddItemForm': function(options) 
@@ -227,19 +229,19 @@
 										});
 									});
 
-				CswAjaxXml({ 
+				CswAjaxJson({ 
 							'url': '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
-							'success': function($xml) { 
-										$xml.children().each(function() {
-											var $icon = $(this);
-											var filename = $icon.CswAttrDom('filename');
-											if(filename !== 'blank.gif') 
-											{
-												$buttonsel.append('<option value="'+ filename +'">'+ filename +'</option>');
-											}
-										}); // each
+							'success': function(data) { 
+										
+							            for (var icon in data) {
+							                    var filename = icon;
+							                    if (filename !== 'blank.gif')
+							                    {
+							                        $buttonsel.append('<option value="' + filename + '">' + filename + '</option>');
+							                    }
+							            } // each
 									} // success
-							}); // CswAjaxXml
+							}); // CswAjaxJson
 			} // getAddItemForm
 		
 	};
@@ -261,7 +263,7 @@
 	function _clickItem(clickopts)
 	{
 		var c = {
-			$item: '',
+			itemData: '',
 			$table: '',
 			onAddClick: function() {},
 			onLinkClick: function() {},
@@ -270,18 +272,18 @@
 		if(clickopts) $.extend(c, clickopts);
 
 		var optSelect = {
-			type: c.$item.CswAttrXml('type'),
-			viewmode: c.$item.CswAttrXml('viewmode'),
-			itemid: c.$item.CswAttrXml('itemid'), 
-			text: c.$item.CswAttrXml('text'), 
-			iconurl: c.$item.CswAttrXml('iconurl'),
-			viewid: c.$item.CswAttrXml('viewid'),
-			actionid: c.$item.CswAttrXml('actionid'),
-			actionname: c.$item.CswAttrXml('actionname'),
-			actionurl: c.$item.CswAttrXml('actionurl'),
-			reportid: c.$item.CswAttrXml('reportid'),
-			//nodetypeid: c.$item.CswAttrXml('nodetypeid'),
-			linktype: c.$item.CswAttrXml('linktype')
+			type: itemData.type,
+			viewmode: itemData.viewmode,
+			itemid: itemData.itemid, 
+			text: itemData.text, 
+			iconurl: itemData.iconurl,
+			viewid: itemData.viewid,
+			actionid: itemData.actionid,
+			actionname: itemData.actionname,
+			actionurl: itemData.actionurl,
+			reportid: itemData.reportid,
+			//nodetypeid: itemData.nodetypeid,
+			linktype: itemData.linktype
 		};
 
 		if(c.$table.CswLayoutTable('isConfig') === false)   // case 22288
@@ -289,7 +291,7 @@
 			switch( optSelect.linktype.toLowerCase() )
 			{
 				case 'add': 
-					c.onAddClick(c.$item.CswAttrXml('nodetypeid'));
+					c.onAddClick(itemData.nodetypeid);
 					break;
 				case 'link':
 					c.onLinkClick(optSelect);
