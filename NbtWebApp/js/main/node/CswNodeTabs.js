@@ -2,6 +2,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
+/// <reference path="../fieldtypes/_CswFieldTypeFactory.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	$.fn.CswNodeTabs = function (options)
@@ -202,7 +203,7 @@
 							                relatednodeid: o.relatednodeid,
 							                propid: propId,
 							                $propdiv: $propcell.children('div'),
-							                $propxml: thisProp,
+							                propData: thisProp,
 							                onchange: function() { },
 							                onReload: function() { getProps($tabcontentdiv, tabid); },
 							                cswnbtnodekey: o.cswnbtnodekey
@@ -231,7 +232,7 @@
 							                relatednodeid: o.relatednodeid,
 							                propid: propId,
 							                $propdiv: $propcell.children('div'),
-							                $propxml: thisProp,
+							                propData: thisProp,
 							                onchange: function() { },
 							                onReload: function() { getProps($tabcontentdiv, tabid); },
 							                cswnbtnodekey: o.cswnbtnodekey

@@ -1,6 +1,12 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeMTBF';
+    var pluginName = 'CswFieldTypeMTBF';
 
     var methods = {
         init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
@@ -8,15 +14,15 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var StartDate = o.$propxml.children('startdatetime').text().trim();
-            var Value = o.$propxml.children('value').text().trim();
-            var Units = o.$propxml.children('units').text().trim();
+            var startDate = tryParseString(o.propData.startdatetime).trim();
+            var value = tryParseString(o.propData.value).trim();
+            var units = tryParseString(o.propData.units).trim();
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1);
             var $cell12 = $table.CswTable('cell', 1, 2);
 
-            $cell11.append(Value + '&nbsp;' + Units);
+            $cell11.append(value + '&nbsp;' + units);
             if(!o.ReadOnly)
             {
                 var $EditButton = $cell12.CswImageButton({
@@ -34,7 +40,7 @@
                 var $StartDateBox = $StartDateBoxCell.CswInput('init',{ID: o.ID + '_sd',
                                                                   type: CswInput_Types.text,
                                                                   cssclass: 'textinput date',
-                                                                  value: StartDate,
+                                                                  value: startDate,
                                                                   onChange: o.onchange
                                                                 }); 
                 $StartDateBox.datepicker();
@@ -49,9 +55,9 @@
 									.appendTo($edittable.CswTable('cell', 3, 2))
 									.change(o.onchange);
 				var $hoursopt = $('<option value="hours">hours</option>').appendTo($UnitsSelect);
-				if(Units === 'hours') $hoursopt.CswAttrDom('selected', 'true');
+				if(units === 'hours') $hoursopt.CswAttrDom('selected', 'true');
 				var $daysopt = $('<option value="days">days</option>').appendTo($UnitsSelect);
-				if(Units === 'days') $daysopt.CswAttrDom('selected', 'true');
+				if(units === 'days') $daysopt.CswAttrDom('selected', 'true');
 
 //				var $refreshbtn = $('<input type="button" id="'+ o.ID + '_refresh" value="Refresh">')
 //									.appendTo($edittable.CswTable('cell', 4, 2));
@@ -62,8 +68,8 @@
         save: function(o) { //$propdiv, $xml
                 var StartDate = o.$propdiv.find('#'+ o.ID +'_sd').val();
                 var Units = o.$propdiv.find('#'+ o.ID +'_units').val();
-                o.$propxml.children('startdatetime').text(StartDate);
-                o.$propxml.children('units').text(Units);
+                o.propData.startdatetime = StartDate;
+                o.propData.units = Units;
             }
     };
     
@@ -75,7 +81,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

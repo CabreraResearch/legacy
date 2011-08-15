@@ -1,26 +1,33 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeDate';
+    var pluginName = 'CswFieldTypeDate';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
             var $Div = $(this);
             $Div.contents().remove();
 
-            var Value = o.$propxml.children('value').text().trim();
-            if(Value === '1/1/0001')
-                Value = '';
-
+            var value = tryParseString(o.propData.value).trim();
+            if(value === '1/1/0001') {
+                value = '';
+            }
+            
             if(o.ReadOnly)
             {
-                $Div.append(Value);
+                $Div.append(value);
             }
             else 
             {
                 var $TextBox = $Div.CswInput('init',{ID: o.ID,
                                                      type: CswInput_Types.text,
-                                                     value: Value,
+                                                     value: value,
                                                      onChange: o.onchange,
                                                      cssclass: 'textinput date'
                                               }); 
@@ -34,7 +41,7 @@
         },
         save: function(o) { //$propdiv, $xml
                 var $TextBox = o.$propdiv.find('input');
-                o.$propxml.children('value').text($TextBox.val());
+                o.propData.value = $TextBox.val();
             }
     };
     
@@ -46,7 +53,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

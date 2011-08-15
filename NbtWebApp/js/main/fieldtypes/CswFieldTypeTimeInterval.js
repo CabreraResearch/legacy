@@ -3,12 +3,12 @@
     var PluginName = 'CswFieldTypeTimeInterval';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
 
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var TextValue = o.$propxml.children('Interval').CswAttrXml('text');
+                var TextValue = o.propData.children('Interval').CswAttrXml('text');
 
 				$Div.append('<span id="' + o.ID + '_textvalue">' + TextValue + '</span>');
 
@@ -168,7 +168,7 @@
 					//  </RateIntervalValue>
 					//</Interval>
 
-					var $RateIntervalXml = o.$propxml.children('interval').children('rateintervalvalue');
+					var $RateIntervalXml = o.propData.children('interval').children('rateintervalvalue');
 					var RateType = $RateIntervalXml.children('ratetype').text();
 
 					switch(RateType)
@@ -252,15 +252,15 @@
 
 				ratexml += '</rateintervalvalue></interval>';
 
-				o.$propxml.children().remove();
+				o.propData.children().remove();
 				if($.browser.msie)
 				{
 					// case 21833
-					o.$propxml.append($.xml(ratexml));
+					o.propData.append($.xml(ratexml));
 				}
 				else 
 				{
-					o.$propxml.append($(ratexml));
+					o.propData.append($(ratexml));
 				}
             } // save
     };

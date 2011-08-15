@@ -3,12 +3,12 @@
     var PluginName = 'CswFieldTypeSequence';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
 
             var $Div = $(this);
             $Div.contents().remove();
 
-            var Value = o.$propxml.children('sequence').text().trim();
+            var Value = o.propData.children('sequence').text().trim();
 
             if(o.ReadOnly)
             {
@@ -32,7 +32,7 @@
         },
         save: function(o) {
                 var $TextBox = o.$propdiv.find('input');
-                o.$propxml.children('sequence').text($TextBox.val());
+                o.propData.children('sequence').text($TextBox.val());
             }
     };
     

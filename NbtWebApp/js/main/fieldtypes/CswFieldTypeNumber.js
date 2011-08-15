@@ -3,16 +3,16 @@
     var PluginName = 'CswFieldTypeNumber';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
             var $Div = $(this);
 
 			var $NumberTextBox = $Div.CswNumberTextBox({
 				'ID': o.ID,
-				'Value': o.$propxml.children('value').text().trim(),
-				'MinValue': o.$propxml.children('value').CswAttrXml('minvalue'),
-				'MaxValue': o.$propxml.children('value').CswAttrXml('maxvalue'),
-				'Precision': o.$propxml.children('value').CswAttrXml('precision'),
+				'Value': o.propData.children('value').text().trim(),
+				'MinValue': o.propData.children('value').CswAttrXml('minvalue'),
+				'MaxValue': o.propData.children('value').CswAttrXml('maxvalue'),
+				'Precision': o.propData.children('value').CswAttrXml('precision'),
 				'ReadOnly': o.ReadOnly,
 				'Required': o.Required,
 				'onchange': o.onchange
@@ -24,7 +24,7 @@
 			}
         },
         save: function(o) { //$propdiv, $xml
-				o.$propxml.children('value').text(o.$propdiv.CswNumberTextBox('value', o.ID));
+				o.propData.children('value').text(o.$propdiv.CswNumberTextBox('value', o.ID));
             }
     };
     

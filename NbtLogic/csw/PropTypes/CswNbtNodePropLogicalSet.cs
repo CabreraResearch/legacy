@@ -290,6 +290,7 @@ namespace ChemSW.Nbt.PropTypes
 
 
         private string _ElemName_LogicalSetXml = "LogicalSetXml";
+        private string _ElemName_LogicalSetJson = "logicalsetjson";
 
         private string _NameColumn = "name";
         private string _KeyColumn = "key";
@@ -336,25 +337,18 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            JProperty LSXmlNode = new JProperty( _ElemName_LogicalSetXml.ToLower() );
-            ParentObject.Add( LSXmlNode );
-
-            JObject LSXmlNodeObj = new JObject();
-            LSXmlNode.Value = LSXmlNodeObj;
+            JArray LsArray = new JArray();
+            JProperty LsProp = new JProperty( _ElemName_LogicalSetJson, LsArray );
+            ParentObject.Add( LsProp );
 
             DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
             foreach( DataRow Row in Data.Rows )
             {
-                JProperty ItemNode = new JProperty( "item" );
-                LSXmlNodeObj.Add( ItemNode );
-
                 JObject ItemNodeObj = new JObject();
-                ItemNode.Value = ItemNodeObj;
+                LsArray.Add( ItemNodeObj );
                 foreach( DataColumn Column in Data.Columns )
                 {
-                    ItemNodeObj.Add( new JProperty( "column",
-                        new JProperty( "field", Column.ColumnName ),
-                        new JProperty( "value", Row[Column].ToString() ) ) );
+                    ItemNodeObj.Add( new JProperty( Column.ColumnName, Row[Column].ToString() ) );
                 }
             }
         }

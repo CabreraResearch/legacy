@@ -1,24 +1,30 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
 		
 	$.fn.CswFieldTypeLocation = function (method) {
 
-		var PluginName = 'CswFieldTypeLocation';
+		var pluginName = 'CswFieldTypeLocation';
 
 		var methods = {
-			init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+			init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 			
 				var $Div = $(this);
 				$Div.contents().remove();
 
-				var NodeId = o.$propxml.children('nodeid').text().trim();
-				var NodeKey = o.$propxml.children('nodekey').text().trim();
-				var Name = o.$propxml.children('name').text().trim();
-				var Path = o.$propxml.children('path').text().trim();
-				var ViewId = o.$propxml.children('viewid').text().trim();
+				var nodeId = tryParseString(o.propData.nodeid).trim();
+				var nodeKey = tryParseString(o.propData.nodekey).trim();
+				var name = tryParseString(o.propData.name).trim();
+				var path = tryParseString(o.propData.path).trim();
+				var viewId = tryParseString(o.propData.viewid).trim();
 
 				if(o.ReadOnly)
 				{
-					$Div.append(Path);
+					$Div.append(path);
 				}
 				else 
 				{
@@ -26,16 +32,16 @@
 
 					var $pathcell = $table.CswTable('cell', 1, 1);
 					$pathcell.CswAttrDom('colspan', '2');
-					$pathcell.append(Path + "<br/>");
+					$pathcell.append(path + "<br/>");
 
 					var $selectcell = $table.CswTable('cell', 2, 1);
-					var $selectdiv = $('<div class="locationselect" value="'+ NodeId +'"/>' )
+					var $selectdiv = $('<div class="locationselect" value="'+ nodeId +'"/>' )
 										.appendTo($selectcell);
 
 					var $locationtree = $('<div />').CswNodeTree('init', { 'ID': o.ID,
-																			viewid: ViewId,
-																			nodeid: NodeId,
-																			cswnbtnodekey: NodeKey,
+																			viewid: viewId,
+																			nodeid: nodeId,
+																			cswnbtnodekey: nodeKey,
 																			onSelectNode: function (optSelect)
 																			{
 																				onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onchange);
@@ -50,7 +56,7 @@
 																		});
 	
 					$selectdiv.CswComboBox( 'init', {	'ID': o.ID + '_combo', 
-														'TopContent': Name,
+														'TopContent': name,
 														'SelectContent': $locationtree,
 														'Width': '266px' 
 													});
@@ -74,7 +80,7 @@
 			},
 			save: function(o) { //($propdiv, $xml
 					var $selectdiv = o.$propdiv.find('.locationselect');
-					o.$propxml.children('nodeid').text($selectdiv.val());
+					o.propData.nodeid = $selectdiv.val();
 				}
 		};
 	
@@ -102,7 +108,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 			return methods.init.apply( this, arguments );
 		} else {
-			$.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+			$.error( 'Method ' +  method + ' does not exist on ' + pluginName );
 		}    
   
 	};

@@ -3,14 +3,14 @@
     var PluginName = 'CswFieldTypeViewReference';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
 
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var ViewId = o.$propxml.children('viewid').text().trim();
-                var ViewMode = o.$propxml.children('viewmode').text().trim().toLowerCase();
-                var ViewName = o.$propxml.children('name').text().trim();
+                var ViewId = o.propData.children('viewid').text().trim();
+                var ViewMode = o.propData.children('viewmode').text().trim().toLowerCase();
+                var ViewName = o.propData.children('name').text().trim();
 
 				var $table = $Div.CswTable('init', { 'ID': o.ID + '_tbl' });
 

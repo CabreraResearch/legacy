@@ -8,7 +8,7 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var Value = o.$propxml.children('value').text().trim();
+            var Value = o.propData.children('value').text().trim();
 
             if(o.ReadOnly)
             {
@@ -41,7 +41,7 @@
         },
         save: function(o) {
                 var $TextBox = o.$propdiv.find('input');
-                o.$propxml.children('value').text($TextBox.val());
+                o.propData.children('value').text($TextBox.val());
             }
     };
     

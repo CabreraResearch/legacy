@@ -1,6 +1,12 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeLink';
+    var pluginName = 'CswFieldTypeLink';
 
     var methods = {
         init: function(o) { 
@@ -8,10 +14,10 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var Text = o.$propxml.children('text').text().trim();
-            var Href = o.$propxml.children('href').text().trim();
+            var text = tryParseString(o.propData.text).trim();
+            var href = tryParseString(o.propData.href).trim();
 
-            var $Link = $('<a href="'+ Href +'" target="_blank">'+ Text +'</a>&nbsp;&nbsp;' )
+            var $Link = $('<a href="' + href + '" target="_blank">' + text + '</a>&nbsp;&nbsp;');
 
             if(o.ReadOnly)
             {
@@ -46,7 +52,7 @@
                 var $edittextcell = $edittable.CswTable('cell', 1, 2);
                 var $edittext = $edittextcell.CswInput('init',{ID: o.ID + '_text',
                                                                 type: CswInput_Types.text,
-                                                                value: Text,
+                                                                value: text,
                                                                 onChange: o.onchange
                                                                 }); 
                 
@@ -56,11 +62,11 @@
                 var $edithrefcell = $edittable.CswTable('cell', 2, 2);
 				var $edithref = $edithrefcell.CswInput('init',{ID: o.ID + '_href',
                                                                type: CswInput_Types.text,
-                                                               value: Href,
+                                                               value: href,
                                                                onChange: o.onchange
                                                        }); 
 
-                if(o.Required && Href === '')
+                if(o.Required && href === '')
                 {
                     $edittable.show();
 					$edittext.addClass("required");
@@ -73,8 +79,8 @@
         save: function(o) { 
                 var $edittext = o.$propdiv.find('#' + o.ID + '_text');
                 var $edithref = o.$propdiv.find('#' + o.ID + '_href');
-				o.$propxml.children('text').text($edittext.val());
-				o.$propxml.children('href').text($edithref.val());
+				o.propData.text = $edittext.val();
+				o.propData.href = $edithref.val();
             }
     };
     
@@ -86,7 +92,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

@@ -1,6 +1,12 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeMemo';
+    var pluginName = 'CswFieldTypeMemo';
 
     var methods = {
         init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
@@ -9,17 +15,17 @@
             $Div.contents().remove();
 
             //var Value = extractCDataValue($xml.children('text'));
-            var Value = o.$propxml.children('text').text().trim();
-            var rows = o.$propxml.children('text').CswAttrXml('rows');
-            var columns = o.$propxml.children('text').CswAttrXml('columns');
+            var value = tryParseString(o.propData.text).trim();
+            var rows = tryParseString(o.propData.rows);
+            var columns = tryParseString(o.propData.columns);
 
             if(o.ReadOnly)
             {
-                $Div.append(Value);
+                $Div.append(value);
             }
             else 
             {
-                var $TextArea = $('<textarea id="'+ o.ID +'" name="' + o.ID + '" rows="'+rows+'" cols="'+columns+'">'+ Value +'</textarea>' )
+                var $TextArea = $('<textarea id="'+ o.ID +'" name="' + o.ID + '" rows="'+rows+'" cols="'+columns+'">'+ value +'</textarea>' )
                                     .appendTo($Div)
                                     .change(o.onchange); 
                 if(o.Required)
@@ -31,7 +37,7 @@
         },
         save: function(o) { //$propdiv, $xml
                 var $TextArea = o.$propdiv.find('textarea');
-                o.$propxml.children('text').text($TextArea.val());
+                o.propData.text = $TextArea.val();
             }
     };
     
@@ -43,7 +49,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

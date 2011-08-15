@@ -8,14 +8,14 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var Answer = o.$propxml.children('answer').text().trim();
-                var AllowedAnswers = o.$propxml.children('allowedanswers').text().trim();
-				var CompliantAnswers = o.$propxml.children('compliantanswers').text().trim();
-				var Comments =  o.$propxml.children('comments').text().trim();
-				var CorrectiveAction =  o.$propxml.children('correctiveaction').text().trim();
-				var DateAnswered =  o.$propxml.children('dateanswered').text().trim();
-				var DateCorrected =  o.$propxml.children('datecorrected').text().trim();
-				var IsCompliant =  o.$propxml.children('iscompliant').text().trim();
+                var Answer = o.propData.children('answer').text().trim();
+                var AllowedAnswers = o.propData.children('allowedanswers').text().trim();
+				var CompliantAnswers = o.propData.children('compliantanswers').text().trim();
+				var Comments =  o.propData.children('comments').text().trim();
+				var CorrectiveAction =  o.propData.children('correctiveaction').text().trim();
+				var DateAnswered =  o.propData.children('dateanswered').text().trim();
+				var DateCorrected =  o.propData.children('datecorrected').text().trim();
+				var IsCompliant =  o.propData.children('iscompliant').text().trim();
 
                 if(o.ReadOnly)
                 {
@@ -80,9 +80,9 @@
                 var CorrectiveAction = o.$propdiv.find('#' + o.ID + '_cor').val();
                 var Comments = o.$propdiv.find('#' + o.ID + '_com').val();
                 
-				o.$propxml.children('answer').text(Answer);
-				o.$propxml.children('correctiveaction').text(CorrectiveAction);
-				o.$propxml.children('comments').text(Comments);
+				o.propData.children('answer').text(Answer);
+				o.propData.children('correctiveaction').text(CorrectiveAction);
+				o.propData.children('comments').text(Comments);
             }
     };
     

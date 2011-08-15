@@ -6,14 +6,14 @@
     var ValueCol = "Include";
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
 
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var SelectedViewIds = o.$propxml.children('viewid').text().trim();
-				var $OptionsXml = o.$propxml.children('options');
-				var SelectMode = o.$propxml.children('viewid').CswAttrXml('SelectMode');
+                var SelectedViewIds = o.propData.children('viewid').text().trim();
+				var $OptionsXml = o.propData.children('options');
+				var SelectMode = o.propData.children('viewid').CswAttrXml('SelectMode');
 				var $CBADiv = $('<div />')
 								.appendTo($Div);
 
@@ -42,7 +42,7 @@
 				});
             },
         'save': function(o) {
-				var $OptionsXml = o.$propxml.children('options');
+				var $OptionsXml = o.propData.children('options');
 				var $CBADiv = o.$propdiv.children('div').first();
 				var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
 				for (var r = 0; r < formdata.length; r++) {

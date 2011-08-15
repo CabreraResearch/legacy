@@ -1,6 +1,12 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeMultiList';
+    var pluginName = 'CswFieldTypeMultiList';
     
     var methods = {
         init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
@@ -8,15 +14,13 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var Value = o.$propxml.children('value').text().trim();
-            var $OptionsXml = o.$propxml.children('options');
-
-            if(o.ReadOnly)
-            {
-                $Div.append(Value);
-            }
-            else 
-            {
+            var value = tryParseString(o.propData.value).trim();
+            var options = o.propData.options;
+            var selectedKey = o.propData.selected;
+            
+            if (o.ReadOnly) {
+                $Div.append(value);
+            } else {
 				var $SelectBox = $('<select id="'+ o.ID +'" name="'+ o.ID +'" class="selectinput" />"' )
                                     .appendTo($Div)
                                     .change(function() { _handleOnChange(); })
@@ -33,7 +37,7 @@
 										ID: o.ID + '_valtbl'
 									});
 
-				var $HiddenValue = $('<input type="hidden" name="' + o.ID + '_value" id="' + o.ID + '_value" value="'+ Value +'"/>')
+				var $HiddenValue = $('<input type="hidden" name="' + o.ID + '_value" id="' + o.ID + '_value" value="'+ value +'"/>')
                                     .appendTo($Div);
 
 
@@ -110,23 +114,20 @@
 //                    $SelectBox.append('<option value="' + SplitOptions[i] + '">' + SplitOptions[i] + '</option>');
 //                }
 
-				var SplitValue = Value.split(',');
+                for (var key in options) {
+                    if(options.hasOwnProperty(key)) {
+                        var thisText = options[key];
+                        var thisValue = key;
+                        
+                        if (key === selectedKey) {
+                            _addValue(thisValue, thisText, false);
+                        } else {
+                            $SelectBox.append('<option value="' + thisValue + '">' + thisText + '</option>');
+                        }
+                    }
+                }
 
-                $OptionsXml.children().each(function() {
-					var $option = $(this);
-					var thisText = $option.CswAttrXml('text');
-					var thisValue = $option.CswAttrXml('value');
-					var thisSelected = $option.CswAttrXml('selected');
-
-					if(isTrue(thisSelected))
-					{
-						_addValue(thisValue, thisText, false);
-					} else {
-						$SelectBox.append('<option value="' + thisValue + '">' + thisText + '</option>');
-					}
-				}); // each()
-
-                if(isNullOrEmpty(Value))
+                if(isNullOrEmpty(value))
 				{
 					$ValueTableDiv.hide();
 				}
@@ -140,7 +141,7 @@
         },
         save: function(o) { //$propdiv, $xml
                 var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
-                o.$propxml.children('value').text($HiddenValue.val());
+                o.propData.value = $HiddenValue.val();
             }
     };
     
@@ -152,7 +153,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

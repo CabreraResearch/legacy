@@ -10,10 +10,10 @@
             
 			var $NumberTextBox = $Div.CswNumberTextBox({
 				'ID': o.ID + '_qty',
-				'Value': o.$propxml.children('value').text().trim(),
-				'MinValue': o.$propxml.children('value').CswAttrXml('minvalue'),
-				'MaxValue': o.$propxml.children('value').CswAttrXml('maxvalue'),
-				'Precision': o.$propxml.children('value').CswAttrXml('precision'),
+				'Value': o.propData.children('value').text().trim(),
+				'MinValue': o.propData.children('value').CswAttrXml('minvalue'),
+				'MaxValue': o.propData.children('value').CswAttrXml('maxvalue'),
+				'Precision': o.propData.children('value').CswAttrXml('precision'),
 				'ReadOnly': o.ReadOnly,
 				'Required': o.Required,
 				'onchange': o.onchange
@@ -24,11 +24,11 @@
 				$NumberTextBox.clickOnEnter(o.$savebtn);
 			}
 
-			var selectedUnit = o.$propxml.children('units').contents().first().text();
+			var selectedUnit = o.propData.children('units').contents().first().text();
 			var $unitsel = $('<select id="'+ o.ID + '_units" />')
 							.appendTo($Div)
 							.change(o.onchange);
-			o.$propxml.children('units').children().each(function() {
+			o.propData.children('units').children().each(function() {
 				var unit = $(this).CswAttrXml('value');
 				var $option = $('<option value="' + unit + '">' + unit + '</option>')
 								.appendTo($unitsel);
@@ -40,9 +40,9 @@
 
         },
         save: function(o) {
-				o.$propxml.children('value').text(o.$propdiv.CswNumberTextBox('value', o.ID + '_qty'));
+				o.propData.children('value').text(o.$propdiv.CswNumberTextBox('value', o.ID + '_qty'));
 				var unit = o.$propdiv.find('#' + o.ID + '_units').val();
-				o.$propxml.children('units').text(unit);
+				o.propData.children('units').text(unit);
             }
     };
     
