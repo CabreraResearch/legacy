@@ -426,13 +426,14 @@ namespace ChemSW.Nbt.WebServices
         ///         </subfield>
         ///      </filters>
         /// </summary>
-        private void _getSubFieldFilters( ref XElement FiltersNode, CswNbtSubField SubField, CswViewBuilderProp ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode )
+        private void _getSubFieldFilters( JObject FiltersObj, CswNbtSubField SubField, CswViewBuilderProp ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode )
         {
             if( DefaultFilterMode == CswNbtPropFilterSql.PropertyFilterMode.Undefined )
             {
                 DefaultFilterMode = SubField.DefaultFilterMode;
             }
-            XElement SubFieldNode = new XElement( "subfield", new XAttribute( "column", SubField.Column ), new XAttribute( "name", SubField.Name ) );
+            JProperty SubFieldNode = new JProperty( "subfield", new JObject( new JProperty( "column", SubField.Column ), new JProperty( "name", SubField.Name ) ) );
+            
             XElement FiltersSelect = new XElement( "select" );
             foreach( CswNbtPropFilterSql.PropertyFilterMode FilterModeOpt in SubField.SupportedFilterModes )
             {
@@ -448,7 +449,7 @@ namespace ChemSW.Nbt.WebServices
                 FiltersSelect.Add( ThisFilter );
             }
             SubFieldNode.Add( FiltersSelect );
-            FiltersNode.Add( SubFieldNode );
+            FiltersObj.Add( SubFieldNode );
         } // _getSubFieldFilters()
 
         /// <summary>
@@ -491,7 +492,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         List<CswViewBuilderProp> ViewBuilderProp = new List<CswViewBuilderProp>() { VbProp };
 
-                        ViewBuilderProps = _getViewBuilderProps( ViewBuilderProp, Relationship, NodeTypeOrObjectClassId );
+                        ViewBuilderProps = _getViewBuilderProps( ViewBuilderProp, Relationship );
                     }
                 }
             }
@@ -501,9 +502,9 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns all props and prop filters for a NodeType or ObjectClass
         /// </summary>
-        public XElement getViewBuilderProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
+        public JObject getViewBuilderProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
         {
-            XElement ViewBuilderProps = new XElement( "viewbuilderprops" );
+            JObject ViewBuilderProps = new JObject();
             if( ( !string.IsNullOrEmpty( RelatedIdType ) && !string.IsNullOrEmpty( NodeTypeOrObjectClassId ) ) || !string.IsNullOrEmpty( NodeKey ) )
             {
                 Int32 TypeOrObjectClassId = Int32.MinValue;
@@ -538,15 +539,15 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns all props and prop filters for a NodeType
         /// </summary>
-        public XElement getNodeTypeProps( CswNbtMetaDataNodeType NodeType )
+        public JObject getNodeTypeProps( CswNbtMetaDataNodeType NodeType )
         {
-            XElement NodeTypeProps = new XElement( "properties", "none" );
+            JObject NodeTypeProps = new JObject();
             Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
 
             IEnumerable<CswViewBuilderProp> ViewBuilderProps = _getNodeTypeProps( NodeType, ref UniqueProps );
             if( ViewBuilderProps.Count() > 0 )
             {
-                NodeTypeProps = _getViewBuilderProps( ViewBuilderProps, CswNbtViewRelationship.RelatedIdType.NodeTypeId, NodeType.NodeTypeId );
+                NodeTypeProps = _getViewBuilderProps( ViewBuilderProps, CswNbtViewRelationship.RelatedIdType.NodeTypeId );
             }
             return NodeTypeProps;
         }
@@ -554,14 +555,14 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns all props and prop filters for all NodeTypes of an ObjectClass
         /// </summary>
-        public XElement getNodeTypeProps( CswNbtMetaDataObjectClass ObjectClass )
+        public JObject getNodeTypeProps( CswNbtMetaDataObjectClass ObjectClass )
         {
-            XElement NodeTypeProps = new XElement( "properties", "none" );
+            JObject NodeTypeProps = new JObject();
 
             IEnumerable<CswViewBuilderProp> ViewBuilderProps = _getObjectClassProps( ObjectClass );
             if( ViewBuilderProps.Count() > 0 )
             {
-                NodeTypeProps = _getViewBuilderProps( ViewBuilderProps, CswNbtViewRelationship.RelatedIdType.ObjectClassId, ObjectClass.ObjectClassId );
+                NodeTypeProps = _getViewBuilderProps( ViewBuilderProps, CswNbtViewRelationship.RelatedIdType.ObjectClassId );
             }
             return NodeTypeProps;
         }
@@ -569,22 +570,22 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns all prop filters for a CswNbtViewProperty
         /// </summary>
-        public void getViewBuilderPropSubfields( ref XElement ParentNode, CswViewBuilderProp ViewBuilderProp, ArrayList PropFilters )
+        public void getViewBuilderPropSubfields( JObject ParentNode, CswViewBuilderProp ViewBuilderProp, ArrayList PropFilters )
         {
-            _getViewBuilderPropSubFields( ref ParentNode, ViewBuilderProp, PropFilters );
+            _getViewBuilderPropSubFields( ParentNode, ViewBuilderProp, PropFilters );
         }
 
         /// <summary>
         /// Uses View XML to construct a view and create a CswNbtViewPropertyFilter. and r
         /// Returns filter's XML
         /// </summary>
-        public XElement getViewPropFilter( string ViewXml, string PropFilterJson )
+        public JProperty getViewPropFilter( string ViewXml, string PropFilterJson )
         {
-            XElement PropFilterXml = null;
+            JProperty PropFilterXml = null;
             CswNbtView View = new CswNbtView( _CswNbtResources );
             View.LoadXml( ViewXml );
             JObject PropFilter = JObject.Parse( PropFilterJson );
-            XElement ThisPropFilter = makeViewPropFilter( View, PropFilter );
+            JProperty ThisPropFilter = makeViewPropFilter( View, PropFilter );
             if( null != ThisPropFilter )
             {
                 PropFilterXml = ThisPropFilter;
@@ -595,9 +596,9 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Creates a CswNbtViewPropertyFilter and returns its XML
         /// </summary>
-        public XElement makeViewPropFilter( CswNbtView View, JObject FilterProp )
+        public JProperty makeViewPropFilter( CswNbtView View, JObject FilterProp )
         {
-            XElement PropFilterXml = null;
+            JProperty PropFilterXml = null;
 
             var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
             CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
@@ -623,7 +624,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( ViewPropFilt != null )
             {
-                XElement ThisPropFilter = makeViewPropFilter( ViewPropFilt, FilterProp );
+                JProperty ThisPropFilter = makeViewPropFilter( ViewPropFilt, FilterProp );
                 if( null != ThisPropFilter )
                 {
                     PropFilterXml = ThisPropFilter;
@@ -635,9 +636,9 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Modifies an existing CswNbtViewPropertyFilter and returns its XML 
         /// </summary>
-        public XElement makeViewPropFilter( CswNbtViewPropertyFilter ViewPropFilt, JObject FilterProp )
+        public JProperty makeViewPropFilter( CswNbtViewPropertyFilter ViewPropFilt, JObject FilterProp )
         {
-            XElement PropFilterXml = null;
+            JProperty PropFilterXml = null;
             if( null != ViewPropFilt )
             {
                 var FieldName = CswNbtSubField.SubFieldName.Unknown;
@@ -653,7 +654,7 @@ namespace ChemSW.Nbt.WebServices
                     ViewPropFilt.SubfieldName = FieldName;
                     ViewPropFilt.Value = SearchTerm;
 
-                    PropFilterXml = ViewPropFilt.ToXElement();
+                    PropFilterXml = ViewPropFilt.ToJson();
                 }
             }
             return PropFilterXml;
