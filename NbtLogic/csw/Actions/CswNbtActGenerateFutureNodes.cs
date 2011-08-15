@@ -24,9 +24,9 @@ namespace ChemSW.Nbt.Actions
             _CswNbtActGenerateNodes.MarkFuture = true;
         }//ctor
 
-        public CswDateTime getDateOfLastExistingFutureNode( CswNbtNode CswNbtNodeGenerator )
+        public DateTime getDateOfLastExistingFutureNode( CswNbtNode CswNbtNodeGenerator )
         {
-			CswDateTime ReturnVal = new CswDateTime( _CswNbtResources );
+            DateTime ReturnVal = DateTime.MinValue.Date;
 
             CswNbtView FutureNodesView = getTreeViewOfFutureNodes( new CswNbtNode[] { CswNbtNodeGenerator } );
             ICswNbtTree TargetNodeTree = _CswNbtResources.Trees.getTreeFromView( FutureNodesView, true, true, false, false );
@@ -43,10 +43,10 @@ namespace ChemSW.Nbt.Actions
                         CswNbtNode CurrentTargetNode = TargetNodeTree.getNodeForCurrentPosition();
                         ICswNbtPropertySetGeneratorTarget CurrentTargetNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( CurrentTargetNode );
 
-                        CswDateTime CurrentDate = CurrentTargetNodeAsGeneratorTarget.GeneratedDate.DateValue;
-                        if( CurrentDate.ToDateTime().Date > ReturnVal.ToDateTime().Date )
+                        DateTime CurrentDate = CurrentTargetNodeAsGeneratorTarget.GeneratedDate.DateValue;
+                        if( CurrentDate.Date > ReturnVal.Date )
                         {
-                            ReturnVal = CurrentDate;
+                            ReturnVal = CurrentDate.Date;
                         }
                         TargetNodeTree.goToParentNode();
 
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.Actions
 
         }//getDateOfLastExistingFutureNode()
 
-        public Int32 makeNodes( CswNbtNode CswNbtNodeGenerator, CswDateTime FutureDate )
+        public Int32 makeNodes( CswNbtNode CswNbtNodeGenerator, DateTime FutureDate )
         {
             CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
             Int32 TargetNodeTypeId = CswConvert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds );
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.Actions
 				}
 
 				DateTime PreviousDateOfNextOccurance = DateOfNextOccurance;  // infinite loop guard
-				while( DateOfNextOccurance.Date <= FutureDate.ToDateTime().Date &&
+				while( DateOfNextOccurance.Date <= FutureDate.Date &&
 					   ( GeneratorNode.FinalDueDate.Empty || DateOfNextOccurance.Date <= GeneratorNode.FinalDueDate.DateValue.Date ) )
 				{
 					bool taskgenerated = _CswNbtActGenerateNodes.makeNode( CswNbtNodeGenerator, DateOfNextOccurance );
