@@ -146,11 +146,15 @@ namespace ChemSW.Nbt.WebServices
                 AssemblyFileReader.Close();
             }
 
+            JObject ComponentObj = new JObject();
+            JProperty ComponentsProp = new JProperty( "components", ComponentObj );
+            ret.Add( ComponentsProp );
+
             string VersionFilePath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "/_Version.txt";
             if( File.Exists( VersionFilePath ) )
             {
                 TextReader VersionFileReader = new StreamReader( VersionFilePath );
-                ret.Add( new JProperty( "NbtWebApp",
+                ComponentObj.Add( new JProperty( "NbtWebApp",
                                         new JObject(
                                             new JProperty( "name", "NbtWebApp" ),
                                             new JProperty( "version", VersionFileReader.ReadLine() ),
@@ -176,7 +180,7 @@ namespace ChemSW.Nbt.WebServices
                 name = AssemblyName.Contains( "," ) ? AssemblyName.Substring( 0, AssemblyName.IndexOf( ',' ) ) : AssemblyName;
 
                 JObject AssemObj = new JObject();
-                ret.Add( new JProperty( name, AssemObj ) );
+                ComponentObj.Add( new JProperty( name, AssemObj ) );
 
                 Assembly AssemblyInfo = Assembly.Load( AssemblyName );
                 object[] AssemblyAttributes = (object[]) AssemblyInfo.GetCustomAttributes( true );
@@ -187,12 +191,12 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Copyright = ( AssemblyAttribute ).Copyright;
                 }
-                ret.Add( new JProperty( "name", name ) );
-                ret.Add( new JProperty( "version", Version ) );
-                ret.Add( new JProperty( "copyright", Copyright ) );
+                AssemObj.Add( new JProperty( "name", name ) );
+                AssemObj.Add( new JProperty( "version", Version ) );
+                AssemObj.Add( new JProperty( "copyright", Copyright ) );
             }
 
-            ret.Add( new JProperty( "Schema",
+            ComponentObj.Add( new JProperty( "Schema",
                                     new JObject(
                                         new JProperty( "name", "Schema" ),
                                         new JProperty( "version", _CswNbtResources.getConfigVariableValue( "schemaversion" ) ),
