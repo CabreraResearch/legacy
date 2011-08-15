@@ -368,7 +368,7 @@ namespace ChemSW.Nbt.WebServices
 
                     JObject FiltersObj = new JObject( new JProperty( "name", ViewBuilderProp.MetaDataPropName ) );
                     JProperty FiltersNode = new JProperty( "propertyfilters", FiltersObj );
-                    
+
                     foreach( CswNbtSubField Field in ViewBuilderProp.FieldTypeRule.SubFields )
                     {
                         JObject FieldObj = new JObject( new JProperty( "title", SelectedFieldType ),
@@ -393,12 +393,11 @@ namespace ChemSW.Nbt.WebServices
                     if( ViewBuilderProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
                     {
                         FiltersOptObj.Add( new JProperty( "name", ViewBuilderProp.MetaDataPropName ) );
-                        FiltersOptObj.Add( new JProperty( "select",
-                                                              _getFilterOptions( ViewBuilderProp, ValueSubfieldVal ) ) );
+                        FiltersOptObj.Add( new JProperty( "select", _getFilterOptions( ViewBuilderProp, ValueSubfieldVal ) ) );
                     }
 
-                    ParentObj.Add( new JProperty( "property", 
-                                        new JObject (
+                    ParentObj.Add( new JProperty( "property",
+                                        new JObject(
                                                new JProperty( "propname", ViewBuilderProp.MetaDataPropName ),
                                                new JProperty( "viewbuilderpropid", ViewBuilderProp.MetaDataPropId ),
                                                new JProperty( "relatedidtype", ViewBuilderProp.RelatedIdType ),
@@ -411,7 +410,7 @@ namespace ChemSW.Nbt.WebServices
                                                new JProperty( "defaultfilter", DefaultFilterMode.ToString() ),
                                                SubfieldSelect,
                                                FiltersNode,
-                                               FiltersOptionsNode ) );
+                                               FiltersOptionsNode ) ) );
                 }
             }
         } // _getViewBuilderPropSubFields()
@@ -433,39 +432,41 @@ namespace ChemSW.Nbt.WebServices
                 DefaultFilterMode = SubField.DefaultFilterMode;
             }
             JProperty SubFieldNode = new JProperty( "subfield", new JObject( new JProperty( "column", SubField.Column ), new JProperty( "name", SubField.Name ) ) );
-            
-            XElement FiltersSelect = new XElement( "select" );
+            FiltersObj.Add( SubFieldNode );
+
+            JObject Filters = new JObject();
+            JProperty FiltersSelect = new JProperty( "select", Filters );
+            FiltersObj.Add( FiltersSelect );
             foreach( CswNbtPropFilterSql.PropertyFilterMode FilterModeOpt in SubField.SupportedFilterModes )
             {
-                XElement ThisFilter = new XElement( "option", FilterModeOpt.ToString(),
-                                                    new XAttribute( "value", FilterModeOpt ),
-                                                    new XAttribute( "title", ViewBuilderProp.MetaDataPropName ),
-                                                    new XAttribute( "label", FilterModeOpt ) ); // for Chrome
+                Filters.Add( new JProperty( FilterModeOpt.ToString(), ViewBuilderProp.MetaDataPropName ) );
 
                 if( FilterModeOpt == DefaultFilterMode )
                 {
-                    ThisFilter.Add( new XAttribute( "selected", "selected" ) );
+                    FiltersObj.Add( new JProperty( "selected", FilterModeOpt.ToString() ) );
                 }
-                FiltersSelect.Add( ThisFilter );
             }
-            SubFieldNode.Add( FiltersSelect );
-            FiltersObj.Add( SubFieldNode );
         } // _getSubFieldFilters()
 
         /// <summary>
         /// Sets fieldtype attributes on the Filter node and appends an XElement containing extended attributes, such as an options picklist
         /// </summary>
-        private XElement _getFilterOptions( CswViewBuilderProp ViewBuilderProp, string FilterSelected )
+        private JObject _getFilterOptions( CswViewBuilderProp ViewBuilderProp, string FilterSelected )
         {
-            XElement FilterOptions = new XElement( "options", new XAttribute( "propname", ViewBuilderProp.MetaDataPropName.ToLower() ) );
+            JObject FilterPropObj = new JObject();
+            JProperty FilterProp = new JProperty( "options", FilterPropObj );
+            JObject FilterOptions = new JObject( FilterProp );
 
-            foreach( string Option in ViewBuilderProp.ListOptions )
+            FilterOptions.Add( new JProperty( "name", ViewBuilderProp.MetaDataPropName.ToLower() ) );
+
+            foreach( string Value in ViewBuilderProp.ListOptions )
             {
-                FilterOptions.Add( new XElement( "option", Option,
-                                    new XAttribute( "value", Option ),
-                                    new XAttribute( "id", wsTools.makeId( ViewBuilderProp.MetaDataPropName, Option, string.Empty ) ),
-                                    ( Option == FilterSelected ) ? new XAttribute( "selected", "selected" ) : null )
-                                  );
+                string Id = wsTools.makeId( ViewBuilderProp.MetaDataPropName, Value, string.Empty );
+                FilterPropObj.Add( new JProperty( Id, Value ) );
+                if( Value == FilterSelected )
+                {
+                    FilterOptions.Add( new JProperty( "selected", Id ) );
+                }
             }
             return FilterOptions;
 
@@ -579,22 +580,17 @@ namespace ChemSW.Nbt.WebServices
         /// Uses View XML to construct a view and create a CswNbtViewPropertyFilter. and r
         /// Returns filter's XML
         /// </summary>
-        public JProperty getViewPropFilter( string ViewXml, string PropFilterJson )
+        public JObject getViewPropFilter( string ViewJson, string PropFilterJson )
         {
-            JProperty PropFilterXml = null;
             CswNbtView View = new CswNbtView( _CswNbtResources );
-            View.LoadXml( ViewXml );
+            View.LoadJson( ViewJson );
             JObject PropFilter = JObject.Parse( PropFilterJson );
-            JProperty ThisPropFilter = makeViewPropFilter( View, PropFilter );
-            if( null != ThisPropFilter )
-            {
-                PropFilterXml = ThisPropFilter;
-            }
-            return PropFilterXml;
+            makeViewPropFilter( View, PropFilter );
+            return PropFilter;
         }
 
         /// <summary>
-        /// Creates a CswNbtViewPropertyFilter and returns its XML
+        /// Creates a CswNbtViewPropertyFilter and returns its Json
         /// </summary>
         public JProperty makeViewPropFilter( CswNbtView View, JObject FilterProp )
         {

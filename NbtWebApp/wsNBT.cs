@@ -1109,10 +1109,10 @@ namespace ChemSW.Nbt.WebServices
         }
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement makeViewPropFilter( string ViewXml, string PropFiltJson )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string makeViewPropFilter( string ViewJson, string PropFiltJson )
         {
-            XElement ReturnVal = new XElement( "nodetypeprops" );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1123,7 +1123,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     var ws = new wsViewBuilder( _CswNbtResources );
-                    ReturnVal = ws.getViewPropFilter( ViewXml, PropFiltJson );
+                    ReturnVal = ws.getViewPropFilter( ViewJson, PropFiltJson );
                 }
 
                 _deInitResources();
@@ -1131,13 +1131,12 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         }
 
@@ -1653,10 +1652,10 @@ namespace ChemSW.Nbt.WebServices
         #region Search
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getClientSearchXml( string ViewId, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getClientSearchXml( string ViewId, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
         {
-            XElement ReturnVal = new XElement( "search" );
+            JObject ReturnVal = new JObject();
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -1669,7 +1668,7 @@ namespace ChemSW.Nbt.WebServices
 
                     var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.getSearchXml( View, SelectedNodeTypeIdNum, NodeKey );
+                    ReturnVal = ws.getSearchJson( View, SelectedNodeTypeIdNum, NodeKey );
                 }
 
                 _deInitResources();
@@ -1677,20 +1676,20 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         }
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getNodeTypeSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string IdPrefix, string NodeKey )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getNodeTypeSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string IdPrefix, string NodeKey )
         {
-            XElement ReturnVal = new XElement( "search" );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1707,21 +1706,21 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         } // getSearch()
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getSearchableViews( string IsMobile, string OrderBy )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getSearchableViews( string IsMobile, string OrderBy )
         {
-            XElement ReturnVal = new XElement( "result" );
+            JObject ReturnVal = new JObject();
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -1744,10 +1743,10 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         } // getSearch()
 

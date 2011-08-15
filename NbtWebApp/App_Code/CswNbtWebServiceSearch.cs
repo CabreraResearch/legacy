@@ -1,35 +1,30 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Xml.Linq;
 using ChemSW.Core;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
+using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
-	public class CswNbtWebServiceSearch
-	{
-		private readonly CswNbtResources _CswNbtResources;
-	    //private readonly Int32 _ConstrainToObjectClassId = Int32.MinValue;
-	    private const string _NodeTypePrefix = "nt_";
-	    private const string _ObjectClassPrefix = "oc_";
-	    private wsViewBuilder _ViewBuilder;
+    public class CswNbtWebServiceSearch
+    {
+        private readonly CswNbtResources _CswNbtResources;
+        //private readonly Int32 _ConstrainToObjectClassId = Int32.MinValue;
+        private const string _NodeTypePrefix = "nt_";
+        private const string _ObjectClassPrefix = "oc_";
+        private wsViewBuilder _ViewBuilder;
         /// <summary>
-	    /// Searching against these field types is not yet supported
-	    /// </summary>
+        /// Searching against these field types is not yet supported
+        /// </summary>
         private ArrayList _ProhibittedFieldTypes
-	    {
-	        get
-	        {
-	            ArrayList InvalidFieldTypes = new ArrayList();
-	            InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.LogicalSet ) );
+        {
+            get
+            {
+                ArrayList InvalidFieldTypes = new ArrayList();
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.LogicalSet ) );
                 InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewPickList ) );
                 InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewReference ) );
                 InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect ) );
@@ -37,17 +32,17 @@ namespace ChemSW.Nbt.WebServices
                 InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.MTBF ) );
                 InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Grid ) );
                 InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Password ) );
-	            return InvalidFieldTypes;
-	        }
-	    }
+                return InvalidFieldTypes;
+            }
+        }
 
         public CswNbtWebServiceSearch( CswNbtResources CswNbtResources, string Prefix )
         {
-			_CswNbtResources = CswNbtResources;
-            _ViewBuilder = new wsViewBuilder( _CswNbtResources, _ProhibittedFieldTypes, Prefix );  
+            _CswNbtResources = CswNbtResources;
+            _ViewBuilder = new wsViewBuilder( _CswNbtResources, _ProhibittedFieldTypes, Prefix );
             //wsViewBuilder.CswViewBuilderProp 
 
-		}//ctor
+        }//ctor
 
         public CswNbtWebServiceSearch( CswNbtResources CswNbtResources )
         {
@@ -59,9 +54,9 @@ namespace ChemSW.Nbt.WebServices
         #region Generic Search Form XML
 
         /// <summary>
-        /// Generates the XML for a NodeTypeSelect pick list
+        /// Generates the JSON for a NodeTypeSelect pick list
         /// </summary>
-        private XElement _getNodeTypeBasedSearch( CswNbtMetaDataNodeType SelectedNodeType )
+        private JObject _getNodeTypeBasedSearch( CswNbtMetaDataNodeType SelectedNodeType )
         {
             Int32 SelectWidth = 0;
             //var SelectedNodeType = Node.NodeType; //_CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
@@ -101,74 +96,74 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            XElement NodeTypeSelect = new XElement( "optgroup", new XAttribute( "label", "Specific Types" ) );
+            JObject NodeTypeSelObj = new JObject( new JProperty( "label", "Specific Types" ) );
+            JProperty NodeTypeSelect = new JProperty( "nodetypeselect", NodeTypeSelObj );
+
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes.Cast<CswNbtMetaDataNodeType>()
                                                         .Where( NodeType => ( NodeType.NodeTypeProps.Count > 0 ) ) )
-                                                                  
             {
-                XElement ThisOption = new XElement( "option",
-                                            new XAttribute( "title", "nodetypeid" ),
-                                            new XAttribute( "label", NodeType.NodeTypeName ), // for Chrome
-                                            new XAttribute( "value", NodeType.FirstVersionNodeTypeId ), 
-                                            new XAttribute( "id", _NodeTypePrefix + NodeType.FirstVersionNodeTypeId ) );
+                JObject ThisOptObj = new JObject(
+                                            new JProperty( "type", "nodetypeid" ),
+                                            new JProperty( "name", NodeType.NodeTypeName ),
+                                            new JProperty( "value", NodeType.FirstVersionNodeTypeId ),
+                                            new JProperty( "id", _NodeTypePrefix + NodeType.FirstVersionNodeTypeId ) );
+                JProperty ThisOption = new JProperty( "option_" + NodeType.FirstVersionNodeTypeId, ThisOptObj );
+                NodeTypeSelObj.Add( ThisOption );
+
                 if( SelectedNodeType == NodeType )
                 {
-                    ThisOption.Add( new XAttribute( "selected", "selected" ) );
+                    ThisOptObj.Add( new JProperty( "selected", "selected" ) );
                 }
                 if( NodeType.NodeTypeName.Length > SelectWidth )
                 {
                     SelectWidth = NodeType.NodeTypeName.Length;
                 }
-                ThisOption.Value = NodeType.NodeTypeName;
-                NodeTypeSelect.Add( ThisOption );
-            }
-            //SelectOptions.Add( NodeTypeSelect );
+            } //SelectOptions.Add( NodeTypeSelect );
 
-            XElement ObjectClassSelect = new XElement( "optgroup", new XAttribute( "label", "Generic Types" ) );
+            JObject ObjectClassSelObj = new JObject( new JProperty( "label", "Generic Types" ) );
+            JProperty ObjectClassSelect = new JProperty( "objectclassselect", ObjectClassSelObj );
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses.Cast<CswNbtMetaDataObjectClass>()
                                                               .Where( ObjectClass => CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass != ObjectClass.ObjectClass &&
                                                                       ( ObjectClass.ObjectClassProps.Count > 0 &&
                                                                         ObjectClass.NodeTypes.Count > 0 ) ) )
             {
-                XElement ThisOption = new XElement( "option",
-                                            new XAttribute( "title", "objectclassid" ),
-                                            new XAttribute( "label", "All " + ObjectClass.ObjectClass ), // for Chrome
-                                            new XAttribute( "value", ObjectClass.ObjectClassId ),
-                                            new XAttribute( "id", _ObjectClassPrefix + ObjectClass.ObjectClassId ) );
-                if( null == SelectedNodeType && SearchOC == ObjectClass)
+                JObject ThisOptObj = new JObject(
+                                            new JProperty( "type", "objectclassid" ),
+                                            new JProperty( "name", "All " + ObjectClass.ObjectClass ),
+                                            new JProperty( "value", ObjectClass.ObjectClassId ),
+                                            new JProperty( "id", _ObjectClassPrefix + ObjectClass.ObjectClassId ) );
+                JProperty ThisOption = new JProperty( "option_" + ObjectClass.ObjectClassId, ThisOptObj );
+                ObjectClassSelObj.Add( ThisOption );
+
+                if( null == SelectedNodeType && SearchOC == ObjectClass )
                 {
-                    ThisOption.Add( new XAttribute( "selected", "selected" ) );
+                    ThisOptObj.Add( new JProperty( "selected", "selected" ) );
                 }
                 if( ObjectClass.ObjectClass.ToString().Length > SelectWidth )
                 {
                     SelectWidth = ObjectClass.ObjectClass.ToString().Length;
                 }
-                ThisOption.Value = "All " + ObjectClass.ObjectClass;
+
                 ObjectClassSelect.Add( ThisOption );
             }
             //SelectOptions.Add( ObjectClassSelect );
 
-            
+
             //SelectOptions.Add( new XAttribute( "style", "width: " + (SelectWidth*7) + "px;" ) );
             //NodeTypeSearch.Add( SelectOptions );
 
-            XElement NodeTypeProps;
-            if( null != SelectedNodeType )
-            {
-                NodeTypeProps = _ViewBuilder.getNodeTypeProps( SelectedNodeType );
-            }
-            else
-            {
-                NodeTypeProps = _ViewBuilder.getNodeTypeProps( SearchOC );
-            }
+            JObject NodeTypeProps;
+            NodeTypeProps = null != SelectedNodeType ? 
+                _ViewBuilder.getNodeTypeProps( SelectedNodeType ) : 
+                _ViewBuilder.getNodeTypeProps( SearchOC );
 
-            XElement NodeTypeSearch = new XElement( "search", 
-                                            new XAttribute( "searchtype", "nodetypesearch" ), 
-                                            new XElement( "nodetypes", 
-                                                new XElement( "select",
+            JObject NodeTypeSearch = new JObject( new JProperty( "searchtype", "nodetypesearch" ),
+                                            new JProperty( "nodetypes",
+                                                new JObject( 
                                                         NodeTypeSelect,
-                                                        ObjectClassSelect)),
-                                            NodeTypeProps);
+                                                        ObjectClassSelect ) ),
+                                            new JProperty( "props", NodeTypeProps )
+                                     );
             return NodeTypeSearch;
         } // getNodeTypeBasedSearch()
 
@@ -177,20 +172,21 @@ namespace ChemSW.Nbt.WebServices
         #region Get Search XML
 
         /// <summary>
-        /// Returns the XML for filtered (searchable) View properties, if the View is searchable.
-        /// Else, returns XML for a NodeTypeSelect.
+        /// Returns the JSON for filtered (searchable) View properties, if the View is searchable.
+        /// Else, returns JSON for a NodeTypeSelect.
         /// </summary>
-        public XElement getSearchXml( CswNbtView View, string SelectedNodeTypeIdNum, string NodeKey )
+        public JObject getSearchJson( CswNbtView View, string SelectedNodeTypeIdNum, string NodeKey )
         {
-            XElement SearchNode = new XElement( "search", 
-                                        new XAttribute( "searchtype", "viewsearch" ) );
-            
-            XElement PropNode = new XElement( "properties" );
+            JObject SearchNode = new JObject( new JProperty( "searchtype", "viewsearch" ) );
+
+            JObject PropObj = new JObject();
+            JProperty PropNode = new JProperty( "properties", PropObj );
+            SearchNode.Add( PropNode );
 
             if( null == View || !View.IsSearchable() )
             {
                 CswNbtMetaDataNodeType SelectedNodeType = null;
-                if( string.IsNullOrEmpty(SelectedNodeTypeIdNum) && !string.IsNullOrEmpty( NodeKey ) )
+                if( string.IsNullOrEmpty( SelectedNodeTypeIdNum ) && !string.IsNullOrEmpty( NodeKey ) )
                 {
                     string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
                     CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
@@ -206,7 +202,7 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
-                foreach( CswViewBuilderProp SearchProp in View.getOrderedViewProps(false)
+                foreach( CswViewBuilderProp SearchProp in View.getOrderedViewProps( false )
                                                      .Where( Prop => Prop.Filters.Count > 0 &&
                                                         !_ProhibittedFieldTypes.Contains( Prop.FieldType ) )
                                                      .Select( Prop => new CswViewBuilderProp( Prop ) ) )
@@ -217,7 +213,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ViewPropFilters.Add( Filt );
                     }
-                    _ViewBuilder.getViewBuilderPropSubfields( ref PropNode, SearchProp, ViewPropFilters );
+                    _ViewBuilder.getViewBuilderPropSubfields( PropObj, SearchProp, ViewPropFilters );
                 }
                 SearchNode.Add( PropNode );
             }
@@ -225,9 +221,9 @@ namespace ChemSW.Nbt.WebServices
             return SearchNode;
         } // getViewBasedSearch()
 
-        public XElement getSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
+        public JObject getSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
         {
-            XElement SearchProps = _ViewBuilder.getViewBuilderProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey );
+            JObject SearchProps = _ViewBuilder.getViewBuilderProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey );
             return SearchProps;
         }
 
@@ -276,18 +272,18 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewSearchPair GenericSearch = null;
             //CswNbtView SearchView = null;
             string ViewName = string.Empty;
-            if( null != SearchJson ) 
+            if( null != SearchJson )
             {
                 NodesSearch = JObject.FromObject( SearchJson );
                 //NodesSearch = XElement.Parse( SearchJson );
-                CswNbtView SearchView = new CswNbtView( _CswNbtResources ) {ViewMode = NbtViewRenderingMode.Tree};
+                CswNbtView SearchView = new CswNbtView( _CswNbtResources ) { ViewMode = NbtViewRenderingMode.Tree };
 
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
-                
+
                 string ParentViewId = (string) NodesSearch.Property( "parentviewid" ).Value;
-                
-                if( null != NodesSearch.Property( "viewbuilderprops") )
+
+                if( null != NodesSearch.Property( "viewbuilderprops" ) )
                 {
                     JArray Props = (JArray) NodesSearch.Property( "viewbuilderprops" ).Value;
 
@@ -354,7 +350,7 @@ namespace ChemSW.Nbt.WebServices
                 SearchView.ViewName = ViewName;
                 SearchView.SaveToCache( true );
                 string SearchViewId = SearchView.SessionViewId.ToString();
-                GenericSearch = new CswNbtViewSearchPair(_CswNbtResources, ParentViewId, SearchViewId );
+                GenericSearch = new CswNbtViewSearchPair( _CswNbtResources, ParentViewId, SearchViewId );
             }
 
             return GenericSearch;
@@ -362,7 +358,7 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
-        
+
     } // class CswNbtWebServiceSearch
 
     /// <summary>
@@ -395,9 +391,9 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
             CswNbtView _ParentView = null;
             // Try to fetch ParentView for reload on Clear()
-            if( !string.IsNullOrEmpty( _ParentViewKey ) ) 
+            if( !string.IsNullOrEmpty( _ParentViewKey ) )
             {
-                if( CswNbtViewId.isViewIdString( _ParentViewKey ))
+                if( CswNbtViewId.isViewIdString( _ParentViewKey ) )
                 {
                     CswNbtViewId _ParentVid = new CswNbtViewId( _ParentViewKey );
                     _ParentView = _CswNbtResources.ViewSelect.restoreView( _ParentVid );
@@ -406,13 +402,13 @@ namespace ChemSW.Nbt.WebServices
                         _ParentView.SaveToCache( true );
                     }
                 }
-                else if( CswNbtSessionDataId.isSessionDataIdString( _ParentViewKey ))
+                else if( CswNbtSessionDataId.isSessionDataIdString( _ParentViewKey ) )
                 {
                     CswNbtSessionDataId _ParentSessionId = new CswNbtSessionDataId( _ParentViewKey );
                     _ParentView = _CswNbtResources.ViewSelect.getSessionView( _ParentSessionId );
                 }
             }
-            
+
             // If this is the 2nd search, try to recycle the SessionView
             CswNbtView _SearchableView = null;
             if( _ParentViewKey != _SearchViewKey && // true if we're coming from a non-view, like Welcome
