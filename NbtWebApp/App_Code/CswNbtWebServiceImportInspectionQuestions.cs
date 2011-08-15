@@ -109,6 +109,32 @@ namespace ChemSW.Nbt.WebServices
             return ExcelDataTable;
         } // ConvertExcelFileToDataTable()
 
-    }
+        public void CreateNodes(DataTable ExcelDataTable)
+        {
+            CswNbtMetaDataNodeType NewInspectionDesignNodeType = _CswNbtResources.MetaData.makeNewNodeType("InspectionDesignClass", "Inspection Design " + DateTime.Now.ToString("MMddyy_HHmmss"), string.Empty);
+ 
+            foreach (DataRow Row in ExcelDataTable.Rows)
+            {
+                string Section = Row[ImportColumnsToDisplayString(ImportColumns.Section)].ToString();
+                string Question = Row[ImportColumnsToDisplayString(ImportColumns.Question)].ToString();
+                string HelpText = Row[ImportColumnsToDisplayString(ImportColumns.Help_Text)].ToString();
 
+                //string AllowedAnswers = Row[ImportColumnsToDisplayString(ImportColumns.Allowed_Answers)].ToString();
+                CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                PossibleAnswers.FromString(Row[ImportColumnsToDisplayString(ImportColumns.Allowed_Answers)].ToString());
+
+                //string CompliantAnswers = Row[ImportColumnsToDisplayString(ImportColumns.Compliant_Answers)].ToString();
+                CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
+                CompliantAnswers.FromString(Row[ImportColumnsToDisplayString(ImportColumns.Compliant_Answers)].ToString());
+
+                CswNbtMetaDataNodeTypeProp QuestionProperty =  _CswNbtResources.MetaData.makeNewProp(NewInspectionDesignNodeType, CswNbtMetaDataFieldType.NbtFieldType.Question, Question, 0);
+
+                // For mapping of question subfields to question node type properties
+                // See lines 800 - 850 and lines 1908 - 1954 in design.aspx.cs
+                QuestionProperty.ListOptions = PossibleAnswers.ToString();
+                QuestionProperty.ValueOptions = CompliantAnswers.ToString();
+                QuestionProperty.HelpText = HelpText;
+            }
+        }
+    }
 }
