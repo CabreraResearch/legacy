@@ -5,8 +5,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -153,36 +151,36 @@ namespace ChemSW.Nbt.WebServices
          * ends up seeing the authentication node even if it is a peer of the tree and not in the tree. 
          * Please trust me: we're talking major whackadelia. But it works fine as an attribute. 
          */
-        private void _xAddAuthenticationStatus( XElement XElement, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
-        {
-            if( XElement != null )
-            {
-                XElement.SetAttributeValue( "authenticationstatus", AuthenticationStatusIn.ToString() );
-                if( _CswSessionResources != null &&
-                    _CswSessionResources.CswSessionManager != null &&
-                    !ForMobile )
-                {
-                    XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
-                }
-            }
-        }//_xAuthenticationStatus()
+        //private void _xAddAuthenticationStatus( XElement XElement, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
+        //{
+        //    if( XElement != null )
+        //    {
+        //        XElement.SetAttributeValue( "authenticationstatus", AuthenticationStatusIn.ToString() );
+        //        if( _CswSessionResources != null &&
+        //            _CswSessionResources.CswSessionManager != null &&
+        //            !ForMobile )
+        //        {
+        //            XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+        //        }
+        //    }
+        //}//_xAuthenticationStatus()
 
 
-        private void _xAddAuthenticationStatus( XmlDocument XmlDocument, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
-        {
-            if( XmlDocument != null )
-            {
-                if( XmlDocument.DocumentElement == null )
-                    CswXmlDocument.SetDocumentElement( XmlDocument, "root" );
-                CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "authenticationstatus", AuthenticationStatusIn.ToString() );
-                if( _CswSessionResources != null &&
-                    _CswSessionResources.CswSessionManager != null &&
-                    !ForMobile )
-                {
-                    CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
-                }
-            }
-        }//_xAuthenticationStatus()
+        //private void _xAddAuthenticationStatus( XmlDocument XmlDocument, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
+        //{
+        //    if( XmlDocument != null )
+        //    {
+        //        if( XmlDocument.DocumentElement == null )
+        //            CswXmlDocument.SetDocumentElement( XmlDocument, "root" );
+        //        CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "authenticationstatus", AuthenticationStatusIn.ToString() );
+        //        if( _CswSessionResources != null &&
+        //            _CswSessionResources.CswSessionManager != null &&
+        //            !ForMobile )
+        //        {
+        //            CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
+        //        }
+        //    }
+        //}//_xAuthenticationStatus()
 
         private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
         {
@@ -200,43 +198,43 @@ namespace ChemSW.Nbt.WebServices
 
 
 
-        /// <summary>
-        /// Returns error as XmlDocument
-        /// </summary>
-        private XmlDocument xmlError( Exception ex )
-        {
-            string Message = string.Empty;
-            string Detail = string.Empty;
-            ErrorType Type = ErrorType.Error;
-            bool Display = true;
-            _error( ex, out Type, out Message, out Detail, out Display );
+        ///// <summary>
+        ///// Returns error as XmlDocument
+        ///// </summary>
+        //private XmlDocument xmlError( Exception ex )
+        //{
+        //    string Message = string.Empty;
+        //    string Detail = string.Empty;
+        //    ErrorType Type = ErrorType.Error;
+        //    bool Display = true;
+        //    _error( ex, out Type, out Message, out Detail, out Display );
 
-            XmlDocument ErrorXmlDoc = new XmlDocument();
-            CswXmlDocument.SetDocumentElement( ErrorXmlDoc, "error" );
-            CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "display", Display.ToString().ToLower() );
-            CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "type", Type.ToString() );
-            CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "message", Message );
-            CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "detail", Detail );
-            return ErrorXmlDoc;
-        }
+        //    XmlDocument ErrorXmlDoc = new XmlDocument();
+        //    CswXmlDocument.SetDocumentElement( ErrorXmlDoc, "error" );
+        //    CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "display", Display.ToString().ToLower() );
+        //    CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "type", Type.ToString() );
+        //    CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "message", Message );
+        //    CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "detail", Detail );
+        //    return ErrorXmlDoc;
+        //}
 
-        /// <summary>
-        /// Returns error as XElement
-        /// </summary>
-        private XElement _xError( Exception ex )
-        {
-            string Message = string.Empty;
-            string Detail = string.Empty;
-            ErrorType Type = ErrorType.Error;
-            bool Display = true;
-            _error( ex, out Type, out Message, out Detail, out Display );
+        ///// <summary>
+        ///// Returns error as XElement
+        ///// </summary>
+        //private XElement _xError( Exception ex )
+        //{
+        //    string Message = string.Empty;
+        //    string Detail = string.Empty;
+        //    ErrorType Type = ErrorType.Error;
+        //    bool Display = true;
+        //    _error( ex, out Type, out Message, out Detail, out Display );
 
-            return new XElement( "error",
-                new XAttribute( "display", Display.ToString().ToLower() ),
-                new XAttribute( "type", Type.ToString() ),
-                new XAttribute( "message", Message ),
-                new XAttribute( "detail", Detail ) );
-        }
+        //    return new XElement( "error",
+        //        new XAttribute( "display", Display.ToString().ToLower() ),
+        //        new XAttribute( "type", Type.ToString() ),
+        //        new XAttribute( "message", Message ),
+        //        new XAttribute( "detail", Detail ) );
+        //}
 
         /// <summary>
         /// Returns error as JProperty
@@ -1314,7 +1312,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NewPropsXml, string NodeTypeId, string ViewId )
+        public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NewPropsJson, string NodeTypeId, string ViewId )
         {
             JObject ReturnVal = new JObject();
 
@@ -1330,7 +1328,7 @@ namespace ChemSW.Nbt.WebServices
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
                     var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( TabId ), NewPropsXml, CswConvert.ToInt32( NodeTypeId ), View );
+                    ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View );
                 }
 
                 _deInitResources();
