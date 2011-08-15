@@ -134,15 +134,15 @@ namespace ChemSW.Nbt.WebServices
         }
 
 
-        public string makeVersionXml()
+        public JObject makeVersionJson()
         {
-            string ret = string.Empty;
+            JObject ret = new JObject();
 
             string AssemblyFilePath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "/_Assembly.txt";
             if( File.Exists( AssemblyFilePath ) )
             {
                 TextReader AssemblyFileReader = new StreamReader( AssemblyFilePath );
-                ret += "<assembly>" + AssemblyFileReader.ReadLine() + "</assembly>";
+                ret.Add( new JProperty( "assembly", AssemblyFileReader.ReadLine() ) );
                 AssemblyFileReader.Close();
             }
 
@@ -150,11 +150,13 @@ namespace ChemSW.Nbt.WebServices
             if( File.Exists( VersionFilePath ) )
             {
                 TextReader VersionFileReader = new StreamReader( VersionFilePath );
-                ret += "<component>";
-                ret += " <name>NbtWebApp</name>";
-                ret += " <version>" + VersionFileReader.ReadLine() + "</version>";
-                ret += " <copyright>Copyright &copy; ChemSW, Inc. 2005-2011</copyright>";
-                ret += "</component>";
+                ret.Add( new JProperty( "NbtWebApp",
+                                        new JObject(
+                                            new JProperty( "name", "NbtWebApp" ),
+                                            new JProperty( "version", VersionFileReader.ReadLine() ),
+                                            new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-2011" )
+                                            )
+                             ) );
                 VersionFileReader.Close();
             }
 
@@ -170,44 +172,37 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( string AssemblyName in Assemblies )
             {
-                ret += "<component>";
-                if( AssemblyName.Contains( "," ) )
-                    ret += "<name>" + AssemblyName.Substring( 0, AssemblyName.IndexOf( ',' ) ) + "</name>";
-                else
-                    ret += "<name>" + AssemblyName + "</name>";
+                string name = string.Empty;
+                name = AssemblyName.Contains( "," ) ? AssemblyName.Substring( 0, AssemblyName.IndexOf( ',' ) ) : AssemblyName;
+
+                JObject AssemObj = new JObject();
+                ret.Add( new JProperty( name, AssemObj ) );
+
                 Assembly AssemblyInfo = Assembly.Load( AssemblyName );
                 object[] AssemblyAttributes = (object[]) AssemblyInfo.GetCustomAttributes( true );
 
                 string Version = AssemblyInfo.GetName().Version.ToString();
                 string Copyright = string.Empty;
-                foreach( object AssemblyAttribute in AssemblyAttributes )
+                foreach( AssemblyCopyrightAttribute AssemblyAttribute in AssemblyAttributes.OfType<AssemblyCopyrightAttribute>() )
                 {
-                    //if (AssemblyAttribute is AssemblyFileVersionAttribute)
-                    //{
-                    //    Version = ( (AssemblyFileVersionAttribute) AssemblyAttribute ).Version;
-                    //}
-                    if( AssemblyAttribute is AssemblyCopyrightAttribute )
-                    {
-                        Copyright = ( (AssemblyCopyrightAttribute) AssemblyAttribute ).Copyright;
-                    }
+                    Copyright = ( AssemblyAttribute ).Copyright;
                 }
-                ret += "<version>" + Version + "</version>";
-                ret += "<copyright>" + Copyright + "</copyright>";
-                ret += "</component>";
+                ret.Add( new JProperty( "name", name ) );
+                ret.Add( new JProperty( "version", Version ) );
+                ret.Add( new JProperty( "copyright", Copyright ) );
             }
 
-            //CswTableCaddy ConfigVarsTableCaddy = Master.CswNbtResources.makeCswTableCaddy("configuration_variables");
-            //ConfigVarsTableCaddy.WhereClause = "where variablename = 'schemaversion'";
-            //DataTable ConfigVarsTable = ConfigVarsTableCaddy.Table;
+            ret.Add( new JProperty( "Schema",
+                                    new JObject(
+                                        new JProperty( "name", "Schema" ),
+                                        new JProperty( "version", _CswNbtResources.getConfigVariableValue( "schemaversion" ) ),
+                                        new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-2011" )
+                                        )
 
-            ret += "<component>";
-            ret += " <name>Schema</name>";
-            ret += " <version>" + _CswNbtResources.getConfigVariableValue( "schemaversion" ) + "</version>";
-            ret += " <copyright>Copyright &copy; ChemSW, Inc. 2005-2011</copyright>";
-            ret += "</component>";
+                         ) );
 
-            return "<versions>" + ret + "</versions>";
-        } // makeVersionXml()
+            return ret;
+        } // makeVersionJson()
 
 
 

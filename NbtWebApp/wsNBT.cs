@@ -853,10 +853,10 @@ namespace ChemSW.Nbt.WebServices
         } // getViewInfo()
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement saveViewInfo( string ViewId, string ViewXml )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string saveViewInfo( string ViewId, string ViewJson )
         {
-            XElement ReturnVal = new XElement( "result" );
+            JObject ReturnVal = new JObject();
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -869,7 +869,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtView View = _getView( ViewId );
                     if( null != View )
                     {
-                        View.LoadXml( ViewXml );
+                        View.LoadJson( ViewJson );
                         View.save();
 
                         //if( View.Visibility != NbtViewVisibility.Property )
@@ -877,7 +877,7 @@ namespace ChemSW.Nbt.WebServices
                         _CswNbtResources.ViewSelect.removeSessionView( View );
                         _CswNbtResources.ViewSelect.clearCache();
 
-                        ReturnVal.Add( new XAttribute( "succeeded", "true" ) );
+                        ReturnVal.Add( new JProperty( "succeeded", "true" ) );
                     }
                 }
 
@@ -885,13 +885,13 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
 
         } // saveViewInfo()
@@ -1146,10 +1146,10 @@ namespace ChemSW.Nbt.WebServices
         #region Tabs and Props
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId, string Date, string filterToPropId )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId, string Date, string filterToPropId )
         {
-            XElement ReturnVal = new XElement( "tabs" );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1171,21 +1171,21 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         } // getTabs()
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XmlDocument getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date )
         {
-            XmlDocument ReturnVal = new XmlDocument();
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1207,20 +1207,20 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = xmlError( ex );
+                ReturnVal = jError( ex );
             }
 
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
         } // getProps()
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XmlDocument getSingleProp( string EditMode, string NodeId, string SafeNodeKey, string PropId, string NodeTypeId, string NewPropXml )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getSingleProp( string EditMode, string NodeId, string SafeNodeKey, string PropId, string NodeTypeId, string NewPropJson )
         {
-            XmlDocument ReturnVal = new XmlDocument();
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1235,7 +1235,7 @@ namespace ChemSW.Nbt.WebServices
                     //{
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
                     var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-                    ReturnVal = ws.getSingleProp( RealEditMode, NodeId, ParsedNodeKey, PropId, CswConvert.ToInt32( NodeTypeId ), NewPropXml );
+                    ReturnVal = ws.getSingleProp( RealEditMode, NodeId, ParsedNodeKey, PropId, CswConvert.ToInt32( NodeTypeId ), NewPropJson );
                     //}
                 }
 
@@ -1243,20 +1243,20 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = xmlError( ex );
+                ReturnVal = jError( ex );
             }
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
         } // getSingleProp()
 
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getPropNames( string Type, string Id )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getPropNames( string Type, string Id )
         {
-            XElement ReturnVal = new XElement( "properties" );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1288,10 +1288,12 @@ namespace ChemSW.Nbt.WebServices
                         foreach( ICswNbtMetaDataProp Prop in Props )
                         {
                             ReturnVal.Add(
-                                new XElement( "prop",
-                                    new XAttribute( "proptype", PropType ),
-                                    new XAttribute( "propname", Prop.PropNameWithQuestionNo ),
-                                    new XAttribute( "propid", Prop.PropId.ToString() ) ) );
+                                new JProperty( "prop_" + Prop.PropId.ToString(),
+                                    new JObject(
+                                        new JProperty( "proptype", PropType ),
+                                        new JProperty( "propname", Prop.PropNameWithQuestionNo ),
+                                        new JProperty( "propid", Prop.PropId.ToString() ) ) )
+                                        );
                         }
                     } // if( nId != Int32.MinValue )
 
@@ -1301,13 +1303,13 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         } // getPropNames()
 
@@ -1352,7 +1354,6 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1387,10 +1388,10 @@ namespace ChemSW.Nbt.WebServices
         #region Misc
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XmlDocument getAbout()
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getAbout()
         {
-            XmlDocument ReturnVal = new XmlDocument();
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1401,20 +1402,18 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     var ws = new CswNbtWebServiceHeader( _CswNbtResources );
-                    string Data = ws.makeVersionXml();
-                    ReturnVal.LoadXml( Data.Replace( "&", "&amp;" ) );
-
+                    ReturnVal = ws.makeVersionJson();
                 }
 
                 _deInitResources();
             }
             catch( Exception ex )
             {
-                ReturnVal = xmlError( ex );
+                ReturnVal = jError( ex );
             }
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-            return ReturnVal;
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
         } // getAbout()
 
         [WebMethod( EnableSession = false )]
@@ -2012,10 +2011,10 @@ namespace ChemSW.Nbt.WebServices
 
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getWelcomeItems( string RoleId )
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getWelcomeItems( string RoleId )
         {
-            XElement ReturnVal = new XElement( "welcome" );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -2029,11 +2028,11 @@ namespace ChemSW.Nbt.WebServices
                     // Only administrators can get welcome content for other roles
                     if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
-                        ReturnVal = XElement.Parse( ws.GetWelcomeItems( RoleId ) );
+                        ReturnVal = ws.GetWelcomeItems( RoleId );
                     }
                     else
                     {
-                        ReturnVal = XElement.Parse( ws.GetWelcomeItems( _CswNbtResources.CurrentNbtUser.RoleId.ToString() ) );
+                        ReturnVal = ws.GetWelcomeItems( _CswNbtResources.CurrentNbtUser.RoleId.ToString() );
                     }
                 }
 
@@ -2042,22 +2041,22 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
 
         } // getWelcomeItems()
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getWelcomeButtonIconList()
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getWelcomeButtonIconList()
         {
-            XElement ReturnVal = new XElement( "buttonicons" );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -2076,12 +2075,12 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         } // getWelcomeButtonIconList()
 
