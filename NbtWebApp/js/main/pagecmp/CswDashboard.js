@@ -12,37 +12,36 @@
 
 		var $DashDiv = $(this);
 		
-		CswAjaxXml({
+		CswAjaxJson({
 			url: o.Url,
 			data: {},
 			stringify: false,
-			success: function ($xml) {
-				 
-					var $table = $DashDiv.CswTable('init', { ID: 'DashboardTable' });
-					$table.addClass('DashboardTable');
-					var $tr = $table.append('<tr />');
+			success: function (data) {
 
-					$xml.children().each(function() {
-						var $this = $(this);
+				var $table = $DashDiv.CswTable('init', { ID: 'DashboardTable' });
+				$table.addClass('DashboardTable');
+				var $tr = $table.append('<tr />');
 
-						var cellcontent = '';
-						if($this.CswAttrXml('href') !== undefined)
-						{
-							cellcontent = '<td class="DashboardCell">' +
-										  '  <a target="_blank" href="'+ $this.CswAttrXml('href') + '">' +
-										  '    <div title="'+ $this.CswAttrXml('text') +'" id="'+ $this.CswAttrXml('id') +'" class="'+ $this.CswAttrXml('id') +'" />' +
-										  '  </a>' +
-										  '</td>';
-						} else {
-							cellcontent = '<td class="DashboardCell">' +
-										  '  <div title="'+ $this.CswAttrXml('text') +'" id="'+ $this.CswAttrXml('id') +'" class="'+ $this.CswAttrXml('id') +'" />' +
-										  '</td>';
-						}
-						$tr.append(cellcontent);
-
-					});
-
-					o.onSuccess();
+				for (var dashId in data) {
+				    if (data.hasOwnProperty(dashId)) {
+				        var thisIcon = data[dashId];
+				        var cellcontent = '';
+				        if (thisIcon.href !== undefined)
+				        {
+				            cellcontent = '<td class="DashboardCell">' +
+    				            '  <a target="_blank" href="' + thisIcon.href + '">' +
+        				            '    <div title="' + thisIcon.text + '" id="' + dashId + '" class="' + dashId + '" />' +
+            				            '  </a>' +
+                				            '</td>';
+				        } else {
+				            cellcontent = '<td class="DashboardCell">' +
+    				            '  <div title="' + thisIcon.text + '" id="' + dashId + '" class="' + dashId + '" />' +
+        				            '</td>';
+				        }
+				        $tr.append(cellcontent);
+				    }
+				}
+			    o.onSuccess();
 
 			} // success{}
 		});

@@ -1,42 +1,25 @@
-﻿/// <reference path="thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+﻿/// <reference path="CswEnums.js" />
+/// <reference path="CswGlobalTools.js" />
+/// <reference path="CswPrototypeExtensions.js" />
+/// <reference path="../main/tools/CswArray.js" />
+/// <reference path="../main/tools/CswTools.js" />
+/// <reference path="../main/tools/CswAttr.js" />
+/// <reference path="../main/tools/CswClientDb.js" />
+/// <reference path="../main/tools/CswCookie.js" />
+/// <reference path="../main/tools/CswProfileMethod.js" />
+/// <reference path="../main/tools/CswQueryString.js" />
+/// <reference path="../main/tools/CswString.js" />
+/// <reference path="../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../thirdparty/jquery/core/jquery.cookie.js" />
+/// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
 
-/// <reference path="_CswPrototypeExtensions.js" />
-/// <reference path="CswProfileMethod.js" />
-/// <reference path="CswArray.js" />
-/// <reference path="CswClientDb.js" />
-/// <reference path="CswEnums.js" />
-/// <reference path="CswString.js" />
-
-/// <reference path="jquery/common/CswAttr.js" />
-/// <reference path="jquery/common/CswTools.js" />
-/// <reference path="jquery/common/CswCookie.js" />
-/// <reference path="jquery/common/CswDiv.js" />
-/// <reference path="jquery/common/CswInput.js" />
-/// <reference path="jquery/common/CswLink.js" />
-/// <reference path="jquery/common/CswSelect.js" />
-/// <reference path="jquery/common/CswSpan.js" />
-
-/// <reference path="mobile/CswMobileTools.js" />
-
-/// <reference path="mobile/clientdb/CswMobileClientDbResources.js" />
-/// <reference path="mobile/clientdb/CswMobileClientDb.js" />
-
-/// <reference path="mobile/sync/CswMobileSync.js" />
-/// <reference path="mobile/sync/CswMobileBackgroundTask.js" />
-
-// ------------------------------------------------------------------------------------
-// Globals (yuck)
-// ------------------------------------------------------------------------------------
-
+//#region Globals (yuck)
 "use strict";
 
 var homeUrl = 'Main.html';
+//#endregion Globals (yuck)
 
-
-// ------------------------------------------------------------------------------------
-// Session Expiration
-// ------------------------------------------------------------------------------------
-
+//#region Session Expiration
 var expiretime = '';
 var expiretime_interval;
 var expired_interval;
@@ -83,12 +66,9 @@ function checkExpireTime()
 		});
 	}
 }
+//#endregion Session Expiration
 
-
-// ------------------------------------------------------------------------------------
-// Current State
-// ------------------------------------------------------------------------------------
-
+//#region Current State
 function setCurrentView(viewid, viewmode)
 {
 	clearCurrent();
@@ -103,12 +83,19 @@ function setCurrentAction(actionname, actionurl)
 	$.CswCookie('set', CswCookieName.CurrentActionUrl, actionurl);
 }
 
+function setCurrentReport(reportid)
+{
+	clearCurrent();
+	$.CswCookie('set', CswCookieName.CurrentReportId, reportid);
+}
+
 function clearCurrent()
 {
 	$.CswCookie('clear', CswCookieName.CurrentViewId);
 	$.CswCookie('clear', CswCookieName.CurrentViewMode);
 	$.CswCookie('clear', CswCookieName.CurrentActionName);
 	$.CswCookie('clear', CswCookieName.CurrentActionUrl);
+	$.CswCookie('clear', CswCookieName.CurrentReportId);
 }
 
 function getCurrent()
@@ -117,14 +104,13 @@ function getCurrent()
 		'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
 		'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
 		'actionname': $.CswCookie('get', CswCookieName.CurrentActionName),
-		'actionurl': $.CswCookie('get', CswCookieName.CurrentActionUrl)
+		'actionurl': $.CswCookie('get', CswCookieName.CurrentActionUrl),
+		'reportid': $.CswCookie('get', CswCookieName.CurrentReportId)
 	};
 }
+//#region Current State
 
-// ------------------------------------------------------------------------------------
-// Ajax
-// ------------------------------------------------------------------------------------
-
+//#region Ajax
 var _ajaxCount = 0;
 function ajaxInProgress()
 {
@@ -512,11 +498,9 @@ function jsonToString(j)
 //    }
 //	return ret;
 //}
+//#endregion Ajax
 
-// ------------------------------------------------------------------------------------
-// Check Changes
-// ------------------------------------------------------------------------------------
-
+//#region Check Changes
 var changed = new Number(0);
 var checkChangesEnabled = true;
 
@@ -638,12 +622,9 @@ if (CswAppMode.mode === 'full')
 		window.onload = function() { initCheckChanges(); };
 	}
 }
+//#endregion Check Changes
 
-
-// ------------------------------------------------------------------------------------
-// User permissions
-// ------------------------------------------------------------------------------------
-
+//#region User permissions
 function IsAdministrator(options)
 {
 	var o = {
@@ -666,10 +647,9 @@ function IsAdministrator(options)
 			}
 	});
 } // IsAdministrator()
+//#endregion User permissions
 
-// ------------------------------------------------------------------------------------
-// Node interactions
-// ------------------------------------------------------------------------------------
+//#region Node interactions
 function copyNode(options)
 {
 	var o = {
@@ -730,12 +710,9 @@ function deleteNodes(options)
 		error: o.onError
 	});
 }
+//#region Node interactions
 
-
-// ------------------------------------------------------------------------------------
-// jsTree
-// ------------------------------------------------------------------------------------
-
+//#region jsTree
 function jsTreeGetSelected($treediv)
 { /// <param name="$" type="jQuery" />
 	var IDPrefix = $treediv.CswAttrDom('id');
@@ -748,12 +725,9 @@ function jsTreeGetSelected($treediv)
 	};
 	return ret;
 }
+//#endregion jsTree
 
-
-// ------------------------------------------------------------------------------------
-// Menu
-// ------------------------------------------------------------------------------------
-
+//#region Menu
 function GoHome()
 { /// <param name="$" type="jQuery" />
 	clearCurrent();
@@ -763,46 +737,53 @@ function GoHome()
 function HandleMenuItem(options)
 { /// <param name="$" type="jQuery" />
 	var o = {
-		'$ul': '',
-		'$itemxml': '',
-		'onLogout': function () { },
-		'onAlterNode': function (nodeid, nodekey) { },
-		'onSearch': { onViewSearch: function () { }, onGenericSearch: function () { } },
-		'onMultiEdit': function () { },
-		'onEditView': function (viewid) { },
-		'onSaveView': function (newviewid) { },
-		'Multi': false,
-		'NodeCheckTreeId': ''
+		$ul: '',
+	    itemKey: '',
+		itemJson: '',
+		onLogout: null, // function () { },
+		onAlterNode: null, // function (nodeid, nodekey) { },
+		onSearch: {
+		     onViewSearch: null, // function () { }, 
+		     onGenericSearch: null // function () { }
+	    },
+		onMultiEdit: null, //function () { },
+		onEditView: null, //function (viewid) { },
+		onSaveView: null, //function (newviewid) { },
+		Multi: false,
+		NodeCheckTreeId: ''
 	};
 	if (options)
 	{
 		$.extend(o, options);
 	}
 	var $li;
-	if (o.$itemxml.CswAttrXml('href') !== undefined && o.$itemxml.CswAttrXml('href') !== '')
+    var json = o.itemJson;
+    var href = tryParseString(json.href);
+    var text = tryParseString(o.itemKey);
+    var popup = tryParseString(json.popup);
+    var action = tryParseString(json.action);
+    
+	if (!isNullOrEmpty(href))
 	{
-		$li = $('<li><a href="' + o.$itemxml.CswAttrXml('href') + '">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
-						.appendTo(o.$ul)
+	    $li = $('<li><a href="' + href + '">' + text + '</a></li>')
+    	    .appendTo(o.$ul);
 	}
-	else if (o.$itemxml.CswAttrXml('popup') !== undefined && o.$itemxml.CswAttrXml('popup') !== '')
+	else if (!isNullOrEmpty(popup))
 	{
-		$li = $('<li class="headermenu_dialog"><a href="' + o.$itemxml.CswAttrXml('popup') + '" target="_blank">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
-						.appendTo(o.$ul)
-//						.click(function ()
-//						{
-//						    $.CswDialog('OpenDialog', o.$itemxml.CswAttrXml('text'), o.$itemxml.CswAttrXml('popup'));
-//						    return false;
-//						})
-						;
+		$li = $('<li class="headermenu_dialog"><a href="' + popup + '" target="_blank">' + text + '</a></li>')
+						.appendTo(o.$ul);
 	}
-	else if (o.$itemxml.CswAttrXml('action') !== undefined && o.$itemxml.CswAttrXml('action') !== '')
+	else if (!isNullOrEmpty(action))
 	{
-		$li = $('<li><a href="#">' + o.$itemxml.CswAttrXml('text') + '</a></li>')
+		$li = $('<li><a href="#">' + text + '</a></li>')
 						.appendTo(o.$ul);
 		var $a = $li.children('a');
-		switch (o.$itemxml.CswAttrXml('action'))
+	    var nodeid = tryParseString(json.nodeid);
+	    var nodename = tryParseString(json.nodename);
+	    var viewid = tryParseString(json.viewid);
+	    
+		switch (action)
 		{
-
 			case 'About':
 				$a.click(function () { $.CswDialog('AboutDialog'); return false; });
 				break;
@@ -811,9 +792,9 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('AddNodeDialog', {
-						'nodetypeid': o.$itemxml.CswAttrXml('nodetypeid'),
-						'relatednodeid': o.$itemxml.CswAttrXml('relatednodeid'), //for Grid Props
-						'onAddNode': o.onAlterNode
+						nodetypeid: tryParseString(json.nodetypeid),
+						relatednodeid: tryParseString(json.relatednodeid), //for Grid Props
+						onAddNode: o.onAlterNode
 					});
 					return false;
 				});
@@ -823,27 +804,27 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('DeleteNodeDialog', {
-						'nodename': o.$itemxml.CswAttrXml('nodename'),
-						'nodeid': o.$itemxml.CswAttrXml('nodeid'),
-						'onDeleteNode': o.onAlterNode,
-						'NodeCheckTreeId': o.NodeCheckTreeId,
-						'Multi': o.Multi
+						nodename: nodename,
+						nodeid: nodeid,
+						onDeleteNode: o.onAlterNode,
+						NodeCheckTreeId: o.NodeCheckTreeId,
+						Multi: o.Multi
 					});
 					return false;
 				});
 				break;
 
 			case 'editview':
-				$a.click(function () { o.onEditView(o.$itemxml.CswAttrXml('viewid')); return false; });
+				$a.click(function () { o.onEditView(viewid); return false; });
 				break;
 
 			case 'CopyNode':
 				$a.click(function ()
 				{
 					$.CswDialog('CopyNodeDialog', {
-						'nodename': o.$itemxml.CswAttrXml('nodename'),
-						'nodeid': o.$itemxml.CswAttrXml('nodeid'),
-						'onCopyNode': o.onAlterNode
+						nodename: nodename,
+						nodeid: nodeid,
+						onCopyNode: o.onAlterNode
 					});
 					return false;
 				});
@@ -853,8 +834,8 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('PrintLabelDialog', {
-						'nodeid': o.$itemxml.CswAttrXml('nodeid'),
-						'propid': o.$itemxml.CswAttrXml('propid')
+						'nodeid': nodeid,
+						'propid': tryParseString(json.propid)
 					});
 					return false;
 				});
@@ -872,11 +853,11 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('EditNodeDialog', {
-						'nodeid': o.$itemxml.CswAttrXml('userid'),
-						'cswnbtnodekey': '',
-						'filterToPropId': '',
-						'title': 'User Profile',
-						'onEditNode': function (nodeid, nodekey) { }
+						nodeid: nodeid,
+						cswnbtnodekey: '',
+						filterToPropId: '',
+						title: 'User Profile',
+						onEditNode: null // function (nodeid, nodekey) { }
 					});
 					return false;
 				});
@@ -904,9 +885,9 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('AddViewDialog', {
-						'viewid': o.$itemxml.CswAttrXml('viewid'),
-						'viewmode': o.$itemxml.CswAttrXml('viewmode'),
-						'onAddView': o.onSaveView
+						viewid: viewid,
+						viewmode: tryParseString(json.viewmode),
+						onAddView: o.onSaveView
 					});
 					return false;
 				});
@@ -916,14 +897,11 @@ function HandleMenuItem(options)
 	}
 	else
 	{
-		$li = $('<li>' + o.$itemxml.CswAttrXml('text') + '</li>')
-						.appendTo(o.$ul)
+	    $li = $('<li>' + text + '</li>')
+    	    .appendTo(o.$ul);
 	}
 	return $li;
 }
-
-
-
 
 // Used by CswDialog and CswViewEditor
 function makeViewVisibilitySelect($table, rownum, label)
@@ -950,10 +928,10 @@ function makeViewVisibilitySelect($table, rownum, label)
 				'ID': id + '_visrolesel',
 				'objectclass': 'RoleClass'
 			}).hide();
-			$visuserselect = $parent.CswNodeSelect('init', {
-				'ID': id + '_visusersel',
-				'objectclass': 'UserClass'
-			})
+		    $visuserselect = $parent.CswNodeSelect('init', {
+		        'ID': id + '_visusersel',
+		        'objectclass': 'UserClass'
+		    });
 
 			$visibilityselect.change(function ()
 			{
@@ -984,25 +962,19 @@ function makeViewVisibilitySelect($table, rownum, label)
 	};
 
 } // makeViewVisibilitySelect()
+//#endregion Menu
 
 
-
-// ------------------------------------------------------------------------------------
-// Popups
-// ------------------------------------------------------------------------------------
-
+//#region Popups
 function openPopup(url, height, width)
 {
 	var popup = window.open(url, null, 'height=' + height + ', width=' + width + ', status=no, resizable=yes, scrollbars=yes, toolbar=yes, location=no, menubar=yes');
 	popup.focus();
 	return popup;
 }
+//#endregion Popups
 
-
-// ------------------------------------------------------------------------------------
-// Validation
-// ------------------------------------------------------------------------------------
-
+//#region Validation
 function validateTime(value)
 {
 	var isValid = true;
@@ -1085,11 +1057,9 @@ function validateInteger(value)
 	var regex = /^\-?\d*$/g;
 	return (regex.test(value));
 } // validateInteger()
+//#endregion Validation
 
-// ------------------------------------------------------------------------------------
-// strings
-// ------------------------------------------------------------------------------------
-
+//#region Strings
 function startsWith(source, search)
 {
 	return (source.substr(0, search.length) === search);
@@ -1098,11 +1068,11 @@ function startsWith(source, search)
 function getTimeString(date)
 {
 	var ret = '';
-	var hours = date.getHours()
-	var minutes = date.getMinutes()
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
 	if (minutes < 10)
 	{
-		minutes = "0" + minutes
+	    minutes = "0" + minutes;
 	}
 	ret = (hours % 12) + ":" + minutes + " ";
 	if (hours > 11)
@@ -1114,299 +1084,9 @@ function getTimeString(date)
 	}
 	return ret;
 }
+//#endregion Strings
 
-function makeId(options)
-{
-	/// <summary>
-	///   Generates an ID for DOM assignment
-	/// </summary>
-	/// <param name="options" type="Object">
-	///     A JSON Object
-	///     &#10;1 - options.ID: Base ID string
-	///     &#10;2 - options.prefix: String prefix to prepend
-	///     &#10;3 - options.suffix: String suffix to append
-	///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
-	/// </param>
-	/// <returns type="String>A concatenated string of provided values</returns>
-	var o = {
-		'ID': '',
-		'prefix': '',
-		'suffix': '',
-		'Delimiter': '_'
-	};
-	if (options) $.extend(o, options);
-
-	var elementId = o.ID;
-
-	if (!isNullOrEmpty(o.prefix) && !isNullOrEmpty(elementId))
-	{
-		elementId = o.prefix + o.Delimiter + elementId;
-	}
-	if (!isNullOrEmpty(o.suffix) && !isNullOrEmpty(elementId))
-	{
-		elementId += o.Delimiter + o.suffix;
-	}
-	return elementId;
-}
-
-function makeSafeId(options)
-{
-	/// <summary>
-	///   Generates a "safe" ID for DOM assignment
-	/// </summary>
-	/// <param name="options" type="Object">
-	///     A JSON Object
-	///     &#10;1 - options.ID: Base ID string
-	///     &#10;2 - options.prefix: String prefix to prepend
-	///     &#10;3 - options.suffix: String suffix to append
-	///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
-	/// </param>
-	/// <returns type="String>A concatenated string of provided values</returns>
-	var o = {
-		'ID': '',
-		'prefix': '',
-		'suffix': '',
-		'Delimiter': '_'
-	};
-	if (options) $.extend(o, options);
-
-	var elementId = o.ID;
-	var toReplace = [/'/gi, / /gi, /\//g];
-
-	if (!isNullOrEmpty(o.prefix) && !isNullOrEmpty(elementId))
-	{
-		elementId = o.prefix + o.Delimiter + elementId;
-	}
-	if (!isNullOrEmpty(o.suffix) && !isNullOrEmpty(elementId))
-	{
-		elementId += o.Delimiter + o.suffix;
-	}
-	for (var i = 0; i < toReplace.length; i++)
-	{
-		if(toReplace.hasOwnProperty(i)) {
-		    if (!isNullOrEmpty(elementId))
-		    {
-		        elementId = elementId.replace(toReplace[i], '');
-		    }
-		}
-	}
-
-	return elementId;
-}
-
-function isNullOrEmpty(obj)
-{
-	/// <summary> Returns true if the input is null, undefined, or ''</summary>
-	/// <param name="obj" type="Object"> Object to test</param>
-	/// <returns type="Boolean" />
-    var ret = false;
-	if (!isFunction(obj))
-	{
-		ret = $.isPlainObject(obj) && $.isEmptyObject(obj);
-		if (!ret && isGeneric(obj))
-		{
-			ret = (trim(obj) === '');
-		}
-	} 
-	return ret;
-}
-
-function isGeneric(obj)
-{
-	/// <summary> Returns true if the object is not a function, array, jQuery or JSON object</summary>
-	/// <param name="obj" type="Object"> Object to test</param>
-	/// <returns type="Boolean" />
-	var ret = (!isFunction(obj) && !isArray(obj) && !isJQuery(obj) && !isJson(obj));
-	return ret;
-}
-
-function isFunction(obj)
-{
-	/// <summary> Returns true if the object is a function</summary>
-	/// <param name="obj" type="Object"> Object to test</param>
-	/// <returns type="Boolean" />
-	var ret = ($.isFunction(obj));
-	return ret;
-}
-
-function isArray(obj)
-{
-	/// <summary> Returns true if the object is an array</summary>
-	/// <param name="obj" type="Object"> Object to test</param>
-	/// <returns type="Boolean" />
-	var ret = ($.isArray(obj));
-	return ret;
-}
-
-function isJson(obj)
-{
-	/// <summary> 
-	///    Returns true if the object is a JSON object.
-	///     &#10; isJson(CswInput_Types.text) === true 
-	///     &#10; isJson(CswInput_Types.text.name) === false
-	/// </summary>
-	/// <param name="obj" type="Object"> Object to test</param>
-	/// <returns type="Boolean" />
-	var ret = ($.isPlainObject(obj));
-	return ret;
-}
-
-function isJQuery(obj)
-{
-	var ret = (obj instanceof jQuery);
-	return ret;
-}
-
-function isNumeric(obj)
-{
-	/// <summary>
-	///   Returns true if the input is a number
-	/// </summary>
-	/// <param name="str" type="Object">
-	///     String or object to test
-	/// </param>
-	var ret = false;
-	if (!isNullOrEmpty(obj))
-	{
-		var num = parseInt(obj);
-		if (num !== NaN)
-		{
-			ret = true;
-		}
-	}
-	return ret;
-}
-
-function isTrue(str)
-{
-	/// <summary>
-	///   Returns true if the input is true, 'true', '1' or 1.
-	///   &#10;1 Returns false if the input is false, 'false', '0' or 0.
-	///   &#10;2 Otherwise returns false and (if debug) writes an error to the log.
-	/// </summary>
-	/// <param name="str" type="Object">
-	///     String or object to test
-	/// </param>
-	/// <returns type="Bool" />
-
-	var ret;
-	if (str === 'true' || str === true || str === '1' || str === 1)
-	{
-		ret = true;
-	}
-	else if (str === 'false' || str === false || str === '0' || str === 0)
-	{
-		ret = false;
-	}
-	else
-	{
-		ret = false;
-		//if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.',false);
-	}
-	return ret;
-}
-
-function tryParseString(inputStr, defaultStr)
-{
-	/// <summary>
-	///   Returns the inputStr if !isNullOrEmpty, else returns the defaultStr
-	/// </summary>
-	/// <param name="inputStr" type="String"> String to parse </param>
-	/// <param name="defaultStr" type="String"> Default value if null or empty </param>
-	/// <returns type="String" />
-    var ret = '';
-    if (defaultStr) {
-        ret = defaultStr;
-    }
-	if (!isNullOrEmpty(inputStr))
-	{
-		ret = inputStr;
-	}
-	return ret;
-}
-
-var Int32MinVal = new Number(-2147483648);
-function tryParseNumber(inputNum, defaultNum)
-{
-	/// <summary>
-	///   Returns the inputNum if !NaN, else returns the defaultNum
-	/// </summary>
-	/// <param name="inputNum" type="Number"> String to parse to number </param>
-	/// <param name="defaultNum" type="Number"> Default value if not a number </param>
-	/// <returns type="Number" />
-	var ret = new Number(defaultNum);
-	var tryRet = new Number(inputNum);
-	if (tryRet.toString() !== "NaN" && tryRet !== Int32MinVal)
-	{
-		ret = tryRet;
-	}
-	return ret;
-}
-
-function tryParseElement(elementId, $context)
-{
-	/// <summary>
-	///   Attempts to fetch an element from the DOM first through jQuery, then through JavaScript
-	/// </summary>
-	/// <param name="elementId" type="String"> ElementId to find </param>
-	/// <param name="$context" type="jQuery"> Optional context to limit the search </param>
-	/// <returns type="jQuery">jQuery object, empty if no match found.</returns>
-	var $ret = $('');
-	if (!isNullOrEmpty(elementId))
-	{
-		if (arguments.length == 2 && !isNullOrEmpty($context))
-		{
-			$ret = $('#' + elementId, $context);
-		}
-		else
-		{
-			$ret = $('#' + elementId);
-		}
-
-		if ($ret.length === 0)
-		{
-			$ret = $(document.getElementById(elementId));
-		}
-		if ($ret.length === 0)
-		{
-			$ret = $(document.getElementsByName(elementId));
-		}
-	}
-	return $ret;
-}
-
-function trim(str)
-{
-	/// <summary>Returns a string without left and right whitespace</summary>
-	/// <param name="str" type="String"> String to parse </param>
-	/// <returns type="String">Parsed string</returns>
-	return $.trim(str);
-}
-
-function makeDelegate(method, options) {
-    /// <summary>
-    /// Returns a function with the argument parameter of the value of the current instance of the object.
-    /// <para>For example, in a "for(i=0;i<10;i++)" loop, makeDelegate will capture the value of "i" for a given function.</para>
-    /// </summary>
-	/// <param name="method" type="Function"> A function to delegate. </param>
-    /// <param name="options" type="Object"> A single parameter to hand the delegate function.</param>
-	/// <returns type="Function">A delegate function: function(options)</returns>
-    return function() { method(options); };
-}
-
-function makeEventDelegate(method, options) {
-    /// <summary>
-    /// Returns a function with the event object as the first parameter, and the current value of options as the second parameter.
-    /// </summary>
-	/// <param name="method" type="Function"> A function to delegate. </param>
-    /// <param name="options" type="Object"> A single parameter to hand the delegate function.</param>
-	/// <returns type="Function">A delegate function: function(eventObj, options)</returns>
-    return function(eventObj) { method(eventObj,options); };
-}
-
-// ------------------------------------------------------------------------------------
-// for debug
-// ------------------------------------------------------------------------------------
+//#region Debug
 function iterate(obj)
 {
 	var str;
@@ -1421,31 +1101,6 @@ function iterate(obj)
 		console.log("iterate() error: No popup!");
 }
 
-// because IE 8 doesn't support console.log unless the console is open (*duh*)
-function log(s, includeCallStack)
-{
-	/// <summary>Outputs a message to the console log(Webkit,FF) or an alert(IE)</summary>
-	/// <param name="s" type="String"> String to output </param>
-	/// <param name="includeCallStack" type="Boolean"> If true, include the callStack </param>
-	var extendedLog = '';
-	if (isTrue(includeCallStack))
-	{
-		extendedLog = console.trace();
-	}
-
-	try
-	{
-		if (!isNullOrEmpty(extendedLog))
-			console.log(s, extendedLog);
-		else
-			console.log(s);
-	} catch (e)
-	{
-		alert(s);
-		if (!isNullOrEmpty(extendedLog)) alert(extendedLog);
-	}
-}
-
 function errorHandler(error, includeCallStack, includeLocalStorage, doAlert)
 {
 	if (hasWebStorage() && includeLocalStorage) log(localStorage);
@@ -1456,6 +1111,7 @@ function errorHandler(error, includeCallStack, includeLocalStorage, doAlert)
 		log('Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack);
 	}
 }
+//#endregion Debug
 
 //#region Persistent Logging
 
