@@ -54,7 +54,8 @@ namespace ChemSW.Nbt.Security
         public string LastName { get { return string.Empty; } }
         public string Email { get { return string.Empty; } }
 		public string DateFormat { get { return string.Empty; } }
-        public Int32 PageSize { get { return 50; } }
+		public string TimeFormat { get { return string.Empty; } }
+		public Int32 PageSize { get { return 50; } }
 
         public void postChanges( bool ForceUpdate )
         {

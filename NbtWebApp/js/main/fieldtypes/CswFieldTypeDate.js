@@ -8,9 +8,11 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var Value = o.$propxml.children('value').text().trim();
-            if(Value === '1/1/0001')
-                Value = '';
+            var Value = o.$propxml.children('value').CswAttrXml('date');
+            var Format = ServerDateFormatToJQuery(o.$propxml.children('value').CswAttrXml('dateformat'));
+
+//            if (Value === '1/1/0001')
+//                Value = '';
 
             if(o.ReadOnly)
             {
@@ -22,9 +24,9 @@
                                                      type: CswInput_Types.text,
                                                      value: Value,
                                                      onChange: o.onchange,
-                                                     cssclass: 'textinput date'
+                                                     cssclass: 'textinput' // date' date validation broken by alternative formats
                                               }); 
-                $TextBox.datepicker();
+                $TextBox.datepicker({ 'dateFormat': Format });
                 if(o.Required)
                 {
                     $TextBox.addClass("required");
@@ -34,7 +36,8 @@
         },
         save: function(o) { //$propdiv, $xml
                 var $TextBox = o.$propdiv.find('input');
-                o.$propxml.children('value').text($TextBox.val());
+                //o.$propxml.children('value').text($TextBox.val());
+				o.$propxml.children('value').CswAttrXml('date', $TextBox.val());
             }
     };
     

@@ -1059,6 +1059,19 @@ function validateInteger(value)
 } // validateInteger()
 //#endregion Validation
 
+//#region Dates
+
+function ServerDateFormatToJQuery(ServerDateFormat)
+{
+	var ret = ServerDateFormat;
+	ret = ret.replace(/M/g, 'm');
+	ret = ret.replace(/mmm/g, 'M');
+	ret = ret.replace(/yyyy/g, 'yy');
+	return ret;
+}
+
+//#endregion Dates
+
 //#region Strings
 function startsWith(source, search)
 {
