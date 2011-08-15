@@ -233,11 +233,10 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I07.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I05.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I07.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I06.cs" />
-     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I04.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I04.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I03.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I02.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswProdUpdtRsrc.cs" />
@@ -258,6 +257,9 @@
     <Compile Include="csw\Schema\CswTableDdlOp.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I01.cs" />
     <Compile Include="csw\Schema\ICswUpdateSchemaTo.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I08.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I09.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I10.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03.cs" />
