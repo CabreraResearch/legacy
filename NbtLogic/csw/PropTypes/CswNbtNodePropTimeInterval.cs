@@ -98,7 +98,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            //Not yet implemented
+            JObject IntervalObj = new JObject();
+            ParentObject.Add( new JProperty( _IntervalSubField.ToXmlNodeName(), IntervalObj ) );
+            IntervalObj.Add( "text", RateInterval.ToString() );
+            RateInterval.ToJson( IntervalObj );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -141,7 +144,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            //Not yet implemented
+            CswRateInterval NewRateInterval = new CswRateInterval();
+            NewRateInterval.ReadJson( JObject );
+            // Setting RateInterval triggers the change to the property value -- don't skip this step
+            RateInterval = NewRateInterval;
         }
     }//CswNbtNodeProp
 

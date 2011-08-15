@@ -1,6 +1,12 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeNumber';
+    var pluginName = 'CswFieldTypeNumber';
 
     var methods = {
         init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
@@ -8,14 +14,14 @@
             var $Div = $(this);
 
 			var $NumberTextBox = $Div.CswNumberTextBox({
-				'ID': o.ID,
-				'Value': o.propData.children('value').text().trim(),
-				'MinValue': o.propData.children('value').CswAttrXml('minvalue'),
-				'MaxValue': o.propData.children('value').CswAttrXml('maxvalue'),
-				'Precision': o.propData.children('value').CswAttrXml('precision'),
-				'ReadOnly': o.ReadOnly,
-				'Required': o.Required,
-				'onchange': o.onchange
+				ID: o.ID,
+				Value: tryParseString(o.propData.value).trim(),
+				MinValue: tryParseString(o.propData.minvalue),
+				MaxValue: tryParseString(o.propData.maxvalue),
+				Precision: tryParseString(o.propData.precision),
+				ReadOnly: isTrue(o.ReadOnly),
+				Required: isTrue(o.Required),
+				onchange: o.onchange
 			});
 
 			if(!isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0)
@@ -24,7 +30,7 @@
 			}
         },
         save: function(o) { //$propdiv, $xml
-				o.propData.children('value').text(o.$propdiv.CswNumberTextBox('value', o.ID));
+				o.propData.value = o.$propdiv.CswNumberTextBox('value', o.ID);
             }
     };
     
@@ -36,7 +42,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

@@ -199,11 +199,9 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject.Add( new JProperty( "maxvalue", MaxValue.ToString() ) );
             ParentObject.Add( new JProperty( "precision", Precision.ToString() ) );
 
-            JProperty UnitsNode = new JProperty( _UnitsSubField.ToXmlNodeName( true ), Units );
-            ParentObject.Add( UnitsNode );
-
             JArray UnitsNodeObj = new JArray();
-            UnitsNode.Value = UnitsNodeObj;
+            JProperty UnitsNode = new JProperty( _UnitsSubField.ToXmlNodeName( true ), UnitsNodeObj );
+            ParentObject.Add( UnitsNode );
 
             foreach( CswNbtNode UnitNode in _UnitNodes )
             {

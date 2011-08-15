@@ -1,13 +1,14 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../_Global.js" />
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         
     $.fn.CswFieldTypeRelationship = function (method) {
 
-        var PluginName = 'CswFieldTypeRelationship';
+        var pluginName = 'CswFieldTypeRelationship';
 
         var methods = {
             init: function(o) { //nodepk = o.nodeid, o.propData = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
@@ -15,23 +16,18 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var SelectedNodeId = o.$propxml.children('nodeid').text().trim();
-                if( o.relatednodeid !== '' && o.relatednodeid !== undefined && 
-                    ( SelectedNodeId === '' || SelectedNodeId === undefined ) )
-                {
-                    SelectedNodeId = o.relatednodeid;
+                var selectedNodeId = tryParseString(o.propData.nodeid).trim();
+                if (!isNullOrEmpty(o.relatednodeid) && isNullOrEmpty(selectedNodeId)) {
+                    selectedNodeId = o.relatednodeid;
                 }
-                var SelectedName = o.$propxml.children('name').text().trim();
-                var NodeTypeId = o.$propxml.children('nodetypeid').text().trim();
-                var AllowAdd = isTrue( o.$propxml.children('allowadd').text().trim() );
-                var $Options = o.$propxml.children('options');
+                var selectedName = tryParseString(o.propData.name).trim();
+                var nodeTypeId = tryParseString(o.propData.nodetypeid).trim();
+                var allowAdd = isTrue(o.propData.allowadd);
+                var options = o.propData.options;
 
-                if(o.ReadOnly)
-                {
-                    $Div.append(SelectedName);
-                }
-                else 
-                {
+                if(o.ReadOnly) {
+                    $Div.append(selectedName);
+                } else {
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
                     var $selectcell = $table.CswTable('cell', 1, 1);
@@ -39,22 +35,23 @@
                                         .appendTo($selectcell)
                                         .change(o.onchange);
 
-                    $Options.children().each(function() {
-                        var $this = $(this);
-                        $SelectBox.append('<option value="' + $this.CswAttrXml('id') + '">' + $this.CswAttrXml('value') + '</option>');
-                    });
+                    for (var optId in options) {
+                        if (options.hasOwnProperty(optId)) {
+                            var optVal = options[optId];
+                            $SelectBox.append('<option value="' + optId + '">' + optVal + '</option>');
+                        }
+                    }
 
-                    $SelectBox.val( SelectedNodeId );
+                    $SelectBox.val( selectedNodeId );
                     
-                    if( !isNullOrEmpty( NodeTypeId ) && AllowAdd )
-					{
+                    if (!isNullOrEmpty(nodeTypeId) && allowAdd) {
 						var $addcell = $table.CswTable('cell', 1, 2);
 						var $AddButton = $('<div />').appendTo($addcell);
 						$AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
 													AlternateText: "Add New",
 													onClick: function($ImageDiv) { 
 															$.CswDialog('AddNodeDialog', {
-																							'nodetypeid': NodeTypeId, 
+																							'nodetypeid': nodeTypeId, 
 																							'onAddNode': function(nodeid, cswnbtnodekey) { o.onReload(); }
 																						});
 															return CswImageButton_ButtonType.None;
@@ -62,8 +59,7 @@
 													});
 					}
 
-                    if(o.Required)
-                    {
+                    if (o.Required) {
                         $SelectBox.addClass("required");
                     }
                 }
@@ -71,7 +67,7 @@
             },
             save: function(o) {
                     var $SelectBox = o.$propdiv.find('select');
-                    o.$propxml.children('nodeid').text($SelectBox.val());
+                    o.propData.nodeid = $SelectBox.val();
                 }
         };
     
@@ -81,7 +77,7 @@
         } else if ( typeof method === 'object' || ! method ) {
             return methods.init.apply( this, arguments );
         } else {
-            $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+            $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

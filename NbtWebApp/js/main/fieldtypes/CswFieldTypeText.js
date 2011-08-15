@@ -1,11 +1,12 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../_Global.js" />
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         
-    var PluginName = 'CswFieldTypeText';
+    var pluginName = 'CswFieldTypeText';
 
     var methods = {
         init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
@@ -13,20 +14,20 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var Value = o.$propxml.children('text').text().trim();
-            var Length = tryParseNumber( o.$propxml.children('text').CswAttrXml('length'), 14 );
+            var value = tryParseString(o.$propxml.text).trim();
+            var length = tryParseNumber( o.$propxml.length, 14 );
 
             if(o.ReadOnly)
             {
-                $Div.append(Value);
+                $Div.append(value);
             }
             else 
             {
                 var $TextBox = $Div.CswInput('init', {ID: o.ID,
                                                         type: CswInput_Types.text,
-                                                        value: Value,
+                                                        value: value,
                                                         cssclass: 'textinput',
-                                                        width: Length * 7,
+                                                        width: length * 7,
                                                         onChange: o.onchange
                                                       });
 
@@ -40,7 +41,7 @@
         },
         save: function(o) {
                 var $TextBox = o.$propdiv.find('input');
-                o.$propxml.children('text').text($TextBox.val());
+                o.$propxml.text = $TextBox.val();
             }
     };
     
@@ -52,7 +53,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

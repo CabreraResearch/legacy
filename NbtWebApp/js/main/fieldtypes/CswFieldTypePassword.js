@@ -1,11 +1,12 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../_Global.js" />
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         
-    var PluginName = 'CswFieldTypePassword';
+    var pluginName = 'CswFieldTypePassword';
 
     var methods = {
         init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
@@ -13,8 +14,8 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-			var IsExpired = o.$propxml.children('isexpired').text().trim();
-			var IsAdmin = o.$propxml.children('isadmin').text().trim();
+			var isExpired = isTrue(o.propData.isexpired);
+			var isAdmin = isTrue(o.propData.isadmin);
 
             if(o.ReadOnly)
             {
@@ -45,22 +46,21 @@
                                                          cssclass: 'textinput password2',
                                                          onChange: o.onchange
                                                  }); 
-                if(isTrue(IsAdmin))
+                if(isTrue(isAdmin))
 				{
 					var $IsExpiredCheck = $cell31.CswInput({ 
 							'id': o.ID + '_exp',
 							'name': o.ID + '_exp',
 							'type': CswInput_Types.checkbox
 						});
-					if(isTrue(IsExpired))
+					if(isTrue(isExpired))
 					{
 						$IsExpiredCheck.CswAttrDom('checked', 'true');
 					}
 					$cell32.append('Expired');
 				}
                 
-                if(o.Required && isNullOrEmpty(o.$propxml.children('password').text()))
-                {
+                if (o.Required && isNullOrEmpty(o.propData.password)) {
                     $TextBox1.addClass("required");
                 }
 
@@ -75,14 +75,14 @@
                 var $IsExpiredCheck = o.$propdiv.find('input#' + o.ID + '_exp');
 				if($IsExpiredCheck.length > 0)
 				{
-					o.$propxml.children('isexpired').text($IsExpiredCheck.is(':checked'));
+					o.propData.isexpired = $IsExpiredCheck.is(':checked');
                 }
 				
                 var $TextBox = o.$propdiv.find('input#' + o.ID + '_pwd1');
 				var newpw = $TextBox.val();
 				if(newpw !== '')
 				{
-					o.$propxml.children('newpassword').text(newpw);
+					o.propData.newpassword = newpw;
 				}
 			}
     };
@@ -95,7 +95,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

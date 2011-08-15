@@ -17,32 +17,36 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var $OptionsXml = o.propData.children('options');
-            var SelectedNodeTypeIds = o.propData.children('NodeType').text().trim();
-            var SelectMode = o.propData.children('NodeType').CswAttrXml('SelectMode');   // Single, Multiple, Blank
+            var optData = o.propData.options;
+            var selectedNodeTypeIds = tryParseString(o.propData.nodetype).trim();
+            var selectMode = o.propData.selectmode;   // Single, Multiple, Blank
 
             var $CBADiv = $('<div />')
                             .appendTo($Div);
 
             // get data
-            var data = new Array();
+            var data = new [];
             var d = 0;
-            $OptionsXml.find('item').each(function () {
-                var $this = $(this);
-                var $elm = { 
-                             'label': $this.children('column[field="' + nameCol + '"]').CswAttrXml('value'),
-                             'key': $this.children('column[field="' + keyCol + '"]').CswAttrXml('value'),
-                             'values': [ ($this.children('column[field="' + valueCol + '"]').CswAttrXml('value') === "True") ]
-                           };
-                data[d] = $elm;
-                d++;
-            });
+            for (var i=0; i < optData.length; i++) {
+                var thisSet = optData[i];
+                for (var item in thisSet) {
+                    if(thisSet.hasOwnProperty(item)) {
+                        var $elm = {
+                            'label': thisSet[item],
+                            'key': item,
+                            'values': [ isTrue(thisSet[item]) ]
+                        };
+                        data[d] = $elm;
+                        d++;
+                    }
+                }
+            }
 
             $CBADiv.CswCheckBoxArray('init', {
                 'ID': o.ID + '_cba',
                 'cols': [ valueCol ],
                 'data': data,
-                'UseRadios': (SelectMode === 'Single'),
+                'UseRadios': (selectMode === 'Single'),
                 'Required': o.Required,
                 'ReadOnly': o.ReadOnly,
                 'onchange': o.onchange
@@ -51,18 +55,18 @@
 
         },
         save: function (o) { //$propdiv, $xml
-            var $OptionsXml = o.propData.children('options');
+            var optionData = o.propData.options;
             var $CBADiv = o.$propdiv.children('div').first();
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             for (var r = 0; r < formdata.length; r++) {
                 var checkitem = formdata[r][0];
-                var $xmlitem = $OptionsXml.find('item:has(column[field="' + keyCol + '"][value="' + checkitem.key + '"])');
-                var $xmlvaluecolumn = $xmlitem.find('column[field="' + valueCol + '"]');
+                var optItem = findObject(optionData, keyCol, checkitem.key);
+                var optVal = optItem[valueCol];
 
-                if (checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "False")
-                    $xmlvaluecolumn.CswAttrXml('value', 'True');
-                else if (!checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "True")
-                    $xmlvaluecolumn.CswAttrXml('value', 'False');
+                if (checkitem.checked && optVal === "False")
+                    optVal = 'True';
+                else if (!checkitem.checked && optVal === "True")
+                    optVal = 'False');
             } // for( var r = 0; r < formdata.length; r++)
         } // save()
     };
