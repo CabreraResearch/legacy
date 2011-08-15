@@ -1417,10 +1417,10 @@ namespace ChemSW.Nbt.WebServices
         } // getAbout()
 
         [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Xml )]
-        public XElement getNodeTypes()
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getNodeTypes()
         {
-            XElement ReturnVal = new XElement( "nodetypes" );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1438,12 +1438,12 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                ReturnVal = _xError( ex );
+                ReturnVal = jError( ex );
             }
 
-            _xAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal;
+            return ReturnVal.ToString();
 
         } // getNodeTypes()
 
