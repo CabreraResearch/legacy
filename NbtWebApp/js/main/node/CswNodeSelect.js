@@ -29,7 +29,7 @@
 
 				var $select = $('<select id="'+ o.ID +'_nodeselect" />')
 								.appendTo($parent);
-				$select.change(function() { o.onSelect( $select.val() ); });
+				$select.change(function() { if(isFunction(o.onSelect)) o.onSelect( $select.val() ); });
 
 				var jsonData = {
 					NodeTypeId: o.nodetypeid,
