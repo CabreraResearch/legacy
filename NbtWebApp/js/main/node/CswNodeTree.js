@@ -98,14 +98,13 @@
 							}
 						}
 					    
-					    var initiallyOpen = selectid;
 					    var hasNodes = false;
 					    function treeJsonToHtml(json,level)
 						{
 					        hasNodes = true;
 					        var id = json.attr.id;
-					        if (selectid === id || (level === selectLevel && isNullOrEmpty(initiallyOpen))) {
-					            initiallyOpen = id;
+					        if (selectid === id || (level === selectLevel && isNullOrEmpty(selectid))) {
+					            selectid = id;
 					        }
 					        
 					        var nodeid = tryParseString(id.substring(idPrefix.length));
@@ -155,16 +154,16 @@
 								// initially_open and initially_select cause multiple event triggers and race conditions.
 								// So we'll do it ourselves instead.
 								// Open
-							    if (!isNullOrEmpty(initiallyOpen)) {
-							        var $selecteditem = $treediv.find('#' + initiallyOpen);
+							    if (!isNullOrEmpty(selectid)) {
+							        var $selecteditem = $treediv.find('#' + selectid);
 							        var $itemparents = $selecteditem.parents().andSelf();
 							        $itemparents.each(function() {
 							            $treediv.jstree('open_node', '#' + $(this).CswAttrXml('id'));
 							        });
-							    }
-							    // Select
-								$treediv.jstree('select_node', '#' + initiallyOpen);
 
+							        // Select
+							        $treediv.jstree('select_node', '#' + selectid);
+							    }
 							}).bind('load_node.jstree', function() {
 								$('.'+ idPrefix +'check').unbind('click');
 								$('.'+ idPrefix +'check').click(function() { return handleCheck($treediv, $(this)); });
