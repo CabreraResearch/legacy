@@ -276,22 +276,22 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _SelectedViewIdsSubField.ToXmlNodeName(), SelectedViewIds.ToString() ) );
-            ParentObject.Add( new JProperty( "selectmode", SelectMode.ToString() ) );
-            ParentObject.Add( new JProperty( _CachedViewNameSubField.ToXmlNodeName(), CachedViewNames.ToString() ) );
+            ParentObject[_SelectedViewIdsSubField.ToXmlNodeName()] = SelectedViewIds.ToString();
+            ParentObject["selectmode"] = SelectMode.ToString();
+            ParentObject[_CachedViewNameSubField.ToXmlNodeName()] = CachedViewNames.ToString();
 
             JObject OptionsObj = new JObject();
-            ParentObject.Add( new JProperty( "options", OptionsObj ) );
+            ParentObject["options"] = OptionsObj;
 
             DataTable ViewsTable = ViewsForCBA();
             foreach( DataRow ViewRow in ViewsTable.Rows )
             {
                 JObject UserObj = new JObject();
-                OptionsObj.Add( new JProperty( "user_" + ViewRow[KeyColumn], UserObj ) );
+                OptionsObj["user_" + ViewRow[KeyColumn]] = UserObj;
 
-                UserObj.Add( new JProperty( NameColumn, ViewRow[NameColumn].ToString() ) );
-                UserObj.Add( new JProperty( KeyColumn, ViewRow[KeyColumn].ToString() ) );
-                UserObj.Add( new JProperty( ValueColumn, ViewRow[ValueColumn].ToString() ) );
+                UserObj[NameColumn] = ViewRow[NameColumn].ToString();
+                UserObj[KeyColumn] = ViewRow[KeyColumn].ToString();
+                UserObj[ValueColumn] = ViewRow[ValueColumn].ToString();
             }
         }
 

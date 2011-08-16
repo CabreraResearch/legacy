@@ -164,18 +164,18 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _ValueSubField.ToXmlNodeName( true ), Value ) );
+            ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value.ToString();
 
             JObject OptionsObj = new JObject();
-            ParentObject.Add( new JProperty( "options", OptionsObj ) );
+            ParentObject["options"] = OptionsObj;
 
             foreach( string Key in this.Options.Keys )
             {
-                OptionsObj.Add( new JProperty( Key, Options[Key] ) );
+                OptionsObj[Key] = Options[Key];
 
                 if( Value.Contains( Key ) )
                 {
-                    ParentObject.Add( new JProperty( "selected", Key ) );
+                    ParentObject["selected"] = Key;
                 }
             }
 

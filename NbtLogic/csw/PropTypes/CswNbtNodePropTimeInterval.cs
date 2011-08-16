@@ -99,8 +99,8 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             JObject IntervalObj = new JObject();
-            ParentObject.Add( new JProperty( _IntervalSubField.ToXmlNodeName(), IntervalObj ) );
-            IntervalObj.Add( "text", RateInterval.ToString() );
+            ParentObject[_IntervalSubField.ToXmlNodeName()] = IntervalObj;
+            IntervalObj["text"] = RateInterval.ToString();
             RateInterval.ToJson( IntervalObj );
         }
 

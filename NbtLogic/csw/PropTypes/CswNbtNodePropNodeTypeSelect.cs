@@ -170,12 +170,11 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _SelectedNodeTypeIdsSubField.ToXmlNodeName().ToLower(), SelectedNodeTypeIds.ToString() ) );
-            ParentObject.Add( new JProperty( "selectmode", SelectMode.ToString() ) );
+            ParentObject[_SelectedNodeTypeIdsSubField.ToXmlNodeName().ToLower()] = SelectedNodeTypeIds.ToString();
+            ParentObject["selectmode"] = SelectMode.ToString();
 
             JArray OptionsAry = new JArray();
-            JProperty OptionsNode = new JProperty( "options", OptionsAry );
-            ParentObject.Add( OptionsNode );
+            ParentObject["options"] = OptionsAry;
 
             DataTable Data = Options;
             foreach( DataRow Row in Data.Rows )
@@ -184,7 +183,7 @@ namespace ChemSW.Nbt.PropTypes
                 OptionsAry.Add( OptionObj );
                 foreach( DataColumn Column in Data.Columns )
                 {
-                    OptionObj.Add( new JProperty( Column.ColumnName, Row[Column].ToString() ) );
+                    OptionObj[Column.ColumnName] = Row[Column].ToString();
                 }
             }
         }

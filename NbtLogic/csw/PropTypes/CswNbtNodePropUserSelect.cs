@@ -194,22 +194,21 @@ namespace ChemSW.Nbt.PropTypes
         }
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _SelectedUserIdsSubField.ToXmlNodeName(), SelectedUserIds.ToString() ) );
+            ParentObject[_SelectedUserIdsSubField.ToXmlNodeName()] = SelectedUserIds.ToString();
 
             JObject OptionsObj = new JObject();
-            JProperty OptionsNode = new JProperty( "options", OptionsObj );
-            ParentObject.Add( OptionsNode );
+            ParentObject["options"] = OptionsObj;
 
             DataTable UsersTable = getUserOptions();
             foreach( DataRow UserRow in UsersTable.Rows )
             {
                 JObject UserObj = new JObject();
-                OptionsObj.Add( new JProperty( "user_" + UserRow[KeyColumn], UserObj ) );
+                OptionsObj["user_" + UserRow[KeyColumn]] = UserObj;
 
-                UserObj.Add( new JProperty( NameColumn, UserRow[NameColumn].ToString() ) );
-                UserObj.Add( new JProperty( KeyColumn, UserRow[KeyColumn].ToString() ) );
-                UserObj.Add( new JProperty( StringKeyColumn, UserRow[StringKeyColumn].ToString() ) );
-                UserObj.Add( new JProperty( ValueColumn, UserRow[ValueColumn].ToString() ) );
+                UserObj[NameColumn] = UserRow[NameColumn].ToString();
+                UserObj[KeyColumn] = UserRow[KeyColumn].ToString();
+                UserObj[StringKeyColumn] = UserRow[StringKeyColumn].ToString();
+                UserObj[ValueColumn] = UserRow[ValueColumn].ToString();
             }
         }
 

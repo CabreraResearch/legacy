@@ -216,21 +216,24 @@ namespace ChemSW.Nbt.WebServices
 
                 // Handle conditional properties
                 JObject SubPropsObj = new JObject();
-                JProperty SubPropsXmlNode = new JProperty( "subprops", SubPropsObj );
+                JProperty SubPropsJProp = new JProperty( "subprops", SubPropsObj );
+                PropObj.Add( SubPropsJProp );
+                bool HasSubProps = false;
                 foreach( CswNbtMetaDataNodeTypeProp FilterProp in Prop.NodeTypeTab.NodeTypePropsByDisplayOrder )
                 {
                     if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                     {
-                        PropObj["hassubprops"] = "true";
-
+                        HasSubProps = true;
                         JObject FilterPropXml = _makePropJson( SubPropsObj, Node, FilterProp, FilterProp.DisplayRow, FilterProp.DisplayColumn );
-
                         // Hide those for whom the filter doesn't match
                         // (but we need the XML node to be there to store the value, for client-side changes)
                         FilterPropXml["display"] = FilterProp.CheckFilter( Node ).ToString().ToLower();
 
                     } // if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                 } // foreach( CswNbtMetaDataNodeTypeProp FilterProp in Tab.NodeTypePropsByDisplayOrder )
+
+                PropObj["hassubprops"] = HasSubProps;
+
             } // if-else( EditMode == NodeEditMode.AddInPopup )
         } // addProp()
 
@@ -240,38 +243,31 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
 
             CswPropIdAttr PropIdAttr = null;
-            if( Node.NodeId != null )
-            {
-                PropIdAttr = new CswPropIdAttr( Node, Prop );
-            }
-            else
-            {
-                PropIdAttr = new CswPropIdAttr( null, Prop );
-            }
+            PropIdAttr = Node.NodeId != null ? new CswPropIdAttr( Node, Prop ) : new CswPropIdAttr( null, Prop );
 
             JObject PropObj = new JObject();
-            ParentObj.Add( "prop_" + PropIdAttr.ToString(), PropObj );
+            ParentObj["prop_" + PropIdAttr] = PropObj;
 
-            PropObj.Add( new JProperty( "id", PropIdAttr.ToString() ) );
-            PropObj.Add( new JProperty( "name", Prop.PropNameWithQuestionNo ) );
-            PropObj.Add( new JProperty( "helptext", PropWrapper.HelpText ) );
-            PropObj.Add( new JProperty( "fieldtype", Prop.FieldType.FieldType.ToString() ) );
+            PropObj["id"] = PropIdAttr.ToString();
+            PropObj["name"] = Prop.PropNameWithQuestionNo;
+            PropObj["helptext"] = PropWrapper.HelpText;
+            PropObj["fieldtype"] = Prop.FieldType.FieldType.ToString();
             if( Prop.ObjectClassProp != null )
             {
-                PropObj.Add( new JProperty( "ocpname", Prop.ObjectClassProp.PropName ) );
+                PropObj["ocpname"] = Prop.ObjectClassProp.PropName;
             }
-            PropObj.Add( new JProperty( "displayrow", Row.ToString() ) );
-            PropObj.Add( new JProperty( "displaycol", Column.ToString() ) );
-            PropObj.Add( new JProperty( "required", Prop.IsRequired.ToString().ToLower() ) );
+            PropObj["displayrow"] = Row.ToString();
+            PropObj["displaycol"] = Column.ToString();
+            PropObj["required"] = Prop.IsRequired.ToString().ToLower();
             bool IsReadOnly = ( Prop.ReadOnly ||                  // nodetype_props.readonly
                                 PropWrapper.ReadOnly ||           // jct_nodes_props.readonly
                                 Node.ReadOnly ||                  // nodes.readonly
                                 !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, Prop.NodeTypeTab, null, Node, Prop ) );
 
-            PropObj.Add( new JProperty( "readonly", IsReadOnly.ToString().ToLower() ) );
-            PropObj.Add( new JProperty( "gestalt", PropWrapper.Gestalt.Replace( "\"", "&quot;" ) ) );
-            PropObj.Add( new JProperty( "copyable", Prop.IsCopyable().ToString().ToLower() ) );
-            PropObj.Add( new JProperty( "highlight", PropWrapper.AuditChanged.ToString().ToLower() ) );
+            PropObj["readonly"] = IsReadOnly.ToString().ToLower();
+            PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
+            PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
+            PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
 
             PropWrapper.ToJSON( PropObj );
 
@@ -283,14 +279,14 @@ namespace ChemSW.Nbt.WebServices
         {
             Random Num = new Random();
             JObject PropObj = new JObject();
-            ParentObj.Add( new JProperty( "prop" + Num.Next(), PropObj ) );
-            PropObj.Add( new JProperty( "name", "Audit History" ) );
-            PropObj.Add( new JProperty( "helptext", string.Empty ) );
-            PropObj.Add( new JProperty( "fieldtype", "AuditHistoryGrid" ) );
-            PropObj.Add( new JProperty( "displayrow", "1" ) );
-            PropObj.Add( new JProperty( "displaycol", "1" ) );
-            PropObj.Add( new JProperty( "required", "false" ) );
-            PropObj.Add( new JProperty( "readonly", "true" ) );
+            ParentObj["prop" + Num.Next()] = PropObj;
+            PropObj["name"] = "Audit History";
+            PropObj["helptext"] = string.Empty;
+            PropObj["fieldtype"] = "AuditHistoryGrid";
+            PropObj["displayrow"] = "1";
+            PropObj["displaycol"] = "1";
+            PropObj["required"] = "false";
+            PropObj["readonly"] = "true";
 
             //CswNbtWebServiceAuditing wsAuditing = new CswNbtWebServiceAuditing(_CswNbtResources);
             //PropXmlNode.InnerText = wsAuditing.getAuditHistoryGrid( Node ).ToString();

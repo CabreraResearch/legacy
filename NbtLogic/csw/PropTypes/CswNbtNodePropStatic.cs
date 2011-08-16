@@ -101,16 +101,16 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName(true), StaticText,
+            ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName( true ), StaticText,
                 new XAttribute( "rows", Rows.ToString() ),
                 new XAttribute( "columns", Columns.ToString() ) ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _TextSubField.ToXmlNodeName(true), StaticText ) );
-            ParentObject.Add( new JProperty( "rows", Rows.ToString() ) );
-            ParentObject.Add( new JProperty( "columns", Columns.ToString() ) );
+            ParentObject[_TextSubField.ToXmlNodeName( true )] = StaticText;
+            ParentObject["rows"] = Rows.ToString();
+            ParentObject["columns"] = Columns.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -120,9 +120,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName(true) ) )
+            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ) )
             {
-                StaticText = XmlNode.Element( _TextSubField.ToXmlNodeName(true) ).Value;
+                StaticText = XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ).Value;
             }
         }
 
@@ -133,9 +133,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _TextSubField.ToXmlNodeName(true) ) )
+            if( null != JObject.Property( _TextSubField.ToXmlNodeName( true ) ) )
             {
-                StaticText = (string) JObject.Property( _TextSubField.ToXmlNodeName(true) ).Value;
+                StaticText = (string) JObject.Property( _TextSubField.ToXmlNodeName( true ) ).Value;
             }
         }
     }//CswNbtNodePropStatic

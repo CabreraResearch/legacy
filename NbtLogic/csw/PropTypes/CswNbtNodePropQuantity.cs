@@ -192,16 +192,14 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _QuantitySubField.ToXmlNodeName( true ), ( !Double.IsNaN( Quantity ) ) ?
-                Quantity.ToString() : string.Empty ) );
+            ParentObject[_QuantitySubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? Quantity.ToString() : string.Empty;
 
-            ParentObject.Add( new JProperty( "minvalue", MinValue.ToString() ) );
-            ParentObject.Add( new JProperty( "maxvalue", MaxValue.ToString() ) );
-            ParentObject.Add( new JProperty( "precision", Precision.ToString() ) );
+            ParentObject["minvalue"] = MinValue.ToString();
+            ParentObject["maxvalue"] = MaxValue.ToString();
+            ParentObject["precision"] = Precision.ToString();
 
             JArray UnitsNodeObj = new JArray();
-            JProperty UnitsNode = new JProperty( _UnitsSubField.ToXmlNodeName( true ), UnitsNodeObj );
-            ParentObject.Add( UnitsNode );
+            ParentObject[_UnitsSubField.ToXmlNodeName( true )] = UnitsNodeObj;
 
             foreach( CswNbtNode UnitNode in _UnitNodes )
             {

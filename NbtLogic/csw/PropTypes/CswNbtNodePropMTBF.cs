@@ -198,15 +198,15 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _StartDateTimeSubField.ToXmlNodeName(true), ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty ),
-                new XElement( _ValueSubField.ToXmlNodeName(true), CachedValue.ToString() ),
-                new XElement( _UnitsSubField.ToXmlNodeName(true), Units ) );
+            ParentNode.Add( new XElement( _StartDateTimeSubField.ToXmlNodeName( true ), ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty ),
+                new XElement( _ValueSubField.ToXmlNodeName( true ), CachedValue.ToString() ),
+                new XElement( _UnitsSubField.ToXmlNodeName( true ), Units ) );
         }
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _StartDateTimeSubField.ToXmlNodeName(true), ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty ) );
-            ParentObject.Add( new JProperty( _ValueSubField.ToXmlNodeName(true), CachedValue.ToString() ) );
-            ParentObject.Add( new JProperty( _UnitsSubField.ToXmlNodeName(true), Units ) );
+            ParentObject[_StartDateTimeSubField.ToXmlNodeName( true )] = ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty;
+            ParentObject[_ValueSubField.ToXmlNodeName( true )] = CachedValue.ToString();
+            ParentObject[_UnitsSubField.ToXmlNodeName( true )] = Units;
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -219,13 +219,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _StartDateTimeSubField.ToXmlNodeName(true) ) )
+            if( null != XmlNode.Element( _StartDateTimeSubField.ToXmlNodeName( true ) ) )
             {
-                StartDateTime = CswConvert.ToDateTime( XmlNode.Element( _StartDateTimeSubField.ToXmlNodeName(true) ).Value );
+                StartDateTime = CswConvert.ToDateTime( XmlNode.Element( _StartDateTimeSubField.ToXmlNodeName( true ) ).Value );
             }
-            if( null != XmlNode.Element( _UnitsSubField.ToXmlNodeName(true) ) )
+            if( null != XmlNode.Element( _UnitsSubField.ToXmlNodeName( true ) ) )
             {
-                Units = XmlNode.Element( _UnitsSubField.ToXmlNodeName(true) ).Value;
+                Units = XmlNode.Element( _UnitsSubField.ToXmlNodeName( true ) ).Value;
             }
             //PendingUpdate = true;
             RefreshCachedValue();
@@ -242,13 +242,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _StartDateTimeSubField.ToXmlNodeName(true) ) )
+            if( null != JObject.Property( _StartDateTimeSubField.ToXmlNodeName( true ) ) )
             {
-                StartDateTime = CswConvert.ToDateTime( JObject.Property( _StartDateTimeSubField.ToXmlNodeName(true) ).Value );
+                StartDateTime = CswConvert.ToDateTime( JObject.Property( _StartDateTimeSubField.ToXmlNodeName( true ) ).Value );
             }
-            if( null != JObject.Property( _UnitsSubField.ToXmlNodeName(true) ) )
+            if( null != JObject.Property( _UnitsSubField.ToXmlNodeName( true ) ) )
             {
-                Units = (string) JObject.Property( _UnitsSubField.ToXmlNodeName(true) ).Value;
+                Units = (string) JObject.Property( _UnitsSubField.ToXmlNodeName( true ) ).Value;
             }
             //PendingUpdate = true;
             RefreshCachedValue();

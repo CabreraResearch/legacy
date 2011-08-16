@@ -130,9 +130,9 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
-            ParentObject.Add( new JProperty( _ViewIdSubField.ToXmlNodeName(), ViewId.ToString() ) );
-            ParentObject.Add( new JProperty( "viewmode", View.ViewMode.ToString() ) );
-            ParentObject.Add( new JProperty( _CachedViewNameSubField.ToXmlNodeName(), CachedViewName.ToString() ) );
+            ParentObject[_ViewIdSubField.ToXmlNodeName()] = ViewId.ToString();
+            ParentObject["viewmode"] = View.ViewMode.ToString();
+            ParentObject[_CachedViewNameSubField.ToXmlNodeName()] = CachedViewName.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

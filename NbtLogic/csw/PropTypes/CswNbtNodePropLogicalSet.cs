@@ -338,8 +338,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             JArray LsArray = new JArray();
-            JProperty LsProp = new JProperty( _ElemName_LogicalSetJson, LsArray );
-            ParentObject.Add( LsProp );
+            ParentObject[_ElemName_LogicalSetJson] = LsArray;
 
             DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
             foreach( DataRow Row in Data.Rows )
@@ -348,7 +347,7 @@ namespace ChemSW.Nbt.PropTypes
                 LsArray.Add( ItemNodeObj );
                 foreach( DataColumn Column in Data.Columns )
                 {
-                    ItemNodeObj.Add( new JProperty( Column.ColumnName, Row[Column].ToString() ) );
+                    ItemNodeObj[Column.ColumnName] = Row[Column].ToString();
                 }
             }
         }

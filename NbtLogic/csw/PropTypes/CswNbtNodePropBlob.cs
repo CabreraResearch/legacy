@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 string ret = string.Empty;
-				if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
+                if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
                 {
                     ret = "GetBlob.Aspx?mode=doc&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.ToString() + "&propid=" + NodeTypePropId.ToString();
                 }
@@ -119,16 +119,16 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _ContentTypeSubField.ToXmlNodeName(true), ContentType ),
-                            new XElement( _FileNameSubField.ToXmlNodeName(true), FileName ),
+            ParentNode.Add( new XElement( _ContentTypeSubField.ToXmlNodeName( true ), ContentType ),
+                            new XElement( _FileNameSubField.ToXmlNodeName( true ), FileName ),
                             new XElement( CswNbtSubField.SubFieldName.Href.ToString(), Href ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _ContentTypeSubField.ToXmlNodeName(true), ContentType ) );
-            ParentObject.Add( new JProperty( _FileNameSubField.ToXmlNodeName(true), FileName ) );
-            ParentObject.Add( new JProperty( CswNbtSubField.SubFieldName.Href.ToString(), Href ) );
+            ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
+            ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
+            ParentObject[CswNbtSubField.SubFieldName.Href.ToString()] = Href;
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -139,13 +139,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _ContentTypeSubField.ToXmlNodeName(true) ) )
+            if( null != XmlNode.Element( _ContentTypeSubField.ToXmlNodeName( true ) ) )
             {
-                ContentType = XmlNode.Element( _ContentTypeSubField.ToXmlNodeName(true) ).Value;
+                ContentType = XmlNode.Element( _ContentTypeSubField.ToXmlNodeName( true ) ).Value;
             }
-            if( null != XmlNode.Element( _FileNameSubField.ToXmlNodeName(true) ) )
+            if( null != XmlNode.Element( _FileNameSubField.ToXmlNodeName( true ) ) )
             {
-                FileName = XmlNode.Element( _FileNameSubField.ToXmlNodeName(true) ).Value;
+                FileName = XmlNode.Element( _FileNameSubField.ToXmlNodeName( true ) ).Value;
             }
         }
 
@@ -157,13 +157,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _ContentTypeSubField.ToXmlNodeName(true) ) )
+            if( null != JObject.Property( _ContentTypeSubField.ToXmlNodeName( true ) ) )
             {
-                ContentType = (string) JObject.Property( _ContentTypeSubField.ToXmlNodeName(true) ).Value;
+                ContentType = (string) JObject.Property( _ContentTypeSubField.ToXmlNodeName( true ) ).Value;
             }
-            if( null != JObject.Property( _FileNameSubField.ToXmlNodeName(true) ) )
+            if( null != JObject.Property( _FileNameSubField.ToXmlNodeName( true ) ) )
             {
-                FileName = (string) JObject.Property( _FileNameSubField.ToXmlNodeName(true) ).Value;
+                FileName = (string) JObject.Property( _FileNameSubField.ToXmlNodeName( true ) ).Value;
             }
         }
     }
