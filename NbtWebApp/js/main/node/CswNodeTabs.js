@@ -338,7 +338,7 @@
 				    var fieldtype = thisProp.fieldtype;
 				    var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
 
-				    if ((thisProp.CswAttrXml('display') !== 'false' || configMode) &&
+				    if ((isTrue(thisProp.display) !== 'false' || configMode) &&
     				    fieldtype !== 'Image' &&
         				    fieldtype !== 'Grid' &&
             				    (o.filterToPropId === '' || o.filterToPropId === propid))
