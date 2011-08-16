@@ -129,7 +129,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            //Not yet implemented
+            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
+            ParentObject.Add( new JProperty( _ViewIdSubField.ToXmlNodeName(), ViewId.ToString() ) );
+            ParentObject.Add( new JProperty( "viewmode", View.ViewMode.ToString() ) );
+            ParentObject.Add( new JProperty( _CachedViewNameSubField.ToXmlNodeName(), CachedViewName.ToString() ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -151,7 +154,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            //Not yet implemented
+            ViewId = new CswNbtViewId( CswConvert.ToInt32( JObject[_ViewIdSubField.ToXmlNodeName()] ) );
+            PendingUpdate = true;
         }
     }//CswNbtNodeProp
 

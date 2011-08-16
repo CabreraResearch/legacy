@@ -394,7 +394,7 @@
 		function _makeProp($propcell, propData, $tabcontentdiv, tabid, configMode, $savebtn)
 		{
 			$propcell.empty();
-			if ((propData.display !== 'false' || configMode ) &&
+			if ((isTrue(propData.display) || configMode ) &&
 				(o.filterToPropId === '' || o.filterToPropId === propData.id)) {
 
 			    var propId = propData.id;
@@ -407,7 +407,7 @@
 					propid: propId,
 					$propdiv: $('<div/>').appendTo($propcell),
 					$savebtn: $savebtn,
-					$propxml: propData,
+					propData: propData,
 					onchange: function() { },
 					onReload: function() { getProps($tabcontentdiv, tabid); },
 					cswnbtnodekey: o.cswnbtnodekey,
@@ -426,12 +426,12 @@
 						_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, propId, o.nodetypeid, propData, $propcell, $tabcontentdiv, tabid, false, $savebtn);
 						if(isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName);
 					};
-				} // if ($propxml.CswAttrXml('hassubprops') === "true")
+				} // if (propData.hassubprops === "true")
 
 				$.CswFieldTypeFactory('make', fieldOpt);
 
 				// recurse on sub-props
-				var $subprops = propData.children('subprops');
+				var subProps = propData.subprops;
 
 				var $subtable = $propcell.CswLayoutTable('init', {
 					ID: fieldOpt.propid + '_subproptable',
@@ -448,16 +448,16 @@
 					showConfigButton: false
 				});
 
-				if (($subprops.length > 0 && $subprops.children('[display != "false"]').length > 0) || configMode)
+				if ((!isNullOrEmpty(subProps) && isTrue(subProps.display)) || configMode)
 				{
-					_handleProps($subtable, $subprops, $tabcontentdiv, tabid, configMode, $savebtn);
+					_handleProps($subtable, subProps, $tabcontentdiv, tabid, configMode, $savebtn);
 					if (configMode) {
 						$subtable.CswLayoutTable('ConfigOn');
 					} else {
 						$subtable.CswLayoutTable('ConfigOff');
 					}
 				}
-			} // if ($propxml.CswAttrXml('display') != 'false' || ConfigMode )
+			} // if (propData.display != 'false' || ConfigMode )
 		} // _makeProp()
 
 		function _updateSubProps(fieldOpt, singlePropUrl, editMode, cswnbtnodekey, propId, nodetypeid, propData, $propcell, $tabcontentdiv, tabid, configMode, $savebtn)
@@ -570,7 +570,7 @@
 				if (propData.hasOwnProperty(prop)) {
 				    var thisProp = propData[prop];
 				    var propOpt = {
-				        $propxml: thisProp,
+				        propData: thisProp,
 				        $propdiv: '',
 				        $propCell: '',
 				        fieldtype: thisProp.fieldtype,

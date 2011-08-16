@@ -1,6 +1,12 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeTimeInterval';
+    var pluginName = 'CswFieldTypeTimeInterval';
 
     var methods = {
         init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
@@ -8,9 +14,9 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var TextValue = o.propData.children('Interval').CswAttrXml('text');
+                var textValue = o.propData.Interval.text;
 
-				$Div.append('<span id="' + o.ID + '_textvalue">' + TextValue + '</span>');
+				$Div.append('<span id="' + o.ID + '_textvalue">' + textValue + '</span>');
 
                 if(!o.ReadOnly)
                 {
@@ -168,18 +174,18 @@
 					//  </RateIntervalValue>
 					//</Interval>
 
-					var $RateIntervalXml = o.propData.children('interval').children('rateintervalvalue');
-					var RateType = $RateIntervalXml.children('ratetype').text();
+					var rateIntervalData = o.propData.interval.rateintervalvalue;
+					var rateType = rateIntervalData.ratetype;
 
-					switch(RateType)
+					switch(rateType)
 					{
 						case "WeeklyByDay":
 							$weeklyradio.CswAttrDom('checked', 'true');
 							$WeeklyDiv.show(); 
 							$MonthlyDiv.hide(); 
 							$YearlyDiv.hide();
-							setWeekDayChecked( o.ID + '_weeklyday', $RateIntervalXml.children('weeklyday').text());
-							$WeeklyStartDate.val($RateIntervalXml.children('startingdate').text());
+							setWeekDayChecked( o.ID + '_weeklyday', rateIntervalData.children('weeklyday').text());
+							$WeeklyStartDate.val(rateIntervalData.children('startingdate').text());
 							$MonthlyByDateRadio.CswAttrDom('checked', 'true');     //default (for case 21048)
 							break;
 						case "MonthlyByDate":
@@ -188,10 +194,10 @@
 							$MonthlyDiv.show(); 
 							$YearlyDiv.hide();
 							$MonthlyByDateRadio.CswAttrDom('checked', 'true');
-							$MonthlyRateSelect.val($RateIntervalXml.children('monthlyfrequency').text());
-							$MonthlyDateSelect.val($RateIntervalXml.children('monthlydate').text());
-							$MonthlyStartMonthSelect.val($RateIntervalXml.children('startingmonth').text());
-							$MonthlyStartYearSelect.val($RateIntervalXml.children('startingyear').text());
+							$MonthlyRateSelect.val(rateIntervalData.children('monthlyfrequency').text());
+							$MonthlyDateSelect.val(rateIntervalData.children('monthlydate').text());
+							$MonthlyStartMonthSelect.val(rateIntervalData.children('startingmonth').text());
+							$MonthlyStartYearSelect.val(rateIntervalData.children('startingyear').text());
 							break;
 						case "MonthlyByWeekAndDay":
 							$monthlyradio.CswAttrDom('checked', 'true');
@@ -199,70 +205,61 @@
 							$MonthlyDiv.show(); 
 							$YearlyDiv.hide();
 							$MonthlyByDayRadio.CswAttrDom('checked', 'true');
-							$MonthlyWeekSelect.val($RateIntervalXml.children('monthlyweek').text());
-							setWeekDayChecked( o.ID + '_monthly_day', $RateIntervalXml.children('monthlyday').text());
-							$MonthlyStartMonthSelect.val($RateIntervalXml.children('startingmonth').text());
-							$MonthlyStartYearSelect.val($RateIntervalXml.children('startingyear').text());
+							$MonthlyWeekSelect.val(rateIntervalData.children('monthlyweek').text());
+							setWeekDayChecked( o.ID + '_monthly_day', rateIntervalData.children('monthlyday').text());
+							$MonthlyStartMonthSelect.val(rateIntervalData.children('startingmonth').text());
+							$MonthlyStartYearSelect.val(rateIntervalData.children('startingyear').text());
 							break;
 						case "YearlyByDate":
 							$yearlyradio.CswAttrDom('checked', 'true');
 							$WeeklyDiv.hide(); 
 							$MonthlyDiv.hide(); 
 							$YearlyDiv.show();
-							$YearlyStartDate.val($RateIntervalXml.children('yearlydate').text());
+							$YearlyStartDate.val(rateIntervalData.children('yearlydate').text());
 							$MonthlyByDateRadio.CswAttrDom('checked', 'true');     //default (for case 21048)
 							break;
 					} // switch(RateType)
 				}
             },
         save: function(o) {
-				
-				var ratexml = '<interval><rateintervalvalue>';
-				var RateType = $('[name="' + o.ID + '_type"]:checked').val();
-				switch(RateType)
-				{
-					case 'weekly': 
-						ratexml += '<ratetype>WeeklyByDay</ratetype>';
-						ratexml += '<weeklyday>' + getWeekDayChecked( o.ID + '_weeklyday' ) + '</weeklyday>';
-						ratexml += '<startingdate>'+ $('#' + o.ID + '_weekly_sd').val() +'</startingdate>';
-						break;
+				try {
+				    var RateType = $('[name="' + o.ID + '_type"]:checked').val();
+				    switch (RateType)
+				    {
+				        case 'weekly':
+				            o.propData.interval.rateintervalvalue.ratetype = 'WeeklyByDay';
+				            o.propData.interval.rateintervalvalue.weeklyday = getWeekDayChecked(o.ID + '_weeklyday');
+				            o.propData.interval.rateintervalvalue.startingdate = $('#' + o.ID + '_weekly_sd').val();
+				            break;
 
-					case 'monthly': 
-						var MonthlyType = $('[name="'+ o.ID +'_monthly"]:checked').val();
-						ratexml += '<ratetype>'+ MonthlyType +'</ratetype>';
-						ratexml += '<monthlyfrequency>'+ $('#' + o.ID + '_monthly_rate').val() +'</monthlyfrequency>';
-						if(MonthlyType === "MonthlyByDate")
-						{
-							ratexml += '<monthlydate>'+ $('#' + o.ID + '_monthly_date').val() +'</monthlydate>';
-						} 
-						else // MonthlyByWeekAndDay
-						{
-							ratexml += '<monthlyweek>' + $('#' + o.ID + '_monthly_week' ).val() + '</monthlyweek>';
-							ratexml += '<monthlyday>' + getWeekDayChecked( o.ID + '_monthly_day' ) + '</monthlyday>';
-						}
-						ratexml += '<startingmonth>' + $('#' + o.ID + '_monthly_startMonth' ).val() + '</startingmonth>';
-						ratexml += '<startingyear>' + $('#' + o.ID + '_monthly_startYear' ).val() + '</startingyear>';
-						break;
-					
-					case 'yearly': 
-						ratexml += '<ratetype>YearlyByDate</ratetype>';
-						ratexml += '<yearlydate>'+ $('#' + o.ID + '_yearly_sd').val() +'</yearlydate>';
-						break;
-				} // switch(RateType)
+				        case 'monthly':
+				            var monthlyType = $('[name="' + o.ID + '_monthly"]:checked').val();
+				            o.propData.interval.rateintervalvalue.ratetype = monthlyType;
+				            o.propData.interval.rateintervalvalue.monthlyfrequency = $('#' + o.ID + '_monthly_rate').val();
+				            if (monthlyType === "MonthlyByDate")
+				            {
+				                o.propData.interval.rateintervalvalue.monthlydate = $('#' + o.ID + '_monthly_date').val();
+				            }
+				            else // MonthlyByWeekAndDay
+				            {
+				                o.propData.interval.rateintervalvalue.monthlyweek = $('#' + o.ID + '_monthly_week').val();
+				                o.propData.interval.rateintervalvalue.monthlyday = getWeekDayChecked(o.ID + '_monthly_day');
+				            }
+				            o.propData.interval.rateintervalvalue.startingmonth = $('#' + o.ID + '_monthly_startMonth').val();
+				            o.propData.interval.rateintervalvalue.startingyear = $('#' + o.ID + '_monthly_startYear').val();
+				            break;
 
-				ratexml += '</rateintervalvalue></interval>';
-
-				o.propData.children().remove();
-				if($.browser.msie)
-				{
-					// case 21833
-					o.propData.append($.xml(ratexml));
+				        case 'yearly':
+				            o.propData.interval.rateintervalvalue.ratetype = 'YearlyByDate';
+				            o.propData.interval.rateintervalvalue.yearlydate = $('#' + o.ID + '_yearly_sd').val();
+				            break;
+				    } // switch(RateType)
+				} catch(e) {
+				    if(debugOn()) {
+				        log('Error updating propData: ' + e);
+				    }
 				}
-				else 
-				{
-					o.propData.append($(ratexml));
-				}
-            } // save
+        } // save
     };
     
 
@@ -347,7 +344,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };
