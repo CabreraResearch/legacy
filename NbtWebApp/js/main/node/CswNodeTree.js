@@ -84,7 +84,7 @@
 					    
 						//var $selecteditem = data.find('item[id="'+ selectid + '"]');
 					    var selectLevel = -1;
-					    if (selectid === '') {
+					    if (isNullOrEmpty(selectid)) {
 							if (o.SelectFirstChild) {	
 								if (o.viewmode === 'list' ) {
 								    selectLevel = 1;
