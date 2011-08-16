@@ -15,8 +15,8 @@
             $Div.contents().remove();
 
             //var value = tryParseString(o.propData.value).trim();
-            var value = o.$propxml.children('value').CswAttrXml('date');
-            var Format = ServerDateFormatToJQuery(o.$propxml.children('value').CswAttrXml('dateformat'));
+            var value = o.propData.value.date;
+            var Format = ServerDateFormatToJQuery(o.propData.value.dateformat);
 
 //            if (value === '1/1/0001')
 //                value = '';
@@ -43,9 +43,7 @@
         },
         save: function(o) { //$propdiv, $xml
                 var $TextBox = o.$propdiv.find('input');
-                //o.$propxml.children('value').text($TextBox.val());
-                //o.propData.value = $TextBox.val();
-				o.$propxml.children('value').CswAttrXml('date', $TextBox.val());
+				o.propData.value.date = $TextBox.val();
             }
     };
     
