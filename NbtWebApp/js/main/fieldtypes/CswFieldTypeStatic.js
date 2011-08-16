@@ -9,7 +9,7 @@
     var pluginName = 'CswFieldTypeStatic';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function(o) {
                 
             var $Div = $(this);
             $Div.contents().remove();
