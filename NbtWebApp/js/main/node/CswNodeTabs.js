@@ -338,7 +338,7 @@
 				    var fieldtype = thisProp.fieldtype;
 				    var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
 
-				    if ((isTrue(thisProp.display) !== 'false' || configMode) &&
+				    if ((isTrue(thisProp.display) || configMode) &&
     				    fieldtype !== 'Image' &&
         				    fieldtype !== 'Grid' &&
             				    (o.filterToPropId === '' || o.filterToPropId === propid))
@@ -360,7 +360,7 @@
 				            $labelcell.append(propName);
 				        }
 
-				        if (false === isTrue(thisProp.readonly))
+				        if (!isTrue(thisProp.readonly))
 				        {
 				            AtLeastOneSaveable = true;
 				            if (o.ShowCheckboxes && isTrue(thisProp.copyable)) {
