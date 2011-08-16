@@ -80,7 +80,7 @@
 						        var $textcell = $cellset[2][1].children('div');
 
 						        if (!isNullOrEmpty(thisItem.buttonicon))
-						            $imagecell.append($('<a href=""><img border="0" src="' + thisItem.buttonicon + '"/></a>'));
+						            $imagecell.append($('<a href="javascript:void(0);"><img border="0" src="' + thisItem.buttonicon + '"/></a>'));
 
 						        var clickopts = {
 						            itemData: thisItem,
@@ -94,9 +94,10 @@
 						        {
 						            $textcell.append('<span>' + thisItem.text + '</span>');
 						        } else {
-						            $textcell.append($('<a href="">' + thisItem.text + '</a>'));
-						            $textcell.find('a').click(function() { _clickItem(clickopts); return false; });
-						            $imagecell.find('a').click(function() { _clickItem(clickopts); return false; });
+						            var onClick = makeDelegate(_clickItem, clickopts);
+						            $textcell.append($('<a href="javascript:void(0);">' + thisItem.text + '</a>'));
+						            $textcell.find('a').click(onClick);
+						            $imagecell.find('a').click(onClick);
 						        }
 
 						        var $welcomehidden = $textcell.CswInput('init', {ID: thisItem.welcomeid,
@@ -272,18 +273,18 @@
 		if(clickopts) $.extend(c, clickopts);
 
 		var optSelect = {
-			type: itemData.type,
-			viewmode: itemData.viewmode,
-			itemid: itemData.itemid, 
-			text: itemData.text, 
-			iconurl: itemData.iconurl,
-			viewid: itemData.viewid,
-			actionid: itemData.actionid,
-			actionname: itemData.actionname,
-			actionurl: itemData.actionurl,
-			reportid: itemData.reportid,
+			type: c.itemData.type,
+			viewmode: c.itemData.viewmode,
+			itemid: c.itemData.itemid, 
+			text: c.itemData.text, 
+			iconurl: c.itemData.iconurl,
+			viewid: c.itemData.viewid,
+			actionid: c.itemData.actionid,
+			actionname: c.itemData.actionname,
+			actionurl: c.itemData.actionurl,
+			reportid: c.itemData.reportid,
 			//nodetypeid: itemData.nodetypeid,
-			linktype: itemData.linktype
+			linktype: c.itemData.linktype
 		};
 
 		if(c.$table.CswLayoutTable('isConfig') === false)   // case 22288
@@ -291,7 +292,7 @@
 			switch( optSelect.linktype.toLowerCase() )
 			{
 				case 'add': 
-					c.onAddClick(itemData.nodetypeid);
+					c.onAddClick(c.itemData.nodetypeid);
 					break;
 				case 'link':
 					c.onLinkClick(optSelect);
@@ -303,16 +304,17 @@
 					break;
 			}
 		}
+	    return false;
 	} // _clickItem()
 
 	function _removeItem(removedata)
 	{
 		var r = {
-					'cellset': '',
-					'row': '',
-					'column': '',
-					'RemoveWelcomeItemUrl': '',
-					'onSuccess': function() { }
+					cellset: '',
+					row: '',
+					column: '',
+					RemoveWelcomeItemUrl: '',
+					onSuccess: function() { }
 				};
 		if(removedata) {
 			$.extend(r, removedata);
