@@ -225,7 +225,7 @@
 									"select_limit": 1//,
 									//"initially_select": selectid
 								},
-								"themes": tryParseString(treeThemes),
+								"themes": treeThemes,
 								"core": {
 									//"initially_open": initiallyOpen
 								},
