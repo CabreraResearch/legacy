@@ -66,7 +66,7 @@
                 if (checkitem.checked && optVal === "False")
                     optVal = 'True';
                 else if (!checkitem.checked && optVal === "True")
-                    optVal = 'False');
+                    optVal = 'False';
             } // for( var r = 0; r < formdata.length; r++)
         } // save()
     };

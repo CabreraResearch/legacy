@@ -52,12 +52,12 @@
                 var thisKey = '';
                 for (var field in thisSet) {
                     if (thisSet.hasOwnProperty(field) && field !== nameCol && field !== keyCol) {
-                        var value = thisSet[field];  //thisSet.children('column[field="' + cols[c] + '"]').CswAttrXml('value');
+                        var value = thisSet[field]; //thisSet.children('column[field="' + cols[c] + '"]').CswAttrXml('value');
                         values[r] = isTrue(value);
                         r++;
                     }
                     else if (field === nameCol) {
-                        thisName = thisSet[field];   
+                        thisName = thisSet[field];
                     }
                     else if (field === keyCol) {
                         thisKey = thisSet[field];
@@ -65,12 +65,12 @@
                 }
 
                 var $elm = { 'label': thisName,
-                             'key': thisKey,
-                             'values': values };
+                    'key': thisKey,
+                    'values': values };
                 data[d] = $elm;
                 d++;
-            });
-                
+            }
+
             $CBADiv.CswCheckBoxArray('init', {
                                      'ID': o.ID + '_cba',
                                      'cols': cols,
