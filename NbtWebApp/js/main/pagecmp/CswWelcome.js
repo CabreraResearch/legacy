@@ -102,7 +102,7 @@
 						        var $welcomehidden = $textcell.CswInput('init', {ID: thisItem.welcomeid,
 						            type: CswInput_Types.hidden
 						        });
-						        $welcomehidden.CswAttrDom('welcomeid', thisItem.CswAttrXml('welcomeid'));
+						        $welcomehidden.CswAttrDom('welcomeid', thisItem.welcomeid);
 						    }
 						}
 					} // success{}
@@ -341,17 +341,17 @@
 
 	function _addItem(addoptions)
 	{
-		var a = {
-			'AddWelcomeItemUrl': '', 
-			'type': '',
-			'viewtype': '',
-			'viewvalue': '',
-			'nodetypeid': '',
-			'text': '',
-			'iconfilename': '',
-			'onSuccess': function() { },
-			'onError': function() { }
-		}
+	    var a = {
+	        'AddWelcomeItemUrl': '',
+	        'type': '',
+	        'viewtype': '',
+	        'viewvalue': '',
+	        'nodetypeid': '',
+	        'text': '',
+	        'iconfilename': '',
+	        'onSuccess': function() { },
+	        'onError': function() { }
+	    };
 		if(addoptions){
 			$.extend(a, addoptions);
 		}
