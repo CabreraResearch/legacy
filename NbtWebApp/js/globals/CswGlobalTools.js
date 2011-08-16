@@ -160,7 +160,7 @@ function isNumeric(obj)
 	return ret;
 }
 
-function isTrue(str)
+function isTrue(str,isTrueIfNull)
 {
 	/// <summary>
 	///   Returns true if the input is true, 'true', '1' or 1.
@@ -179,7 +179,7 @@ function isTrue(str)
 	else if (str === 'false' || str === false || str === '0' || str === 0) {
 		ret = false;
 	}
-	else if (isNullOrEmpty(str)) {
+	else if (isTrueIfNull && isNullOrEmpty(str)) {
 		ret = true;
 	} else {
 	    ret = false;

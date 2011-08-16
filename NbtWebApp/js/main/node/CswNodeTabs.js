@@ -338,7 +338,7 @@
 				    var fieldtype = thisProp.fieldtype;
 				    var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
 
-				    if ((isTrue(thisProp.display) || configMode) &&
+				    if ((isTrue(thisProp.display, true) || configMode) &&
     				    fieldtype !== 'Image' &&
         				    fieldtype !== 'Grid' &&
             				    (o.filterToPropId === '' || o.filterToPropId === propid))
@@ -394,7 +394,7 @@
 		function _makeProp($propcell, propData, $tabcontentdiv, tabid, configMode, $savebtn)
 		{
 			$propcell.empty();
-			if ((isTrue(propData.display) || configMode ) &&
+			if ((isTrue(propData.display, true) || configMode ) &&
 				(o.filterToPropId === '' || o.filterToPropId === propData.id)) {
 
 			    var propId = propData.id;
