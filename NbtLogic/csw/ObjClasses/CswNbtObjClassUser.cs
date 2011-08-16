@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string EmailPropertyName { get { return "Email"; } }
 		public static string PageSizePropertyName { get { return "Page Size"; } }
 		public static string DateFormatPropertyName { get { return "Date Format"; } }
+		public static string TimeFormatPropertyName { get { return "Time Format"; } }
 
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -250,6 +251,8 @@ namespace ChemSW.Nbt.ObjClasses
         public string Email { get { return EmailProperty.Text; } }
 		public string DateFormat { get { return DateFormatProperty.Value; } }
 		public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[DateFormatPropertyName].AsList ); } }
+		public string TimeFormat { get { return TimeFormatProperty.Value; } }
+		public CswNbtNodePropList TimeFormatProperty { get { return ( _CswNbtNode.Properties[TimeFormatPropertyName].AsList ); } }
 
         public string EncryptedPassword { get { return PasswordProperty.EncryptedPassword; } }
 

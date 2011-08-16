@@ -32,11 +32,12 @@
 				var $cell2 = $table.CswTable('cell', 1, 2);
 				$cell2.addClass( "CswComboBox_ImageCell" );
 
+				var hideTO;
 				var $ChildDiv = $('<div id="' + o.ID +'_child" class="CswComboBox_ChildDiv">')
 								  .appendTo($Div)
 								  .css('width', o.Width)
 								  .append(o.SelectContent)
-								  .hover(function() {}, function() { $ChildDiv.hide(); });
+								  .hover(function() { clearTimeout(hideTO); }, function() { hideTO = setTimeout(function() { $ChildDiv.hide(); }, 750); });
 
 				$cell1.click(function() { Toggle($TopDiv, $ChildDiv) });
 

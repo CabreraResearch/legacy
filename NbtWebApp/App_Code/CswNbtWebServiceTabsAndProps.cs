@@ -28,24 +28,24 @@ namespace ChemSW.Nbt.WebServices
             _ThisUser = _CswNbtResources.CurrentNbtUser;
         }
 
-        private CswNbtNode _getNode( string NodeId, string NodeKey, DateTime Date )
+		private CswNbtNode _getNode( string NodeId, string NodeKey, CswDateTime Date )
         {
             CswNbtNode Node = null;
             if( !string.IsNullOrEmpty( NodeKey ) )
             {
                 CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-                Node = _CswNbtResources.getNode( RealNodeKey, Date );
+				Node = _CswNbtResources.getNode(RealNodeKey, Date.ToDateTime());
             }
             else if( !string.IsNullOrEmpty( NodeId ) )
             {
                 CswPrimaryKey RealNodeId = new CswPrimaryKey();
                 RealNodeId.FromString( NodeId );
-                Node = _CswNbtResources.getNode( RealNodeId, Date );
+				Node = _CswNbtResources.getNode( RealNodeId, Date.ToDateTime() );
             }
             return Node;
         } // _getNode()
 
-        public JObject getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId, DateTime Date, string filterToPropId )
+		public JObject getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
         {
             JObject Ret = new JObject();
 
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     // History tab
-                    if( Date == DateTime.MinValue &&
+					if( Date.IsNull &&
                         CswConvert.ToBoolean( _CswNbtResources.getConfigVariableValue( "auditing" ) ) )
                     {
                         if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType ) )
@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns XML for all properties in a given tab
         /// </summary>
-        public JObject getProps( NodeEditMode EditMode, string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, DateTime Date )
+		public JObject getProps( NodeEditMode EditMode, string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date )
         {
             JObject Ret = new JObject();
 
@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNode Node = null;
             Node = EditMode == NodeEditMode.AddInPopup ?
                                     _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing ) :
-                                    _getNode( NodeId, NodeKey, DateTime.MinValue );
+                                    _getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
 
             if( Node != null )
             {
@@ -332,7 +332,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey NbtNodeKey = null;
             Node = EditMode == NodeEditMode.AddInPopup ?
                                     _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode ) :
-                                    _getNode( NodeId, NodeKey, DateTime.MinValue );
+                                    _getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
 
             if( Node != null &&
                 ( EditMode == NodeEditMode.AddInPopup &&
