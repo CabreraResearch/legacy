@@ -173,18 +173,16 @@ function isTrue(str)
 	/// <returns type="Bool" />
 
 	var ret;
-	if (str === 'true' || str === true || str === '1' || str === 1)
-	{
+	if (str === 'true' || str === true || str === '1' || str === 1) {
 		ret = true;
 	}
-	else if (str === 'false' || str === false || str === '0' || str === 0)
-	{
+	else if (str === 'false' || str === false || str === '0' || str === 0) {
 		ret = false;
 	}
-	else
-	{
-		ret = false;
-		//if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.',false);
+	else if (isNullOrEmpty(str)) {
+		ret = true;
+	} else {
+	    ret = false;
 	}
 	return ret;
 }
