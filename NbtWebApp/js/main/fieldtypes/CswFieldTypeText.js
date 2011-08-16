@@ -14,8 +14,8 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var value = tryParseString(o.$propxml.text).trim();
-            var length = tryParseNumber( o.$propxml.length, 14 );
+            var value = tryParseString(o.propData.text).trim();
+            var length = tryParseNumber( o.propData.length, 14 );
 
             if(o.ReadOnly)
             {
