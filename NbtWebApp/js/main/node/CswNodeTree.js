@@ -73,7 +73,7 @@
 						}
 
 						var newviewid = data.viewid;
-						if(o.viewid !== newviewid )
+						if (o.viewid !== newviewid )
 						{
 							o.onViewChange(newviewid, 'tree');
 							o.viewid = newviewid;
@@ -104,7 +104,7 @@
 						{
 					        hasNodes = true;
 					        var id = json.attr.id;
-					        if (selectid === id || ( level === selectLevel)) {
+					        if (selectid === id || (level === selectLevel && isNullOrEmpty(initiallyOpen))) {
 					            initiallyOpen = id;
 					        }
 					        
