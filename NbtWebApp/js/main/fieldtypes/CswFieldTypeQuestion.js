@@ -19,9 +19,12 @@
 				var compliantAnswers = tryParseString(o.propData.compliantanswers).trim();
 				var comments =  tryParseString(o.propData.comments).trim();
 				var correctiveAction =  tryParseString(o.propData.correctiveaction).trim();
-				var dateAnswered =  tryParseString(o.propData.dateanswered).trim();
-				var dateCorrected =  tryParseString(o.propData.datecorrected).trim();
 				var isCompliant =  isTrue(o.propData.iscompliant);
+
+				var dateAnswered =  tryParseString(o.propData.dateanswered.date).trim();
+				var dateCorrected =  tryParseString(o.propData.datecorrected.date).trim();
+				var dateAnsweredFormat =  ServerDateFormatToJQuery(o.propData.dateanswered.dateFormat);
+				var dateCorrectedFormat =  ServerDateFormatToJQuery(o.propData.datecorrected.dateFormat);
 
                 if(o.ReadOnly)
                 {
