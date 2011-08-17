@@ -51,7 +51,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         //private Label _Label;
         protected override void CreateChildControls()
         {
-            _CswTimeIntervalSelector = new CswTimeIntervalSelector( true );
+			_CswTimeIntervalSelector = new CswTimeIntervalSelector( _CswNbtResources, true );
             _CswTimeIntervalSelector.ID = "CswTimeIntervalSelector";
             this.Controls.Add( _CswTimeIntervalSelector );
             base.CreateChildControls();

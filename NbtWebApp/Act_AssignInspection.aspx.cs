@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.WebPages
             DueDateIntervalLiteral.Text = "Due Date Interval:";
             SubTable.addControl( 2, 0, DueDateIntervalLiteral );
 
-            DueDateInterval = new CswTimeIntervalSelector( false );
+            DueDateInterval = new CswTimeIntervalSelector(Master.CswNbtResources, false );
             DueDateInterval.ID = "DueDateInterval";
             SubTable.addControl( 2, 1, DueDateInterval );
         }
