@@ -2,6 +2,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
+/// <reference path="../pagecmp/CswWizard.js" />
 
 ;  (function ($) { /// <param name="$" type="jQuery" />
 
@@ -28,8 +29,8 @@
 		};
 		if(options) $.extend(o, options);
 
-		var WizardStepArray = [ CswViewEditor_WizardSteps.step1, CswViewEditor_WizardSteps.step2, CswViewEditor_WizardSteps.step3, 
-								CswViewEditor_WizardSteps.step4, CswViewEditor_WizardSteps.step5, CswViewEditor_WizardSteps.step6];
+		var WizardStepArray = [ CswViewEditor_WizardSteps.viewselect, CswViewEditor_WizardSteps.attributes, CswViewEditor_WizardSteps.relationships, 
+								CswViewEditor_WizardSteps.properties, CswViewEditor_WizardSteps.filters, CswViewEditor_WizardSteps.tuning];
 		var WizardSteps = {};                
 		for( var i = 1; i <= WizardStepArray.length; i++ )
 		{                
@@ -61,7 +62,7 @@
 			$wizard.CswWizard('button', 'finish', 'disable');
 
 		// Step 1 - Choose a View
-		var $div1 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step1.step);
+		var $div1 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.viewselect.step);
 		var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  "+
 							"Views are useful for defining a user's workflow or for creating elaborate search criteria. "+
 							"This wizard will take you step by step through the process of creating a new View or "+
@@ -173,7 +174,7 @@
 		//$wizard.CswWizard('button', 'next', 'disable');
 
 		// Step 2 - Edit View Attributes
-		var $div2 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step2.step);
+		var $div2 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.attributes.step);
 		var $table2 = $div2.CswTable({ 
 				'ID': o.ID + '_tbl2', 
 				'FirstCellRightAlign': true 
@@ -221,22 +222,22 @@
 		});
 		
 		// Step 3 - Add Relationships
-		var $div3 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step3.step);
+		var $div3 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.relationships.step);
 		$div3.append('Add relationships from the select boxes below:<br/><br/>');
 		var $treediv3 = $('<div />').appendTo($div3);
 		
 		// Step 4 - Select Properties
-		var $div4 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step4.step);
+		var $div4 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.properties.step);
 		$div4.append('Add properties from the select boxes below:<br/><br/>');
 		var $treediv4 = $('<div />').appendTo($div4);
 		
 		// Step 5 - Set Filters
-		var $div5 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step5.step);
+		var $div5 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.filters.step);
 		$div5.append('Add filters by selecting properties from the tree:<br/><br/>');
 		var $treediv5 = $('<div />').appendTo($div5);
 
 		// Step 6 - Fine Tuning
-		var $div6 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step6.step);
+		var $div6 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.tuning.step);
 		$div6.append('Select what you want to edit from the tree:<br/><br/>');
 		var $table6 = $div6.CswTable({ 'ID': o.ID + '_6_tbl' });
 	   
@@ -244,7 +245,7 @@
 
 		function _onBeforePrevious($wizard, stepno)
 		{
-			return (stepno !== CswViewEditor_WizardSteps.step2.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
+			return (stepno !== CswViewEditor_WizardSteps.attributes.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
 		}
 
 		function _handleNext($wizard, newstepno)
@@ -252,9 +253,9 @@
 			CurrentStep = newstepno;
 			switch(newstepno)
 			{
-				case CswViewEditor_WizardSteps.step1.step:
+				case CswViewEditor_WizardSteps.viewselect.step:
 					break;
-				case CswViewEditor_WizardSteps.step2.step:
+				case CswViewEditor_WizardSteps.attributes.step:
 					$wizard.CswWizard('button', 'finish', 'enable');
 					$wizard.CswWizard('button', 'next', 'disable');
 
@@ -297,7 +298,7 @@
 						} // success
 					}); // ajax
 					break;
-				case CswViewEditor_WizardSteps.step3.step:
+				case CswViewEditor_WizardSteps.relationships.step:
 					// save step 2 content to $currentviewxml
 					if(currentViewJson !== undefined)
 					{
@@ -305,16 +306,16 @@
 					} // if($currentviewxml !== undefined)
 
 					// make step 3 tree
-					_makeViewTree(CswViewEditor_WizardSteps.step3.step, $treediv3);
+					_makeViewTree(CswViewEditor_WizardSteps.relationships.step, $treediv3);
 					break;
-				case CswViewEditor_WizardSteps.step4.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step4.step, $treediv4);
+				case CswViewEditor_WizardSteps.properties.step:
+					_makeViewTree(CswViewEditor_WizardSteps.properties.step, $treediv4);
 					break;
-				case CswViewEditor_WizardSteps.step5.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step5.step, $treediv5);
+				case CswViewEditor_WizardSteps.filters.step:
+					_makeViewTree(CswViewEditor_WizardSteps.filters.step, $treediv5);
 					break;
-				case CswViewEditor_WizardSteps.step6.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step6.step, $table6.CswTable('cell', 1, 1));
+				case CswViewEditor_WizardSteps.tuning.step:
+					_makeViewTree(CswViewEditor_WizardSteps.tuning.step, $table6.CswTable('cell', 1, 1));
 					break;
 			} // switch(newstepno)
 		} // _handleNext()
@@ -360,21 +361,21 @@
 			CurrentStep = newstepno;
 			switch(newstepno)
 			{
-				case CswViewEditor_WizardSteps.step1.step: 
+				case CswViewEditor_WizardSteps.viewselect.step: 
 					break;
-				case CswViewEditor_WizardSteps.step2.step: 
+				case CswViewEditor_WizardSteps.attributes.step: 
 					break;
-				case CswViewEditor_WizardSteps.step3.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step3.step, $treediv3);
+				case CswViewEditor_WizardSteps.relationships.step:
+					_makeViewTree(CswViewEditor_WizardSteps.relationships.step, $treediv3);
 					break;
-				case CswViewEditor_WizardSteps.step4.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step4.step, $treediv4);
+				case CswViewEditor_WizardSteps.properties.step:
+					_makeViewTree(CswViewEditor_WizardSteps.properties.step, $treediv4);
 					break;
-				case CswViewEditor_WizardSteps.step5.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step5.step, $treediv5);
+				case CswViewEditor_WizardSteps.filters.step:
+					_makeViewTree(CswViewEditor_WizardSteps.filters.step, $treediv5);
 					break;
-				case CswViewEditor_WizardSteps.step6.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step6.step, $table6.CswTable('cell', 1, 1));
+				case CswViewEditor_WizardSteps.tuning.step:
+					_makeViewTree(CswViewEditor_WizardSteps.tuning.step, $table6.CswTable('cell', 1, 1));
 					break;
 			}
 		}
@@ -386,7 +387,7 @@
 			var processView = true; 
 
 			if (!isNullOrEmpty(currentViewJson)) {
-				if (CurrentStep === CswViewEditor_WizardSteps.step2.step) {
+				if (CurrentStep === CswViewEditor_WizardSteps.attributes.step) {
 					cacheStepTwo();
 				}
 				if (currentViewJson.mode === 'Grid' &&
@@ -559,12 +560,27 @@
 				if($select.CswAttrDom('arbid') === "root")
 				{
 				    $.extend(currentViewJson.childrelationships, childJson);
-				    //currentViewJson.append($(childJson));
 				} else {
-				    var parentObj = findObject(currentViewJson, 'arbitraryid', $select.CswAttrDom('arbid'));
-				    $.extend(parentObj.childrelationships, childJson);
-                    //var $parent = currentViewJson.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]');
-					//parentObj.append($(childJson));
+				    var objUtil = new ObjectHelper(currentViewJson);
+				    var parentObj = objUtil.find('arbitraryid', $select.CswAttrDom('arbid'));
+				    var collection = '';
+				    switch (stepno) {
+				        case CswViewEditor_WizardSteps.relationships.step:
+				            collection = 'childrelationships';
+				            break;
+				        case CswViewEditor_WizardSteps.properties.step:
+				            collection = 'properties';
+				            break;
+				        case CswViewEditor_WizardSteps.filters.step:
+				            collection = 'filters';
+				            break;				            
+				    }
+				    var objCollecion = parentObj[collection];
+				    if (isNullOrEmpty(objCollecion)) {
+				        objCollecion = { };
+				        parentObj[collection] = objCollecion;
+				    }
+				    $.extend(objCollecion, childJson);
 				}
 				_makeViewTree(stepno, $div);
 			}); // child select
@@ -577,7 +593,9 @@
 					ID: $td.CswAttrDom('arbid') + '_delete',
 					onClick: function ($ImageDiv) { 
 						var $span = $ImageDiv.parent();
-					    deleteObject(currentViewJson, 'arbitraryid', $span.CswAttrDom('arbid'));
+					    var objUtil = new ObjectHelper(currentViewJson);
+				        var parentObj = objUtil.find('arbitraryid', $span.CswAttrDom('arbid'));
+					    delete parentObj[$span.CswAttrDom('arbid')];
 					    //currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('arbid') +'"]').remove();
 						_makeViewTree(stepno, $div);
 						return CswImageButton_ButtonType.None; 
@@ -585,7 +603,7 @@
 				});
 			}); // delete
 
-			if(stepno === CswViewEditor_WizardSteps.step5.step)
+			if(stepno === CswViewEditor_WizardSteps.filters.step)
 			{
 				$div.find('.vieweditor_addfilter').each(function() {
 					var $span = $(this);
@@ -640,7 +658,7 @@
 				}); // property click
 			} // if(stepno === 5)
 
-			if(stepno === CswViewEditor_WizardSteps.step6.step)
+			if(stepno === CswViewEditor_WizardSteps.tuning.step)
 			{
 				var $cell = $table6.CswTable('cell', 1, 2);
 				var viewmode = _getSelectedViewMode($viewgrid);
@@ -688,9 +706,11 @@
 							for (var propName in data) {
 							    if (data.hasOwnProperty(propName)) {
 							        var thisProp = data[propName];
+							        var dataProp = { };
+							        dataProp[propName] = thisProp;
 							        var $option = $('<option value="' + thisProp.propid + '">' + propName + '</option>')
     							        .appendTo($groupbyselect)
-    							        .data('thisPropData', { propName: thisProp});
+    							        .data('thisPropData', dataProp);
 							        if (viewnodejson.groupbypropid === thisProp.propid &&
     							        viewnodejson.groupbyproptype === thisProp.proptype &&
         							        viewnodejson.groupbypropname === thisProp.propname)
@@ -827,8 +847,10 @@
 
 			switch (nodename) {
 		        case 'treeview':
-				    if(stepno === CswViewEditor_WizardSteps.step3.step) skipchildoptions = false;
-		            children = 'childrelationships';
+				    children = 'childrelationships';
+		            if (stepno === CswViewEditor_WizardSteps.relationships.step) {
+				        skipchildoptions = false;
+				    }
 				    arbid = "root";
 				    name = itemJson.viewname;
 				    rel = "root";
@@ -836,10 +858,15 @@
 				    linkclass = 'vieweditor_viewrootlink';
 			        break;
 			    case 'relationship':
-			        if(stepno === CswViewEditor_WizardSteps.step3.step) skipchildoptions = false;
-				    if(stepno === CswViewEditor_WizardSteps.step4.step) skipchildoptions = false;
-			        children = 'properties';
-				    name = itemJson.secondname;
+			        if (stepno === CswViewEditor_WizardSteps.relationships.step) {
+			            children = 'childrelationships';
+			            skipchildoptions = false;
+			        }
+			        if (stepno === CswViewEditor_WizardSteps.properties.step) {
+			            children = 'properties';
+			            skipchildoptions = false;
+			        }
+			        name = itemJson.secondname;
 				    var propname = tryParseString(itemJson.propname);
 				    if (!isNullOrEmpty(propname)) {
 					    if( itemJson.propowner === "First" ) {
@@ -853,18 +880,28 @@
 				    linkclass = 'vieweditor_viewrellink';
 			        break;
 			    case 'property':
-				    if(stepno <= CswViewEditor_WizardSteps.step3.step) skipme = true;
-				    if(stepno === CswViewEditor_WizardSteps.step5.step) skipchildoptions = false;
-			        children = 'filters';
-				    name = itemJson.name;
+				    if (stepno <= CswViewEditor_WizardSteps.relationships.step) {
+				        skipme = true;
+				    }
+			        if (stepno === CswViewEditor_WizardSteps.properties.step) {
+			            //children = 'childrelationships';
+			            skipchildoptions = false;
+			        }
+			        if (stepno === CswViewEditor_WizardSteps.filters.step) {
+			            skipchildoptions = false;
+			            children = 'filters';
+			        }
+			        name = itemJson.name;
 				    rel = "property";
 				    types.property = { icon: { image: "Images/view/property.gif" } };
 				    linkclass = "vieweditor_viewproplink";
 			        break;
 			    case 'filter':
-				    if(stepno <= CswViewEditor_WizardSteps.step4.step) skipme = true;
+				    if (stepno <= CswViewEditor_WizardSteps.properties.step) {
+				        skipme = true;
+				    }
 
-				    name = itemJson.subfieldname + ' ' + itemJson.filtermode + ' ' + itemJson.value;
+			        name = itemJson.subfieldname + ' ' + itemJson.filtermode + ' ' + itemJson.value;
 				    rel = "filter";
 				    types.filter = { icon: { image: "Images/view/filter.gif" } };
 				    linkclass = 'vieweditor_viewfilterlink';
@@ -893,10 +930,20 @@
 				            $.extend(types, childcontent.types);				            
 				        }
 				    }
+				    if (children != 'childrelationships' && stepno > CswViewEditor_WizardSteps.relationships.step && stepno <= CswViewEditor_WizardSteps.properties.step && itemJson.hasOwnProperty('childrelationships')) {
+				        var relJson = itemJson.childrelationships;
+				        for (var rela in relJson) {
+				            if (relJson.hasOwnProperty(rela)) {
+                                var relcontent = viewJsonToHtml(stepno, relJson[rela]);
+				                treestr += relcontent.htmlstring;
+				                $.extend(types, relcontent.types);				            
+				            }
+				        }
+				    }
 				}
 			    if(!skipchildoptions) 
 				{
-					if(stepno === CswViewEditor_WizardSteps.step5.step)
+					if(stepno === CswViewEditor_WizardSteps.filters.step)
 					{ 
 						// view filters
 						treestr += '<li><span class="vieweditor_addfilter" proparbid="' + arbid + '"></span></li>';
@@ -923,9 +970,11 @@
 								for (var optionName in data) {
 								    if (data.hasOwnProperty(optionName)) {
 								        var thisOpt = data[optionName];
+								        var dataOpt = { };
+								        dataOpt[optionName] = thisOpt;
 								        var $option = $('<option value="' + thisOpt.arbitraryid + '">' + optionName + '</option>')
     								        .appendTo($select);
-								        $option.data('thisViewJson', {optionName: thisOpt});
+								        $option.data('thisViewJson',dataOpt);
 								    }
 								}
 							} // success
