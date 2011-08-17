@@ -1090,7 +1090,7 @@ function startsWith(source, search)
 function getTimeString(date, timeformat)
 {
 	var MilitaryTime = false;
-	if (!isNullOrEmpty(timeformat) && timeformat === "HH:mm:ss")
+	if (!isNullOrEmpty(timeformat) && timeformat === "H:mm:ss")
 	{
 		MilitaryTime = true;
 	}

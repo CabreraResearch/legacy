@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Schema
 			DataTable OCPTable = OCPUpdate.getEmptyTable();
 			_CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, UserOC, CswNbtObjClassUser.TimeFormatPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List,
 														   false, false, false, string.Empty, Int32.MinValue, false, false, false, false,
-														   "hh:mm:ss tt, HH:mm:ss", Int32.MinValue, Int32.MinValue );
+														   "h:mm:ss tt, H:mm:ss", Int32.MinValue, Int32.MinValue );
 			OCPUpdate.update( OCPTable );
 
 			_CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
