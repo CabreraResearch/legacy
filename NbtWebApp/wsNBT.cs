@@ -2560,35 +2560,6 @@ namespace ChemSW.Nbt.WebServices
 
         #region Import Inspection Questions
 
-        //[WebMethod(EnableSession = false)]
-        //[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        //public string getImportInspectionQuestionsExcelTemplate()
-        //{
-        //    JObject ReturnVal = new JObject();
-        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-
-        //    try
-        //    {
-        //        _initResources();
-        //        AuthenticationStatus = _attemptRefresh();
-        //        if (AuthenticationStatus.Authenticated == AuthenticationStatus)
-        //        {
-        //            CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
-        //            ReturnVal = new JObject(new JProperty("exceltemplate", ws.GetExcelTemplate()));
-        //        }
-        //        _deInitResources();
-        //    }
-        //    catch (Exception Ex)
-        //    {
-        //        ReturnVal = jError(Ex);
-        //    }
-
-        //    _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
-
-        //    return ReturnVal.ToString();
-
-        //} // getImportInspectionQuestionsExcelTemplate()
-
         [WebMethod(EnableSession = false)]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
         public string uploadInspectionFile()
@@ -2610,40 +2581,47 @@ namespace ChemSW.Nbt.WebServices
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
                     // These variables seem to work in Google chrome but NOT in IE
                     string FileName = Context.Request["qqfile"];
-                    string PropId = Context.Request["propid"];
+                    //string PropId = Context.Request["propid"];
+                    string InspectionName = Context.Request["InspectionName"];
 
                     if (!string.IsNullOrEmpty(FileName))
                     {
-                        // Unfortunately, Context.Request.ContentType is always application/octet-stream
-                        // So we have to detect the content type
-                        //string[] SplitFileName = FileName.Split('.');
-                        //string Extension = SplitFileName[SplitFileName.Length - 1];
-                        //string ContentType = "application/vnd.ms-excel";
-
-                        if (Context.Request.InputStream != null)
+                        if (!string.IsNullOrEmpty(InspectionName))
                         {
-                            string TempFileName = "excelupload_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString("MMddyyyy_HHmmss") + ".xls";
-                            string FullPathAndFileName = _TempPath + "\\" + TempFileName;
-                            using (FileStream OutputFile = File.Create(FullPathAndFileName))
+                            if (Context.Request.InputStream != null)
                             {
-                                Context.Request.InputStream.CopyTo(OutputFile);
-                            }
+                                // generate a temporary file name
+                                string TempFileName = "excelupload_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString("MMddyyyy_HHmmss") + ".xls";
+                                string FullPathAndFileName = _TempPath + "\\" + TempFileName;
+                                // upload user file to temporary file
+                                // our Excel file reader only likes to read files from disk - does not read files from memory or stream
+                                using (FileStream OutputFile = File.Create(FullPathAndFileName))
+                                {
+                                    Context.Request.InputStream.CopyTo(OutputFile);
+                                }
 
-                            // Load the excel file into a data table
-                            CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
-                            ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName);
+                                // Load the excel file into a data table
+                                CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                                ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName);
 
-                            // determine if we were successful or failure
-                            if (ExcelDataTable != null)
-                            {
-                                ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
-                            }
-                            else
-                            {
-                                ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
-                            }
-                        } // if( Context.Request.InputStream != null )
+                                // determine if we were successful or failure
+                                if (ExcelDataTable != null)
+                                {
+                                    ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
+                                }
+                                else
+                                {
+                                    ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
+                                }
+                            } // if( Context.Request.InputStream != null )
+                        } // if (!string.IsNullOrEmpty(FileName))
+                        else
+                        {
+                        }
                     } // if (!string.IsNullOrEmpty(FileName))
+                    else
+                    {
+                    }
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 _deInitResources();
             } // try

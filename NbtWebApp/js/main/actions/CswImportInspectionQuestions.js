@@ -68,7 +68,10 @@ var CswImportInspectionQuestions_WizardSteps = {
         // define parameters to pass into FileUploader
 		var o = {
 			url: '/NbtWebApp/wsNBT.asmx/uploadInspectionFile',
-			params: {},
+			params: 
+            {
+            InspectionName: _getNewInspectionName()
+            },
 			onSuccess: function() { }
 		};
 
@@ -77,6 +80,10 @@ var CswImportInspectionQuestions_WizardSteps = {
 			action: o.url,
 			params: o.params,
 			debug: false,
+            onSubmit: function()
+            {
+                o.params['InspectionName'] = _getNewInspectionName();
+            },
 			onComplete: function() 
 				{ 
 					o.onSuccess(); 
@@ -91,6 +98,13 @@ var CswImportInspectionQuestions_WizardSteps = {
 		var instructions2 = "Thanks for using the Inspections Questions import wizard.<br/><br/>";
 		$div2.append(instructions2);
 		
+        function _getNewInspectionName()
+        {
+            // I am doing one basic step at a time to help with debugging
+            var inspectionNameElement = $div1.find('#importinspectionquestions_inspectionname');
+            var inspectionNameValue = inspectionNameElement.val();
+            return (inspectionNameValue);
+        }
 
 		function _onBeforePrevious($wizard, stepno)
 		{
