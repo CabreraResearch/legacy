@@ -555,14 +555,14 @@
 
 			$div.find('.vieweditor_childselect').change(function() {
 				var $select = $(this);
-				var childJson = $select.find('option:selected').data('optionviewjson');
+				var childJson = $select.find('option:selected').data('thisViewJson');
 				if($select.CswAttrDom('arbid') === "root")
 				{
-				    $.extend(currentViewJson, childJson);
+				    $.extend(currentViewJson.childrelationships, childJson);
 				    //currentViewJson.append($(childJson));
 				} else {
 				    var parentObj = findObject(currentViewJson, 'arbitraryid', $select.CswAttrDom('arbid'));
-				    $.extend(parentObj, childJson);
+				    $.extend(parentObj.childrelationships, childJson);
                     //var $parent = currentViewJson.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]');
 					//parentObj.append($(childJson));
 				}
@@ -690,7 +690,7 @@
 							        var thisProp = data[propName];
 							        var $option = $('<option value="' + thisProp.propid + '">' + propName + '</option>')
     							        .appendTo($groupbyselect)
-    							        .data('propxml', thisProp);
+    							        .data('thisPropData', { propName: thisProp});
 							        if (viewnodejson.groupbypropid === thisProp.propid &&
     							        viewnodejson.groupbyproptype === thisProp.proptype &&
         							        viewnodejson.groupbypropname === thisProp.propname)
@@ -724,7 +724,7 @@
 								viewnodejson.CswAttrXml('showintree', ($showtreecheck.is(':checked')))
 							viewnodejson.CswAttrXml('allowdelete', ($allowdeletingcheck.is(':checked')))
 							if($groupbyselect.val() !== '') {
-								var $propxml = $groupbyselect.find(':selected').data('propxml');
+								var $propxml = $groupbyselect.find(':selected').data('thisPropData');
 								viewnodejson.CswAttrXml('groupbypropid', $propxml.CswAttrXml('propid'));
 								viewnodejson.CswAttrXml('groupbyproptype', $propxml.CswAttrXml('proptype'));
 								viewnodejson.CswAttrXml('groupbypropname', $propxml.CswAttrXml('propname'));
@@ -925,7 +925,7 @@
 								        var thisOpt = data[optionName];
 								        var $option = $('<option value="' + thisOpt.arbitraryid + '">' + optionName + '</option>')
     								        .appendTo($select);
-								        $option.data('optionviewjson', thisOpt);
+								        $option.data('thisViewJson', {optionName: thisOpt});
 								    }
 								}
 							} // success

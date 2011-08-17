@@ -20,9 +20,9 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject getTree( CswNbtView View, string IdPrefix, bool IsFirstLoad, CswNbtNodeKey ParentNodeKey, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool UsePaging, bool ShowEmpty, bool ForSearch, bool IncludeInQuickLaunch )
         {
+            JObject ReturnObj = new JObject();
             JArray RootArray = new JArray();
-            JProperty DataProp = new JProperty( "tree", RootArray );
-            JObject ReturnObj = new JObject( DataProp );
+            ReturnObj["tree"] = RootArray;
 
             string EmptyOrInvalid = "No Results";
             // Case 21699: Show empty tree for search
@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.WebServices
                     if( IsFirstLoad )
                     {
                         View.SaveToCache( IncludeInQuickLaunch );
-                        ReturnObj.Add( new JProperty( "viewid", View.SessionViewId.ToString() ) );
+                        ReturnObj["viewid"] = View.SessionViewId.ToString();
                     }
                 } // if( Tree.getChildNodeCount() > 0 )
                 else
@@ -107,20 +107,18 @@ namespace ChemSW.Nbt.WebServices
 
             if( ShowEmpty )
             {
-                ReturnObj.Add( new JProperty( "tree",
-                                               new JArray(
-                                                   new JObject(
-                                                       new JProperty( "data", ViewName ),
-                                                       new JProperty( "attr",
-                                                                      new JObject(
-                                                                          new JProperty( "viewid", ViewId ) ) ),
-                                                       new JProperty( "children",
-                                                                      new JArray(
-                                                                          EmptyOrInvalid
-                                                                          )
-                                                           ) )
-
-                                                   ) ) );
+                ReturnObj["tree"] = new JArray(
+                                        new JObject(
+                                            new JProperty( "data", ViewName ),
+                                            new JProperty( "attr",
+                                                            new JObject(
+                                                                new JProperty( "viewid", ViewId ) ) ),
+                                            new JProperty( "children",
+                                                            new JArray(
+                                                                EmptyOrInvalid
+                                                                )
+                                                ) )
+                                        );
             }
             ReturnObj.Add( Types );
             return ReturnObj;
@@ -196,7 +194,9 @@ namespace ChemSW.Nbt.WebServices
                 Tree.goToNthChild( c );
 
                 CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
-                string ThisNodeName = Tree.getNodeNameForCurrentPosition();
+                CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
+                string ThisNodeName = ThisNode.NodeName;
+                string ThisNodeIcon = ThisNode.IconFileName;
                 string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
                 string ThisNodeId = "";
                 string ThisNodeRel = "";
@@ -206,10 +206,8 @@ namespace ChemSW.Nbt.WebServices
                     case NodeSpecies.More:
                     case NodeSpecies.Plain:
                         {
-                            CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
                             ThisNodeId = IdPrefix + ThisNode.NodeId.ToString();
                             ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
-
                         }
                         break;
                     case NodeSpecies.Group:
@@ -227,7 +225,7 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 JArray ThisNodeChildren = new JArray();
-                GrandParentNode.Add( new JObject(
+                JObject ThisNodeObj = new JObject(
                                           new JProperty( "data", ThisNodeName ),
                                           new JProperty( "attr",
                                               new JObject(
@@ -238,12 +236,16 @@ namespace ChemSW.Nbt.WebServices
                                                     new JProperty( "cswnbtnodekey", ThisNodeKeyString )
                                                   )
                                               ),
-                                          new JProperty( "children", ThisNodeChildren ),
-                                          new JProperty( "state", ThisNodeState )
-                                    ) );
+                                          new JProperty( "icon", "Images/icons/" + ThisNodeIcon )
+                                    );
+                if( "leaf" != ThisNodeState )
+                {
+                    ThisNodeObj.Add( new JProperty( "children", ThisNodeChildren ) );
+                    ThisNodeObj.Add( new JProperty( "state", ThisNodeState ) );
+                }
+                GrandParentNode.Add( ThisNodeObj );
                 if( Tree.getChildNodeCount() > 0 )
                 {
-                    // XElement ChildNode = _runTreeNodesRecursive()
                     _runTreeNodesRecursive( View, Tree, IdPrefix, ThisNodeChildren );
                 }
                 Tree.goToParentNode();

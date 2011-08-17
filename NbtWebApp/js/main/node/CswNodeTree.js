@@ -73,10 +73,12 @@
 						}
 
 						var newviewid = data.viewid;
-						if(o.viewid !== newviewid )
+						if (o.viewid !== newviewid )
 						{
-							o.onViewChange(newviewid, 'tree');
-							o.viewid = newviewid;
+							if(isFunction(o.onViewChange)) {
+							    o.onViewChange(newviewid, 'tree');
+							}
+						    o.viewid = newviewid;
 						}
 
 					    var treeData = data.tree;
@@ -84,7 +86,7 @@
 					    
 						//var $selecteditem = data.find('item[id="'+ selectid + '"]');
 					    var selectLevel = -1;
-					    if (selectid === '') {
+					    if (isNullOrEmpty(selectid)) {
 							if (o.SelectFirstChild) {	
 								if (o.viewmode === 'list' ) {
 								    selectLevel = 1;
@@ -98,14 +100,13 @@
 							}
 						}
 					    
-					    var initiallyOpen = selectid;
 					    var hasNodes = false;
 					    function treeJsonToHtml(json,level)
 						{
 					        hasNodes = true;
 					        var id = json.attr.id;
-					        if (selectid === id || ( level === selectLevel)) {
-					            initiallyOpen = id;
+					        if (selectid === id || (level === selectLevel && isNullOrEmpty(selectid))) {
+					            selectid = id;
 					        }
 					        
 					        var nodeid = tryParseString(id.substring(idPrefix.length));
@@ -155,16 +156,16 @@
 								// initially_open and initially_select cause multiple event triggers and race conditions.
 								// So we'll do it ourselves instead.
 								// Open
-							    if (!isNullOrEmpty(initiallyOpen)) {
-							        var $selecteditem = $treediv.find('#' + initiallyOpen);
+							    if (!isNullOrEmpty(selectid)) {
+							        var $selecteditem = $treediv.find('#' + selectid);
 							        var $itemparents = $selecteditem.parents().andSelf();
 							        $itemparents.each(function() {
 							            $treediv.jstree('open_node', '#' + $(this).CswAttrXml('id'));
 							        });
-							    }
-							    // Select
-								$treediv.jstree('select_node', '#' + initiallyOpen);
 
+							        // Select
+							        $treediv.jstree('select_node', '#' + selectid);
+							    }
 							}).bind('load_node.jstree', function() {
 								$('.'+ idPrefix +'check').unbind('click');
 								$('.'+ idPrefix +'check').click(function() { return handleCheck($treediv, $(this)); });
@@ -226,7 +227,7 @@
 									"select_limit": 1//,
 									//"initially_select": selectid
 								},
-								"themes": tryParseString(treeThemes),
+								"themes": treeThemes,
 								"core": {
 									//"initially_open": initiallyOpen
 								},

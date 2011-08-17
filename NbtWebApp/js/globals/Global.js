@@ -164,7 +164,9 @@ function CswAjaxJson(options)
 					'message': result.error.message,
 					'detail': result.error.detail
 				}, '');
-				o.error();
+				if (isFunction(o.error)) {
+			        o.error();
+			    }
 			}
 			else
 			{
@@ -193,7 +195,9 @@ function CswAjaxJson(options)
 			_ajaxCount--;
 			//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
 			log("Webservice Request (" + o.url + ") Failed: " + textStatus);
-			o.error();
+			if (isFunction(o.error)) {
+			    o.error();
+			}
 		}
 	});                 // $.ajax({
 } // CswAjaxJson()
