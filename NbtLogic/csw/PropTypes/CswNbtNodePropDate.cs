@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.PropTypes
 			//CswXmlDocument.AppendXmlNode( ParentNode, _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) );
 			XmlNode DateValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _DateValueSubField.ToXmlNodeName() );
 			CswDateTime CswDate = new CswDateTime( _CswNbtResources, DateValue );
-			CswXmlDocument.AppendXmlAttribute( DateValueNode, "date", CswDate.ToClientAsString() );
+			CswXmlDocument.AppendXmlAttribute( DateValueNode, "date", CswDate.ToClientAsDateString() );
 			CswXmlDocument.AppendXmlAttribute( DateValueNode, "dateformat", CswDate.ClientDateFormat );
 		}
 
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.PropTypes
             //ParentObject[_DateValueSubField.ToXmlNodeName( true )] = DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat );
 			CswDateTime CswDate = new CswDateTime( _CswNbtResources, DateValue );
 			ParentObject.Add( new JProperty( _DateValueSubField.ToXmlNodeName( true ), 
-											 CswDate.ToClientAsJObject() ) );
+											 CswDate.ToClientAsDateJObject() ) );
 		}
 
 		public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.PropTypes
 				//DateValue = CswConvert.ToDateTime( JObject.Property( _DateValueSubField.ToXmlNodeName(true) ).Value );
                 //DateValue = CswConvert.ToDateTime( JObject.Property( _DateValueSubField.ToXmlNodeName( true ) ).Value );
 				CswDateTime CswDate = new CswDateTime( _CswNbtResources );
-				CswDate.FromClientJObject( (JObject) JObject[_DateValueSubField.ToXmlNodeName( true )] );
+				CswDate.FromClientDateJObject( (JObject) JObject[_DateValueSubField.ToXmlNodeName( true )] );
 				DateValue = CswDate.ToDateTime();
 			}
         }

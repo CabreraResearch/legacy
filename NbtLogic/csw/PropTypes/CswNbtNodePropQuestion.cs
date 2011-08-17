@@ -302,10 +302,10 @@ namespace ChemSW.Nbt.PropTypes
 
 			CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources, DateAnswered );
 			ParentObject.Add( new JProperty( _DateAnsweredSubField.ToXmlNodeName( true ),
-											 CswDateAnswered.ToClientAsJObject() ) );
+											 CswDateAnswered.ToClientAsDateJObject() ) );
 			CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources, DateCorrected );
 			ParentObject.Add( new JProperty( _DateCorrectedSubField.ToXmlNodeName( true ),
-											 CswDateCorrected.ToClientAsJObject() ) );
+											 CswDateCorrected.ToClientAsDateJObject() ) );
 		}
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -373,7 +373,7 @@ namespace ChemSW.Nbt.PropTypes
 				//        DateAnswered = CswConvert.ToDateTime( JObject.Property( _DateAnsweredSubField.ToXmlNodeName( true ) ).Value );
 				//    }
 				CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources );
-				CswDateAnswered.FromClientJObject( (JObject) JObject[_DateAnsweredSubField.ToXmlNodeName( true )] );
+				CswDateAnswered.FromClientDateJObject( (JObject) JObject[_DateAnsweredSubField.ToXmlNodeName( true )] );
 				DateAnswered = CswDateAnswered.ToDateTime();
 			}
 			if( DateCorrected == DateTime.MinValue )
@@ -383,7 +383,7 @@ namespace ChemSW.Nbt.PropTypes
 				//        DateCorrected = CswConvert.ToDateTime( JObject.Property( _DateCorrectedSubField.ToXmlNodeName( true ) ).Value );
 				//    }
 				CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources );
-				CswDateCorrected.FromClientJObject( (JObject) JObject[_DateCorrectedSubField.ToXmlNodeName( true )] );
+				CswDateCorrected.FromClientDateJObject( (JObject) JObject[_DateCorrectedSubField.ToXmlNodeName( true )] );
 				DateCorrected = CswDateCorrected.ToDateTime();
 			}
 
