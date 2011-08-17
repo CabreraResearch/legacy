@@ -193,7 +193,7 @@
 																});
 
 		var v;
-		// we don't have xml to see whether this is a Property view or not yet,
+		// we don't have json to see whether this is a Property view or not yet,
 		// so checking startingStep will have to suffice
 		if(o.startingStep === 1)
 		{
@@ -299,11 +299,11 @@
 					}); // ajax
 					break;
 				case CswViewEditor_WizardSteps.relationships.step:
-					// save step 2 content to $currentviewxml
+					// save step 2 content to currentviewjson
 					if(currentViewJson !== undefined)
 					{
 						cacheStepTwo();
-					} // if($currentviewxml !== undefined)
+					} // if(currentViewJson !== undefined)
 
 					// make step 3 tree
 					_makeViewTree(CswViewEditor_WizardSteps.relationships.step, $treediv3);
@@ -629,27 +629,29 @@
 						'enabledText': 'Add',
 						'disabledText': 'Adding',
 						'onclick': function () {
-
-						    var arbProp = findObject(currentViewJson, 'arbitraryid', $span.CswAttrDom('proparbid'));
+						    var objHelper = new ObjectHelper(currentViewJson);
+						    var arbitraryId = $span.CswAttrDom('proparbid');
+						    var arbProp = objHelper.find('arbitraryid', arbitraryId);
 						    if (arbProp.hasOwnProperty('fieldtype')) {
 						        var fieldType = arbProp.fieldtype;
 						    }
 							var Json = $tbl.CswViewPropFilter('getFilterJson', { 
 											ID: o.ID,
 											$parent: $span,
-											fieldtype: fieldType, //currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]').CswAttrXml('fieldtype'),
+											fieldtype: fieldType, 
 											proparbitraryid: $span.CswAttrDom('proparbid'),
 											allowNullFilterValue: true
 										});
 
-							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 
+							var filterJson = $tbl.CswViewPropFilter('makeFilter', { 
 								viewJson: currentViewJson, 
 								filtJson: Json, 
 								onSuccess: function(filterJson) {
-								    var propObj = findObject(currentViewJson, 'arbitraryid', $span.CswAttrDom('proparbid'));
+								    var objHelper = new ObjectHelper(currentViewJson);
+								    var arbitraryId = $span.CswAttrDom('proparbid');
+								    var propObj = objHelper.find('arbitraryid', arbitraryId);
 								    propObj.filters[filterJson.arbitraryid] = filterJson;
-								    //var $propxml = currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]');
-									//$(xmlToString($filterxml)).appendTo($propxml);
+
 									_makeViewTree(stepno, $div);
 								} // onSuccess
 							}); // CswViewPropFilter
@@ -730,7 +732,7 @@
 						$showtreecheck = $showtreecheckcell.CswInput('init',{ID: o.ID + '_stcb',
 																  type: CswInput_Types.checkbox
 																}); 
-						if(viewnodejson.CswAttrXml('showintree').toLowerCase() == 'true') {
+						if(viewnodejson.showintree.toLowerCase() == 'true') {
 							$showtreecheck.CswAttrDom('checked', 'true');
 						}
 					}
@@ -740,18 +742,19 @@
 						'enabledText': 'Apply',
 						'disableOnClick': false,
 						'onclick': function() {
-							if($showtreecheck !== undefined)
-								viewnodejson.CswAttrXml('showintree', ($showtreecheck.is(':checked')))
-							viewnodejson.CswAttrXml('allowdelete', ($allowdeletingcheck.is(':checked')))
-							if($groupbyselect.val() !== '') {
-								var $propxml = $groupbyselect.find(':selected').data('thisPropData');
-								viewnodejson.CswAttrXml('groupbypropid', $propxml.CswAttrXml('propid'));
-								viewnodejson.CswAttrXml('groupbyproptype', $propxml.CswAttrXml('proptype'));
-								viewnodejson.CswAttrXml('groupbypropname', $propxml.CswAttrXml('propname'));
+							if($showtreecheck !== undefined) {
+							    viewnodejson.showintree = $showtreecheck.is(':checked');
+							    viewnodejson.allowdelete = $allowdeletingcheck.is(':checked');
+							}
+						    if($groupbyselect.val() !== '') {
+								var propData = $groupbyselect.find(':selected').data('thisPropData');
+								viewnodejson.groupbypropid = propData.propid;
+								viewnodejson.groupbyproptype = propData.proptype;
+								viewnodejson.groupbypropname = propData.propname;
 							} else {
-								viewnodejson.CswAttrXml('groupbypropid', '');
-								viewnodejson.CswAttrXml('groupbyproptype', '');
-								viewnodejson.CswAttrXml('groupbypropname', '');
+								viewnodejson.groupbypropid = '';
+								viewnodejson.groupbyproptype = '';
+								viewnodejson.groupbypropname = '';
 							}
 						} // onClick
 					}); // CswButton
@@ -759,12 +762,14 @@
 
 				// Property
 				$div.find('.vieweditor_viewproplink').click(function() {
-					$a = $(this);
+					var $a = $(this);
 					$cell.empty();
 
 					if(viewmode === "Grid")
 					{
-						var $viewnodexml = currentViewJson.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
+					    var objHelper = new ObjectHelper(currentViewJson);
+					    var arbitraryId = $a.CswAttrDom('arbid');
+					    var viewNodeData = objHelper.find('arbitraryid', arbitraryId);
 
 						//$cell.append('For ' + $a.text());
 						var $table = $cell.CswTable({ 'ID': o.ID + '_editprop', 'FirstCellRightAlign': true });
@@ -774,7 +779,7 @@
 						var $sortbycheck = $sortbycheckcell.CswInput('init',{ID: o.ID + '_sortcb',
 																  type: CswInput_Types.checkbox
 																}); 
-						if($viewnodexml.CswAttrXml('sortby').toLowerCase() == 'true') {
+						if(viewNodeData.sortby.toLowerCase() == 'true') {
 							$sortbycheck.CswAttrDom('checked', 'true');
 						}
 
@@ -783,23 +788,23 @@
 						var $colordertextbox = $colordertextcell.CswInput('init',{ID: o.ID + '_gcotb',
 																  type: CswInput_Types.text
 																}); 
-						$colordertextbox.val($viewnodexml.CswAttrXml('order'));
+						$colordertextbox.val(viewNodeData.order);
 
 						$table.CswTable('cell', 3, 1).append('Grid Column Width (in characters)');
 						var $colwidthtextcell = $table.CswTable('cell', 3, 2);
 						var $colwidthtextbox = $colwidthtextcell.CswInput('init',{ID: o.ID + '_gcwtb',
 																  type: CswInput_Types.text
 																});
-						$colwidthtextbox.val($viewnodexml.CswAttrXml('width'));
+						$colwidthtextbox.val(viewNodeData.width);
 
 						$table.CswTable('cell', 4, 2).CswButton({ 
 							'ID': o.ID + '_saveprop',
 							'enabledText': 'Apply',
 							'disableOnClick': false,
 							'onclick': function() {
-								$viewnodexml.CswAttrXml('sortby', ($sortbycheck.is(':checked')))
-								$viewnodexml.CswAttrXml('order', $colordertextbox.val());
-								$viewnodexml.CswAttrXml('width', $colwidthtextbox.val());
+							    viewNodeData.sortby = $sortbycheck.is(':checked');
+								viewNodeData.order = $colordertextbox.val();
+								viewNodeData.width = $colwidthtextbox.val();
 							} // onClick
 						}); // CswButton
 					}
@@ -807,17 +812,18 @@
 
 				// Filter
 				$div.find('.vieweditor_viewfilterlink').click(function() {
-					$a = $(this);
+					var $a = $(this);
 					$cell.empty();
 					//$cell.append('For ' + $a.text());
-
-					var $viewnodexml = currentViewJson.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
+				    var objHelper = new ObjectHelper(currentViewJson);
+				    var arbitraryId = $a.CswAttrDom('arbid');
+				    var viewNodeData = objHelper.find('arbitraryid', arbitraryId);
 
 					var $table = $cell.CswTable({ 'ID': o.ID + '_editfilt', 'FirstCellRightAlign': true });
 					$table.CswTable('cell', 1, 1).append('Case Sensitive');
 					var $casecheck = $('<input type="checkbox" id="' + o.ID + '_casecb" />')
 											.appendTo($table.CswTable('cell', 1, 2));
-					if($viewnodexml.CswAttrXml('casesensitive').toLowerCase() === 'true') {
+					if(viewNodeData.casesensitive.toLowerCase() === 'true') {
 						$casecheck.CswAttrDom('checked', 'true');
 					}
 
@@ -826,7 +832,7 @@
 						'enabledText': 'Apply',
 						'disableOnClick': false,
 						'onclick': function() {
-							$viewnodexml.CswAttrXml('casesensitive', ($casecheck.is(':checked')))
+						    viewNodeData.casesensitive = $casecheck.is(':checked');
 						} // onClick
 					}); // CswButton
 				});
@@ -991,7 +997,7 @@
 						'htmlstring': treestr,
 						'types': types
 					};
-		} // _viewXmlToHtml()
+		} // _viewJsonToHtml()
 
 
 		return $div;
