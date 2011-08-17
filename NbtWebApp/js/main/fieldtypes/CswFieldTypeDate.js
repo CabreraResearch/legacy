@@ -16,7 +16,7 @@
 
             //var value = tryParseString(o.propData.value).trim();
             var value = o.propData.value.date;
-            var Format = ServerDateFormatToJQuery(o.propData.value.dateformat);
+            var dateFormat = ServerDateFormatToJQuery(o.propData.value.dateformat);
 
 //            if (value === '1/1/0001')
 //                value = '';
@@ -33,7 +33,7 @@
                                                      onChange: o.onchange,
                                                      cssclass: 'textinput' // date' date validation broken by alternative formats
                                               }); 
-                $TextBox.datepicker({ 'dateFormat': Format });
+                $TextBox.datepicker({ 'dateFormat': dateFormat });
                 if(o.Required)
                 {
                     $TextBox.addClass("required");

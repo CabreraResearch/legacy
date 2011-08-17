@@ -14,7 +14,9 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var startDate = tryParseString(o.propData.startdatetime).trim();
+            var startDate = tryParseString(o.propData.startdatetime.date);
+            var dateFormat = ServerDateFormatToJQuery(o.propData.startdatetime.dateformat);
+
             var value = tryParseString(o.propData.value).trim();
             var units = tryParseString(o.propData.units).trim();
 
@@ -43,8 +45,8 @@
                                                                   value: startDate,
                                                                   onChange: o.onchange
                                                                 }); 
-                $StartDateBox.datepicker();
-				
+				$StartDateBox.datepicker({ 'dateFormat': dateFormat });
+
 //				$edittable.CswTable('cell', 2, 1).append('End Date');
 //                var $EndDateBox = $('<input type="text" class="textinput date" id="'+ o.ID +'_ed" name="' + o.ID + '_ed" value="" />"' )
 //									.appendTo($edittable.CswTable('cell', 2, 2))
@@ -68,9 +70,9 @@
         save: function(o) { //$propdiv, $xml
                 var StartDate = o.$propdiv.find('#'+ o.ID +'_sd').val();
                 var Units = o.$propdiv.find('#'+ o.ID +'_units').val();
-                o.propData.startdatetime = StartDate;
+                o.propData.startdatetime.date = StartDate;
                 o.propData.units = Units;
-            }
+        }
     };
     
     // Method calling logic
