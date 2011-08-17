@@ -23,8 +23,8 @@
 
 				var dateAnswered =  tryParseString(o.propData.dateanswered.date).trim();
 				var dateCorrected =  tryParseString(o.propData.datecorrected.date).trim();
-				var dateAnsweredFormat =  ServerDateFormatToJQuery(o.propData.dateanswered.dateFormat);
-				var dateCorrectedFormat =  ServerDateFormatToJQuery(o.propData.datecorrected.dateFormat);
+				var dateAnsweredFormat =  ServerDateFormatToJQuery(o.propData.dateanswered.dateformat);
+				var dateCorrectedFormat =  ServerDateFormatToJQuery(o.propData.datecorrected.dateformat);
 
                 if(o.ReadOnly)
                 {
