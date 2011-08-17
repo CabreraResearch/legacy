@@ -14,26 +14,27 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var value = tryParseString(o.propData.value).trim();
+            var value = tryParseString(o.propData.value.time).trim();
+            var timeFormat = ServerTimeFormatToJQuery(o.propData.value.timeformat);
 
             if (o.ReadOnly) {
                 $Div.append(value);
             } else {
                 var $TextBox = $Div.CswInput('init',{ID: o.ID,
                                                       type: CswInput_Types.text,
-                                                      cssclass: 'textinput validateTime',
+                                                      cssclass: 'textinput', // validateTime',
                                                       onChange: o.onchange,
                                                       value: value
                                                  }); 
                 var $nowbutton = $Div.CswButton('init',{ 'ID': o.ID +'_now',
 														'disableOnClick': false,
-                                                        'onclick': function() { $TextBox.val(getTimeString(new Date())); },
+                                                        'onclick': function() { $TextBox.val( getTimeString(new Date(), timeFormat) ); },
                                                         'enabledText': 'Now'
                                                  }); 
                 
-				jQuery.validator.addMethod( "validateTime", function(value, element) { 
-                            return (this.optional(element) || validateTime($(element).val()));
-                        }, 'Enter a valid time (e.g. 12:30 PM)');
+//				jQuery.validator.addMethod( "validateTime", function(value, element) { 
+//                            return (this.optional(element) || validateTime($(element).val()));
+//                        }, 'Enter a valid time (e.g. 12:30 PM)');
 
 				if(o.Required)
                 {
@@ -44,7 +45,7 @@
         },
         save: function(o) {
                 var $TextBox = o.$propdiv.find('input');
-                o.propData.value = $TextBox.val();
+                o.propData.value.time = $TextBox.val();
             }
     };
     
