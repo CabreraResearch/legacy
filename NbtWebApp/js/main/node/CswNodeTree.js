@@ -75,8 +75,10 @@
 						var newviewid = data.viewid;
 						if (o.viewid !== newviewid )
 						{
-							o.onViewChange(newviewid, 'tree');
-							o.viewid = newviewid;
+							if(isFunction(o.onViewChange)) {
+							    o.onViewChange(newviewid, 'tree');
+							}
+						    o.viewid = newviewid;
 						}
 
 					    var treeData = data.tree;
