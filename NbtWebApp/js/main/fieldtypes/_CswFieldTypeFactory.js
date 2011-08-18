@@ -39,8 +39,8 @@ $.CswFieldTypeFactory = function (method)
 				case "Composite":
 					m.$propdiv.CswFieldTypeComposite('init', m); //'init', nodeid, propData, onchange
 					break;
-				case "Date":
-					m.$propdiv.CswFieldTypeDate('init', m); //'init', nodeid, propData, onchange
+				case "DateTime":
+					m.$propdiv.CswFieldTypeDateTime('init', m); //'init', nodeid, propData, onchange
 					break;
 				case "File":
 					m.$propdiv.CswFieldTypeFile('init', m); //'init', nodeid, propData, onchange
@@ -111,9 +111,9 @@ $.CswFieldTypeFactory = function (method)
 				case "Text":
 					m.$propdiv.CswFieldTypeText('init', m); //('init', nodeid, propData, onchange);
 					break;
-				case "Time":
-					m.$propdiv.CswFieldTypeTime('init', m); //('init', nodeid, propData, onchange);
-					break;
+//				case "Time":
+//					m.$propdiv.CswFieldTypeTime('init', m); //('init', nodeid, propData, onchange);
+//					break;
 				case "TimeInterval":
 					m.$propdiv.CswFieldTypeTimeInterval('init', m); //('init', nodeid, propData, onchange);
 					break;
@@ -156,8 +156,8 @@ $.CswFieldTypeFactory = function (method)
 				case "Composite":
 					m.$propdiv.CswFieldTypeComposite('save', m); //('save', $propdiv, propData);
 					break;
-				case "Date":
-					m.$propdiv.CswFieldTypeDate('save', m); //('save', $propdiv, propData);
+				case "DateTime":
+					m.$propdiv.CswFieldTypeDateTime('save', m); //('save', $propdiv, propData);
 					break;
 				case "File":
 					m.$propdiv.CswFieldTypeFile('save', m); //('save', $propdiv, propData);
@@ -228,9 +228,9 @@ $.CswFieldTypeFactory = function (method)
 				case "Text":
 					m.$propdiv.CswFieldTypeText('save', m); //('save', $propdiv, propData);
 					break;
-				case "Time":
-					m.$propdiv.CswFieldTypeTime('save', m); //('save', $propdiv, propData);
-					break;
+//				case "Time":
+//					m.$propdiv.CswFieldTypeTime('save', m); //('save', $propdiv, propData);
+//					break;
 				case "TimeInterval":
 					m.$propdiv.CswFieldTypeTimeInterval('save', m); //('save', $propdiv, propData);
 					break;

@@ -12,13 +12,13 @@ using ChemSW.Nbt.Security;
 namespace ChemSW.Nbt.MetaData.FieldTypeRules
 {
 
-    public class CswNbtFieldTypeRuleDate : ICswNbtFieldTypeRule
+    public class CswNbtFieldTypeRuleDateTime : ICswNbtFieldTypeRule
     {
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
-        public CswNbtFieldTypeRuleDate( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRuleDateTime( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources, MetaDataProp );
@@ -76,6 +76,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }
 
-    }//CswNbtFieldTypeRuleDate
+    }//CswNbtFieldTypeRuleDateTime
 
 }//namespace ChemSW.Nbt.MetaData

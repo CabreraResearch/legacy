@@ -206,8 +206,7 @@ namespace ChemSW.Nbt.PropTypes
         {
 			//ParentObject[_StartDateTimeSubField.ToXmlNodeName( true )] = ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty;
 			CswDateTime CswDate = new CswDateTime( _CswNbtResources, StartDateTime );
-			ParentObject.Add( new JProperty( _StartDateTimeSubField.ToXmlNodeName( true ),
-											 CswDate.ToClientAsDateJObject() ) );
+			ParentObject.Add( new JProperty( _StartDateTimeSubField.ToXmlNodeName( true ), CswDate.ToClientAsDateTimeJObject() ) );
 			
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = CachedValue.ToString();
             ParentObject[_UnitsSubField.ToXmlNodeName( true )] = Units;
@@ -250,7 +249,7 @@ namespace ChemSW.Nbt.PropTypes
             {
 				//StartDateTime = CswConvert.ToDateTime( JObject.Property( _StartDateTimeSubField.ToXmlNodeName( true ) ).Value );
 				CswDateTime CswDate = new CswDateTime( _CswNbtResources );
-				CswDate.FromClientDateJObject( (JObject) JObject[_StartDateTimeSubField.ToXmlNodeName( true )] );
+				CswDate.FromClientDateTimeJObject( (JObject) JObject[_StartDateTimeSubField.ToXmlNodeName( true )] );
 				StartDateTime = CswDate.ToDateTime();
             }
             if( null != JObject.Property( _UnitsSubField.ToXmlNodeName( true ) ) )

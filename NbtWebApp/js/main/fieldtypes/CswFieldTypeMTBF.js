@@ -39,13 +39,23 @@
 				var $edittable = $table.CswTable('cell', 2, 2).CswTable('init', { 'ID': o.ID + '_edittbl' });
 				$edittable.CswTable('cell', 1, 1).append('Start Date');
                 var $StartDateBoxCell = $edittable.CswTable('cell', 1, 2);
-                var $StartDateBox = $StartDateBoxCell.CswInput('init',{ID: o.ID + '_sd',
-                                                                  type: CswInput_Types.text,
-                                                                  cssclass: 'textinput date',
-                                                                  value: startDate,
-                                                                  onChange: o.onchange
-                                                                }); 
-				$StartDateBox.datepicker({ 'dateFormat': dateFormat });
+				
+				var $StartDateDiv = $StartDateBoxCell.CswDateTimePicker('init', { ID: o.ID + '_sd',
+																					Date: startDate,
+																					DateFormat: dateFormat,
+																					DisplayMode: 'Date',
+																					ReadOnly: o.ReadOnly,
+																					Required: o.Required,
+																					OnChange: o.onchange
+																				});
+
+//                var $StartDateBox = $StartDateBoxCell.CswInput('init',{ID: o.ID + '_sd',
+//                                                                  type: CswInput_Types.text,
+//                                                                  cssclass: 'textinput date',
+//                                                                  value: startDate,
+//                                                                  onChange: o.onchange
+//                                                                }); 
+//				$StartDateBox.datepicker({ 'dateFormat': dateFormat });
 
 //				$edittable.CswTable('cell', 2, 1).append('End Date');
 //                var $EndDateBox = $('<input type="text" class="textinput date" id="'+ o.ID +'_ed" name="' + o.ID + '_ed" value="" />"' )
@@ -68,7 +78,7 @@
             }
         },
         save: function(o) { //$propdiv, $xml
-                var StartDate = o.$propdiv.find('#'+ o.ID +'_sd').val();
+                var StartDate = o.$propdiv.find('#'+ o.ID +'_sd').CswDateTimePicker('value').Date;
                 var Units = o.$propdiv.find('#'+ o.ID +'_units').val();
                 o.propData.startdatetime.date = StartDate;
                 o.propData.units = Units;

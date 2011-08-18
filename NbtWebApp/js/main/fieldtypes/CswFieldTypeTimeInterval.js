@@ -70,11 +70,6 @@
 
 					$WeeklyTable.CswTable('cell', 2, 1).append('Starting On:');
 					var $WeeklyStartDateCell = $WeeklyTable.CswTable('cell', 2, 2);
-					var $WeeklyStartDate = $WeeklyStartDateCell.CswInput('init', { ID: o.ID + '_weekly_sd',
-                                                                                   type: CswInput_Types.text,
-                                                                                   cssclass: 'textinput', // date',
-                                                                                   onChange: o.onchange
-                                                                        });  
 
 					// Monthly
 					var $MonthlyDiv = $('<div />')
@@ -153,17 +148,13 @@
 	//									.hide();
 				
 					$YearlyDiv.append('Every Year, Starting On:<br/>');
-					var $YearlyStartDate = $YearlyDiv.CswInput('init',{ID: o.ID + '_yearly_sd',
-                                                                       type: CswInput_Types.text,
-                                                                       cssclass: 'textinput', // date',
-                                                                       onChange: o.onchange
-                                                                }); 
+
 					// Set selected values
 
 					var rateIntervalData = o.propData.Interval.rateintervalvalue;
 					var rateType = rateIntervalData.ratetype;
 					var dateFormat = ServerDateFormatToJQuery(rateIntervalData.dateformat);
-
+log('dateformat = ' + dateFormat);
 					switch(rateType)
 					{
 						case "WeeklyByDay":
@@ -172,7 +163,7 @@
 							$MonthlyDiv.hide(); 
 							$YearlyDiv.hide();
 							setWeekDayChecked( o.ID + '_weeklyday', rateIntervalData.weeklyday);
-							$WeeklyStartDate.val(rateIntervalData.startingdate.date);
+							var WeeklyStartDate = rateIntervalData.startingdate.date;
 							$MonthlyByDateRadio.CswAttrDom('checked', 'true');     //default (for case 21048)
 							break;
 						case "MonthlyByDate":
@@ -202,13 +193,27 @@
 							$WeeklyDiv.hide(); 
 							$MonthlyDiv.hide(); 
 							$YearlyDiv.show();
-							$YearlyStartDate.val(rateIntervalData.yearlydate.date);
+							var YearlyStartDate = rateIntervalData.yearlydate.date;
 							$MonthlyByDateRadio.CswAttrDom('checked', 'true');     //default (for case 21048)
 							break;
 					} // switch(RateType)
 
-					$WeeklyStartDate.datepicker({ dateFormat: dateFormat });
-                    $YearlyStartDate.datepicker({ dateFormat: dateFormat });
+					var $WeeklyStartDateDiv = $WeeklyStartDateCell.CswDateTimePicker('init', { ID: o.ID + '_weekly_sd',
+																					Date: WeeklyStartDate,
+																					DateFormat: dateFormat,
+																					DisplayMode: 'Date',
+																					ReadOnly: o.ReadOnly,
+																					Required: o.Required,
+																					OnChange: o.onchange
+																				});
+					var $YearlyStartDateDiv = $YearlyDiv.CswDateTimePicker('init', { ID: o.ID + '_yearly_sd',
+																					Date: YearlyStartDate,
+																					DateFormat: dateFormat,
+																					DisplayMode: 'Date',
+																					ReadOnly: o.ReadOnly,
+																					Required: o.Required,
+																					OnChange: o.onchange
+																				});
 				}
             },
         save: function(o) {
@@ -221,7 +226,7 @@
 				            RIValue.ratetype = 'WeeklyByDay';
 				            RIValue.weeklyday = getWeekDayChecked(o.ID + '_weeklyday');
 				            RIValue.startingdate = {};
-							RIValue.startingdate.date = $('#' + o.ID + '_weekly_sd').val();
+							RIValue.startingdate.date = $('#' + o.ID + '_weekly_sd').CswDateTimePicker('value').Date;
 				            RIValue.startingdate.dateformat = RIValue.dateformat;
 				            break;
 
@@ -245,7 +250,7 @@
 				        case 'yearly':
 				            RIValue.ratetype = 'YearlyByDate';
 				            RIValue.yearlydate = {};
-							RIValue.yearlydate.date = $('#' + o.ID + '_yearly_sd').val();
+							RIValue.yearlydate.date = $('#' + o.ID + '_yearly_sd').CswDateTimePicker('value').Date;
 				            RIValue.yearlydate.dateformat = RIValue.dateformat;
 				            break;
 				    } // switch(RateType)
