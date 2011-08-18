@@ -52,11 +52,11 @@ namespace ChemSW.Nbt.ObjClasses
         //BZ 10247
         private void setDoneOnDate()
         {
-            if( Completed.Checked == Tristate.True && DoneOn.DateValue == DateTime.MinValue )
-                DoneOn.DateValue = DateTime.Today;
+			if( Completed.Checked == Tristate.True && DoneOn.DateTimeValue == DateTime.MinValue )
+				DoneOn.DateTimeValue = DateTime.Today;
 
-            if( Completed.Checked == Tristate.False && DoneOn.DateValue != DateTime.MinValue )
-                DoneOn.DateValue = DateTime.MinValue;
+			if( Completed.Checked == Tristate.False && DoneOn.DateTimeValue != DateTime.MinValue )
+				DoneOn.DateTimeValue = DateTime.MinValue;
         }
 
         #region Inherited Events
@@ -118,25 +118,25 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropDate GeneratedDate
+        public CswNbtNodePropDateTime GeneratedDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName].AsDateTime );
             }
         }
-        public CswNbtNodePropDate DoneOn
+		public CswNbtNodePropDateTime DoneOn
         {
             get
             {
-                return ( _CswNbtNode.Properties[DoneOnPropertyName].AsDate );
+                return ( _CswNbtNode.Properties[DoneOnPropertyName].AsDateTime );
             }
         }
-        public CswNbtNodePropDate DueDate
+		public CswNbtNodePropDateTime DueDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[DueDatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[DueDatePropertyName].AsDateTime );
             }
         }
 

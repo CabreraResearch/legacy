@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.WebServices
 						Row["nodeidstr"] = InspectionNode.NodeId.ToString();
 						Row["Inspection"] = InspectionNode.NodeName;
 						Row["Inspection Point"] = NodeAsInspection.Target.CachedNodeName;
-						Row["Due"] = NodeAsInspection.Date.DateValue.ToShortDateString();
+						Row["Due"] = NodeAsInspection.Date.DateTimeValue.ToShortDateString();
 						Row["Status"] = NodeAsInspection.Status.Value;
 						Row["OOC Question"] = QuestionProp.NodeTypeProp.PropNameWithQuestionNo;
 						Row["OOC Answer"] = QuestionProp.AsQuestion.Answer;
