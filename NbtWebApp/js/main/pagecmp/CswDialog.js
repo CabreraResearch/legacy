@@ -337,10 +337,6 @@
 								url: '/NbtWebApp/wsNBT.asmx/getAbout',
 								data: {},
 								success: function (data) {
-								    if(debugOn()) {
-								        log('CswDialog_AboutDialog');
-								        log(data);
-								    }
 								    $div.append('NBT Assembly Version: ' + data.assembly + '<br/><br/>');
 									var $table = $div.CswTable('init', { ID: 'abouttable' });
 									var row = 1;

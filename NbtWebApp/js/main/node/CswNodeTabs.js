@@ -83,10 +83,6 @@
 				data: jsonData,
 				success: function (data)
 				{
-				    if (debugOn()) {
-				        log('CswNodeTabs');
-				        log(data);
-				    }
 				    clearTabs();
 					var tabdivs = [];
 					var selectedtabno = 0;
@@ -161,10 +157,6 @@
 				data: jsonData,
 				success: function (data)
 				{
-				    if (debugOn()) {
-				        log('CswNodeTabs_getProps()');
-				        log(data);
-				    }
 				    var $form = $tabcontentdiv.children('form');
 					$form.contents().remove();
 
@@ -480,10 +472,6 @@
 				data: jsonData,
 				success: function (data)
 				{
-				    if (debugOn()) {
-				        log('CswNodeTabs_updateSubProps()');
-				        log(data);
-				    }
 				    _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn );
 				}
 			});
