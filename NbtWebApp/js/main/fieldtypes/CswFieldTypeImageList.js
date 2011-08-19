@@ -28,7 +28,7 @@
 		                            .appendTo($Div);
 			}
 
-            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' })
 			var currCol = 1;
 
             if (!o.ReadOnly) 
@@ -64,18 +64,17 @@
 			function addImage(name, href, doAnimation)
 			{
 				var $imagecell = $table.CswTable('cell', 1, currCol)
-									.css('text-align', 'center');
+									.css({ 'text-align': 'center',
+											'padding-left': '10px' });
 				var $namecell = $table.CswTable('cell', 2, currCol)
-									.css('text-align', 'center');
-				var $clearcell = $table.CswTable('cell', 3, currCol)
-									.css('text-align', 'center');
+									.css({ 'text-align': 'center',
+											'padding-left': '10px' });
 				currCol++;
 
 				if(doAnimation)
 				{
 					$imagecell.hide();
 					$namecell.hide();
-					$clearcell.hide();
 				}
 
 				$imagecell.append('<a href="'+ href +'" target="_blank"><img src="' + href + '" alt="' + name + '" width="'+ width +'" height="'+ height +'"/></a>')
@@ -85,12 +84,11 @@
 				}
 				if(!o.ReadOnly)
 				{
-					$clearcell.CswImageButton({
+					$namecell.CswImageButton({
 						ButtonType: CswImageButton_ButtonType.Delete,
 						AlternateText: 'Remove',
 						ID: makeId({ 'prefix': 'image_' + currCol, 'id': 'rembtn' }),
 						onClick: function ($ImageDiv) {
-							$clearcell.fadeOut('fast');
 							$namecell.fadeOut('fast');
 							$imagecell.fadeOut('fast');
 
@@ -107,7 +105,6 @@
 				{
 					$imagecell.fadeIn('fast');
 					$namecell.fadeIn('fast'); 
-					$clearcell.fadeIn('fast');
 				}
 
 			} // addImage()
