@@ -105,7 +105,7 @@
 						{
 					        hasNodes = true;
 					        var id = json.attr.id;
-					        if (selectid === id || (level === selectLevel && isNullOrEmpty(selectid))) {
+					        if (level === selectLevel && isNullOrEmpty(selectid)) {
 					            selectid = id;
 					        }
 					        
