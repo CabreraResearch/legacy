@@ -99,12 +99,10 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         private JObject _getViewBuilderProps( IEnumerable<CswViewBuilderProp> ViewBuilderProperties, CswNbtViewRelationship.RelatedIdType RelatedIdType )
         {
-            JObject ViewBuilderPropsNode = new JObject();
             JObject PropObj = new JObject();
-            ViewBuilderPropsNode["properties"] = PropObj;
 
-            JObject FiltersNodeObj = new JObject();
-            PropObj["propertyfilters"] = FiltersNodeObj;
+            JObject PropertiesObj = new JObject();
+            PropObj["properties"] = PropertiesObj;
 
             JObject PropGroups = new JObject();
             JObject NodeTypePropsGrpObj = new JObject();
@@ -144,11 +142,11 @@ namespace ChemSW.Nbt.WebServices
                             break;
                     }
 
-                    _getVbPropData( FiltersNodeObj, Prop );
+                    _getVbPropData( PropertiesObj, Prop );
                 }
 
             }
-            return ViewBuilderPropsNode;
+            return PropObj;
         }
 
         /// <summary>
@@ -201,12 +199,12 @@ namespace ChemSW.Nbt.WebServices
                 ParentObj["fieldtype"] = ViewBuilderProp.FieldType.FieldType.ToString();
 
                 JObject SubfieldObj = new JObject();
-                ParentObj["select"] = SubfieldObj;
+                ParentObj["subfields"] = SubfieldObj;
 
                 if( null != ViewBuilderProp.FieldTypeRule.SubFields.Default )
                 {
-                    ParentObj["filter"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
-                    ParentObj["subfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Column.ToString();
+                    ParentObj["defaultfilter"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
+                    ParentObj["defaultsubfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Column.ToString();
                 }
 
                 JObject FiltersObj = new JObject();
@@ -275,7 +273,7 @@ namespace ChemSW.Nbt.WebServices
 
                     CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode = Filter.FilterMode;
 
-                    JObject FiltersObj = new JObject( new JProperty( "name", ViewBuilderProp.MetaDataPropName ) );
+                    JObject FiltersObj = new JObject();
                     PropObj["propertyfilters"] = FiltersObj;
                     foreach( CswNbtSubField Field in ViewBuilderProp.FieldTypeRule.SubFields )
                     {
@@ -301,11 +299,11 @@ namespace ChemSW.Nbt.WebServices
                     if( ViewBuilderProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
                     {
                         FiltersOptObj["name"] = ViewBuilderProp.MetaDataPropName;
-                        FiltersOptObj["select"] = _getFilterOptions( ViewBuilderProp, Filter.Value );
+                        FiltersOptObj["filteroptions"] = _getFilterOptions( ViewBuilderProp, Filter.Value );
                     }
                 }
             }
-        } // _getViewBuilderPropData()
+        } // _getVbPropertiesData()
 
         /// <summary>
         /// Returns the JSON for SubFields Filters
@@ -316,16 +314,20 @@ namespace ChemSW.Nbt.WebServices
             {
                 DefaultFilterMode = SubField.DefaultFilterMode;
             }
-            FiltersObj["subfield_" + SubField.Column] = new JObject( new JProperty( "column", SubField.Column ), new JProperty( "name", SubField.Name ) );
 
             JObject Filters = new JObject();
-            FiltersObj["select"] = Filters;
+            FiltersObj[SubField.Column] = Filters;
+            Filters["column"] = SubField.Column.ToString();
+            Filters["name"] = SubField.Name.ToString();
+
+            JObject FiltersCol = new JObject();
+            Filters["filters"] = FiltersCol;
             foreach( CswNbtPropFilterSql.PropertyFilterMode FilterModeOpt in SubField.SupportedFilterModes )
             {
-                Filters[FilterModeOpt.ToString()] = ViewBuilderProp.MetaDataPropName;
+                FiltersCol[FilterModeOpt.ToString()] = FilterModeOpt.ToString();
                 if( FilterModeOpt == DefaultFilterMode )
                 {
-                    FiltersObj["selected"] = FilterModeOpt.ToString();
+                    FiltersCol["selected"] = FilterModeOpt.ToString();
                 }
             }
         } // _getSubFieldFilters()

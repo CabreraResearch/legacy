@@ -86,8 +86,7 @@
 					        log('CswViewPropFilter_init:');
 					        log(data);
 					    }
-						o.propsData = data.propertyfilters;
-						//o.filtarbitraryid = o.propsData.filtarbitraryid;
+						o.propsData = data;
 						renderPropFiltRow(o);
 					} //success
 				}); //ajax
@@ -112,8 +111,8 @@
 					var $props = $propSelectCell.CswSpan('init',{ID: propCellId, value: propertyName});
 				}
 				
-				var fieldtype = filtOpt.propsData.fieldtype;
-				var $defaultFilter = filtOpt.propsData.defaultsubfield.filter;
+				var fieldtype = propsData.fieldtype;
+				var $defaultFilter = propsData.defaultsubfield.filter;
 				
 				//Row propRow, Column 4: subfield default value (hidden) 
 				var $subfieldCell = $propFilterTable.CswTable('cell', filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
