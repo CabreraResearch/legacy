@@ -564,6 +564,9 @@
 
 	function _openDiv($div, width, height)
 	{
+		$('<div id="DialogErrorDiv" style="display: none;"></div>')
+			.prependTo($div);
+
 		$div.dialog({ 'modal': true,
 			'width': width,
 			'height': height,
