@@ -233,17 +233,17 @@
         // Step 3 - Add Relationships
         var $div3 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.relationships.step);
         $div3.append('Add relationships from the select boxes below:<br/><br/>');
-        var $treediv3 = $('<div />').appendTo($div3);
+        var $treediv3 = $('<div id="' + CswViewEditor_WizardSteps.relationships.divId + '"><div/>').appendTo($div3);
 
         // Step 4 - Select Properties
         var $div4 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.properties.step);
         $div4.append('Add properties from the select boxes below:<br/><br/>');
-        var $treediv4 = $('<div />').appendTo($div4);
+        var $treediv4 = $('<div id="' + CswViewEditor_WizardSteps.properties.divId + '"><div/>').appendTo($div4);
 
         // Step 5 - Set Filters
         var $div5 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.filters.step);
         $div5.append('Add filters by selecting properties from the tree:<br/><br/>');
-        var $treediv5 = $('<div />').appendTo($div5);
+        var $treediv5 = $('<div id="' + CswViewEditor_WizardSteps.filters.divId + '"><div/>').appendTo($div5);
 
         // Step 6 - Fine Tuning
         var $div6 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.tuning.step);
@@ -645,8 +645,7 @@
                 var $a = $(this);
                 $cell.empty();
 
-                if (viewmode === "Grid")
-                {
+                if (viewmode === "Grid") {
                     var objHelper = new ObjectHelper(currentViewJson);
                     var arbitraryId = $a.CswAttrDom('arbid');
                     var viewNodeData = objHelper.find('arbitraryid', arbitraryId);
@@ -965,6 +964,25 @@
             });
         }
         
+        function getTreeDiv(stepno) {
+            var ret = '';
+            switch (stepno) {
+                case CswViewEditor_WizardSteps.relationships.step:
+                    ret = $('#' + CswViewEditor_WizardSteps.relationships.divId);
+                    break;
+                case CswViewEditor_WizardSteps.properties.step:
+                    ret = $('#' + CswViewEditor_WizardSteps.properties.divId);
+                    break;
+                case CswViewEditor_WizardSteps.filters.step:
+                    ret = $('#' + CswViewEditor_WizardSteps.filters.divId);
+                    break;
+                case CswViewEditor_WizardSteps.tuning.step:
+                    ret = $('#' + o.ID);
+                    break;
+            }
+            return ret;
+        }
+        
         function makeChildSelect(stepno, arbid, propName) {
             var $select = '';
             
@@ -995,14 +1013,15 @@
                                     $option.data('thisViewJson', dataOpt);
                                 }
                             }
-                            var childJson = $select.find('option:selected').data('thisViewJson');
+                            
                             $select.change(function() {
-                                if ($select.CswAttrDom('arbid') === "root")
-                                {
+                                var $this = $(this);
+                                var childJson = $this.find('option:selected').data('thisViewJson');
+                                if (arbid === "root") {
                                     $.extend(currentViewJson.childrelationships, childJson);
                                 } else {
                                     var objUtil = new ObjectHelper(currentViewJson);
-                                    var parentObj = objUtil.find('arbitraryid', $select.CswAttrDom('arbid'));
+                                    var parentObj = objUtil.find('arbitraryid', arbid);
                                     var collection = '';
                                     switch (stepno) {
                                         case CswViewEditor_WizardSteps.relationships.step:
@@ -1019,7 +1038,8 @@
                                     }
                                     $.extend(objCollection, childJson);
                                 }
-                                _makeViewTree(stepno, $div);
+                                var $tree = getTreeDiv(stepno);
+                                _makeViewTree(stepno, $tree);
                             });
                             
                         } // success
