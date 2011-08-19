@@ -482,7 +482,7 @@ namespace ChemSW.Nbt.WebServices
             if( !string.IsNullOrEmpty( ViewJson ) && !string.IsNullOrEmpty( ViewPropArbitraryId ) )
             {
                 CswNbtView ThisView = new CswNbtView( _CswNbtResources );
-                ThisView.LoadXml( ViewJson );
+                ThisView.LoadJson( ViewJson );
                 CswNbtViewProperty ThisProp = (CswNbtViewProperty) ThisView.FindViewNodeByArbitraryId( ViewPropArbitraryId );
                 if( null != ThisProp )
                 {
