@@ -337,7 +337,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 DefaultFilterMode = SubField.DefaultFilterMode;
             }
-            FiltersObj["subfield_" + SubField.Column] = new JObject( new JProperty( "column", SubField.Column ), new JProperty( "name", SubField.Name ) ) );
+            FiltersObj["subfield_" + SubField.Column] = new JObject( new JProperty( "column", SubField.Column ), new JProperty( "name", SubField.Name ) );
 
             JObject Filters = new JObject();
             FiltersObj["select"] = Filters;
