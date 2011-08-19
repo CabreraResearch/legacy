@@ -332,15 +332,25 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Grid
 
-        public CswNbtNodePropImage AsImage
-        {
-            get
-            {
-                if( !( _CswNbtNodeProp is CswNbtNodePropImage ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropImage ) ) ) );
-                return ( (CswNbtNodePropImage) _CswNbtNodeProp );
-            }
-        }//Generic
+		public CswNbtNodePropImage AsImage
+		{
+			get
+			{
+				if( !( _CswNbtNodeProp is CswNbtNodePropImage ) )
+					throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropImage ) ) ) );
+				return ( (CswNbtNodePropImage) _CswNbtNodeProp );
+			}
+		}//Image
+
+		public CswNbtNodePropImageList AsImageList
+		{
+			get
+			{
+				if( !( _CswNbtNodeProp is CswNbtNodePropImageList ) )
+					throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropImageList ) ) ) );
+				return ( (CswNbtNodePropImageList) _CswNbtNodeProp );
+			}
+		}//ImageList
 
         public CswNbtNodePropLink AsLink
         {
