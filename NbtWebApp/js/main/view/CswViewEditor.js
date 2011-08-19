@@ -718,8 +718,12 @@
         }
         
         function _makeViewTree(stepno, $content) {
+            var $tree = $content;
+            if (isNullOrEmpty($tree)) {
+                $tree = getTreeDiv(stepno);
+            }
             var treecontent = viewJsonHtml(stepno, currentViewJson);
-            $content.jstree({
+            $tree.jstree({
                     "html_data":
                         {
                             "data": treecontent.html
@@ -739,6 +743,7 @@
             if (stepno === CswViewEditor_WizardSteps.tuning.step) {
                 makeTuningStep($content);
             }
+            return $tree;
         } // _makeViewTree()
         
         function viewJsonHtml(stepno, viewJson) {
@@ -926,7 +931,7 @@
                             var propObj = objHelper.find('arbitraryid', propArbId);
                             propObj.filters[filterJson.arbitraryid] = filterJson;
 
-                            _makeViewTree(stepno, $div);
+                            _makeViewTree(stepno);
                         } // onSuccess
                     }); // CswViewPropFilter
                 } // onClick
@@ -958,7 +963,7 @@
                     var parentObj = objUtil.find('arbitraryid', arbid);
                     delete parentObj[$span.CswAttrDom('arbid')];
                     //currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('arbid') +'"]').remove();
-                    _makeViewTree(stepno, $div);
+                    _makeViewTree(stepno);
                     return CswImageButton_ButtonType.None;
                 }
             });
@@ -1038,8 +1043,7 @@
                                     }
                                     $.extend(objCollection, childJson);
                                 }
-                                var $tree = getTreeDiv(stepno);
-                                _makeViewTree(stepno, $tree);
+                                _makeViewTree(stepno);
                             });
                             
                         } // success

@@ -95,12 +95,12 @@ var CswSearch_CssClasses = {
 
 // for CswViewEditor
 var CswViewEditor_WizardSteps = {
-	viewselect: { step: 1, description: 'Choose a View' },
-	attributes: { step: 2, description: 'Edit View Attributes' },
-	relationships: { step: 3, description: 'Add Relationships' },
-	properties: { step: 4, description: 'Select Properties' },
-	filters: { step: 5, description: 'Set Filters' },
-	tuning: { step: 6, description: 'Fine Tuning' }
+	viewselect: { step: 1, description: 'Choose a View', divId: 'step1_viewselect' },
+	attributes: { step: 2, description: 'Edit View Attributes', divId: 'step2_attributes' },
+	relationships: { step: 3, description: 'Add Relationships', divId: 'step3_relationships' },
+	properties: { step: 4, description: 'Select Properties', divId: 'step4_properties' },
+	filters: { step: 5, description: 'Set Filters', divId: 'step5_filters' },
+	tuning: { step: 6, description: 'Fine Tuning', divId: 'step6_tuning' }
 };
 
 // for CswViewPropFilter
