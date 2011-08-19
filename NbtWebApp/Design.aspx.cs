@@ -1568,25 +1568,71 @@ namespace ChemSW.Nbt.WebPages
                             GridViewXmlRow.Cells[1].Controls.Add( EditGridViewButton );
                             break;
 
-                        case CswNbtMetaDataFieldType.NbtFieldType.Image:
-                            TableRow HeightRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal) HeightRow.Cells[0].Controls[0] ).Text = "Height (pixels):";
-                            TextBox HeightValue = new TextBox();
-                            HeightValue.CssClass = "textinput";
-                            HeightValue.ID = "EditProp_RowsValue" + SelectedNodeTypeProp.PropId.ToString();
-                            if( SelectedNodeTypeProp.TextAreaRows != Int32.MinValue )
-                                HeightValue.Text = SelectedNodeTypeProp.TextAreaRows.ToString();
-                            HeightRow.Cells[1].Controls.Add( HeightValue );
+						case CswNbtMetaDataFieldType.NbtFieldType.Image:
+							TableRow HeightRow = makeEditPropTableRow( EditPropPlaceHolder );
+							( (Literal) HeightRow.Cells[0].Controls[0] ).Text = "Height (pixels):";
+							TextBox HeightValue = new TextBox();
+							HeightValue.CssClass = "textinput";
+							HeightValue.ID = "EditProp_RowsValue" + SelectedNodeTypeProp.PropId.ToString();
+							if( SelectedNodeTypeProp.TextAreaRows != Int32.MinValue )
+								HeightValue.Text = SelectedNodeTypeProp.TextAreaRows.ToString();
+							HeightRow.Cells[1].Controls.Add( HeightValue );
 
-                            TableRow WidthRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal) WidthRow.Cells[0].Controls[0] ).Text = "Width (pixels):";
-                            TextBox WidthValue = new TextBox();
-                            WidthValue.CssClass = "textinput";
-                            WidthValue.ID = "EditProp_ColsValue" + SelectedNodeTypeProp.PropId.ToString();
-                            if( SelectedNodeTypeProp.TextAreaColumns != Int32.MinValue )
-                                WidthValue.Text = SelectedNodeTypeProp.TextAreaColumns.ToString();
-                            WidthRow.Cells[1].Controls.Add( WidthValue );
-                            break;
+							TableRow WidthRow = makeEditPropTableRow( EditPropPlaceHolder );
+							( (Literal) WidthRow.Cells[0].Controls[0] ).Text = "Width (pixels):";
+							TextBox WidthValue = new TextBox();
+							WidthValue.CssClass = "textinput";
+							WidthValue.ID = "EditProp_ColsValue" + SelectedNodeTypeProp.PropId.ToString();
+							if( SelectedNodeTypeProp.TextAreaColumns != Int32.MinValue )
+								WidthValue.Text = SelectedNodeTypeProp.TextAreaColumns.ToString();
+							WidthRow.Cells[1].Controls.Add( WidthValue );
+							break;
+
+						case CswNbtMetaDataFieldType.NbtFieldType.ImageList:
+							TableRow ILHeightRow = makeEditPropTableRow( EditPropPlaceHolder );
+							( (Literal) ILHeightRow.Cells[0].Controls[0] ).Text = "Height (pixels):";
+							TextBox ILHeightValue = new TextBox();
+							ILHeightValue.CssClass = "textinput";
+							ILHeightValue.ID = "EditProp_RowsValue" + SelectedNodeTypeProp.PropId.ToString();
+							if( SelectedNodeTypeProp.TextAreaRows != Int32.MinValue )
+								ILHeightValue.Text = SelectedNodeTypeProp.TextAreaRows.ToString();
+							ILHeightRow.Cells[1].Controls.Add( ILHeightValue );
+
+							TableRow ILWidthRow = makeEditPropTableRow( EditPropPlaceHolder );
+							( (Literal) ILWidthRow.Cells[0].Controls[0] ).Text = "Width (pixels):";
+							TextBox ILWidthValue = new TextBox();
+							ILWidthValue.CssClass = "textinput";
+							ILWidthValue.ID = "EditProp_ColsValue" + SelectedNodeTypeProp.PropId.ToString();
+							if( SelectedNodeTypeProp.TextAreaColumns != Int32.MinValue )
+								ILWidthValue.Text = SelectedNodeTypeProp.TextAreaColumns.ToString();
+							ILWidthRow.Cells[1].Controls.Add( ILWidthValue );
+							
+							TableRow ILNameOptionsRow = makeEditPropTableRow( EditPropPlaceHolder );
+							( (Literal) ILNameOptionsRow.Cells[0].Controls[0] ).Text = "Image Names, separated by newlines:";
+                            TextBox ILNameOptionsValue = new TextBox();
+                            if( DerivesFromObjectClassProp && ObjectClassProp.ListOptions != String.Empty )
+								ILNameOptionsValue.Enabled = false;
+							ILNameOptionsValue.CssClass = "textinput";
+							ILNameOptionsValue.ID = "EditProp_OptionsValue" + SelectedNodeTypeProp.PropId.ToString();
+							ILNameOptionsValue.Text = SelectedNodeTypeProp.ListOptions;
+							ILNameOptionsValue.TextMode = TextBoxMode.MultiLine;
+							ILNameOptionsValue.Rows = 5;
+							ILNameOptionsValue.Columns = 100;
+							ILNameOptionsRow.Cells[1].Controls.Add( ILNameOptionsValue );
+
+							TableRow ILUrlOptionsRow = makeEditPropTableRow( EditPropPlaceHolder );
+							( (Literal) ILUrlOptionsRow.Cells[0].Controls[0] ).Text = "Image URLs, separated by newlines:";
+                            TextBox ILUrlOptionsValue = new TextBox();
+                            if( DerivesFromObjectClassProp && ObjectClassProp.ValueOptions != String.Empty )
+								ILUrlOptionsValue.Enabled = false;
+							ILUrlOptionsValue.CssClass = "textinput";
+							ILUrlOptionsValue.ID = "EditProp_ValueOptionsValue" + SelectedNodeTypeProp.PropId.ToString();
+							ILUrlOptionsValue.Text = SelectedNodeTypeProp.ValueOptions;
+							ILUrlOptionsValue.TextMode = TextBoxMode.MultiLine;
+							ILUrlOptionsValue.Rows = 5;
+							ILUrlOptionsValue.Columns = 100;
+							ILUrlOptionsRow.Cells[1].Controls.Add( ILUrlOptionsValue );
+							break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.List:
                             TableRow OptionsRow = makeEditPropTableRow( EditPropPlaceHolder );
@@ -2218,6 +2264,7 @@ namespace ChemSW.Nbt.WebPages
                     // BZ 8058 - Default Value
                     if( FieldType.CanHaveDefaultValue() &&
 						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Scientific &&   // temporary until ported into new UI
+						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ImageList &&   // temporary until ported into new UI
 						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MultiList )     // temporary until ported into new UI
 					{
                         TableRow DefaultValueRow = makeEditPropTableRow( EditPropPlaceHolder );
