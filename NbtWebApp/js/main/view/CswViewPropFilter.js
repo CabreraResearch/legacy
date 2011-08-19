@@ -6,42 +6,42 @@
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
-	var PluginName = "CswViewPropFilter";
+	var pluginName = "CswViewPropFilter";
 
-	function makePropFilterId(ID, options)
+	function makePropFilterId(id, options)
 	{
-		var FilterId = '';
-		var Delimiter = '_';
+		var filterId = '';
+		var delimiter = '_';
 		var o = {
-			'proparbitraryid': '',
-			'filtarbitraryid': '',
-			'viewbuilderpropid': '',
-			'ID': ''
+			proparbitraryid: '',
+			filtarbitraryid: '',
+			viewbuilderpropid: '',
+			ID: ''
 		};
 		if(options) $.extend(o,options);
 		
 		if (!isNullOrEmpty(o.filtarbitraryid)) {
-			FilterId = makeId({ 'ID': ID + Delimiter + 'filtarbitraryid', 
-								'prefix': o.ID, 
-								'suffix': o.filtarbitraryid });
+			filterId = makeId({ ID: id + delimiter + 'filtarbitraryid', 
+								prefix: o.ID, 
+								suffix: o.filtarbitraryid });
 		} 
 		else if (!isNullOrEmpty( o.viewbuilderpropid)) {
-			FilterId = makeId({ 'ID': ID + Delimiter + 'viewbuilderpropid', 
-								'prefix': o.ID, 
-								'suffix': o.viewbuilderpropid });
+			filterId = makeId({ ID: id + delimiter + 'viewbuilderpropid', 
+								prefix: o.ID, 
+								suffix: o.viewbuilderpropid });
 		}
 		else if(!isNullOrEmpty(  o.proparbitraryid ) ) {
-			FilterId = makeId({ 'ID': ID + Delimiter + 'proparbitraryid', 
-								'prefix': o.ID, 
-								'suffix': o.proparbitraryid });
+			filterId = makeId({ ID: id + delimiter + 'proparbitraryid', 
+								prefix: o.ID, 
+								suffix: o.proparbitraryid });
 		}
 		else if( !isNullOrEmpty( o.ID ) ) {
-			FilterId = makeId({ 'ID': ID, 
-								'prefix': o.ID });
+			filterId = makeId({ ID: id, 
+								prefix: o.ID });
 		} else {
-			FilterId = ID;
+			filterId = id;
 		}
-		return FilterId;
+		return filterId;
 	}
 
 	var methods = {
@@ -49,9 +49,6 @@
 		'init': function(options) 
 		{
 			var o = { 
-				//URLs
-				getNewPropsUrl: '/NbtWebApp/wsNBT.asmx/getViewPropFilterUI',
-
 				//options
 				viewid: '',
 				viewJson: '',
@@ -77,14 +74,14 @@
 			if ( isNullOrEmpty( o.propsData ) && !isNullOrEmpty( o.proparbitraryid ) )
 			{
 				var jsonData = {
-					ViewJson: o.viewJson,
+					ViewJson: JSON.stringify(o.viewJson),
 					PropArbitraryId: o.proparbitraryid
 				};
 
 				CswAjaxJson({ 
-					'url': o.getNewPropsUrl,
-					'data': jsonData,
-					'success': function(data) { 
+					url: '/NbtWebApp/wsNBT.asmx/getViewPropFilterUI',
+					data: jsonData,
+					success: function(data) { 
 					    if (debugOn()) {
 					        log('CswViewPropFilter_init:');
 					        log(data);
@@ -326,7 +323,6 @@
 		'makeFilter': function(options)
 		{
 			var o = {
-				url: '/NbtWebApp/wsNBT.asmx/makeViewPropFilter',
 				viewJson: '',
 				filtJson: '',
 				onSuccess: function($filterXml) {}
@@ -339,11 +335,11 @@
 			};
 
 			CswAjaxJson({ 
-			'url': o.url,
-			'data': jsonData,
-			'success': function(data) { 
-					o.onSuccess(data);
-				}
+			    url: '/NbtWebApp/wsNBT.asmx/makeViewPropFilter',
+			    data: jsonData,
+			    success: function(data) { 
+					    o.onSuccess(data);
+				    }
 			});
 		}, // 'makefilter': function(options)
 		'bindToButton': function()
@@ -380,7 +376,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
 		}    
   
 	};
