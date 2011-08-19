@@ -223,7 +223,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject getSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
         {
-            JObject SearchProps = _ViewBuilder.getViewBuilderProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey );
+            JObject SearchProps = _ViewBuilder.getVbProperties( RelatedIdType, NodeTypeOrObjectClassId, NodeKey );
             return SearchProps;
         }
 

@@ -123,11 +123,9 @@ namespace ChemSW.Nbt.WebServices
                                                     select ViewBuilderProp )
                 {
                     JObject PropNodeObj = new JObject();
-                    JProperty PropNode = new JProperty( Prop.MetaDataPropName, PropNodeObj );
                     PropNodeObj["title"] = RelatedIdType.ToString();
-                    PropNodeObj["label"] = Prop.MetaDataPropName;
+                    PropNodeObj["name"] = Prop.MetaDataPropName;
                     PropNodeObj["id"] = Prop.MetaDataPropId;
-                    PropNodeObj["value"] = Prop.MetaDataPropId;
 
                     if( !Selected )
                     {
@@ -139,14 +137,14 @@ namespace ChemSW.Nbt.WebServices
                     switch( RelatedIdType )
                     {
                         case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                            NodeTypePropsGrpObj.Add( PropNode );
+                            NodeTypePropsGrpObj[Prop.MetaDataPropName] = PropNodeObj;
                             break;
                         case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                            ObjectClassPropsGrpObj.Add( PropNode );
+                            ObjectClassPropsGrpObj[Prop.MetaDataPropName] = PropNodeObj;
                             break;
                     }
 
-                    _getViewBuilderPropSubFields( FiltersNodeObj, Prop );
+                    _getVbPropData( FiltersNodeObj, Prop );
                 }
 
             }
@@ -183,12 +181,12 @@ namespace ChemSW.Nbt.WebServices
                 ViewBuilderProps = _getViewBuilderProps( ViewBuilderProperties, Relationship );
             }
             return ViewBuilderProps;
-        } // getViewBuilderProps()
+        } // getVbProp()
 
         /// <summary>
-        /// Returns the Subfields XML for a NodeTypeProp/ObjectClassProp's SubFields collection as:
+        /// Returns the JSON for a Vb prop
         /// </summary>
-        private void _getViewBuilderPropSubFields( JObject ParentObj, CswViewBuilderProp ViewBuilderProp )
+        private void _getVbPropData( JObject ParentObj, CswViewBuilderProp ViewBuilderProp )
         {
             if( null != ViewBuilderProp )
             {
@@ -214,7 +212,8 @@ namespace ChemSW.Nbt.WebServices
                     ChildObj["subfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Column.ToString();
                 }
 
-                JObject FiltersObj = new JObject( new JProperty( "name", ViewBuilderProp.MetaDataPropName ) );
+                JObject FiltersObj = new JObject();
+                FiltersObj["name"] = ViewBuilderProp.MetaDataPropName;
                 ChildObj["propertyfilters"] = FiltersObj;
 
                 foreach( CswNbtSubField Field in SubFields )
@@ -248,29 +247,12 @@ namespace ChemSW.Nbt.WebServices
                     FiltersOptsObj["select"] = _getFilterOptions( ViewBuilderProp, string.Empty );
                 }
             }
-        } // _getViewBuilderPropSubFields()
+        } // _getViewBuilderPropData()
 
         /// <summary>
-        /// Returns the Subfields XML for a CswNbtViewProp's SubFields collection as:
-        ///     <propertyfilters>
-        ///         <property propname="Barcode" fieldtype="Barcode" relatedidtype="nodetypeprop" viewbuilderpropid="1">
-        ///             <defaultsubfield propname="Barcode>Equals</defaultsubfield>
-        ///             <subfields>
-        ///                 <select id="filter_select">
-        ///                     <option value="Equals">Equals</option>
-        ///                 </select>
-        ///             </subfields>
-        ///             <filters>
-        ///                 <subfield propname="Barcode">Field1
-        ///                     <select id="filter_select">
-        ///                         <option value="Equals">Equals</option>
-        ///                     </select>
-        ///                 </subfield>
-        ///             </filters>
-        ///          </property>   
-        ///      </propertyfilters>
+        /// Returns the JSON for a Vb prop collection
         /// </summary>
-        private void _getViewBuilderPropSubFields( JObject ParentObj, CswViewBuilderProp ViewBuilderProp, ArrayList PropFilters )
+        private void _getVbPropertiesData( JObject ParentObj, CswViewBuilderProp ViewBuilderProp, ArrayList PropFilters )
         {
             if( null != ViewBuilderProp )
             {
@@ -326,10 +308,10 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
             }
-        } // _getViewBuilderPropSubFields()
+        } // _getViewBuilderPropData()
 
         /// <summary>
-        /// Returns the XML for For SubFields Filters as:
+        /// Returns the JSON for SubFields Filters
         /// </summary>
         private void _getSubFieldFilters( JObject FiltersObj, CswNbtSubField SubField, CswViewBuilderProp ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode )
         {
@@ -378,9 +360,9 @@ namespace ChemSW.Nbt.WebServices
 
         #region Public Methods
 
-        public JObject getViewBuilderProps( string ViewJson, string ViewPropArbitraryId )
+        public JObject getVbProp( string ViewJson, string ViewPropArbitraryId )
         {
-            JObject ViewBuilderProps = new JObject();
+            JObject Ret = new JObject();
             if( !string.IsNullOrEmpty( ViewJson ) && !string.IsNullOrEmpty( ViewPropArbitraryId ) )
             {
                 CswNbtView ThisView = new CswNbtView( _CswNbtResources );
@@ -393,19 +375,17 @@ namespace ChemSW.Nbt.WebServices
                     Int32 NodeTypeOrObjectClassId = VbProp.MetaDataPropId;
                     if( Int32.MinValue != NodeTypeOrObjectClassId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
                     {
-                        List<CswViewBuilderProp> ViewBuilderProp = new List<CswViewBuilderProp>() { VbProp };
-
-                        ViewBuilderProps = _getViewBuilderProps( ViewBuilderProp, Relationship );
+                        _getVbPropData( Ret, VbProp );
                     }
                 }
             }
-            return ViewBuilderProps;
+            return Ret;
         }
 
         /// <summary>
         /// Returns all props and prop filters for a NodeType or ObjectClass
         /// </summary>
-        public JObject getViewBuilderProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
+        public JObject getVbProperties( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
         {
             JObject ViewBuilderProps = new JObject();
             if( ( !string.IsNullOrEmpty( RelatedIdType ) && !string.IsNullOrEmpty( NodeTypeOrObjectClassId ) ) || !string.IsNullOrEmpty( NodeKey ) )
@@ -475,7 +455,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public void getViewBuilderPropSubfields( JObject ParentNode, CswViewBuilderProp ViewBuilderProp, ArrayList PropFilters )
         {
-            _getViewBuilderPropSubFields( ParentNode, ViewBuilderProp, PropFilters );
+            _getVbPropertiesData( ParentNode, ViewBuilderProp, PropFilters );
         }
 
         /// <summary>
