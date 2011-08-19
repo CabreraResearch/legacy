@@ -41,7 +41,7 @@
         },
         save: function(o) {
                 var $TextBox = o.$propdiv.find('input');
-                o.$propxml.text = $TextBox.val();
+                o.propData.text = $TextBox.val();
             }
     };
     

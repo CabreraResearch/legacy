@@ -1,41 +1,44 @@
 ﻿using System;
 using System.Data;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
-    /// <summary>
-    /// Updates the schema to version 01I-02
-    /// </summary>
-    public class CswUpdateSchemaTo01I02 : ICswUpdateSchemaTo
-    {
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+	/// <summary>
+	/// Updates the schema to version 01I-08
+	/// </summary>
+	public class CswUpdateSchemaTo01I08 : ICswUpdateSchemaTo
+	{
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 02 ); } }
-        public CswUpdateSchemaTo01I02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
-        }
-
-
-        public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
+		private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
+		public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 08 ); } }
+		public CswUpdateSchemaTo01I08( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+		{
+			_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+			_CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
+		}
 
 
-        public void update()
-        {
+		public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
 
-			CswTableUpdate OCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I-02_OCP_Update", "object_class_props" );
+
+		public void update()
+		{
+			CswTableUpdate OCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I-08_OCP_Update", "object_class_props" );
 
 			// case 7728
 			// Change Date and Time to DateTime
-			// This is also in script 01I-08
-			CswTableUpdate FieldTypesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I-02_FT_Update", "field_types" );
+			// This is also in script 01I-02
+			CswTableUpdate FieldTypesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I-08_FT_Update", "field_types" );
 			DataTable FTTable = FieldTypesUpdate.getTable( "where fieldtype = 'Date' or fieldtype = 'Time'" );
 			if( FTTable.Rows.Count > 0 )
 			{
@@ -58,7 +61,7 @@ namespace ChemSW.Nbt.Schema
 				// update props first
 				if( TimeFTId != Int32.MinValue && DateFTId != Int32.MinValue )
 				{
-					CswTableUpdate NTPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I-02_NTP_Update", "nodetype_props" );
+					CswTableUpdate NTPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I-08_NTP_Update", "nodetype_props" );
 
 					// date
 					DataTable DateOCPTable = OCPUpdate.getTable( "where fieldtypeid = " + DateFTId.ToString() );
@@ -74,7 +77,7 @@ namespace ChemSW.Nbt.Schema
 						DateNTPRow["extended"] = CswNbtNodePropDateTime.DateDisplayMode.Date.ToString();
 					}
 					NTPUpdate.update( DateNTPTable );
-		
+
 					// time
 					DataTable TimeOCPTable = OCPUpdate.getTable( "where fieldtypeid = " + TimeFTId.ToString() );
 					foreach( DataRow TimeOCPRow in TimeOCPTable.Rows )
@@ -96,7 +99,7 @@ namespace ChemSW.Nbt.Schema
 				// now commit field types change
 				FieldTypesUpdate.update( FTTable );
 			} // if( FTTable.Rows.Count > 0 )
-	
+
 			// Fix views
 			CswTableUpdate ViewsUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I-02_Views_Update", "node_views" );
 			DataTable ViewsTable = ViewsUpdate.getTable( "where viewxml like '%\"Date\"%' or viewxml like '%\"Time\"%'" );
@@ -110,22 +113,48 @@ namespace ChemSW.Nbt.Schema
 			ViewsUpdate.update( ViewsTable );
 
 
+
 			// case 9943
-			// Add "Date Format" property to User
-			
-			CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass);
-			
+			// Add "Time Format" property to User
+
+			CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+
 			DataTable OCPTable = OCPUpdate.getEmptyTable();
-			_CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, UserOC, CswNbtObjClassUser.DateFormatPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List, 
-														   false, false, false, string.Empty, Int32.MinValue, false, false, false, false, 
-														   "MM/dd/yyyy,dd-MM-yyyy,yyyy/MM/dd,dd MMM yyyy", Int32.MinValue, Int32.MinValue );
+			_CswNbtSchemaModTrnsctn.addObjectClassPropRow( OCPTable, UserOC, CswNbtObjClassUser.TimeFormatPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List,
+														   false, false, false, string.Empty, Int32.MinValue, false, false, false, false,
+														   "h:mm:ss tt, H:mm:ss", Int32.MinValue, Int32.MinValue );
 			OCPUpdate.update( OCPTable );
 
 			_CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
-        }//Update()
 
-    }//class CswUpdateSchemaTo01I02
+			// case 7728
+			// Store Password.ChangedDate in field1_date, not field2
+			CswNbtMetaDataFieldType PasswordFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Password );
+			CswCommaDelimitedString inClause = new CswCommaDelimitedString();
+			foreach( CswNbtMetaDataNodeType NodeType in _CswNbtSchemaModTrnsctn.MetaData.NodeTypes )
+			{
+				foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
+				{
+					if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Password )
+					{
+						inClause.Add( Prop.PropId.ToString() );
+					}
+				}
+			}
+			CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I-08_jct_update", "jct_nodes_props" );
+			DataTable PasswordTable = JctUpdate.getTable( "where nodetypepropid in (" + inClause.ToString() + ")" );
+			foreach( DataRow PasswordRow in PasswordTable.Rows )
+			{
+				PasswordRow["field1_date"] = CswConvert.ToDbVal( CswConvert.ToDateTime( PasswordRow["field2"] ) );
+				PasswordRow["field2"] = CswConvert.ToDbVal( string.Empty );
+			}
+			JctUpdate.update( PasswordTable );
+
+		} // Update()
+
+
+	}//class CswUpdateSchemaTo01I08
 
 }//namespace ChemSW.Nbt.Schema
 

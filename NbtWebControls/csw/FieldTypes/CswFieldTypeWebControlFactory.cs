@@ -85,7 +85,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     Control = new CswComposite( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Date:
+                case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                     Control = new CswDate( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
@@ -192,9 +192,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     Control = new CswText( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Time:
-                    Control = new CswTime( CswNbtResources, MetaDataProp, EditMode );
-                    break;
+				//case CswNbtMetaDataFieldType.NbtFieldType.Time:
+				//    Control = new CswTime( CswNbtResources, MetaDataProp, EditMode );
+				//    break;
 
                 case CswNbtMetaDataFieldType.NbtFieldType.TimeInterval:
                     Control = new CswTimeInterval( CswNbtResources, MetaDataProp, EditMode );

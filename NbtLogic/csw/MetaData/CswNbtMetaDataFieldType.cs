@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.MetaData
         {
             Barcode,
             Composite,
-            Date,
+            DateTime,
             External,
             File,
             Grid,
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.MetaData
             Sequence,
             Static,
             Text,
-            Time,
+            //Time,
             TimeInterval,
             Unknown,
             UserSelect,
@@ -109,8 +109,8 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public bool IsSimpleType()
         {
-            return ( FieldType == NbtFieldType.Date ||
-                     FieldType == NbtFieldType.Time ||
+            return ( FieldType == NbtFieldType.DateTime ||
+                     //FieldType == NbtFieldType.Time ||
                      FieldType == NbtFieldType.List ||
                      FieldType == NbtFieldType.Logical ||
                      FieldType == NbtFieldType.Memo ||

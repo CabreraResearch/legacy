@@ -314,7 +314,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
                     _OOC = ( _OOC || !QuestionProp.IsCompliant );
                     _allAnswered = ( _allAnswered && QuestionProp.Answer != string.Empty );
-                    _allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered.Date <= this.Date.DateValue );
+					_allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
                 }
 
                 if( _allAnswered )
@@ -365,7 +365,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( _allAnswered && _Finished )
                 {
                     Parent.Status.Value = _OOC ? "OOC" : "OK";
-                    Parent.LastInspectionDate.DateValue = DateTime.Now;
+					Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
                     ParentNode.postChanges( false );
                 }
             }
@@ -445,22 +445,22 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Due Date of inspection
         /// </summary>
-        public CswNbtNodePropDate Date
+		public CswNbtNodePropDateTime Date
         {
             get
             {
-                return ( _CswNbtNode.Properties[DatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[DatePropertyName].AsDateTime );
             }
         }
 
         /// <summary>
         /// Date the inspection was generated
         /// </summary>
-        public CswNbtNodePropDate GeneratedDate
+		public CswNbtNodePropDateTime GeneratedDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName].AsDateTime );
             }
         }
 

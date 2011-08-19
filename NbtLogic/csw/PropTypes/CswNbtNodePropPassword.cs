@@ -80,17 +80,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string StringValue = _CswNbtNodePropData.GetPropRowValue( _ChangedDateSubField.Column );
-                DateTime ReturnVal = DateTime.MinValue;
-                if( StringValue != string.Empty )
-                    ReturnVal = Convert.ToDateTime( StringValue );
-                return ( ReturnVal.Date );
+				//string StringValue = _CswNbtNodePropData.GetPropRowValue( _ChangedDateSubField.Column );
+				//DateTime ReturnVal = DateTime.MinValue;
+				//if( StringValue != string.Empty )
+				//    ReturnVal = Convert.ToDateTime( StringValue );
+				//return ( ReturnVal.Date );
+				return _CswNbtNodePropData.GetPropRowValueDate( _ChangedDateSubField.Column );
             }
 
             set
             {
                 if( DateTime.MinValue != value )
-                    _CswNbtNodePropData.SetPropRowValue( _ChangedDateSubField.Column, value.Date.ToShortDateString() );
+                    _CswNbtNodePropData.SetPropRowValue( _ChangedDateSubField.Column, value );
                 else
                     _CswNbtNodePropData.SetPropRowValue( _ChangedDateSubField.Column, DBNull.Value );
             }

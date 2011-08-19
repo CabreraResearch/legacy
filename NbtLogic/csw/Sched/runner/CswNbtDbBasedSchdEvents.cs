@@ -30,14 +30,14 @@ namespace ChemSW.Nbt.Sched
             SchedulerNode.RunStatus.StaticText = CswNbtSchdItem.StatusMessage;
             if( CswNbtSchdItem.Succeeded )
             {
-                DateTime CandidateNextDueDate = SchedulerNode.DueDateInterval.getNextOccuranceAfter( SchedulerNode.NextDueDate.DateValue );
-                if( SchedulerNode.FinalDueDate.DateValue.Date != DateTime.MinValue &&
-                    ( SchedulerNode.FinalDueDate.DateValue.Date < DateTime.Now.Date ||
-                      CandidateNextDueDate > SchedulerNode.FinalDueDate.DateValue.Date ) )
+				DateTime CandidateNextDueDate = SchedulerNode.DueDateInterval.getNextOccuranceAfter( SchedulerNode.NextDueDate.DateTimeValue );
+				if( SchedulerNode.FinalDueDate.DateTimeValue.Date != DateTime.MinValue &&
+					( SchedulerNode.FinalDueDate.DateTimeValue.Date < DateTime.Now.Date ||
+					  CandidateNextDueDate > SchedulerNode.FinalDueDate.DateTimeValue.Date ) )
                 {
                     CandidateNextDueDate = DateTime.MinValue;
                 }
-                SchedulerNode.NextDueDate.DateValue = CandidateNextDueDate;
+				SchedulerNode.NextDueDate.DateTimeValue = CandidateNextDueDate;
             }
             CswNbtSchedulerNode.postChanges( false );
 

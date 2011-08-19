@@ -54,15 +54,15 @@
 				var $CBADiv = o.$propdiv.children('div').first();
 				var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             alert('Come back to fix save.');
-                for (var r = 0; r < formdata.length; r++) {
-					var checkitem = formdata[r][0];
-					var $xmlitem = optionData.find('user:has(column[field="' + keyCol + '"][value="' + checkitem.key + '"])');
-					var $xmlvaluecolumn = $xmlitem.find('column[field="' + valueCol + '"]');
-					if (checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "False")
-						$xmlvaluecolumn.CswAttrXml('value', 'True');
-					else if (!checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "True")
-						$xmlvaluecolumn.CswAttrXml('value', 'False');
-				} // for( var r = 0; r < formdata.length; r++)
+//                for (var r = 0; r < formdata.length; r++) {
+//					var checkitem = formdata[r][0];
+//					var $xmlitem = optionData.find('user:has(column[field="' + keyCol + '"][value="' + checkitem.key + '"])');
+//					var $xmlvaluecolumn = $xmlitem.find('column[field="' + valueCol + '"]');
+//					if (checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "False")
+//						$xmlvaluecolumn.CswAttrXml('value', 'True');
+//					else if (!checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "True")
+//						$xmlvaluecolumn.CswAttrXml('value', 'False');
+//				} // for( var r = 0; r < formdata.length; r++)
             }
     };
     

@@ -101,16 +101,16 @@ namespace ChemSW.Nbt.Sched
                         CswNbtObjClassMailReport CurrentMailReport = MailReports[idx];
                         if( CurrentMailReport.Enabled.Checked == Tristate.True )
                         {
-                            DateTime ThisDueDateValue = CurrentMailReport.NextDueDate.DateValue.Date;
+							DateTime ThisDueDateValue = CurrentMailReport.NextDueDate.DateTimeValue.Date;
                             DateTime InitialDueDateValue = CurrentMailReport.DueDateInterval.getStartDate().Date;
-                            DateTime FinalDueDateValue = CurrentMailReport.FinalDueDate.DateValue.Date;
+							DateTime FinalDueDateValue = CurrentMailReport.FinalDueDate.DateTimeValue.Date;
 
                             // BZ 7866
                             if( ThisDueDateValue != DateTime.MinValue )
                             {
                                 // BZ 7124 - set runtime
-                                if( CurrentMailReport.RunTime.TimeValue != DateTime.MinValue )
-                                    ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentMailReport.RunTime.TimeValue.TimeOfDay.Ticks );
+								if( CurrentMailReport.RunTime.DateTimeValue != DateTime.MinValue )
+									ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentMailReport.RunTime.DateTimeValue.TimeOfDay.Ticks );
 
                                 Int32 WarnDays = (Int32) CurrentMailReport.WarningDays.Value;
                                 if( WarnDays > 0 )
@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.Sched
                                     CswMail CswMail = _CswNbtResources.CswMail;
                                     CswNbtMailReportStatus CswNbtMailReportStatus = new CswNbtMailReportStatus();
 
-                                    CurrentMailReport.LastProcessed.DateValue = DateTime.Now;
+									CurrentMailReport.LastProcessed.DateTimeValue = DateTime.Now;
 
 									string ReportLink = string.Empty;
 

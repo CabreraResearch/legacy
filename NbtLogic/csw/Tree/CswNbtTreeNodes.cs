@@ -1037,14 +1037,14 @@ namespace ChemSW.Nbt
             string PropValue = Gestalt;
             switch( FieldType.FieldType )
             {
-                case CswNbtMetaDataFieldType.NbtFieldType.Date:
+                case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                     if( Gestalt != string.Empty )
-                        PropValue = CswTools.ToXmlDateFormat( Convert.ToDateTime( Gestalt ) );
+                        PropValue = CswTools.ToXmlDateTimeFormat( Convert.ToDateTime( Gestalt ) );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Time:
-                    if( Gestalt != string.Empty )
-                        PropValue = CswTools.ToXmlTimeFormat( Convert.ToDateTime( Gestalt ) );
-                    break;
+				//case CswNbtMetaDataFieldType.NbtFieldType.Time:
+				//    if( Gestalt != string.Empty )
+				//        PropValue = CswTools.ToXmlTimeFormat( Convert.ToDateTime( Gestalt ) );
+				//    break;
             }
             NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_NodePropGestalt, PropValue ) );
             NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_NodePropFieldType, FieldType.FieldType.ToString() ) );

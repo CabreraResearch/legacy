@@ -40,16 +40,16 @@ namespace ChemSW.Nbt.Sched
             CswNbtObjClassMailReport MailReportNode = CswNbtNodeCaster.AsMailReport( _CswNbtNodeMailReport );
             if( MailReportNode.Enabled.Checked == Tristate.True )
             {
-                DateTime ThisDueDateValue = MailReportNode.NextDueDate.DateValue.Date;
+				DateTime ThisDueDateValue = MailReportNode.NextDueDate.DateTimeValue.Date;
                 DateTime InitialDueDateValue = MailReportNode.DueDateInterval.getStartDate().Date;
-                DateTime FinalDueDateValue = MailReportNode.FinalDueDate.DateValue.Date;
+				DateTime FinalDueDateValue = MailReportNode.FinalDueDate.DateTimeValue.Date;
 
                 // BZ 7866
                 if( ThisDueDateValue != DateTime.MinValue )
                 {
                     // BZ 7124 - set runtime
-                    if( MailReportNode.RunTime.TimeValue != DateTime.MinValue )
-                        ThisDueDateValue = ThisDueDateValue.AddTicks( MailReportNode.RunTime.TimeValue.TimeOfDay.Ticks );
+					if( MailReportNode.RunTime.DateTimeValue != DateTime.MinValue )
+						ThisDueDateValue = ThisDueDateValue.AddTicks( MailReportNode.RunTime.DateTimeValue.TimeOfDay.Ticks );
 
                     Int32 WarnDays = (Int32) MailReportNode.WarningDays.Value;
                     if( WarnDays > 0 )
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.Sched
                 if( null != _CswNbtNodeMailReport )
                 {
                     CswNbtObjClassMailReport MailReportObjClass = CswNbtNodeCaster.AsMailReport( _CswNbtNodeMailReport );
-                    MailReportObjClass.LastProcessed.DateValue = DateTime.Now;
+					MailReportObjClass.LastProcessed.DateTimeValue = DateTime.Now;
 
                     string ReportReference = _CswNbtResources.SetupVbls["MailReportUrlStem"] + "Login.aspx?destination=";
 

@@ -63,13 +63,13 @@
 					data: dataParam,
 					stringify: false,
 					success: function (data) {
-						var selectid = '';
+						var idToSelect = '';
 						//var treePlugins = ["themes", "xml_data", "ui", "types", "crrm"];
 						var treePlugins = ["themes", "html_data", "ui", "types", "crrm"];
 					    var treeThemes;
 						if( !isNullOrEmpty( o.nodeid ) ) 
 						{
-							selectid = idPrefix + o.nodeid;
+							idToSelect = idPrefix + o.nodeid;
 						}
 
 						var newviewid = data.viewid;
@@ -86,26 +86,29 @@
 					    
 						//var $selecteditem = data.find('item[id="'+ selectid + '"]');
 					    var selectLevel = -1;
-					    if (isNullOrEmpty(selectid)) {
-							if (o.SelectFirstChild) {	
-								if (o.viewmode === 'list' ) {
-								    selectLevel = 1;
-									treeThemes = {"dots": false};
-								} else {
-								    selectLevel = 2;
-									treeThemes = {"dots": true};
-								}
+						if (o.SelectFirstChild) {	
+							if (o.viewmode === 'list' ) {
+								selectLevel = 1;
+								treeThemes = {"dots": false};
 							} else {
-								selectid = idPrefix + 'root';
+								selectLevel = 2;
+								treeThemes = {"dots": true};
+							}
+						} 
+						else 
+						{
+							if (isNullOrEmpty(idToSelect)) {
+								idToSelect = idPrefix + 'root';
 							}
 						}
 					    
 					    var hasNodes = false;
-					    function treeJsonToHtml(json,level)
+					    var selectid = '';
+						function treeJsonToHtml(json,level)
 						{
 					        hasNodes = true;
 					        var id = json.attr.id;
-					        if (level === selectLevel && isNullOrEmpty(selectid)) {
+					        if (idToSelect === id || (level === selectLevel && isNullOrEmpty(selectid))) {
 					            selectid = id;
 					        }
 					        

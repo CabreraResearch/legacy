@@ -1063,29 +1063,61 @@ function validateInteger(value)
 } // validateInteger()
 //#endregion Validation
 
+//#region Dates
+
+function ServerDateFormatToJQuery(ServerDateFormat)
+{
+	var ret = ServerDateFormat;
+	ret = ret.replace(/M/g, 'm');
+	ret = ret.replace(/mmm/g, 'M');
+	ret = ret.replace(/yyyy/g, 'yy');
+	return ret;
+}
+function ServerTimeFormatToJQuery(ServerTimeFormat)
+{
+	var ret = ServerTimeFormat;
+	return ret;
+}
+
+//#endregion Dates
+
 //#region Strings
 function startsWith(source, search)
 {
 	return (source.substr(0, search.length) === search);
 }
 
-function getTimeString(date)
+function getTimeString(date, timeformat)
 {
+	var MilitaryTime = false;
+	if (!isNullOrEmpty(timeformat) && timeformat === "H:mm:ss")
+	{
+		MilitaryTime = true;
+	}
+
 	var ret = '';
     var hours = date.getHours();
     var minutes = date.getMinutes();
-	if (minutes < 10)
-	{
-	    minutes = "0" + minutes;
-	}
-	ret = (hours % 12) + ":" + minutes + " ";
-	if (hours > 11)
-	{
-		ret += "PM";
-	} else
-	{
-		ret += "AM";
-	}
+    var seconds = date.getSeconds();
+
+    if (minutes < 10) minutes = "0" + minutes;
+    if (seconds < 10) seconds = "0" + seconds;
+
+    if (MilitaryTime)
+    {
+    	ret = hours + ":" + minutes + ":" + seconds;
+    } 
+	else
+    {
+    	ret = (hours % 12) + ":" + minutes + ":" + seconds + " ";
+    	if (hours > 11)
+    	{
+    		ret += "PM";
+    	} else
+    	{
+    		ret += "AM";
+    	}
+    }
 	return ret;
 }
 //#endregion Strings

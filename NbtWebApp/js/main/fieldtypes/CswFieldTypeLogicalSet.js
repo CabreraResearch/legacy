@@ -27,7 +27,7 @@
                             .appendTo($Div);
 
             // get columns
-            var cols = new [];
+            var cols = [];
             var c = 0;
 
             for (var column in logicalSetJson[0]) {
