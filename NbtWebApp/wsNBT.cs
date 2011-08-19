@@ -2567,6 +2567,9 @@ namespace ChemSW.Nbt.WebServices
             JObject ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             DataTable ExcelDataTable = null;
+            string ErrorMessage = string.Empty;
+            string WarningMessage = string.Empty;
+            int NumRowsImported = 0;
 
             try
             {
@@ -2582,11 +2585,11 @@ namespace ChemSW.Nbt.WebServices
                     // These variables seem to work in Google chrome but NOT in IE
                     string FileName = Context.Request["qqfile"];
                     //string PropId = Context.Request["propid"];
-                    string InspectionName = Context.Request["InspectionName"];
+                    string NewInspectionName = Context.Request["InspectionName"];
 
                     if (!string.IsNullOrEmpty(FileName))
                     {
-                        if (!string.IsNullOrEmpty(InspectionName))
+                        if (!string.IsNullOrEmpty(NewInspectionName))
                         {
                             if (Context.Request.InputStream != null)
                             {
@@ -2602,21 +2605,31 @@ namespace ChemSW.Nbt.WebServices
 
                                 // Load the excel file into a data table
                                 CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
-                                ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName);
+                                ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName, ref ErrorMessage, ref WarningMessage);
+                                if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
+                                {
+                                    NumRowsImported = ws.CreateNodes(ExcelDataTable, NewInspectionName, ref ErrorMessage, ref WarningMessage);
+                                }
 
                                 // determine if we were successful or failure
-                                if (ExcelDataTable != null)
+                                if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
                                 {
-                                    ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
+                                    if (string.IsNullOrEmpty(WarningMessage))
+                                        ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
+                                    else
+                                        ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()), new JProperty("error", WarningMessage));
                                 }
                                 else
                                 {
-                                    ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
+                                    if (string.IsNullOrEmpty(ErrorMessage))
+                                        ErrorMessage = "Could not read Excel file.";
+                                    ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", ErrorMessage));
                                 }
                             } // if( Context.Request.InputStream != null )
                         } // if (!string.IsNullOrEmpty(FileName))
                         else
                         {
+                            ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "You must enter the name of this new inspection."));
                         }
                     } // if (!string.IsNullOrEmpty(FileName))
                     else

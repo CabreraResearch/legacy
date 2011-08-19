@@ -93,11 +93,6 @@ var CswImportInspectionQuestions_WizardSteps = {
 
 		//$wizard.CswWizard('button', 'next', 'disable');
 
-		// Step 2 - Upload File
-		var $div2 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step2.step);
-		var instructions2 = "Thanks for using the Inspections Questions import wizard.<br/><br/>";
-		$div2.append(instructions2);
-		
         function _getNewInspectionName()
         {
             // I am doing one basic step at a time to help with debugging
@@ -106,6 +101,11 @@ var CswImportInspectionQuestions_WizardSteps = {
             return (inspectionNameValue);
         }
 
+		// Step 2 - Upload File
+		var $div2 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step2.step);
+		var instructions2 = "Thanks for using the Inspections Questions import wizard.<br/><br/>";
+		$div2.append(instructions2);
+		
 		function _onBeforePrevious($wizard, stepno)
 		{
 			return (stepno !== CswImportInspectionQuestions_WizardSteps.step2.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
