@@ -109,7 +109,6 @@
 					        hasNodes = true;
 					        var id = json.attr.id;
 					        if (idToSelect === id || (level === selectLevel && isNullOrEmpty(selectid))) {
-log('setting selectid = ' + id );
 					            selectid = id;
 					        }
 					        
