@@ -30,6 +30,7 @@
         if (options) $.extend(o, options);
 
         var childPropNames = {
+            root: { name: 'root', next: '' },
             childrelationships: { name: 'childrelationships', next: '' },
             properties: { name: 'properties', next: '' },
             filters: { name: 'filters', next: '' }
@@ -846,12 +847,13 @@
         
         function viewJsonHtml(stepno, viewJson) {
             var types = { };
-            var $ret = makeViewRootHtml(stepno, viewJson, types);
-            var $viewList = $('<ul></ul')
-                                .appendTo($ret);
+            var $ret = $('<ul></ul');
+            var $root = makeViewRootHtml(stepno, viewJson, types)
+                            .appendTo($ret);
+
             if(viewJson.hasOwnProperty(childPropNames.childrelationships.name)) {
                 var rootRelationships = viewJson[childPropNames.childrelationships.name];
-                makeViewRelationshipsRecursive(stepno, rootRelationships, types, $viewList);
+                makeViewRelationshipsRecursive(stepno, rootRelationships, types, $root);
             }
             
             return { html: xmlToString($ret), types: types };
@@ -864,7 +866,7 @@
             types.root = { icon: { image: tryParseString(itemJson.iconfilename) } };
             var linkclass = 'vieweditor_viewrootlink';
 
-            var $ret = makeViewListItem(arbid, linkclass, name, false, false, stepno, '', rel);
+            var $ret = makeViewListItem(arbid, linkclass, name, false, false, stepno, childPropNames.root, rel);
             return $ret;
         }
         
@@ -882,58 +884,80 @@
             }
             var rel = tryParseString(itemJson.secondtype) + '_' + tryParseString(itemJson.secondid);
             var skipme = false;
-            var skipchildoptions = (stepno >= CswViewEditor_WizardSteps.relationships.step);
+            var skipchildoptions = (stepno <= CswViewEditor_WizardSteps.relationships.step);
             var linkclass = 'vieweditor_viewrellink';
             var showDelete = (stepno === CswViewEditor_WizardSteps.relationships.step);
             types[rel] = { icon: { image: tryParseString(itemJson.secondiconfilename) } };
             
             var $ret = makeViewListItem(arbid, linkclass, name, showDelete, skipme, stepno, childPropNames.childrelationships, rel);
-
+            
+            if (stepno === CswViewEditor_WizardSteps.relationships.step) {
+                var $select = makeChildSelect(stepno, arbid, childPropNames.childrelationships).appendTo($ret);
+            }
             if (!skipchildoptions)
             {
                 if(itemJson.hasOwnProperty(childPropNames.properties.name)) {
                     var propJson = itemJson[childPropNames.properties.name];
-                    $ret.append(makeViewPropertyHtml(propJson, types, stepno));    
+                    if (!isNullOrEmpty(propJson)) {
+                        var $propUl = $('<ul></ul>').appendTo($ret);
+                        for (var prop in propJson) {
+                            if (propJson.hasOwnProperty(prop)) {
+                                var thisProp = propJson[prop];
+                                $propUl.append(makeViewPropertyHtml(thisProp, types, stepno));
+                            }
+                        }
+                    }
                 }
+                $ret.append(makeChildSelect(stepno, arbid, childPropNames.properties));
             }
             return $ret;                
         }
         
         function makeViewRelationshipsRecursive(stepno, relationshipJson, types, $content) {
             if (!isNullOrEmpty(relationshipJson)) {
+                var $ul = $('<ul></ul>').appendTo($content);
                 for (var relationship in relationshipJson) {
                     if (relationshipJson.hasOwnProperty(relationship)) {
                         var thisRelationship = relationshipJson[relationship];
                         var $rel = makeViewRelationshipHtml(stepno, thisRelationship, types)
-                                        .appendTo($content);
+                                        .appendTo($ul);
                         if(thisRelationship.hasOwnProperty(childPropNames.childrelationships.name)) {
                             var childRelationships = thisRelationship[childPropNames.childrelationships.name];
                             makeViewRelationshipsRecursive(stepno, childRelationships, types, $rel);
                         }
                     }
                 }
-
             }
-
         }
         
         function makeViewPropertyHtml(itemJson, types, stepno) {
-            var $ret = '';
+            var $ret = $('<li></li>');
             if(!isNullOrEmpty(itemJson)) {
                 var arbid = itemJson.arbitraryid;
                 //var nodename = itemJson.nodename;
                 var name = itemJson.name;
                 var rel = 'property';
                 var skipme = (stepno <= CswViewEditor_WizardSteps.relationships.step);
-                var skipchildoptions = (stepno >= CswViewEditor_WizardSteps.properties.step);
+                var skipchildoptions = (stepno <= CswViewEditor_WizardSteps.properties.step);
                 var linkclass = 'vieweditor_viewproplink';
                 var showDelete = (stepno === CswViewEditor_WizardSteps.properties.step);
-                $ret = makeViewListItem(arbid, linkclass, name, showDelete, skipme, stepno, childPropNames.properties, rel);
+                if (!isNullOrEmpty(name)) {
+                    $ret = makeViewListItem(arbid, linkclass, name, showDelete, skipme, stepno, childPropNames.properties, rel);
+                }
                 if (!isNullOrEmpty($ret) && !skipchildoptions) {
                     if (itemJson.hasOwnProperty(childPropNames.filters.name)) {
                         var filterJson = itemJson[childPropNames.filters.name];
-                        $ret.append(makeViewPropertyFilterHtml(filterJson, stepno, types));
+                        if (!isNullOrEmpty(filterJson)) {
+                            var $filtUl = $('<ul></ul>').appendTo($ret);
+                            for (var filter in filterJson) {
+                                if (filterJson.hasOwnProperty(filter)) {
+                                    var thisFilt = filterJson[filter];
+                                    $filtUl.append(makeViewPropertyFilterHtml(thisFilt, stepno, types));            
+                                }
+                            }
+                        }
                     }
+                    $ret.append($('<span class="vieweditor_addfilter" proparbid="' + arbid + '"></span>'));            
                 }
                 types.property = { icon: { image: "Images/view/property.gif" } };
             }
@@ -941,7 +965,7 @@
         }
         
         function makeViewPropertyFilterHtml(itemJson, stepno, types) {
-            var $ret = '';
+            var $ret = $('<li></li>');
             if(!isNullOrEmpty(itemJson)) {
                 var arbid = itemJson.arbitraryid;
                 //var nodename = itemJson.nodename;
@@ -951,24 +975,22 @@
                 var linkclass = 'vieweditor_viewfilterlink';
                 var showDelete = (stepno === CswViewEditor_WizardSteps.filters.step);
                 $ret = makeViewListItem(arbid, linkclass, name, showDelete, skipme, '', rel);
-                if (stepno === CswViewEditor_WizardSteps.filters.step) {
-                    $ret.append($('<li><span class="vieweditor_addfilter" proparbid="' + arbid + '"></span></li>'));
-                }
+//                if (stepno === CswViewEditor_WizardSteps.filters.step) {
+//                    $ret.append($('<span class="vieweditor_addfilter" proparbid="' + arbid + '"></span>'));
+//                }
                 types.filter = { icon: { image: "Images/view/filter.gif" } };
+                
             }
             return $ret;            
         }
 
         function makeViewListItem(arbid, linkclass, name, showDelete, skipme, stepno, propName, rel) {
-            var $ret = null;
+            var $ret = $('<li></li>');
             if (!skipme) {
-                $ret = $('<li id="' + arbid + ' rel="' + rel + ' class="jstree-open"></li>');
+                $ret = $('<li id="' + arbid + '" rel="' + rel + '" class="jstree-open"></li>');
                 $ret.append($('<a href="#" class="' + linkclass + '" arbid="' + arbid + '">' + name + '</a>'));
                 if (showDelete) {
                     $ret.append($('<span style="" class="vieweditor_deletespan" arbid="' + arbid + '"></span>'));
-                }
-                if (stepno !== CswViewEditor_WizardSteps.filters.step && arbid !== 'root') {
-                    $ret.append(makeChildSelect(stepno, arbid, propName));
                 }
             }
             return $ret;
@@ -978,7 +1000,7 @@
             var $select = '';
             
             if (canAddChildSelect(stepno,propName,arbid)) {
-                $select = $('<li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li>');
+                $select = $('<ul><li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li></ul>');
 
                 var dataJson = {
                     StepNo: stepno,
@@ -1012,25 +1034,25 @@
         
         function canAddChildSelect(stepno,propName,arbid) {
             var ret = false;
-            if (arbid !== 'root') { 
-                switch (stepno) {
-                    case CswViewEditor_WizardSteps.relationships.step:
-                        if (propName === childPropNames.childrelationships) {
-                            ret = true;
-                        }
-                        break;
-                    case CswViewEditor_WizardSteps.properties.step:
-                        if (propName === childPropNames.properties) {
-                            ret = true;
-                        }
-                        break;
-                    case CswViewEditor_WizardSteps.filters.step:
-                        if (propName === childPropNames.filters) {
-                            ret = true;
-                        }
-                        break;
-                }
+            
+            switch (stepno) {
+                case CswViewEditor_WizardSteps.relationships.step:
+                    if (propName === childPropNames.childrelationships || propName === childPropNames.root) {
+                        ret = true;
+                    }
+                    break;
+                case CswViewEditor_WizardSteps.properties.step:
+                    if (propName === childPropNames.properties && arbid !== 'root') {
+                        ret = true;
+                    }
+                    break;
+                case CswViewEditor_WizardSteps.filters.step:
+                    if (propName === childPropNames.filters && arbid !== 'root') {
+                        ret = true;
+                    }
+                    break;
             }
+            
             return ret;
         }
         
