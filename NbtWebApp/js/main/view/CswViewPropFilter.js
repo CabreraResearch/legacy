@@ -86,8 +86,8 @@
 					        log('CswViewPropFilter_init:');
 					        log(data);
 					    }
-						o.propsData = data.propertyfilters.property;
-						o.filtarbitraryid = o.propsData.filtarbitraryid;
+						o.propsData = data.propertyfilters;
+						//o.filtarbitraryid = o.propsData.filtarbitraryid;
 						renderPropFiltRow(o);
 					} //success
 				}); //ajax
@@ -99,8 +99,9 @@
 
 			function renderPropFiltRow(filtOpt)
 			{
-				var propertyId = filtOpt.propsData.viewbuilderpropid;
-				var propertyName = filtOpt.propsData.propname;
+			    var propsData = filtOpt.propsData;
+			    var propertyId = propsData.viewbuilderpropid;
+				var propertyName = propsData.propname;
 				
 				if( filtOpt.includePropertyName )
 				{
