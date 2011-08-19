@@ -104,7 +104,7 @@
 							o.onchange();
 							return CswImageButton_ButtonType.None; 
 						}
-					})
+					});
 				} // _addValue()
 
 //				var SplitOptions = Options.split(',');
