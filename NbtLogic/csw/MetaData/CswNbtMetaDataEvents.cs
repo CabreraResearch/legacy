@@ -32,6 +32,9 @@ namespace ChemSW.Nbt.MetaData
 				//PropPermissions.Save();
 				//_CswNbtResources.CurrentNbtUser.RoleNode.postChanges( false );
 
+				// case 23185 - reset permission options
+				_CswNbtResources.CurrentNbtUser.RoleNode.afterPopulateProps();
+
 				_CswNbtResources.Permit.set( new CswNbtPermit.NodeTypePermission[] {
 												CswNbtPermit.NodeTypePermission.Delete, 
 												CswNbtPermit.NodeTypePermission.Create, 
