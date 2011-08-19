@@ -418,17 +418,20 @@ namespace ChemSW.Nbt
             try
             {
                 JProperty Children = Node.Property( _ChildRelationshipsName );
-                JObject Relationships = (JObject) Children.Value;
-                foreach( CswNbtViewRelationship ChildRelationship in
-                    from Relationship
-                        in Relationships.Properties()
-                    select (JObject) Relationship.Value
-                        into RelationshipObj
-                        let NodeName = CswConvert.ToString( RelationshipObj["nodename"] )
-                        where NodeName == CswNbtViewXmlNodeName.Relationship.ToString().ToLower()
-                        select new CswNbtViewRelationship( CswNbtResources, _View, RelationshipObj ) )
+                if( null != Children )
                 {
-                    this.addChildRelationship( ChildRelationship );
+                    JObject Relationships = (JObject) Children.Value;
+                    foreach( CswNbtViewRelationship ChildRelationship in
+                        from Relationship
+                            in Relationships.Properties()
+                        select (JObject) Relationship.Value
+                            into RelationshipObj
+                            let NodeName = CswConvert.ToString( RelationshipObj["nodename"] )
+                            where NodeName == CswNbtViewXmlNodeName.Relationship.ToString().ToLower()
+                            select new CswNbtViewRelationship( CswNbtResources, _View, RelationshipObj ) )
+                    {
+                        this.addChildRelationship( ChildRelationship );
+                    }
                 }
             }
             catch( Exception ex )

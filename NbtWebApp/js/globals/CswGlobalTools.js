@@ -285,59 +285,62 @@ function makeEventDelegate(method, options) {
     return function(eventObj) { method(eventObj,options); };
 }
 
-function findObject(obj, key, value) {
+function ObjectHelper(obj) {
     /// <summary>Find an object in a JSON object.</summary>
 	/// <param name="obj" type="Object"> Object to search </param>
-    /// <param name="key" type="String"> Property name </param>
-    /// <param name="value" type="Object"> Value to find </param>
-	/// <returns type="Array"> An array of matching objects.</returns>
-    var ret = [];
-
-    if(jQuery.isPlainObject(obj))
-    {
-        if( obj.hasOwnProperty(key) && 
-            obj[key] === value) {
-            ret.push(obj);
+	/// <returns type="ObjectHelper"></returns>
+    var thisObj = obj;
+    
+    function recursiveFind(parentObj, key, value) {
+        /// <summary>Recursively search an object</summary>
+	    /// <param name="parentObj" type="Object"> Object to search </param>
+        /// <param name="key" type="String"> Property name to match. </param>
+        /// <param name="value" type="Object"> Property value to match </param>
+	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
+        var ret = { };
+        if (jQuery.isPlainObject(parentObj)) {
+            for (var childKey in parentObj) {
+                if (parentObj.hasOwnProperty(childKey)) {
+                    var childObj = parentObj[childKey];
+                    if (childObj.hasOwnProperty(key) && childObj[key] === value) {
+                        ret = childObj;
+                        break;
+                    } 
+                    else if (isNullOrEmpty(ret) && jQuery.isPlainObject(childObj)) {
+                        ret = recursiveFind(childObj, key, value);
+                    }
+                }
+            }
         }
-        
-        var objects = jQuery.grep(obj, function(elem) {
-            return (jQuery.isArray(elem) || jQuery.isPlainObject(elem));
-        });
-
-        ret.concat(jQuery.map(objects, function(elem){
-            return findObject(elem, key, value);
-        }));
+        return ret;
     }
-
-    return ret;
-}
-
-function deleteObject(obj, key, value) {
-    /// <summary>Find and delete an object in a JSON object.</summary>
-	/// <param name="obj" type="Object"> Object to search </param>
-    /// <param name="key" type="String"> Property name </param>
-    /// <param name="value" type="Object"> Value to find </param>
-	/// <returns type="Boolean"> True if successful.</returns>
-    var ret = false;
-
-    if(jQuery.isPlainObject(obj))
-    {
-        if( obj.hasOwnProperty(key) && 
-            obj[key] === value) {
-            delete obj[key];
-            ret = true;
+    
+    function find(key, value) {
+        /// <summary>Find a property's parent</summary>
+        /// <param name="key" type="String"> Property name to match. </param>
+        /// <param name="value" type="Object"> Property value to match </param>
+	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
+        var ret = { };
+        if (jQuery.isPlainObject(thisObj))
+        {
+            for (var childKey in thisObj) {
+                if (thisObj.hasOwnProperty(childKey)) {
+                    var childObj = thisObj[childKey];
+                    if (childObj.hasOwnProperty(key) && childObj[key] === value) {
+                        ret = thisObj;
+                        break;
+                    } 
+                    else if (isNullOrEmpty(ret) && jQuery.isPlainObject(childObj)) {
+                        ret = recursiveFind(childObj, key, value);                        
+                    }
+                }
+            }
         }
-        
-        var objects = jQuery.grep(obj, function(elem) {
-            return (jQuery.isArray(elem) || jQuery.isPlainObject(elem));
-        });
-
-        ret.concat(jQuery.map(objects, function(elem){
-            return findObject(elem, key, value);
-        }));
+        return ret;
     }
-
-    return ret;
+    
+    this.find = find;
+    this.obj = thisObj;
 }
 
 // because IE 8 doesn't support console.log unless the console is open (*duh*)

@@ -643,31 +643,37 @@ namespace ChemSW.Nbt
             try
             {
                 JProperty Children = RelationshipObj.Property( _ChildRelationshipsName );
-                JObject Relationships = (JObject) Children.Value;
-                foreach( CswNbtViewRelationship ChildRelationship in
-                    from Relationship
-                        in Relationships.Properties()
-                    select (JObject) Relationship.Value
-                        into ChildRelationObj
-                        let NodeName = CswConvert.ToString( ChildRelationObj["nodename"] )
-                        where NodeName == CswNbtViewXmlNodeName.Relationship.ToString().ToLower()
-                        select new CswNbtViewRelationship( CswNbtResources, _View, ChildRelationObj ) )
+                if( null != Children )
                 {
-                    this.addChildRelationship( ChildRelationship );
+                    JObject Relationships = (JObject) Children.Value;
+                    foreach( CswNbtViewRelationship ChildRelationship in
+                        from Relationship
+                            in Relationships.Properties()
+                        select (JObject) Relationship.Value
+                            into ChildRelationObj
+                            let NodeName = CswConvert.ToString( ChildRelationObj["nodename"] )
+                            where NodeName == CswNbtViewXmlNodeName.Relationship.ToString().ToLower()
+                            select new CswNbtViewRelationship( CswNbtResources, _View, ChildRelationObj ) )
+                    {
+                        this.addChildRelationship( ChildRelationship );
+                    }
                 }
 
                 JProperty Properties = RelationshipObj.Property( _PropertiesName );
-                JObject PropsObj = (JObject) Properties.Value;
-                foreach( CswNbtViewProperty ChildProp in
-                    from Property
-                        in PropsObj.Properties()
-                    select (JObject) Property.Value
-                        into PropObj
-                        let NodeName = CswConvert.ToString( PropObj["nodename"] )
-                        where NodeName == CswNbtViewXmlNodeName.Property.ToString().ToLower()
-                        select new CswNbtViewProperty( CswNbtResources, _View, PropObj ) )
+                if( null != Properties )
                 {
-                    this.addProperty( ChildProp );
+                    JObject PropsObj = (JObject) Properties.Value;
+                    foreach( CswNbtViewProperty ChildProp in
+                        from Property
+                            in PropsObj.Properties()
+                        select (JObject) Property.Value
+                            into PropObj
+                            let NodeName = CswConvert.ToString( PropObj["nodename"] )
+                            where NodeName == CswNbtViewXmlNodeName.Property.ToString().ToLower()
+                            select new CswNbtViewProperty( CswNbtResources, _View, PropObj ) )
+                    {
+                        this.addProperty( ChildProp );
+                    }
                 }
 
             }
@@ -954,23 +960,23 @@ namespace ChemSW.Nbt
         {
             JObject RelationshipObj = new JObject();
 
-            RelationshipObj.Add( new JProperty( "nodename", CswNbtViewXmlNodeName.Relationship.ToString().ToLower() ) );
+            RelationshipObj["nodename"] = CswNbtViewXmlNodeName.Relationship.ToString().ToLower();
 
             string RelationshipId = string.Empty;
             if( PropId != Int32.MinValue )
             {
                 RelationshipId = PropId.ToString();
-                RelationshipObj.Add( new JProperty( PropIdAttrName, PropId.ToString() ) );
-                RelationshipObj.Add( new JProperty( PropNameAttrName, PropName.ToString() ) );
-                RelationshipObj.Add( new JProperty( PropTypeAttrName, PropType.ToString() ) );
-                RelationshipObj.Add( new JProperty( PropOwnerAttrName, PropOwner.ToString() ) );
+                RelationshipObj[PropIdAttrName] = PropId.ToString();
+                RelationshipObj[PropNameAttrName] = PropName.ToString();
+                RelationshipObj[PropTypeAttrName] = PropType.ToString();
+                RelationshipObj[PropOwnerAttrName] = PropOwner.ToString();
             }
 
             if( GroupByPropId != Int32.MinValue )
             {
-                RelationshipObj.Add( new JProperty( GroupByPropIdAttrName, GroupByPropId.ToString() ) );
-                RelationshipObj.Add( new JProperty( GroupByPropNameAttrName, GroupByPropName.ToString() ) );
-                RelationshipObj.Add( new JProperty( GroupByPropTypeAttrName, GroupByPropType.ToString() ) );
+                RelationshipObj[GroupByPropIdAttrName] = GroupByPropId.ToString();
+                RelationshipObj[GroupByPropNameAttrName] = GroupByPropName.ToString();
+                RelationshipObj[GroupByPropTypeAttrName] = GroupByPropType.ToString();
             }
 
             if( FirstId != Int32.MinValue )
@@ -979,9 +985,9 @@ namespace ChemSW.Nbt
                 {
                     RelationshipId = FirstId.ToString();
                 }
-                RelationshipObj.Add( new JProperty( FirstNameAttrName, FirstName.ToString() ) );
-                RelationshipObj.Add( new JProperty( FirstTypeAttrName, FirstType.ToString() ) );
-                RelationshipObj.Add( new JProperty( FirstIdAttrName, FirstId.ToString() ) );
+                RelationshipObj[FirstNameAttrName] = FirstName.ToString();
+                RelationshipObj[FirstTypeAttrName] = FirstType.ToString();
+                RelationshipObj[FirstIdAttrName] = FirstId.ToString();
             }
 
             if( SecondId != Int32.MinValue )
@@ -990,17 +996,17 @@ namespace ChemSW.Nbt
                 {
                     RelationshipId = SecondId.ToString();
                 }
-                RelationshipObj.Add( new JProperty( SecondNameAttrName, SecondName.ToString() ) );
-                RelationshipObj.Add( new JProperty( SecondTypeAttrName, SecondType.ToString() ) );
-                RelationshipObj.Add( new JProperty( SecondIdAttrName, SecondId.ToString() ) );
-                RelationshipObj.Add( new JProperty( SecondIconFileNameAttrName, SecondIconFileName.ToString() ) );
+                RelationshipObj[SecondNameAttrName] = SecondName.ToString();
+                RelationshipObj[SecondTypeAttrName] = SecondType.ToString();
+                RelationshipObj[SecondIdAttrName] = SecondId.ToString();
+                RelationshipObj[SecondIconFileNameAttrName] = SecondIconFileName.ToString();
             }
 
-            RelationshipObj.Add( new JProperty( SelectableAttrName, Selectable.ToString().ToLower() ) );
-            RelationshipObj.Add( new JProperty( ArbitraryIdAttrName, ArbitraryId.ToString() ) );
-            RelationshipObj.Add( new JProperty( ShowInTreeAttrName, ShowInTree.ToString().ToLower() ) );
-            RelationshipObj.Add( new JProperty( AllowAddChildrenAttrName, AddChildren.ToString() ) );
-            RelationshipObj.Add( new JProperty( AllowDeleteAttrName, AllowDelete.ToString() ) );
+            RelationshipObj[SelectableAttrName] = Selectable.ToString().ToLower();
+            RelationshipObj[ArbitraryIdAttrName] = ArbitraryId.ToString();
+            RelationshipObj[ShowInTreeAttrName] = ShowInTree.ToString().ToLower();
+            RelationshipObj[AllowAddChildrenAttrName] = AddChildren.ToString();
+            RelationshipObj[AllowDeleteAttrName] = AllowDelete.ToString();
 
             string FilterInString = "";
             bool bFirst = true;
@@ -1010,7 +1016,7 @@ namespace ChemSW.Nbt
                 FilterInString += Child.ToString();
                 bFirst = false;
             }
-            RelationshipObj.Add( new JProperty( NodeIdFilterInAttrName, FilterInString ) );
+            RelationshipObj[NodeIdFilterInAttrName] = FilterInString;
 
             string FilterOutString = "";
             bFirst = true;
@@ -1020,13 +1026,13 @@ namespace ChemSW.Nbt
                 FilterOutString += Child.ToString();
                 bFirst = false;
             }
-            RelationshipObj.Add( new JProperty( NodeIdFilterOutAttrName, FilterOutString ) );
+            RelationshipObj[NodeIdFilterOutAttrName] = FilterOutString;
 
             if( !FirstLevelOnly )
             {
                 // Handle props and propfilters
                 JObject PropObj = new JObject();
-                RelationshipObj.Add( new JProperty( _PropertiesName, PropObj ) );
+                RelationshipObj[_PropertiesName] = PropObj;
                 foreach( CswNbtViewProperty Prop in this.Properties )
                 {
                     PropObj.Add( Prop.ToJson() );
@@ -1034,14 +1040,14 @@ namespace ChemSW.Nbt
 
                 // Recurse on child ViewNodes
                 JObject ChildObj = new JObject();
-                RelationshipObj.Add( new JProperty( _ChildRelationshipsName, ChildObj ) );
+                RelationshipObj[_ChildRelationshipsName] = ChildObj;
                 foreach( CswNbtViewRelationship ChildRelationship in this.ChildRelationships )
                 {
                     ChildObj.Add( ChildRelationship.ToJson() );
                 }
                 if( string.IsNullOrEmpty( RPropName ) )
                 {
-                    RPropName = CswNbtViewXmlNodeName.Relationship.ToString() + "_" + RelationshipId;
+                    RPropName = CswNbtViewXmlNodeName.Relationship.ToString() + "_" + RelationshipId; ;
                 }
             }
             JProperty RelationshipProp = new JProperty( RPropName, RelationshipObj );

@@ -338,17 +338,20 @@ namespace ChemSW.Nbt
             try
             {
                 JProperty FiltersProp = PropObj.Property( _FiltersName );
-                JObject FiltersObj = (JObject) FiltersProp.Value;
-                foreach( CswNbtViewPropertyFilter Filter in
-                    from FilterProp
-                        in FiltersObj.Properties()
-                    select (JObject) FilterProp.Value
-                        into FilterObj
-                        let NodeName = CswConvert.ToString( FilterObj["nodename"] )
-                        where NodeName == CswNbtViewXmlNodeName.Filter.ToString().ToLower()
-                        select new CswNbtViewPropertyFilter( CswNbtResources, _View, FilterObj ) )
+                if( null != FiltersProp )
                 {
-                    this.addFilter( Filter );
+                    JObject FiltersObj = (JObject) FiltersProp.Value;
+                    foreach( CswNbtViewPropertyFilter Filter in
+                        from FilterProp
+                            in FiltersObj.Properties()
+                        select (JObject) FilterProp.Value
+                            into FilterObj
+                            let NodeName = CswConvert.ToString( FilterObj["nodename"] )
+                            where NodeName == CswNbtViewXmlNodeName.Filter.ToString().ToLower()
+                            select new CswNbtViewPropertyFilter( CswNbtResources, _View, FilterObj ) )
+                    {
+                        this.addFilter( Filter );
+                    }
                 }
             }
             catch( Exception ex )
