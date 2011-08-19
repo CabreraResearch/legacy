@@ -193,28 +193,25 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = ViewBuilderProp.FieldType.FieldType;
                 CswNbtSubFieldColl SubFields = ViewBuilderProp.FieldTypeRule.SubFields;
 
-                JObject ChildObj = new JObject();
-                ParentObj[ViewBuilderProp.MetaDataPropName] = ChildObj;
-
-                ChildObj["propname"] = ViewBuilderProp.MetaDataPropName;
-                ChildObj["viewbuilderpropid"] = ViewBuilderProp.MetaDataPropId;
-                ChildObj["relatedidtype"] = ViewBuilderProp.RelatedIdType.ToString();
-                ChildObj["proptype"] = ViewBuilderProp.Type.ToString();
-                ChildObj["metadatatypename"] = ViewBuilderProp.MetaDataTypeName;
-                ChildObj["fieldtype"] = ViewBuilderProp.FieldType.FieldType.ToString();
+                ParentObj["propname"] = ViewBuilderProp.MetaDataPropName;
+                ParentObj["viewbuilderpropid"] = ViewBuilderProp.MetaDataPropId;
+                ParentObj["relatedidtype"] = ViewBuilderProp.RelatedIdType.ToString();
+                ParentObj["proptype"] = ViewBuilderProp.Type.ToString();
+                ParentObj["metadatatypename"] = ViewBuilderProp.MetaDataTypeName;
+                ParentObj["fieldtype"] = ViewBuilderProp.FieldType.FieldType.ToString();
 
                 JObject SubfieldObj = new JObject();
-                ChildObj["select"] = SubfieldObj;
+                ParentObj["select"] = SubfieldObj;
 
                 if( null != ViewBuilderProp.FieldTypeRule.SubFields.Default )
                 {
-                    ChildObj["filter"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
-                    ChildObj["subfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Column.ToString();
+                    ParentObj["filter"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
+                    ParentObj["subfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Column.ToString();
                 }
 
                 JObject FiltersObj = new JObject();
                 FiltersObj["name"] = ViewBuilderProp.MetaDataPropName;
-                ChildObj["propertyfilters"] = FiltersObj;
+                ParentObj["propertyfilters"] = FiltersObj;
 
                 foreach( CswNbtSubField Field in SubFields )
                 {
@@ -232,14 +229,14 @@ namespace ChemSW.Nbt.WebServices
 
                     if( null == ViewBuilderProp.FieldTypeRule.SubFields.Default )
                     {
-                        ChildObj["filter"] = Field.DefaultFilterMode.ToString();
+                        ParentObj["filter"] = Field.DefaultFilterMode.ToString();
                     }
                     _getSubFieldFilters( FiltersObj, Field, ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode.Undefined );
 
                 }
 
                 JObject FiltersOptsObj = new JObject();
-                ChildObj["filtersoptions"] = FiltersOptsObj;
+                ParentObj["filtersoptions"] = FiltersOptsObj;
 
                 if( ViewBuilderProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
                 {
