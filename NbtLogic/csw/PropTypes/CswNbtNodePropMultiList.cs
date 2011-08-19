@@ -164,23 +164,19 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value.ToString();
+			ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value.ToString();
 
-            JObject OptionsObj = new JObject();
-            ParentObject["options"] = OptionsObj;
+			JObject OptionsObj = new JObject();
+			ParentObject["options"] = OptionsObj;
 
-            foreach( string Key in this.Options.Keys )
-            {
-                OptionsObj[Key] = Options[Key];
-
-                if( Value.Contains( Key ) )
-                {
-                    ParentObject["selected"] = Key;
-                }
-            }
-
-
-        } // ToJSON()
+			foreach( string Key in this.Options.Keys )
+			{
+				OptionsObj[Key] = new JObject();
+				OptionsObj[Key]["text"] = Options[Key];
+				OptionsObj[Key]["value"] = Key;
+				OptionsObj[Key]["selected"] = Value.Contains( Key ).ToString().ToLower();
+			}
+		} // ToJSON()
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
