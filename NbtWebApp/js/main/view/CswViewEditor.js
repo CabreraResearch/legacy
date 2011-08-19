@@ -562,34 +562,6 @@
 
             // tree events
 
-            $div.find('.vieweditor_childselect').change(function() {
-                var $select = $(this);
-                var childJson = $select.find('option:selected').data('thisViewJson');
-                if ($select.CswAttrDom('arbid') === "root")
-                {
-                    $.extend(currentViewJson.childrelationships, childJson);
-                } else {
-                    var objUtil = new ObjectHelper(currentViewJson);
-                    var parentObj = objUtil.find('arbitraryid', $select.CswAttrDom('arbid'));
-                    var collection = '';
-                    switch (stepno) {
-                        case CswViewEditor_WizardSteps.relationships.step:
-                            collection = childPropNames.childrelationships.name;
-                            break;
-                        case CswViewEditor_WizardSteps.properties.step:
-                            collection = childPropNames.properties.name;
-                            break;
-                    }
-                    var objCollection = parentObj[collection];
-                    if (isNullOrEmpty(objCollection)) {
-                        objCollection = { };
-                        parentObj[collection] = objCollection;
-                    }
-                    $.extend(objCollection, childJson);
-                }
-                _makeViewTree(stepno, $div);
-            }); // child select
-
             $div.find('.vieweditor_deletespan').each(function() {
                 var $td = $(this);
                 $td.CswImageButton({
@@ -677,7 +649,7 @@
 
                 // Relationship
                 $div.find('.vieweditor_viewrellink').click(function() {
-                    $a = $(this);
+                    var $a = $(this);
                     $cell.empty();
                     //$cell.append('For ' + $a.text());
 
@@ -847,7 +819,7 @@
         
         function viewJsonHtml(stepno, viewJson) {
             var types = { };
-            var $ret = $('<ul></ul');
+            var $ret = $('<ul></ul>');
             var $root = makeViewRootHtml(stepno, viewJson, types)
                             .appendTo($ret);
 
@@ -1026,6 +998,33 @@
                                     $option.data('thisViewJson', dataOpt);
                                 }
                             }
+                            var childJson = $select.find('option:selected').data('thisViewJson');
+                            $select.change(function() {
+                                if ($select.CswAttrDom('arbid') === "root")
+                                {
+                                    $.extend(currentViewJson.childrelationships, childJson);
+                                } else {
+                                    var objUtil = new ObjectHelper(currentViewJson);
+                                    var parentObj = objUtil.find('arbitraryid', $select.CswAttrDom('arbid'));
+                                    var collection = '';
+                                    switch (stepno) {
+                                        case CswViewEditor_WizardSteps.relationships.step:
+                                            collection = childPropNames.childrelationships.name;
+                                            break;
+                                        case CswViewEditor_WizardSteps.properties.step:
+                                            collection = childPropNames.properties.name;
+                                            break;
+                                    }
+                                    var objCollection = parentObj[collection];
+                                    if (isNullOrEmpty(objCollection)) {
+                                        objCollection = { };
+                                        parentObj[collection] = objCollection;
+                                    }
+                                    $.extend(objCollection, childJson);
+                                }
+                                _makeViewTree(stepno, $div);
+                            });
+                            
                         } // success
                     }); // ajax
             }
