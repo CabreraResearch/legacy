@@ -277,15 +277,15 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _NodeIdSubField.ToXmlNodeName( true ), ( SelectedNodeId != null ) ? SelectedNodeId.ToString() : string.Empty ) );
-            ParentObject.Add( new JProperty( _ColumnSubField.ToXmlNodeName( true ), ( SelectedColumn != Int32.MinValue ) ? SelectedColumn.ToString() : string.Empty ) );
-            ParentObject.Add( new JProperty( _RowSubField.ToXmlNodeName( true ), ( SelectedRow != Int32.MinValue ) ? SelectedRow.ToString() : string.Empty ) );
-            ParentObject.Add( new JProperty( _NameSubField.ToXmlNodeName( true ), CachedNodeName ) );
-            ParentObject.Add( new JProperty( _PathSubField.ToXmlNodeName( true ), CachedPath ) );
-            ParentObject.Add( new JProperty( _BarcodeSubField.ToXmlNodeName( true ), CachedBarcode ) );
+            ParentObject[_NodeIdSubField.ToXmlNodeName( true )] = ( SelectedNodeId != null ) ? SelectedNodeId.ToString() : string.Empty;
+            ParentObject[_ColumnSubField.ToXmlNodeName( true )] = ( SelectedColumn != Int32.MinValue ) ? SelectedColumn.ToString() : string.Empty;
+            ParentObject[_RowSubField.ToXmlNodeName( true )] = ( SelectedRow != Int32.MinValue ) ? SelectedRow.ToString() : string.Empty;
+            ParentObject[_NameSubField.ToXmlNodeName( true )] = CachedNodeName;
+            ParentObject[_PathSubField.ToXmlNodeName( true )] = CachedPath;
+            ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = CachedBarcode;
 
             View.SaveToCache( false );
-            ParentObject.Add( new JProperty( "viewid", View.SessionViewId.ToString() ) );
+            ParentObject["viewid"] = View.SessionViewId.ToString();
 
             if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
             {
@@ -293,7 +293,7 @@ namespace ChemSW.Nbt.PropTypes
                 CswNbtNodeKey NodeKey = Tree.getNodeKeyByNodeId( NodeId );
                 if( NodeKey != null )
                 {
-                    ParentObject.Add( new JProperty( "nodekey", NodeKey.ToString() ) );
+                    ParentObject["nodekey"] = NodeKey.ToString();
                 }
             }
         }

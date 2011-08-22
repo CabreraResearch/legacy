@@ -1,71 +1,76 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeLogicalSet';
-    var NameCol = "name";
-    var KeyCol = "key";
+    var pluginName = 'CswFieldTypeLogicalSet';
+    var nameCol = "name";
+    var keyCol = "key";
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
             var $Div = $(this);
             $Div.contents().remove();
 
-            var $LogicalSetXml = o.$propxml.children('logicalsetxml');
+            var logicalSetJson = o.propData.logicalsetjson;
 
-            //<LogicalSetXml>
-            //    <item>
-            //        <column field="name" value="Assembly"></column>
-            //        <column field="key" value="7"></column>
-            //        <column field="View" value="True"></column>
-            //        <column field="Create" value="True"></column>
-            //        <column field="Delete" value="True"></column>
-            //        <column field="Edit" value="True"></column>
-            //    </item>
-            //    <item>
-            //        ...
-            //    </item>
-            //</LogicalSetXml>
+            //logicalSetJson = {
+            //    [{ name: value, name2: value2 },
+            //     { name: value, name2: value2 }]
+            // }
             
             var $CBADiv = $('<div />')
                             .appendTo($Div);
 
             // get columns
-            var cols = new Array();
+            var cols = [];
             var c = 0;
 
-            $LogicalSetXml.find('item')
-                            .first()
-                            .children('column')
-                            .each(function() {
-                                    var fieldname = $(this).CswAttrXml('field');
-                                    if(fieldname !== NameCol && fieldname != KeyCol)
-                                    {
-                                        cols[c] = fieldname;
-                                        c++;
-                                    }
-                            });
+            for (var column in logicalSetJson[0]) {
+                if(logicalSetJson.hasOwnProperty(column)) {
+                    var fieldname = column;
+                    if (fieldname !== nameCol && fieldname != keyCol)
+                    {
+                        cols[c] = fieldname;
+                        c++;
+                    }
+                }
+            }
 
             // get data
             var data = new Array();
             var d = 0;
-            $LogicalSetXml.find('item').each(function () {
-                var $this = $(this);
-                var values = new Array();
+            for (var i=0; i < logicalSetJson.length; i++) {
+                var thisSet = logicalSetJson[i];
+                var values = [];
                 var r = 0;
-                for(var c = 0; c < cols.length; c++)
-                {
-                    var value = $this.children('column[field="'+ cols[c] +'"]').CswAttrXml('value');
-                    values[r] = (value === "True");
-                    r++;
+                var thisName = '';
+                var thisKey = '';
+                for (var field in thisSet) {
+                    if (thisSet.hasOwnProperty(field) && field !== nameCol && field !== keyCol) {
+                        var value = thisSet[field]; //thisSet.children('column[field="' + cols[c] + '"]').CswAttrXml('value');
+                        values[r] = isTrue(value);
+                        r++;
+                    }
+                    else if (field === nameCol) {
+                        thisName = thisSet[field];
+                    }
+                    else if (field === keyCol) {
+                        thisKey = thisSet[field];
+                    }
                 }
 
-                var $elm = { 'label': $this.children('column[field="' + NameCol + '"]').CswAttrXml('value'),
-                             'key': $this.children('column[field="' + KeyCol + '"]').CswAttrXml('value'),
-                             'values': values };
+                var $elm = { 'label': thisName,
+                    'key': thisKey,
+                    'values': values };
                 data[d] = $elm;
                 d++;
-            });
-                
+            }
+
             $CBADiv.CswCheckBoxArray('init', {
                                      'ID': o.ID + '_cba',
                                      'cols': cols,
@@ -77,7 +82,7 @@
 
         },
         save: function(o) { //$propdiv, $xml
-                var $LogicalSetXml = o.$propxml.children('logicalsetxml');
+                var logicalSetJson = o.propData.logicalsetxml;
                 var $CBADiv = o.$propdiv.children('div').first();
                 var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
                 for( var r = 0; r < formdata.length; r++)
@@ -85,14 +90,15 @@
                     for( var c = 0; c < formdata[r].length; c++)
                     {
                         var checkitem = formdata[r][c];
-                        var $xmlitem = $LogicalSetXml.find('item:has(column[field="'+ KeyCol +'"][value="'+ checkitem.key +'"])');
-                        var $xmlitemcolumn = $xmlitem.find('column[field="' + checkitem.collabel + '"]');
+                        var jsonItem = findObject(logicalSetJson, keyCol, checkitem.key);
+                        var itemColumn = findObject(jsonItem, checkitem.collabel);
                     
-                        if(checkitem.checked && $xmlitemcolumn.CswAttrXml('value') === "False")
-                            $xmlitemcolumn.CswAttrXml('value', 'True');
-                        else if(!checkitem.checked && $xmlitemcolumn.CswAttrXml('value') === "True")
-                            $xmlitemcolumn.CswAttrXml('value', 'False');
-
+                        if (checkitem.checked && itemColumn === "False") {
+                            itemColumn = 'True';
+                        }
+                        else if (!checkitem.checked && itemColumn === "True") {
+                            itemColumn = 'False';
+                        }
                     } // for( var c = 0; c < formdata.length; c++)
                 } // for( var r = 0; r < formdata.length; r++)
             } // save()
@@ -107,7 +113,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

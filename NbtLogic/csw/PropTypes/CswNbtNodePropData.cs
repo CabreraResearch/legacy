@@ -351,7 +351,24 @@ namespace ChemSW.Nbt.PropTypes
 					throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
             }
             return ret;
-        }
+        } // GetPropRowValue()
+
+		public DateTime GetPropRowValueDate( CswNbtSubField.PropColumn Column )
+		{
+			DateTime ret = DateTime.MinValue;
+			switch( Column )
+			{
+				case CswNbtSubField.PropColumn.Field1_Date:
+					ret = Field1_Date;
+					break;
+				case CswNbtSubField.PropColumn.Field2_Date:
+					ret = Field2_Date;
+					break;
+				default:
+					throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValueDate() found an unhandled PropColumn: " + Column.ToString() );
+			}
+			return ret;
+		} // GetPropRowValueDate()
 
 		public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
 		{

@@ -28,8 +28,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleComposite( CswNbtFieldResources, MetaDataProp );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Date:
-                    ReturnVal = new CswNbtFieldTypeRuleDate( CswNbtFieldResources, MetaDataProp );
+                case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                    ReturnVal = new CswNbtFieldTypeRuleDateTime( CswNbtFieldResources, MetaDataProp );
                     break;
 
                 case CswNbtMetaDataFieldType.NbtFieldType.External:
@@ -140,9 +140,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleText( CswNbtFieldResources, MetaDataProp );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Time:
-                    ReturnVal = new CswNbtFieldTypeRuleTime( CswNbtFieldResources, MetaDataProp );
-                    break;
+				//case CswNbtMetaDataFieldType.NbtFieldType.Time:
+				//    ReturnVal = new CswNbtFieldTypeRuleTime( CswNbtFieldResources, MetaDataProp );
+				//    break;
 
                 case CswNbtMetaDataFieldType.NbtFieldType.TimeInterval:
                     ReturnVal = new CswNbtFieldTypeRuleTimeInterval( CswNbtFieldResources, MetaDataProp );

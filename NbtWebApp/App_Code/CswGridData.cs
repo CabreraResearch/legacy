@@ -323,16 +323,16 @@ namespace ChemSW.Nbt.WebServices
                 case CswNbtMetaDataFieldType.NbtFieldType.Number:
                     _JqFieldType = JqFieldType.number;
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Date:
+                case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                     _JqFieldType = JqFieldType.date;
                     break;
                 //case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                 //    //not implemented yet
                 //    _JqFieldType = JqFieldType.datetime;
                 //    break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Time:
-                    _JqFieldType = JqFieldType.time;
-                    break;
+				//case CswNbtMetaDataFieldType.NbtFieldType.Time:
+				//    _JqFieldType = JqFieldType.time;
+				//    break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Link:
                     _JqFieldType = JqFieldType.link;
                     break;

@@ -439,7 +439,7 @@ namespace ChemSW.Nbt.WebPages
                             }
 
 							InspectionPointAsMP.Description.Text = InspectionPointDescription;
-							InspectionPointAsMP.LastInspectionDate.DateValue = LastInspectionDate;
+							InspectionPointAsMP.LastInspectionDate.DateTimeValue = LastInspectionDate;
                             InspectionPointAsMP.Location.SelectedNodeId = RoomNode.NodeId;
                             InspectionPointAsMP.Location.RefreshNodeName();
                             InspectionPointAsMP.Type.Value = Type;

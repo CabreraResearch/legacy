@@ -1,50 +1,53 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeScientific';
+    var pluginName = 'CswFieldTypeScientific';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
             var $Div = $(this);
 
-			if(isTrue(o.ReadOnly))
-			{
-				$Div.append(o.$propxml.CswAttrXml('gestalt'));
+			if (isTrue(o.ReadOnly)) {
+				$Div.append(o.propData.gestalt);
 			} 
 			else 
 			{
 				var $ValueNTB = $Div.CswNumberTextBox({
-					'ID': o.ID + '_val',
-					'Value': o.$propxml.children('base').text().trim(),
-					'Precision': 6,
-					'ReadOnly': o.ReadOnly,
-					'Required': o.Required,
-					'onchange': o.onchange,
-					'width': '60px'
+					ID: o.ID + '_val',
+					Value: tryParseString(o.propData.base).trim(),
+					Precision: 6,
+					ReadOnly: o.ReadOnly,
+					Required: o.Required,
+					onchange: o.onchange,
+					width: '60px'
 				});
 				$Div.append('E');
 				var $ExponentNTB = $Div.CswNumberTextBox({
-					'ID':  o.ID + '_exp',
-					'Value': o.$propxml.children('exponent').text().trim(),
-					'ReadOnly': o.ReadOnly,
-					'Required': o.Required,
-					'onchange': o.onchange,
-					'width': '25px'
+					ID:  o.ID + '_exp',
+					Value: tryParseString(o.propData.exponent).trim(),
+					ReadOnly: o.ReadOnly,
+					Required: o.Required,
+					onchange: o.onchange,
+					width: '25px'
 				});
 
-				if(!isNullOrEmpty($ValueNTB) && $ValueNTB.length > 0)
-				{
+				if (!isNullOrEmpty($ValueNTB) && $ValueNTB.length > 0) {
 					$ValueNTB.clickOnEnter(o.$savebtn);
 				}
-				if(!isNullOrEmpty($ExponentNTB) && $ExponentNTB.length > 0)
-				{
+				if (!isNullOrEmpty($ExponentNTB) && $ExponentNTB.length > 0) {
 					$ExponentNTB.clickOnEnter(o.$savebtn);
 				}
 			}
         },
         save: function(o) { //$propdiv, $xml
-				o.$propxml.children('base').text(o.$propdiv.CswNumberTextBox('value', o.ID + '_val'));
-				o.$propxml.children('exponent').text(o.$propdiv.CswNumberTextBox('value', o.ID + '_exp'));
+				o.propData.base = o.$propdiv.CswNumberTextBox('value', o.ID + '_val');
+				o.propData.exponent =o.$propdiv.CswNumberTextBox('value', o.ID + '_exp');
             }
     };
     
@@ -56,7 +59,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

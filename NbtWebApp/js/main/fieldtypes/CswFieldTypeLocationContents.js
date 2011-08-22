@@ -1,6 +1,12 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeLocationContents';
+    var pluginName = 'CswFieldTypeLocationContents';
 
     var methods = {
         init: function(o) { // nodepk, $xml, onchange
@@ -8,7 +14,7 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var Value = o.$propxml.children('value').text().trim();
+                var value = tryParseString(o.propData.value).trim();
 
                 $Div.append('[Not Implemented Yet]');
 //                if(o.ReadOnly)
@@ -34,7 +40,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

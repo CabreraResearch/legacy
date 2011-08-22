@@ -1,5 +1,7 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 ; (function ($)
 {
@@ -12,8 +14,8 @@
 					ID: '',
 					NodeTypesUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
 					nodetypeid: '',
-					onSelect: function (nodetypeid) {},
-					onSuccess: function () {}
+					onSelect: null, //function (nodetypeid) {},
+					onSuccess: null //function () {}
 				};
 
 				if (options)
@@ -26,20 +28,22 @@
 
 				var $select = $('<select id="'+ o.ID +'_sel" />')
 								.appendTo($parent);
-				$select.change(function(event) { o.onSelect( $select.val() ); });
+				$select.change(function() { if (isFunction(o.onSelect)) o.onSelect( $select.val() ); });
 
-				CswAjaxXml({
+				CswAjaxJson({
 						url: o.NodeTypesUrl,
 						data: {},
-						stringify: false,
-						success: function ($xml)
+						success: function (data)
 						{
-							$xml.children('nodetype').each(function() {
-								var $nodetype = $(this);
-								$select.append('<option value="'+ $nodetype.CswAttrXml('id') +'">'+ $nodetype.CswAttrXml('name') +'</option>');
-							});
-
-							o.onSuccess();
+							for (var nodeType in data) {
+							    if (data.hasOwnProperty(nodeType)) {
+							        var thisNodeType = data[nodeType];
+							        $select.append('<option value="' + thisNodeType.id + '">' + thisNodeType.name + '</option>');
+							    }
+							}
+						    if (isFunction(o.onSuccess)) {
+						        o.onSuccess();
+						    }
 						}
 				});
 

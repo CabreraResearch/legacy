@@ -87,7 +87,7 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleBarCode.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleBlob.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleComposite.cs" />
-    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleDate.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleDateTime.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleDateImpl.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleDefaultImpl.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleExternal.cs" />
@@ -177,7 +177,7 @@
     <Compile Include="csw\PropTypes\CswNbtNodePropBlob.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropComposite.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropData.cs" />
-    <Compile Include="csw\PropTypes\CswNbtNodePropDate.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropDateTime.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropFactory.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropGrid.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropImage.cs" />
@@ -233,6 +233,7 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I08.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I05.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I07.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I06.cs" />

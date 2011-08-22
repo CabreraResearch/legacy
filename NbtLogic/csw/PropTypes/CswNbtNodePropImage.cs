@@ -141,8 +141,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _FileNameSubField.ToXmlNodeName(true), FileName ),
-                            new XElement( _ContentTypeSubField.ToXmlNodeName(true), ContentType ),
+            ParentNode.Add( new XElement( _FileNameSubField.ToXmlNodeName( true ), FileName ),
+                            new XElement( _ContentTypeSubField.ToXmlNodeName( true ), ContentType ),
                             new XElement( CswNbtSubField.SubFieldName.Href.ToString(), ImageUrl,
                                 new XElement( "width", Width.ToString() ),
                                 new XElement( "height", Height.ToString() ) ) );
@@ -150,28 +150,28 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _FileNameSubField.ToXmlNodeName( true ), FileName ) );
-            ParentObject.Add( new JProperty( _ContentTypeSubField.ToXmlNodeName( true ), ContentType ) );
-            ParentObject.Add( new JProperty( CswNbtSubField.SubFieldName.Href.ToString(), ImageUrl ) );
-            ParentObject.Add( new JProperty( "width", Width.ToString() ) );
-            ParentObject.Add( new JProperty( "height", Height.ToString() ) );
+            ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
+            ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
+            ParentObject[CswNbtSubField.SubFieldName.Href.ToString()] = ImageUrl;
+            ParentObject["width"] = Width.ToString();
+            ParentObject["height"] = Height.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            ContentType = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ContentTypeSubField.ToXmlNodeName(true) );
-            FileName = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _FileNameSubField.ToXmlNodeName(true) );
+            ContentType = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ContentTypeSubField.ToXmlNodeName( true ) );
+            FileName = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _FileNameSubField.ToXmlNodeName( true ) );
         }
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _ContentTypeSubField.ToXmlNodeName(true) ) )
+            if( null != XmlNode.Element( _ContentTypeSubField.ToXmlNodeName( true ) ) )
             {
-                ContentType = XmlNode.Element( _ContentTypeSubField.ToXmlNodeName(true) ).Value;
+                ContentType = XmlNode.Element( _ContentTypeSubField.ToXmlNodeName( true ) ).Value;
             }
-            if( null != XmlNode.Element( _FileNameSubField.ToXmlNodeName(true) ) )
+            if( null != XmlNode.Element( _FileNameSubField.ToXmlNodeName( true ) ) )
             {
-                FileName = XmlNode.Element( _FileNameSubField.ToXmlNodeName(true) ).Value;
+                FileName = XmlNode.Element( _FileNameSubField.ToXmlNodeName( true ) ).Value;
             }
         }
 
@@ -183,13 +183,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _ContentTypeSubField.ToXmlNodeName(true) ) )
+            if( null != JObject.Property( _ContentTypeSubField.ToXmlNodeName( true ) ) )
             {
-                ContentType = (string) JObject.Property( _ContentTypeSubField.ToXmlNodeName(true) ).Value;
+                ContentType = (string) JObject.Property( _ContentTypeSubField.ToXmlNodeName( true ) ).Value;
             }
-            if( null != JObject.Property( _FileNameSubField.ToXmlNodeName(true) ) )
+            if( null != JObject.Property( _FileNameSubField.ToXmlNodeName( true ) ) )
             {
-                FileName = (string) JObject.Property( _FileNameSubField.ToXmlNodeName(true) ).Value;
+                FileName = (string) JObject.Property( _FileNameSubField.ToXmlNodeName( true ) ).Value;
             }
         }
     }

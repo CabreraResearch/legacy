@@ -1,19 +1,25 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeUserSelect';
-	var NameCol = "User Name";
-	var KeyCol = "UserId";
-    var StringKeyCol = "UserIdString";
-	var ValueCol = "Include";
+    var pluginName = 'CswFieldTypeUserSelect';
+	var nameCol = "User Name";
+	var keyCol = "UserId";
+    var stringKeyCol = "UserIdString";
+	var valueCol = "Include";
 
     var methods = {
-        'init': function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        'init': function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
 
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var SelectedUserIds = o.$propxml.children('NodeId').text().trim();
-				var $OptionsXml = o.$propxml.children('options');
+                var selectedUserIds = o.propData.children('NodeId').text().trim();
+				var $OptionsXml = o.propData.children('options');
 
 				var $CBADiv = $('<div />')
 								.appendTo($Div);
@@ -24,9 +30,9 @@
 				$OptionsXml.children().each(function () {
 					var $user = $(this);
 					var $elm = { 
-								 'label': $user.children('column[field="' + NameCol + '"]').CswAttrXml('value'),
-								 'key': $user.children('column[field="' + KeyCol + '"]').CswAttrXml('value'),
-								 'values': [ ($user.children('column[field="' + ValueCol + '"]').CswAttrXml('value') === "True") ]
+								 'label': $user.children('column[field="' + nameCol + '"]').CswAttrXml('value'),
+								 'key': $user.children('column[field="' + keyCol + '"]').CswAttrXml('value'),
+								 'values': [ ($user.children('column[field="' + valueCol + '"]').CswAttrXml('value') === "True") ]
 							   };
 					data[d] = $elm;
 					d++;
@@ -34,7 +40,7 @@
 
 				$CBADiv.CswCheckBoxArray('init', {
 					'ID': o.ID + '_cba',
-					'cols': [ ValueCol ],
+					'cols': [ valueCol ],
 					'data': data,
 					'UseRadios': false,
 					'Required': o.Required,
@@ -43,13 +49,13 @@
 				});
             },
         'save': function(o) {
-				var $OptionsXml = o.$propxml.children('options');
+				var $OptionsXml = o.propData.children('options');
 				var $CBADiv = o.$propdiv.children('div').first();
 				var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
 				for (var r = 0; r < formdata.length; r++) {
 					var checkitem = formdata[r][0];
-					var $xmlitem = $OptionsXml.find('user:has(column[field="' + KeyCol + '"][value="' + checkitem.key + '"])');
-					var $xmlvaluecolumn = $xmlitem.find('column[field="' + ValueCol + '"]');
+					var $xmlitem = $OptionsXml.find('user:has(column[field="' + keyCol + '"][value="' + checkitem.key + '"])');
+					var $xmlvaluecolumn = $xmlitem.find('column[field="' + valueCol + '"]');
 					if (checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "False")
 						$xmlvaluecolumn.CswAttrXml('value', 'True');
 					else if (!checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "True")
@@ -66,7 +72,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

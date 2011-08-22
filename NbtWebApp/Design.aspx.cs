@@ -827,8 +827,8 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.DisplayRowAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.DisplayColAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
-                    PropToSave.DateToday = Convert.ToBoolean( getPropAttributeValue( "EditProp_DateTodayValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
-                    PropToSave.Length = CswConvert.ToInt32( getPropAttributeValue( "EditProp_LengthValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+					PropToSave.DateToday = Convert.ToBoolean( getPropAttributeValue( "EditProp_DateTodayValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
+					PropToSave.Length = CswConvert.ToInt32( getPropAttributeValue( "EditProp_LengthValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.TextAreaRows = CswConvert.ToInt32( getPropAttributeValue( "EditProp_RowsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.TextAreaColumns = CswConvert.ToInt32( getPropAttributeValue( "EditProp_ColsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.CompositeTemplateText = getPropAttributeValue( "EditProp_TemplateValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
@@ -1475,7 +1475,7 @@ namespace ChemSW.Nbt.WebPages
 
                             break;
 
-                        case CswNbtMetaDataFieldType.NbtFieldType.Date:
+                        case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                             TableRow DateTodayRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) DateTodayRow.Cells[0].Controls[0] ).Text = "";
                             CheckBox DateTodayValue = new CheckBox();
@@ -1483,7 +1483,17 @@ namespace ChemSW.Nbt.WebPages
                             DateTodayValue.Text = "Default to Today";
                             DateTodayValue.Checked = SelectedNodeTypeProp.DateToday;
                             DateTodayRow.Cells[1].Controls.Add( DateTodayValue );
-                            break;
+
+							TableRow DateTypeRow = makeEditPropTableRow( EditPropPlaceHolder );
+							( (Literal) DateTypeRow.Cells[0].Controls[0] ).Text = "Date Type";
+                            DropDownList DateTypeValue = new DropDownList();
+							DateTypeValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
+							DateTypeValue.Items.Add( new ListItem( "Date Only", CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ) );
+							DateTypeValue.Items.Add( new ListItem( "Time Only", CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ) );
+							DateTypeValue.Items.Add( new ListItem( "Date and Time", CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() ) );
+							DateTypeValue.SelectedValue = SelectedNodeTypeProp.Extended;
+							DateTypeRow.Cells[1].Controls.Add( DateTypeValue );
+							break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.External:
                             /*
@@ -2225,8 +2235,8 @@ namespace ChemSW.Nbt.WebPages
                     switch( FieldType.FieldType )
                     {
                         //case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Date:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Time:
+                        case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                        //case CswNbtMetaDataFieldType.NbtFieldType.Time:
                         //case CswNbtMetaDataFieldType.NbtFieldType.File:
                         //case CswNbtMetaDataFieldType.NbtFieldType.Image:
                         case CswNbtMetaDataFieldType.NbtFieldType.Link:

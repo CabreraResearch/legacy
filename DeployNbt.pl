@@ -92,7 +92,7 @@ my $assemblyname = <ASSEMBLYFILE>;
 close( ASSEMBLYFILE );
 $assemblyname =~ /^(\w+)\s?.*$/;
 my $releasename = $1;
-my $assemblyno = "$releasename $datestr.$increment"; 
+my $assemblyno = $releasename ."_". $datestr .".". $increment"; 
 
 foreach my $component (@components)
 {

@@ -1,948 +1,1062 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../pagecmp/CswWizard.js" />
 
 ;  (function ($) { /// <param name="$" type="jQuery" />
 
-	$.fn.CswViewEditor = function (options) 
-	{
-		var o = {
-			ViewGridUrl: '/NbtWebApp/wsNBT.asmx/getViewGrid',
-			ViewInfoUrl: '/NbtWebApp/wsNBT.asmx/getViewInfo',
-			SaveViewUrl: '/NbtWebApp/wsNBT.asmx/saveViewInfo',
-			CopyViewUrl: '/NbtWebApp/wsNBT.asmx/copyView',
-			DeleteViewUrl: '/NbtWebApp/wsNBT.asmx/deleteView',
-			ChildOptionsUrl: '/NbtWebApp/wsNBT.asmx/getViewChildOptions',
-			PropNamesUrl: '/NbtWebApp/wsNBT.asmx/getPropNames',
-			viewid: '',
-			viewname: '',
-			viewmode: '',
-			ID: 'vieweditor',
-			ColumnViewName: 'VIEWNAME', 
-			ColumnViewId: 'NODEVIEWID',
-			ColumnFullViewId: 'VIEWID',
-			ColumnViewMode: 'VIEWMODE',
-			onCancel: function($wizard) {},
-			onFinish: function(viewid, viewmode) {},
-			startingStep: 1
-		};
-		if(options) $.extend(o, options);
+    $.fn.CswViewEditor = function(options) {
+        var o = {
+            ViewGridUrl: '/NbtWebApp/wsNBT.asmx/getViewGrid',
+            ViewInfoUrl: '/NbtWebApp/wsNBT.asmx/getViewInfo',
+            SaveViewUrl: '/NbtWebApp/wsNBT.asmx/saveViewInfo',
+            CopyViewUrl: '/NbtWebApp/wsNBT.asmx/copyView',
+            DeleteViewUrl: '/NbtWebApp/wsNBT.asmx/deleteView',
+            ChildOptionsUrl: '/NbtWebApp/wsNBT.asmx/getViewChildOptions',
+            PropNamesUrl: '/NbtWebApp/wsNBT.asmx/getPropNames',
+            viewid: '',
+            viewname: '',
+            viewmode: '',
+            ID: 'vieweditor',
+            ColumnViewName: 'VIEWNAME',
+            ColumnViewId: 'NODEVIEWID',
+            ColumnFullViewId: 'VIEWID',
+            ColumnViewMode: 'VIEWMODE',
+            onCancel: null, // function($wizard) {},
+            onFinish: null, // function(viewid, viewmode) {},
+            startingStep: 1
+        };
+        if (options) $.extend(o, options);
 
-		var WizardStepArray = [ CswViewEditor_WizardSteps.step1, CswViewEditor_WizardSteps.step2, CswViewEditor_WizardSteps.step3, 
-								CswViewEditor_WizardSteps.step4, CswViewEditor_WizardSteps.step5, CswViewEditor_WizardSteps.step6];
-		var WizardSteps = {};                
-		for( var i = 1; i <= WizardStepArray.length; i++ )
-		{                
-			WizardSteps[i] = WizardStepArray[i-1].description;
-		}
+        var childPropNames = {
+            root: { name: 'root', next: '' },
+            childrelationships: { name: 'childrelationships', next: '' },
+            properties: { name: 'properties', next: '' },
+            filters: { name: 'filters', next: '' }
+        };
+        childPropNames.childrelationships.next = childPropNames.properties;
+        childPropNames.properties.next = childPropNames.filters;
+        
+        var WizardStepArray = [CswViewEditor_WizardSteps.viewselect, CswViewEditor_WizardSteps.attributes, CswViewEditor_WizardSteps.relationships,
+            CswViewEditor_WizardSteps.properties, CswViewEditor_WizardSteps.filters, CswViewEditor_WizardSteps.tuning];
+        var WizardSteps = { };
+        for (var i = 1; i <= WizardStepArray.length; i++)
+        {
+            WizardSteps[i] = WizardStepArray[i - 1].description;
+        }
 
-		var CurrentStep = o.startingStep;
+        var CurrentStep = o.startingStep;
 
-		var $parent = $(this);
-		var $div = $('<div></div>')
-					.appendTo($parent);
+        var $parent = $(this);
+        var $div = $('<div></div>')
+            .appendTo($parent);
 
-		var $wizard = $div.CswWizard('init', { 
-				'ID': o.ID + '_wizard',
-				'Title': 'Edit View',
-				'StepCount': WizardStepArray.length,
-				'Steps': WizardSteps,
-				'StartingStep': o.startingStep,
-				'FinishText': 'Save and Finish',
-				'onNext': _handleNext,
-				'onPrevious': _handlePrevious,
-				'onBeforePrevious': _onBeforePrevious,
-				'onCancel': o.onCancel,
-				'onFinish': _handleFinish
-			});
+        var $wizard = $div.CswWizard('init', {
+            ID: o.ID + '_wizard',
+            Title: 'Edit View',
+            StepCount: WizardStepArray.length,
+            Steps: WizardSteps,
+            StartingStep: o.startingStep,
+            FinishText: 'Save and Finish',
+            onNext: _handleNext,
+            onPrevious: _handlePrevious,
+            onBeforePrevious: _onBeforePrevious,
+            onCancel: o.onCancel,
+            onFinish: _handleFinish
+        });
 
-		// don't activate Save and Finish until step 2
-		if(o.startingStep === 1)
-			$wizard.CswWizard('button', 'finish', 'disable');
+        // don't activate Save and Finish until step 2
+        if (o.startingStep === 1)
+            $wizard.CswWizard('button', 'finish', 'disable');
 
-		// Step 1 - Choose a View
-		var $div1 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step1.step);
-		var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  "+
-							"Views are useful for defining a user's workflow or for creating elaborate search criteria. "+
-							"This wizard will take you step by step through the process of creating a new View or "+
-							"editing an existing View.<br/><br/>";
-		$div1.append(instructions);
-		$div1.append('Select a View to Edit:&nbsp;');
-		var $selview_span = $('<span id="'+ o.ID +'_selviewname" style="font-weight: bold"></span>')
-								.appendTo($div1);
-		var $viewgrid_div = $('<div></div>').appendTo($div1);
-		var $viewgrid;
-		function onViewGridSuccess($vg) { 
-			$viewgrid = $vg; 
-		}
+        // Step 1 - Choose a View
+        var $div1 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.viewselect.step);
+        var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  " +
+            "Views are useful for defining a user's workflow or for creating elaborate search criteria. " +
+                "This wizard will take you step by step through the process of creating a new View or " +
+                    "editing an existing View.<br/><br/>";
+        $div1.append(instructions);
+        $div1.append('Select a View to Edit:&nbsp;');
+        var $selview_span = $('<span id="' + o.ID + '_selviewname" style="font-weight: bold"></span>')
+            .appendTo($div1);
+        var $viewgrid_div = $('<div></div>').appendTo($div1);
+        var $viewgrid;
+        function onViewGridSuccess($vg) {
+            $viewgrid = $vg;
+        }
 
-		_getViewsGrid(onViewGridSuccess, o.viewid);
+        _getViewsGrid(onViewGridSuccess, o.viewid);
 
-		var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: '100%' });
-		var $div1_btntbl_cell11 = $div1_btntbl.CswTable('cell', 1, 1)
-		var $div1_btntbl_cell12 = $div1_btntbl.CswTable('cell', 1, 2)
-		$div1_btntbl_cell12.CswAttrDom('align', 'right');
-		var $allcheck_div = $('<div></div>').appendTo($div1_btntbl_cell12);
+        var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: '100%' });
+        var $div1_btntbl_cell11 = $div1_btntbl.CswTable('cell', 1, 1)
+        var $div1_btntbl_cell12 = $div1_btntbl.CswTable('cell', 1, 2)
+        $div1_btntbl_cell12.CswAttrDom('align', 'right');
+        var $allcheck_div = $('<div></div>').appendTo($div1_btntbl_cell12);
 
-		IsAdministrator({
-			'Yes': function() {
-				var $showOther = $allcheck_div.CswInput('init',{ID: o.ID + '_all',
-																type: CswInput_Types.checkbox,
-																onChange: function() { 
-																				_getViewsGrid(onViewGridSuccess); 
-																			}
-																});
-				$allcheck_div.append('Show Other Roles/Users');
-			}
-		});
+        IsAdministrator({
+                'Yes': function() {
+                    var $showOther = $allcheck_div.CswInput('init', {ID: o.ID + '_all',
+                        type: CswInput_Types.checkbox,
+                        onChange: function() {
+                            _getViewsGrid(onViewGridSuccess);
+                        }
+                    });
+                    $allcheck_div.append('Show Other Roles/Users');
+                }
+            });
 
-		var $copyviewbtn = $div1_btntbl_cell11.CswButton({
-			'ID': o.ID + '_copyview',
-			'enabledText': 'Copy View',
-			'disableOnClick': true,
-			'onclick': function() {
-				var viewid = _getSelectedViewId($viewgrid);
-				if(!isNullOrEmpty(viewid))
-				{
-					var dataJson = {
-						ViewId: viewid
-					};
+        var $copyviewbtn = $div1_btntbl_cell11.CswButton({
+                'ID': o.ID + '_copyview',
+                'enabledText': 'Copy View',
+                'disableOnClick': true,
+                'onclick': function() {
+                    var viewid = _getSelectedViewId($viewgrid);
+                    if (!isNullOrEmpty(viewid))
+                    {
+                        var dataJson = {
+                            ViewId: viewid
+                        };
 
-					CswAjaxJson({
-						url: o.CopyViewUrl,
-						data: dataJson,
-						success: function (gridJson) {
-							_getViewsGrid(onViewGridSuccess, gridJson.copyviewid); 
-						},
-						error: function() {
-							$copyviewbtn.CswButton('enable');
-						}
-					});
-				} // if(viewid !== '' && viewid !== undefined)
-			} // onclick
-		}); // copy button
-		$copyviewbtn.CswButton('disable');
+                        CswAjaxJson({
+                                url: o.CopyViewUrl,
+                                data: dataJson,
+                                success: function(gridJson) {
+                                    _getViewsGrid(onViewGridSuccess, gridJson.copyviewid);
+                                },
+                                error: function() {
+                                    $copyviewbtn.CswButton('enable');
+                                }
+                            });
+                    } // if(viewid !== '' && viewid !== undefined)
+                } // onclick
+            }); // copy button
+        $copyviewbtn.CswButton('disable');
 
-		var $deleteviewbtn = $div1_btntbl_cell11.CswButton({
-			'ID': o.ID + '_deleteview',
-			'enabledText': 'Delete View',
-			'disableOnClick': true,
-			'onclick': function() {
-				var viewid = _getSelectedViewId($viewgrid);
-				if( !isNullOrEmpty( viewid ) )
-				{
-					if(confirm("Are you sure you want to delete: " + _getSelectedViewName($viewgrid)))
-					{
-						var dataJson = {
-							ViewId: viewid
-						};
+        var $deleteviewbtn = $div1_btntbl_cell11.CswButton({
+                ID: o.ID + '_deleteview',
+                enabledText: 'Delete View',
+                disableOnClick: true,
+                onclick: function() {
+                    var viewid = _getSelectedViewId($viewgrid);
+                    if (!isNullOrEmpty(viewid))
+                    {
+                        if (confirm("Are you sure you want to delete: " + _getSelectedViewName($viewgrid)))
+                        {
+                            var dataJson = {
+                                ViewId: viewid
+                            };
 
-						CswAjaxJson({
-							url: o.DeleteViewUrl,
-							data: dataJson,
-							success: function (gridJson) {
-								_getViewsGrid(onViewGridSuccess); 
-								$copyviewbtn.CswButton('disable');
-							},
-							error: function() {
-								$deleteviewbtn.CswButton('enable');
-							}
-						});
-					}
-				}
-			} // onclick
-		}); // delete button
-		$deleteviewbtn.CswButton('disable');
+                            CswAjaxJson({
+                                    url: o.DeleteViewUrl,
+                                    data: dataJson,
+                                    success: function() {
+                                        _getViewsGrid(onViewGridSuccess);
+                                        $copyviewbtn.CswButton('disable');
+                                    },
+                                    error: function() {
+                                        $deleteviewbtn.CswButton('enable');
+                                    }
+                                });
+                        }
+                    }
+                } // onclick
+            }); // delete button
+        $deleteviewbtn.CswButton('disable');
 
-		var $newviewbtn = $div1_btntbl_cell11.CswButton({
-			'ID': o.ID + '_newview',
-			'enabledText': 'Create New View',
-			'disableOnClick': false,
-			'onclick': function() {
-				$.CswDialog('AddViewDialog', { 
-					'onAddView': function(newviewid) {
-						$viewgrid = _getViewsGrid(onViewGridSuccess, newviewid); 
-					},
-					'onClose': function() {
-						$newviewbtn.CswButton('enable');
-					}
-				}); // CswDialog
-			} // onclick
-		})
+        var $newviewbtn = $div1_btntbl_cell11.CswButton({
+                'ID': o.ID + '_newview',
+                'enabledText': 'Create New View',
+                'disableOnClick': false,
+                'onclick': function() {
+                    $.CswDialog('AddViewDialog', {
+                        'onAddView': function(newviewid) {
+                            $viewgrid = _getViewsGrid(onViewGridSuccess, newviewid);
+                        },
+                        'onClose': function() {
+                            $newviewbtn.CswButton('enable');
+                        }
+                    }); // CswDialog
+                } // onclick
+            })
 
-		//$wizard.CswWizard('button', 'next', 'disable');
+        //$wizard.CswWizard('button', 'next', 'disable');
 
-		// Step 2 - Edit View Attributes
-		var $div2 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step2.step);
-		var $table2 = $div2.CswTable({ 
-				'ID': o.ID + '_tbl2', 
-				'FirstCellRightAlign': true 
-		});
+        // Step 2 - Edit View Attributes
+        var $div2 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.attributes.step);
+        var $table2 = $div2.CswTable({
+                'ID': o.ID + '_tbl2',
+                'FirstCellRightAlign': true
+            });
 
-		$table2.CswTable('cell', 1, 1).append('View Name:');
-		var $viewnametextcell = $table2.CswTable('cell', 1, 2);
-		var $viewnametextbox = $viewnametextcell.CswInput('init',{ID: o.ID + '_viewname',
-																	type: CswInput_Types.text
-																	});
+        $table2.CswTable('cell', 1, 1).append('View Name:');
+        var $viewnametextcell = $table2.CswTable('cell', 1, 2);
+        var $viewnametextbox = $viewnametextcell.CswInput('init', {ID: o.ID + '_viewname',
+            type: CswInput_Types.text
+        });
 
-		$table2.CswTable('cell', 2, 1).append('Category:');
-		var $categorytextcell = $table2.CswTable('cell', 2, 2);
-		var $categorytextbox = $categorytextcell.CswInput('init',{ID: o.ID + '_category',
-																	type: CswInput_Types.text
-																});
+        $table2.CswTable('cell', 2, 1).append('Category:');
+        var $categorytextcell = $table2.CswTable('cell', 2, 2);
+        var $categorytextbox = $categorytextcell.CswInput('init', {ID: o.ID + '_category',
+            type: CswInput_Types.text
+        });
 
-		var v;
-		// we don't have xml to see whether this is a Property view or not yet,
-		// so checking startingStep will have to suffice
-		if(o.startingStep === 1)
-		{
-			v = makeViewVisibilitySelect($table2, 3, 'View Visibility:');
-		}
+        var v;
+        // we don't have json to see whether this is a Property view or not yet,
+        // so checking startingStep will have to suffice
+        if (o.startingStep === 1)
+        {
+            v = makeViewVisibilitySelect($table2, 3, 'View Visibility:');
+        }
 
-		$table2.CswTable('cell', 4, 1).append('For Mobile:');
-		var $formobilecheckcell = $table2.CswTable('cell', 4, 2);
-		var $formobilecheckbox = $formobilecheckcell.CswInput('init',{ID: o.ID + '_formobile',
-																		type: CswInput_Types.checkbox
-																});
+        $table2.CswTable('cell', 4, 1).append('For Mobile:');
+        var $formobilecheckcell = $table2.CswTable('cell', 4, 2);
+        var $formobilecheckbox = $formobilecheckcell.CswInput('init', {ID: o.ID + '_formobile',
+            type: CswInput_Types.checkbox
+        });
 
-		$table2.CswTable('cell', 5, 1).append('Display Mode:');
-		var $displaymodespan = $table2.CswTable('cell', 5, 2).append('<span id="'+ o.ID +'_displaymode"></span>');
-		
-		var $gridwidthlabelcell = $table2.CswTable('cell', 6, 1)
-								.append('Grid Width (in characters):');
-		var $gridwidthtextboxcell = $table2.CswTable('cell', 6, 2);
-		$gridwidthtextboxcell.CswNumberTextBox('init', {
-				'ID': o.ID + '_gridwidth',
-				'Value': '',
-				'MinValue': '1',
-				'MaxValue': '',
-				'Precision': '0',
-				'onchange': function() { }
-		});
-		
-		// Step 3 - Add Relationships
-		var $div3 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step3.step);
-		$div3.append('Add relationships from the select boxes below:<br/><br/>');
-		var $treediv3 = $('<div />').appendTo($div3);
-		
-		// Step 4 - Select Properties
-		var $div4 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step4.step);
-		$div4.append('Add properties from the select boxes below:<br/><br/>');
-		var $treediv4 = $('<div />').appendTo($div4);
-		
-		// Step 5 - Set Filters
-		var $div5 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step5.step);
-		$div5.append('Add filters by selecting properties from the tree:<br/><br/>');
-		var $treediv5 = $('<div />').appendTo($div5);
+        $table2.CswTable('cell', 5, 1).append('Display Mode:');
+        var $displaymodespan = $table2.CswTable('cell', 5, 2).append('<span id="' + o.ID + '_displaymode"></span>');
 
-		// Step 6 - Fine Tuning
-		var $div6 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.step6.step);
-		$div6.append('Select what you want to edit from the tree:<br/><br/>');
-		var $table6 = $div6.CswTable({ 'ID': o.ID + '_6_tbl' });
-	   
-		var $currentviewxml;
+        var $gridwidthlabelcell = $table2.CswTable('cell', 6, 1)
+            .append('Grid Width (in characters):');
+        var $gridwidthtextboxcell = $table2.CswTable('cell', 6, 2);
+        $gridwidthtextboxcell.CswNumberTextBox('init', {
+            'ID': o.ID + '_gridwidth',
+            'Value': '',
+            'MinValue': '1',
+            'MaxValue': '',
+            'Precision': '0',
+            'onchange': function() { }
+        });
 
-		function _onBeforePrevious($wizard, stepno)
-		{
-			return (stepno !== CswViewEditor_WizardSteps.step2.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
-		}
+        // Step 3 - Add Relationships
+        var $div3 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.relationships.step);
+        $div3.append('Add relationships from the select boxes below:<br/><br/>');
+        var $treediv3 = $('<div />').appendTo($div3);
 
-		function _handleNext($wizard, newstepno)
-		{
-			CurrentStep = newstepno;
-			switch(newstepno)
-			{
-				case CswViewEditor_WizardSteps.step1.step:
-					break;
-				case CswViewEditor_WizardSteps.step2.step:
-					$wizard.CswWizard('button', 'finish', 'enable');
-					$wizard.CswWizard('button', 'next', 'disable');
+        // Step 4 - Select Properties
+        var $div4 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.properties.step);
+        $div4.append('Add properties from the select boxes below:<br/><br/>');
+        var $treediv4 = $('<div />').appendTo($div4);
 
-					var dataXml = {
-						ViewId: _getSelectedViewId($viewgrid)
-					};
+        // Step 5 - Set Filters
+        var $div5 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.filters.step);
+        $div5.append('Add filters by selecting properties from the tree:<br/><br/>');
+        var $treediv5 = $('<div />').appendTo($div5);
 
-					CswAjaxXml({
-						url: o.ViewInfoUrl,
-						data: dataXml,
-						stringify: false,
-						success: function($xml) {
-							$currentviewxml = $xml;
-							$viewnametextbox.val($currentviewxml.CswAttrXml('viewname'));
-							$categorytextbox.val($currentviewxml.CswAttrXml('category'));
-							if($currentviewxml.CswAttrXml('visibility') !== 'Property')
-							{
-								if(v.getvisibilityselect() !== undefined)
-								{
-									v.getvisibilityselect().val($currentviewxml.CswAttrXml('visibility')).trigger('change');
-									v.getvisroleselect().val('nodes_' + $currentviewxml.CswAttrXml('visibilityroleid'));
-									v.getvisuserselect().val('nodes_' + $currentviewxml.CswAttrXml('visibilityuserid'));
-								}
-							}
+        // Step 6 - Fine Tuning
+        var $div6 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.tuning.step);
+        $div6.append('Select what you want to edit from the tree:<br/><br/>');
+        var $table6 = $div6.CswTable({ 'ID': o.ID + '_6_tbl' });
 
-							if( isTrue( $currentviewxml.CswAttrXml('formobile') ) ) {
-								$formobilecheckbox.CswAttrDom('checked','checked');
-							}
-							var mode = $currentviewxml.CswAttrXml('mode')
-							$displaymodespan.text(mode);
-							$gridwidthtextboxcell.CswNumberTextBox('setValue', o.ID + '_gridwidth', $currentviewxml.CswAttrXml('width'));
-							if(mode === "Grid") {
-								$gridwidthlabelcell.show();
-								$gridwidthtextboxcell.show();
-							} else {
-								$gridwidthlabelcell.hide();
-								$gridwidthtextboxcell.hide();
-							}
+        var currentViewJson;
 
-							$wizard.CswWizard('button', 'next', 'enable');
-						} // success
-					}); // ajax
-					break;
-				case CswViewEditor_WizardSteps.step3.step:
-					// save step 2 content to $currentviewxml
-					if($currentviewxml !== undefined)
-					{
-						cacheStepTwo();
-					} // if($currentviewxml !== undefined)
+        function _onBeforePrevious($wizard, stepno)
+        {
+            return (stepno !== CswViewEditor_WizardSteps.attributes.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?"));
+        }
+
+        function _handleNext($wizard, newstepno)
+        {
+            CurrentStep = newstepno;
+            switch (newstepno)
+            {
+                case CswViewEditor_WizardSteps.viewselect.step:
+                    break;
+                case CswViewEditor_WizardSteps.attributes.step:
+                    $wizard.CswWizard('button', 'finish', 'enable');
+                    $wizard.CswWizard('button', 'next', 'disable');
+
+                    var jsonData = {
+                        ViewId: _getSelectedViewId($viewgrid)
+                    };
+
+                    CswAjaxJson({
+                            url: o.ViewInfoUrl,
+                            data: jsonData,
+                            success: function(data) {
+                                currentViewJson = data.TreeView;
+
+                                $viewnametextbox.val(currentViewJson.viewname);
+                                $categorytextbox.val(currentViewJson.category);
+                                var visibility = tryParseString(currentViewJson.visibility);
+                                if (visibility !== 'Property') {
+                                    if (v.getvisibilityselect() !== undefined) {
+                                        v.getvisibilityselect().val(visibility).trigger('change');
+                                        v.getvisroleselect().val('nodes_' + currentViewJson.visibilityroleid);
+                                        v.getvisuserselect().val('nodes_' + currentViewJson.visibilityuserid);
+                                    }
+                                }
+
+                                if (isTrue(currentViewJson.formobile)) {
+                                    $formobilecheckbox.CswAttrDom('checked', 'checked');
+                                }
+                                var mode = currentViewJson.mode;
+                                $displaymodespan.text(mode);
+                                $gridwidthtextboxcell.CswNumberTextBox('setValue', o.ID + '_gridwidth', currentViewJson.width);
+                                if (mode === "Grid") {
+                                    $gridwidthlabelcell.show();
+                                    $gridwidthtextboxcell.show();
+                                } else {
+                                    $gridwidthlabelcell.hide();
+                                    $gridwidthtextboxcell.hide();
+                                }
+
+                                $wizard.CswWizard('button', 'next', 'enable');
+                            } // success
+                        }); // ajax
+                    break;
+                case CswViewEditor_WizardSteps.relationships.step:
+					// save step 2 content to currentviewjson
+                    if (currentViewJson !== undefined)
+                    {
+                        cacheStepTwo();
+                    } // if(currentViewJson !== undefined)
 
 					// make step 3 tree
-					_makeViewTree(CswViewEditor_WizardSteps.step3.step, $treediv3);
-					break;
-				case CswViewEditor_WizardSteps.step4.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step4.step, $treediv4);
-					break;
-				case CswViewEditor_WizardSteps.step5.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step5.step, $treediv5);
-					break;
-				case CswViewEditor_WizardSteps.step6.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step6.step, $table6.CswTable('cell', 1, 1));
-					break;
-			} // switch(newstepno)
-		} // _handleNext()
+                    _makeViewTree(CswViewEditor_WizardSteps.relationships.step, $treediv3);
+                    break;
+                case CswViewEditor_WizardSteps.properties.step:
+                    _makeViewTree(CswViewEditor_WizardSteps.properties.step, $treediv4);
+                    break;
+                case CswViewEditor_WizardSteps.filters.step:
+                    _makeViewTree(CswViewEditor_WizardSteps.filters.step, $treediv5);
+                    break;
+                case CswViewEditor_WizardSteps.tuning.step:
+                    _makeViewTree(CswViewEditor_WizardSteps.tuning.step, $table6.CswTable('cell', 1, 1));
+                    break;
+            } // switch(newstepno)
+        } // _handleNext()
 
-		function cacheStepTwo()
-		{
-			$currentviewxml.CswAttrXml('viewname', $viewnametextbox.val());
-			$currentviewxml.CswAttrXml('category', $categorytextbox.val());
-			if($currentviewxml.CswAttrXml('visibility') !== 'Property')
-			{
-				if( v.getvisibilityselect() !== undefined )
-				{
-					var visibility = v.getvisibilityselect().val();
-					$currentviewxml.CswAttrXml('visibility', visibility);
+        function cacheStepTwo()
+        {
+            currentViewJson.viewname = $viewnametextbox.val();
+            currentViewJson.category = $categorytextbox.val();
+            if (currentViewJson.visibility !== 'Property') {
+                if (v.getvisibilityselect() !== undefined) {
+                    var visibility = v.getvisibilityselect().val();
+                    currentViewJson.visibility = visibility;
 
-					var rolenodeid = '';
-					if(visibility === 'Role')
-					{
-						rolenodeid = v.getvisroleselect().val();
-						if(!isNullOrEmpty(rolenodeid))
-						{
-							rolenodeid = rolenodeid.substr('nodes_'.length)
-						}
-					}
-					$currentviewxml.CswAttrXml('visibilityroleid', rolenodeid);
-					
-					var usernodeid = '';
-					if(visibility === 'User')
-					{
-						usernodeid = v.getvisuserselect().val();
-						if(!isNullOrEmpty(usernodeid))
-						{
-							usernodeid = usernodeid.substr('nodes_'.length)
-						}
-					}
-					$currentviewxml.CswAttrXml('visibilityuserid', usernodeid);
-				}
-			}
-			var formobile = ($formobilecheckbox.is(':checked') ? 'true' : 'false');
-			$currentviewxml.CswAttrXml('formobile', formobile );
-			$currentviewxml.CswAttrXml('width', $gridwidthtextboxcell.CswNumberTextBox('value', o.ID + '_gridwidth'));
-		}
+                    var rolenodeid = '';
+                    if (visibility === 'Role') {
+                        rolenodeid = v.getvisroleselect().val();
+                        if (!isNullOrEmpty(rolenodeid)) {
+                            rolenodeid = rolenodeid.substr('nodes_'.length);
+                        }
+                    }
+                    currentViewJson.visibilityroleid = rolenodeid;
 
-		function _handlePrevious($wizard, newstepno)
-		{
-			if(newstepno === 1)
-				$wizard.CswWizard('button', 'finish', 'disable');
-			
-			CurrentStep = newstepno;
-			switch(newstepno)
-			{
-				case CswViewEditor_WizardSteps.step1.step: 
-					break;
-				case CswViewEditor_WizardSteps.step2.step: 
-					break;
-				case CswViewEditor_WizardSteps.step3.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step3.step, $treediv3);
-					break;
-				case CswViewEditor_WizardSteps.step4.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step4.step, $treediv4);
-					break;
-				case CswViewEditor_WizardSteps.step5.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step5.step, $treediv5);
-					break;
-				case CswViewEditor_WizardSteps.step6.step:
-					_makeViewTree(CswViewEditor_WizardSteps.step6.step, $table6.CswTable('cell', 1, 1));
-					break;
-			}
-		}
+                    var usernodeid = '';
+                    if (visibility === 'User') {
+                        usernodeid = v.getvisuserselect().val();
+                        if (!isNullOrEmpty(usernodeid)) {
+                            usernodeid = usernodeid.substr('nodes_'.length);
+                        }
+                    }
+                    currentViewJson.visibilityuserid = usernodeid;
+                }
+            }
+            var formobile = ($formobilecheckbox.is(':checked') ? 'true' : 'false');
+            currentViewJson.formobile = formobile;
+            currentViewJson.width = $gridwidthtextboxcell.CswNumberTextBox('value', o.ID + '_gridwidth');
+        }
+
+        function _handlePrevious($wizard, newstepno)
+        {
+            if (newstepno === 1)
+                $wizard.CswWizard('button', 'finish', 'disable');
+
+            CurrentStep = newstepno;
+            switch (newstepno)
+            {
+                case CswViewEditor_WizardSteps.viewselect.step:
+                    break;
+                case CswViewEditor_WizardSteps.attributes.step:
+                    break;
+                case CswViewEditor_WizardSteps.relationships.step:
+                    _makeViewTree(CswViewEditor_WizardSteps.relationships.step, $treediv3);
+                    break;
+                case CswViewEditor_WizardSteps.properties.step:
+                    _makeViewTree(CswViewEditor_WizardSteps.properties.step, $treediv4);
+                    break;
+                case CswViewEditor_WizardSteps.filters.step:
+                    _makeViewTree(CswViewEditor_WizardSteps.filters.step, $treediv5);
+                    break;
+                case CswViewEditor_WizardSteps.tuning.step:
+                    _makeViewTree(CswViewEditor_WizardSteps.tuning.step, $table6.CswTable('cell', 1, 1));
+                    break;
+            }
+        }
 
 
-		function _handleFinish($wizard)
-		{
-			var viewid = _getSelectedViewId($viewgrid);
-			var processView = true; 
+        function _handleFinish($wizard)
+        {
+            var viewid = _getSelectedViewId($viewgrid);
+            var processView = true;
 
-			if( !isNullOrEmpty( $currentviewxml ) )
-			{
-				if( CurrentStep === CswViewEditor_WizardSteps.step2.step )
-				{
-					cacheStepTwo();
-				}
-				if( $currentviewxml.CswAttrXml('mode') === 'Grid' &&
-					( $currentviewxml.children('relationship').length === 0 ||
-					  $currentviewxml.children('relationship').children('property').length === 0 ) )
-				{
-					processView = confirm('You are attempting to create a Grid without properties. This will not display any information. Do you want to continue?');
-					if(!processView) $wizard.CswWizard('button', 'finish', 'enable');
-				}
-			}
+            if (!isNullOrEmpty(currentViewJson)) {
+                if (CurrentStep === CswViewEditor_WizardSteps.attributes.step) {
+                    cacheStepTwo();
+                }
+                if (currentViewJson.mode === 'Grid' &&
+                    (currentViewJson.children('relationship').length === 0 ||
+                        currentViewJson.children('relationship').children('property').length === 0))
+                {
+                    processView = confirm('You are attempting to create a Grid without properties. This will not display any information. Do you want to continue?');
+                    if (!processView) $wizard.CswWizard('button', 'finish', 'enable');
+                }
+            }
 
-			if(processView)
-			{
-				var dataXml = {
-					ViewId: viewid,
-					ViewXml: xmlToString($currentviewxml)
-				};
+            if (processView)
+            {
+                var jsonData = {
+                    ViewId: viewid,
+                    ViewJson: JSON.stringify(currentViewJson)
+                };
 
-				CswAjaxXml({
-					url: o.SaveViewUrl,
-					data: dataXml,
-					stringify: true,
-					success: function ($xml) {
-						o.onFinish(viewid, _getSelectedViewMode($viewgrid));
-					} // success
-				});
-			} // ajax
-		} //_handleFinish
+                CswAjaxJson({
+                        url: o.SaveViewUrl,
+                        data: jsonData,
+                        success: function() {
+                            o.onFinish(viewid, _getSelectedViewMode($viewgrid));
+                        } // success
+                    });
+            } // ajax
+        } //_handleFinish
 
-		function _getViewsGrid(onSuccess, selectedviewid)
-		{
-			var all = false;
-			if($('#'+ o.ID + '_all:checked').length > 0)
-				all = true;
+        function _getViewsGrid(onSuccess, selectedviewid)
+        {
+            var all = false;
+            if ($('#' + o.ID + '_all:checked').length > 0)
+                all = true;
 
-			$selview_span.text('');
-			if(o.startingStep === 1)
-				$wizard.CswWizard('button', 'next', 'disable');
-			
-			// passing selectedviewid in allows us to translate SessionViewIds to ViewIds
-			var dataJson = {
-				All: all,
-				SelectedViewId: tryParseString(selectedviewid,'')
-			};
+            $selview_span.text('');
+            if (o.startingStep === 1)
+                $wizard.CswWizard('button', 'next', 'disable');
 
-			CswAjaxJson({
-				url: o.ViewGridUrl,
-				data: dataJson,
-				success: function (gridJson) {
+            // passing selectedviewid in allows us to translate SessionViewIds to ViewIds
+            var dataJson = {
+                All: all,
+                SelectedViewId: tryParseString(selectedviewid, '')
+            };
 
-					$viewgrid_div.empty();
-					var $gridPager = $('<div id="' + o.ID + '_gp" style="width:100%; height:20px;" />')
-									 .appendTo($viewgrid_div);
-					var $viewgrid = $('<table id="'+ o.ID + '_gt" />')
-										.appendTo($viewgrid_div);
+            CswAjaxJson({
+                    url: o.ViewGridUrl,
+                    data: dataJson,
+                    success: function(gridJson) {
 
-					var mygridopts = {
-						'autowidth': true,
-						'height': 180,
-						'onSelectRow': function(id, selected) {
-							if(selected) 
-							{
-								$copyviewbtn.CswButton('enable');
-								$deleteviewbtn.CswButton('enable');
-								$selview_span.text(_getSelectedViewName($viewgrid));
-								$wizard.CswWizard('button', 'next', 'enable');
-							}
-							else 
-							{
-								$copyviewbtn.CswButton('disable');
-								$deleteviewbtn.CswButton('disable');
-								$selview_span.text("");
-								$wizard.CswWizard('button', 'next', 'disable');
-							}
-						},
-						'pager': $gridPager
-					};
-					$.extend(gridJson, mygridopts);
+                        $viewgrid_div.empty();
+                        var $gridPager = $('<div id="' + o.ID + '_gp" style="width:100%; height:20px;" />')
+                            .appendTo($viewgrid_div);
+                        var $viewgrid = $('<table id="' + o.ID + '_gt" />')
+                            .appendTo($viewgrid_div);
 
-					$viewgrid.jqGrid(gridJson)
-							.hideCol(o.ColumnFullViewId);
+                        var mygridopts = {
+                            'autowidth': true,
+                            'height': 180,
+                            'onSelectRow': function(id, selected) {
+                                if (selected)
+                                {
+                                    $copyviewbtn.CswButton('enable');
+                                    $deleteviewbtn.CswButton('enable');
+                                    $selview_span.text(_getSelectedViewName($viewgrid));
+                                    $wizard.CswWizard('button', 'next', 'enable');
+                                }
+                                else
+                                {
+                                    $copyviewbtn.CswButton('disable');
+                                    $deleteviewbtn.CswButton('disable');
+                                    $selview_span.text("");
+                                    $wizard.CswWizard('button', 'next', 'disable');
+                                }
+                            },
+                            'pager': $gridPager
+                        };
+                        $.extend(gridJson, mygridopts);
 
-					if(!isNullOrEmpty( gridJson.selectedpk ))
-					{
-						$viewgrid.setSelection(_getRowForPk($viewgrid, gridJson.selectedpk));
-						$viewgrid.CswNodeGrid('scrollToSelectedRow');
-					}
-					onSuccess($viewgrid);
-				} // success
-			}); // ajax
-		} // _getViewsGrid()
-		
-		function _getSelectedViewId($viewgrid)
-		{
-			var ret = '';
-			if(o.startingStep === 1) {
-				ret = _getSelectedRowValue($viewgrid, o.ColumnFullViewId);
-			} else {
-				ret = o.viewid;
-			}
-			return ret;
-		}
-		
-		function _getSelectedViewMode($viewgrid)
-		{
-			var ret = '';
-			if(o.startingStep === 1) {
-				ret = _getSelectedRowValue($viewgrid, o.ColumnViewMode);
-			} else {
-				ret = o.viewmode;
-			}
-			return ret;
-		}
+                        $viewgrid.jqGrid(gridJson)
+                            .hideCol(o.ColumnFullViewId);
 
-		function _getSelectedViewName($viewgrid)
-		{
-			var ret = '';
-			if(o.startingStep === 1) {
-				ret = _getSelectedRowValue($viewgrid, o.ColumnViewName);
-			} else {
-				ret = o.viewname;
-			}
-			return ret;
-		}
+                        if (!isNullOrEmpty(gridJson.selectedpk))
+                        {
+                            $viewgrid.setSelection(_getRowForPk($viewgrid, gridJson.selectedpk));
+                            $viewgrid.CswNodeGrid('scrollToSelectedRow');
+                        }
+                        onSuccess($viewgrid);
+                    } // success
+                }); // ajax
+        } // _getViewsGrid()
 
-		function _getSelectedRowValue($viewgrid, columnname)
-		{
-			var rowid = $viewgrid.jqGrid('getGridParam', 'selrow');
-			var ret = $viewgrid.jqGrid('getCell', rowid, columnname);
-			return ret;
-		}
+        function _getSelectedViewId($viewgrid)
+        {
+            var ret = '';
+            if (o.startingStep === 1) {
+                ret = _getSelectedRowValue($viewgrid, o.ColumnFullViewId);
+            } else {
+                ret = o.viewid;
+            }
+            return ret;
+        }
 
-		function _getRowForPk($viewgrid, selectedpk)
-		{
-			var pks = $viewgrid.jqGrid('getCol', o.ColumnViewId, true);
-			var rowid = 0;
-			for(var i in pks)
-			{
-				if(pks[i].value.toString() === selectedpk.toString())
-					rowid = pks[i].id;
-			}
-			return rowid;
-		}
+        function _getSelectedViewMode($viewgrid)
+        {
+            var ret = '';
+            if (o.startingStep === 1) {
+                ret = _getSelectedRowValue($viewgrid, o.ColumnViewMode);
+            } else {
+                ret = o.viewmode;
+            }
+            return ret;
+        }
 
-		
-		function _makeViewTree(stepno, $div)
-		{
-			var treecontent = _viewXmlToHtml(stepno, $currentviewxml);
-			$div.jstree({
-						"html_data":
-							{
-								"data": treecontent.htmlstring
-							},
-						"ui": {
-							"select_limit": 1 //,
-							//"initially_select": selectid,
-						},
-						"types": {
-							"types": treecontent.types,
-							"max_children": -2,
-							"max_depth": -2
-						},
-						"plugins": ["themes", "html_data", "ui", "types", "crrm"]
-			}); // tree
+        function _getSelectedViewName($viewgrid)
+        {
+            var ret = '';
+            if (o.startingStep === 1) {
+                ret = _getSelectedRowValue($viewgrid, o.ColumnViewName);
+            } else {
+                ret = o.viewname;
+            }
+            return ret;
+        }
 
-			// tree events
+        function _getSelectedRowValue($viewgrid, columnname)
+        {
+            var rowid = $viewgrid.jqGrid('getGridParam', 'selrow');
+            var ret = $viewgrid.jqGrid('getCell', rowid, columnname);
+            return ret;
+        }
 
-			$div.find('.vieweditor_childselect').change(function() {
-				var $select = $(this);
-				var childxml = $select.find('option:selected').data('optionviewxml');
-				if($select.CswAttrDom('arbid') === "root")
-				{
-					$currentviewxml.append($(childxml));
-				} else {
-					var $parent = $currentviewxml.find('[arbitraryid="' + $select.CswAttrDom('arbid') +'"]');
-					$parent.append($(childxml));
-				}
-				_makeViewTree(stepno, $div);
-			}); // child select
+        function _getRowForPk($viewgrid, selectedpk)
+        {
+            var pks = $viewgrid.jqGrid('getCol', o.ColumnViewId, true);
+            var rowid = 0;
+            for (var i in pks)
+            {
+                if (pks[i].value.toString() === selectedpk.toString())
+                    rowid = pks[i].id;
+            }
+            return rowid;
+        }
 
-			$div.find('.vieweditor_deletespan').each(function() {
-				var $td = $(this); 
-				$td.CswImageButton({
-					ButtonType: CswImageButton_ButtonType.Delete,
-					AlternateText: 'Delete',
-					ID: $td.CswAttrDom('arbid') + '_delete',
-					onClick: function ($ImageDiv) { 
-						var $span = $ImageDiv.parent();
-						$currentviewxml.find('[arbitraryid="' + $span.CswAttrDom('arbid') +'"]').remove();
-						_makeViewTree(stepno, $div);
-						return CswImageButton_ButtonType.None; 
-					}
-				});
-			}); // delete
+        function _makeViewTree(stepno, $div)
+        {
+            var treecontent = viewJsonHtml(stepno, currentViewJson);
+            $div.jstree({
+                    "html_data":
+                        {
+                            "data": treecontent.html
+                        },
+                    "ui": {
+                        "select_limit": 1 //,
+                        //"initially_select": selectid,
+                    },
+                    "types": {
+                        "types": treecontent.types,
+                        "max_children": -2,
+                        "max_depth": -2
+                    },
+                    "plugins": ["themes", "html_data", "ui", "types", "crrm"]
+                }); // tree
 
-			if(stepno === CswViewEditor_WizardSteps.step5.step)
-			{
-				$div.find('.vieweditor_addfilter').each(function() {
-					var $span = $(this);
-					var $tbl = $span.CswTable({ 'ID': o.ID + '_propfilttbl' });
-					$tbl.css('display', 'inline-table');
-					$tbl.CswViewPropFilter('init', {
-														'viewxml': xmlToString($currentviewxml),
-														'proparbitraryid': $span.CswAttrDom('proparbid'),
-														'filtarbitraryid': '',
-														'viewbuilderpropid': '',
-														'ID': o.ID,
-														'propRow': 1,
-														'firstColumn': 1,
-														'includePropertyName': false,
-														'selectedSubfieldVal': '',
-														'selectedFilterVal': '',
-														'autoFocusInput': false
-												});
-					
-					$tbl.CswTable('cell', 1, 5).CswButton('init', {
-						'ID':	'addfiltbtn',
-						'prefix': o.ID,
-						'enabledText': 'Add',
-						'disabledText': 'Adding',
-						'onclick': function () { 
-							
-							var Json = $tbl.CswViewPropFilter('getFilterJson', { 
-											ID: o.ID,
-											$parent: $span,
-											fieldtype: $currentviewxml.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]').CswAttrXml('fieldtype'),
-											proparbitraryid: $span.CswAttrDom('proparbid'),
-											allowNullFilterValue: true
-										});
+            // tree events
 
-							var filterxml = $tbl.CswViewPropFilter('makeFilter', { 
-								'viewxml': xmlToString($currentviewxml), 
-								'filtJson': Json, 
-								'onSuccess': function($filterxml) {
-									var $propxml = $currentviewxml.find('[arbitraryid="' + $span.CswAttrDom('proparbid') +'"]');
-									$(xmlToString($filterxml)).appendTo($propxml);
-									_makeViewTree(stepno, $div);
-								} // onSuccess
-							}); // CswViewPropFilter
-						} // onClick
-					}); // CswButton
-				}); // property click
-			} // if(stepno === 5)
+            $div.find('.vieweditor_deletespan').each(function() {
+                var $td = $(this);
+                $td.CswImageButton({
+                        ButtonType: CswImageButton_ButtonType.Delete,
+                        AlternateText: 'Delete',
+                        ID: $td.CswAttrDom('arbid') + '_delete',
+                        onClick: function($ImageDiv) {
+                            var $span = $ImageDiv.parent();
+                            var objUtil = new ObjectHelper(currentViewJson);
+                            var parentObj = objUtil.find('arbitraryid', $span.CswAttrDom('arbid'));
+                            delete parentObj[$span.CswAttrDom('arbid')];
+                            //currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('arbid') +'"]').remove();
+                            _makeViewTree(stepno, $div);
+                            return CswImageButton_ButtonType.None;
+                        }
+                    });
+            }); // delete
 
-			if(stepno === CswViewEditor_WizardSteps.step6.step)
-			{
-				var $cell = $table6.CswTable('cell', 1, 2);
-				var viewmode = _getSelectedViewMode($viewgrid);
+            if (stepno === CswViewEditor_WizardSteps.filters.step)
+            {
+                $div.find('.vieweditor_addfilter').each(function() {
+                    var $span = $(this);
+                    var $tbl = $span.CswTable({ 'ID': o.ID + '_propfilttbl' });
+                    $tbl.css('display', 'inline-table');
+                    $tbl.CswViewPropFilter('init', {
+                        viewJson: currentViewJson,
+                        proparbitraryid: $span.CswAttrDom('proparbid'),
+                        filtarbitraryid: '',
+                        viewbuilderpropid: '',
+                        ID: o.ID,
+                        propRow: 1,
+                        firstColumn: 1,
+                        includePropertyName: false,
+                        selectedSubfieldVal: '',
+                        selectedFilterVal: '',
+                        autoFocusInput: false
+                    });
 
-				// Root
-				$div.find('.vieweditor_viewrootlink').click(function() {
-					$cell.empty();
-				});
+                    $tbl.CswTable('cell', 1, 5).CswButton('init', {
+                        'ID': 'addfiltbtn',
+                        'prefix': o.ID,
+                        'enabledText': 'Add',
+                        'disabledText': 'Adding',
+                        'onclick': function() {
+                            var objHelper = new ObjectHelper(currentViewJson);
+                            var arbitraryId = $span.CswAttrDom('proparbid');
+                            var arbProp = objHelper.find('arbitraryid', arbitraryId);
+                            if (arbProp.hasOwnProperty('fieldtype')) {
+                                var fieldType = arbProp.fieldtype;
+                            }
+                            var filtJson = $tbl.CswViewPropFilter('getFilterJson', {
+                                ID: o.ID,
+                                $parent: $span,
+                                fieldtype: fieldType,
+                                proparbitraryid: $span.CswAttrDom('proparbid'),
+                                allowNullFilterValue: true
+                            });
 
-				// Relationship
-				$div.find('.vieweditor_viewrellink').click(function() {
-					$a = $(this);
-					$cell.empty();
-					//$cell.append('For ' + $a.text());
+                            var filterJson = $tbl.CswViewPropFilter('makeFilter', {
+                                viewJson: currentViewJson,
+                                filtJson: filtJson,
+                                onSuccess: function(filterJson) {
+                                    var objHelper = new ObjectHelper(currentViewJson);
+                                    var arbitraryId = $span.CswAttrDom('proparbid');
+                                    var propObj = objHelper.find('arbitraryid', arbitraryId);
+                                    propObj.filters[filterJson.arbitraryid] = filterJson;
 
-					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
+                                    _makeViewTree(stepno, $div);
+                                } // onSuccess
+                            }); // CswViewPropFilter
+                        } // onClick
+                    }); // CswButton
+                }); // property click
+            } // if(stepno === 5)
 
-					var $table = $cell.CswTable({ 'ID': o.ID + '_editrel', 'FirstCellRightAlign': true });
-					$table.CswTable('cell', 1, 1).append('Allow Deleting');
-					var $allowdeletingcell = $table.CswTable('cell', 1, 2);
-					var $allowdeletingcheck = $allowdeletingcell.CswInput('init',{ID: o.ID + '_adcb',
-																  type: CswInput_Types.checkbox
-																});
+            if (stepno === CswViewEditor_WizardSteps.tuning.step)
+            {
+                var $cell = $table6.CswTable('cell', 1, 2);
+                var viewmode = _getSelectedViewMode($viewgrid);
 
-					if($viewnodexml.CswAttrXml('allowdelete').toLowerCase() == 'true') {
-						$allowdeletingcheck.CswAttrDom('checked', 'true');
-					}
+                // Root
+                $div.find('.vieweditor_viewrootlink').click(function() {
+                    $cell.empty();
+                });
 
-					$table.CswTable('cell', 2, 1).append('Group By');
-					var $groupbyselect = $('<select id="' + o.ID + '_gbs" />')
-												.appendTo($table.CswTable('cell', 2, 2));
-					var dataXml = {
-						Type: $viewnodexml.CswAttrXml('secondtype'),
-						Id: $viewnodexml.CswAttrXml('secondid')
-					}
-					
-					CswAjaxXml({
-						url: o.PropNamesUrl,
-						data: dataXml,
-						stringify: false,
-						success: function($xml) {
-							$groupbyselect.empty();
-							$('<option value="">[None]</option>')
-								.appendTo($groupbyselect);
-							$xml.children().each(function() {
-								var $prop = $(this);
-								var $option = $('<option value="'+ $prop.CswAttrXml('propid') +'">'+ $prop.CswAttrXml('propname') +'</option>')
-									.appendTo($groupbyselect)
-									.data('propxml', $prop);
-								if($viewnodexml.CswAttrXml('groupbypropid') === $prop.CswAttrXml('propid') &&
-									$viewnodexml.CswAttrXml('groupbyproptype') === $prop.CswAttrXml('proptype') &&
-									$viewnodexml.CswAttrXml('groupbypropname') === $prop.CswAttrXml('propname'))
-								{
-									$option.CswAttrDom('selected', 'true');
-								}
-							}); // each
-						} // success
-					}); // ajax
+                // Relationship
+                $div.find('.vieweditor_viewrellink').click(function() {
+                    var $a = $(this);
+                    $cell.empty();
+                    //$cell.append('For ' + $a.text());
 
-					var $showtreecheck;
-					if(viewmode === "Tree")
-					{
-						$table.CswTable('cell', 3, 1).append('Show In Tree');
-						var $showtreecheckcell = $table.CswTable('cell', 3, 2);
-						$showtreecheck = $showtreecheckcell.CswInput('init',{ID: o.ID + '_stcb',
-																  type: CswInput_Types.checkbox
-																}); 
-						if($viewnodexml.CswAttrXml('showintree').toLowerCase() == 'true') {
-							$showtreecheck.CswAttrDom('checked', 'true');
-						}
-					}
+                    var objHelper = new ObjectHelper(currentViewJson);
+                    var arbitraryId = $a.CswAttrDom('arbid');
+                    var viewnodejson = objHelper.find('arbitraryid', arbitraryId);
 
-					$table.CswTable('cell', 4, 2).CswButton({ 
-						'ID': o.ID + '_saverel',
-						'enabledText': 'Apply',
-						'disableOnClick': false,
-						'onclick': function() {
-							if($showtreecheck !== undefined)
-								$viewnodexml.CswAttrXml('showintree', ($showtreecheck.is(':checked')))
-							$viewnodexml.CswAttrXml('allowdelete', ($allowdeletingcheck.is(':checked')))
-							if($groupbyselect.val() !== '') {
-								var $propxml = $groupbyselect.find(':selected').data('propxml');
-								$viewnodexml.CswAttrXml('groupbypropid', $propxml.CswAttrXml('propid'));
-								$viewnodexml.CswAttrXml('groupbyproptype', $propxml.CswAttrXml('proptype'));
-								$viewnodexml.CswAttrXml('groupbypropname', $propxml.CswAttrXml('propname'));
-							} else {
-								$viewnodexml.CswAttrXml('groupbypropid', '');
-								$viewnodexml.CswAttrXml('groupbyproptype', '');
-								$viewnodexml.CswAttrXml('groupbypropname', '');
-							}
-						} // onClick
-					}); // CswButton
-				}); // $div.find('.vieweditor_viewrellink').click(function() {
+                    var $table = $cell.CswTable({ 'ID': o.ID + '_editrel', 'FirstCellRightAlign': true });
+                    $table.CswTable('cell', 1, 1).append('Allow Deleting');
+                    var $allowdeletingcell = $table.CswTable('cell', 1, 2);
+                    var $allowdeletingcheck = $allowdeletingcell.CswInput('init', {ID: o.ID + '_adcb',
+                        type: CswInput_Types.checkbox
+                    });
 
-				// Property
-				$div.find('.vieweditor_viewproplink').click(function() {
-					$a = $(this);
-					$cell.empty();
+                    if (viewnodejson.allowdelete.toLowerCase() == 'true') {
+                        $allowdeletingcheck.CswAttrDom('checked', 'true');
+                    }
 
-					if(viewmode === "Grid")
-					{
-						var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
+                    $table.CswTable('cell', 2, 1).append('Group By');
+                    var $groupbyselect = $('<select id="' + o.ID + '_gbs" />')
+                        .appendTo($table.CswTable('cell', 2, 2));
+                    var jsonData = {
+                        Type: viewnodejson.secondtype,
+                        Id: viewnodejson.secondid
+                    };
 
-						//$cell.append('For ' + $a.text());
-						var $table = $cell.CswTable({ 'ID': o.ID + '_editprop', 'FirstCellRightAlign': true });
+                    CswAjaxJson({
+                            url: o.PropNamesUrl,
+                            data: jsonData,
+                            success: function(data) {
+                                $groupbyselect.empty();
+                                $('<option value="">[None]</option>')
+                                    .appendTo($groupbyselect);
+                                for (var propName in data) {
+                                    if (data.hasOwnProperty(propName)) {
+                                        var thisProp = data[propName];
+                                        var dataProp = { };
+                                        dataProp[propName] = thisProp;
+                                        var $option = $('<option value="' + thisProp.propid + '">' + propName + '</option>')
+                                            .appendTo($groupbyselect)
+                                            .data('thisPropData', dataProp);
+                                        if (viewnodejson.groupbypropid === thisProp.propid &&
+                                            viewnodejson.groupbyproptype === thisProp.proptype &&
+                                                viewnodejson.groupbypropname === thisProp.propname)
+                                        {
+                                            $option.CswAttrDom('selected', 'true');
+                                        }
+                                    }
+                                } // each
+                            } // success
+                        }); // ajax
 
-						$table.CswTable('cell', 1, 1).append('Sort By');
-						var $sortbycheckcell = $table.CswTable('cell', 1, 2);
-						var $sortbycheck = $sortbycheckcell.CswInput('init',{ID: o.ID + '_sortcb',
-																  type: CswInput_Types.checkbox
-																}); 
-						if($viewnodexml.CswAttrXml('sortby').toLowerCase() == 'true') {
-							$sortbycheck.CswAttrDom('checked', 'true');
-						}
+                    var $showtreecheck;
+                    if (viewmode === "Tree")
+                    {
+                        $table.CswTable('cell', 3, 1).append('Show In Tree');
+                        var $showtreecheckcell = $table.CswTable('cell', 3, 2);
+                        $showtreecheck = $showtreecheckcell.CswInput('init', {ID: o.ID + '_stcb',
+                            type: CswInput_Types.checkbox
+                        });
+                        if (viewnodejson.showintree.toLowerCase() == 'true') {
+                            $showtreecheck.CswAttrDom('checked', 'true');
+                        }
+                    }
 
-						$table.CswTable('cell', 2, 1).append('Grid Column Order');
-						var $colordertextcell = $table.CswTable('cell', 2, 2);
-						var $colordertextbox = $colordertextcell.CswInput('init',{ID: o.ID + '_gcotb',
-																  type: CswInput_Types.text
-																}); 
-						$colordertextbox.val($viewnodexml.CswAttrXml('order'));
+                    $table.CswTable('cell', 4, 2).CswButton({
+                            'ID': o.ID + '_saverel',
+                            'enabledText': 'Apply',
+                            'disableOnClick': false,
+                            'onclick': function() {
+                                if ($showtreecheck !== undefined) {
+                                    viewnodejson.showintree = $showtreecheck.is(':checked');
+                                    viewnodejson.allowdelete = $allowdeletingcheck.is(':checked');
+                                }
+                                if ($groupbyselect.val() !== '') {
+                                    var propData = $groupbyselect.find(':selected').data('thisPropData');
+                                    viewnodejson.groupbypropid = propData.propid;
+                                    viewnodejson.groupbyproptype = propData.proptype;
+                                    viewnodejson.groupbypropname = propData.propname;
+                                } else {
+                                    viewnodejson.groupbypropid = '';
+                                    viewnodejson.groupbyproptype = '';
+                                    viewnodejson.groupbypropname = '';
+                                }
+                            } // onClick
+                        }); // CswButton
+                }); // $div.find('.vieweditor_viewrellink').click(function() {
 
-						$table.CswTable('cell', 3, 1).append('Grid Column Width (in characters)');
-						var $colwidthtextcell = $table.CswTable('cell', 3, 2);
-						var $colwidthtextbox = $colwidthtextcell.CswInput('init',{ID: o.ID + '_gcwtb',
-																  type: CswInput_Types.text
-																});
-						$colwidthtextbox.val($viewnodexml.CswAttrXml('width'));
+                // Property
+                $div.find('.vieweditor_viewproplink').click(function() {
+                    var $a = $(this);
+                    $cell.empty();
 
-						$table.CswTable('cell', 4, 2).CswButton({ 
-							'ID': o.ID + '_saveprop',
-							'enabledText': 'Apply',
-							'disableOnClick': false,
-							'onclick': function() {
-								$viewnodexml.CswAttrXml('sortby', ($sortbycheck.is(':checked')))
-								$viewnodexml.CswAttrXml('order', $colordertextbox.val());
-								$viewnodexml.CswAttrXml('width', $colwidthtextbox.val());
-							} // onClick
-						}); // CswButton
-					}
-				});
+                    if (viewmode === "Grid")
+                    {
+                        var objHelper = new ObjectHelper(currentViewJson);
+                        var arbitraryId = $a.CswAttrDom('arbid');
+                        var viewNodeData = objHelper.find('arbitraryid', arbitraryId);
 
-				// Filter
-				$div.find('.vieweditor_viewfilterlink').click(function() {
-					$a = $(this);
-					$cell.empty();
-					//$cell.append('For ' + $a.text());
+                        //$cell.append('For ' + $a.text());
+                        var $table = $cell.CswTable({ 'ID': o.ID + '_editprop', 'FirstCellRightAlign': true });
 
-					var $viewnodexml = $currentviewxml.find('[arbitraryid="'+ $a.CswAttrDom('arbid') +'"]')
+                        $table.CswTable('cell', 1, 1).append('Sort By');
+                        var $sortbycheckcell = $table.CswTable('cell', 1, 2);
+                        var $sortbycheck = $sortbycheckcell.CswInput('init', {ID: o.ID + '_sortcb',
+                            type: CswInput_Types.checkbox
+                        });
+                        if (viewNodeData.sortby.toLowerCase() == 'true') {
+                            $sortbycheck.CswAttrDom('checked', 'true');
+                        }
 
-					var $table = $cell.CswTable({ 'ID': o.ID + '_editfilt', 'FirstCellRightAlign': true });
-					$table.CswTable('cell', 1, 1).append('Case Sensitive');
-					var $casecheck = $('<input type="checkbox" id="' + o.ID + '_casecb" />')
-											.appendTo($table.CswTable('cell', 1, 2));
-					if($viewnodexml.CswAttrXml('casesensitive').toLowerCase() === 'true') {
-						$casecheck.CswAttrDom('checked', 'true');
-					}
+                        $table.CswTable('cell', 2, 1).append('Grid Column Order');
+                        var $colordertextcell = $table.CswTable('cell', 2, 2);
+                        var $colordertextbox = $colordertextcell.CswInput('init', {ID: o.ID + '_gcotb',
+                            type: CswInput_Types.text
+                        });
+                        $colordertextbox.val(viewNodeData.order);
 
-					$table.CswTable('cell', 4, 2).CswButton({ 
-						'ID': o.ID + '_savefilt',
-						'enabledText': 'Apply',
-						'disableOnClick': false,
-						'onclick': function() {
-							$viewnodexml.CswAttrXml('casesensitive', ($casecheck.is(':checked')))
-						} // onClick
-					}); // CswButton
-				});
-			} // if(stepno === 6)
-		} // _makeViewTree()
+                        $table.CswTable('cell', 3, 1).append('Grid Column Width (in characters)');
+                        var $colwidthtextcell = $table.CswTable('cell', 3, 2);
+                        var $colwidthtextbox = $colwidthtextcell.CswInput('init', {ID: o.ID + '_gcwtb',
+                            type: CswInput_Types.text
+                        });
+                        $colwidthtextbox.val(viewNodeData.width);
 
-		function _viewXmlToHtml(stepno, $itemxml)
-		{
-			var types = {};
-			var arbid = $itemxml.CswAttrXml('arbitraryid');
-			var nodename = $itemxml.get(0).nodeName;
-			var name;
-			var rel;
-			var skipme = false;
-			var skipchildoptions = true;
-			var linkclass;
+                        $table.CswTable('cell', 4, 2).CswButton({
+                                'ID': o.ID + '_saveprop',
+                                'enabledText': 'Apply',
+                                'disableOnClick': false,
+                                'onclick': function() {
+                                    viewNodeData.sortby = $sortbycheck.is(':checked');
+                                    viewNodeData.order = $colordertextbox.val();
+                                    viewNodeData.width = $colwidthtextbox.val();
+                                } // onClick
+                            }); // CswButton
+                    }
+                });
 
-			if(nodename.toLowerCase() === 'treeview')
-			{
-				if(stepno === CswViewEditor_WizardSteps.step3.step) skipchildoptions = false;
+                // Filter
+                $div.find('.vieweditor_viewfilterlink').click(function() {
+                    var $a = $(this);
+                    $cell.empty();
+                    //$cell.append('For ' + $a.text());
+                    var objHelper = new ObjectHelper(currentViewJson);
+                    var arbitraryId = $a.CswAttrDom('arbid');
+                    var viewNodeData = objHelper.find('arbitraryid', arbitraryId);
 
-				arbid = "root";
-				name = $itemxml.CswAttrXml('viewname');
-				rel = "root";
-				types.root = { icon: { image: $itemxml.CswAttrXml('iconfilename') } };
-				linkclass = 'vieweditor_viewrootlink';
-			}
-			else if(nodename.toLowerCase() === 'relationship')
-			{
-				if(stepno === CswViewEditor_WizardSteps.step3.step) skipchildoptions = false;
-				if(stepno === CswViewEditor_WizardSteps.step4.step) skipchildoptions = false;
+                    var $table = $cell.CswTable({ 'ID': o.ID + '_editfilt', 'FirstCellRightAlign': true });
+                    $table.CswTable('cell', 1, 1).append('Case Sensitive');
+                    var $casecheck = $('<input type="checkbox" id="' + o.ID + '_casecb" />')
+                        .appendTo($table.CswTable('cell', 1, 2));
+                    if (viewNodeData.casesensitive.toLowerCase() === 'true') {
+                        $casecheck.CswAttrDom('checked', 'true');
+                    }
 
-				name = $itemxml.CswAttrXml('secondname');
-				var propname = $itemxml.CswAttrXml('propname');
-				if( propname !== '' && propname !== undefined)
-				{
-					if( $itemxml.CswAttrXml('propowner') === "First" )
-						name += " (by " + $itemxml.CswAttrXml('firstname') + "'s " + propname + ")";
-					else
-						name += " (by " + propname + ")";
-				}
-				rel = $itemxml.CswAttrXml('secondtype') + '_' + $itemxml.CswAttrXml('secondid');
-				types[rel] = { icon: { image: $itemxml.CswAttrXml('secondiconfilename') } };
-				linkclass = 'vieweditor_viewrellink';
-			}
-			else if(nodename.toLowerCase() === 'property')
-			{
-				if(stepno <= CswViewEditor_WizardSteps.step3.step) skipme = true;
-				if(stepno === CswViewEditor_WizardSteps.step5.step) skipchildoptions = false;
+                    $table.CswTable('cell', 4, 2).CswButton({
+                            'ID': o.ID + '_savefilt',
+                            'enabledText': 'Apply',
+                            'disableOnClick': false,
+                            'onclick': function() {
+                                viewNodeData.casesensitive = $casecheck.is(':checked');
+                            } // onClick
+                        }); // CswButton
+                });
+            } // if(stepno === 6)
+        } // _makeViewTree()
+        
+        function viewJsonHtml(stepno, viewJson) {
+            var types = { };
+            var $ret = $('<ul></ul>');
+            var $root = makeViewRootHtml(stepno, viewJson, types)
+                            .appendTo($ret);
 
-				name = $itemxml.CswAttrXml('name');
-				rel = "property";
-				types.property = { icon: { image: "Images/view/property.gif" } };
-				linkclass = "vieweditor_viewproplink";
-			}
-			else if(nodename.toLowerCase() === 'filter')
-			{
-				if(stepno <= CswViewEditor_WizardSteps.step4.step) skipme = true;
+            if(viewJson.hasOwnProperty(childPropNames.childrelationships.name)) {
+                var rootRelationships = viewJson[childPropNames.childrelationships.name];
+                makeViewRelationshipsRecursive(stepno, rootRelationships, types, $root);
+            }
+            
+            return { html: xmlToString($ret), types: types };
+        }
+        
+        function makeViewRootHtml(stepno, itemJson, types) {
+            var arbid = 'root';
+            var name = itemJson.viewname;
+            var rel = "root";
+            types.root = { icon: { image: tryParseString(itemJson.iconfilename) } };
+            var linkclass = 'vieweditor_viewrootlink';
 
-				name = $itemxml.CswAttrXml('subfieldname') + ' ' + $itemxml.CswAttrXml('filtermode') + ' ' + $itemxml.CswAttrXml('value');
-				rel = "filter";
-				types.filter = { icon: { image: "Images/view/filter.gif" } };
-				linkclass = 'vieweditor_viewfilterlink';
-			}
-			
-			var treestr = '';
-			if(!skipme)
-			{
-				treestr = '<li id="'+ arbid +'" ';
-				treestr += '    rel="'+ rel +'" ';
-				treestr += '    class="jstree-open" ';
-				treestr += '>';
-				treestr += ' <a href="#" class="' + linkclass + '" arbid="'+ arbid +'">'+ name +'</a>';
-				if(arbid !== "root")
-				{
-					treestr += ' <span style="" class="vieweditor_deletespan" arbid="'+ arbid +'"></span>';
-				}
+            var $ret = makeViewListItem(arbid, linkclass, name, false, false, stepno, childPropNames.root, rel);
+            return $ret;
+        }
+        
+        function makeViewRelationshipHtml(stepno, itemJson, types) {
+            var arbid = itemJson.arbitraryid;
+            //var nodename = itemJson.nodename;
+            var name = itemJson.secondname;
+            var propname = tryParseString(itemJson.propname);
+            if (!isNullOrEmpty(propname)) {
+                if (itemJson.propowner === "First") {
+                    name += " (by " + itemJson.firstname + "'s " + propname + ")";
+                } else {
+                    name += " (by " + propname + ")";
+                }
+            }
+            var rel = tryParseString(itemJson.secondtype) + '_' + tryParseString(itemJson.secondid);
+            var skipme = false;
+            var skipchildoptions = (stepno <= CswViewEditor_WizardSteps.relationships.step);
+            var linkclass = 'vieweditor_viewrellink';
+            var showDelete = (stepno === CswViewEditor_WizardSteps.relationships.step);
+            types[rel] = { icon: { image: tryParseString(itemJson.secondiconfilename) } };
+            
+            var $ret = makeViewListItem(arbid, linkclass, name, showDelete, skipme, stepno, childPropNames.childrelationships, rel);
+            
+            if (stepno === CswViewEditor_WizardSteps.relationships.step) {
+                var $select = makeChildSelect(stepno, arbid, childPropNames.childrelationships).appendTo($ret);
+            }
+            if (!skipchildoptions)
+            {
+                if(itemJson.hasOwnProperty(childPropNames.properties.name)) {
+                    var propJson = itemJson[childPropNames.properties.name];
+                    if (!isNullOrEmpty(propJson)) {
+                        var $propUl = $('<ul></ul>').appendTo($ret);
+                        for (var prop in propJson) {
+                            if (propJson.hasOwnProperty(prop)) {
+                                var thisProp = propJson[prop];
+                                $propUl.append(makeViewPropertyHtml(thisProp, types, stepno));
+                            }
+                        }
+                    }
+                }
+                $ret.append(makeChildSelect(stepno, arbid, childPropNames.properties));
+            }
+            return $ret;                
+        }
+        
+        function makeViewRelationshipsRecursive(stepno, relationshipJson, types, $content) {
+            if (!isNullOrEmpty(relationshipJson)) {
+                var $ul = $('<ul></ul>').appendTo($content);
+                for (var relationship in relationshipJson) {
+                    if (relationshipJson.hasOwnProperty(relationship)) {
+                        var thisRelationship = relationshipJson[relationship];
+                        var $rel = makeViewRelationshipHtml(stepno, thisRelationship, types)
+                                        .appendTo($ul);
+                        if(thisRelationship.hasOwnProperty(childPropNames.childrelationships.name)) {
+                            var childRelationships = thisRelationship[childPropNames.childrelationships.name];
+                            makeViewRelationshipsRecursive(stepno, childRelationships, types, $rel);
+                        }
+                    }
+                }
+            }
+        }
+        
+        function makeViewPropertyHtml(itemJson, types, stepno) {
+            var $ret = $('<li></li>');
+            if(!isNullOrEmpty(itemJson)) {
+                var arbid = itemJson.arbitraryid;
+                //var nodename = itemJson.nodename;
+                var name = itemJson.name;
+                var rel = 'property';
+                var skipme = (stepno <= CswViewEditor_WizardSteps.relationships.step);
+                var skipchildoptions = (stepno <= CswViewEditor_WizardSteps.properties.step);
+                var linkclass = 'vieweditor_viewproplink';
+                var showDelete = (stepno === CswViewEditor_WizardSteps.properties.step);
+                if (!isNullOrEmpty(name)) {
+                    $ret = makeViewListItem(arbid, linkclass, name, showDelete, skipme, stepno, childPropNames.properties, rel);
+                }
+                if (!isNullOrEmpty($ret) && !skipchildoptions) {
+                    if (itemJson.hasOwnProperty(childPropNames.filters.name)) {
+                        var filterJson = itemJson[childPropNames.filters.name];
+                        if (!isNullOrEmpty(filterJson)) {
+                            var $filtUl = $('<ul></ul>').appendTo($ret);
+                            for (var filter in filterJson) {
+                                if (filterJson.hasOwnProperty(filter)) {
+                                    var thisFilt = filterJson[filter];
+                                    $filtUl.append(makeViewPropertyFilterHtml(thisFilt, stepno, types));            
+                                }
+                            }
+                        }
+                    }
+                    $ret.append($('<span class="vieweditor_addfilter" proparbid="' + arbid + '"></span>'));            
+                }
+                types.property = { icon: { image: "Images/view/property.gif" } };
+            }
+            return $ret;
+        }
+        
+        function makeViewPropertyFilterHtml(itemJson, stepno, types) {
+            var $ret = $('<li></li>');
+            if(!isNullOrEmpty(itemJson)) {
+                var arbid = itemJson.arbitraryid;
+                //var nodename = itemJson.nodename;
+                var name = itemJson.subfieldname + ' ' + itemJson.filtermode + ' ' + itemJson.value;
+                var rel = 'filter';
+                var skipme = (stepno <= CswViewEditor_WizardSteps.properties.step);
+                var linkclass = 'vieweditor_viewfilterlink';
+                var showDelete = (stepno === CswViewEditor_WizardSteps.filters.step);
+                $ret = makeViewListItem(arbid, linkclass, name, showDelete, skipme, '', rel);
+//                if (stepno === CswViewEditor_WizardSteps.filters.step) {
+//                    $ret.append($('<span class="vieweditor_addfilter" proparbid="' + arbid + '"></span>'));
+//                }
+                types.filter = { icon: { image: "Images/view/filter.gif" } };
+                
+            }
+            return $ret;            
+        }
 
-				treestr += '<ul>';
-				$itemxml.children().each(function() { 
-					var childcontent = _viewXmlToHtml(stepno, $(this)); 
-					treestr += childcontent.htmlstring;
-					$.extend(types, childcontent.types);
-				});
+        function makeViewListItem(arbid, linkclass, name, showDelete, skipme, stepno, propName, rel) {
+            var $ret = $('<li></li>');
+            if (!skipme) {
+                $ret = $('<li id="' + arbid + '" rel="' + rel + '" class="jstree-open"></li>');
+                $ret.append($('<a href="#" class="' + linkclass + '" arbid="' + arbid + '">' + name + '</a>'));
+                if (showDelete) {
+                    $ret.append($('<span style="" class="vieweditor_deletespan" arbid="' + arbid + '"></span>'));
+                }
+            }
+            return $ret;
+        }
+        
+        function makeChildSelect(stepno, arbid, propName) {
+            var $select = '';
+            
+            if (canAddChildSelect(stepno,propName,arbid)) {
+                $select = $('<ul><li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li></ul>');
 
-				if(!skipchildoptions) 
-				{
-					if(stepno === CswViewEditor_WizardSteps.step5.step)
-					{ 
-						// view filters
-						treestr += '<li><span class="vieweditor_addfilter" proparbid="' + arbid + '"></span></li>';
-					}
-					else 
-					{
-						// relationships or properties
-						treestr += '<li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li>';
-						
-						var dataXml = {
-							StepNo: stepno,
-							ArbitraryId: arbid,
-							ViewXml: xmlToString($currentviewxml)
-						};
+                var dataJson = {
+                    StepNo: stepno,
+                    ArbitraryId: arbid,
+                    ViewJson: JSON.stringify(currentViewJson)
+                };
 
-						CswAjaxXml({
-							url: o.ChildOptionsUrl,
-							data: dataXml,
-							stringify: true,
-							success: function($xml) 
-							{
-								var $select = $('#' + stepno + '_' + arbid + '_child');
-								$select.empty();
-								$select.append('<option value="">Select...</option>');
-								$xml.children().each(function() {
-									var $optionxml = $(this);
-									var $optionviewxml = $($optionxml.CswAttrXml('value'));
-									var $option = $('<option value="'+ $optionviewxml.CswAttrXml('arbitraryid') +'">'+ $optionxml.CswAttrXml('name') +'</option>')
-													.appendTo($select);
-									$option.data('optionviewxml', $optionxml.CswAttrXml('value'));
-								});
+                CswAjaxJson({
+                        url: o.ChildOptionsUrl,
+                        data: dataJson,
+                        success: function(data)
+                        {
+                            var $select = $('#' + stepno + '_' + arbid + '_child');
+                            $select.empty();
+                            $select.append('<option value="">Select...</option>');
+                            for (var optionName in data) {
+                                if (data.hasOwnProperty(optionName)) {
+                                    var thisOpt = data[optionName];
+                                    var dataOpt = { };
+                                    dataOpt[optionName] = thisOpt;
+                                    var $option = $('<option value="' + thisOpt.arbitraryid + '">' + optionName + '</option>')
+                                        .appendTo($select);
+                                    $option.data('thisViewJson', dataOpt);
+                                }
+                            }
+                            var childJson = $select.find('option:selected').data('thisViewJson');
+                            $select.change(function() {
+                                if ($select.CswAttrDom('arbid') === "root")
+                                {
+                                    $.extend(currentViewJson.childrelationships, childJson);
+                                } else {
+                                    var objUtil = new ObjectHelper(currentViewJson);
+                                    var parentObj = objUtil.find('arbitraryid', $select.CswAttrDom('arbid'));
+                                    var collection = '';
+                                    switch (stepno) {
+                                        case CswViewEditor_WizardSteps.relationships.step:
+                                            collection = childPropNames.childrelationships.name;
+                                            break;
+                                        case CswViewEditor_WizardSteps.properties.step:
+                                            collection = childPropNames.properties.name;
+                                            break;
+                                    }
+                                    var objCollection = parentObj[collection];
+                                    if (isNullOrEmpty(objCollection)) {
+                                        objCollection = { };
+                                        parentObj[collection] = objCollection;
+                                    }
+                                    $.extend(objCollection, childJson);
+                                }
+                                _makeViewTree(stepno, $div);
+                            });
+                            
+                        } // success
+                    }); // ajax
+            }
+            return $select;
+        }
+        
+        function canAddChildSelect(stepno,propName,arbid) {
+            var ret = false;
+            
+            switch (stepno) {
+                case CswViewEditor_WizardSteps.relationships.step:
+                    if (propName === childPropNames.childrelationships || propName === childPropNames.root) {
+                        ret = true;
+                    }
+                    break;
+                case CswViewEditor_WizardSteps.properties.step:
+                    if (propName === childPropNames.properties && arbid !== 'root') {
+                        ret = true;
+                    }
+                    break;
+                case CswViewEditor_WizardSteps.filters.step:
+                    if (propName === childPropNames.filters && arbid !== 'root') {
+                        ret = true;
+                    }
+                    break;
+            }
+            
+            return ret;
+        }
+        
+        return $div;
 
-							} // success
-						}); // ajax
-
-					} // if-else(stepno === 5)
-				} // if(!skipchildoptions) 
-
-				treestr += '</ul>';
-				treestr += '</li>';
-			}
-
-			return {
-						'htmlstring': treestr,
-						'types': types
-					};
-		} // _viewXmlToHtml()
-
-
-		return $div;
-
-	} // $.fn.CswViewEditor
+    }; // $.fn.CswViewEditor
 }) (jQuery);
 

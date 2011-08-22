@@ -4,7 +4,7 @@ pause
 
 
 
-echo "Enter the release name tag to update to (For example, Horatio 2011.8.2.1):"
+echo "Enter the release name tag to update to (For example, Horatio_2011.8.2.1):"
 set /p TagName=
 
 

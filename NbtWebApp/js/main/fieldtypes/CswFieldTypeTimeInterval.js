@@ -1,16 +1,21 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeTimeInterval';
+    var pluginName = 'CswFieldTypeTimeInterval';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
-
+        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var TextValue = o.$propxml.children('Interval').CswAttrXml('text');
+                var textValue = o.propData.Interval.text;
 
-				$Div.append('<span id="' + o.ID + '_textvalue">' + TextValue + '</span>');
+				$Div.append('<span id="' + o.ID + '_textvalue">' + textValue + '</span>');
 
                 if(!o.ReadOnly)
                 {
@@ -65,12 +70,6 @@
 
 					$WeeklyTable.CswTable('cell', 2, 1).append('Starting On:');
 					var $WeeklyStartDateCell = $WeeklyTable.CswTable('cell', 2, 2);
-					var $WeeklyStartDate = $WeeklyStartDateCell.CswInput('init', { ID: o.ID + '_weekly_sd',
-                                                                                   type: CswInput_Types.text,
-                                                                                   cssclass: 'textinput date',
-                                                                                   onChange: o.onchange
-                                                                        });  
-                    $WeeklyStartDate.datepicker();
 
 					// Monthly
 					var $MonthlyDiv = $('<div />')
@@ -149,37 +148,22 @@
 	//									.hide();
 				
 					$YearlyDiv.append('Every Year, Starting On:<br/>');
-					var $YearlyStartDate = $YearlyDiv.CswInput('init',{ID: o.ID + '_yearly_sd',
-                                                                       type: CswInput_Types.text,
-                                                                       cssclass: 'textinput date',
-                                                                       onChange: o.onchange
-                                                                }); 
-                    $YearlyStartDate.datepicker();
 
 					// Set selected values
 
-					//<Interval>
-					//  <RateIntervalValue>
-					//    <RateType>MonthlyByDate</RateType>
-					//    <MonthlyFrequency>1</MonthlyFrequency>
-					//    <MonthlyDate>1</MonthlyDate>
-					//    <StartingMonth>1</StartingMonth>
-					//    <StartingYear>2011</StartingYear>
-					//  </RateIntervalValue>
-					//</Interval>
-
-					var $RateIntervalXml = o.$propxml.children('interval').children('rateintervalvalue');
-					var RateType = $RateIntervalXml.children('ratetype').text();
-
-					switch(RateType)
+					var rateIntervalData = o.propData.Interval.rateintervalvalue;
+					var rateType = rateIntervalData.ratetype;
+					var dateFormat = ServerDateFormatToJQuery(rateIntervalData.dateformat);
+log('dateformat = ' + dateFormat);
+					switch(rateType)
 					{
 						case "WeeklyByDay":
 							$weeklyradio.CswAttrDom('checked', 'true');
 							$WeeklyDiv.show(); 
 							$MonthlyDiv.hide(); 
 							$YearlyDiv.hide();
-							setWeekDayChecked( o.ID + '_weeklyday', $RateIntervalXml.children('weeklyday').text());
-							$WeeklyStartDate.val($RateIntervalXml.children('startingdate').text());
+							setWeekDayChecked( o.ID + '_weeklyday', rateIntervalData.weeklyday);
+							var WeeklyStartDate = rateIntervalData.startingdate.date;
 							$MonthlyByDateRadio.CswAttrDom('checked', 'true');     //default (for case 21048)
 							break;
 						case "MonthlyByDate":
@@ -188,10 +172,10 @@
 							$MonthlyDiv.show(); 
 							$YearlyDiv.hide();
 							$MonthlyByDateRadio.CswAttrDom('checked', 'true');
-							$MonthlyRateSelect.val($RateIntervalXml.children('monthlyfrequency').text());
-							$MonthlyDateSelect.val($RateIntervalXml.children('monthlydate').text());
-							$MonthlyStartMonthSelect.val($RateIntervalXml.children('startingmonth').text());
-							$MonthlyStartYearSelect.val($RateIntervalXml.children('startingyear').text());
+							$MonthlyRateSelect.val(rateIntervalData.monthlyfrequency);
+							$MonthlyDateSelect.val(rateIntervalData.monthlydate);
+							$MonthlyStartMonthSelect.val(rateIntervalData.startingmonth);
+							$MonthlyStartYearSelect.val(rateIntervalData.startingyear);
 							break;
 						case "MonthlyByWeekAndDay":
 							$monthlyradio.CswAttrDom('checked', 'true');
@@ -199,70 +183,83 @@
 							$MonthlyDiv.show(); 
 							$YearlyDiv.hide();
 							$MonthlyByDayRadio.CswAttrDom('checked', 'true');
-							$MonthlyWeekSelect.val($RateIntervalXml.children('monthlyweek').text());
-							setWeekDayChecked( o.ID + '_monthly_day', $RateIntervalXml.children('monthlyday').text());
-							$MonthlyStartMonthSelect.val($RateIntervalXml.children('startingmonth').text());
-							$MonthlyStartYearSelect.val($RateIntervalXml.children('startingyear').text());
+							$MonthlyWeekSelect.val(rateIntervalData.monthlyweek);
+							setWeekDayChecked( o.ID + '_monthly_day', rateIntervalData.monthlyday);
+							$MonthlyStartMonthSelect.val(rateIntervalData.startingmonth);
+							$MonthlyStartYearSelect.val(rateIntervalData.startingyear);
 							break;
 						case "YearlyByDate":
 							$yearlyradio.CswAttrDom('checked', 'true');
 							$WeeklyDiv.hide(); 
 							$MonthlyDiv.hide(); 
 							$YearlyDiv.show();
-							$YearlyStartDate.val($RateIntervalXml.children('yearlydate').text());
+							var YearlyStartDate = rateIntervalData.yearlydate.date;
 							$MonthlyByDateRadio.CswAttrDom('checked', 'true');     //default (for case 21048)
 							break;
 					} // switch(RateType)
+
+					var $WeeklyStartDateDiv = $WeeklyStartDateCell.CswDateTimePicker('init', { ID: o.ID + '_weekly_sd',
+																					Date: WeeklyStartDate,
+																					DateFormat: dateFormat,
+																					DisplayMode: 'Date',
+																					ReadOnly: o.ReadOnly,
+																					Required: o.Required,
+																					OnChange: o.onchange
+																				});
+					var $YearlyStartDateDiv = $YearlyDiv.CswDateTimePicker('init', { ID: o.ID + '_yearly_sd',
+																					Date: YearlyStartDate,
+																					DateFormat: dateFormat,
+																					DisplayMode: 'Date',
+																					ReadOnly: o.ReadOnly,
+																					Required: o.Required,
+																					OnChange: o.onchange
+																				});
 				}
             },
         save: function(o) {
-				
-				var ratexml = '<interval><rateintervalvalue>';
-				var RateType = $('[name="' + o.ID + '_type"]:checked').val();
-				switch(RateType)
-				{
-					case 'weekly': 
-						ratexml += '<ratetype>WeeklyByDay</ratetype>';
-						ratexml += '<weeklyday>' + getWeekDayChecked( o.ID + '_weeklyday' ) + '</weeklyday>';
-						ratexml += '<startingdate>'+ $('#' + o.ID + '_weekly_sd').val() +'</startingdate>';
-						break;
+				try {
+				    var RateType = $('[name="' + o.ID + '_type"]:checked').val();
+				    var RIValue = o.propData.Interval.rateintervalvalue;
+					switch (RateType)
+				    {
+				        case 'weekly':
+				            RIValue.ratetype = 'WeeklyByDay';
+				            RIValue.weeklyday = getWeekDayChecked(o.ID + '_weeklyday');
+				            RIValue.startingdate = {};
+							RIValue.startingdate.date = $('#' + o.ID + '_weekly_sd').CswDateTimePicker('value').Date;
+				            RIValue.startingdate.dateformat = RIValue.dateformat;
+				            break;
 
-					case 'monthly': 
-						var MonthlyType = $('[name="'+ o.ID +'_monthly"]:checked').val();
-						ratexml += '<ratetype>'+ MonthlyType +'</ratetype>';
-						ratexml += '<monthlyfrequency>'+ $('#' + o.ID + '_monthly_rate').val() +'</monthlyfrequency>';
-						if(MonthlyType === "MonthlyByDate")
-						{
-							ratexml += '<monthlydate>'+ $('#' + o.ID + '_monthly_date').val() +'</monthlydate>';
-						} 
-						else // MonthlyByWeekAndDay
-						{
-							ratexml += '<monthlyweek>' + $('#' + o.ID + '_monthly_week' ).val() + '</monthlyweek>';
-							ratexml += '<monthlyday>' + getWeekDayChecked( o.ID + '_monthly_day' ) + '</monthlyday>';
-						}
-						ratexml += '<startingmonth>' + $('#' + o.ID + '_monthly_startMonth' ).val() + '</startingmonth>';
-						ratexml += '<startingyear>' + $('#' + o.ID + '_monthly_startYear' ).val() + '</startingyear>';
-						break;
-					
-					case 'yearly': 
-						ratexml += '<ratetype>YearlyByDate</ratetype>';
-						ratexml += '<yearlydate>'+ $('#' + o.ID + '_yearly_sd').val() +'</yearlydate>';
-						break;
-				} // switch(RateType)
+				        case 'monthly':
+				            var monthlyType = $('[name="' + o.ID + '_monthly"]:checked').val();
+				            RIValue.ratetype = monthlyType;
+				            RIValue.monthlyfrequency = $('#' + o.ID + '_monthly_rate').val();
+				            if (monthlyType === "MonthlyByDate")
+				            {
+				                RIValue.monthlydate = $('#' + o.ID + '_monthly_date').val();
+				            }
+				            else // MonthlyByWeekAndDay
+				            {
+				                RIValue.monthlyweek = $('#' + o.ID + '_monthly_week').val();
+				                RIValue.monthlyday = getWeekDayChecked(o.ID + '_monthly_day');
+				            }
+				            RIValue.startingmonth = $('#' + o.ID + '_monthly_startMonth').val();
+				            RIValue.startingyear = $('#' + o.ID + '_monthly_startYear').val();
+				            break;
 
-				ratexml += '</rateintervalvalue></interval>';
-
-				o.$propxml.children().remove();
-				if($.browser.msie)
-				{
-					// case 21833
-					o.$propxml.append($.xml(ratexml));
+				        case 'yearly':
+				            RIValue.ratetype = 'YearlyByDate';
+				            RIValue.yearlydate = {};
+							RIValue.yearlydate.date = $('#' + o.ID + '_yearly_sd').CswDateTimePicker('value').Date;
+				            RIValue.yearlydate.dateformat = RIValue.dateformat;
+				            break;
+				    } // switch(RateType)
+				} catch(e) {
+				    if(debugOn()) {
+				        log('Error updating propData: ' + e);
+				    }
 				}
-				else 
-				{
-					o.$propxml.append($(ratexml));
-				}
-            } // save
+        } // save
     };
     
 
@@ -347,7 +344,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

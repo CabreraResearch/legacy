@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.PropertySets
         string GeneratorTargetGeneratorPropertyName { get; }
         string GeneratorTargetParentPropertyName { get; }
 
-        CswNbtNodePropDate GeneratedDate { get; }
+        CswNbtNodePropDateTime GeneratedDate { get; }
         CswNbtNodePropLogical IsFuture { get; }
         CswNbtNodePropRelationship Generator { get; }
         CswNbtNodePropRelationship Parent { get; }

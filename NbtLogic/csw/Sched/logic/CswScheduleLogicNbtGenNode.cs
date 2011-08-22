@@ -82,16 +82,16 @@ namespace ChemSW.Nbt.Sched
                         CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
                         if( CurrentGenerator.Enabled.Checked == Tristate.True )
                         {
-                            DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateValue.Date;
+							DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateTimeValue.Date;
                             DateTime InitialDueDateValue = CurrentGenerator.DueDateInterval.getStartDate().Date;
-                            DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateValue.Date;
+							DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateTimeValue.Date;
 
                             // BZ 7866
                             if( ThisDueDateValue != DateTime.MinValue )
                             {
                                 // BZ 7124 - set runtime
-                                if( CurrentGenerator.RunTime.TimeValue != DateTime.MinValue )
-                                    ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.TimeValue.TimeOfDay.Ticks );
+								if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue )
+									ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
 
                                 Int32 WarnDays = (Int32) CurrentGenerator.WarningDays.Value;
                                 if( WarnDays > 0 )

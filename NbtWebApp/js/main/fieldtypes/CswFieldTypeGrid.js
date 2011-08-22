@@ -1,15 +1,15 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../../_Global.js" />
-/// <reference path="../CswNodeGrid.js" />
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 		
-	var PluginName = 'CswFieldTypeGrid';
+	var pluginName = 'CswFieldTypeGrid';
    
 	var methods = {
-		'init': function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+		'init': function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
 			/// <summary>
             ///   Initializes a jqGrid as an NbtNode Prop
             /// </summary>
@@ -24,16 +24,16 @@
 				$Div.append('[Grid display disabled]');
 			} else {
 
-				var MenuDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype_menu'});
-				var $MenuDiv = $('<div id="' + MenuDivId + '" name="' + MenuDivId + '"></div>');
+				var menuDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype_menu'});
+				var $MenuDiv = $('<div id="' + menuDivId + '" name="' + menuDivId + '"></div>');
 
-				var SearchDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype_search'});
-				var $SearchDiv = $('<div id="' + SearchDivId + '" name="' + SearchDivId + '"></div>');
+				var searchDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype_search'});
+				var $SearchDiv = $('<div id="' + searchDivId + '" name="' + searchDivId + '"></div>');
 
-				var GridDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype'});
-				var $GridDiv = $('<div id="' + GridDivId + '" name="' + GridDivId + '"></div>');
+				var gridDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype'});
+				var $GridDiv = $('<div id="' + gridDivId + '" name="' + gridDivId + '"></div>');
 
-				var viewid = o.$propxml.children('viewid').text().trim();
+				var viewid = tryParseString(o.propData.viewid).trim();
             
 				var gridOpts = {
 					'ID': o.ID,
@@ -96,14 +96,14 @@
 										$SearchDiv.empty();
 										$SearchDiv.CswSearch({'parentviewid': viewid,
 															  'cswnbtnodekey': o.cswnbtnodekey,
-															  'ID': SearchDivId,
+															  'ID': searchDivId,
 															  'onSearchSubmit': onSearchSubmit,
 															  'onClearSubmit': onClearSubmit
 															  });
 									},
 									'onGenericSearch': function () { /*not possible here*/ }
 								},
-							'onEditView': function (Viewid)
+							'onEditView': function ()
 							{
 								o.onEditView(viewid);                    
 							}
@@ -126,7 +126,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
 		}    
   
 	};

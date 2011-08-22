@@ -276,7 +276,23 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            //Not yet implemented
+            ParentObject[_SelectedViewIdsSubField.ToXmlNodeName()] = SelectedViewIds.ToString();
+            ParentObject["selectmode"] = SelectMode.ToString();
+            ParentObject[_CachedViewNameSubField.ToXmlNodeName()] = CachedViewNames.ToString();
+
+            JObject OptionsObj = new JObject();
+            ParentObject["options"] = OptionsObj;
+
+            DataTable ViewsTable = ViewsForCBA();
+            foreach( DataRow ViewRow in ViewsTable.Rows )
+            {
+                JObject UserObj = new JObject();
+                OptionsObj["user_" + ViewRow[KeyColumn]] = UserObj;
+
+                UserObj[NameColumn] = ViewRow[NameColumn].ToString();
+                UserObj[KeyColumn] = ViewRow[KeyColumn].ToString();
+                UserObj[ValueColumn] = ViewRow[ValueColumn].ToString();
+            }
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -323,7 +339,28 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            //Not yet implemented
+            CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
+
+            if( null != JObject["options"] )
+            {
+                JObject OptionsObj = (JObject) JObject["options"];
+
+                foreach( JProperty UserProp in OptionsObj.Properties() )
+                {
+                    JObject UserObj = (JObject) UserProp.Value;
+
+                    string key = CswConvert.ToString( UserObj[KeyColumn] );
+                    string name = CswConvert.ToString( UserObj[NameColumn] );
+                    bool value = CswConvert.ToBoolean( UserObj[ValueColumn] );
+                    if( value )
+                    {
+                        NewSelectedViewIds.Add( key );
+                    }
+                } // foreach( JProperty UserProp in OptionsObj.Properties() )
+
+                SelectedViewIds = NewSelectedViewIds;
+                RefreshViewName();
+            }
         }
     }//CswNbtNodeProp
 

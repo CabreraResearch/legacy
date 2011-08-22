@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.PropertySets
         string InspectionParentLastInspectionDatePropertyName { get; }
 
         CswNbtNodePropList Status { get; }
-        CswNbtNodePropDate LastInspectionDate { get; }
+        CswNbtNodePropDateTime LastInspectionDate { get; }
 
     }//ICswNbtPropertySetInspectionParent
 

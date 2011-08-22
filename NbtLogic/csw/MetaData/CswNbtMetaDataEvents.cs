@@ -32,14 +32,17 @@ namespace ChemSW.Nbt.MetaData
 				//PropPermissions.Save();
 				//_CswNbtResources.CurrentNbtUser.RoleNode.postChanges( false );
 
-                //_CswNbtResources.Permit.set( new CswNbtPermit.NodeTypePermission[] {
-                //                                CswNbtPermit.NodeTypePermission.Delete, 
-                //                                CswNbtPermit.NodeTypePermission.Create, 
-                //                                CswNbtPermit.NodeTypePermission.Edit, 
-                //                                CswNbtPermit.NodeTypePermission.View }, 
-                //                            NewNodeType, 
-                //                            _CswNbtResources.CurrentNbtUser.RoleNode,
-                //                            true );
+				// case 23185 - reset permission options
+				_CswNbtResources.CurrentNbtUser.RoleNode.afterPopulateProps();
+
+				_CswNbtResources.Permit.set( new CswNbtPermit.NodeTypePermission[] {
+												CswNbtPermit.NodeTypePermission.Delete, 
+												CswNbtPermit.NodeTypePermission.Create, 
+												CswNbtPermit.NodeTypePermission.Edit, 
+												CswNbtPermit.NodeTypePermission.View }, 
+											NewNodeType, 
+											_CswNbtResources.CurrentNbtUser.RoleNode,
+											true );
 
 			}//if we have a current user
 

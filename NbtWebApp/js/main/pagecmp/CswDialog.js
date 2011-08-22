@@ -1,5 +1,7 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 		
@@ -331,27 +333,30 @@
 
 		'AboutDialog': function () {
 							var $div = $('<div></div>');
-							CswAjaxXml({
+							CswAjaxJson({
 								url: '/NbtWebApp/wsNBT.asmx/getAbout',
 								data: {},
-								stringify: false,
-								success: function ($xml) {
-									$div.append('NBT Assembly Version: ' + $xml.children('assembly').text() + '<br/><br/>');
+								success: function (data) {
+								    $div.append('NBT Assembly Version: ' + data.assembly + '<br/><br/>');
 									var $table = $div.CswTable('init', { ID: 'abouttable' });
 									var row = 1;
-									$xml.children('component').each(function () {
-										var $namecell = $table.CswTable('cell', row, 1);
-										var $versioncell = $table.CswTable('cell', row, 2);
-										var $copyrightcell = $table.CswTable('cell', row, 3);
-										$namecell.css('padding', '2px 5px 2px 5px');
-										$versioncell.css('padding', '2px 5px 2px 5px');
-										$copyrightcell.css('padding', '2px 5px 2px 5px');
-										var $component = $(this);
-										$namecell.append($component.children('name').text());
-										$versioncell.append($component.children('version').text());
-										$copyrightcell.append($component.children('copyright').text());
-										row++;
-									});
+
+								    var components = data.components;
+								    for (var comp in components) {
+								        if (components.hasOwnProperty(comp)) {
+								            var thisComp = components[comp];
+								            var $namecell = $table.CswTable('cell', row, 1);
+								            var $versioncell = $table.CswTable('cell', row, 2);
+								            var $copyrightcell = $table.CswTable('cell', row, 3);
+								            $namecell.css('padding', '2px 5px 2px 5px');
+								            $versioncell.css('padding', '2px 5px 2px 5px');
+								            $copyrightcell.css('padding', '2px 5px 2px 5px');
+								            $namecell.append(thisComp.name);
+								            $versioncell.append(thisComp.version);
+								            $copyrightcell.append(thisComp.copyright);
+								            row++;
+								        }
+								    }
 								}
 							});
 							_openDiv($div, 600, 400);
@@ -555,6 +560,9 @@
 
 	function _openDiv($div, width, height)
 	{
+		$('<div id="DialogErrorDiv" style="display: none;"></div>')
+			.prependTo($div);
+
 		$div.dialog({ 'modal': true,
 			'width': width,
 			'height': height,

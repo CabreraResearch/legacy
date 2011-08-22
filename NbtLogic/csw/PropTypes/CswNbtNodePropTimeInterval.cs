@@ -20,11 +20,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 XmlDocument XmlDoc = new XmlDocument();
                 XmlDoc.LoadXml( CswNbtNodePropData.ClobData.ToString() );
-                _RateInterval = new CswRateInterval( XmlDoc.FirstChild );
+				_RateInterval = new CswRateInterval( _CswNbtResources, XmlDoc.FirstChild );
             }
             else
             {
-                _RateInterval = new CswRateInterval();
+				_RateInterval = new CswRateInterval( _CswNbtResources );
             }
             _IntervalSubField = ( (CswNbtFieldTypeRuleTimeInterval) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).IntervalSubField;
             _StartDateSubField = ( (CswNbtFieldTypeRuleTimeInterval) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).StartDateSubField;
@@ -98,7 +98,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            //Not yet implemented
+            JObject IntervalObj = new JObject();
+            ParentObject[_IntervalSubField.ToXmlNodeName()] = IntervalObj;
+            IntervalObj["text"] = RateInterval.ToString();
+            RateInterval.ToJson( IntervalObj );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -109,7 +112,7 @@ namespace ChemSW.Nbt.PropTypes
             //XmlNode IntervalNode = CswXmlDocument.SetDocumentElement( Doc, _IntervalSubField.ToXmlNodeName() );
             //IntervalNode.InnerXml = IntervalXmlAsString;
 
-            CswRateInterval NewRateInterval = new CswRateInterval();
+			CswRateInterval NewRateInterval = new CswRateInterval( _CswNbtResources );
             NewRateInterval.ReadXml( XmlNode.FirstChild.FirstChild );
             // Setting RateInterval triggers the change to the property value -- don't skip this step
             RateInterval = NewRateInterval;
@@ -132,7 +135,7 @@ namespace ChemSW.Nbt.PropTypes
                 XmlNode IntervalNode = CswXmlDocument.SetDocumentElement( Doc, _IntervalSubField.ToXmlNodeName() );
                 IntervalNode.InnerXml = IntervalXmlAsString.Trim();
 
-                CswRateInterval NewRateInterval = new CswRateInterval();
+				CswRateInterval NewRateInterval = new CswRateInterval( _CswNbtResources );
                 NewRateInterval.ReadXml( IntervalNode );
                 // Setting RateInterval triggers the change to the property value -- don't skip this step
                 RateInterval = NewRateInterval;
@@ -141,8 +144,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            //Not yet implemented
+			CswRateInterval NewRateInterval = new CswRateInterval( _CswNbtResources );
+			NewRateInterval.ReadJson( (JObject) JObject[_IntervalSubField.ToXmlNodeName()] );
+            // Setting RateInterval triggers the change to the property value -- don't skip this step
+            RateInterval = NewRateInterval;
         }
+
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes
