@@ -44,11 +44,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleGrid( CswNbtFieldResources, MetaDataProp );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Image:
-                    ReturnVal = new CswNbtFieldTypeRuleImage( CswNbtFieldResources, MetaDataProp );
-                    break;
+				case CswNbtMetaDataFieldType.NbtFieldType.Image:
+					ReturnVal = new CswNbtFieldTypeRuleImage( CswNbtFieldResources, MetaDataProp );
+					break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Link:
+				case CswNbtMetaDataFieldType.NbtFieldType.ImageList:
+					ReturnVal = new CswNbtFieldTypeRuleImageList( CswNbtFieldResources, MetaDataProp );
+					break;
+
+				case CswNbtMetaDataFieldType.NbtFieldType.Link:
                     ReturnVal = new CswNbtFieldTypeRuleLink( CswNbtFieldResources, MetaDataProp );
                     break;
 

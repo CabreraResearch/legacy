@@ -51,6 +51,9 @@ $.CswFieldTypeFactory = function (method)
 				case "Image":
 					m.$propdiv.CswFieldTypeImage('init', m); //'init', nodeid, propData, onchange
 					break;
+				case "ImageList":
+					m.$propdiv.CswFieldTypeImageList('init', m); //'init', nodeid, propData, onchange
+					break;
 				case "Link":
 					m.$propdiv.CswFieldTypeLink('init', m); //'init', nodeid, propData, onchange
 					break;
@@ -167,6 +170,9 @@ $.CswFieldTypeFactory = function (method)
 					break;
 				case "Image":
 					m.$propdiv.CswFieldTypeImage('save', m); //('save', $propdiv, propData);
+					break;
+				case "ImageList":
+					m.$propdiv.CswFieldTypeImageList('save', m); //('save', $propdiv, propData);
 					break;
 				case "Link":
 					m.$propdiv.CswFieldTypeLink('save', m); //('save', $propdiv, propData);
