@@ -909,7 +909,6 @@
                     if ($filtUl.children().length === 0) {
                         $filtUl.append(makeViewPropertyFilterHtml({}, stepno, types, arbid));
                     }
-                    log($filtUl);
                 }
                 types.property = { icon: { image: "Images/view/property.gif" } };
             }
