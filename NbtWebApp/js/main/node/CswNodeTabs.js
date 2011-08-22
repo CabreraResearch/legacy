@@ -248,8 +248,7 @@
 												onclick: function () { Save($form, $layouttable, data, $savetab, tabid); }
 												});
 					}
-					_handleProps($layouttable, data, $tabcontentdiv, tabid, false, $savetab);
-
+					var AtLeastOneSaveable = _handleProps($layouttable, data, $tabcontentdiv, tabid, false, $savetab);
 
 					// Validation
 					$form.validate({
@@ -272,7 +271,7 @@
 					}); // validate()
 
 					// case 8494
-					if (!isNullOrEmpty(data) && o.EditMode == EditMode.AddInPopup.name) {
+					if (!AtLeastOneSaveable && o.EditMode == EditMode.AddInPopup.name) {
 						Save($form, $layouttable, data, $savetab, tabid);
 					} else if (isFunction(o.onInitFinish)) {
 						o.onInitFinish();
@@ -381,6 +380,7 @@
 			} else {
 				$savebtn.show();
 			}
+			return AtLeastOneSaveable;
 		} // _handleProps()
 
 		function _makeProp($propcell, propData, $tabcontentdiv, tabid, configMode, $savebtn)

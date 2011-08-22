@@ -311,7 +311,10 @@ function CswError(errorJson)
 	};
 	if (errorJson) $.extend(e, errorJson);
 
-	var $errorsdiv = $('#ErrorDiv');
+	var $errorsdiv = $('#DialogErrorDiv');
+	if ($errorsdiv.length <= 0) 
+		$errorsdiv = $('#ErrorDiv');
+
 	if ($errorsdiv.length > 0 && isTrue(e.display))
 	{
 		$errorsdiv.CswErrorMessage({ 'type': e.type, 'message': e.message, 'detail': e.detail });

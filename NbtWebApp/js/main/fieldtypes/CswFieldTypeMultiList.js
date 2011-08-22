@@ -16,7 +16,6 @@
 
             var value = tryParseString(o.propData.value).trim();
             var options = o.propData.options;
-            var selectedKey = o.propData.selected;
             
             if (o.ReadOnly) {
                 $Div.append(value);
@@ -116,13 +115,12 @@
 
                 for (var key in options) {
                     if(options.hasOwnProperty(key)) {
-                        var thisText = options[key];
-                        var thisValue = key;
+                        var thisOption = options[key];
                         
-                        if (key === selectedKey) {
-                            _addValue(thisValue, thisText, false);
+                        if (isTrue(thisOption.selected)) {
+                            _addValue(thisOption.value, thisOption.text, false);
                         } else {
-                            $SelectBox.append('<option value="' + thisValue + '">' + thisText + '</option>');
+                            $SelectBox.append('<option value="' + thisOption.value + '">' + thisOption.text + '</option>');
                         }
                     }
                 }
