@@ -3,7 +3,7 @@
 
 var CswImportInspectionQuestions_WizardSteps = {
     'step1': { step: 1, description: 'Select File For Upload' },
-    'step2': { step: 2, description: 'Upload File' }
+    'step2': { step: 2, description: 'Upload Completed Okay' }
 };
 
 ; (function ($) { /// <param name="$" type="jQuery" />
@@ -17,6 +17,7 @@ var CswImportInspectionQuestions_WizardSteps = {
 			viewmode: '',
 			ID: 'importinspectionquestions',
 			onCancel: function($wizard) {},
+			onFinish: function($wizard) {},
 			startingStep: 1
 		};
 		if(options) $.extend(o, options);
@@ -45,7 +46,7 @@ var CswImportInspectionQuestions_WizardSteps = {
 				'onPrevious': _handlePrevious,
 				'onBeforePrevious': _onBeforePrevious,
 				'onCancel': o.onCancel,
-				'onFinish': _handleFinish
+				'onFinish': o.onFinish
 			});
 
 		// don't activate Save and Finish until step 2
@@ -72,7 +73,10 @@ var CswImportInspectionQuestions_WizardSteps = {
             {
             InspectionName: _getNewInspectionName()
             },
-			onSuccess: function() { }
+			onSuccess: function() 
+            { 
+            _handleNext($wizard, CswImportInspectionQuestions_WizardSteps.step2.step);
+            }
 		};
 
 		var uploader = new qq.FileUploader({
@@ -119,7 +123,8 @@ var CswImportInspectionQuestions_WizardSteps = {
 				case CswImportInspectionQuestions_WizardSteps.step1.step:
 					break;
 				case CswImportInspectionQuestions_WizardSteps.step2.step:
-					$wizard.CswWizard('button', 'finish', 'enable');
+ 					$wizard.CswWizard('button', 'finish', 'enable');
+					$wizard.CswWizard('button', 'next', 'click');
 					$wizard.CswWizard('button', 'next', 'disable');
 
 					break;

@@ -786,10 +786,7 @@
 					'onFinish': function (viewid, viewmode)
 					{
 						clear({ 'all': true });
-						if(isTrue(o.ActionOptions.IgnoreReturn))
-							refreshSelected();
-						else
-							handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+						refreshSelected();
 					},
 					'startingStep': o.ActionOptions.startingStep
 				};
