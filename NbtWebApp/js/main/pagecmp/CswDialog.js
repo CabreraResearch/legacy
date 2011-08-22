@@ -96,6 +96,10 @@
 																				createData.Visibility = v.getvisibilityselect().val();
 																				createData.VisibilityRoleId = v.getvisroleselect().val();
 																				createData.VisibilityUserId = v.getvisuserselect().val();
+																			} else {
+																				createData.Visibility = "";
+																				createData.VisibilityRoleId = "";
+																				createData.VisibilityUserId = "";
 																			}
 
 																			CswAjaxJson({
