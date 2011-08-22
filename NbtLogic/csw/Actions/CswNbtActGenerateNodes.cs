@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.Actions
             }
 
             if ( DueDate == DateTime.MinValue )
-                DueDate = GeneratorNode.NextDueDate.DateValue.Date;
+				DueDate = GeneratorNode.NextDueDate.DateTimeValue.Date;
             if ( DueDate == DateTime.MinValue )
                 DueDate = GeneratorNode.DueDateInterval.getStartDate();
 
@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.Actions
                         NewNode.copyPropertyValues( CswNbtNodeGenerator );
 
                         ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( NewNode );
-                        NewNodeAsGeneratorTarget.GeneratedDate.DateValue = DueDate;
+						NewNodeAsGeneratorTarget.GeneratedDate.DateTimeValue = DueDate;
                         NewNodeAsGeneratorTarget.GeneratedDate.ReadOnly = true;  //bz # 5349
                         NewNodeAsGeneratorTarget.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
                         NewNodeAsGeneratorTarget.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.Actions
                     }
                     else
                     {
-                        if ( DateTime.Now.Date >= ExistingNodeAsGeneratorTarget.GeneratedDate.DateValue.Date )
+						if( DateTime.Now.Date >= ExistingNodeAsGeneratorTarget.GeneratedDate.DateTimeValue.Date )
                         {
                             ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
                         }

@@ -160,7 +160,7 @@ function isNumeric(obj)
 	return ret;
 }
 
-function isTrue(str)
+function isTrue(str,isTrueIfNull)
 {
 	/// <summary>
 	///   Returns true if the input is true, 'true', '1' or 1.
@@ -173,18 +173,16 @@ function isTrue(str)
 	/// <returns type="Bool" />
 
 	var ret;
-	if (str === 'true' || str === true || str === '1' || str === 1)
-	{
+	if (str === 'true' || str === true || str === '1' || str === 1) {
 		ret = true;
 	}
-	else if (str === 'false' || str === false || str === '0' || str === 0)
-	{
+	else if (str === 'false' || str === false || str === '0' || str === 0) {
 		ret = false;
 	}
-	else
-	{
-		ret = false;
-		//if(debug) log('isTrue() was called on ' + str + ', which is not a boolean.',false);
+	else if (isTrueIfNull && isNullOrEmpty(str)) {
+		ret = true;
+	} else {
+	    ret = false;
 	}
 	return ret;
 }
@@ -285,6 +283,64 @@ function makeEventDelegate(method, options) {
     /// <param name="options" type="Object"> A single parameter to hand the delegate function.</param>
 	/// <returns type="Function">A delegate function: function(eventObj, options)</returns>
     return function(eventObj) { method(eventObj,options); };
+}
+
+function ObjectHelper(obj) {
+    /// <summary>Find an object in a JSON object.</summary>
+	/// <param name="obj" type="Object"> Object to search </param>
+	/// <returns type="ObjectHelper"></returns>
+    var thisObj = obj;
+    
+    function recursiveFind(parentObj, key, value) {
+        /// <summary>Recursively search an object</summary>
+	    /// <param name="parentObj" type="Object"> Object to search </param>
+        /// <param name="key" type="String"> Property name to match. </param>
+        /// <param name="value" type="Object"> Property value to match </param>
+	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
+        var ret = { };
+        if (jQuery.isPlainObject(parentObj)) {
+            for (var childKey in parentObj) {
+                if (parentObj.hasOwnProperty(childKey)) {
+                    var childObj = parentObj[childKey];
+                    if (childObj.hasOwnProperty(key) && childObj[key] === value) {
+                        ret = childObj;
+                        break;
+                    } 
+                    else if (isNullOrEmpty(ret) && jQuery.isPlainObject(childObj)) {
+                        ret = recursiveFind(childObj, key, value);
+                    }
+                }
+            }
+        }
+        return ret;
+    }
+    
+    function find(key, value) {
+        /// <summary>Find a property's parent</summary>
+        /// <param name="key" type="String"> Property name to match. </param>
+        /// <param name="value" type="Object"> Property value to match </param>
+	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
+        var ret = { };
+        if (jQuery.isPlainObject(thisObj))
+        {
+            for (var childKey in thisObj) {
+                if (thisObj.hasOwnProperty(childKey)) {
+                    var childObj = thisObj[childKey];
+                    if (childObj.hasOwnProperty(key) && childObj[key] === value) {
+                        ret = thisObj;
+                        break;
+                    } 
+                    else if (isNullOrEmpty(ret) && jQuery.isPlainObject(childObj)) {
+                        ret = recursiveFind(childObj, key, value);                        
+                    }
+                }
+            }
+        }
+        return ret;
+    }
+    
+    this.find = find;
+    this.obj = thisObj;
 }
 
 // because IE 8 doesn't support console.log unless the console is open (*duh*)

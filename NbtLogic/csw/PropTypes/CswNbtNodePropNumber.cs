@@ -114,11 +114,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _ValueSubField.ToXmlNodeName( true ), ( !Double.IsNaN( Value ) ) ?
-                Value.ToString() : string.Empty ) );
-            ParentObject.Add( new JProperty( "minvalue", MinValue.ToString() ) );
-            ParentObject.Add( new JProperty( "maxvalue", MaxValue.ToString() ) );
-            ParentObject.Add( new JProperty( "precision", Precision.ToString() ) );
+            ParentObject[_ValueSubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Value ) ) ? Value.ToString() : string.Empty;
+            ParentObject["minvalue"] = MinValue.ToString();
+            ParentObject["maxvalue"] = MaxValue.ToString();
+            ParentObject["precision"] = Precision.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

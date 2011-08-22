@@ -45,7 +45,7 @@ var CswCookieName = {
 	CurrentViewMode: 'csw_currentviewmode',
 	CurrentNodeId: 'csw_currentnodeid',
 	CurrentNodeKey: 'csw_currentnodekey',
-	CurrentTabId: 'csw_currenttabid'
+	CurrentTabId: 'csw_currenttabid',
 	CurrentReportId: 'csw_currentreportid'
 };
 
@@ -95,12 +95,12 @@ var CswSearch_CssClasses = {
 
 // for CswViewEditor
 var CswViewEditor_WizardSteps = {
-	'step1': { step: 1, description: 'Choose a View' },
-	'step2': { step: 2, description: 'Edit View Attributes' },
-	'step3': { step: 3, description: 'Add Relationships' },
-	'step4': { step: 4, description: 'Select Properties' },
-	'step5': { step: 5, description: 'Set Filters' },
-	'step6': { step: 6, description: 'Fine Tuning' }
+	viewselect: { step: 1, description: 'Choose a View' },
+	attributes: { step: 2, description: 'Edit View Attributes' },
+	relationships: { step: 3, description: 'Add Relationships' },
+	properties: { step: 4, description: 'Select Properties' },
+	filters: { step: 5, description: 'Set Filters' },
+	tuning: { step: 6, description: 'Fine Tuning' }
 };
 
 // for CswViewPropFilter

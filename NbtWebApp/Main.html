@@ -60,7 +60,7 @@
 
 <script type="text/javascript">
 
-	var debug = false;
+	debugOn(debug);
 
 	var MainTreeId = 'main';
 	var MainGridId = 'CswNodeGrid';
@@ -92,7 +92,7 @@
 
 	function initAll()
 	{
-		if (debug) log('Main.initAll()');
+		//if (debugOn()) log('Main.initAll()');
 
 		$('#CenterBottomDiv').CswLogin('login', {
 			'onAuthenticate': function (u)
@@ -159,7 +159,7 @@
 
 	function clear(options)
 	{
-		if (debug) log('Main.clear()');
+		//if (debugOn()) log('Main.clear()');
 
 		var o = {
 			left: false, 
@@ -196,7 +196,7 @@
 
 	function refreshWelcome()
 	{
-		if (debug) log('Main.refreshWelcome()');
+		//if (debugOn()) log('Main.refreshWelcome()');
         clear({ all: true });
 
         $('#CenterBottomDiv').CswWelcome('initTable', {
@@ -227,7 +227,7 @@
 
 	function handleItemSelect(options)
 	{
-		if (debug) log('Main.handleItemSelect()');
+		//if (debugOn()) log('Main.handleItemSelect()');
 
 		if (manuallyCheckChanges())
 		{
@@ -312,7 +312,7 @@
 
 	function refreshMainMenu(options) 
 	{
-		if (debug) log('Main.refreshMainMenu()');
+		//if (debugOn()) log('Main.refreshMainMenu()');
 
 		var o = {
 			viewid: '',
@@ -384,7 +384,7 @@
 
 	function refreshSearchPanel(options)
 	{
-	    if (debug) log('Main.refreshSearchPanel()');
+	    //if (debugOn()) log('Main.refreshSearchPanel()');
 	    
         var o = {
 	        viewid: '',
@@ -504,7 +504,7 @@
 
 	function getViewGrid(options)
 	{
-		if (debug) log('Main.getViewGrid()');
+		//if (debugOn()) log('Main.getViewGrid()');
 
 		var o = {
 			viewid: '',
@@ -553,7 +553,7 @@
 
 	function onSelectTreeNode(options)
 	{
-		if (debug) log('Main.onSelectTreeNode()');
+		//if (debugOn()) log('Main.onSelectTreeNode()');
 
 		if (manuallyCheckChanges())
 		{
@@ -587,7 +587,7 @@
 
 	function getTabs(options)
 	{
-		if (debug) log('Main.getTabs()');
+		//if (debugOn()) log('Main.getTabs()');
 
 		var o = {
 			nodeid: '',
@@ -641,7 +641,7 @@
 
 	function refreshSelected(options)
 	{
-		if (debug) log('Main.refreshSelected()');
+		//if (debugOn()) log('Main.refreshSelected()');
 		
 		if (manuallyCheckChanges())
 		{
@@ -698,7 +698,7 @@
 
 	function refreshNodesTree(options)
 	{
-		if (debug) log('Main.refreshNodesTree()');
+		//if (debugOn()) log('Main.refreshNodesTree()');
 
 		var o = {
 			'nodeid': '',

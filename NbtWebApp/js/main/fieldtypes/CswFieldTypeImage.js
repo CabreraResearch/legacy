@@ -1,34 +1,35 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../_Global.js" />
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         
-    var PluginName = 'CswFieldTypeImage';
+    var pluginName = 'CswFieldTypeImage';
 
     var methods = {
-        init: function(o) { //o.nodeid, o.$propxml, o.onchange
+        init: function(o) { //o.nodeid, o.propData, o.onchange
 
             var $Div = $(this);
             $Div.contents().remove();
 
-            var Href = o.$propxml.children('href').text().trim();
-            var Width = o.$propxml.children('href').CswAttrXml('width');
-            var Height = o.$propxml.children('href').CswAttrXml('height');
-            var FileName = o.$propxml.children('name').text().trim();
+            var href = tryParseString(o.propData.href).trim();
+            var width = tryParseString(o.propData.width);
+            var height = tryParseString(o.propData.height);
+            var fileName = tryParseString(o.propData.name).trim();
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
-            var $cell21 = $table.CswTable('cell', 2, 1).CswAttrDom('width', Width-36);
+            var $cell21 = $table.CswTable('cell', 2, 1).CswAttrDom('width', width-36);
             var $cell22 = $table.CswTable('cell', 2, 2).CswAttrDom('align', 'right');
             var $cell23 = $table.CswTable('cell', 2, 3).CswAttrDom('align', 'right');
 
-			if(FileName !== '')
+			if(fileName !== '')
 			{
-				var $TextBox = $('<a href="'+ Href +'" target="_blank"><img src="' + Href + '" alt="' + FileName + '" width="'+ Width +'" height="'+ Height +'"/></a>')
+				var $TextBox = $('<a href="'+ href +'" target="_blank"><img src="' + href + '" alt="' + fileName + '" width="'+ width +'" height="'+ height +'"/></a>')
 									.appendTo($cell11);
-				$cell21.append('<a href="'+ Href +'" target="_blank">'+ FileName +'</a>');
+				$cell21.append('<a href="'+ href +'" target="_blank">'+ fileName +'</a>');
 			}
 
             if(!o.ReadOnly && o.EditMode != EditMode.AddInPopup.name)
@@ -42,11 +43,11 @@
                                         onClick: function ($ImageDiv) { 
 											
 											$.CswDialog( 'FileUploadDialog', {
-												'url': '/NbtWebApp/wsNBT.asmx/fileForProp',
-												'params': { 
-															'PropId': o.$propxml.CswAttrXml('id')
+												url: '/NbtWebApp/wsNBT.asmx/fileForProp',
+												params: { 
+															'PropId': o.propData.id
 														  },
-												'onSuccess': function()
+												onSuccess: function()
 													{
 														o.onReload();
 													}
@@ -65,14 +66,14 @@
 											if(confirm("Are you sure you want to clear this image?"))
 											{
 												var dataJson = {
-                                                    PropId: o.$propxml.CswAttrXml('id'), 
+                                                    PropId: o.propData.id, 
                                                     IncludeBlob: true
                                                 };
                                                 
-                                                CswAjaxJSON({
-													'url': '/NbtWebApp/wsNBT.asmx/clearProp',
-													'data': dataJson,
-													'success': function() { o.onReload(); }
+                                                CswAjaxJson({
+													url: '/NbtWebApp/wsNBT.asmx/clearProp',
+													data: dataJson,
+													success: function() { o.onReload(); }
 												});
 											}
 											return CswImageButton_ButtonType.None; 
@@ -81,7 +82,7 @@
             }
 
         },
-        save: function(o) { //$propdiv, o.$propxml
+        save: function(o) { //$propdiv, o.propData
 				// nothing to do here
             }
     };
@@ -94,7 +95,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

@@ -237,11 +237,11 @@ namespace ChemSW.Nbt.PropTypes
 			bool DoCopy = false;
 			switch( this.FieldType.FieldType )
 			{
-				case CswNbtMetaDataFieldType.NbtFieldType.Date:
-					CswNbtNodePropDate PropAsDate = this.AsDate;
+				case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+					CswNbtNodePropDateTime PropAsDate = this.AsDateTime;
 					if( PropAsDate.DefaultToToday )
 					{
-						PropAsDate.DateValue = DateTime.Now;
+						PropAsDate.DateTimeValue = DateTime.Now;
 					}
 					break;
 				case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
@@ -312,15 +312,15 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Composite
 
-        public CswNbtNodePropDate AsDate
+		public CswNbtNodePropDateTime AsDateTime
         {
             get
             {
-                if( !( _CswNbtNodeProp is CswNbtNodePropDate ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropDate ) ) ) );
-                return ( (CswNbtNodePropDate) _CswNbtNodeProp );
+                if( !( _CswNbtNodeProp is CswNbtNodePropDateTime ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropDateTime ) ) ) );
+				return ( (CswNbtNodePropDateTime) _CswNbtNodeProp );
             }
-        }//Date
+        }//DateTime
 
         public CswNbtNodePropGrid AsGrid
         {
@@ -332,15 +332,25 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Grid
 
-        public CswNbtNodePropImage AsImage
-        {
-            get
-            {
-                if( !( _CswNbtNodeProp is CswNbtNodePropImage ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropImage ) ) ) );
-                return ( (CswNbtNodePropImage) _CswNbtNodeProp );
-            }
-        }//Generic
+		public CswNbtNodePropImage AsImage
+		{
+			get
+			{
+				if( !( _CswNbtNodeProp is CswNbtNodePropImage ) )
+					throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropImage ) ) ) );
+				return ( (CswNbtNodePropImage) _CswNbtNodeProp );
+			}
+		}//Image
+
+		public CswNbtNodePropImageList AsImageList
+		{
+			get
+			{
+				if( !( _CswNbtNodeProp is CswNbtNodePropImageList ) )
+					throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropImageList ) ) ) );
+				return ( (CswNbtNodePropImageList) _CswNbtNodeProp );
+			}
+		}//ImageList
 
         public CswNbtNodePropLink AsLink
         {
@@ -568,15 +578,15 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Text
 
-        public CswNbtNodePropTime AsTime
-        {
-            get
-            {
-                if( !( _CswNbtNodeProp is CswNbtNodePropTime ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropTime ) ) ) );
-                return ( (CswNbtNodePropTime) _CswNbtNodeProp );
-            }
-        }//Time
+		//public CswNbtNodePropDateTime AsTime
+		//{
+		//    get
+		//    {
+		//        if( !( _CswNbtNodeProp is CswNbtNodePropTime ) )
+		//            throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropTime ) ) ) );
+		//        return ( (CswNbtNodePropTime) _CswNbtNodeProp );
+		//    }
+		//}//Time
 
         public CswNbtNodePropTimeInterval AsTimeInterval
         {

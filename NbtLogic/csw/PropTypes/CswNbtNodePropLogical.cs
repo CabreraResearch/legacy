@@ -71,14 +71,14 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXElement( XElement ParentNode )
         {
-            ParentNode.Add( new XElement( _CheckedSubField.ToXmlNodeName(true), Checked.ToString().ToLower() ),
+            ParentNode.Add( new XElement( _CheckedSubField.ToXmlNodeName( true ), Checked.ToString().ToLower() ),
                 new XElement( CswNbtSubField.SubFieldName.Required.ToString(), Required.ToString().ToLower() ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _CheckedSubField.ToXmlNodeName(true), Checked.ToString().ToLower() ) );
-            ParentObject.Add( new JProperty( CswNbtSubField.SubFieldName.Required.ToString(), Required.ToString().ToLower() ) );
+            ParentObject[_CheckedSubField.ToXmlNodeName( true )] = Checked.ToString().ToLower();
+            ParentObject[CswNbtSubField.SubFieldName.Required.ToString()] = Required.ToString().ToLower();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -88,9 +88,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            if( null != XmlNode.Element( _CheckedSubField.ToXmlNodeName(true) ) )
+            if( null != XmlNode.Element( _CheckedSubField.ToXmlNodeName( true ) ) )
             {
-                Checked = CswConvert.ToTristate( XmlNode.Element( _CheckedSubField.ToXmlNodeName(true) ).Value );
+                Checked = CswConvert.ToTristate( XmlNode.Element( _CheckedSubField.ToXmlNodeName( true ) ).Value );
             }
         }
 
@@ -101,9 +101,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _CheckedSubField.ToXmlNodeName(true) ) )
+            if( null != JObject.Property( _CheckedSubField.ToXmlNodeName( true ) ) )
             {
-                Checked = CswConvert.ToTristate( JObject.Property( _CheckedSubField.ToXmlNodeName(true) ).Value );
+                Checked = CswConvert.ToTristate( JObject.Property( _CheckedSubField.ToXmlNodeName( true ) ).Value );
             }
         }
     }//CswNbtNodeProp

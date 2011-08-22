@@ -111,6 +111,8 @@
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
     <Content Include="js\globals\CswGlobalTools.js" />
+    <Content Include="js\main\controls\CswDateTimePicker.js" />
+    <Content Include="js\main\fieldtypes\CswFieldTypeImageList.js" />
     <Content Include="js\main\tools\CswArray.js" />
     <Content Include="js\main\tools\CswClientDb.js" />
     <Content Include="js\globals\CswEnums.js" />
@@ -600,7 +602,7 @@
     <Content Include="js\main\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeBarcode.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeComposite.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeDate.js" />
+    <Content Include="js\main\fieldtypes\CswFieldTypeDateTime.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeFile.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeGrid.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeImage.js" />

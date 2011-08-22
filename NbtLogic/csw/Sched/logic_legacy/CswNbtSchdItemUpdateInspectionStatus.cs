@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Sched
             bool ReturnVal = false;
             if( null != _InspectionNode )
             {
-                DateTime DueDate = _InspectionNode.Date.DateValue;
+				DateTime DueDate = _InspectionNode.Date.DateTimeValue;
                 CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( _InspectionNode.Generator.RelatedNodeId );
                 if( null != GeneratorNode &&
                     _Pending == _InspectionNode.Status.Value &&

@@ -108,7 +108,7 @@ function getCurrent()
 		'reportid': $.CswCookie('get', CswCookieName.CurrentReportId)
 	};
 }
-//#region Current State
+//#endregion Current State
 
 //#region Ajax
 var _ajaxCount = 0;
@@ -164,7 +164,9 @@ function CswAjaxJson(options)
 					'message': result.error.message,
 					'detail': result.error.detail
 				}, '');
-				o.error();
+				if (isFunction(o.error)) {
+			        o.error();
+			    }
 			}
 			else
 			{
@@ -179,7 +181,7 @@ function CswAjaxJson(options)
 
 				_handleAuthenticationStatus({
 					status: auth,
-					success: function () { o.success(result); },
+					success: function () { if (isFunction(o.success)) { o.success(result); } },
 					failure: o.onloginfail,
 					usernodeid: result.nodeid,
 					usernodekey: result.cswnbtnodekey,
@@ -193,104 +195,106 @@ function CswAjaxJson(options)
 			_ajaxCount--;
 			//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
 			log("Webservice Request (" + o.url + ") Failed: " + textStatus);
-			o.error();
+			if (isFunction(o.error)) {
+			    o.error();
+			}
 		}
 	});                 // $.ajax({
-} // CswAjaxXml()
+} // CswAjaxJson()
 
-function CswAjaxXml(options)
-{
-	/// <summary>
-	///   Executes Async webservice request for XML
-	/// </summary>
-	/// <param name="options" type="Object">
-	///     A JSON Object
-	///     &#10;1 - options.url: WebService URL
-	///     &#10;2 - options.data: {field1: value, field2: value}
-	///     &#10;3 - options.success: function() {}
-	///     &#10;4 - options.error: function() {}
-	///     &#10;5 - options.formobile: false
-	/// </param>
+//function CswAjaxXml(options)
+//{
+//	/// <summary>
+//	///   Executes Async webservice request for XML
+//	/// </summary>
+//	/// <param name="options" type="Object">
+//	///     A JSON Object
+//	///     &#10;1 - options.url: WebService URL
+//	///     &#10;2 - options.data: {field1: value, field2: value}
+//	///     &#10;3 - options.success: function() {}
+//	///     &#10;4 - options.error: function() {}
+//	///     &#10;5 - options.formobile: false
+//	/// </param>
 
-	var o = {
-		url: '',
-		data: {},
-		stringify: false, //in case we need to conditionally apply $.param() instead of JSON.stringify() (or both)
-		onloginfail: function () { _finishLogout(); },
-		success: function () { },
-		error: function () { },
-		formobile: false,
-		async: true
-	};
+//	var o = {
+//		url: '',
+//		data: {},
+//		stringify: false, //in case we need to conditionally apply $.param() instead of JSON.stringify() (or both)
+//		onloginfail: function () { _finishLogout(); },
+//		success: function () { },
+//		error: function () { },
+//		formobile: false,
+//		async: true
+//	};
 
-	if (options) $.extend(o, options);
-	
-	if (!isNullOrEmpty(o.url))
-	{
-		_ajaxCount++;
-		$.ajax({
-			type: 'POST',
-			async: o.async,
-			url: o.url,
-			dataType: "text",
-			//contentType: 'application/json; charset=utf-8',
-			data: $.param(o.data),     // should be 'field1=value&field2=value'
-			success: function (data, textStatus, XMLHttpRequest)
-			{
-				_ajaxCount--;
-				//var endtime = new Date();
-				//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
+//	if (options) $.extend(o, options);
+//	
+//	if (!isNullOrEmpty(o.url))
+//	{
+//		_ajaxCount++;
+//		$.ajax({
+//			type: 'POST',
+//			async: o.async,
+//			url: o.url,
+//			dataType: "text",
+//			//contentType: 'application/json; charset=utf-8',
+//			data: $.param(o.data),     // should be 'field1=value&field2=value'
+//			success: function (data, textStatus, XMLHttpRequest)
+//			{
+//				_ajaxCount--;
+//				//var endtime = new Date();
+//				//$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
-				var $realxml;
-				if ($.browser.msie)
-				{
-					// We have to use third-party jquery.xml.js for Internet Explorer to handle non-DOM XML content
-					$realxml = $.xml(data);
-				}
-				else
-				{
-					$realxml = $(XMLHttpRequest.responseXML).children().first();
-				}
+//				var $realxml;
+//				if ($.browser.msie)
+//				{
+//					// We have to use third-party jquery.xml.js for Internet Explorer to handle non-DOM XML content
+//					$realxml = $.xml(data);
+//				}
+//				else
+//				{
+//					$realxml = $(XMLHttpRequest.responseXML).children().first();
+//				}
 
-				if ($realxml.first().get(0).nodeName === "error")
-				{
-					_handleAjaxError(XMLHttpRequest, {
-						'display': $realxml.CswAttrXml('display'),
-						'type': $realxml.CswAttrXml('type'),
-						'message': $realxml.CswAttrXml('message'),
-						'detail': $realxml.CswAttrXml('detail')
-					}, '');
-					o.error();
-				}
-				else
-				{
-					var auth = tryParseString($realxml.CswAttrXml('authenticationstatus'), 'Unknown');
-					if (!o.formobile) {
-						setExpireTime($realxml.CswAttrXml('timeout'));
-					}
-					
-					_handleAuthenticationStatus({
-						status: auth,
-						success: function () { o.success($realxml) },
-						failure: o.onloginfail,
-						usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
-						usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
-						passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), ''),
-						ForMobile: o.formobile
-					});
-				}
+//				if ($realxml.first().get(0).nodeName === "error")
+//				{
+//					_handleAjaxError(XMLHttpRequest, {
+//						'display': $realxml.CswAttrXml('display'),
+//						'type': $realxml.CswAttrXml('type'),
+//						'message': $realxml.CswAttrXml('message'),
+//						'detail': $realxml.CswAttrXml('detail')
+//					}, '');
+//					o.error();
+//				}
+//				else
+//				{
+//					var auth = tryParseString($realxml.CswAttrXml('authenticationstatus'), 'Unknown');
+//					if (!o.formobile) {
+//						setExpireTime($realxml.CswAttrXml('timeout'));
+//					}
+//					
+//					_handleAuthenticationStatus({
+//						status: auth,
+//						success: function () { o.success($realxml) },
+//						failure: o.onloginfail,
+//						usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
+//						usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
+//						passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), ''),
+//						ForMobile: o.formobile
+//					});
+//				}
 
-			}, // success{}
-			error: function (XMLHttpRequest, textStatus, errorThrown)
-			{
-				_ajaxCount--;
-				//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
-				log("Webservice Request (" + o.url + ") Failed: " + textStatus);
-				o.error();
-			}
-		});                               // $.ajax({
-	} // if(o.url != '')
-} // CswAjaxXml()
+//			}, // success{}
+//			error: function (XMLHttpRequest, textStatus, errorThrown)
+//			{
+//				_ajaxCount--;
+//				//_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+//				log("Webservice Request (" + o.url + ") Failed: " + textStatus);
+//				o.error();
+//			}
+//		});                               // $.ajax({
+//	} // if(o.url != '')
+//} // CswAjaxXml()
 
 function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
 {
@@ -307,7 +311,10 @@ function CswError(errorJson)
 	};
 	if (errorJson) $.extend(e, errorJson);
 
-	var $errorsdiv = $('#ErrorDiv');
+	var $errorsdiv = $('#DialogErrorDiv');
+	if ($errorsdiv.length <= 0) 
+		$errorsdiv = $('#ErrorDiv');
+
 	if ($errorsdiv.length > 0 && isTrue(e.display))
 	{
 		$errorsdiv.CswErrorMessage({ 'type': e.type, 'message': e.message, 'detail': e.detail });
@@ -1059,29 +1066,61 @@ function validateInteger(value)
 } // validateInteger()
 //#endregion Validation
 
+//#region Dates
+
+function ServerDateFormatToJQuery(ServerDateFormat)
+{
+	var ret = ServerDateFormat;
+	ret = ret.replace(/M/g, 'm');
+	ret = ret.replace(/mmm/g, 'M');
+	ret = ret.replace(/yyyy/g, 'yy');
+	return ret;
+}
+function ServerTimeFormatToJQuery(ServerTimeFormat)
+{
+	var ret = ServerTimeFormat;
+	return ret;
+}
+
+//#endregion Dates
+
 //#region Strings
 function startsWith(source, search)
 {
 	return (source.substr(0, search.length) === search);
 }
 
-function getTimeString(date)
+function getTimeString(date, timeformat)
 {
+	var MilitaryTime = false;
+	if (!isNullOrEmpty(timeformat) && timeformat === "H:mm:ss")
+	{
+		MilitaryTime = true;
+	}
+
 	var ret = '';
     var hours = date.getHours();
     var minutes = date.getMinutes();
-	if (minutes < 10)
-	{
-	    minutes = "0" + minutes;
-	}
-	ret = (hours % 12) + ":" + minutes + " ";
-	if (hours > 11)
-	{
-		ret += "PM";
-	} else
-	{
-		ret += "AM";
-	}
+    var seconds = date.getSeconds();
+
+    if (minutes < 10) minutes = "0" + minutes;
+    if (seconds < 10) seconds = "0" + seconds;
+
+    if (MilitaryTime)
+    {
+    	ret = hours + ":" + minutes + ":" + seconds;
+    } 
+	else
+    {
+    	ret = (hours % 12) + ":" + minutes + ":" + seconds + " ";
+    	if (hours > 11)
+    	{
+    		ret += "PM";
+    	} else
+    	{
+    		ret += "AM";
+    	}
+    }
 	return ret;
 }
 //#endregion Strings

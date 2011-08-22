@@ -161,11 +161,11 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[IPFilterRegexPropertyName].AsText );
             }
         }
-        public CswNbtNodePropDate SubscriptionExpirationDate
+		public CswNbtNodePropDateTime SubscriptionExpirationDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[SubscriptionExpirationDatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[SubscriptionExpirationDatePropertyName].AsDateTime );
             }
         }
         public CswNbtNodePropLogical Deactivated

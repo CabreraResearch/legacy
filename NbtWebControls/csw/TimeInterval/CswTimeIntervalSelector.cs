@@ -27,18 +27,25 @@ namespace ChemSW.NbtWebControls
         //private string MonthlyDayPickerRadioGroupName = "_monthlyday";
         private bool _UseCheckChanges = true;
         public bool ReadOnly = false;
+		private CswNbtResources _CswNbtResources;
 
-        public CswTimeIntervalSelector(bool UseCheckChanges)
-        {
-            DataBinding += new EventHandler( CswTimeIntervalSelector_DataBinding );
+        public CswTimeIntervalSelector(CswNbtResources Resources, bool UseCheckChanges)
+		{
+			_CswNbtResources = Resources;
+			DataBinding += new EventHandler( CswTimeIntervalSelector_DataBinding );
             _UseCheckChanges = UseCheckChanges;
         }
 
 
-        private CswRateInterval _RateInterval = new CswRateInterval();
+		private CswRateInterval _RateInterval;
         public CswRateInterval RateInterval
         {
-            get { return _RateInterval; }
+			get
+			{
+				if( _RateInterval == null )
+					_RateInterval = new CswRateInterval( _CswNbtResources );
+				return _RateInterval;
+			}
             set { _RateInterval = value; }
         }
 

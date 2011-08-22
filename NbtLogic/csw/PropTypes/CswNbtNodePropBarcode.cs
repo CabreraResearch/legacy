@@ -153,8 +153,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _SequenceNumberSubField.ToXmlNodeName( true ), SequenceNumber ) );
-            ParentObject.Add( new JProperty( _BarcodeSubField.ToXmlNodeName( true ), Barcode ) );
+            ParentObject[_SequenceNumberSubField.ToXmlNodeName( true )] = SequenceNumber;
+            ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = Barcode;
         }
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )

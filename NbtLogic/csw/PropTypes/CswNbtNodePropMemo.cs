@@ -100,9 +100,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _TextSubField.ToXmlNodeName( true ), Text ) );
-            ParentObject.Add( new JProperty( "rows", Rows.ToString() ) );
-            ParentObject.Add( new JProperty( "columns", Columns.ToString() ) );
+            ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
+            ParentObject["rows"] = Rows.ToString();
+            ParentObject["columns"] = Columns.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

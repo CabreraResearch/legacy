@@ -1,36 +1,42 @@
-﻿; (function ($) {
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+
+; (function ($) {
         
-    var PluginName = 'CswFieldTypeStatic';
+    var pluginName = 'CswFieldTypeStatic';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function(o) {
                 
             var $Div = $(this);
             $Div.contents().remove();
                  
-            var Text = o.$propxml.children('text').text().trim();
-            var Columns = parseInt( o.$propxml.children('text').CswAttrXml('columns') );
-            var Rows = parseInt( o.$propxml.children('text').CswAttrXml('rows') );
+            var text = tryParseString(o.propData.text).trim();
+            var columns = parseInt( o.propData.columns);
+            var rows = parseInt( o.propData.rows);
 
             var overflow = 'auto';
             var width = '';
             var height = '';
-            if(Columns > 0 && Rows > 0)
+            if(columns > 0 && rows > 0)
             {
                 overflow = 'scroll';
-                width = Math.round( Columns + 2 - ( Columns / 2.25)) + 'em';
-                height = Math.round( Rows + 2.5 + ( Rows / 5)) + 'em';
+                width = Math.round( columns + 2 - ( columns / 2.25)) + 'em';
+                height = Math.round( rows + 2.5 + ( rows / 5)) + 'em';
             }
-            else if(Columns > 0)
+            else if(columns > 0)
             {
-                width = Math.round( Columns - ( Columns / 2.25)) + 'em';
+                width = Math.round( columns - ( columns / 2.25)) + 'em';
             }
-            else if(Rows > 0)
+            else if(rows > 0)
             {
-                height = Math.round( Rows + 0.5 + ( Rows / 5)) + 'em';
+                height = Math.round( rows + 0.5 + ( rows / 5)) + 'em';
             }
             
-            var $StaticDiv = $('<div class="staticvalue" style="overflow: '+ overflow +'; width: '+ width +'; height: '+ height +';">' + Text + '</div>' )
+            var $StaticDiv = $('<div class="staticvalue" style="overflow: '+ overflow +'; width: '+ width +'; height: '+ height +';">' + text + '</div>' )
                             .appendTo($Div); 
         },
         save: function(o) {
@@ -46,7 +52,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

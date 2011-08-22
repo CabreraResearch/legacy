@@ -8,6 +8,7 @@
 {
     border: 1px solid #aaaaaa;
     cursor: move;
+    padding: 10px;
 }
 .CswLayoutTable_dragcell
 {

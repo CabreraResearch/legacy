@@ -1,5 +1,7 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 ; (function ($) {
 	var PluginName = "CswWizard";
@@ -95,11 +97,11 @@
 															});
 				var $finishbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_finish',
 															'enabledText': o.FinishText,
-															'onclick': function() { o.onFinish($table); }
+															'onclick': function() { if(isFunction(o.onFinish)) o.onFinish($table); }
 															});
 				var $cancelbtn = $bcell12.CswButton('init', { 'ID': o.ID + '_cancel',
 															'enabledText': 'Cancel',
-															'onclick': function() { o.onCancel($table); }
+															'onclick': function() { if(isFunction(o.onCancel)) o.onCancel($table); }
 															});
 
 				_selectStep($table, o.SelectedStep);
