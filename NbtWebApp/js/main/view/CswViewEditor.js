@@ -751,6 +751,10 @@
                     "plugins": ["themes", "html_data", "ui", "types", "crrm"]
                 }); // tree
             
+            if (stepno >= CswViewEditor_WizardSteps.relationships.step && stepno <= CswViewEditor_WizardSteps.properties.step) {
+                bindDeleteBtns(stepno);
+            }
+            
             if (stepno === CswViewEditor_WizardSteps.filters.step) {
                 bindViewPropFilterBtns(stepno);
             }
@@ -761,6 +765,21 @@
             return $tree;
         } // _makeViewTree()
         
+        function bindDeleteBtns(stepno) {
+            $('.' + viewEditClasses.vieweditor_deletespan.name).each(function() {
+                var $span = $(this);
+                var arbid = $span.CswAttrXml('arbid');
+                var $btn = $span.find('#' + arbid + '_delete');
+                $btn.bind('click', function() {
+                    var objUtil = new ObjectHelper(currentViewJson);
+                    var parentObj = objUtil.find('arbitraryid', arbid);
+                    delete parentObj[arbid];
+
+                    _makeViewTree(stepno);
+                    return CswImageButton_ButtonType.None;
+                });
+            });
+        }
         
         function bindViewPropFilterBtns(stepno) {
             $('.' + viewEditClasses.vieweditor_addfilter.name).each(function() {
@@ -964,21 +983,12 @@
             return $ret;
         }
         
-        function makeDeleteSpan(arbid, stepno) {
+        function makeDeleteSpan(arbid) {
             var $td = $('<span style="" class="' + viewEditClasses.vieweditor_deletespan.name + '" arbid="' + arbid + '"></span>');
             $td.CswImageButton({
                 ButtonType: CswImageButton_ButtonType.Delete,
                 AlternateText: 'Delete',
-                ID: arbid + '_delete',
-                onClick: function($ImageDiv) {
-                    var $span = $ImageDiv.parent();
-                    var objUtil = new ObjectHelper(currentViewJson);
-                    var parentObj = objUtil.find('arbitraryid', arbid);
-                    delete parentObj[$span.CswAttrDom('arbid')];
-                    //currentViewJson.find('[arbitraryid="' + $span.CswAttrDom('arbid') +'"]').remove();
-                    _makeViewTree(stepno);
-                    return CswImageButton_ButtonType.None;
-                }
+                ID: arbid + '_delete'
             });
             return $td;
         }
