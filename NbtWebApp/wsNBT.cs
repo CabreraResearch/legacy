@@ -1662,7 +1662,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
+                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
                     CswNbtView View = _getView( ViewId );
                     ReturnVal = ws.getSearchJson( View, SelectedNodeTypeIdNum, NodeKey );
                 }
@@ -1694,7 +1694,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
+                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
                     ReturnVal = ( ws.getSearchProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey ) );
                 }
 

@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../pagecmp/CswWizard.js" />
+/// <reference path="CswViewPropFilter.js" />
 
 ;  (function ($) { /// <param name="$" type="jQuery" />
 
@@ -35,6 +36,16 @@
             properties: { name: 'properties', next: '' },
             filters: { name: 'filters', next: '' }
         };
+
+        var viewEditClasses = {
+            vieweditor_viewrootlink: { name: 'vieweditor_viewrootlink' },
+            vieweditor_viewproplink: { name: 'vieweditor_viewproplink' },
+            vieweditor_viewfilterlink: { name: 'vieweditor_viewfilterlink' }, 
+            vieweditor_addfilter: { name: 'vieweditor_addfilter' },
+            vieweditor_deletespan: { name: 'vieweditor_deletespan' },
+            vieweditor_childselect: { name: 'vieweditor_childselect' }
+        };
+        
         childPropNames.childrelationships.next = childPropNames.properties;
         childPropNames.properties.next = childPropNames.filters;
         
@@ -89,8 +100,8 @@
         _getViewsGrid(onViewGridSuccess, o.viewid);
 
         var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: '100%' });
-        var $div1_btntbl_cell11 = $div1_btntbl.CswTable('cell', 1, 1)
-        var $div1_btntbl_cell12 = $div1_btntbl.CswTable('cell', 1, 2)
+        var $div1_btntbl_cell11 = $div1_btntbl.CswTable('cell', 1, 1);
+        var $div1_btntbl_cell12 = $div1_btntbl.CswTable('cell', 1, 2);
         $div1_btntbl_cell12.CswAttrDom('align', 'right');
         var $allcheck_div = $('<div></div>').appendTo($div1_btntbl_cell12);
 
@@ -739,12 +750,49 @@
                     },
                     "plugins": ["themes", "html_data", "ui", "types", "crrm"]
                 }); // tree
-
+            
+            if (stepno === CswViewEditor_WizardSteps.filters.step) {
+                bindViewPropFilterBtns(stepno);
+            }
+            
             if (stepno === CswViewEditor_WizardSteps.tuning.step) {
                 makeTuningStep($content);
             }
             return $tree;
         } // _makeViewTree()
+        
+        
+        function bindViewPropFilterBtns(stepno) {
+            $('.' + viewEditClasses.vieweditor_addfilter.name).each(function() {
+                var $span = $(this);
+                var arbitraryId = $span.CswAttrXml('proparbid');
+
+                var $btn = $span.find('#' + arbitraryId + '_addfiltbtn');
+                $btn.bind('click', function() {
+                    var objHelper = new ObjectHelper(currentViewJson);
+                
+                    var propJson = objHelper.find('arbitraryid', arbitraryId);
+                    
+                    var $tbl = $span.find('#' + o.ID + '_' + arbitraryId + '_propfilttbl');
+                    var newFiltJson = $tbl.CswViewPropFilter('getFilterJson', {
+                        ID: o.ID,
+                        $parent: $span,
+                        filtJson: propJson,
+                        proparbitraryid: arbitraryId,
+                        allowNullFilterValue: true
+                    });
+
+                    $tbl.CswViewPropFilter('makeFilter', {
+                        viewJson: currentViewJson,
+                        filtJson: newFiltJson,
+                        onSuccess: function(newPropJson) {
+                            propJson = newPropJson;
+                            _makeViewTree(stepno);
+                        } // onSuccess
+                    }); // CswViewPropFilter
+                });
+            }); 
+        }
         
         function viewJsonHtml(stepno, viewJson) {
             var types = { };
@@ -765,7 +813,7 @@
             var name = itemJson.viewname;
             var rel = "root";
             types.root = { icon: { image: tryParseString(itemJson.iconfilename) } };
-            var linkclass = 'vieweditor_viewrootlink';
+            var linkclass = viewEditClasses.vieweditor_viewrootlink.name;
 
             var $ret = makeViewListItem(arbid, linkclass, name, false, false, stepno, childPropNames.root, rel);
             return $ret;
@@ -786,7 +834,7 @@
             var rel = tryParseString(itemJson.secondtype) + '_' + tryParseString(itemJson.secondid);
             var skipme = false;
             var skipchildoptions = (stepno <= CswViewEditor_WizardSteps.relationships.step);
-            var linkclass = 'vieweditor_viewrellink';
+            var linkclass = viewEditClasses.vieweditor_viewrootlink.name;
             var showDelete = (stepno === CswViewEditor_WizardSteps.relationships.step);
             types[rel] = { icon: { image: tryParseString(itemJson.secondiconfilename) } };
             
@@ -840,16 +888,16 @@
                 var rel = 'property';
                 var skipme = (stepno <= CswViewEditor_WizardSteps.relationships.step);
                 var skipchildoptions = (stepno <= CswViewEditor_WizardSteps.properties.step);
-                var linkclass = 'vieweditor_viewproplink';
+                var linkclass = viewEditClasses.vieweditor_viewproplink.name;
                 var showDelete = (stepno === CswViewEditor_WizardSteps.properties.step);
                 if (!isNullOrEmpty(name)) {
                     $ret = makeViewListItem(arbid, linkclass, name, showDelete, skipme, stepno, childPropNames.properties, rel);
                 }
                 if (!isNullOrEmpty($ret) && !skipchildoptions) {
+                    var $filtUl = $('<ul></ul>').appendTo($ret);
                     if (itemJson.hasOwnProperty(childPropNames.filters.name)) {
                         var filterJson = itemJson[childPropNames.filters.name];
                         if (!isNullOrEmpty(filterJson)) {
-                            var $filtUl = $('<ul></ul>').appendTo($ret);
                             for (var filter in filterJson) {
                                 if (filterJson.hasOwnProperty(filter)) {
                                     var thisFilt = filterJson[filter];
@@ -858,7 +906,10 @@
                             }
                         }
                     }
-                    $ret.append( makeViewPropFilterSpan(arbid, stepno) );            
+                    if ($filtUl.children().length === 0) {
+                        $filtUl.append(makeViewPropertyFilterHtml({}, stepno, types, arbid));
+                    }
+                    log($filtUl);
                 }
                 types.property = { icon: { image: "Images/view/property.gif" } };
             }
@@ -867,75 +918,38 @@
         
         function makeViewPropertyFilterHtml(itemJson, stepno, types, propArbId) {
             var $ret = $('<li></li>');
-            if(!isNullOrEmpty(itemJson)) {
-                var arbid = itemJson.arbitraryid;
-                //var nodename = itemJson.nodename;
-                var name = itemJson.subfieldname + ' ' + itemJson.filtermode + ' ' + itemJson.value;
-                var rel = 'filter';
-                var skipme = (stepno <= CswViewEditor_WizardSteps.properties.step);
-                var linkclass = 'vieweditor_viewfilterlink';
-                var showDelete = (stepno === CswViewEditor_WizardSteps.filters.step);
-                $ret = makeViewListItem(arbid, linkclass, name, showDelete, skipme, '', rel);
-                if (stepno === CswViewEditor_WizardSteps.filters.step) {
-                    $ret.append( makeViewPropFilterSpan(propArbId, stepno) );
+            if (stepno === CswViewEditor_WizardSteps.filters.step) {
+                $ret.append(makeViewPropFilterSpan(propArbId, itemJson));
+                if (!isNullOrEmpty(itemJson)) {
+                    $ret.append(makeDeleteSpan(propArbId, stepno));
                 }
-                types.filter = { icon: { image: "Images/view/filter.gif" } };
-                
             }
+            types.filter = { icon: { image: "Images/view/filter.gif" } };
             return $ret;            
         }
 
-        function makeViewPropFilterSpan(propArbId, stepno) {
-            var $span = $('<span class="vieweditor_addfilter" proparbid="' + propArbId + '"></span>');
-            var $tbl = $span.CswTable({ 'ID': o.ID + '_propfilttbl' });
+        function makeViewPropFilterSpan(propArbId, filterJson) {
+            var $span = $('<span class="' + viewEditClasses.vieweditor_addfilter.name + '" proparbid="' + propArbId + '"></span>');
+            var $tbl = $span.CswTable({ 'ID': o.ID + '_' + propArbId + '_propfilttbl' });
             $tbl.css('display', 'inline-table');
             $tbl.CswViewPropFilter('init', {
                 viewJson: currentViewJson,
+                ID: o.ID + '_' + propArbId + '_propfilttbl',
+                propData: filterJson,
                 proparbitraryid: propArbId,
-                filtarbitraryid: '',
-                viewbuilderpropid: '',
-                ID: o.ID,
                 propRow: 1,
                 firstColumn: 1,
                 includePropertyName: false,
-                selectedSubfieldVal: '',
-                selectedFilterVal: '',
                 autoFocusInput: false
             });
 
-            $tbl.CswTable('cell', 1, 5).CswButton('init', {
-                'ID': 'addfiltbtn',
-                'prefix': o.ID,
-                'enabledText': 'Add',
-                'disabledText': 'Adding',
-                'onclick': function() {
-                    var objHelper = new ObjectHelper(currentViewJson);
-                    var arbitraryId = $span.CswAttrDom('proparbid');
-                    var arbProp = objHelper.find('arbitraryid', arbitraryId);
-                    if (arbProp.hasOwnProperty('fieldtype')) {
-                        var fieldType = arbProp.fieldtype;
-                    }
-                    var filtJson = $tbl.CswViewPropFilter('getFilterJson', {
-                        ID: o.ID,
-                        $parent: $span,
-                        fieldtype: fieldType,
-                        proparbitraryid: propArbId,
-                        allowNullFilterValue: true
-                    });
-
-                    var filterJson = $tbl.CswViewPropFilter('makeFilter', {
-                        viewJson: currentViewJson,
-                        filtJson: filtJson,
-                        onSuccess: function(filterJson) {
-                            var objHelper = new ObjectHelper(currentViewJson);
-                            var propObj = objHelper.find('arbitraryid', propArbId);
-                            propObj.filters[filterJson.arbitraryid] = filterJson;
-
-                            _makeViewTree(stepno);
-                        } // onSuccess
-                    }); // CswViewPropFilter
-                } // onClick
-            }); // CswButton
+            if (isNullOrEmpty(filterJson)) {
+                $tbl.CswTable('cell', 1, 5).CswButton('init', {
+                    ID: propArbId + '_addfiltbtn',
+                    enabledText: 'Add',
+                    disabledText: 'Adding'
+                }); // CswButton
+            }
             return $span;
         }
         
@@ -952,7 +966,7 @@
         }
         
         function makeDeleteSpan(arbid, stepno) {
-            var $td = $('<span style="" class="vieweditor_deletespan" arbid="' + arbid + '"></span>');
+            var $td = $('<span style="" class="' + viewEditClasses.vieweditor_deletespan.name + '" arbid="' + arbid + '"></span>');
             $td.CswImageButton({
                 ButtonType: CswImageButton_ButtonType.Delete,
                 AlternateText: 'Delete',
@@ -967,6 +981,7 @@
                     return CswImageButton_ButtonType.None;
                 }
             });
+            return $td;
         }
         
         function getTreeDiv(stepno) {
@@ -992,7 +1007,7 @@
             var $select = '';
             
             if (canAddChildSelect(stepno,propName,arbid)) {
-                $select = $('<ul><li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="vieweditor_childselect"></select></li></ul>');
+                $select = $('<ul><li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="' + viewEditClasses.vieweditor_childselect.name + '"></select></li></ul>');
 
                 var dataJson = {
                     StepNo: stepno,

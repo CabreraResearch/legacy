@@ -1,20 +1,22 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../_Global.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
-    var PluginName = "CswSelect";
+    var pluginName = "CswSelect";
     
     var methods = {
 	
 		'init': function(options) 
 		{
             var o = {
-                'ID': '',
-                'selected': '',
-                'values': [{value: '', display: ''}],
-                'cssclass': '',
-                'onChange': function () {}
+                ID: '',
+                selected: '',
+                values: [{value: '', display: ''}],
+                cssclass: '',
+                onChange: null //function () {}
             };
             if (options) $.extend(o, options);
 
@@ -29,8 +31,7 @@
             if (!isNullOrEmpty( o.cssclass )) $select.addClass(o.cssclass);
             if (!isNullOrEmpty( o.value )) $select.text( o.value );
 
-            for(var key in o.values)
-            {
+            for (var key in o.values) {
                 if (o.values.hasOwnProperty(key)) {
                     var value = o.values[key].value;
                     var display = o.values[key].display;
@@ -42,7 +43,7 @@
                 }
             }
             
-            if( !isNullOrEmpty( o.onChange ) ) {
+            if (isFunction(o.onChange)) {
                  $select.bind('change', function () {
                     var $this = $(this);
                     o.onChange($this);
@@ -61,7 +62,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
 		}    
   
 	};

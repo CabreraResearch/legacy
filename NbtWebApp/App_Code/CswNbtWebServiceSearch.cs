@@ -36,14 +36,6 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public CswNbtWebServiceSearch( CswNbtResources CswNbtResources, string Prefix )
-        {
-            _CswNbtResources = CswNbtResources;
-            _ViewBuilder = new wsViewBuilder( _CswNbtResources, _ProhibittedFieldTypes, Prefix );
-            //wsViewBuilder.CswViewBuilderProp 
-
-        }//ctor
-
         public CswNbtWebServiceSearch( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
@@ -153,13 +145,13 @@ namespace ChemSW.Nbt.WebServices
             //NodeTypeSearch.Add( SelectOptions );
 
             JObject NodeTypeProps;
-            NodeTypeProps = null != SelectedNodeType ? 
-                _ViewBuilder.getNodeTypeProps( SelectedNodeType ) : 
+            NodeTypeProps = null != SelectedNodeType ?
+                _ViewBuilder.getNodeTypeProps( SelectedNodeType ) :
                 _ViewBuilder.getNodeTypeProps( SearchOC );
 
             JObject NodeTypeSearch = new JObject( new JProperty( "searchtype", "nodetypesearch" ),
                                             new JProperty( "nodetypes",
-                                                new JObject( 
+                                                new JObject(
                                                         NodeTypeSelect,
                                                         ObjectClassSelect ) ),
                                             new JProperty( "props", NodeTypeProps )
