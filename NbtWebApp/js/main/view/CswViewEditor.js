@@ -772,9 +772,8 @@
                 var $btn = $span.find('#' + arbid + '_delete');
                 $btn.bind('click', function() {
                     var objUtil = new ObjectHelper(currentViewJson);
-                    var parentObj = objUtil.find('arbitraryid', arbid);
-                    delete parentObj[arbid];
-
+                    objUtil.remove('arbitraryid', arbid);
+                    
                     _makeViewTree(stepno);
                     return CswImageButton_ButtonType.None;
                 });

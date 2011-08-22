@@ -339,7 +339,49 @@ function ObjectHelper(obj) {
         return ret;
     }
     
+    function recursiveDelete(parentObj, key, value) {
+        var ret = false;
+        if (jQuery.isPlainObject(parentObj)) {
+            for (var childKey in parentObj) {
+                if (parentObj.hasOwnProperty(childKey)) {
+                    var childObj = parentObj[childKey];
+                    if (childObj.hasOwnProperty(key) && childObj[key] === value) {
+                        delete parentObj[childKey];
+                        ret = true;
+                        break;
+                    } 
+                    else if (false === ret && jQuery.isPlainObject(childObj)) {
+                        ret = recursiveDelete(childObj, key, value);
+                    }
+                }
+            }
+        }
+        return ret;
+    }
+    
+    function remove(key, value) {
+        var ret = false;
+        if (jQuery.isPlainObject(thisObj))
+        {
+            for (var childKey in thisObj) {
+                if (thisObj.hasOwnProperty(childKey)) {
+                    var childObj = thisObj[childKey];
+                    if (childObj.hasOwnProperty(key) && childObj[key] === value) {
+                        delete thisObj[childKey];
+                        ret = true;
+                        break;
+                    } 
+                    else if (false === ret && jQuery.isPlainObject(childObj)) {
+                        ret = recursiveDelete(childObj, key, value);                        
+                    }
+                }
+            }
+        }
+        return ret;
+    }
+    
     this.find = find;
+    this.remove = remove;
     this.obj = thisObj;
 }
 
