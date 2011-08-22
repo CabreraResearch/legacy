@@ -772,6 +772,7 @@
 //			case 'Assign_Tests':
 //				break;
 
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin
 			case 'Create_Inspection':
 				clear({ 'all': true });
 
@@ -787,6 +788,8 @@
 					{
 						clear({ 'all': true });
 						refreshSelected();
+                        // After the new inspection is imported, Phil and Steve want to send the system to Design Mode
+                        window.location = "Design.aspx";
 					},
 					'startingStep': o.ActionOptions.startingStep
 				};

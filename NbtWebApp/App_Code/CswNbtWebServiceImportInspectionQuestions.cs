@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.WebServices
                             NewInspectionName = NewInspectionName.Trim();
                             // Save the new Inspection
                             CswNbtMetaDataObjectClass InspectionObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass);
-                            CswNbtMetaDataNodeType NewInspectionNodeType = _CswNbtResources.MetaData.makeNewNodeType(InspectionObjectClass.ObjectClassId, NewInspectionName, string.Empty);
+                            CswNbtMetaDataNodeType NewInspectionNodeType = _CswNbtResources.MetaData.makeNewNodeType(InspectionObjectClass.ObjectClassId, NewInspectionName, "Fire Extinguisher");
 
                             // Get rid of the automatically created Section in this case
                             _CswNbtResources.MetaData.DeleteNodeTypeTab(NewInspectionNodeType.getNodeTypeTab("Section 1"));
