@@ -81,6 +81,10 @@ foreach my $component (@components)
 	&runCommand("hg pull -u -R ". $repopaths{$component});
 }
 
+# also pull new version of Daily Build Tools
+&runCommand("hg pull -u -R c:\kiln\DailyBuildTools");
+
+
 #---------------------------------------------------------------------------------
 # 2. update versions
 
