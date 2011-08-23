@@ -81,6 +81,10 @@ foreach my $component (@components)
 	&runCommand("hg pull -u -R ". $repopaths{$component});
 }
 
+# also pull new version of Daily Build Tools
+&runCommand("hg pull -u -R c:\kiln\DailyBuildTools");
+
+
 #---------------------------------------------------------------------------------
 # 2. update versions
 
@@ -92,7 +96,7 @@ my $assemblyname = <ASSEMBLYFILE>;
 close( ASSEMBLYFILE );
 $assemblyname =~ /^(\w+)\s?.*$/;
 my $releasename = $1;
-my $assemblyno = $releasename ."_". $datestr .".". $increment"; 
+my $assemblyno = $releasename ."_". $datestr .".". $increment; 
 
 foreach my $component (@components)
 {
