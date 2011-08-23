@@ -92,14 +92,16 @@
 				var $whitesel = $('<select id="' + o.ID + '_white"></select>')
 									.appendTo($edittable.CswTable('cell', 4, 2))
 									.append('<option value=""></option>')
-									.append('<option value="OX">OX</option>')
-									.append('<option value="W">W</option>')
-									.append('<option value="COR">COR</option>')
+									.append('<option value="ACID">ACID</option>')
+									.append('<option value="ALK">ALK</option>')
 									.append('<option value="BIO">BIO</option>')
-									.append('<option value="POI">POI</option>')
-									.append('<option value="RAD">RAD</option>')
+									.append('<option value="COR">COR</option>')
 									.append('<option value="CRYO">CRYO</option>')
 									.append('<option value="CYL">CYL</option>')
+									.append('<option value="OX">OX</option>')
+									.append('<option value="POI">POI</option>')
+									.append('<option value="RAD">RAD</option>')
+									.append('<option value="W">W</option>')
 									.change(function() {
 										setValue($whitediv, $whitesel.val());
 									});
