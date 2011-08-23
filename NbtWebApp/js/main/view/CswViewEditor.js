@@ -750,7 +750,7 @@
                     "plugins": ["themes", "html_data", "ui", "types", "crrm"]
                 }); // tree
             
-            if (stepno >= CswViewEditor_WizardSteps.relationships.step && stepno <= CswViewEditor_WizardSteps.properties.step) {
+            if (stepno >= CswViewEditor_WizardSteps.relationships.step && stepno <= CswViewEditor_WizardSteps.filters.step) {
                 bindDeleteBtns(stepno);
             }
             
@@ -936,8 +936,9 @@
             var $ret = $('<li></li>');
             if (stepno === CswViewEditor_WizardSteps.filters.step) {
                 if (!isNullOrEmpty(itemJson)) {
-                    $ret.append(makeViewPropFilterStaticSpan(propArbId, itemJson));
-                    $ret.append(makeDeleteSpan(propArbId, stepno));
+                    var filtArbitraryId = tryParseString(itemJson.arbitraryid);
+                    $ret.append(makeViewPropFilterStaticSpan(propArbId, itemJson, filtArbitraryId));
+                    $ret.append(makeDeleteSpan(filtArbitraryId, stepno));
                 } else {
                     $ret.append(makeViewPropFilterAddSpan(propArbId));                    
                 }
@@ -946,14 +947,13 @@
             return $ret;            
         }
 
-        function makeViewPropFilterStaticSpan(propArbId, filterJson) {
-            var $span = $('<span class="' + viewEditClasses.vieweditor_addfilter.name + '" proparbid="' + propArbId + '"></span>');
-            var $tbl = $span.CswTable({ 'ID': o.ID + '_' + propArbId + '_propfilttbl' });
+        function makeViewPropFilterStaticSpan(propArbId, filterJson, filtArbitraryId) {
+            var $span = $('<span class="' + viewEditClasses.vieweditor_addfilter.name + '" arbid="' + filtArbitraryId + '"></span>');
+            var $tbl = $span.CswTable({ 'ID': o.ID + '_' + filtArbitraryId + '_propfilttbl' });
             $tbl.css('display', 'inline-table');
 
-            var filtArbitraryId = tryParseString(filterJson.arbitraryid);
             $tbl.CswViewPropFilter('add', {
-                ID: o.ID + '_' + propArbId + '_propfilttbl',
+                ID: o.ID + '_' + filtArbitraryId + '_propfilttbl',
                 propsData: filterJson,
                 proparbitraryid: propArbId,
                 filterarbitraryid: filtArbitraryId,

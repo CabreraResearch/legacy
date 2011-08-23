@@ -303,23 +303,23 @@
 			    
 
 			        //Subfield
-			        $subfieldCell.CswSpan('init', {
+			        $subfieldCell.CswSpan('init', { 
 			                            ID: defaultSubFieldId,
 			                            value: selectedSubfield,
 			                            cssclass: ViewBuilder_CssClasses.default_filter.name })
-    			                 .CswAttrDom({ align: "center" });
+    			                 .css({ align: "center" });
 			        //Selected Filter
 			        $filtersCell.CswSpan('init', {
 			                            ID: filtersOptionsId,
 			                            value: selectedFilterMode,
 			                            cssclass: ViewBuilder_CssClasses.filter_select.name })
-    			                 .CswAttrDom({ align: "center" });			        
+    			                 .css({ align: "center" });
 			        //Filter Input
 			        $propFilterValueCell.CswSpan('init', {
 			                            ID: filtValInputId,
 			                            value: filterValue,
 			                            cssclass: ViewBuilder_CssClasses.default_filter.name })
-    			                 .CswAttrDom({ align: "center" });			        
+    			                 .css({ align: "center" });
 			}
 			return $propFilterTable;
 		}, // 'add': function(options) {
