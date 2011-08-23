@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Security
         {
             AuthenticationStatus ReturnVal = AuthenticationStatus.Failed;
             _User = null;
-            
+
             CswNbtNode UserAsNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username );
             if( UserAsNode != null )
             {
@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Security
                     if( UserObjClass.EncryptedPassword == encryptedpassword )
                     {
                         UserObjClass.clearFailedLoginCount();
-                        UserObjClass.LastLogin.DateValue = DateTime.Now;
+                        UserObjClass.LastLogin.DateTimeValue = DateTime.Now;
                         _User = UserObjClass;
                         ReturnVal = AuthenticationStatus.Authenticated;
                     }
