@@ -773,7 +773,6 @@
                 $btn.bind('click', function() {
                     var objUtil = new ObjectHelper(currentViewJson);
                     objUtil.remove('arbitraryid', arbid);
-                    
                     _makeViewTree(stepno);
                     return CswImageButton_ButtonType.None;
                 });
@@ -919,7 +918,7 @@
                             for (var filter in filterJson) {
                                 if (filterJson.hasOwnProperty(filter)) {
                                     var thisFilt = filterJson[filter];
-                                    $filtUl.append(makeViewPropertyFilterHtml(thisFilt, stepno, types, arbid));            
+                                    $filtUl.append(makeViewPropertyFilterHtml(thisFilt, stepno, types, arbid, true));            
                                 }
                             }
                         }
@@ -933,10 +932,10 @@
             return $ret;
         }
         
-        function makeViewPropertyFilterHtml(itemJson, stepno, types, propArbId) {
+        function makeViewPropertyFilterHtml(itemJson, stepno, types, propArbId, readOnly) {
             var $ret = $('<li></li>');
             if (stepno === CswViewEditor_WizardSteps.filters.step) {
-                $ret.append(makeViewPropFilterSpan(propArbId, itemJson));
+                $ret.append(makeViewPropFilterSpan(propArbId, itemJson, readOnly));
                 if (!isNullOrEmpty(itemJson)) {
                     $ret.append(makeDeleteSpan(propArbId, stepno));
                 }
@@ -945,7 +944,7 @@
             return $ret;            
         }
 
-        function makeViewPropFilterSpan(propArbId, filterJson) {
+        function makeViewPropFilterSpan(propArbId, filterJson, readOnly) {
             var $span = $('<span class="' + viewEditClasses.vieweditor_addfilter.name + '" proparbid="' + propArbId + '"></span>');
             var $tbl = $span.CswTable({ 'ID': o.ID + '_' + propArbId + '_propfilttbl' });
             $tbl.css('display', 'inline-table');
@@ -953,6 +952,7 @@
                 viewJson: currentViewJson,
                 ID: o.ID + '_' + propArbId + '_propfilttbl',
                 propData: filterJson,
+                readOnly: readOnly,
                 proparbitraryid: propArbId,
                 propRow: 1,
                 firstColumn: 1,

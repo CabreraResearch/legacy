@@ -186,21 +186,17 @@ namespace ChemSW.Nbt.WebServices
                 ParentObj["metadatatypename"] = ViewBuilderProp.MetaDataTypeName;
                 ParentObj["fieldtype"] = ViewBuilderProp.FieldType.FieldType.ToString();
                 ParentObj["proparbitraryid"] = ViewBuilderProp.ViewProp.ArbitraryId;
-                ParentObj["filtarbitraryid"] = ( null != Filter ) ? Filter.ArbitraryId : string.Empty;
+                ParentObj["filtarbitraryid"] = string.Empty;
+                ParentObj["defaultsubfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
+                ParentObj["defaultfilter"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.DefaultFilterMode.ToString();
 
-                CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode = ViewBuilderProp.FieldTypeRule.SubFields.Default.DefaultFilterMode;
                 if( null != Filter )
                 {
-                    DefaultFilterMode = Filter.FilterMode;
+                    ParentObj["filtervalue"] = Filter.Value;
+                    ParentObj["filtarbitraryid"] = Filter.ArbitraryId;
+                    ParentObj["defaultsubfield"] = Filter.SubfieldName.ToString();
+                    ParentObj["defaultfilter"] = Filter.FilterMode.ToString();
                 }
-                ParentObj["defaultfilter"] = DefaultFilterMode.ToString();
-
-                CswNbtSubField.SubFieldName DefaultSubField = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name;
-                if( null != Filter )
-                {
-                    DefaultSubField = Filter.SubfieldName;
-                }
-                ParentObj["defaultsubfield"] = DefaultSubField.ToString();
 
                 ParentObj["subfields"] = new JObject();
 
@@ -234,7 +230,6 @@ namespace ChemSW.Nbt.WebServices
         {
             if( null != ViewBuilderProp )
             {
-                CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = ViewBuilderProp.FieldType.FieldType;
                 foreach( CswNbtViewPropertyFilter Filter in PropFilters )
                 {
                     JObject PropObj = new JObject();
@@ -291,7 +286,7 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
-        public JObject getVbProp( CswNbtView View, string ViewPropArbitraryId )
+        public JObject getVbProp( CswNbtView View, string ViewPropArbitraryId, CswNbtViewPropertyFilter PropFilter = null )
         {
             JObject Ret = new JObject();
             if( false == string.IsNullOrEmpty( ViewPropArbitraryId ) )
@@ -304,7 +299,7 @@ namespace ChemSW.Nbt.WebServices
                     Int32 NodeTypeOrObjectClassId = VbProp.MetaDataPropId;
                     if( Int32.MinValue != NodeTypeOrObjectClassId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
                     {
-                        _getVbPropData( Ret, VbProp );
+                        _getVbPropData( Ret, VbProp, PropFilter );
                     }
                 }
             }
@@ -434,7 +429,7 @@ namespace ChemSW.Nbt.WebServices
                 bool FilterUpdated = makeViewPropFilter( ViewPropFilt, FilterProp );
                 if( FilterUpdated )
                 {
-                    Ret = getVbProp( View, ViewPropFilt.Parent.ArbitraryId );
+                    Ret = getVbProp( View, ViewPropFilt.Parent.ArbitraryId, ViewPropFilt );
                 }
             }
             return Ret;
