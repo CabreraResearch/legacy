@@ -832,7 +832,7 @@
         function makeViewRootHtml(stepno, itemJson, types) {
             var arbid = 'root';
             var name = itemJson.viewname;
-            var rel = "root";
+            var rel = 'root';
             types.root = { icon: { image: tryParseString(itemJson.iconfilename) } };
             var linkclass = viewEditClasses.vieweditor_viewrootlink.name;
 
@@ -946,9 +946,11 @@
                         }
                     }
                 }
-                var $filtBuilderLi = makeViewPropertyFilterHtml(null, stepno, types, arbid);
-                if (false === isNullOrEmpty($filtBuilderLi)) {
-                    $filtUl.append($filtBuilderLi);
+                if (stepno !== CswViewEditor_WizardSteps.tuning.step) {
+                    var $filtBuilderLi = makeViewPropertyFilterHtml(null, stepno, types, arbid);
+                    if (false === isNullOrEmpty($filtBuilderLi)) {
+                        $filtUl.append($filtBuilderLi);
+                    }
                 }
                 if ($filtUl.children().length > 0) {
                     $ret.append($filtUl);
@@ -962,24 +964,33 @@
             var $ret = null;
             if (stepno >= CswViewEditor_WizardSteps.filters.step) {
                 $ret = $('<li></li>');
+                var rel = 'filter';
                 if (!isNullOrEmpty(itemJson)) {
                     var filtArbitraryId = tryParseString(itemJson.arbitraryid);
-                    $ret.append(makeViewPropFilterStaticSpan(propArbId, itemJson, filtArbitraryId));
-                    $ret.append(makeDeleteSpan(filtArbitraryId, stepno));
+                    if (stepno === CswViewEditor_WizardSteps.filters.step) {
+                        var selectedSubfield = tryParseString(itemJson.subfield);
+			            var selectedFilterMode = tryParseString(itemJson.filtermode);
+			            var filterValue = tryParseString(itemJson.value);
+                        var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
+                        $ret.append(makeViewListItem(filtArbitraryId, viewEditClasses.vieweditor_addfilter.name, name, false, stepno, childPropNames.filters, rel));
+                    } else {
+                        $ret.append(makeViewPropFilterStaticSpan(propArbId, itemJson, filtArbitraryId, rel));
+                        $ret.append(makeDeleteSpan(filtArbitraryId, stepno));
+                    }
                 } else {
-                    $ret.append(makeViewPropFilterAddSpan(propArbId));                    
+                    $ret.append(makeViewPropFilterAddSpan(propArbId, rel));                    
                 }
             }
             types.filter = { icon: { image: "Images/view/filter.gif" } };
             return $ret;            
         }
 
-        function makeViewPropFilterStaticSpan(propArbId, filterJson, filtArbitraryId) {
+        function makeViewPropFilterStaticSpan(propArbId, filterJson, filtArbitraryId, rel) {
             var $span = $('<span class="' + viewEditClasses.vieweditor_addfilter.name + '" arbid="' + filtArbitraryId + '"></span>');
             var $tbl = $span.CswTable({ 'ID': o.ID + '_' + filtArbitraryId + '_propfilttbl' });
             $tbl.css('display', 'inline-table');
 
-            $tbl.CswViewPropFilter('add', {
+            $tbl.CswViewPropFilter('static', {
                 ID: o.ID + '_' + filtArbitraryId + '_propfilttbl',
                 propsData: filterJson,
                 proparbitraryid: propArbId,
@@ -993,7 +1004,7 @@
             return $span;
         }
         
-        function makeViewPropFilterAddSpan(propArbId) {
+        function makeViewPropFilterAddSpan(propArbId, rel) {
             var $span = $('<span class="' + viewEditClasses.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
             var $tbl = $span.CswTable({ 'ID': o.ID + '_' + propArbId + '_propfilttbl' });
             $tbl.css('display', 'inline-table');

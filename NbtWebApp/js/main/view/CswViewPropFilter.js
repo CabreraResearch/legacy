@@ -242,7 +242,7 @@
 			}
 		    return $propFilterTable;
 		}, // 'init': function(options) {
-	    'add': function(options) {
+	    'static': function(options) {
 			var o = { 
 				//options
 				propsData: '',
@@ -279,9 +279,9 @@
 					$propSelectCell.CswSpan('init',{ID: propCellId, value: propertyName});
 				}
 
-			    var selectedSubfield = ' ' + tryParseString(propsData.subfield) + ' ';
-			    var selectedFilterMode = ' ' + tryParseString(propsData.filtermode) + ' ';
-			    var filterValue = ' ' + tryParseString(propsData.value) + ' ';
+			    var selectedSubfield = tryParseString(propsData.subfield);
+			    var selectedFilterMode = tryParseString(propsData.filtermode);
+			    var filterValue = tryParseString(propsData.value);
 			    
 			    //Row propRow, Column 4: Subfield Cell
 			    var $subfieldCell = $propFilterTable.CswTable('cell', filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
