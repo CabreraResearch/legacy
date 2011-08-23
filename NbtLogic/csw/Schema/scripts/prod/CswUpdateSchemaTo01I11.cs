@@ -10,15 +10,15 @@ using ChemSW.Nbt.Actions;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01I-10
+    /// Updates the schema to version 01I-11
     /// </summary>
-    public class CswUpdateSchemaTo01I10 : ICswUpdateSchemaTo
+    public class CswUpdateSchemaTo01I11 : ICswUpdateSchemaTo
     {
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
         private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 10 ); } }
-        public CswUpdateSchemaTo01I10( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 11 ); } }
+        public CswUpdateSchemaTo01I11( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
         {
             _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
             _CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
@@ -124,7 +124,7 @@ namespace ChemSW.Nbt.Schema
                                         true);
         }//Update()
 
-    }//class CswUpdateSchemaTo01I10
+    }//class CswUpdateSchemaTo01I11
 
 }//namespace ChemSW.Nbt.Schema
 
