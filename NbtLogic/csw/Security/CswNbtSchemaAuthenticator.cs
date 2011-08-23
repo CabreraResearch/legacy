@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Security
         {
             AuthenticationStatus ReturnVal = AuthenticationStatus.Failed;
             _User = null;
-            
+
             CswNbtNode UserAsNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username );
             if( UserAsNode != null )
             {
