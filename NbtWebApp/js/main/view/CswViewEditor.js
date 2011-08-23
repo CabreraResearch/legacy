@@ -4,6 +4,8 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../pagecmp/CswWizard.js" />
 /// <reference path="CswViewPropFilter.js" />
+/// <reference path="../controls/CswButton.js" />
+/// <reference path="../controls/CswSelect.js" />
 
 ;  (function ($) { /// <param name="$" type="jQuery" />
 
@@ -543,10 +545,9 @@
         {
             var pks = $viewgrid.jqGrid('getCol', o.ColumnViewId, true);
             var rowid = 0;
-            for (var i in pks)
-            {
-                if (pks[i].value.toString() === selectedpk.toString())
-                    rowid = pks[i].id;
+            for (var pk in pks) {
+                if (pks[pk].value.toString() === selectedpk.toString())
+                    rowid = pks[pk].id;
             }
             return rowid;
         }
@@ -577,67 +578,67 @@
                     type: CswInput_Types.checkbox
                 });
 
-                if (viewnodejson.allowdelete.toLowerCase() == 'true') {
+                if (isTrue(viewnodejson.allowdelete)) {
                     $allowdeletingcheck.CswAttrDom('checked', 'true');
                 }
 
                 $table.CswTable('cell', 2, 1).append('Group By');
-                var $groupbyselect = $('<select id="' + o.ID + '_gbs" />')
-                    .appendTo($table.CswTable('cell', 2, 2));
+                var $groupbyselect = $table.CswTable('cell', 2, 2).CswSelect('init', { ID: o.ID + '_gbs' });
+                
                 var jsonData = {
                     Type: viewnodejson.secondtype,
                     Id: viewnodejson.secondid
                 };
-
                 CswAjaxJson({
                         url: o.PropNamesUrl,
                         data: jsonData,
                         success: function(data) {
                             $groupbyselect.empty();
-                            $('<option value="">[None]</option>')
-                                .appendTo($groupbyselect);
-                            for (var propName in data) {
-                                if (data.hasOwnProperty(propName)) {
-                                    var thisProp = data[propName];
+                            var groupOpts = [{ value: 'none', display: '[None]' }];
+                            var groupSel = 'none';
+                            for (var propKey in data) {
+                                if (data.hasOwnProperty(propKey)) {
+                                    var thisProp = data[propKey];
                                     var dataProp = { };
-                                    dataProp[propName] = thisProp;
-                                    var $option = $('<option value="' + thisProp.propid + '">' + propName + '</option>')
-                                        .appendTo($groupbyselect)
-                                        .data('thisPropData', dataProp);
+                                    dataProp[propKey] = thisProp;
+                                    groupOpts.push({ value: thisProp.propid, 
+                                                     display: thisProp.propname, 
+                                                     data: dataProp, 
+                                                     dataName: 'thisPropData' });
                                     if (viewnodejson.groupbypropid === thisProp.propid &&
                                         viewnodejson.groupbyproptype === thisProp.proptype &&
-                                            viewnodejson.groupbypropname === thisProp.propname)
+                                        viewnodejson.groupbypropname === thisProp.propname)
                                     {
-                                        $option.CswAttrDom('selected', 'true');
+                                        groupSel = thisProp.propid;
                                     }
                                 }
                             } // each
+                            $groupbyselect.CswSelect('setoptions', groupOpts, groupSel);
                         } // success
                     }); // ajax
 
                 var $showtreecheck;
-                if (viewmode === "Tree")
-                {
+                if (viewmode === "Tree") {
                     $table.CswTable('cell', 3, 1).append('Show In Tree');
                     var $showtreecheckcell = $table.CswTable('cell', 3, 2);
                     $showtreecheck = $showtreecheckcell.CswInput('init', {ID: o.ID + '_stcb',
                         type: CswInput_Types.checkbox
                     });
-                    if (viewnodejson.showintree.toLowerCase() == 'true') {
+                    if (isTrue(viewnodejson.showintree)) {
                         $showtreecheck.CswAttrDom('checked', 'true');
                     }
                 }
 
                 $table.CswTable('cell', 4, 2).CswButton({
-                        'ID': o.ID + '_saverel',
-                        'enabledText': 'Apply',
-                        'disableOnClick': false,
-                        'onclick': function() {
-                            if ($showtreecheck !== undefined) {
+                        ID: o.ID + '_saverel',
+                        enabledText: 'Apply',
+                        disableOnClick: false,
+                        onclick: function() {
+                            if (false === isNullOrEmpty($showtreecheck)) {
                                 viewnodejson.showintree = $showtreecheck.is(':checked');
                                 viewnodejson.allowdelete = $allowdeletingcheck.is(':checked');
                             }
-                            if ($groupbyselect.val() !== '') {
+                            if (false === isNullOrEmpty($groupbyselect.val())) {
                                 var propData = $groupbyselect.find(':selected').data('thisPropData');
                                 viewnodejson.groupbypropid = propData.propid;
                                 viewnodejson.groupbyproptype = propData.proptype;
@@ -669,7 +670,7 @@
                     var $sortbycheck = $sortbycheckcell.CswInput('init', {ID: o.ID + '_sortcb',
                         type: CswInput_Types.checkbox
                     });
-                    if (viewNodeData.sortby.toLowerCase() == 'true') {
+                    if (isTrue(viewNodeData.sortby)) {
                         $sortbycheck.CswAttrDom('checked', 'true');
                     }
 
@@ -688,10 +689,10 @@
                     $colwidthtextbox.val(viewNodeData.width);
 
                     $table.CswTable('cell', 4, 2).CswButton({
-                            'ID': o.ID + '_saveprop',
-                            'enabledText': 'Apply',
-                            'disableOnClick': false,
-                            'onclick': function() {
+                            ID: o.ID + '_saveprop',
+                            enabledText: 'Apply',
+                            disableOnClick: false,
+                            onclick: function() {
                                 viewNodeData.sortby = $sortbycheck.is(':checked');
                                 viewNodeData.order = $colordertextbox.val();
                                 viewNodeData.width = $colwidthtextbox.val();
@@ -713,15 +714,15 @@
                 $table.CswTable('cell', 1, 1).append('Case Sensitive');
                 var $casecheck = $('<input type="checkbox" id="' + o.ID + '_casecb" />')
                     .appendTo($table.CswTable('cell', 1, 2));
-                if (viewNodeData.casesensitive.toLowerCase() === 'true') {
+                if (isTrue(viewNodeData.casesensitive)) {
                     $casecheck.CswAttrDom('checked', 'true');
                 }
 
                 $table.CswTable('cell', 4, 2).CswButton({
-                        'ID': o.ID + '_savefilt',
-                        'enabledText': 'Apply',
-                        'disableOnClick': false,
-                        'onclick': function() {
+                        ID: o.ID + '_savefilt',
+                        enabledText: 'Apply',
+                        disableOnClick: false,
+                        onclick: function() {
                             viewNodeData.casesensitive = $casecheck.is(':checked');
                         } // onClick
                     }); // CswButton
@@ -787,6 +788,8 @@
 
                 var $btn = $span.find('#' + arbitraryId + '_addfiltbtn');
                 $btn.bind('click', function() {
+                    var $this = $(this);
+                    $this.CswButton('disable');
                     var objHelper = new ObjectHelper(currentViewJson);
                 
                     var propJson = objHelper.find('arbitraryid', arbitraryId);
@@ -967,12 +970,15 @@
                 var rel = 'filter';
                 if (!isNullOrEmpty(itemJson)) {
                     var filtArbitraryId = tryParseString(itemJson.arbitraryid);
-                    if (stepno === CswViewEditor_WizardSteps.filters.step) {
+                    if (stepno === CswViewEditor_WizardSteps.tuning.step) {
                         var selectedSubfield = tryParseString(itemJson.subfield);
 			            var selectedFilterMode = tryParseString(itemJson.filtermode);
 			            var filterValue = tryParseString(itemJson.value);
                         var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
-                        $ret.append(makeViewListItem(filtArbitraryId, viewEditClasses.vieweditor_addfilter.name, name, false, stepno, childPropNames.filters, rel));
+                        var $filtLink = makeViewListItem(filtArbitraryId, viewEditClasses.vieweditor_viewfilterlink.name, name, false, stepno, childPropNames.filters, rel);
+                        if (false === isNullOrEmpty($filtLink)) {
+                            $ret = $filtLink;
+                        }
                     } else {
                         $ret.append(makeViewPropFilterStaticSpan(propArbId, itemJson, filtArbitraryId, rel));
                         $ret.append(makeDeleteSpan(filtArbitraryId, stepno));
@@ -985,7 +991,7 @@
             return $ret;            
         }
 
-        function makeViewPropFilterStaticSpan(propArbId, filterJson, filtArbitraryId, rel) {
+        function makeViewPropFilterStaticSpan(propArbId, filterJson, filtArbitraryId) {
             var $span = $('<span class="' + viewEditClasses.vieweditor_addfilter.name + '" arbid="' + filtArbitraryId + '"></span>');
             var $tbl = $span.CswTable({ 'ID': o.ID + '_' + filtArbitraryId + '_propfilttbl' });
             $tbl.css('display', 'inline-table');
@@ -1004,7 +1010,7 @@
             return $span;
         }
         
-        function makeViewPropFilterAddSpan(propArbId, rel) {
+        function makeViewPropFilterAddSpan(propArbId) {
             var $span = $('<span class="' + viewEditClasses.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
             var $tbl = $span.CswTable({ 'ID': o.ID + '_' + propArbId + '_propfilttbl' });
             $tbl.css('display', 'inline-table');
