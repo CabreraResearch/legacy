@@ -81,6 +81,9 @@ $.CswFieldTypeFactory = function (method)
 				case "MultiList":
 					m.$propdiv.CswFieldTypeMultiList('init', m); //'init', nodeid, propData, onchange
 					break;
+				case "NFPA":
+					m.$propdiv.CswFieldTypeNFPA('init', m); //'init', nodeid, propData, onchange
+					break;
 				case "NodeTypeSelect":
 					m.$propdiv.CswFieldTypeNodeTypeSelect('init', m); //'init', nodeid, propData, onchange
 					break;
@@ -200,6 +203,9 @@ $.CswFieldTypeFactory = function (method)
 					break;
 				case "MultiList":
 					m.$propdiv.CswFieldTypeMultiList('save', m); //('save', $propdiv, propData);
+					break;
+				case "NFPA":
+					m.$propdiv.CswFieldTypeNFPA('save', m); //('save', $propdiv, propData);
 					break;
 				case "NodeTypeSelect":
 					m.$propdiv.CswFieldTypeNodeTypeSelect('save', m); //('save', $propdiv, propData);

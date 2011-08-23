@@ -8,3 +8,72 @@
 {
 	background-color: #ffff00;
 }
+
+.CswFieldTypeNFPA_table
+{
+	padding: 20px;
+	
+     -moz-transform: rotate(45deg);  /* FF3.5+ */
+       -o-transform: rotate(45deg);  /* Opera 10.5 */
+  -webkit-transform: rotate(45deg);  /* Saf3.1+, Chrome */
+      -ms-transform: rotate(45deg);  /* IE9 */
+          transform: rotate(45deg);  
+}
+.CswFieldTypeNFPA_cell
+{
+	vertical-align: middle;
+	text-align: center;
+	width: 50px;
+	height: 50px;
+}
+
+.CswFieldTypeNFPA_red
+{
+	font-size: 2em;
+	background-color: #ff0000;
+	border-top: 2px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 2px solid #000000;
+}
+.CswFieldTypeNFPA_yellow
+{
+	font-size: 2em;
+	background-color: #ffff00;
+	border-top: 2px solid #000000;
+	border-right: 2px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+.CswFieldTypeNFPA_blue
+{
+	font-size: 2em;
+	background-color: #0000ff;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 2px solid #000000;
+	border-left: 2px solid #000000;
+}
+.CswFieldTypeNFPA_white
+{
+	font-size: 1em;
+	background-color: #ffffff;
+	border-top: 1px solid #000000;
+	border-right: 2px solid #000000;
+	border-bottom: 2px solid #000000;
+	border-left: 1px solid #000000;
+}
+
+.CswFieldTypeNFPA_text
+{
+	color: #000000;
+	padding: 3px;
+	font-weight: bold;
+	
+     -moz-transform: rotate(315deg);  /* FF3.5+ */
+       -o-transform: rotate(315deg);  /* Opera 10.5 */
+  -webkit-transform: rotate(315deg);  /* Saf3.1+, Chrome */
+      -ms-transform: rotate(315deg);  /* IE9 */
+          transform: rotate(315deg);  
+}
+

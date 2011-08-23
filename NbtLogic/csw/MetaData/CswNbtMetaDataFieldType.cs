@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.MetaData
             //MultiRelationship,
 			MultiList,
             //NodeTypePermissions,
+			NFPA,
             NodeTypeSelect,
             Number,
             Password,
