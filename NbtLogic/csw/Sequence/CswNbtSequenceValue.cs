@@ -19,8 +19,12 @@ namespace ChemSW.Nbt
         public CswNbtSequenceValue( CswNbtResources CswNbtResources, Int32 SequenceId )
         {
             _CswNbtResources = CswNbtResources;
+			if( SequenceId == Int32.MinValue )
+			{
+				throw new CswDniException( ErrorType.Error, "Sequence Not Set", "CswNbtSequenceValue got a null SequenceId" );
+			}
 
-            _SequenceId = SequenceId;
+			_SequenceId = SequenceId;
             CswTableSelect SequencesSelect = _CswNbtResources.makeCswTableSelect( "SequencesSelect", "sequences" );
             _CurrentSequenceRow = SequencesSelect.getTable( "sequenceid", _SequenceId, true ).Rows[0];
         }

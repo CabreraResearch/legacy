@@ -1045,20 +1045,27 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     NbtViewVisibility RealVisibility = NbtViewVisibility.Unknown;
-                    Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
-
-                    CswPrimaryKey RealVisibilityRoleId = null;
-                    CswPrimaryKey RealVisibilityUserId = null;
-                    if( RealVisibility == NbtViewVisibility.Role )
-                    {
-                        RealVisibilityRoleId = new CswPrimaryKey();
-                        RealVisibilityRoleId.FromString( VisibilityRoleId );
-                    }
-                    else if( RealVisibility == NbtViewVisibility.User )
-                    {
-                        RealVisibilityUserId = new CswPrimaryKey();
-                        RealVisibilityUserId.FromString( VisibilityUserId );
-                    }
+					CswPrimaryKey RealVisibilityRoleId = null;
+					CswPrimaryKey RealVisibilityUserId = null;
+					if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+					{
+						Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
+						if( RealVisibility == NbtViewVisibility.Role )
+						{
+							RealVisibilityRoleId = new CswPrimaryKey();
+							RealVisibilityRoleId.FromString( VisibilityRoleId );
+						}
+						else if( RealVisibility == NbtViewVisibility.User )
+						{
+							RealVisibilityUserId = new CswPrimaryKey();
+							RealVisibilityUserId.FromString( VisibilityUserId );
+						}
+					}
+					else
+					{
+						RealVisibility = NbtViewVisibility.User;
+						RealVisibilityUserId = _CswNbtResources.CurrentUser.UserId;
+					}
 
                     CswNbtView CopyView = null;
                     if( ViewId != string.Empty )

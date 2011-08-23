@@ -39,7 +39,7 @@ namespace ChemSW.Nbt
 													   CswDbCfgInfoNbt, 
 													   true, 
 													   CswNbtResources, 
-													   new CswNbtAuthenticator( CswNbtResources ), 
+													   new CswNbtSchemaAuthenticator( CswNbtResources ), 
 													   _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ), 
 																								  new CswNbtStatisticsStorageStateServer(), 
 																								  RecordStatistics ) );
