@@ -258,7 +258,12 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 ViewsTable = _CswNbtResources.ViewSelect.getUserViews();
-            }
+				ViewsTable.Columns.Add( "viewid" );      // string CswNbtViewId
+				foreach( DataRow Row in ViewsTable.Rows )
+				{
+					Row["viewid"] = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) ).ToString();
+				}
+			}
 
             if( ViewsTable.Columns.Contains( "viewxml" ) )
                 ViewsTable.Columns.Remove( "viewxml" );
