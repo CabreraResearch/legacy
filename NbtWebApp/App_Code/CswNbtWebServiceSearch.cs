@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ViewPropFilters.Add( Filt );
                     }
-                    _ViewBuilder.getViewBuilderPropSubfields( PropObj, SearchProp, ViewPropFilters );
+                    _ViewBuilder.addVbPropFilters( PropObj, SearchProp, ViewPropFilters );
                 }
                 SearchNode.Add( PropNode );
             }
@@ -310,7 +310,7 @@ namespace ChemSW.Nbt.WebServices
                                 CswNbtMetaDataObjectClassProp ObjectClassProp = NodeTypeProp.ObjectClassProp;
                                 CswNbtViewProperty ViewOcProperty = SearchView.AddViewProperty( OcRelationship, ObjectClassProp );
                                 CswNbtViewPropertyFilter ViewOcPropFilt = SearchView.AddViewPropertyFilter( ViewOcProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
-                                _ViewBuilder.makeViewPropFilter( ViewOcPropFilt, FilterProp );
+                                _ViewBuilder.makeViewPropFilter( (CswNbtView) ViewOcPropFilt, FilterProp );
                             }
                         }
                         else if( PropType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
@@ -333,7 +333,7 @@ namespace ChemSW.Nbt.WebServices
 
                                 CswNbtViewProperty ViewNtProperty = SearchView.AddViewProperty( NtRelationship, NodeTypeProp );
                                 CswNbtViewPropertyFilter ViewNtPropFilt = SearchView.AddViewPropertyFilter( ViewNtProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
-                                _ViewBuilder.makeViewPropFilter( ViewNtPropFilt, FilterProp );
+                                _ViewBuilder.makeViewPropFilter( (CswNbtView) ViewNtPropFilt, FilterProp );
                             }
                         }
                     }
