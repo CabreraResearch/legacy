@@ -1128,7 +1128,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     var ws = new wsViewBuilder( _CswNbtResources );
-                    ReturnVal = ws.getViewPropFilter( ViewJson, PropFiltJson );
+                    ReturnVal = ws.makeViewPropFilter( ViewJson, PropFiltJson );
                 }
 
                 _deInitResources();
