@@ -248,6 +248,7 @@ namespace ChemSW.Nbt.WebServices
             ParentObj[FiltId]["subfield"] = Filter.SubfieldName.ToString();
             ParentObj[FiltId]["value"] = Filter.Value;
             ParentObj[FiltId]["filtermode"] = Filter.FilterMode.ToString();
+            ParentObj[FiltId]["casesensitive"] = Filter.CaseSensitive;
         }
 
         #endregion Private Assembly Methods

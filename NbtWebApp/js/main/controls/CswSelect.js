@@ -9,12 +9,11 @@
     
     var methods = {
 	
-		'init': function(options) 
-		{
+		'init': function(options) {
             var o = {
                 ID: '',
                 selected: '',
-                values: [{value: '', display: ''}],
+                values: [{value: '', display: '', data: {}}],
                 cssclass: '',
                 onChange: null //function () {}
             };
@@ -31,17 +30,8 @@
             if (!isNullOrEmpty( o.cssclass )) $select.addClass(o.cssclass);
             if (!isNullOrEmpty( o.value )) $select.text( o.value );
 
-            for (var key in o.values) {
-                if (o.values.hasOwnProperty(key)) {
-                    var value = o.values[key].value;
-                    var display = o.values[key].display;
-                    var $opt = $('<option value="' + value + '">' + display + '</option>')
-                        .appendTo($select);
-                    if (value === o.selected) {
-                        $opt.CswAttrDom('selected', 'selected');
-                    }
-                }
-            }
+		    
+		    setOptions(o.values, o.selected, $select);
             
             if (isFunction(o.onChange)) {
                  $select.bind('change', function () {
@@ -52,9 +42,37 @@
             
             $parent.append($select);
             return $select;
+        },
+        'setoptions': function (values, selected) {
+            var $select = $(this);
+            setOptions(values, selected, $select);
+            return $select;
         }
+        
     };
-    	// Method calling logic
+    
+    function setOptions(values, selected, $select) {
+        if (isArray(values) && values.length > 0) {
+            for (var key in values) {
+                if (values.hasOwnProperty(key)) {
+                    var thisOpt = values[key];
+                    var value = tryParseString(thisOpt.value);
+                    var display = tryParseString(thisOpt.display);
+                    var $opt = $('<option value="' + value + '">' + display + '</option>')
+                        .appendTo($select);
+                    if (value === selected) {
+                        $opt.CswAttrDom('selected', 'selected');
+                    }
+                    if (false === isNullOrEmpty(thisOpt.data)) {
+                        $opt.data(thisOpt.dataName, thisOpt.data);
+                    }
+                }
+            }
+        }
+        return $select;
+    }
+    
+    // Method calling logic
 	$.fn.CswSelect = function (method) {
 		
 		if ( methods[method] ) {

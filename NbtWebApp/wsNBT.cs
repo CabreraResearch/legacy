@@ -1029,27 +1029,27 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     NbtViewVisibility RealVisibility = NbtViewVisibility.Unknown;
-					CswPrimaryKey RealVisibilityRoleId = null;
-					CswPrimaryKey RealVisibilityUserId = null;
-					if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-					{
-						Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
-						if( RealVisibility == NbtViewVisibility.Role )
-						{
-							RealVisibilityRoleId = new CswPrimaryKey();
-							RealVisibilityRoleId.FromString( VisibilityRoleId );
-						}
-						else if( RealVisibility == NbtViewVisibility.User )
-						{
-							RealVisibilityUserId = new CswPrimaryKey();
-							RealVisibilityUserId.FromString( VisibilityUserId );
-						}
-					}
-					else
-					{
-						RealVisibility = NbtViewVisibility.User;
-						RealVisibilityUserId = _CswNbtResources.CurrentUser.UserId;
-					}
+                    CswPrimaryKey RealVisibilityRoleId = null;
+                    CswPrimaryKey RealVisibilityUserId = null;
+                    if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    {
+                        Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
+                        if( RealVisibility == NbtViewVisibility.Role )
+                        {
+                            RealVisibilityRoleId = new CswPrimaryKey();
+                            RealVisibilityRoleId.FromString( VisibilityRoleId );
+                        }
+                        else if( RealVisibility == NbtViewVisibility.User )
+                        {
+                            RealVisibilityUserId = new CswPrimaryKey();
+                            RealVisibilityUserId.FromString( VisibilityUserId );
+                        }
+                    }
+                    else
+                    {
+                        RealVisibility = NbtViewVisibility.User;
+                        RealVisibilityUserId = _CswNbtResources.CurrentUser.UserId;
+                    }
 
                     CswNbtView CopyView = null;
                     if( ViewId != string.Empty )
@@ -1287,15 +1287,16 @@ namespace ChemSW.Nbt.WebServices
                             PropType = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId.ToString();
                         }
 
-                        foreach( ICswNbtMetaDataProp Prop in Props )
+                        if( null != Props )
                         {
-                            ReturnVal.Add(
-                                new JProperty( "prop_" + Prop.PropId.ToString(),
-                                    new JObject(
-                                        new JProperty( "proptype", PropType ),
-                                        new JProperty( "propname", Prop.PropNameWithQuestionNo ),
-                                        new JProperty( "propid", Prop.PropId.ToString() ) ) )
-                                        );
+                            foreach( ICswNbtMetaDataProp Prop in Props )
+                            {
+                                string PropId = "prop_" + Prop.PropId.ToString();
+                                ReturnVal[PropId] = new JObject();
+                                ReturnVal[PropId]["proptype"] = PropType;
+                                ReturnVal[PropId]["propname"] = Prop.PropNameWithQuestionNo;
+                                ReturnVal[PropId]["propid"] = Prop.PropId.ToString();
+                            }
                         }
                     } // if( nId != Int32.MinValue )
 
