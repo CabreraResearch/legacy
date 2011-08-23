@@ -67,18 +67,20 @@
 
 				function makeSelect($cell, id, selected, $div)
 				{
-					var $sel = $('<select id="' + o.ID + '_' + id + '"></select>')
-									.appendTo($cell);
-					for(var i = 0; i <= 4; i++)
-					{
-						var $opt = $('<option value="'+ i +'">'+ i +'</option>')
-										.appendTo($sel);
-					}
-					$sel.val(selected);
-					$sel.change(function() {
-						setValue($div, $sel.val());
-					});
-				}
+					var $sel = $cell.CswSelect({
+											'ID': makeId({ ID: o.ID, suffix: id }),
+											'selected': selected,
+											'values': [{ value: '0', display: '0'},
+													   { value: '1', display: '1'},
+													   { value: '2', display: '2'},
+													   { value: '3', display: '3'},
+													   { value: '4', display: '4'}],
+											'cssclass': '',
+											'onChange': function () {
+												setValue($div, $sel.val());
+											}
+										});
+				} // makeSelect()
 
 				$edittable.CswTable('cell', 1, 1).append('Flammability');
 				$edittable.CswTable('cell', 2, 1).append('Health');
@@ -89,23 +91,24 @@
 				makeSelect($edittable.CswTable('cell', 2, 2), 'yellow', yellow, $yellowdiv);
 				makeSelect($edittable.CswTable('cell', 3, 2), 'blue', blue, $bluediv);
 
-				var $whitesel = $('<select id="' + o.ID + '_white"></select>')
-									.appendTo($edittable.CswTable('cell', 4, 2))
-									.append('<option value=""></option>')
-									.append('<option value="ACID">ACID</option>')
-									.append('<option value="ALK">ALK</option>')
-									.append('<option value="BIO">BIO</option>')
-									.append('<option value="COR">COR</option>')
-									.append('<option value="CRYO">CRYO</option>')
-									.append('<option value="CYL">CYL</option>')
-									.append('<option value="OX">OX</option>')
-									.append('<option value="POI">POI</option>')
-									.append('<option value="RAD">RAD</option>')
-									.append('<option value="W">W</option>')
-									.change(function() {
-										setValue($whitediv, $whitesel.val());
+				var $whitesel = $edittable.CswTable('cell', 4, 2).CswSelect({
+										'ID': makeId({ ID: o.ID, suffix: 'white' }),
+										'selected': white,
+										'values': [ { value: 'ACID', display: 'ACID'},
+													{ value: 'ALK', display: 'ALK'},
+													{ value: 'BIO', display: 'BIO'},
+													{ value: 'COR', display: 'COR'},
+													{ value: 'CRYO', display: 'CRYO'},
+													{ value: 'CYL', display: 'CYL'},
+													{ value: 'OX', display: 'OX'},
+													{ value: 'POI', display: 'POI'},
+													{ value: 'RAD', display: 'RAD'},
+													{ value: 'W', display: 'W'}],
+										'cssclass': '',
+										'onChange': function () {
+											setValue($whitediv, $whitesel.val());
+										}
 									});
-				$whitesel.val(white);
 
             } // if(!o.ReadOnly)
         },
