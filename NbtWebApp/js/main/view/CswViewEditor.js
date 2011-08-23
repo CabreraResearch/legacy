@@ -805,7 +805,7 @@
                             if(false === propJson.hasOwnProperty(childPropNames.propfilters.name)) {
                                 propJson[childPropNames.propfilters.name] = { };
                             }
-                            propJson[childPropNames.propfilters.name][newPropJson.arbitraryid] = newPropJson;
+                            $.extend(propJson[childPropNames.propfilters.name], newPropJson);
                             _makeViewTree(stepno);
                         } // onSuccess
                     }); // CswViewPropFilter
@@ -954,7 +954,7 @@
             var filtArbitraryId = tryParseString(filterJson.arbitraryid);
             $tbl.CswViewPropFilter('add', {
                 ID: o.ID + '_' + propArbId + '_propfilttbl',
-                propData: filterJson,
+                propsData: filterJson,
                 proparbitraryid: propArbId,
                 filterarbitraryid: filtArbitraryId,
                 propRow: 1,
@@ -973,8 +973,7 @@
             $tbl.CswViewPropFilter('init', {
                 viewJson: currentViewJson,
                 ID: o.ID + '_' + propArbId + '_propfilttbl',
-                propData: null,
-                readOnly: readOnly,
+                propsData: null,
                 proparbitraryid: propArbId,
                 propRow: 1,
                 firstColumn: 1,

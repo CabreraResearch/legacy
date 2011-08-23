@@ -232,11 +232,9 @@ namespace ChemSW.Nbt.WebServices
         private JObject _getListPropFilterOptions( CswViewBuilderProp ViewBuilderProp )
         {
             JObject FilterOptions = new JObject();
-            FilterOptions["name"] = ViewBuilderProp.MetaDataPropName.ToLower();
-            FilterOptions["options"] = new JObject();
             foreach( string Value in ViewBuilderProp.ListOptions )
             {
-                FilterOptions["options"][Value] = Value;
+                FilterOptions[Value] = Value;
             }
             return FilterOptions;
 

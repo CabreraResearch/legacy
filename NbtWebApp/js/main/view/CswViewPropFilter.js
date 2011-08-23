@@ -211,11 +211,16 @@
 			                }
 			            }
 			            var filtSelected = propsData.filtersoptions.selected;
-			            $propFilterValueCell.CswSelect('init', { ID: filtValInputId, values: filtValAry, selected: filtSelected });
+			            $propFilterValueCell.CswSelect('init', { ID: filtValInputId, 
+			                                                     values: filtValAry, 
+			                                                     selected: filtSelected,
+			                                                     cssclass: ViewBuilder_CssClasses.filter_value.name});
 			        }
 			    }
 			    else if (fieldtype === CswSubFields_Map.Logical.name) {
-			        $propFilterValueCell.CswTristateCheckBox('init', { 'ID': filtValInputId, 'Checked': defaultSubfieldVal });
+			        $propFilterValueCell.CswTristateCheckBox('init', { ID: filtValInputId, 
+                                                                       Checked: defaultSubfieldVal,
+			                                                           cssclass: ViewBuilder_CssClasses.filter_value.name});
 			    } else {
 			        var placeholder = '';
 			        if (isNullOrEmpty(defaultSubfieldVal)) {
@@ -267,7 +272,9 @@
 				{
 					//Row propRow, Column 3: property
 					var $propSelectCell = $propFilterTable.CswTable('cell', filtOpt.propRow, filtOpt.firstColumn) //3
-														  .empty();
+														  .empty()
+				                                          .css('padding', '2px');
+				    
 					var propCellId = makePropFilterId(propertyName,filtOpt);
 					$propSelectCell.CswSpan('init',{ID: propCellId, value: propertyName});
 				}
@@ -278,17 +285,20 @@
 			    
 			    //Row propRow, Column 4: Subfield Cell
 			    var $subfieldCell = $propFilterTable.CswTable('cell', filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
-    			        .empty();
+    			                                    .empty()
+			                                        .css('padding', '2px');
 			    var defaultSubFieldId = makePropFilterId('default_filter', filtOpt);
 			    
 			    //Row propRow, Column 5: Filters cell
 			    var $filtersCell = $propFilterTable.CswTable('cell', filtOpt.propRow, (filtOpt.firstColumn + 2)) //5
-    			        .empty();
+    			                                    .empty()
+			                                        .css('padding', '2px');
                 var filtersOptionsId = makePropFilterId('filter_select', filtOpt);
 			    
 			    //Row propRow, Column 6: Input cell
 			    var $propFilterValueCell = $propFilterTable.CswTable('cell', filtOpt.propRow, (filtOpt.firstColumn + 3)) //6
-    			        .empty();
+    			                                    .empty()
+			                                        .css('padding', '2px');
 			    var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
 			    
 
@@ -327,18 +337,19 @@
 
 		    var $filtInput = $thisProp.find('.' + ViewBuilder_CssClasses.filter_value.name);
 			var filterValue;
-			switch (o.fieldtype) { 
-				case 'Logical': 
+		    var fieldtype = o.filtJson.fieldtype;
+			switch (fieldtype) { 
+				case CswSubFields_Map.Logical.name: 
 					filterValue = $filtInput.CswTristateCheckBox('value');
 					break;
-				case 'List':
+				case CswSubFields_Map.List.name:
 					filterValue = $filtInput.find(':selected').val();
 					break;
 				default:
 					filterValue = $filtInput.val();
 					break;
 			}
-			if (filterValue !== '' || o.allowNullFilterValue) {
+			if (false === isNullOrEmpty(filterValue) || o.allowNullFilterValue) {
 			    var $subField = $thisProp.find('.' + ViewBuilder_CssClasses.subfield_select.name);
 				var subFieldText = $subField.find(':selected').text();
 
