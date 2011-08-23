@@ -68,7 +68,11 @@ namespace ChemSW.Nbt.MetaData
             ViewID,
             ChangedDate,
 			Base,
-			Exponent
+			Exponent,
+			Health,
+			Flammability,
+			Reactivity,
+			Special
         }
 
         public SubFieldName Name = SubFieldName.Value;

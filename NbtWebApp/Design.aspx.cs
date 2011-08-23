@@ -2264,7 +2264,8 @@ namespace ChemSW.Nbt.WebPages
                     // BZ 8058 - Default Value
                     if( FieldType.CanHaveDefaultValue() &&
 						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Scientific &&   // temporary until ported into new UI
-						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ImageList &&   // temporary until ported into new UI
+						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ImageList &&    // temporary until ported into new UI
+						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.NFPA &&         // temporary until ported into new UI
 						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MultiList )     // temporary until ported into new UI
 					{
                         TableRow DefaultValueRow = makeEditPropTableRow( EditPropPlaceHolder );
