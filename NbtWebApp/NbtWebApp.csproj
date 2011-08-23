@@ -114,6 +114,7 @@
     <Content Include="js\main\controls\CswDateTimePicker.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeNFPA.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeImageList.js" />
+    <Content Include="js\main\node\CswNodePreview.js" />
     <Content Include="js\main\tools\CswArray.js" />
     <Content Include="js\main\tools\CswClientDb.js" />
     <Content Include="js\globals\CswEnums.js" />

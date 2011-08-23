@@ -420,6 +420,16 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // copyPropValues()
 
+		public JObject getNodePreview( string NodeIdStr, string NodeKeyStr )
+		{
+			CswNbtNodeKey SourceNodeKey = new CswNbtNodeKey( _CswNbtResources, SourceNodeKeyStr );
+			CswNbtNode Node = _getNode( NodeIdStr, NodeKeyStr, new CswDateTime( _CswNbtResources ) );
+
+
+
+		}
+
+
         private void _applyPropJson( CswNbtNode Node, JObject PropObj )
         {
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( CswConvert.ToString( PropObj["id"] ) );
