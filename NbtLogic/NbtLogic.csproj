@@ -217,7 +217,6 @@
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceFactoryNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicFactoryNbt.cs" />
-    <Compile Include="csw\Sched\core\CswScheduleLogicInfoNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicParamNbt.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenNode.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtInspection.cs" />
