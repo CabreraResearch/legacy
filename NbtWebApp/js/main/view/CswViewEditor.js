@@ -599,11 +599,9 @@
                             for (var propKey in data) {
                                 if (data.hasOwnProperty(propKey)) {
                                     var thisProp = data[propKey];
-                                    var dataProp = { };
-                                    dataProp[propKey] = thisProp;
                                     groupOpts.push({ value: thisProp.propid, 
                                                      display: thisProp.propname, 
-                                                     data: dataProp, 
+                                                     data: thisProp, 
                                                      dataName: 'thisPropData' });
                                     if (viewnodejson.groupbypropid === thisProp.propid &&
                                         viewnodejson.groupbyproptype === thisProp.proptype &&
