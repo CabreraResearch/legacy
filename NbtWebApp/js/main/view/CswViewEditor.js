@@ -590,7 +590,7 @@
                 $table.CswTable('cell', 2, 1).append('Group By');
                 var $groupbyselect = $table.CswTable('cell', 2, 2)
                                             .CswSelect('init', 
-                                                { ID: o.ID + '_gbs', 
+                                                { ID: o.ID + '_gbs',
                                                   onChange: function() {
                                                       var $this = $(this).find(':selected');
                                                       var propData = { };
@@ -670,8 +670,13 @@
 
                     $table.CswTable('cell', 1, 1).append('Sort By');
                     var $sortbycheckcell = $table.CswTable('cell', 1, 2);
-                    var $sortbycheck = $sortbycheckcell.CswInput('init', {ID: o.ID + '_sortcb',
-                        type: CswInput_Types.checkbox
+                    var $sortbycheck = $sortbycheckcell.CswInput('init', 
+                                                            { ID: o.ID + '_sortcb',
+                                                              type: CswInput_Types.checkbox,
+                                                              onChange: function () {
+                                                                  var $this = $(this);
+                                                                  viewNodeData.sortby = $this.is(':checked');
+                                                              }
                     });
                     if (isTrue(viewNodeData.sortby)) {
                         $sortbycheck.CswAttrDom('checked', 'true');
@@ -679,28 +684,27 @@
 
                     $table.CswTable('cell', 2, 1).append('Grid Column Order');
                     var $colordertextcell = $table.CswTable('cell', 2, 2);
-                    var $colordertextbox = $colordertextcell.CswInput('init', {ID: o.ID + '_gcotb',
-                        type: CswInput_Types.text
+                    var $colordertextbox = $colordertextcell.CswInput('init', 
+                                                                { ID: o.ID + '_gcotb',
+                                                                  type: CswInput_Types.text,
+                                                                  onChange: function () {
+                                                                      var $this = $(this);
+                                                                      viewNodeData.order = $this.val();
+                                                                  }
                     });
                     $colordertextbox.val(viewNodeData.order);
 
                     $table.CswTable('cell', 3, 1).append('Grid Column Width (in characters)');
                     var $colwidthtextcell = $table.CswTable('cell', 3, 2);
-                    var $colwidthtextbox = $colwidthtextcell.CswInput('init', {ID: o.ID + '_gcwtb',
-                        type: CswInput_Types.text
+                    var $colwidthtextbox = $colwidthtextcell.CswInput('init', 
+                                                                { ID: o.ID + '_gcwtb',
+                                                                  type: CswInput_Types.text,
+                                                                  onChange: function () {
+                                                                      var $this = $(this);
+                                                                      viewNodeData.width = $this.val();
+                                                                  }
                     });
                     $colwidthtextbox.val(viewNodeData.width);
-
-                    $table.CswTable('cell', 4, 2).CswButton({
-                            ID: o.ID + '_saveprop',
-                            enabledText: 'Apply',
-                            disableOnClick: false,
-                            onclick: function() {
-                                viewNodeData.sortby = $sortbycheck.is(':checked');
-                                viewNodeData.order = $colordertextbox.val();
-                                viewNodeData.width = $colwidthtextbox.val();
-                            } // onClick
-                        }); // CswButton
                 }
             });
 
@@ -715,20 +719,18 @@
 
                 var $table = $cell.CswTable({ 'ID': o.ID + '_editfilt', 'FirstCellRightAlign': true });
                 $table.CswTable('cell', 1, 1).append('Case Sensitive');
-                var $casecheck = $('<input type="checkbox" id="' + o.ID + '_casecb" />')
-                    .appendTo($table.CswTable('cell', 1, 2));
+                var $casecheck = $table.CswTable('cell', 1, 2)
+                                       .CswInput('init', 
+                                            { ID: o.ID + '_casecb',
+                                              type: CswInput_Types.checkbox,
+                                              onChange: function () {
+                                                  var $this = $(this);
+                                                  viewNodeData.casesensitive = $this.is(':checked');
+                                              }
+                                       });
                 if (isTrue(viewNodeData.casesensitive)) {
                     $casecheck.CswAttrDom('checked', 'true');
                 }
-
-                $table.CswTable('cell', 4, 2).CswButton({
-                        ID: o.ID + '_savefilt',
-                        enabledText: 'Apply',
-                        disableOnClick: false,
-                        onclick: function() {
-                            viewNodeData.casesensitive = $casecheck.is(':checked');
-                        } // onClick
-                    }); // CswButton
             });
         }
         
