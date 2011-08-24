@@ -117,7 +117,7 @@
 					        var nbtnodekey = tryParseString(json.attr.cswnbtnodekey);
 					        var rel = tryParseString(json.attr.rel);
 					        var species = tryParseString(json.attr.species);
-						    var state = tryParseString(json.attr.state, 'closed');
+						    var state = tryParseString(json.attr.state, 'open');
 						    
 					        var treestr = '<li id="'+ id +'" rel="'+ rel +'" species="'+ species +'" class="jstree-'+ state +'" ';
 							if (!isNullOrEmpty(nbtnodekey)) {

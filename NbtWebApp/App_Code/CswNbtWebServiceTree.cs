@@ -71,6 +71,7 @@ namespace ChemSW.Nbt.WebServices
                         FirstObj["attr"] = new JObject();
                         FirstObj["attr"]["id"] = IdPrefix + "root";
                         FirstObj["attr"]["rel"] = "root";
+                        FirstObj["state"] = "open";
                         FirstObj["children"] = ChildArray;
 
                         _runTreeNodesRecursive( View, Tree, IdPrefix, ChildArray );
@@ -110,6 +111,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnObj["tree"][0]["data"] = ViewName;
                 ReturnObj["tree"][0]["attr"] = new JObject();
                 ReturnObj["tree"][0]["attr"]["viewid"] = ViewId;
+                ReturnObj["tree"][0]["state"] = "open";
                 ReturnObj["tree"][0]["children"] = new JArray();
                 ReturnObj["tree"][0]["children"][0] = EmptyOrInvalid;
             }
@@ -176,11 +178,11 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
 
-                string ThisNodeName = string.Empty;
-                string ThisNodeIcon = string.Empty;
+                string ThisNodeName = Tree.getNodeNameForCurrentPosition();
+                string ThisNodeIcon = "";
                 string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( CswTools.tryParseString( ThisNodeKey ) );
-                string ThisNodeId = string.Empty;
-                string ThisNodeRel = string.Empty;
+                string ThisNodeId = "";
+                string ThisNodeRel = "";
 
                 switch( ThisNodeKey.NodeSpecies )
                 {
