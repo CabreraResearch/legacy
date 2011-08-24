@@ -291,6 +291,16 @@ function ObjectHelper(obj) {
 	/// <returns type="ObjectHelper"></returns>
     var thisObj = obj;
     
+    function foundMatch(anObj, prop, value) {
+        var ret = false;
+        if(false === isNullOrEmpty(anObj) &&
+           anObj.hasOwnProperty(prop) &&
+           anObj[prop] === value ) {
+            ret = true;
+        }
+        return ret;
+    }
+    
     function recursiveFind(parentObj, key, value) {
         /// <summary>Recursively search an object</summary>
 	    /// <param name="parentObj" type="Object"> Object to search </param>
@@ -302,7 +312,7 @@ function ObjectHelper(obj) {
             for (var childKey in parentObj) {
                 if (parentObj.hasOwnProperty(childKey)) {
                     var childObj = parentObj[childKey];
-                    if (childObj.hasOwnProperty(key) && childObj[key] === value) {
+                    if (foundMatch(childObj, key, value)) {
                         ret = childObj;
                         break;
                     } 
@@ -326,7 +336,7 @@ function ObjectHelper(obj) {
             for (var childKey in thisObj) {
                 if (thisObj.hasOwnProperty(childKey)) {
                     var childObj = thisObj[childKey];
-                    if (childObj.hasOwnProperty(key) && childObj[key] === value) {
+                    if (foundMatch(childObj, key, value)) {
                         ret = thisObj;
                         break;
                     } 
@@ -345,7 +355,7 @@ function ObjectHelper(obj) {
             for (var childKey in parentObj) {
                 if (parentObj.hasOwnProperty(childKey)) {
                     var childObj = parentObj[childKey];
-                    if (childObj.hasOwnProperty(key) && childObj[key] === value) {
+                    if (foundMatch(childObj, key, value)) {
                         delete parentObj[childKey];
                         ret = true;
                         break;
@@ -366,7 +376,7 @@ function ObjectHelper(obj) {
             for (var childKey in thisObj) {
                 if (thisObj.hasOwnProperty(childKey)) {
                     var childObj = thisObj[childKey];
-                    if (childObj.hasOwnProperty(key) && childObj[key] === value) {
+                    if (foundMatch(childObj, key, value)) {
                         delete thisObj[childKey];
                         ret = true;
                         break;
