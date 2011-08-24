@@ -17,7 +17,7 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var selectedViewIds = tryParseString(o.propData.viewid).trim();
+                var selectedViewIds = tryParseString(o.propData.viewid).trim().split(',');
 				var optionData = o.propData.options;
 				var selectMode = o.propData.selectmode;
 				var $CBADiv = $('<div />')
@@ -25,17 +25,15 @@
 
 				// get data
 				var data = [];
-				var d = 0;
 				for (var optId in optionData) {
 				    if (optionData.hasOwnProperty(optId)) {
 				        var thisOpt = optionData[optId];
-				        var $elm = {
+				        var vOpt = {
 				            label: thisOpt[nameCol],
 				            key: thisOpt[keyCol],
-				            values: [isTrue(thisOpt[valueCol])]
+				            values: [(selectedViewIds.indexOf(thisOpt[keyCol]) !== -1)]
 				        };
-				        data[d] = $elm;
-				        d++;
+				        data.push(vOpt);
 				    }
 				}
 
@@ -53,16 +51,17 @@
 				var optionData = o.propData.options;
 				var $CBADiv = o.$propdiv.children('div').first();
 				var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-            alert('Come back to fix save.');
-//                for (var r = 0; r < formdata.length; r++) {
-//					var checkitem = formdata[r][0];
-//					var $xmlitem = optionData.find('user:has(column[field="' + keyCol + '"][value="' + checkitem.key + '"])');
-//					var $xmlvaluecolumn = $xmlitem.find('column[field="' + valueCol + '"]');
-//					if (checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "False")
-//						$xmlvaluecolumn.CswAttrXml('value', 'True');
-//					else if (!checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "True")
-//						$xmlvaluecolumn.CswAttrXml('value', 'False');
-//				} // for( var r = 0; r < formdata.length; r++)
+                for (var r = 0; r < formdata.length; r++) {
+                    var checkitem = formdata[r][0];
+                    var objHelper = new ObjectHelper(optionData);
+                    var optItem = objHelper.find(keyCol, checkitem.key);
+                    var optVal = optItem[valueCol];
+
+                    if (checkitem.checked && optVal === "False")
+                        optItem[valueCol] = 'True';
+                    else if (!checkitem.checked && optVal === "True")
+                        optItem[valueCol] = 'False';
+                } // for( var r = 0; r < formdata.length; r++)
             }
     };
     
