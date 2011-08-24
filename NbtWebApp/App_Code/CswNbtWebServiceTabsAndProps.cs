@@ -28,24 +28,24 @@ namespace ChemSW.Nbt.WebServices
             _ThisUser = _CswNbtResources.CurrentNbtUser;
         }
 
-		private CswNbtNode _getNode( string NodeId, string NodeKey, CswDateTime Date )
+        private CswNbtNode _getNode( string NodeId, string NodeKey, CswDateTime Date )
         {
             CswNbtNode Node = null;
             if( !string.IsNullOrEmpty( NodeKey ) )
             {
                 CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-				Node = _CswNbtResources.getNode(RealNodeKey, Date.ToDateTime());
+                Node = _CswNbtResources.getNode( RealNodeKey, Date.ToDateTime() );
             }
             else if( !string.IsNullOrEmpty( NodeId ) )
             {
                 CswPrimaryKey RealNodeId = new CswPrimaryKey();
                 RealNodeId.FromString( NodeId );
-				Node = _CswNbtResources.getNode( RealNodeId, Date.ToDateTime() );
+                Node = _CswNbtResources.getNode( RealNodeId, Date.ToDateTime() );
             }
             return Node;
         } // _getNode()
 
-		public JObject getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
+        public JObject getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
         {
             JObject Ret = new JObject();
 
@@ -54,11 +54,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
                 {
-                    Ret.Add( new JProperty( "newtab",
-                                    new JObject(
-                                            new JProperty( "id", "newtab" ),
-                                            new JProperty( "name", "Add New " + NodeType.NodeTypeName ),
-                                            new JProperty( "canEditLayout", "false" ) ) ) );
+                    _makeTab( Ret, "0", "newtab", "Add New " + NodeType.NodeTypeName, false );
                 }
             }
             else if( filterToPropId != string.Empty )
@@ -67,11 +63,8 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
                 if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, false, Prop.NodeTypeTab ) )
                 {
-                    Ret.Add( new JProperty( Prop.NodeTypeTab.TabId.ToString(),
-                                      new JObject(
-                                            new JProperty( "id", Prop.NodeTypeTab.TabId.ToString() ),
-                                            new JProperty( "name", Prop.NodeTypeTab.TabName ),
-                                            new JProperty( "canEditLayout", "false" ) ) ) );
+                    CswNbtMetaDataNodeTypeTab Tab = Prop.NodeTypeTab;
+                    _makeTab( Ret, Tab.TabOrder.ToString(), Tab.TabId.ToString(), Tab.TabName, false );
                 }
             }
             else
@@ -83,24 +76,16 @@ namespace ChemSW.Nbt.WebServices
                         .Cast<CswNbtMetaDataNodeTypeTab>()
                         .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType, false, Tab ) ) )
                     {
-                        Ret.Add( new JProperty( Tab.TabId.ToString(),
-                                       new JObject(
-                                               new JProperty( "id", Tab.TabId.ToString() ),
-                                               new JProperty( "name", Tab.TabName ),
-                                               new JProperty( "canEditLayout", _canEditLayout().ToString().ToLower() ) ) ) );
+                        _makeTab( Ret, Tab.TabOrder.ToString(), Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
                     }
 
                     // History tab
-					if( Date.IsNull &&
+                    if( Date.IsNull &&
                         CswConvert.ToBoolean( _CswNbtResources.getConfigVariableValue( "auditing" ) ) )
                     {
                         if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType ) )
                         {
-                            Ret.Add( new JProperty( HistoryTabPrefix + NodeId,
-                                         new JObject(
-                                                new JProperty( "id", HistoryTabPrefix + NodeId ),
-                                                new JProperty( "name", "History" ),
-                                                new JProperty( "canEditLayout", "false" ) ) ) );
+                            _makeTab( Ret, Int32.MaxValue.ToString(), HistoryTabPrefix + NodeId, "History", false );
                         }
                     }
                 } // if( Node != null )
@@ -108,11 +93,19 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getTabs()
 
+        public void _makeTab( JObject ParentObj, string PropertyName, string Id, string Name, bool CanEditLayout )
+        {
+            ParentObj[PropertyName] = new JObject();
+            ParentObj[PropertyName]["id"] = Id;
+            ParentObj[PropertyName]["name"] = Name;
+            ParentObj[PropertyName]["canEditLayout"] = CanEditLayout;
+        }
+
 
         /// <summary>
         /// Returns XML for all properties in a given tab
         /// </summary>
-		public JObject getProps( NodeEditMode EditMode, string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date )
+        public JObject getProps( NodeEditMode EditMode, string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date )
         {
             JObject Ret = new JObject();
 
