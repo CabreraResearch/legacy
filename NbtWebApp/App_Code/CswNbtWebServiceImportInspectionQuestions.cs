@@ -127,8 +127,7 @@ namespace ChemSW.Nbt.WebServices
             } // try
             catch (Exception ex)
             {
-                ErrorMessage = "Exception: " + ex.Message;
-                System.Diagnostics.Debug.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
+                _CswNbtResources.CswLogger.reportError(ex);
             }
             finally
             {
