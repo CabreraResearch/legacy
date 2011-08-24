@@ -43,16 +43,19 @@
             $parent.append($select);
             return $select;
         },
-        'setoptions': function (values, selected) {
+        'setoptions': function (values, selected, doEmpty) {
             var $select = $(this);
-            setOptions(values, selected, $select);
+            setOptions(values, selected, $select, doEmpty);
             return $select;
         }
         
     };
     
-    function setOptions(values, selected, $select) {
+    function setOptions(values, selected, $select, doEmpty) {
         if (isArray(values) && values.length > 0) {
+            if (doEmpty) {
+                $select.empty();
+            }
             for (var key in values) {
                 if (values.hasOwnProperty(key)) {
                     var thisOpt = values[key];
