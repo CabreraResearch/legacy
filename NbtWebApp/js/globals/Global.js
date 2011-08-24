@@ -860,7 +860,7 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('EditNodeDialog', {
-						nodeid: nodeid,
+						nodeid: json.userid,
 						cswnbtnodekey: '',
 						filterToPropId: '',
 						title: 'User Profile',
