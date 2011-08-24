@@ -861,9 +861,6 @@
             
             var $ret = makeViewListItem(arbid, linkclass, name, showDelete, stepno, childPropNames.childrelationships, rel);
             
-            if (stepno === CswViewEditor_WizardSteps.relationships.step) {
-                makeChildSelect(stepno, arbid, childPropNames.childrelationships).appendTo($ret);
-            }
             if (!skipchildoptions)
             {
                 if(itemJson.hasOwnProperty(childPropNames.properties.name)) {
@@ -886,10 +883,6 @@
                         }
                     }
                 }
-                var $selectLi = makeChildSelect(stepno, arbid, childPropNames.properties);
-                if (false === isNullOrEmpty($selectLi)) {
-                    $ret.append($selectLi);
-                }
             }
             return $ret;                
         }
@@ -907,6 +900,16 @@
                         if(thisRelationship.hasOwnProperty(childPropNames.childrelationships.name)) {
                             var childRelationships = thisRelationship[childPropNames.childrelationships.name];
                             makeViewRelationshipsRecursive(stepno, childRelationships, types, $rel);
+                        }
+                        var $selectLi;
+                        if (stepno === CswViewEditor_WizardSteps.relationships.step) {
+                            $selectLi = makeChildSelect(stepno, thisRelationship.arbitraryid, childPropNames.childrelationships);
+                        }
+                        else if (stepno === CswViewEditor_WizardSteps.properties.step) {
+                            $selectLi = makeChildSelect(stepno, thisRelationship.arbitraryid, childPropNames.properties);
+                        }
+                        if (false === isNullOrEmpty($selectLi)) {
+                            $rel.append($selectLi);
                         }
                     }
                 }
