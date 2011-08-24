@@ -47,10 +47,15 @@
                 var thisSet = logicalSetJson[i];
                 
                 if (thisSet.hasOwnProperty(keyCol) && thisSet.hasOwnProperty(nameCol) && thisSet.hasOwnProperty(valCol)) {
-
+                    var values = [];
+                    for (var v=0; v < cols.length; v++) {
+                        if(thisSet.hasOwnProperty(cols[v])) {
+                            values.push(thisSet[cols[v]]);
+                        }
+                    }
                     var dataOpts = { 'label': thisSet[nameCol],
                         'key': thisSet[keyCol],
-                        'values': [isTrue(thisSet[valCol])] };
+                        'values': values };
                     data.push(dataOpts);
                 }
             }
