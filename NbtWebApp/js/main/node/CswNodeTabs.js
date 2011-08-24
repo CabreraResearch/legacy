@@ -16,6 +16,7 @@
 			MovePropUrl: '/NbtWebApp/wsNBT.asmx/moveProp',
 			SavePropUrl: '/NbtWebApp/wsNBT.asmx/saveProps',
 			CopyPropValuesUrl: '/NbtWebApp/wsNBT.asmx/copyPropValues',
+			NodePreviewUrl: '/NbtWebApp/wsNBT.asmx/getNodePreview',
 			nodeid: '',               
 			relatednodeid: '',
 			tabid: '',                
@@ -24,7 +25,7 @@
 			filterToPropId: '',       
 			title: '',
 			date: '',      // for audit records
-			EditMode: EditMode.Edit.name, // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
+			EditMode: EditMode.Edit.name, // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, NodePreview
 			onSave: null, // function (nodeid, cswnbtnodekey, tabcount) { },
 			onBeforeTabSelect: null, // function (tabid) { return true; },
 			onTabSelect: null, // function (tabid) { },
@@ -33,7 +34,8 @@
 			ShowCheckboxes: false,
 			ShowAsReport: true,
 			NodeCheckTreeId: '',
-			onEditView: null // function(viewid) { }
+			onEditView: null, // function(viewid) { }
+			Config: false
 		};
 
 		if (options)
@@ -163,8 +165,12 @@
 					if(o.title !== '')
 						$form.append(o.title);
 
+					var $formtbl = $form.CswTable('init', { ID: o.ID + '_formtbl', width: '100%' });
+					var $formtblcell11 = $formtbl.CswTable('cell', 1, 1);
+					var $formtblcell12 = $formtbl.CswTable('cell', 1, 2);
+
 					var $savetab;
-					var $layouttable = $form.CswLayoutTable('init', {
+					var $layouttable = $formtblcell11.CswLayoutTable('init', {
 						ID: o.ID + '_props',
 						OddCellRightAlign: true,
 						ReadOnly: (o.EditMode === 'PrintReport'),
@@ -176,7 +182,7 @@
 						{
 							onSwap(onSwapData);
 						},
-						showConfigButton: (isNullOrEmpty(o.date) && o.filterToPropId === '' && isTrue($tabcontentdiv.data('canEditLayout'))),
+						showConfigButton: false,
 						onConfigOn: function() { 
 							for (var prop in data) {
 							    if (data.hasOwnProperty(prop)) {
@@ -242,7 +248,7 @@
 
 					if(o.EditMode !== EditMode.PrintReport.Name)
 					{
-						$savetab = $form.CswButton({ID: 'SaveTab', 
+						$savetab = $formtblcell11.CswButton({ID: 'SaveTab', 
 												enabledText: 'Save Changes', 
 												disabledText: 'Saving...', 
 												onclick: function () { Save($form, $layouttable, data, $savetab, tabid); }
@@ -269,6 +275,29 @@
 							}
 						}
 					}); // validate()
+
+					if(isTrue(o.Config))
+					{
+						$layouttable.CswLayoutTable('ConfigOn');
+					} 
+					else if(!o.Config && 
+						isNullOrEmpty(o.date) && 
+						o.filterToPropId === '' && 
+						isTrue($tabcontentdiv.data('canEditLayout')))
+					{
+						// Show the 'fake' config button to open the dialog
+						$formtblcell12.CswImageButton({
+													ButtonType: CswImageButton_ButtonType.Configure,
+													AlternateText: 'Configure',
+													ID: o.ID + 'configbtn',
+													onClick: function ($ImageDiv) 
+													{ 
+														$.CswDialog('EditLayoutDialog', o);
+														return CswImageButton_ButtonType.None; 
+													}
+												});
+					}
+
 
 					// case 8494
 					if (!AtLeastOneSaveable && o.EditMode == EditMode.AddInPopup.name) {

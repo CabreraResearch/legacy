@@ -205,7 +205,7 @@
 									});
 								}, 1000);
 
-							}).bind('dehover_node.jstree', function(data, event) {
+							}).bind('dehover_node.jstree', function(e, data) {
 								var selected = jsTreeGetSelected($treediv);
 								clearTimeout(nodepreview_timeout);
 								if($nodepreview !== undefined)
@@ -213,6 +213,7 @@
 									$nodepreview.CswNodePreview('close');
 									$nodepreview = undefined;
 								}
+
 							}).jstree({
 								"html_data":
 									{

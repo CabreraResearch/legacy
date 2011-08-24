@@ -24,15 +24,21 @@
 									position: 'absolute',
 									top: o.Y + 'px',
 									left: o.X + 'px',
-									width: '100px',
-									height: '100px',
+									width: '600px',
+									height: '400px',
+									overflow: 'auto',
 									border: '1px solid #003366',
 									backgroundColor: '#ffffff'
 								})
 								.appendTo('body');
 
-				$div.append('nodeid = ' + o.nodeid);
-
+				$div.CswNodeTabs({
+									ID: o.ID + 'tabs',
+									nodeid: o.nodeid,               
+									cswnbtnodekey: o.cswnbtnodekey,        
+									EditMode: EditMode.Preview.name
+								});
+				
 				return $div;
 			},
 		'close': function()

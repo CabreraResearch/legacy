@@ -1385,39 +1385,39 @@ namespace ChemSW.Nbt.WebServices
         } // copyPropValue()	
 
 
-		[WebMethod( EnableSession = false )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string getNodePreview( string NodeId, string NodeKey )
-		{
-			JObject ReturnVal = new JObject();
+		//[WebMethod( EnableSession = false )]
+		//[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		//public string getNodePreview( string NodeId, string NodeKey )
+		//{
+		//    JObject ReturnVal = new JObject();
 
-			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-			try
-			{
-				_initResources();
-				AuthenticationStatus = _attemptRefresh();
+		//    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+		//    try
+		//    {
+		//        _initResources();
+		//        AuthenticationStatus = _attemptRefresh();
 
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					string ParsedNodeId = wsTools.FromSafeJavaScriptParam( NodeId );
-					string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
+		//        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+		//        {
+		//            string ParsedNodeId = wsTools.FromSafeJavaScriptParam( NodeId );
+		//            string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
 
-					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-					ReturnVal = ws.getNodePreview( ParsedNodeId, ParsedNodeKey );
-				}
+		//            var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+		//            ReturnVal = ws.getNodePreview( ParsedNodeId, ParsedNodeKey );
+		//        }
 
-				_deInitResources();
+		//        _deInitResources();
 
-			}
-			catch( Exception ex )
-			{
-				ReturnVal = jError( ex );
-			}
+		//    }
+		//    catch( Exception ex )
+		//    {
+		//        ReturnVal = jError( ex );
+		//    }
 
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+		//    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-			return ReturnVal.ToString();
-		}
+		//    return ReturnVal.ToString();
+		//}
 
 
         #endregion Tabs and Props

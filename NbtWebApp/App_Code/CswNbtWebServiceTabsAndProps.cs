@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceTabsAndProps
     {
-        public enum NodeEditMode { Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, AuditHistoryInPopup };
+        public enum NodeEditMode { Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, AuditHistoryInPopup, Preview };
 
         private readonly CswNbtResources _CswNbtResources;
         private readonly ICswNbtUser _ThisUser;
@@ -420,14 +420,16 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // copyPropValues()
 
-		public JObject getNodePreview( string NodeIdStr, string NodeKeyStr )
-		{
-			CswNbtNodeKey SourceNodeKey = new CswNbtNodeKey( _CswNbtResources, SourceNodeKeyStr );
-			CswNbtNode Node = _getNode( NodeIdStr, NodeKeyStr, new CswDateTime( _CswNbtResources ) );
-
-
-
-		}
+		//public JObject getNodePreview( string NodeIdStr, string NodeKeyStr )
+		//{
+		//    JObject ret = new JObject();
+		//    CswNbtNode Node = _getNode( NodeIdStr, NodeKeyStr, new CswDateTime( _CswNbtResources ) );
+		//    foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
+		//    {
+		//        ret.Add( new JProperty( Tab.TabId.ToString(), getProps( NodeEditMode.PrintReport, NodeIdStr, NodeKeyStr, Tab.TabId.ToString(), Node.NodeTypeId, new CswDateTime( _CswNbtResources ) ) ) );
+		//    }
+		//    return ret;
+		//} // getNodePreview()
 
 
         private void _applyPropJson( CswNbtNode Node, JObject PropObj )

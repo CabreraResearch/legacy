@@ -155,6 +155,16 @@
 
 						},
 
+		'EditLayoutDialog': function (CswNodeTabOptions)
+						{
+							CswNodeTabOptions.Config = true;
+
+							var $div = $('<div></div>');
+							$div.CswNodeTabs(CswNodeTabOptions);
+
+							_openDiv($div, 800, 600);
+						},
+
 		'EditNodeDialog': function (options)
 						{
 							var o = {
