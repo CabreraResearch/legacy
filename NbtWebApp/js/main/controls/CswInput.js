@@ -1,6 +1,7 @@
 ﻿/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../_Global.js" />
-/// <reference path="../../CswEnums.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
@@ -20,7 +21,7 @@
                 'width': '',
                 'autofocus': false,
                 'autocomplete': 'on',
-                'onChange': function() {}
+                'onChange': null //function() {}
             };
             if (options) $.extend(o, options);
 
@@ -58,7 +59,7 @@
             if (!isNullOrEmpty(o.cssclass)) $input.addClass(o.cssclass);
             if (!isNullOrEmpty(o.width)) $input.css('width', o.width);
             if (isTrue(o.autofocus)) $input.CswAttrDom('autofocus', o.autofocus);
-            if (!isNullOrEmpty(o.onChange)) $input.change( function () { o.onChange(); } );
+            if (isFunction(o.onChange)) $input.change( function () { o.onChange(); } );
                                 
             $parent.append($input);
             return $input;
