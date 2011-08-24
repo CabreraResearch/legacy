@@ -301,25 +301,24 @@
 			                                        .css('padding', '2px');
 			    var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
 			    
-
-			        //Subfield
-			        $subfieldCell.CswSpan('init', { 
-			                            ID: defaultSubFieldId,
-			                            value: selectedSubfield,
-			                            cssclass: ViewBuilder_CssClasses.default_filter.name })
-    			                 .css({ align: "center" });
-			        //Selected Filter
-			        $filtersCell.CswSpan('init', {
-			                            ID: filtersOptionsId,
-			                            value: selectedFilterMode,
-			                            cssclass: ViewBuilder_CssClasses.filter_select.name })
-    			                 .css({ align: "center" });
-			        //Filter Input
-			        $propFilterValueCell.CswSpan('init', {
-			                            ID: filtValInputId,
-			                            value: filterValue,
-			                            cssclass: ViewBuilder_CssClasses.default_filter.name })
-    			                 .css({ align: "center" });
+			    //Subfield
+			    $subfieldCell.CswSpan('init', { 
+			                        ID: defaultSubFieldId,
+			                        value: selectedSubfield,
+			                        cssclass: ViewBuilder_CssClasses.default_filter.name })
+    			                .css({ 'text-align': "center" });
+			    //Selected Filter
+			    $filtersCell.CswSpan('init', {
+			                        ID: filtersOptionsId,
+			                        value: selectedFilterMode,
+			                        cssclass: ViewBuilder_CssClasses.filter_select.name })
+    			                .css({ 'text-align': "center" });
+			    //Filter Input
+			    $propFilterValueCell.CswSpan('init', {
+			                        ID: filtValInputId,
+			                        value: filterValue,
+			                        cssclass: ViewBuilder_CssClasses.default_filter.name })
+    			                .css({ 'text-align': "center" });
 			}
 			return $propFilterTable;
 		}, // 'add': function(options) {
