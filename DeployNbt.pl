@@ -94,7 +94,7 @@ open( ASSEMBLYFILE, "< ". $repopaths{"Nbt"} ."/NbtWebApp/_Assembly.txt" )
 	or die( "Could not open _Assembly.txt" );
 my $assemblyname = <ASSEMBLYFILE>;
 close( ASSEMBLYFILE );
-$assemblyname =~ /^(\w+)\s?.*$/;
+$assemblyname =~ /^(\w+?)_.*$/;
 my $releasename = $1;
 my $assemblyno = $releasename ."_". $datestr .".". $increment; 
 

@@ -85,10 +85,13 @@ namespace ChemSW.Nbt.PropTypes
 				//case CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions:
                 //    InnerProperty = new CswNbtNodePropNodeTypePermissions(CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp);
                 //    break;
-                case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
-                    InnerProperty = new CswNbtNodePropNodeTypeSelect( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
-                    break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Number:
+				case CswNbtMetaDataFieldType.NbtFieldType.NFPA:
+					InnerProperty = new CswNbtNodePropNFPA( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
+					break;
+				case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
+					InnerProperty = new CswNbtNodePropNodeTypeSelect( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
+					break;
+				case CswNbtMetaDataFieldType.NbtFieldType.Number:
                     InnerProperty = new CswNbtNodePropNumber( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Password:
