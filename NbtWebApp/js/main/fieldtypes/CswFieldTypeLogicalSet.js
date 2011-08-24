@@ -7,8 +7,9 @@
 ; (function ($) {
         
     var pluginName = 'CswFieldTypeLogicalSet';
-    var nameCol = "name";
-    var keyCol = "key";
+    var nameCol = 'name';
+    var keyCol = 'key';
+    var valCol = 'Include';
 
     var methods = {
         init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
@@ -28,47 +29,30 @@
 
             // get columns
             var cols = [];
-            var c = 0;
 
             for (var column in logicalSetJson[0]) {
-                if(logicalSetJson.hasOwnProperty(column)) {
+                if(logicalSetJson[0].hasOwnProperty(column)) {
                     var fieldname = column;
-                    if (fieldname !== nameCol && fieldname != keyCol)
+                    if (fieldname !== nameCol && fieldname !== keyCol)
                     {
-                        cols[c] = fieldname;
-                        c++;
+                        cols.push(fieldname);
                     }
                 }
             }
 
             // get data
-            var data = new Array();
-            var d = 0;
+            var data = [];
+
             for (var i=0; i < logicalSetJson.length; i++) {
                 var thisSet = logicalSetJson[i];
-                var values = [];
-                var r = 0;
-                var thisName = '';
-                var thisKey = '';
-                for (var field in thisSet) {
-                    if (thisSet.hasOwnProperty(field) && field !== nameCol && field !== keyCol) {
-                        var value = thisSet[field]; //thisSet.children('column[field="' + cols[c] + '"]').CswAttrXml('value');
-                        values[r] = isTrue(value);
-                        r++;
-                    }
-                    else if (field === nameCol) {
-                        thisName = thisSet[field];
-                    }
-                    else if (field === keyCol) {
-                        thisKey = thisSet[field];
-                    }
-                }
+                
+                if (thisSet.hasOwnProperty(keyCol) && thisSet.hasOwnProperty(nameCol) && thisSet.hasOwnProperty(valCol)) {
 
-                var $elm = { 'label': thisName,
-                    'key': thisKey,
-                    'values': values };
-                data[d] = $elm;
-                d++;
+                    var dataOpts = { 'label': thisSet[nameCol],
+                        'key': thisSet[keyCol],
+                        'values': [isTrue(thisSet[valCol])] };
+                    data.push(dataOpts);
+                }
             }
 
             $CBADiv.CswCheckBoxArray('init', {
