@@ -160,6 +160,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JObject getSingleProp( NodeEditMode EditMode, string NodeId, string NodeKey, string PropIdFromJson, Int32 NodeTypeId, string NewPropJson )
         {
+            JObject Ret = new JObject();
             JObject PropObj = new JObject();
             CswNbtNode Node = null;
             Node = EditMode == NodeEditMode.AddInPopup ?
@@ -193,8 +194,12 @@ namespace ChemSW.Nbt.WebServices
                     //Node.Rollback();
                 }
             }
+            if( PropObj.HasValues )
+            {
+                Ret = (JObject) PropObj.Properties().First().Value;
+            }
 
-            return PropObj;
+            return Ret;
         } // getProp()
 
         private void _addProp( JObject ParentObj, NodeEditMode EditMode, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
