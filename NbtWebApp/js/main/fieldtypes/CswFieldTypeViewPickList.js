@@ -14,54 +14,45 @@
     var methods = {
         init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
 
-                var $Div = $(this);
-                $Div.contents().remove();
+            var $Div = $(this);
+            $Div.contents().remove();
 
-                var selectedViewIds = tryParseString(o.propData.viewid).trim().split(',');
-				var optionData = o.propData.options;
-				var selectMode = o.propData.selectmode;
-				var $CBADiv = $('<div />')
-								.appendTo($Div);
-
-				// get data
-				var data = [];
-				for (var optId in optionData) {
-				    if (optionData.hasOwnProperty(optId)) {
-				        var thisOpt = optionData[optId];
-				        var vOpt = {
-				            label: thisOpt[nameCol],
-				            key: thisOpt[keyCol],
-				            values: [(selectedViewIds.indexOf(thisOpt[keyCol]) !== -1)]
-				        };
-				        data.push(vOpt);
-				    }
-				}
-
-            $CBADiv.CswCheckBoxArray('init', {
-				ID: o.ID + '_cba',
-				cols: [ valueCol ],
-				data: data,
-				UseRadios: (selectMode === 'Single'),
-				Required: o.Required,
-				ReadOnly: o.ReadOnly,
-				onchange: o.onchange
-			});
-            },
+            var selectedViewIds = tryParseString(o.propData.viewid).trim().split(',');
+			var optionData = o.propData.options;
+			var selectMode = o.propData.selectmode;
+			var $cbaDiv = $('<div />')
+							.appendTo($Div)
+                            .CswCheckBoxArray('transmorgify', {
+                                dataAry: optionData,
+			                    nameCol: nameCol,
+			                    keyCol: keyCol,
+                                valueCol: valueCol
+                            })
+                            .CswCheckBoxArray('init', {
+				                ID: o.ID + '_cba',
+				                UseRadios: (selectMode === 'Single'),
+				                Required: o.Required,
+				                ReadOnly: o.ReadOnly,
+				                onchange: o.onchange
+			                });
+            return $Div;    
+        },
         'save': function(o) {
-				var optionData = o.propData.options;
-				var $CBADiv = o.$propdiv.children('div').first();
-				var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-                for (var r = 0; r < formdata.length; r++) {
-                    var checkitem = formdata[r][0];
-                    var objHelper = new ObjectHelper(optionData);
-                    var optItem = objHelper.find(keyCol, checkitem.key);
-                    var optVal = optItem[valueCol];
+			var optionData = o.propData.options;
+			var $cbaDiv = o.$propdiv.children('div').first();
+			var formdata = $cbaDiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+            for (var r = 0; r < formdata.length; r++) {
+                var checkitem = formdata[r][0];
+                var objHelper = new ObjectHelper(optionData);
+                var optItem = objHelper.find(keyCol, checkitem.key);
+                var optVal = optItem[valueCol];
 
-                    if (checkitem.checked && optVal === "False")
-                        optItem[valueCol] = 'True';
-                    else if (!checkitem.checked && optVal === "True")
-                        optItem[valueCol] = 'False';
-                } // for( var r = 0; r < formdata.length; r++)
+                if (checkitem.checked && optVal === "False")
+                    optItem[valueCol] = 'True';
+                else if (!checkitem.checked && optVal === "True")
+                    optItem[valueCol] = 'False';
+            } // for( var r = 0; r < formdata.length; r++)
+            return $(this);
             }
     };
     
