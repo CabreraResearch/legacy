@@ -36,26 +36,11 @@
 
         },
         save: function(o) { //$propdiv, $xml
-                var logicalSetJson = o.propData.logicalsetxml;
-                var $CBADiv = o.$propdiv.children('div').first();
-                var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-                for( var r = 0; r < formdata.length; r++)
-                {
-                    for( var c = 0; c < formdata[r].length; c++)
-                    {
-                        var checkitem = formdata[r][c];
-                        var jsonItem = findObject(logicalSetJson, keyCol, checkitem.key);
-                        var itemColumn = findObject(jsonItem, checkitem.collabel);
-                    
-                        if (checkitem.checked && itemColumn === "False") {
-                            itemColumn = 'True';
-                        }
-                        else if (!checkitem.checked && itemColumn === "True") {
-                            itemColumn = 'False';
-                        }
-                    } // for( var c = 0; c < formdata.length; c++)
-                } // for( var r = 0; r < formdata.length; r++)
-            } // save()
+            var $CBADiv = o.$propdiv.children('div').first();
+            var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+            o.propData.logicalsetjson = formdata;
+            return $(this);
+        } // save()
     };
     
 

@@ -38,22 +38,11 @@
             return $Div;    
         },
         'save': function(o) {
-			var optionData = o.propData.options;
 			var $cbaDiv = o.$propdiv.children('div').first();
 			var formdata = $cbaDiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-            for (var r = 0; r < formdata.length; r++) {
-                var checkitem = formdata[r][0];
-                var objHelper = new ObjectHelper(optionData);
-                var optItem = objHelper.find(keyCol, checkitem.key);
-                var optVal = optItem[valueCol];
-
-                if (checkitem.checked && optVal === "False")
-                    optItem[valueCol] = 'True';
-                else if (!checkitem.checked && optVal === "True")
-                    optItem[valueCol] = 'False';
-            } // for( var r = 0; r < formdata.length; r++)
+            o.propData.options = formdata;
             return $(this);
-            }
+        }
     };
     
     // Method calling logic

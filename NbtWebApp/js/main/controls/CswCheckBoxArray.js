@@ -8,6 +8,7 @@
 	
 		var pluginName = 'CswCheckBoxArray';
 	    var storedData = 'CbaData';
+	    var storedDataClass = 'CbaStoredData';
 	    
 		var methods = {
 			transmorgify: function (options) {
@@ -107,8 +108,11 @@
 					checkType = CswInput_Types.radio.name;
 				
 				$Div.contents().remove();
-
-				var $OuterDiv = $('<div/>').appendTo($Div);
+		        var storeDataId = o.ID + '_cswCbaArrayDataStore';
+				var $OuterDiv = $('<div id="' + storeDataId + '" class="' + storedDataClass + '"/>')
+    				                .appendTo($Div)
+				                    .data(storedData, {columns: o.cols, data: o.data});;
+		        
 				if (o.ReadOnly) {
 					for (var r = 0; r < o.data.length; r++) {
 						var rRow = o.data[r];
@@ -171,6 +175,22 @@
 					} // if(o.UseRadios && ! o.Required)
 					tablerow++;
 
+				    var onClick = function() {
+					    var $this = $(this);
+					    var col = $this.CswAttrXml('col');
+					    var row = $this.CswAttrXml('row');
+					    var cbaDiv = $('#' + storeDataId);
+					    var cache = cbaDiv.data(storedData);
+				        if (cache.data.hasOwnProperty(row)) {
+					        var thisRow = cache.data[row];
+					        if (thisRow.hasOwnProperty('values')) {
+					            var values = thisRow.values;
+					            values[col] = $this.is(':checked');
+					        }
+					    }
+					    cbaDiv.data(storedData, cache);
+					};
+				    
 					// Data
 					for(var s = 0; s < o.data.length; s++)
 					{
@@ -179,18 +199,20 @@
 						var $sLabelcell = $table.CswTable('cell', tablerow + s, 1);
 						$sLabelcell.addClass('cbarraycell');
 						$sLabelcell.append(sRow.label);
-						for(var f = 0; f < o.cols.length; f++)
+					    
+					    for(var f = 0; f < o.cols.length; f++)
 						{
 						
 							var $fCell = $table.CswTable('cell', tablerow + s, f+2);
 							$fCell.addClass('cbarraycell');
 							var fCheckid = o.ID + '_' + s + '_' + f;
+                            
 							var $fCheck = $('<input type="'+ checkType +'" class="CBACheckBox_'+ o.ID +'" id="'+ fCheckid + '" name="' + o.ID + '" />')
 										   .appendTo($fCell)
 										   .bind('click', o.onchange)
 							               .CswAttrXml({key: sRow.key, rowlabel: sRow.label, collabel: o.cols[f], row: s, col: f })
 							               .data('thisRow', sRow)
-						                   .bind('click', function () { log(sRow); });
+						                   .bind('click', onClick);
 
 							if(sRow.values[f]) {
 								$fCheck.CswAttrDom('checked', 'true');
@@ -224,20 +246,11 @@
 				}
 				
 				var $Div = $(this);
-				var data = new Array();
-				$Div.find('.CBACheckBox_' + o.ID)
-					.each(function() {
-							var $check = $(this);
-							var r = parseInt($check.CswAttrDom('row'));
-							var c = parseInt($check.CswAttrDom('col'));
-							if(data[r] === undefined) 
-								data[r] = new Array();
-							data[r][c] = { key: $check.CswAttrDom('key'),
-										   rowlabel: $check.CswAttrDom('rowlabel'),
-										   collabel: $check.CswAttrDom('collabel'),
-										   checked: $check.CswAttrDom('checked') 
-										 };
-						});
+				var data = [];
+				var $dataDiv = $Div.find('.' + storedDataClass);
+				if (!isNullOrEmpty($dataDiv)) {
+				    data = $dataDiv.data(storedData);
+				}	
 				return data;
 			}
 		};

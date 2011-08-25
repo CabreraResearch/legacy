@@ -40,20 +40,10 @@
             return $Div;
         },
         save: function (o) { //$propdiv, $xml
-            var optionData = o.propData.options;
             var $CBADiv = o.$propdiv.children('div').first();
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-            for (var r = 0; r < formdata.length; r++) {
-                var checkitem = formdata[r][0];
-                var objHelper = new ObjectHelper(optionData);
-                var optItem = objHelper.find(keyCol, checkitem.key);
-                var optVal = optItem[valueCol];
-
-                if (checkitem.checked && optVal === "False")
-                    optItem[valueCol] = 'True';
-                else if (!checkitem.checked && optVal === "True")
-                    optItem[valueCol] = 'False';
-            } // for( var r = 0; r < formdata.length; r++)
+            o.propData.options = formdata;
+            return $(this);
         } // save()
     };
 
