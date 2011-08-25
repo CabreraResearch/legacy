@@ -292,21 +292,22 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = ( RelatedNodeId != null ) ?
+            ParentObject["value"] = new JObject();
+            ParentObject["value"][_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = ( RelatedNodeId != null ) ?
                                 RelatedNodeId.PrimaryKey.ToString() : string.Empty;
-            ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
+            ParentObject["value"][_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
 
             if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
             {
-                ParentObject["nodetypeid"] = TargetId.ToString();
+                ParentObject["value"]["nodetypeid"] = TargetId.ToString();
             }
             if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
             {
-                ParentObject["allowadd"] = "true";
+                ParentObject["value"]["allowadd"] = "true";
             }
 
             JObject OptionsNodeObj = new JObject();
-            ParentObject["options"] = OptionsNodeObj;
+            ParentObject["value"]["options"] = OptionsNodeObj;
 
             Dictionary<CswPrimaryKey, string> Options = getOptions();
             foreach( CswPrimaryKey NodePk in Options.Keys.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )

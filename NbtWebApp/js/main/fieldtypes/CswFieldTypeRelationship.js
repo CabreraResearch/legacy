@@ -16,14 +16,16 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var selectedNodeId = tryParseString(o.propData.nodeid).trim();
+                var value = o.propData.value;
+                
+                var selectedNodeId = tryParseString(value.nodeid).trim();
                 if (!isNullOrEmpty(o.relatednodeid) && isNullOrEmpty(selectedNodeId)) {
                     selectedNodeId = o.relatednodeid;
                 }
-                var selectedName = tryParseString(o.propData.name).trim();
-                var nodeTypeId = tryParseString(o.propData.nodetypeid).trim();
-                var allowAdd = isTrue(o.propData.allowadd);
-                var options = o.propData.options;
+                var selectedName = tryParseString(value.name).trim();
+                var nodeTypeId = tryParseString(value.nodetypeid).trim();
+                var allowAdd = isTrue(value.allowadd);
+                var options = value.options;
 
                 if(o.ReadOnly) {
                     $Div.append(selectedName);
