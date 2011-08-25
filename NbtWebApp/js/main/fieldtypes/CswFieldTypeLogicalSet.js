@@ -3,13 +3,14 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../controls/CswCheckBoxArray.js" />
 
 ; (function ($) {
         
     var pluginName = 'CswFieldTypeLogicalSet';
     var nameCol = 'name';
     var keyCol = 'key';
-    var valCol = 'Include';
+  
 
     var methods = {
         init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
@@ -18,56 +19,20 @@
             $Div.contents().remove();
 
             var logicalSetJson = o.propData.logicalsetjson;
-
-            //logicalSetJson = {
-            //    [{ name: value, name2: value2 },
-            //     { name: value, name2: value2 }]
-            // }
             
-            var $CBADiv = $('<div />')
-                            .appendTo($Div);
-
-            // get columns
-            var cols = [];
-
-            for (var column in logicalSetJson[0]) {
-                if(logicalSetJson[0].hasOwnProperty(column)) {
-                    var fieldname = column;
-                    if (fieldname !== nameCol && fieldname !== keyCol)
-                    {
-                        cols.push(fieldname);
-                    }
-                }
-            }
-
-            // get data
-            var data = [];
-
-            for (var i=0; i < logicalSetJson.length; i++) {
-                var thisSet = logicalSetJson[i];
-                
-                if (thisSet.hasOwnProperty(keyCol) && thisSet.hasOwnProperty(nameCol) && thisSet.hasOwnProperty(valCol)) {
-                    var values = [];
-                    for (var v=0; v < cols.length; v++) {
-                        if(thisSet.hasOwnProperty(cols[v])) {
-                            values.push(thisSet[cols[v]]);
-                        }
-                    }
-                    var dataOpts = { 'label': thisSet[nameCol],
-                        'key': thisSet[keyCol],
-                        'values': values };
-                    data.push(dataOpts);
-                }
-            }
-
-            $CBADiv.CswCheckBoxArray('init', {
-                                     'ID': o.ID + '_cba',
-                                     'cols': cols,
-                                     'data': data,
-                                     'onchange': o.onchange,
-									 'ReadOnly': o.ReadOnly
-                                    });
-
+            var $cbaDiv = $('<div />')
+                            .appendTo($Div)
+                            .CswCheckBoxArray('transmorgify', {
+                                dataAry: logicalSetJson,
+			                    nameCol: nameCol,
+			                    keyCol: keyCol
+                            })
+                            .CswCheckBoxArray('init', {
+                                ID: o.ID + '_cba',
+                                onchange: o.onchange,
+								ReadOnly: o.ReadOnly
+                            });
+            return $Div;
 
         },
         save: function(o) { //$propdiv, $xml

@@ -21,34 +21,23 @@
             var selectedNodeTypeIds = tryParseString(o.propData.nodetype).trim().split(',');
             var selectMode = o.propData.selectmode; // Single, Multiple, Blank
 
-            var $CBADiv = $('<div />')
-                .appendTo($Div);
+            var $cbaDiv = $('<div />')
+                    .appendTo($Div)
+                    .CswCheckBoxArray('transmorgify', {
+                        dataAry: optData,
+			            nameCol: nameCol,
+			            keyCol: keyCol,
+                        valCol: valueCol
+                    })  
+                    .CswCheckBoxArray('init', {
+                        ID: o.ID + '_cba',
+                        UseRadios: (selectMode === 'Single'),
+                        Required: o.Required,
+                        ReadOnly: o.ReadOnly,
+                        onchange: o.onchange
+                    });
 
-            // get data
-            var data = [];
-            for (var i = 0; i < optData.length; i++) {
-                var thisNodeType = optData[i];
-                if (thisNodeType.hasOwnProperty(nameCol) && thisNodeType.hasOwnProperty(keyCol) && thisNodeType.hasOwnProperty(valueCol)) {
-                    var ntOpt = {
-                        'label': thisNodeType[nameCol],
-                        'key': thisNodeType[keyCol],
-                        'values': [(selectedNodeTypeIds.indexOf(thisNodeType[keyCol]) !== -1)]
-                    };
-                    data.push(ntOpt);
-                }
-            }
-
-            $CBADiv.CswCheckBoxArray('init', {
-                ID: o.ID + '_cba',
-                cols: [ valueCol ],
-                data: data,
-                UseRadios: (selectMode === 'Single'),
-                Required: o.Required,
-                ReadOnly: o.ReadOnly,
-                onchange: o.onchange
-            });
-
-
+            return $Div;
         },
         save: function (o) { //$propdiv, $xml
             var optionData = o.propData.options;

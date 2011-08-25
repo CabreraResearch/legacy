@@ -280,18 +280,17 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["selectmode"] = SelectMode.ToString();
             ParentObject[_CachedViewNameSubField.ToXmlNodeName()] = CachedViewNames.ToString();
 
-            JObject OptionsObj = new JObject();
-            ParentObject["options"] = OptionsObj;
+            JArray ViewsArray = new JArray();
+            ParentObject["options"] = ViewsArray;
 
             DataTable ViewsTable = ViewsForCBA();
             foreach( DataRow ViewRow in ViewsTable.Rows )
             {
-                JObject UserObj = new JObject();
-                OptionsObj["user_" + ViewRow[KeyColumn]] = UserObj;
-
-                UserObj[NameColumn] = ViewRow[NameColumn].ToString();
-                UserObj[KeyColumn] = ViewRow[KeyColumn].ToString();
-                UserObj[ValueColumn] = ViewRow[ValueColumn].ToString();
+                JObject ViewObj = new JObject();
+                ViewsArray.Add(ViewObj);
+                ViewObj[NameColumn] = ViewRow[NameColumn].ToString();
+                ViewObj[KeyColumn] = ViewRow[KeyColumn].ToString();
+                ViewObj[ValueColumn] = ViewRow[ValueColumn].ToString();
             }
         }
 
