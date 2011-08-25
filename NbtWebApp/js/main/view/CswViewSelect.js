@@ -11,20 +11,21 @@
 				var o = {
 					ID: '',
 					//viewid: '',
-					onSelect: function(optSelect) { 
-						var x = {
-									iconurl: '',
-									type: '',
-									viewid: '',
-									viewname: '',
-									viewmode: '',
-									actionid: '',
-									actionname: '',
-									actionurl: '',
-									reportid: ''
-								};
-					},
-					onSuccess: function() {},
+					onSelect: null,
+//				        function() { 
+//						var x = {
+//									iconurl: '',
+//									type: '',
+//									viewid: '',
+//									viewname: '',
+//									viewmode: '',
+//									actionid: '',
+//									actionname: '',
+//									actionurl: '',
+//									reportid: ''
+//								};
+//					},
+					onSuccess: null, //function() {},
 					ClickDelay: 300,
 					issearchable: false,
 					usesession: true
@@ -36,35 +37,35 @@
 
 				var $selectdiv = $(this);
 				
-				$viewtreediv = $('<div/>');
-				$selectdiv.CswComboBox('init', { 'ID': o.ID + '_combo', 
-													'TopContent': 'Select a View',
-													'SelectContent': $viewtreediv,
-													'Width': '266px' });
+				var $viewtreediv = $('<div/>');
+				$selectdiv.CswComboBox('init', { ID: o.ID + '_combo', 
+												 TopContent: 'Select a View',
+												 SelectContent: $viewtreediv,
+												 Width: '266px' });
 
 				$viewtreediv.CswViewTree({ 
-											'onSelect': function(optSelect) 
+											onSelect: function(optSelect) 
 												{ 
 													_onTreeSelect({
-																	'ID': o.ID,
-																	'ClickDelay': o.ClickDelay,
-																	'$item': optSelect.$item,
-																	'iconurl': optSelect.iconurl,
-																	'type': optSelect.type,
-																	'viewid': optSelect.viewid,
-																	'viewname': optSelect.viewname,
-																	'viewmode': optSelect.viewmode,
-																	'actionid': optSelect.actionid,
-																	'actionname': optSelect.actionname,
-																	'actionurl': optSelect.actionurl,
-																	'reportid': optSelect.reportid,
-																	'onSelect': o.onSelect,
-																	'$selectdiv': $selectdiv
+																	ID: o.ID,
+																	ClickDelay: o.ClickDelay,
+																	$item: optSelect.$item,
+																	iconurl: optSelect.iconurl,
+																	type: optSelect.type,
+																	viewid: optSelect.viewid,
+																	viewname: optSelect.viewname,
+																	viewmode: optSelect.viewmode,
+																	actionid: optSelect.actionid,
+																	actionname: optSelect.actionname,
+																	actionurl: optSelect.actionurl,
+																	reportid: optSelect.reportid,
+																	onSelect: o.onSelect,
+																	$selectdiv: $selectdiv
 																});
 												}, 
-											'onSuccess': o.onSuccess,
-											'issearchable': o.issearchable,
-											'usesession': o.usesession 
+											onSuccess: o.onSuccess,
+											issearchable: o.issearchable,
+											usesession: o.usesession 
 										});
 				return $selectdiv;
 			},

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
@@ -180,7 +179,7 @@ namespace ChemSW.Nbt.WebServices
 
                 string ThisNodeName = Tree.getNodeNameForCurrentPosition();
                 string ThisNodeIcon = "";
-                string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( CswTools.tryParseString( ThisNodeKey ) );
+                string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
                 string ThisNodeId = "";
                 string ThisNodeRel = "";
 
