@@ -50,6 +50,18 @@ namespace ChemSW.Nbt.Schema
  order by lower(a.actionname)" );
 
 
+			// case 22955
+			// Add new NFPA fieldtype
+
+			CswTableUpdate FieldTypesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I10_FieldTypes_Update", "field_types" );
+			DataTable FieldTypeTable = FieldTypesUpdate.getEmptyTable();
+			DataRow NewFTRow = FieldTypeTable.NewRow();
+			NewFTRow["auditflag"] = "0";
+			NewFTRow["datatype"] = "text";
+			NewFTRow["deleted"] = CswConvert.ToDbVal( false );
+			NewFTRow["fieldtype"] = CswNbtMetaDataFieldType.NbtFieldType.NFPA.ToString();
+			FieldTypeTable.Rows.Add( NewFTRow );
+			FieldTypesUpdate.update( FieldTypeTable );
 
 		} // Update()
 

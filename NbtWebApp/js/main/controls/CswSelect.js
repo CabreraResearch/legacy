@@ -1,20 +1,21 @@
 ﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../_Global.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
-    var PluginName = "CswSelect";
+    var pluginName = "CswSelect";
     
     var methods = {
 	
-		'init': function(options) 
-		{
+		'init': function(options) {
             var o = {
-                'ID': '',
-                'selected': '',
-                'values': [{value: '', display: ''}],
-                'cssclass': '',
-                'onChange': function () {}
+                ID: '',
+                selected: '',
+                values: [{value: '', display: '', data: {}}],
+                cssclass: '',
+                onChange: null //function () {}
             };
             if (options) $.extend(o, options);
 
@@ -29,20 +30,10 @@
             if (!isNullOrEmpty( o.cssclass )) $select.addClass(o.cssclass);
             if (!isNullOrEmpty( o.value )) $select.text( o.value );
 
-            for(var key in o.values)
-            {
-                if (o.values.hasOwnProperty(key)) {
-                    var value = o.values[key].value;
-                    var display = o.values[key].display;
-                    var $opt = $('<option value="' + value + '">' + display + '</option>')
-                        .appendTo($select);
-                    if (value === o.selected) {
-                        $opt.CswAttrDom('selected', 'selected');
-                    }
-                }
-            }
+		    
+		    setOptions(o.values, o.selected, $select);
             
-            if( !isNullOrEmpty( o.onChange ) ) {
+            if (isFunction(o.onChange)) {
                  $select.bind('change', function () {
                     var $this = $(this);
                     o.onChange($this);
@@ -51,9 +42,40 @@
             
             $parent.append($select);
             return $select;
+        },
+        'setoptions': function (values, selected, doEmpty) {
+            var $select = $(this);
+            setOptions(values, selected, $select, doEmpty);
+            return $select;
         }
+        
     };
-    	// Method calling logic
+    
+    function setOptions(values, selected, $select, doEmpty) {
+        if (isArray(values) && values.length > 0) {
+            if (doEmpty) {
+                $select.empty();
+            }
+            for (var key in values) {
+                if (values.hasOwnProperty(key)) {
+                    var thisOpt = values[key];
+                    var value = tryParseString(thisOpt.value);
+                    var display = tryParseString(thisOpt.display);
+                    var $opt = $('<option value="' + value + '">' + display + '</option>')
+                        .appendTo($select);
+                    if (value === selected) {
+                        $opt.CswAttrDom('selected', 'selected');
+                    }
+                    if (false === isNullOrEmpty(thisOpt.data)) {
+                        $opt.data(thisOpt.dataName, thisOpt.data);
+                    }
+                }
+            }
+        }
+        return $select;
+    }
+    
+    // Method calling logic
 	$.fn.CswSelect = function (method) {
 		
 		if ( methods[method] ) {
@@ -61,7 +83,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
 		}    
   
 	};

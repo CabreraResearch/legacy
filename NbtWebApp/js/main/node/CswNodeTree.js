@@ -117,17 +117,15 @@
 					        var nbtnodekey = tryParseString(json.attr.cswnbtnodekey);
 					        var rel = tryParseString(json.attr.rel);
 					        var species = tryParseString(json.attr.species);
-					        
-					        var treestr = '<li id="'+ id +'" ';
-							treestr += '    rel="'+ rel +'" ';
-							treestr += '    species="'+ species +'" ';
-							treestr += '    class="jstree-'+ json.attr.state +'" ';
+						    var state = tryParseString(json.attr.state, 'open');
+						    
+					        var treestr = '<li id="'+ id +'" rel="'+ rel +'" species="'+ species +'" class="jstree-'+ state +'" ';
 							if (!isNullOrEmpty(nbtnodekey)) {
 								treestr += '    cswnbtnodekey="'+ nbtnodekey.replace(/"/g, '&quot;') +'"';
 							}
 							treestr += '>';
 							if (o.ShowCheckboxes) {
-								treestr += '  <input type="checkbox" class="'+ idPrefix +'check" id="check_'+ nodeid +'" rel="'+ rel +'" nodeid="'+ nodeid +'" nodename="'+ nodename +'"></input>';
+								treestr += '<input type="checkbox" class="'+ idPrefix +'check" id="check_'+ nodeid +'" rel="'+ rel +'" nodeid="'+ nodeid +'" nodename="'+ nodename +'"></input>';
 							}
 							treestr += '  <a href="#">'+ nodename +'</a>';
 					        var children = json.children;

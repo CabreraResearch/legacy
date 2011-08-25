@@ -114,6 +114,7 @@
     <Content Include="js\main\actions\CswImportInspectionQuestions.js" />
     <Content Include="js\globals\CswGlobalTools.js" />
     <Content Include="js\main\controls\CswDateTimePicker.js" />
+    <Content Include="js\main\fieldtypes\CswFieldTypeNFPA.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeImageList.js" />
     <Content Include="js\main\tools\CswArray.js" />
     <Content Include="js\main\tools\CswClientDb.js" />
@@ -1124,37 +1125,6 @@
     <Content Include="js\thirdparty\js\gserializer.js" />
     <Content Include="js\thirdparty\js\jblas-profiler\profiler-dump.js" />
     <Content Include="js\thirdparty\js\jblas-profiler\profiler.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq-vsdoc.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.min.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\linq-vsdoc.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\linq.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\linq.min.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\ReadMe.txt" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\reference.htm" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\sample\script.wsf" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\sample\tutorial.htm" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\action.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\aggregate.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\arrayEnumerable.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\convert.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\dictionary.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\enumerable.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\errorHandling.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\functional.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\grouping.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\join.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\jquery-1.4.1.min.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\ordering.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\paging.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\projection.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\qunit.css" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\qunit.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\set.js" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\testrunner.htm" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\testrunner.jquery.htm" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\testrunner.jquery.min.htm" />
-    <Content Include="js\thirdparty\js\linq.js_ver2.2.0.2\test\testrunner.min.htm" />
     <Content Include="js\thirdparty\js\modernizr-2.0.3.js" />
     <Content Include="js\thirdparty\js\modernizr-2.0.3.min.js" />
     <Content Include="js\globals\Global.js" />
@@ -1544,7 +1514,6 @@
       <DependentUpon>GetBlob.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="js\thirdparty\js\linq.js_ver2.2.0.2\sample\LinqJS.cs" />
     <Compile Include="License.aspx.cs">
       <DependentUpon>License.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1881,16 +1850,6 @@
     <None Include="js\thirdparty\jquery\themes\theme-aristo\icons.psd" />
     <None Include="js\thirdparty\jquery\themes\theme-aristo\README.rdoc" />
     <None Include="js\thirdparty\js\jblas-profiler\README.md" />
-    <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\Action0.snippet" />
-    <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\Action1.snippet" />
-    <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\Action2.snippet" />
-    <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\EnumerableFrom.snippet" />
-    <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\EnumerableRange.snippet" />
-    <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\Func0.snippet" />
-    <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\Func1.snippet" />
-    <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\Func2.snippet" />
-    <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\jQueryEnumerableFrom.snippet" />
-    <None Include="js\thirdparty\js\linq.js_ver2.2.0.2\snippets\jQueryEnumerableRange.snippet" />
     <None Include="js\_compile.pl" />
     <None Include="Mobile.manifest" />
     <None Include="SkinPrint\Calendar\Thumbs.db" />

@@ -467,17 +467,27 @@ namespace ChemSW.Nbt.PropTypes
 
 		}//AsMultiList
 
-        public CswNbtNodePropNodeTypeSelect AsNodeTypeSelect
-        {
-            get
-            {
-                if( !( _CswNbtNodeProp is CswNbtNodePropNodeTypeSelect ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropNodeTypeSelect ) ) ) );
-                return ( (CswNbtNodePropNodeTypeSelect) _CswNbtNodeProp );
-            }
-        }//AsNodeTypeSelect
+		public CswNbtNodePropNodeTypeSelect AsNodeTypeSelect
+		{
+			get
+			{
+				if( !( _CswNbtNodeProp is CswNbtNodePropNodeTypeSelect ) )
+					throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropNodeTypeSelect ) ) ) );
+				return ( (CswNbtNodePropNodeTypeSelect) _CswNbtNodeProp );
+			}
+		}//AsNodeTypeSelect
 
-        public CswNbtNodePropNumber AsNumber
+		public CswNbtNodePropNFPA AsNFPA
+		{
+			get
+			{
+				if( !( _CswNbtNodeProp is CswNbtNodePropNFPA ) )
+					throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropNFPA ) ) ) );
+				return ( (CswNbtNodePropNFPA) _CswNbtNodeProp );
+			}
+		}//AsNFPA
+
+		public CswNbtNodePropNumber AsNumber
         {
             get
             {

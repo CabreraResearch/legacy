@@ -1,12 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -14,6 +8,7 @@ namespace ChemSW.Nbt.MetaData
     {
         public enum NbtFieldType
         {
+            Unknown,
             Barcode,
             Composite,
             DateTime,
@@ -32,8 +27,9 @@ namespace ChemSW.Nbt.MetaData
             MOL,
             MTBF,
             //MultiRelationship,
-			MultiList,
+            MultiList,
             //NodeTypePermissions,
+			NFPA,
             NodeTypeSelect,
             Number,
             Password,
@@ -41,13 +37,12 @@ namespace ChemSW.Nbt.MetaData
             Quantity,
             Question,
             Relationship,
-			Scientific,
+            Scientific,
             Sequence,
             Static,
             Text,
             //Time,
             TimeInterval,
-            Unknown,
             UserSelect,
             ViewPickList,
             ViewReference
@@ -70,9 +65,11 @@ namespace ChemSW.Nbt.MetaData
 
         public static NbtFieldType getFieldTypeFromString( string FieldTypeName )
         {
-            return (NbtFieldType) Enum.Parse( typeof( NbtFieldType ), FieldTypeName, true );
+            NbtFieldType Ret = NbtFieldType.Unknown;
+            NbtFieldType.TryParse( FieldTypeName, true, out Ret );
+            return Ret;
         }
-        
+
         public DataRow _DataRow
         {
             get { return _FieldTypeRow; }
@@ -96,12 +93,17 @@ namespace ChemSW.Nbt.MetaData
 
         public Int32 FieldTypeId
         {
-            get { return CswConvert.ToInt32( _FieldTypeRow[ "fieldtypeid" ].ToString() ); }
+            get { return CswConvert.ToInt32( _FieldTypeRow["fieldtypeid"].ToString() ); }
         }
 
         public NbtFieldType FieldType
         {
-            get { return ( NbtFieldType ) Enum.Parse( typeof( NbtFieldType ), _FieldTypeRow[ "fieldtype" ].ToString() ); }
+            get
+            {
+                NbtFieldType Ret = NbtFieldType.Unknown;
+                NbtFieldType.TryParse( _FieldTypeRow["fieldtype"].ToString(), true, out Ret );
+                return Ret;
+            }
         }
 
         /// <summary>
@@ -111,7 +113,7 @@ namespace ChemSW.Nbt.MetaData
         public bool IsSimpleType()
         {
             return ( FieldType == NbtFieldType.DateTime ||
-                     //FieldType == NbtFieldType.Time ||
+                //FieldType == NbtFieldType.Time ||
                      FieldType == NbtFieldType.List ||
                      FieldType == NbtFieldType.Logical ||
                      FieldType == NbtFieldType.Memo ||
@@ -190,7 +192,7 @@ namespace ChemSW.Nbt.MetaData
             }
 
             // If one is null, but not both, return false.
-            if( ( ( object ) ft1 == null ) || ( ( object ) ft2 == null ) )
+            if( ( (object) ft1 == null ) || ( (object) ft2 == null ) )
             {
                 return false;
             }
@@ -211,12 +213,12 @@ namespace ChemSW.Nbt.MetaData
         {
             if( !( obj is CswNbtMetaDataFieldType ) )
                 return false;
-            return this == ( CswNbtMetaDataFieldType ) obj;
+            return this == (CswNbtMetaDataFieldType) obj;
         }
 
         public bool Equals( CswNbtMetaDataFieldType obj )
         {
-            return this == ( CswNbtMetaDataFieldType ) obj;
+            return this == (CswNbtMetaDataFieldType) obj;
         }
 
         public override int GetHashCode()

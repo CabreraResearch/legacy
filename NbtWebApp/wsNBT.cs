@@ -1045,27 +1045,27 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     NbtViewVisibility RealVisibility = NbtViewVisibility.Unknown;
-					CswPrimaryKey RealVisibilityRoleId = null;
-					CswPrimaryKey RealVisibilityUserId = null;
-					if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-					{
-						Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
-						if( RealVisibility == NbtViewVisibility.Role )
-						{
-							RealVisibilityRoleId = new CswPrimaryKey();
-							RealVisibilityRoleId.FromString( VisibilityRoleId );
-						}
-						else if( RealVisibility == NbtViewVisibility.User )
-						{
-							RealVisibilityUserId = new CswPrimaryKey();
-							RealVisibilityUserId.FromString( VisibilityUserId );
-						}
-					}
-					else
-					{
-						RealVisibility = NbtViewVisibility.User;
-						RealVisibilityUserId = _CswNbtResources.CurrentUser.UserId;
-					}
+                    CswPrimaryKey RealVisibilityRoleId = null;
+                    CswPrimaryKey RealVisibilityUserId = null;
+                    if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    {
+                        Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
+                        if( RealVisibility == NbtViewVisibility.Role )
+                        {
+                            RealVisibilityRoleId = new CswPrimaryKey();
+                            RealVisibilityRoleId.FromString( VisibilityRoleId );
+                        }
+                        else if( RealVisibility == NbtViewVisibility.User )
+                        {
+                            RealVisibilityUserId = new CswPrimaryKey();
+                            RealVisibilityUserId.FromString( VisibilityUserId );
+                        }
+                    }
+                    else
+                    {
+                        RealVisibility = NbtViewVisibility.User;
+                        RealVisibilityUserId = _CswNbtResources.CurrentUser.UserId;
+                    }
 
                     CswNbtView CopyView = null;
                     if( ViewId != string.Empty )
@@ -1114,7 +1114,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new wsViewBuilder( _CswNbtResources );
-                    ReturnVal = ws.getViewBuilderProps( ViewJson, PropArbitraryId );
+                    ReturnVal = ws.getVbProp( ViewJson, PropArbitraryId );
                 }
 
                 _deInitResources();
@@ -1144,7 +1144,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     var ws = new wsViewBuilder( _CswNbtResources );
-                    ReturnVal = ws.getViewPropFilter( ViewJson, PropFiltJson );
+                    ReturnVal = ws.makeViewPropFilter( ViewJson, PropFiltJson );
                 }
 
                 _deInitResources();
@@ -1179,10 +1179,10 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-					CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					CswDateTime InDate = new CswDateTime( _CswNbtResources );
-					InDate.FromClientDateTimeString( Date );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+                    CswDateTime InDate = new CswDateTime( _CswNbtResources );
+                    InDate.FromClientDateTimeString( Date );
                     ReturnVal = ws.getTabs( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( NodeTypeId ), InDate, filterToPropId );
                 }
 
@@ -1214,11 +1214,11 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-					CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-					CswDateTime InDate = new CswDateTime( _CswNbtResources );
-					InDate.FromClientDateTimeString( Date );
-					ReturnVal = ws.getProps( RealEditMode, NodeId, ParsedNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ), InDate );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+                    CswDateTime InDate = new CswDateTime( _CswNbtResources );
+                    InDate.FromClientDateTimeString( Date );
+                    ReturnVal = ws.getProps( RealEditMode, NodeId, ParsedNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ), InDate );
                 }
 
                 _deInitResources();
@@ -1303,15 +1303,16 @@ namespace ChemSW.Nbt.WebServices
                             PropType = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId.ToString();
                         }
 
-                        foreach( ICswNbtMetaDataProp Prop in Props )
+                        if( null != Props )
                         {
-                            ReturnVal.Add(
-                                new JProperty( "prop_" + Prop.PropId.ToString(),
-                                    new JObject(
-                                        new JProperty( "proptype", PropType ),
-                                        new JProperty( "propname", Prop.PropNameWithQuestionNo ),
-                                        new JProperty( "propid", Prop.PropId.ToString() ) ) )
-                                        );
+                            foreach( ICswNbtMetaDataProp Prop in Props )
+                            {
+                                string PropId = "prop_" + Prop.PropId.ToString();
+                                ReturnVal[PropId] = new JObject();
+                                ReturnVal[PropId]["proptype"] = PropType;
+                                ReturnVal[PropId]["propname"] = Prop.PropNameWithQuestionNo;
+                                ReturnVal[PropId]["propid"] = Prop.PropId.ToString();
+                            }
                         }
                     } // if( nId != Int32.MinValue )
 
@@ -1685,7 +1686,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
+                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
                     CswNbtView View = _getView( ViewId );
                     ReturnVal = ws.getSearchJson( View, SelectedNodeTypeIdNum, NodeKey );
                 }
@@ -1717,7 +1718,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, IdPrefix );
+                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
                     ReturnVal = ( ws.getSearchProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey ) );
                 }
 

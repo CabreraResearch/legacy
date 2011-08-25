@@ -36,14 +36,6 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public CswNbtWebServiceSearch( CswNbtResources CswNbtResources, string Prefix )
-        {
-            _CswNbtResources = CswNbtResources;
-            _ViewBuilder = new wsViewBuilder( _CswNbtResources, _ProhibittedFieldTypes, Prefix );
-            //wsViewBuilder.CswViewBuilderProp 
-
-        }//ctor
-
         public CswNbtWebServiceSearch( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
@@ -153,13 +145,13 @@ namespace ChemSW.Nbt.WebServices
             //NodeTypeSearch.Add( SelectOptions );
 
             JObject NodeTypeProps;
-            NodeTypeProps = null != SelectedNodeType ? 
-                _ViewBuilder.getNodeTypeProps( SelectedNodeType ) : 
+            NodeTypeProps = null != SelectedNodeType ?
+                _ViewBuilder.getNodeTypeProps( SelectedNodeType ) :
                 _ViewBuilder.getNodeTypeProps( SearchOC );
 
             JObject NodeTypeSearch = new JObject( new JProperty( "searchtype", "nodetypesearch" ),
                                             new JProperty( "nodetypes",
-                                                new JObject( 
+                                                new JObject(
                                                         NodeTypeSelect,
                                                         ObjectClassSelect ) ),
                                             new JProperty( "props", NodeTypeProps )
@@ -213,7 +205,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ViewPropFilters.Add( Filt );
                     }
-                    _ViewBuilder.getViewBuilderPropSubfields( PropObj, SearchProp, ViewPropFilters );
+                    _ViewBuilder.addVbPropFilters( PropObj, SearchProp );
                 }
                 SearchNode.Add( PropNode );
             }
@@ -223,7 +215,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject getSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
         {
-            JObject SearchProps = _ViewBuilder.getViewBuilderProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey );
+            JObject SearchProps = _ViewBuilder.getVbProperties( RelatedIdType, NodeTypeOrObjectClassId, NodeKey );
             return SearchProps;
         }
 
@@ -318,7 +310,7 @@ namespace ChemSW.Nbt.WebServices
                                 CswNbtMetaDataObjectClassProp ObjectClassProp = NodeTypeProp.ObjectClassProp;
                                 CswNbtViewProperty ViewOcProperty = SearchView.AddViewProperty( OcRelationship, ObjectClassProp );
                                 CswNbtViewPropertyFilter ViewOcPropFilt = SearchView.AddViewPropertyFilter( ViewOcProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
-                                _ViewBuilder.makeViewPropFilter( ViewOcPropFilt, FilterProp );
+                                _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
                             }
                         }
                         else if( PropType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
@@ -341,7 +333,7 @@ namespace ChemSW.Nbt.WebServices
 
                                 CswNbtViewProperty ViewNtProperty = SearchView.AddViewProperty( NtRelationship, NodeTypeProp );
                                 CswNbtViewPropertyFilter ViewNtPropFilt = SearchView.AddViewPropertyFilter( ViewNtProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
-                                _ViewBuilder.makeViewPropFilter( ViewNtPropFilt, FilterProp );
+                                _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
                             }
                         }
                     }

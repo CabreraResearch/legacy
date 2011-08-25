@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
@@ -65,16 +65,15 @@ namespace ChemSW.Nbt.WebServices
                     if( IsFirstLoad && ( View.ViewMode == NbtViewRenderingMode.Tree || ForSearch ) )
                     {
                         JArray ChildArray = new JArray();
-                        RootArray.Add( new JObject(
-                                           new JProperty( "data", View.ViewName ),
-                                           new JProperty( "attr",
-                                                          new JObject(
-                                                              new JProperty( "id", IdPrefix + "root" ),
-                                                              new JProperty( "rel", "root" )
-                                                              )
-                                               ),
-                                           new JProperty( "children", ChildArray )
-                                           ) );
+                        JObject FirstObj = new JObject();
+                        RootArray.Add( FirstObj );
+                        FirstObj["data"] = View.ViewName;
+                        FirstObj["attr"] = new JObject();
+                        FirstObj["attr"]["id"] = IdPrefix + "root";
+                        FirstObj["attr"]["rel"] = "root";
+                        FirstObj["state"] = "open";
+                        FirstObj["children"] = ChildArray;
+
                         _runTreeNodesRecursive( View, Tree, IdPrefix, ChildArray );
                     }
                     else // List, or non-top level of Tree
@@ -95,58 +94,41 @@ namespace ChemSW.Nbt.WebServices
 
             } // else if( !ShowEmpty )
 
-            JProperty Types = new JProperty( "types" );
             string ViewName = string.Empty;
             string ViewId = string.Empty;
+            ReturnObj["types"] = new JObject();
             if( ValidView )
             {
                 ViewName = View.ViewName;
                 ViewId = View.ViewId.ToString();
-                Types.Value = getTypes( View );
+                ReturnObj["types"] = getTypes( View );
             }
 
             if( ShowEmpty )
             {
-                ReturnObj["tree"] = new JArray(
-                                        new JObject(
-                                            new JProperty( "data", ViewName ),
-                                            new JProperty( "attr",
-                                                            new JObject(
-                                                                new JProperty( "viewid", ViewId ) ) ),
-                                            new JProperty( "children",
-                                                            new JArray(
-                                                                EmptyOrInvalid
-                                                                )
-                                                ) )
-                                        );
+                ReturnObj["tree"] = new JArray();
+                ReturnObj["tree"][0] = new JObject();
+                ReturnObj["tree"][0]["data"] = ViewName;
+                ReturnObj["tree"][0]["attr"] = new JObject();
+                ReturnObj["tree"][0]["attr"]["viewid"] = ViewId;
+                ReturnObj["tree"][0]["state"] = "open";
+                ReturnObj["tree"][0]["children"] = new JArray();
+                ReturnObj["tree"][0]["children"][0] = EmptyOrInvalid;
             }
-            ReturnObj.Add( Types );
+
             return ReturnObj;
         } // getTree()
 
         public JObject getTypes( CswNbtView View )
         {
-            var TypesJson = new JObject(
-                                new JProperty( "root",
-                                    new JObject(
-                                        new JProperty( "icon",
-                                            new JObject(
-                                                new JProperty( "image", "Images/view/viewtree.gif" )
-                                            )
-                                        )
-                                    )
-                                ),
-                                new JProperty( "group",
-                                    new JObject(
-                                        new JProperty( "icon",
-                                            new JObject(
-                                                new JProperty( "image", "Images/icons/group.gif" )
-                                            )
-                                        )
-                                    )
-                                ),
-                                new JProperty( "default", "" )
-                            );
+            JObject TypesJson = new JObject();
+            TypesJson["root"] = new JObject();
+            TypesJson["root"]["icon"] = new JObject();
+            TypesJson["root"]["icon"]["image"] = "Images/view/viewtree.gif";
+            TypesJson["group"] = new JObject();
+            TypesJson["group"]["icon"] = new JObject();
+            TypesJson["group"]["icon"]["image"] = "Images/icons/group.gif";
+            TypesJson["default"] = "";
 
             var NodeTypes = new Dictionary<Int32, string>();
             ArrayList Relationships = View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
@@ -173,13 +155,11 @@ namespace ChemSW.Nbt.WebServices
                 } // else
             } // foreach( CswNbtViewRelationship Rel in Relationships )
 
-            foreach( var JProperty in NodeTypes
-                                .Select( NodeType => new JProperty( "nt_" + NodeType.Key,
-                                                        new JObject( new JProperty( "icon",
-                                                            new JObject( new JProperty( "image", "Images/icons/" + NodeType.Value ) ) ) ) ) )
-                                .Where( NodeTypeJProp => null == TypesJson.Property( NodeTypeJProp.Name ) ) )
+            foreach( KeyValuePair<Int32, string> NodeType in NodeTypes )
             {
-                TypesJson.Add( JProperty );
+                TypesJson["nt_" + NodeType.Key] = new JObject();
+                TypesJson["nt_" + NodeType.Key]["icon"] = new JObject();
+                TypesJson["nt_" + NodeType.Key]["icon"]["image"] = "Images/icons/" + NodeType.Value;
             }
             return TypesJson;
         } // getTypes()
@@ -193,11 +173,14 @@ namespace ChemSW.Nbt.WebServices
             {
                 Tree.goToNthChild( c );
 
+                JObject ThisNodeObj = new JObject();
+                GrandParentNode.Add( ThisNodeObj );
+
                 CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
-                CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
-                string ThisNodeName = ThisNode.NodeName;
-                string ThisNodeIcon = ThisNode.IconFileName;
-                string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
+
+                string ThisNodeName = Tree.getNodeNameForCurrentPosition();
+                string ThisNodeIcon = "";
+                string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( CswTools.tryParseString( ThisNodeKey ) );
                 string ThisNodeId = "";
                 string ThisNodeRel = "";
 
@@ -206,12 +189,14 @@ namespace ChemSW.Nbt.WebServices
                     case NodeSpecies.More:
                     case NodeSpecies.Plain:
                         {
+                            CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
                             ThisNodeId = IdPrefix + ThisNode.NodeId.ToString();
+                            ThisNodeName = ThisNode.NodeName;
+                            ThisNodeIcon = ThisNode.IconFileName;
                             ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
                         }
                         break;
                     case NodeSpecies.Group:
-                        ThisNodeId = "";
                         ThisNodeRel = "group";
                         break;
                 }
@@ -224,28 +209,21 @@ namespace ChemSW.Nbt.WebServices
                     ThisNodeState = "leaf";
                 }
 
-                JArray ThisNodeChildren = new JArray();
-                JObject ThisNodeObj = new JObject(
-                                          new JProperty( "data", ThisNodeName ),
-                                          new JProperty( "attr",
-                                              new JObject(
-                                                    new JProperty( "id", ThisNodeId ),
-                                                    new JProperty( "rel", ThisNodeRel ),
-                                                    new JProperty( "state", ThisNodeState ),
-                                                    new JProperty( "species", ThisNodeKey.NodeSpecies.ToString() ),
-                                                    new JProperty( "cswnbtnodekey", ThisNodeKeyString )
-                                                  )
-                                              ),
-                                          new JProperty( "icon", "Images/icons/" + ThisNodeIcon )
-                                    );
-                if( "leaf" != ThisNodeState )
+                ThisNodeObj["data"] = ThisNodeName;
+                ThisNodeObj["icon"] = "Images/icons/" + ThisNodeIcon;
+                ThisNodeObj["attr"] = new JObject();
+                ThisNodeObj["attr"]["id"] = ThisNodeId;
+                ThisNodeObj["attr"]["rel"] = ThisNodeRel;
+                ThisNodeObj["attr"]["state"] = ThisNodeState;
+                ThisNodeObj["attr"]["species"] = ThisNodeKey.NodeSpecies.ToString();
+                ThisNodeObj["attr"]["cswnbtnodekey"] = ThisNodeKeyString;
+
+
+                if( "leaf" != ThisNodeState && Tree.getChildNodeCount() > 0 )
                 {
-                    ThisNodeObj.Add( new JProperty( "children", ThisNodeChildren ) );
-                    ThisNodeObj.Add( new JProperty( "state", ThisNodeState ) );
-                }
-                GrandParentNode.Add( ThisNodeObj );
-                if( Tree.getChildNodeCount() > 0 )
-                {
+                    JArray ThisNodeChildren = new JArray();
+                    ThisNodeObj["children"] = ThisNodeChildren;
+                    ThisNodeObj["state"] = ThisNodeState;
                     _runTreeNodesRecursive( View, Tree, IdPrefix, ThisNodeChildren );
                 }
                 Tree.goToParentNode();

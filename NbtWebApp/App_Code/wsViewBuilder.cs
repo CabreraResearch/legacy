@@ -14,30 +14,18 @@ namespace ChemSW.Nbt.WebServices
     public class wsViewBuilder : System.Web.Services.WebService
     {
         private readonly CswNbtResources _CswNbtResources;
-        //private CswNbtView _View;
         private readonly ArrayList _ProhibittedFieldTypes;
-        private readonly string _Prefix = "csw";
 
-        public wsViewBuilder( CswNbtResources CswNbtResources, ArrayList ProhibittedFieldTypes, string Prefix = null )
+        public wsViewBuilder( CswNbtResources CswNbtResources, ArrayList ProhibittedFieldTypes )
         {
             _CswNbtResources = CswNbtResources;
-            //_View = View;
             _ProhibittedFieldTypes = ProhibittedFieldTypes;
-            if( !string.IsNullOrEmpty( Prefix ) )
-            {
-                _Prefix = Prefix;
-            }
         } //ctor
 
-        public wsViewBuilder( CswNbtResources CswNbtResources, string Prefix = null )
+        public wsViewBuilder( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            //_View = View;
             _ProhibittedFieldTypes = new ArrayList();
-            if( !string.IsNullOrEmpty( Prefix ) )
-            {
-                _Prefix = Prefix;
-            }
         } //ctor
 
         #region Private Assembly Methods
@@ -95,52 +83,22 @@ namespace ChemSW.Nbt.WebServices
         } // _getObjectClassProps()
 
         /// <summary>
-        /// Fetches all props and all prop fiters for a ViewProp collection
-        ///     <viewbuilderprops>
-        ///         <properties>
-        ///             <select>
-        ///                 <optgroup label="Specific Properties">
-        ///                     <option value="1">Barcode</option>
-        ///                 </optgroup>
-        ///             </select>
-        ///         </properties>
-        ///         <propertyfilters>
-        ///             <property propname="Barcode" fieldtype="Barcode">
-        ///                 <defaultsubfield propname="Barcode>Equals</defaultsubfield>
-        ///                 <subfields>
-        ///                     <select id="filter_select">
-        ///                         <option value="Equals">Equals</option>
-        ///                     </select>
-        ///                 </subfields>
-        ///                 <filters>
-        ///                     <subfield propname="Barcode">Field1
-        ///                         <select id="filter_select">
-        ///                             <option value="Equals">Equals</option>
-        ///                         </select>
-        ///                     </subfield>
-        ///                 </filters>
-        ///             </property>   
-        ///         </propertyfilters>
-        ///     </viewbuilderprops>
+        /// Fetches all props and all prop filters for a ViewProp collection
         /// </summary>
-        private JObject _getViewBuilderProps( IEnumerable<CswViewBuilderProp> ViewBuilderProperties, CswNbtViewRelationship.RelatedIdType RelatedIdType )
+        private JObject _getVbProperties( IEnumerable<CswViewBuilderProp> ViewBuilderProperties, CswNbtViewRelationship.RelatedIdType RelatedIdType )
         {
-            JObject ViewBuilderPropsNode = new JObject();
-            string DefaultPropName = string.Empty;
-            JObject FiltersNodeObj = new JObject();
-            JProperty FiltersNode = new JProperty( "propertyfilters", FiltersNodeObj );
+            JObject PropObj = new JObject();
 
+            JObject PropertiesObj = new JObject();
+            PropObj["properties"] = PropertiesObj;
+
+            JObject PropGroups = new JObject();
             JObject NodeTypePropsGrpObj = new JObject();
-            JProperty NodeTypePropsGroup = new JProperty( "Specific Properties", NodeTypePropsGrpObj );
+            PropGroups["Specific Properties"] = NodeTypePropsGrpObj;
 
             JObject ObjectClassPropsGrpObj = new JObject();
-            JProperty ObjectClassPropsGroup = new JProperty( "Generic Properties", ObjectClassPropsGrpObj );
-
-            JObject PropObj = new JObject();
-            ViewBuilderPropsNode.Add( new JProperty( "properties", PropObj ) );
-            PropObj.Add( new JProperty( "select",
-                           new JObject( NodeTypePropsGroup, ObjectClassPropsGroup ) ) );
-            PropObj.Add( FiltersNode );
+            PropGroups["Generic Properties"] = ObjectClassPropsGrpObj;
+            PropObj["select"] = PropGroups;
 
             bool Selected = false;
             if( null != ViewBuilderProperties )
@@ -151,67 +109,38 @@ namespace ChemSW.Nbt.WebServices
                                                     select ViewBuilderProp )
                 {
                     JObject PropNodeObj = new JObject();
-                    JProperty PropNode = new JProperty( Prop.MetaDataPropName, PropNodeObj );
-                    PropNodeObj.Add( new JProperty( "title", RelatedIdType ) );
-                    PropNodeObj.Add( new JProperty( "label", Prop.MetaDataPropName ) ); //for Chrome
-                    PropNodeObj.Add( new JProperty( "id", Prop.MetaDataPropId ) );
-                    PropNodeObj.Add( new JProperty( "value", Prop.MetaDataPropId ) );
+                    PropNodeObj["title"] = RelatedIdType.ToString();
+                    PropNodeObj["name"] = Prop.MetaDataPropName;
+                    PropNodeObj["id"] = Prop.MetaDataPropId;
 
                     if( !Selected )
                     {
-                        PropNodeObj.Add( new JProperty( "selected", "selected" ) );
-                        DefaultPropName = Prop.MetaDataPropName;
-                        PropObj.Add( new JProperty( "defaultprop", DefaultPropName ) );
+                        PropNodeObj["selected"] = true;
+                        PropObj["defaultprop"] = Prop.MetaDataPropName;
                         Selected = true;
                     }
 
                     switch( RelatedIdType )
                     {
                         case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                            NodeTypePropsGrpObj.Add( PropNode );
+                            NodeTypePropsGrpObj[Prop.MetaDataPropName] = PropNodeObj;
                             break;
                         case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                            ObjectClassPropsGrpObj.Add( PropNode );
+                            ObjectClassPropsGrpObj[Prop.MetaDataPropName] = PropNodeObj;
                             break;
                     }
 
-                    _getViewBuilderPropSubFields( FiltersNodeObj, Prop );
+                    _getVbPropData( PropertiesObj, Prop );
                 }
 
             }
-            return ViewBuilderPropsNode;
-        }
+            return PropObj;
+        } // _getVbProperties()
 
         /// <summary>
-        /// Fetches all props and all prop fiters for a NodeType
-        ///     <viewbuilderprops>
-        ///         <properties>
-        ///             <select>
-        ///                 <optgroup label="Specific Properties">
-        ///                     <option value="1">Barcode</option>
-        ///                 </optgroup>
-        ///             </select>
-        ///         </properties>
-        ///         <propertyfilters>
-        ///             <property propname="Barcode" fieldtype="Barcode">
-        ///                 <defaultsubfield propname="Barcode>Equals</defaultsubfield>
-        ///                 <subfields>
-        ///                     <select id="filter_select">
-        ///                         <option value="Equals">Equals</option>
-        ///                     </select>
-        ///                 </subfields>
-        ///                 <filters>
-        ///                     <subfield propname="Barcode">Field1
-        ///                         <select id="filter_select">
-        ///                             <option value="Equals">Equals</option>
-        ///                         </select>
-        ///                     </subfield>
-        ///                 </filters>
-        ///             </property>   
-        ///         </propertyfilters>
-        ///     </viewbuilderprops>
+        /// Fetches all props and all prop filters for a NodeType
         /// </summary>
-        private JObject _getViewBuilderProps( CswNbtViewRelationship.RelatedIdType Relationship, Int32 NodeTypeOrObjectClassId )
+        private JObject _getVbProperties( CswNbtViewRelationship.RelatedIdType Relationship, Int32 NodeTypeOrObjectClassId )
         {
             JObject ViewBuilderProps = new JObject();
 
@@ -235,255 +164,115 @@ namespace ChemSW.Nbt.WebServices
                             break;
                         }
                 }
-                ViewBuilderProps = _getViewBuilderProps( ViewBuilderProperties, Relationship );
+                ViewBuilderProps = _getVbProperties( ViewBuilderProperties, Relationship );
             }
             return ViewBuilderProps;
-        } // getViewBuilderProps()
+        } // _getVbProperties()
 
         /// <summary>
-        /// Returns the Subfields XML for a NodeTypeProp/ObjectClassProp's SubFields collection as:
-        ///     <propertyfilters>
-        ///         <property propname="Barcode" fieldtype="Barcode" relatedidtype="nodetypeprop" viewbuilderpropid="1">
-        ///             <defaultsubfield propname="Barcode>Equals</defaultsubfield>
-        ///             <subfields>
-        ///                 <select id="filter_select">
-        ///                     <option value="Equals">Equals</option>
-        ///                 </select>
-        ///             </subfields>
-        ///             <filters>
-        ///                 <subfield propname="Barcode">Field1
-        ///                     <select id="filter_select">
-        ///                         <option value="Equals">Equals</option>
-        ///                     </select>
-        ///                 </subfield>
-        ///             </filters>
-        ///          </property>   
-        ///      </propertyfilters>
+        /// Returns the JSON for a Vb prop
         /// </summary>
-        private void _getViewBuilderPropSubFields( JObject ParentObj, CswViewBuilderProp ViewBuilderProp )
+        private void _getVbPropData( JObject ParentObj, CswViewBuilderProp ViewBuilderProp )
         {
             if( null != ViewBuilderProp )
             {
-                CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = ViewBuilderProp.FieldType.FieldType;
                 CswNbtSubFieldColl SubFields = ViewBuilderProp.FieldTypeRule.SubFields;
 
-                JObject SubfieldObj = new JObject();
-                JProperty SubfieldSelect = new JProperty( "select", SubfieldObj );
+                ParentObj["propname"] = ViewBuilderProp.MetaDataPropName;
+                ParentObj["viewbuilderpropid"] = ViewBuilderProp.MetaDataPropId;
+                ParentObj["relatedidtype"] = ViewBuilderProp.RelatedIdType.ToString();
+                ParentObj["proptype"] = ViewBuilderProp.Type.ToString();
+                ParentObj["metadatatypename"] = ViewBuilderProp.MetaDataTypeName;
+                ParentObj["fieldtype"] = ViewBuilderProp.FieldType.FieldType.ToString();
+                ParentObj["proparbitraryid"] = ViewBuilderProp.ViewProp.ArbitraryId;
+                ParentObj["filtarbitraryid"] = string.Empty;
+                ParentObj["defaultsubfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
+                ParentObj["defaultfiltermode"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.DefaultFilterMode.ToString();
 
-                string DefaultFilter = string.Empty;
-                string DefaultSubfield = string.Empty;
-                if( null != ViewBuilderProp.FieldTypeRule.SubFields.Default )
-                {
-                    DefaultFilter = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
-                    DefaultSubfield = ViewBuilderProp.FieldTypeRule.SubFields.Default.Column.ToString();
-                }
-
-                JObject FiltersObj = new JObject( new JProperty( "name", ViewBuilderProp.MetaDataPropName ) );
-                JProperty FiltersNode = new JProperty( "propertyfilters", FiltersObj );
+                ParentObj["subfields"] = new JObject();
 
                 foreach( CswNbtSubField Field in SubFields )
                 {
-                    JObject FieldObj = new JObject();
-                    JProperty FieldNode = new JProperty( "option", FieldObj );
-                    SubfieldObj.Add( FieldNode );
+                    string OptName = Field.Name.ToString();
+                    ParentObj["subfields"][OptName] = new JObject();
+                    ParentObj["subfields"][OptName]["column"] = Field.Column.ToString();
+                    ParentObj["subfields"][OptName]["name"] = OptName;
+                    JObject FiltersObj = new JObject();
+                    ParentObj["subfields"][OptName]["filtermodes"] = FiltersObj;
 
-                    FieldObj.Add( new JProperty( "title", SelectedFieldType ) );
-                    FieldObj.Add( new JProperty( "label", Field.Name ) ); // for Chrome
-                    FieldObj.Add( new JProperty( "value", Field.Column ) );
-                    FieldObj.Add( new JProperty( "id", Field.Column ) );
-                    FieldObj.Add( new JProperty( "name", Field.Name.ToString() ) );
-
-                    if( Field.Name == ViewBuilderProp.FieldTypeRule.SubFields.Default.Name )
-                    {
-                        FieldObj.Add( new JProperty( "selected", "selected" ) );
-                    }
-
-                    if( !string.IsNullOrEmpty( DefaultFilter ) )
-                    {
-                        DefaultFilter = Field.DefaultFilterMode.ToString();
-                    }
-                    _getSubFieldFilters( FiltersObj, Field, ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode.Undefined );
-
+                    _addSubFieldFilterModes( FiltersObj, Field );
                 }
 
-                JObject FiltersOptsObj = new JObject();
-                JProperty FiltersOptionsNode = new JProperty( "filtersoptions", FiltersOptsObj );
+                addVbPropFilters( ParentObj, ViewBuilderProp );
+
                 if( ViewBuilderProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
                 {
-                    FiltersOptsObj.Add( new JProperty( "name", ViewBuilderProp.MetaDataPropName ) );
-                    FiltersOptsObj.Add( new JProperty( "select",
-                                                          _getFilterOptions( ViewBuilderProp, string.Empty ) ) );
-                }
-
-                ParentObj.Add( new JProperty( ViewBuilderProp.MetaDataPropName,
-                                              new JObject(
-                                                  new JProperty( "propname", ViewBuilderProp.MetaDataPropName ),
-                                                  new JProperty( "viewbuilderpropid", ViewBuilderProp.MetaDataPropId ),
-                                                  new JProperty( "relatedidtype", ViewBuilderProp.RelatedIdType ),
-                                                  new JProperty( "proptype", ViewBuilderProp.Type ),
-                                                  new JProperty( "metadatatypename", ViewBuilderProp.MetaDataTypeName ),
-                                                  new JProperty( "fieldtype", ViewBuilderProp.FieldType.FieldType ),
-                                                  new JProperty( "filter", DefaultFilter ),
-                                                  new JProperty( "subfield", DefaultSubfield ),
-                                                  SubfieldSelect,
-                                                  FiltersNode,
-                                                  FiltersOptionsNode )
-                                   ) );
-            }
-        } // _getViewBuilderPropSubFields()
-
-        /// <summary>
-        /// Returns the Subfields XML for a CswNbtViewProp's SubFields collection as:
-        ///     <propertyfilters>
-        ///         <property propname="Barcode" fieldtype="Barcode" relatedidtype="nodetypeprop" viewbuilderpropid="1">
-        ///             <defaultsubfield propname="Barcode>Equals</defaultsubfield>
-        ///             <subfields>
-        ///                 <select id="filter_select">
-        ///                     <option value="Equals">Equals</option>
-        ///                 </select>
-        ///             </subfields>
-        ///             <filters>
-        ///                 <subfield propname="Barcode">Field1
-        ///                     <select id="filter_select">
-        ///                         <option value="Equals">Equals</option>
-        ///                     </select>
-        ///                 </subfield>
-        ///             </filters>
-        ///          </property>   
-        ///      </propertyfilters>
-        /// </summary>
-        private void _getViewBuilderPropSubFields( JObject ParentObj, CswViewBuilderProp ViewBuilderProp, ArrayList PropFilters )
-        {
-            if( null != ViewBuilderProp )
-            {
-                CswNbtMetaDataFieldType.NbtFieldType SelectedFieldType = ViewBuilderProp.FieldType.FieldType;
-                foreach( CswNbtViewPropertyFilter Filter in PropFilters )
-                {
-                    JObject SubfieldObj = new JObject();
-                    JProperty SubfieldSelect = new JProperty( "subfields", SubfieldObj );
-
-                    CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode = Filter.FilterMode;
-                    string DefaultSubfield = Filter.SubfieldName.ToString();
-                    string ValueSubfieldVal = Filter.Value;
-
-                    JObject FiltersObj = new JObject( new JProperty( "name", ViewBuilderProp.MetaDataPropName ) );
-                    JProperty FiltersNode = new JProperty( "propertyfilters", FiltersObj );
-
-                    foreach( CswNbtSubField Field in ViewBuilderProp.FieldTypeRule.SubFields )
-                    {
-                        JObject FieldObj = new JObject( new JProperty( "title", SelectedFieldType ),
-                                                        new JProperty( "label", Field.Name ), // for Chrome
-                                                        new JProperty( "value", Field.Column ),
-                                                        new JProperty( "defaultvalue", Filter.Value ),
-                                                        new JProperty( "arbitraryid", Filter.ArbitraryId ),
-                                                        new JProperty( "id", Field.Column ),
-                                                        new JProperty( "name", Field.Name.ToString() )
-                                                        );
-                        JProperty FieldNode = new JProperty( "option", FieldObj );
-                        if( Field.Name == Filter.SubfieldName )
-                        {
-                            FieldObj.Add( new JProperty( "selected", "selected" ) );
-                        }
-                        _getSubFieldFilters( FiltersObj, Field, ViewBuilderProp, DefaultFilterMode );
-                        SubfieldSelect.Add( FieldNode );
-                    }
-
-                    JObject FiltersOptObj = new JObject();
-                    JProperty FiltersOptionsNode = new JProperty( "filtersoptions", FiltersOptObj );
-                    if( ViewBuilderProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
-                    {
-                        FiltersOptObj.Add( new JProperty( "name", ViewBuilderProp.MetaDataPropName ) );
-                        FiltersOptObj.Add( new JProperty( "select", _getFilterOptions( ViewBuilderProp, ValueSubfieldVal ) ) );
-                    }
-
-                    ParentObj.Add( new JProperty( "property",
-                                        new JObject(
-                                               new JProperty( "propname", ViewBuilderProp.MetaDataPropName ),
-                                               new JProperty( "viewbuilderpropid", ViewBuilderProp.MetaDataPropId ),
-                                               new JProperty( "relatedidtype", ViewBuilderProp.RelatedIdType ),
-                                               new JProperty( "proptype", ViewBuilderProp.Type ),
-                                               new JProperty( "metadatatypename", ViewBuilderProp.MetaDataTypeName ),
-                                               new JProperty( "fieldtype", ViewBuilderProp.FieldType.FieldType ),
-                                               new JProperty( "proparbitraryid", ViewBuilderProp.ViewProp.ArbitraryId ),
-                                               new JProperty( "filtarbitraryid", Filter.ArbitraryId ),
-                                               new JProperty( "defaultsubfield", DefaultSubfield ),
-                                               new JProperty( "defaultfilter", DefaultFilterMode.ToString() ),
-                                               SubfieldSelect,
-                                               FiltersNode,
-                                               FiltersOptionsNode ) ) );
+                    ParentObj["filtersoptions"] = new JObject();
+                    ParentObj["filtersoptions"]["name"] = ViewBuilderProp.MetaDataPropName;
+                    ParentObj["filtersoptions"]["selected"] = ViewBuilderProp.ListOptions.First();
+                    ParentObj["filtersoptions"]["options"] = _getListPropFilterOptions( ViewBuilderProp );
                 }
             }
-        } // _getViewBuilderPropSubFields()
+        } // _getVbPropData()
 
         /// <summary>
-        /// Returns the XML for For SubFields Filters as:
-        ///     <filters>
-        ///         <subfield propname="Barcode">Field1
-        ///             <select id="filter_select">
-        ///                 <option value="Equals">Equals</option>
-        ///             </select>
-        ///         </subfield>
-        ///      </filters>
+        /// Returns the JSON for SubFields Filters
         /// </summary>
-        private void _getSubFieldFilters( JObject FiltersObj, CswNbtSubField SubField, CswViewBuilderProp ViewBuilderProp, CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode )
+        private void _addSubFieldFilterModes( JObject FiltersObj, CswNbtSubField SubField )
         {
-            if( DefaultFilterMode == CswNbtPropFilterSql.PropertyFilterMode.Undefined )
-            {
-                DefaultFilterMode = SubField.DefaultFilterMode;
-            }
-            JProperty SubFieldNode = new JProperty( "subfield", new JObject( new JProperty( "column", SubField.Column ), new JProperty( "name", SubField.Name ) ) );
-            FiltersObj.Add( SubFieldNode );
-
-            JObject Filters = new JObject();
-            JProperty FiltersSelect = new JProperty( "select", Filters );
-            FiltersObj.Add( FiltersSelect );
             foreach( CswNbtPropFilterSql.PropertyFilterMode FilterModeOpt in SubField.SupportedFilterModes )
             {
-                Filters.Add( new JProperty( FilterModeOpt.ToString(), ViewBuilderProp.MetaDataPropName ) );
-
-                if( FilterModeOpt == DefaultFilterMode )
-                {
-                    FiltersObj.Add( new JProperty( "selected", FilterModeOpt.ToString() ) );
-                }
+                FiltersObj[FilterModeOpt.ToString()] = FilterModeOpt.ToString();
             }
-        } // _getSubFieldFilters()
+        } // _addSubFieldFilterModes()
 
         /// <summary>
-        /// Sets fieldtype attributes on the Filter node and appends an XElement containing extended attributes, such as an options picklist
+        /// Returns the List Options as JSON
         /// </summary>
-        private JObject _getFilterOptions( CswViewBuilderProp ViewBuilderProp, string FilterSelected )
+        private JObject _getListPropFilterOptions( CswViewBuilderProp ViewBuilderProp )
         {
-            JObject FilterPropObj = new JObject();
-            JProperty FilterProp = new JProperty( "options", FilterPropObj );
-            JObject FilterOptions = new JObject( FilterProp );
-
-            FilterOptions.Add( new JProperty( "name", ViewBuilderProp.MetaDataPropName.ToLower() ) );
-
+            JObject FilterOptions = new JObject();
             foreach( string Value in ViewBuilderProp.ListOptions )
             {
-                string Id = wsTools.makeId( ViewBuilderProp.MetaDataPropName, Value, string.Empty );
-                FilterPropObj.Add( new JProperty( Id, Value ) );
-                if( Value == FilterSelected )
-                {
-                    FilterOptions.Add( new JProperty( "selected", Id ) );
-                }
+                FilterOptions[Value] = Value;
             }
             return FilterOptions;
 
-        } // _getFilterInitValue()
+        } // _getListPropFilterOptions()
+
+        private void _addVbPropFilter( JObject ParentObj, CswNbtViewPropertyFilter Filter )
+        {
+            string FiltId = Filter.ArbitraryId;
+            ParentObj[FiltId] = new JObject();
+            ParentObj[FiltId]["arbitraryid"] = Filter.ArbitraryId;
+            ParentObj[FiltId]["subfield"] = Filter.SubfieldName.ToString();
+            ParentObj[FiltId]["value"] = Filter.Value;
+            ParentObj[FiltId]["filtermode"] = Filter.FilterMode.ToString();
+            ParentObj[FiltId]["casesensitive"] = Filter.CaseSensitive;
+        }
 
         #endregion Private Assembly Methods
 
         #region Public Methods
 
-        public JObject getViewBuilderProps( string ViewJson, string ViewPropArbitraryId )
+        public JObject getVbProp( string ViewJson, string ViewPropArbitraryId )
         {
-            JObject ViewBuilderProps = new JObject();
-            if( !string.IsNullOrEmpty( ViewJson ) && !string.IsNullOrEmpty( ViewPropArbitraryId ) )
+            JObject Ret = new JObject();
+            if( !string.IsNullOrEmpty( ViewJson ) )
             {
                 CswNbtView ThisView = new CswNbtView( _CswNbtResources );
-                ThisView.LoadXml( ViewJson );
-                CswNbtViewProperty ThisProp = (CswNbtViewProperty) ThisView.FindViewNodeByArbitraryId( ViewPropArbitraryId );
+                ThisView.LoadJson( ViewJson );
+                Ret = getVbProp( ThisView, ViewPropArbitraryId );
+            }
+            return Ret;
+        }
+
+        public JObject getVbProp( CswNbtView View, string ViewPropArbitraryId )
+        {
+            JObject Ret = new JObject();
+            if( false == string.IsNullOrEmpty( ViewPropArbitraryId ) )
+            {
+                CswNbtViewProperty ThisProp = (CswNbtViewProperty) View.FindViewNodeByArbitraryId( ViewPropArbitraryId );
                 if( null != ThisProp )
                 {
                     CswViewBuilderProp VbProp = new CswViewBuilderProp( ThisProp );
@@ -491,19 +280,17 @@ namespace ChemSW.Nbt.WebServices
                     Int32 NodeTypeOrObjectClassId = VbProp.MetaDataPropId;
                     if( Int32.MinValue != NodeTypeOrObjectClassId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
                     {
-                        List<CswViewBuilderProp> ViewBuilderProp = new List<CswViewBuilderProp>() { VbProp };
-
-                        ViewBuilderProps = _getViewBuilderProps( ViewBuilderProp, Relationship );
+                        _getVbPropData( Ret, VbProp );
                     }
                 }
             }
-            return ViewBuilderProps;
+            return Ret;
         }
 
         /// <summary>
         /// Returns all props and prop filters for a NodeType or ObjectClass
         /// </summary>
-        public JObject getViewBuilderProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
+        public JObject getVbProperties( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
         {
             JObject ViewBuilderProps = new JObject();
             if( ( !string.IsNullOrEmpty( RelatedIdType ) && !string.IsNullOrEmpty( NodeTypeOrObjectClassId ) ) || !string.IsNullOrEmpty( NodeKey ) )
@@ -531,10 +318,92 @@ namespace ChemSW.Nbt.WebServices
                     TypeOrObjectClassId = CswConvert.ToInt32( NodeTypeOrObjectClassId );
                     CswNbtViewRelationship.RelatedIdType.TryParse( RelatedIdType, true, out Relationship );
                 }
-                ViewBuilderProps = _getViewBuilderProps( Relationship, TypeOrObjectClassId );
+                ViewBuilderProps = _getVbProperties( Relationship, TypeOrObjectClassId );
             }
             return ViewBuilderProps;
+        }
 
+        /// <summary>
+        /// Returns all prop filters for a CswNbtViewProperty
+        /// </summary>
+        public void addVbPropFilters( JObject ParentObj, CswViewBuilderProp ViewBuilderProp )
+        {
+            if( null != ViewBuilderProp )
+            {
+                JObject PropFilters = new JObject();
+                ParentObj["propfilters"] = PropFilters;
+
+                ArrayList Filters = ViewBuilderProp.Filters;
+                foreach( CswNbtViewPropertyFilter Filter in Filters )
+                {
+                    _addVbPropFilter( PropFilters, Filter );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Uses View JSON to construct a view and create a CswNbtViewPropertyFilter
+        /// Returns filter's JSON
+        /// </summary>
+        public JObject makeViewPropFilter( string ViewJson, string PropFilterJson )
+        {
+            JObject Ret = new JObject();
+            CswNbtView View = new CswNbtView( _CswNbtResources );
+            View.LoadJson( ViewJson );
+            JObject PropFilter = JObject.Parse( PropFilterJson );
+            Ret = makeViewPropFilter( View, PropFilter );
+            return Ret;
+        }
+
+        /// <summary>
+        /// Creates a CswNbtViewPropertyFilter and returns its Json
+        /// </summary>
+        public JObject makeViewPropFilter( CswNbtView View, JObject FilterProp )
+        {
+            JObject Ret = new JObject();
+
+            var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
+            CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
+
+            string FiltArbitraryId = CswConvert.ToString( FilterProp["filtarbitraryid"] );
+            string PropArbitraryId = CswConvert.ToString( FilterProp["proparbitraryid"] );
+            if( FiltArbitraryId == "undefined" ) FiltArbitraryId = string.Empty;
+            if( PropArbitraryId == "undefined" ) PropArbitraryId = string.Empty;
+
+            CswNbtViewPropertyFilter ViewPropFilt = null;
+            if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown )
+            {
+                if( false == string.IsNullOrEmpty( FiltArbitraryId ) )
+                {
+                    ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
+                }
+                else if( false == string.IsNullOrEmpty( PropArbitraryId ) )
+                {
+                    CswNbtViewProperty ViewProp = (CswNbtViewProperty) View.FindViewNodeByArbitraryId( PropArbitraryId );
+                    ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+                }
+            }
+
+            if( ViewPropFilt != null )
+            {
+                CswNbtSubField.SubFieldName FieldName;
+                Enum.TryParse( CswConvert.ToString( FilterProp["subfield"] ), true, out FieldName );
+
+                CswNbtPropFilterSql.PropertyFilterMode FilterMode;
+                Enum.TryParse( CswConvert.ToString( FilterProp["filter"] ), true, out FilterMode );
+
+                string FilterValue = CswConvert.ToString( FilterProp["filtervalue"] );
+
+                if( FieldName != CswNbtSubField.SubFieldName.Unknown &&
+                    FilterMode != CswNbtPropFilterSql.PropertyFilterMode.Undefined )
+                {
+                    ViewPropFilt.FilterMode = FilterMode;
+                    ViewPropFilt.SubfieldName = FieldName;
+                    ViewPropFilt.Value = FilterValue;
+                    _addVbPropFilter( Ret, ViewPropFilt );
+                }
+            }
+            return Ret;
         }
 
         /// <summary>
@@ -546,9 +415,9 @@ namespace ChemSW.Nbt.WebServices
             Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
 
             IEnumerable<CswViewBuilderProp> ViewBuilderProps = _getNodeTypeProps( NodeType, ref UniqueProps );
-            if( ViewBuilderProps.Count() > 0 )
+            if( ViewBuilderProps != null && ViewBuilderProps.Count() > 0 )
             {
-                NodeTypeProps = _getViewBuilderProps( ViewBuilderProps, CswNbtViewRelationship.RelatedIdType.NodeTypeId );
+                NodeTypeProps = _getVbProperties( ViewBuilderProps, CswNbtViewRelationship.RelatedIdType.NodeTypeId );
             }
             return NodeTypeProps;
         }
@@ -561,100 +430,14 @@ namespace ChemSW.Nbt.WebServices
             JObject NodeTypeProps = new JObject();
 
             IEnumerable<CswViewBuilderProp> ViewBuilderProps = _getObjectClassProps( ObjectClass );
-            if( ViewBuilderProps.Count() > 0 )
+            if( ViewBuilderProps != null && ViewBuilderProps.Count() > 0 )
             {
-                NodeTypeProps = _getViewBuilderProps( ViewBuilderProps, CswNbtViewRelationship.RelatedIdType.ObjectClassId );
+                NodeTypeProps = _getVbProperties( ViewBuilderProps, CswNbtViewRelationship.RelatedIdType.ObjectClassId );
             }
             return NodeTypeProps;
         }
 
-        /// <summary>
-        /// Returns all prop filters for a CswNbtViewProperty
-        /// </summary>
-        public void getViewBuilderPropSubfields( JObject ParentNode, CswViewBuilderProp ViewBuilderProp, ArrayList PropFilters )
-        {
-            _getViewBuilderPropSubFields( ParentNode, ViewBuilderProp, PropFilters );
-        }
 
-        /// <summary>
-        /// Uses View XML to construct a view and create a CswNbtViewPropertyFilter. and r
-        /// Returns filter's XML
-        /// </summary>
-        public JObject getViewPropFilter( string ViewJson, string PropFilterJson )
-        {
-            CswNbtView View = new CswNbtView( _CswNbtResources );
-            View.LoadJson( ViewJson );
-            JObject PropFilter = JObject.Parse( PropFilterJson );
-            makeViewPropFilter( View, PropFilter );
-            return PropFilter;
-        }
-
-        /// <summary>
-        /// Creates a CswNbtViewPropertyFilter and returns its Json
-        /// </summary>
-        public JProperty makeViewPropFilter( CswNbtView View, JObject FilterProp )
-        {
-            JProperty PropFilterXml = null;
-
-            var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
-            CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
-
-            string FiltArbitraryId = (string) FilterProp["filtarbitraryid"];
-            string PropArbitraryId = (string) FilterProp["proparbitraryid"];
-            if( FiltArbitraryId == "undefined" ) FiltArbitraryId = string.Empty;
-            if( PropArbitraryId == "undefined" ) PropArbitraryId = string.Empty;
-
-            CswNbtViewPropertyFilter ViewPropFilt = null;
-            if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown )
-            {
-                if( !string.IsNullOrEmpty( FiltArbitraryId ) )
-                {
-                    ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
-                }
-                else if( !string.IsNullOrEmpty( PropArbitraryId ) )
-                {
-                    CswNbtViewProperty ViewProp = (CswNbtViewProperty) View.FindViewNodeByArbitraryId( PropArbitraryId );
-                    ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
-                }
-            }
-
-            if( ViewPropFilt != null )
-            {
-                JProperty ThisPropFilter = makeViewPropFilter( ViewPropFilt, FilterProp );
-                if( null != ThisPropFilter )
-                {
-                    PropFilterXml = ThisPropFilter;
-                }
-            }
-            return PropFilterXml;
-        }
-
-        /// <summary>
-        /// Modifies an existing CswNbtViewPropertyFilter and returns its XML 
-        /// </summary>
-        public JProperty makeViewPropFilter( CswNbtViewPropertyFilter ViewPropFilt, JObject FilterProp )
-        {
-            JProperty PropFilterXml = null;
-            if( null != ViewPropFilt )
-            {
-                var FieldName = CswNbtSubField.SubFieldName.Unknown;
-                CswNbtSubField.SubFieldName.TryParse( (string) FilterProp["subfield"], true, out FieldName );
-                var FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
-                CswNbtPropFilterSql.PropertyFilterMode.TryParse( (string) FilterProp["filter"], true, out FilterMode );
-                string SearchTerm = (string) FilterProp["filtervalue"];
-
-                if( FieldName != CswNbtSubField.SubFieldName.Unknown &&
-                    FilterMode != CswNbtPropFilterSql.PropertyFilterMode.Undefined )
-                {
-                    ViewPropFilt.FilterMode = FilterMode;
-                    ViewPropFilt.SubfieldName = FieldName;
-                    ViewPropFilt.Value = SearchTerm;
-
-                    PropFilterXml = ViewPropFilt.ToJson();
-                }
-            }
-            return PropFilterXml;
-        }
         #endregion Public Methods
     }
     #endregion wsViewBuilder
