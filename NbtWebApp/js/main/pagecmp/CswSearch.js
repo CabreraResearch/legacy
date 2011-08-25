@@ -182,10 +182,7 @@
 			var $propSelectCell = o.$searchTable.CswTable('cell', propRow, 3)
 									.empty();
 			var propSelectId = makeId({ID: 'property_select', prefix: o.ID});
-			if (debugOn()) {
-				log('CswSearch_propselect:');
-				log(o.propsData);
-			}
+
 		    var selectOpt = o.propsData.properties.select;
 		    var selectAry = [];
 		    var selected = '';
@@ -346,10 +343,6 @@
 				'url': o.getClientSearchXmlUrl,
 				'data':jsonData,
 				'success': function(data) { 
-					if (debugOn()) {
-					    log('CswSearch_init()');
-					    log(data);
-					}
 				    $topspandiv.empty();
 				    o.searchtype = data.searchtype;
 					var searchTableId = makeId({prefix: o.ID, ID: 'search_tbl'});
@@ -439,10 +432,6 @@
 					break;
 				case 'viewsearch':
 					searchUrl = o.doViewSearchUrl;
-				    if (debugOn()) {
-					    log('CswSearch_viewsearch:');
-					    log(o.propsData);
-					}
 				    var properties = o.propsData.property;
 					for (var prop in properties) {
 					    if (properties.hasOwnProperty(prop)) {
