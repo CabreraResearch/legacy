@@ -345,8 +345,13 @@
 				        var helpText = tryParseString(thisProp.helptext);
 				        var propName = tryParseString(thisProp.name);
 				        if (!isNullOrEmpty(helpText)) {
-				            $('<a href="#" class="cswprop_helplink" title="' + helpText + '" onclick="return false;">' + propName + '</a>')
-    				            .appendTo($labelcell);
+				            $labelcell.CswLink('init', {href: '#', 
+				                                        cssclass: 'cswprop_helplink', 
+				                                        title: helpText, 
+				                                        onclick: function() { return false; }, 
+				                                        value: propName
+				                              });
+    				            
 				        } else {
 				            $labelcell.append(propName);
 				        }

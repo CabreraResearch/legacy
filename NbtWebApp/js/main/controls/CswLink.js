@@ -1,23 +1,26 @@
 ﻿/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../_Global.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
-	var PluginName = "CswLink";
+	var pluginName = "CswLink";
 	
 	var methods = {
 	
-		'init': function(options) 
+		init: function(options) 
 		{
 			var o = {
-				'ID': '',
-				'value': '',
-				'type': '', //MIME type
-				'media': 'all',
-				'target': '',
-				'rel': '',
-				'cssclass': '',
-				'onClick': function() {}
+				ID: '',
+				value: '',
+				type: '', //MIME type
+				media: 'all',
+				target: '',
+			    title: '',
+				rel: '',
+				cssclass: '',
+				onClick: function() {}
 			};
 			if (options) $.extend(o, options);
 			
@@ -25,15 +28,16 @@
 			var $link = $('<a></a>');
 			
 			var elementId = tryParseString(o.ID,'');
-			if( elementId !== '' ) $link.CswAttrDom('id',elementId);
-			if( !isNullOrEmpty( o.href ) ) $link.CswAttrDom('href', o.href);
-			if( !isNullOrEmpty( o.value ) ) $link.text(o.value);
-			if( !isNullOrEmpty( o.cssclass ) ) $link.addClass(o.cssclass);
-			if( !isNullOrEmpty( o.type ) ) $link.CswAttrDom('type',o.type);
-			if( !isNullOrEmpty( o.rel ) ) $link.CswAttrDom('rel',o.rel);
-			if( !isNullOrEmpty( o.media ) ) $link.CswAttrDom('media',o.media);
-			if( !isNullOrEmpty( o.target ) ) $link.CswAttrDom('target',o.target);
-			if( !isNullOrEmpty( o.onClick ) ) 
+			if (elementId !== '' ) $link.CswAttrDom('id',elementId);
+			if (false === isNullOrEmpty(o.href)) $link.CswAttrDom('href', o.href);
+			if (false === isNullOrEmpty(o.value)) $link.text(o.value);
+			if (false === isNullOrEmpty(o.cssclass)) $link.addClass(o.cssclass);
+			if (false === isNullOrEmpty(o.type)) $link.CswAttrDom('type',o.type);
+		    if (false === isNullOrEmpty(o.title)) $link.CswAttrDom('title',o.title);
+			if (false === isNullOrEmpty(o.rel)) $link.CswAttrDom('rel',o.rel);
+			if (false === isNullOrEmpty(o.media)) $link.CswAttrDom('media',o.media);
+			if (false === isNullOrEmpty(o.target)) $link.CswAttrDom('target',o.target);
+			if (false === isNullOrEmpty(o.onClick)) 
 			{
 				$link.click( function() {
 							 o.onClick();
@@ -52,7 +56,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
 		}    
   
 	};
