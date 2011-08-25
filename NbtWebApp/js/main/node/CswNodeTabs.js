@@ -498,10 +498,6 @@
 					data: data,
 					success: function (data)
 					{
-                        if (debugOn()) {
-                            log('CswNodeTabs_Save()');
-                            log(data);
-                        }
 					    var doSave = true;
 						if(o.ShowCheckboxes)
 						{
