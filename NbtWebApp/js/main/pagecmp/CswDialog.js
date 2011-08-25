@@ -206,7 +206,9 @@
 											$div.dialog('close');
 										}
 										_setupTabs(date);
-										o.onEditNode(nodeid, nodekey);
+										if (isFunction(o.onEditNode)) {
+										    o.onEditNode(nodeid, nodekey);
+										}
 									},
 									'onBeforeTabSelect': function (tabid)
 									{
