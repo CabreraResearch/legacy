@@ -1,4 +1,4 @@
-﻿/// <reference path="../../_Global.js" />
+/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../../jquery/common/CswAttr.js" />
 /// <reference path="../CswMobileTools.js" />

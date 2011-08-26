@@ -10,7 +10,7 @@ $.jgrid = {
 	defaults : {
 		recordtext: "View {0} - {1} of {2}",
 	    emptyrecords: "No records to view",
-		loadtext: "Hleður...",
+		loadtext: "HleÃ°ur...",
 		pgtext : "Page {0} of {1}"
 	},
 	search : {
@@ -26,19 +26,19 @@ $.jgrid = {
 	    addCaption: "Add Record",
 	    editCaption: "Edit Record",
 	    bSubmit: "Vista",
-	    bCancel: "Hætta við",
+	    bCancel: "HÃ¦tta viÃ°",
 		bClose: "Loka",
 		saveData: "Data has been changed! Save changes?",
 		bYes : "Yes",
 		bNo : "No",
 		bExit : "Cancel",
 	    msg: {
-	        required:"Reitur er nauðsynlegur",
-	        number:"Vinsamlega settu inn tölu",
-	        minValue:"gildi verður að vera meira en eða jafnt og ",
-	        maxValue:"gildi verður að vera minna en eða jafnt og ",
-	        email: "er ekki löglegt email",
-	        integer: "Vinsamlega settu inn tölu",
+	        required:"Reitur er nauÃ°synlegur",
+	        number:"Vinsamlega settu inn tÃ¶lu",
+	        minValue:"gildi verÃ°ur aÃ° vera meira en eÃ°a jafnt og ",
+	        maxValue:"gildi verÃ°ur aÃ° vera minna en eÃ°a jafnt og ",
+	        email: "er ekki lÃ¶glegt email",
+	        integer: "Vinsamlega settu inn tÃ¶lu",
 			date: "Please, enter valid date value",
 			url: "is not a valid URL. Prefix required ('http://' or 'https://')",
 			nodefined : " is not defined!",
@@ -52,36 +52,36 @@ $.jgrid = {
 	    bClose: "Close"
 	},
 	del : {
-	    caption: "Eyða",
-	    msg: "Eyða völdum færslum ?",
-	    bSubmit: "Eyða",
-	    bCancel: "Hætta við"
+	    caption: "EyÃ°a",
+	    msg: "EyÃ°a vÃ¶ldum fÃ¦rslum ?",
+	    bSubmit: "EyÃ°a",
+	    bCancel: "HÃ¦tta viÃ°"
 	},
 	nav : {
 		edittext: " ",
-	    edittitle: "Breyta færslu",
+	    edittitle: "Breyta fÃ¦rslu",
 		addtext:" ",
-	    addtitle: "Ný færsla",
+	    addtitle: "NÃ½ fÃ¦rsla",
 	    deltext: " ",
-	    deltitle: "Eyða færslu",
+	    deltitle: "EyÃ°a fÃ¦rslu",
 	    searchtext: " ",
 	    searchtitle: "Leita",
 	    refreshtext: "",
-	    refreshtitle: "Endurhlaða",
-	    alertcap: "Viðvörun",
-	    alerttext: "Vinsamlega veldu færslu",
+	    refreshtitle: "EndurhlaÃ°a",
+	    alertcap: "ViÃ°vÃ¶run",
+	    alerttext: "Vinsamlega veldu fÃ¦rslu",
 		viewtext: "",
 		viewtitle: "View selected row"
 	},
 	col : {
-	    caption: "Sýna / fela dálka",
+	    caption: "SÃ½na / fela dÃ¡lka",
 	    bSubmit: "Vista",
-	    bCancel: "Hætta við"	
+	    bCancel: "HÃ¦tta viÃ°"	
 	},
 	errors : {
 		errcap : "Villa",
-		nourl : "Vantar slóð",
-		norecords: "Engar færslur valdar",
+		nourl : "Vantar slÃ³Ã°",
+		norecords: "Engar fÃ¦rslur valdar",
 	    model : "Length of colNames <> colModel!"
 	},
 	formatter : {

@@ -1,4 +1,4 @@
-﻿; (function ($) {
+; (function ($) {
 	$.fn.CswDashboard = function (options) {
 
 		var o = {

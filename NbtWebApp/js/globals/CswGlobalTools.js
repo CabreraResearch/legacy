@@ -1,4 +1,4 @@
-﻿function makeId(options)
+function makeId(options)
 {
 	/// <summary>
 	///   Generates an ID for DOM assignment
