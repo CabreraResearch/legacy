@@ -110,6 +110,7 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="js\main\controls\CswGrid.js" />
     <Content Include="MainFooter.html" />
     <Content Include="js\globals\CswGlobalTools.js" />
     <Content Include="js\main\controls\CswDateTimePicker.js" />
