@@ -1,5 +1,8 @@
 /// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../controls/CswGrid.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
@@ -248,8 +251,8 @@
 	}
 
 
-	$.fn.CswNodeGrid = function (method) {
-		/// <summary>
+    $.fn.CswNodeGrid = function(method) {
+        /// <summary>
 		///   Generates a jqGrid
 		/// </summary>
 		/// <param name="method" type="String">
@@ -259,14 +262,14 @@
 		/// </param>
 		
 		// Method calling logic
-		if ( methods[method] ) {
-		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-		} else if ( typeof method === 'object' || ! method ) {
-		  return methods.init.apply( this, arguments );
-		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
-		}    
-	}
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
+        } else {
+            $.error('Method ' + method + ' does not exist on ' + PluginName);
+        }
+    };
 
 })(jQuery);
 
