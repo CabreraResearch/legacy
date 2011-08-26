@@ -9,15 +9,15 @@
     var pluginName = 'CswFieldTypeImage';
 
     var methods = {
-        init: function(o) { //o.nodeid, o.propData, o.onchange
+        init: function(o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
-
-            var href = tryParseString(o.propData.href).trim();
-            var width = tryParseString(o.propData.width);
-            var height = tryParseString(o.propData.height);
-            var fileName = tryParseString(o.propData.name).trim();
+            var propVals = o.propData.values;
+            var href = tryParseString(propVals.href).trim();
+            var width = tryParseString(propVals.width);
+            var height = tryParseString(propVals.height);
+            var fileName = tryParseString(propVals.name).trim();
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');

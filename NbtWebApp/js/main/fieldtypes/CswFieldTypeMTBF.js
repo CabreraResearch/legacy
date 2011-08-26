@@ -13,12 +13,12 @@
 
             var $Div = $(this);
             $Div.contents().remove();
+            var propVals = o.propData.values;
+            var startDate = tryParseString(propVals.startdatetime.date);
+            var dateFormat = ServerDateFormatToJQuery(propVals.startdatetime.dateformat);
 
-            var startDate = tryParseString(o.propData.startdatetime.date);
-            var dateFormat = ServerDateFormatToJQuery(o.propData.startdatetime.dateformat);
-
-            var value = tryParseString(o.propData.value).trim();
-            var units = tryParseString(o.propData.units).trim();
+            var value = tryParseString(propVals.value).trim();
+            var units = tryParseString(propVals.units).trim();
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1);
@@ -78,10 +78,11 @@
             }
         },
         save: function(o) { //$propdiv, $xml
-                var StartDate = o.$propdiv.find('#'+ o.ID +'_sd').CswDateTimePicker('value').Date;
-                var Units = o.$propdiv.find('#'+ o.ID +'_units').val();
-                o.propData.startdatetime.date = StartDate;
-                o.propData.units = Units;
+            var StartDate = o.$propdiv.find('#'+ o.ID +'_sd').CswDateTimePicker('value').Date;
+            var Units = o.$propdiv.find('#'+ o.ID +'_units').val();
+            var propVals = o.propData.values;    
+            propVals.startdatetime.date = StartDate;
+            propVals.units = Units;
         }
     };
     

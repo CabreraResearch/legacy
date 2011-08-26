@@ -17,8 +17,8 @@
 
             var $Div = $(this);
             $Div.contents().remove();
-
-            var logicalSetJson = o.propData.logicalsetjson;
+            var propVals = o.propData.values;
+            var logicalSetJson = propVals.logicalsetjson;
             
             var $cbaDiv = $('<div />')
                             .appendTo($Div)
@@ -36,7 +36,7 @@
         save: function(o) { //$propdiv, $xml
             var $CBADiv = o.$propdiv.children('div').first();
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-            o.propData.logicalsetjson = formdata;
+            o.propData.values.logicalsetjson = formdata;
             return $(this);
         } // save()
     };

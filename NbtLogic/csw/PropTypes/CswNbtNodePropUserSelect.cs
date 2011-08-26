@@ -196,19 +196,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_SelectedUserIdsSubField.ToXmlNodeName()] = SelectedUserIds.ToString();
 
-            JObject OptionsObj = new JObject();
-            ParentObject["options"] = OptionsObj;
+            JArray OptionsAry = new JArray();
+            ParentObject["options"] = OptionsAry;
 
-            DataTable UsersTable = getUserOptions();
-            foreach( DataRow UserRow in UsersTable.Rows )
+            DataTable Data = getUserOptions();
+            foreach( DataRow Row in Data.Rows )
             {
-                JObject UserObj = new JObject();
-                OptionsObj["user_" + UserRow[KeyColumn]] = UserObj;
-
-                UserObj[NameColumn] = UserRow[NameColumn].ToString();
-                UserObj[KeyColumn] = UserRow[KeyColumn].ToString();
-                UserObj[StringKeyColumn] = UserRow[StringKeyColumn].ToString();
-                UserObj[ValueColumn] = UserRow[ValueColumn].ToString();
+                JObject OptionObj = new JObject();
+                OptionsAry.Add( OptionObj );
+                OptionObj[NameColumn] = Row[NameColumn].ToString();
+                OptionObj[KeyColumn] = Row[KeyColumn].ToString();
+                OptionObj[StringKeyColumn] = Row[StringKeyColumn].ToString();
+                OptionObj[ValueColumn] = Row[ValueColumn].ToString();
             }
         }
 

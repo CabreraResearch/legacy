@@ -13,9 +13,9 @@
 
             var $Div = $(this);
             $Div.contents().remove();
-
-            var value = tryParseString(o.propData.value).trim();
-            var options = o.propData.options;
+            var propVals = o.propData.values;
+            var value = tryParseString(propVals.value).trim();
+            var options = propVals.options;
             
             if (o.ReadOnly) {
                 $Div.append(value);
@@ -139,7 +139,7 @@
         },
         save: function(o) { //$propdiv, $xml
                 var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
-                o.propData.value = $HiddenValue.val();
+                o.propData.values.value = $HiddenValue.val();
             }
     };
     

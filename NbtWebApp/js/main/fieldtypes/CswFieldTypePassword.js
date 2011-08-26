@@ -9,13 +9,13 @@
     var pluginName = 'CswFieldTypePassword';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function(o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
-
-			var isExpired = isTrue(o.propData.isexpired);
-			var isAdmin = isTrue(o.propData.isadmin);
+            var propVals = o.propData.values;
+			var isExpired = isTrue(propVals.isexpired);
+			var isAdmin = isTrue(propVals.isadmin);
 
             if(o.ReadOnly)
             {
@@ -60,7 +60,7 @@
 					$cell32.append('Expired');
 				}
                 
-                if (o.Required && isNullOrEmpty(o.propData.password)) {
+                if (o.Required && isNullOrEmpty(propVals.password)) {
                     $TextBox1.addClass("required");
                 }
 
@@ -72,19 +72,20 @@
             }
         },
         save: function(o) { //$propdiv, $xml
-                var $IsExpiredCheck = o.$propdiv.find('input#' + o.ID + '_exp');
-				if($IsExpiredCheck.length > 0)
-				{
-					o.propData.isexpired = $IsExpiredCheck.is(':checked');
-                }
+            var $IsExpiredCheck = o.$propdiv.find('input#' + o.ID + '_exp');
+			var propVals = o.propData.values;	
+            if($IsExpiredCheck.length > 0)
+			{
+				propVals.isexpired = $IsExpiredCheck.is(':checked');
+            }
 				
-                var $TextBox = o.$propdiv.find('input#' + o.ID + '_pwd1');
-				var newpw = $TextBox.val();
-				if(newpw !== '')
-				{
-					o.propData.newpassword = newpw;
-				}
+            var $TextBox = o.$propdiv.find('input#' + o.ID + '_pwd1');
+			var newpw = $TextBox.val();
+			if(newpw !== '')
+			{
+				propVals.newpassword = newpw;
 			}
+		}
     };
     
     // Method calling logic

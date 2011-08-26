@@ -9,20 +9,21 @@
     var pluginName = 'CswFieldTypePropertyReference';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function(o) { 
                 
-                var $Div = $(this);
-                $Div.contents().remove();
-                 
-                var text = tryParseString(o.propData.value).trim();
-                text += '&nbsp;';
+            var $Div = $(this);
+            $Div.contents().remove();
+                
+            var propVals = o.propData.values;
+            var text = tryParseString(propVals.value).trim();
+            text += '&nbsp;';
 
-                var $StaticDiv = $('<div id="'+ o.ID +'" class="staticvalue">' + text + '</div>' )
-                               .appendTo($Div); 
-            },
+            var $StaticDiv = $('<div id="'+ o.ID +'" class="staticvalue">' + text + '</div>' )
+                            .appendTo($Div); 
+        },
         save: function(o) { //$propdiv, $xml
                 // no changes to save
-            }
+        }
     };
     
     // Method calling logic

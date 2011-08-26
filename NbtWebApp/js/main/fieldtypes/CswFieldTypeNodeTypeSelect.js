@@ -16,9 +16,9 @@
 
             var $Div = $(this);
             $Div.contents().remove();
-
-            var optData = o.propData.options;
-            var selectMode = o.propData.selectmode; // Single, Multiple, Blank
+            var propVals = o.propData.values;
+            var optData = propVals.options;
+            var selectMode = propVals.selectmode; // Single, Multiple, Blank
 
             var $cbaDiv = $('<div />')
                     .appendTo($Div)
@@ -39,7 +39,7 @@
         save: function (o) { //$propdiv, $xml
             var $CBADiv = o.$propdiv.children('div').first();
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-            o.propData.options = formdata;
+            o.propData.values.options = formdata;
             return $(this);
         } // save()
     };

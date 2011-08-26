@@ -13,13 +13,13 @@
 
             var $Div = $(this);
             $Div.contents().remove();
-            
+            var propVals = o.propData.values;
 			var $NumberTextBox = $Div.CswNumberTextBox({
 				ID: o.ID + '_qty',
-				Value: tryParseString(o.propData.value).trim(),
-				MinValue: tryParseString(o.propData.minvalue),
-				MaxValue: tryParseString(o.propData.maxvalue),
-				Precision: tryParseString(o.propData.precision),
+				Value: tryParseString(propVals.value).trim(),
+				MinValue: tryParseString(propVals.minvalue),
+				MaxValue: tryParseString(propVals.maxvalue),
+				Precision: tryParseString(propVals.precision),
 				ReadOnly: isTrue(o.ReadOnly),
 				Required: isTrue(o.Required),
 				onchange: o.onchange
@@ -31,7 +31,7 @@
 			}
 
             //this is an array
-            var units = o.propData.units;
+            var units = propVals.units;
             var selectedUnit = units[0];
 			var $unitsel = $('<select id="'+ o.ID + '_units" />')
 							.appendTo($Div)
@@ -48,10 +48,11 @@
 
         },
         save: function(o) {
-				o.propData.value = o.$propdiv.CswNumberTextBox('value', o.ID + '_qty');
-				var unit = o.$propdiv.find('#' + o.ID + '_units').val();
-				o.propData.units = unit;
-            }
+			var propVals = o.propData.values;	
+            propVals.value = o.$propdiv.CswNumberTextBox('value', o.ID + '_qty');
+			var unit = o.$propdiv.find('#' + o.ID + '_units').val();
+			propVals.units = unit;
+        }
     };
     
     // Method calling logic

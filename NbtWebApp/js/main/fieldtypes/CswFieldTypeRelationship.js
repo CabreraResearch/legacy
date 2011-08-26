@@ -16,16 +16,16 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var value = o.propData.value;
+                var propVals = o.propData.values;
                 
-                var selectedNodeId = tryParseString(value.nodeid).trim();
+                var selectedNodeId = tryParseString(propVals.nodeid).trim();
                 if (!isNullOrEmpty(o.relatednodeid) && isNullOrEmpty(selectedNodeId)) {
                     selectedNodeId = o.relatednodeid;
                 }
-                var selectedName = tryParseString(value.name).trim();
-                var nodeTypeId = tryParseString(value.nodetypeid).trim();
-                var allowAdd = isTrue(value.allowadd);
-                var options = value.options;
+                var selectedName = tryParseString(propVals.name).trim();
+                var nodeTypeId = tryParseString(propVals.nodetypeid).trim();
+                var allowAdd = isTrue(propVals.allowadd);
+                var options = propVals.options;
 
                 if(o.ReadOnly) {
                     $Div.append(selectedName);
@@ -69,7 +69,7 @@
             },
             save: function(o) {
                     var $SelectBox = o.$propdiv.find('select');
-                    o.propData.nodeid = $SelectBox.val();
+                    o.propData.values.nodeid = $SelectBox.val();
                 }
         };
     

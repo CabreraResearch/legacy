@@ -9,13 +9,13 @@
     var pluginName = 'CswFieldTypeText';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function(o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
-
-            var value = tryParseString(o.propData.text).trim();
-            var length = tryParseNumber( o.propData.length, 14 );
+            var propVals = o.propData.values;
+            var value = tryParseString(propVals.text).trim();
+            var length = tryParseNumber( propVals.length, 14 );
 
             if(o.ReadOnly)
             {
@@ -41,7 +41,7 @@
         },
         save: function(o) {
                 var $TextBox = o.$propdiv.find('input');
-                o.propData.text = $TextBox.val();
+                o.propData.values.text = $TextBox.val();
             }
     };
     

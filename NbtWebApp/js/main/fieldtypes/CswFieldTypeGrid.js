@@ -9,7 +9,7 @@
 	var pluginName = 'CswFieldTypeGrid';
    
 	var methods = {
-		'init': function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+		'init': function(o) { 
 			/// <summary>
             ///   Initializes a jqGrid as an NbtNode Prop
             /// </summary>
@@ -18,7 +18,7 @@
             /// </param>
             var $Div = $(this);
 			$Div.empty();
-
+            var propVals = o.propData.values;
 			if(o.EditMode === EditMode.AuditHistoryInPopup.name)
 			{
 				$Div.append('[Grid display disabled]');
@@ -33,7 +33,7 @@
 				var gridDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype'});
 				var $GridDiv = $('<div id="' + gridDivId + '" name="' + gridDivId + '"></div>');
 
-				var viewid = tryParseString(o.propData.viewid).trim();
+				var viewid = tryParseString(propVals.viewid).trim();
             
 				var gridOpts = {
 					'ID': o.ID,

@@ -9,18 +9,18 @@
     var pluginName = 'CswFieldTypeScientific';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function(o) { 
 
             var $Div = $(this);
-
+            var propVals = o.propData.values;
 			if (isTrue(o.ReadOnly)) {
-				$Div.append(o.propData.gestalt);
+				$Div.append(propVals.gestalt);
 			} 
 			else 
 			{
 				var $ValueNTB = $Div.CswNumberTextBox({
 					ID: o.ID + '_val',
-					Value: tryParseString(o.propData.base).trim(),
+					Value: tryParseString(propVals.base).trim(),
 					Precision: 6,
 					ReadOnly: o.ReadOnly,
 					Required: o.Required,
@@ -30,7 +30,7 @@
 				$Div.append('E');
 				var $ExponentNTB = $Div.CswNumberTextBox({
 					ID:  o.ID + '_exp',
-					Value: tryParseString(o.propData.exponent).trim(),
+					Value: tryParseString(propVals.exponent).trim(),
 					ReadOnly: o.ReadOnly,
 					Required: o.Required,
 					onchange: o.onchange,
@@ -46,9 +46,10 @@
 			}
         },
         save: function(o) { //$propdiv, $xml
-				o.propData.base = o.$propdiv.CswNumberTextBox('value', o.ID + '_val');
-				o.propData.exponent =o.$propdiv.CswNumberTextBox('value', o.ID + '_exp');
-            }
+			var propVals = o.propData.values;	
+            propVals.base = o.$propdiv.CswNumberTextBox('value', o.ID + '_val');
+			propVals.exponent =o.$propdiv.CswNumberTextBox('value', o.ID + '_exp');
+        }
     };
     
     // Method calling logic

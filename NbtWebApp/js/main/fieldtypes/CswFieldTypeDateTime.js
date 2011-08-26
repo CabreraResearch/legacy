@@ -12,14 +12,14 @@
         init: function(o) {
 
             var $Div = $(this);
-
+            var propVals = o.propData.values;
 			var $DTPickerDiv = $Div.CswDateTimePicker('init', {
 													ID: o.ID,
-													Date: tryParseString(o.propData.value.date).trim(),
-													Time: tryParseString(o.propData.value.time).trim(),
-													DateFormat: ServerDateFormatToJQuery(o.propData.value.dateformat),
-													TimeFormat: ServerTimeFormatToJQuery(o.propData.value.timeformat),
-													DisplayMode: o.propData.value.displaymode,
+													Date: tryParseString(propVals.date).trim(),
+													Time: tryParseString(propVals.time).trim(),
+													DateFormat: ServerDateFormatToJQuery(propVals.dateformat),
+													TimeFormat: ServerTimeFormatToJQuery(propVals.timeformat),
+													DisplayMode: propVals.displaymode,
 													ReadOnly: o.ReadOnly,
 													Required: o.Required,
 													OnChange: o.onchange
@@ -30,8 +30,9 @@
         save: function(o) { //$propdiv, $xml
             var $DTPickerDiv = o.$propdiv.find('#' + o.ID);
 			var dateval = $DTPickerDiv.CswDateTimePicker('value');
-			o.propData.value.date = dateval.Date;
-			o.propData.value.time = dateval.Time;
+			var propVals = o.propData.values;
+            propVals.date = dateval.Date;
+			propVals.time = dateval.Time;
         }
     };
     

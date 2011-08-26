@@ -16,9 +16,9 @@
 
             var $Div = $(this);
             $Div.contents().remove();
-
-			var optionData = o.propData.options;
-			var selectMode = o.propData.selectmode;
+            var propVals = o.propData.values;
+			var optionData = propVals.options;
+			var selectMode = propVals.selectmode;
 			var $cbaDiv = $('<div />')
 							.appendTo($Div)
                             .CswCheckBoxArray('init', {
@@ -37,7 +37,7 @@
         'save': function(o) {
 			var $cbaDiv = o.$propdiv.children('div').first();
 			var formdata = $cbaDiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-            o.propData.options = formdata;
+            o.propData.values.options = formdata;
             return $(this);
         }
     };

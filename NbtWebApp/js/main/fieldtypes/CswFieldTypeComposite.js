@@ -9,12 +9,12 @@
     var pluginName = 'CswFieldTypeComposite';
 
     var methods = {
-        init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function (o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
-
-            var value = tryParseString(o.propData.value).trim();
+            var propVals = o.propData.values;
+            var value = tryParseString(propVals.value).trim();
             $Div.append(value);
 
         },
