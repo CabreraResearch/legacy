@@ -502,7 +502,7 @@
 				data: jsonData,
 				success: function (data)
 				{
-				    _makeProp($propcell, data["prop_" + propId], $tabcontentdiv, tabid, configMode, $savebtn );
+				    _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn );
 				}
 			});
 		} // _updateSubProps()
