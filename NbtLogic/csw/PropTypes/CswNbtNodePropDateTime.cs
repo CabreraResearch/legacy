@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.PropTypes
             //ParentObject[_DateValueSubField.ToXmlNodeName( true )] = DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat );
 
             CswDateTime CswDate = new CswDateTime( _CswNbtResources, DateTimeValue );
-            ParentObject.Add( CswDate.ToClientAsDateTimeJObject().Properties() );
+            ParentObject[_DateValueSubField.ToXmlNodeName( true )] = CswDate.ToClientAsDateTimeJObject();
             ParentObject["displaymode"] = DisplayMode.ToString();
 
         } // ToJSON()
