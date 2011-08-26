@@ -110,6 +110,7 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="MainFooter.html" />
     <Content Include="js\globals\CswGlobalTools.js" />
     <Content Include="js\main\controls\CswDateTimePicker.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeNFPA.js" />
@@ -195,6 +196,7 @@
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.cookie.js" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.js" />
+    <Content Include="MainTos.html" />
     <Content Include="NewMain.html" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.js" />
@@ -1132,7 +1134,6 @@
     <Content Include="Main.js" />
     <Content Include="Mobile.html" />
     <Content Include="Mobile_Includes.html" />
-    <Content Include="MainFooter.html" />
     <Content Include="MainHeader.html" />
     <Content Include="MainIncludes.html" />
     <Content Include="Main.html" />
