@@ -158,6 +158,7 @@
 		'EditLayoutDialog': function (CswNodeTabOptions)
 						{
 							CswNodeTabOptions.Config = true;
+							CswNodeTabOptions.ShowAsReport = false;
 
 							var $div = $('<div></div>');
 							var $table = $div.CswTable('init', { ID: 'EditLayoutDialog_table', width: '100%' });
@@ -179,7 +180,7 @@
 
 							$cell12.CswNodeTabs(CswNodeTabOptions);
 
-							_openDiv($div, 800, 600);
+							_openDiv($div, 900, 600);
 						},
 
 		'EditNodeDialog': function (options)

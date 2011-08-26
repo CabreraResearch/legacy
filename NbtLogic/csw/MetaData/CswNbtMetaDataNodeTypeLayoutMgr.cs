@@ -154,7 +154,25 @@ namespace ChemSW.Nbt.MetaData
 			return MaxRow;
 		} // getCurrentMaxDisplayRow()
 
+		public Collection<CswNbtMetaDataNodeTypeProp> getPropsInLayout( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab, LayoutType LayoutType )
+		{
+			Collection<CswNbtMetaDataNodeTypeProp> ret = new Collection<CswNbtMetaDataNodeTypeProp>();
+
+			CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropsInLayout_Select", "nodetype_layout" );
+			string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeType.NodeTypeId.ToString();
+			if( Tab != null )
+			{
+				WhereClause += "and nodetypetabsetid = " + Tab.TabId.ToString();
+			}
+			DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
+			foreach( DataRow Row in LayoutTable.Rows )
+			{
+				ret.Add( _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( CswConvert.ToInt32( Row["nodetypepropid"] ) ) );
+			}
+			return ret;
+		} // getPropsInLayout()
 		
+
 		//public void makeSpaceForProp(CswNbtMetaDataNodeTypeLayout.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp )
 		//    // NodeTypeTab, Int32 DisplayColumn, Int32 DisplayRow)
 		//{
