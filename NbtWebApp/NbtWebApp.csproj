@@ -196,7 +196,6 @@
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.cookie.js" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.js" />
-    <Content Include="MainTos.html" />
     <Content Include="NewMain.html" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.js" />
