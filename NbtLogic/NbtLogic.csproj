@@ -62,6 +62,7 @@
     <Compile Include="csw\CswNbtResources.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportExport.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportExportFrame.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeLayoutMgr.cs" />
     <Compile Include="csw\MetaData\CswNbtFieldResources.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaData.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataCollectionFieldType.cs" />
@@ -236,6 +237,7 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I11.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I10.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I09.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I08.cs" />

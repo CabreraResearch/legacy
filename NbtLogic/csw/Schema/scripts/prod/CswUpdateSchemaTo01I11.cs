@@ -1,54 +1,38 @@
 ﻿using System;
 using System.Data;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
-    /// <summary>
-    /// Updates the schema to version 01I-01
-    /// </summary>
-    public class CswUpdateSchemaTo01I01 : ICswUpdateSchemaTo
-    {
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+	/// <summary>
+	/// Updates the schema to version 01I-11
+	/// </summary>
+	public class CswUpdateSchemaTo01I11 : ICswUpdateSchemaTo
+	{
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 01 ); } }
-        public CswUpdateSchemaTo01I01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
-        }
-
-
-        public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
+		private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
+		public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 11 ); } }
+		public CswUpdateSchemaTo01I11( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+		{
+			_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+			_CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
+		}
 
 
-        public void update()
-        {
-            // This script is reserved for schema changes, 
-            // such as adding tables or columns, 
-            // which need to take place before any other changes can be made.
-
-			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "jct_nodes_props", "field2_numeric" ) )
-			{
-				_CswNbtSchemaModTrnsctn.addDoubleColumn( "jct_nodes_props", "field2_numeric", "A second numeric value", false, false, 6 );
-			}
-
-			// case 8411
-			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodetype_tabset", "firsttabversionid" ) )
-			{
-				_CswNbtSchemaModTrnsctn.addForeignKeyColumn( "nodetype_tabset", "firsttabversionid", "Foreign key to original tab version", false, false, "nodetype_tabset", "nodetypetabsetid" );
-			}
-			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodetype_tabset", "priortabversionid" ) )
-			{
-				_CswNbtSchemaModTrnsctn.addForeignKeyColumn( "nodetype_tabset", "priortabversionid", "Foreign key to previous tab version", false, false, "nodetype_tabset", "nodetypetabsetid" );
-			}
+		public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
 
 
-
-
+		public void update()
+		{
 			// case 22960
 			// Change how we store layouts
 			// also in 01I-01
@@ -102,10 +86,10 @@ namespace ChemSW.Nbt.Schema
 				_CswNbtSchemaModTrnsctn.dropColumn( "nodetype_props", "setvalonadd" );
 			} // if( false == _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( LayoutTableName ) )
 
+		} // Update()
 
-		}//Update()
 
-    }//class CswUpdateSchemaTo01I01
+	}//class CswUpdateSchemaTo01I11
 
 }//namespace ChemSW.Nbt.Schema
 

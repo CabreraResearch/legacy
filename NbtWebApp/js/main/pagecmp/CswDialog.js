@@ -160,7 +160,24 @@
 							CswNodeTabOptions.Config = true;
 
 							var $div = $('<div></div>');
-							$div.CswNodeTabs(CswNodeTabOptions);
+							var $table = $div.CswTable('init', { ID: 'EditLayoutDialog_table', width: '100%' });
+							var $cell11 = $table.CswTable('cell', 1, 1);
+							var $cell12 = $table.CswTable('cell', 1, 2);
+							$cell11.append("Configure:<br/>");
+							$cell11.CswSelect('init', {
+										'ID': 'EditLayoutDialog_layoutselect',
+										'selected': 'Edit',
+										'values': [ { value: 'AddInPopup', display: 'Add' },
+													{ value: 'Edit', display: 'Edit' },
+													{ value: 'Preview', display: 'Preview' } ],
+										'onChange': function () {
+											CswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
+											$cell12.contents().remove();
+											$cell12.CswNodeTabs(CswNodeTabOptions);
+										}
+									});
+
+							$cell12.CswNodeTabs(CswNodeTabOptions);
 
 							_openDiv($div, 800, 600);
 						},

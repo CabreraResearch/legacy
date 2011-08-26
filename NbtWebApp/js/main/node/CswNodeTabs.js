@@ -246,7 +246,7 @@
 
 					var i = 0;
 
-					if(o.EditMode !== EditMode.PrintReport.Name)
+					if( o.EditMode !== EditMode.PrintReport.Name)
 					{
 						$savetab = $formtblcell11.CswButton({ID: 'SaveTab', 
 												enabledText: 'Save Changes', 
@@ -404,7 +404,8 @@
 				}
 			}
 
-			if(AtLeastOneSaveable === false && o.EditMode != EditMode.AddInPopup.name) {
+			if(o.Config || ( AtLeastOneSaveable === false && o.EditMode != EditMode.AddInPopup.name ) )
+			{
 				$savebtn.hide();
 			} else {
 				$savebtn.show();

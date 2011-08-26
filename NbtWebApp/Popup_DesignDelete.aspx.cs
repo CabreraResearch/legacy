@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp(Convert.ToInt32(_SelectedValue));
                         _SelectedNodeType = _SelectedNodeTypeProp.NodeType;
-                        _SelectedNodeTypeTab = _SelectedNodeTypeProp.NodeTypeTab;
+						_SelectedNodeTypeTab = _SelectedNodeTypeProp.EditLayout.Tab;
                     }
                     else
                     {

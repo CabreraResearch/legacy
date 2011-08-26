@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.MetaData
 
 
         public ICollection NodeTypePropIds { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdsByTab( TabId ); } }
-        public ICollection NodeTypeProps { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByTab( TabId ); } }
+		public ICollection NodeTypeProps { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByTab( TabId ); } }
         public ICollection NodeTypePropsByDisplayOrder { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByDisplayOrder( TabId ); } }
 
         public CswNbtMetaDataNodeTypeProp FirstPropByDisplayOrder()
@@ -197,16 +197,16 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropDisplayOrder( TabId, Prop );
         }
 
-        public Int32 getCurrentMaxDisplayRow()
-        {
-            Int32 Max = 0;
-            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeProps )
-            {
-                if( Prop.DisplayRow > Max )
-                    Max = Prop.DisplayRow;
-            }
-            return Max;
-        }
+		//public Int32 getCurrentMaxDisplayRow()
+		//{
+		//    Int32 Max = 0;
+		//    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeProps )
+		//    {
+		//        if( Prop.DisplayRow > Max )
+		//            Max = Prop.DisplayRow;
+		//    }
+		//    return Max;
+		//}
 
         public static string _Element_MetaDataNodeTypeTab = "MetaDataNodeTypeTab";
         public static string _Attribute_TabId = "tabid";
