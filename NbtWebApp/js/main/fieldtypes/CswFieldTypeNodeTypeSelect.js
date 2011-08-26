@@ -18,38 +18,34 @@
             $Div.contents().remove();
 
             var optData = o.propData.options;
-            var selectedNodeTypeIds = tryParseString(o.propData.nodetype).trim();
-            var selectMode = o.propData.selectmode;   // Single, Multiple, Blank
+            var selectedNodeTypeIds = tryParseString(o.propData.nodetype).trim().split(',');
+            var selectMode = o.propData.selectmode; // Single, Multiple, Blank
 
             var $CBADiv = $('<div />')
-                            .appendTo($Div);
+                .appendTo($Div);
 
             // get data
-            var data = new [];
-            var d = 0;
-            for (var i=0; i < optData.length; i++) {
-                var thisSet = optData[i];
-                for (var item in thisSet) {
-                    if(thisSet.hasOwnProperty(item)) {
-                        var $elm = {
-                            'label': thisSet[item],
-                            'key': item,
-                            'values': [ isTrue(thisSet[item]) ]
-                        };
-                        data[d] = $elm;
-                        d++;
-                    }
+            var data = [];
+            for (var i = 0; i < optData.length; i++) {
+                var thisNodeType = optData[i];
+                if (thisNodeType.hasOwnProperty(nameCol) && thisNodeType.hasOwnProperty(keyCol) && thisNodeType.hasOwnProperty(valueCol)) {
+                    var ntOpt = {
+                        'label': thisNodeType[nameCol],
+                        'key': thisNodeType[keyCol],
+                        'values': [(selectedNodeTypeIds.indexOf(thisNodeType[keyCol]) !== -1)]
+                    };
+                    data.push(ntOpt);
                 }
             }
 
             $CBADiv.CswCheckBoxArray('init', {
-                'ID': o.ID + '_cba',
-                'cols': [ valueCol ],
-                'data': data,
-                'UseRadios': (selectMode === 'Single'),
-                'Required': o.Required,
-                'ReadOnly': o.ReadOnly,
-                'onchange': o.onchange
+                ID: o.ID + '_cba',
+                cols: [ valueCol ],
+                data: data,
+                UseRadios: (selectMode === 'Single'),
+                Required: o.Required,
+                ReadOnly: o.ReadOnly,
+                onchange: o.onchange
             });
 
 
@@ -60,13 +56,14 @@
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             for (var r = 0; r < formdata.length; r++) {
                 var checkitem = formdata[r][0];
-                var optItem = findObject(optionData, keyCol, checkitem.key);
+                var objHelper = new ObjectHelper(optionData);
+                var optItem = objHelper.find(keyCol, checkitem.key);
                 var optVal = optItem[valueCol];
 
                 if (checkitem.checked && optVal === "False")
-                    optVal = 'True';
+                    optItem[valueCol] = 'True';
                 else if (!checkitem.checked && optVal === "True")
-                    optVal = 'False';
+                    optItem[valueCol] = 'False';
             } // for( var r = 0; r < formdata.length; r++)
         } // save()
     };
