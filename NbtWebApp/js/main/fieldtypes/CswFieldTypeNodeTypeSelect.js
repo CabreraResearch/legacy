@@ -18,23 +18,20 @@
             $Div.contents().remove();
 
             var optData = o.propData.options;
-            var selectedNodeTypeIds = tryParseString(o.propData.nodetype).trim().split(',');
             var selectMode = o.propData.selectmode; // Single, Multiple, Blank
 
             var $cbaDiv = $('<div />')
                     .appendTo($Div)
-                    .CswCheckBoxArray('transmorgify', {
-                        dataAry: optData,
-			            nameCol: nameCol,
-			            keyCol: keyCol,
-                        valCol: valueCol
-                    })  
                     .CswCheckBoxArray('init', {
                         ID: o.ID + '_cba',
                         UseRadios: (selectMode === 'Single'),
                         Required: o.Required,
                         ReadOnly: o.ReadOnly,
-                        onchange: o.onchange
+                        onchange: o.onchange,
+                        dataAry: optData,
+			            nameCol: nameCol,
+			            keyCol: keyCol,
+                        valCol: valueCol
                     });
 
             return $Div;

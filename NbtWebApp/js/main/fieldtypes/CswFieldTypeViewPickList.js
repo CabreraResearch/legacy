@@ -12,28 +12,25 @@
     var valueCol = "Include";
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function(o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
 
-            var selectedViewIds = tryParseString(o.propData.viewid).trim().split(',');
 			var optionData = o.propData.options;
 			var selectMode = o.propData.selectmode;
 			var $cbaDiv = $('<div />')
 							.appendTo($Div)
-                            .CswCheckBoxArray('transmorgify', {
-                                dataAry: optionData,
-			                    nameCol: nameCol,
-			                    keyCol: keyCol,
-                                valueCol: valueCol
-                            })
                             .CswCheckBoxArray('init', {
 				                ID: o.ID + '_cba',
 				                UseRadios: (selectMode === 'Single'),
 				                Required: o.Required,
 				                ReadOnly: o.ReadOnly,
-				                onchange: o.onchange
+				                onchange: o.onchange,
+                                dataAry: optionData,
+			                    nameCol: nameCol,
+			                    keyCol: keyCol,
+                                valueCol: valueCol
 			                });
             return $Div;    
         },

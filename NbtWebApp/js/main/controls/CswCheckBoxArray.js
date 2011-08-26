@@ -11,65 +11,6 @@
 	    var storedDataClass = 'CbaStoredData';
 	    
 		var methods = {
-			transmorgify: function (options) {
-			    var $this = $(this);
-
-			    var o = {
-                    dataAry: [],
-			        nameCol: '',
-			        keyCol: '',
-			        valCol: ''
-			    };
-			    if(options) $.extend(o, options);
-
-			    if (false === isNullOrEmpty(o.dataAry) && o.dataAry.length > 0) {
-	   			    // get columns
-                    var cols = [];
-
-			        var firstProp = o.dataAry[0];
-			        for (var column in firstProp) {
-
-			            if (firstProp.hasOwnProperty(column)) {
-			                var fieldname = column;
-			                if (fieldname !== o.nameCol && fieldname !== o.keyCol)
-			                {
-			                    cols.push(fieldname);
-			                }
-			            }
-			        }
-			        if (false === isNullOrEmpty(o.valCol) && cols.indexOf(o.valCol) === -1) {
-			            cols.push(o.valCol)
-			                ;			        }
-
-			        // get data
-			        var data = [];
-
-			        for (var i = 0; i < o.dataAry.length; i++) {
-			            var thisSet = o.dataAry[i];
-
-			            if (thisSet.hasOwnProperty(o.keyCol) && thisSet.hasOwnProperty(o.nameCol)) {
-			                var values = [];
-			                for (var v = 0; v < cols.length; v++) {
-			                    if (thisSet.hasOwnProperty(cols[v])) {
-			                        values.push(isTrue(thisSet[cols[v]]));
-			                    }
-			                }
-			                var dataOpts = { 'label': thisSet[o.nameCol],
-			                    'key': thisSet[o.keyCol],
-			                    'values': values };
-			                data.push(dataOpts);
-			            }
-			        }
-
-			        var dataStore = {
-                        cols: cols,
-			            data: data
-			        };
-
-			        $this.data(storedData, dataStore);
-			    }
-			    return $this;
-			},
 		    init: function(options) {
 		
 				var o = {
@@ -89,20 +30,29 @@
 					UseRadios: false,
 					Required: false,
 					ReadOnly: false,
-					onchange: function() { }
+					onchange: null, //function() { }
+				    dataAry: [],
+			        nameCol: '',
+			        keyCol: '',
+			        valCol: ''
 				};
 				
 				if (options) {
 					$.extend(o, options);
 				}
 
-		        var $Div = $(this);
+		        var $Div = transmorgify({ dataAry: o.dataAry,
+			                              nameCol: o.nameCol,
+			                              keyCol: o.keyCol,
+			                              valCol: o.valCol 
+		                                 }, 
+		                                 $(this));
+		        
 		        var dataStore = $Div.data(storedData);
 		        if (false === isNullOrEmpty(storedData)) {
 		            $.extend(o, dataStore);
-		        } else {
-		            
 		        }
+		        
 				var checkType = CswInput_Types.checkbox.name;
 				if(o.UseRadios)
 					checkType = CswInput_Types.radio.name;
@@ -255,6 +205,67 @@
 			}
 		};
 	
+	    
+	    function transmorgify (options, $control) {
+			    var $this = $control;
+
+			    var o = {
+                    dataAry: [],
+			        nameCol: '',
+			        keyCol: '',
+			        valCol: ''
+			    };
+			    if(options) $.extend(o, options);
+
+			    if (false === isNullOrEmpty(o.dataAry) && o.dataAry.length > 0) {
+	   			    // get columns
+                    var cols = [];
+
+			        var firstProp = o.dataAry[0];
+			        for (var column in firstProp) {
+
+			            if (firstProp.hasOwnProperty(column)) {
+			                var fieldname = column;
+			                if (fieldname !== o.nameCol && fieldname !== o.keyCol)
+			                {
+			                    cols.push(fieldname);
+			                }
+			            }
+			        }
+			        if (false === isNullOrEmpty(o.valCol) && cols.indexOf(o.valCol) === -1) {
+			            cols.push(o.valCol)
+			                ;			        }
+
+			        // get data
+			        var data = [];
+
+			        for (var i = 0; i < o.dataAry.length; i++) {
+			            var thisSet = o.dataAry[i];
+
+			            if (thisSet.hasOwnProperty(o.keyCol) && thisSet.hasOwnProperty(o.nameCol)) {
+			                var values = [];
+			                for (var v = 0; v < cols.length; v++) {
+			                    if (thisSet.hasOwnProperty(cols[v])) {
+			                        values.push(isTrue(thisSet[cols[v]]));
+			                    }
+			                }
+			                var dataOpts = { 'label': thisSet[o.nameCol],
+			                    'key': thisSet[o.keyCol],
+			                    'values': values };
+			                data.push(dataOpts);
+			            }
+			        }
+
+			        var dataStore = {
+                        cols: cols,
+			            data: data
+			        };
+
+			        $this.data(storedData, dataStore);
+			    }
+			    return $this;
+			}
+	    
 		function ToggleCheckAll($checkalllink, id)
 		{
 			// Are there any unchecked checkboxes?

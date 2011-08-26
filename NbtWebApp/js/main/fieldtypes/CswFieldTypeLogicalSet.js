@@ -22,15 +22,13 @@
             
             var $cbaDiv = $('<div />')
                             .appendTo($Div)
-                            .CswCheckBoxArray('transmorgify', {
-                                dataAry: logicalSetJson,
-			                    nameCol: nameCol,
-			                    keyCol: keyCol
-                            })
                             .CswCheckBoxArray('init', {
                                 ID: o.ID + '_cba',
                                 onchange: o.onchange,
-								ReadOnly: o.ReadOnly
+								ReadOnly: o.ReadOnly,
+                                dataAry: logicalSetJson,
+			                    nameCol: nameCol,
+			                    keyCol: keyCol
                             });
             return $Div;
 
