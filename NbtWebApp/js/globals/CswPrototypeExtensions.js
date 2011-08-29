@@ -1,4 +1,4 @@
-﻿/// <reference path="_Global.js" />
+/// <reference path="_Global.js" />
 
 //#region Browser Compatibility
 

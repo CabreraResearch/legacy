@@ -1,4 +1,4 @@
-﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -345,8 +345,13 @@
 				        var helpText = tryParseString(thisProp.helptext);
 				        var propName = tryParseString(thisProp.name);
 				        if (!isNullOrEmpty(helpText)) {
-				            $('<a href="#" class="cswprop_helplink" title="' + helpText + '" onclick="return false;">' + propName + '</a>')
-    				            .appendTo($labelcell);
+				            $labelcell.CswLink('init', {href: '#', 
+				                                        cssclass: 'cswprop_helplink', 
+				                                        title: helpText, 
+				                                        onclick: function() { return false; }, 
+				                                        value: propName
+				                              });
+    				            
 				        } else {
 				            $labelcell.append(propName);
 				        }
@@ -498,10 +503,6 @@
 					data: data,
 					success: function (data)
 					{
-                        if (debugOn()) {
-                            log('CswNodeTabs_Save()');
-                            log(data);
-                        }
 					    var doSave = true;
 						if(o.ShowCheckboxes)
 						{

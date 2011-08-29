@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -15,12 +15,12 @@
 			
 				var $Div = $(this);
 				$Div.contents().remove();
-
-				var nodeId = tryParseString(o.propData.nodeid).trim();
-				var nodeKey = tryParseString(o.propData.nodekey).trim();
-				var name = tryParseString(o.propData.name).trim();
-				var path = tryParseString(o.propData.path).trim();
-				var viewId = tryParseString(o.propData.viewid).trim();
+                var propVals = o.propData.values;
+				var nodeId = tryParseString(propVals.nodeid).trim();
+				var nodeKey = tryParseString(propVals.nodekey).trim();
+				var name = tryParseString(propVals.name).trim();
+				var path = tryParseString(propVals.path).trim();
+				var viewId = tryParseString(propVals.viewid).trim();
 
 				if(o.ReadOnly)
 				{
@@ -80,7 +80,7 @@
 			},
 			save: function(o) { //($propdiv, $xml
 					var $selectdiv = o.$propdiv.find('.locationselect');
-					o.propData.nodeid = $selectdiv.val();
+					o.propData.values.nodeid = $selectdiv.val();
 				}
 		};
 	

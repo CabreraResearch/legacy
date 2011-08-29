@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -12,14 +12,14 @@
         init: function(o) {
 
             var $Div = $(this);
-
+            var propVals = o.propData.values;
 			var $DTPickerDiv = $Div.CswDateTimePicker('init', {
 													ID: o.ID,
-													Date: tryParseString(o.propData.value.date).trim(),
-													Time: tryParseString(o.propData.value.time).trim(),
-													DateFormat: ServerDateFormatToJQuery(o.propData.value.dateformat),
-													TimeFormat: ServerTimeFormatToJQuery(o.propData.value.timeformat),
-													DisplayMode: o.propData.value.displaymode,
+													Date: tryParseString(propVals.value.date).trim(),
+													Time: tryParseString(propVals.value.time).trim(),
+													DateFormat: ServerDateFormatToJQuery(propVals.value.dateformat),
+													TimeFormat: ServerTimeFormatToJQuery(propVals.value.timeformat),
+													DisplayMode: propVals.displaymode,
 													ReadOnly: o.ReadOnly,
 													Required: o.Required,
 													OnChange: o.onchange
@@ -30,8 +30,9 @@
         save: function(o) { //$propdiv, $xml
             var $DTPickerDiv = o.$propdiv.find('#' + o.ID);
 			var dateval = $DTPickerDiv.CswDateTimePicker('value');
-			o.propData.value.date = dateval.Date;
-			o.propData.value.time = dateval.Time;
+			var propVals = o.propData.values;
+            propVals.value.date = dateval.Date;
+			propVals.value.time = dateval.Time;
         }
     };
     

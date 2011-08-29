@@ -231,38 +231,26 @@ namespace ChemSW.Nbt.PropTypes
             //SelectedNodeTypeIds.FromString( _HandleReferences( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName() ), NodeTypeMap ) );
             CswCommaDelimitedString NewSelectedNodeTypeIds = new CswCommaDelimitedString();
 
-            if( null != JObject["options"] )
+            if( null != JObject["options"] &&
+                null != JObject["options"]["data"] )
             {
-                JArray OptionsAry = (JArray) JObject["options"];
+                JArray Data = (JArray) JObject["options"]["data"];
 
-                foreach( JObject ItemObj in OptionsAry )
+                foreach( JObject ItemObj in Data )
                 {
-                    string key = string.Empty;
-                    string name = string.Empty;
-                    bool value = false;
-                    foreach( JProperty ColumnNode in ItemObj.Properties() )
-                    {
-                        if( KeyColumn == ColumnNode.Name )
-                        {
-                            key = CswConvert.ToString( ColumnNode.Value );
-                        }
-                        if( NameColumn == ColumnNode.Name )
-                        {
-                            name = CswConvert.ToString( ColumnNode.Value );
-                        }
-                        if( ValueColumn == ColumnNode.Name )
-                        {
-                            value = CswConvert.ToBoolean( ColumnNode.Value );
-                        }
-                    }
+                    string key = CswConvert.ToString( ItemObj["key"] );
+                    //string name = CswConvert.ToString( ItemObj["label"] );
+                    JArray Values = (JArray) ItemObj["values"];
+                    bool value = CswConvert.ToBoolean( Values[0] );
                     if( value )
                     {
                         NewSelectedNodeTypeIds.Add( key );
                     }
-                } // foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "Options" ).ChildNodes )
-
-                SelectedNodeTypeIds = NewSelectedNodeTypeIds;
+                }
             }
+
+            SelectedNodeTypeIds = NewSelectedNodeTypeIds;
+
         }
 
         private string _HandleReferences( string NodeTypeIds, Dictionary<Int32, Int32> NodeTypeMap )

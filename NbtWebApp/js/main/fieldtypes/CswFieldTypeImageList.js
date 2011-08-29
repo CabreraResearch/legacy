@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -12,11 +12,11 @@
         init: function(o) {
 			
 			var $Div = $(this);
-
-            var value = tryParseString(o.propData.value).trim();
-            var options = o.propData.options;
-            var width = tryParseString(o.propData.width);
-            var height = tryParseString(o.propData.height);
+            var propVals = o.propData.values;
+            var value = tryParseString(propVals.value).trim();
+            var options = propVals.options;
+            var width = tryParseString(propVals.width);
+            var height = tryParseString(propVals.height);
             
             if (!o.ReadOnly) 
 			{
@@ -28,7 +28,7 @@
 		                            .appendTo($Div);
 			}
 
-            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' })
+            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 			var currCol = 1;
 
             if (!o.ReadOnly) 
@@ -134,7 +134,7 @@
         },
         save: function(o) {
 			var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
-			o.propData.value = $HiddenValue.text();
+			o.propData.values.value = $HiddenValue.text();
         }
     };
     

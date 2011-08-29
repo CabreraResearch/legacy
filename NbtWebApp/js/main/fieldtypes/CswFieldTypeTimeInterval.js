@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -9,11 +9,11 @@
     var pluginName = 'CswFieldTypeTimeInterval';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function(o) { 
                 var $Div = $(this);
                 $Div.contents().remove();
-
-                var textValue = o.propData.Interval.text;
+                var propVals = o.propData.values;
+                var textValue = propVals.Interval.text;
 
 				$Div.append('<span id="' + o.ID + '_textvalue">' + textValue + '</span>');
 
@@ -142,19 +142,19 @@
 
 
 					// Yearly
-					var $YearlyDiv = $('<div />')
-										.appendTo($topcell)
-										.addClass('CswFieldTypeTimeInterval_Div')
+                    var $YearlyDiv = $('<div />')
+                        .appendTo($topcell)
+                        .addClass('CswFieldTypeTimeInterval_Div');
 	//									.hide();
 				
 					$YearlyDiv.append('Every Year, Starting On:<br/>');
 
 					// Set selected values
 
-					var rateIntervalData = o.propData.Interval.rateintervalvalue;
+					var rateIntervalData = propVals.Interval.rateintervalvalue;
 					var rateType = rateIntervalData.ratetype;
 					var dateFormat = ServerDateFormatToJQuery(rateIntervalData.dateformat);
-log('dateformat = ' + dateFormat);
+
 					switch(rateType)
 					{
 						case "WeeklyByDay":
@@ -218,8 +218,9 @@ log('dateformat = ' + dateFormat);
             },
         save: function(o) {
 				try {
+				    var propVals = o.propData.values;
 				    var RateType = $('[name="' + o.ID + '_type"]:checked').val();
-				    var RIValue = o.propData.Interval.rateintervalvalue;
+				    var RIValue = propVals.Interval.rateintervalvalue;
 					switch (RateType)
 				    {
 				        case 'weekly':

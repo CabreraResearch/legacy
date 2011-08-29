@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -13,9 +13,9 @@
 
             var $Div = $(this);
             $Div.contents().remove();
-
-            var value = tryParseString(o.propData.value).trim();
-            var options = tryParseString(o.propData.options).trim();
+            var propVals = o.propData.values;
+            var value = tryParseString(propVals.value).trim();
+            var options = tryParseString(propVals.options).trim();
 
             if(o.ReadOnly)
             {
@@ -43,7 +43,7 @@
         },
         save: function(o) { //$propdiv, $xml
                 var $SelectBox = o.$propdiv.find('select');
-                o.propData.value = $SelectBox.val();
+                o.propData.values.value = $SelectBox.val();
             }
     };
     

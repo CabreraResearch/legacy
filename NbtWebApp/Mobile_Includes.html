@@ -1,86 +1,86 @@
-﻿<link type="text/css" rel="stylesheet" href="js/mobile/CswMobile.css" />
+<link type="text/css" rel="stylesheet" href="js/mobile/CswMobile.css" />
 <script type="text/javascript" src="js/thirdparty/js/modernizr-2.0.3.js"></script>
 <script type="text/javascript">
-	var debug = false;
-	if(debug) {
-	    //CSS
-	    document.write('<link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.css" />');
-   	    //JQ
-	    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.2.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.js"><\/script>');
-	    //JQM
-	    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.js"><\/script>');
-	    // Globals (load first)
-	    document.write('<script type="text/javascript" src="js/globals/CswEnums.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/globals/CswMobileEnums.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/globals/CswPrototypeExtensions.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/globals/CswGlobalTools.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/globals/Global.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/globals/CswMobileTools.js"><\/script>');
-		// Main JavaScript Classes
-		document.write('<script type="text/javascript" src="js/main/tools/CswArray.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/main/tools/CswString.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/main/tools/CswClientDb.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/main/tools/CswProfileMethod.js"><\/script>');
-		// Mobile JavaScript Classes
-		// Client DB
-		document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileClientDb.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileClientDbResources.js"><\/script>');
-		// Sync
-		document.write('<script type="text/javascript" src="js/mobile/sync/CswMobileSync.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/sync/CswMobileBackgroundTask.js"><\/script>');
-		// Controls
-		document.write('<script type="text/javascript" src="js/mobile/controls/ICswMobileWebControls.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/controls/CswMobilePageHeader.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/controls/CswMobilePageFooter.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/controls/CswMobileMenuButton.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/controls/CswMobileListView.js"><\/script>');
-	    // Pages
-	    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageFactory.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageHelp.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageLogin.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageNodes.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageOffline.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageOnline.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageProps.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageSearch.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageTabs.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageViews.js"><\/script>');
-	    // Object Classes
-	    document.write('<script type="text/javascript" src="js/mobile/objectclasses/CswMobileNodesFactory.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/objectclasses/CswMobileInspectionDesignClass.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/objectclasses/CswMobileGenericClass.js"><\/script>');
-	    // Field Types
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeBarcode.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeDate.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeLink.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeList.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeLogical.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeMemo.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeNumber.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypePassword.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeQuantity.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeQuestion.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeStatic.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeText.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeTime.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobilePropFactory.js"><\/script>');
-		//Plugins
-		document.write('<script type="text/javascript" src="js/main/controls/CswAttr.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/main/controls/CswCookie.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/main/controls/CswDiv.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/main/controls/CswInput.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/main/controls/CswLink.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/main/controls/CswSelect.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/main/controls/CswSpan.js"><\/script>');
-		document.write('<script type="text/javascript" src="js/main/controls/CswTools.js"><\/script>');   
-		document.write('<script type="text/javascript" src="js/mobile/CswMobile.js"><\/script>');
-	}
-	else {
-        document.write('<link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.min.css" />');
-	    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.2.min.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.min.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.min.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/mobile/CswAllMobile.min.js"><\/script>');
-	}
-</script>   
+	    var debug = false;
+	    if(debug) {
+	        //CSS
+	        document.write('<link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.css" />');
+   	        //JQ
+	        document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.2.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.js"><\/script>');
+	        //JQM
+	        document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.js"><\/script>');
+	        // Globals (load first)
+	        document.write('<script type="text/javascript" src="js/globals/CswEnums.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/globals/CswMobileEnums.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/mobile/globals/CswPrototypeExtensions.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/globals/CswGlobalTools.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/globals/Global.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/globals/CswMobileTools.js"><\/script>');
+		    // Main JavaScript Classes
+		    document.write('<script type="text/javascript" src="js/main/tools/CswArray.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/main/tools/CswString.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/main/tools/CswClientDb.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/main/tools/CswProfileMethod.js"><\/script>');
+		    // Mobile JavaScript Classes
+		    // Client DB
+		    document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileClientDb.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/mobile/clientdb/CswMobileClientDbResources.js"><\/script>');
+		    // Sync
+		    document.write('<script type="text/javascript" src="js/mobile/sync/CswMobileSync.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/mobile/sync/CswMobileBackgroundTask.js"><\/script>');
+		    // Controls
+		    document.write('<script type="text/javascript" src="js/mobile/controls/ICswMobileWebControls.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/mobile/controls/CswMobilePageHeader.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/mobile/controls/CswMobilePageFooter.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/mobile/controls/CswMobileMenuButton.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/controls/CswMobileListView.js"><\/script>');
+	        // Pages
+	        document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageFactory.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageHelp.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageLogin.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageNodes.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageOffline.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageOnline.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageProps.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageSearch.js"><\/script>');
+            document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageTabs.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/pages/CswMobilePageViews.js"><\/script>');
+	        // Object Classes
+	        document.write('<script type="text/javascript" src="js/mobile/objectclasses/CswMobileNodesFactory.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/objectclasses/CswMobileInspectionDesignClass.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/objectclasses/CswMobileGenericClass.js"><\/script>');
+	        // Field Types
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeBarcode.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeDate.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeLink.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeList.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeLogical.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeMemo.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeNumber.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypePassword.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeQuantity.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeQuestion.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeStatic.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeText.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobileFieldTypeTime.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/fieldtypes/CswMobilePropFactory.js"><\/script>');
+		    //Plugins
+		    document.write('<script type="text/javascript" src="js/main/controls/CswAttr.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/main/controls/CswCookie.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/main/controls/CswDiv.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/main/controls/CswInput.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/main/controls/CswLink.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/main/controls/CswSelect.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/main/controls/CswSpan.js"><\/script>');
+		    document.write('<script type="text/javascript" src="js/main/controls/CswTools.js"><\/script>');   
+		    document.write('<script type="text/javascript" src="js/mobile/CswMobile.js"><\/script>');
+	    }
+	    else {
+            document.write('<link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.min.css" />');
+	        document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.2.min.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.min.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.min.js"><\/script>');
+	        document.write('<script type="text/javascript" src="js/mobile/CswAllMobile.min.js"><\/script>');
+	    }
+</script>

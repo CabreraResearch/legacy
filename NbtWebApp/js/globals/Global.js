@@ -1,4 +1,4 @@
-﻿/// <reference path="CswEnums.js" />
+/// <reference path="CswEnums.js" />
 /// <reference path="CswGlobalTools.js" />
 /// <reference path="CswPrototypeExtensions.js" />
 /// <reference path="../main/tools/CswArray.js" />

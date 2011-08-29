@@ -1,4 +1,4 @@
-﻿var EditMode = {
+var EditMode = {
 	Edit: { name: 'Edit' },
 	AddInPopup: { name: 'AddInPopup' },
 	EditInPopup: { name: 'EditInPopup' },
