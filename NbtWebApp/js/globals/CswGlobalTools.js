@@ -1,4 +1,4 @@
-﻿function makeId(options)
+function makeId(options)
 {
 	/// <summary>
 	///   Generates an ID for DOM assignment
@@ -173,10 +173,11 @@ function isTrue(str,isTrueIfNull)
 	/// <returns type="Bool" />
 
 	var ret;
-	if (str === 'true' || str === true || str === '1' || str === 1) {
+    var truthy = tryParseString(str).toString().toLowerCase().trim(); 
+	if (truthy === 'true' || truthy === '1') {
 		ret = true;
 	}
-	else if (str === 'false' || str === false || str === '0' || str === 0) {
+	else if (truthy === 'false' || truthy === '0') {
 		ret = false;
 	}
 	else if (isTrueIfNull && isNullOrEmpty(str)) {

@@ -3,21 +3,21 @@
  * Locale: LT
  */
 jQuery.extend(jQuery.validator.messages, {
-       required: "Šis laukas yra privalomas.",
-       remote: "Prašau pataisyti šį lauką.",
-       email: "Prašau įvesti teisingą elektroninio pašto adresą.",
-       url: "Prašau įvesti teisingą URL.",
-       date: "Prašau įvesti teisingą datą.",
-       dateISO: "Prašau įvesti teisingą datą (ISO).",
-       number: "Prašau įvesti teisingą skaičių.",
-       digits: "Prašau naudoti tik skaitmenis.",
-       creditcard: "Prašau įvesti teisingą kreditinės kortelės numerį.",
-       equalTo: "Prašau įvestį tą pačią reikšmę dar kartą.",
-       accept: "Prašau įvesti reikšmę su teisingu plėtiniu.",
-       maxlength: $.format("Prašau įvesti ne daugiau kaip {0} simbolių."),
-       minlength: $.format("Prašau įvesti bent {0} simbolius."),
-       rangelength: $.format("Prašau įvesti reikšmes, kurių ilgis nuo {0} iki {1} simbolių."),
-       range: $.format("Prašau įvesti reikšmę intervale nuo {0} iki {1}."),
-       max: $.format("Prašau įvesti reikšmę mažesnę arba lygią {0}."),
-       min: $.format("Prašau įvesti reikšmę didesnę arba lygią {0}.")
+       required: "Å is laukas yra privalomas.",
+       remote: "PraÅ¡au pataisyti Å¡Ä¯ laukÄ….",
+       email: "PraÅ¡au Ä¯vesti teisingÄ… elektroninio paÅ¡to adresÄ….",
+       url: "PraÅ¡au Ä¯vesti teisingÄ… URL.",
+       date: "PraÅ¡au Ä¯vesti teisingÄ… datÄ….",
+       dateISO: "PraÅ¡au Ä¯vesti teisingÄ… datÄ… (ISO).",
+       number: "PraÅ¡au Ä¯vesti teisingÄ… skaiÄiÅ³.",
+       digits: "PraÅ¡au naudoti tik skaitmenis.",
+       creditcard: "PraÅ¡au Ä¯vesti teisingÄ… kreditinÄ—s kortelÄ—s numerÄ¯.",
+       equalTo: "PraÅ¡au Ä¯vestÄ¯ tÄ… paÄiÄ… reikÅ¡mÄ™ dar kartÄ….",
+       accept: "PraÅ¡au Ä¯vesti reikÅ¡mÄ™ su teisingu plÄ—tiniu.",
+       maxlength: $.format("PraÅ¡au Ä¯vesti ne daugiau kaip {0} simboliÅ³."),
+       minlength: $.format("PraÅ¡au Ä¯vesti bent {0} simbolius."),
+       rangelength: $.format("PraÅ¡au Ä¯vesti reikÅ¡mes, kuriÅ³ ilgis nuo {0} iki {1} simboliÅ³."),
+       range: $.format("PraÅ¡au Ä¯vesti reikÅ¡mÄ™ intervale nuo {0} iki {1}."),
+       max: $.format("PraÅ¡au Ä¯vesti reikÅ¡mÄ™ maÅ¾esnÄ™ arba lygiÄ… {0}."),
+       min: $.format("PraÅ¡au Ä¯vesti reikÅ¡mÄ™ didesnÄ™ arba lygiÄ… {0}.")
 });

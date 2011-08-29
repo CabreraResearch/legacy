@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -13,10 +13,10 @@
                 
             var $Div = $(this);
             $Div.contents().remove();
-                 
-            var text = tryParseString(o.propData.text).trim();
-            var columns = parseInt( o.propData.columns);
-            var rows = parseInt( o.propData.rows);
+             var propVals = o.propData.values;
+            var text = tryParseString(propVals.text).trim();
+            var columns = parseInt( propVals.columns);
+            var rows = parseInt( propVals.rows);
 
             var overflow = 'auto';
             var width = '';

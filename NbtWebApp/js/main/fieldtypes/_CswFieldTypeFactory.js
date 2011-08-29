@@ -1,4 +1,4 @@
-﻿
+
 $.CswFieldTypeFactory = function (method)
 {
 	var m = {

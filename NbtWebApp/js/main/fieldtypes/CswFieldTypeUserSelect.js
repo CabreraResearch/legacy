@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -13,55 +13,34 @@
 	var valueCol = "Include";
 
     var methods = {
-        'init': function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        'init': function(o) { 
 
-                var $Div = $(this);
-                $Div.contents().remove();
-
-                var selectedUserIds = o.propData.children('NodeId').text().trim();
-				var $OptionsXml = o.propData.children('options');
-
-				var $CBADiv = $('<div />')
-								.appendTo($Div);
-
-				// get data
-				var data = new Array();
-				var d = 0;
-				$OptionsXml.children().each(function () {
-					var $user = $(this);
-					var $elm = { 
-								 'label': $user.children('column[field="' + nameCol + '"]').CswAttrXml('value'),
-								 'key': $user.children('column[field="' + keyCol + '"]').CswAttrXml('value'),
-								 'values': [ ($user.children('column[field="' + valueCol + '"]').CswAttrXml('value') === "True") ]
-							   };
-					data[d] = $elm;
-					d++;
-				});
-
-				$CBADiv.CswCheckBoxArray('init', {
-					'ID': o.ID + '_cba',
-					'cols': [ valueCol ],
-					'data': data,
-					'UseRadios': false,
-					'Required': o.Required,
-					'ReadOnly': o.ReadOnly,
-					'onchange': o.onchange
-				});
+            var $Div = $(this);
+            $Div.contents().remove();
+            var propVals = o.propData.values;
+			var options = propVals.options;
+                
+            var $cbaDiv = $('<div />')
+                    .appendTo($Div)
+                    .CswCheckBoxArray('init', {
+                        ID: o.ID + '_cba',
+                        UseRadios: false,
+                        Required: o.Required,
+                        ReadOnly: o.ReadOnly,
+                        onchange: o.onchange,
+                        dataAry: options,
+			            nameCol: nameCol,
+			            keyCol: keyCol,
+                        valCol: valueCol
+                    });
+            return $Div;
             },
         'save': function(o) {
-				var $OptionsXml = o.propData.children('options');
-				var $CBADiv = o.$propdiv.children('div').first();
-				var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-				for (var r = 0; r < formdata.length; r++) {
-					var checkitem = formdata[r][0];
-					var $xmlitem = $OptionsXml.find('user:has(column[field="' + keyCol + '"][value="' + checkitem.key + '"])');
-					var $xmlvaluecolumn = $xmlitem.find('column[field="' + valueCol + '"]');
-					if (checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "False")
-						$xmlvaluecolumn.CswAttrXml('value', 'True');
-					else if (!checkitem.checked && $xmlvaluecolumn.CswAttrXml('value') === "True")
-						$xmlvaluecolumn.CswAttrXml('value', 'False');
-				} // for( var r = 0; r < formdata.length; r++)
-            }
+			var $CBADiv = o.$propdiv.children('div').first();
+            var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+            o.propData.values.options = formdata;
+            return $(this);
+        }
     };
     
     // Method calling logic
