@@ -333,7 +333,7 @@ namespace ChemSW.Nbt.MetaData
 
             // Only new versions of the same nodetype can reuse the name
             if( getNodeType( NodeTypeName ) != null )
-                throw new CswDniException( "Node Type Name must be unique", "Attempted to create a new nodetype with the same name as an existing nodetype" );
+                throw new CswDniException( ErrorType.Warning, "Node Type Name must be unique", "Attempted to create a new nodetype with the same name as an existing nodetype" );
 
             CswNbtMetaDataObjectClass ObjectClass = getObjectClass(ObjectClassId);
 
