@@ -1,4 +1,4 @@
-﻿///// <reference path="_CswFieldTypeFactory.js" />
+///// <reference path="_CswFieldTypeFactory.js" />
 ///// <reference path="../../globals/CswEnums.js" />
 ///// <reference path="../../globals/CswGlobalTools.js" />
 ///// <reference path="../../globals/Global.js" />

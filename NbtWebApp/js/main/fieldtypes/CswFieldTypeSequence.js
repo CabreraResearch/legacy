@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -9,12 +9,12 @@
     var pluginName = 'CswFieldTypeSequence';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function(o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
-
-            var value = tryParseString(o.propData.sequence).trim();
+            var propVals = o.propData.values;
+            var value = tryParseString(propVals.sequence).trim();
 
             if (o.ReadOnly) {
                 $Div.append(value);
@@ -34,7 +34,7 @@
         },
         save: function(o) {
                 var $TextBox = o.$propdiv.find('input');
-                o.propData.sequence = $TextBox.val();
+                o.propData.values.sequence = $TextBox.val();
             }
     };
     

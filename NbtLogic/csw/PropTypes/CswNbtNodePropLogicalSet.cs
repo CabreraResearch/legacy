@@ -393,7 +393,30 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            //Not yet implemented
+
+            if( null != JObject["logicalsetjson"] &&
+                null != JObject["logicalsetjson"]["data"] &&
+                null != JObject["logicalsetjson"]["columns"] )
+            {
+                JArray Data = (JArray) JObject["logicalsetjson"]["data"];
+                JArray ColumnsAry = (JArray) JObject["logicalsetjson"]["columns"];
+                CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
+                ColumnNames.FromArray( ColumnsAry );
+
+                foreach( JObject ItemObj in Data )
+                {
+                    string key = CswConvert.ToString( ItemObj["key"] );
+                    string name = CswConvert.ToString( ItemObj["label"] );
+                    JArray Values = (JArray) ItemObj["values"];
+                    for( Int32 i = 0; i < ColumnNames.Count; i++ )
+                    {
+                        bool Val = CswConvert.ToBoolean( Values[i] );
+                        SetValue( ColumnNames[i], name, Val );
+                    }
+                }
+            }
+
+            Save();
         }
 
         /// <summary>

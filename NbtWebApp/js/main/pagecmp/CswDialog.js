@@ -1,4 +1,4 @@
-﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/Global.js" />
@@ -206,7 +206,9 @@
 											$div.dialog('close');
 										}
 										_setupTabs(date);
-										o.onEditNode(nodeid, nodekey);
+										if (isFunction(o.onEditNode)) {
+										    o.onEditNode(nodeid, nodekey);
+										}
 									},
 									'onBeforeTabSelect': function (tabid)
 									{

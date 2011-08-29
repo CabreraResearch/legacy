@@ -1,4 +1,4 @@
-﻿var CswMobileCssClasses = {
+var CswMobileCssClasses = {
     listview: { name: 'csw_listview' },
     select: { name: 'csw_prop_select' },
     fieldset: { name: 'csw_fieldset' },
