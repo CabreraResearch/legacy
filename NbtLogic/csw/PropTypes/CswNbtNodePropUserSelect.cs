@@ -194,7 +194,21 @@ namespace ChemSW.Nbt.PropTypes
         }
         public override void ToJSON( JObject ParentObject )
         {
-            //Not yet implemented
+            ParentObject[_SelectedUserIdsSubField.ToXmlNodeName()] = SelectedUserIds.ToString();
+
+            JArray OptionsAry = new JArray();
+            ParentObject["options"] = OptionsAry;
+
+            DataTable Data = getUserOptions();
+            foreach( DataRow Row in Data.Rows )
+            {
+                JObject OptionObj = new JObject();
+                OptionsAry.Add( OptionObj );
+                OptionObj[NameColumn] = Row[NameColumn].ToString();
+                OptionObj[KeyColumn] = Row[KeyColumn].ToString();
+                OptionObj[StringKeyColumn] = Row[StringKeyColumn].ToString();
+                OptionObj[ValueColumn] = Row[ValueColumn].ToString();
+            }
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -237,6 +251,31 @@ namespace ChemSW.Nbt.PropTypes
             } // foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "Options" ).ChildNodes )
 
             SelectedUserIds = NewSelectedUserIds;
+        }
+
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            CswCommaDelimitedString NewSelectedUserIds = new CswCommaDelimitedString();
+
+            if( null != JObject["options"] )
+            {
+                JObject OptionsObj = (JObject) JObject["options"];
+
+                foreach( JProperty ItemNode in OptionsObj.Properties() )
+                {
+                    JObject UserObj = (JObject) ItemNode.Value;
+
+                    string key = CswConvert.ToString( UserObj[KeyColumn] );
+                    string name = CswConvert.ToString( UserObj[NameColumn] );
+                    bool value = CswConvert.ToBoolean( UserObj[ValueColumn] );
+                    if( value )
+                    {
+                        NewSelectedUserIds.Add( key );
+                    }
+                } // foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "Options" ).ChildNodes )
+
+                SelectedUserIds = NewSelectedUserIds;
+            }
         }
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
@@ -297,9 +336,6 @@ namespace ChemSW.Nbt.PropTypes
             return SelectedUserNames;
         } // SelectedUserNames()
 
-        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            //Not yet implemented
-        }
+
     }//CswNbtNodePropUserSelect
 }//namespace ChemSW.Nbt.PropTypes

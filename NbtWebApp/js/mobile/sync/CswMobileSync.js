@@ -1,8 +1,9 @@
-﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../../_Global.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
 /// <reference path="../../_CswPrototypeExtensions.js" />
 /// <reference path="CswMobileBackgroundTask.js" />
+/// <reference path="../CswMobileTools.js" />
 
 //#region CswMobileSync
 
@@ -27,16 +28,16 @@ function CswMobileSync(options,mobileStorage) {
     var o = {
         onSync: function () {},
         onSuccess: function () {},
-        onError: function () {},
-        onLoginFailure: function () {},
+        onError: onError,
+	    onLoginFailure: onLoginFail,
         onComplete: function () {},
-        syncUrl: '',
+        syncUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
         ForMobile: true
     };
 
     if(options) $().extend(o, options);
 
-    if (false) { //this enables Intellisense
+    if (isNullOrEmpty(mobileStorage)) { //this enables Intellisense
         mobileStorage = new CswMobileClientDbResources();
     }
     
@@ -54,7 +55,7 @@ function CswMobileSync(options,mobileStorage) {
         if (!isNullOrEmpty(o.onSync) &&
             !isNullOrEmpty(sessionId) &&
                 !mobileStorage.stayOffline()) {
-            //_processModifiedNodes(function (objectId, objectJSON)
+
             o.onSync(function(objectId, objectJSON) {
                 if (!isNullOrEmpty(objectId) && !isNullOrEmpty(objectJSON))
                 {
@@ -66,13 +67,12 @@ function CswMobileSync(options,mobileStorage) {
                         ForMobile: o.ForMobile
                     };
 
-                    CswAjaxJSON({
+                    CswAjaxJson({
                             formobile: o.ForMobile,
                             url: o.syncUrl,
                             data: dataJson,
                             onloginfail: function(text)
                             {
-                                //HEY YOU!: add setOffline(); to onLoginFailure if you know what's good for you!
                                 if (!isNullOrEmpty(o.onLoginFailure)) {
                                     o.onLoginFailure(text);
                                 }

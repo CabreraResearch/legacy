@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.WebPages
             DueDateIntervalLiteral.Text = "Due Date Interval:";
             SubTable.addControl( 2, 0, DueDateIntervalLiteral );
 
-            DueDateInterval = new CswTimeIntervalSelector( false );
+            DueDateInterval = new CswTimeIntervalSelector(Master.CswNbtResources, false );
             DueDateInterval.ID = "DueDateInterval";
             SubTable.addControl( 2, 1, DueDateInterval );
         }
@@ -295,7 +295,7 @@ namespace ChemSW.Nbt.WebPages
                         CswNbtNode NewGeneratorNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( DefaultGeneratorNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.JustSetPk );
                         CswNbtObjClassGenerator NewGeneratorObjClass = CswNbtNodeCaster.AsGenerator( NewGeneratorNode );
                         NewGeneratorObjClass.DueDateInterval.RateInterval = DueDateInterval.RateInterval;
-                        NewGeneratorObjClass.FinalDueDate.DateValue = EndDatePicker.SelectedDate;
+                        NewGeneratorObjClass.FinalDueDate.DateTimeValue = EndDatePicker.SelectedDate;
                         //NewGeneratorObjClass.InitialDueDate.DateValue = StartDatePicker.SelectedDate;
                         NewGeneratorObjClass.Owner.RelatedNodeId = TargetNodeKey.NodeId;
                         NewGeneratorObjClass.Owner.RefreshNodeName();
@@ -311,7 +311,7 @@ namespace ChemSW.Nbt.WebPages
                         CswNbtNode NewInspectionNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( InspectionNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.JustSetPk );
                         CswNbtObjClassInspectionDesign NewInspectionObjClass = CswNbtNodeCaster.AsInspectionDesign( NewInspectionNode );
                         NewInspectionObjClass.Target.RelatedNodeId = TargetNodeKey.NodeId;
-                        NewInspectionObjClass.GeneratedDate.DateValue = DateTime.Today;
+                        NewInspectionObjClass.GeneratedDate.DateTimeValue = DateTime.Today;
                         NewInspectionNode.postChanges( true );
 
                         NewChildNodeIds.Add( NewInspectionNode.NodeId );

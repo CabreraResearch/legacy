@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.Schema
         {
             //_CswResourcesForTableCaddy.commitTransaction();
             _CswNbtResources.Rollback();
-            _CswNbtResources.refreshDataDictionary();
+            _CswNbtResources.refresh();
             _CswDdl.revert();
             _CswDdl.clear();
 
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.Schema
 
         public void refreshDataDictionary()
         {
-            _CswNbtResources.refreshDataDictionary();
+            _CswNbtResources.refresh();
         }
 
 
@@ -307,7 +307,7 @@ namespace ChemSW.Nbt.Schema
             {
                 if( _CswNbtMetaDataForSchemaUpdater == null && _CswNbtResources.IsInitializedForDbAccess )
                 {
-                    _CswNbtMetaDataForSchemaUpdater = new CswNbtMetaDataForSchemaUpdater( _CswNbtResources, _CswNbtResources.MetaData._CswNbtMetaDataResources, false );
+                    _CswNbtMetaDataForSchemaUpdater = new CswNbtMetaDataForSchemaUpdater( _CswNbtResources, _CswNbtResources.MetaData._CswNbtMetaDataResources );
                     _CswNbtResources.assignMetaDataEvents( _CswNbtMetaDataForSchemaUpdater );
                 }
                 return _CswNbtMetaDataForSchemaUpdater;

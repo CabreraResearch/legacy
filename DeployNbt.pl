@@ -37,13 +37,6 @@ $schemata{"nbt_master"} = "nbt";   # master
 $schemata{"nbt_schema1"} = "nbt";  # 1
 $schemata{"nbt_schema2"} = "nbt";  # 2
 $schemata{"sales"} = "nbt";  # sales
-$schemata{"import"} = "nbt";  # import
-$schemata{"muehlhan"} = "nbt";  # Muehlhan
-$schemata{"crfireline"} = "nbt";  # CRFireline
-$schemata{"clorox"} = "nbt";  # Clorox
-$schemata{"mcmaster"} = "nbt";  # McMaster
-$schemata{"riverside"} = "nbt";  # riverside
-$schemata{"marshfield"} = "nbt";  # Marshfield
 
 # this one will always be reset to the master
 my $masterschema = "nbt_master";
@@ -81,6 +74,10 @@ foreach my $component (@components)
 	&runCommand("hg pull -u -R ". $repopaths{$component});
 }
 
+# also pull new version of Daily Build Tools
+&runCommand("hg pull -u -R c:\kiln\DailyBuildTools");
+
+
 #---------------------------------------------------------------------------------
 # 2. update versions
 
@@ -90,9 +87,9 @@ open( ASSEMBLYFILE, "< ". $repopaths{"Nbt"} ."/NbtWebApp/_Assembly.txt" )
 	or die( "Could not open _Assembly.txt" );
 my $assemblyname = <ASSEMBLYFILE>;
 close( ASSEMBLYFILE );
-$assemblyname =~ /^(\w+)\s?.*$/;
+$assemblyname =~ /^(\w+?)_.*$/;
 my $releasename = $1;
-my $assemblyno = "$releasename $datestr.$increment"; 
+my $assemblyno = $releasename ."_". $datestr .".". $increment; 
 
 foreach my $component (@components)
 {
@@ -213,7 +210,8 @@ foreach my $component (@components)
 {
 	my $path = $repopaths{$component};
 	&runCommand("hg commit -R $path -m \"Automated commit for release: $assemblyno\"");
-	&runCommand("hg tag -R $path \"$component $datestr.$increment\"");
+      # &runCommand("hg tag -R $path \"$component $datestr.$increment\"");
+	&runCommand("hg tag -R $path \"$assemblyno\"");
 	&runCommand("hg push -R $path");
 }
 

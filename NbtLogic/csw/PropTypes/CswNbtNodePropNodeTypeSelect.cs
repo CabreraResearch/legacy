@@ -170,7 +170,22 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            //Not yet implemented
+            ParentObject[_SelectedNodeTypeIdsSubField.ToXmlNodeName().ToLower()] = SelectedNodeTypeIds.ToString();
+            ParentObject["selectmode"] = SelectMode.ToString();
+
+            JArray OptionsAry = new JArray();
+            ParentObject["options"] = OptionsAry;
+
+            DataTable Data = Options;
+            foreach( DataRow Row in Data.Rows )
+            {
+                JObject OptionObj = new JObject();
+                OptionsAry.Add( OptionObj );
+                foreach( DataColumn Column in Data.Columns )
+                {
+                    OptionObj[Column.ColumnName] = Row[Column].ToString();
+                }
+            }
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -213,7 +228,29 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            //Not yet implemented
+            //SelectedNodeTypeIds.FromString( _HandleReferences( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName() ), NodeTypeMap ) );
+            CswCommaDelimitedString NewSelectedNodeTypeIds = new CswCommaDelimitedString();
+
+            if( null != JObject["options"] &&
+                null != JObject["options"]["data"] )
+            {
+                JArray Data = (JArray) JObject["options"]["data"];
+
+                foreach( JObject ItemObj in Data )
+                {
+                    string key = CswConvert.ToString( ItemObj["key"] );
+                    //string name = CswConvert.ToString( ItemObj["label"] );
+                    JArray Values = (JArray) ItemObj["values"];
+                    bool value = CswConvert.ToBoolean( Values[0] );
+                    if( value )
+                    {
+                        NewSelectedNodeTypeIds.Add( key );
+                    }
+                }
+            }
+
+            SelectedNodeTypeIds = NewSelectedNodeTypeIds;
+
         }
 
         private string _HandleReferences( string NodeTypeIds, Dictionary<Int32, Int32> NodeTypeMap )

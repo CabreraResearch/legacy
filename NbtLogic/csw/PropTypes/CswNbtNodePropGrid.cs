@@ -76,9 +76,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( "viewname", View.ViewName ) );
-            ParentObject.Add( new JProperty( "viewid", View.ViewId.ToString() ) );
-            ParentObject.Add( new JProperty( "width", Width.ToString() ) );
+            ParentObject["viewname"] = View.ViewName;
+            ParentObject["viewid"] = View.ViewId.ToString();
+            ParentObject["width"] = Width.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

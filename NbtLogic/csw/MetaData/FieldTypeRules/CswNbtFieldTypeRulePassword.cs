@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             //                                        CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( EncryptedPasswordSubField );
 
-            ChangedDateSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.ChangedDate );
+            ChangedDateSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1_Date, CswNbtSubField.SubFieldName.ChangedDate );
             SubFields.add( ChangedDateSubField );
         }//ctor
 

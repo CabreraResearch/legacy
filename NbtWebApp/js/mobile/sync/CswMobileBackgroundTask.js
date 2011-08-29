@@ -1,4 +1,4 @@
-﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../../_Global.js" />
 /// <reference path="../../_CswPrototypeExtensions.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
@@ -21,7 +21,7 @@ function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
         onError: function () { },
         onLoginFailure: function () { },
         PollingInterval: '30000', //30 seconds
-        taskUrl: ''
+        taskUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest'
     };
 
     if (options) $.extend(o, options);
@@ -31,11 +31,7 @@ function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
     {
         mobileStorage = new CswMobileClientDbResources();
     }
-    
-    if(false) { //enables Intellisense
-        mobileSync = new CswMobileSync();
-    }
-    
+   
     var backgroundTaskId;
 
     function handleDataCheckTimer(onSuccessOveride, onFailureOveride) {
@@ -47,7 +43,7 @@ function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
         /// <returns type="void"></returns>
         if ( !mobileStorage.stayOffline() )
         {
-            CswAjaxJSON({
+            CswAjaxJson({
                 formobile: o.ForMobile,
                 url: o.taskUrl,
                 data: {},

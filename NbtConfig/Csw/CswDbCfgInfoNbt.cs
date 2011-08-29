@@ -22,7 +22,19 @@ namespace ChemSW.Nbt.Config
         }//SetConfigMode()
 
 
+        public string MasterAccessId
+        {
+            set
+            {
+                _CswDbCfgInfo.MasterAccessId = value;
+            }
 
+            get
+            {
+                return ( _CswDbCfgInfo.MasterAccessId ); 
+            }
+
+        }
 
         public void makeNewDbInstance( string AccessId, string ServerType, string ServerName, string UserName, string PlainPwd, string UserCount, bool Deactivated, string IPFilterRegex )
         {
@@ -34,6 +46,7 @@ namespace ChemSW.Nbt.Config
         {
             _CswDbCfgInfo.removeDbInstance( AccessId );
         }//removeDbInstance()
+
 
         public void makeConfigurationCurrent( string AccessId )
         {
@@ -170,6 +183,7 @@ namespace ChemSW.Nbt.Config
                 return ( _CswDbCfgInfo.CurrentIPFilterRegex );
             }
         }
+
 
 
         public ArrayList AccessIds

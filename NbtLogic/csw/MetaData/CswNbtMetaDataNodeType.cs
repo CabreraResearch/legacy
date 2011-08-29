@@ -215,7 +215,7 @@ namespace ChemSW.Nbt.MetaData
             get
             {
 				return ( ( !IsLocked || IsLatestVersion ) &&
-						 ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeId ) ) );
+						 ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, this ) ) );
             }
         }
         public bool CanDelete
@@ -223,7 +223,7 @@ namespace ChemSW.Nbt.MetaData
             get
             {
 				return ( ( !IsLocked || IsLatestVersion ) &&
-						 ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, NodeTypeId ) ) );
+						 ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, this ) ) );
             }
         }
 
@@ -325,6 +325,19 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypeId, NodeTypePropId );
         }
+		public CswNbtMetaDataNodeTypeTab getNodeTypeTabByFirstVersionId( Int32 FirstTabVersionId )
+		{
+			CswNbtMetaDataNodeTypeTab ret = null;
+			foreach( CswNbtMetaDataNodeTypeTab Tab in NodeTypeTabs )
+			{
+				if( Tab.FirstTabVersionId == FirstTabVersionId )
+				{
+					ret = Tab;
+					break;
+				}
+			}
+			return ret;
+		} // getNodeTypeTabByFirstVersionId()
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByFirstVersionId( Int32 FirstPropVersionId )
         {
@@ -338,7 +351,7 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             return ret;
-        }
+        } // getNodeTypePropByFirstVersionId()
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassPropName( string ObjectClassPropName )
         {

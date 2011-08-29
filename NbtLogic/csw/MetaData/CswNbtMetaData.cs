@@ -810,26 +810,26 @@ namespace ChemSW.Nbt.MetaData
             // Copy nodetype info
             DataTable NewNodeTypeTable = _CswNbtMetaDataResources.NodeTypeTableUpdate.getEmptyTable();
             DataRow InsertedNodeTypeRow = NewNodeTypeTable.NewRow();
-            InsertedNodeTypeRow["objectclassid"] = NodeType.ObjectClass.ObjectClassId;
+			InsertedNodeTypeRow["objectclassid"] = CswConvert.ToDbVal( NodeType.ObjectClass.ObjectClassId );
             InsertedNodeTypeRow["iconfilename"] = NodeType.IconFileName;
             InsertedNodeTypeRow["nodetypename"] = NewNodeTypeName;
             InsertedNodeTypeRow["category"] = NodeType.Category;
-            InsertedNodeTypeRow["islocked"] = "0";
+			InsertedNodeTypeRow["islocked"] = CswConvert.ToDbVal( false );
             NewNodeTypeTable.Rows.Add(InsertedNodeTypeRow);
             Int32 NewNodeTypeId = CswConvert.ToInt32(InsertedNodeTypeRow["nodetypeid"].ToString());
-            if (IsVersioning)
-            {
-                // new version of this nodetype
-                InsertedNodeTypeRow["versionno"] = (NodeType.VersionNo + 1).ToString();
-                InsertedNodeTypeRow["priorversionid"] = NodeType.NodeTypeId;
-                InsertedNodeTypeRow["firstversionid"] = NodeType.FirstVersionNodeTypeId;
-            }
-            else
-            {
-                // first version of new nodetype
-                InsertedNodeTypeRow["versionno"] = "1";
-                InsertedNodeTypeRow["firstversionid"] = NewNodeTypeId;
-            }
+			if( IsVersioning )
+			{
+				// new version of this nodetype
+				InsertedNodeTypeRow["versionno"] = ( NodeType.VersionNo + 1 ).ToString();
+				InsertedNodeTypeRow["priorversionid"] = CswConvert.ToDbVal( NodeType.NodeTypeId );
+				InsertedNodeTypeRow["firstversionid"] = CswConvert.ToDbVal( NodeType.FirstVersionNodeTypeId );
+			}
+			else
+			{
+				// first version of new nodetype
+				InsertedNodeTypeRow["versionno"] = "1";
+				InsertedNodeTypeRow["firstversionid"] = CswConvert.ToDbVal( NewNodeTypeId );
+			}
             _CswNbtMetaDataResources.NodeTypeTableUpdate.update(NewNodeTypeTable);
 
 
@@ -865,8 +865,20 @@ namespace ChemSW.Nbt.MetaData
                 DataRow NewTabRow = NewTabsTable.NewRow();
                 NodeTypeTab.CopyTabToNewNodeTypeTabRow(NewTabRow);
                 NewTabRow["nodetypeid"] = NewNodeTypeId.ToString();
-                NewTabsTable.Rows.Add(NewTabRow);
-                Int32 NewTabId = CswConvert.ToInt32(NewTabRow["nodetypetabsetid"].ToString());
+				NewTabsTable.Rows.Add( NewTabRow );
+				Int32 NewTabId = CswConvert.ToInt32( NewTabRow["nodetypetabsetid"].ToString() );
+				if( IsVersioning )
+				{
+					// new version of this nodetypetab
+					NewTabRow["priortabversionid"] = CswConvert.ToDbVal( NodeTypeTab.TabId );
+					NewTabRow["firsttabversionid"] = CswConvert.ToDbVal( NodeTypeTab.FirstTabVersionId );
+				}
+				else
+				{
+					// first version of new nodetypetab
+					NewTabRow["priortabversionid"] = CswConvert.ToDbVal( Int32.MinValue );
+					NewTabRow["firsttabversionid"] = CswConvert.ToDbVal( NewTabId );
+				}
                 _CswNbtMetaDataResources.NodeTypeTabTableUpdate.update(NewTabsTable);
                 TabMap.Add(NodeTypeTab.TabId, NewTabId);
 
@@ -885,16 +897,16 @@ namespace ChemSW.Nbt.MetaData
                 NewPropRow["nodetypetabsetid"] = CswConvert.ToDbVal(CswConvert.ToInt32(TabMap[NodeTypeProp.NodeTypeTab.TabId]));
                 NewPropsTable.Rows.Add(NewPropRow);
                 Int32 NewPropId = CswConvert.ToInt32(NewPropRow["nodetypepropid"].ToString());
-                if (IsVersioning)
-                {
-                    NewPropRow["firstpropversionid"] = CswConvert.ToDbVal(NodeTypeProp.FirstPropVersionId);
-                    NewPropRow["priorpropversionid"] = CswConvert.ToDbVal(NodeTypeProp.PropId);
-                }
-                else
-                {
-                    NewPropRow["priorpropversionid"] = CswConvert.ToDbVal(Int32.MinValue);
-                    NewPropRow["firstpropversionid"] = CswConvert.ToDbVal(NewPropId);
-                }
+				if( IsVersioning )
+				{
+					NewPropRow["priorpropversionid"] = CswConvert.ToDbVal( NodeTypeProp.PropId );
+					NewPropRow["firstpropversionid"] = CswConvert.ToDbVal( NodeTypeProp.FirstPropVersionId );
+				}
+				else
+				{
+					NewPropRow["priorpropversionid"] = CswConvert.ToDbVal( Int32.MinValue );
+					NewPropRow["firstpropversionid"] = CswConvert.ToDbVal( NewPropId );
+				}
                 _CswNbtMetaDataResources.NodeTypePropTableUpdate.update(NewPropsTable);
 
                 // BZ 10242 forces this to happen after the row is inserted, so we'll have to update it twice

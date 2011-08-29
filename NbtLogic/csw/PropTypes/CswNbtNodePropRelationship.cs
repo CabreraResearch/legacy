@@ -238,7 +238,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
             }
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetId ) )
+            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "allowadd", "true" );
             }
@@ -271,7 +271,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentNode.Add( new XElement( "nodetypeid", TargetId.ToString() ) );
             }
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetId ) )
+            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
             {
                 ParentNode.Add( new XElement( "allowadd", "true" ) );
             }
@@ -292,30 +292,27 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( _NodeIDSubField.ToXmlNodeName( true ), ( RelatedNodeId != null ) ?
-                                RelatedNodeId.PrimaryKey.ToString() : string.Empty ) );
-            ParentObject.Add( new JProperty( _NameSubField.ToXmlNodeName( true ), CachedNodeName ) );
+            ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = ( RelatedNodeId != null ) ?
+                                RelatedNodeId.PrimaryKey.ToString() : string.Empty;
+            ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
 
             if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
             {
-                ParentObject.Add( new JProperty( "nodetypeid", TargetId.ToString() ) );
+                ParentObject["nodetypeid"] = TargetId.ToString();
             }
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetId ) )
+            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
             {
-                ParentObject.Add( new JProperty( "allowadd", "true" ) );
+                ParentObject["allowadd"] = "true";
             }
-
-            JProperty OptionsNode = new JProperty( "options" );
-            ParentObject.Add( OptionsNode );
 
             JObject OptionsNodeObj = new JObject();
-            OptionsNode.Value = OptionsNodeObj;
+            ParentObject["options"] = OptionsNodeObj;
 
             Dictionary<CswPrimaryKey, string> Options = getOptions();
             foreach( CswPrimaryKey NodePk in Options.Keys.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
             {
                 // options: { id: value, id: value }
-                OptionsNodeObj.Add( new JProperty( NodePk.PrimaryKey.ToString(), Options[NodePk] ) );
+                OptionsNodeObj[NodePk.PrimaryKey.ToString().ToLower()] = Options[NodePk];
             }
         }
 

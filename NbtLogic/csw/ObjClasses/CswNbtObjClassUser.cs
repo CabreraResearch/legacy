@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string EmailPropertyName { get { return "Email"; } }
 		public static string PageSizePropertyName { get { return "Page Size"; } }
 		public static string DateFormatPropertyName { get { return "Date Format"; } }
+		public static string TimeFormatPropertyName { get { return "Time Format"; } }
 
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -196,11 +197,11 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
 				
-				foreach( string YValue in _RoleNodeObjClass.ActionPermissions.YValues )
+				foreach( CswNbtAction Action in _CswNbtResources.Actions )
 				{
-					if( _CswNbtResources.Permit.can( CswNbtAction.ActionNameStringToEnum( YValue ), this ) )
+					if( _CswNbtResources.Permit.can( Action, this ) )
 					{
-						NewYValues.Add( YValue );
+						NewYValues.Add( Action.DisplayName.ToString() );
 					}
 				}
                 this.QuickLaunchActions.YValues = NewYValues;
@@ -243,13 +244,37 @@ namespace ChemSW.Nbt.ObjClasses
         public string FirstName { get { return FirstNameProperty.Text; } }
         public string LastName { get { return LastNameProperty.Text; } }
         public string Username { get { return UsernameProperty.Text; } }
-        public CswNbtNodePropDate LastLogin { get { return ( _CswNbtNode.Properties[LastLoginPropertyName].AsDate ); } }
+		public CswNbtNodePropDateTime LastLogin { get { return ( _CswNbtNode.Properties[LastLoginPropertyName].AsDateTime ); } }
         public CswNbtNodePropViewPickList QuickLaunchViews { get { return _CswNbtNode.Properties[QuickLaunchViewsPropertyName].AsViewPickList; } }
         public CswNbtNodePropLogicalSet QuickLaunchActions { get { return _CswNbtNode.Properties[QuickLaunchActionsPropertyName].AsLogicalSet; } }
         public CswNbtNodePropText EmailProperty { get { return _CswNbtNode.Properties[EmailPropertyName].AsText; } }
         public string Email { get { return EmailProperty.Text; } }
-		public string DateFormat { get { return DateFormatProperty.Value; } }
+		public string DateFormat
+		{
+			get
+			{
+				string ret = DateFormatProperty.Value;
+				if( ret == string.Empty )
+				{
+					ret = CswDateTime.DefaultDateFormat;
+				}
+				return ret;
+			}
+		}
 		public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[DateFormatPropertyName].AsList ); } }
+		public string TimeFormat
+		{
+			get
+			{
+				string ret = TimeFormatProperty.Value;
+				if( ret == string.Empty )
+				{
+					ret = CswDateTime.DefaultTimeFormat;
+				}
+				return ret;
+			}
+		}
+		public CswNbtNodePropList TimeFormatProperty { get { return ( _CswNbtNode.Properties[TimeFormatPropertyName].AsList ); } }
 
         public string EncryptedPassword { get { return PasswordProperty.EncryptedPassword; } }
 

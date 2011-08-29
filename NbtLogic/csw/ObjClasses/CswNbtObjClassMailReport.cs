@@ -205,27 +205,27 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropDate LastProcessed
+		public CswNbtNodePropDateTime LastProcessed
         {
             get
             {
-                return ( _CswNbtNode.Properties[LastProcessedPropertyName].AsDate );
+                return ( _CswNbtNode.Properties[LastProcessedPropertyName].AsDateTime );
             }
         }
 
-        public CswNbtNodePropDate FinalDueDate
+		public CswNbtNodePropDateTime FinalDueDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[FinalDueDatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[FinalDueDatePropertyName].AsDateTime );
             }
         }
 
-        public CswNbtNodePropDate NextDueDate
+		public CswNbtNodePropDateTime NextDueDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[NextDueDatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[NextDueDatePropertyName].AsDateTime );
             }
         }
 
@@ -253,11 +253,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropTime RunTime
+		public CswNbtNodePropDateTime RunTime
         {
             get
             {
-                return ( _CswNbtNode.Properties[RunTimePropertyName].AsTime );
+                return ( _CswNbtNode.Properties[RunTimePropertyName].AsDateTime );
             }
         }
 

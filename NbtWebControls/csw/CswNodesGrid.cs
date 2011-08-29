@@ -374,16 +374,16 @@ namespace ChemSW.NbtWebControls
                         //switch( CurrentNodeTypeProp.FieldType.FieldType )
                         switch( ColFieldType )
                         {
-                            case CswNbtMetaDataFieldType.NbtFieldType.Date:
+                            case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                                 thisColumn = new GridDateTimeColumn();
                                 thisColumn.DataFormatString = "{0:M/d/yyyy}";
                                 thisColumn.DataType = typeof( DateTime );
                                 break;
-                            case CswNbtMetaDataFieldType.NbtFieldType.Time:
-                                thisColumn = new GridDateTimeColumn();
-                                thisColumn.DataFormatString = "{0:H:mm:ss}";
-                                thisColumn.DataType = typeof( DateTime );
-                                break;
+							//case CswNbtMetaDataFieldType.NbtFieldType.Time:
+							//    thisColumn = new GridDateTimeColumn();
+							//    thisColumn.DataFormatString = "{0:H:mm:ss}";
+							//    thisColumn.DataType = typeof( DateTime );
+							//    break;
                             default:
                                 thisColumn = new GridBoundColumn();
                                 break;

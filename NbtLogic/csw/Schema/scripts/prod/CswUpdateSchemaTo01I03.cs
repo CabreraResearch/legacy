@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -28,7 +29,7 @@ namespace ChemSW.Nbt.Schema
 
         public void update()
         {
-			if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "field2_numeric" ) )
+			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "jct_nodes_props", "field2_numeric" ) )
 			{
 				_CswNbtSchemaModTrnsctn.addDoubleColumn( "jct_nodes_props", "field2_numeric", "A second numeric value", false, false, 6 );
 			}
@@ -90,7 +91,16 @@ namespace ChemSW.Nbt.Schema
 			_CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
 			// set value of Version property
+			Collection<CswNbtMetaDataNodeType> InspectionNodeTypes = new Collection<CswNbtMetaDataNodeType>();
 			foreach( CswNbtMetaDataNodeType InspectionDesignNT in InspectionDesignOC.NodeTypes )
+			{
+				if( InspectionDesignNT.IsLatestVersion )
+				{
+					InspectionNodeTypes.Add( InspectionDesignNT );
+				}
+			}
+
+			foreach( CswNbtMetaDataNodeType InspectionDesignNT in InspectionNodeTypes )
 			{
 				CswNbtMetaDataNodeTypeProp VersionNTP = InspectionDesignNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.VersionPropertyName );
 				VersionNTP.UseNumbering = false;
@@ -98,9 +108,14 @@ namespace ChemSW.Nbt.Schema
 				CswNbtMetaDataNodeTypeTab DetailTab = InspectionDesignNT.getNodeTypeTab( "Detail" );
 				if( DetailTab != null )
 				{
-					VersionNTP.NodeTypeTab = DetailTab;
-					VersionNTP.DisplayRow = DetailTab.getCurrentMaxDisplayRow() + 1;
-					VersionNTP.DisplayColumn = 1;
+					// case 23047
+					// Prevent versioning by editing directly
+					//VersionNTP.NodeTypeTab = DetailTab;
+					//VersionNTP.DisplayRow = DetailTab.getCurrentMaxDisplayRow() + 1;
+					//VersionNTP.DisplayColumn = 1;
+					VersionNTP._DataRow["nodetypetabsetid"] = CswConvert.ToDbVal( DetailTab.TabId );
+					VersionNTP._DataRow["display_row"] = CswConvert.ToDbVal( DetailTab.getCurrentMaxDisplayRow() + 1 );
+					VersionNTP._DataRow["display_col"] = CswConvert.ToDbVal( 1 );
 				}
 
 				foreach( CswNbtNode Node in InspectionDesignNT.getNodes( false, true ) )
