@@ -4,10 +4,15 @@
 /// <reference path="../../globals/Global.js" />
 
 function CswGrid(options, $parent) {
-    
+    ///<summary>Generates a grid</summary>
+    ///<param name="options" type="Object">Object defining paramaters for jqGrid construction</param>
+    ///<param name="$parent" type="JQuery">Parent element to attach grid to.</param>
+    ///<returns type="CswGrid">new CswGrid()</returns>
     var $gridTable;
     var $gridPager;
     var $topPager;
+    
+    //#region private
     
     (function() {
         var o = {
@@ -125,14 +130,6 @@ function CswGrid(options, $parent) {
 		return height;
 	}
 
-    function scrollToRow () {
-	
-        var rowid = $gridTable.jqGrid('getGridParam', 'selrow');
-        var rowHeight = getGridRowHeight($gridTable) || 23; // Default height
-	    var index = $gridTable.getInd(rowid);
-	    $gridTable.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
-    }
-    
     function getCell (rowid, key) {
         var ret = '';
         if(false === isNullOrEmpty(rowid) && false === isNullOrEmpty(key)) {
@@ -141,11 +138,74 @@ function CswGrid(options, $parent) {
         return ret;
     }
     
+    function getSelectedRowId() {
+        var rowid = $gridTable.jqGrid('getGridParam', 'selrow');
+        return rowid;
+    }
+    
+    //#region private
+    
+    //#region public, priveleged
+    
+    function hideColumn (id) {
+        $gridTable.jqGrid('hideCol', id);
+    }
+    
+    function scrollToRow (rowid) {
+	    ///<summary>Scrolls the grid to the specified rowid</summary>
+        ///<param name="rowid" type="String">Optional. jqGrid rowid. If null, selected row is assumed.</param>
+        ///<returns type="Void"></returns>
+        if (isNullOrEmpty(rowid)) {
+	        rowid = getSelectedRowId();
+	    }
+        var rowHeight = getGridRowHeight($gridTable) || 23; // Default height
+	    var index = $gridTable.getInd(rowid);
+	    $gridTable.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
+    }
+    
+    function getRowIdForVal(value, column) {
+        ///<summary>Gets a jqGrid rowid by column name and value.</summary>
+        ///<param name="value" type="String">Cell value</param>
+        ///<param name="column" type="String">Column name</param>
+        ///<returns type="String">jqGrid row id.</returns>
+        var pks = $gridTable.jqGrid('getCol', column, true);
+        var rowid = 0;
+        for (var pk in pks) {
+            if (pks[pk].value.toString() === value.toString())
+                rowid = pks[pk].id;
+        }
+        return rowid;
+    }
+    
+    function getValueForColumn(columnname, rowid) {
+        ///<summary>Gets a cell value by column name.</summary>
+        ///<param name="columnname" type="String">Grid column name.</param>
+        ///<param name="rowid" type="String">Optional. If null, selected row is assumed.</param>
+        ///<returns type="String">Value of the cell.</returns>
+        if (isNullOrEmpty(rowid)) {
+            rowid = getSelectedRowId();
+        }
+        var ret = getCell(rowid, columnname);
+        return ret;
+    }
+    
+    function setSelection(rowid) {
+        ///<summary>Sets the selected row by jqGrid's rowid</summary>
+        if (false === isNullOrEmpty(rowid)) {
+            $gridTable.setSelection(rowid);
+        }
+    }
+    
     this.$gridTable = $gridTable;
     this.$gridPager = $gridPager;
     this.$topPager = $topPager;
     this.getGridRowHeight = getGridRowHeight;
     this.scrollToRow = scrollToRow;
     this.getCell = getCell;
+    this.hideColumn = hideColumn;
+    this.getRowIdForVal = getRowIdForVal;
+    this.setSelection = setSelection;
+    this.getValueForColumn = getValueForColumn;
+    
+    //#region public, priveleged
 }
-

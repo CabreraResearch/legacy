@@ -1,43 +1,36 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Web.SessionState;
-using System.Xml;
-using System.Data;
 using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Actions;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
-	public class CswGridData
-	{
-		private CswNbtResources _CswNbtResources;
-		public CswGridData( CswNbtResources Resources )
-		{
-			_CswNbtResources = Resources;
-			PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
-		}
+    public class CswGridData
+    {
+        private CswNbtResources _CswNbtResources;
+        public CswGridData( CswNbtResources Resources )
+        {
+            _CswNbtResources = Resources;
+            PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
+        }
 
-		public string PkColumn = string.Empty;
-		public bool HidePkColumn = true;
-		public Int32 PageSize;
+        public string PkColumn = string.Empty;
+        public bool HidePkColumn = true;
+        public Int32 PageSize;
         public bool GridAutoEncode = true;
         public Int32 GridHeight = 300;
-	    //public string GridRowList = "[10,25,50]";
-	    public string GridSortName = string.Empty;
-	    public string GridTitle = string.Empty;
+        //public string GridRowList = "[10,25,50]";
+        public string GridSortName = string.Empty;
+        public string GridTitle = string.Empty;
         public Int32 GridWidth = Int32.MinValue;
-	    public bool CanEdit = false;
-	    public bool CanDelete = false;
+        public bool CanEdit = false;
+        public bool CanDelete = false;
 
         public enum JqGridJsonOptions
         {
@@ -122,75 +115,90 @@ namespace ChemSW.Nbt.WebServices
             row
         };
 
-	    private const string _NoResultsDisplayString = "No Results";
+        private const string _NoResultsDisplayString = "No Results";
 
-		public JObject DataTableToJSON( DataTable Data )
-		{
-			// Columns
-			JArray JColumnNames = new JArray();
-			JArray JColumnDefs = new JArray();
-			foreach( DataColumn Column in Data.Columns )
-			{
-				//bool IsPrimaryKey = false;
-				//foreach( DataColumn PkCol in Data.PrimaryKey )
-				//{
-				//    if( PkCol == Column )
-				//        IsPrimaryKey = true;
-				//}
+        public JObject DataTableToJSON( DataTable Data )
+        {
+            // Columns
+            JArray JColumnNames = new JArray();
+            JArray JColumnDefs = new JArray();
+            foreach( DataColumn Column in Data.Columns )
+            {
+                bool IsKey = ( Column.ColumnName.ToLower() == PkColumn.ToLower() );
+                dataColumnToJson( Column, JColumnNames, JColumnDefs, IsKey );
+            } // foreach( DataColumn Column in Data.Columns )
 
-				JColumnNames.Add( Column.ColumnName.ToUpperInvariant() );
-				JObject ThisColumnDef = new JObject();
-				ThisColumnDef.Add( new JProperty( "name", Column.ColumnName.ToUpperInvariant() ) );
-				ThisColumnDef.Add( new JProperty( "index", Column.ColumnName.ToUpperInvariant() ) );
-				if( Column.ColumnName.ToLower() == PkColumn.ToLower() )
-				{
-					ThisColumnDef.Add( new JProperty( "key", true ) );
-                    if( HidePkColumn )
-                    {
-                        ThisColumnDef.Add( new JProperty( "hidden", true ) );
-                    }
-				}
-				JColumnDefs.Add( ThisColumnDef );
-			} // foreach( DataColumn Column in Data.Columns )
+            // Rows
+            JArray JRows = new JArray();
+            foreach( DataRow Row in Data.Rows )
+            {
+                dataRowToJson( Row, JRows );
+            }
 
-			// Rows
-			JArray JRows = new JArray();
-			foreach( DataRow Row in Data.Rows )
-			{
-				JObject RowObj = new JObject();
-				foreach( DataColumn Column in Data.Columns )
-				{
-					RowObj.Add( new JProperty( Column.ColumnName.ToUpperInvariant(), Row[Column].ToString() ) );
-				}
-				JRows.Add( RowObj );
-			}
+            JObject FinalGrid = makeJqGridJSON( JColumnNames, JColumnDefs, JRows );
 
-		    JObject FinalGrid = makeJqGridJSON( JColumnNames, JColumnDefs, JRows );
+            return FinalGrid;
 
-		    return FinalGrid;
+        } // _mapDataTable()
 
-		} // _mapDataTable()
+        public void dataColumnToJson( DataColumn Column, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false )
+        {
+            string ColumnName = Column.ColumnName.ToUpperInvariant();
+            makeJqColumn( ColumnName, JColumnNames, JColumnDefs, IsKey, IsHidden );
+        }
 
+        public void makeJqColumn( String ColumnName, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false )
+        {
+            JColumnNames.Add( ColumnName.ToUpperInvariant() );
+            JObject ThisColumnDef = new JObject();
+            ThisColumnDef["name"] = ColumnName.ToUpperInvariant();
+            ThisColumnDef["index"] = ColumnName.ToUpperInvariant();
+            if( IsKey )
+            {
+                ThisColumnDef["key"] = true;
+            }
+            if( ( IsKey && HidePkColumn ) || IsHidden )
+            {
+                ThisColumnDef["hidden"] = true;
+            }
+            JColumnDefs.Add( ThisColumnDef );
+        }
+
+        public void dataRowToJson( DataRow Row, JArray JRows )
+        {
+
+            JObject RowObj = new JObject();
+            foreach( DataColumn Column in Row.Table.Columns )
+            {
+                makeJqCell( RowObj, Column.ColumnName.ToUpperInvariant(), Row[Column].ToString() );
+            }
+            JRows.Add( RowObj );
+        } // _mapDataTable()
+
+        public void makeJqCell( JObject RowObj, String ColumnName, String Value )
+        {
+            RowObj[ColumnName] = Value;
+        }
 
         /// <summary>
         /// Returns a JSON Array representing grid rows (a row as a JObject of JProperty key/value pairs);
         /// This anticipates XElements as derived from a Tree from a View
         /// </summary>
-        public JArray getGridRowsJSON(IEnumerable<XElement> GridNodes)
+        public JArray getGridRowsJSON( IEnumerable<XElement> GridNodes )
         {
-			JArray RowsArray = new JArray(
-								from Element in GridNodes //not recursive
-								select new JObject(
-									new JProperty( "nodeid", Element.Attribute( "nodeid" ).Value ),
-									new JProperty( "nodeidstr", new CswPrimaryKey( "nodes", CswConvert.ToInt32( Element.Attribute( "nodeid" ).Value ) ).ToString() ),
-									new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( Element.Attribute( "key" ).Value ) ),
-									new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
-										from DirtyElement in Element.DescendantNodes().OfType<XElement>() // recursive
-										where DirtyElement.Name == ( "NbtNodeProp" )
-										select _massageGridCell( DirtyElement )
-									)
-								);
-            
+            JArray RowsArray = new JArray(
+                                from Element in GridNodes //not recursive
+                                select new JObject(
+                                    new JProperty( "nodeid", Element.Attribute( "nodeid" ).Value ),
+                                    new JProperty( "nodeidstr", new CswPrimaryKey( "nodes", CswConvert.ToInt32( Element.Attribute( "nodeid" ).Value ) ).ToString() ),
+                                    new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( Element.Attribute( "key" ).Value ) ),
+                                    new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
+                                        from DirtyElement in Element.DescendantNodes().OfType<XElement>() // recursive
+                                        where DirtyElement.Name == ( "NbtNodeProp" )
+                                        select _massageGridCell( DirtyElement )
+                                    )
+                                );
+
             return RowsArray;
         } // getGridRowsJSON()
 
@@ -219,20 +227,20 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
-		/// Generates a JSON array of friendly Column Names
-		/// </summary>
-		public JArray getGridColumnNamesJson(IEnumerable<CswNbtViewProperty> PropCollection)
+        /// Generates a JSON array of friendly Column Names
+        /// </summary>
+        public JArray getGridColumnNamesJson( IEnumerable<CswNbtViewProperty> PropCollection )
         {
             JArray ColumnArray = new JArray(
                 from ViewProp in PropCollection.Select( Prop => new CswViewBuilderProp( Prop ) )
                 select new JValue( ViewProp.PropName )
                 );
-            return ColumnArray; 
+            return ColumnArray;
         }
 
         /// <summary>
-		/// Generates a JSON property with the definitional data for a jqGrid Column Array
-		/// </summary>
+        /// Generates a JSON property with the definitional data for a jqGrid Column Array
+        /// </summary>
         public JArray getGridColumnDefinitionJson( IEnumerable<CswNbtViewProperty> PropCollection )
         {
             JArray ColumnDefArray = new JArray(
@@ -243,7 +251,7 @@ namespace ChemSW.Nbt.WebServices
             return ColumnDefArray;
         }
 
-	    /// <summary>
+        /// <summary>
         /// Combines required jqGrid options into jqGrid consumable JObject
         /// </summary>
         public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows )
@@ -260,14 +268,14 @@ namespace ChemSW.Nbt.WebServices
                     new JProperty( JqGridJsonOptions.sortname.ToString(), GridSortName ),
                     new JProperty( JqGridJsonOptions.autoencode.ToString(), GridAutoEncode ),
                     new JProperty( JqGridJsonOptions.height.ToString(), GridHeight ),
-                    //new JProperty( JqGridJsonOptions.rowList.ToString(), GridRowList ),
+                //new JProperty( JqGridJsonOptions.rowList.ToString(), GridRowList ),
                     new JProperty( JqGridJsonOptions.caption.ToString(), GridTitle ),
                     new JProperty( "CanEdit", CanEdit.ToString().ToLower() ),
                     new JProperty( "CanDelete", CanDelete.ToString().ToLower() )
                 );
         }
 
-	} // class CswGridData
+    } // class CswGridData
 
     /// <summary>
     /// For the transformation of XElement Attribute types into valid JProperty and JObject types
@@ -306,7 +314,7 @@ namespace ChemSW.Nbt.WebServices
         };
         private readonly JqFieldType _JqFieldType = JqFieldType.Unknown;
 
-        
+
         public enum JqGridSortBy
         {
             Unknown,
@@ -330,9 +338,9 @@ namespace ChemSW.Nbt.WebServices
                 //    //not implemented yet
                 //    _JqFieldType = JqFieldType.datetime;
                 //    break;
-				//case CswNbtMetaDataFieldType.NbtFieldType.Time:
-				//    _JqFieldType = JqFieldType.time;
-				//    break;
+                //case CswNbtMetaDataFieldType.NbtFieldType.Time:
+                //    _JqFieldType = JqFieldType.time;
+                //    break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Link:
                     _JqFieldType = JqFieldType.link;
                     break;
@@ -357,7 +365,7 @@ namespace ChemSW.Nbt.WebServices
             _LiteralColumnName = ViewProperty.PropName.ToLower();
             _FriendlyColumnName = ViewProperty.PropName.ToLower().Replace( " ", "_" );
             _ColumnWidth = ViewProperty.Width;
-            
+
             _DoCssOverride = DoCssOverride;
         } //ctor
 
@@ -380,7 +388,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( null != ReturnObj.Property( ThisPropAttribute.Name ) )
                 {
-					throw new CswDniException( ErrorType.Error, "Error attempting to add duplicate property to collection", "Property: " + ThisPropAttribute + " already exists in the JObject: " + ReturnObj.ToString() );
+                    throw new CswDniException( ErrorType.Error, "Error attempting to add duplicate property to collection", "Property: " + ThisPropAttribute + " already exists in the JObject: " + ReturnObj.ToString() );
                 }
                 ReturnObj.Add( ThisPropAttribute );
             }
@@ -607,15 +615,15 @@ namespace ChemSW.Nbt.WebServices
                     // jqGrid handles all date/time formats as the same type == date; 
                     // we must specify a datefmt to define the display template
                     case JqFieldType.date:
-                        ReturnProp = new JProperty ( "formatoptions",
-                                            new JObject( 
-                                                new JProperty( "srcformat", "Y-m-d" ) ,
+                        ReturnProp = new JProperty( "formatoptions",
+                                            new JObject(
+                                                new JProperty( "srcformat", "Y-m-d" ),
                                                 new JProperty( "newformat", "m/d/Y" ) )
                                         );
                         break;
                     case JqFieldType.time:
-                        ReturnProp = new JProperty ( "formatoptions",
-                                            new JObject( 
+                        ReturnProp = new JProperty( "formatoptions",
+                                            new JObject(
                                                 new JProperty( "srcformat", "H:i:s" ),
                                                 new JProperty( "newformat", "H:i:s" ) )
                                         );
@@ -628,8 +636,8 @@ namespace ChemSW.Nbt.WebServices
                     //                    );
                     //    break;
                     case JqFieldType.number:
-                        ReturnProp = new JProperty ( "formatoptions",
-                                            new JObject( 
+                        ReturnProp = new JProperty( "formatoptions",
+                                            new JObject(
                                                 new JProperty( "decimalSeparator", "." ),
                                                 new JProperty( "thousandsSeparator", "," ),
                                                 new JProperty( "decimalPlaces", "2" ),
@@ -637,8 +645,8 @@ namespace ChemSW.Nbt.WebServices
                                         );
                         break;
                     case JqFieldType.link:
-                        ReturnProp = new JProperty ( "formatoptions",
-                                            new JObject( 
+                        ReturnProp = new JProperty( "formatoptions",
+                                            new JObject(
                                                 new JProperty( "target", "" ) )
                                         );
                         break;
