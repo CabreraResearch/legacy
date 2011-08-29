@@ -143,6 +143,15 @@ function CswGrid(options, $parent) {
         return rowid;
     }
     
+    function getColumn (column, returnType) {
+        ///<summary>Gets the contents of a jqGrid column</summary>
+        ///<param name="column" type="String">Column name</param>
+        ///<param name="returnType" type="Boolean">If false, returns a simple array of values. If true, returns an array [{id: id, value: value},{...}]</param>
+        ///<returns type="Array">An array of the columns values</returns>
+        var ret = $gridTable.jqGrid('getCol', column, returnType);
+        return ret;
+    }
+    
     //#region private
     
     //#region public, priveleged
@@ -168,7 +177,7 @@ function CswGrid(options, $parent) {
         ///<param name="value" type="String">Cell value</param>
         ///<param name="column" type="String">Column name</param>
         ///<returns type="String">jqGrid row id.</returns>
-        var pks = $gridTable.jqGrid('getCol', column, true);
+        var pks = getColumn(column, true);
         var rowid = 0;
         for (var pk in pks) {
             if (pks[pk].value.toString() === value.toString())
@@ -201,7 +210,6 @@ function CswGrid(options, $parent) {
     this.$topPager = $topPager;
     this.getGridRowHeight = getGridRowHeight;
     this.scrollToRow = scrollToRow;
-    this.getCell = getCell;
     this.hideColumn = hideColumn;
     this.getRowIdForVal = getRowIdForVal;
     this.setSelection = setSelection;

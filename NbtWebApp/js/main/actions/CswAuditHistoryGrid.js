@@ -2,10 +2,11 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../controls/CswGrid.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         
-    var PluginName = 'CswAuditHistoryGrid';
+    var pluginName = 'CswAuditHistoryGrid';
 
     var methods = {
         init: function(options) {
@@ -25,85 +26,69 @@
 			$Div.contents().remove();
 
 			CswAjaxJson({
-				'url': o.Url,
-				'data': {
-					'NodeId': o.nodeid, 
-					'JustDateColumn': o.JustDateColumn 
+				url: o.Url,
+				data: {
+					NodeId: o.nodeid, 
+					JustDateColumn: o.JustDateColumn 
 				},
-				'success': function(gridJson) {
+				success: function(gridJson) {
 				
-					var $gridPager = $('<div id="' + o.ID + '_gp" style="width:100%; height:20px;" />')
-										.appendTo($Div);
-					var $grid = $('<table id="'+ o.ID + '_gt" />')
-										.appendTo($Div);
-
-					var mygridopts = {
-						'autowidth': false,
-						'datatype': 'local', 
-						'height': 180,
-						'width': '100%',
-						'pager': $gridPager,
-						'emptyrecords': 'No Results',
-						'loadtext': 'Loading...',
-						'multiselect': false,
-						'rowList': [10,25,50],  
-						'rowNum': 10,
-						'onSelectRow': function(rowid, selected)
-						{
-							if (!PreventSelectTrigger && rowid !== null) 
-							{
-								o.onSelectRow($grid.jqGrid('getCell', rowid, 'CHANGEDATE'));
-							}
-						}
-					};
-					$.extend(gridJson, mygridopts);
-
-					var optNav = {
-						'add': false,
-						'view': false,
-						'del': false,
-						'refresh': false,
-						'search': false,
-
-						'edit': o.allowEditRow,
-						'edittext': "",
-						'edittitle': "Edit row",
-						'editfunc': function(rowid) 
-							{
-								if (rowid !== null) 
-								{
-									o.onEditRow($grid.jqGrid('getCell', rowid, 'CHANGEDATE'));
-								}
-								else
-								{
+				    var preventSelectTrigger = false;
+					
+				    var auditGridId = o.ID + '_csw_auditGrid_outer';
+                    var $auditGrid = $Div.find('#' + auditGridId);
+                    if (isNullOrEmpty($auditGrid) || $auditGrid.length === 0) {
+                        $auditGrid = $('<div id="' + o.ID + '"></div>').appendTo($Div);
+                    } else {
+                        $auditGrid.empty();
+                    }
+				    
+				    var g = {
+						ID: o.ID,
+					    hasPager: false,
+					    gridOpts: {
+						    height: 180,
+						    rowNum: 10,
+						    onSelectRow: function(rowid) {
+							    if (!preventSelectTrigger && false === isNullOrEmpty(rowid)) {
+								    var cellVal = grid.getValueForColumn('CHANGEDATE', rowid);
+								    o.onSelectRow(cellVal);
+							    }
+						    }
+                        },
+						optNav: {
+						    add: false,
+						    view: false,
+						    del: false,
+						    refresh: false,
+						    search: false,
+						    edit: o.allowEditRow,
+						    edittext: "",
+						    edittitle: "Edit row",
+						    editfunc: function(rowid) {
+								if (false === isNullOrEmpty(rowid)) {
+								    var cellVal = grid.getValueForColumn('CHANGEDATE', rowid);
+									o.onEditRow(cellVal);
+								} else {
 									alert('Please select a row to edit');
 								}
 							}
+						 }
+                        
 					};
+					$.extend(g.gridOpts, gridJson);
 
-					$grid.jqGrid(gridJson)
-							.navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, {}, {} ); 
-
+				    var grid = new CswGrid(g, $auditGrid);
+				    grid.$gridPager.css({ width: '100%', height: '20px' });
 					// set selected row by date
-					var PreventSelectTrigger = false;
+					
 					if(!isNullOrEmpty(o.selectedDate))
 					{
-						var dates = $grid.jqGrid('getCol', 'CHANGEDATE', true);
-						var rowid = 0;
-						for(var i in dates)
-						{
-							if(dates[i].value.toString() === o.selectedDate.toString())
-								rowid = dates[i].id;
-						}					
-						PreventSelectTrigger = true;
-						$grid.setSelection(rowid);
-						PreventSelectTrigger = false;
+					    preventSelectTrigger = true;
+						var rowid = grid.getRowIdForVal('CHANGEDATE', o.selectedDate.toString());
+					    grid.setSelection(rowid);
+						preventSelectTrigger = false;
 					}
-
-					// now bind the select event
-					$grid.jqGrid({
-					});
-
 				}
 			});
 
@@ -119,7 +104,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };
