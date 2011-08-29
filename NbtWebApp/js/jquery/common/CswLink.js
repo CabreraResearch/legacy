@@ -17,6 +17,7 @@
 				'target': '',
 				'rel': '',
 				'cssclass': '',
+                'href': '',
 				'onClick': function() {}
 			};
 			if (options) $.extend(o, options);

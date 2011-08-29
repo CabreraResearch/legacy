@@ -15,6 +15,7 @@ namespace ChemSW.Nbt.MetaData
         public enum NbtFieldType
         {
             Barcode,
+            Button,
             Composite,
             Date,
             External,

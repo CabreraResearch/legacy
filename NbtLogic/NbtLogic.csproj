@@ -82,6 +82,7 @@
     <Compile Include="csw\MetaData\CswNbtPropFilterSql.cs" />
     <Compile Include="csw\MetaData\CswNbtSubField.cs" />
     <Compile Include="csw\MetaData\CswNbtSubFieldColl.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleButton.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMultiList.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleScientific.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleBarCode.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="csw\PropertySets\CswNbtPropertySetSchedulerImpl.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetGeneratorTarget.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetScheduler.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropButton.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropMultiList.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropScientific.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodeProp.cs" />
@@ -232,6 +234,7 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I05.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I04.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I03.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I02.cs" />
