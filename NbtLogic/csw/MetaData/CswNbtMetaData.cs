@@ -332,9 +332,8 @@ namespace ChemSW.Nbt.MetaData
 				throw new CswDniException( ErrorType.Warning, "Node Type Name is required", "Attempted to create a new nodetype with a null nodetypename" );
 
             // Only new versions of the same nodetype can reuse the name
-            // Temporarily override
-            //if( getNodeType( NodeTypeName ) != null )
-            //    throw new CswDniException( "Node Type Name must be unique", "Attempted to create a new nodetype with the same name as an existing nodetype" );
+            if( getNodeType( NodeTypeName ) != null )
+                throw new CswDniException( "Node Type Name must be unique", "Attempted to create a new nodetype with the same name as an existing nodetype" );
 
             CswNbtMetaDataObjectClass ObjectClass = getObjectClass(ObjectClassId);
 
