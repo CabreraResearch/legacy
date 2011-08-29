@@ -79,8 +79,8 @@
     				            };
     				            if (rowid !== null)
     				            {
-    				                editOpt.cswnbtnodekey = ret.getCell(rowid, 'cswnbtnodekey');
-    				                editOpt.nodeid = ret.getCell(rowid, 'nodeidstr');
+    				                editOpt.cswnbtnodekey = ret.getValueForColumn('cswnbtnodekey', rowid);
+    				                editOpt.nodeid = ret.getValueForColumn('nodeidstr', rowid);
     				                $.CswDialog('EditNodeDialog', editOpt);
     				            }
     				            else
@@ -101,8 +101,8 @@
 						            onDeleteNode: o.onDeleteNode
 						        };
 						        if (rowid !== null) {
-						            delOpt.cswnbtnodekey = ret.getCell(rowid, 'cswnbtnodekey');
-						            delOpt.nodename = ret.getCell(rowid, 'nodename');
+						            delOpt.cswnbtnodekey = ret.getValueForColumn('cswnbtnodekey', rowid);
+						            delOpt.nodename = ret.getValueForColumn('nodename', rowid);
 						            $.CswDialog('DeleteNodeDialog', delOpt);
 						        }
 						        else
