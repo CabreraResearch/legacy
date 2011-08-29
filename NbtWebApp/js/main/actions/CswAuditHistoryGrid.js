@@ -77,9 +77,10 @@
                         
 					};
 					$.extend(g.gridOpts, gridJson);
-
+				    
 				    var grid = new CswGrid(g, $auditGrid);
 				    grid.$gridPager.css({ width: '100%', height: '20px' });
+				    
 					// set selected row by date
 					
 					if(!isNullOrEmpty(o.selectedDate))

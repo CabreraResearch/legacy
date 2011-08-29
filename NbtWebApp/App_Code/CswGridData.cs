@@ -32,6 +32,8 @@ namespace ChemSW.Nbt.WebServices
         public bool CanEdit = false;
         public bool CanDelete = false;
 
+        private Int32 _ColumnsWidth = 0;
+
         public enum JqGridJsonOptions
         {
             Unknown,
@@ -161,6 +163,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 ThisColumnDef["hidden"] = true;
             }
+            _ColumnsWidth += ColumnName.Length;
             JColumnDefs.Add( ThisColumnDef );
         }
 
@@ -256,23 +259,30 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows )
         {
-            return new JObject(
-                    new JProperty( JqGridJsonOptions.datatype.ToString(), "local" ),
-                    new JProperty( JqGridJsonOptions.colNames.ToString(), ColumnNames ),
-                    new JProperty( JqGridJsonOptions.colModel.ToString(), ColumnDefinition ),
-                    new JProperty( JqGridJsonOptions.data.ToString(), Rows ),
-                    new JProperty( JqGridJsonOptions.rowNum.ToString(), PageSize ),
-                    new JProperty( JqGridJsonOptions.viewrecords.ToString(), true ),
-                    new JProperty( JqGridJsonOptions.emptyrecords.ToString(), _NoResultsDisplayString ),
-                    ( GridWidth != Int32.MinValue ) ? new JProperty( JqGridJsonOptions.width.ToString(), GridWidth ) : new JProperty( JqGridJsonOptions.autowidth.ToString(), true ),
-                    new JProperty( JqGridJsonOptions.sortname.ToString(), GridSortName ),
-                    new JProperty( JqGridJsonOptions.autoencode.ToString(), GridAutoEncode ),
-                    new JProperty( JqGridJsonOptions.height.ToString(), GridHeight ),
-                //new JProperty( JqGridJsonOptions.rowList.ToString(), GridRowList ),
-                    new JProperty( JqGridJsonOptions.caption.ToString(), GridTitle ),
-                    new JProperty( "CanEdit", CanEdit.ToString().ToLower() ),
-                    new JProperty( "CanDelete", CanDelete.ToString().ToLower() )
-                );
+            JObject Ret = new JObject();
+
+            Ret[JqGridJsonOptions.datatype.ToString()] = "local";
+            Ret[JqGridJsonOptions.colNames.ToString()] = ColumnNames;
+            Ret[JqGridJsonOptions.colModel.ToString()] = ColumnDefinition;
+            Ret[JqGridJsonOptions.data.ToString()] = Rows;
+            Ret[JqGridJsonOptions.rowNum.ToString()] = PageSize;
+            Ret[JqGridJsonOptions.viewrecords.ToString()] = true;
+            Ret[JqGridJsonOptions.emptyrecords.ToString()] = _NoResultsDisplayString;
+            if( GridWidth == Int32.MinValue )
+            {
+                Int32 ColWidth = _ColumnsWidth * 14;
+                GridWidth = ColWidth < 800 ? ColWidth : 450;
+            }
+            Ret[JqGridJsonOptions.width.ToString()] = GridWidth;
+            //Ret[JqGridJsonOptions.autowidth.ToString()] = true;
+            Ret[JqGridJsonOptions.sortname.ToString()] = GridSortName;
+            Ret[JqGridJsonOptions.autoencode.ToString()] = GridAutoEncode;
+            Ret[JqGridJsonOptions.height.ToString()] = GridHeight;
+            Ret[JqGridJsonOptions.caption.ToString()] = GridTitle;
+            Ret["CanEdit"] = CanEdit.ToString().ToLower();
+            Ret["CanDelete"] = CanDelete.ToString().ToLower();
+
+            return Ret;
         }
 
     } // class CswGridData
