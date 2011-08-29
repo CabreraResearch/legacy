@@ -1,15 +1,16 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
 /// <reference path="../controls/CswMobileMenuButton.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
 /// <reference path="CswMobilePageFactory.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
 /// <reference path="../controls/CswMobileListView.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 //#region CswMobilePageViews
 
@@ -28,8 +29,8 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
     var title = CswMobilePage_Type.views.title;
     var divSuffix = '_views';
     var ulSuffix = '_list';
-    function $contentPage() { return $page.find('div:jqmData(role="content")'); };
-    var $content = (isNullOrEmpty($contentPage()) || $contentPage().length === 0) ? null : $contentPage().find('#' + id + divSuffix);
+    var $contentPage = $page.find('div:jqmData(role="content")');
+    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null: $contentPage.find('#' + id + divSuffix);
     var contentDivId;
     
     //ctor
@@ -60,6 +61,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
             p.DivId = id;
         }
         contentDivId = id + divSuffix;
+        
         if( !isNullOrEmpty(p.title)) {
             title = p.title;
         } else {

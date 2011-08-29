@@ -1,13 +1,15 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
+/// <reference path="../../main/tools/CswTools.js" />
+/// <reference path="../../main/tools/CswAttr.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
 /// <reference path="CswMobilePageFactory.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
-/// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../controls/CswMobileListView.js" />
 /// <reference path="../objectclasses/CswMobileNodesFactory.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 //#region CswMobilePageNodes
 
@@ -31,9 +33,9 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     var viewId, level;
     var divSuffix = '_nodes';
     var ulSuffix = '_list';
-    var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
-    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + divSuffix);
-    var contentDivId;
+    var $contentPage = $page.find('div:jqmData(role="content")');
+    var contentDivId = id + divSuffix;
+    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
     
     //ctor
     (function () {
@@ -59,7 +61,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         } else {
             p.DivId = id;
         }
-
+        
         contentDivId = id + divSuffix;
         
         if (!isNullOrEmpty(p.title)) {
@@ -84,10 +86,6 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     })(); //ctor
 
     function getContent(onSuccess, postSuccess) {
-        //var now = new Date();
-        //var lastSync = new Date(mobileStorage.lastSyncTime);
-        //( now.getTime() - lastSync.getTime() < 300000 ) ) //it's been less than 5 minutes since the last sync
-        $content = ensureContent($content, contentDivId);
         var cachedJson = mobileStorage.fetchCachedViewJson(viewId);
 
 		if (!isNullOrEmpty(cachedJson)) {
@@ -148,15 +146,14 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
             {
                 if(viewJson.hasOwnProperty(nodeKey)) {
                     var nodeJson = viewJson[nodeKey];
-                    delete nodeJson.subitems;
-                    var ocDef = { nodeKey: nodeKey };
-                    $.extend(ocDef, nodeJson);
-                    var node = new CswMobileNodesFactory(ocDef);
-                        
-                    if (Int32MinVal === node.nodeId || 'No Results' === node.nodeName) {
+                    if (Int32MinVal === nodeKey.split('_')[1] || 'No Results' === nodeJson) {
                         makeEmptyListView(listView, null, 'No Results');
                     } else {
-
+                        delete nodeJson.subitems;
+                        var ocDef = { nodeKey: nodeKey };
+                        $.extend(ocDef, nodeJson);
+                        var node = new CswMobileNodesFactory(ocDef);
+                        
                         var opts = {
                             ParentId: id,
                             DivId: nodeKey,

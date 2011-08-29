@@ -1,15 +1,17 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
 /// <reference path="../controls/CswMobileMenuButton.js" />
 /// <reference path="../CswMobile.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
-/// <reference path="../../jquery/common/CswCookie.js" />
 /// <reference path="CswMobilePageFactory.js" />
+/// <reference path="../../main/tools/CswCookie.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../main/tools/CswArray.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
 
 //#region CswMobilePageLogin
 
@@ -30,8 +32,9 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
     var title = CswMobilePage_Type.login.title;
     var loginSuffix = '_login';
     var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
-    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + loginSuffix);
-    var contentDivId;
+    var contentDivId = id + loginSuffix;
+    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+    
     
     //ctor
     (function() {

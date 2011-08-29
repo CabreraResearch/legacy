@@ -1,8 +1,10 @@
 /// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
-/// <reference path="clientdb/CswMobileClientDbResources.js" />
-/// <reference path="../CswEnums.js" />
-/// <reference path="controls/CswMobileListView.js" />
+/// <reference path="CswMobileEnums.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../clientdb/CswMobileClientDbResources.js" />
+/// <reference path="../controls/CswMobileListView.js" />
 
 //#region plugins
 
@@ -373,10 +375,10 @@ function ensureContent($content, contentDivId) {
     /// <param name="$content" type="jQuery">Some content element.</param>
     /// <param name="contentDivId" type="String">DivId</param>
     /// <returns type="jQuery">An empty content div.</returns>
-    if (isNullOrEmpty($content) || $content.length === 0) {
+    if (isNullOrEmpty($content) || $content.length > 1) {
         $content = $('<div id="' + contentDivId + '"></div>');
     } else {
-        $content.empty();
+        $content.empty();   
     }
     return $content;
 }    

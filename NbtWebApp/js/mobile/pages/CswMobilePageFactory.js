@@ -1,12 +1,10 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
 /// <reference path="../controls/CswMobileMenuButton.js" />
-/// <reference path="../../CswEnums.js" />
-/// <reference path="../CswMobileTools.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
 /// <reference path="CswMobilePageViews.js" />
 /// <reference path="CswMobilePageHelp.js" />
 /// <reference path="CswMobilePageLogin.js" />
@@ -19,6 +17,9 @@
 /// <reference path="CswMobilePageTabs.js" />
 /// <reference path="CswMobilePageProps.js" />
 /// <reference path="CswMobilePageNodes.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 //#region CswMobilePageFactory
 
@@ -187,8 +188,8 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     }
     
     function fillContent(forceRefresh,onSuccess) {
-        $contentRole.append(cswMobilePage.$content);
         if (contentIsFullyPopulated() && !forceRefresh) {
+            $contentRole.append(cswMobilePage.$content);
             onPageComplete(onSuccess);
         } else {
             $contentRole.append(cswMobilePage.getContent(refreshPageContent,onSuccess));
