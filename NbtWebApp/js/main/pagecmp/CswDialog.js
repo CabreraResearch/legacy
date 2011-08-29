@@ -159,6 +159,10 @@
 						{
 							CswNodeTabOptions.Config = true;
 							CswNodeTabOptions.ShowAsReport = false;
+							CswNodeTabOptions.onTabSelect = function(tabid) {
+								CswNodeTabOptions.tabid = tabid;
+								_configAddOptions();
+							};
 
 							var $div = $('<div></div>');
 							var $table = $div.CswTable('init', { ID: 'EditLayoutDialog_table', width: '100%' });
@@ -202,7 +206,7 @@
 											EditMode: $layoutSelect.val()
 										},
 									success: function(data) {
-										var propOpts = [];
+										var propOpts = [{ value: '', display: 'Select...' }];
 										for(var p in data) 
 										{
 											if(data.hasOwnProperty(p))
