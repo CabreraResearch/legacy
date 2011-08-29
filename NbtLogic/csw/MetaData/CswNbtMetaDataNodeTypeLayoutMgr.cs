@@ -171,6 +171,28 @@ namespace ChemSW.Nbt.MetaData
 			}
 			return ret;
 		} // getPropsInLayout()
+
+		public Collection<CswNbtMetaDataNodeTypeProp> getPropsNotInLayout( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab, LayoutType LayoutType )
+		{
+			Collection<CswNbtMetaDataNodeTypeProp> ret = new Collection<CswNbtMetaDataNodeTypeProp>();
+			foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps)
+			{
+				ret.Add( Prop );
+			}
+
+			CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropsNotInLayout_Select", "nodetype_layout" );
+			string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeType.NodeTypeId.ToString();
+			if( Tab != null )
+			{
+				WhereClause += "and nodetypetabsetid = " + Tab.TabId.ToString();
+			}
+			DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
+			foreach( DataRow Row in LayoutTable.Rows )
+			{
+				ret.Remove( _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( CswConvert.ToInt32( Row["nodetypepropid"] ) ) );
+			}
+			return ret;
+		} // getPropsNotInLayout()
 		
 
 		//public void makeSpaceForProp(CswNbtMetaDataNodeTypeLayout.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp )

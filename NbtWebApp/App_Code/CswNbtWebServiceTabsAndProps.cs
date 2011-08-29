@@ -452,17 +452,40 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // copyPropValues()
 
-		//public JObject getNodePreview( string NodeIdStr, string NodeKeyStr )
-		//{
-		//    JObject ret = new JObject();
-		//    CswNbtNode Node = _getNode( NodeIdStr, NodeKeyStr, new CswDateTime( _CswNbtResources ) );
-		//    foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
-		//    {
-		//        ret.Add( new JProperty( Tab.TabId.ToString(), getProps( NodeEditMode.PrintReport, NodeIdStr, NodeKeyStr, Tab.TabId.ToString(), Node.NodeTypeId, new CswDateTime( _CswNbtResources ) ) ) );
-		//    }
-		//    return ret;
-		//} // getNodePreview()
+		public JObject getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+		{
+			JObject ret = new JObject();
 
+			CswNbtMetaDataNodeType NodeType = null;
+			if( NodeTypeId != string.Empty )
+			{
+				NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeId ) );
+			}
+			else
+			{
+				CswNbtNode Node = _getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+				NodeType = Node.NodeType;
+			}
+
+			if( NodeType != null )
+			{
+				CswNbtMetaDataNodeTypeTab Tab = null;
+				if( TabId != string.Empty )
+				{
+					Tab = NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
+				}
+
+				Collection<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( NodeType, Tab, LayoutType );
+				foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
+				{
+					ret.Add( new JProperty( "prop_" + Prop.PropId.ToString(), 
+								new JObject(
+									new JProperty( "propid", Prop.PropId.ToString() ),
+									new JProperty( "propname", Prop.PropNameWithQuestionNo.ToString() ) ) ) );
+				}
+			} // if( NodeType != null )
+			return ret;
+		} // getPropertiesForLayoutAdd()
 
         private void _applyPropJson( CswNbtNode Node, JObject PropObj )
         {

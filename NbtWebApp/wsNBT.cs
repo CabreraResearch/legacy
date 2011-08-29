@@ -1385,42 +1385,6 @@ namespace ChemSW.Nbt.WebServices
 
         } // copyPropValue()	
 
-
-		//[WebMethod( EnableSession = false )]
-		//[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		//public string getNodePreview( string NodeId, string NodeKey )
-		//{
-		//    JObject ReturnVal = new JObject();
-
-		//    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-		//    try
-		//    {
-		//        _initResources();
-		//        AuthenticationStatus = _attemptRefresh();
-
-		//        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-		//        {
-		//            string ParsedNodeId = wsTools.FromSafeJavaScriptParam( NodeId );
-		//            string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
-
-		//            var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-		//            ReturnVal = ws.getNodePreview( ParsedNodeId, ParsedNodeKey );
-		//        }
-
-		//        _deInitResources();
-
-		//    }
-		//    catch( Exception ex )
-		//    {
-		//        ReturnVal = jError( ex );
-		//    }
-
-		//    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-		//    return ReturnVal.ToString();
-		//}
-
-
         #endregion Tabs and Props
 
         #region Misc
@@ -1685,8 +1649,46 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, string EditMode )
+        {
+            JObject ReturnVal = new JObject();
 
-        #endregion Misc
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
+					CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Unknown;
+					switch( RealEditMode )
+					{
+						case NodeEditMode.AddInPopup: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add; break;
+						case NodeEditMode.Preview: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview; break;
+						default: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit; break;
+					}
+					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+					ReturnVal = ws.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, LayoutType );
+				}
+
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getPropertiesForLayoutAdd()
+
+ #endregion Misc
 
         #region Search
 
