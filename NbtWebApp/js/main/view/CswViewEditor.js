@@ -461,7 +461,7 @@
                     success: function(gridJson) {
 
                         var viewGridId = o.ID + '_csw_viewGrid_outer';
-                        var $viewGrid = $div.find('#' + viewGridId);
+                        var $viewGrid = $div1.find('#' + viewGridId);
                         if (isNullOrEmpty($viewGrid) || $viewGrid.length === 0) {
                             $viewGrid = $('<div id="' + o.ID + '"></div>').appendTo($div1);
                         } else {
