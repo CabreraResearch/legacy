@@ -9,6 +9,50 @@ using ChemSW.Nbt.PropTypes;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
 
+
+namespace ChemSW.Nbt
+{
+	/// <summary>
+	/// Editing and Display mode for Nodes
+	/// </summary>
+	public enum NodeEditMode
+	{
+		/// <summary>
+		/// Regular editing
+		/// </summary>
+		Edit,
+		/// <summary>
+		/// Adding a new node in a popup
+		/// </summary>
+		AddInPopup,
+		/// <summary>
+		/// Editing a node in a popup
+		/// </summary>
+		EditInPopup,
+		/// <summary>
+		/// Editing fake property values (as in Design mode)
+		/// </summary>
+		Demo,
+		/// <summary>
+		/// Displaying values for a print report
+		/// </summary>
+		PrintReport,
+		/// <summary>
+		/// Editing the default value of a property (in Design)
+		/// </summary>
+		DefaultValue,
+		/// <summary>
+		/// Showing node audit history in a popup
+		/// </summary>
+		AuditHistoryInPopup,
+		/// <summary>
+		/// A preview of the node, displayed when hovering
+		/// </summary>
+		Preview
+	}; // NodeEditMode
+} // namespace ChemSW.Nbt
+
+
 namespace ChemSW.Nbt.ObjClasses
 {
     /// <summary>

@@ -8,6 +8,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.DB;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -25,6 +26,23 @@ namespace ChemSW.Nbt.MetaData
             Edit,
             Preview
         }
+
+		public LayoutType LayoutTypeForEditMode( string EditMode )
+		{
+			NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
+			return LayoutTypeForEditMode( RealEditMode );
+		}
+		public LayoutType LayoutTypeForEditMode( NodeEditMode EditMode )
+		{
+			LayoutType LType = LayoutType.Unknown;
+			switch( EditMode )
+			{
+				case NodeEditMode.AddInPopup: LType = LayoutType.Add; break;
+				case NodeEditMode.Preview: LType = LayoutType.Preview; break;
+				default: LType = LayoutType.Edit; break;
+			}
+			return LType;
+		} // LayoutTypeForEditMode()
 
 		public class NodeTypeLayout
 		{
@@ -77,6 +95,7 @@ namespace ChemSW.Nbt.MetaData
 					LayoutTable.Rows.Add( Row );
 				}
 				Row["layouttype"] = LayoutType.ToString();
+				Row["nodetypeid"] = CswConvert.ToDbVal( Prop.NodeType.NodeTypeId );
 				Row["nodetypepropid"] = CswConvert.ToDbVal( Prop.PropId );
 				if( Tab != null && LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
 				{

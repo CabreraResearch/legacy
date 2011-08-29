@@ -1164,7 +1164,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                    CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+                    NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
                     ReturnVal = ws.getTabs( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( NodeTypeId ), InDate, filterToPropId );
@@ -1199,7 +1199,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                    CswNbtWebServiceTabsAndProps.NodeEditMode RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+                    NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
                     ReturnVal = ws.getProps( RealEditMode, NodeId, ParsedNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ), InDate );
@@ -1235,8 +1235,8 @@ namespace ChemSW.Nbt.WebServices
                     string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
                     //if( !string.IsNullOrEmpty( ParsedNodeKey ) )
                     //{
-                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                    var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+					NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
                     ReturnVal = ws.getSingleProp( RealEditMode, NodeId, ParsedNodeKey, PropId, CswConvert.ToInt32( NodeTypeId ), NewPropJson );
                     //}
                 }
@@ -1331,8 +1331,8 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                    var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
+					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+					NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
                     CswNbtView View = _getView( ViewId );
                     ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View );
                 }
@@ -1649,6 +1649,42 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
+		#endregion Misc
+
+		#region NodeType Layout
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string MoveProp( string PropId, string NewRow, string NewColumn, string EditMode )
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+					NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
+					bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ), RealEditMode );
+					ReturnVal.Add( new JProperty( "moveprop", ret.ToString().ToLower() ) );
+				}
+
+				_deInitResources();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+
+		} // MoveProp()
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, string EditMode )
@@ -1688,11 +1724,45 @@ namespace ChemSW.Nbt.WebServices
 
         } // getPropertiesForLayoutAdd()
 
- #endregion Misc
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string addPropertyToLayout( string PropId, string TabId, string EditMode )
+		{
+			JObject ReturnVal = new JObject();
 
-        #region Search
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
 
-        [WebMethod( EnableSession = false )]
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode );
+
+					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+					bool ret = ws.addPropertyToLayout( PropId, TabId, LayoutType );
+					ReturnVal.Add( new JProperty( "result", ret.ToString().ToLower() ) );
+				}
+
+				_deInitResources();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+
+		} // addPropertyToLayout()
+
+		#endregion NodeType Layout
+
+		#region Search
+
+		[WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getClientSearchXml( string ViewId, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
         {
@@ -1980,39 +2050,6 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         }
-
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string MoveProp( string PropId, string NewRow, string NewColumn, string EditMode )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                    var RealEditMode = (CswNbtWebServiceTabsAndProps.NodeEditMode) Enum.Parse( typeof( CswNbtWebServiceTabsAndProps.NodeEditMode ), EditMode );
-                    bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ), RealEditMode );
-                    ReturnVal.Add( new JProperty( "moveprop", ret.ToString().ToLower() ) );
-                }
-
-                _deInitResources();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // MoveProp()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]

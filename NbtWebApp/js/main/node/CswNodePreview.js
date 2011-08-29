@@ -36,7 +36,8 @@
 									ID: o.ID + 'tabs',
 									nodeid: o.nodeid,               
 									cswnbtnodekey: o.cswnbtnodekey,        
-									EditMode: EditMode.Preview.name
+									EditMode: EditMode.Preview.name,
+									ShowAsReport: false
 								});
 				
 				return $div;
