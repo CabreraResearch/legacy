@@ -153,7 +153,6 @@
 
 					    if(hasNodes) {
 							var $nodepreview = undefined;
-							var nodepreview_timeout;
 
 							$treediv.bind('init_done.jstree', function() { 
 
@@ -192,20 +191,16 @@
 								var $hoverLI = $(data.rslt.obj[0]);
 								var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
 								var cswnbtnodekey = $hoverLI.CswAttrDom('cswnbtnodekey');
-
-								nodepreview_timeout = setTimeout(function() {
-									$nodepreview = $.CswNodePreview('open', {
-										ID: nodeid + "_preview",
-										nodeid: nodeid, 
-										cswnbtnodekey: cswnbtnodekey,
-										X: data.args[1].pageX,
-										Y: data.args[1].pageY
-									});
-								}, 1000);
+								
+								$nodepreview = $.CswNodePreview('open', {
+									ID: nodeid + "_preview",
+									nodeid: nodeid, 
+									cswnbtnodekey: cswnbtnodekey,
+									eventArg: data.args[1]
+								});
 
 							}).bind('dehover_node.jstree', function(e, data) {
 								var selected = jsTreeGetSelected($treediv);
-								clearTimeout(nodepreview_timeout);
 								if($nodepreview !== undefined)
 								{
 									$nodepreview.CswNodePreview('close');

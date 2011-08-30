@@ -14,38 +14,51 @@
 					ID: '',
 					nodeid: '',
 					cswnbtnodekey: '',
-					X: 0,
-					Y: 0
+					eventArg: {},
+					delay: 500
 				};
 				if(options) $.extend(o, options);
 				
 				var $div = $('<div id="' + o.ID + '"></div>')
 								.css({
 									position: 'absolute',
-									top: o.Y + 'px',
-									left: o.X + 'px',
-									width: '600px',
-									height: '400px',
+									top: o.eventArg.pageY + 'px',
+									left: o.eventArg.pageX + 'px',
+									width: '400px',
+									height: '300px',
 									overflow: 'auto',
 									border: '1px solid #003366',
+									padding: '2px',
 									backgroundColor: '#ffffff'
 								})
-								.appendTo('body');
+								.appendTo('body')
+								.hide();
 
-				$div.CswNodeTabs({
-									ID: o.ID + 'tabs',
-									nodeid: o.nodeid,               
-									cswnbtnodekey: o.cswnbtnodekey,        
-									EditMode: EditMode.Preview.name,
-									ShowAsReport: false
-								});
-				
+				var timeoutHandle = setTimeout(function() {
+						$div.CswNodeTabs({
+										ID: o.ID + 'tabs',
+										nodeid: o.nodeid,               
+										cswnbtnodekey: o.cswnbtnodekey,        
+										EditMode: EditMode.Preview.name,
+										ShowAsReport: false,
+										onInitFinish: function() {
+											$div.show();
+										}
+									});
+					}, o.delay);
+
+				$div.data('timeoutHandle', timeoutHandle);
+
 				return $div;
 			},
 		'close': function()
 			{
 				var $div = $(this);
-				$div.remove();
+				if($div.length > 0)
+				{
+					clearTimeout($div.data('timeoutHandle'));
+					$div.remove();
+				}
 			}
 	};
 
