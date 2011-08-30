@@ -19,7 +19,7 @@
 				};
 				if(options) $.extend(o, options);
 
-				var $div = $('<div id="' + o.ID + '"></div>')
+				var $div = $('<div id="' + o.ID + '" class="CswNodePreview"></div>')
 								.css({
 									position: 'absolute',
 									overflow: 'auto',
@@ -69,7 +69,8 @@
 				if($div.length > 0)
 				{
 					clearTimeout($div.data('timeoutHandle'));
-					$div.remove();
+					// Clear all node previews, in case other ones are hanging around
+					$('.CswNodePreview').remove();
 				}
 			}
 	};
