@@ -1,8 +1,9 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 //#region CswMobileFieldTypeQuestion
 
@@ -37,16 +38,17 @@ function CswMobileFieldTypeQuestion(ftDef) {
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
-
+        
+        var propVals = p.values;
         subfields = CswSubFields_Map.Question.subfields;
-        value = tryParseString(p[subfields.Answer.name]);
+        value = tryParseString(propVals[subfields.Answer.name]);
         gestalt = tryParseString(p.gestalt, '');
         
-        var answer = tryParseString(p.answer);
-        var allowedAnswers = tryParseString(p.allowedanswers).split(',');
-        compliantAnswers = tryParseString(p.compliantanswers).split(',');
-        var comments = tryParseString(p[subfields.Comments.name]);
-        var correctiveAction = tryParseString(p[subfields.CorrectiveAction.name]);
+        var answer = tryParseString(propVals.answer);
+        var allowedAnswers = tryParseString(propVals.allowedanswers).split(',');
+        compliantAnswers = tryParseString(propVals.compliantanswers).split(',');
+        var comments = tryParseString(propVals[subfields.Comments.name]);
+        var correctiveAction = tryParseString(propVals[subfields.CorrectiveAction.name]);
 
         $content = ensureContent($content, contentDivId);
 
@@ -121,7 +123,7 @@ function CswMobileFieldTypeQuestion(ftDef) {
     }
     
     function updatePropValue(json,id,newValue) {
-        var subFieldToUpdate;
+        var subFieldToUpdate = '';
         if (id.contains(makeSafeId({ ID: propId, suffix: 'com' }))) {
             subFieldToUpdate = subfields.Comments.name;
 		} 
