@@ -45,7 +45,8 @@
 				    
 				    var g = {
 						ID: o.ID,
-					    hasPager: false,
+				        canEdit: isTrue(o.allowEditRow),
+					    hasPager: true,
 					    gridOpts: {
 						    height: 180,
 						    rowNum: 10,
@@ -54,18 +55,15 @@
 								    var cellVal = grid.getValueForColumn('CHANGEDATE', rowid);
 								    o.onSelectRow(cellVal);
 							    }
-						    }
-                        },
-						optNav: {
-						    add: false,
+						    },
+                            add: false,
 						    view: false,
 						    del: false,
 						    refresh: false,
-						    search: false,
-						    edit: o.allowEditRow,
-						    edittext: "",
-						    edittitle: "Edit row",
-						    editfunc: function(rowid) {
+						    search: false
+					    },
+						optNavEdit: {
+					        editfunc: function(rowid) {
 								if (false === isNullOrEmpty(rowid)) {
 								    var cellVal = grid.getValueForColumn('CHANGEDATE', rowid);
 									o.onEditRow(cellVal);
@@ -73,8 +71,7 @@
 									alert('Please select a row to edit');
 								}
 							}
-						 }
-                        
+					    }
 					};
 					$.extend(g.gridOpts, gridJson);
 				    
