@@ -375,7 +375,7 @@ function ensureContent($content, contentDivId) {
     /// <param name="$content" type="jQuery">Some content element.</param>
     /// <param name="contentDivId" type="String">DivId</param>
     /// <returns type="jQuery">An empty content div.</returns>
-    if (isNullOrEmpty($content) || $content.length > 1) {
+    if (isNullOrEmpty($content)) {
         $content = $('<div id="' + contentDivId + '"></div>');
     } else {
         $content.empty();   
