@@ -351,6 +351,10 @@ namespace ChemSW.Nbt.WebServices
 				if( NodeTypePropId != Int32.MinValue )
 				{
 					CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+					if( EditMode == NodeEditMode.AddInPopup && Prop.IsRequired && false == Prop.HasDefaultValue() )
+					{
+						throw new CswDniException( ErrorType.Warning, Prop.PropName + " may not be removed", Prop.PropName + " is required and has no unique value, and therefore cannot be removed from 'Add' layouts" );
+					}
 					Prop.removeFromLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode ) );
 					ret = true;
 				}
