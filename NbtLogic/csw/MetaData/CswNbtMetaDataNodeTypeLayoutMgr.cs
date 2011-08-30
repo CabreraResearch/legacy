@@ -97,6 +97,7 @@ namespace ChemSW.Nbt.MetaData
 				Row["layouttype"] = LayoutType.ToString();
 				Row["nodetypeid"] = CswConvert.ToDbVal( Prop.NodeType.NodeTypeId );
 				Row["nodetypepropid"] = CswConvert.ToDbVal( Prop.PropId );
+
 				if( Tab != null && LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
 				{
 					Row["nodetypetabsetid"] = CswConvert.ToDbVal( Tab.TabId );
@@ -165,7 +166,8 @@ namespace ChemSW.Nbt.MetaData
 				Int32 ThisRow = CswConvert.ToInt32( Row["display_row"] );
 				Int32 ThisTabId = CswConvert.ToInt32( Row["nodetypetabsetid"] );
 				if( ThisRow > MaxRow &&
-					( Tab == null || Tab.TabId == ThisTabId ) )
+					( LayoutType != LayoutType.Edit || 
+					  ( Tab != null && Tab.TabId == ThisTabId ) ) )
 				{
 					MaxRow = ThisRow;
 				}
