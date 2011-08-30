@@ -67,26 +67,8 @@
                     }
                 }
 
-				var $nodepreview = undefined;
-				$Div.hover(function(event) { onHoverIn(event, selectedNodeId); }, onHoverOut);
+				$Div.hover(function(event) { nodeHoverIn(event, $SelectBox.val()); }, nodeHoverOut);
 				
-				function onHoverIn(event, selectedNodeId) 
-				{
-					$nodepreview = $.CswNodePreview('open', {
-									ID: selectedNodeId + "_preview",
-									nodeid: selectedNodeId, 
-									eventArg: event
-								});
-				}
-				function onHoverOut(event) 
-				{
-					if($nodepreview !== undefined)
-					{
-						$nodepreview.CswNodePreview('close');
-						$nodepreview = undefined;
-					}
-				}
-
             },
             save: function(o) {
                     var $SelectBox = o.$propdiv.find('select');

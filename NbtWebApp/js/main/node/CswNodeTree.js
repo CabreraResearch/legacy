@@ -151,9 +151,8 @@
 					    }
                         treehtmlstring += '</ul>';
 
-					    if(hasNodes) {
-							var $nodepreview = undefined;
-
+					    if(hasNodes) 
+						{
 							$treediv.bind('init_done.jstree', function() { 
 
 								// initially_open and initially_select cause multiple event triggers and race conditions.
@@ -191,21 +190,11 @@
 								var $hoverLI = $(data.rslt.obj[0]);
 								var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
 								var cswnbtnodekey = $hoverLI.CswAttrDom('cswnbtnodekey');
-								
-								$nodepreview = $.CswNodePreview('open', {
-									ID: nodeid + "_preview",
-									nodeid: nodeid, 
-									cswnbtnodekey: cswnbtnodekey,
-									eventArg: data.args[1]
-								});
+								nodeHoverIn(data.args[1], nodeid, cswnbtnodekey);
 
 							}).bind('dehover_node.jstree', function(e, data) {
 								var selected = jsTreeGetSelected($treediv);
-								if($nodepreview !== undefined)
-								{
-									$nodepreview.CswNodePreview('close');
-									$nodepreview = undefined;
-								}
+								nodeHoverOut();
 
 							}).jstree({
 								"html_data":
