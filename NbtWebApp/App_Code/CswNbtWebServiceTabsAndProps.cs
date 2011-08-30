@@ -327,23 +327,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
                 Int32 NodeTypePropId = PropId.NodeTypePropId;
-                if( NodeTypePropId != Int32.MinValue && NewRow > 0 && NewColumn > 0 )
-                {
-                    CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                    if( EditMode == NodeEditMode.AddInPopup )
-                    {
-						//Prop.DisplayColAdd = NewColumn;
-						//Prop.DisplayRowAdd = NewRow;
-						Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, null, NewRow, NewColumn );
-					}
-                    else
-                    {
-						//Prop.DisplayColumn = NewColumn;
-						//Prop.DisplayRow = NewRow;
-						Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, null, NewRow, NewColumn );
-					}
-                    ret = true;
-                }
+				if( NodeTypePropId != Int32.MinValue && NewRow > 0 && NewColumn > 0 )
+				{
+					CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+					Prop.updateLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode ), null, NewRow, NewColumn );
+					ret = true;
+				}
             } // if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             else
             {
