@@ -953,6 +953,22 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+
+		public bool HasSubProps()
+		{
+			bool ret = false;
+			foreach( CswNbtMetaDataNodeTypeProp OtherProp in NodeType.NodeTypeProps )
+			{
+				if( OtherProp.FilterNodeTypePropId == this.FirstPropVersionId )
+				{
+					ret = true;
+				}
+			}
+			return ret;
+		} // HasSubProps()
+
+
+
         public Int32 FilterNodeTypePropId
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["filterpropid"] ); }

@@ -182,63 +182,69 @@
 						{
 							onSwap(onSwapData);
 						},
-						showConfigButton: false,
+						showConfigButton: o.Config,
 						onConfigOn: function() { 
 							for (var prop in data) {
 							    if (data.hasOwnProperty(prop)) {
 							        var thisProp = data[prop];
-							        var propId = thisProp.id;
-							        var $subtable = $layouttable.find('#' + propId + '_subproptable');
-							        var $parentcell = $subtable.parent().parent();
-							        var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
-							        var $propcell = _getPropertyCell($cellset);
+							        if(isTrue(thisProp.hassubprops))
+									{
+										var propId = thisProp.id;
+										var $subtable = $layouttable.find('#' + propId + '_subproptable');
+										var $parentcell = $subtable.parent().parent();
+										var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
+										var $propcell = _getPropertyCell($cellset);
 
-							        if ($subtable.length > 0)
-							        {
-							            var fieldOpt = {
-							                fieldtype: thisProp.fieldtype,
-							                nodeid: o.nodeid,
-							                relatednodeid: o.relatednodeid,
-							                propid: propId,
-							                $propdiv: $propcell.children('div'),
-							                propData: thisProp,
-							                onchange: function() { },
-							                onReload: function() { getProps($tabcontentdiv, tabid); },
-							                cswnbtnodekey: o.cswnbtnodekey
-							            };
+										if ($subtable.length > 0)
+										{
+											var fieldOpt = {
+												fieldtype: thisProp.fieldtype,
+												nodeid: o.nodeid,
+												relatednodeid: o.relatednodeid,
+												propid: propId,
+												$propdiv: $propcell.children('div'),
+												propData: thisProp,
+												onchange: function() { },
+												onReload: function() { getProps($tabcontentdiv, tabid); },
+												cswnbtnodekey: o.cswnbtnodekey
+											};
 
-							            _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, propId, o.nodetypeid, thisProp, $propcell, $tabcontentdiv, tabid, true, $savetab);
-							        }
-							    }
+											_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, propId, o.nodetypeid, thisProp, $propcell, $tabcontentdiv, tabid, true, $savetab);
+										} // if ($subtable.length > 0)
+									} // if(isTrue(thisProp.hassubprops))
+							    } // if (data.hasOwnProperty(prop)) {
 							} // for (var prop in data) {
 						}, // onConfigOn
 						onConfigOff: function() { 
 							for (var prop in data) {
 							    if (data.hasOwnProperty(prop)) {
 							        var thisProp = data[prop];
-							        var propId = thisProp.id;
-							        var $subtable = $layouttable.find('#' + propId + '_subproptable');
-							        var $parentcell = $subtable.parent().parent();
-							        var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
-							        var $propcell = _getPropertyCell($cellset);
+							        if(isTrue(thisProp.hassubprops))
+									{
+										var propId = thisProp.id;
+										var $subtable = $layouttable.find('#' + propId + '_subproptable');
+										var $parentcell = $subtable.parent().parent();
+										var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
+										var $propcell = _getPropertyCell($cellset);
 
-							        if ($subtable.length > 0)
-							        {
-							            var fieldOpt = {
-							                fieldtype: thisProp.fieldtype,
-							                nodeid: o.nodeid,
-							                relatednodeid: o.relatednodeid,
-							                propid: propId,
-							                $propdiv: $propcell.children('div'),
-							                propData: thisProp,
-							                onchange: function() { },
-							                onReload: function() { getProps($tabcontentdiv, tabid); },
-							                cswnbtnodekey: o.cswnbtnodekey
-							            };
+										if ($subtable.length > 0)
+										{
+											var fieldOpt = {
+												fieldtype: thisProp.fieldtype,
+												nodeid: o.nodeid,
+												relatednodeid: o.relatednodeid,
+												propid: propId,
+												$propdiv: $propcell.children('div'),
+												propData: thisProp,
+												onchange: function() { },
+												onReload: function() { getProps($tabcontentdiv, tabid); },
+												cswnbtnodekey: o.cswnbtnodekey
+											};
 
-							            _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, propId, o.nodetypeid, thisProp, $propcell, $tabcontentdiv, tabid, false, $savetab);
-							        }
-						        }
+											_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, propId, o.nodetypeid, thisProp, $propcell, $tabcontentdiv, tabid, false, $savetab);
+										} // if ($subtable.length > 0)
+									} // if(isTrue(thisProp.hassubprops))
+								} // if (data.hasOwnProperty(prop)) {
 							} // for (var prop in data) {
 						} // onConfigOff
 
@@ -453,7 +459,7 @@
 						_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, propId, o.nodetypeid, propData, $propcell, $tabcontentdiv, tabid, false, $savebtn);
 						if(isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName);
 					};
-				} // if (propData.hassubprops === "true")
+				} // if (isTrue(propData.hassubprops)) {
 
 				$.CswFieldTypeFactory('make', fieldOpt);
 
