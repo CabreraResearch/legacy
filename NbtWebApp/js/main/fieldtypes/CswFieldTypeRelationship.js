@@ -14,7 +14,6 @@
             init: function(o) { //nodepk = o.nodeid, o.propData = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
             
                 var $Div = $(this);
-                $Div.contents().remove();
 
                 var propVals = o.propData.values;
                 
@@ -29,7 +28,9 @@
 
                 if(o.ReadOnly) {
                     $Div.append(selectedName);
-                } else {
+                } 
+				else 
+				{
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
                     var $selectcell = $table.CswTable('cell', 1, 1);
@@ -65,6 +66,26 @@
                         $SelectBox.addClass("required");
                     }
                 }
+
+				var $nodepreview = undefined;
+				$Div.hover(function(event) { onHoverIn(event, selectedNodeId); }, onHoverOut);
+				
+				function onHoverIn(event, selectedNodeId) 
+				{
+					$nodepreview = $.CswNodePreview('open', {
+									ID: selectedNodeId + "_preview",
+									nodeid: selectedNodeId, 
+									eventArg: event
+								});
+				}
+				function onHoverOut(event) 
+				{
+					if($nodepreview !== undefined)
+					{
+						$nodepreview.CswNodePreview('close');
+						$nodepreview = undefined;
+					}
+				}
 
             },
             save: function(o) {

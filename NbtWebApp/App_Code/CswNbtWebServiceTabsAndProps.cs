@@ -38,9 +38,17 @@ namespace ChemSW.Nbt.WebServices
             }
             else if( !string.IsNullOrEmpty( NodeId ) )
             {
-                CswPrimaryKey RealNodeId = new CswPrimaryKey();
-                RealNodeId.FromString( NodeId );
-                Node = _CswNbtResources.getNode( RealNodeId, Date.ToDateTime() );
+				CswPrimaryKey RealNodeId = new CswPrimaryKey();
+				if( CswTools.IsInteger( NodeId ) )
+				{
+					RealNodeId.TableName = "nodes";
+					RealNodeId.PrimaryKey = CswConvert.ToInt32( NodeId );
+				}
+				else
+				{
+					RealNodeId.FromString( NodeId );
+				}
+				Node = _CswNbtResources.getNode( RealNodeId, Date.ToDateTime() );
             }
             return Node;
         } // _getNode()
