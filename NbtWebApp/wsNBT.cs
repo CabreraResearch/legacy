@@ -1685,6 +1685,38 @@ namespace ChemSW.Nbt.WebServices
 
 		} // MoveProp()
 
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string removeProp( string PropId, string EditMode )
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+					NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
+					bool ret = ws.removeProp( PropId, RealEditMode );
+					ReturnVal.Add( new JProperty( "removeprop", ret.ToString().ToLower() ) );
+				}
+
+				_deInitResources();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+
+		} // removeProp()
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, string EditMode )

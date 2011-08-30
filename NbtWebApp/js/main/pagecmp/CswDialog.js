@@ -164,6 +164,9 @@
 								CswNodeTabOptions.tabid = tabid;
 								_configAddOptions();
 							};
+							CswNodeTabOptions.onPropertyRemove = function(propid) {
+								_configAddOptions();
+							};
 
 							var $div = $('<div></div>');
 							var $table = $div.CswTable('init', { ID: 'EditLayoutDialog_table', width: '100%' });

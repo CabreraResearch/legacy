@@ -320,26 +320,47 @@ namespace ChemSW.Nbt.WebServices
 
         } // _getAuditHistoryGridProp()
 
-        public bool moveProp( string PropIdAttr, Int32 NewRow, Int32 NewColumn, NodeEditMode EditMode )
-        {
-            bool ret = false;
-            if( _canEditLayout() )
-            {
-                CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
-                Int32 NodeTypePropId = PropId.NodeTypePropId;
+		public bool moveProp( string PropIdAttr, Int32 NewRow, Int32 NewColumn, NodeEditMode EditMode )
+		{
+			bool ret = false;
+			if( _canEditLayout() )
+			{
+				CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+				Int32 NodeTypePropId = PropId.NodeTypePropId;
 				if( NodeTypePropId != Int32.MinValue && NewRow > 0 && NewColumn > 0 )
 				{
 					CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 					Prop.updateLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode ), null, NewRow, NewColumn );
 					ret = true;
 				}
-            } // if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-            else
-            {
-                throw new CswDniException( ErrorType.Warning, "You do not have permission to configure layout", _CswNbtResources.CurrentNbtUser.Username + " tried to change property layout without administrative or Design privileges" );
-            }
-            return ret;
-        } // moveProp()
+			} // if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+			else
+			{
+				throw new CswDniException( ErrorType.Warning, "You do not have permission to configure layout", _CswNbtResources.CurrentNbtUser.Username + " tried to change property layout without administrative or Design privileges" );
+			}
+			return ret;
+		} // moveProp()
+
+		public bool removeProp( string PropIdAttr, NodeEditMode EditMode )
+		{
+			bool ret = false;
+			if( _canEditLayout() )
+			{
+				CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+				Int32 NodeTypePropId = PropId.NodeTypePropId;
+				if( NodeTypePropId != Int32.MinValue )
+				{
+					CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+					Prop.removeFromLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode ) );
+					ret = true;
+				}
+			} // if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+			else
+			{
+				throw new CswDniException( ErrorType.Warning, "You do not have permission to configure layout", _CswNbtResources.CurrentNbtUser.Username + " tried to change property layout without administrative or Design privileges" );
+			}
+			return ret;
+		} // removeProp()
 
         public JObject saveProps( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
         {

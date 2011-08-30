@@ -14,6 +14,7 @@
 			SinglePropUrl: '/NbtWebApp/wsNBT.asmx/getSingleProp',
 			PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
 			MovePropUrl: '/NbtWebApp/wsNBT.asmx/moveProp',
+			RemovePropUrl: '/NbtWebApp/wsNBT.asmx/removeProp',
 			SavePropUrl: '/NbtWebApp/wsNBT.asmx/saveProps',
 			CopyPropValuesUrl: '/NbtWebApp/wsNBT.asmx/copyPropValues',
 			NodePreviewUrl: '/NbtWebApp/wsNBT.asmx/getNodePreview',
@@ -31,6 +32,7 @@
 			onBeforeTabSelect: null, // function (tabid) { return true; },
 			onTabSelect: null, // function (tabid) { },
 			onPropertyChange: null, // function(propid, propname) { },
+			onPropertyRemove: null, // function(propid) { },
 			onInitFinish: null, // function() { },
 			ShowCheckboxes: false,
 			ShowAsReport: true,
@@ -184,6 +186,7 @@
 							onSwap(onSwapData);
 						},
 						showConfigButton: o.Config,
+						showRemoveButton: o.Config,
 						onConfigOn: function() { 
 							for (var prop in data) {
 							    if (data.hasOwnProperty(prop)) {
@@ -247,7 +250,11 @@
 									} // if(isTrue(thisProp.hassubprops))
 								} // if (data.hasOwnProperty(prop)) {
 							} // for (var prop in data) {
-						} // onConfigOff
+						}, // onConfigOff
+						onRemove: function(event, onRemoveData)
+						{ 
+							onRemove(onRemoveData);
+						} // onRemove
 
 					}); // CswLayoutTable()
 
@@ -316,7 +323,23 @@
 				} // success{}
 			}); // ajax
 		} // getProps()
+		
+		function onRemove(onRemoveData)
+		{
+			var $propdiv = _getPropertyCell(onRemoveData.cellset).children('div').first();
+			var propid = $propdiv.CswAttrDom('propid');
+			
+			CswAjaxJson({
+				url: o.RemovePropUrl,
+				data: { PropId: propid, EditMode: o.EditMode },
+				success: function (data)
+				{
+					o.onPropertyRemove(propid);
+				}
+			});
 
+		} // onRemove()
+		
 		function onSwap(onSwapData)
 		{
 			_moveProp(_getPropertyCell(onSwapData.cellset).children('div').first(), onSwapData.swaprow, onSwapData.swapcolumn);
@@ -480,7 +503,8 @@
 					{
 						onSwap(onSwapData);
 					},
-					showConfigButton: false
+					showConfigButton: false,
+					showRemoveButton: false
 				});
 
 				if ((!isNullOrEmpty(subProps) && isTrue(subProps.display)) || configMode)
