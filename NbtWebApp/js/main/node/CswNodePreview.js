@@ -15,28 +15,13 @@
 					nodeid: '',
 					cswnbtnodekey: '',
 					eventArg: {},
-					delay: 500,
-					width: 400,
-					height: 300
+					delay: 500
 				};
 				if(options) $.extend(o, options);
-
-				// Make sure preview div is within the window
-				var extra = 10;
-				var X = o.eventArg.pageX;
-				var Y = o.eventArg.pageY;
-				var windowX = $(window).width() - extra;
-				var windowY = $(window).height() - extra;
-				if(X + o.width > windowX) X = windowX - o.width;
-				if(Y + o.height > windowY) Y = windowY - o.height;
 
 				var $div = $('<div id="' + o.ID + '"></div>')
 								.css({
 									position: 'absolute',
-									top: Y + 'px',
-									left: X + 'px',
-									width: o.width + 'px',
-									height: o.height + 'px',
 									overflow: 'auto',
 									border: '1px solid #003366',
 									padding: '2px',
@@ -53,6 +38,22 @@
 										EditMode: EditMode.Preview.name,
 										ShowAsReport: false,
 										onInitFinish: function() {
+											
+											// Make sure preview div is within the window
+											var windowX = $(window).width() - 10;
+											var windowY = $(window).height() - 10;
+											var divwidth = $div.width();
+											var divheight = $div.height();
+											var X = o.eventArg.pageX;
+											var Y = o.eventArg.pageY;
+
+											if(X + divwidth > windowX) X = windowX - divwidth;
+											if(Y + divheight > windowY) Y = windowY - divheight;
+
+											$div.css({ 
+													top: Y + 'px',
+													left: X + 'px'
+											});
 											$div.show();
 										}
 									});
