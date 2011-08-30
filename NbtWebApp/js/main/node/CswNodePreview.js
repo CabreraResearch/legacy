@@ -15,17 +15,28 @@
 					nodeid: '',
 					cswnbtnodekey: '',
 					eventArg: {},
-					delay: 500
+					delay: 500,
+					width: 400,
+					height: 300
 				};
 				if(options) $.extend(o, options);
-				
+
+				// Make sure preview div is within the window
+				var extra = 10;
+				var X = o.eventArg.pageX;
+				var Y = o.eventArg.pageY;
+				var windowX = $(window).width() - extra;
+				var windowY = $(window).height() - extra;
+				if(X + o.width > windowX) X = windowX - o.width;
+				if(Y + o.height > windowY) Y = windowY - o.height;
+
 				var $div = $('<div id="' + o.ID + '"></div>')
 								.css({
 									position: 'absolute',
-									top: o.eventArg.pageY + 'px',
-									left: o.eventArg.pageX + 'px',
-									width: '400px',
-									height: '300px',
+									top: Y + 'px',
+									left: X + 'px',
+									width: o.width + 'px',
+									height: o.height + 'px',
 									overflow: 'auto',
 									border: '1px solid #003366',
 									padding: '2px',
