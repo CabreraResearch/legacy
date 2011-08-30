@@ -27,6 +27,7 @@
 			date: '',      // for audit records
 			EditMode: EditMode.Edit.name, // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, NodePreview
 			onSave: null, // function (nodeid, cswnbtnodekey, tabcount) { },
+			Refresh: null, // function (nodeid, cswnbtnodekey, tabcount) { },
 			onBeforeTabSelect: null, // function (tabid) { return true; },
 			onTabSelect: null, // function (tabid) { },
 			onPropertyChange: null, // function(propid, propname) { },
@@ -298,6 +299,7 @@
 													ID: o.ID + 'configbtn',
 													onClick: function ($ImageDiv) 
 													{ 
+														clearTabs();
 														$.CswDialog('EditLayoutDialog', o);
 														return CswImageButton_ButtonType.None; 
 													}

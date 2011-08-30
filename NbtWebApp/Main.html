@@ -604,6 +604,11 @@
 				unsetChanged();
 				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
 			},
+			'Refresh': function (nodeid, cswnbtnodekey)
+			{
+				unsetChanged();
+				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+			},
 			'tabid': $.CswCookie('get', CswCookieName.CurrentTabId),
 			'onBeforeTabSelect': function (tabid)
 			{

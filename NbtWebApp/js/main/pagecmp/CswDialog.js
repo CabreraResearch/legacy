@@ -157,6 +157,7 @@
 
 		'EditLayoutDialog': function (CswNodeTabOptions)
 						{
+							CswNodeTabOptions.ID = CswNodeTabOptions.ID + '_editlayout';
 							CswNodeTabOptions.Config = true;
 							CswNodeTabOptions.ShowAsReport = false;
 							CswNodeTabOptions.onTabSelect = function(tabid) {
@@ -239,9 +240,14 @@
 								});  // CswAjaxJson
 							} // _configAddOptions()
 
+							function _onclose()
+							{
+								CswNodeTabOptions.Refresh();
+							}
+
 							_resetLayout();
 
-							_openDiv($div, 900, 600);
+							_openDiv($div, 900, 600, _onclose);
 						},
 
 		'EditNodeDialog': function (options)
@@ -653,7 +659,7 @@
 	};
 
 
-	function _openDiv($div, width, height)
+	function _openDiv($div, width, height, onClose)
 	{
 		$('<div id="DialogErrorDiv" style="display: none;"></div>')
 			.prependTo($div);
@@ -663,6 +669,7 @@
 			'height': height,
 			'close': function (event, ui) { 
 				$div.remove(); 
+				if(isFunction(onClose)) onClose();
 			}
 		});
 	}
