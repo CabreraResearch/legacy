@@ -62,34 +62,34 @@ namespace ChemSW.Nbt.WebServices
 			else
 			{
 				CswNbtNode Node = _getNode( NodeId, NodeKey, Date );
-				switch( EditMode )
-				{
-					case NodeEditMode.AddInPopup:
+				//switch( EditMode )
+				//{
+				//    case NodeEditMode.AddInPopup:
 
-						CswNbtMetaDataNodeType NodeType = null;
-						if( NodeTypeId != Int32.MinValue )
-						{
-							NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-						}
-						else if( Node != null )
-						{
-							NodeType = Node.NodeType;
-						}
+				//        CswNbtMetaDataNodeType NodeType = null;
+				//        if( NodeTypeId != Int32.MinValue )
+				//        {
+				//            NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+				//        }
+				//        else if( Node != null )
+				//        {
+				//            NodeType = Node.NodeType;
+				//        }
 
-						if( NodeType != null && _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
-						{
-							_makeTab( Ret, "0", "newtab", "Add New " + NodeType.NodeTypeName, false );
-						}
-						break;
+				//        if( NodeType != null && _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
+				//        {
+				//            _makeTab( Ret, "0", "newtab", "Add New " + NodeType.NodeTypeName, false );
+				//        }
+				//        break;
 
-					case NodeEditMode.Preview:
-						if( Node != null )
-						{
-							_makeTab( Ret, "0", "previewtab", Node.NodeType.NodeTypeName, false );
-						}
-						break;
+				//    case NodeEditMode.Preview:
+				//        if( Node != null )
+				//        {
+				//            _makeTab( Ret, "0", "previewtab", Node.NodeType.NodeTypeName, false );
+				//        }
+				//        break;
 
-					default:
+				//    default:
 						if( Node != null )
 						{
 							foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs
@@ -110,8 +110,8 @@ namespace ChemSW.Nbt.WebServices
 							}
 
 						} // if( Node != null )
-						break;
-				} // switch(EditMode)
+				//        break;
+				//} // switch(EditMode)
 
 			} // if-else( filterToPropId != string.Empty )
 			return Ret;

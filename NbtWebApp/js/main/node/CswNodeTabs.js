@@ -73,6 +73,14 @@
 			$outertabdiv.contents().remove();
 		}
 
+		function makeTabContentDiv($parent, tabid, canEditLayout)
+		{
+			var $tabcontentdiv = $('<div id="' + tabid + '"><form onsubmit="return false;" id="' + tabid + '_form" /></div>')
+				.appendTo($parent);
+			$tabcontentdiv.data('canEditLayout', canEditLayout);
+			return $tabcontentdiv;
+		}
+
 		function getTabs()
 		{
 			var jsonData = {
@@ -83,67 +91,79 @@
 				Date: o.date,
 				filterToPropId: o.filterToPropId
 			};
-			CswAjaxJson({
-				url: o.TabsUrl,
-				data: jsonData,
-				success: function (data)
-				{
-				    clearTabs();
-					var tabdivs = [];
-					var selectedtabno = 0;
-					var tabno = 0;
 
-					for (var tabId in data) {
-					    if (data.hasOwnProperty(tabId)) {
-					        var thisTab = data[tabId];
-					        var thisTabId = thisTab.id;
-					        if (o.EditMode === 'PrintReport' || tabdivs.length === 0)
-					        {
-					            // For PrintReports, we're going to make a separate tabstrip for each tab
-					            tabdivs[tabdivs.length] = $("<div><ul></ul></div>").appendTo($outertabdiv);
-					        }
-					        var $tabdiv = tabdivs[tabdivs.length - 1];
-					        $tabdiv.children('ul').append('<li><a href="#' + thisTabId + '">' + thisTab.name + '</a></li>');
-					        var $tabcontentdiv = $('<div id="' + thisTabId + '"><form onsubmit="return false;" id="' + thisTabId + '_form" /></div>')
-    					        .appendTo($tabdiv);
-					        $tabcontentdiv.data('canEditLayout', thisTab.canEditLayout);
-					        if (thisTabId === o.tabid)
-					        {
-					            selectedtabno = tabno;
-					        }
-					        tabno++;
-					    }
-					} // for (var tabId in data) {
-
-					tabcnt = tabno;
-
-					for(var t in tabdivs)
+			// For performance, don't bother getting tabs if we're in Add or Preview
+			var tabdata = {};
+			if( o.EditMode == EditMode.AddInPopup.name || 
+				o.EditMode == EditMode.Preview.name )
+			{
+				var tabid = o.EditMode + "_tab";
+				var $tabcontentdiv = makeTabContentDiv($parent, tabid, false)
+				getProps($tabcontentdiv, tabid);
+			}
+			else
+			{
+				CswAjaxJson({
+					url: o.TabsUrl,
+					data: jsonData,
+					success: function (data)
 					{
-						var $tabdiv = tabdivs[t];
-						$tabdiv.tabs({
-							'selected': selectedtabno,
-							'select': function (event, ui)
-							{
-							    if (isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(tabid)) {
-									var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
-									var tabid = $tabcontentdiv.CswAttrDom('id');
-									getProps($tabcontentdiv, tabid);
-                                    if (isFunction(o.onTabSelect)) {
-                                        o.onTabSelect(tabid);
-                                    }
-							    } else {
-									return false;
-								}
-							}
-						});
-						var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
-						var selectedtabid = $tabcontentdiv.CswAttrDom('id');
-						getProps($tabcontentdiv, selectedtabid);
-						if (isFunction(o.onTabSelect)) o.onTabSelect(selectedtabid);
-					} // for(var t in tabdivs)
+						clearTabs();
+						var tabdivs = [];
+						var selectedtabno = 0;
+						var tabno = 0;
 
-				} // success{}
-			}); // ajax
+						for (var tabId in data) 
+						{
+							if (data.hasOwnProperty(tabId)) 
+							{
+								var thisTab = data[tabId];
+								var thisTabId = thisTab.id;
+								if (o.EditMode === 'PrintReport' || tabdivs.length === 0)
+								{
+									// For PrintReports, we're going to make a separate tabstrip for each tab
+									tabdivs[tabdivs.length] = $("<div><ul></ul></div>").appendTo($outertabdiv);
+								}
+								var $tabdiv = tabdivs[tabdivs.length - 1];
+								$tabdiv.children('ul').append('<li><a href="#' + thisTabId + '">' + thisTab.name + '</a></li>');
+								var $tabcontentdiv = makeTabContentDiv($tabdiv, thisTabId, thisTab.canEditLayout);
+								if (thisTabId === o.tabid)
+								{
+									selectedtabno = tabno;
+								}
+								tabno++;
+							}
+						} // for (var tabId in data) {
+
+						tabcnt = tabno;
+
+						for(var t in tabdivs)
+						{
+							var $tabdiv = tabdivs[t];
+							$tabdiv.tabs({
+								'selected': selectedtabno,
+								'select': function (event, ui)
+								{
+									if (isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(tabid)) {
+										var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
+										var tabid = $tabcontentdiv.CswAttrDom('id');
+										getProps($tabcontentdiv, tabid);
+										if (isFunction(o.onTabSelect)) {
+											o.onTabSelect(tabid);
+										}
+									} else {
+										return false;
+									}
+								}
+							});
+							var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
+							var selectedtabid = $tabcontentdiv.CswAttrDom('id');
+							getProps($tabcontentdiv, selectedtabid);
+							if (isFunction(o.onTabSelect)) o.onTabSelect(selectedtabid);
+						} // for(var t in tabdivs)
+					} // success
+				}); // ajax
+			} // if-else editmode is add or preview
 		} // getTabs()
 
 		function getProps($tabcontentdiv, tabid)
