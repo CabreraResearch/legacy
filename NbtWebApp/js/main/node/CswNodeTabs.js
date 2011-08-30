@@ -335,9 +335,12 @@
 
 
 					// case 8494
-					if (!AtLeastOneSaveable && o.EditMode == EditMode.AddInPopup.name) {
+					if (!o.Config && !AtLeastOneSaveable && o.EditMode == EditMode.AddInPopup.name) 
+					{
 						Save($form, $layouttable, data, $savetab, tabid);
-					} else if (isFunction(o.onInitFinish)) {
+					} 
+					else if (isFunction(o.onInitFinish)) 
+					{
 						o.onInitFinish();
 					}
 				} // success{}
