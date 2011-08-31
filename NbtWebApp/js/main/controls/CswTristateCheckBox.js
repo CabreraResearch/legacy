@@ -1,20 +1,22 @@
 /// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 
 	var PluginName = 'CswTristateCheckBox';
 
 	var methods = {
-		'init': function (options)
+		init: function (options)
 		{
 			var o = {
-				'ID': '',
-				'prefix': '',
-				'Checked': '',
-				'ReadOnly': false,
-				'Required': false,
-				'onchange': function() { }
+				ID: '',
+				prefix: '',
+				Checked: '',
+				ReadOnly: false,
+				Required: false,
+				onchange: function() { }
 			};
 			if(options) $.extend(o, options);
 
@@ -23,14 +25,14 @@
 			var elementId = makeId({prefix: o.prefix, ID: o.ID});
 			
 			//Case 21769
-			var tristateVal = tryParseString(o.Checked,"null").toLowerCase();
+			var tristateVal = (o.Required) ? tryParseString(o.Checked,"false").toLowerCase(): tryParseString(o.Checked,"null").toLowerCase();
 
 			if(o.ReadOnly)
 			{
 				switch(tristateVal)
 				{
-					case "true": $parent.append('Yes'); break;
-					case "false": $parent.append('No'); break;
+					case 'true': $parent.append('Yes'); break;
+					case 'false': $parent.append('No'); break;
 				}
 			} 
 			else 
@@ -38,8 +40,8 @@
 				var thisButtonType;
 				switch(tristateVal)
 				{
-					case "true": thisButtonType = CswImageButton_ButtonType.CheckboxTrue; break;
-					case "false": thisButtonType = CswImageButton_ButtonType.CheckboxFalse; break;
+					case 'true': thisButtonType = CswImageButton_ButtonType.CheckboxTrue; break;
+					case 'false': thisButtonType = CswImageButton_ButtonType.CheckboxFalse; break;
 					default: thisButtonType = CswImageButton_ButtonType.CheckboxNull; break;
 				}
 
