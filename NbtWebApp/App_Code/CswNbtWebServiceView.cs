@@ -504,7 +504,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.ObjectClass;
 
             CswStaticSelect RelationshipPropsSelect = _CswNbtResources.makeCswStaticSelect( "getRelationsForNodeTypeId_select", "getRelationsForNodeTypeId" );
-            RelationshipPropsSelect.S4Parameters.Add( "getnodetypeid", FirstVersionNodeType.NodeTypeId );
+            RelationshipPropsSelect.S4Parameters.Add( "getnodetypeid", new CswStaticParam( "getnodetypeid", FirstVersionNodeType.NodeTypeId ) );
             //RelationshipPropsQueryCaddy.S4Parameters.Add("getroleid", _CswNbtResources.CurrentUser.RoleId);
             DataTable RelationshipPropsTable = RelationshipPropsSelect.getTable();
 
@@ -635,7 +635,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
 
             CswStaticSelect RelationshipPropsSelect = _CswNbtResources.makeCswStaticSelect( "getRelationsForObjectClassId_select", "getRelationsForObjectClassId" );
-            RelationshipPropsSelect.S4Parameters.Add( "getobjectclassid", ObjectClassId );
+            RelationshipPropsSelect.S4Parameters.Add( "getobjectclassid", new CswStaticParam( "getobjectclassid", ObjectClassId ) );
             DataTable RelationshipPropsTable = RelationshipPropsSelect.getTable();
 
             foreach( DataRow PropRow in RelationshipPropsTable.Rows )

@@ -1,30 +1,20 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Data;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
-
-using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
 using ChemSW.CswWebControls;
 using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebPages
 {
     public partial class Statistics : System.Web.UI.Page
     {
-        public enum StatisticsDisplayMode 
+        public enum StatisticsDisplayMode
         {
             Schema,
             User
@@ -109,22 +99,22 @@ namespace ChemSW.Nbt.WebPages
                     AccessIdListBox.SelectionMode = ListSelectionMode.Multiple;
                     AccessIdListBox.Height = Unit.Parse( "300px" );
 
-					CswNbtMetaDataObjectClass CustomerOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
-					//CswNbtView CustomerView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
-					//ICswNbtTree CustomerTree = Master.CswNbtResources.Trees.getTreeFromView( CustomerView, true, true, false, false );
-					Collection<CswNbtNode> CustomerNodes = CustomerOC.getNodes(false, false);
+                    CswNbtMetaDataObjectClass CustomerOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
+                    //CswNbtView CustomerView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
+                    //ICswNbtTree CustomerTree = Master.CswNbtResources.Trees.getTreeFromView( CustomerView, true, true, false, false );
+                    Collection<CswNbtNode> CustomerNodes = CustomerOC.getNodes( false, false );
                     // Sort by Customer Name
                     SortedList CustomerList = new SortedList();
                     ArrayList AccessIds = new ArrayList( Master.CswNbtResources.CswDbCfgInfo.AccessIds );
-                    foreach ( string AccessId in AccessIds )
+                    foreach( string AccessId in AccessIds )
                     {
                         CswNbtNode CustomerNode = null;
-						//CustomerTree.goToRoot();
-						//for( int i = 0; i < CustomerTree.getChildNodeCount(); i++ )
-						//{
-						//    CustomerTree.goToNthChild( i );
-						foreach(CswNbtNode ThisCustomerNode in CustomerNodes)
-						{
+                        //CustomerTree.goToRoot();
+                        //for( int i = 0; i < CustomerTree.getChildNodeCount(); i++ )
+                        //{
+                        //    CustomerTree.goToNthChild( i );
+                        foreach( CswNbtNode ThisCustomerNode in CustomerNodes )
+                        {
                             //CswNbtNode ThisCustomerNode = CustomerTree.getNodeForCurrentPosition();
                             if( CswNbtNodeCaster.AsCustomer( ThisCustomerNode ).CompanyID.Text == AccessId )
                             {
@@ -163,17 +153,17 @@ namespace ChemSW.Nbt.WebPages
                     UserIdListBox.SelectionMode = ListSelectionMode.Multiple;
                     UserIdListBox.Height = Unit.Parse( "300px" );
 
-					//CswNbtView UserView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-					//ICswNbtTree UserTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, true, true, false, false );
+                    //CswNbtView UserView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                    //ICswNbtTree UserTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, true, true, false, false );
 
-					//UserTree.goToRoot();
-					//for( int i = 0; i < UserTree.getChildNodeCount(); i++ )
-					//{
-					//    UserTree.goToNthChild( i );
-					//    CswNbtNode ThisUserNode = UserTree.getNodeForCurrentPosition();
-					CswNbtMetaDataObjectClass UserOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass);
-					foreach(CswNbtNode ThisUserNode in UserOC.getNodes(false, false))
-					{
+                    //UserTree.goToRoot();
+                    //for( int i = 0; i < UserTree.getChildNodeCount(); i++ )
+                    //{
+                    //    UserTree.goToNthChild( i );
+                    //    CswNbtNode ThisUserNode = UserTree.getNodeForCurrentPosition();
+                    CswNbtMetaDataObjectClass UserOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                    foreach( CswNbtNode ThisUserNode in UserOC.getNodes( false, false ) )
+                    {
                         UserIdListBox.Items.Add( new ListItem( ThisUserNode.NodeName, ThisUserNode.NodeId.PrimaryKey.ToString() ) );
                         //UserTree.goToParentNode();
                     }
@@ -239,9 +229,9 @@ namespace ChemSW.Nbt.WebPages
                 // If you want to change the display order of rows, here's where you do it.
                 Int32 i = 0;
                 RowHash = new Hashtable();
-                if( _NbtMgrEnabled || _DisplayMode == StatisticsDisplayMode.User) 
+                if( _NbtMgrEnabled || _DisplayMode == StatisticsDisplayMode.User )
                     RowHash.Add( NameRowName, i++ );
-                if(_DisplayMode == StatisticsDisplayMode.User)
+                if( _DisplayMode == StatisticsDisplayMode.User )
                     RowHash.Add( UserIdRowName, i++ );
                 RowHash.Add( AccessIdRowName, i++ );
                 RowHash.Add( LastLogoutRowName, i++ );
@@ -254,7 +244,7 @@ namespace ChemSW.Nbt.WebPages
                 RowHash.Add( TotalSessionsRowName, i++ );
                 RowHash.Add( AverageServerTimeRowName, i++ );
                 RowHash.Add( AverageSessionLengthRowName, i++ );
-                if( _DisplayMode == StatisticsDisplayMode.Schema ) 
+                if( _DisplayMode == StatisticsDisplayMode.Schema )
                     RowHash.Add( MostSessionsPerUserRowName, i++ );
                 if( _DisplayMode == StatisticsDisplayMode.Schema )
                     RowHash.Add( TotalNodesRowName, i++ );
@@ -270,7 +260,7 @@ namespace ChemSW.Nbt.WebPages
                 RowHash.Add( NodesCopiedCountRowName, i++ );
                 RowHash.Add( NodesDeletedCountRowName, i++ );
                 RowHash.Add( ErrorsRowName, i++ );
-                if( _DisplayMode == StatisticsDisplayMode.Schema ) 
+                if( _DisplayMode == StatisticsDisplayMode.Schema )
                     RowHash.Add( SwitchModeRowName, i++ );
 
                 // First Column
@@ -283,7 +273,7 @@ namespace ChemSW.Nbt.WebPages
                 }
 
                 DateTime StartDate = DateTime.Now.AddMonths( -1 * CswConvert.ToInt32( TimeList.SelectedValue ) );
-                DateTime EndDate = DateTime.Now.AddDays(1);   // EndDate = tomorrow will include today's data
+                DateTime EndDate = DateTime.Now.AddDays( 1 );   // EndDate = tomorrow will include today's data
 
                 // Data Columns
                 Int32 aggregatecol = 1;
@@ -294,7 +284,7 @@ namespace ChemSW.Nbt.WebPages
                     {
 
                         ArrayList AccessIds = new ArrayList( Master.CswNbtResources.CswDbCfgInfo.AccessIds );
-                        foreach ( string AccessId in AccessIds )
+                        foreach( string AccessId in AccessIds )
                         {
                             ListItem AccessIdItem = AccessIdListBox.Items.FindByValue( AccessId );
                             if( AccessIdItem != null && AccessIdItem.Selected )
@@ -422,8 +412,8 @@ namespace ChemSW.Nbt.WebPages
             else
             {
                 NodesSelect = Master.CswNbtResources.makeCswTableSelect( "totalnodes_select", "nodes" );
-				CswNbtMetaDataObjectClass UserOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-				UserView = UserOC.CreateDefaultView(); // Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                UserView = UserOC.CreateDefaultView(); // Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                 UserTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, true, true, false, false );
             }
 
@@ -459,8 +449,8 @@ namespace ChemSW.Nbt.WebPages
                 TotalNodes = NodesSelect.getRecordCount();
                 UserCount = UserTree.getChildNodeCount();
 
-                SimultaneousUsageSelect.S4Parameters.Add( "getbeforedate", Master.CswNbtResources.getDbNativeDate( EndDate ) );
-                SimultaneousUsageSelect.S4Parameters.Add( "getafterdate", Master.CswNbtResources.getDbNativeDate( StartDate ) );
+                SimultaneousUsageSelect.S4Parameters.Add( "getbeforedate", new CswStaticParam( "getbeforedate", Master.CswNbtResources.getDbNativeDate( EndDate ), true ) );
+                SimultaneousUsageSelect.S4Parameters.Add( "getbeforedate", new CswStaticParam( "getbeforedate", Master.CswNbtResources.getDbNativeDate( StartDate ), true ) );
                 DataTable SimultaneousUsageTable = SimultaneousUsageSelect.getTable();
                 //PeakUsers = CswConvert.ToInt32( SimultaneousUsageTable.Rows[0]["maxcnt"] );
                 _getPeakSimultaneousUsers( SimultaneousUsageTable, out PeakUsers, out PeakUsersCount );
@@ -492,7 +482,7 @@ namespace ChemSW.Nbt.WebPages
                     else
                         SessionsPerUserHash[ThisUserID] = 1;
                 }
-                
+
                 if( StatRow["count_actionloads"] != null && StatRow["count_actionloads"].ToString() != string.Empty )
                     ActionLoadsCount += CswConvert.ToInt32( StatRow["count_actionloads"] );
                 if( StatRow["count_multiedit"] != null && StatRow["count_multiedit"].ToString() != string.Empty )
@@ -584,10 +574,10 @@ namespace ChemSW.Nbt.WebPages
             {
                 _displayDataColumn( AutoTable, ColumnNo, true, ( LimitToUserId == null ), StartDate, EndDate,
                                    LimitToUserId, UserName, CustomerNodeId, CustomerName, AccessId, LastLogout,
-                                   TotalNodes, UserCount, MostSessions, MostSessionsUserName, TotalSessions, 
+                                   TotalNodes, UserCount, MostSessions, MostSessionsUserName, TotalSessions,
                                    PeakUsers, PeakUsersCount, UserLimit,
                                    AverageServerTime, AverageSessionTime, ActionLoadsCount, MultiEditCount,
-                                   ReportRunsCount, ViewsLoadCount, ViewsEditedCount, SearchesLoadCount, 
+                                   ReportRunsCount, ViewsLoadCount, ViewsEditedCount, SearchesLoadCount,
                                    ViewFilterMods,
                                    NodesSavedCount, NodesAddedCount,
                                    NodesCopiedCount, NodesDeletedCount, Errors );
@@ -642,10 +632,10 @@ namespace ChemSW.Nbt.WebPages
 
         private void _displayDataColumn( CswAutoTable AutoTable, Int32 ColumnNo, bool ShowPopupLinks, bool ShowModeLink, DateTime StartDate, DateTime EndDate,
                                         CswPrimaryKey LimitToUserId, string UserName, CswPrimaryKey CustomerNodeId, string CustomerName, string AccessId, DateTime LastLogout,
-                                        Int32 TotalNodes, Int32 UserCount, Int32 MostSessions, string MostSessionsUserName, Int32 TotalSessions, 
+                                        Int32 TotalNodes, Int32 UserCount, Int32 MostSessions, string MostSessionsUserName, Int32 TotalSessions,
                                         Int32 PeakUsers, Int32 PeakUsersCount, Int32 UserLimit,
                                         double AverageServerTime, TimeSpan AverageSessionTime, Int32 ActionLoadsCount,
-                                        Int32 MultiEditCount, Int32 ReportRunsCount, Int32 ViewsLoadCount, Int32 ViewsEditedCount, Int32 SearchesLoadCount, 
+                                        Int32 MultiEditCount, Int32 ReportRunsCount, Int32 ViewsLoadCount, Int32 ViewsEditedCount, Int32 SearchesLoadCount,
                                         Int32 ViewFilterMods, Int32 NodesSavedCount, Int32 NodesAddedCount,
                                         Int32 NodesCopiedCount, Int32 NodesDeletedCount, Int32 Errors )
         {

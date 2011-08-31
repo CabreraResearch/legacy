@@ -237,8 +237,8 @@ namespace ChemSW.Nbt
                 //else
                 //{
                 CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
-                ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
-                ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
+                ViewsSelect.S4Parameters.Add( "getroleid", new CswStaticParam( "getroleid", User.RoleId.PrimaryKey.ToString() ) );
+                ViewsSelect.S4Parameters.Add( "getuserid", new CswStaticParam( "getuserid", User.UserId.PrimaryKey.ToString() ) );
                 string AddClause = " ";
                 if( MobileOnly )
                 {
@@ -252,11 +252,15 @@ namespace ChemSW.Nbt
                 {
                     AddClause += "and nodeviewid in (" + LimitToViews.ToString() + ")";
                 }
-                ViewsSelect.S4Parameters.Add( "addclause", AddClause );
+                ViewsSelect.S4Parameters.Add( "addclause", new CswStaticParam( "addclause", AddClause ) );
                 if( OrderBy != string.Empty )
-                    ViewsSelect.S4Parameters.Add( "orderbyclause", OrderBy );
+                {
+                    ViewsSelect.S4Parameters.Add( "orderbyclause", new CswStaticParam( "orderbyclause", OrderBy ) );
+                }
                 else
-                    ViewsSelect.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );
+                {
+                    ViewsSelect.S4Parameters.Add( "orderbyclause", new CswStaticParam( "orderbyclause", "lower(v.viewname)" ) );
+                }
                 ViewsTable = ViewsSelect.getTable();
 
                 _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() data fetched", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
@@ -296,7 +300,7 @@ namespace ChemSW.Nbt
         public DataTable getUserViews()
         {
             CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getUserViews_select", "getUserViewInfo" );
-            ViewsSelect.S4Parameters.Add( "getuserid", _CswNbtResources.CurrentUser.UserId.PrimaryKey.ToString() );
+            ViewsSelect.S4Parameters.Add( "getuserid", new CswStaticParam( "getuserid", _CswNbtResources.CurrentUser.UserId.PrimaryKey.ToString() ) );
             return ViewsSelect.getTable();
         }
 
