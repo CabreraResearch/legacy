@@ -218,23 +218,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _Views == null )
+
+                Collection<CswNbtView> QuickLaunchViews = new Collection<CswNbtView>();
+                if( NodeId != null )
                 {
-                    if( NodeId != null )
-                    {
-                        // Use the User's visible, quicklaunch views
-                        CswCommaDelimitedString ViewIds = new CswCommaDelimitedString( SelectedViewIds.Count, true );
-                        ViewIds.FromDelimitedString( SelectedViewIds );
-                        _Views = _CswNbtResources.ViewSelect.getVisibleViews( User, false, ViewIds );
-                    }
-                    else
-                    {
-                        // else 
-                        // Creating a new user, don't pick a default view (BZ 7055)
-                        _Views = new Collection<CswNbtView>();
-                    }
+                    // Use the User's visible, quicklaunch views
+                    CswCommaDelimitedString ViewIds = new CswCommaDelimitedString( SelectedViewIds.Count, true );
+                    ViewIds.FromDelimitedString( SelectedViewIds );
+                    QuickLaunchViews = _CswNbtResources.ViewSelect.getVisibleViews( User, false, ViewIds );
                 }
-                return _Views;
+                return QuickLaunchViews;
             }
         }
 
