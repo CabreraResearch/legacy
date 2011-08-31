@@ -30,9 +30,9 @@ namespace ChemSW.LogTester
 			_MessageCount = MessageCount;
 
 			_CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt,
-																			new CswSetupVblsNbt( SetupMode.Executable ),
-																			new CswDbCfgInfoNbt( SetupMode.Executable ),
-																			CswTools.getConfigurationFilePath( SetupMode.Executable ),
+                                                                            new CswSetupVblsNbt( SetupMode.NbtExe ),
+                                                                            new CswDbCfgInfoNbt( SetupMode.NbtExe ),
+																			CswTools.getConfigurationFilePath( SetupMode.NbtExe ),
 																			true,
 																			false );
 			_CswLogger = _CswNbtResources.CswLogger;

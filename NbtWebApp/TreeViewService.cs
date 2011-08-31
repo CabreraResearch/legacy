@@ -32,7 +32,7 @@ public class TreeViewService : System.Web.Services.WebService
     {
         //        CswNbtSession CswSessionWeb = new CswNbtSession( Context.Application, Context.Session, Context.Request, Context.Response );
 
-        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
+        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.NbtWeb );
         CswNbtResources = CswInitialization.CswNbtResources;
         //        CswSessionWeb.CswNbtResources = CswNbtResources;
 
