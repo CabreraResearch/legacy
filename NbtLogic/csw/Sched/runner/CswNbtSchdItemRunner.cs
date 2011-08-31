@@ -133,8 +133,8 @@ namespace ChemSW.Nbt.Sched
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler( GlobalExceptionHandler );
             //*** Main resource objects
             _Path = Application.StartupPath + "\\..\\etc";
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Executable );
-            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Executable  );
+            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe );
+            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
 
             _SessionAccessIds.Clear();
             foreach( string CurrentAccessId in _CswDbCfgInfoNbt.AccessIds )
@@ -204,7 +204,7 @@ namespace ChemSW.Nbt.Sched
 
             //_CswNbtObjClassFactory = new CswNbtObjClassFactory();
             //_CswNbtResources = new CswNbtResources( AppType.Sched, _CswSetupVblsNbt, _CswDbCfgInfoNbt, true, false );
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Sched, _CswSetupVblsNbt, _CswDbCfgInfoNbt , CswTools.getConfigurationFilePath( SetupMode.Executable ), true, false ); 
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Sched, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.NbtExe ), true, false ); 
 
             _CswNbtResources.SetDbResources( new CswNbtTreeFactory( _Path ) );
 
