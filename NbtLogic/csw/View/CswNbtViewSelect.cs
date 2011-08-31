@@ -246,7 +246,7 @@ namespace ChemSW.Nbt
             {
                 AddClause += "and viewmode = '" + ViewRenderingMode.ToString() + "'";
             }
-            if( null != LimitToViews && LimitToViews.Count > 0 )
+            if( null != LimitToViews )
             {
                 AddClause += "and nodeviewid in (" + LimitToViews.ToString() + ")";
             }
