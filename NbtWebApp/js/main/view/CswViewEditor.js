@@ -95,6 +95,7 @@
         var $selview_span = $('<span id="' + o.ID + '_selviewname" style="font-weight: bold"></span>')
             .appendTo($div1);
         var cswViewGrid;
+        var rowid;
         var $viewgrid;
         function onViewGridSuccess($vg) {
             $viewgrid = $vg;
@@ -125,7 +126,7 @@
                 'enabledText': 'Copy View',
                 'disableOnClick': true,
                 'onclick': function() {
-                    var viewid = _getSelectedViewId($viewgrid);
+                    var viewid = _getSelectedViewId();
                     if (!isNullOrEmpty(viewid))
                     {
                         var dataJson = {
@@ -474,11 +475,12 @@
                                 autowidth: true,
                                 height: 180,
                                 onSelectRow: function(id, selected) {
+                                    rowid = id;
                                     if (selected)
                                     {
                                         $copyviewbtn.CswButton('enable');
                                         $deleteviewbtn.CswButton('enable');
-                                        $selview_span.text(_getSelectedViewName(cswViewGrid.$gridTable));
+                                        $selview_span.text(_getSelectedViewName(id, cswViewGrid.$gridTable));
                                         $wizard.CswWizard('button', 'next', 'enable');
                                     }
                                     else
@@ -500,7 +502,7 @@
 
                         if (!isNullOrEmpty(gridJson.selectedpk))
                         {
-                            var rowid = cswViewGrid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
+                            rowid = cswViewGrid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
                             cswViewGrid.setSelection(rowid);
                             cswViewGrid.scrollToRow(rowid);
                         }
@@ -531,11 +533,11 @@
             return ret;
         }
 
-        function _getSelectedViewName()
+        function _getSelectedViewName(rowid)
         {
             var ret = '';
             if (o.startingStep === 1) {
-                ret = cswViewGrid.getValueForColumn(o.ColumnViewName);
+                ret = cswViewGrid.getValueForColumn(o.ColumnViewName, rowid);
             } else {
                 ret = o.viewname;
             }
