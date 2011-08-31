@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtNode //: System.IEquatable<CswNbtNode>
     {
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
-        public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy );
+		public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation );
         public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );
         public delegate void OnRequestFillHandler( CswNbtNode Node, DateTime Date );
         public delegate void OnRequestFillFromNodeTypeIdHandler( CswNbtNode Node, Int32 NodeTypeId );
@@ -457,10 +457,10 @@ namespace ChemSW.Nbt.ObjClasses
         //bz # 5943
         public void postChanges( bool ForceUpdate )
         {
-            postChanges( ForceUpdate, false );
+            postChanges( ForceUpdate, false, false );
         }
 
-        public void postChanges( bool ForceUpdate, bool IsCopy )
+		public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false )
         {
             if( NodeModificationState.Modified == ModificationState || ForceUpdate )
             {
@@ -471,12 +471,12 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != _CswNbtObjClass )
                 {
                     if( IsNew )
-                        _CswNbtObjClass.beforeCreateNode();
+						_CswNbtObjClass.beforeCreateNode( OverrideUniqueValidation );
                     else
-                        _CswNbtObjClass.beforeWriteNode();
+						_CswNbtObjClass.beforeWriteNode( OverrideUniqueValidation );
                 }
 
-                OnRequestWriteNode( this, ForceUpdate, IsCopy );
+				OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation );
 
                 if( null != _CswNbtObjClass )
                 {
