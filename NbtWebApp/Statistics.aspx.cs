@@ -450,7 +450,7 @@ namespace ChemSW.Nbt.WebPages
                 UserCount = UserTree.getChildNodeCount();
 
                 SimultaneousUsageSelect.S4Parameters.Add( "getbeforedate", new CswStaticParam( "getbeforedate", Master.CswNbtResources.getDbNativeDate( EndDate ), true ) );
-                SimultaneousUsageSelect.S4Parameters.Add( "getbeforedate", new CswStaticParam( "getbeforedate", Master.CswNbtResources.getDbNativeDate( StartDate ), true ) );
+                SimultaneousUsageSelect.S4Parameters.Add( "getafterdate", new CswStaticParam( "getafterdate", Master.CswNbtResources.getDbNativeDate( StartDate ), true ) );
                 DataTable SimultaneousUsageTable = SimultaneousUsageSelect.getTable();
                 //PeakUsers = CswConvert.ToInt32( SimultaneousUsageTable.Rows[0]["maxcnt"] );
                 _getPeakSimultaneousUsers( SimultaneousUsageTable, out PeakUsers, out PeakUsersCount );
