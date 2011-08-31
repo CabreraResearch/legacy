@@ -1,7 +1,7 @@
 ;(function($){
 /**
  * jqGrid Spanish Translation
- * Traduccion jqGrid en Español por Yamil Bracho
+ * Traduccion jqGrid en EspaÃ±ol por Yamil Bracho
  * Traduccion corregida y ampliada por Faserline, S.L. 
  * http://www.faserline.com
  * Dual licensed under the MIT and GPL licenses:
@@ -13,13 +13,13 @@ $.jgrid = {
 		recordtext: "Mostrando {0} - {1} de {2}",
 	    emptyrecords: "Sin registros que mostrar",
 		loadtext: "Cargando...",
-		pgtext : "Página {0} de {1}"
+		pgtext : "PÃ¡gina {0} de {1}"
 	},
 	search : {
-	    caption: "Búsqueda...",
+	    caption: "BÃºsqueda...",
 	    Find: "Buscar",
 	    Reset: "Limpiar",
-	    odata : ['igual ', 'no igual a', 'menor que', 'menor o igual que','mayor que','mayor o igual a', 'empiece por','no empiece por','está en','no está en','termina por','no termina por','contiene','no contiene'],
+	    odata : ['igual ', 'no igual a', 'menor que', 'menor o igual que','mayor que','mayor o igual a', 'empiece por','no empiece por','estÃ¡ en','no estÃ¡ en','termina por','no termina por','contiene','no contiene'],
 	    groupOps: [	{ op: "AND", text: "todo" },	{ op: "OR",  text: "cualquier" }	],
 		matchText: " match",
 		rulesText: " reglas"
@@ -30,23 +30,23 @@ $.jgrid = {
 	    bSubmit: "Guardar",
 	    bCancel: "Cancelar",
 		bClose: "Cerrar",
-		saveData: "Se han modificado los datos, ¿guardar cambios?",
+		saveData: "Se han modificado los datos, Â¿guardar cambios?",
 		bYes : "Si",
 		bNo : "No",
 		bExit : "Cancelar",
 	    msg: {
 	        required:"Campo obligatorio",
-	        number:"Introduzca un número",
+	        number:"Introduzca un nÃºmero",
 	        minValue:"El valor debe ser mayor o igual a ",
 	        maxValue:"El valor debe ser menor o igual a ",
-	        email: "no es una dirección de correo válida",
+	        email: "no es una direcciÃ³n de correo vÃ¡lida",
 	        integer: "Introduzca un valor entero",
 			date: "Introduza una fecha correcta ",
-			url: "no es una URL válida. Prefijo requerido ('http://' or 'https://')",
-			nodefined : " no está definido.",
+			url: "no es una URL vÃ¡lida. Prefijo requerido ('http://' or 'https://')",
+			nodefined : " no estÃ¡ definido.",
 			novalue : " valor de retorno es requerido.",
-			customarray : "La función personalizada debe devolver un array.",
-			customfcheck : "La función personalizada debe estar presente en el caso de validación personalizada."
+			customarray : "La funciÃ³n personalizada debe devolver un array.",
+			customfcheck : "La funciÃ³n personalizada debe estar presente en el caso de validaciÃ³n personalizada."
 		}
 	},
 	view : {
@@ -55,7 +55,7 @@ $.jgrid = {
 	},
 	del : {
 	    caption: "Eliminar",
-	    msg: "¿Desea eliminar los registros seleccionados?",
+	    msg: "Â¿Desea eliminar los registros seleccionados?",
 	    bSubmit: "Eliminar",
 	    bCancel: "Cancelar"
 	},
@@ -67,7 +67,7 @@ $.jgrid = {
 	    deltext: " ",
 	    deltitle: "Eliminar fila seleccionada",
 	    searchtext: " ",
-	    searchtitle: "Buscar información",
+	    searchtitle: "Buscar informaciÃ³n",
 	    refreshtext: "",
 	    refreshtitle: "Recargar datos",
 	    alertcap: "Aviso",

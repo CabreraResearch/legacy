@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -16,14 +16,16 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var selectedNodeId = tryParseString(o.propData.nodeid).trim();
+                var propVals = o.propData.values;
+                
+                var selectedNodeId = tryParseString(propVals.nodeid).trim();
                 if (!isNullOrEmpty(o.relatednodeid) && isNullOrEmpty(selectedNodeId)) {
                     selectedNodeId = o.relatednodeid;
                 }
-                var selectedName = tryParseString(o.propData.name).trim();
-                var nodeTypeId = tryParseString(o.propData.nodetypeid).trim();
-                var allowAdd = isTrue(o.propData.allowadd);
-                var options = o.propData.options;
+                var selectedName = tryParseString(propVals.name).trim();
+                var nodeTypeId = tryParseString(propVals.nodetypeid).trim();
+                var allowAdd = isTrue(propVals.allowadd);
+                var options = propVals.options;
 
                 if(o.ReadOnly) {
                     $Div.append(selectedName);
@@ -67,7 +69,7 @@
             },
             save: function(o) {
                     var $SelectBox = o.$propdiv.find('select');
-                    o.propData.nodeid = $SelectBox.val();
+                    o.propData.values.nodeid = $SelectBox.val();
                 }
         };
     

@@ -8,7 +8,7 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
- * $Date: 2010-07-01 10:51:11 +0300 (четв, 01 юли 2010) $
+ * $Date: 2010-07-01 10:51:11 +0300 (Ñ‡ÐµÑ‚Ð², 01 ÑŽÐ»Ð¸ 2010) $
  * $Revision: 191 $
  */
 

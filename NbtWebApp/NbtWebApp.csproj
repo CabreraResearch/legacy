@@ -106,10 +106,14 @@
     <Content Include="Act_Receiving.aspx" />
     <Content Include="Act_SplitSamples.aspx" />
     <Compile Include="App_Code\CswNbtWebServiceAuditing.cs" />
+    <Compile Include="App_Code\CswNbtWebServiceImportInspectionQuestions.cs" />
     <Compile Include="App_Code\CswNbtWebServiceInspections.cs" />
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="js\main\actions\CswImportInspectionQuestions.js" />
+    <Content Include="js\main\controls\CswGrid.js" />
+    <Content Include="MainFooter.html" />
     <Content Include="js\globals\CswGlobalTools.js" />
     <Content Include="js\main\controls\CswDateTimePicker.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeNFPA.js" />
@@ -119,6 +123,7 @@
     <Content Include="js\globals\CswEnums.js" />
     <Content Include="js\main\tools\CswProfileMethod.js" />
     <Content Include="js\mobile\controls\CswMobileListView.js" />
+    <Content Include="js\actions\CswImportInspectionQuestions.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeMultiList.js" />
     <Content Include="js\mobile\globals\CswMobileEnums.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeBarcode.js" />
@@ -1132,7 +1137,6 @@
     <Content Include="Main.js" />
     <Content Include="Mobile.html" />
     <Content Include="Mobile_Includes.html" />
-    <Content Include="MainFooter.html" />
     <Content Include="MainHeader.html" />
     <Content Include="MainIncludes.html" />
     <Content Include="Main.html" />

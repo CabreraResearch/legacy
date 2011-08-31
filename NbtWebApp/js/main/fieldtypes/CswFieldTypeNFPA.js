@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -12,11 +12,11 @@
         init: function(o) {
 
             var $Div = $(this);
-
-			var red = o.propData.flammability;
-			var yellow = o.propData.reactivity;
-			var blue = o.propData.health;
-			var white = o.propData.special;
+            var propVals = o.propData.values;
+			var red = propVals.flammability;
+			var yellow = propVals.reactivity;
+			var blue = propVals.health;
+			var white = propVals.special;
 
 			var $outertable = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
@@ -113,11 +113,12 @@
             } // if(!o.ReadOnly)
         },
         save: function(o) {
-				o.propData.flammability = o.$propdiv.find('#' + o.ID + '_red').val();
-				o.propData.reactivity = o.$propdiv.find('#' + o.ID + '_yellow').val();
-				o.propData.health = o.$propdiv.find('#' + o.ID + '_blue').val();
-				o.propData.special = o.$propdiv.find('#' + o.ID + '_white').val();
-            }
+			var propVals = o.propData.values;	
+            propVals.flammability = o.$propdiv.find('#' + o.ID + '_red').val();
+			propVals.reactivity = o.$propdiv.find('#' + o.ID + '_yellow').val();
+			propVals.health = o.$propdiv.find('#' + o.ID + '_blue').val();
+			propVals.special = o.$propdiv.find('#' + o.ID + '_white').val();
+        }
     };
     
     // Method calling logic

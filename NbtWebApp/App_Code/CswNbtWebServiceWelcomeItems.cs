@@ -120,10 +120,17 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
                             if( null != ThisView && ThisView.IsFullyEnabled() )
                             {
+                                    // FogBugz case 9552, Keith Baldwin 7/27/2011
                                 LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
+                                    ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView(ThisView, false, true, false, false);
+                                    if (null != CswNbtTree)
+                                    {
+                                        LinkText += " (" + CswNbtTree.getChildNodeCount().ToString() + ")";
+                                    }
                                 ItemObj.Add( new JProperty( "viewid", new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString() ) );
                                 ItemObj.Add( new JProperty( "viewmode", ThisView.ViewMode.ToString().ToLower() ) );
                                 ItemObj.Add( new JProperty( "type", "view" ) );
+
                             }
                         }
                         if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )

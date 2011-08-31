@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -9,16 +9,16 @@
     var pluginName = 'CswFieldTypeNumber';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function(o) {
 
             var $Div = $(this);
-
+            var propVals = o.propData.values;
 			var $NumberTextBox = $Div.CswNumberTextBox({
 				ID: o.ID,
-				Value: tryParseString(o.propData.value).trim(),
-				MinValue: tryParseString(o.propData.minvalue),
-				MaxValue: tryParseString(o.propData.maxvalue),
-				Precision: tryParseString(o.propData.precision),
+				Value: tryParseString(propVals.value).trim(),
+				MinValue: tryParseString(propVals.minvalue),
+				MaxValue: tryParseString(propVals.maxvalue),
+				Precision: tryParseString(propVals.precision),
 				ReadOnly: isTrue(o.ReadOnly),
 				Required: isTrue(o.Required),
 				onchange: o.onchange
@@ -30,7 +30,7 @@
 			}
         },
         save: function(o) { //$propdiv, $xml
-				o.propData.value = o.$propdiv.CswNumberTextBox('value', o.ID);
+				o.propData.values.value = o.$propdiv.CswNumberTextBox('value', o.ID);
             }
     };
     

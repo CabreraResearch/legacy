@@ -9,82 +9,82 @@
 **/
 $.jgrid = {
 	defaults : {
-		recordtext: "Peržiūrima {0} - {1} iš {2}",
-		emptyrecords: "Įrašų nėra",
+		recordtext: "PerÅ¾iÅ«rima {0} - {1} iÅ¡ {2}",
+		emptyrecords: "Ä®raÅ¡Å³ nÄ—ra",
 		loadtext: "Kraunama...",
-		pgtext : "Puslapis {0} iš {1}"
+		pgtext : "Puslapis {0} iÅ¡ {1}"
 	},
 	search : {
-		caption: "Paieška...",
-		Find: "Ieškoti",
+		caption: "PaieÅ¡ka...",
+		Find: "IeÅ¡koti",
 		Reset: "Atstatyti",
-		odata : ['lygu', 'nelygu', 'mažiau', 'mažiau arba lygu','daugiau','daugiau arba lygu', 'prasideda','neprasideda','reikšmė yra','reikšmės nėra','baigiasi','nesibaigia','yra sudarytas','nėra sudarytas'],
+		odata : ['lygu', 'nelygu', 'maÅ¾iau', 'maÅ¾iau arba lygu','daugiau','daugiau arba lygu', 'prasideda','neprasideda','reikÅ¡mÄ— yra','reikÅ¡mÄ—s nÄ—ra','baigiasi','nesibaigia','yra sudarytas','nÄ—ra sudarytas'],
 		groupOps: [	{ op: "AND", text: "visi" },	{ op: "OR",  text: "bet kuris" }	],
 		matchText: " match",
 		rulesText: " rules"
 	},
 	edit : {
-		addCaption: "Sukurti įrašą",
-		editCaption: "Redaguoti įrašą",
-		bSubmit: "Išsaugoti",
-		bCancel: "Atšaukti",
-		bClose: "Uždaryti",
-		saveData: "Duomenys buvo pakeisti! Išsaugoti pakeitimus?",
+		addCaption: "Sukurti Ä¯raÅ¡Ä…",
+		editCaption: "Redaguoti Ä¯raÅ¡Ä…",
+		bSubmit: "IÅ¡saugoti",
+		bCancel: "AtÅ¡aukti",
+		bClose: "UÅ¾daryti",
+		saveData: "Duomenys buvo pakeisti! IÅ¡saugoti pakeitimus?",
 		bYes : "Taip",
 		bNo : "Ne",
-		bExit : "Atšaukti",
+		bExit : "AtÅ¡aukti",
 		msg: {
 			required:"Privalomas laukas",
-			number:"Įveskite tinkamą numerį",
-			minValue:"reikšmė turi būti didesnė arba lygi ",
-			maxValue:"reikšmė turi būti mažesnė arba lygi",
-			email: "neteisingas el. pašto adresas",
-			integer: "Įveskite teisingą sveikąjį skaičių",
-			date: "Įveskite teisingą datą",
-			url: "blogas adresas. Nepamirškite pridėti ('http://' arba 'https://')",
-			nodefined : " nėra apibrėžta!",
-			novalue : " turi būti gražinama kokia nors reikšmė!",
-			customarray : "Custom f-ja turi grąžinti masyvą!",
-			customfcheck : "Custom f-ja tūrėtų būti sukurta, prieš bandant ją naudoti!"
+			number:"Ä®veskite tinkamÄ… numerÄ¯",
+			minValue:"reikÅ¡mÄ— turi bÅ«ti didesnÄ— arba lygi ",
+			maxValue:"reikÅ¡mÄ— turi bÅ«ti maÅ¾esnÄ— arba lygi",
+			email: "neteisingas el. paÅ¡to adresas",
+			integer: "Ä®veskite teisingÄ… sveikÄ…jÄ¯ skaiÄiÅ³",
+			date: "Ä®veskite teisingÄ… datÄ…",
+			url: "blogas adresas. NepamirÅ¡kite pridÄ—ti ('http://' arba 'https://')",
+			nodefined : " nÄ—ra apibrÄ—Å¾ta!",
+			novalue : " turi bÅ«ti graÅ¾inama kokia nors reikÅ¡mÄ—!",
+			customarray : "Custom f-ja turi grÄ…Å¾inti masyvÄ…!",
+			customfcheck : "Custom f-ja tÅ«rÄ—tÅ³ bÅ«ti sukurta, prieÅ¡ bandant jÄ… naudoti!"
 			
 		}
 	},
 	view : {
-		caption: "Peržiūrėti įrašus",
-		bClose: "Uždaryti"
+		caption: "PerÅ¾iÅ«rÄ—ti Ä¯raÅ¡us",
+		bClose: "UÅ¾daryti"
 	},
 	del : {
-		caption: "Ištrinti",
-		msg: "Ištrinti pažymėtus įrašus(-ą)?",
-		bSubmit: "Ištrinti",
-		bCancel: "Atšaukti"
+		caption: "IÅ¡trinti",
+		msg: "IÅ¡trinti paÅ¾ymÄ—tus Ä¯raÅ¡us(-Ä…)?",
+		bSubmit: "IÅ¡trinti",
+		bCancel: "AtÅ¡aukti"
 	},
 	nav : {
 		edittext: "",
-		edittitle: "Redaguoti pažymėtą eilutę",
+		edittitle: "Redaguoti paÅ¾ymÄ—tÄ… eilutÄ™",
 		addtext:"",
-		addtitle: "Pridėti naują eilutę",
+		addtitle: "PridÄ—ti naujÄ… eilutÄ™",
 		deltext: "",
-		deltitle: "Ištrinti pažymėtą eilutę",
+		deltitle: "IÅ¡trinti paÅ¾ymÄ—tÄ… eilutÄ™",
 		searchtext: "",
-		searchtitle: "Rasti įrašus",
+		searchtitle: "Rasti Ä¯raÅ¡us",
 		refreshtext: "",
-		refreshtitle: "Perkrauti lentelę",
-		alertcap: "Įspėjimas",
-		alerttext: "Pasirinkite eilutę",
+		refreshtitle: "Perkrauti lentelÄ™",
+		alertcap: "Ä®spÄ—jimas",
+		alerttext: "Pasirinkite eilutÄ™",
 		viewtext: "",
-		viewtitle: "Peržiūrėti pasirinktą eilutę"
+		viewtitle: "PerÅ¾iÅ«rÄ—ti pasirinktÄ… eilutÄ™"
 	},
 	col : {
 		caption: "Pasirinkti stulpelius",
 		bSubmit: "Gerai",
-		bCancel: "Atšaukti"
+		bCancel: "AtÅ¡aukti"
 	},
 	errors : {
 		errcap : "Klaida",
-		nourl : "Url reikšmė turi būti perduota",
-		norecords: "Nėra įrašų, kuriuos būtų galima apdoroti",
-		model : "colNames skaičius <> colModel skaičiui!"
+		nourl : "Url reikÅ¡mÄ— turi bÅ«ti perduota",
+		norecords: "NÄ—ra Ä¯raÅ¡Å³, kuriuos bÅ«tÅ³ galima apdoroti",
+		model : "colNames skaiÄius <> colModel skaiÄiui!"
 	},
 	formatter : {
 		integer : {thousandsSeparator: "", defaultValue: '0'},
@@ -92,12 +92,12 @@ $.jgrid = {
 		currency : {decimalSeparator:",", thousandsSeparator: "", decimalPlaces: 2, prefix: "", suffix:"", defaultValue: '0.00'},
 		date : {
 			dayNames:   [
-				"Sek", "Pir", "Ant", "Tre", "Ket", "Pen", "Šeš",
-				"Sekmadienis", "Pirmadienis", "Antradienis", "Trečiadienis", "Ketvirtadienis", "Penktadienis", "Šeštadienis"
+				"Sek", "Pir", "Ant", "Tre", "Ket", "Pen", "Å eÅ¡",
+				"Sekmadienis", "Pirmadienis", "Antradienis", "TreÄiadienis", "Ketvirtadienis", "Penktadienis", "Å eÅ¡tadienis"
 			],
 			monthNames: [
 				"Sau", "Vas", "Kov", "Bal", "Geg", "Bir", "Lie", "Rugj", "Rugs", "Spa", "Lap", "Gru",
-				"Sausis", "Vasaris", "Kovas", "Balandis", "Gegužė", "Birželis", "Liepa", "Rugpjūtis", "Rugsėjis", "Spalis", "Lapkritis", "Gruodis"
+				"Sausis", "Vasaris", "Kovas", "Balandis", "GeguÅ¾Ä—", "BirÅ¾elis", "Liepa", "RugpjÅ«tis", "RugsÄ—jis", "Spalis", "Lapkritis", "Gruodis"
 			],
 			AmPm : ["am","pm","AM","PM"],
 			S: function (j) {return j < 11 || j > 13 ? ['st', 'nd', 'rd', 'th'][Math.min((j - 1) % 10, 3)] : 'th'},

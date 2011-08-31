@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;
+using System.Data;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -34,11 +35,26 @@ namespace ChemSW.Nbt.WebServices
         private CswNbtResources _CswNbtResources;
         private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
 
+        /// <summary>
+        /// These are files that we want to keep around
+        /// </summary>
         private string _FilesPath
         {
             get
             {
                 return ( System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc" );
+            }
+        }
+
+        /// <summary>
+        /// These are files we do NOT want to keep around after temporarily using them.  There is a function that purges old files.  
+        /// </summary>
+        private string _TempPath
+        {
+            get
+            {
+                // ApplicationPhysicalPath already has \\ at the end
+                return (System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "temp");
             }
         }
 
@@ -2547,6 +2563,133 @@ namespace ChemSW.Nbt.WebServices
             }
             return View;
         } // _getView()
+
+        #region Import Inspection Questions
+
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string uploadInspectionFile()
+        {
+            JObject ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            DataTable ExcelDataTable = null;
+            string ErrorMessage = string.Empty;
+            string WarningMessage = string.Empty;
+            int NumRowsImported = 0;
+
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    PurgeTempFiles("xls");
+
+                    // putting these in the param list causes the webservice to fail with
+                    // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
+                    // These variables seem to work in Google chrome but NOT in IE
+                    string FileName = Context.Request["qqfile"];
+                    //string PropId = Context.Request["propid"];
+                    string NewInspectionName = Context.Request["InspectionName"];
+
+                    if (!string.IsNullOrEmpty(FileName))
+                    {
+                        if (!string.IsNullOrEmpty(NewInspectionName))
+                        {
+                            if (Context.Request.InputStream != null)
+                            {
+                                // generate a temporary file name
+                                string TempFileName = "excelupload_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString("MMddyyyy_HHmmss") + ".xls";
+                                string FullPathAndFileName = _TempPath + "\\" + TempFileName;
+                                // upload user file to temporary file
+                                // our Excel file reader only likes to read files from disk - does not read files from memory or stream
+                                using (FileStream OutputFile = File.Create(FullPathAndFileName))
+                                {
+                                    Context.Request.InputStream.CopyTo(OutputFile);
+                                }
+
+                                // Load the excel file into a data table
+                                CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                                ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName, ref ErrorMessage, ref WarningMessage);
+                                if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
+                                {
+                                    NumRowsImported = ws.CreateNodes(ExcelDataTable, NewInspectionName, ref ErrorMessage, ref WarningMessage);
+                                }
+
+                                // determine if we were successful or failure
+                                if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
+                                {
+                                    if (string.IsNullOrEmpty(WarningMessage))
+                                        ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
+                                    else
+                                        ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()), new JProperty("error", WarningMessage));
+                                }
+                                else
+                                {
+                                    if (string.IsNullOrEmpty(ErrorMessage))
+                                        ErrorMessage = "Could not read Excel file.";
+                                    ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", ErrorMessage));
+                                }
+                            } // if( Context.Request.InputStream != null )
+                        } // if (!string.IsNullOrEmpty(FileName))
+                        else
+                        {
+                            ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "You must enter the name of this new inspection."));
+                        }
+                    } // if (!string.IsNullOrEmpty(FileName))
+                    else
+                    {
+                    }
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch (Exception ex)
+            {
+                ReturnVal = jError(ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+
+        } // uploadInspectionFile()
+
+        /// <summary>
+        /// Purge files in the temporary directory
+        /// </summary>
+        /// <param name="FileExtension">
+        /// Optional extension type of files to purge.  Default is to purge all files
+        /// </param>
+        /// <param name="HoursToKeepFiles">
+        /// Optional number of hours to keep temporary files around.  Default is 12 hours
+        /// </param>
+        public void PurgeTempFiles(string FileExtension = ".*", int HoursToKeepFiles = 12)
+        {
+            DirectoryInfo myDirectoryInfo = new DirectoryInfo(_TempPath);
+            FileInfo[] myFileInfoArray = myDirectoryInfo.GetFiles();
+
+            FileExtension = FileExtension.ToLower().Trim();
+            if (!FileExtension.StartsWith("."))
+            {
+                FileExtension = "." + FileExtension;
+            }
+            foreach (FileInfo myFileInfo in myFileInfoArray)
+            {
+                if ((FileExtension == "*") || (myFileInfo.Extension.ToString().ToLower() == FileExtension))
+                {
+                    if (DateTime.Now.Subtract(myFileInfo.CreationTime).TotalHours > HoursToKeepFiles)
+                    {
+                        myFileInfo.Delete();
+                    }
+                }
+            }
+        }
+
+
+        #endregion
+
+
 
     }//wsNBT
 

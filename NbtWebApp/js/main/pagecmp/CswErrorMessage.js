@@ -1,4 +1,4 @@
-﻿; (function ($) {
+; (function ($) {
 	$.fn.CswErrorMessage = function (options) {
 
 		var o = {

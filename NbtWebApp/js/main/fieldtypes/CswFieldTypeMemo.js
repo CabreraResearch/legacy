@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -15,9 +15,10 @@
             $Div.contents().remove();
 
             //var Value = extractCDataValue($xml.children('text'));
-            var value = tryParseString(o.propData.text).trim();
-            var rows = tryParseString(o.propData.rows);
-            var columns = tryParseString(o.propData.columns);
+            var propVals = o.propData.values;
+            var value = tryParseString(propVals.text).trim();
+            var rows = tryParseString(propVals.rows);
+            var columns = tryParseString(propVals.columns);
 
             if(o.ReadOnly)
             {
@@ -37,7 +38,7 @@
         },
         save: function(o) { //$propdiv, $xml
                 var $TextArea = o.$propdiv.find('textarea');
-                o.propData.text = $TextArea.val();
+                o.propData.values.text = $TextArea.val();
             }
     };
     

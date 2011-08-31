@@ -1,5 +1,7 @@
-﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	$.fn.CswViewTree = function (options) { 
@@ -23,7 +25,7 @@
 								reportid: ''
 								};
 						},
-			onSuccess: function() { }
+			onSuccess: null //function() { }
 		};
 
 		if (options) {
@@ -61,23 +63,27 @@
 						"plugins": ["themes", "json_data", "ui", "types"]
 					}).bind('select_node.jstree', 
 								function () {
-									var selected = jsTreeGetSelected($viewsdiv);
-								    var optSelect = {
-												$item: selected.$item,
-												iconurl: selected.iconurl,
-												type: selected.$item.CswAttrXml('viewtype'),
-												viewid: selected.$item.CswAttrXml('viewid'),
-												viewname: selected.text,
-												viewmode: selected.$item.CswAttrXml('viewmode'),
-												actionid: selected.$item.CswAttrXml('actionid'),
-												actionname: selected.$item.CswAttrXml('actionname'),
-												actionurl: selected.$item.CswAttrXml('actionurl'),
-												reportid: selected.$item.CswAttrXml('reportid')
-											};
-									o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
+									if (isFunction(o.onSelect)) {
+									    var selected = jsTreeGetSelected($viewsdiv);
+									    var optSelect = {
+									        $item: selected.$item,
+									        iconurl: selected.iconurl,
+									        type: selected.$item.CswAttrXml('viewtype'),
+									        viewid: selected.$item.CswAttrXml('viewid'),
+									        viewname: selected.text,
+									        viewmode: selected.$item.CswAttrXml('viewmode'),
+									        actionid: selected.$item.CswAttrXml('actionid'),
+									        actionname: selected.$item.CswAttrXml('actionname'),
+									        actionurl: selected.$item.CswAttrXml('actionurl'),
+									        reportid: selected.$item.CswAttrXml('reportid')
+									    };
+									    o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
+									}
 								});
 
-					o.onSuccess();
+					if (isFunction(o.onSuccess)) {
+					    o.onSuccess();  
+					} 
 
 				} // success{}
 			});

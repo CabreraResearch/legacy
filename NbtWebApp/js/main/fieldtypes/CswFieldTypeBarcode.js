@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -13,8 +13,8 @@
 
             var $Div = $(this);
             $Div.contents().remove();
-
-            var value = tryParseString(o.propData.barcode).trim();
+            var propVals = o.propData.values;
+            var value = tryParseString(propVals.barcode).trim();
 
             if(o.ReadOnly)
             {
@@ -54,7 +54,7 @@
         },
         save: function(o) {
             var $TextBox = o.$propdiv.find('input');
-            o.propData.barcode = $TextBox.val();
+            o.propData.values.barcode = $TextBox.val();
         }
     };
     

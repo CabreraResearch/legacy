@@ -1,4 +1,4 @@
-﻿; (function ($) {
+; (function ($) {
 	$.fn.CswComboBox = function (method) {
 
 		var methods = {

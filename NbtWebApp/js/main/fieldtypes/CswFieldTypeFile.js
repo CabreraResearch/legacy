@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -9,13 +9,15 @@
     var pluginName = 'CswFieldTypeFile';
 
     var methods = {
-        init: function(o) { //o.nodeid, o.propData, o.onchange
+        init: function(o) { 
 
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var href = tryParseString(o.propData.href).trim();
-                var fileName = tryParseString(o.propData.name).trim();
+                var propVals = o.propData.values;
+            
+                var href = tryParseString(propVals.href).trim();
+                var fileName = tryParseString(propVals.name).trim();
 
                 var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
                 var $cell11 = $table.CswTable('cell', 1, 1);

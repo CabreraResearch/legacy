@@ -1,4 +1,4 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -14,8 +14,9 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var text = tryParseString(o.propData.text).trim();
-            var href = tryParseString(o.propData.href).trim();
+            var propVals = o.propData.values;
+            var text = tryParseString(propVals.text).trim();
+            var href = tryParseString(propVals.href).trim();
 
             var $Link = $('<a href="' + href + '" target="_blank">' + text + '</a>&nbsp;&nbsp;');
 
@@ -77,11 +78,12 @@
             }
         },
         save: function(o) { 
-                var $edittext = o.$propdiv.find('#' + o.ID + '_text');
-                var $edithref = o.$propdiv.find('#' + o.ID + '_href');
-				o.propData.text = $edittext.val();
-				o.propData.href = $edithref.val();
-            }
+            var $edittext = o.$propdiv.find('#' + o.ID + '_text');
+            var $edithref = o.$propdiv.find('#' + o.ID + '_href');
+			var propVals = o.propData.values;	
+            propVals.text = $edittext.val();
+			propVals.href = $edithref.val();
+        }
     };
     
     // Method calling logic

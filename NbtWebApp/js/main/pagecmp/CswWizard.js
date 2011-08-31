@@ -1,4 +1,4 @@
-﻿/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
@@ -119,21 +119,23 @@
 		// e.g. $wizard.CswWizard('button', 'next', 'disable');
 		'button': function(button, action) {
 				var $table = $(this);
+                var ret;
 				switch(button)
 				{
 					case 'previous':
-						$('#' + $table.CswAttrDom('id') + '_prev').CswButton(action);
+						ret = $('#' + $table.CswAttrDom('id') + '_prev').CswButton(action);
 						break;
 					case 'next':
-						$('#' + $table.CswAttrDom('id') + '_next').CswButton(action);
+						ret = $('#' + $table.CswAttrDom('id') + '_next').CswButton(action);
 						break;
 					case 'finish':
-						$('#' + $table.CswAttrDom('id') + '_finish').CswButton(action);
+						ret = $('#' + $table.CswAttrDom('id') + '_finish').CswButton(action);
 						break;
 					case 'cancel':
-						$('#' + $table.CswAttrDom('id') + '_cancel').CswButton(action);
+						ret = $('#' + $table.CswAttrDom('id') + '_cancel').CswButton(action);
 						break;
 				}
+                return button;
 			}
 		};
 

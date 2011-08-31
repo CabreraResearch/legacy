@@ -280,18 +280,17 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["selectmode"] = SelectMode.ToString();
             ParentObject[_CachedViewNameSubField.ToXmlNodeName()] = CachedViewNames.ToString();
 
-            JObject OptionsObj = new JObject();
-            ParentObject["options"] = OptionsObj;
+            JArray ViewsArray = new JArray();
+            ParentObject["options"] = ViewsArray;
 
             DataTable ViewsTable = ViewsForCBA();
             foreach( DataRow ViewRow in ViewsTable.Rows )
             {
-                JObject UserObj = new JObject();
-                OptionsObj["user_" + ViewRow[KeyColumn]] = UserObj;
-
-                UserObj[NameColumn] = ViewRow[NameColumn].ToString();
-                UserObj[KeyColumn] = ViewRow[KeyColumn].ToString();
-                UserObj[ValueColumn] = ViewRow[ValueColumn].ToString();
+                JObject ViewObj = new JObject();
+                ViewsArray.Add( ViewObj );
+                ViewObj[NameColumn] = ViewRow[NameColumn].ToString();
+                ViewObj[KeyColumn] = ViewRow[KeyColumn].ToString();
+                ViewObj[ValueColumn] = ViewRow[ValueColumn].ToString();
             }
         }
 
@@ -341,17 +340,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
 
-            if( null != JObject["options"] )
+            if( null != JObject["options"] && null != JObject["options"]["data"] )
             {
-                JObject OptionsObj = (JObject) JObject["options"];
+                JArray OptionsObj = (JArray) JObject["options"]["data"];
 
-                foreach( JProperty UserProp in OptionsObj.Properties() )
+                foreach( JObject ViewObj in OptionsObj )
                 {
-                    JObject UserObj = (JObject) UserProp.Value;
-
-                    string key = CswConvert.ToString( UserObj[KeyColumn] );
-                    string name = CswConvert.ToString( UserObj[NameColumn] );
-                    bool value = CswConvert.ToBoolean( UserObj[ValueColumn] );
+                    string key = CswConvert.ToString( ViewObj["key"] );
+                    //string name = CswConvert.ToString( ViewObj["label"] );
+                    JArray Values = (JArray) ViewObj["values"];
+                    bool value = CswConvert.ToBoolean( Values[0] );
                     if( value )
                     {
                         NewSelectedViewIds.Add( key );

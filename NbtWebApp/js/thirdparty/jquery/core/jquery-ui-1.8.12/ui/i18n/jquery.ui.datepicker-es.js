@@ -1,4 +1,4 @@
-/* Inicialización en español para la extensión 'UI date picker' para jQuery. */
+/* InicializaciÃ³n en espaÃ±ol para la extensiÃ³n 'UI date picker' para jQuery. */
 /* Traducido por Vester (xvester@gmail.com). */
 jQuery(function($){
 	$.datepicker.regional['es'] = {
