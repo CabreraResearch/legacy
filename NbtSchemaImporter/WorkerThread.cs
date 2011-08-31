@@ -63,8 +63,8 @@ namespace ChemSW.Nbt.Schema
         {
             _ConfigurationPath = ConfigurationPath;
 
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Executable );
-            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Executable );
+            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe );
+            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
 
             _InitSessionResources();
         }
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Schema
             //_CswNbtObjClassFactory = new CswNbtObjClassFactory();
 
             //_CswNbtResources = new CswNbtResources( AppType.SchemInit, _CswSetupVblsNbt, _CswDbCfgInfoNbt, false, false );
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ), false, false  );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.NbtExe ), false, false );
             //_CswNbtResources.SetDbResources( new CswNbtTreeFactory( _ConfigurationPath ) );
 
             //_CswNbtMetaDataEvents = new CswNbtMetaDataEvents( _CswNbtResources );
@@ -88,13 +88,13 @@ namespace ChemSW.Nbt.Schema
             _CswLogger = _CswNbtResources.CswLogger;
 
             //_CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaImporterUser" );
-			_CswNbtResources.InitCurrentUser = InitUser;
+            _CswNbtResources.InitCurrentUser = InitUser;
         }//constructor
 
-		public ICswUser InitUser( ICswResources Resources )
-		{
-			return new CswNbtSystemUser( Resources, "_SchemaImporterUser" );
-		}
+        public ICswUser InitUser( ICswResources Resources )
+        {
+            return new CswNbtSystemUser( Resources, "_SchemaImporterUser" );
+        }
 
         public CswDataTable getDbInstances()
         {

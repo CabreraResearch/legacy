@@ -772,8 +772,33 @@
 //				break;
 //			case 'Assign_Tests':
 //				break;
-//			case 'Create_Inspection':
-//				break;
+
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin
+			case 'Create_Inspection':
+				clear({ 'all': true });
+
+				var ImportInspectionQuestionsOptions = {
+					'viewid': o.ActionOptions.viewid,
+					'viewmode': o.ActionOptions.viewmode,
+					'onCancel': function ()
+					{
+						clear({ 'all': true });
+						refreshSelected();
+					},
+					'onFinish': function (viewid, viewmode)
+					{
+						clear({ 'all': true });
+						refreshSelected();
+                        // After the new inspection is imported, Phil and Steve want to send the system to Design Mode
+                        window.location = "Design.aspx";
+					},
+					'startingStep': o.ActionOptions.startingStep
+				};
+
+				$('#CenterTopDiv').CswImportInspectionQuestions(ImportInspectionQuestionsOptions);
+
+				break;
+
 //			case 'Design':
 //				break;
 			case 'Edit_View':
@@ -826,6 +851,8 @@
 				_setupOOCInspections();
 
 				break;
+
+
 //			case 'Load_Mobile_Data':
 //				break;
 //			case 'Receiving':

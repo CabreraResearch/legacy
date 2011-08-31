@@ -11,21 +11,20 @@ using ChemSW.TblDn;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassUnitOfMeasure : CswNbtObjClass
+    public class CswNbtObjClassUnitType : CswNbtObjClass
     {
         public static string NamePropertyName { get { return "Name"; } }
-        public static string UnitTypePropertyName { get { return "Unit Type"; } }
-        public static string ConversionFactorPropertyName { get { return "Conversion Factor"; } }
+        public static string BaseUnitPropertyName { get { return "Base Unit"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassUnitOfMeasure( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassUnitType( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
-        public CswNbtObjClassUnitOfMeasure( CswNbtResources CswNbtResources )
+        public CswNbtObjClassUnitType( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
@@ -33,13 +32,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass ); }
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
+        public override void beforeCreateNode()
         {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeCreateNode();
         } // beforeCreateNode()
 
         public override void afterCreateNode()
@@ -47,9 +46,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode()
         {
-            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode();
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -90,25 +89,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropScientific ConversionFactor
+        public CswNbtNodePropRelationship BaseUnit
         {
             get
             {
-                return ( _CswNbtNode.Properties[ConversionFactorPropertyName].AsScientific );
-            }
-        }
-
-        public CswNbtNodePropRelationship UnitType
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[UnitTypePropertyName].AsRelationship );
+                return (_CswNbtNode.Properties[BaseUnitPropertyName].AsRelationship);
             }
         }
         #endregion
 
 
 
-    }//CswNbtObjClassUnitOfMeasure
+    }//CswNbtObjClassUnitType
 
 }//namespace ChemSW.Nbt.ObjClasses

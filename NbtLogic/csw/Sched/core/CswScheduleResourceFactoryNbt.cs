@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Sched
 
         public ICswResources make()
         {
-            CswNbtResources ReturnVal = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, new Config.CswSetupVblsNbt( SetupMode.Executable ), new Config.CswDbCfgInfoNbt( SetupMode.Executable ), CswTools.getConfigurationFilePath( SetupMode.Executable ), true, false );
+            CswNbtResources ReturnVal = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, new Config.CswSetupVblsNbt( SetupMode.NbtExe ), new Config.CswDbCfgInfoNbt( SetupMode.NbtExe ), CswTools.getConfigurationFilePath( SetupMode.NbtExe ), true, false );
             //ReturnVal.CurrentUser = new CswNbtSystemUser( ReturnVal, "NbtScheduleServiceUser" );
 			ReturnVal.InitCurrentUser = InitUser;
             return ( ReturnVal );
