@@ -214,20 +214,20 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Collection of Views to select
         /// </summary>
-        public Collection<CswNbtView> QuickLaunchViews
+        public Collection<CswNbtView> SelectedViews
         {
             get
             {
 
-                Collection<CswNbtView> QuickLaunchViews = new Collection<CswNbtView>();
+                Collection<CswNbtView> _SelectedViews = new Collection<CswNbtView>();
                 if( NodeId != null )
                 {
                     // Use the User's visible, quicklaunch views
                     CswCommaDelimitedString ViewIds = new CswCommaDelimitedString( SelectedViewIds.Count, true );
                     ViewIds.FromDelimitedString( SelectedViewIds );
-                    QuickLaunchViews = _CswNbtResources.ViewSelect.getVisibleViews( User, false, ViewIds );
+                    _SelectedViews = _CswNbtResources.ViewSelect.getVisibleViews( User, false, ViewIds );
                 }
-                return QuickLaunchViews;
+                return _SelectedViews;
             }
         }
 

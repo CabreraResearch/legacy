@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.WebServices
             if( User != null )
             {
                 CswNbtObjClassUser UserOc = User.UserNode;
-                foreach( CswNbtView View in UserOc.QuickLaunchViews.QuickLaunchViews )
+                foreach( CswNbtView View in UserOc.QuickLaunchViews.SelectedViews )
                 {
                     Int32 ViewId = null == View.SessionViewId ? View.ViewId.get() : View.SessionViewId.get();
                     UserQuickLaunchViews.Add( ViewId, View );
