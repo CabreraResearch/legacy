@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
@@ -55,7 +56,7 @@ namespace ChemSW.Nbt
             return ret;
         }
 
-        public JObject getQuickLaunchJson( CswCommaDelimitedString UserQuickLaunchViews, CswCommaDelimitedString UserQuickLaunchActions )
+        public JObject getQuickLaunchJson( Dictionary<int, CswNbtView> UserQuickLaunchViews, Dictionary<int, CswNbtAction> UserQuickLaunchActions )
         {
             JObject ReturnVal = new JObject();
 
@@ -67,48 +68,77 @@ namespace ChemSW.Nbt
                                  + SessionDataColumn_QuickLaunch + " = '" + CswConvert.ToDbVal( true ).ToString() + "'";
             DataTable SessionDataTable = SessionDataSelect.getTable( WhereClause, OrderBy );
 
-            Collection<DataRow> RowsToProcess = new Collection<DataRow>();
             Int32 RowCount = 0;
             foreach( DataRow Row in SessionDataTable.Rows )
             {
-                string ActionId = CswConvert.ToString( Row[SessionDataColumn_ActionId] );
-                string ViewId = CswConvert.ToString( Row[SessionDataColumn_ViewId] );
-                if( UserQuickLaunchViews.Contains( ViewId ) || UserQuickLaunchActions.Contains( ActionId ) )
+                Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
+                Int32 ViewId = CswConvert.ToInt32( Row[SessionDataColumn_ViewId] );
+                if( UserQuickLaunchViews.ContainsKey( ViewId ) )
                 {
-                    RowsToProcess.Add( Row );
+                    _addQuickLaunchProp( Row, ReturnVal );
+                    UserQuickLaunchViews.Remove( ViewId );
+                }
+                else if( UserQuickLaunchActions.ContainsKey( ActionId ) )
+                {
+                    _addQuickLaunchProp( Row, ReturnVal );
+                    UserQuickLaunchActions.Remove( ViewId );
                 }
                 else if( RowCount < 5 )
                 {
-                    RowsToProcess.Add( Row );
+                    _addQuickLaunchProp( Row, ReturnVal );
                     RowCount++;
                 }
             }
-
-            foreach( DataRow Row in RowsToProcess )
+            foreach( KeyValuePair<int, CswNbtView> View in UserQuickLaunchViews )
             {
-                Int32 ItemId = CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] );
-
-                JProperty ThisItem = new JProperty( "item_" + ItemId );
-                JObject ThisItemObj = new JObject();
-                ThisItem.Value = ThisItemObj;
-
-                ThisItemObj["launchtype"] = Row[SessionDataColumn_SessionDataType].ToString();
-                ThisItemObj["text"] = Row[SessionDataColumn_Name].ToString();
-                ThisItemObj["viewmode"] = Row[SessionDataColumn_ViewMode].ToString();
-
-                ThisItemObj["itemid"] = new CswNbtSessionDataId( ItemId ).ToString();
-
-                Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
-                if( ActionId != Int32.MinValue )
-                {
-                    ThisItemObj["actionname"] = _CswNbtResources.Actions[ActionId].Name.ToString();
-                    ThisItemObj["actionurl"] = _CswNbtResources.Actions[ActionId].Url;
-                }
-                ReturnVal.Add( ThisItem );
+                JObject ViewObj = new JObject();
+                ReturnVal["item_" + View.Value.ViewId.get()] = ViewObj;
+                _addQuickLaunchView( ViewObj, "View", View.Value.ViewName, View.Value.ViewMode, View.Value.ViewId.get() );
             }
+            foreach( KeyValuePair<int, CswNbtAction> Action in UserQuickLaunchActions )
+            {
+                JObject ActionObj = new JObject();
+                ReturnVal["item_" + Action.Key] = ActionObj;
+                _addQuickLaunchAction( ActionObj, "Action", Action.Value.DisplayName, Action.Value.DisplayName, Action.Key, Action.Value.Url );
+            }
+
             return ReturnVal;
         } // getQuickLaunchJson()
 
+        private void _addQuickLaunchProp( DataRow Row, JObject ParentObj )
+        {
+            Int32 ItemId = CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] );
+
+            JObject QlObj = new JObject();
+            ParentObj["item_" + ItemId] = QlObj;
+
+            Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
+            if( ActionId != Int32.MinValue )
+            {
+                _addQuickLaunchAction( QlObj, Row[SessionDataColumn_SessionDataType], Row[SessionDataColumn_Name], _CswNbtResources.Actions[ActionId].Name, ItemId, _CswNbtResources.Actions[ActionId].Url );
+            }
+            else
+            {
+                _addQuickLaunchView( QlObj, Row[SessionDataColumn_SessionDataType], Row[SessionDataColumn_Name], Row[SessionDataColumn_ViewMode], ItemId );
+            }
+        }
+
+        private void _addQuickLaunchView( JObject ParentObj, object LaunchType, object Text, object ViewMode, object ItemId )
+        {
+            ParentObj["launchtype"] = CswConvert.ToString( LaunchType );
+            ParentObj["text"] = CswConvert.ToString( Text );
+            ParentObj["viewmode"] = CswConvert.ToString( ViewMode );
+            ParentObj["itemid"] = new CswNbtSessionDataId( CswConvert.ToString( ItemId ) ).ToString();
+        }
+
+        private void _addQuickLaunchAction( JObject ParentObj, object LaunchType, object Text, object ActionName, object ItemId, object ActionUrl )
+        {
+            ParentObj["launchtype"] = CswConvert.ToString( LaunchType );
+            ParentObj["text"] = CswConvert.ToString( Text );
+            ParentObj["itemid"] = new CswNbtSessionDataId( CswConvert.ToString( ItemId ) ).ToString();
+            ParentObj["actionname"] = CswConvert.ToString( ActionName );
+            ParentObj["actionurl"] = CswConvert.ToString( ActionUrl );
+        }
         /// <summary>
         /// Save an action to the session data collection.
         /// </summary>

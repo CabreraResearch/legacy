@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
@@ -68,28 +68,35 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JObject getQuickLaunchItems()
         {
-            CswCommaDelimitedString UserQuickLaunchViews = new CswCommaDelimitedString();
-            CswCommaDelimitedString UserQuickLaunchActions = new CswCommaDelimitedString();
+            JObject Ret = new JObject();
+            Dictionary<int, CswNbtView> UserQuickLaunchViews = new Dictionary<int, CswNbtView>();
+            Dictionary<int, CswNbtAction> UserQuickLaunchActions = new Dictionary<int, CswNbtAction>();
 
             ICswNbtUser User = _CswNbtResources.CurrentNbtUser;
             if( User != null )
             {
                 CswNbtObjClassUser UserOc = User.UserNode;
-                UserQuickLaunchViews = UserOc.QuickLaunchViews.SelectedViewIds;
+                foreach( CswNbtView View in UserOc.QuickLaunchViews.QuickLaunchViews )
+                {
+                    Int32 ViewId = null == View.SessionViewId ? View.ViewId.get() : View.SessionViewId.get();
+                    UserQuickLaunchViews.Add( ViewId, View );
+                }
 
                 DataTable ActionsTable = UserOc.QuickLaunchActions.GetDataAsTable( ActionName, ActionPk );
                 foreach( CswNbtAction Action in ( from DataRow ActionRow in ActionsTable.Rows
                                                   where CswConvert.ToBoolean( ActionRow[ActionSelected] )
-                                                  select _CswNbtResources.Actions[CswConvert.ToInt32( ActionRow[ActionPk] )]
-                                                      into ThisAction
-                                                      where null != ThisAction
-                                                      select ThisAction ) )
+                                                  select CswNbtAction.ActionNameStringToEnum( CswConvert.ToString( ActionRow[ActionPk] ) )
+                                                      into NbtActionName
+                                                      select _CswNbtResources.Actions[NbtActionName]
+                                                          into ThisAction
+                                                          where null != ThisAction
+                                                          select ThisAction ) )
                 {
-                    UserQuickLaunchActions.Add( Action.ActionId.ToString() );
+                    UserQuickLaunchActions.Add( Action.ActionId, Action );
                 }
             }
-
-            return _CswNbtResources.SessionDataMgr.getQuickLaunchJson( UserQuickLaunchViews, UserQuickLaunchActions );
+            Ret = _CswNbtResources.SessionDataMgr.getQuickLaunchJson( UserQuickLaunchViews, UserQuickLaunchActions );
+            return Ret;
         } // getQuickLaunchItems()
 
     }

@@ -64,7 +64,7 @@ namespace ChemSW.Nbt
             }
             else
             {
-				throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "CswNbtViewSelect was handed an invalid NbtViewId in restoreView()." );
+                throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "CswNbtViewSelect was handed an invalid NbtViewId in restoreView()." );
             }
             //}
             return ( ReturnVal );
@@ -189,9 +189,9 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all views visible to the provided user
         /// </summary>
-        public Collection<CswNbtView> getVisibleViews( ICswNbtUser User, bool IncludeEmptyViews )
+        public Collection<CswNbtView> getVisibleViews( ICswNbtUser User, bool IncludeEmptyViews, CswCommaDelimitedString LimitToViews = null )
         {
-            return getVisibleViews( string.Empty, User, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any );
+            return getVisibleViews( string.Empty, User, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any, LimitToViews );
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a Collection of all views visible to the current user
         /// </summary>
-        public Collection<CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode )
+        public Collection<CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode, CswCommaDelimitedString LimitToViews = null )
         {
             CswTimer VisibleViewsTimer = new CswTimer();
 
@@ -246,6 +246,10 @@ namespace ChemSW.Nbt
             {
                 AddClause += "and viewmode = '" + ViewRenderingMode.ToString() + "'";
             }
+            if( null != LimitToViews && LimitToViews.Count > 0 )
+            {
+                AddClause += "and nodeviewid in (" + LimitToViews.ToString() + ")";
+            }
             ViewsSelect.S4Parameters.Add( "addclause", AddClause );
             if( OrderBy != string.Empty )
                 ViewsSelect.S4Parameters.Add( "orderbyclause", OrderBy );
@@ -264,10 +268,10 @@ namespace ChemSW.Nbt
 
                 if( ( ( ThisView.Root.ChildRelationships.Count > 0 &&
                             ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                                                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType(R.SecondId), true, null, User ) ).Count() > 0 )
+                                                                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ), true, null, User ) ).Count() > 0 )
                         ) || IncludeEmptyViews ) &&
                     ThisView.IsFullyEnabled() &&
-					( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
+                    ( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
                     ( !SearchableOnly || ThisView.IsSearchable() ) )
                 {
                     VisibleViews.Add( ThisView );
