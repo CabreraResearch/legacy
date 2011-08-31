@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using System.Collections.Generic;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -38,6 +39,21 @@ namespace ChemSW.Nbt.Schema
                                                                       where a.logoutdate < #getbeforedate
                                                                         and a.logoutdate > #getafterdate
                                                                       order by a.statisticsid, b.statisticsid" );
+
+            //Case 23156
+            List<CswNbtView> MpViews = _CswNbtSchemaModTrnsctn.restoreViews( "Mount Points" );
+            foreach( CswNbtView View in MpViews )
+            {
+                View.ViewName = "FE Inspection Points";
+                View.save();
+            }
+
+            List<CswNbtView> MpgViews = _CswNbtSchemaModTrnsctn.restoreViews( "Mount Point Groups" );
+            foreach( CswNbtView View in MpgViews )
+            {
+                View.ViewName = "FE Inspection Point Groups";
+                View.save();
+            }
 
         }//Update()
 
