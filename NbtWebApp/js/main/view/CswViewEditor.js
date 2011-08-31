@@ -480,7 +480,7 @@
                                     {
                                         $copyviewbtn.CswButton('enable');
                                         $deleteviewbtn.CswButton('enable');
-                                        $selview_span.text(_getSelectedViewName(id, cswViewGrid.$gridTable));
+                                        $selview_span.text(_getSelectedViewName(id));
                                         $wizard.CswWizard('button', 'next', 'enable');
                                     }
                                     else
