@@ -28,6 +28,17 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp UserDtp = UserOC.getObjectClassProp( CswNbtObjClassUser.DateFormatPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( UserDtp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, "M/d/yyyy,d-M-yyyy,yyyy/M/d,dd MMM yyyy" );
             _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
+
+            //Case 23130
+            _CswNbtSchemaModTrnsctn.UpdateS4( "getSimultaneousUsage", @"select a.statisticsid, b.statisticsid simultaneousid
+                                                                       from statistics a
+                                                                       join statistics b on a.logindate <= b.logoutdate
+                                                                                        and a.logoutdate >= b.logindate
+                                                                                        and a.statisticsid <> b.statisticsid
+                                                                      where a.logoutdate < #getbeforedate
+                                                                        and a.logoutdate > #getafterdate
+                                                                      order by a.statisticsid, b.statisticsid" );
+
         }//Update()
 
     }//class CswUpdateSchemaTo01I12
