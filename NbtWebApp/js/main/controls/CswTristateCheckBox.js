@@ -25,7 +25,7 @@
 			var elementId = makeId({prefix: o.prefix, ID: o.ID});
 			
 			//Case 21769
-			var tristateVal = (o.Required) ? tryParseString(o.Checked,"false").toLowerCase(): tryParseString(o.Checked,"null").toLowerCase();
+			var tristateVal = tryParseString(o.Checked,"null").toLowerCase();
 
 			if(o.ReadOnly)
 			{
