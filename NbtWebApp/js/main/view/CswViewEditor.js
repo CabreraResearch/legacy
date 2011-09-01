@@ -6,6 +6,7 @@
 /// <reference path="CswViewPropFilter.js" />
 /// <reference path="../controls/CswButton.js" />
 /// <reference path="../controls/CswSelect.js" />
+/// <reference path="../controls/CswGrid.js" />
 
 ;  (function ($) { /// <param name="$" type="jQuery" />
 
@@ -93,7 +94,8 @@
         $div1.append('Select a View to Edit:&nbsp;');
         var $selview_span = $('<span id="' + o.ID + '_selviewname" style="font-weight: bold"></span>')
             .appendTo($div1);
-        var $viewgrid_div = $('<div></div>').appendTo($div1);
+        var cswViewGrid;
+        var rowid;
         var $viewgrid;
         function onViewGridSuccess($vg) {
             $viewgrid = $vg;
@@ -124,7 +126,7 @@
                 'enabledText': 'Copy View',
                 'disableOnClick': true,
                 'onclick': function() {
-                    var viewid = _getSelectedViewId($viewgrid);
+                    var viewid = _getSelectedViewId();
                     if (!isNullOrEmpty(viewid))
                     {
                         var dataJson = {
@@ -191,7 +193,7 @@
                         }
                     }); // CswDialog
                 } // onclick
-            })
+            });
 
         //$wizard.CswWizard('button', 'next', 'disable');
 
@@ -459,99 +461,89 @@
                     data: dataJson,
                     success: function(gridJson) {
 
-                        $viewgrid_div.empty();
-                        var $gridPager = $('<div id="' + o.ID + '_gp" style="width:100%; height:20px;" />')
-                            .appendTo($viewgrid_div);
-                        var $viewgrid = $('<table id="' + o.ID + '_gt" />')
-                            .appendTo($viewgrid_div);
-
-                        var mygridopts = {
-                            'autowidth': true,
-                            'height': 180,
-                            'onSelectRow': function(id, selected) {
-                                if (selected)
-                                {
-                                    $copyviewbtn.CswButton('enable');
-                                    $deleteviewbtn.CswButton('enable');
-                                    $selview_span.text(_getSelectedViewName($viewgrid));
-                                    $wizard.CswWizard('button', 'next', 'enable');
+                        var viewGridId = o.ID + '_csw_viewGrid_outer';
+                        var $viewGrid = $div1.find('#' + viewGridId);
+                        if (isNullOrEmpty($viewGrid) || $viewGrid.length === 0) {
+                            $viewGrid = $('<div id="' + o.ID + '"></div>').appendTo($div1);
+                        } else {
+                            $viewGrid.empty();
+                        }
+                        var g = {
+                            ID: o.ID,
+                            hasPager: false,
+                            gridOpts: {
+                                autowidth: true,
+                                height: 180,
+                                onSelectRow: function(id, selected) {
+                                    rowid = id;
+                                    if (selected)
+                                    {
+                                        $copyviewbtn.CswButton('enable');
+                                        $deleteviewbtn.CswButton('enable');
+                                        $selview_span.text(_getSelectedViewName(id));
+                                        $wizard.CswWizard('button', 'next', 'enable');
+                                    }
+                                    else
+                                    {
+                                        $copyviewbtn.CswButton('disable');
+                                        $deleteviewbtn.CswButton('disable');
+                                        $selview_span.text("");
+                                        $wizard.CswWizard('button', 'next', 'disable');
+                                    }
                                 }
-                                else
-                                {
-                                    $copyviewbtn.CswButton('disable');
-                                    $deleteviewbtn.CswButton('disable');
-                                    $selview_span.text("");
-                                    $wizard.CswWizard('button', 'next', 'disable');
-                                }
-                            },
-                            'pager': $gridPager
+                            }
                         };
-                        $.extend(gridJson, mygridopts);
+                        $.extend(g.gridOpts, gridJson);
 
-                        $viewgrid.jqGrid(gridJson)
-                            .hideCol(o.ColumnFullViewId);
+                        cswViewGrid = new CswGrid(g, $viewGrid);
+                        cswViewGrid.$gridPager.css({width: '100%', height: '20px' });
+                        
+                        cswViewGrid.hideColumn(o.ColumnFullViewId);
 
                         if (!isNullOrEmpty(gridJson.selectedpk))
                         {
-                            $viewgrid.setSelection(_getRowForPk($viewgrid, gridJson.selectedpk));
-                            $viewgrid.CswNodeGrid('scrollToSelectedRow');
+                            rowid = cswViewGrid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
+                            cswViewGrid.setSelection(rowid);
+                            cswViewGrid.scrollToRow(rowid);
                         }
                         onSuccess($viewgrid);
                     } // success
                 }); // ajax
         } // _getViewsGrid()
 
-        function _getSelectedViewId($viewgrid)
+        function _getSelectedViewId()
         {
             var ret = '';
             if (o.startingStep === 1) {
-                ret = _getSelectedRowValue($viewgrid, o.ColumnFullViewId);
+                ret = cswViewGrid.getValueForColumn(o.ColumnFullViewId);
             } else {
                 ret = o.viewid;
             }
             return ret;
         }
 
-        function _getSelectedViewMode($viewgrid)
+        function _getSelectedViewMode()
         {
             var ret = '';
             if (o.startingStep === 1) {
-                ret = _getSelectedRowValue($viewgrid, o.ColumnViewMode);
+                ret = cswViewGrid.getValueForColumn(o.ColumnViewMode);
             } else {
                 ret = o.viewmode;
             }
             return ret;
         }
 
-        function _getSelectedViewName($viewgrid)
+        function _getSelectedViewName(rowid)
         {
             var ret = '';
             if (o.startingStep === 1) {
-                ret = _getSelectedRowValue($viewgrid, o.ColumnViewName);
+                ret = cswViewGrid.getValueForColumn(o.ColumnViewName, rowid);
             } else {
                 ret = o.viewname;
             }
             return ret;
         }
-
-        function _getSelectedRowValue($viewgrid, columnname)
-        {
-            var rowid = $viewgrid.jqGrid('getGridParam', 'selrow');
-            var ret = $viewgrid.jqGrid('getCell', rowid, columnname);
-            return ret;
-        }
-
-        function _getRowForPk($viewgrid, selectedpk)
-        {
-            var pks = $viewgrid.jqGrid('getCol', o.ColumnViewId, true);
-            var rowid = 0;
-            for (var pk in pks) {
-                if (pks[pk].value.toString() === selectedpk.toString())
-                    rowid = pks[pk].id;
-            }
-            return rowid;
-        }
-
+        
         function makeTuningStep($content) {
             var $cell = $table6.CswTable('cell', 1, 2);
             var viewmode = _getSelectedViewMode($viewgrid);

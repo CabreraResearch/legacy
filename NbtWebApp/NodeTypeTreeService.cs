@@ -24,7 +24,7 @@ public class NodeTypeTreeService : System.Web.Services.WebService
         //bz # 9278
 
 
-        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
+        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.NbtWeb );
         _CswNbtResources = CswInitialization.CswNbtResources;
 
 

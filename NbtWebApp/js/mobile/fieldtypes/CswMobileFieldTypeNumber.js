@@ -1,8 +1,9 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 //#region CswMobileFieldTypeNumber
 
@@ -34,8 +35,9 @@ function CswMobileFieldTypeNumber(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
+        var propVals = p.values;
         subfields = CswSubFields_Map.Number.subfields;        
-        value = tryParseString(p[subfields.Value.name]);
+        value = tryParseString(propVals[subfields.Value.name]);
         gestalt = tryParseString(p.gestalt, '');
         
         $content = ensureContent(contentDivId);

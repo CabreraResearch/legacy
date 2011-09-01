@@ -1,16 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Data;
-using ChemSW.Nbt.PropTypes;
+using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.DB;
-using ChemSW.Core;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -83,11 +78,14 @@ namespace ChemSW.Nbt.ObjClasses
                     CswStaticSelect PropRefsSelect = _CswNbtResources.makeCswStaticSelect( "MetaDataOC_beforeWriteNode_proprefs_select", "getPropertyReferences" );
                     //BZ 8744 
                     if( CurrentProp.NodeId.TableName == "nodes" )
-                        PropRefsSelect.S4Parameters.Add( "getnodeid", CurrentProp.NodeId.PrimaryKey );
+                    {
+                        CswStaticParam StaticParam = new CswStaticParam( "getnodeid", CurrentProp.NodeId.PrimaryKey );
+                        PropRefsSelect.S4Parameters.Add( "getnodeid", StaticParam );
+                    }
                     else
-						throw new CswDniException( ErrorType.Error, "Record could not be updated.", "Error updating property reference on node in " + CurrentProp.NodeId.TableName + " table." );
-                    PropRefsSelect.S4Parameters.Add( "getnodetypepropid", CurrentProp.NodeTypePropId );
-                    PropRefsSelect.S4Parameters.Add( "getobjectclasspropid", CurrentProp.ObjectClassPropId );
+                    { throw new CswDniException( ErrorType.Error, "Record could not be updated.", "Error updating property reference on node in " + CurrentProp.NodeId.TableName + " table." ); }
+                    PropRefsSelect.S4Parameters.Add( "getnodetypepropid", new CswStaticParam( "getnodetypepropid", CurrentProp.NodeTypePropId ) );
+                    PropRefsSelect.S4Parameters.Add( "getobjectclasspropid", new CswStaticParam( "getobjectclasspropid", CurrentProp.ObjectClassPropId ) );
                     DataTable PropRefsTable = PropRefsSelect.getTable();
 
                     if( PropRefsTable.Rows.Count > 0 )
@@ -166,7 +164,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-        public override void afterPopulateProps() 
+        public override void afterPopulateProps()
         {
         }
 

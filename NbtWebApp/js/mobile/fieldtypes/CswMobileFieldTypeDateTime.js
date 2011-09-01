@@ -1,8 +1,9 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 //#region CswMobileFieldTypeDate
 
@@ -34,12 +35,37 @@ function CswMobileFieldTypeDate(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
         
+        var propVals = p.values;
         subfields = CswSubFields_Map.Date.subfields;
-        value = tryParseString(p[subfields.Value.name]);
+        
+        var date = tryParseString(propVals.value.date).trim();
+        var time = tryParseString(propVals.value.time).trim();
+        var dateFormat = ServerDateFormatToJQuery(propVals.value.dateformat);
+        var timeFormat = ServerTimeFormatToJQuery(propVals.value.timeformat);
+        var displayMode = propVals.displaymode;
+
+        $content = ensureContent(contentDivId);
         gestalt = tryParseString(p.gestalt, '');
         
-        $content = ensureContent(contentDivId);
-        $content.CswInput('init', { type: CswInput_Types.date, ID: elementId, value: value });
+        value = '';
+        switch (displayMode.toLowerCase()) {
+            case subfields.DisplayMode.DateTime.name.toLowerCase():
+                value = date + ' ' + time;
+                $content.CswInput('init', { type: CswInput_Types.date, ID: elementId, value: date });
+                $content.CswInput('init', { type: CswInput_Types.time, ID: elementId, value: time });
+                break;
+            case subfields.DisplayMode.Date.name.toLowerCase():
+                value = date;
+                $content.CswInput('init', { type: CswInput_Types.date, ID: elementId, value: value });
+                break;
+            case subfields.DisplayMode.Time.name.toLowerCase():
+                value = time;
+                $content.CswInput('init', { type: CswInput_Types.date, ID: elementId, value: value });                
+                break;
+            default :
+                $content.append($('<p style="white-space:normal;" id="' + elementId + '">' + gestalt + '</p>'));
+                break;
+        }
     })(); //ctor
         
     function applyFieldTypeLogicToContent($control) {

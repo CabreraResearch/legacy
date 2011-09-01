@@ -107,39 +107,44 @@
 						function treeJsonToHtml(json,level)
 						{
 					        hasNodes = true;
-					        var id = json.attr.id;
-					        if (idToSelect === id || (level === selectLevel && isNullOrEmpty(selectid))) {
-					            selectid = id;
+						    var treestr = '';
+						    if ('No Results' !== json && json.hasOwnProperty('attr')) {
+					            var id = tryParseString(json.attr.id);
+					            if (idToSelect === id || (level === selectLevel && isNullOrEmpty(selectid))) {
+					                selectid = id;
+					            }
+
+					            var nodeid = tryParseString(id.substring(idPrefix.length));
+					            var nodename = tryParseString(json.data);
+					            var nbtnodekey = tryParseString(json.attr.cswnbtnodekey);
+					            var rel = tryParseString(json.attr.rel);
+					            var species = tryParseString(json.attr.species);
+					            var state = tryParseString(json.attr.state, 'open');
+
+					            treestr += '<li id="' + id + '" rel="' + rel + '" species="' + species + '" class="jstree-' + state + '" ';
+					            if (!isNullOrEmpty(nbtnodekey)) {
+					                treestr += '    cswnbtnodekey="' + nbtnodekey.replace( /"/g , '&quot;') + '"';
+					            }
+					            treestr += '>';
+					            if (o.ShowCheckboxes) {
+					                treestr += '<input type="checkbox" class="' + idPrefix + 'check" id="check_' + nodeid + '" rel="' + rel + '" nodeid="' + nodeid + '" nodename="' + nodename + '"></input>';
+					            }
+					            treestr += '  <a href="#">' + nodename + '</a>';
+					            var children = json.children;
+					            for (var child in children) {
+					                // recurse
+					                if (children.hasOwnProperty(child)) {
+					                    var childNode = children[child];
+					                    treestr += '<ul>';
+					                    treestr += treeJsonToHtml(childNode, 2);
+					                    treestr += '</ul>';
+					                }
+					            }
+					            treestr += '</li>';
+					        } else {
+					            treestr += '<li id="' + Int32MinVal + '" rel="leaf" class="jstree-leaf">No Results</li>';
 					        }
-					        
-					        var nodeid = tryParseString(id.substring(idPrefix.length));
-							var nodename = tryParseString(json.data);
-					        var nbtnodekey = tryParseString(json.attr.cswnbtnodekey);
-					        var rel = tryParseString(json.attr.rel);
-					        var species = tryParseString(json.attr.species);
-						    var state = tryParseString(json.attr.state, 'open');
-						    
-					        var treestr = '<li id="'+ id +'" rel="'+ rel +'" species="'+ species +'" class="jstree-'+ state +'" ';
-							if (!isNullOrEmpty(nbtnodekey)) {
-								treestr += '    cswnbtnodekey="'+ nbtnodekey.replace(/"/g, '&quot;') +'"';
-							}
-							treestr += '>';
-							if (o.ShowCheckboxes) {
-								treestr += '<input type="checkbox" class="'+ idPrefix +'check" id="check_'+ nodeid +'" rel="'+ rel +'" nodeid="'+ nodeid +'" nodename="'+ nodename +'"></input>';
-							}
-							treestr += '  <a href="#">'+ nodename +'</a>';
-					        var children = json.children;
-					        for (var child in children) {
-								// recurse
-								if (children.hasOwnProperty(child)) {
-								    var childNode = children[child];
-								    treestr += '<ul>';
-								    treestr += treeJsonToHtml(childNode,2);
-								    treestr += '</ul>';
-								}
-					        }
-							treestr += '</li>';
-							return treestr;
+						    return treestr;
 						} // _treeXmlToHtml()
 					    
 					    var treehtmlstring = '<ul>';

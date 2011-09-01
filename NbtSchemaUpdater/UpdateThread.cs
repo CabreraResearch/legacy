@@ -69,10 +69,10 @@ namespace ChemSW.Nbt.Schema
         {
             try
             {
-                _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Executable );
-                _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Executable );
+                _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe );
+                _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
 
-                _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ) ,false , false );
+                _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.NbtExe ), false, false );
                 _CswSchemaScriptsProd = new CswSchemaScriptsProd( _CswNbtResources );
                 _CswLogger = _CswNbtResources.CswLogger;
 
