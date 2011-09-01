@@ -2564,7 +2564,7 @@ namespace ChemSW.Nbt.WebServices
             return View;
         } // _getView()
 
-        #region Import Inspection Questions
+        #region Import New Inspection 
 
         [WebMethod(EnableSession = false)]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -2620,10 +2620,17 @@ namespace ChemSW.Nbt.WebServices
                                 // determine if we were successful or failure
                                 if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
                                 {
-                                    if (string.IsNullOrEmpty(WarningMessage))
-                                        ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
-                                    else
-                                        ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()), new JProperty("error", WarningMessage));
+                                    ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
+                                    ReturnVal.Add(new JProperty("tempfilename", TempFileName));
+
+                                    ws.AddPrimaryKeys(ref ExcelDataTable);
+                                    CswGridData gd = new CswGridData(_CswNbtResources);
+                                    gd.PkColumn = "RowNumber";
+                                    ReturnVal.Add(gd.DataTableToJSON(ExcelDataTable));
+
+                                    if (!string.IsNullOrEmpty(WarningMessage))
+                                         ReturnVal.Add(new JProperty("error", WarningMessage));
+                                 
                                 }
                                 else
                                 {
@@ -2686,6 +2693,64 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string getInspectionTargets()
+        {
+            JObject ReturnVal = null;
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                    ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()), new JProperty("inspectiontargetsselect", ws.getInspectionTargets()));
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch (Exception ex)
+            {
+                ReturnVal = jError(ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+
+        }
+
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string IsNewInspectionNameUnique(string NewInsepctionName)
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                    if (ws.IsNodeTypeNameUnique(NewInsepctionName))
+                        ReturnVal = new JObject(new JProperty("succeeded", "true"));
+                    else
+                        ReturnVal = new JObject(new JProperty("succeeded", "false"));
+                }
+                _deInitResources();
+            }
+            catch (Exception Ex)
+            {
+                ReturnVal = jError(Ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+        } // IsNewInspectionNameUnique()
 
         #endregion
 
