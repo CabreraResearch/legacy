@@ -14,30 +14,26 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_005_02 : ICswUpdateSchemaTo
+    public class CswTestCase_005_02 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
         public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_005.Purpose, "verify that tables constrained were rolled back" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_005 _CswTstCaseRsrc_005 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_005_02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_005_02( CswSchemaVersion CswSchemaVersion )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_005 =   ( CswTstCaseRsrc_005) CswTstCaseRsrc;
         }//ctor
 
-        public void update()
+        public override void update()
         {
-            List<PkFkPair> PairList = _CswTstCaseRsrc_005.getPkFkPairs();
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_005 = new CswTstCaseRsrc_005( _CswNbtSchemaModTrnsctn );
+			
+			List<PkFkPair> PairList = _CswTstCaseRsrc_005.getPkFkPairs();
 
             //Verify that we cleaned up after ourselves
             foreach( PkFkPair CurrentPair in PairList )

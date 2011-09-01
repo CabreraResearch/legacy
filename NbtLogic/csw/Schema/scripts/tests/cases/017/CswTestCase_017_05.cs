@@ -14,11 +14,8 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_017_05 : ICswUpdateSchemaTo
+    public class CswTestCase_017_05 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
         public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_017.Purpose, "verify test data tear-down" ) ); } }
 
@@ -26,18 +23,18 @@ namespace ChemSW.Nbt.Schema
         private CswTstCaseRsrc_017 _CswTstCaseRsrc_017 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_017_05( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_017_05( CswSchemaVersion CswSchemaVersion )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_017 =   ( CswTstCaseRsrc_017) CswTstCaseRsrc;
         }//ctor
 
-        public void update()
+        public override void update()
         {
-            List<PkFkPair> PairList = _CswTstCaseRsrc_017.getPkFkPairs();
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_017 = new CswTstCaseRsrc_017( _CswNbtSchemaModTrnsctn );
+			
+			List<PkFkPair> PairList = _CswTstCaseRsrc_017.getPkFkPairs();
 
             //Verify that we cleaned up after ourselves
             foreach( PkFkPair CurrentPair in PairList )

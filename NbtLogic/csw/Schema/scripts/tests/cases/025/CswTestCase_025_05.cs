@@ -15,31 +15,27 @@ using ChemSW.Audit;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_025_05 : ICswUpdateSchemaTo
+    public class CswTestCase_025_05 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
         public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_025.Purpose, "verify contents of audit" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_025 _CswTstCaseRsrc_025 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_025_05( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_025_05( CswSchemaVersion CswSchemaVersion )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_025 = (CswTstCaseRsrc_025) CswTstCaseRsrc;
 
         }//ctor
 
 
-        public void update()
+        public override void update()
         {
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_025 = new CswTstCaseRsrc_025( _CswNbtSchemaModTrnsctn );
+
 
             CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
 

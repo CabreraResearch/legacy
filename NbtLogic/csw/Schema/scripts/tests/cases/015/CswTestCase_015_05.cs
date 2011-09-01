@@ -15,30 +15,26 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_015_05 : ICswUpdateSchemaTo
+    public class CswTestCase_015_05 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
         public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_015.Purpose, "Verify test data were cleaned up" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_015 _CswTstCaseRsrc_015 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_015_05( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_015_05( CswSchemaVersion CswSchemaVersion )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_015 = (CswTstCaseRsrc_015) CswTstCaseRsrc;
         }//ctor
 
-        public void update()
+        public override void update()
         {
-            _CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_015.FakeTestTableName );
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_015 = new CswTstCaseRsrc_015( _CswNbtSchemaModTrnsctn );
+			
+			_CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_015.FakeTestTableName );
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback

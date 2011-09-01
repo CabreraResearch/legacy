@@ -20,32 +20,28 @@ using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_027_04 : ICswUpdateSchemaTo
+    public class CswTestCase_027_04 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
         public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_027.Purpose, "CswNbtActUpdatePropertyValue: " + TotalIterations.ToString() + " iterations"  ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_027 _CswTstCaseRsrc_027 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_027_04( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_027_04( CswSchemaVersion CswSchemaVersion )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_027 = (CswTstCaseRsrc_027) CswTstCaseRsrc;
 
         }//ctor
 
         public Int32 TotalIterations = 100; 
-        public void update()
+        public override void update()
         {
-            // Find which nodes are out of date
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_027 = new CswTstCaseRsrc_027( _CswNbtSchemaModTrnsctn );
+			
+			// Find which nodes are out of date
             CswStaticSelect OutOfDateNodesQuerySelect = _CswNbtSchemaModTrnsctn.makeCswStaticSelect( "OutOfDateNodes_select", "ValuesToUpdate" );
             DataTable OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, 25 );
 

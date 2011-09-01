@@ -17,11 +17,8 @@ using ChemSW.Log;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_027_03 : ICswUpdateSchemaTo
+    public class CswTestCase_027_03 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
         public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_027.Purpose, "Do table update " + _TotalUpdateTestLoops.ToString() + " times" ) ); } }
 
@@ -31,20 +28,20 @@ namespace ChemSW.Nbt.Schema
         private Int32 _TotalUpdateTestLoops = 1000;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_027_03( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_027_03( CswSchemaVersion CswSchemaVersion )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_027 = (CswTstCaseRsrc_027) CswTstCaseRsrc;
 
         }//ctor
 
 
-        public void update()
+        public override void update()
         {
-            for( int idx = 0; idx < _TotalUpdateTestLoops; idx++ )
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_027 = new CswTstCaseRsrc_027( _CswNbtSchemaModTrnsctn );
+			
+			for( int idx = 0; idx < _TotalUpdateTestLoops; idx++ )
             {
 
                 Int32 TestEveryNth = 10;

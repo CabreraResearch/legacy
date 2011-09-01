@@ -15,12 +15,8 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Test Case: 001, part 02
     /// </summary>
-    public class CswTestCase_001_02 : ICswUpdateSchemaTo
+    public class CswTestCase_001_02 : CswUpdateSchemaTo
     {
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
-
         public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription(this.GetType().Name, _CswTstCaseRsrc_001.Purpose, "Verify add operation and add data to columns" ) ); } }
 
 
@@ -28,19 +24,18 @@ namespace ChemSW.Nbt.Schema
         private CswTstCaseRsrc_001 _CswTstCaseRsrc_001 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_001_02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_001_02( CswSchemaVersion CswSchemaVersion )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_001 =   ( CswTstCaseRsrc_001) CswTstCaseRsrc;
         }//ctor
 
 
 
-        public void update()
+        public override void update()
         {
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_001 = new CswTstCaseRsrc_001( _CswNbtSchemaModTrnsctn );
 
             if( !_CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( _CswTstCaseRsrc_001.TestTableName, _CswTstCaseRsrc_001.TestColumnNameOne ) )
                 throw ( new CswDniException( "Column " + _CswTstCaseRsrc_001.TestColumnNameOne + " was not created in data base " ) );
