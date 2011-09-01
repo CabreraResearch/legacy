@@ -381,6 +381,11 @@ function ObjectHelper(obj) {
 
 //borrowed from http://code.google.com/p/shadejs
 function crawlObject(thisObj, onSuccess, doRecursion) {
+    /// <summary>Iterates (optionally recursively) an object and exec a function on each of its properties.</summary>
+	/// <param name="thisObj" type="Object"> An object to crawl </param>
+	/// <param name="onSuccess" type="Function"> A function to execute on finding a property </param>
+    /// <param name="doRecursion" type="Boolean"> If true, recurse on all properties </param>
+    /// <returns type="Object">Returns the return of onSuccess</returns>
     var ret = false;
     if (jQuery.isPlainObject(thisObj)) {
         for (var childKey in thisObj) {
