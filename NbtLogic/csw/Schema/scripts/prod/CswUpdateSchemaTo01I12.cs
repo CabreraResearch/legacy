@@ -55,6 +55,11 @@ namespace ChemSW.Nbt.Schema
                 View.save();
             }
 
+            //Case 23132
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "session_data", "keepinquicklaunch" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "session_data", "keepinquicklaunch", "Determines whether to keep the item in User's Quick Launch", true, false );
+            }
         }//Update()
 
     }//class CswUpdateSchemaTo01I12
