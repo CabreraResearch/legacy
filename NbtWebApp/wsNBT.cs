@@ -472,7 +472,6 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceView( _CswNbtResources );
-                    //ReturnVal = XElement.Parse( ws.getViewTree( Session, IsSearchable, UseSession ) );
                     ReturnVal = ws.getViewTree( IsSearchable );
                     _deInitResources();
                 }
