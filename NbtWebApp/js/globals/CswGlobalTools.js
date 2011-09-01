@@ -286,114 +286,116 @@ function makeEventDelegate(method, options) {
     return function(eventObj) { method(eventObj,options); };
 }
 
+function foundMatch(anObj, prop, value) {
+    var ret = false;
+    if(false === isNullOrEmpty(anObj) &&
+        anObj.hasOwnProperty(prop) &&
+        anObj[prop] === value ) {
+        ret = true;
+    }
+    return ret;
+}
+
 function ObjectHelper(obj) {
     /// <summary>Find an object in a JSON object.</summary>
 	/// <param name="obj" type="Object"> Object to search </param>
 	/// <returns type="ObjectHelper"></returns>
     var thisObj = obj;
     
-    function foundMatch(anObj, prop, value) {
-        var ret = false;
-        if(false === isNullOrEmpty(anObj) &&
-           anObj.hasOwnProperty(prop) &&
-           anObj[prop] === value ) {
-            ret = true;
-        }
-        return ret;
-    }
-    
-    function recursiveFind(parentObj, key, value) {
-        /// <summary>Recursively search an object</summary>
-	    /// <param name="parentObj" type="Object"> Object to search </param>
-        /// <param name="key" type="String"> Property name to match. </param>
-        /// <param name="value" type="Object"> Property value to match </param>
-	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
-        var ret = { };
-        if (jQuery.isPlainObject(parentObj)) {
-            for (var childKey in parentObj) {
-                if (parentObj.hasOwnProperty(childKey)) {
-                    var childObj = parentObj[childKey];
-                    if (foundMatch(childObj, key, value)) {
-                        ret = childObj;
-                        break;
-                    } 
-                    else if (isNullOrEmpty(ret) && jQuery.isPlainObject(childObj)) {
-                        ret = recursiveFind(childObj, key, value);
-                    }
-                }
-            }
-        }
-        return ret;
-    }
+//    function recursiveFind(parentObj, key, value) {
+//        /// <summary>Recursively search an object</summary>
+//	    /// <param name="parentObj" type="Object"> Object to search </param>
+//        /// <param name="key" type="String"> Property name to match. </param>
+//        /// <param name="value" type="Object"> Property value to match </param>
+//	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
+//        var ret = { };
+//        if (jQuery.isPlainObject(parentObj)) {
+//            for (var childKey in parentObj) {
+//                if (parentObj.hasOwnProperty(childKey)) {
+//                    var childObj = parentObj[childKey];
+//                    if (foundMatch(childObj, key, value)) {
+//                        ret = childObj;
+//                        break;
+//                    } 
+//                    else if (isNullOrEmpty(ret) && jQuery.isPlainObject(childObj)) {
+//                        ret = recursiveFind(childObj, key, value);
+//                    }
+//                }
+//            }
+//        }
+//        return ret;
+//    }
     
     function find(key, value) {
         /// <summary>Find a property's parent</summary>
         /// <param name="key" type="String"> Property name to match. </param>
         /// <param name="value" type="Object"> Property value to match </param>
 	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
-        var ret = { };
-        if (jQuery.isPlainObject(thisObj))
-        {
-            for (var childKey in thisObj) {
-                if (thisObj.hasOwnProperty(childKey)) {
-                    var childObj = thisObj[childKey];
-                    if (foundMatch(childObj, key, value)) {
-                        ret = thisObj;
-                        break;
-                    } 
-                    else if (isNullOrEmpty(ret) && jQuery.isPlainObject(childObj)) {
-                        ret = recursiveFind(childObj, key, value);                        
-                    }
-                }
-            }
-        }
+        var onSuccess = function(childObj) {
+            if (foundMatch(childObj, key, value)) {
+                ret = thisObj;
+                break;
+            } 
+        };
+        var ret = crawlObject(thisObj, onSuccess, true);
         return ret;
     }
     
-    function recursiveDelete(parentObj, key, value) {
-        var ret = false;
-        if (jQuery.isPlainObject(parentObj)) {
-            for (var childKey in parentObj) {
-                if (parentObj.hasOwnProperty(childKey)) {
-                    var childObj = parentObj[childKey];
-                    if (foundMatch(childObj, key, value)) {
-                        delete parentObj[childKey];
-                        ret = true;
-                        break;
-                    } 
-                    else if (false === ret && jQuery.isPlainObject(childObj)) {
-                        ret = recursiveDelete(childObj, key, value);
-                    }
-                }
-            }
-        }
-        return ret;
-    }
+//    function recursiveDelete(parentObj, key, value) {
+//        var ret = false;
+//        if (jQuery.isPlainObject(parentObj)) {
+//            for (var childKey in parentObj) {
+//                if (parentObj.hasOwnProperty(childKey)) {
+//                    var childObj = parentObj[childKey];
+//                    if (foundMatch(childObj, key, value)) {
+//                        delete parentObj[childKey];
+//                        ret = true;
+//                        break;
+//                    } 
+//                    else if (false === ret && jQuery.isPlainObject(childObj)) {
+//                        ret = recursiveDelete(childObj, key, value);
+//                    }
+//                }
+//            }
+//        }
+//        return ret;
+//    }
     
     function remove(key, value) {
-        var ret = false;
-        if (jQuery.isPlainObject(thisObj))
-        {
-            for (var childKey in thisObj) {
-                if (thisObj.hasOwnProperty(childKey)) {
-                    var childObj = thisObj[childKey];
-                    if (foundMatch(childObj, key, value)) {
-                        delete thisObj[childKey];
-                        ret = true;
-                        break;
-                    } 
-                    else if (false === ret && jQuery.isPlainObject(childObj)) {
-                        ret = recursiveDelete(childObj, key, value);                        
-                    }
-                }
+        var onSuccess = function(childObj, childKey) {
+            if (foundMatch(childObj, key, value)) {
+                delete thisObj[childKey];
+                ret = true;
+                break;
             }
-        }
+        };
+        var ret = crawlObject(thisObj, onSuccess, true);
+        
         return ret;
     }
     
     this.find = find;
     this.remove = remove;
     this.obj = thisObj;
+}
+
+//borrowed from http://code.google.com/p/shadejs
+function crawlObject(thisObj, onSuccess, doRecursion) {
+    var ret = false;
+    if (jQuery.isPlainObject(thisObj)) {
+        for (var childKey in thisObj) {
+            if (thisObj.hasOwnProperty(childKey)) {
+                var childObj = thisObj[childKey];
+                if (isFunction(onSuccess)) {
+                    ret = onSuccess(childObj, childKey);
+                }
+                else if (doRecursion && false === ret && jQuery.isPlainObject(childObj)) {
+                    ret = crawlObject(childObj, onSuccess, doRecursion);
+                }
+            }
+        }
+    }
+    return ret;
 }
 
 // because IE 8 doesn't support console.log unless the console is open (*duh*)

@@ -167,7 +167,7 @@
 					var $layouttable = $form.CswLayoutTable('init', {
 						ID: o.ID + '_props',
 						OddCellRightAlign: true,
-						ReadOnly: (o.EditMode === 'PrintReport'),
+						ReadOnly: (o.EditMode === EditMode.PrintReport.name),
 						cellset: {
 							rows: 1,
 							columns: 2
@@ -177,67 +177,43 @@
 							onSwap(onSwapData);
 						},
 						showConfigButton: (isNullOrEmpty(o.date) && o.filterToPropId === '' && isTrue($tabcontentdiv.data('canEditLayout'))),
-						onConfigOn: function() { 
-							for (var prop in data) {
-							    if (data.hasOwnProperty(prop)) {
-							        var thisProp = data[prop];
-							        var propId = thisProp.id;
-							        var $subtable = $layouttable.find('#' + propId + '_subproptable');
-							        var $parentcell = $subtable.parent().parent();
-							        var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
-							        var $propcell = _getPropertyCell($cellset);
-
-							        if ($subtable.length > 0)
-							        {
-							            var fieldOpt = {
-							                fieldtype: thisProp.fieldtype,
-							                nodeid: o.nodeid,
-							                relatednodeid: o.relatednodeid,
-							                propid: propId,
-							                $propdiv: $propcell.children('div'),
-							                propData: thisProp,
-							                onchange: function() { },
-							                onReload: function() { getProps($tabcontentdiv, tabid); },
-							                cswnbtnodekey: o.cswnbtnodekey
-							            };
-
-							            _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, propId, o.nodetypeid, thisProp, $propcell, $tabcontentdiv, tabid, true, $savetab);
-							        }
-							    }
-							} // for (var prop in data) {
+						onConfigOn: function() {
+						    doUpdateSubProps(data, true);
 						}, // onConfigOn
-						onConfigOff: function() { 
-							for (var prop in data) {
-							    if (data.hasOwnProperty(prop)) {
-							        var thisProp = data[prop];
-							        var propId = thisProp.id;
-							        var $subtable = $layouttable.find('#' + propId + '_subproptable');
-							        var $parentcell = $subtable.parent().parent();
-							        var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrDom('row'), $parentcell.CswAttrDom('column'));
-							        var $propcell = _getPropertyCell($cellset);
-
-							        if ($subtable.length > 0)
-							        {
-							            var fieldOpt = {
-							                fieldtype: thisProp.fieldtype,
-							                nodeid: o.nodeid,
-							                relatednodeid: o.relatednodeid,
-							                propid: propId,
-							                $propdiv: $propcell.children('div'),
-							                propData: thisProp,
-							                onchange: function() { },
-							                onReload: function() { getProps($tabcontentdiv, tabid); },
-							                cswnbtnodekey: o.cswnbtnodekey
-							            };
-
-							            _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, propId, o.nodetypeid, thisProp, $propcell, $tabcontentdiv, tabid, false, $savetab);
-							        }
-						        }
-							} // for (var prop in data) {
+						onConfigOff: function() {
+						    doUpdateSubProps(data, false);
 						} // onConfigOff
 
 					}); // CswLayoutTable()
 
+				    function doUpdateSubProps(configOn) {
+				        var updOnSuccess = function(thisProp, key) {
+                            var propId = key; //key
+							var $subtable = $layouttable.find('#' + propId + '_subproptable');
+							var $parentcell = $subtable.parent().parent();
+							var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrXml('row'), $parentcell.CswAttrXml('column'));
+							var $propcell = _getPropertyCell($cellset);
+
+							if ($subtable.length > 0)
+							{
+							    var fieldOpt = {
+							        fieldtype: thisProp.fieldtype,
+							        nodeid: o.nodeid,
+							        relatednodeid: o.relatednodeid,
+							        propid: propId,
+							        $propdiv: $propcell.children('div'),
+							        propData: thisProp,
+							        onchange: function() { },
+							        onReload: function() { getProps($tabcontentdiv, tabid); },
+							        cswnbtnodekey: o.cswnbtnodekey
+							    };
+
+							    _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, propId, o.nodetypeid, thisProp, $propcell, $tabcontentdiv, tabid, configOn, $savetab);
+							}
+				        };
+				        crawlObject(data, updOnSuccess, false);
+				    }
+				    
 					var i = 0;
 
 					if(o.EditMode !== EditMode.PrintReport.Name)
@@ -248,7 +224,7 @@
 												onclick: function () { Save($form, $layouttable, data, $savetab, tabid); }
 												});
 					}
-					var AtLeastOneSaveable = _handleProps($layouttable, data, $tabcontentdiv, tabid, false, $savetab);
+					var AtLeastOneSaveable = _handleProperties($layouttable, data, $tabcontentdiv, tabid, false, $savetab);
 
 					// Validation
 					$form.validate({
@@ -319,67 +295,71 @@
 			return $cellset[1][2].children('div');
 		}
 
-		function _handleProps($layouttable, data, $tabcontentdiv, tabid, configMode, $savebtn)
-		{
-			var AtLeastOneSaveable = false;
-			for (var prop in data) {
-				if (data.hasOwnProperty(prop)) {
-                    var thisProp = data[prop];
-				    var propid = thisProp.id;
-				    var fieldtype = thisProp.fieldtype;
-				    var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
+	    function handleProp($layouttable, thisProp, $tabcontentdiv, tabid, configMode, $savebtn) {
+			var isSaveable = false;
 
-				    if ((isTrue(thisProp.display, true) || configMode) &&
-    				    fieldtype !== 'Image' &&
-        				    fieldtype !== 'Grid' &&
-            				    (o.filterToPropId === '' || o.filterToPropId === propid))
-				    {
-				        var $labelcell = _getLabelCell($cellset);
-				        $labelcell.addClass('propertylabel');
+			var propid = thisProp.id;
+			var fieldtype = thisProp.fieldtype;
+			var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
 
-				        if (isTrue(thisProp.highlight))
-				        {
-				            $labelcell.addClass('ui-state-highlight');
-				        }
+			if ((isTrue(thisProp.display, true) || configMode) &&
+    			fieldtype !== 'Image' &&
+        			fieldtype !== 'Grid' &&
+            			(o.filterToPropId === '' || o.filterToPropId === propid))
+			{
+				var $labelcell = _getLabelCell($cellset);
+				$labelcell.addClass('propertylabel');
 
-				        var helpText = tryParseString(thisProp.helptext);
-				        var propName = tryParseString(thisProp.name);
-				        if (!isNullOrEmpty(helpText)) {
-				            $labelcell.CswLink('init', {href: '#', 
-				                                        cssclass: 'cswprop_helplink', 
-				                                        title: helpText, 
-				                                        onclick: function() { return false; }, 
-				                                        value: propName
-				                              });
+				if (isTrue(thisProp.highlight))
+				{
+				    $labelcell.addClass('ui-state-highlight');
+				}
+
+				var helpText = tryParseString(thisProp.helptext);
+				var propName = tryParseString(thisProp.name);
+				if (!isNullOrEmpty(helpText)) {
+				    $labelcell.CswLink('init', {href: '#', 
+				                                cssclass: 'cswprop_helplink', 
+				                                title: helpText, 
+				                                onclick: function() { return false; }, 
+				                                value: propName
+				                        });
     				            
-				        } else {
-				            $labelcell.append(propName);
-				        }
+				} else {
+				    $labelcell.append(propName);
+				}
 
-				        if (!isTrue(thisProp.readonly))
-				        {
-				            AtLeastOneSaveable = true;
-				            if (o.ShowCheckboxes && isTrue(thisProp.copyable)) {
-				                var $propcheck = $labelcell.CswInput('init', {ID: 'check_' + propid,
-				                    type: CswInput_Types.checkbox,
-				                    value: false, // Value --not defined?,
-				                    cssclass: o.ID + '_check'
-				                });
-				                $propcheck.CswAttrDom('propid', propid);
-				            }
-				        }
+				if (!isTrue(thisProp.readonly))
+				{
+				    isSaveable = true;
+				    if (o.ShowCheckboxes && isTrue(thisProp.copyable)) {
+				        var $propcheck = $labelcell.CswInput('init', {ID: 'check_' + propid,
+				            type: CswInput_Types.checkbox,
+				            value: false, // Value --not defined?,
+				            cssclass: o.ID + '_check'
+				        });
+				        $propcheck.CswAttrDom('propid', propid);
 				    }
-
-				    var $propcell = _getPropertyCell($cellset);
-				    $propcell.addClass('propertyvaluecell');
-
-				    if (isTrue(thisProp.highlight)) {
-				        $propcell.addClass('ui-state-highlight');
-				    }
-				    _makeProp($propcell, thisProp, $tabcontentdiv, tabid, configMode, $savebtn);
 				}
 			}
 
+			var $propcell = _getPropertyCell($cellset);
+			$propcell.addClass('propertyvaluecell');
+
+			if (isTrue(thisProp.highlight)) {
+				$propcell.addClass('ui-state-highlight');
+			}
+			_makeProp($propcell, thisProp, $tabcontentdiv, tabid, configMode, $savebtn);
+	        return isSaveable;
+		}
+	    
+		function _handleProperties($layouttable, data, $tabcontentdiv, tabid, configMode, $savebtn) {
+			var AtLeastOneSaveable = false;
+		    var handleSuccess = function(propObj, propKey) {
+		        AtLeastOneSaveable = handleProp($layouttable, propObj, $tabcontentdiv, tabid, configMode, $savebtn) || AtLeastOneSaveable;
+		    };
+		    crawlObject(data, handleSuccess, false);
+		    
 			if(AtLeastOneSaveable === false && o.EditMode != EditMode.AddInPopup.name) {
 				$savebtn.hide();
 			} else {
@@ -388,8 +368,7 @@
 			return AtLeastOneSaveable;
 		} // _handleProps()
 
-		function _makeProp($propcell, propData, $tabcontentdiv, tabid, configMode, $savebtn)
-		{
+		function _makeProp($propcell, propData, $tabcontentdiv, tabid, configMode, $savebtn) {
 			$propcell.empty();
 			if ((isTrue(propData.display, true) || configMode ) &&
 				(o.filterToPropId === '' || o.filterToPropId === propData.id)) {
@@ -426,39 +405,43 @@
 				} // if (propData.hassubprops === "true")
 
 				$.CswFieldTypeFactory('make', fieldOpt);
+                
+			    if (propData.hasOwnProperty('subprops')) {
+			        // recurse on sub-props
+				    var subProps = propData.subprops;
 
-				// recurse on sub-props
-				var subProps = propData.subprops;
-
-				var $subtable = $propcell.CswLayoutTable('init', {
-					ID: fieldOpt.propid + '_subproptable',
-					OddCellRightAlign: true,
-					ReadOnly: (o.EditMode === 'PrintReport'),
-					cellset: {
-						rows: 1,
-						columns: 2
-					},
-					onSwap: function (e, onSwapData)
-					{
-						onSwap(onSwapData);
-					},
-					showConfigButton: false
-				});
-
-				if ((!isNullOrEmpty(subProps) && isTrue(subProps.display)) || configMode)
-				{
-					_handleProps($subtable, subProps, $tabcontentdiv, tabid, configMode, $savebtn);
-					if (configMode) {
-						$subtable.CswLayoutTable('ConfigOn');
-					} else {
-						$subtable.CswLayoutTable('ConfigOff');
-					}
-				}
+				    var $subtable = $propcell.CswLayoutTable('init', {
+					    ID: fieldOpt.propid + '_subproptable',
+					    OddCellRightAlign: true,
+					    ReadOnly: (o.EditMode === 'PrintReport'),
+					    cellset: {
+						    rows: 1,
+						    columns: 2
+					    },
+					    onSwap: function (e, onSwapData)
+					    {
+						    onSwap(onSwapData);
+					    },
+					    showConfigButton: false
+				    });
+			        
+			        var subOnSuccess = function(subProp, key) {
+			            subProp.propId = key;
+			            if (isTrue(subProp.display) || configMode) {
+			                handleProp($subtable, subProp, $tabcontentdiv, tabid, configMode, $savebtn);
+			                if (configMode) {
+			                    $subtable.CswLayoutTable('ConfigOn');
+			                } else {
+			                    $subtable.CswLayoutTable('ConfigOff');
+			                }
+			            }
+			        };
+			        crawlObject(subProps, subOnSuccess, true);
+			    }
 			} // if (propData.display != 'false' || ConfigMode )
 		} // _makeProp()
 
-		function _updateSubProps(fieldOpt, singlePropUrl, editMode, cswnbtnodekey, propId, nodetypeid, propData, $propcell, $tabcontentdiv, tabid, configMode, $savebtn)
-		{
+		function _updateSubProps(fieldOpt, singlePropUrl, editMode, cswnbtnodekey, propId, nodetypeid, propData, $propcell, $tabcontentdiv, tabid, configMode, $savebtn) {
 			// do a fake 'save' to update the xml with the current value
 			$.CswFieldTypeFactory('save', fieldOpt);
 
@@ -482,8 +465,7 @@
 			});
 		} // _updateSubProps()
 
-		function Save($form, $layouttable, propsData, $savebtn, tabid)
-		{
+		function Save($form, $layouttable, propsData, $savebtn, tabid) {
 			if($form.valid())
 			{
 				_updatePropJsonFromForm($layouttable, propsData);
@@ -553,40 +535,38 @@
 			}
 		} // Save()
 
-		function _updatePropJsonFromForm($layouttable, propData)
-		{
-			for (var prop in propData) {
-				if (propData.hasOwnProperty(prop)) {
-				    var thisProp = propData[prop];
-				    var propOpt = {
-				        propData: thisProp,
-				        $propdiv: '',
-				        $propCell: '',
-				        fieldtype: thisProp.fieldtype,
-				        nodeid: o.nodeid,
-				        cswnbtnodekey: o.cswnbtnodekey
-				    };
+		function _updatePropJsonFromForm($layouttable, propData) {
+		    var updSuccess = function(thisProp, propKey) {
+                var propOpt = {
+				    propData: thisProp,
+				    $propdiv: '',
+				    $propCell: '',
+				    fieldtype: thisProp.fieldtype,
+				    nodeid: o.nodeid,
+				    cswnbtnodekey: o.cswnbtnodekey
+				};
 				    
-				    var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
-				    propOpt.$propcell = _getPropertyCell($cellset);
-				    propOpt.$propdiv = propOpt.$propcell.children('div').first();
+				var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
+				propOpt.$propcell = _getPropertyCell($cellset);
+				propOpt.$propdiv = propOpt.$propcell.children('div').first();
 
-				    $.CswFieldTypeFactory('save', propOpt);
+				$.CswFieldTypeFactory('save', propOpt);
 
-				    // recurse on subprops
-				    if ( isTrue(thisProp.hassubprops)) {
-				        var subProps = thisProp.subprops;
-				        if (!isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
-				            var $subtable = propOpt.$propcell.children('#' + thisProp.id + '_subproptable').first();
-				            if ($subtable.length > 0)
-				            {
-				                _updatePropJsonFromForm($subtable, subProps);
-				            }
+				// recurse on subprops
+				if (isTrue(thisProp.hassubprops) && thisProp.hasOwnProperty('subprops')) {
+				    var subProps = thisProp.subprops;
+				    if (!isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
+				        var $subtable = propOpt.$propcell.children('#' + thisProp.id + '_subproptable').first();
+				        if ($subtable.length > 0)
+				        {
+				            _updatePropJsonFromForm($subtable, subProps);
 				        }
 				    }
 				}
-			} // each()
-		} // _updatePropXmlFromForm()
+		    };
+
+		    crawlObject(propData, updSuccess, false);
+	} // _updatePropXmlFromForm()
 
 		// For proper chaining support
 		return this;

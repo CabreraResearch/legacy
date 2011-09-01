@@ -432,7 +432,7 @@ namespace ChemSW.Nbt.WebServices
                 if( SubPropsObj.HasValues )
                 {
                     foreach( JObject ChildPropObj in SubPropsObj.Properties()
-                                .Where( ChildProp => null != ChildProp.Value )
+                                .Where( ChildProp => null != ChildProp.Value && ChildProp.Value.HasValues)
                                 .Select( ChildProp => (JObject) ChildProp.Value )
                                 .Where( ChildPropObj => ChildPropObj.HasValues ) )
                     {
