@@ -15,23 +15,11 @@ namespace ChemSW.Nbt.Schema
 	/// <summary>
 	/// Updates the schema to version 01I-07
 	/// </summary>
-	public class CswUpdateSchemaTo01I07 : ICswUpdateSchemaTo
+	public class CswUpdateSchemaTo01I07 : CswUpdateSchemaTo
 	{
-		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 07 ); } }
 
-		private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
-		public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 07 ); } }
-		public CswUpdateSchemaTo01I07( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-		{
-			_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-			_CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
-		}
-
-
-		public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
-
-
-		public void update()
+		public override void update()
 		{
 			// case 21450 - Remove 'For Reports' views from master data
 

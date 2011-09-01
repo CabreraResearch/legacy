@@ -9,23 +9,11 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema to version 01I-01
     /// </summary>
-    public class CswUpdateSchemaTo01I01 : ICswUpdateSchemaTo
+    public class CswUpdateSchemaTo01I01 : CswUpdateSchemaTo
     {
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 01 ); } }
 
-        private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 01 ); } }
-        public CswUpdateSchemaTo01I01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
-        }
-
-
-        public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
-
-
-        public void update()
+		public override void update()
         {
             // This script is reserved for schema changes, 
             // such as adding tables or columns, 
