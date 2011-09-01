@@ -252,7 +252,7 @@ namespace ChemSW.Nbt
                 {
                     AddClause += "and nodeviewid in (" + LimitToViews.ToString() + ")";
                 }
-                ViewsSelect.S4Parameters.Add( "addclause", new CswStaticParam( "addclause", AddClause ) );
+                ViewsSelect.S4Parameters.Add( "addclause", new CswStaticParam( "addclause", AddClause, true ) );
                 if( OrderBy != string.Empty )
                 {
                     ViewsSelect.S4Parameters.Add( "orderbyclause", new CswStaticParam( "orderbyclause", OrderBy ) );
