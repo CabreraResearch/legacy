@@ -12,18 +12,21 @@
         init: function(o) {
 			
 			var $Div = $(this);
-            
-			return $Div.CswAuditHistoryGrid({ 
-				'ID': o.ID,
-				'nodeid': o.nodeid,
-				'onEditRow': function(date) {
-								$.CswDialog('EditNodeDialog', {
-									'nodeid': o.nodeid,
-									'onEditNode': o.onEditNode,
-									'date': date
-								});
-							}
-			});
+            var ret = '';
+            if (false === o.Multi) {
+                ret = $Div.CswAuditHistoryGrid({
+                        ID: o.ID,
+                        nodeid: o.nodeid,
+                        onEditRow: function(date) {
+                            $.CswDialog('EditNodeDialog', {
+                                nodeid: o.nodeid,
+                                onEditNode: o.onEditNode,
+                                date: date
+                            });
+                        }
+                    });
+            }
+            return ret;
         },
         save: function(o) {
                 

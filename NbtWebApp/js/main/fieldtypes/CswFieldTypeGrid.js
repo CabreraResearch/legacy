@@ -21,8 +21,7 @@
             var $Div = $(this);
 			$Div.empty();
             var propVals = o.propData.values;
-			if(o.EditMode === EditMode.AuditHistoryInPopup.name)
-			{
+			if(o.EditMode === EditMode.AuditHistoryInPopup.name || o.Multi) {
 				$Div.append('[Grid display disabled]');
 			} else {
 

@@ -1,3 +1,37 @@
+/// <reference path="CswFieldTypeAuditHistoryGrid.js" />
+/// <reference path="CswFieldTypeViewReference.js" />
+/// <reference path="CswFieldTypeBarcode.js" />
+/// <reference path="CswFieldTypeComposite.js" />
+/// <reference path="CswFieldTypeDateTime.js" />
+/// <reference path="CswFieldTypeFile.js" />
+/// <reference path="CswFieldTypeGrid.js" />
+/// <reference path="CswFieldTypeImage.js" />
+/// <reference path="CswFieldTypeImageList.js" />
+/// <reference path="CswFieldTypeLink.js" />
+/// <reference path="CswFieldTypeList.js" />
+/// <reference path="CswFieldTypeLocation.js" />
+/// <reference path="CswFieldTypeLocationContents.js" />
+/// <reference path="CswFieldTypeLogical.js" />
+/// <reference path="CswFieldTypeLogicalSet.js" />
+/// <reference path="CswFieldTypeMemo.js" />
+/// <reference path="CswFieldTypeMTBF.js" />
+/// <reference path="CswFieldTypeMultiList.js" />
+/// <reference path="CswFieldTypeNFPA.js" />
+/// <reference path="CswFieldTypeNodeTypeSelect.js" />
+/// <reference path="CswFieldTypeNumber.js" />
+/// <reference path="CswFieldTypePassword.js" />
+/// <reference path="CswFieldTypePropertyReference.js" />
+/// <reference path="CswFieldTypeQuantity.js" />
+/// <reference path="CswFieldTypeQuestion.js" />
+/// <reference path="CswFieldTypeRelationship.js" />
+/// <reference path="CswFieldTypeScientific.js" />
+/// <reference path="CswFieldTypeSequence.js" />
+/// <reference path="CswFieldTypeStatic.js" />
+/// <reference path="CswFieldTypeText.js" />
+/// <reference path="CswFieldTypeTime.js" />
+/// <reference path="CswFieldTypeTimeInterval.js" />
+/// <reference path="CswFieldTypeUserSelect.js" />
+/// <reference path="CswFieldTypeViewPickList.js" />
 
 $.CswFieldTypeFactory = function (method)
 {
@@ -14,6 +48,7 @@ $.CswFieldTypeFactory = function (method)
 		Required: '',
 		ReadOnly: '',
 		EditMode: EditMode.Edit.name,
+	    Multi: false,
 		onEditView: function () { }
 	};
 

@@ -42,6 +42,8 @@ var CswViewMode = {
     table: { name: 'Table' }
 };
 
+var CswMultiEditValue = '[Unchanged]';
+
 // for CswCookie
 var CswCookieName = {
 	SessionId: 'CswSessionId',

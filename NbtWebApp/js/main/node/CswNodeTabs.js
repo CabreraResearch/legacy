@@ -200,10 +200,12 @@
 							        propData: thisProp,
 							        onchange: function() { },
 							        onReload: function() { getProps($tabcontentdiv, tabid); },
+							        EditMode: o.EditMode,
+							        Multi: o.Multi,
 							        cswnbtnodekey: o.cswnbtnodekey
 							    };
 
-							    _updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, propId, o.nodetypeid, thisProp, $propcell, $tabcontentdiv, tabid, configOn, $savetab);
+							    _updateSubProps(fieldOpt, propId, thisProp, $propcell, $tabcontentdiv, tabid, configOn, $savetab);
 							}
 				        };
 				        crawlObject(data, updOnSuccess, false);
@@ -377,6 +379,7 @@
 					onReload: function() { getProps($tabcontentdiv, tabid); },
 					cswnbtnodekey: o.cswnbtnodekey,
 					EditMode: o.EditMode,
+			        Multi: o.Multi,
 					onEditView: o.onEditView,
 					ReadOnly: isTrue(propData.readonly)
 				};
@@ -388,7 +391,7 @@
 				if (isTrue(propData.hassubprops)) {
 					fieldOpt.onchange = function ()
 					{
-						_updateSubProps(fieldOpt, o.SinglePropUrl, o.EditMode, o.cswnbtnodekey, propId, o.nodetypeid, propData, $propcell, $tabcontentdiv, tabid, false, $savebtn);
+						_updateSubProps(fieldOpt, propId, propData, $propcell, $tabcontentdiv, tabid, false, $savebtn);
 						if(isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName);
 					};
 				} // if (propData.hassubprops === "true")
@@ -430,22 +433,33 @@
 			} // if (propData.display != 'false' || ConfigMode )
 		} // _makeProp()
 
-		function _updateSubProps(fieldOpt, singlePropUrl, editMode, cswnbtnodekey, propId, nodetypeid, propData, $propcell, $tabcontentdiv, tabid, configMode, $savebtn) {
-			// do a fake 'save' to update the xml with the current value
+		function _updateSubProps(fieldOpt, propId, propData, $propcell, $tabcontentdiv, tabid, configMode, $savebtn) {
+			/// <summary>Update a properties sub props</summary>
+	        /// <param name="fieldOpt" type="Object"> An object defining a prop's fieldtype </param>
+	        /// <param name="propId" type="String"> A propertyid </param>
+            /// <param name="propData" type="Object"> Property definition </param>
+		    /// <param name="$propcell" type="JQuery"> An element to append to </param>
+		    /// <param name="$tabcontentdiv" type="JQuery"> A tab element </param>
+		    /// <param name="tabid" type="String"> TabId </param>
+		    /// <param name="configMode" type="Boolean"> True if config mode </param>
+		    /// <param name="$savebtn" type="JQuery"> A save button </param>
+            /// <returns type="void"></returns>
+		    
+		    // do a fake 'save' to update the json with the current value
 			$.CswFieldTypeFactory('save', fieldOpt);
 
 			// update the propxml from the server
 			var jsonData = {
-				EditMode: editMode,
+				EditMode: fieldOpt.editMode,
 				NodeId: o.nodeid,
-				SafeNodeKey: cswnbtnodekey,
+				SafeNodeKey: fieldOpt.cswnbtnodekey,
 				PropId: propId,
-				NodeTypeId: nodetypeid,
+				NodeTypeId: o.nodetypeid,
 				NewPropJson: JSON.stringify(propData)
 			};
 
 			CswAjaxJson({
-				url: singlePropUrl,
+				url: o.SinglePropUrl,
 				data: jsonData,
 				success: function (data)
 				{
@@ -532,6 +546,7 @@
 				    $propCell: '',
 				    fieldtype: thisProp.fieldtype,
 				    nodeid: o.nodeid,
+                    Multi: o.Multi,
 				    cswnbtnodekey: o.cswnbtnodekey
 				};
 				    

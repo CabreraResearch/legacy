@@ -14,7 +14,7 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = tryParseString(propVals.value).trim();
+            var value = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditValue;
             $Div.append(value);
 
         },
