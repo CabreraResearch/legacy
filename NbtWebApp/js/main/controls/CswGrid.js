@@ -146,8 +146,12 @@ function CswGrid(options, $parent) {
     }
     
     function getSelectedRowId() {
-        var selector = (false === multiEdit) ? 'selrow' : 'selarrrow';
-        var rowid = $gridTable.jqGrid('getGridParam', selector);
+        var rowid = $gridTable.jqGrid('getGridParam', 'selrow');
+        return rowid;
+    }
+    
+    function getSelectedRowsIds() {
+        var rowid = $gridTable.jqGrid('getGridParam', 'selarrrow');
         return rowid;
     }
     
@@ -236,7 +240,7 @@ function CswGrid(options, $parent) {
                 }, false);
             }
         } else { // if (false === multiEdit)
-            var rows = getSelectedRowId();
+            var rows = getSelectedRowsIds();
             if (rows.length > 0) {
                 haveSelectedRows = true;
                 //loop once to guarantee we have Arrays

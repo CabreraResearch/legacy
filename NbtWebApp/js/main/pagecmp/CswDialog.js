@@ -2,10 +2,13 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/Global.js" />
+/// <reference path="../controls/CswTable.js" />
+/// <reference path="../actions/CswAuditHistoryGrid.js" />
+/// <reference path="../node/CswNodeTabs.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 		
-	var PluginName = 'CswDialog';
+	var pluginName = 'CswDialog';
 
 	var methods = {
 
@@ -155,53 +158,64 @@
 				nodeid: '',
 				nodepk: '',
 				cswnbtnodekey: '',
-				multiselect: '',
+				Multi: false,
 				filterToPropId: '',
 				title: '',
-				onEditNode: function (nodeid, nodekey) { },
+				onEditNode: null, // function (nodeid, nodekey) { },
 				date: ''     // viewing audit records
 			};
 			if (options) $.extend(o, options);
-		    o.nodeid = tryParseString(o.nodeid, o.nodepk);
+            var nodeid, nodekey;
+            if (o.Multi && isArray(o.nodeid)) {
+                nodeid = o.nodeid[0];
+                nodekey = o.cswnbtnodekey[0];
+            } else {
+                nodeid = tryParseString(o.nodeid, o.nodepk);
+                nodekey = o.cswnbtnodekey;
+            }
+            
 		    var $div = $('<div></div>');
 							
 			var myEditMode = EditMode.EditInPopup.name;
 			var $table = $div.CswTable();
-			if(!isNullOrEmpty(o.date))
-			{
+			if(false === isNullOrEmpty(o.date) && false === o.Multi) {
 				myEditMode = EditMode.AuditHistoryInPopup.name;
 				$table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
-					ID: o.nodeid + '_history',
-					nodeid: o.nodeid,
+					ID: nodeid + '_history',
+					nodeid: nodeid,
 					onEditNode: o.onEditNode,
 					JustDateColumn: true,
 					selectedDate: o.date,
-					onSelectRow: function(date) { _setupTabs(date); },
+					onSelectRow: function(date) { setupTabs(date); },
 					allowEditRow: false
 				});
 			}
 			var $tabcell = $table.CswTable('cell', 1, 2);
 
-			_setupTabs(o.date);
+			setupTabs(o.date);
 
-			function _setupTabs(date)
+			function setupTabs(date)
 			{
 				$tabcell.empty();
 				$tabcell.CswNodeTabs({
-					nodeid: o.nodeid,
-					cswnbtnodekey: o.cswnbtnodekey,
+					nodeid: nodeid,
+					cswnbtnodekey: nodekey,
 					filterToPropId: o.filterToPropId,
+				    Multi: o.Multi,    
 					EditMode: myEditMode,
 					title: o.title,
 					tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
 					date: date,
+				    onMultiSave: function () {
+				        
+				    }, 
 					onSave: function (nodeid, nodekey, tabcount) {
 						unsetChanged();
 						if(tabcount === 1)
 						{
 							$div.dialog('close');
 						}
-						_setupTabs(date);
+						setupTabs(date);
 						if (isFunction(o.onEditNode)) {
 							o.onEditNode(nodeid, nodekey);
 						}
@@ -576,7 +590,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
 		}    
   
 	};
