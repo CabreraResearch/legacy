@@ -9,9 +9,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchemaTo01I12 : CswUpdateSchemaTo
     {
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 12 ); } }
+        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 12 ); } }
 
-        public void update()
+		public override void update()
         {
             CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp UserDtp = UserOC.getObjectClassProp( CswNbtObjClassUser.DateFormatPropertyName );
