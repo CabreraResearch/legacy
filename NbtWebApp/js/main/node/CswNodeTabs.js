@@ -178,10 +178,10 @@
 						},
 						showConfigButton: (isNullOrEmpty(o.date) && o.filterToPropId === '' && isTrue($tabcontentdiv.data('canEditLayout'))),
 						onConfigOn: function() {
-						    doUpdateSubProps(data, true);
+						    doUpdateSubProps(true);
 						}, // onConfigOn
 						onConfigOff: function() {
-						    doUpdateSubProps(data, false);
+						    doUpdateSubProps(false);
 						} // onConfigOff
 
 					}); // CswLayoutTable()
@@ -213,8 +213,6 @@
 				        };
 				        crawlObject(data, updOnSuccess, false);
 				    }
-				    
-					var i = 0;
 
 					if(o.EditMode !== EditMode.PrintReport.Name)
 					{
