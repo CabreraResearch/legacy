@@ -17,16 +17,17 @@ namespace ChemSW.Nbt.Schema
 
     public class CswTestCase_026_02 : CswUpdateSchemaTo
     {
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_026.Purpose, "create test data to populate table" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_026.Purpose, "create test data to populate table" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_026 _CswTstCaseRsrc_026 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_026_02( CswSchemaVersion CswSchemaVersion )
+        public CswTestCase_026_02( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
+			_CswTstCaseRsrc_026 = (CswTstCaseRsrc_026) CswTstCaseRsc;
 
         }//ctor
 
@@ -34,7 +35,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_026 = new CswTstCaseRsrc_026( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_026.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
             //_CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.BuiltInProp].AsText.Text = _CswTstCaseRsrc_026.InsertValOfBuiltInProp;
             //_CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.AddedProp].AsText.Text = _CswTstCaseRsrc_026.InsertValOfAddedProp;

@@ -17,22 +17,23 @@ namespace ChemSW.Nbt.Schema
 
     public class CswTestCase_011_05 : CswUpdateSchemaTo
     {
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_011.Purpose, "Verify update" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_011.Purpose, "Verify update" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_011 _CswTstCaseRsrc_011 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_011_05( CswSchemaVersion CswSchemaVersion )
+        public CswTestCase_011_05( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-        }//ctor
+			_CswTstCaseRsrc_011 = (CswTstCaseRsrc_011) CswTstCaseRsc;
+		}//ctor
 
         public override void update()
         {
 			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_011 = new CswTstCaseRsrc_011( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_011.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 			
 			CswTableSelect CswTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( Description, _CswTstCaseRsrc_011.FakeTestTableName );
 

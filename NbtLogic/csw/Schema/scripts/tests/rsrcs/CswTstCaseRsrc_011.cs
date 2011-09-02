@@ -18,18 +18,19 @@ namespace ChemSW.Nbt.Schema
     public class CswTstCaseRsrc_011
     {
 
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		private CswTestCaseRsrc _CswTestCaseRsrc;
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+		{
+			set
+			{
+				_CswNbtSchemaModTrnsctn = value;
+				_CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			}
+		}
 
-        private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        public CswTstCaseRsrc_011( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
 
-        }//ctor
-
-
-        public string Purpose = "Update same table after rollback of insert";
+        public static string Purpose = "Update same table after rollback of insert";
 
         public string FakeTestTableName { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
         public string FakeTestColumnName { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }

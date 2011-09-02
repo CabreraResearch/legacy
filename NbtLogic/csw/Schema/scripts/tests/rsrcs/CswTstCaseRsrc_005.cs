@@ -18,17 +18,19 @@ namespace ChemSW.Nbt.Schema
     public class CswTstCaseRsrc_005
     {
 
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		private CswTestCaseRsrc _CswTestCaseRsrc;
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+		{
+			set
+			{
+				_CswNbtSchemaModTrnsctn = value;
+				_CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			}
+		}
 
-        private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        public CswTstCaseRsrc_005( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-        }//ctor
 
-
-        public string Purpose = "Rollback Add of Constrained Columns";
+        public static string Purpose = "Rollback Add of Constrained Columns";
 
         public List<PkFkPair> getPkFkPairs() { return ( _CswTestCaseRsrc.getPkFkPairs( 6 ) ); }
 

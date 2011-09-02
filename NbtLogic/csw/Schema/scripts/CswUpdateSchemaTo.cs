@@ -13,15 +13,7 @@ namespace ChemSW.Nbt.Schema
 		}
 
 		public abstract CswSchemaVersion SchemaVersion { get; }
-
-		public string Description
-		{
-			get
-			{
-				return "Update to schema version " + SchemaVersion.ToString();
-			}
-		}
-	
+		public abstract string Description { get; }	
 		public abstract void update();
 	}
 }

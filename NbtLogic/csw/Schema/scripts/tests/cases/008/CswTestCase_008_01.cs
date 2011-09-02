@@ -16,22 +16,23 @@ namespace ChemSW.Nbt.Schema
 
     public class CswTestCase_008_01 : CswUpdateSchemaTo
     {
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_008.Purpose, "verify read" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_008.Purpose, "verify read" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_008 _CswTstCaseRsrc_008 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_008_01( CswSchemaVersion CswSchemaVersion )
+        public CswTestCase_008_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-        }//ctor
+			_CswTstCaseRsrc_008 = (CswTstCaseRsrc_008) CswTstCaseRsc;
+		}//ctor
 
         public override void update()
         {
 			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_008 = new CswTstCaseRsrc_008( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_008.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 			
 			_CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetype_props", "nodetypepropid" );
 

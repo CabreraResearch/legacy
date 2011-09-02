@@ -18,22 +18,23 @@ namespace ChemSW.Nbt.Schema
     public class CswTestCase_013_07 : CswUpdateSchemaTo
     {
 
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_013.Purpose, "Post update of table that was rolled back" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_013.Purpose, "Post update of table that was rolled back" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_013 _CswTstCaseRsrc_013 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_013_07( CswSchemaVersion CswSchemaVersion )
+        public CswTestCase_013_07( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-        }//ctor
+			_CswTstCaseRsrc_013 = (CswTstCaseRsrc_013) CswTstCaseRsc;
+		}//ctor
 
         public override void update()
         {
 			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_013 = new CswTstCaseRsrc_013( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_013.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 			
 			_CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.update( _CswTstCaseRsrc_013.TheSuspectUpdateTable );
 

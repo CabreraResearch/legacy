@@ -22,22 +22,23 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswTestCase_010_01 : CswUpdateSchemaTo
     {
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_010.Purpose, "'the' test" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_010.Purpose, "'the' test" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_010 _CswTstCaseRsrc_010 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_010_01( CswSchemaVersion CswSchemaVersion )
+        public CswTestCase_010_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-        }//ctor
+			_CswTstCaseRsrc_010 = (CswTstCaseRsrc_010) CswTstCaseRsc;
+		}//ctor
 
         public override void update()
         {
 			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_010 = new CswTstCaseRsrc_010( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_010.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 			//Int32 MaterialsPk = Int32.MinValue;
 
 

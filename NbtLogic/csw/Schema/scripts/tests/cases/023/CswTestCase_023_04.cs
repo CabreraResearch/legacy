@@ -17,16 +17,17 @@ namespace ChemSW.Nbt.Schema
 
     public class CswTestCase_023_04 : CswUpdateSchemaTo
     {
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_023.Purpose, "clean up test data" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_023.Purpose, "clean up test data" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_023 _CswTstCaseRsrc_023 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
         public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_023_04( CswSchemaVersion CswSchemaVersion )
+        public CswTestCase_023_04( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
+			_CswTstCaseRsrc_023 = (CswTstCaseRsrc_023) CswTstCaseRsc;
 
         }//ctor
 
@@ -34,7 +35,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_023 = new CswTstCaseRsrc_023( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_023.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
 			CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
             _CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_023.ArbitraryTableName_01 );

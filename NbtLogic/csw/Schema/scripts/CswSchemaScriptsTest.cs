@@ -34,8 +34,8 @@ namespace ChemSW.Nbt.Schema
 
             List<string> TestCaseTypeNames = new List<string>();
             Dictionary<string, Type> TestCaseTypesByName = new Dictionary<string, Type>();
-            //Dictionary<string, Type> TestResourceTypesByName = new Dictionary<string, Type>();
-            //Dictionary<string, Object> TestResourceInstancesByName = new Dictionary<string, Object>();
+			Dictionary<string, Type> TestResourceTypesByName = new Dictionary<string, Type>();
+			Dictionary<string, Object> TestResourceInstancesByName = new Dictionary<string, Object>();
             Type[] Types = Assembly.GetExecutingAssembly().GetTypes();
             foreach( Type CurrentType in Types )
             {
@@ -51,15 +51,15 @@ namespace ChemSW.Nbt.Schema
                         }
                     }//if it's a test case
 
-					//if( CurrentType.Name.Contains( "CswTstCaseRsrc_" ) )
-					//{
-					//    string TestCaseGroupId = CurrentType.Name.Substring( 15, 3 );
-					//    if( false == TestResourceTypesByName.ContainsKey( CurrentType.Name ) )
-					//    {
-					//        TestResourceTypesByName.Add( TestCaseGroupId, CurrentType );
-					//        TestResourceInstancesByName.Add( TestCaseGroupId, null );
-					//    }
-					//}//if its a test case resource
+					if( CurrentType.Name.Contains( "CswTstCaseRsrc_" ) )
+					{
+						string TestCaseGroupId = CurrentType.Name.Substring( 15, 3 );
+						if( false == TestResourceTypesByName.ContainsKey( CurrentType.Name ) )
+						{
+							TestResourceTypesByName.Add( TestCaseGroupId, CurrentType );
+							TestResourceInstancesByName.Add( TestCaseGroupId, null );
+						}
+					}//if its a test case resource
 
                 }//if it's in our schema and it's a class
 
@@ -91,22 +91,22 @@ namespace ChemSW.Nbt.Schema
 
 
 
-				//Object[] ResourceCtorArgs = new Object[1];
+				Object[] ResourceCtorArgs = new Object[0];
 				//ResourceCtorArgs[0] = _CswNbtSchemaModTrnsctn;
 
-				//string TestCaseGroupId = _getCaseNumberFromTestCaseTypeName( CurrentTestCaseType.Name );
-				//if( null == TestResourceInstancesByName[TestCaseGroupId] )
-				//{
-				//    TestResourceInstancesByName[TestCaseGroupId] = Activator.CreateInstance( TestResourceTypesByName[TestCaseGroupId], ResourceCtorArgs );
-				//}
+				string TestCaseGroupId = _getCaseNumberFromTestCaseTypeName( CurrentTestCaseType.Name );
+				if( null == TestResourceInstancesByName[TestCaseGroupId] )
+				{
+					TestResourceInstancesByName[TestCaseGroupId] = Activator.CreateInstance( TestResourceTypesByName[TestCaseGroupId], ResourceCtorArgs );
+				}
 
 
                 CswSchemaVersion CurrentVersion = new CswSchemaVersion( 1, 'T', idx + 1 );
 
-                Object[] TestCaseCtorArgs = new Object[1];
+                Object[] TestCaseCtorArgs = new Object[2];
                 //TestCaseCtorArgs[0] = _CswNbtSchemaModTrnsctn;
                 TestCaseCtorArgs[0] = CurrentVersion;
-                //TestCaseCtorArgs[2] = TestResourceInstancesByName[TestCaseGroupId];
+                TestCaseCtorArgs[1] = TestResourceInstancesByName[TestCaseGroupId];
 
                 CswUpdateSchemaTo CurrentTestCaseInstance = (CswUpdateSchemaTo) Activator.CreateInstance( CurrentTestCaseType, TestCaseCtorArgs );
                 _UpdateDrivers.Add( CurrentTestCaseInstance.SchemaVersion, new CswSchemaUpdateDriver( CurrentTestCaseInstance ) );

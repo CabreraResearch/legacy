@@ -21,19 +21,19 @@ namespace ChemSW.Nbt.Schema
     public class CswTstCaseRsrc_023
     {
 
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		private CswTestCaseRsrc _CswTestCaseRsrc;
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+		{
+			set
+			{
+				_CswNbtSchemaModTrnsctn = value;
+				_CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			}
+		}
+		private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
 
-        private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
-        public CswTstCaseRsrc_023( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-        }//ctor
-
-
-        public string Purpose = "Rollback of audit data";
+        public static string Purpose = "Rollback of audit data";
 
         public string ArbitraryTableName_01 { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
 
