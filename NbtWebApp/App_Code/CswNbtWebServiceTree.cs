@@ -105,13 +105,13 @@ namespace ChemSW.Nbt.WebServices
 
             if( ShowEmpty )
             {
-                ReturnObj["tree"] = new JArray();
-                ReturnObj["tree"][0] = new JObject();
+                ReturnObj["tree"] = new JArray( new JObject() );
+                //ReturnObj["tree"][0] = new JObject();
                 ReturnObj["tree"][0]["data"] = ViewName;
                 ReturnObj["tree"][0]["attr"] = new JObject();
                 ReturnObj["tree"][0]["attr"]["viewid"] = ViewId;
                 ReturnObj["tree"][0]["state"] = "open";
-                ReturnObj["tree"][0]["children"] = new JArray();
+                ReturnObj["tree"][0]["children"] = new JArray( new JObject() );
                 ReturnObj["tree"][0]["children"][0] = EmptyOrInvalid;
             }
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -19,20 +15,20 @@ namespace ChemSW.Nbt.Schema
             // such as adding tables or columns, 
             // which need to take place before any other changes can be made.
 
-			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "jct_nodes_props", "field2_numeric" ) )
-			{
-				_CswNbtSchemaModTrnsctn.addDoubleColumn( "jct_nodes_props", "field2_numeric", "A second numeric value", false, false, 6 );
-			}
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "jct_nodes_props", "field2_numeric" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addDoubleColumn( "jct_nodes_props", "field2_numeric", "A second numeric value", false, false, 6 );
+            }
 
-			// case 8411
-			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodetype_tabset", "firsttabversionid" ) )
-			{
-				_CswNbtSchemaModTrnsctn.addForeignKeyColumn( "nodetype_tabset", "firsttabversionid", "Foreign key to original tab version", false, false, "nodetype_tabset", "nodetypetabsetid" );
-			}
-			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodetype_tabset", "priortabversionid" ) )
-			{
-				_CswNbtSchemaModTrnsctn.addForeignKeyColumn( "nodetype_tabset", "priortabversionid", "Foreign key to previous tab version", false, false, "nodetype_tabset", "nodetypetabsetid" );
-			}
+            // case 8411
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodetype_tabset", "firsttabversionid" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( "nodetype_tabset", "firsttabversionid", "Foreign key to original tab version", false, false, "nodetype_tabset", "nodetypetabsetid" );
+            }
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodetype_tabset", "priortabversionid" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( "nodetype_tabset", "priortabversionid", "Foreign key to previous tab version", false, false, "nodetype_tabset", "nodetypetabsetid" );
+            }
 
 
 
@@ -91,7 +87,12 @@ namespace ChemSW.Nbt.Schema
 			} // if( false == _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( LayoutTableName ) )
 
 
-		}//Update()
+            //Case 23132
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "session_data", "keepinquicklaunch" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "session_data", "keepinquicklaunch", "Determines whether to keep the item in User's Quick Launch", true, false );
+            }
+        }//Update()
 
     }//class CswUpdateSchemaTo01I01
 

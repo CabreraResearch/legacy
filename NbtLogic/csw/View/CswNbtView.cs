@@ -1363,13 +1363,13 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Save this View to Session's data cache
         /// </summary>
-        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false )
+        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
         {
             // don't cache twice
             if( SessionViewId == null || ForceCache )
             {
                 bool ForQuickLaunch = ( IncludeInQuickLaunch && IsQuickLaunch );
-                _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch );
+                _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch, KeepInQuickLaunch );
             }
         } // SaveToCache()
 

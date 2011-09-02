@@ -178,10 +178,20 @@ var CswSubFields_Map = {
         } 
     },
 	Composite: { name: 'Composite', subfields: { } },
-	Date: {
-	     name: 'Date', 
+	DateTime: {
+	     name: 'DateTime', 
 	     subfields: {
-            Value: CswSubField_Names.Value
+            Value: {
+                Date: { name: 'date '},
+                Time: { name: 'time' },
+                DateFormat: { name: 'dateformat' },
+                TimeFormat: { name: 'timeformat' }
+            },
+	        DisplayMode: {
+	            Date: { name: 'Date' },
+	            Time: { name: 'Time' },
+	            DateTime: { name: 'DateTime' }
+	        } 
         } 
 	},
 	File: { name: 'File', subfields: { } },
@@ -263,12 +273,6 @@ var CswSubFields_Map = {
 	     name: 'Text', 
 	     subfields: {
             Text: CswSubField_Names.Text
-        } 
-	},
-	Time: {
-	     name: 'Time', 
-	     subfields: {
-            Value: CswSubField_Names.Value
         } 
 	},
 	TimeInterval: { name: 'TimeInterval', subfields: { } },

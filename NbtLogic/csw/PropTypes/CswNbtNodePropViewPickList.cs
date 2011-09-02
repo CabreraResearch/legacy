@@ -211,6 +211,26 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        /// <summary>
+        /// Collection of Views to select
+        /// </summary>
+        public Collection<CswNbtView> SelectedViews
+        {
+            get
+            {
+
+                Collection<CswNbtView> _SelectedViews = new Collection<CswNbtView>();
+                if( NodeId != null )
+                {
+                    // Use the User's visible, quicklaunch views
+                    CswCommaDelimitedString ViewIds = new CswCommaDelimitedString( SelectedViewIds.Count, true );
+                    ViewIds.FromDelimitedString( SelectedViewIds );
+                    _SelectedViews = _CswNbtResources.ViewSelect.getVisibleViews( User, false, ViewIds );
+                }
+                return _SelectedViews;
+            }
+        }
+
         public const string NameColumn = "View Name";
         public const string KeyColumn = "nodeviewid";
         public const string ValueColumn = "Include";

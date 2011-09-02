@@ -1,8 +1,10 @@
 /// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
-/// <reference path="clientdb/CswMobileClientDbResources.js" />
-/// <reference path="../CswEnums.js" />
-/// <reference path="controls/CswMobileListView.js" />
+/// <reference path="CswMobileEnums.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../clientdb/CswMobileClientDbResources.js" />
+/// <reference path="../controls/CswMobileListView.js" />
 
 //#region plugins
 
@@ -373,10 +375,10 @@ function ensureContent($content, contentDivId) {
     /// <param name="$content" type="jQuery">Some content element.</param>
     /// <param name="contentDivId" type="String">DivId</param>
     /// <returns type="jQuery">An empty content div.</returns>
-    if (isNullOrEmpty($content) || $content.length === 0) {
+    if (isNullOrEmpty($content)) {
         $content = $('<div id="' + contentDivId + '"></div>');
     } else {
-        $content.empty();
+        $content.empty();   
     }
     return $content;
 }    
@@ -387,13 +389,20 @@ function modifyPropJson(json,key,value) {
     /// <param name="key" type="String">A JSON property name (key).</param>
     /// <param name="value" type="Object">A value to set.</param>
     /// <returns type="Object">The modified JSON</returns>
-    if (!isNullOrEmpty(key) &&
-        json.hasOwnProperty(key)) {
-        var oldValue = json[key];
-        json[key] = value;
-        if (oldValue !== value) {
-            json.wasmodified = true;
-        } 
+    if (!isNullOrEmpty(key)) {
+        if (json.hasOwnProperty('values') && json['values'].hasOwnProperty(key)) {
+            var oldValue = json['values'][key];
+            json['values'][key] = value;
+            if (oldValue !== value) {
+                json.wasmodified = true;
+            }
+        } else if (json.hasOwnProperty(key)) {
+            var oldValue = json[key];
+            json[key] = value;
+            if (oldValue !== value) {
+                json.wasmodified = true;
+            }
+        }
     }
     return json;
 }

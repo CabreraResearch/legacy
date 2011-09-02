@@ -11,7 +11,7 @@
         var pluginName = 'CswFieldTypeRelationship';
 
         var methods = {
-            init: function(o) { //nodepk = o.nodeid, o.propData = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+            init: function(o) { 
             
                 var $Div = $(this);
 

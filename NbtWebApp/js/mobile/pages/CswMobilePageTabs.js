@@ -1,12 +1,14 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
 /// <reference path="CswMobilePageFactory.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
-/// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../controls/CswMobileListView.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../controls/CswMobileListView.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../../main/tools/CswAttr.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 //#region CswMobilePageTabs
 
@@ -30,7 +32,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
     var viewId, level, nodeId;
     var divSuffix = '_tabs';
     var ulSuffix = '_list';
-    var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
+    var $contentPage = $page.find('div:jqmData(role="content")');
     var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + divSuffix);
     var contentDivId;
     

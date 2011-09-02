@@ -128,7 +128,7 @@
     <Content Include="js\main\fieldtypes\CswFieldTypeMultiList.js" />
     <Content Include="js\mobile\globals\CswMobileEnums.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeBarcode.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeDate.js" />
+    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeDateTime.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeLink.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeList.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeLogical.js" />
@@ -139,7 +139,6 @@
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeQuestion.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeStatic.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeText.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeTime.js" />
     <Content Include="js\mobile\fieldtypes\CswMobilePropFactory.js" />
     <Content Include="js\mobile\objectclasses\CswMobileInspectionDesignClass.js" />
     <Content Include="js\mobile\objectclasses\CswMobileGenericClass.js" />
