@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -37,29 +34,25 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtObjClassUser UserOc = User.UserNode;
 
                 //Add the user's stored views to QuickLaunchHistory
-                Collection<Int32> UserQuickLaunchViews = UserOc.QuickLaunchViews.SelectedViewIds.ToIntCollection();
-                foreach( Int32 ViewIdNum in UserQuickLaunchViews )
+                foreach( CswNbtView View in UserOc.QuickLaunchViews.SelectedViews.Where( View => View.IsFullyEnabled() ) )
                 {
-                    CswNbtViewId ThisViewId = new CswNbtViewId( ViewIdNum );
-                    CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( ThisViewId );
-                    if( ThisView.IsFullyEnabled() )
-                    {
-                        ThisView.SaveToCache( true );
-                    }
+                    View.SaveToCache( true, false, true );
                 }
 
                 //Add the user's stored actions to QuickLaunchHistory
-                CswNbtNodePropLogicalSet ActionsLogicalSet = UserOc.QuickLaunchActions;
-                DataTable ActionsTable = ActionsLogicalSet.GetDataAsTable( ActionName, ActionPk );
+                DataTable ActionsTable = UserOc.QuickLaunchActions.GetDataAsTable( ActionName, ActionPk );
                 foreach( CswNbtAction Action in ( from DataRow ActionRow in ActionsTable.Rows
                                                   where CswConvert.ToBoolean( ActionRow[ActionSelected] )
-                                                  select _CswNbtResources.Actions[CswConvert.ToInt32( ActionRow[ActionPk] )]
-                                                      into ThisAction
-                                                      where null != ThisAction
-                                                      select ThisAction ) )
+                                                  select CswNbtAction.ActionNameStringToEnum( CswConvert.ToString( ActionRow[ActionPk] ) )
+                                                      into NbtActionName
+                                                      select _CswNbtResources.Actions[NbtActionName]
+                                                          into ThisAction
+                                                          where null != ThisAction
+                                                          select ThisAction ) )
                 {
-                    Action.SaveToCache( true );
+                    Action.SaveToCache( true, true );
                 }
+
             } // if(User != null)
         } // initQuickLaunchItems()
 
@@ -68,28 +61,13 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JObject getQuickLaunchItems()
         {
-            CswCommaDelimitedString UserQuickLaunchViews = new CswCommaDelimitedString();
-            CswCommaDelimitedString UserQuickLaunchActions = new CswCommaDelimitedString();
-
+            JObject Ret = new JObject();
             ICswNbtUser User = _CswNbtResources.CurrentNbtUser;
             if( User != null )
             {
-                CswNbtObjClassUser UserOc = User.UserNode;
-                UserQuickLaunchViews = UserOc.QuickLaunchViews.SelectedViewIds;
-
-                DataTable ActionsTable = UserOc.QuickLaunchActions.GetDataAsTable( ActionName, ActionPk );
-                foreach( CswNbtAction Action in ( from DataRow ActionRow in ActionsTable.Rows
-                                                  where CswConvert.ToBoolean( ActionRow[ActionSelected] )
-                                                  select _CswNbtResources.Actions[CswConvert.ToInt32( ActionRow[ActionPk] )]
-                                                      into ThisAction
-                                                      where null != ThisAction
-                                                      select ThisAction ) )
-                {
-                    UserQuickLaunchActions.Add( Action.ActionId.ToString() );
-                }
+                Ret = _CswNbtResources.SessionDataMgr.getQuickLaunchJson();
             }
-
-            return _CswNbtResources.SessionDataMgr.getQuickLaunchJson( UserQuickLaunchViews, UserQuickLaunchActions );
+            return Ret;
         } // getQuickLaunchItems()
 
     }

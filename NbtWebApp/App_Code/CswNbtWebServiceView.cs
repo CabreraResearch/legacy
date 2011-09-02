@@ -209,10 +209,17 @@ namespace ChemSW.Nbt.WebServices
         public JObject getViewGrid( bool All )
         {
             JObject ReturnVal = new JObject();
+            CswGridData gd = new CswGridData( _CswNbtResources );
+            gd.PkColumn = "nodeviewid";
+
+            JArray JColumnNames = new JArray();
+            JArray JColumnDefs = new JArray();
+            JArray JRows = new JArray();
+
             bool IsAdmin = _CswNbtResources.CurrentNbtUser.IsAdministrator();
 
             Collection<CswNbtView> Views = new Collection<CswNbtView>();
-            DataTable ViewsTable;
+            DataTable ViewsTable = null;
             if( IsAdmin )
             {
                 if( All )
@@ -227,66 +234,78 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     Views = _CswNbtResources.ViewSelect.getVisibleViews( true );
-                    ViewsTable = new DataTable();
-                    ViewsTable.Columns.Add( "nodeviewid" );  // Int32 pk
-                    ViewsTable.Columns.Add( "viewid" );      // string CswNbtViewId
-                    ViewsTable.Columns.Add( "viewname" );
-                    ViewsTable.Columns.Add( "viewmode" );
-                    ViewsTable.Columns.Add( "visibility" );
-                    ViewsTable.Columns.Add( "category" );
-                    ViewsTable.Columns.Add( "rolename" );
-                    ViewsTable.Columns.Add( "username" );
-                    foreach( CswNbtView View in Views )
-                    {
-                        string RoleName = string.Empty;
-                        CswNbtNode Role = _CswNbtResources.Nodes.GetNode( View.VisibilityRoleId );
-                        if( null != Role )
-                        {
-                            RoleName = Role.NodeName;
-                        }
-                        string UserName = string.Empty;
-                        CswNbtNode User = _CswNbtResources.Nodes.GetNode( View.VisibilityUserId );
-                        if( null != User )
-                        {
-                            UserName = User.NodeName;
-                        }
-
-                        ViewsTable.Rows.Add( View.ViewId.get(), View.ViewId.ToString(), View.ViewName, View.ViewMode.ToString(), View.Visibility.ToString(), View.Category, RoleName, UserName );
-                    }
                 }
             }
             else
             {
                 ViewsTable = _CswNbtResources.ViewSelect.getUserViews();
-				ViewsTable.Columns.Add( "viewid" );      // string CswNbtViewId
-				foreach( DataRow Row in ViewsTable.Rows )
-				{
-					Row["viewid"] = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) ).ToString();
-				}
-			}
-
-            if( ViewsTable.Columns.Contains( "viewxml" ) )
-                ViewsTable.Columns.Remove( "viewxml" );
-            if( ViewsTable.Columns.Contains( "roleid" ) )
-                ViewsTable.Columns.Remove( "roleid" );
-            if( ViewsTable.Columns.Contains( "userid" ) )
-                ViewsTable.Columns.Remove( "userid" );
-            if( ViewsTable.Columns.Contains( "mssqlorder" ) )
-                ViewsTable.Columns.Remove( "mssqlorder" );
-
-            if( !IsAdmin )
-            {
-                if( ViewsTable.Columns.Contains( "visibility" ) )
-                    ViewsTable.Columns.Remove( "visibility" );
-                if( ViewsTable.Columns.Contains( "username" ) )
-                    ViewsTable.Columns.Remove( "username" );
-                if( ViewsTable.Columns.Contains( "rolename" ) )
-                    ViewsTable.Columns.Remove( "rolename" );
+                ViewsTable.Columns.Add( "viewid" );      // string CswNbtViewId
+                foreach( DataRow Row in ViewsTable.Rows )
+                {
+                    Row["viewid"] = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) ).ToString();
+                }
             }
 
-            CswGridData gd = new CswGridData( _CswNbtResources );
-            gd.PkColumn = "nodeviewid";
-            ReturnVal = gd.DataTableToJSON( ViewsTable );
+            if( null == ViewsTable )
+            {
+                gd.makeJqColumn( "NODEVIEWID", JColumnNames, JColumnDefs, false, true );
+                gd.makeJqColumn( "VIEWID", JColumnNames, JColumnDefs, true, true );
+                gd.makeJqColumn( "VIEWNAME", JColumnNames, JColumnDefs, false, false );
+                gd.makeJqColumn( "VIEWMODE", JColumnNames, JColumnDefs, false, false );
+                gd.makeJqColumn( "VISIBILITY", JColumnNames, JColumnDefs, false, false );
+                gd.makeJqColumn( "CATEGORY", JColumnNames, JColumnDefs, false, false );
+                gd.makeJqColumn( "ROLENAME", JColumnNames, JColumnDefs, false, false );
+                gd.makeJqColumn( "USERNAME", JColumnNames, JColumnDefs, false, false );
+                foreach( CswNbtView View in Views )
+                {
+                    string RoleName = string.Empty;
+                    CswNbtNode Role = _CswNbtResources.Nodes.GetNode( View.VisibilityRoleId );
+                    if( null != Role )
+                    {
+                        RoleName = Role.NodeName;
+                    }
+                    string UserName = string.Empty;
+                    CswNbtNode User = _CswNbtResources.Nodes.GetNode( View.VisibilityUserId );
+                    if( null != User )
+                    {
+                        UserName = User.NodeName;
+                    }
+                    JObject RowObj = new JObject();
+                    JRows.Add( RowObj );
+                    gd.makeJqCell( RowObj, "NODEVIEWID", View.ViewId.get().ToString() );
+                    gd.makeJqCell( RowObj, "VIEWID", View.ViewId.ToString() );
+                    gd.makeJqCell( RowObj, "VIEWNAME", View.ViewName );
+                    gd.makeJqCell( RowObj, "VIEWMODE", View.ViewMode.ToString() );
+                    gd.makeJqCell( RowObj, "VISIBILITY", View.Visibility.ToString() );
+                    gd.makeJqCell( RowObj, "CATEGORY", View.Category );
+                    gd.makeJqCell( RowObj, "ROLENAME", RoleName );
+                    gd.makeJqCell( RowObj, "USERNAME", UserName );
+                }
+                ReturnVal = gd.makeJqGridJSON( JColumnNames, JColumnDefs, JRows );
+            }
+            else
+            {
+                if( ViewsTable.Columns.Contains( "viewxml" ) )
+                    ViewsTable.Columns.Remove( "viewxml" );
+                if( ViewsTable.Columns.Contains( "roleid" ) )
+                    ViewsTable.Columns.Remove( "roleid" );
+                if( ViewsTable.Columns.Contains( "userid" ) )
+                    ViewsTable.Columns.Remove( "userid" );
+                if( ViewsTable.Columns.Contains( "mssqlorder" ) )
+                    ViewsTable.Columns.Remove( "mssqlorder" );
+
+                if( !IsAdmin )
+                {
+                    if( ViewsTable.Columns.Contains( "visibility" ) )
+                        ViewsTable.Columns.Remove( "visibility" );
+                    if( ViewsTable.Columns.Contains( "username" ) )
+                        ViewsTable.Columns.Remove( "username" );
+                    if( ViewsTable.Columns.Contains( "rolename" ) )
+                        ViewsTable.Columns.Remove( "rolename" );
+                }
+
+                ReturnVal = gd.DataTableToJSON( ViewsTable );
+            }
 
             return ReturnVal;
         } // getViewGrid()
@@ -305,7 +324,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( SelectedViewNode is CswNbtViewRelationship )
                     {
-                       if( StepNo == 3 )
+                        if( StepNo == 3 )
                         {
                             // Potential child relationships
 
@@ -485,7 +504,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.ObjectClass;
 
             CswStaticSelect RelationshipPropsSelect = _CswNbtResources.makeCswStaticSelect( "getRelationsForNodeTypeId_select", "getRelationsForNodeTypeId" );
-            RelationshipPropsSelect.S4Parameters.Add( "getnodetypeid", FirstVersionNodeType.NodeTypeId );
+            RelationshipPropsSelect.S4Parameters.Add( "getnodetypeid", new CswStaticParam( "getnodetypeid", FirstVersionNodeType.NodeTypeId ) );
             //RelationshipPropsQueryCaddy.S4Parameters.Add("getroleid", _CswNbtResources.CurrentUser.RoleId);
             DataTable RelationshipPropsTable = RelationshipPropsSelect.getTable();
 
@@ -616,7 +635,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
 
             CswStaticSelect RelationshipPropsSelect = _CswNbtResources.makeCswStaticSelect( "getRelationsForObjectClassId_select", "getRelationsForObjectClassId" );
-            RelationshipPropsSelect.S4Parameters.Add( "getobjectclassid", ObjectClassId );
+            RelationshipPropsSelect.S4Parameters.Add( "getobjectclassid", new CswStaticParam( "getobjectclassid", ObjectClassId ) );
             DataTable RelationshipPropsTable = RelationshipPropsSelect.getTable();
 
             foreach( DataRow PropRow in RelationshipPropsTable.Rows )

@@ -12,8 +12,9 @@
 		init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
 			var $Div = $(this);
-			var checkOpt = {
-                    Checked: tryParseString(o.propData.checked).trim(),
+		    var propVals = o.propData.values;
+		    var checkOpt = {
+                    Checked: tryParseString(propVals.checked).trim(),
                     Required: isTrue(o.Required),
                     ReadOnly: isTrue(o.ReadOnly),
                     onchange: o.onchange
@@ -23,8 +24,9 @@
 		},
 		save: function(o) { //$propdiv, $xml
 			var $Div = o.$propdiv.find('div');
-			var checked = $Div.CswTristateCheckBox('value');
-			o.propData.checked = checked;
+			var propVals = o.propData.values;
+		    var checked = $Div.CswTristateCheckBox('value');
+			propVals.checked = checked;
 		}
 	};
 	

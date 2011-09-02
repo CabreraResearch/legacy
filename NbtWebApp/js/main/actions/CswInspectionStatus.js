@@ -1,5 +1,8 @@
 /// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../controls/CswGrid.js" />
 
 ;  (function ($) { /// <param name="$" type="jQuery" />
 
@@ -7,7 +10,8 @@
 	{
 		var o = {
 			Url: '/NbtWebApp/wsNBT.asmx/getInspectionStatusGrid',
-			onEditNode: function() {}
+			onEditNode: function() {},
+		    ID: 'CswInspectionStatus'
 		};
 		if(options) $.extend(o, options);
 
@@ -17,66 +21,58 @@
 
 		
 		CswAjaxJson({
-			'url': o.Url,
-			'data': {},
-			'success': function(gridJson) 
-				{
-					$div.empty();
-					var $gridPager = $('<div id="' + o.ID + '_gp" style="width:100%; height:20px;" />')
-										.appendTo($div);
-					var $grid = $('<table id="'+ o.ID + '_gt" />')
-										.appendTo($div);
-
-					var mygridopts = {
-						'autowidth': true,
-						'datatype': 'local', 
-						'height': 180,
-						'pager': $gridPager,
-						'emptyrecords': 'No Results',
-						'loadtext': 'Loading...',
-						'multiselect': false,
-						'rowList': [10,25,50],  
-						'rowNum': 10
-					} 
+			url: o.Url,
+			data: {},
+			success: function(gridJson) {
 					
-					var optNav = {
-						'add': false,
-						'view': false,
-						'del': false,
-						'refresh': false,
+			    var inspGridId = o.ID + '_csw_inspGrid_outer';
+                var $inspGrid = $div.find('#' + inspGridId);
+                if (isNullOrEmpty($inspGrid) || $inspGrid.length === 0) {
+                    $inspGrid = $('<div id="' + o.ID + '"></div>').appendTo($div);
+                } else {
+                    $inspGrid.empty();
+                }
 
-						'edit': true,
-						'edittext': "",
-						'edittitle': "Edit row",
-						'editfunc': function(rowid) 
-							{
-								var editOpt = {
-									nodeid: '',
-									onEditNode: o.onEditNode
-								};
-								if (rowid !== null) 
-								{
-									editOpt.nodeid = $grid.jqGrid('getCell', rowid, 'NODEIDSTR');
-									$.CswDialog('EditNodeDialog', editOpt);
-								}
-								else
-								{
-									alert('Please select a row to edit');
-								}
+			    var g = {
+			        Id: o.ID,
+			        gridOpts: {
+                        autowidth: true,
+			            rowNum: 10
+			        },
+			        optNav: {
+						add: false,
+						view: false,
+						del: false,
+						refresh: false,
+						edit: true,
+						edittext: "",
+						edittitle: "Edit row",
+						editfunc: function(rowid) {
+							var editOpt = {
+								nodeid: '',
+								onEditNode: o.onEditNode
+							};
+							if (false === isNullOrEmpty(rowid))  {
+								editOpt.nodeid = grid.getValueForColumn('NODEIDSTR', rowid);
+								$.CswDialog('EditNodeDialog', editOpt);
+							} else {
+								alert('Please select a row to edit');
 							}
-					};
-					$.extend(gridJson, mygridopts);
+						}
+					}
+			    };
 
-					$grid.jqGrid(gridJson)
-						 .navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, {}, {} ); 
-					$grid.jqGrid(gridJson)
-						.hideCol('NODEID')
-						.hideCol('NODEIDSTR');
 
-				}, // success
+			    $.extend(g.gridOpts, gridJson);
+
+			    var grid = new CswGrid(g, $inspGrid);
+			    grid.hideColumn('NODEID');
+			    grid.hideColumn('NODEIDSTR');
+
+			}, // success
 			'error': function() 
-				{
-				}
+			{
+			}
 		});
 
 		return $div;

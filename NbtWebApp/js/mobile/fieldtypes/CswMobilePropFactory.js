@@ -1,14 +1,11 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
-/// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../controls/CswMobileListView.js" />
 /// <reference path="CswMobileFieldTypeBarcode.js" />
-/// <reference path="CswMobileFieldTypeTime.js" />
-/// <reference path="CswMobileFieldTypeDate.js" />
+/// <reference path="CswMobileFieldTypeDateTime.js" />
 /// <reference path="CswMobileFieldTypeLink.js" />
 /// <reference path="CswMobileFieldTypeList.js" />
 /// <reference path="CswMobileFieldTypeLogical.js" />
@@ -19,6 +16,7 @@
 /// <reference path="CswMobileFieldTypeQuestion.js" />
 /// <reference path="CswMobileFieldTypeStatic.js" />
 /// <reference path="CswMobileFieldTypeText.js" />
+/// <reference path="../globals/CswMobileTools.js" />
 
 //#region CswMobilePropsFactory
 
@@ -81,7 +79,7 @@ function CswMobilePropsFactory(propDef) {
 	        case CswSubFields_Map.Composite.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);
 	            break;
-	        case CswSubFields_Map.Date.name:
+	        case CswSubFields_Map.DateTime.name:
 	            ret = new CswMobileFieldTypeDate(ftDef);
 	            break;
 	        case CswSubFields_Map.File.name:
@@ -152,9 +150,6 @@ function CswMobilePropsFactory(propDef) {
 	            break;
 	        case CswSubFields_Map.Text.name:
 	            ret = new CswMobileFieldTypeText(ftDef);
-	            break;
-	        case CswSubFields_Map.Time.name:
-	            ret = new CswMobileFieldTypeTime(ftDef);
 	            break;
 	        case CswSubFields_Map.TimeInterval.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);

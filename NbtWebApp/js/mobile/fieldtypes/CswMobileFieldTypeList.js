@@ -1,9 +1,10 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
-/// <reference path="../../jquery/common/CswSelect.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../main/controls/CswSelect.js" />
 
 //#region CswMobileFieldTypeList
 
@@ -35,10 +36,11 @@ function CswMobileFieldTypeList(ftDef) {
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
-                
+        
+        var propVals = p.values;
         subfields = CswSubFields_Map.List.subfields;
-        value = tryParseString(p[subfields.Value.name]);
-        var optionsstr = p.options;
+        value = tryParseString(propVals[subfields.Value.name]);
+        var optionsstr = propVals.options;
         gestalt = tryParseString(p.gestalt, '');
         
         var values = [];
@@ -52,7 +54,7 @@ function CswMobileFieldTypeList(ftDef) {
 		}
         
         $content = ensureContent(contentDivId);
-        var $prop = $content.CswSelect('init', {
+        $content.CswSelect('init', {
                                 ID: elementId,
                                 selected: value,
                                 values: values,

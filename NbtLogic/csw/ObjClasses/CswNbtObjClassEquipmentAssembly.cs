@@ -70,7 +70,8 @@ namespace ChemSW.Nbt.ObjClasses
             if( NodeModificationState.Modified == _CswNbtNode.ModificationState )
             {
                 CswStaticSelect PropRefsSelect = _CswNbtResources.makeCswStaticSelect( "afterWriteNode_select", "getMatchingEquipPropsForAssembly" );
-                PropRefsSelect.S4Parameters.Add( "getassemblynodeid", _CswNbtNode.NodeId.PrimaryKey );
+                CswStaticParam StaticParam = new CswStaticParam( "getassemblynodeid", _CswNbtNode.NodeId.PrimaryKey );
+                PropRefsSelect.S4Parameters.Add( "getassemblynodeid", StaticParam );
                 DataTable PropRefsTable = PropRefsSelect.getTable();
 
                 // Update the nodes.pendingupdate directly, to avoid having to fetch all the node info for every related node 

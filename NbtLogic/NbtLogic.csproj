@@ -222,7 +222,6 @@
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceFactoryNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicFactoryNbt.cs" />
-    <Compile Include="csw\Sched\core\CswScheduleLogicInfoNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicParamNbt.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenNode.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtInspection.cs" />
@@ -239,6 +238,7 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I12.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I10.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I09.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I08.cs" />
