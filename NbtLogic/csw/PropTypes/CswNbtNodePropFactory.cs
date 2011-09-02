@@ -76,6 +76,9 @@ namespace ChemSW.Nbt.PropTypes
                 case CswNbtMetaDataFieldType.NbtFieldType.Memo:
                     InnerProperty = new CswNbtNodePropMemo( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;
+                case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                    InnerProperty = new CswNbtNodePropMol( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
+                    break;
                 case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
                     InnerProperty = new CswNbtNodePropMTBF( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;

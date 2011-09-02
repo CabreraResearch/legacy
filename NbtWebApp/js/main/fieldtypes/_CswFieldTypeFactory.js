@@ -75,7 +75,10 @@ $.CswFieldTypeFactory = function (method)
 				case "Memo":
 					m.$propdiv.CswFieldTypeMemo('init', m); //'init', nodeid, propData, onchange
 					break;
-				case "MTBF":
+	            case "Mol":
+	                m.$propdiv.CswFieldTypeMol('init', m); //'init', nodeid, propData, onchange
+	                break;
+                case "MTBF":
 					m.$propdiv.CswFieldTypeMTBF('init', m); //'init', nodeid, propData, onchange
 					break;
 				case "MultiList":
@@ -198,6 +201,9 @@ $.CswFieldTypeFactory = function (method)
 				case "Memo":
 					m.$propdiv.CswFieldTypeMemo('save', m); //('save', $propdiv, propData);
 					break;
+	            case "Mol":
+	                m.$propdiv.CswFieldTypeMol('save', m); //('save', $propdiv, propData);
+	                break;
 				case "MTBF":
 					m.$propdiv.CswFieldTypeMTBF('save', m); //('save', $propdiv, propData);
 					break;
