@@ -258,6 +258,7 @@ function CswGrid(options, $parent) {
         
         if (haveSelectedRows) {
             if (isFunction(onSelect)) {
+                opts.Multi = multiEdit;
                 ret = onSelect(opts);
             }
         } 

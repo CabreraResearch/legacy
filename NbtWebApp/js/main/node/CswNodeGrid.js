@@ -99,7 +99,7 @@
 						        };
     				            var delFunc = function(opts) {
     				                opts.onDeleteNode = o.onDeleteNode;
-    				                $.CswDialog('DeleteNodeDialog', opts);
+    				                $.CswDialog('DeleteNodeDialog', opts, opts.nodeid, opts.cswnbtnodekey);
     				            };
     				            var emptyFunc = function(opts) {
                                     alert('Please select a row to delete');

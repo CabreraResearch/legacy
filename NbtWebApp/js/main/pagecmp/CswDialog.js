@@ -282,7 +282,7 @@
 				nodename: '',
 				nodeid: '',
 				cswnbtnodekey: '', 
-				onDeleteNode: function(nodeid, nodekey) { },
+				onDeleteNode: null, //function(nodeid, nodekey) { },
 				Multi: false,
 				NodeCheckTreeId: ''
 			};
@@ -308,7 +308,11 @@
 				        //nodekeys[nodekeys.length] = $nodecheck.CswAttrDom('cswnbtnodekey');
 				        $div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.CswAttrDom('nodename') + '</span>');
 				    });
-				} 
+				} else {
+				    for(var i=0; i<o.nodename.length; i++) {
+				        $div.append('<br/><span style="padding-left: 10px;">' + o.nodename[i] + '</span>');
+				    }
+				}
 			} else {
 				$div.append('<span>' + o.nodename + '?</span>');
 				nodeids[0] = o.nodeid;
@@ -321,13 +325,15 @@
 														disabledText: 'Deleting', 
 														onclick: function() {
 																	deleteNodes({
-																				'nodeids': nodeids, 
-																				'nodekeys': nodekeys,
-																				'onSuccess': function(nodeid, nodekey) {
+																				nodeids: nodeids, 
+																				nodekeys: nodekeys,
+																				onSuccess: function(nodeid, nodekey) {
 																					$div.dialog('close');
-																					o.onDeleteNode(nodeid, nodekey);
+																					if (isFunction(o.onDeleteNode)) {
+																					    o.onDeleteNode(nodeid, nodekey);
+																					}
 																				},
-																				'onError': function() {
+																				onError: function() {
 																					$deletebtn.CswButton('enable');
 																				}
 																			});
