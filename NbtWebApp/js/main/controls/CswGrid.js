@@ -146,7 +146,7 @@ function CswGrid(options, $parent) {
     }
     
     function getSelectedRowId() {
-        var selector = (false === multiEdit) ? 'selrow' : 'selarrow';
+        var selector = (false === multiEdit) ? 'selrow' : 'selarrrow';
         var rowid = $gridTable.jqGrid('getGridParam', selector);
         return rowid;
     }
@@ -228,13 +228,33 @@ function CswGrid(options, $parent) {
                 rowid = getSelectedRowId();
             }
             if (false === isNullOrEmpty(rowid)) {
+                haveSelectedRows = true;
                 crawlObject(opts, function(prop, key, parent) {
-                    parent[key] = getValueForColumn(key, rowid);
+                    if (false === isFunction(parent[key])) {
+                        parent[key] = getValueForColumn(key, rowid);
+                    }
                 }, false);
             }
-        } else {
-            
-        }
+        } else { // if (false === multiEdit)
+            var rows = getSelectedRowId();
+            if (rows.length > 0) {
+                haveSelectedRows = true;
+                //loop once to guarantee we have Arrays
+                crawlObject(opts, function(prop, key, parent) {
+                    if (false === isFunction(parent[key])) {
+                        parent[key] = [];
+                    }
+                }, false);
+                for (var i = 0; i < rows.length; i++) {
+                    crawlObject(opts, function(prop, key, parent) {
+                        if (isArray(parent[key])) {
+                            rowid = rows[i];
+                            parent[key].push(getValueForColumn(key, rowid));
+                        }
+                    }, false);
+                }
+            }
+        } // else
         
         if (haveSelectedRows) {
             if (isFunction(onSelect)) {

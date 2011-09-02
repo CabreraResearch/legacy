@@ -76,10 +76,10 @@
     				        {
     				            var editOpt = {
     				                cswnbtnodekey: '',
-    				                nodeid: '',
-    				                onEditNode: o.onEditNode
+    				                nodeid: ''
     				            };
     				            var editFunc = function(opts) {
+    				                opts.onEditNode = o.onEditNode;
     				                $.CswDialog('EditNodeDialog', opts);
     				            };
     				            var emptyFunc = function(opts) {
@@ -95,10 +95,10 @@
 						        var delOpt = {
 						            cswnbtnodekey: '',
 						            nodeid: '',
-						            nodename: '',
-						            onDeleteNode: o.onDeleteNode
+						            nodename: ''
 						        };
     				            var delFunc = function(opts) {
+    				                opts.onDeleteNode = o.onDeleteNode;
     				                $.CswDialog('DeleteNodeDialog', opts);
     				            };
     				            var emptyFunc = function(opts) {
