@@ -392,7 +392,7 @@ function crawlObject(thisObj, onSuccess, doRecursion) {
             if (thisObj.hasOwnProperty(childKey)) {
                 var childObj = thisObj[childKey];
                 if (isFunction(onSuccess)) {
-                    ret = onSuccess(childObj, childKey);
+                    ret = onSuccess(childObj, childKey, thisObj);
                 }
                 else if (doRecursion && false === ret && jQuery.isPlainObject(childObj)) {
                     ret = crawlObject(childObj, onSuccess, doRecursion);

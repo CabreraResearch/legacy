@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.WebServices
                                 from Element in GridNodes //not recursive
                                 select new JObject(
                                     new JProperty( "nodeid", Element.Attribute( "nodeid" ).Value ),
-                                    new JProperty( "nodeidstr", new CswPrimaryKey( "nodes", CswConvert.ToInt32( Element.Attribute( "nodeid" ).Value ) ).ToString() ),
+                                    new JProperty( "nodepk", new CswPrimaryKey( "nodes", CswConvert.ToInt32( Element.Attribute( "nodeid" ).Value ) ).ToString() ),
                                     new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( Element.Attribute( "key" ).Value ) ),
                                     new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
                                         from DirtyElement in Element.DescendantNodes().OfType<XElement>() // recursive

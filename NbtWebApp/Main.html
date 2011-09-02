@@ -300,6 +300,7 @@
 
 		var o = {
 			viewid: '',
+		    viewmode: '',
 			nodeid: '',
 			cswnbtnodekey: '',
             prefix: 'csw'
@@ -314,14 +315,25 @@
 			'viewid': o.viewid,
 			'nodeid': o.nodeid,
 			'cswnbtnodekey': o.cswnbtnodekey,
-			'onAddNode': function (nodeid, cswnbtnodekey)
-			{
+			'onAddNode': function (nodeid, cswnbtnodekey) {
 				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
 			},
-			'onMultiEdit': function ()
-			{
+			'onMultiEdit': function () {
 				multi = !multi;
-				refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			    switch (o.viewmode) {
+			        case CswViewMode.grid.name:
+			            var g = {
+			                gridOpts: {
+			                    //reinit: true,
+			                    multiselect: true
+			                }
+			            };
+			            o.grid.changeGridOpts(g);
+			            break;
+			        default:
+                        refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
+			            break;
+			    }
 			},
 			'onSearch':
                 {
@@ -523,16 +535,23 @@
         
         clear({ centerbottom: true});
         
-        $('#CenterBottomDiv').CswNodeGrid({ 
-                                'viewid': o.viewid, 
-                                'nodeid': o.nodeid,
-                                'cswnbtnodekey': o.cswnbtnodekey, 
-                                'showempty': getEmptyGrid,
-                                'ID': MainGridId, 
+        $('#CenterBottomDiv').CswNodeGrid('init', { 
+                                viewid: o.viewid, 
+                                nodeid: o.nodeid,
+                                cswnbtnodekey: o.cswnbtnodekey, 
+                                showempty: getEmptyGrid,
+                                ID: MainGridId, 
                                 //'onAddNode': o.onAddNode,
-                                'onEditNode': o.onEditNode,
-                                'onDeleteNode': o.onDeleteNode });
-        if(o.doMenuRefresh) refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+                                onEditNode: o.onEditNode,
+                                onDeleteNode: o.onDeleteNode,
+                                onSuccess: function(grid) {
+                                    if(o.doMenuRefresh) refreshMainMenu({ viewid: o.viewid, 
+                                              viewmode: CswViewMode.grid.name,
+                                              grid: grid,
+                                              nodeid: o.nodeid, 
+                                              cswnbtnodekey: o.cswnbtnodekey });                                    
+                                }
+        });
 	}
 
 	function onSelectTreeNode(options)
@@ -559,12 +578,12 @@
 			if (o.nodeid !== '' && o.nodeid !== 'root')
 			{
 				getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-				refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+				refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
 			} 
 			else
 			{
 				clear({ 'right': true });
-				refreshMainMenu({ 'viewid': o.viewid, 'nodeid': '', 'cswnbtnodekey': '' });
+				refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
 			}
 		}
 	} // onSelectTreeNode()
@@ -584,42 +603,42 @@
 
 		clear({ right: true });
 		$('#RightDiv').CswNodeTabs({
-			'ID': 'nodetabs',
-			'nodeid': o.nodeid,
-			'cswnbtnodekey': o.cswnbtnodekey,
-			'onSave': function (nodeid, cswnbtnodekey)
+			ID: 'nodetabs',
+			nodeid: o.nodeid,
+			cswnbtnodekey: o.cswnbtnodekey,
+			onSave: function (nodeid, cswnbtnodekey)
 			{
 				unsetChanged();
 				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
 			},
-			'tabid': $.CswCookie('get', CswCookieName.CurrentTabId),
-			'onBeforeTabSelect': function (tabid)
+			tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
+			onBeforeTabSelect: function (tabid)
 			{
 				return manuallyCheckChanges();
 			},
-			'onTabSelect': function (tabid)
+			onTabSelect: function (tabid)
 			{
 				$.CswCookie('set', CswCookieName.CurrentTabId, tabid);
 			},
-			'onPropertyChange': function (propid, propname)
+			onPropertyChange: function (propid, propname)
 			{
 				//if(debug) log('Property Changed: propid = ' + propid + ', propname = ' + propname);
 				setChanged();
             },
-            'onEditView': function (viewid)
+            onEditView: function (viewid)
             {
 				_handleAction({ 
 					'actionname': 'Edit_View', 
 					'ActionOptions': {
-						'viewid': viewid,
-						'viewmode': 'Grid',
-						'startingStep': 2,
-						'IgnoreReturn': true,
+						viewid: viewid,
+						viewmode: CswViewMode.grid.name,
+						startingStep: 2,
+						IgnoreReturn: true
 					}
 				});
             },
-			'ShowCheckboxes': multi,
-			'NodeCheckTreeId': MainTreeId
+			ShowCheckboxes: multi,
+			NodeCheckTreeId: MainTreeId
 		});
 	}
 

@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../controls/CswGrid.js" />
+/// <reference path="../pagecmp/CswDialog.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 	
@@ -23,7 +24,8 @@
 				EditMode: EditMode.Edit.name,
 				//onAddNode: function(nodeid,cswnbtnodekey){},
 				onEditNode: null, //function(nodeid,cswnbtnodekey){},
-				onDeleteNode: null //function(nodeid,cswnbtnodekey){}
+				onDeleteNode: null, //function(nodeid,cswnbtnodekey){}
+			    onSuccess: null
 			};
 		
 			if (optJqGrid) {
@@ -77,17 +79,13 @@
     				                nodeid: '',
     				                onEditNode: o.onEditNode
     				            };
-    				            if (rowid !== null)
-    				            {
-    				                editOpt.cswnbtnodekey = ret.getValueForColumn('cswnbtnodekey', rowid);
-    				                editOpt.nodeid = ret.getValueForColumn('nodeidstr', rowid);
-    				                $.CswDialog('EditNodeDialog', editOpt);
-    				            }
-    				            else
-    				            {
-    				                alert('Please select a row to edit');
-    				            }
-    				            return editOpt.CswNbtNodeKey;
+    				            var editFunc = function(opts) {
+    				                $.CswDialog('EditNodeDialog', opts);
+    				            };
+    				            var emptyFunc = function(opts) {
+                                    alert('Please select a row to edit');
+    				            };
+    				            return ret.opGridRows(editOpt, rowid, editFunc, emptyFunc);
     				        }
     				    };
 						
@@ -100,21 +98,21 @@
 						            nodename: '',
 						            onDeleteNode: o.onDeleteNode
 						        };
-						        if (rowid !== null) {
-						            delOpt.cswnbtnodekey = ret.getValueForColumn('cswnbtnodekey', rowid);
-						            delOpt.nodename = ret.getValueForColumn('nodename', rowid);
-						            $.CswDialog('DeleteNodeDialog', delOpt);
-						        }
-						        else
-						        {
-						            alert('Please select a row to delete');
-						        }
-						        return delOpt.cswnbtnodekey;
+    				            var delFunc = function(opts) {
+    				                $.CswDialog('DeleteNodeDialog', opts);
+    				            };
+    				            var emptyFunc = function(opts) {
+                                    alert('Please select a row to delete');
+    				            };
+    				            return ret.opGridRows(delOpt, rowid, delFunc, emptyFunc);
 						    }
 						};
 
 					} // else
 				    ret = new CswGrid(g, $parent);
+				    if (isFunction(o.onSuccess)) {
+				        o.onSuccess(ret);
+				    }
 				} // success{} 
 			}); // ajax
 			return ret;

@@ -3,6 +3,8 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../controls/CswGrid.js" />
+/// <reference path="../node/CswNodeGrid.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 		
@@ -34,50 +36,52 @@
 				var $GridDiv = $('<div id="' + gridDivId + '" name="' + gridDivId + '"></div>');
 
 				var viewid = tryParseString(propVals.viewid).trim();
-            
+			    var cswGrid = new CswGrid();
 				var gridOpts = {
-					'ID': o.ID,
-					'viewid': viewid, 
-					'nodeid': o.nodeid, 
-					'cswnbtnodekey': o.cswnbtnodekey, 
-					'readonly': o.ReadOnly,
-					'reinit': false,
-					'EditMode': o.EditMode,
-					'onEditNode': function() { 
+					ID: o.ID,
+					viewid: viewid, 
+					nodeid: o.nodeid, 
+					cswnbtnodekey: o.cswnbtnodekey, 
+					readonly: o.ReadOnly,
+					reinit: false,
+					EditMode: o.EditMode,
+					onEditNode: function() { 
 						refreshGrid(gridOpts);
 					},
 	//                'onAddNode': function() { 
 	//                    refreshGrid(gridOpts);
 	//                },
-					'onDeleteNode': function() { 
+					onDeleteNode: function() { 
 						refreshGrid(gridOpts);
 					}
 				};
 
 				function refreshGrid(options) { 
-					var o ={
-						reinit: true
+					var g ={
+						gridOpts: {
+						    reinit: true,
+					        multiselect: false
+					    }
 					};
 					if( options ) $.extend(options,o);
-					$GridDiv.CswNodeGrid('init', options);
+				    cswGrid.changeGridOpts(g);
 				};
 
-				$GridDiv.CswNodeGrid('init', gridOpts);
+				cswGrid = $GridDiv.CswNodeGrid('init', gridOpts);
 				//Case 21741
 				if( o.EditMode !== EditMode.PrintReport.name )
 				{
 					$MenuDiv.CswMenuMain({
-							'viewid': viewid,
-							'nodeid': o.nodeid,
-							'cswnbtnodekey': o.cswnbtnodekey,
-							'propid': o.ID,
-							'onAddNode': function (nodeid, cswnbtnodekey)
-							{
+							viewid: viewid,
+							nodeid: o.nodeid,
+							cswnbtnodekey: o.cswnbtnodekey,
+							propid: o.ID,
+							onAddNode: function (nodeid, cswnbtnodekey) {
 								refreshGrid(gridOpts);
 							},
-							'onSearch':
+							onSearch:
 								{
-									'onViewSearch': function ()
+									onViewSearch: function ()
 									{
 										var onSearchSubmit = function(searchviewid) {
 											var s = {};
@@ -101,10 +105,9 @@
 															  'onClearSubmit': onClearSubmit
 															  });
 									},
-									'onGenericSearch': function () { /*not possible here*/ }
+									onGenericSearch: function () { /*not possible here*/ }
 								},
-							'onEditView': function ()
-							{
+							onEditView: function () {
 								o.onEditView(viewid);                    
 							}
 					}); // CswMenuMain
