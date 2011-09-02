@@ -20,7 +20,9 @@ namespace ChemSW.Nbt.Schema
         private CswNbtResources _CswNbtResources;
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
         private List<CswSchemaUpdateDriver> _UpdateDriverList = new List<CswSchemaUpdateDriver>();
-        private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
+		private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
+		public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
+
 
         private string _getCaseNumberFromTestCaseTypeName( string TypeName ) { return ( TypeName.Substring( 12, 3 ) ); }
         //        private string _getCaseNumberFromResourceTypeName( string TypeName ) { return ( TypeName.Substring( 12, 3 ) ); }
@@ -101,7 +103,7 @@ namespace ChemSW.Nbt.Schema
 
                 CswSchemaVersion CurrentVersion = new CswSchemaVersion( 1, 'T', idx + 1 );
 
-                Object[] TestCaseCtorArgs = new Object[3];
+                Object[] TestCaseCtorArgs = new Object[1];
                 //TestCaseCtorArgs[0] = _CswNbtSchemaModTrnsctn;
                 TestCaseCtorArgs[0] = CurrentVersion;
                 //TestCaseCtorArgs[2] = TestResourceInstancesByName[TestCaseGroupId];

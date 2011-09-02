@@ -137,7 +137,15 @@ namespace ChemSW.Nbt.Schema
 
         }//Update()
 
-        public bool Next() { return ( null != _CswSchemaScripts.Next ); }
+		public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers
+		{
+			get
+			{
+				return _CswSchemaScripts.UpdateDrivers;
+			}
+		}
+
+
 
     }//CswSchemaUpdater
 

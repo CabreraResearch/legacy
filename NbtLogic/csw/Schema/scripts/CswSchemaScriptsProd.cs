@@ -14,8 +14,10 @@ namespace ChemSW.Nbt.Schema
     public class CswSchemaScriptsProd : ICswSchemaScripts
     {
         private CswNbtResources _CswNbtResources;
-        Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
 
+		private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
+		public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
+		
 		public CswSchemaScriptsProd( CswNbtResources CswNbtResources )
 		{
 			_CswNbtResources = CswNbtResources;

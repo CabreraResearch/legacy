@@ -172,6 +172,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
 						}
 						else
 						{
+							CswNbtResources.AccessId = CurrentAccessId;
+
 							// Do the update on the current accessid
 							CswConsoleOutput.write( _Separator_NuLine + "Applying schema operation to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
 
@@ -191,7 +193,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 									EndAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey_EndAtTestCase] );
 								}
 
-								List<string> TestCasesToIgnore = null;
+								List<string> TestCasesToIgnore = new List<string>();
 								if( _UserArgs.ContainsKey( _ArgKey_IgnoreTestCasesCsv ) )
 								{
 									CswCommaDelimitedString CswCommaDelimitedString = new CswCommaDelimitedString();
@@ -211,7 +213,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
 							if( false == _UserArgs.ContainsKey( _ArgKey_Describe ) )
 							{
-								_updateAccessId( CurrentAccessId, CswSchemaUpdater, CswConsoleOutput );
+								_updateAccessId( CurrentAccessId, CswNbtResources, CswSchemaUpdater, CswConsoleOutput );
 							}
 							else if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
 							{
@@ -236,7 +238,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         }//process() 
 
-		private void _updateAccessId( string AccessId , CswSchemaUpdater CswSchemaUpdater, CswConsoleOutput CswConsoleOutput )
+		private void _updateAccessId( string AccessId, CswNbtResources CswNbtResources, CswSchemaUpdater CswSchemaUpdater, CswConsoleOutput CswConsoleOutput )
         {
 			CswSchemaUpdateThread CswSchemaUpdateThread = new CswSchemaUpdateThread( CswSchemaUpdater );
 			
@@ -306,14 +308,13 @@ namespace ChemSW.Nbt.Schema.CmdLn
 		private void _describe( CswNbtResources CswNbtResources, CswSchemaUpdater CswSchemaUpdater, CswConsoleOutput CswConsoleOutput )
         {
             List<string> Descriptions = new List<string>();
-            while( CswSchemaUpdater.Next() )
-            {
-                string CurrentDescription = CswSchemaUpdater.CurrentVersion.ToString() + ": " + CswSchemaUpdater.getDriver( CswSchemaUpdater.CurrentVersion ).Description;
+            foreach( CswSchemaUpdateDriver CurrentDriver in CswSchemaUpdater.UpdateDrivers.Values)
+			{
+				string CurrentDescription = CurrentDriver.SchemaVersion.ToString() + ": " + CurrentDriver.Description;
                 if( false == Descriptions.Contains( CurrentDescription ) )
                 {
                     Descriptions.Add( CurrentDescription );
                 }
-
             }
 
             CswConsoleOutput.write( _VersionInfo );
