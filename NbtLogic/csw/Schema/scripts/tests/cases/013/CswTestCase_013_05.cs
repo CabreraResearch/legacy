@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "Column  " + _CswTstCaseRsrc_013.FakeValColumnName02 + " does not have the committed value " + _CswTstCaseRsrc_013.LocalAribtiraryValue02Delta ) );
 
             if( DataTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName01].ToString() == _CswTstCaseRsrc_013.LocalAribtiraryValue01Delta )
-                throw ( new CswDniException( "Column  " + _CswTstCaseRsrc_013.FakeValColumnName01 + " has the rolled back value (with another value modication)" + _CswTstCaseRsrc_013.LocalAribtiraryValue01Delta ) );
+                throw ( new CswDniException( "Column  " + _CswTstCaseRsrc_013.FakeValColumnName01 + " has the rolled back value (with another value modication): " + _CswTstCaseRsrc_013.LocalAribtiraryValue01Delta ) );
 
         }//runTest()
 

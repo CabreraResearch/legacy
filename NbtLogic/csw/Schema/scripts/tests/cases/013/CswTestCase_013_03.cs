@@ -42,6 +42,7 @@ namespace ChemSW.Nbt.Schema
             _CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.update( _CswTstCaseRsrc_013.TheSuspectUpdateTable );
 
             throw ( new CswDniExceptionIgnoreDeliberately() ); 
+
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
