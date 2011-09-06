@@ -334,7 +334,7 @@ function ObjectHelper(obj) {
         var onSuccess = function(childObj) {
             if (foundMatch(childObj, key, value)) {
                 ret = thisObj;
-                break;
+                eval('break;');
             } 
         };
         var ret = crawlObject(thisObj, onSuccess, true);
@@ -366,7 +366,7 @@ function ObjectHelper(obj) {
             if (foundMatch(childObj, key, value)) {
                 delete thisObj[childKey];
                 ret = true;
-                break;
+                eval('break;');
             }
         };
         var ret = crawlObject(thisObj, onSuccess, true);
