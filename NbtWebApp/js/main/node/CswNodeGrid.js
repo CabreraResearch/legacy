@@ -93,13 +93,13 @@
 						    delfunc: function(rowid)
 						    {
 						        var delOpt = {
-						            cswnbtnodekey: '',
-						            nodeid: '',
-						            nodename: ''
+						            cswnbtnodekeys: '',
+						            nodeids: '',
+						            nodenames: ''
 						        };
     				            var delFunc = function(opts) {
     				                opts.onDeleteNode = o.onDeleteNode;
-    				                $.CswDialog('DeleteNodeDialog', opts, opts.nodeid, opts.cswnbtnodekey);
+    				                $.CswDialog('DeleteNodeDialog', opts);
     				            };
     				            var emptyFunc = function(opts) {
                                     alert('Please select a row to delete');

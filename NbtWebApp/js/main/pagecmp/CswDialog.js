@@ -280,11 +280,11 @@
 							
 			_openDiv($div, 400, 300);
 		}, // CopyNodeDialog       
-		DeleteNodeDialog: function (options, nodeids, nodekeys) {
+		DeleteNodeDialog: function (options) {
 			var o = {
-				nodename: '',
-				nodeid: '',
-				cswnbtnodekey: '', 
+				nodenames: [],
+				nodeids: [],
+				cswnbtnodekeys: [], 
 				onDeleteNode: null, //function(nodeid, nodekey) { },
 				Multi: false,
 				NodeCheckTreeId: ''
@@ -295,53 +295,47 @@
 			}
 
 			var $div = $('<div><span>Are you sure you want to delete:</span></div>');
-
-		    if (false === isArray(nodeids) || false === isArray(nodekeys)) {
-				nodeids = [];
-				nodekeys = [];
-			}
-		    
-			if(o.Multi)
-			{
-				if (nodeids.length === 0 || nodekeys.length === 0 ) {
+            
+			if(o.Multi) {
+				if (o.nodeids.length === 0 || o.nodekeys.length === 0 ) {
 				    var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+				    var n = 0;
 				    $nodechecks.each(function() {
 				        var $nodecheck = $(this);
-				        nodeids[nodeids.length] = $nodecheck.CswAttrDom('nodeid');
-				        //nodekeys[nodekeys.length] = $nodecheck.CswAttrDom('cswnbtnodekey');
-				        $div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.CswAttrDom('nodename') + '</span>');
+				        o.nodeids[n] = $nodecheck.CswAttrXml('nodeid');
+				        o.cswnbtnodekeys[n] = $nodecheck.CswAttrXml('cswnbtnodekey');
+				        $div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.CswAttrXml('nodename') + '</span>');
+				        n++;
 				    });
 				} else {
-				    for(var i=0; i<o.nodename.length; i++) {
-				        $div.append('<br/><span style="padding-left: 10px;">' + o.nodename[i] + '</span>');
+				    for(var i=0; i <o.nodenames.length; i++) {
+				        $div.append('<br/><span style="padding-left: 10px;">' + o.nodenames[i] + '</span>');
 				    }
 				}
 			} else {
-				$div.append('<span>' + o.nodename + '?</span>');
-				nodeids[0] = o.nodeid;
-				nodekeys[0] = o.cswnbtnodekey;
+				$div.append('<span>' + o.nodenames[0] + '?</span>');
 			}
 			$div.append('<br/><br/>');
 	
 			var $deletebtn = $div.CswButton({ID: 'deletenode_submit', 
-														enabledText: 'Delete', 
-														disabledText: 'Deleting', 
-														onclick: function() {
-																	deleteNodes({
-																				nodeids: nodeids, 
-																				nodekeys: nodekeys,
-																				onSuccess: function(nodeid, nodekey) {
-																					$div.dialog('close');
-																					if (isFunction(o.onDeleteNode)) {
-																					    o.onDeleteNode(nodeid, nodekey);
-																					}
-																				},
-																				onError: function() {
-																					$deletebtn.CswButton('enable');
-																				}
-																			});
-															}
-														});
+											enabledText: 'Delete', 
+											disabledText: 'Deleting', 
+											onclick: function() {
+												deleteNodes({
+													nodeids: o.nodeids, 
+													nodekeys: o.cswnbtnodekeys,
+													onSuccess: function(nodeid, nodekey) {
+														$div.dialog('close');
+														if (isFunction(o.onDeleteNode)) {
+															o.onDeleteNode(nodeid, nodekey);
+														}
+													},
+													onError: function() {
+														$deletebtn.CswButton('enable');
+													}
+												});
+											}
+										});
 
 			var $cancelbtn = $div.CswButton({ID: 'deletenode_cancel', 
 														enabledText: 'Cancel', 
