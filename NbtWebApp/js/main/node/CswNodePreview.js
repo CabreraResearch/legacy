@@ -19,13 +19,17 @@
 				};
 				if(options) $.extend(o, options);
 
+				var windowX = $(window).width() - 10;
+				var windowY = $(window).height() - 10;
 				var $div = $('<div id="' + o.ID + '" class="CswNodePreview"></div>')
 								.css({
 									position: 'absolute',
 									overflow: 'auto',
 									border: '1px solid #003366',
 									padding: '2px',
-									backgroundColor: '#ffffff'
+									backgroundColor: '#ffffff',
+									maxWidth: windowX,
+									maxHeight: windowY
 								})
 								.appendTo('body')
 								.hide();
@@ -40,8 +44,8 @@
 										onInitFinish: function() {
 											
 											// Make sure preview div is within the window
-											var windowX = $(window).width() - 10;
-											var windowY = $(window).height() - 10;
+											windowX = $(window).width() - 10;
+											windowY = $(window).height() - 10;
 											var divwidth = $div.width();
 											var divheight = $div.height();
 											var X = o.eventArg.pageX;
