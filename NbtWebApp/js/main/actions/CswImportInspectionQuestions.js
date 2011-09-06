@@ -13,7 +13,7 @@ var CswImportInspectionQuestions_WizardSteps = {
 	$.fn.CswImportInspectionQuestions = function (options) 
 	{
 		var o = {
-			ImportFileUrl: '/NbtWebApp/wsNBT.asmx/ImportInspectionQuestions',
+			ImportFileUrl: '/NbtWebApp/wsNBT.asmx/previewInspectionQuestions',
 			viewid: '',
 			viewname: '',
 			viewmode: '',
@@ -66,11 +66,11 @@ var CswImportInspectionQuestions_WizardSteps = {
         var $TextBox = $div2.CswInput('init', {ID: o.ID + '_inspectionname', type: CswInput_Types.text});
         var $ErrorLabel = $('<div ID="InspectionNameErrorLabel" style="visibility:hidden">ERROR: inspection name is NOT unique.</div>');
         $div2.append($ErrorLabel);
-        //$InspectionNameErrorLabel.style.visibility = "hidden";
         var targetname = "<br/><br/>Please enter the target of the new inspection:<br />";
         $div2.append(targetname);
         var $nodetypeselect = $('<div></div>');
-        $nodetypeselect.CswNodeTypeSelect('init', {'ID': 'step2_nodettypeselect'});
+        $nodetypeselect.CswNodeTypeSelect('init', {ID: 'step2_nodettypeselect'});
+        //var $nodetypeselect = $div2.CswNodeTypeSelect('init', {ID: 'step2_nodettypeselect'});
         $div2.append($nodetypeselect);
 
         // step 3 - Upload file
@@ -79,47 +79,57 @@ var CswImportInspectionQuestions_WizardSteps = {
 		$div3.append(instructions3);
 		var $fileuploaddiv = $('<div></div>');
 
-        // define parameters to pass into FileUploader
+         // step 4 - Preview results
+		var $div4 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step4.step);
+
+       // define parameters to pass into FileUploader
 		var o = {
-			url: '/NbtWebApp/wsNBT.asmx/uploadInspectionFile',
+			url: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
 			params: 
             {
             InspectionName: _getNewInspectionName()
             },
-			onSuccess: function(data) 
+			onSuccess: function(id, fileName, responseJSON) 
             { 
-					var $gridPager = $('<div id="' + o.ID + '_gp" style="width:100%; height:20px;" />')
-										.appendTo($div4);
-					var $grid = $('<table id="'+ o.ID + '_gt" />')
-										.appendTo($div4);
+		        var instructions4b = "Inspection Name: ";
+		        $div4.append(instructions4b);
+                var $newinspectionname = _getNewInspectionName();
+		        $div4.append($newinspectionname);
+		        var instructions4c = "<br/><br/>Target: ";
+		        $div4.append(instructions4c);
+                 var $targetname = _getTargetInspection($nodetypeselect);
+		        $div4.append($targetname);
+		        var instructions4d = "<br/><br/>Your data from the Excel spreadsheet is shown below.  If this all looks correct then click the 'Save and Finish' button to create the new inspection.<br/><br/>";
+		        $div4.append(instructions4d);
 
-					var mygridopts = {
-						'autowidth': true,
-						'datatype': 'local', 
-						'height': 180,
-						'pager': $gridPager,
-						'emptyrecords': 'No Results',
-						'loadtext': 'Loading...',
-						'multiselect': false,
-						'rowList': [10,25,50],  
-						'rowNum': 10
-					} 
-					
-					var optNav = {
-						'add': false,
-						'view': false,
-						'del': false,
-						'refresh': false,
-						'edit': false
-					};
-					$.extend(data.gridJson, mygridopts);
+			    var step4previewgridid = o.ID + '_step4_previewgrid_outer';
+                var $previewgrid = $div.find('#' + step4previewgridid);
+                if (isNullOrEmpty($previewgrid) || $previewgrid.length === 0) {
+                    $previewgrid = $('<div id="' + o.ID + '"></div>').appendTo($div4);
+                } else {
+                    $previewgrid.empty();
+                }
 
-					$grid.jqGrid(data.gridJson)
-						 .navGrid('#'+$gridPager.CswAttrDom('id'), optNav, {}, {}, {}, {}, {} ); 
-					//$grid.jqGrid(gridJson)
-					//	.hideCol('NODEID')
-					//	.hideCol('NODEIDSTR');
-            _handleNext($wizard, CswImportInspectionQuestions_WizardSteps.step4.step);
+			    var g = {
+			        Id: o.ID,
+			        gridOpts: {
+                        autowidth: true,
+			            rowNum: 20
+			        },
+			        optNav: {
+						add: false,
+						view: false,
+						del: false,
+						refresh: false,
+						edit: false
+					}
+			    };
+
+			    $.extend(g.gridOpts, responseJSON.jqGridOpt);
+
+			    var grid = new CswGrid(g, $previewgrid);
+            //_handleNext($wizard, CswImportInspectionQuestions_WizardSteps.step4.step);
+            $wizard.CswWizard('button', 'next', 'click');
             }
 		};
 
@@ -132,19 +142,13 @@ var CswImportInspectionQuestions_WizardSteps = {
             {
                 o.params['InspectionName'] = _getNewInspectionName();
             },
-			onComplete: function() 
+			onComplete: function(id, fileName, responseJSON) 
 				{ 
-					o.onSuccess(); 
+					o.onSuccess(id, fileName, responseJSON); 
 				}
 		});
 		$div3.append($fileuploaddiv);
     
-        // step 4 - Preview results
-		var $div4 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step4.step);
-		var instructions4 = "<br/><br/>Here is a preview of your inspection file.<br/><br/>";
-		$div4.append(instructions4);
-
-
         function _getNewInspectionName()
         {
             // I am doing one basic step at a time to help with debugging
@@ -153,12 +157,13 @@ var CswImportInspectionQuestions_WizardSteps = {
             return (inspectionNameValue);
         }
 
-        function _getTargetInspection()
+        function _getTargetInspection(targetInspectionSelect)
         {
             // I am doing one basic step at a time to help with debugging
-            var inspectionNameElement = $div2.find('#step2_nodettypeselect');
-            var inspectionNameValue = inspectionNameElement.val();
-            return (inspectionNameValue);
+            //var nodettypeselectElement = $div2.find('#step2_nodettypeselect');
+            //var nodettypeselectValue = nodettypeselectElement.val();
+            //return (nodettypeselectValue);
+            return (targetInspectionSelect.find(':selected').text());
         }
 
 		function _handleNext($wizard, newstepno)

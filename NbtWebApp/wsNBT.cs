@@ -2592,7 +2592,91 @@ namespace ChemSW.Nbt.WebServices
                     string FileName = Context.Request["qqfile"];
                     //string PropId = Context.Request["propid"];
                     string NewInspectionName = Context.Request["InspectionName"];
+                    string TempFileName = Context.Request["TempFileName"];
 
+                    if (!string.IsNullOrEmpty(FileName))
+                    {
+                        if (!string.IsNullOrEmpty(NewInspectionName))
+                        {
+                            if (Context.Request.InputStream != null)
+                            {
+                                 string FullPathAndFileName = _TempPath + "\\" + TempFileName;
+                                // upload user file to temporary file
+                                // our Excel file reader only likes to read files from disk - does not read files from memory or stream
+                                using (FileStream OutputFile = File.Create(FullPathAndFileName))
+                                {
+                                    Context.Request.InputStream.CopyTo(OutputFile);
+                                }
+
+                                // Load the excel file into a data table
+                                CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                                ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName, ref ErrorMessage, ref WarningMessage);
+                                if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
+                                {
+                                    NumRowsImported = ws.CreateNodes(ExcelDataTable, NewInspectionName, ref ErrorMessage, ref WarningMessage);
+ 
+                                    ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
+
+                                    if (!string.IsNullOrEmpty(WarningMessage))
+                                         ReturnVal.Add(new JProperty("error", WarningMessage));
+                                 
+                                }
+                                else
+                                {
+                                    if (string.IsNullOrEmpty(ErrorMessage))
+                                        ErrorMessage = "Could not read Excel file.";
+                                    ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", ErrorMessage));
+                                }
+                            } // if( Context.Request.InputStream != null )
+                        } // if (!string.IsNullOrEmpty(FileName))
+                        else
+                        {
+                            ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "You must enter the name of this new inspection."));
+                        }
+                    } // if (!string.IsNullOrEmpty(FileName))
+                    else
+                    {
+                    }
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch (Exception ex)
+            {
+                ReturnVal = jError(ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+
+        } // uploadInspectionFile()
+
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string previewInspectionFile()
+        {
+            JObject ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            DataTable ExcelDataTable = null;
+            string ErrorMessage = string.Empty;
+            string WarningMessage = string.Empty;
+
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    PurgeTempFiles("xls");
+
+                    // putting these in the param list causes the webservice to fail with
+                    // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
+                    // These variables seem to work in Google chrome but NOT in IE
+                    string FileName = Context.Request["qqfile"];
+                    //string PropId = Context.Request["propid"];
+                    string NewInspectionName = Context.Request["InspectionName"];
+ 
                     if (!string.IsNullOrEmpty(FileName))
                     {
                         if (!string.IsNullOrEmpty(NewInspectionName))
@@ -2612,10 +2696,6 @@ namespace ChemSW.Nbt.WebServices
                                 // Load the excel file into a data table
                                 CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
                                 ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName, ref ErrorMessage, ref WarningMessage);
-                                if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
-                                {
-                                    NumRowsImported = ws.CreateNodes(ExcelDataTable, NewInspectionName, ref ErrorMessage, ref WarningMessage);
-                                }
 
                                 // determine if we were successful or failure
                                 if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
@@ -2626,11 +2706,11 @@ namespace ChemSW.Nbt.WebServices
                                     ws.AddPrimaryKeys(ref ExcelDataTable);
                                     CswGridData gd = new CswGridData(_CswNbtResources);
                                     gd.PkColumn = "RowNumber";
-                                    ReturnVal.Add(gd.DataTableToJSON(ExcelDataTable));
+ 
+                                    ReturnVal.Add(new JProperty("jqGridOpt", gd.DataTableToJSON(ExcelDataTable)));
 
                                     if (!string.IsNullOrEmpty(WarningMessage))
-                                         ReturnVal.Add(new JProperty("error", WarningMessage));
-                                 
+                                        ReturnVal.Add(new JProperty("error", WarningMessage));
                                 }
                                 else
                                 {
