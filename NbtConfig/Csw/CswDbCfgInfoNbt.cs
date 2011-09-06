@@ -15,13 +15,6 @@ namespace ChemSW.Nbt.Config
 
         public void fill() { _CswDbCfgInfo.fill(); }
 
-        public void setSetupMode( SetupMode SetupMode, string SetupFilePath )
-        {
-            _CswDbCfgInfo.setSetupMode( SetupMode, SetupFilePath );
-
-        }//SetConfigMode()
-
-
         public string MasterAccessId
         {
             set
