@@ -113,10 +113,10 @@
     <Content Include="ConfigVars.aspx" />
     <Content Include="js\main\actions\CswImportInspectionQuestions.js" />
     <Content Include="js\main\controls\CswGrid.js" />
+    <Content Include="js\main\fieldtypes\CswFieldTypeButton.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeMol.js" />
     <Content Include="MainFooter.html" />
     <Content Include="js\globals\CswGlobalTools.js" />
-    <Content Include="js\jquery\fieldtypes\CswFieldTypeButton.js" />
     <Content Include="js\main\controls\CswDateTimePicker.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeNFPA.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeImageList.js" />

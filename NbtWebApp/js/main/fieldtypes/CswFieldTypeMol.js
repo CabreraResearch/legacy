@@ -19,6 +19,7 @@
             //var height = tryParseString(propVals.height);
             //var fileName = tryParseString(propVals.name).trim();
             var mol = tryParseString(propVals.mol).trim();
+            var col = tryParseString(propVals.column).trim();
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
@@ -27,7 +28,7 @@
             var $cell23 = $table.CswTable('cell', 2, 3).CswAttrDom('align', 'right');
 
             if (mol !== '') {
-                var $TextBox = $('<p>' + mol + '</p>')
+                var $TextBox = $('<pre>' + mol + '</pre>')
 									.appendTo($cell11);
                 //$cell21.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');
             }
@@ -44,7 +45,8 @@
                             $.CswDialog('FileUploadDialog', {
                                 url: '/NbtWebApp/wsNBT.asmx/fileForProp',
                                 params: {
-                                    'PropId': o.propData.id
+                                    'PropId': o.propData.id,
+                                    'Column': col
                                 },
                                 onSuccess: function () {
                                     o.onReload();
@@ -85,7 +87,7 @@
     };
 
     // Method calling logic
-    $.fn.CswFieldTypeImage = function (method) {
+    $.fn.CswFieldTypeMol = function (method) {
 
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));

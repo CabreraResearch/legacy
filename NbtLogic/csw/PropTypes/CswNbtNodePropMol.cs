@@ -65,6 +65,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_MolSubField.ToXmlNodeName( true )] = Mol;
+            ParentObject["column"] = _MolSubField.Column.ToString().ToLower();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

@@ -31,6 +31,11 @@
 									.appendTo($cell11);
 				$cell21.append('<a href="'+ href +'" target="_blank">'+ fileName +'</a>');
 			}
+            else
+            {
+			    $cell21.append('(no image selected)');
+            }
+
 
             if(!o.ReadOnly && o.EditMode != EditMode.AddInPopup.name)
             {
