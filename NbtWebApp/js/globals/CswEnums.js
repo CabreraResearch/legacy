@@ -42,7 +42,7 @@ var CswViewMode = {
     table: { name: 'Table' }
 };
 
-var CswMultiEditValue = '[Unchanged]';
+var CswMultiEditDefaultValue = '[Unchanged]';
 
 // for CswCookie
 var CswCookieName = {

@@ -16,8 +16,8 @@
 
                 var propVals = o.propData.values;
             
-                var href = (false === o.Multi) ? tryParseString(propVals.href).trim() : CswMultiEditValue;
-                var fileName = (false === o.Multi) ? tryParseString(propVals.name).trim() : CswMultiEditValue;
+                var href = (false === o.Multi) ? tryParseString(propVals.href).trim() : CswMultiEditDefaultValue;
+                var fileName = (false === o.Multi) ? tryParseString(propVals.name).trim() : CswMultiEditDefaultValue;
 
                 var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
                 var $cell11 = $table.CswTable('cell', 1, 1);

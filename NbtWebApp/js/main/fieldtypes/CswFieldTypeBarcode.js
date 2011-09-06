@@ -14,7 +14,7 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? tryParseString(propVals.barcode).trim() : CswMultiEditValue;
+            var value = (false === o.Multi) ? tryParseString(propVals.barcode).trim() : CswMultiEditDefaultValue;
 
             if(o.ReadOnly)
             {

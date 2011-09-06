@@ -13,8 +13,8 @@
 
             var $Div = $(this);
             var propVals = o.propData.values;
-            var date = (false === o.Multi) ? tryParseString(propVals.value.date).trim() : CswMultiEditValue;
-            var time = (false === o.Multi) ? tryParseString(propVals.value.time).trim() : CswMultiEditValue;
+            var date = (false === o.Multi) ? tryParseString(propVals.value.date).trim() : CswMultiEditDefaultValue;
+            var time = (false === o.Multi) ? tryParseString(propVals.value.time).trim() : CswMultiEditDefaultValue;
             
             var $DTPickerDiv = $Div.CswDateTimePicker('init', {
 													ID: o.ID,

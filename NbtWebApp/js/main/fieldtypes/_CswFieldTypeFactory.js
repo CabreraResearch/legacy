@@ -32,6 +32,9 @@
 /// <reference path="CswFieldTypeTimeInterval.js" />
 /// <reference path="CswFieldTypeUserSelect.js" />
 /// <reference path="CswFieldTypeViewPickList.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 $.CswFieldTypeFactory = function (method)
 {
