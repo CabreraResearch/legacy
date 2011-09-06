@@ -387,19 +387,15 @@ function crawlObject(thisObj, onSuccess, doRecursion) {
     /// <param name="doRecursion" type="Boolean"> If true, recurse on all properties </param>
     /// <returns type="Object">Returns the return of onSuccess</returns>
     var ret = false;
-    if (jQuery.isPlainObject(thisObj)) {
-        for (var childKey in thisObj) {
-            if (thisObj.hasOwnProperty(childKey)) {
-                var childObj = thisObj[childKey];
-                if (isFunction(onSuccess)) {
-                    ret = onSuccess(childObj, childKey, thisObj);
-                }
-                else if (doRecursion && false === ret && jQuery.isPlainObject(childObj)) {
-                    ret = crawlObject(childObj, onSuccess, doRecursion);
-                }
-            }
+    $.each(thisObj, function (childKey, value)  {
+        var childObj = thisObj[childKey];
+        if (isFunction(onSuccess)) {
+            ret = onSuccess(childObj, childKey, thisObj);
         }
-    }
+        else if (doRecursion) {
+            ret = crawlObject(childObj, onSuccess, doRecursion);
+        }
+    });
     return ret;
 }
 
