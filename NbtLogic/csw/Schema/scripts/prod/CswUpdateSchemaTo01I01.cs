@@ -79,6 +79,15 @@ namespace ChemSW.Nbt.Schema
 						LayoutAddRow["display_row"] = PropRow["display_row_add"];
 						LayoutAddRow["display_column"] = PropRow["display_col_add"];
 						LayoutTable.Rows.Add( LayoutAddRow );
+
+						// Set the preview to be the same as add at first
+						DataRow LayoutPreviewRow = LayoutTable.NewRow();
+						LayoutPreviewRow["layouttype"] = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview.ToString();
+						LayoutPreviewRow["nodetypeid"] = PropRow["nodetypeid"];
+						LayoutPreviewRow["nodetypepropid"] = PropRow["nodetypepropid"];
+						LayoutPreviewRow["display_row"] = PropRow["display_row_add"];
+						LayoutPreviewRow["display_column"] = PropRow["display_col_add"];
+						LayoutTable.Rows.Add( LayoutPreviewRow );
 					}
 				} // foreach( DataRow PropRow in PropTable.Rows )
 				LayoutUpdate.update( LayoutTable );
