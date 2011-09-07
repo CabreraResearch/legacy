@@ -302,30 +302,6 @@ function ObjectHelper(obj) {
 	/// <returns type="ObjectHelper"></returns>
     var thisObj = obj;
     
-//    function recursiveFind(parentObj, key, value) {
-//        /// <summary>Recursively search an object</summary>
-//	    /// <param name="parentObj" type="Object"> Object to search </param>
-//        /// <param name="key" type="String"> Property name to match. </param>
-//        /// <param name="value" type="Object"> Property value to match </param>
-//	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
-//        var ret = { };
-//        if (jQuery.isPlainObject(parentObj)) {
-//            for (var childKey in parentObj) {
-//                if (parentObj.hasOwnProperty(childKey)) {
-//                    var childObj = parentObj[childKey];
-//                    if (foundMatch(childObj, key, value)) {
-//                        ret = childObj;
-//                        break;
-//                    } 
-//                    else if (isNullOrEmpty(ret) && jQuery.isPlainObject(childObj)) {
-//                        ret = recursiveFind(childObj, key, value);
-//                    }
-//                }
-//            }
-//        }
-//        return ret;
-//    }
-    
     function find(key, value) {
         /// <summary>Find a property's parent</summary>
         /// <param name="key" type="String"> Property name to match. </param>
@@ -340,26 +316,6 @@ function ObjectHelper(obj) {
         var ret = crawlObject(thisObj, onSuccess, true);
         return ret;
     }
-    
-//    function recursiveDelete(parentObj, key, value) {
-//        var ret = false;
-//        if (jQuery.isPlainObject(parentObj)) {
-//            for (var childKey in parentObj) {
-//                if (parentObj.hasOwnProperty(childKey)) {
-//                    var childObj = parentObj[childKey];
-//                    if (foundMatch(childObj, key, value)) {
-//                        delete parentObj[childKey];
-//                        ret = true;
-//                        break;
-//                    } 
-//                    else if (false === ret && jQuery.isPlainObject(childObj)) {
-//                        ret = recursiveDelete(childObj, key, value);
-//                    }
-//                }
-//            }
-//        }
-//        return ret;
-//    }
     
     function remove(key, value) {
         var onSuccess = function(childObj, childKey) {
@@ -392,7 +348,7 @@ function crawlObject(thisObj, onSuccess, doRecursion) {
         if (isFunction(onSuccess)) {
             ret = onSuccess(childObj, childKey, thisObj);
         }
-        else if (doRecursion) {
+        if (doRecursion) {
             ret = crawlObject(childObj, onSuccess, doRecursion);
         }
     });
