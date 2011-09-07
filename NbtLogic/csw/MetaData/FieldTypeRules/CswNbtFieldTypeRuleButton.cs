@@ -7,31 +7,23 @@ using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.DB;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.MetaData.FieldTypeRules
 {
 
-    public class CswNbtFieldTypeRuleMol : ICswNbtFieldTypeRule
+    public class CswNbtFieldTypeRuleButton : ICswNbtFieldTypeRule
     {
-
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
-
-        public CswNbtFieldTypeRuleMol( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRuleButton( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources, MetaDataProp );
 
-            MolSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Mol );
-            // BZ 8638
-            //MolSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-            //                          CswNbtPropFilterSql.PropertyFilterMode.Null;
-            SubFields.add( MolSubField );
         }//ctor
-
-        public CswNbtSubField MolSubField;
 
         public CswNbtSubFieldColl SubFields
         {
@@ -41,14 +33,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }//get
         }
 
-
-        public bool SearchAllowed { get { return ( false );  } }
+        public bool SearchAllowed { get { return ( false ); } }
 
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
         {
-            return ( string.Empty );
+            return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn ) );
         }//makeWhereClause()
-
 
         public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
         {
@@ -60,11 +50,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
 
-        public void afterCreateNodeTypeProp(  CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }
 
-    }//CswNbtFieldTypeRuleMol
+    }//ICswNbtFieldTypeRule
 
 }//namespace ChemSW.Nbt.MetaData

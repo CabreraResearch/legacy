@@ -10,6 +10,7 @@ namespace ChemSW.Nbt.MetaData
         {
             Unknown,
             Barcode,
+            Button,
             Composite,
             DateTime,
             External,

@@ -34,6 +34,9 @@ namespace ChemSW.Nbt.PropTypes
                 case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
                     InnerProperty = new CswNbtNodePropBarcode( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;
+                case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                    InnerProperty = new CswNbtNodePropButton( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
+                    break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Composite:
                     InnerProperty = new CswNbtNodePropComposite( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;
@@ -72,6 +75,9 @@ namespace ChemSW.Nbt.PropTypes
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Memo:
                     InnerProperty = new CswNbtNodePropMemo( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
+                    break;
+                case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                    InnerProperty = new CswNbtNodePropMol( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
                     InnerProperty = new CswNbtNodePropMTBF( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );

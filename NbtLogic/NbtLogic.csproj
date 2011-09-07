@@ -83,6 +83,7 @@
     <Compile Include="csw\MetaData\CswNbtPropFilterSql.cs" />
     <Compile Include="csw\MetaData\CswNbtSubField.cs" />
     <Compile Include="csw\MetaData\CswNbtSubFieldColl.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleButton.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNFPA.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleImageList.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMultiList.cs" />
@@ -173,6 +174,7 @@
     <Compile Include="csw\PropertySets\CswNbtPropertySetSchedulerImpl.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetGeneratorTarget.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetScheduler.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropButton.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropNFPA.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropImageList.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropMultiList.cs" />
@@ -237,7 +239,6 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I14.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I01.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I02.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I03.cs" />
@@ -250,6 +251,8 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I10.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I11.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I12.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I13.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I14.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswProdUpdtRsrc.cs" />
     <Compile Include="csw\Sched\runner\CswNbtSchdItemRunner.cs" />
     <Compile Include="csw\Sched\logic_legacy\CswNbtSchdItemUpdateInspectionStatus.cs" />
@@ -267,7 +270,6 @@
     <Compile Include="csw\Schema\CswSequenceDdlOp.cs" />
     <Compile Include="csw\Schema\CswTableDdlOp.cs" />
     <Compile Include="csw\Schema\scripts\CswUpdateSchemaTo.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I13.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03.cs" />
