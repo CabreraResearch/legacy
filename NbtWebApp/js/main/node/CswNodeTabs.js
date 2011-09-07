@@ -14,8 +14,10 @@
 			SinglePropUrl: '/NbtWebApp/wsNBT.asmx/getSingleProp',
 			PropsUrl: '/NbtWebApp/wsNBT.asmx/getProps',
 			MovePropUrl: '/NbtWebApp/wsNBT.asmx/moveProp',
+			RemovePropUrl: '/NbtWebApp/wsNBT.asmx/removeProp',
 			SavePropUrl: '/NbtWebApp/wsNBT.asmx/saveProps',
 			CopyPropValuesUrl: '/NbtWebApp/wsNBT.asmx/copyPropValues',
+			NodePreviewUrl: '/NbtWebApp/wsNBT.asmx/getNodePreview',
 			nodeid: '',               
 			relatednodeid: '',
 			tabid: '',                
@@ -24,17 +26,20 @@
 			filterToPropId: '',       
 			title: '',
 			date: '',      // for audit records
-			EditMode: EditMode.Edit.name, // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue
+			EditMode: EditMode.Edit.name, // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, NodePreview
 			Multi: false,
 		    onSave: null, // function (nodeid, cswnbtnodekey, tabcount) { },
+			Refresh: null, // function (nodeid, cswnbtnodekey, tabcount) { },
 			onBeforeTabSelect: null, // function (tabid) { return true; },
 			onTabSelect: null, // function (tabid) { },
 			onPropertyChange: null, // function(propid, propname) { },
+			onPropertyRemove: null, // function(propid) { },
 			onInitFinish: null, // function() { },
 			ShowCheckboxes: false,
 			ShowAsReport: true,
 			NodeCheckTreeId: '',
-			onEditView: null // function(viewid) { }
+			onEditView: null, // function(viewid) { }
+			Config: false
 		};
 
 		if (options) {
@@ -66,7 +71,16 @@
 			$outertabdiv.contents().remove();
 		}
 
-		function getTabs() {
+		function makeTabContentDiv($parent, tabid, canEditLayout)
+		{
+			var $tabcontentdiv = $('<div id="' + tabid + '"><form onsubmit="return false;" id="' + tabid + '_form" /></div>')
+				.appendTo($parent);
+			$tabcontentdiv.data('canEditLayout', canEditLayout);
+			return $tabcontentdiv;
+		}
+
+		function getTabs()
+		{
 			var jsonData = {
 				EditMode: o.EditMode,
 				NodeId: o.nodeid,
@@ -76,17 +90,31 @@
 				filterToPropId: o.filterToPropId,
 			    Multi: o.Multi
 			};
-			CswAjaxJson({
-				url: o.TabsUrl,
-				data: jsonData,
-				success: function (data)
-				{
-				    clearTabs();
-					var tabdivs = [];
-					var selectedtabno = 0;
-					var tabno = 0;
+
+			// For performance, don't bother getting tabs if we're in Add or Preview
+			var tabdata = {};
+			if( o.EditMode == EditMode.AddInPopup.name || 
+				o.EditMode == EditMode.Preview.name )
+			{
+				var tabid = o.EditMode + "_tab";
+				var $tabcontentdiv = makeTabContentDiv($parent, tabid, false)
+				getProps($tabcontentdiv, tabid);
+			}
+			else
+			{
+				CswAjaxJson({
+					url: o.TabsUrl,
+					data: jsonData,
+					success: function (data)
+					{
+						clearTabs();
+						var tabdivs = [];
+						var selectedtabno = 0;
+						var tabno = 0;
 
 				    var tabFunc = function(thisTab) {
+							if (data.hasOwnProperty(tabId)) 
+							{
                         var thisTabId = thisTab.id;
 					    if (o.EditMode === 'PrintReport' || tabdivs.length === 0)
 					    {
@@ -95,9 +123,7 @@
 					    }
 					    var $tabdiv = tabdivs[tabdivs.length - 1];
 					    $tabdiv.children('ul').append('<li><a href="#' + thisTabId + '">' + thisTab.name + '</a></li>');
-					    var $tabcontentdiv = $('<div id="' + thisTabId + '"><form onsubmit="return false;" id="' + thisTabId + '_form" /></div>')
-    					    .appendTo($tabdiv);
-					    $tabcontentdiv.data('canEditLayout', thisTab.canEditLayout);
+								var $tabcontentdiv = makeTabContentDiv($tabdiv, thisTabId, thisTab.canEditLayout);
 					    if (thisTabId === o.tabid)
 					    {
 					        selectedtabno = tabno;
@@ -106,34 +132,34 @@
 				    };
 				    crawlObject(data, tabFunc, false);
 
-					tabcnt = tabno;
+						tabcnt = tabno;
 
-					for(var t in tabdivs)
-					{
-						var $tabdiv = tabdivs[t];
-						$tabdiv.tabs({
+						for(var t in tabdivs)
+						{
+							var $tabdiv = tabdivs[t];
+							$tabdiv.tabs({
 							selected: selectedtabno,
 							select: function (event, ui) {
 							    var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
 							    var tabid = $tabcontentdiv.CswAttrDom('id');
 							    if (isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(tabid)) {
-									getProps($tabcontentdiv, tabid);
+										getProps($tabcontentdiv, tabid);
 									if (isFunction(o.onTabSelect)) {
-                                        o.onTabSelect(tabid);
-                                    }
-							    } else {
-									return false;
+											o.onTabSelect(tabid);
+										}
+									} else {
+										return false;
+									}
 								}
-							}
-						});
-						var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
-						var selectedtabid = $tabcontentdiv.CswAttrDom('id');
-						getProps($tabcontentdiv, selectedtabid);
-						if (isFunction(o.onTabSelect)) o.onTabSelect(selectedtabid);
-					} // for(var t in tabdivs)
-
-				} // success{}
-			}); // ajax
+							});
+							var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
+							var selectedtabid = $tabcontentdiv.CswAttrDom('id');
+							getProps($tabcontentdiv, selectedtabid);
+							if (isFunction(o.onTabSelect)) o.onTabSelect(selectedtabid);
+						} // for(var t in tabdivs)
+					} // success
+				}); // ajax
+			} // if-else editmode is add or preview
 		} // getTabs()
 
 		function getProps($tabcontentdiv, tabid) {
@@ -158,8 +184,12 @@
 					    $form.append(o.title);
 					}
 
+					var $formtbl = $form.CswTable('init', { ID: o.ID + '_formtbl', width: '100%' });
+					var $formtblcell11 = $formtbl.CswTable('cell', 1, 1);
+					var $formtblcell12 = $formtbl.CswTable('cell', 1, 2);
+
 				    var $savetab;
-					var $layouttable = $form.CswLayoutTable('init', {
+					var $layouttable = $formtblcell11.CswLayoutTable('init', {
 						ID: o.ID + '_props',
 						OddCellRightAlign: true,
 						ReadOnly: (o.EditMode === EditMode.PrintReport.name),
@@ -171,9 +201,13 @@
 						{
 							onSwap(onSwapData);
 						},
-						showConfigButton: (isNullOrEmpty(o.date) && o.filterToPropId === '' && isTrue($tabcontentdiv.data('canEditLayout'))),
+						showConfigButton: o.Config,
+						showRemoveButton: o.Config,
 						onConfigOn: function() {
 						    doUpdateSubProps(true);
+							        if(isTrue(thisProp.hassubprops))
+									{
+							    } // if (data.hasOwnProperty(prop)) {
 						}, // onConfigOn
 						onConfigOff: function() {
 						    doUpdateSubProps(false);
@@ -210,10 +244,14 @@
 				        };
 				        crawlObject(data, updOnSuccess, false);
 				    }
+						onRemove: function(event, onRemoveData)
+						{ 
+							onRemove(onRemoveData);
+						} // onRemove
 
-					if(o.EditMode !== EditMode.PrintReport.Name)
+					if( o.EditMode !== EditMode.PrintReport.Name)
 					{
-						$savetab = $form.CswButton({ID: 'SaveTab', 
+						$savetab = $formtblcell11.CswButton({ID: 'SaveTab', 
 												enabledText: 'Save Changes', 
 												disabledText: 'Saving...', 
 												onclick: function () { Save($form, $layouttable, data, $savetab, tabid); }
@@ -241,17 +279,61 @@
 						}
 					}); // validate()
 
+					if(isTrue(o.Config))
+					{
+						$layouttable.CswLayoutTable('ConfigOn');
+					} 
+					else if(!o.Config && 
+						isNullOrEmpty(o.date) && 
+						o.filterToPropId === '' && 
+						isTrue($tabcontentdiv.data('canEditLayout')))
+					{
+						// Show the 'fake' config button to open the dialog
+						$formtblcell12.CswImageButton({
+													ButtonType: CswImageButton_ButtonType.Configure,
+													AlternateText: 'Configure',
+													ID: o.ID + 'configbtn',
+													onClick: function ($ImageDiv) 
+													{ 
+														clearTabs();
+														$.CswDialog('EditLayoutDialog', o);
+														return CswImageButton_ButtonType.None; 
+													}
+												});
+					}
+
+
 					// case 8494
-					if (!AtLeastOneSaveable && o.EditMode == EditMode.AddInPopup.name) {
+					if (!o.Config && !AtLeastOneSaveable && o.EditMode == EditMode.AddInPopup.name) 
+					{
 						Save($form, $layouttable, data, $savetab, tabid);
-					} else if (isFunction(o.onInitFinish)) {
+					} 
+					else if (isFunction(o.onInitFinish)) 
+					{
 						o.onInitFinish();
 					}
 				} // success{}
 			}); // ajax
 		} // getProps()
 	   
-		function onSwap(onSwapData) {
+		function onRemove(onRemoveData)
+		{
+			var $propdiv = _getPropertyCell(onRemoveData.cellset).children('div').first();
+			var propid = $propdiv.CswAttrDom('propid');
+			
+			CswAjaxJson({
+				url: o.RemovePropUrl,
+				data: { PropId: propid, EditMode: o.EditMode },
+				success: function (data)
+				{
+					o.onPropertyRemove(propid);
+				}
+			});
+
+		} // onRemove()
+		
+		function onSwap(onSwapData)
+		{
 			_moveProp(_getPropertyCell(onSwapData.cellset).children('div').first(), onSwapData.swaprow, onSwapData.swapcolumn);
 			_moveProp(_getPropertyCell(onSwapData.swapcellset).children('div').first(), onSwapData.row, onSwapData.column);
 		} // onSwap()
@@ -351,7 +433,8 @@
 		    };
 		    crawlObject(data, handleSuccess, false);
 		    
-			if(AtLeastOneSaveable === false && o.EditMode != EditMode.AddInPopup.name) {
+			if(o.Config || ( AtLeastOneSaveable === false && o.EditMode != EditMode.AddInPopup.name ) )
+			{
 				$savebtn.hide();
 			} else {
 				$savebtn.show();
@@ -394,7 +477,7 @@
 						_updateSubProps(fieldOpt, propId, propData, $propcell, $tabcontentdiv, tabid, false, $savebtn);
 						if(isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName);
 					};
-				} // if (propData.hassubprops === "true")
+				} // if (isTrue(propData.hassubprops)) {
 
 				$.CswFieldTypeFactory('make', fieldOpt);
                 
@@ -414,7 +497,8 @@
 					    {
 						    onSwap(onSwapData);
 					    },
-					    showConfigButton: false
+					showConfigButton: false,
+					showRemoveButton: false
 				    });
 			        
 			        var subOnSuccess = function(subProp, key) {

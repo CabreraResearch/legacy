@@ -77,6 +77,8 @@
 //                        }
 				}
 
+				$Div.hover(function(event) { nodeHoverIn(event, $selectdiv.val()); }, nodeHoverOut);
+
 			},
 			save: function(o) { //($propdiv, $xml
 					var $selectdiv = o.$propdiv.find('.locationselect');

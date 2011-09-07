@@ -23,22 +23,20 @@ namespace ChemSW.Nbt.Schema
     public class CswTstCaseRsrc_027
     {
 
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
-        private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
+		private CswTestCaseRsrc _CswTestCaseRsrc;
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+		{
+			set
+			{
+				_CswNbtSchemaModTrnsctn = value;
+				_CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			}
+		}
+		private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
         public Process Process = null;
-        public CswTstCaseRsrc_027( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
 
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            Process = System.Diagnostics.Process.GetCurrentProcess();
-        }//ctor
-
-
-
-        public string Purpose = "Memory consumption";
+        public static string Purpose = "Memory consumption";
 
 
         public long ProcessMemoryAtStart = Int32.MinValue;

@@ -840,10 +840,10 @@
 						this.select_node(event.currentTarget, true, event);
 					}, this))
 				.delegate("a", "mouseenter.jstree", $.proxy(function (event) {
-						this.hover_node(event.target);
+						this.hover_node(event.target, event);
 					}, this))
 				.delegate("a", "mouseleave.jstree", $.proxy(function (event) {
-						this.dehover_node(event.target);
+						this.dehover_node(event.target, event);
 					}, this))
 				.bind("reopen.jstree", $.proxy(function () { 
 						this.reselect();

@@ -15,23 +15,12 @@ namespace ChemSW.Nbt.Schema
 	/// <summary>
 	/// Updates the schema to version 01I-10
 	/// </summary>
-	public class CswUpdateSchemaTo01I10 : ICswUpdateSchemaTo
+	public class CswUpdateSchemaTo01I10 : CswUpdateSchemaTo
 	{
-		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 10 ); } }
+		public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
 
-		private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
-		public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 10 ); } }
-		public CswUpdateSchemaTo01I10( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-		{
-			_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-			_CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
-		}
-
-
-		public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
-
-
-		public void update()
+		public override void update()
 		{
 			// case 23088
 			// fix 'getActiveActions' S4

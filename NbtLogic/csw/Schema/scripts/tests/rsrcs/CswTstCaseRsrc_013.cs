@@ -18,18 +18,19 @@ namespace ChemSW.Nbt.Schema
     public class CswTstCaseRsrc_013
     {
 
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		private CswTestCaseRsrc _CswTestCaseRsrc;
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+		{
+			set
+			{
+				_CswNbtSchemaModTrnsctn = value;
+				_CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			}
+		}
 
-        private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        public CswTstCaseRsrc_013( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
 
-        }//ctor
-
-
-        public string Purpose = "Reject stale column value";
+        public static string Purpose = "Reject stale column value";
 
         public string FakeTestTableName { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
         public string FakeValColumnName01 { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }

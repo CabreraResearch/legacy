@@ -11,23 +11,12 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema to version 01I-03
     /// </summary>
-    public class CswUpdateSchemaTo01I03 : ICswUpdateSchemaTo
+    public class CswUpdateSchemaTo01I03 : CswUpdateSchemaTo
     {
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 03 ); } }
+		public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
 
-        private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 03 ); } }
-        public CswUpdateSchemaTo01I03( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
-        }
-
-
-        public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
-
-
-        public void update()
+		public override void update()
         {
 			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "jct_nodes_props", "field2_numeric" ) )
 			{
@@ -113,9 +102,11 @@ namespace ChemSW.Nbt.Schema
 					//VersionNTP.NodeTypeTab = DetailTab;
 					//VersionNTP.DisplayRow = DetailTab.getCurrentMaxDisplayRow() + 1;
 					//VersionNTP.DisplayColumn = 1;
-					VersionNTP._DataRow["nodetypetabsetid"] = CswConvert.ToDbVal( DetailTab.TabId );
-					VersionNTP._DataRow["display_row"] = CswConvert.ToDbVal( DetailTab.getCurrentMaxDisplayRow() + 1 );
-					VersionNTP._DataRow["display_col"] = CswConvert.ToDbVal( 1 );
+					
+					//VersionNTP._DataRow["nodetypetabsetid"] = CswConvert.ToDbVal( DetailTab.TabId );
+					//VersionNTP._DataRow["display_row"] = CswConvert.ToDbVal( DetailTab.getCurrentMaxDisplayRow() + 1 );
+					//VersionNTP._DataRow["display_col"] = CswConvert.ToDbVal( 1 );
+					VersionNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DetailTab, Int32.MinValue, Int32.MinValue );
 				}
 
 				foreach( CswNbtNode Node in InspectionDesignNT.getNodes( false, true ) )

@@ -45,7 +45,7 @@ namespace ChemSW.Nbt
             return ( ReturnVal );
         }
 
-        public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase )
+		public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase, bool IsCopy, bool OverrideUniqueValidation )
         {
             getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, PostToDatabase );
             //setDefaultPropertyValues( Node );
@@ -57,11 +57,11 @@ namespace ChemSW.Nbt
 				{
 					PropWrapper.makePropRow();
 				}
-				Node.postChanges( true );
+				Node.postChanges( true, IsCopy, OverrideUniqueValidation );
 			}
 		}//makeNewNodeEntry()
 
-        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy )
+        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation )
         {
             try
             {
@@ -73,7 +73,7 @@ namespace ChemSW.Nbt
                     //the db, after which it will have a node id
                     if( null == Node.NodeId )
                     {
-                        makeNewNodeEntry( Node, true );
+						makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
                         //setDefaultPropertyValues( Node );
                     }
 
@@ -82,7 +82,7 @@ namespace ChemSW.Nbt
 
                     //bz # 5878
                     //Node.Properties.ManageTransaction = _ManageTransaction;
-                    Node.Properties.update( IsCopy );
+					Node.Properties.update( IsCopy, OverrideUniqueValidation );
 
                     //set nodename with updated prop values
                     _synchNodeName( Node );

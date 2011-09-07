@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        override public void onBeforeUpdateNodePropRow( bool IsCopy )
+		override public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
             if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Sequence )
             {
@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.PropTypes
             // Automatically generate a value.  This will not overwrite existing values.
             setSequenceValue();
 
-            base.onBeforeUpdateNodePropRow( IsCopy );
+			base.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
         }//onBeforeUpdateNodePropRow()
 
         public override void Copy( CswNbtNodePropData Source )
