@@ -30,7 +30,7 @@
 
 			if(o.ReadOnly) {
 				if(o.Multi) {
-				    $parent.append('?');
+				    $parent.append(CswMultiEditDefaultValue);
 				} else {
 				    switch (tristateVal) {
 				        case 'true': $parent.append('Yes'); break;
