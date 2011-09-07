@@ -22,11 +22,18 @@
                 if (false === isNullOrEmpty(o.relatednodeid) && isNullOrEmpty(selectedNodeId) && false === o.Multi) {
                     selectedNodeId = o.relatednodeid;
                 }
-                var selectedName = tryParseString(propVals.name).trim();
+                var selectedName = (false === o.Multi) ? tryParseString(propVals.name).trim() : CswMultiEditDefaultValue;
                 var nodeTypeId = tryParseString(propVals.nodetypeid).trim();
                 var allowAdd = isTrue(propVals.allowadd);
                 var options = propVals.options;
-
+                var relationships = [];
+                crawlObject(options, function(relatedObj, key) {
+                                        relationships.push({ value: key, display: relatedObj });
+                }, false);
+                if(o.Multi) {
+                    relationships.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
+                }
+                
                 if(o.ReadOnly) {
                     $Div.append(selectedName);
                 } 
@@ -40,7 +47,7 @@
                                                     ID: o.ID,
                                                     cssclass: 'selectinput',
                                                     onChange: o.onchange,
-                                                    values: options,
+                                                    values: relationships,
                                                     selected: selectedNodeId
                                                 });
                     

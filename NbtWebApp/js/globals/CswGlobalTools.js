@@ -225,6 +225,7 @@ function tryParseNumber(inputNum, defaultNum)
 	return ret;
 }
 
+var dateTimeMinValue = new Date('1/1/0001 12:00:00 AM');
 function tryParseElement(elementId, $context)
 {
 	/// <summary>
