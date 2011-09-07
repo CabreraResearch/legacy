@@ -16,10 +16,11 @@
             $Div.contents().remove();
             var propVals = o.propData.values;
             var value = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue;
+            var gestalt = tryParseString(o.propData.gestalt).trim();
             var options = propVals.options;
             
             if (o.ReadOnly) {
-                $Div.append(value);
+                $Div.append(gestalt);
             } else {
                 var values = ['Select...'];
                 var selected = 'Select...';

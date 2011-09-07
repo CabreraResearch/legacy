@@ -613,8 +613,13 @@
 			},
 			tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
 			onBeforeTabSelect: function (tabid)
-			{
+                        {
 				return manuallyCheckChanges();
+			},
+			'Refresh': function (nodeid, cswnbtnodekey)
+			{
+				unsetChanged();
+				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
 			},
 			onTabSelect: function (tabid)
 			{

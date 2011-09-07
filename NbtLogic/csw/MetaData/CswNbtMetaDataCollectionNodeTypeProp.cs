@@ -78,15 +78,15 @@ namespace ChemSW.Nbt.MetaData
                 ret = new ArrayList();
             return ret;
         }
-        public ICollection getNodeTypePropsByTab( Int32 TabId )
-        {
-            ICollection ret;
-            if( _ByNodeTypeTab.ContainsKey( TabId ) )
-                ret = ( (NodeTypeTabHashEntry) _ByNodeTypeTab[TabId] ).ByPropName.Values;
-            else
-                ret = new ArrayList();
-            return ret;
-        }
+		public ICollection getNodeTypePropsByTab( Int32 TabId )
+		{
+			ICollection ret;
+			if( _ByNodeTypeTab.ContainsKey( TabId ) )
+				ret = ( (NodeTypeTabHashEntry) _ByNodeTypeTab[TabId] ).ByPropName.Values;
+			else
+				ret = new ArrayList();
+			return ret;
+		}
         public ICollection getNodeTypePropsByDisplayOrder( Int32 TabId )
         {
             ICollection ret;
@@ -180,19 +180,22 @@ namespace ChemSW.Nbt.MetaData
             NodeTypeHashEntry Entry = _ByNodeType[NodeTypeProp.NodeType.NodeTypeId] as NodeTypeHashEntry;
             Entry.ByPropId.Add( NodeTypeProp.PropId, NodeTypeProp );
             Entry.ByPropName.Add( NodeTypeProp.PropName.ToLower(), NodeTypeProp );
-            Entry.ByQuestionNo.Add( NodeTypeProp.NodeTypeTab.SectionNo + "." + NodeTypeProp.QuestionNo + "_" + NodeTypeProp.PropId, NodeTypeProp );
-            if( NodeTypeProp.ObjectClassProp != null )
-                Entry.ByObjectClassPropName.Add( NodeTypeProp.ObjectClassProp.PropName.ToLower(), NodeTypeProp );
+			if( NodeTypeProp.EditLayout != null && NodeTypeProp.EditLayout.Tab != null )
+			{
+				Entry.ByQuestionNo.Add( NodeTypeProp.EditLayout.Tab.SectionNo + "." + NodeTypeProp.QuestionNo + "_" + NodeTypeProp.PropId, NodeTypeProp );
+				if( !_ByNodeTypeTab.ContainsKey( NodeTypeProp.EditLayout.Tab.TabId ) )
+				{
+					_ByNodeTypeTab.Add( NodeTypeProp.EditLayout.Tab.TabId, new NodeTypeTabHashEntry() );
+				}
 
-            // By Tab
-            if( !_ByNodeTypeTab.ContainsKey( NodeTypeProp.NodeTypeTab.TabId ) )
-            {
-                _ByNodeTypeTab.Add( NodeTypeProp.NodeTypeTab.TabId, new NodeTypeTabHashEntry() );
-            }
-            NodeTypeTabHashEntry TabEntry = _ByNodeTypeTab[NodeTypeProp.NodeTypeTab.TabId] as NodeTypeTabHashEntry;
-            TabEntry.ByPropId.Add( NodeTypeProp.PropId, NodeTypeProp );
-            TabEntry.ByPropName.Add( NodeTypeProp.PropName.ToLower(), NodeTypeProp );
-            TabEntry.ByDisplayOrder.Add( NodeTypeProp, NodeTypeProp );
+				// By Tab
+				NodeTypeTabHashEntry TabEntry = _ByNodeTypeTab[NodeTypeProp.EditLayout.Tab.TabId] as NodeTypeTabHashEntry;
+				TabEntry.ByPropId.Add( NodeTypeProp.PropId, NodeTypeProp );
+				TabEntry.ByPropName.Add( NodeTypeProp.PropName.ToLower(), NodeTypeProp );
+				TabEntry.ByDisplayOrder.Add( NodeTypeProp, NodeTypeProp );
+			}
+			if( NodeTypeProp.ObjectClassProp != null )
+                Entry.ByObjectClassPropName.Add( NodeTypeProp.ObjectClassProp.PropName.ToLower(), NodeTypeProp );
 
             // By Object Class Prop
             if( NodeTypeProp.ObjectClassProp != null )
@@ -220,14 +223,14 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeHashEntry Entry = _ByNodeType[NodeTypeProp.NodeType.NodeTypeId] as NodeTypeHashEntry;
                 Entry.ByPropId.Remove( NodeTypeProp.PropId );
                 Entry.ByPropName.Remove( NodeTypeProp.PropName.ToLower() );
-                Entry.ByQuestionNo.Remove( NodeTypeProp.NodeTypeTab.SectionNo + "." + NodeTypeProp.QuestionNo + "_" + NodeTypeProp.PropId );
+				Entry.ByQuestionNo.Remove( NodeTypeProp.EditLayout.Tab.SectionNo + "." + NodeTypeProp.QuestionNo + "_" + NodeTypeProp.PropId );
                 if( NodeTypeProp.ObjectClassProp != null )
                     Entry.ByObjectClassPropName.Remove( NodeTypeProp.ObjectClassProp.PropName.ToLower() );
             }
             // By Tab
-            if( _ByNodeTypeTab.ContainsKey( NodeTypeProp.NodeTypeTab.TabId ) )
+			if( _ByNodeTypeTab.ContainsKey( NodeTypeProp.EditLayout.Tab.TabId ) )
             {
-                NodeTypeTabHashEntry TabEntry = _ByNodeTypeTab[NodeTypeProp.NodeTypeTab.TabId] as NodeTypeTabHashEntry;
+				NodeTypeTabHashEntry TabEntry = _ByNodeTypeTab[NodeTypeProp.EditLayout.Tab.TabId] as NodeTypeTabHashEntry;
                 TabEntry.ByPropId.Remove( NodeTypeProp.PropId );
                 TabEntry.ByPropName.Remove( NodeTypeProp.PropName.ToLower() );
                 TabEntry.ByDisplayOrder.Remove( NodeTypeProp );

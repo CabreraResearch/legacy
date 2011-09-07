@@ -207,10 +207,10 @@ namespace ChemSW.Nbt.PropTypes
         /// Event which fires before the node prop data row is written to the database
         /// </summary>
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
-        virtual public void onBeforeUpdateNodePropRow( bool IsCopy )
+        virtual public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
             //bz # 6686
-            if( IsUnique && WasModified )
+			if( IsUnique && WasModified && !OverrideUniqueValidation )
             {
                 CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
                 CswNbtView.ViewName = "Other Nodes, for Property Uniqueness";

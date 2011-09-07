@@ -15,7 +15,6 @@
             init: function(o) { 
             
                 var $Div = $(this);
-                $Div.contents().remove();
 
                 var propVals = o.propData.values;
                 
@@ -30,7 +29,9 @@
 
                 if(o.ReadOnly) {
                     $Div.append(selectedName);
-                } else {
+                } 
+				else 
+				{
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
                     var $selectcell = $table.CswTable('cell', 1, 1);
@@ -63,6 +64,8 @@
                     }
                 }
 
+				$Div.hover(function(event) { nodeHoverIn(event, $SelectBox.val()); }, nodeHoverOut);
+				
             },
             save: function(o) {
                     var $SelectBox = o.$propdiv.find('select');

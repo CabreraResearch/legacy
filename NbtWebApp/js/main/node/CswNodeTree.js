@@ -156,7 +156,8 @@
 					    }
                         treehtmlstring += '</ul>';
 
-					    if(hasNodes) {
+					    if(hasNodes) 
+						{
 							$treediv.bind('init_done.jstree', function() { 
 
 								// initially_open and initially_select cause multiple event triggers and race conditions.
@@ -176,7 +177,8 @@
 								$('.'+ idPrefix +'check').unbind('click');
 								$('.'+ idPrefix +'check').click(function() { return handleCheck($treediv, $(this)); });
 
-							}).bind('select_node.jstree', function(e, newData) { return firstSelectNode({
+							}).bind('select_node.jstree', function(e, newData) { 
+								return firstSelectNode({
 									e: e, 
 									data: newData, 
 									url: url,
@@ -188,6 +190,17 @@
 									UsePaging: o.UsePaging,
 									forsearch: o.forsearch
 								});
+								
+							}).bind('hover_node.jstree', function(e, data) {
+								var $hoverLI = $(data.rslt.obj[0]);
+								var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
+								var cswnbtnodekey = $hoverLI.CswAttrDom('cswnbtnodekey');
+								nodeHoverIn(data.args[1], nodeid, cswnbtnodekey);
+
+							}).bind('dehover_node.jstree', function(e, data) {
+								var selected = jsTreeGetSelected($treediv);
+								nodeHoverOut();
+
 							}).jstree({
 								"html_data":
 									{

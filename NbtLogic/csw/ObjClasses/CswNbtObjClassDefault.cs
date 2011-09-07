@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.Unknown ); }
         }
 
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
         } // beforeCreateNode()
 
@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         } // afterCreateNode()
 
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
