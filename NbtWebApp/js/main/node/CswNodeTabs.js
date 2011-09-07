@@ -112,25 +112,23 @@
 						var selectedtabno = 0;
 						var tabno = 0;
 
-				    var tabFunc = function(thisTab) {
-							if (data.hasOwnProperty(tabId)) 
-							{
-                        var thisTabId = thisTab.id;
-					    if (o.EditMode === 'PrintReport' || tabdivs.length === 0)
-					    {
-					        // For PrintReports, we're going to make a separate tabstrip for each tab
-					        tabdivs[tabdivs.length] = $("<div><ul></ul></div>").appendTo($outertabdiv);
-					    }
-					    var $tabdiv = tabdivs[tabdivs.length - 1];
-					    $tabdiv.children('ul').append('<li><a href="#' + thisTabId + '">' + thisTab.name + '</a></li>');
-								var $tabcontentdiv = makeTabContentDiv($tabdiv, thisTabId, thisTab.canEditLayout);
-					    if (thisTabId === o.tabid)
-					    {
-					        selectedtabno = tabno;
-					    }
-					    tabno++;
-				    };
-				    crawlObject(data, tabFunc, false);
+				        var tabFunc = function(thisTab) {
+                            var thisTabId = thisTab.id;
+					        if (o.EditMode === 'PrintReport' || tabdivs.length === 0)
+					        {
+					            // For PrintReports, we're going to make a separate tabstrip for each tab
+					            tabdivs[tabdivs.length] = $("<div><ul></ul></div>").appendTo($outertabdiv);
+					        }
+					        var $tabdiv = tabdivs[tabdivs.length - 1];
+					        $tabdiv.children('ul').append('<li><a href="#' + thisTabId + '">' + thisTab.name + '</a></li>');
+								    var $tabcontentdiv = makeTabContentDiv($tabdiv, thisTabId, thisTab.canEditLayout);
+					        if (thisTabId === o.tabid)
+					        {
+					            selectedtabno = tabno;
+					        }
+					        tabno++;
+				        };  
+				        crawlObject(data, tabFunc, false);
 
 						tabcnt = tabno;
 
