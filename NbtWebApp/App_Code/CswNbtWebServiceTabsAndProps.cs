@@ -463,6 +463,42 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // ClearPropValue()
 
+        public bool saveMolProp( string moldata, string propIdAttr )
+        {
+            bool ret = false;
+
+            CswPropIdAttr PropId = new CswPropIdAttr( propIdAttr );
+            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
+            if( Int32.MinValue != PropId.NodeId.PrimaryKey )
+            {
+                CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
+                CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
+
+                // Do the update directly
+                CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
+                //JctUpdate.AllowBlobColumns = true;
+                if( PropWrapper.JctNodePropId > 0 )
+                {
+                    DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
+                    JctTable.Rows[0]["clobdata"] = moldata;
+                    JctUpdate.update( JctTable );
+                }
+                else
+                {
+                    DataTable JctTable = JctUpdate.getEmptyTable();
+                    DataRow JRow = JctTable.NewRow();
+                    JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
+                    JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
+                    JRow["nodeidtablename"] = Node.NodeId.TableName;
+                    JRow["clobdata"] = moldata;
+                    JctTable.Rows.Add( JRow );
+                    JctUpdate.update( JctTable );
+                }
+                ret = true;
+            } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
+            return ret;
+        }
+
         public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column )
         {
             bool ret = false;

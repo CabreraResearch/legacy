@@ -19,7 +19,7 @@
             //var height = tryParseString(propVals.height);
             //var fileName = tryParseString(propVals.name).trim();
             var mol = tryParseString(propVals.mol).trim();
-            var col = tryParseString(propVals.column).trim();
+            //var col = tryParseString(propVals.column).trim();
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
@@ -49,12 +49,10 @@
                         ID: o.ID + '_edit',
                         onClick: function ($ImageDiv) {
 
-                            $.CswDialog('FileUploadDialog', {
-                                url: '/NbtWebApp/wsNBT.asmx/fileForProp',
-                                params: {
-                                    'PropId': o.propData.id,
-                                    'Column': col
-                                },
+                            $.CswDialog('EditMolDialog', {
+                                TextUrl: '/NbtWebApp/wsNBT.asmx/saveMolProp',
+                                FileUrl: '/NbtWebApp/wsNBT.asmx/saveMolPropFile',
+                                PropId: o.propData.id,
                                 onSuccess: function () {
                                     o.onReload();
                                 }

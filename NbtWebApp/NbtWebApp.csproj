@@ -115,6 +115,10 @@
     <Content Include="js\main\controls\CswGrid.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeButton.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeMol.js" />
+    <Content Include="js\thirdparty\js\jmol\dchtest.html" />
+    <Content Include="js\thirdparty\js\jmol\Jmol.jar" />
+    <Content Include="js\thirdparty\js\jmol\Jmol.js" />
+    <Content Include="js\thirdparty\js\jmol\JmolApplet.jar" />
     <Content Include="MainFooter.html" />
     <Content Include="js\globals\CswGlobalTools.js" />
     <Content Include="js\main\controls\CswDateTimePicker.js" />
@@ -1827,6 +1831,13 @@
     <None Include="jmol\cefixime_syn.mol" />
     <None Include="jmol\JmolApplet.properties" />
     <None Include="jmol\test.mol" />
+    <None Include="js\thirdparty\js\jmol\Acetone %28acetaldehyde%29.mol" />
+    <None Include="js\thirdparty\js\jmol\Acetonitrile.mol" />
+    <None Include="js\thirdparty\js\jmol\aspirina.mol" />
+    <None Include="js\thirdparty\js\jmol\cefixime_syn.mol" />
+    <None Include="js\thirdparty\js\jmol\Dibutyl phthalate.mol" />
+    <None Include="js\thirdparty\js\jmol\JmolApplet.properties" />
+    <None Include="js\thirdparty\js\jmol\test.mol" />
     <None Include="js\_compileMobile.pl" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\demo\captcha\fonts\Anorexia.ttf" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\demo\captcha\images\.htaccess" />

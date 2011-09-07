@@ -1604,6 +1604,102 @@ namespace ChemSW.Nbt.WebServices
 
         } // fileForProp()
 
+
+
+        //dch
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string saveMolPropFile()
+        {
+            JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+
+                    // putting these in the param list causes the webservice to fail with
+                    // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
+                    string FileName = Context.Request["qqfile"];
+                    string PropId = Context.Request["propid"];
+
+                    if( !string.IsNullOrEmpty( FileName ) && !string.IsNullOrEmpty( PropId ) )
+                    {
+                            // Read the binary data
+                            BinaryReader br = new BinaryReader( Context.Request.InputStream );
+                            long Length = Context.Request.InputStream.Length;
+                            byte[] FileData = new byte[Length];
+                            for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
+                            {
+                                FileData[CurrentIndex] = br.ReadByte();
+                            }
+
+                            // Save the binary data
+                            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                            bool ret = ws.saveMolProp( CswTools.ByteArrayToString( FileData ),PropId);
+           
+                            ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
+
+                    } // if( FileName != string.Empty && PropId != string.Empty )
+
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // saveMolPropFile()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string saveMolProp(string molData,string PropId)
+        {
+            JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+
+                    if( !string.IsNullOrEmpty( molData ) && !string.IsNullOrEmpty( PropId ) )
+                    {
+                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                        bool ret = ws.saveMolProp( molData, PropId );
+
+                        ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
+
+                    } // if( FileName != string.Empty && PropId != string.Empty )
+
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // saveMolProp()
+
+
+
+
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getLabels( string PropId )
