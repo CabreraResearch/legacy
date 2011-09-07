@@ -359,11 +359,11 @@ function _handleAuthenticationStatus(options)
 			GoodEnoughForMobile = true;
 			if( !o.ForMobile ) {
 				$.CswDialog('EditNodeDialog', {
-					'nodeid': o.usernodeid,
-					'cswnbtnodekey': o.usernodekey,
-					'filterToPropId': o.passwordpropid,
-					'title': 'Your password has expired.  Please change it now:',
-					'onEditNode': function () { o.success(); }
+					nodeids: [ o.usernodeid ],
+					nodekeys: [ o.usernodekey ],
+					filterToPropId: o.passwordpropid,
+					title: 'Your password has expired.  Please change it now:',
+					onEditNode: function () { o.success(); }
 				});
 			}
 			break;
@@ -883,8 +883,7 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('EditNodeDialog', {
-						nodeid: json.userid,
-						cswnbtnodekey: '',
+						nodeids: [ json.userid ],
 						filterToPropId: '',
 						title: 'User Profile',
 						onEditNode: null // function (nodeid, nodekey) { }

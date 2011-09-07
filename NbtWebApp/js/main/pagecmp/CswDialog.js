@@ -251,9 +251,10 @@
 		}, // EditLayoutDialog
 	    EditNodeDialog: function (options) {
 	        var o = {
-				nodeid: '',
-				nodepk: '',
-				cswnbtnodekey: '',
+				nodeids: [],
+				nodepks: [],
+				nodekeys: [],
+	            nodenames: [],
 				Multi: false,
 				filterToPropId: '',
 				title: '',
@@ -261,14 +262,14 @@
 				date: ''     // viewing audit records
 			};
 			if (options) $.extend(o, options);
-            var nodeid, nodekey;
-            if (o.Multi && isArray(o.nodeid)) {
-                nodeid = o.nodeid[0];
-                nodekey = o.cswnbtnodekey[0];
-            } else {
-                nodeid = tryParseString(o.nodeid, o.nodepk);
-                nodekey = o.cswnbtnodekey;
-            }
+//            var nodeid, nodekey;
+//            if (o.Multi && isArray(o.nodeid)) {
+//                nodeid = o.nodeid[0];
+//                nodekey = o.cswnbtnodekey[0];
+//            } else {
+//                nodeid = tryParseString(o.nodeid, o.nodepk);
+//                nodekey = o.cswnbtnodekey;
+//            }
             
 		    var $div = $('<div></div>');
 							
@@ -277,8 +278,8 @@
 			if(false === isNullOrEmpty(o.date) && false === o.Multi) {
 				myEditMode = EditMode.AuditHistoryInPopup.name;
 				$table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
-					ID: nodeid + '_history',
-					nodeid: nodeid,
+					ID: nodeids[0] + '_history',
+					nodeid: nodeids[0],
 					onEditNode: o.onEditNode,
 					JustDateColumn: true,
 					selectedDate: o.date,
@@ -294,18 +295,16 @@
 			{
 				$tabcell.empty();
 				$tabcell.CswNodeTabs({
-					nodeid: nodeid,
-					cswnbtnodekey: nodekey,
+					nodeids: o.nodeids,
+					nodekeys: o.nodekeys,
+				    nodenames: o.nodenames,
 					filterToPropId: o.filterToPropId,
 				    Multi: o.Multi,    
 					EditMode: myEditMode,
 					title: o.title,
 					tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
 					date: date,
-				    onMultiSave: function () {
-				        
-				    }, 
-					onSave: function (nodeid, nodekey, tabcount) {
+					onSave: function (nodeids, nodekeys, tabcount) {
 						unsetChanged();
 						if(tabcount === 1)
 						{
@@ -313,7 +312,7 @@
 						}
 						setupTabs(date);
 						if (isFunction(o.onEditNode)) {
-							o.onEditNode(nodeid, nodekey);
+							o.onEditNode(nodeids, nodekeys);
 						}
 					},
 					onBeforeTabSelect: function (tabid) {
