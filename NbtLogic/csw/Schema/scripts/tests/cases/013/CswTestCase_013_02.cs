@@ -35,16 +35,15 @@ namespace ChemSW.Nbt.Schema
 			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
 			_CswTstCaseRsrc_013.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 			
-			_CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_013.FakeTestTableName );
-            _CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.StorageMode = StorageMode.Cached; // causes the rolback behavior we want
+			CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_013.FakeTestTableName );
+            CswTableUpdate.StorageMode = StorageMode.Cached; // causes the rolback behavior we want
+            DataTable DataTable = CswTableUpdate.getTable();
 
-            
-            DataTable DataTable = _CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.getTable();
             DataTable.Rows.Add( DataTable.NewRow() );
             
             DataTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName01] = _CswTstCaseRsrc_013.LocalAribtiraryValue01;
             DataTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName02] = _CswTstCaseRsrc_013.LocalAribtiraryValue02;
-            _CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.update( DataTable );
+            CswTableUpdate.update( DataTable );
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
