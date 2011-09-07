@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
 		public override void update()
 		{
 			CswTableUpdate FieldTypesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I14_FieldTypes_Update", "field_types" );
-			DataTable FieldTypeTable = FieldTypesUpdate.getTable( "where fieldtype='" + CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() + "'" );
+			DataTable FieldTypeTable = FieldTypesUpdate.getTable( null, string.Empty, Int32.MinValue, "where fieldtype='" + CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() + "'", false, null, Int32.MinValue, Int32.MinValue, false );
 			FieldTypeTable.Rows[0]["deleted"] = CswConvert.ToDbVal( false );
 			FieldTypesUpdate.update( FieldTypeTable );
 		} // Update()
