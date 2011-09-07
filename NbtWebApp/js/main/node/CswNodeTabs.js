@@ -205,49 +205,46 @@
 						showRemoveButton: o.Config,
 						onConfigOn: function() {
 						    doUpdateSubProps(true);
-							        if(isTrue(thisProp.hassubprops))
-									{
-							    } // if (data.hasOwnProperty(prop)) {
 						}, // onConfigOn
 						onConfigOff: function() {
 						    doUpdateSubProps(false);
-						} // onConfigOff
-
+						}, // onConfigOff
+                        onRemove: function(event, onRemoveData) { 
+							onRemove(onRemoveData);
+						} // onRemove
 					}); // CswLayoutTable()
 
 				    function doUpdateSubProps(configOn) {
 				        var updOnSuccess = function(thisProp, key) {
-                            var propId = key; //key
-							var $subtable = $layouttable.find('#' + propId + '_subproptable');
-							var $parentcell = $subtable.parent().parent();
-							var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrXml('row'), $parentcell.CswAttrXml('column'));
-							var $propcell = _getPropertyCell($cellset);
+                            if(isTrue(thisProp.hassubprops)) {
+                                var propId = key; //key
+                                var $subtable = $layouttable.find('#' + propId + '_subproptable');
+                                var $parentcell = $subtable.parent().parent();
+                                var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrXml('row'), $parentcell.CswAttrXml('column'));
+                                var $propcell = _getPropertyCell($cellset);
 
-							if ($subtable.length > 0)
-							{
-							    var fieldOpt = {
-							        fieldtype: thisProp.fieldtype,
-							        nodeid: o.nodeid,
-							        relatednodeid: o.relatednodeid,
-							        propid: propId,
-							        $propdiv: $propcell.children('div'),
-							        propData: thisProp,
-							        onchange: function() { },
-							        onReload: function() { getProps($tabcontentdiv, tabid); },
-							        EditMode: o.EditMode,
-							        Multi: o.Multi,
-							        cswnbtnodekey: o.cswnbtnodekey
-							    };
+                                if ($subtable.length > 0)
+                                {
+                                    var fieldOpt = {
+                                        fieldtype: thisProp.fieldtype,
+                                        nodeid: o.nodeid,
+                                        relatednodeid: o.relatednodeid,
+                                        propid: propId,
+                                        $propdiv: $propcell.children('div'),
+                                        propData: thisProp,
+                                        onchange: function() { },
+                                        onReload: function() { getProps($tabcontentdiv, tabid); },
+                                        EditMode: o.EditMode,
+                                        Multi: o.Multi,
+                                        cswnbtnodekey: o.cswnbtnodekey
+                                    };
 
-							    _updateSubProps(fieldOpt, propId, thisProp, $propcell, $tabcontentdiv, tabid, configOn, $savetab);
-							}
+                                    _updateSubProps(fieldOpt, propId, thisProp, $propcell, $tabcontentdiv, tabid, configOn, $savetab);
+                                }
+                            }
 				        };
 				        crawlObject(data, updOnSuccess, false);
 				    }
-						onRemove: function(event, onRemoveData)
-						{ 
-							onRemove(onRemoveData);
-						} // onRemove
 
 					if( o.EditMode !== EditMode.PrintReport.Name)
 					{
