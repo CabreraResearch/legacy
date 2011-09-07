@@ -30,6 +30,13 @@
             if (mol !== '') {
                 var $TextBox = $('<pre>' + mol + '</pre>')
 									.appendTo($cell11);
+
+                        jmolInitialize("./js/thirdparty/js/jmol");
+                        jmolLoadInline(mol);
+                        jmolApplet(300, "");
+                        jmolCheckbox("spin on", "spin off", "0");
+
+
                 //$cell21.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');
             }
 
