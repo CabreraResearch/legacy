@@ -123,7 +123,6 @@
     <Content Include="js\globals\CswEnums.js" />
     <Content Include="js\main\tools\CswProfileMethod.js" />
     <Content Include="js\mobile\controls\CswMobileListView.js" />
-    <Content Include="js\actions\CswImportInspectionQuestions.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeMultiList.js" />
     <Content Include="js\mobile\globals\CswMobileEnums.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeBarcode.js" />

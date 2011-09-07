@@ -1531,6 +1531,7 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string fileForProp()
         {
+            //Come back to implement Multi
             JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -1545,6 +1546,7 @@ namespace ChemSW.Nbt.WebServices
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
                     string FileName = Context.Request["qqfile"];
                     string PropId = Context.Request["propid"];
+                    string Multi = Context.Request["multi"];
 
                     if( !string.IsNullOrEmpty( FileName ) && !string.IsNullOrEmpty( PropId ) )
                     {
@@ -1994,8 +1996,9 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string clearProp( string PropId, bool IncludeBlob )
+        public string clearProp( string PropId, string IncludeBlob, string Multi )
         {
+            //Come back to implement Multi
             JObject ReturnVal = new JObject( new JProperty( "Succeeded", false.ToString().ToLower() ) );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -2006,7 +2009,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                    bool ret = ws.ClearPropValue( PropId, IncludeBlob );
+                    bool ret = ws.ClearPropValue( PropId, CswConvert.ToBoolean( IncludeBlob ) );
                     ReturnVal = new JObject( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
                 }
 

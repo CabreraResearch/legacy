@@ -56,7 +56,7 @@
 				};
 
 				function refreshGrid(options) { 
-					var g ={
+					var g = {
 						gridOpts: {
 						    reinit: true,
 					        multiselect: false

@@ -44,8 +44,7 @@
                                 }
                             });
                 }
-                if(o.Required)
-                {
+                if(o.Required) {
                     $TextBox.addClass("required");
                 }
 				
