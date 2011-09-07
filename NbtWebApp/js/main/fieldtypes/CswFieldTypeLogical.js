@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../controls/CswTristateCheckBox.js" />
 
 ; (function ($) {
 		
@@ -14,9 +15,10 @@
 			var $Div = $(this);
 		    var propVals = o.propData.values;
 		    var checkOpt = {
-                    Checked: tryParseString(propVals.checked).trim(),
+                    Checked: (false === o.Multi) ? tryParseString(propVals.checked).trim() : null,
                     Required: isTrue(o.Required),
                     ReadOnly: isTrue(o.ReadOnly),
+		            Multi: o.Multi,
                     onchange: o.onchange
             };
 

@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../controls/CswInput.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         
@@ -17,12 +18,9 @@
 			var isExpired = isTrue(propVals.isexpired);
 			var isAdmin = isTrue(propVals.isadmin);
 
-            if(o.ReadOnly)
-            {
+            if(o.ReadOnly) {
                 // show nothing
-            }
-            else 
-            {
+            } else {
                 var $table = $Div.CswTable('init', { 
 					ID: o.ID + '_tbl', 
 					'OddCellRightAlign': true 
@@ -38,23 +36,23 @@
 				var $TextBox1 = $cell12.CswInput('init',{ID: o.ID + '_pwd1',
                                                          type: CswInput_Types.password,
                                                          cssclass: 'textinput',
+				                                         value: (false === o.Multi) ? '' : CswMultiEditDefaultValue,
                                                          onChange: o.onchange
                                                  }); 
                 $cell21.append('Confirm');
                 var $TextBox2 = $cell22.CswInput('init',{ID: o.ID + '_pwd2',
                                                          type: CswInput_Types.password,
+                                                         value: (false === o.Multi) ? '' : CswMultiEditDefaultValue,
                                                          cssclass: 'textinput password2',
                                                          onChange: o.onchange
                                                  }); 
-                if(isTrue(isAdmin))
-				{
+                if(isTrue(isAdmin)) {
 					var $IsExpiredCheck = $cell31.CswInput({ 
 							'id': o.ID + '_exp',
 							'name': o.ID + '_exp',
 							'type': CswInput_Types.checkbox
 						});
-					if(isTrue(isExpired))
-					{
+					if(isTrue(isExpired)) {
 						$IsExpiredCheck.CswAttrDom('checked', 'true');
 					}
 					$cell32.append('Expired');

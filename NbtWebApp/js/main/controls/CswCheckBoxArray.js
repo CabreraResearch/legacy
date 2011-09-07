@@ -30,6 +30,7 @@
 					UseRadios: false,
 					Required: false,
 					ReadOnly: false,
+				    Multi: false,
 					onchange: null, //function() { }
 				    dataAry: [],
 			        nameCol: '',
@@ -70,15 +71,17 @@
 						var first = true;
 						for (var c = 0; c < o.cols.length; c++) {
 							if (isTrue(rRow.values[c])) {
-								if (!rowlabeled) {
+								if (false === rowlabeled) {
 									$OuterDiv.append(rRow.label + ": ");
 									rowlabeled = true;
 								}
-								if (!first) {
-									$OuterDiv.append(", ");
-								}
-								$OuterDiv.append(o.cols[c]);
-								first = false;
+							    if (false === o.Multi) {
+							        if (false === first) {
+							            $OuterDiv.append(", ");
+							        }
+							        $OuterDiv.append(o.cols[c]);
+							        first = false;
+							    }
 							}
 						}
 						if (rowlabeled) {
@@ -94,8 +97,7 @@
 
 					// Header
 					var tablerow = 1;
-					for(var d = 0; d < o.cols.length; d++)
-					{
+					for(var d = 0; d < o.cols.length; d++) {
 						var $dCell = $table.CswTable('cell', tablerow, d+2);
 						$dCell.addClass('cbarraycell');
 						$dCell.append(o.cols[d]);
@@ -103,14 +105,12 @@
 					tablerow++;
 
 					//[none] row
-					if(o.UseRadios && ! o.Required)
-					{
+					if(o.UseRadios && false === o.Required) {
 						// Row label
 						var $labelcell = $table.CswTable('cell', tablerow, 1);
 						$labelcell.addClass('cbarraycell');
 						$labelcell.append('[none]');
-						for(var e = 0; e < o.cols.length; e++)
-						{
+						for(var e = 0; e < o.cols.length; e++) {
 							var $eCell = $table.CswTable('cell', tablerow, e+2);
 							$eCell.addClass('cbarraycell');
 							var eCheckid = o.ID + '_none';
@@ -118,9 +118,9 @@
 										   .appendTo($eCell)
 										   .click(o.onchange);
 							$eCell.CswAttrXml({'key': '', rowlabel: '[none]', collabel: o.cols[e], row: -1, col: e });
-						
-							$eCheck.CswAttrDom('checked', 'true');   // the browser will override this if another one is checked
-
+						    if (false === o.Multi) {
+						        $eCheck.CswAttrDom('checked', 'true'); // the browser will override this if another one is checked
+						    }
 						} // for(var c = 0; c < o.cols.length; c++)
 					} // if(o.UseRadios && ! o.Required)
 					tablerow++;

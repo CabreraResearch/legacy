@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../controls/CswSelect.js" />
 
 ; (function ($) {
         
@@ -14,25 +15,22 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = tryParseString(propVals.value).trim();
+            var value = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue;
             var options = tryParseString(propVals.options).trim();
 
-            if(o.ReadOnly)
-            {
+            if(o.ReadOnly) {
                 $Div.append(value);
-            }
-            else 
-            {
-                var $SelectBox = $('<select id="'+ o.ID +'" name="'+ o.ID +'" class="selectinput" />"' )
-                                    .appendTo($Div)
-                                    .change(o.onchange);
-
-                var splitOptions = options.split(',');
-                for(var i = 0; i < splitOptions.length; i++)
-                {
-                    $SelectBox.append('<option value="' + splitOptions[i] + '">' + splitOptions[i] + '</option>');
+            } else {
+                var values = options.split(',');
+                if (o.Multi) {
+                    values.push(CswMultiEditDefaultValue);
                 }
-                $SelectBox.val( value );
+                var $SelectBox = $Div.CswSelect('init', { ID: o.ID, 
+                                                          cssclass: 'selectinput', 
+                                                          onChange: o.onchange,
+                                                          values: values,
+                                                          selected: value
+                                      });
 
                 if(o.Required)
                 {
@@ -42,9 +40,9 @@
 
         },
         save: function(o) { //$propdiv, $xml
-                var $SelectBox = o.$propdiv.find('select');
-                o.propData.values.value = $SelectBox.val();
-            }
+            var $SelectBox = o.$propdiv.find('select');
+            o.propData.values.value = $SelectBox.val();
+        }
     };
     
     // Method calling logic

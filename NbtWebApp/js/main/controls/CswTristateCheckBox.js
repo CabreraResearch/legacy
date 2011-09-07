@@ -16,6 +16,7 @@
 				Checked: '',
 				ReadOnly: false,
 				Required: false,
+			    Multi: false,
 				onchange: function() { }
 			};
 			if(options) $.extend(o, options);
@@ -27,12 +28,14 @@
 			//Case 21769
 			var tristateVal = tryParseString(o.Checked,"null").toLowerCase();
 
-			if(o.ReadOnly)
-			{
-				switch(tristateVal)
-				{
-					case 'true': $parent.append('Yes'); break;
-					case 'false': $parent.append('No'); break;
+			if(o.ReadOnly) {
+				if(o.Multi) {
+				    $parent.append('?');
+				} else {
+				    switch (tristateVal) {
+				        case 'true': $parent.append('Yes'); break;
+				        case 'false': $parent.append('No'); break;
+				    }
 				}
 			} 
 			else 

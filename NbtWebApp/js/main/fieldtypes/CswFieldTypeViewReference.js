@@ -20,7 +20,7 @@
 
 				var $table = $Div.CswTable('init', { 'ID': o.ID + '_tbl' });
 
-				if(o.EditMode != EditMode.AddInPopup.name)
+				if(o.EditMode !== EditMode.AddInPopup.name && false === o.Multi)
 				{
 					$table.CswTable('cell', 1, 1).CswImageButton({
 						ID: o.ID + '_view',
@@ -38,7 +38,7 @@
 							return CswImageButton_ButtonType.None; 
 						}
 					});
-					if(!o.ReadOnly)
+					if(false === o.ReadOnly)
 					{
 						$table.CswTable('cell', 1, 2).CswImageButton({
 							ID: o.ID + '_edit',

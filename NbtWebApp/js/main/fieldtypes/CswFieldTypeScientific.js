@@ -20,7 +20,7 @@
 			{
 				var $ValueNTB = $Div.CswNumberTextBox({
 					ID: o.ID + '_val',
-					Value: tryParseString(propVals.base).trim(),
+					Value: (false === o.Multi) ? tryParseString(propVals.base).trim() : CswMultiEditDefaultValue,
 					Precision: 6,
 					ReadOnly: o.ReadOnly,
 					Required: o.Required,
@@ -30,7 +30,7 @@
 				$Div.append('E');
 				var $ExponentNTB = $Div.CswNumberTextBox({
 					ID:  o.ID + '_exp',
-					Value: tryParseString(propVals.exponent).trim(),
+					Value: (false === o.Multi) ? tryParseString(propVals.exponent).trim() : CswMultiEditDefaultValue,
 					ReadOnly: o.ReadOnly,
 					Required: o.Required,
 					onchange: o.onchange,

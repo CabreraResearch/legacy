@@ -14,9 +14,9 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = tryParseString(propVals.sequence).trim();
+            var value = (false === o.Multi) ? tryParseString(propVals.sequence).trim() : CswMultiEditDefaultValue;
 
-            if (o.ReadOnly) {
+            if (o.ReadOnly || o.Multi) {
                 $Div.append(value);
             } else {
                 var $TextBox = $Div.CswInput('init',{ID: o.ID,

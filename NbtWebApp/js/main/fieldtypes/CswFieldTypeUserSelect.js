@@ -26,6 +26,7 @@
                         ID: o.ID + '_cba',
                         UseRadios: false,
                         Required: o.Required,
+                        Multi: o.Multi,
                         ReadOnly: o.ReadOnly,
                         onchange: o.onchange,
                         dataAry: options,
@@ -34,7 +35,7 @@
                         valCol: valueCol
                     });
             return $Div;
-            },
+        },
         'save': function(o) {
 			var $CBADiv = o.$propdiv.children('div').first();
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );

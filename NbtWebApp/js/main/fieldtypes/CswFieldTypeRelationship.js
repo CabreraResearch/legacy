@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../controls/CswSelect.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         
@@ -18,8 +19,8 @@
 
                 var propVals = o.propData.values;
                 
-                var selectedNodeId = tryParseString(propVals.nodeid).trim();
-                if (!isNullOrEmpty(o.relatednodeid) && isNullOrEmpty(selectedNodeId)) {
+                var selectedNodeId = (false === o.Multi) ? tryParseString(propVals.nodeid).trim() : CswMultiEditDefaultValue;
+                if (false === isNullOrEmpty(o.relatednodeid) && isNullOrEmpty(selectedNodeId) && false === o.Multi) {
                     selectedNodeId = o.relatednodeid;
                 }
                 var selectedName = tryParseString(propVals.name).trim();
@@ -33,20 +34,16 @@
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
                     var $selectcell = $table.CswTable('cell', 1, 1);
-                    var $SelectBox = $('<select id="'+ o.ID +'" name="'+ o.ID +'" class="selectinput" />"' )
-                                        .appendTo($selectcell)
-                                        .change(o.onchange);
 
-                    for (var optId in options) {
-                        if (options.hasOwnProperty(optId)) {
-                            var optVal = options[optId];
-                            $SelectBox.append('<option value="' + optId + '">' + optVal + '</option>');
-                        }
-                    }
-
-                    $SelectBox.val( selectedNodeId );
+                    var $SelectBox = $selectcell.CswSelect('init', {
+                                                    ID: o.ID,
+                                                    cssclass: 'selectinput',
+                                                    onChange: o.onchange,
+                                                    values: options,
+                                                    selected: selectedNodeId
+                                                });
                     
-                    if (!isNullOrEmpty(nodeTypeId) && allowAdd) {
+                    if (false === isNullOrEmpty(nodeTypeId) && allowAdd) {
 						var $addcell = $table.CswTable('cell', 1, 2);
 						var $AddButton = $('<div />').appendTo($addcell);
 						$AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 

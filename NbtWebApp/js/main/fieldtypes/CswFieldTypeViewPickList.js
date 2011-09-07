@@ -26,6 +26,7 @@
 				                UseRadios: (selectMode === 'Single'),
 				                Required: o.Required,
 				                ReadOnly: o.ReadOnly,
+                                Multi: o.Multi,
 				                onchange: o.onchange,
                                 dataAry: optionData,
 			                    nameCol: nameCol,

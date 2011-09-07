@@ -14,7 +14,7 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var startDate = tryParseString(propVals.startdatetime.date);
+            var startDate = (false === o.Multi) ? tryParseString(propVals.startdatetime.date) : CswMultiEditDefaultValue; 
             var dateFormat = ServerDateFormatToJQuery(propVals.startdatetime.dateformat);
 
             var value = tryParseString(propVals.value).trim();

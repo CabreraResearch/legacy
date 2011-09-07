@@ -13,10 +13,10 @@
 
             var $Div = $(this);
             var propVals = o.propData.values;
-			var red = propVals.flammability;
-			var yellow = propVals.reactivity;
-			var blue = propVals.health;
-			var white = propVals.special;
+			var red = (false === o.Multi) ? propVals.flammability : CswMultiEditDefaultValue;
+			var yellow = (false === o.Multi) ? propVals.reactivity : CswMultiEditDefaultValue;
+			var blue = (false === o.Multi) ? propVals.health : CswMultiEditDefaultValue;
+			var white = (false === o.Multi) ? propVals.special : CswMultiEditDefaultValue;
 
 			var $outertable = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
@@ -64,17 +64,22 @@
 				var $edittable = $outertable.CswTable('cell', 1, 2)
 												.CswTable('init', { ID: o.ID + '_edittbl',
 																	FirstCellRightAlign: true });
-
+                var selVals = [
+                    { value: '0', display: '0' },
+                    { value: '1', display: '1' },
+                    { value: '2', display: '2' },
+                    { value: '3', display: '3' },
+                    { value: '4', display: '4' }
+                ];
+                if (o.Multi) {
+                    selVals.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
+                }
 				function makeSelect($cell, id, selected, $div)
 				{
 					var $sel = $cell.CswSelect({
 											'ID': makeId({ ID: o.ID, suffix: id }),
 											'selected': selected,
-											'values': [{ value: '0', display: '0'},
-													   { value: '1', display: '1'},
-													   { value: '2', display: '2'},
-													   { value: '3', display: '3'},
-													   { value: '4', display: '4'}],
+											'values': selVals,
 											'cssclass': '',
 											'onChange': function () {
 												setValue($div, $sel.val());
@@ -91,24 +96,30 @@
 				makeSelect($edittable.CswTable('cell', 2, 2), 'yellow', yellow, $yellowdiv);
 				makeSelect($edittable.CswTable('cell', 3, 2), 'blue', blue, $bluediv);
 
-				var $whitesel = $edittable.CswTable('cell', 4, 2).CswSelect({
-										'ID': makeId({ ID: o.ID, suffix: 'white' }),
-										'selected': white,
-										'values': [ { value: 'ACID', display: 'ACID'},
-													{ value: 'ALK', display: 'ALK'},
-													{ value: 'BIO', display: 'BIO'},
-													{ value: 'COR', display: 'COR'},
-													{ value: 'CRYO', display: 'CRYO'},
-													{ value: 'CYL', display: 'CYL'},
-													{ value: 'OX', display: 'OX'},
-													{ value: 'POI', display: 'POI'},
-													{ value: 'RAD', display: 'RAD'},
-													{ value: 'W', display: 'W'}],
-										'cssclass': '',
-										'onChange': function () {
-											setValue($whitediv, $whitesel.val());
-										}
-									});
+                var whiteVals = [
+                    { value: 'ACID', display: 'ACID' },
+                    { value: 'ALK', display: 'ALK' },
+                    { value: 'BIO', display: 'BIO' },
+                    { value: 'COR', display: 'COR' },
+                    { value: 'CRYO', display: 'CRYO' },
+                    { value: 'CYL', display: 'CYL' },
+                    { value: 'OX', display: 'OX' },
+                    { value: 'POI', display: 'POI' },
+                    { value: 'RAD', display: 'RAD' },
+                    { value: 'W', display: 'W' }];
+                if (o.Multi) {
+                    whiteVals.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
+                }
+				var $whitesel = $edittable.CswTable('cell', 4, 2)
+    				                      .CswSelect({
+										     'ID': makeId({ ID: o.ID, suffix: 'white' }),
+										     'selected': white,
+										     'values': whiteVals,
+										     'cssclass': '',
+										     'onChange': function () {
+											    setValue($whitediv, $whitesel.val());
+										     }
+									      });
 
             } // if(!o.ReadOnly)
         },
