@@ -70,9 +70,10 @@
 							if(isNullOrEmpty(o.viewid))
 							{
 								$table.CswTable('cell', 2, 1).append('Display Mode:');
-								$displaymodeselect.append('<option value="List">List</option>');
-								$displaymodeselect.append('<option value="Tree">Tree</option>');
 								$displaymodeselect.append('<option value="Grid">Grid</option>');
+								$displaymodeselect.append('<option value="List" selected>List</option>');
+								$displaymodeselect.append('<option value="Table">Table</option>');
+								$displaymodeselect.append('<option value="Tree">Tree</option>');
 								$displaymodeselect.appendTo($table.CswTable('cell', 2, 2));
 							}
 
