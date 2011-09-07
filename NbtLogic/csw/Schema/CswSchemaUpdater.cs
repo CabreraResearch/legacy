@@ -130,7 +130,6 @@ namespace ChemSW.Nbt.Schema
                 _UpdateHistoryTableUpdate.update( _UpdateHistoryTable );
 
                 CswNbtResources.finalize();
-                CswNbtResources.clearUpdates(); 
 
             } // if update is valid
 
