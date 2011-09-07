@@ -369,16 +369,16 @@ namespace ChemSW.Nbt.MetaData
             return MaximumTabOrder;
         }
 
-        public Int32 getCurrentMaxDisplayRowAdd()
-        {
-            Int32 Max = 0;
-            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeProps )
-            {
-                if( Prop.DisplayRowAdd > Max )
-                    Max = Prop.DisplayRowAdd;
-            }
-            return Max;
-        }
+		//public Int32 getCurrentMaxDisplayRowAdd()
+		//{
+		//    Int32 Max = 0;
+		//    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeProps )
+		//    {
+		//        if( Prop.DisplayRowAdd > Max )
+		//            Max = Prop.DisplayRowAdd;
+		//    }
+		//    return Max;
+		//}
 
         public static string _Element_MetaDataNodeType = "MetaDataNodeType";
         public static string _Attribute_NodeTypeId = "nodetypeid";

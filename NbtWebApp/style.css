@@ -361,6 +361,7 @@ body a
 {
 	vertical-align: top;
 	padding: 4px 4px 4px 10px;
+	font-weight: bold;
 }
 
 .propertyvaluecell

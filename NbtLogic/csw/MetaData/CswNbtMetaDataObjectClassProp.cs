@@ -387,18 +387,21 @@ namespace ChemSW.Nbt.MetaData
             foreach( DataColumn Column in _ObjectClassPropRow.Table.Columns )
             {
                 string ColumnName = Column.ColumnName;
-                if( ColumnName != "defaultvalueid" )
-                {
-                    if( NewPropRow.Table.Columns.Contains( ColumnName ) )
-                    {
-                        if( !_ObjectClassPropRow.IsNull( ColumnName ) )
-                        {
-                            NewPropRow[ColumnName] = _ObjectClassPropRow[ColumnName];
-                        }
-                    }
-                }
+				if( ColumnName != "display_rowadd" &&
+					ColumnName != "display_coladd" &&
+					ColumnName != "setvalonadd" &&
+					ColumnName != "defaultvalueid" )
+				{
+					if( NewPropRow.Table.Columns.Contains( ColumnName ) )
+					{
+						if( !_ObjectClassPropRow.IsNull( ColumnName ) )
+						{
+							NewPropRow[ColumnName] = _ObjectClassPropRow[ColumnName];
+						}
+					}
+				}
             }
-        }
+        } // CopyPropToNewPropRow()
 
         public bool IsUserRelationship()
         {

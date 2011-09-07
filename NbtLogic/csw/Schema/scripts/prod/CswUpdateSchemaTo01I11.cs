@@ -12,23 +12,12 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema to version 01I-11
     /// </summary>
-    public class CswUpdateSchemaTo01I11 : ICswUpdateSchemaTo
+    public class CswUpdateSchemaTo01I11 : CswUpdateSchemaTo
     {
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 11 ); } }
+		public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
 
-        private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 11 ); } }
-        public CswUpdateSchemaTo01I11( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
-        }
-
-
-        public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
-
-
-        public void update()
+        public override void update()
         {
             // case 7608
             // 1. Following the steps in the Wiki for creating a new object class - Implement a new class - Unit Type class - using CswNbtObjClassUnitOfMeasure as a model

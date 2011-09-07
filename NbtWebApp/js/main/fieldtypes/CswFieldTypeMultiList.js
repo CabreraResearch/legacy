@@ -15,10 +15,11 @@
             $Div.contents().remove();
             var propVals = o.propData.values;
             var value = tryParseString(propVals.value).trim();
+            var gestalt = tryParseString(o.propData.gestalt).trim();
             var options = propVals.options;
             
             if (o.ReadOnly) {
-                $Div.append(value);
+                $Div.append(gestalt);
             } else {
 				var $SelectBox = $('<select id="'+ o.ID +'" name="'+ o.ID +'" class="selectinput" />"' )
                                     .appendTo($Div)

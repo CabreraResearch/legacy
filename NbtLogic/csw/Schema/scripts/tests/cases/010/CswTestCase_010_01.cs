@@ -20,30 +20,26 @@ namespace ChemSW.Nbt.Schema
     /// what it tests. Let's just leave it alone and pray that it never fails and that it never leaves test data
     /// lying around. k? 
     /// </summary>
-    public class CswTestCase_010_01 : ICswUpdateSchemaTo
+    public class CswTestCase_010_01 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_010.Purpose, "'the' test" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_010.Purpose, "'the' test" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_010 _CswTstCaseRsrc_010 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_010_01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_010_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_010 =   ( CswTstCaseRsrc_010) CswTstCaseRsrc;
-        }//ctor
+			_CswTstCaseRsrc_010 = (CswTstCaseRsrc_010) CswTstCaseRsc;
+		}//ctor
 
-        public void update()
+        public override void update()
         {
-            //Int32 MaterialsPk = Int32.MinValue;
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_010.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+			//Int32 MaterialsPk = Int32.MinValue;
 
 
             //SETUP: BEGIN *****************************************
