@@ -629,7 +629,6 @@
     <Content Include="js\main\fieldtypes\CswFieldTypeSequence.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeStatic.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeText.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeTime.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeTimeInterval.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeUserSelect.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeViewPickList.js" />
