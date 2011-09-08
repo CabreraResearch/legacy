@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.WebServices
         }
     }
 
-        public int CreateNodes(DataTable ExcelDataTable, string NewInspectionName, ref string ErrorMessage, ref string WarningMessage)
+        public int CreateNodes(DataTable ExcelDataTable, string NewInspectionName, string TargetName, ref string ErrorMessage, ref string WarningMessage)
         {
             int NumRowsImported = 0;
 
@@ -174,9 +174,9 @@ namespace ChemSW.Nbt.WebServices
 
                             // Set the target nodeType of the Target relationship property
                             // For now - we are setting the target relationship type to FE Inspection Point
-                            CswNbtMetaDataNodeType FeInspectionPointNodeType = _CswNbtResources.MetaData.getNodeType("FE Inspection Point");
+                            CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType(TargetName);
                             string NewFKType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
-                            Int32 NewFKValue = FeInspectionPointNodeType.NodeTypeId;
+                            Int32 NewFKValue = TargetNodeType.NodeTypeId;
                             CswNbtMetaDataNodeTypeProp TargetProperty = NewInspectionNodeType.getNodeTypePropByObjectClassPropName(CswNbtObjClassInspectionDesign.TargetPropertyName);
                             TargetProperty.SetFK(NewFKType, NewFKValue, string.Empty, Int32.MinValue);
 

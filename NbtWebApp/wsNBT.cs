@@ -2568,7 +2568,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod(EnableSession = false)]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public string uploadInspectionFile()
+        public string uploadInspectionFile(string NewInspectionName, string TargetName, string TempFileName)
         {
             JObject ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2584,36 +2584,20 @@ namespace ChemSW.Nbt.WebServices
 
                 if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 {
-                    PurgeTempFiles("xls");
-
-                    // putting these in the param list causes the webservice to fail with
-                    // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
-                    // These variables seem to work in Google chrome but NOT in IE
-                    string FileName = Context.Request["qqfile"];
-                    //string PropId = Context.Request["propid"];
-                    string NewInspectionName = Context.Request["InspectionName"];
-                    string TempFileName = Context.Request["TempFileName"];
-
-                    if (!string.IsNullOrEmpty(FileName))
+                    if (!string.IsNullOrEmpty(TempFileName))
                     {
                         if (!string.IsNullOrEmpty(NewInspectionName))
                         {
-                            if (Context.Request.InputStream != null)
+                            if (!string.IsNullOrEmpty(TargetName))
                             {
                                  string FullPathAndFileName = _TempPath + "\\" + TempFileName;
-                                // upload user file to temporary file
-                                // our Excel file reader only likes to read files from disk - does not read files from memory or stream
-                                using (FileStream OutputFile = File.Create(FullPathAndFileName))
-                                {
-                                    Context.Request.InputStream.CopyTo(OutputFile);
-                                }
-
+ 
                                 // Load the excel file into a data table
                                 CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
                                 ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName, ref ErrorMessage, ref WarningMessage);
                                 if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
                                 {
-                                    NumRowsImported = ws.CreateNodes(ExcelDataTable, NewInspectionName, ref ErrorMessage, ref WarningMessage);
+                                    NumRowsImported = ws.CreateNodes(ExcelDataTable, NewInspectionName, TargetName, ref ErrorMessage, ref WarningMessage);
  
                                     ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
 
@@ -2628,14 +2612,19 @@ namespace ChemSW.Nbt.WebServices
                                     ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", ErrorMessage));
                                 }
                             } // if( Context.Request.InputStream != null )
+                            else
+                            {
+                                ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "Did not receive target name."));
+                            }
                         } // if (!string.IsNullOrEmpty(FileName))
                         else
                         {
-                            ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "You must enter the name of this new inspection."));
+                            ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "Did not receive new inspection name."));
                         }
                     } // if (!string.IsNullOrEmpty(FileName))
                     else
                     {
+                        ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "Did not receive temp file name."));
                     }
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 _deInitResources();
@@ -2701,7 +2690,7 @@ namespace ChemSW.Nbt.WebServices
                                 if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
                                 {
                                     ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
-                                    ReturnVal.Add(new JProperty("tempfilename", TempFileName));
+                                    ReturnVal.Add(new JProperty("tempFileName", TempFileName));
 
                                     ws.AddPrimaryKeys(ref ExcelDataTable);
                                     CswGridData gd = new CswGridData(_CswNbtResources);
@@ -2804,7 +2793,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod(EnableSession = false)]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public string IsNewInspectionNameUnique(string NewInsepctionName)
+        public string IsNewInspectionNameUnique(string NewInspectionName)
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2815,7 +2804,7 @@ namespace ChemSW.Nbt.WebServices
                 if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 {
                     CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
-                    if (ws.IsNodeTypeNameUnique(NewInsepctionName))
+                    if (ws.IsNodeTypeNameUnique(NewInspectionName))
                         ReturnVal = new JObject(new JProperty("succeeded", "true"));
                     else
                         ReturnVal = new JObject(new JProperty("succeeded", "false"));
