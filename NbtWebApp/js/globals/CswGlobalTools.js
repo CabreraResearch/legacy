@@ -287,11 +287,12 @@ function makeEventDelegate(method, options) {
 }
 
 function foundMatch(anObj, prop, value) {
-    var ret = false;
+	var ret = false;
     if(false === isNullOrEmpty(anObj) &&
         anObj.hasOwnProperty(prop) &&
-        anObj[prop] === value ) {
-        ret = true;
+        anObj[prop] === value) 
+	{
+    	ret = true;
     }
     return ret;
 }
@@ -303,29 +304,43 @@ function ObjectHelper(obj) {
     var thisObj = obj;
     
     function find(key, value) {
-        /// <summary>Find a property's parent</summary>
+         /// <summary>Find a property's parent</summary>
         /// <param name="key" type="String"> Property name to match. </param>
         /// <param name="value" type="Object"> Property value to match </param>
 	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
-        var onSuccess = function(childObj) {
-            if (foundMatch(childObj, key, value)) {
-                ret = thisObj;
-                eval('break;');
-            } 
-        };
-        var ret = crawlObject(thisObj, onSuccess, true);
+    	var ret;
+		var onSuccess = function (childObj)
+		{
+			if (foundMatch(childObj, key, value))
+			{
+				ret = childObj;
+				return false;
+				//eval('break;');
+			} else
+			{
+				return true;
+			}
+		};
+		crawlObject(thisObj, onSuccess, true);
         return ret;
     }
     
     function remove(key, value) {
-        var onSuccess = function(childObj, childKey) {
-            if (foundMatch(childObj, key, value)) {
-                delete thisObj[childKey];
-                ret = true;
-                eval('break;');
-            }
-        };
-        var ret = crawlObject(thisObj, onSuccess, true);
+    	var ret;
+    	var onSuccess = function (childObj, childKey)
+    	{
+    		if (foundMatch(childObj, key, value))
+    		{
+    			delete thisObj[childKey];
+    			ret = true;
+    			//eval('break;');
+    			return false;
+    		} else
+    		{
+    			return true;
+    		}
+    	};
+        crawlObject(thisObj, onSuccess, true);
         
         return ret;
     }
@@ -339,21 +354,27 @@ function ObjectHelper(obj) {
 function crawlObject(thisObj, onSuccess, doRecursion) {
     /// <summary>Iterates (optionally recursively) an object and exec a function on each of its properties.</summary>
 	/// <param name="thisObj" type="Object"> An object to crawl </param>
-	/// <param name="onSuccess" type="Function"> A function to execute on finding a property </param>
+	/// <param name="onSuccess" type="Function"> A function to execute on finding a property, which should return true to continue</param>
     /// <param name="doRecursion" type="Boolean"> If true, recurse on all properties </param>
     /// <returns type="Object">Returns the return of onSuccess</returns>
-    var ret = false;
-    $.each(thisObj, function (childKey, value)  {
-        var childObj = thisObj[childKey];
-        if (isFunction(onSuccess)) {
-            ret = onSuccess(childObj, childKey, thisObj);
-        }
-        if (doRecursion) {
-            ret = crawlObject(childObj, onSuccess, doRecursion);
-        }
-    });
-    return ret;
-}
+
+	if (isFunction(onSuccess) && $.isPlainObject(thisObj))
+ 	{
+		var KeepGoing = true;
+		$.each(thisObj, function (childKey, value)
+		{
+			if (KeepGoing)
+			{
+				var childObj = thisObj[childKey];
+				KeepGoing = onSuccess(childObj, childKey, thisObj);
+			}
+			if (KeepGoing && doRecursion)
+			{
+				crawlObject(childObj, onSuccess, doRecursion);
+			}
+		});
+	}
+} // crawlObject()
 
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
 function log(s, includeCallStack)

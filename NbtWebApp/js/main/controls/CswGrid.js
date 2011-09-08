@@ -233,10 +233,13 @@ function CswGrid(options, $parent) {
             }
             if (false === isNullOrEmpty(rowid)) {
                 haveSelectedRows = true;
-                crawlObject(opts, function(prop, key, parent) {
-                    if (false === isFunction(parent[key])) {
-                        parent[key] = getValueForColumn(key, rowid);
-                    }
+                crawlObject(opts, function (prop, key, parent)
+                {
+                	if (false === isFunction(parent[key]))
+                	{
+                		parent[key] = getValueForColumn(key, rowid);
+                	}
+                	return true;
                 }, false);
             }
         } else { // if (false === multiEdit)
@@ -248,6 +251,7 @@ function CswGrid(options, $parent) {
                     if (false === isFunction(parent[key])) {
                         parent[key] = [];
                     }
+                    return true;
                 }, false);
                 for (var i = 0; i < rows.length; i++) {
                     crawlObject(opts, function(prop, key, parent) {
@@ -255,7 +259,8 @@ function CswGrid(options, $parent) {
                             rowid = rows[i];
                             parent[key].push(getValueForColumn(key, rowid));
                         }
-                    }, false);
+						return true;
+					}, false);
                 }
             }
         } // else
