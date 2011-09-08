@@ -24,7 +24,8 @@ my @components = (
 	"CswLogService", 
 	"Nbt",
 	"NbtImport",
-	"NbtHelp"
+	"NbtHelp",
+	"DailyBuildTools"
 );
 
 my $orclserver = "golem";
@@ -51,6 +52,10 @@ foreach my $component (@components)
 	elsif($component eq "Nbt" || $component eq "NbtImport")
 	{
 		$repopaths{$component} = "c:/kiln/Nbt/$component";
+	}
+	elsif($component eq "DailyBuildTools")
+	{
+		$repopaths{$component} = "c:/kiln/$component";
 	} else {
 		$repopaths{$component} = "c:/kiln/Common/$component";
 	}
@@ -73,10 +78,6 @@ foreach my $component (@components)
 {
 	&runCommand("hg pull -u -R ". $repopaths{$component});
 }
-
-# also pull new version of Daily Build Tools
-&runCommand("hg pull -u -R c:\kiln\DailyBuildTools");
-
 
 #---------------------------------------------------------------------------------
 # 2. update versions
