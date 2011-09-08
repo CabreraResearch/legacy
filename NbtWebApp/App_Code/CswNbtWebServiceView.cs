@@ -343,7 +343,7 @@ namespace ChemSW.Nbt.WebServices
                             // Child options are all relations to this nodetype
                             Int32 CurrentId = CurrentRelationship.SecondId;
 
-                            ArrayList Relationships = null;
+							Collection<CswNbtViewRelationship> Relationships = null;
                             if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
                             {
                                 Relationships = getObjectClassRelatedNodeTypesAndObjectClasses( CurrentId, View, CurrentLevel );
@@ -492,9 +492,9 @@ namespace ChemSW.Nbt.WebServices
 
         #region Helper Functions
 
-        private ArrayList getNodeTypeRelatedNodeTypesAndObjectClasses( Int32 FirstVersionId, CswNbtView View, Int32 Level )
+		private Collection<CswNbtViewRelationship> getNodeTypeRelatedNodeTypesAndObjectClasses( Int32 FirstVersionId, CswNbtView View, Int32 Level )
         {
-            ArrayList Relationships = new ArrayList();
+			Collection<CswNbtViewRelationship> Relationships = new Collection<CswNbtViewRelationship>();
 
             // If we're doing a grid, we can only pick things in which the provided nodetype has a relationship to, 
             // rather than things that are related to the provided nodetype.
@@ -534,7 +534,9 @@ namespace ChemSW.Nbt.WebServices
                             //R1.setProp( CswNbtViewRelationship.PropOwnerType.First, ThisProp );
                             //R1.setFirst( FirstVersionNodeType );
                             //R1.setSecond( FirstVersionNodeType );
-                            Relationships.Add( R1 );
+
+							//Relationships.Add( R1 );
+							_InsertRelationship( Relationships, R1 );
 
                             if( !Restrict )
                             {
@@ -542,7 +544,8 @@ namespace ChemSW.Nbt.WebServices
                                 //CswNbtViewRelationship R2 = new CswNbtViewRelationship( _CswNbtResources, View, R1 );
                                 //R2.setProp( CswNbtViewRelationship.PropOwnerType.Second, ThisProp );
                                 CswNbtViewRelationship R2 = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.Second, ThisProp, false );
-                                Relationships.Add( R2 );
+                                //Relationships.Add( R2 );
+								_InsertRelationship( Relationships, R2 );
                             }
                         }
                     }
@@ -558,7 +561,8 @@ namespace ChemSW.Nbt.WebServices
                         //R1.setProp( CswNbtViewRelationship.PropOwnerType.First, ThisProp );
                         R1.overrideFirst( FirstVersionNodeType );
                         R1.overrideSecond( ObjectClass );
-                        Relationships.Add( R1 );
+                        //Relationships.Add( R1 );
+						_InsertRelationship( Relationships, R1 );
 
                         if( !Restrict )
                         {
@@ -568,8 +572,9 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtViewRelationship R2 = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.Second, ThisProp, false );
                             R2.overrideFirst( FirstVersionNodeType );
                             R2.overrideSecond( ObjectClass );
-                            Relationships.Add( R2 );
-                        }
+                            //Relationships.Add( R2 );
+							_InsertRelationship( Relationships, R2 );
+						}
                     }
                     else
                     {
@@ -587,8 +592,9 @@ namespace ChemSW.Nbt.WebServices
                             if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
                                 _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
                             {
-                                Relationships.Add( R );
-                            }
+								//Relationships.Add( R );
+								_InsertRelationship( Relationships, R );
+							}
                         }
                         else if( ( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
                                    PropRow["fkvalue"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) ||
@@ -607,8 +613,9 @@ namespace ChemSW.Nbt.WebServices
                                 if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
                                     _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
                                 {
-                                    Relationships.Add( R );
-                                }
+                                    //Relationships.Add( R );
+									_InsertRelationship( Relationships, R );
+								}
                             }
                         }
                         else
@@ -622,12 +629,12 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            return Relationships;
+			return Relationships;
         }
 
-        private ArrayList getObjectClassRelatedNodeTypesAndObjectClasses( Int32 ObjectClassId, CswNbtView View, Int32 Level )
+		private Collection<CswNbtViewRelationship> getObjectClassRelatedNodeTypesAndObjectClasses( Int32 ObjectClassId, CswNbtView View, Int32 Level )
         {
-            ArrayList Relationships = new ArrayList();
+			Collection<CswNbtViewRelationship> Relationships = new Collection<CswNbtViewRelationship>();
 
             // If we're doing a grid, we can only pick things in which the provided nodetype has a relationship to, 
             // rather than things that are related to the provided nodetype.
@@ -659,7 +666,8 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtViewRelationship R1 = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.First, ThisProp, false );
                         R1.overrideFirst( ObjectClass );
                         R1.overrideSecond( ObjectClass );
-                        Relationships.Add( R1 );
+                        //Relationships.Add( R1 );
+						_InsertRelationship( Relationships, R1 );
 
                         if( !Restrict )
                         {
@@ -669,8 +677,9 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtViewRelationship R2 = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.Second, ThisProp, false );
                             R2.overrideFirst( ObjectClass );
                             R2.overrideSecond( ObjectClass );
-                            Relationships.Add( R2 );
-                        }
+                            //Relationships.Add( R2 );
+							_InsertRelationship( Relationships, R2 );
+						}
                     }
                     else
                     {
@@ -686,8 +695,9 @@ namespace ChemSW.Nbt.WebServices
                             else
                                 R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
                             R.overrideFirst( ObjectClass );
-                            Relationships.Add( R );
-                        }
+                            //Relationships.Add( R );
+							_InsertRelationship( Relationships, R );
+						}
                         else if( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() && PropRow["fkvalue"].ToString() == ObjectClassId.ToString() )
                         {
                             if( !Restrict )
@@ -706,7 +716,8 @@ namespace ChemSW.Nbt.WebServices
                                     R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["typeid"] ) ) );
                                 }
                                 R.overrideFirst( ObjectClass );
-                                Relationships.Add( R );
+                                //Relationships.Add( R );
+								_InsertRelationship( Relationships, R );
                             }
                         }
                         else
@@ -717,11 +728,27 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            return Relationships;
+			return Relationships;
         }
 
+		private void _InsertRelationship(Collection<CswNbtViewRelationship> Relationships, CswNbtViewRelationship AddMe)
+		{
+			Int32 InsertAt = Relationships.Count;
+			for( Int32 i = 0; i < Relationships.Count; i++ )
+			{
+				if( Relationships[i].SecondName.CompareTo( AddMe.SecondName ) > 0 ||
+					( Relationships[i].SecondName.CompareTo( AddMe.SecondName ) == 0 &&
+					  Relationships[i].PropName.CompareTo( AddMe.PropName ) >= 0 ) )
+				{
+					InsertAt = i;
+					break;
+				}
+			}
+			Relationships.Insert( InsertAt, AddMe );
+		} // _InsertRelationship
 
-        private ICollection _getNodeTypePropsCollection( Int32 NodeTypeId )
+
+		private ICollection _getNodeTypePropsCollection( Int32 NodeTypeId )
         {
             // Need to generate a set of all Props, including latest version props and
             // all historical ones from previous versions that are no longer included in the latest.
