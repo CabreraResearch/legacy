@@ -272,6 +272,8 @@ namespace ChemSW.Nbt.Schema
 					SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ).ToString() );
 
                     UpdateSucceeded = _CswSchemaUpdater.Update();
+					
+					CswNbtResources.ClearCache();
 
                     e.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
                     e.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
