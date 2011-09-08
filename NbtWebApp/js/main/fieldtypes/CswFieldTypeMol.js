@@ -14,12 +14,8 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            //var href = tryParseString(propVals.href).trim();
             var width = 100; //tryParseString(propVals.width);
-            //var height = tryParseString(propVals.height);
-            //var fileName = tryParseString(propVals.name).trim();
             var mol = tryParseString(propVals.mol).trim();
-            //var col = tryParseString(propVals.column).trim();
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
@@ -28,17 +24,15 @@
             var $cell23 = $table.CswTable('cell', 2, 3).CswAttrDom('align', 'right');
 
             if (mol !== '') {
-                var $TextBox = $('<pre>' + mol + '</pre>')
-									.appendTo($cell11);
 
 				var JmolFolder = "./js/thirdparty/js/jmol-12.0.49/";
 				jmolInitialize(JmolFolder);
 				jmolSetDocument(false);
 				var myApplet = jmolAppletInline('300px', mol);
-                jmolCheckbox("spin on", "spin off", "0");
 				$Div.append(myApplet);
+                var myCheck = jmolCheckbox("spin on", "spin off", "Rotate");
+                $Div.append(myCheck);
 
-                //$cell21.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');
             }
 
             if (!o.ReadOnly && o.EditMode != EditMode.AddInPopup.name) {
