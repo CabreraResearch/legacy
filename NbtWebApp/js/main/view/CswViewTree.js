@@ -63,19 +63,26 @@
 						"plugins": ["themes", "json_data", "ui", "types"]
 					}).bind('select_node.jstree', 
 								function () {
-									if (isFunction(o.onSelect)) {
-									    var selected = jsTreeGetSelected($viewsdiv);
+								    var selected = jsTreeGetSelected($viewsdiv);
+								    var $item = selected.$item;
+								    var isLeaf = isTrue($item.CswAttrXml('isleaf'));
+								    if (false === isLeaf) {
+								        var $node = $(this);
+								        $viewsdiv.jstree('close_all');
+								        $node.jstree('toggle_node');    
+								    }
+								    else if (isFunction(o.onSelect)) {
 									    var optSelect = {
-									        $item: selected.$item,
+									        $item: $item,
 									        iconurl: selected.iconurl,
-									        type: selected.$item.CswAttrXml('viewtype'),
-									        viewid: selected.$item.CswAttrXml('viewid'),
+									        type: $item.CswAttrXml('viewtype'),
+									        viewid: $item.CswAttrXml('viewid'),
 									        viewname: selected.text,
-									        viewmode: selected.$item.CswAttrXml('viewmode'),
-									        actionid: selected.$item.CswAttrXml('actionid'),
-									        actionname: selected.$item.CswAttrXml('actionname'),
-									        actionurl: selected.$item.CswAttrXml('actionurl'),
-									        reportid: selected.$item.CswAttrXml('reportid')
+									        viewmode: $item.CswAttrXml('viewmode'),
+									        actionid: $item.CswAttrXml('actionid'),
+									        actionname: $item.CswAttrXml('actionname'),
+									        actionurl: $item.CswAttrXml('actionurl'),
+									        reportid: $item.CswAttrXml('reportid')
 									    };
 									    o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
 									}

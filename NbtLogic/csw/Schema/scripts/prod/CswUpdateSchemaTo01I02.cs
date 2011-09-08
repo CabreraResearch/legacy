@@ -11,23 +11,12 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema to version 01I-02
     /// </summary>
-    public class CswUpdateSchemaTo01I02 : ICswUpdateSchemaTo
+    public class CswUpdateSchemaTo01I02 : CswUpdateSchemaTo
     {
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 02 ); } }
+		public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
 
-        private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
-        public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 02 ); } }
-        public CswUpdateSchemaTo01I02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
-        }
-
-
-        public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
-
-
-        public void update()
+		public override void update()
         {
 
 			CswTableUpdate OCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I-02_OCP_Update", "object_class_props" );

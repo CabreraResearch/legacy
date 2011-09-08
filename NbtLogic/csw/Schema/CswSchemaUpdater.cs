@@ -15,44 +15,45 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswSchemaUpdater
     {
-        private CswNbtResources _CswNbtResources;
-        private CswTableUpdate _UpdateHistoryTableUpdate;
-        private DataTable _UpdateHistoryTable;
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
+        private ICswSchemaScripts _CswSchemaScripts = null;
+		private string _AccessId = string.Empty;
 
-        public enum HamletNodeTypes
-        {
-            Fire_Extinguisher,
-            Mount_Point,
-            Mount_Point_Group,
-            Physical_Inspection,
-            Physical_Inspection_Schedule,
-            Physical_Inspection_Route,
-            Notification,
-            Floor,
-            FE_Inspection_Point,
-            Inspection_Group
-        }
-        public static string HamletNodeTypesAsString( HamletNodeTypes NodeType )
-        {
-            return ( NodeType.ToString().Replace( '_', ' ' ) );
-        }
-
-        ICswSchemaScripts _CswSchemaScripts = null;
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswSchemaUpdater( CswNbtResources CswNbtResources, ICswSchemaScripts CswSchemaScripts )
+		public CswSchemaUpdater( string AccessId, ResourcesInitHandler ResourcesInitHandler, ICswSchemaScripts CswSchemaScripts )
         {
             _CswSchemaScripts = CswSchemaScripts;
-            _CswNbtResources = CswNbtResources;
-            _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
-
-
-
+			_ResourcesInitHandler = ResourcesInitHandler;
+			_AccessId = AccessId;
+			//_ReinitCswNbtResources( AccessId );
         }
 
-        /// <summary>
+		#region Resources Handling
+
+		// This allows us to use a new Resources per update script
+		public delegate CswNbtResources ResourcesInitHandler( string AccessId );
+		private ResourcesInitHandler _ResourcesInitHandler = null;
+
+		//private CswNbtSchemaModTrnsctn _ReinitCswNbtResources( string AccessId )
+		//{
+		//}
+
+		//private CswNbtSchemaModTrnsctn __CswNbtSchemaModTrnsctn = null;
+		//public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+		//{
+		//    get { return __CswNbtSchemaModTrnsctn; }
+		//}
+
+		//private CswNbtResources __CswNbtResources;
+		//public CswNbtResources CswNbtResources
+		//{
+		//    get { return __CswNbtResources; }
+		//}
+
+		#endregion Resources Handling
+
+		/// <summary>
         /// The highest schema version number defined in the updater
         /// </summary>
         public CswSchemaVersion LatestVersion { get { return ( _CswSchemaScripts.LatestVersion ); } }
@@ -82,22 +83,24 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public bool Update()
         {
-            _UpdateHistoryTableUpdate = _CswNbtResources.makeCswTableUpdate( "schemaupdater_updatehistory_update", "update_history" );
-            _UpdateHistoryTable = _UpdateHistoryTableUpdate.getTable();
+			CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
+			CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( CswNbtResources );
+			
+			CswTableUpdate _UpdateHistoryTableUpdate = CswNbtResources.makeCswTableUpdate( "schemaupdater_updatehistory_update", "update_history" );
+            DataTable _UpdateHistoryTable = _UpdateHistoryTableUpdate.getTable();
 
             CswSchemaUpdateDriver CurrentUpdateDriver = null;
             bool UpdateSuccessful = true;
             if( null != ( CurrentUpdateDriver = _CswSchemaScripts.Next ) )
             {
-
+				CurrentUpdateDriver.CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
                 CurrentUpdateDriver.update();
                 UpdateSuccessful = CurrentUpdateDriver.UpdateSucceeded;
-
 
                 if( !UpdateSuccessful )
                 {
                     // Belt and suspenders.
-                    _CswNbtResources.logError( new CswDniException( "Schema Updater encountered a problem: " + CurrentUpdateDriver.Message ) );
+                    CswNbtResources.logError( new CswDniException( "Schema Updater encountered a problem: " + CurrentUpdateDriver.Message ) );
                     _ErrorMessage = "Error updating to schema version " + CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Message;
                 }
                 else
@@ -126,7 +129,7 @@ namespace ChemSW.Nbt.Schema
                 _UpdateHistoryTable.Rows.Add( NewUpdateHistoryRow );
                 _UpdateHistoryTableUpdate.update( _UpdateHistoryTable );
 
-                _CswNbtResources.finalize();
+                CswNbtResources.finalize();
 
             } // if update is valid
 
@@ -134,7 +137,15 @@ namespace ChemSW.Nbt.Schema
 
         }//Update()
 
-        public bool Next() { return ( null != _CswSchemaScripts.Next ); }
+		public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers
+		{
+			get
+			{
+				return _CswSchemaScripts.UpdateDrivers;
+			}
+		}
+
+
 
     }//CswSchemaUpdater
 

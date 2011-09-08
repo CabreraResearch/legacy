@@ -717,6 +717,29 @@ function deleteNodes(options)
 		error: o.onError
 	});
 }
+
+// Node Preview
+
+var $nodepreview = undefined;
+function nodeHoverIn(event, nodeid, cswnbtnodekey)
+{
+	$nodepreview = $.CswNodePreview('open', {
+		ID: nodeid + "_preview",
+		nodeid: nodeid,
+		cswnbtnodekey: cswnbtnodekey,
+		eventArg: event
+	});
+}
+function nodeHoverOut()
+{
+	if ($nodepreview !== undefined)
+	{
+		$nodepreview.CswNodePreview('close');
+		$nodepreview = undefined;
+	}
+}
+
+
 //#region Node interactions
 
 //#region jsTree
@@ -811,8 +834,8 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('DeleteNodeDialog', {
-						nodename: nodename,
-						nodeid: nodeid,
+						nodenames: [ nodename ],
+						nodeids: [ nodeid ],
 						onDeleteNode: o.onAlterNode,
 						NodeCheckTreeId: o.NodeCheckTreeId,
 						Multi: o.Multi

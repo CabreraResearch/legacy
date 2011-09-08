@@ -220,7 +220,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Set any existing pending or overdue inspections on the same parent to missed
         /// </summary>
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             if( Tristate.True != this.IsFuture.Checked )
             {
@@ -256,7 +256,7 @@ namespace ChemSW.Nbt.ObjClasses
 			CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
 			Version.Text = ThisNodeType.NodeTypeName + " v" + ThisNodeType.VersionNo.ToString();
 
-            _CswNbtObjClassDefault.beforeCreateNode();
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
         /// <summary>
@@ -295,7 +295,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Determine Inspection Status and set read-only
         /// </summary>
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
 			CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
             _Finished = ( Tristate.True == this.Finished.Checked );
@@ -350,7 +350,7 @@ namespace ChemSW.Nbt.ObjClasses
 				_CswNbtNode.ReadOnly = true;
 			}
 		
-			_CswNbtObjClassDefault.beforeWriteNode();
+			_CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
 		}//beforeWriteNode()
 
         /// <summary>

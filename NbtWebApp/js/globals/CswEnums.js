@@ -5,7 +5,8 @@ var EditMode = {
 	Demo: { name: 'Demo' },
 	PrintReport: { name: 'PrintReport' },
 	DefaultValue: { name: 'DefaultValue' },
-	AuditHistoryInPopup: { name: 'AuditHistoryInPopup' }
+	AuditHistoryInPopup: { name: 'AuditHistoryInPopup' },
+	Preview: { name: 'Preview' }
 };
 
 // for CswInput
@@ -34,6 +35,15 @@ var CswInput_Types = {
 	url: { id: 21, name: 'url', placeholder: true, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '200px' },
 	week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' }
 };
+
+var CswViewMode = {
+    grid: { name: 'Grid' },
+    tree: { name: 'Tree' },
+    list: { name: 'List' },
+    table: { name: 'Table' }
+};
+
+var CswMultiEditDefaultValue = '[Unchanged]';
 
 // for CswCookie
 var CswCookieName = {

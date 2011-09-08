@@ -14,30 +14,27 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_004_03 : ICswUpdateSchemaTo
+    public class CswTestCase_004_03 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_004.Purpose, "inspect and test constraints" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_004.Purpose, "inspect and test constraints" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_004 _CswTstCaseRsrc_004 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_004_03( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_004_03( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_004 =   ( CswTstCaseRsrc_004) CswTstCaseRsrc;
-        }//ctor
+			_CswTstCaseRsrc_004 = (CswTstCaseRsrc_004) CswTstCaseRsc;
+		}//ctor
 
-        public void update()
+        public override void update()
         {
-            List<PkFkPair> PairList = _CswTstCaseRsrc_004.getPkFkPairs();
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_004.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+			
+			List<PkFkPair> PairList = _CswTstCaseRsrc_004.getPkFkPairs();
             foreach( PkFkPair CurrentPair in PairList )
             {
                 bool ExceptionWasThrown = false;

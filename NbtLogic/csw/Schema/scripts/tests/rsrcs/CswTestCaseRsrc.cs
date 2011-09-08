@@ -57,10 +57,10 @@ namespace ChemSW.Nbt.Schema
         //private string _TestValStem = "Test val ";
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-        public CswTestCaseRsrc( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
 
+		public CswTestCaseRsrc( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        {
+			_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
 
             _TestTableNamesReal.Add( TestTableNamesReal.Modules, "modules" );
             _TestTableNamesReal.Add( TestTableNamesReal.DataDictionary, "data_dictionary" );
@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.Schema
 
         }//_testAddColumnValues() 
 
-        public string makeTestCaseDescription( string RawClassName, string TestCasePurpose, string SubPurpose )
+        public static string makeTestCaseDescription( string RawClassName, string TestCasePurpose, string SubPurpose )
         {
             return ( "Test Case " + RawClassName.Substring( 12 ) + ": " + TestCasePurpose + "--" + SubPurpose );
         }
