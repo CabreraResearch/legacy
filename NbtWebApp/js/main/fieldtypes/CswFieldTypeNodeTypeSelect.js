@@ -42,9 +42,8 @@
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
                 o.propData.values.options = formdata;
-            } else {
-                delete o.propData;
-            }
+                o.wasmodified = true;
+            } 
             return $(this);
         } // save()
     };

@@ -124,43 +124,29 @@
             } // if(!o.ReadOnly)
         },
         save: function(o) {
-            var red = o.$propdiv.find('#' + o.ID + '_red').val();
-            var yellow = o.$propdiv.find('#' + o.ID + '_yellow').val();
-            var blue = o.$propdiv.find('#' + o.ID + '_blue').val();
-            var white = o.$propdiv.find('#' + o.ID + '_white').val();
-            
-            var propVals = o.propData.values;	
-            if (false === o.Multi || (red !== CswMultiEditDefaultValue && yellow !== CswMultiEditDefaultValue && blue !== CswMultiEditDefaultValue && white !== CswMultiEditDefaultValue )) {
-                propVals.flammability = red;
-			    propVals.reactivity = yellow;
-			    propVals.health = blue;
-			    propVals.special = white;    
-            } else {
-                if (red === CswMultiEditDefaultValue && yellow === CswMultiEditDefaultValue && blue === CswMultiEditDefaultValue && white === CswMultiEditDefaultValue ) {
-                    delete o.propData;    
-                } else {
-                    if(red !== CswMultiEditDefaultValue) {
-                        propVals.flammability = red;
-                    } else {
-                        delete propVals.flammability;
-                    }
-                    if(yellow !== CswMultiEditDefaultValue) {
-                        propVals.reactivity = yellow;
-                    } else {
-                        delete propVals.reactivity;
-                    }
-                    if(blue !== CswMultiEditDefaultValue) {
-                        propVals.health = blue;
-                    } else {
-                        delete propVals.health;
-                    }
-                    if(white !== CswMultiEditDefaultValue) {
-                        propVals.special = white;
-                    } else {
-                        delete propVals.special;
-                    }                    
-                }
+            var attributes = {
+                flammability: null,
+                reactivity: null,
+                health: null,
+                special: null
+            };
+            var $red = o.$propdiv.find('#' + o.ID + '_red');
+            if (false === isNullOrEmpty($red)) {
+                attributes.flammability = $red.val();
             }
+            var $yellow = o.$propdiv.find('#' + o.ID + '_yellow');
+            if (false === isNullOrEmpty($yellow)) {
+                attributes.reactivity = $yellow.val();
+            }
+            var $blue = o.$propdiv.find('#' + o.ID + '_blue');
+            if (false === isNullOrEmpty($blue)) {
+                attributes.health = $blue.val();
+            }
+            var $white = o.$propdiv.find('#' + o.ID + '_white');
+            if (false === isNullOrEmpty($white)) {
+                attributes.special = $white.val();
+            }
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

@@ -81,8 +81,8 @@
             }
 
         },
-        save: function(o) { //$propdiv, o.propData
-			// nothing to do here
+        save: function(o) { 
+
         }
     };
     

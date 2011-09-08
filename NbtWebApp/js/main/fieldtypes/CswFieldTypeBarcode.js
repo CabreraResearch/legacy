@@ -52,12 +52,12 @@
             }
         },
         save: function(o) {
+            var attributes = { barcode: barcode };
             var $TextBox = o.$propdiv.find('input');
-            if (false === o.Multi || $TextBox.val() !== CswMultiEditDefaultValue ) {
-                o.propData.values.barcode = $TextBox.val();
-            } else {
-                delete o.propData;
+            if(false === isNullOrEmpty($TextBox)) {
+                attributes.barcode = $TextBox.val();
             }
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

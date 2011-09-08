@@ -142,12 +142,12 @@
             } // if-else(o.ReadOnly)
         },
         save: function(o) { //$propdiv, $xml
+            var attributes = { value: null };
             var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
-            if (false === o.Multi || $HiddenValue.val() !== CswMultiEditDefaultValue) {
-                o.propData.values.value = $HiddenValue.val();
-            } else {
-                delete o.propData;
+            if (false === isNullOrEmpty($HiddenValue)) {
+                attributes.value = $HiddenValue.val();
             }
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

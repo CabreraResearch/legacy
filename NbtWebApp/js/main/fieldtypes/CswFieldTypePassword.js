@@ -70,21 +70,20 @@
             }
         },
         save: function(o) { //$propdiv, $xml
-            var newpw = o.$propdiv.find('input#' + o.ID + '_pwd1').val();
-            if (false === o.Multi || newpw !== CswMultiEditDefaultValue) {
-                var propVals = o.propData.values;
-                var $IsExpiredCheck = o.$propdiv.find('input#' + o.ID + '_exp');
-                if ($IsExpiredCheck.length > 0)
-                {
-                    propVals.isexpired = $IsExpiredCheck.is(':checked');
-                }
-                if (false === isNullOrEmpty(newpw))
-                {
-                    propVals.newpassword = newpw;
-                }
-            } else {
-                delete o.propData;
+            var attributes = {
+                isexpired: null,
+                newpassword: null
+            };
+            var $newpw = o.$propdiv.find('input#' + o.ID + '_pwd1');
+            if (false === isNullOrEmpty($newpw)) {
+                attributes.newpassword = $newpw.val();
             }
+            
+            var $IsExpiredCheck = o.$propdiv.find('input#' + o.ID + '_exp');
+            if (false === isNullOrEmpty($IsExpiredCheck) && $IsExpiredCheck.length > 0) {
+                attributes.isexpired = $IsExpiredCheck.is(':checked');    
+            }
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

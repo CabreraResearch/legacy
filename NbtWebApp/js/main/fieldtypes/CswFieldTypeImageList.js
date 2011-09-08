@@ -115,12 +115,13 @@
 
         },
         save: function(o) {
-			var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
-            if (false === o.Multi || $HiddenValue.text() !== CswMultiEditDefaultValue ) {
-                o.propData.values.value = $HiddenValue.text();
-            } else {
-                delete o.propData;
+            var imageList = null;
+            var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
+            if (false === isNullOrEmpty($HiddenValue)) {
+                imageList = $HiddenValue.text();
             }
+            var attributes = { value: imageList };
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

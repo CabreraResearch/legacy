@@ -739,6 +739,38 @@ function nodeHoverOut()
 	}
 }
 
+function preparePropJsonForSave(isMulti,propJson,attributes,subSubFunc) {
+    var propVals = propJson.propData.values;
+    var validPropCount = 0;
+    if(false === isMulti) {
+        crawlObject(propVals, function(prop, key) {
+            if (attributes.hasOwnProperty(key)) {
+                validPropCount++;
+                propVals[key] = attributes[key];
+                if(isFunction(subSubFunc)) {
+                    subSubFunc(propVals[key], key);
+                }
+            }
+        }, false);
+    } else {
+        crawlObject(propVals, function(prop, key) {
+            if (attributes.hasOwnProperty(key)) {
+                var attr = attributes[key];
+                if (false === isNullOrUndefined(attr) && attr !== CswMultiEditDefaultValue) {
+                    validPropCount++;
+                    propVals[key] = attr; 
+                    if(isFunction(subSubFunc)) {
+                        subSubFunc(propVals[key], key);
+                    }
+                }
+            }
+        }, false);
+    }
+    if(validPropCount > 0) {
+        propJson.wasmodified = true;
+    }
+    return propJson;
+}
 
 //#region Node interactions
 

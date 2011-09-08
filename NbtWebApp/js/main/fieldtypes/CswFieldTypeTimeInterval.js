@@ -246,6 +246,7 @@
 				    var propVals = o.propData.values;
 				    var RateType = $('[name="' + o.ID + '_type"]:checked').val();
 				    if (false === o.Multi || $('#' + o.ID + '_textvalue').text() !== CswMultiEditDefaultValue) {
+				        o.wasmodified = true;
 				        var RIValue = propVals.Interval.rateintervalvalue;
 				        switch (RateType)
 				        {
@@ -281,9 +282,7 @@
 				                RIValue.yearlydate.dateformat = RIValue.dateformat;
 				                break;
 				        } // switch(RateType)
-				    } else {
-				        delete o.propData;
-				    }
+				    } 
 				} catch(e) {
 				    if(debugOn()) {
 				        log('Error updating propData: ' + e);

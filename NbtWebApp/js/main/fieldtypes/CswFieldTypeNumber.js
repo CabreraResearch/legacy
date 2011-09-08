@@ -29,12 +29,8 @@
 			}
         },
         save: function(o) { //$propdiv, $xml
-            var value = o.$propdiv.CswNumberTextBox('value', o.ID);
-            if (false === o.Multi || value !== CswMultiEditDefaultValue) {
-                o.propData.values.value = value;
-            } else {
-                delete o.propData;
-            }
+            var attributes = { value: o.$propdiv.CswNumberTextBox('value', o.ID) };
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

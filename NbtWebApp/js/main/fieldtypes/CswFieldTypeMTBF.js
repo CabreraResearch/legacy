@@ -83,23 +83,25 @@
             }
         },
         save: function(o) { //$propdiv, $xml
-            var startDate = o.$propdiv.find('#'+ o.ID +'_sd').CswDateTimePicker('value').Date;
-            var units = o.$propdiv.find('#'+ o.ID +'_units').val();
-            var propVals = o.propData.values;
-            if(false === o.Multi || (startDate !== CswMultiEditDefaultValue && units !== CswMultiEditDefaultValue)) {
-                propVals.startdatetime.date = startDate;
-                propVals.units = units;
+
+            var attributes = { startdate: null, units: null };
+            var $StartDate = o.$propdiv.find('#' + o.ID + '_sd');
+            if (false === isNullOrEmpty($StartDate)) {
+                attributes.startdate = $StartDate.CswDateTimePicker('value').Date;
             }
-            else if(startDate !== CswMultiEditDefaultValue) {
-                propVals.startdatetime.date = startDate;
-                delete propVals.units;
+
+            var $Units = o.$propdiv.find('#' + o.ID + '_units');
+            if (false === isNullOrEmpty($Units)) {
+                attributes.units = $Units.val();
             }
-            else if(units !== CswMultiEditDefaultValue) {
-                propVals.units = units;
-                delete propVals.startdatetime;
-            } else {
-                delete o.propData;
-            }
+
+            var subSubFunc = function(startDate, key) {
+                if(key === 'startdate' && false === isNullOrUndefined(attributes.startdate.date)) {
+                    startDate.date = attributes.startdate.date;
+                }
+            };
+
+            preparePropJsonForSave(o.Multi, o, attributes, subSubFunc);
         }
     };
     

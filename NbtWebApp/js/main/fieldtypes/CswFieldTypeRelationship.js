@@ -75,12 +75,14 @@
 				
             },
             save: function(o) {
-                var nodeid = o.$propdiv.find('select').val();
-                if (false === o.Multi || nodeid !== CswMultiEditDefaultValue) {
-                    o.propData.values.nodeid = nodeid;
-                } else {
-                    delete o.propData;
+                var attributes = {
+                    nodeid: null
+                };
+                var $nodeid = o.$propdiv.find('select');
+                if (false === isNullOrEmpty($nodeid)) {
+                    attributes.nodeid = $nodeid.val();
                 }
+                preparePropJsonForSave(o.Multi, o, attributes);
             }
         };
     

@@ -573,7 +573,7 @@
 							if($nodechecks.length > 0 && $propchecks.length > 0)
 							{
 								var dataJson = {
-									SourceNodeKey: o.cswnbtnodekey,
+									SourceNodeKey: tryParseObjByIdx(o.nodekeys, 0),
 									CopyNodeIds: [],
 									PropIds: []
 								};

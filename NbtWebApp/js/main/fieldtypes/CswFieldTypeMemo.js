@@ -31,15 +31,14 @@
                     $TextArea.addClass("required");
                 }
             }
-
         },
         save: function(o) { //$propdiv, $xml
+            var attributes = { text: null };
             var $TextArea = o.$propdiv.find('textarea');
-            if (false === o.Multi || $TextArea.val() !== CswMultiEditDefaultValue) {
-                o.propData.values.text = $TextArea.val();
-            } else {
-                delete o.propData;
+            if (false === isNullOrEmpty($TextArea)) {
+                attributes.text = $TextArea.val();
             }
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

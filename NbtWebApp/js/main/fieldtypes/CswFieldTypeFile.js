@@ -11,74 +11,74 @@
     var methods = {
         init: function(o) { 
 
-                var $Div = $(this);
-                $Div.contents().remove();
+            var $Div = $(this);
+            $Div.contents().remove();
 
-                var propVals = o.propData.values;
+            var propVals = o.propData.values;
             
-                var href = (false === o.Multi) ? tryParseString(propVals.href).trim() : CswMultiEditDefaultValue;
-                var fileName = (false === o.Multi) ? tryParseString(propVals.name).trim() : CswMultiEditDefaultValue;
+            var href = (false === o.Multi) ? tryParseString(propVals.href).trim() : CswMultiEditDefaultValue;
+            var fileName = (false === o.Multi) ? tryParseString(propVals.name).trim() : CswMultiEditDefaultValue;
 
-                var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
-                var $cell11 = $table.CswTable('cell', 1, 1);
-                var $cell12 = $table.CswTable('cell', 1, 2);
-                var $cell13 = $table.CswTable('cell', 1, 3);
+            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+            var $cell11 = $table.CswTable('cell', 1, 1);
+            var $cell12 = $table.CswTable('cell', 1, 2);
+            var $cell13 = $table.CswTable('cell', 1, 3);
 
-                $cell11.append('<a href="'+ href +'" target="_blank">'+ fileName +'</a>');
+            $cell11.append('<a href="'+ href +'" target="_blank">'+ fileName +'</a>');
 
-                if(false === o.ReadOnly && o.EditMode !== EditMode.AddInPopup.name) {
-                    //Edit button
-                    $('<div/>')
-                        .appendTo($cell12)
-                        .CswImageButton({   
-                            ButtonType: CswImageButton_ButtonType.Edit,
-                            AlternateText: 'Edit',
-                            ID: o.ID + '_edit',
-                            onClick: function ($ImageDiv) { 
-								$.CswDialog( 'FileUploadDialog', {
-									url: '/NbtWebApp/wsNBT.asmx/fileForProp',
-									params: {
-										PropId: o.propData.id,
+            if(false === o.ReadOnly && o.EditMode !== EditMode.AddInPopup.name) {
+                //Edit button
+                $('<div/>')
+                    .appendTo($cell12)
+                    .CswImageButton({   
+                        ButtonType: CswImageButton_ButtonType.Edit,
+                        AlternateText: 'Edit',
+                        ID: o.ID + '_edit',
+                        onClick: function ($ImageDiv) { 
+							$.CswDialog( 'FileUploadDialog', {
+								url: '/NbtWebApp/wsNBT.asmx/fileForProp',
+								params: {
+									PropId: o.propData.id,
+									Multi: o.Multi
+								},
+								onSuccess: function() {
+									o.onReload();
+								}
+							});
+							return CswImageButton_ButtonType.None; 
+						}
+                    });
+                //Clear button
+                $('<div/>')
+                    .appendTo($cell13)
+                    .CswImageButton({
+                        ButtonType: CswImageButton_ButtonType.Clear,
+                        AlternateText: 'Clear',
+                        ID: o.ID + '_clr',
+                        onClick: function ($ImageDiv) { 
+								if(confirm("Are you sure you want to clear this file?")) {
+									var dataJson = {
+                                        PropId: o.propData.id,
+                                        IncludeBlob: true,
 										Multi: o.Multi
-									},
-									onSuccess: function() {
-										o.onReload();
-									}
-								});
+                                    };
+                                                        
+                                    CswAjaxJson({
+										url: '/NbtWebApp/wsNBT.asmx/clearProp',
+										data: dataJson,
+										success: function() { o.onReload(); }
+									});
+								}
 								return CswImageButton_ButtonType.None; 
 							}
-                        });
-                    //Clear button
-                    $('<div/>')
-                        .appendTo($cell13)
-                        .CswImageButton({
-                            ButtonType: CswImageButton_ButtonType.Clear,
-                            AlternateText: 'Clear',
-                            ID: o.ID + '_clr',
-                            onClick: function ($ImageDiv) { 
-									if(confirm("Are you sure you want to clear this file?")) {
-										var dataJson = {
-                                            PropId: o.propData.id,
-                                            IncludeBlob: true,
-										    Multi: o.Multi
-                                        };
-                                                        
-                                        CswAjaxJson({
-											url: '/NbtWebApp/wsNBT.asmx/clearProp',
-											data: dataJson,
-											success: function() { o.onReload(); }
-										});
-									}
-									return CswImageButton_ButtonType.None; 
-								}
-                        });
-                }
-
-            },
-        save: function(o) {
-//                var $TextBox = $propdiv.find('input');
-//                o.propData.children('barcode').text($TextBox.val());
+                    });
             }
+
+        },
+        save: function(o) {
+//          var $TextBox = $propdiv.find('input');
+//          o.propData.children('barcode').text($TextBox.val());
+        }
     };
     
     // Method calling logic

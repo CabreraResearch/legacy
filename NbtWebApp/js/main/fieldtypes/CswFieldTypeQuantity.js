@@ -46,28 +46,16 @@
                 }); 
         },
         save: function(o) {
-			var propVals = o.propData.values;	
-            var value = o.$propdiv.CswNumberTextBox('value', o.ID + '_qty');
-            var unit = o.$propdiv.find('#' + o.ID + '_units').val();
-            if (false === o.Multi || (value !== CswMultiEditDefaultValue && unit !== CswMultiEditDefaultValue)) {
-                propVals.value = value;
-                propVals.units = unit;
-            } else {
-                if(value === CswMultiEditDefaultValue && unit === CswMultiEditDefaultValue) {
-                    delete o.propData;
-                } else {
-                    if(value !== CswMultiEditDefaultValue) {
-                        propVals.value = value;
-                    } else {
-                        delete propVals.value;
-                    }
-                    if(unit !== CswMultiEditDefaultValue) {
-                        propVals.units = unit;
-                    } else {
-                        delete propVals.units;
-                    }
-                }
-            }
+            var attributes = {
+                value: o.$propdiv.CswNumberTextBox('value', o.ID + '_qty'),
+                units: null
+            };
+            
+            var $unit = o.$propdiv.find('#' + o.ID + '_units');
+            if (false === isNullOrEmpty($unit)) {
+                attributes.units = $unit.val();
+            } 
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

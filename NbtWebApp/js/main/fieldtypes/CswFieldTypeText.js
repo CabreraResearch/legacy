@@ -36,12 +36,14 @@
             }
         },
         save: function(o) {
-            var text = o.$propdiv.find('input').val();
-            if (false === o.Multi || text !== CswMultiEditDefaultValue) {
-                o.propData.values.text = text;
-            } else {
-                delete o.propData;
+            var attributes = {
+                text: null
+            };
+            var $text = o.$propdiv.find('input');
+            if (false === isNullOrEmpty($text)) {
+                attributes.text = $text.val();
             }
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

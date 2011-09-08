@@ -83,35 +83,24 @@
             }
         },
         save: function(o) {
-            var answer = o.$propdiv.find('#' + o.ID + '_ans').val();
-            var correctiveAction = o.$propdiv.find('#' + o.ID + '_cor').val();
-            var comments = o.$propdiv.find('#' + o.ID + '_com').val();
-            var propVals = o.propData.values;    
-			if(false === o.Multi || (answer !== CswMultiEditDefaultValue && correctiveAction !== CswMultiEditDefaultValue && comments !== CswMultiEditDefaultValue)) {
-                propVals.answer = answer;
-			    propVals.correctiveaction = correctiveAction;
-			    propVals.comments = comments;
-			} else {
-			    if(answer === CswMultiEditDefaultValue && correctiveAction === CswMultiEditDefaultValue && comments === CswMultiEditDefaultValue) {
-			        delete o.propData;
-			    } else {
-			        if(answer !== CswMultiEditDefaultValue) {
-			            propVals.answer = answer;
-			        } else {
-			            delete propVals.answer;
-			        }
-			        if(correctiveAction !== CswMultiEditDefaultValue) {
-			            propVals.correctiveaction = correctiveAction;
-			        } else {
-			            delete propVals.correctiveaction;
-			        }
-			        if(comments !== CswMultiEditDefaultValue) {
-			            propVals.comments = comments;
-			        } else {
-			            delete propVals.comments;
-			        }			    
-			    }
-			}
+            var attributes = {
+                answer: null,
+                correctiveaction: null,
+                comments: null
+            };
+            var $answer = o.$propdiv.find('#' + o.ID + '_ans');
+            if (false === isNullOrEmpty($answer)) {
+                attributes.answer = $answer.val();
+            }
+            var $correct = o.$propdiv.find('#' + o.ID + '_cor');
+            if (false === isNullOrEmpty($correct)) {
+                attributes.correctiveaction = $correct.val();
+            }
+            var $comments = o.$propdiv.find('#' + o.ID + '_com');
+            if (false === isNullOrEmpty($comments)) {
+                attributes.comments = $comments.val();
+            }
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

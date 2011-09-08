@@ -77,25 +77,32 @@ function makeSafeId(options)
 	return elementId;
 }
 
-function isNullOrEmpty(obj)
-{
+function isNullOrEmpty(obj) {
 	/// <summary> Returns true if the input is null, undefined, or ''</summary>
 	/// <param name="obj" type="Object"> Object to test</param>
 	/// <returns type="Boolean" />
     var ret = false;
-	if (!isFunction(obj))
-	{
+	if (!isFunction(obj)) {
 		ret = $.isPlainObject(obj) && $.isEmptyObject(obj);
-		if (!ret && isGeneric(obj))
-		{
+		if (!ret && isGeneric(obj)) {
 			ret = (trim(obj) === '');
 		}
 	} 
 	return ret;
 }
 
-function isGeneric(obj)
-{
+function isNullOrUndefined(obj) {
+	/// <summary> Returns true if the input is null or undefined</summary>
+	/// <param name="obj" type="Object"> Object to test</param>
+	/// <returns type="Boolean" />
+    var ret = false;
+	if (!isFunction(obj)) {
+		ret = obj === null || obj === undefined || $.isEmptyObject(obj);
+	} 
+	return ret;
+}
+
+function isGeneric(obj) {
 	/// <summary> Returns true if the object is not a function, array, jQuery or JSON object</summary>
 	/// <param name="obj" type="Object"> Object to test</param>
 	/// <returns type="Boolean" />
@@ -103,8 +110,7 @@ function isGeneric(obj)
 	return ret;
 }
 
-function isFunction(obj)
-{
+function isFunction(obj) {
 	/// <summary> Returns true if the object is a function</summary>
 	/// <param name="obj" type="Object"> Object to test</param>
 	/// <returns type="Boolean" />
@@ -112,8 +118,7 @@ function isFunction(obj)
 	return ret;
 }
 
-function isArray(obj)
-{
+function isArray(obj) {
 	/// <summary> Returns true if the object is an array</summary>
 	/// <param name="obj" type="Object"> Object to test</param>
 	/// <returns type="Boolean" />
@@ -362,15 +367,17 @@ function crawlObject(thisObj, onSuccess, doRecursion) {
     /// <param name="doRecursion" type="Boolean"> If true, recurse on all properties </param>
     /// <returns type="Object">Returns the return of onSuccess</returns>
     var ret = false;
-    $.each(thisObj, function (childKey, value)  {
-        var childObj = thisObj[childKey];
-        if (isFunction(onSuccess)) {
-            ret = onSuccess(childObj, childKey, thisObj);
-        }
-        if (doRecursion) {
-            ret = crawlObject(childObj, onSuccess, doRecursion);
-        }
-    });
+    if($.isPlainObject(thisObj)) {
+        $.each(thisObj, function(childKey, value) {
+            var childObj = thisObj[childKey];
+            if (isFunction(onSuccess)) {
+                ret = onSuccess(childObj, childKey, thisObj);
+            }
+            if (doRecursion) {
+                ret = crawlObject(childObj, onSuccess, doRecursion);
+            }
+        });
+    }
     return ret;
 }
 

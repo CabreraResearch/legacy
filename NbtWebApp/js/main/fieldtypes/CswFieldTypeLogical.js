@@ -24,21 +24,15 @@
 
 			$Div.CswTristateCheckBox('init',checkOpt);
 		},
-		save: function(o) { //$propdiv, $xml
+		save: function(o) { 
 			var $Div = o.$propdiv.find('div');
-			var propVals = o.propData.values;
-		    var checked = $Div.CswTristateCheckBox('value');
-			if (false === o.Multi || checked !== CswMultiEditDefaultValue ) {
-                propVals.checked = checked;
-            } else {
-                delete o.propData;
-            }
+            var attributes = { checked: $Div.CswTristateCheckBox('value') };
+		    preparePropJsonForSave(o.Multi, o, attributes);
 		}
 	};
 	
 	// Method calling logic
 	$.fn.CswFieldTypeLogical = function (method) {
-		
 		if ( methods[method] ) {
 		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
 		} else if ( typeof method === 'object' || ! method ) {

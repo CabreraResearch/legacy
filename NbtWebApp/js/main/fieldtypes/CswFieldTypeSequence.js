@@ -33,12 +33,14 @@
             }
         },
         save: function(o) {
-            var sequence = o.$propdiv.find('input').val();
-            if (false === o.Multi || sequence !== CswMultiEditDefaultValue) {
-                o.propData.values.sequence = sequence;    
-            } else {
-                delete o.propData;                
-            }   
+            var attributes = {
+                sequence: null
+            };
+            var $sequence = o.$propdiv.find('input');
+            if (false === isNullOrEmpty($sequence)) {
+                attributes.sequence = $sequence.val();
+            }
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

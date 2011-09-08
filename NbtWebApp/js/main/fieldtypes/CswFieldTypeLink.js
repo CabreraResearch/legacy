@@ -72,19 +72,20 @@
 				$edithref.clickOnEnter(o.$savebtn);
             }
         },
-        save: function(o) { 
+        save: function(o) {
+            var attributes = {
+                text: null,
+                href: null
+            };
             var $edittext = o.$propdiv.find('#' + o.ID + '_text');
-            var $edithref = o.$propdiv.find('#' + o.ID + '_href');
-			var propVals = o.propData.values;	
-
-            if (false === o.Multi || 
-                ( $edittext.val() !== CswMultiEditDefaultValue &&
-                  $edithref.val() !== CswMultiEditDefaultValue)) {
-                propVals.text = $edittext.val();
-			    propVals.href = $edithref.val();
-            } else {
-                delete o.propData;
+            if (false === isNullOrEmpty($edittext)) {
+                attributes.text = $edittext.val();
             }
+            var $edithref = o.$propdiv.find('#' + o.ID + '_href');
+			if (false === isNullOrEmpty($edithref)) {
+                attributes.href = $edithref.val();
+            }
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

@@ -39,12 +39,12 @@
 
         },
         save: function(o) { //$propdiv, $xml
+            var attributes = { value: null };
             var $SelectBox = o.$propdiv.find('select');
-            if (false === o.Multi || $SelectBox.val() !== CswMultiEditDefaultValue ) {
-                o.propData.values.value = $SelectBox.val();
-            } else {
-                delete o.propData;
+            if (false === isNullOrEmpty($SelectBox)) {
+                attributes.value = $SelectBox.val();
             }
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     
