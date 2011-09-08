@@ -499,7 +499,7 @@ namespace ChemSW.Nbt.WebServices
             // If we're doing a grid, we can only pick things in which the provided nodetype has a relationship to, 
             // rather than things that are related to the provided nodetype.
             // If this is a property grid, then the above rule does not apply to the first level.
-            bool Restrict = ( View.ViewMode == NbtViewRenderingMode.Grid ) &&
+            bool Restrict = ( View.ViewMode == NbtViewRenderingMode.Grid || View.ViewMode == NbtViewRenderingMode.Table ) &&
                             ( View.Visibility != NbtViewVisibility.Property || Level >= 2 );
 
             CswNbtMetaDataNodeType FirstVersionNodeType = _CswNbtResources.MetaData.getNodeType( FirstVersionId );
@@ -632,7 +632,7 @@ namespace ChemSW.Nbt.WebServices
             // If we're doing a grid, we can only pick things in which the provided nodetype has a relationship to, 
             // rather than things that are related to the provided nodetype.
             // If this is a property grid, then the above rule does not apply to the first level.
-            bool Restrict = ( View.ViewMode == NbtViewRenderingMode.Grid ) &&
+            bool Restrict = ( View.ViewMode == NbtViewRenderingMode.Grid || View.ViewMode == NbtViewRenderingMode.Table ) &&
                             ( View.Visibility != NbtViewVisibility.Property || Level >= 2 );
 
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
