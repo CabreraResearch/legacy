@@ -814,11 +814,6 @@
             var $root = makeViewRootHtml(stepno, viewJson, types)
                             .appendTo($ret);
 
-            if(viewJson.hasOwnProperty(childPropNames.childrelationships.name)) {
-                var rootRelationships = viewJson[childPropNames.childrelationships.name];
-                makeViewRelationshipsRecursive(stepno, rootRelationships, types, $root);
-            }
-            
             return { html: xmlToString($ret), types: types };
         }
         
@@ -830,7 +825,18 @@
             var linkclass = viewEditClasses.vieweditor_viewrootlink.name;
 
             var $ret = makeViewListItem(arbid, linkclass, name, false, stepno, childPropNames.root, rel);
-            return $ret;
+            
+            if(itemJson.hasOwnProperty(childPropNames.childrelationships.name)) {
+                var rootRelationships = itemJson[childPropNames.childrelationships.name];
+                makeViewRelationshipsRecursive(stepno, rootRelationships, types, $ret);
+            }
+            
+			var $selectLi = makeChildSelect(stepno, arbid, childPropNames.childrelationships);
+            if (false === isNullOrEmpty($selectLi)) {
+                $ret.append($selectLi);
+            }
+
+			return $ret;
         }
         
         function makeViewRelationshipHtml(stepno, itemJson, types) {
