@@ -19,13 +19,14 @@ namespace ChemSW.Nbt.WebServices
     {
         private readonly CswNbtResources _CswNbtResources;
         private readonly ICswNbtUser _ThisUser;
-
+        private readonly bool _IsMultiEdit;
         private string HistoryTabPrefix = "history_";
 
-        public CswNbtWebServiceTabsAndProps( CswNbtResources CswNbtResources )
+        public CswNbtWebServiceTabsAndProps( CswNbtResources CswNbtResources, bool Multi = false )
         {
             _CswNbtResources = CswNbtResources;
             _ThisUser = _CswNbtResources.CurrentNbtUser;
+            _IsMultiEdit = Multi;
         }
 
         private CswNbtNode _getNode( string NodeId, string NodeKey, CswDateTime Date )
@@ -108,7 +109,8 @@ namespace ChemSW.Nbt.WebServices
 							}
 
 							// History tab
-							if( Date.IsNull &&
+                    if( false == CswConvert.ToBoolean( _IsMultiEdit ) &&
+                        Date.IsNull &&
 								CswConvert.ToBoolean( _CswNbtResources.getConfigVariableValue( "auditing" ) ) )
 							{
 								if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType ) )
@@ -135,13 +137,13 @@ namespace ChemSW.Nbt.WebServices
 
 
         /// <summary>
-        /// Returns XML for all properties in a given tab
+        /// Returns JObject for all properties in a given tab
         /// </summary>
 		public JObject getProps( NodeEditMode EditMode, string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date )
         {
             JObject Ret = new JObject();
 
-			if( TabId.StartsWith( HistoryTabPrefix ) )
+            if( false == _IsMultiEdit && TabId.StartsWith( HistoryTabPrefix ) )
 			{
 				CswNbtNode Node = _getNode( NodeId, NodeKey, Date );
 				if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType ) )
@@ -186,7 +188,6 @@ namespace ChemSW.Nbt.WebServices
 			} // if-else( TabId.StartsWith( HistoryTabPrefix ) )
             return Ret;
         } // getProps()
-
 
         /// <summary>
         /// Returns XML for a single property and its conditional properties
@@ -270,7 +271,6 @@ namespace ChemSW.Nbt.WebServices
 
             } // if-else( EditMode == NodeEditMode.AddInPopup )
         } // addProp()
-
 
         private JObject _makePropJson( NodeEditMode EditMode, JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 Row, Int32 Column )
         {
@@ -529,7 +529,7 @@ namespace ChemSW.Nbt.WebServices
                 if( SubPropsObj.HasValues )
                 {
                     foreach( JObject ChildPropObj in SubPropsObj.Properties()
-                                .Where( ChildProp => null != ChildProp.Value )
+                                .Where( ChildProp => null != ChildProp.Value && ChildProp.Value.HasValues )
                                 .Select( ChildProp => (JObject) ChildProp.Value )
                                 .Where( ChildPropObj => ChildPropObj.HasValues ) )
                     {

@@ -834,8 +834,8 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('DeleteNodeDialog', {
-						nodename: nodename,
-						nodeid: nodeid,
+						nodenames: [ nodename ],
+						nodeids: [ nodeid ],
 						onDeleteNode: o.onAlterNode,
 						NodeCheckTreeId: o.NodeCheckTreeId,
 						Multi: o.Multi

@@ -15,8 +15,8 @@
 				ID: '',
 				nodeid: '',
 				JustDateColumn: false,
-				onEditRow: function(date) {},
-				onSelectRow: function(date) {},
+				onEditRow: null, //function(date) {},
+				onSelectRow: null, //function(date) {},
 				selectedDate: '',
 				allowEditRow: true
 			};
@@ -53,7 +53,9 @@
 						    onSelectRow: function(rowid) {
 							    if (!preventSelectTrigger && false === isNullOrEmpty(rowid)) {
 								    var cellVal = grid.getValueForColumn('CHANGEDATE', rowid);
-								    o.onSelectRow(cellVal);
+							        if (isFunction(o.onSelectRow)) {
+							            o.onSelectRow(cellVal);
+							        }
 							    }
 						    },
                             add: false,
@@ -66,7 +68,9 @@
 					        editfunc: function(rowid) {
 								if (false === isNullOrEmpty(rowid)) {
 								    var cellVal = grid.getValueForColumn('CHANGEDATE', rowid);
-									o.onEditRow(cellVal);
+									if (isFunction(o.onEditRow)) {
+								        o.onEditRow(cellVal);
+								    }
 								} else {
 									alert('Please select a row to edit');
 								}
