@@ -64,7 +64,7 @@
 				$('<a href="#">As Report</a>')
 					.appendTo($linkdiv)
 					.click(function() { 
-						openPopup('NodeReport.html?nodeid=' + o.nodeids[0] + '&cswnbtnodekey=' + o.nodekeys[0], 600, 800); 
+						openPopup('NodeReport.html?nodeid=' + tryParseObjByIdx(o.nodeids, 0) + '&cswnbtnodekey=' + tryParseObjByIdx(o.nodekeys, 0), 600, 800); 
 					});
 			}
 		}
@@ -85,8 +85,8 @@
 		{
 			var jsonData = {
 				EditMode: o.EditMode,
-				NodeId: o.nodeids[0],
-				SafeNodeKey: o.nodekeys[0],
+				NodeId: tryParseObjByIdx(o.nodeids, 0),
+				SafeNodeKey: tryParseObjByIdx(o.nodekeys, 0),
 				NodeTypeId: o.nodetypeid,
 				Date: o.date,
 				filterToPropId: o.filterToPropId,
@@ -161,9 +161,9 @@
 		function getProps($tabcontentdiv, tabid) {
 			var jsonData = {
 				EditMode: o.EditMode,
-				NodeId: o.nodeids[0],
+				NodeId: tryParseObjByIdx(o.nodeids, 0),
 				TabId: tabid, 
-				SafeNodeKey: o.nodekeys[0],
+				SafeNodeKey: tryParseObjByIdx(o.nodekeys, 0),
 				NodeTypeId: o.nodetypeid,
 				Date: o.date,
 			    Multi: o.Multi
@@ -223,7 +223,7 @@
                                 {
                                     var fieldOpt = {
                                         fieldtype: thisProp.fieldtype,
-                                        nodeid: o.nodeids[0],
+                                        nodeid: tryParseObjByIdx(o.nodeids, 0),
                                         relatednodeid: o.relatednodeid,
                                         propid: propId,
                                         $propdiv: $propcell.children('div'),
@@ -232,7 +232,7 @@
                                         onReload: function() { getProps($tabcontentdiv, tabid); },
                                         EditMode: o.EditMode,
                                         Multi: o.Multi,
-                                        cswnbtnodekey: o.nodekeys[0]
+                                        cswnbtnodekey: tryParseObjByIdx(o.nodekeys, 0)
                                     };
 
                                     _updateSubProps(fieldOpt, propId, thisProp, $propcell, $tabcontentdiv, tabid, configOn, $savetab);
@@ -445,7 +445,7 @@
 			    
 			    var fieldOpt = {
 					fieldtype: propData.fieldtype,
-					nodeid: o.nodeids[0],
+					nodeid: tryParseObjByIdx(o.nodeids, 0),
 					relatednodeid: o.relatednodeid,
 					propid: propId,
 					$propdiv: $('<div/>').appendTo($propcell),
@@ -453,7 +453,7 @@
 					propData: propData,
 					onchange: function() { },
 					onReload: function() { getProps($tabcontentdiv, tabid); },
-					cswnbtnodekey: o.nodekeys[0],
+					cswnbtnodekey: tryParseObjByIdx(o.nodekeys, 0),
 					EditMode: o.EditMode,
 			        Multi: o.Multi,
 					onEditView: o.onEditView,
@@ -528,7 +528,7 @@
 			// update the propxml from the server
 			var jsonData = {
 				EditMode: fieldOpt.editMode,
-				NodeId: o.nodeids[0],
+				NodeId: tryParseObjByIdx(o.nodeids, 0),
 				SafeNodeKey: fieldOpt.cswnbtnodekey,
 				PropId: propId,
 				NodeTypeId: o.nodetypeid,
@@ -551,8 +551,8 @@
 				_updatePropJsonFromForm($layouttable, propsData);
 				var data = {
 					EditMode: o.EditMode,
-					NodeIds: o.nodeids,
-					SafeNodeKeys: o.nodekeys,
+					NodeIds: o.nodeids.join(','),
+					SafeNodeKeys: o.nodekeys.join(','),
 					TabId: tabid,
 					NodeTypeId: o.nodetypeid,
 					NewPropsJson: JSON.stringify(propsData),
@@ -621,7 +621,7 @@
 				    $propdiv: '',
 				    $propCell: '',
 				    fieldtype: thisProp.fieldtype,
-				    nodeid: o.nodeids[0],
+				    nodeid: tryParseObjByIdx(o.nodeids, 0),
                     Multi: o.Multi,
 				    cswnbtnodekey: o.cswnbtnodekey
 				};

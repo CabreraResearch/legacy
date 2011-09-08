@@ -226,8 +226,26 @@ function tryParseNumber(inputNum, defaultNum)
 }
 
 var dateTimeMinValue = new Date('1/1/0001 12:00:00 AM');
-function tryParseElement(elementId, $context)
-{
+
+function tryParseObjByIdx(object, index, defaultStr) {
+    /// <summary>
+	///   Attempts to fetch the value at an array index
+	/// </summary>
+	/// <param name="object" type="Object"> Object or array to parse </param>
+	/// <param name="index" type="String"> Index or property to find </param>
+    /// <param name="defaultStr" type="String"> Optional. String to use instead of '' if not index does not exist. </param>
+	/// <returns type="String">Parsed string</returns>
+    var ret = '';
+    if (false === isNullOrEmpty(defaultStr)) {
+        ret = defaultStr;
+    }
+    if((isArray(object) && object.indexOf(index) !== -1) || object.hasOwnProperty(index)) {
+        ret = tryParseString(object[index]);
+    } 
+    return ret;
+}
+
+function tryParseElement(elementId, $context) {
 	/// <summary>
 	///   Attempts to fetch an element from the DOM first through jQuery, then through JavaScript
 	/// </summary>
