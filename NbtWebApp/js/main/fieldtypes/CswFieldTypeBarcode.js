@@ -52,7 +52,7 @@
             }
         },
         save: function(o) {
-            var attributes = { barcode: barcode };
+            var attributes = { barcode: null };
             var $TextBox = o.$propdiv.find('input');
             if(false === isNullOrEmpty($TextBox)) {
                 attributes.barcode = $TextBox.val();
