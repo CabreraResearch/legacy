@@ -29,10 +29,10 @@
 				jmolInitialize(JmolFolder);
 				jmolSetDocument(false);
 				var myApplet = jmolAppletInline('300px', mol);
-				$Div.append(myApplet);
+				$cell11.append(myApplet); 
                 var myCheck = jmolCheckbox("spin on", "spin off", "Rotate");
-                $Div.append(myCheck);
-
+                $cell21.append(myCheck);
+                //$Div.css('z-index', '0'); //this doesn't prevent jmol overlapping dialog
             }
 
             if (!o.ReadOnly && o.EditMode != EditMode.AddInPopup.name) {
@@ -43,11 +43,11 @@
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',
                         onClick: function ($ImageDiv) {
-
                             $.CswDialog('EditMolDialog', {
                                 TextUrl: '/NbtWebApp/wsNBT.asmx/saveMolProp',
                                 FileUrl: '/NbtWebApp/wsNBT.asmx/saveMolPropFile',
                                 PropId: o.propData.id,
+                                molData: mol,
                                 onSuccess: function () {
                                     o.onReload();
                                 }

@@ -513,6 +513,7 @@
 								TextUrl: '',
                                 FileUrl: '',
                                 PropId: '',
+                                molData: '',
 								onSuccess: function() { }
 							};
 							if(options) {
@@ -542,7 +543,7 @@
                                                                     });
 							
 							$div.append('<br/>MOL Text (Paste from Clipboard):<br/>');
-							var $moltxtarea = $('<textarea id="moltxt" rows="4" cols="40"></textarea>')
+							var $moltxtarea = $('<textarea id="moltxt" rows="4" cols="40">' + o.molData + '</textarea>')
 													.appendTo($div);
 							$div.append('<br/>');
                             var $txtsave = $div.CswButton({ID: 'txt_save', 
