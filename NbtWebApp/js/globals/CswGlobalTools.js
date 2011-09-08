@@ -358,9 +358,9 @@ function crawlObject(thisObj, onSuccess, doRecursion) {
     /// <param name="doRecursion" type="Boolean"> If true, recurse on all properties </param>
     /// <returns type="Object">Returns the return of onSuccess</returns>
 
+	var KeepGoing = true;
 	if (isFunction(onSuccess) && $.isPlainObject(thisObj))
  	{
-		var KeepGoing = true;
 		$.each(thisObj, function (childKey, value)
 		{
 			if (KeepGoing)
@@ -370,10 +370,11 @@ function crawlObject(thisObj, onSuccess, doRecursion) {
 			}
 			if (KeepGoing && doRecursion)
 			{
-				crawlObject(childObj, onSuccess, doRecursion);
+				KeepGoing = crawlObject(childObj, onSuccess, doRecursion);
 			}
 		});
 	}
+	return KeepGoing;
 } // crawlObject()
 
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
