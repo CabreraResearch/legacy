@@ -53,7 +53,7 @@
 								onEditNode: o.onEditNode
 							};
 							if (false === isNullOrEmpty(rowid))  {
-								editOpt.nodeid = grid.getValueForColumn('NODEIDSTR', rowid);
+								editOpt.nodeid = grid.getValueForColumn('NODEPK', rowid);
 								$.CswDialog('EditNodeDialog', editOpt);
 							} else {
 								alert('Please select a row to edit');
@@ -67,7 +67,7 @@
 
 			    var grid = new CswGrid(g, $inspGrid);
 			    grid.hideColumn('NODEID');
-			    grid.hideColumn('NODEIDSTR');
+			    grid.hideColumn('NODEPK');
 
 			}, // success
 			'error': function() 

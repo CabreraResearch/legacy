@@ -36,6 +36,15 @@ var CswInput_Types = {
 	week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' }
 };
 
+var CswViewMode = {
+    grid: { name: 'Grid' },
+    tree: { name: 'Tree' },
+    list: { name: 'List' },
+    table: { name: 'Table' }
+};
+
+var CswMultiEditDefaultValue = '[Unchanged]';
+
 // for CswCookie
 var CswCookieName = {
 	SessionId: 'CswSessionId',

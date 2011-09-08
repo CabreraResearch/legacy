@@ -245,13 +245,8 @@ namespace ChemSW.Nbt.WebServices
 
             if( null != View )
             {
-                // MULTI-EDIT
-                if( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List )
-                {
-                    Ret["Multi-Edit"] = new JObject( new JProperty( "action", "multiedit" ) );
-                }
-
-            } // if( null != View )
+                Ret["Multi-Edit"] = new JObject( new JProperty( "action", "multiedit" ) );
+            }
 
             return Ret;
         } // getMenu()

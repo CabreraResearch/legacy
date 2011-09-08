@@ -11,7 +11,8 @@ function CswGrid(options, $parent) {
     var $gridTable;
     var $gridPager;
     var $topPager;
-    
+    var gridTableId;
+    var multiEdit = false;
     //#region private
     
     (function() {
@@ -31,7 +32,7 @@ function CswGrid(options, $parent) {
                 emptyrecords: 'No Results',
                 height: '300',
                 loadtext: 'Loading...',
-	            //multiselect: false,
+	            multiselect: false,
                 pager: $gridPager,
                 rowList: [10, 25, 50],
                 rowNum: 10,
@@ -90,31 +91,37 @@ function CswGrid(options, $parent) {
         };
 
         $.extend(true, o, options);
-
-        var gridTableId = makeId({ ID: o.gridTableID, prefix: o.ID });
+        makeGrid(o);
+    })();
+    
+    function makeGrid(o) {
+        multiEdit = o.gridOpts.multiselect;
+        gridTableId = makeId({ ID: o.gridTableID, prefix: o.ID });
         if (isNullOrEmpty($parent)) {
             $parent = $('<div id="' + gridTableId + '_parent"></div>');
         }
-
+        
         $gridTable = $parent.CswTable('init', { ID: gridTableId });
 
         var gridPagedId = makeId({ ID: o.gridPagerID, prefix: o.ID });
         o.gridOpts.pager = $gridPager = $parent.CswDiv('init', { ID: gridPagedId });
 
         if (o.canEdit) {
-            $.extend(o.optNav, o.optNavEdit);
+            $.extend(true, o.optNav, o.optNavEdit);
         }
         if (o.canDelete) {
-            $.extend(o.optNav, o.optNavDelete);
+            $.extend(true, o.optNav, o.optNavDelete);
         }
+        
         if (o.hasPager) {
             $gridTable.jqGrid(o.gridOpts)
                       .navGrid('#' + $gridPager.CswAttrDom('id'), o.optNav, { }, { }, { }, o.optSearch, { });
         } else {
             $gridTable.jqGrid(o.gridOpts);    
         }
+        $gridTable.data(gridTableId + '_data', o);
         $topPager = $('#' + $gridTable[0].id + '_toppager')[0];
-    })();
+    }
     
   	// Row scrolling adapted from 
 	// http://stackoverflow.com/questions/2549466/is-there-a-way-to-make-jqgrid-scroll-to-the-bottom-when-a-new-row-is-added/2549654#2549654
@@ -140,6 +147,11 @@ function CswGrid(options, $parent) {
     
     function getSelectedRowId() {
         var rowid = $gridTable.jqGrid('getGridParam', 'selrow');
+        return rowid;
+    }
+    
+    function getSelectedRowsIds() {
+        var rowid = $gridTable.jqGrid('getGridParam', 'selarrrow');
         return rowid;
     }
     
@@ -205,6 +217,61 @@ function CswGrid(options, $parent) {
         }
     }
     
+    function changeGridOpts(opts) {
+        var currentOpts = $gridTable.data(gridTableId + '_data');
+        $.extend(true, currentOpts, opts);
+        $parent.empty();
+        makeGrid(currentOpts);
+    }
+    
+    function opGridRows(opts, rowid, onSelect, onEmpty) {
+        var ret = false;
+        var haveSelectedRows = false;
+        if (false === multiEdit) {
+            if (isNullOrEmpty(rowid)) {
+                rowid = getSelectedRowId();
+            }
+            if (false === isNullOrEmpty(rowid)) {
+                haveSelectedRows = true;
+                crawlObject(opts, function(prop, key, parent) {
+                    if (false === isFunction(parent[key])) {
+                        parent[key] = getValueForColumn(key, rowid);
+                    }
+                }, false);
+            }
+        } else { // if (false === multiEdit)
+            var rows = getSelectedRowsIds();
+            if (rows.length > 0) {
+                haveSelectedRows = true;
+                //loop once to guarantee we have Arrays
+                crawlObject(opts, function(prop, key, parent) {
+                    if (false === isFunction(parent[key])) {
+                        parent[key] = [];
+                    }
+                }, false);
+                for (var i = 0; i < rows.length; i++) {
+                    crawlObject(opts, function(prop, key, parent) {
+                        if (isArray(parent[key])) {
+                            rowid = rows[i];
+                            parent[key].push(getValueForColumn(key, rowid));
+                        }
+                    }, false);
+                }
+            }
+        } // else
+        
+        if (haveSelectedRows) {
+            if (isFunction(onSelect)) {
+                opts.Multi = multiEdit;
+                ret = onSelect(opts);
+            }
+        } 
+        else if (isFunction(onEmpty)) {
+            onEmpty(opts);
+    	}
+        return ret;
+    }
+    
     this.$gridTable = $gridTable;
     this.$gridPager = $gridPager;
     this.$topPager = $topPager;
@@ -214,6 +281,8 @@ function CswGrid(options, $parent) {
     this.getRowIdForVal = getRowIdForVal;
     this.setSelection = setSelection;
     this.getValueForColumn = getValueForColumn;
+    this.changeGridOpts = changeGridOpts;
+    this.opGridRows = opGridRows;
     
     //#region public, priveleged
 }
