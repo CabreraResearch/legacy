@@ -327,11 +327,11 @@ function ObjectHelper(obj) {
     
     function remove(key, value) {
     	var ret;
-    	var onSuccess = function (childObj, childKey)
+    	var onSuccess = function (childObj, childKey, parentObj)
     	{
     		if (foundMatch(childObj, key, value))
     		{
-    			delete thisObj[childKey];
+				delete parentObj[childKey];
     			ret = true;
     			//eval('break;');
     			return false;
