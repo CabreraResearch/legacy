@@ -14,7 +14,7 @@
 <link rel="stylesheet" type="text/css" href="js/main/fieldtypes/_CswFieldTypes.css" />
 
 <script type="text/javascript">
-	var debug = true;
+	var debug = false;
 
 	if (debug)
 	{
@@ -28,8 +28,8 @@
 		document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/fileuploader.js"><\/script>');
 	    document.write('<script type="text/javascript" src="js/thirdparty/js/modernizr-2.0.3.js"><\/script>');
-	    document.write('<script type="text/javascript" src="js/thirdparty/js/jmol/Jmol.js"><\/script>');
-	  
+		document.write('<script type="text/javascript" src="js/thirdparty/js/jmol-12.0.49/Jmol.js"><\/script>');
+		
 		// jqGrid 
 		document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/jqGrid-4.0/js/i18n/grid.locale-en.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/jqGrid-4.0/js/jquery.jqGrid.src.js"><\/script>');
@@ -97,6 +97,7 @@
 	    
 		// Node
 		document.write('<script type="text/javascript" src="js/main/node/CswNodeGrid.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/main/node/CswNodePreview.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/main/node/CswNodeSelect.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/main/node/CswNodeTabs.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/main/node/CswNodeTree.js"><\/script>');
@@ -157,12 +158,14 @@
 		// Plugins
 		document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.min.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/fileuploader.js"><\/script>');
-
+		document.write('<script type="text/javascript" src="js/thirdparty/js/modernizr-2.0.3.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/thirdparty/js/jmol-12.0.49/Jmol.js"><\/script>');
+		
 		// jqGrid
 		document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/jqGrid-4.0/js/i18n/grid.locale-en.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/jqGrid-4.0/js/jquery.jqGrid.min.js"><\/script>');
 		document.write('<script type="text/javascript" src="js/thirdparty/js/gserializer.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/thirdparty/js/modernizr-2.0.3.min.js"><\/script>');
+
 		// ChemSW
 		document.write('<script type="text/javascript" src="js/CswAll.min.js"><\/script>');
 	}

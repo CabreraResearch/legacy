@@ -15,29 +15,17 @@ namespace ChemSW.Nbt.Schema
 	/// <summary>
 	/// Updates the schema to version 01I-14
 	/// </summary>
-	public class CswUpdateSchemaTo01I14 : ICswUpdateSchemaTo
+	public class CswUpdateSchemaTo01I14 : CswUpdateSchemaTo
 	{
-		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 14 ); } }
+		public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
 
-		private CswProdUpdtRsrc _CswProdUpdtRsrc = null;
-		public CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'I', 14 ); } }
-		public CswUpdateSchemaTo01I14( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+		public override void update()
 		{
-			_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-			_CswProdUpdtRsrc = new CswProdUpdtRsrc( _CswNbtSchemaModTrnsctn );
-		}
-
-
-		public string Description { get { return ( _CswProdUpdtRsrc.makeTestCaseDescription( SchemaVersion ) ); } }
-
-
-		public void update()
-		{
-            CswTableUpdate FieldTypesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I14_FieldTypes_Update", "field_types" );
-            DataTable FieldTypeTable = FieldTypesUpdate.getTable("where fieldtype='" + CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() + "'");
-            FieldTypeTable.Rows[0]["deleted"] = CswConvert.ToDbVal(false);
-            FieldTypesUpdate.update( FieldTypeTable );
-
+			CswTableUpdate FieldTypesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I14_FieldTypes_Update", "field_types" );
+			DataTable FieldTypeTable = FieldTypesUpdate.getTable( null, string.Empty, Int32.MinValue, "where fieldtype='" + CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() + "'", false, null, Int32.MinValue, Int32.MinValue, false );
+			FieldTypeTable.Rows[0]["deleted"] = CswConvert.ToDbVal( false );
+			FieldTypesUpdate.update( FieldTypeTable );
 		} // Update()
 
 

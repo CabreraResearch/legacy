@@ -31,11 +31,12 @@
                 var $TextBox = $('<pre>' + mol + '</pre>')
 									.appendTo($cell11);
 
-                        jmolInitialize("./js/thirdparty/js/jmol");
-                        jmolLoadInline(mol);
-                        jmolApplet(300, "");
-                        jmolCheckbox("spin on", "spin off", "0");
-
+				var JmolFolder = "./js/thirdparty/js/jmol-12.0.49/";
+				jmolInitialize(JmolFolder);
+				jmolSetDocument(false);
+				var myApplet = jmolAppletInline('300px', mol);
+                jmolCheckbox("spin on", "spin off", "0");
+				$Div.append(myApplet);
 
                 //$cell21.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');
             }

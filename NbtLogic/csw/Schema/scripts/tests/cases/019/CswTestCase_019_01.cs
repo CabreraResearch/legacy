@@ -14,31 +14,28 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_019_01 : ICswUpdateSchemaTo
+    public class CswTestCase_019_01 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_019.Purpose, "create and use test tables" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_019.Purpose, "create and use test tables" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_019 _CswTstCaseRsrc_019 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_019_01( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_019_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_019 = (CswTstCaseRsrc_019) CswTstCaseRsrc;
+			_CswTstCaseRsrc_019 = (CswTstCaseRsrc_019) CswTstCaseRsc;
 
         }//ctor
 
-        public void update()
+        public override void update()
         {
-            _CswTstCaseRsrc_019.makeArbitraryTables();
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_019.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+			
+			_CswTstCaseRsrc_019.makeArbitraryTables();
             _CswTstCaseRsrc_019.makeArbitraryTableData();
 
             CswTableSelect CswTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( Description, _CswTstCaseRsrc_019.ArbitraryTableName_01 );

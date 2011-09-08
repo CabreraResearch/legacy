@@ -55,9 +55,9 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeCreateNode();
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
 
             // BZ 7845
@@ -71,9 +71,9 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtPropertySetSchedulerImpl.setLastFutureDate();
         } // afterCreateNode()
 
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode();
+            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
 
             // BZ 7845

@@ -543,7 +543,7 @@ namespace ChemSW.NbtWebControls
             {
                 if( NodeTypeProp.FieldTypeRule.SearchAllowed &&
                     ( !_IsQuickSearch || NodeTypeProp.IsQuickSearch ) &&
-                    ( FilterPropertiesToTabId == Int32.MinValue || NodeTypeProp.NodeTypeTab.TabId == FilterPropertiesToTabId ) &&
+                    ( FilterPropertiesToTabId == Int32.MinValue || NodeTypeProp.EditLayout.Tab.TabId == FilterPropertiesToTabId ) &&
                     ( FilterOutPropertyId == Int32.MinValue || NodeTypeProp.PropId != FilterOutPropertyId ) &&
                     ( AllowedFieldTypes.Count == 0 || AllowedFieldTypes.Contains( NodeTypeProp.FieldType.FieldType ) ) &&
                     ( !FilterOutConditionalProperties || !NodeTypeProp.hasFilter() ) )

@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Config
         private CswSetupVbls _CswSetupVbls = null;
         public CswSetupVblsNbt( SetupMode SetupMode )
         {
-            _CswSetupVbls = new CswSetupVbls( SetupMode, CswTools.getConfigurationFilePath( SetupMode ) );
+            _CswSetupVbls = new CswSetupVbls( SetupMode );
 
             //_CswSetupVbls.addVblDef( "LogFileLocation", "c:\\", "Location of logfile in local filesystem.", false );
             //_CswSetupVbls.addVblDef( "LogOutputToFlatText", "0", "If 1, log data will be sent to a flat txt file in the LogFileLocation.", false );
@@ -36,12 +36,6 @@ namespace ChemSW.Nbt.Config
 
 
         public SetupMode SetupMode { get { return ( _CswSetupVbls.SetupMode ); } }
-
-        public void setSetupMode( SetupMode SetupMode, string SetupFilePath )
-        {
-            _CswSetupVbls.setSetupMode( SetupMode, SetupFilePath );
-        }//SetSetupMode()
-
 
         public bool doesSettingExist( string VblName )
         {

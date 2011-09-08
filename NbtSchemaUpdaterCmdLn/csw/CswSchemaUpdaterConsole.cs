@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Specialized;
 using System.Data;
 using System.Threading;
 using System.Reflection;
@@ -23,37 +25,43 @@ namespace ChemSW.Nbt.Schema.CmdLn
     /// </summary>
     public class CswSchemaUpdaterConsole
     {
+		private CswDbCfgInfoNbt _CswDbCfgInfoNbt = null;
+		private CswSetupVblsNbt _CswSetupVblsNbt = null;
+		private CswSchemaUpdateThread _CswSchemaUpdateThread = null;
 
+		private const string _Separator_OrArgs = " | ";
+		private const string _Separator_NuLine = "\r\n";
+		private const string _Separator_Arg = "-";
+		private const string _ArgKey_Help = "help";
+		private const string _ArgKey_AccessId = "accessid";
+		private const string _ArgKey_All = "all";
+		private const string _ArgKey_Mode = "mode";
+		private const string _ArgVal_Test = "test";
+		private const string _ArgKey_Describe = "describe";
+		private const string _ArgKey_StartAtTestCase = "start";
+		private const string _ArgKey_EndAtTestCase = "end";
+		private const string _ArgKey_IgnoreTestCasesCsv = "ignore";
 
-        private string _VersionInfo
-        {
-            get
-            {
-                string ReturnVal = string.Empty;
+		public CswSchemaUpdaterConsole()
+		{
+			_CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe );
+			_CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
+		}//ctor
 
-                ReturnVal = _Separator_NuLine + "ChemSW NBT SchemaUpdater version " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-                if( ( null != _CswSchemaUpdater ) && ( string.Empty != _CswNbtResources.AccessId ) )
-                {
-                    ReturnVal += _Separator_NuLine + _Separator_NuLine + "Minimum schema version: " + _CswSchemaUpdater.MinimumVersion;
-                    ReturnVal += _Separator_NuLine + "Latest schema version: " + _CswSchemaUpdater.LatestVersion;
-                }
-
-                return ( ReturnVal );
-            }
-        }
+		private string _VersionInfo
+		{
+			get
+			{
+				return _Separator_NuLine + "ChemSW NBT SchemaUpdater version " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+			}
+		}
 
         private string _Help
         {
             get
             {
-
                 string ReturnVal = string.Empty;
-
                 ReturnVal = _VersionInfo;
-
-
-
 
                 ReturnVal += _Separator_NuLine + _Separator_NuLine + "Usage: " +
                                             _Separator_NuLine + "NbtSchemaUpdate " + _Separator_Arg + _ArgKey_Help + _Separator_OrArgs + _Separator_Arg + _ArgKey_All + _Separator_OrArgs + _Separator_Arg + _ArgKey_AccessId + " <AccessId>" +
@@ -67,39 +75,6 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 return ( ReturnVal );
             }
         }
-
-        private CswDbCfgInfoNbt _CswDbCfgInfoNbt = null;
-        private CswSetupVblsNbt _CswSetupVblsNbt = null;
-        private CswSchemaUpdater _CswSchemaUpdater = null;
-        private CswNbtResources _CswNbtResources = null;
-        private CswSchemaUpdateThread _CswSchemaUpdateThread = null;
-        private CswConsoleOutput _CswConsoleOutput = null;
-
-
-
-        public CswSchemaUpdaterConsole()
-        {
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe );
-            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
-        }//ctor
-
-
-
-
-        private const string _Separator_OrArgs = " | ";
-        private const string _Separator_NuLine = "\r\n";
-        private const string _Separator_Arg = "-";
-        private const string _ArgKey_Help = "help";
-        private const string _ArgKey_AccessId = "accessid";
-        private const string _ArgKey_All = "all";
-        private const string _ArgKey_Mode = "mode";
-        private const string _ArgVal_Test = "test";
-        private const string _ArgKey_Describe = "describe";
-        private const string _ArgKey_StartAtTestCase = "start";
-        private const string _ArgKey_EndAtTestCase = "end";
-        private const string _ArgKey_IgnoreTestCasesCsv = "ignore";
-
-
 
         private Dictionary<string, string> _UserArgs = new Dictionary<string, string>();
         private void _convertArgsToDictionary( string[] args )
@@ -137,29 +112,17 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         }//_convertArgsToDictionary() 
 
-
-
-        private void _makeResources( string AccessId )
-        {
-            //_CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
-            _CswNbtResources.InitCurrentUser = InitUser;
-
-
-            if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
-            {
-                _CswSchemaScripts = new CswSchemaScriptsTest( _CswNbtResources, _StartAtTestCase, _EndAtTestCase, _TestCasesToIgnore );
-            }
-            else
-            {
-                _CswSchemaScripts = new CswSchemaScriptsProd( _CswNbtResources );
-            }
-
-
-            _CswSchemaUpdater = new CswSchemaUpdater( _CswNbtResources, _CswSchemaScripts );
-            _CswSchemaUpdateThread = new CswSchemaUpdateThread( _CswSchemaUpdater );
-
-            _CswNbtResources.AccessId = AccessId;
-
+        private CswNbtResources _makeResources( string AccessId )
+		{
+			CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, 
+																			  CswTools.getConfigurationFilePath( SetupMode.NbtExe ), 
+																			  false, false );
+			ret.InitCurrentUser = InitUser;
+			if( AccessId != string.Empty )
+			{
+				ret.AccessId = AccessId;
+			}
+			return ret;
         }//_makeResources()
 
         public ICswUser InitUser( ICswResources Resources )
@@ -167,190 +130,208 @@ namespace ChemSW.Nbt.Schema.CmdLn
             return new CswNbtSystemUser( Resources, "_SchemaUpdaterUser" );
         }
 
-        private ICswSchemaScripts _CswSchemaScripts = null;
-        private Int32 _StartAtTestCase = 0;
-        private Int32 _EndAtTestCase = 0;
-        private List<string> _TestCasesToIgnore = new List<string>();
-
         public void process( string[] args )
         {
+			CswNbtResources CswNbtResources = _makeResources( string.Empty );
+			CswConsoleOutput CswConsoleOutput = new CswConsoleOutput( CswNbtResources.CswLogger );
 
-            try
-            {
+			try
+			{
+				_convertArgsToDictionary( args );
 
-                _convertArgsToDictionary( args );
-                _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.NbtExe ), false, false );
-                _CswConsoleOutput = new CswConsoleOutput( _CswNbtResources.CswLogger );
+				if( _UserArgs.ContainsKey( _ArgKey_Help ) )
+				{
+					CswConsoleOutput.write( _Help );
+				}
+				else
+				{
+					StringCollection AccessIdsToUpdate = new StringCollection();
 
-                if( _UserArgs.ContainsKey( _ArgKey_StartAtTestCase ) )
-                {
-                    _StartAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey_StartAtTestCase] );
-                }
+					if( _UserArgs.ContainsKey( _ArgKey_AccessId ) )
+					{
+						AccessIdsToUpdate.Add( _UserArgs[_ArgKey_AccessId] );
+					}
+					else if( _UserArgs.ContainsKey( _ArgKey_All ) )
+					{
+						foreach( string AccessId in _CswDbCfgInfoNbt.AccessIds )
+						{
+							AccessIdsToUpdate.Add( AccessId );
+						}
+					}
+					else
+					{
+						//if the user's input does not fit our semantic space, he needs help (as do we all)
+						CswConsoleOutput.write( _Help );
+					}
 
-                if( _UserArgs.ContainsKey( _ArgKey_EndAtTestCase ) )
-                {
-                    _EndAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey_EndAtTestCase] );
-                }
+					foreach( string CurrentAccessId in AccessIdsToUpdate )
+					{
+						if( false == _CswDbCfgInfoNbt.AccessIds.Contains( CurrentAccessId ) )
+						{
+							CswConsoleOutput.write( "AccessId " + CurrentAccessId + " unknown" );
+						}
+						else
+						{
+							CswNbtResources.AccessId = CurrentAccessId;
 
-                if( _UserArgs.ContainsKey( _ArgKey_IgnoreTestCasesCsv ) )
-                {
-                    CswCommaDelimitedString CswCommaDelimitedString = new CswCommaDelimitedString();
-                    CswCommaDelimitedString.FromString( _UserArgs[_ArgKey_IgnoreTestCasesCsv] );
-                    _TestCasesToIgnore = CswCommaDelimitedString.ToList<string>();
-                }//
+							// Do the update on the current accessid
+							CswConsoleOutput.write( _Separator_NuLine + "Applying schema operation to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
+
+							ICswSchemaScripts CswSchemaScripts = null;
+							if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
+							{
+								// Use test cases
+								Int32 StartAtTestCase = 0;
+								if( _UserArgs.ContainsKey( _ArgKey_StartAtTestCase ) )
+								{
+									StartAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey_StartAtTestCase] );
+								}
+
+								Int32 EndAtTestCase = 0;
+								if( _UserArgs.ContainsKey( _ArgKey_EndAtTestCase ) )
+								{
+									EndAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey_EndAtTestCase] );
+								}
+
+								List<string> TestCasesToIgnore = new List<string>();
+								if( _UserArgs.ContainsKey( _ArgKey_IgnoreTestCasesCsv ) )
+								{
+									CswCommaDelimitedString CswCommaDelimitedString = new CswCommaDelimitedString();
+									CswCommaDelimitedString.FromString( _UserArgs[_ArgKey_IgnoreTestCasesCsv] );
+									TestCasesToIgnore = CswCommaDelimitedString.ToList<string>();
+								}
+								CswSchemaScripts = new CswSchemaScriptsTest( StartAtTestCase, EndAtTestCase, TestCasesToIgnore );
+							}
+							else
+							{
+								// Use production scripts
+								CswSchemaScripts = new CswSchemaScriptsProd();
+							}
+
+							CswSchemaUpdater CswSchemaUpdater = new CswSchemaUpdater( CurrentAccessId, new CswSchemaUpdater.ResourcesInitHandler( _makeResources ), CswSchemaScripts );
 
 
-                if( false == _UserArgs.ContainsKey( _ArgKey_Help ) )
-                {
-                    string AccessId = string.Empty;
-                    if( _UserArgs.ContainsKey( _ArgKey_AccessId ) )
-                    {
-                        AccessId = _UserArgs[_ArgKey_AccessId];
-                        if( _CswDbCfgInfoNbt.AccessIds.Contains( AccessId ) )
-                        {
-                            _makeResources( AccessId );
+							if( false == _UserArgs.ContainsKey( _ArgKey_Describe ) )
+							{
+								_updateAccessId( CurrentAccessId, CswNbtResources, CswSchemaUpdater, CswConsoleOutput );
+							}
+							else if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
+							{
+								CswConsoleOutput.write( "Ach. The iteration model for production scripts so woefully different than for test scripts that verily do I say unto the brother, uh, yay: it is easier for a camel to pass through the eye of a needle than is to give an inventory of production test scripts. Of course, since the production test scripts don't deploy the Description property of CswRequestDriver in as a rich a way as do the test scripts, it probably doesn't matter. See case 21739" );
+							}
+							else
+							{
+								_describe( CswNbtResources, CswSchemaUpdater, CswConsoleOutput );
+							}
 
-                            if( false == _UserArgs.ContainsKey( _ArgKey_Describe ) )
-                            {
-                                _updateAccessId();
-                            }
-                            else
-                            {
-                                if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
-                                {
-                                    _describe();
-                                }
-                                else
-                                {
-                                    _CswConsoleOutput.write( "Ach. The iteration model for production scripts so woefully different than for test scripts that verily do I say unto the brother, uh, yay: it is easier for a camel to pass through the eye of a needle than is to give an inventory of production test scripts. Of course, since the production test scripts don't deploy the Description property of CswRequestDriver in as a rich a way as do the test scripts, it probably doesn't matter. See case 21739" );
-                                }
-                            }//if-else a 
-                        }
-                        else
-                        {
-                            _CswConsoleOutput.write( "AccessId " + AccessId + " unknown" );
-                        }
-                    }//if user said to work with a specific accessid
-                    else if( _UserArgs.ContainsKey( _ArgKey_All ) )
-                    {
-                        string[] AccessIds = new string[_CswDbCfgInfoNbt.AccessIds.Count];
-                        _CswDbCfgInfoNbt.AccessIds.CopyTo( AccessIds );
-                        for( int idx = 0; idx < AccessIds.Length; idx++ )
-                        {
+							CswConsoleOutput.write( _Separator_NuLine );
 
-                            string CurrentAccessId = AccessIds[idx];
-                            _makeResources( CurrentAccessId );
-                            _CswConsoleOutput.write( _Separator_NuLine + "Applying schema operation to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
-                            _updateAccessId();
-                            _CswConsoleOutput.write( _Separator_NuLine );
-                        }
-                    }//if user said to update all accessids
-                    else
-                    {
-                        _CswConsoleOutput.write( _Help );
-                    }//if the user's input does not fit our semantic space, he needs help (as do we all)
-                }
-                else
-                {
-                    _CswConsoleOutput.write( _Help );
-                }//if-else the "help" flag was not specified
+						} // if-else( false == _CswDbCfgInfoNbt.AccessIds.Contains( AccessId ) )
+					} // foreach( string CurrentAccessId in AccessIdsToUpdate )
+				} // if-else( _UserArgs.ContainsKey( _ArgKey_Help ) )
+			}//try
 
-            }//try
-
-            catch( Exception Exception )
-            {
-                _CswConsoleOutput.write( "Update failed: " + Exception.Message );
-            }
+			catch( Exception Exception )
+			{
+				CswConsoleOutput.write( "Update failed: " + Exception.Message );
+			}
 
         }//process() 
 
-        private void _updateAccessId()
+		private void _updateAccessId( string AccessId, CswNbtResources CswNbtResources, CswSchemaUpdater CswSchemaUpdater, CswConsoleOutput CswConsoleOutput )
         {
-            string AccessId = _CswNbtResources.AccessId;
-            CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion;
-            if( _CswSchemaUpdater.LatestVersion != CurrentVersion )
+			CswSchemaUpdateThread CswSchemaUpdateThread = new CswSchemaUpdateThread( CswSchemaUpdater );
+			
+			//string AccessId = _CswNbtResources.AccessId;
+			CswSchemaVersion CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
+            if( CswSchemaUpdater.LatestVersion != CurrentVersion )
             {
+				CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "AccessId " + AccessId + ": schema version " + CswSchemaUpdater.CurrentVersion( CswNbtResources ).ToString() + " to schema version " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
 
-                //_CswConsoleOutput.write( "Updating AccessId " + AccessId + " from to schema version " + _CswSchemaUpdater.TargetVersion.ToString() + " to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine );
-                _CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "AccessId " + AccessId + ": schema version " + _CswSchemaUpdater.CurrentVersion.ToString() + " to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
-                bool UpdateSucceeded = true;
-                while( UpdateSucceeded && CurrentVersion != _CswSchemaUpdater.LatestVersion )
+				bool UpdateSucceeded = true;
+                while( UpdateSucceeded && CurrentVersion != CswSchemaUpdater.LatestVersion )
                 {
                     CswSchemaVersion UpdateFromVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration );
 
-                    if( CurrentVersion < _CswSchemaUpdater.MinimumVersion )
+                    if( CurrentVersion < CswSchemaUpdater.MinimumVersion )
                     {
                         UpdateSucceeded = false;
-                        _CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema operation -- " );
-                        _CswConsoleOutput.write( " failed: Schema version (" + CurrentVersion.ToString() + ") is below minimum version (" + _CswSchemaUpdater.MinimumVersion.ToString() + ")" + _Separator_NuLine + _Separator_NuLine );
+						CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema operation -- " );
+						CswConsoleOutput.write( " failed: Schema version (" + CurrentVersion.ToString() + ") is below minimum version (" + CswSchemaUpdater.MinimumVersion.ToString() + ")" + _Separator_NuLine + _Separator_NuLine );
                     }
                     else
                     {
                         CswSchemaVersion UpdateToVersion = null;
-                        if( CurrentVersion == _CswSchemaUpdater.MinimumVersion )
+                        if( CurrentVersion == CswSchemaUpdater.MinimumVersion )
                         {
-                            UpdateToVersion = new CswSchemaVersion( _CswSchemaUpdater.LatestVersion.CycleIteration, _CswSchemaUpdater.LatestVersion.ReleaseIdentifier, 1 );
+                            UpdateToVersion = new CswSchemaVersion( CswSchemaUpdater.LatestVersion.CycleIteration, CswSchemaUpdater.LatestVersion.ReleaseIdentifier, 1 );
                         }
                         else
                         {
                             UpdateToVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
                         }
 
-                        string UpdateDescription = _CswSchemaUpdater.getDriver( UpdateToVersion ).Description;
-                        //                    _CswConsoleOutput.write( "Updating AccessId " + AccessId + " to schema version " + UpdateToVersion.ToString() );
-                        _CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema operation -- " + UpdateDescription );
-                        _CswSchemaUpdateThread.start();
-                        while( UpdateState.Running == _CswSchemaUpdateThread.UpdateState )
+                        string UpdateDescription = CswSchemaUpdater.getDriver( UpdateToVersion ).Description;
+
+						CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema operation -- " + UpdateDescription );
+						CswSchemaUpdateThread.start();
+						while( UpdateState.Running == CswSchemaUpdateThread.UpdateState )
                         {
-                            _CswConsoleOutput.write( " ." );
+							CswConsoleOutput.write( " ." );
                             Thread.Sleep( 1000 );
                         }
 
-                        UpdateSucceeded = ( UpdateState.Succeeded == _CswSchemaUpdateThread.UpdateState );
+						UpdateSucceeded = ( UpdateState.Succeeded == CswSchemaUpdateThread.UpdateState );
                         string MessageStem = "AccessId " + AccessId + ": ";
                         if( UpdateSucceeded )
                         {
 
-                            _CswConsoleOutput.write( " succeeded." + _Separator_NuLine + _Separator_NuLine );
+							CswConsoleOutput.write( " succeeded." + _Separator_NuLine + _Separator_NuLine );
                         }
                         else
                         {
-                            _CswConsoleOutput.write( " failed: " + _CswSchemaUpdateThread.Message + _Separator_NuLine + _Separator_NuLine );
+							CswConsoleOutput.write( " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine + _Separator_NuLine );
                         }
 
-                        CurrentVersion = _CswSchemaUpdater.CurrentVersion;
-                    } // if( CurrentVersion < _CswSchemaUpdater.MinimumVersion )
-                }//iterate updates
+						CswNbtResources.ClearCache();
 
-            }
+						CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
+                    } // if( CurrentVersion < CswSchemaUpdater.MinimumVersion )
+				}// while( UpdateSucceeded && CurrentVersion != CswSchemaUpdater.LatestVersion )
+
+			} // if( CswSchemaUpdater.LatestVersion != CurrentVersion )
             else
             {
-                _CswConsoleOutput.write( _Separator_NuLine + "AccessId " + AccessId + ": Schema version -- " + _CswSchemaUpdater.LatestVersion.ToString() + "-- is current" );
+				CswConsoleOutput.write( _Separator_NuLine + "AccessId " + AccessId + ": Schema version -- " + CswSchemaUpdater.LatestVersion.ToString() + "-- is current" );
             }
-
-
         }//_updateAccessId() 
 
 
-        private void _describe()
+		private void _describe( CswNbtResources CswNbtResources, CswSchemaUpdater CswSchemaUpdater, CswConsoleOutput CswConsoleOutput )
         {
             List<string> Descriptions = new List<string>();
-            while( _CswSchemaUpdater.Next() )
-            {
-                string CurrentDescription = _CswSchemaUpdater.CurrentVersion.ToString() + ": " + _CswSchemaUpdater.getDriver( _CswSchemaUpdater.CurrentVersion ).Description;
+            foreach( CswSchemaUpdateDriver CurrentDriver in CswSchemaUpdater.UpdateDrivers.Values)
+			{
+				string CurrentDescription = CurrentDriver.SchemaVersion.ToString() + ": " + CurrentDriver.Description;
                 if( false == Descriptions.Contains( CurrentDescription ) )
                 {
                     Descriptions.Add( CurrentDescription );
                 }
-
             }
 
-            _CswConsoleOutput.write( _VersionInfo );
-            _CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "Script inventory:" );
+            CswConsoleOutput.write( _VersionInfo );
+
+			if( ( null != CswSchemaUpdater ) && ( string.Empty != CswNbtResources.AccessId ) )
+			{
+				CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "Minimum schema version: " + CswSchemaUpdater.MinimumVersion );
+				CswConsoleOutput.write( _Separator_NuLine + "Latest schema version: " + CswSchemaUpdater.LatestVersion );
+			}
+
+			CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "Script inventory:" );
 
             foreach( string CurrentDescription in Descriptions )
             {
-                _CswConsoleOutput.write( _Separator_NuLine + CurrentDescription );
+				CswConsoleOutput.write( _Separator_NuLine + CurrentDescription );
             }
 
 

@@ -13,60 +13,59 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswSchemaScriptsProd : ICswSchemaScripts
     {
-        private CswNbtResources _CswNbtResources;
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
-        Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
+        //private CswNbtResources _CswNbtResources;
 
+		private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
+		public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
+		
+		public CswSchemaScriptsProd() //CswNbtResources CswNbtResources )
+		{
+			//_CswNbtResources = CswNbtResources;
 
-        public CswSchemaScriptsProd( CswNbtResources CswNbtResources )
-        {
-            _CswNbtResources = CswNbtResources;
-            _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
+			// This is where you manually set to the last version of the previous release
+			_MinimumVersion = new CswSchemaVersion( 1, 'H', 60 );
 
-            // This is where you manually set to the last version of the previous release
-            _MinimumVersion = new CswSchemaVersion( 1, 'H', 60 );
+			// This is where you add new versions.
+			CswSchemaUpdateDriver Schema01I01Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I01() );
+			_UpdateDrivers.Add( Schema01I01Driver.SchemaVersion, Schema01I01Driver );
+			CswSchemaUpdateDriver Schema01I02Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I02() );
+			_UpdateDrivers.Add( Schema01I02Driver.SchemaVersion, Schema01I02Driver );
+			CswSchemaUpdateDriver Schema01I03Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I03() );
+			_UpdateDrivers.Add( Schema01I03Driver.SchemaVersion, Schema01I03Driver );
+			CswSchemaUpdateDriver Schema01I04Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I04() );
+			_UpdateDrivers.Add( Schema01I04Driver.SchemaVersion, Schema01I04Driver );
+			CswSchemaUpdateDriver Schema01I05Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I05() );
+			_UpdateDrivers.Add( Schema01I05Driver.SchemaVersion, Schema01I05Driver );
+			CswSchemaUpdateDriver Schema01I06Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I06() );
+			_UpdateDrivers.Add( Schema01I06Driver.SchemaVersion, Schema01I06Driver );
+			CswSchemaUpdateDriver Schema01I07Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I07() );
+			_UpdateDrivers.Add( Schema01I07Driver.SchemaVersion, Schema01I07Driver );
+			CswSchemaUpdateDriver Schema01I08Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I08() );
+			_UpdateDrivers.Add( Schema01I08Driver.SchemaVersion, Schema01I08Driver );
+			CswSchemaUpdateDriver Schema01I09Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I09() );
+			_UpdateDrivers.Add( Schema01I09Driver.SchemaVersion, Schema01I09Driver );
+			CswSchemaUpdateDriver Schema01I10Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I10() );
+			_UpdateDrivers.Add( Schema01I10Driver.SchemaVersion, Schema01I10Driver );
+			CswSchemaUpdateDriver Schema01I11Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I11() );
+			_UpdateDrivers.Add( Schema01I11Driver.SchemaVersion, Schema01I11Driver );
+			CswSchemaUpdateDriver Schema01I12Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I12() );
+			_UpdateDrivers.Add( Schema01I12Driver.SchemaVersion, Schema01I12Driver );
+			CswSchemaUpdateDriver Schema01I13Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I13() );
+			_UpdateDrivers.Add( Schema01I13Driver.SchemaVersion, Schema01I13Driver );
+			CswSchemaUpdateDriver Schema01I14Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01I14() );
+			_UpdateDrivers.Add( Schema01I14Driver.SchemaVersion, Schema01I14Driver );
 
-            // This is where you add new versions.
-            CswSchemaUpdateDriver Schema01I01Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I01( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I01Driver.SchemaVersion, Schema01I01Driver );
-            CswSchemaUpdateDriver Schema01I02Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I02( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I02Driver.SchemaVersion, Schema01I02Driver );
-            CswSchemaUpdateDriver Schema01I03Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I03( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I03Driver.SchemaVersion, Schema01I03Driver );
-            CswSchemaUpdateDriver Schema01I04Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I04( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I04Driver.SchemaVersion, Schema01I04Driver );
-            CswSchemaUpdateDriver Schema01I05Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I05( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I05Driver.SchemaVersion, Schema01I05Driver );
-            CswSchemaUpdateDriver Schema01I06Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I06( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I06Driver.SchemaVersion, Schema01I06Driver );
-            CswSchemaUpdateDriver Schema01I07Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I07( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I07Driver.SchemaVersion, Schema01I07Driver );
-            CswSchemaUpdateDriver Schema01I08Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I08( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I08Driver.SchemaVersion, Schema01I08Driver );
-            CswSchemaUpdateDriver Schema01I09Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I09( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I09Driver.SchemaVersion, Schema01I09Driver );
-            CswSchemaUpdateDriver Schema01I10Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I10( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I10Driver.SchemaVersion, Schema01I10Driver );
-            CswSchemaUpdateDriver Schema01I11Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I11( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I11Driver.SchemaVersion, Schema01I11Driver );
-            CswSchemaUpdateDriver Schema01I12Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I12( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I12Driver.SchemaVersion, Schema01I12Driver );
-            CswSchemaUpdateDriver Schema01I13Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I13( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I13Driver.SchemaVersion, Schema01I13Driver );
-            CswSchemaUpdateDriver Schema01I14Driver = new CswSchemaUpdateDriver( _CswNbtSchemaModTrnsctn, new CswUpdateSchemaTo01I14( _CswNbtSchemaModTrnsctn ) );
-            _UpdateDrivers.Add( Schema01I14Driver.SchemaVersion, Schema01I14Driver );
+			// This automatically detects the latest version
+			_LatestVersion = _MinimumVersion;
+			foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
+																						( _LatestVersion.CycleIteration == Version.CycleIteration &&
+																							_LatestVersion.ReleaseIdentifier == Version.ReleaseIdentifier &&
+																							_LatestVersion.ReleaseIteration < Version.ReleaseIteration ) ) )
+			{
+				_LatestVersion = Version;
+			}
 
-            // This automatically detects the latest version
-            _LatestVersion = _MinimumVersion;
-            foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
-                                                                                        ( _LatestVersion.CycleIteration == Version.CycleIteration &&
-                                                                                            _LatestVersion.ReleaseIdentifier == Version.ReleaseIdentifier &&
-                                                                                            _LatestVersion.ReleaseIteration < Version.ReleaseIteration ) ) )
-            {
-                _LatestVersion = Version;
-            }
-
-        }//ctor
+		}//ctor
 
         #region ICswSchemaScripts
 
@@ -85,48 +84,40 @@ namespace ChemSW.Nbt.Schema
             get { return ( _MinimumVersion ); }
         }
 
-        public CswSchemaVersion CurrentVersion
+        public CswSchemaVersion CurrentVersion(CswNbtResources CswNbtResources)
         {
-            get
-            {
-                return ( new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ) ) );
-            }
+            return ( new CswSchemaVersion( CswNbtResources.getConfigVariableValue( "schemaversion" ) ) );
         }
 
 
-        public CswSchemaVersion TargetVersion
+        public CswSchemaVersion TargetVersion(CswNbtResources CswNbtResources)
         {
-            get
-            {
-                CswSchemaVersion ret = null;
-                if( CurrentVersion == MinimumVersion )
-                    ret = new CswSchemaVersion( LatestVersion.CycleIteration, LatestVersion.ReleaseIdentifier, 1 );
-                else
-                    ret = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
-                return ret;
-            }
+            CswSchemaVersion ret = null;
+			CswSchemaVersion myCurrentVersion = CurrentVersion( CswNbtResources );
+            if( myCurrentVersion == MinimumVersion )
+                ret = new CswSchemaVersion( LatestVersion.CycleIteration, LatestVersion.ReleaseIdentifier, 1 );
+            else
+				ret = new CswSchemaVersion( myCurrentVersion.CycleIteration, myCurrentVersion.ReleaseIdentifier, myCurrentVersion.ReleaseIteration + 1 );
+            return ret;
         }
 
 
-        public CswSchemaUpdateDriver Next
+        public CswSchemaUpdateDriver Next(CswNbtResources CswNbtResources)
         {
-            get
+            CswSchemaUpdateDriver ReturnVal = null;
+
+			CswSchemaVersion myCurrentVersion = CurrentVersion( CswNbtResources );
+			if( myCurrentVersion == MinimumVersion ||
+				( LatestVersion.CycleIteration == myCurrentVersion.CycleIteration &&
+					LatestVersion.ReleaseIdentifier == myCurrentVersion.ReleaseIdentifier &&
+					LatestVersion.ReleaseIteration > myCurrentVersion.ReleaseIteration ) )
             {
-                CswSchemaUpdateDriver ReturnVal = null;
-
-
-                if( CurrentVersion == MinimumVersion ||
-                    ( LatestVersion.CycleIteration == CurrentVersion.CycleIteration &&
-                      LatestVersion.ReleaseIdentifier == CurrentVersion.ReleaseIdentifier &&
-                      LatestVersion.ReleaseIteration > CurrentVersion.ReleaseIteration ) )
-                {
-                    ReturnVal = _UpdateDrivers[TargetVersion];
-                }
-
-
-
-                return ( ReturnVal );
+				ReturnVal = _UpdateDrivers[TargetVersion( CswNbtResources )];
             }
+
+
+
+            return ( ReturnVal );
         }
 
 
@@ -147,9 +138,9 @@ namespace ChemSW.Nbt.Schema
 
         }//indexer
 
-        public void stampSchemaVersion( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+		public void stampSchemaVersion( CswNbtResources CswNbtResources, CswSchemaUpdateDriver CswSchemaUpdateDriver )
         {
-            _CswNbtResources.setConfigVariableValue( "schemaversion", CswSchemaUpdateDriver.SchemaVersion.ToString() ); ;
+            CswNbtResources.setConfigVariableValue( "schemaversion", CswSchemaUpdateDriver.SchemaVersion.ToString() ); ;
         }//stampSchemaVersion()
 
 

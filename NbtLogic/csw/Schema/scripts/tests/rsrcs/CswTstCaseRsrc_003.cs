@@ -18,17 +18,19 @@ namespace ChemSW.Nbt.Schema
     public class CswTstCaseRsrc_003
     {
 
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		private CswTestCaseRsrc _CswTestCaseRsrc;
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+		{
+			set
+			{
+				_CswNbtSchemaModTrnsctn = value;
+				_CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			}
+		}
 
-        private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        public CswTstCaseRsrc_003( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-        }//ctor
 
-
-        public string Purpose = "Rolllback drop columns";
+        public static string Purpose = "Rolllback drop columns";
 
         public string RealTestTableName { get { return ( _CswTestCaseRsrc.getRealTestTableName( TestTableNamesReal.Nodes ) ); } }
         public string RealTestColumnName { get { return ( _CswTestCaseRsrc.getRealTestColumnName( TestColumnNamesReal.NodeName ) ); } }
