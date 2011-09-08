@@ -32,8 +32,7 @@
                                                           selected: value
                                       });
 
-                if(o.Required)
-                {
+                if(o.Required) {
                     $SelectBox.addClass("required");
                 }
             }
@@ -41,7 +40,11 @@
         },
         save: function(o) { //$propdiv, $xml
             var $SelectBox = o.$propdiv.find('select');
-            o.propData.values.value = $SelectBox.val();
+            if (false === o.Multi || $SelectBox.val() !== CswMultiEditDefaultValue ) {
+                o.propData.values.value = $SelectBox.val();
+            } else {
+                delete o.propData;
+            }
         }
     };
     

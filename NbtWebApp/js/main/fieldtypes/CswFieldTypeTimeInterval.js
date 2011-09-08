@@ -30,7 +30,7 @@
                                                             });
 
 				$table.CswTable('cell', 1, 2).append('<span>&nbsp;Weekly</span>');
-				$weeklyradio.click(function() { $WeeklyDiv.show(); $MonthlyDiv.hide(); $YearlyDiv.hide(); o.onchange(); });
+				$weeklyradio.click(function() { $('#' + o.ID + '_textvalue').text('Weekly'); $WeeklyDiv.show(); $MonthlyDiv.hide(); $YearlyDiv.hide(); o.onchange(); });
 
                 var $monthlyradiocell = $table.CswTable('cell', 2, 1);
 				var $monthlyradio = $monthlyradiocell.CswInput('init',{ID: o.ID + '_type_monthly',
@@ -39,7 +39,7 @@
                                                                         value: 'monthly'
                                                                 });
 				$table.CswTable('cell', 2, 2).append('<span>&nbsp;Monthly</span>');
-				$monthlyradio.click(function() { $WeeklyDiv.hide(); $MonthlyDiv.show(); $YearlyDiv.hide(); o.onchange(); });
+				$monthlyradio.click(function() { $('#' + o.ID + '_textvalue').text('Monthly'); $WeeklyDiv.hide(); $MonthlyDiv.show(); $YearlyDiv.hide(); o.onchange(); });
 
                 var $yearlyradiocell = $table.CswTable('cell', 3, 1);
 				var $yearlyradio = $yearlyradiocell.CswInput('init',{ID: o.ID + '_type_yearly',
@@ -48,7 +48,7 @@
                                                                         value: 'yearly'
                                                             });  
 				$table.CswTable('cell', 3, 2).append('<span>&nbsp;Yearly</span>');
-				$yearlyradio.click(function() { $WeeklyDiv.hide(); $MonthlyDiv.hide(); $YearlyDiv.show(); o.onchange(); });
+				$yearlyradio.click(function() { $('#' + o.ID + '_textvalue').text('Yearly'); $WeeklyDiv.hide(); $MonthlyDiv.hide(); $YearlyDiv.show(); o.onchange(); });
 
 				var $topcell = $table.CswTable('cell', 1, 3);
 				$topcell.CswAttrDom('rowspan', '3');
@@ -78,13 +78,11 @@
 //									.hide();
 
 				$MonthlyDiv.append('Every ');
-				var $MonthlyRateSelect = $('<select id="'+ o.ID + '_monthly_rate"/>')
-											.appendTo($MonthlyDiv)
-											.change(o.onchange);
-				for(var i = 1; i <= 12; i++)
-				{
-					$MonthlyRateSelect.append('<option value="'+ i +'">'+ i +'</option>');
-				}
+                var $MonthlyRateSelect = $MonthlyDiv.CswSelect('init', {
+                                                        ID: o.ID + '_monthly_rate',
+                                                        onChange: o.onchange,
+                                                        values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                                                    });  
 				$MonthlyDiv.append(' Month(s)<br/>');
 
 				var $MonthlyByDateRadio = $MonthlyDiv.CswInput('init',{ID: o.ID +'_monthly_by_date',
@@ -128,7 +126,7 @@
                                                         ID: o.ID +'_monthly_week',
                                                         values: weeksInMonth,
                                                         selected: (false === o.Multi) ? '' : CswMultiEditDefaultValue
-                                                        });
+                                                    });
 				$MonthlyDiv.append('<br/>');
 
 				makeWeekDayPicker($MonthlyDiv, o.ID + '_monthly_day', o.onchange, true);
@@ -247,41 +245,45 @@
 				try {
 				    var propVals = o.propData.values;
 				    var RateType = $('[name="' + o.ID + '_type"]:checked').val();
-				    var RIValue = propVals.Interval.rateintervalvalue;
-					switch (RateType)
-				    {
-				        case 'weekly':
-				            RIValue.ratetype = 'WeeklyByDay';
-				            RIValue.weeklyday = getWeekDayChecked(o.ID + '_weeklyday');
-				            RIValue.startingdate = {};
-							RIValue.startingdate.date = $('#' + o.ID + '_weekly_sd').CswDateTimePicker('value').Date;
-				            RIValue.startingdate.dateformat = RIValue.dateformat;
-				            break;
+				    if (false === o.Multi || $('#' + o.ID + '_textvalue').text() !== CswMultiEditDefaultValue) {
+				        var RIValue = propVals.Interval.rateintervalvalue;
+				        switch (RateType)
+				        {
+				            case 'weekly':
+				                RIValue.ratetype = 'WeeklyByDay';
+				                RIValue.weeklyday = getWeekDayChecked(o.ID + '_weeklyday');
+				                RIValue.startingdate = { };
+				                RIValue.startingdate.date = $('#' + o.ID + '_weekly_sd').CswDateTimePicker('value').Date;
+				                RIValue.startingdate.dateformat = RIValue.dateformat;
+				                break;
 
-				        case 'monthly':
-				            var monthlyType = $('[name="' + o.ID + '_monthly"]:checked').val();
-				            RIValue.ratetype = monthlyType;
-				            RIValue.monthlyfrequency = $('#' + o.ID + '_monthly_rate').val();
-				            if (monthlyType === "MonthlyByDate")
-				            {
-				                RIValue.monthlydate = $('#' + o.ID + '_monthly_date').val();
-				            }
-				            else // MonthlyByWeekAndDay
-				            {
-				                RIValue.monthlyweek = $('#' + o.ID + '_monthly_week').val();
-				                RIValue.monthlyday = getWeekDayChecked(o.ID + '_monthly_day');
-				            }
-				            RIValue.startingmonth = $('#' + o.ID + '_monthly_startMonth').val();
-				            RIValue.startingyear = $('#' + o.ID + '_monthly_startYear').val();
-				            break;
+				            case 'monthly':
+				                var monthlyType = $('[name="' + o.ID + '_monthly"]:checked').val();
+				                RIValue.ratetype = monthlyType;
+				                RIValue.monthlyfrequency = $('#' + o.ID + '_monthly_rate').val();
+				                if (monthlyType === "MonthlyByDate")
+				                {
+				                    RIValue.monthlydate = $('#' + o.ID + '_monthly_date').val();
+				                }
+				                else // MonthlyByWeekAndDay
+				                {
+				                    RIValue.monthlyweek = $('#' + o.ID + '_monthly_week').val();
+				                    RIValue.monthlyday = getWeekDayChecked(o.ID + '_monthly_day');
+				                }
+				                RIValue.startingmonth = $('#' + o.ID + '_monthly_startMonth').val();
+				                RIValue.startingyear = $('#' + o.ID + '_monthly_startYear').val();
+				                break;
 
-				        case 'yearly':
-				            RIValue.ratetype = 'YearlyByDate';
-				            RIValue.yearlydate = {};
-							RIValue.yearlydate.date = $('#' + o.ID + '_yearly_sd').CswDateTimePicker('value').Date;
-				            RIValue.yearlydate.dateformat = RIValue.dateformat;
-				            break;
-				    } // switch(RateType)
+				            case 'yearly':
+				                RIValue.ratetype = 'YearlyByDate';
+				                RIValue.yearlydate = { };
+				                RIValue.yearlydate.date = $('#' + o.ID + '_yearly_sd').CswDateTimePicker('value').Date;
+				                RIValue.yearlydate.dateformat = RIValue.dateformat;
+				                break;
+				        } // switch(RateType)
+				    } else {
+				        delete o.propData;
+				    }
 				} catch(e) {
 				    if(debugOn()) {
 				        log('Error updating propData: ' + e);

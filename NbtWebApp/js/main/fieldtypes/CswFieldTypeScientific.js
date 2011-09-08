@@ -47,8 +47,27 @@
         },
         save: function(o) { //$propdiv, $xml
 			var propVals = o.propData.values;	
-            propVals.base = o.$propdiv.CswNumberTextBox('value', o.ID + '_val');
-			propVals.exponent =o.$propdiv.CswNumberTextBox('value', o.ID + '_exp');
+            var base = o.$propdiv.CswNumberTextBox('value', o.ID + '_val');
+            var exp = o.$propdiv.CswNumberTextBox('value', o.ID + '_exp');
+            if (false === o.Multi || (base !== CswMultiEditDefaultValue && exp !== CswMultiEditDefaultValue)) {
+                propVals.base = base;
+                propVals.exponent = exp;
+            } else {
+                if(base === CswMultiEditDefaultValue && exp === CswMultiEditDefaultValue) {
+                    delete o.propData;
+                } else {
+                    if(base !== CswMultiEditDefaultValue) {
+			            propVals.base = base;
+			        } else {
+			            delete propVals.base;
+			        }
+                    if(exp !== CswMultiEditDefaultValue) {
+			            propVals.exponent = exp;
+			        } else {
+			            delete propVals.exponent;
+			        }
+                }
+            }
         }
     };
     

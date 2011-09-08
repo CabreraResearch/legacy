@@ -36,9 +36,13 @@
             }
         },
         save: function(o) {
-                var $TextBox = o.$propdiv.find('input');
-                o.propData.values.text = $TextBox.val();
+            var text = o.$propdiv.find('input').val();
+            if (false === o.Multi || text !== CswMultiEditDefaultValue) {
+                o.propData.values.text = text;
+            } else {
+                delete o.propData;
             }
+        }
     };
     
     // Method calling logic

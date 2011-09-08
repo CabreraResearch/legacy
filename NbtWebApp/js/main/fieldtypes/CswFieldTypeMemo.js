@@ -34,9 +34,13 @@
 
         },
         save: function(o) { //$propdiv, $xml
-                var $TextArea = o.$propdiv.find('textarea');
+            var $TextArea = o.$propdiv.find('textarea');
+            if (false === o.Multi || $TextArea.val() !== CswMultiEditDefaultValue) {
                 o.propData.values.text = $TextArea.val();
+            } else {
+                delete o.propData;
             }
+        }
     };
     
     // Method calling logic

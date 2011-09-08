@@ -37,7 +37,11 @@
         save: function(o) { //$propdiv, $xml
             var $CBADiv = o.$propdiv.children('div').first();
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-            o.propData.values.logicalsetjson = formdata;
+            if(false === o.Multi || false === formdata.MultiIsUnchanged) {
+                o.propData.values.logicalsetjson = formdata;
+            } else {
+                delete o.propData;
+            }
             return $(this);
         } // save()
     };

@@ -18,7 +18,7 @@
             var width = tryParseString(propVals.width);
             var height = tryParseString(propVals.height);
             
-            if (!o.ReadOnly) {
+            if (false === o.ReadOnly) {
 				var $select = $('<select id="' + o.ID + '"></select>')
 								.append('<option value="">Select...</option>')
 								.appendTo($Div);
@@ -40,7 +40,7 @@
 				        if (isTrue(thisOpt.selected)) {
 						    addImage(thisOpt.text, thisOpt.value, false);
 					    } else {
-						    if (!o.ReadOnly) {			
+						    if (false === o.ReadOnly) {			
 							    $select.append('<option value="'+ thisOpt.value +'">'+ thisOpt.text +'</option>');
 						    }
 					    }
@@ -65,11 +65,11 @@
 					$namecell.hide();
 				}
 
-				$imagecell.append('<a href="'+ href +'" target="_blank"><img src="' + href + '" alt="' + name + '" width="'+ width +'" height="'+ height +'"/></a>')
+                $imagecell.append('<a href="' + href + '" target="_blank"><img src="' + href + '" alt="' + name + '" width="' + width + '" height="' + height + '"/></a>');
 				if (name !== href) {
 					$namecell.append('<a href="'+ href +'" target="_blank">'+ name +'</a>');
 				}
-				if (!o.ReadOnly) {
+				if (false === o.ReadOnly) {
 					$namecell.CswImageButton({
 						ButtonType: CswImageButton_ButtonType.Delete,
 						AlternateText: 'Remove',
@@ -116,7 +116,11 @@
         },
         save: function(o) {
 			var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
-			o.propData.values.value = $HiddenValue.text();
+            if (false === o.Multi || $HiddenValue.text() !== CswMultiEditDefaultValue ) {
+                o.propData.values.value = $HiddenValue.text();
+            } else {
+                delete o.propData;
+            }
         }
     };
     

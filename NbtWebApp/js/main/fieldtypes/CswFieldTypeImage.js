@@ -82,8 +82,8 @@
 
         },
         save: function(o) { //$propdiv, o.propData
-				// nothing to do here
-            }
+			// nothing to do here
+        }
     };
     
     // Method calling logic

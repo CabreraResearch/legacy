@@ -26,9 +26,9 @@
 
                 $cell11.append('<a href="'+ href +'" target="_blank">'+ fileName +'</a>');
 
-                if(!o.ReadOnly && o.EditMode != EditMode.AddInPopup.name)
-                {
-                    var $editButton = $('<div/>')
+                if(false === o.ReadOnly && o.EditMode !== EditMode.AddInPopup.name) {
+                    //Edit button
+                    $('<div/>')
                         .appendTo($cell12)
                         .CswImageButton({   
                             ButtonType: CswImageButton_ButtonType.Edit,
@@ -48,7 +48,8 @@
 								return CswImageButton_ButtonType.None; 
 							}
                         });
-                    var $clearButton = $('<div/>')
+                    //Clear button
+                    $('<div/>')
                         .appendTo($cell13)
                         .CswImageButton({
                             ButtonType: CswImageButton_ButtonType.Clear,

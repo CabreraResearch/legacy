@@ -29,7 +29,12 @@
 			}
         },
         save: function(o) { //$propdiv, $xml
-			o.propData.values.value = o.$propdiv.CswNumberTextBox('value', o.ID);
+            var value = o.$propdiv.CswNumberTextBox('value', o.ID);
+            if (false === o.Multi || value !== CswMultiEditDefaultValue) {
+                o.propData.values.value = value;
+            } else {
+                delete o.propData;
+            }
         }
     };
     

@@ -15,8 +15,8 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-			var isExpired = isTrue(propVals.isexpired);
-			var isAdmin = isTrue(propVals.isadmin);
+			var isExpired = (false === o.Multi) ? isTrue(propVals.isexpired) : null;
+			var isAdmin = (false === o.Multi) ? isTrue(propVals.isadmin) : null;
 
             if(o.ReadOnly) {
                 // show nothing
@@ -46,16 +46,16 @@
                                                          cssclass: 'textinput password2',
                                                          onChange: o.onchange
                                                  }); 
-                if(isTrue(isAdmin)) {
+                if(isAdmin) {
 					var $IsExpiredCheck = $cell31.CswInput({ 
 							'id': o.ID + '_exp',
 							'name': o.ID + '_exp',
 							'type': CswInput_Types.checkbox
 						});
-					if(isTrue(isExpired)) {
+					if(isExpired) {
 						$IsExpiredCheck.CswAttrDom('checked', 'true');
 					}
-					$cell32.append('Expired');
+                    $cell32.append('Expired');
 				}
                 
                 if (o.Required && isNullOrEmpty(propVals.password)) {
@@ -70,20 +70,22 @@
             }
         },
         save: function(o) { //$propdiv, $xml
-            var $IsExpiredCheck = o.$propdiv.find('input#' + o.ID + '_exp');
-			var propVals = o.propData.values;	
-            if($IsExpiredCheck.length > 0)
-			{
-				propVals.isexpired = $IsExpiredCheck.is(':checked');
+            var newpw = o.$propdiv.find('input#' + o.ID + '_pwd1').val();
+            if (false === o.Multi || newpw !== CswMultiEditDefaultValue) {
+                var propVals = o.propData.values;
+                var $IsExpiredCheck = o.$propdiv.find('input#' + o.ID + '_exp');
+                if ($IsExpiredCheck.length > 0)
+                {
+                    propVals.isexpired = $IsExpiredCheck.is(':checked');
+                }
+                if (false === isNullOrEmpty(newpw))
+                {
+                    propVals.newpassword = newpw;
+                }
+            } else {
+                delete o.propData;
             }
-				
-            var $TextBox = o.$propdiv.find('input#' + o.ID + '_pwd1');
-			var newpw = $TextBox.val();
-			if(newpw !== '')
-			{
-				propVals.newpassword = newpw;
-			}
-		}
+        }
     };
     
     // Method calling logic

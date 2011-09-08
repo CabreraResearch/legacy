@@ -76,8 +76,15 @@
             var $edittext = o.$propdiv.find('#' + o.ID + '_text');
             var $edithref = o.$propdiv.find('#' + o.ID + '_href');
 			var propVals = o.propData.values;	
-            propVals.text = $edittext.val();
-			propVals.href = $edithref.val();
+
+            if (false === o.Multi || 
+                ( $edittext.val() !== CswMultiEditDefaultValue &&
+                  $edithref.val() !== CswMultiEditDefaultValue)) {
+                propVals.text = $edittext.val();
+			    propVals.href = $edithref.val();
+            } else {
+                delete o.propData;
+            }
         }
     };
     

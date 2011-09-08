@@ -33,9 +33,13 @@
             }
         },
         save: function(o) {
-                var $TextBox = o.$propdiv.find('input');
-                o.propData.values.sequence = $TextBox.val();
-            }
+            var sequence = o.$propdiv.find('input').val();
+            if (false === o.Multi || sequence !== CswMultiEditDefaultValue) {
+                o.propData.values.sequence = sequence;    
+            } else {
+                delete o.propData;                
+            }   
+        }
     };
     
     // Method calling logic

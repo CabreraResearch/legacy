@@ -79,7 +79,11 @@
 			},
 			save: function(o) { //($propdiv, $xml
 				var $selectdiv = o.$propdiv.find('.locationselect');
-				o.propData.values.nodeid = $selectdiv.val();
+			    if (false === o.Multi || $selectdiv.val() !== CswMultiEditDefaultValue ) {
+                    o.propData.values.nodeid = $selectdiv.val();
+                } else {
+                    delete o.propData;
+                }
 			}
 		};
 	

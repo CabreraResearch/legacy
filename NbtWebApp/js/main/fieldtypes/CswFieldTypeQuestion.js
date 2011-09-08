@@ -87,9 +87,31 @@
             var correctiveAction = o.$propdiv.find('#' + o.ID + '_cor').val();
             var comments = o.$propdiv.find('#' + o.ID + '_com').val();
             var propVals = o.propData.values;    
-			propVals.answer = answer;
-			propVals.correctiveaction = correctiveAction;
-			propVals.comments = comments;
+			if(false === o.Multi || (answer !== CswMultiEditDefaultValue && correctiveAction !== CswMultiEditDefaultValue && comments !== CswMultiEditDefaultValue)) {
+                propVals.answer = answer;
+			    propVals.correctiveaction = correctiveAction;
+			    propVals.comments = comments;
+			} else {
+			    if(answer === CswMultiEditDefaultValue && correctiveAction === CswMultiEditDefaultValue && comments === CswMultiEditDefaultValue) {
+			        delete o.propData;
+			    } else {
+			        if(answer !== CswMultiEditDefaultValue) {
+			            propVals.answer = answer;
+			        } else {
+			            delete propVals.answer;
+			        }
+			        if(correctiveAction !== CswMultiEditDefaultValue) {
+			            propVals.correctiveaction = correctiveAction;
+			        } else {
+			            delete propVals.correctiveaction;
+			        }
+			        if(comments !== CswMultiEditDefaultValue) {
+			            propVals.comments = comments;
+			        } else {
+			            delete propVals.comments;
+			        }			    
+			    }
+			}
         }
     };
     

@@ -83,11 +83,23 @@
             }
         },
         save: function(o) { //$propdiv, $xml
-            var StartDate = o.$propdiv.find('#'+ o.ID +'_sd').CswDateTimePicker('value').Date;
-            var Units = o.$propdiv.find('#'+ o.ID +'_units').val();
-            var propVals = o.propData.values;    
-            propVals.startdatetime.date = StartDate;
-            propVals.units = Units;
+            var startDate = o.$propdiv.find('#'+ o.ID +'_sd').CswDateTimePicker('value').Date;
+            var units = o.$propdiv.find('#'+ o.ID +'_units').val();
+            var propVals = o.propData.values;
+            if(false === o.Multi || (startDate !== CswMultiEditDefaultValue && units !== CswMultiEditDefaultValue)) {
+                propVals.startdatetime.date = startDate;
+                propVals.units = units;
+            }
+            else if(startDate !== CswMultiEditDefaultValue) {
+                propVals.startdatetime.date = startDate;
+                delete propVals.units;
+            }
+            else if(units !== CswMultiEditDefaultValue) {
+                propVals.units = units;
+                delete propVals.startdatetime;
+            } else {
+                delete o.propData;
+            }
         }
     };
     

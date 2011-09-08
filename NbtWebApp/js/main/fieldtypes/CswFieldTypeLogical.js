@@ -28,7 +28,11 @@
 			var $Div = o.$propdiv.find('div');
 			var propVals = o.propData.values;
 		    var checked = $Div.CswTristateCheckBox('value');
-			propVals.checked = checked;
+			if (false === o.Multi || checked !== CswMultiEditDefaultValue ) {
+                propVals.checked = checked;
+            } else {
+                delete o.propData;
+            }
 		}
 	};
 	

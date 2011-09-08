@@ -53,7 +53,11 @@
         },
         save: function(o) {
             var $TextBox = o.$propdiv.find('input');
-            o.propData.values.barcode = $TextBox.val();
+            if (false === o.Multi || $TextBox.val() !== CswMultiEditDefaultValue ) {
+                o.propData.values.barcode = $TextBox.val();
+            } else {
+                delete o.propData;
+            }
         }
     };
     

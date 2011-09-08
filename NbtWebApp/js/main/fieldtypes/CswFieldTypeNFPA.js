@@ -124,11 +124,43 @@
             } // if(!o.ReadOnly)
         },
         save: function(o) {
-			var propVals = o.propData.values;	
-            propVals.flammability = o.$propdiv.find('#' + o.ID + '_red').val();
-			propVals.reactivity = o.$propdiv.find('#' + o.ID + '_yellow').val();
-			propVals.health = o.$propdiv.find('#' + o.ID + '_blue').val();
-			propVals.special = o.$propdiv.find('#' + o.ID + '_white').val();
+            var red = o.$propdiv.find('#' + o.ID + '_red').val();
+            var yellow = o.$propdiv.find('#' + o.ID + '_yellow').val();
+            var blue = o.$propdiv.find('#' + o.ID + '_blue').val();
+            var white = o.$propdiv.find('#' + o.ID + '_white').val();
+            
+            var propVals = o.propData.values;	
+            if (false === o.Multi || (red !== CswMultiEditDefaultValue && yellow !== CswMultiEditDefaultValue && blue !== CswMultiEditDefaultValue && white !== CswMultiEditDefaultValue )) {
+                propVals.flammability = red;
+			    propVals.reactivity = yellow;
+			    propVals.health = blue;
+			    propVals.special = white;    
+            } else {
+                if (red === CswMultiEditDefaultValue && yellow === CswMultiEditDefaultValue && blue === CswMultiEditDefaultValue && white === CswMultiEditDefaultValue ) {
+                    delete o.propData;    
+                } else {
+                    if(red !== CswMultiEditDefaultValue) {
+                        propVals.flammability = red;
+                    } else {
+                        delete propVals.flammability;
+                    }
+                    if(yellow !== CswMultiEditDefaultValue) {
+                        propVals.reactivity = yellow;
+                    } else {
+                        delete propVals.reactivity;
+                    }
+                    if(blue !== CswMultiEditDefaultValue) {
+                        propVals.health = blue;
+                    } else {
+                        delete propVals.health;
+                    }
+                    if(white !== CswMultiEditDefaultValue) {
+                        propVals.special = white;
+                    } else {
+                        delete propVals.special;
+                    }                    
+                }
+            }
         }
     };
     

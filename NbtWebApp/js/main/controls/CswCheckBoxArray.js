@@ -31,6 +31,7 @@
 					Required: false,
 					ReadOnly: false,
 				    Multi: false,
+				    MultiIsUnchanged: true,
 					onchange: null, //function() { }
 				    dataAry: [],
 			        nameCol: '',
@@ -53,7 +54,9 @@
 		        if (false === isNullOrEmpty(storedData)) {
 		            $.extend(o, dataStore);
 		        }
-		        
+		        if(o.Multi) {
+		            o.MultiIsUnchanged = true;
+		        }
 				var checkType = CswInput_Types.checkbox.name;
 				if(o.UseRadios)
 					checkType = CswInput_Types.radio.name;
@@ -116,7 +119,10 @@
 							var eCheckid = o.ID + '_none';
 							var $eCheck = $('<input type="'+ checkType +'" class="CBACheckBox_'+ o.ID +'" id="'+ eCheckid + '" name="' + o.ID + '" />')
 										   .appendTo($eCell)
-										   .click(o.onchange);
+										   .click(function() {
+										       o.MultiIsUnchanged = false;
+										       o.onchange();
+										   });
 							$eCell.CswAttrXml({'key': '', rowlabel: '[none]', collabel: o.cols[e], row: -1, col: e });
 						    if (false === o.Multi) {
 						        $eCheck.CswAttrDom('checked', 'true'); // the browser will override this if another one is checked
@@ -131,6 +137,7 @@
 					    var row = $this.CswAttrXml('row');
 					    var cbaDiv = $('#' + storeDataId);
 					    var cache = cbaDiv.data(storedData);
+				        cache.MultiIsUnchanged = false;
 				        if (cache.data.hasOwnProperty(row)) {
 					        var thisRow = cache.data[row];
 					        if (thisRow.hasOwnProperty('values')) {
@@ -179,10 +186,11 @@
 						var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ CheckAllLinkText +'</a></div>')
 											 .appendTo($Div);
 						var $checkalllink = $checkalldiv.children('a');
-						$checkalllink.click(function() { ToggleCheckAll($checkalllink, o.ID); return false; });
+						$checkalllink.click(function() { toggleCheckAll($checkalllink, o.ID); return false; });
 					}
 
 				} // if-else(o.ReadOnly)
+		        return $Div;
 			}, // init
 
 			getdata: function (options) { 
@@ -207,84 +215,84 @@
 	
 	    
 	    function transmorgify (options, $control) {
-			    var $this = $control;
+			var $this = $control;
 
-			    var o = {
-                    dataAry: [],
-			        nameCol: '',
-			        keyCol: '',
-			        valCol: ''
-			    };
-			    if(options) $.extend(o, options);
+			var o = {
+                dataAry: [],
+			    nameCol: '',
+			    keyCol: '',
+			    valCol: ''
+			};
+			if(options) $.extend(o, options);
 
-			    if (false === isNullOrEmpty(o.dataAry) && o.dataAry.length > 0) {
-	   			    // get columns
-                    var cols = [];
+			if (false === isNullOrEmpty(o.dataAry) && o.dataAry.length > 0) {
+	   			// get columns
+                var cols = [];
 
-			        var firstProp = o.dataAry[0];
-			        for (var column in firstProp) {
+			    var firstProp = o.dataAry[0];
+			    for (var column in firstProp) {
 
-			            if (firstProp.hasOwnProperty(column)) {
-			                var fieldname = column;
-			                if (fieldname !== o.nameCol && fieldname !== o.keyCol)
-			                {
-			                    cols.push(fieldname);
-			                }
+			        if (firstProp.hasOwnProperty(column)) {
+			            var fieldname = column;
+			            if (fieldname !== o.nameCol && fieldname !== o.keyCol)
+			            {
+			                cols.push(fieldname);
 			            }
 			        }
-			        if (false === isNullOrEmpty(o.valCol) && cols.indexOf(o.valCol) === -1) {
-			            cols.push(o.valCol)
-			                ;			        }
-
-			        // get data
-			        var data = [];
-
-			        for (var i = 0; i < o.dataAry.length; i++) {
-			            var thisSet = o.dataAry[i];
-
-			            if (thisSet.hasOwnProperty(o.keyCol) && thisSet.hasOwnProperty(o.nameCol)) {
-			                var values = [];
-			                for (var v = 0; v < cols.length; v++) {
-			                    if (thisSet.hasOwnProperty(cols[v])) {
-			                        values.push(isTrue(thisSet[cols[v]]));
-			                    }
-			                }
-			                var dataOpts = { 'label': thisSet[o.nameCol],
-			                    'key': thisSet[o.keyCol],
-			                    'values': values };
-			                data.push(dataOpts);
-			            }
-			        }
-
-			        var dataStore = {
-                        cols: cols,
-			            data: data
-			        };
-
-			        $this.data(storedData, dataStore);
 			    }
-			    return $this;
+			    if (false === isNullOrEmpty(o.valCol) && cols.indexOf(o.valCol) === -1) {
+			        cols.push(o.valCol)
+			            ;			        }
+
+			    // get data
+			    var data = [];
+
+			    for (var i = 0; i < o.dataAry.length; i++) {
+			        var thisSet = o.dataAry[i];
+
+			        if (thisSet.hasOwnProperty(o.keyCol) && thisSet.hasOwnProperty(o.nameCol)) {
+			            var values = [];
+			            for (var v = 0; v < cols.length; v++) {
+			                if (thisSet.hasOwnProperty(cols[v])) {
+			                    values.push(isTrue(thisSet[cols[v]]));
+			                }
+			            }
+			            var dataOpts = { 'label': thisSet[o.nameCol],
+			                'key': thisSet[o.keyCol],
+			                'values': values };
+			            data.push(dataOpts);
+			        }
+			    }
+
+			    var dataStore = {
+                    cols: cols,
+			        data: data
+			    };
+
+			    $this.data(storedData, dataStore);
 			}
+			return $this;
+		}
 	    
-		function ToggleCheckAll($checkalllink, id)
+		function toggleCheckAll($checkalllink, id)
 		{
 			// Are there any unchecked checkboxes?
 			if($('.CBACheckBox_' + id).not(':checked').length > 0)
 			{
-				CheckAll($checkalllink, id);
+				checkAll($checkalllink, id);
 			} else {
-				UncheckAll($checkalllink, id);
+				uncheckAll($checkalllink, id);
 			}
 		} // ToggleCheckAll()
 
-		function CheckAll($checkalllink, id)
+		function checkAll($checkalllink, id)
 		{
-			$('.CBACheckBox_' + id).CswAttrDom('checked', 'checked');
+			$('.CBACheckBox_' + id).CswAttrDom('checked', 'checked').click();
 			$checkalllink.text('Uncheck all');
 		}
-		function UncheckAll($checkalllink, id)
+		function uncheckAll($checkalllink, id)
 		{
-			$('.CBACheckBox_' + id).removeAttr('checked');
+			$('.CBACheckBox_' + id).removeAttr('checked').click();
 			$checkalllink.text('Check all');
 		}
 

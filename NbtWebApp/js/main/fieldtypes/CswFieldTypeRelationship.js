@@ -75,9 +75,13 @@
 				
             },
             save: function(o) {
-                    var $SelectBox = o.$propdiv.find('select');
-                    o.propData.values.nodeid = $SelectBox.val();
+                var nodeid = o.$propdiv.find('select').val();
+                if (false === o.Multi || nodeid !== CswMultiEditDefaultValue) {
+                    o.propData.values.nodeid = nodeid;
+                } else {
+                    delete o.propData;
                 }
+            }
         };
     
         // Method calling logic

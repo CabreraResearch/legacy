@@ -34,8 +34,16 @@
             var $DTPickerDiv = o.$propdiv.find('#' + o.ID);
 			var dateval = $DTPickerDiv.CswDateTimePicker('value');
 			var propVals = o.propData.values;
-            propVals.value.date = dateval.Date;
-			propVals.value.time = dateval.Time;
+            if (false === o.Multi || 
+                (dateval.Date !== CswMultiEditDefaultValue &&
+                dateval.Time !== CswMultiEditDefaultValue)) {
+                propVals.value.date = dateval.Date;
+			    propVals.value.time = dateval.Time;    
+            } else {
+                delete o.propData;
+            }
+            
+            
         }
     };
     

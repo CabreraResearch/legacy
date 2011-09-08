@@ -47,9 +47,27 @@
         },
         save: function(o) {
 			var propVals = o.propData.values;	
-            propVals.value = o.$propdiv.CswNumberTextBox('value', o.ID + '_qty');
-			var unit = o.$propdiv.find('#' + o.ID + '_units').val();
-			propVals.units = unit;
+            var value = o.$propdiv.CswNumberTextBox('value', o.ID + '_qty');
+            var unit = o.$propdiv.find('#' + o.ID + '_units').val();
+            if (false === o.Multi || (value !== CswMultiEditDefaultValue && unit !== CswMultiEditDefaultValue)) {
+                propVals.value = value;
+                propVals.units = unit;
+            } else {
+                if(value === CswMultiEditDefaultValue && unit === CswMultiEditDefaultValue) {
+                    delete o.propData;
+                } else {
+                    if(value !== CswMultiEditDefaultValue) {
+                        propVals.value = value;
+                    } else {
+                        delete propVals.value;
+                    }
+                    if(unit !== CswMultiEditDefaultValue) {
+                        propVals.units = unit;
+                    } else {
+                        delete propVals.units;
+                    }
+                }
+            }
         }
     };
     
