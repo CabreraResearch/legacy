@@ -349,17 +349,23 @@ function ObjectHelper(obj) {
 	/// <param name="obj" type="Object"> Object to search </param>
 	/// <returns type="ObjectHelper"></returns>
     var thisObj = obj;
+    var currentObj = null;
+    var parentObj = thisObj;
+    var currentKey = null;
+    var parentKey = null;
     
     function find(key, value) {
-         /// <summary>Find a property's parent</summary>
+        /// <summary>Find a property's parent</summary>
         /// <param name="key" type="String"> Property name to match. </param>
         /// <param name="value" type="Object"> Property value to match </param>
 	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
         var ret = false;
-		var onSuccess = function (childObj, childKey, parentObj) {
+		var onSuccess = function (childObj, childKey, parObj) {
             var found = false;
 			if (foundMatch(childObj, key, value)) {
-			    ret = parentObj;
+			    ret = currentObj = childObj;
+			    parentObj = parObj;
+			    currentKey = childKey;
 			    found = true;
 			}
 		    return found;
@@ -369,11 +375,14 @@ function ObjectHelper(obj) {
     }
     
     function remove(key, value) {
-        var onSuccess = function (childObj, childKey, parentObj) {
+        var onSuccess = function (childObj, childKey, parObj) {
             var deleted = false;
             if (foundMatch(childObj, key, value)) {
                 deleted = true;
-                delete parentObj[childKey];
+                delete parObj[childKey];
+                currentKey = null;
+                currentObj = null;
+                parentObj = parentObj;
             }
             return deleted;
     	};
@@ -383,6 +392,9 @@ function ObjectHelper(obj) {
     this.find = find;
     this.remove = remove;
     this.obj = thisObj;
+    this.parentObj = parentObj;
+    this.currentObj = currentObj;
+    this.currentKey = currentObj;
 }
 
 //http://stackoverflow.com/questions/7356835/jquery-each-fumbles-if-non-array-object-has-length-property
