@@ -354,23 +354,27 @@ function ObjectHelper(obj) {
         /// <param name="key" type="String"> Property name to match. </param>
         /// <param name="value" type="Object"> Property value to match </param>
 	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
+        var ret = false;
         var onSuccess = function(childObj) {
+            var found = false;
             if (foundMatch(childObj, key, value)) {
                 ret = thisObj;
-                eval('break;');
-            } 
+                found = true;
+            }
+            return found;
         };
-        var ret = crawlObject(thisObj, onSuccess, true);
+        crawlObject(thisObj, onSuccess, true);
         return ret;
     }
     
     function remove(key, value) {
         var onSuccess = function(childObj, childKey) {
+            var deleted = false;
             if (foundMatch(childObj, key, value)) {
                 delete thisObj[childKey];
-                ret = true;
-                eval('break;');
+                deleted = true;
             }
+            return deleted;
         };
         var ret = crawlObject(thisObj, onSuccess, true);
         
