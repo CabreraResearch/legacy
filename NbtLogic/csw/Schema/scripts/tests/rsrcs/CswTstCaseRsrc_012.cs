@@ -42,10 +42,6 @@ namespace ChemSW.Nbt.Schema
         public string Val_Row_2 { get { return( "meeny"); } } 
         public string Val_Row_3 { get { return( "minie"); } }
 
-        public DataTable TheSuspectUpdateTable = null;
-        public CswTableUpdate TheSuspectUpdateTablesUpdater = null; 
-
-
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 
 }//ChemSW.Nbt.Schema

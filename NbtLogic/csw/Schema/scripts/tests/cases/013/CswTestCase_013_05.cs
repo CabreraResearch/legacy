@@ -34,14 +34,16 @@ namespace ChemSW.Nbt.Schema
         {
 			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
 			_CswTstCaseRsrc_013.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			DataTable DataTable = _CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.getTable();
+
+            CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_013.FakeTestTableName );
+            CswTableUpdate.StorageMode = StorageMode.Cached; // causes the rolback behavior we want
+            DataTable DataTable = CswTableUpdate.getTable();
             
             if( DataTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName02].ToString() != _CswTstCaseRsrc_013.LocalAribtiraryValue02Delta )
                 throw ( new CswDniException( "Column  " + _CswTstCaseRsrc_013.FakeValColumnName02 + " does not have the committed value " + _CswTstCaseRsrc_013.LocalAribtiraryValue02Delta ) );
 
             if( DataTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName01].ToString() == _CswTstCaseRsrc_013.LocalAribtiraryValue01Delta )
-                throw ( new CswDniException( "Column  " + _CswTstCaseRsrc_013.FakeValColumnName01 + " has the rolled back value (with another value modication)" + _CswTstCaseRsrc_013.LocalAribtiraryValue01Delta ) );
+                throw ( new CswDniException( "Column  " + _CswTstCaseRsrc_013.FakeValColumnName01 + " has the rolled back value (with another value modication): " + _CswTstCaseRsrc_013.LocalAribtiraryValue01Delta ) );
 
         }//runTest()
 
