@@ -721,8 +721,7 @@ function deleteNodes(options)
 // Node Preview
 
 var $nodepreview = undefined;
-function nodeHoverIn(event, nodeid, cswnbtnodekey)
-{
+function nodeHoverIn(event, nodeid, cswnbtnodekey) {
 	$nodepreview = $.CswNodePreview('open', {
 		ID: nodeid + "_preview",
 		nodeid: nodeid,
@@ -730,8 +729,8 @@ function nodeHoverIn(event, nodeid, cswnbtnodekey)
 		eventArg: event
 	});
 }
-function nodeHoverOut()
-{
+
+function nodeHoverOut() {
 	if ($nodepreview !== undefined)
 	{
 		$nodepreview.CswNodePreview('close');
@@ -740,11 +739,21 @@ function nodeHoverOut()
 }
 
 function preparePropJsonForSave(isMulti, propVals, attributes) {
+    ///<summary>Takes property JSON from the form and modifies it in order to send back to the server.</summary>
+    ///<param name="isMulti" type="Boolean">True if this is Multi-Edit</param>
+    ///<param name="propVals" type="Object">Likely an o.propData.values object. This contains the cached prop JSON.</param>
+    ///<param name="attributes" type="Object">An object which mirrors the structure of propVals. This contains the new prop JSON derived from the form.</param>
+    ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
     var wasModified = preparePropJsonForSaveRecursive(isMulti, propVals, attributes);
     propVals.wasmodified = wasModified;
 }
 
 function preparePropJsonForSaveRecursive(isMulti, propVals, attributes) {
+    ///<summary>Recurses over the subfields and sub-subfields of a property to update its JSON.</summary>
+    ///<param name="isMulti" type="Boolean">True if this is Multi-Edit</param>
+    ///<param name="propVals" type="Object">Likely an o.propData.values object. This contains the cached prop JSON.</param>
+    ///<param name="attributes" type="Object">An object which mirrors the structure of propVals. This contains the new prop JSON derived from the form.</param>
+    ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
     if (false === isNullOrEmpty(propVals)) {
         var wasModified = false;
         crawlObject(propVals, function(prop, key, par) {
