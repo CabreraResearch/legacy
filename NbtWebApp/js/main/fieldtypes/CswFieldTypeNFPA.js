@@ -146,7 +146,7 @@
             if (false === isNullOrEmpty($white)) {
                 attributes.special = $white.val();
             }
-            preparePropJsonForSave(o.Multi, o, attributes);
+            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
         }
     };
     

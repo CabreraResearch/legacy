@@ -739,44 +739,32 @@ function nodeHoverOut()
 	}
 }
 
-function preparePropJsonForSave(isMulti,propJson,attributes,subSubFunc) {
-    var propVals = propJson.propData.values;
-    var modifiedPropCount = 0;
-    if(false === isMulti) {
+function preparePropJsonForSave(isMulti, propVals, attributes) {
+    var wasModified = preparePropJsonForSaveRecursive(isMulti, propVals, attributes);
+    propVals.wasmodified = wasModified;
+}
+
+function preparePropJsonForSaveRecursive(isMulti, propVals, attributes) {
+    if (false === isNullOrEmpty(propVals)) {
+        var wasModified = false;
         crawlObject(propVals, function(prop, key, par) {
             if (contains(attributes, key)) {
                 var attr = attributes[key];
                 //don't bother sending this to server unless it's changed
-                if(propVals[key] !== attr) {
-                    modifiedPropCount++;
-                    propVals[key] = attr;
+                if (isPlainObject(attr)) {
+                    wasModified = preparePropJsonForSaveRecursive(isMulti, propVals[key], attr);
                 }
-                //use recursion here instead. someday.
-                if(isFunction(subSubFunc)) {
-                    subSubFunc(propVals[key], key, modifiedPropCount);
+                else if ((false === isMulti && propVals[key] !== attr) ||
+                    (isMulti && false === isNullOrUndefined(attr) && attr !== CswMultiEditDefaultValue)) {
+                    wasModified = true;
+                    propVals[key] = attr;
                 }
             }
         }, false);
     } else {
-        crawlObject(propVals, function(prop, key, par) {
-            if (contains(attributes, key)) {
-                var attr = attributes[key];
-                if (false === isNullOrUndefined(attr) && attr !== CswMultiEditDefaultValue) {
-                    //unlike in single-prop mode, identical values still represent a change (for other nodes)
-                    modifiedPropCount++;
-                    propVals[key] = attr; 
-                    //use recursion here instead. someday.
-                    if(isFunction(subSubFunc)) {
-                        subSubFunc(propVals[key], key);
-                    }
-                }
-            }
-        }, false);
+        //debug
     }
-    if(modifiedPropCount > 0) {
-        propJson.wasmodified = true;
-    }
-    return propJson;
+    return wasModified;
 }
 
 //#region Node interactions

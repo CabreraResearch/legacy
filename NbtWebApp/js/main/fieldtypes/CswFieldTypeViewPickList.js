@@ -36,13 +36,13 @@
             return $Div;    
         },
         'save': function(o) {
-			var $cbaDiv = o.$propdiv.children('div').first();
+            var attributes = { options: null };
+            var $cbaDiv = o.$propdiv.children('div').first();
 			var formdata = $cbaDiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
-                o.propData.values.options = formdata;
-                o.wasmodified = true;
+                attributes.options = formdata;
             } 
-            return o;
+            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
         }
     };
     

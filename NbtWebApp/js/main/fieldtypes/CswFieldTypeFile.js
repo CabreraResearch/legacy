@@ -78,6 +78,7 @@
         save: function(o) {
 //          var $TextBox = $propdiv.find('input');
 //          o.propData.children('barcode').text($TextBox.val());
+            o.wasmodified = false;
         }
     };
     

@@ -410,7 +410,7 @@ function each(thisObj, onSuccess) {
                 var childObj = thisObj[childKey];
                 ret = onSuccess(childObj, childKey, thisObj, value);
                 if(ret) {
-                    return false;
+                    return false; //false signals break
                 }
             });
         }

@@ -30,7 +30,7 @@
         },
         save: function(o) { //$propdiv, $xml
             var attributes = { value: o.$propdiv.CswNumberTextBox('value', o.ID) };
-            preparePropJsonForSave(o.Multi, o, attributes);
+            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
         }
     };
     

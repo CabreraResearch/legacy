@@ -528,25 +528,25 @@
 		    
 		    // do a fake 'save' to update the json with the current value
 			$.CswFieldTypeFactory('save', fieldOpt);
+            if(fieldOpt.wasmodified) {
+                // update the propxml from the server
+                var jsonData = {
+                    EditMode: fieldOpt.editMode,
+                    NodeId: tryParseObjByIdx(o.nodeids, 0),
+                    SafeNodeKey: fieldOpt.cswnbtnodekey,
+                    PropId: propId,
+                    NodeTypeId: o.nodetypeid,
+                    NewPropJson: JSON.stringify(propData)
+                };
 
-			// update the propxml from the server
-			var jsonData = {
-				EditMode: fieldOpt.editMode,
-				NodeId: tryParseObjByIdx(o.nodeids, 0),
-				SafeNodeKey: fieldOpt.cswnbtnodekey,
-				PropId: propId,
-				NodeTypeId: o.nodetypeid,
-				NewPropJson: JSON.stringify(propData)
-			};
-
-			CswAjaxJson({
-				url: o.SinglePropUrl,
-				data: jsonData,
-				success: function (data)
-				{
-				    _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn );
-				}
-			});
+                CswAjaxJson({
+                    url: o.SinglePropUrl,
+                    data: jsonData,
+                    success: function(data) {
+                        _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn);
+                    }
+                });
+            }
 		} // _updateSubProps()
 
 		function Save($form, $layouttable, propsData, $savebtn, tabid) {
@@ -555,8 +555,8 @@
 				_updatePropJsonFromForm($layouttable, propsData);
 				var data = {
 					EditMode: o.EditMode,
-					NodeIds: o.nodeids.join(','),
-					SafeNodeKeys: o.nodekeys.join(','),
+					NodeIds: tryParseObjByIdx(o.nodeids, 0), // o.nodeids.join(','),
+					SafeNodeKeys: tryParseObjByIdx(o.nodekeys, 0), // o.nodekeys.join(','),
 					TabId: tabid,
 					NodeTypeId: o.nodetypeid,
 					NewPropsJson: JSON.stringify(propsData),
@@ -569,20 +569,25 @@
 					success: function (data)
 					{
 					    var doSave = true;
-						if(o.ShowCheckboxes)
+						var dataJson = {
+							SourceNodeKey: tryParseObjByIdx(o.nodekeys, 0),
+							CopyNodeIds: [],
+							PropIds: []
+						};
+					    function copyNodeProps() {
+							CswAjaxJson({
+								url: o.CopyPropValuesUrl,
+								data: dataJson
+							}); // ajax						        
+						}
+					    if(o.ShowCheckboxes)
 						{
 							// apply the newly saved checked property values on this node to the checked nodes
 							var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
 							var $propchecks = $('.' + o.ID + '_check:checked');
-							if($nodechecks.length > 0 && $propchecks.length > 0)
-							{
-								var dataJson = {
-									SourceNodeKey: tryParseObjByIdx(o.nodekeys, 0),
-									CopyNodeIds: [],
-									PropIds: []
-								};
-								
-								$nodechecks.each(function() { 
+							
+						    if($nodechecks.length > 0 && $propchecks.length > 0) {
+						        $nodechecks.each(function() { 
 									var nodeid = $(this).CswAttrDom('nodeid');
 									dataJson.CopyNodeIds.push(nodeid); 
 								});
@@ -591,18 +596,17 @@
 									var propid = $(this).CswAttrDom('propid');
 									dataJson.PropIds.push(propid);
 								});
-
-								CswAjaxJson({
-									url: o.CopyPropValuesUrl,
-									data: dataJson
-								}); // ajax
+						        copyNodeProps();
 							} // if($nodechecks.length > 0 && $propchecks.length > 0)
-							else
-							{
+							else {
 								doSave = false;
 								alert('You have not selected any properties to save.');
 							}
 						} // if(o.ShowCheckboxes)
+					    else if(o.Multi) {
+						    dataJson.CopyNodeIds = o.nodeids.join(',');
+						    copyNodeProps();
+					    }
 						if (isFunction(o.onSave) && doSave) o.onSave(data.nodeid, data.cswnbtnodekey, tabcnt);
 						$savebtn.CswButton('enable');
 					}, // success
@@ -619,7 +623,7 @@
 		} // Save()
 
 		function _updatePropJsonFromForm($layouttable, propData) {
-		    var updSuccess = function(thisProp, propKey) {
+		    var updSuccess = function(thisProp, propKey, propData) {
                 var propOpt = {
 				    propData: thisProp,
 				    $propdiv: '',
@@ -637,9 +641,9 @@
 				$.CswFieldTypeFactory('save', propOpt);
 
 				// recurse on subprops
-				if (isTrue(thisProp.hassubprops) && thisProp.hasOwnProperty('subprops')) {
+				if (isTrue(thisProp.hassubprops) && contains(thisProp, 'subprops')) {
 				    var subProps = thisProp.subprops;
-				    if (!isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
+				    if (false === isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
 				        var $subtable = propOpt.$propcell.children('#' + thisProp.id + '_subproptable').first();
 				        if ($subtable.length > 0) {
 				            _updatePropJsonFromForm($subtable, subProps);

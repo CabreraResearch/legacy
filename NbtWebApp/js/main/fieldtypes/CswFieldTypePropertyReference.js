@@ -22,7 +22,7 @@
                             .appendTo($Div); 
         },
         save: function(o) { //$propdiv, $xml
-                // no changes to save
+             o.wasmodified = false;
         }
     };
     

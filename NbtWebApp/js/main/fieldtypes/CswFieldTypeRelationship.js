@@ -36,9 +36,7 @@
                 
                 if(o.ReadOnly) {
                     $Div.append(selectedName);
-                } 
-				else 
-				{
+                } else {
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
                     var $selectcell = $table.CswTable('cell', 1, 1);
@@ -82,7 +80,7 @@
                 if (false === isNullOrEmpty($nodeid)) {
                     attributes.nodeid = $nodeid.val();
                 }
-                preparePropJsonForSave(o.Multi, o, attributes);
+                preparePropJsonForSave(o.Multi, o.propData.values, attributes);
             }
         };
     

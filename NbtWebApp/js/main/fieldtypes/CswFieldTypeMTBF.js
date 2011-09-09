@@ -84,7 +84,12 @@
         },
         save: function(o) { //$propdiv, $xml
 
-            var attributes = { startdate: null, units: null };
+            var attributes = {
+                startdate: {
+                    date: null
+                }, 
+                units: null
+            };
             var $StartDate = o.$propdiv.find('#' + o.ID + '_sd');
             if (false === isNullOrEmpty($StartDate)) {
                 attributes.startdate = $StartDate.CswDateTimePicker('value').Date;
@@ -94,14 +99,7 @@
             if (false === isNullOrEmpty($Units)) {
                 attributes.units = $Units.val();
             }
-
-            var subSubFunc = function(startDate, key) {
-                if(key === 'startdate' && false === isNullOrUndefined(attributes.startdate.date)) {
-                    startDate.date = attributes.startdate.date;
-                }
-            };
-
-            preparePropJsonForSave(o.Multi, o, attributes, subSubFunc);
+            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
         }
     };
     

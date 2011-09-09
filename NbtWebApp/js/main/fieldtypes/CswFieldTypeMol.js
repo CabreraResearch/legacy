@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../thirdparty/js/jmol-12.0.49/Jmol.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 
@@ -90,7 +91,7 @@
 
         },
         save: function (o) { //$propdiv, o.propData
-            // nothing to do here
+            o.wasmodified = false;
         }
     };
 

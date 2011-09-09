@@ -243,46 +243,61 @@
         },
         save: function(o) {
 				try {
-				    var propVals = o.propData.values;
-				    var RateType = $('[name="' + o.ID + '_type"]:checked').val();
+				    var attributes = {
+                        Interval: {
+                            rateintervalvalue: {
+                                ratetype: null,
+                                weeklyday: null,
+                                startingdate: {
+                                    date: null,
+                                    dateformat: null
+                                },
+                                monthlyfrequency: null,
+                                monthlydate: null,
+                                monthlyweek: null,
+                                startingmonth: null,
+                                startingyear: null,
+                                yearlydate: {
+                                    date: null,
+                                    dateformat: null
+                                }
+                            }
+                        }
+				    };
+				    var rateType = $('[name="' + o.ID + '_type"]:checked').val();
+				    var dateFormat = o.propData.values.Interval.rateintervalvalue;
 				    if (false === o.Multi || $('#' + o.ID + '_textvalue').text() !== CswMultiEditDefaultValue) {
-				        o.wasmodified = true;
-				        var RIValue = propVals.Interval.rateintervalvalue;
-				        switch (RateType)
-				        {
+				        switch (rateType) {
 				            case 'weekly':
-				                RIValue.ratetype = 'WeeklyByDay';
-				                RIValue.weeklyday = getWeekDayChecked(o.ID + '_weeklyday');
-				                RIValue.startingdate = { };
-				                RIValue.startingdate.date = $('#' + o.ID + '_weekly_sd').CswDateTimePicker('value').Date;
-				                RIValue.startingdate.dateformat = RIValue.dateformat;
+				                attributes.Interval.rateintervalvalue.ratetype = 'WeeklyByDay';
+				                attributes.Interval.rateintervalvalue.weeklyday = getWeekDayChecked(o.ID + '_weeklyday');
+				                attributes.Interval.rateintervalvalue.startingdate = { };
+				                attributes.Interval.rateintervalvalue.startingdate.date = $('#' + o.ID + '_weekly_sd').CswDateTimePicker('value').Date;
+				                attributes.Interval.rateintervalvalue.startingdate.dateformat = dateFormat;
 				                break;
-
 				            case 'monthly':
 				                var monthlyType = $('[name="' + o.ID + '_monthly"]:checked').val();
-				                RIValue.ratetype = monthlyType;
-				                RIValue.monthlyfrequency = $('#' + o.ID + '_monthly_rate').val();
-				                if (monthlyType === "MonthlyByDate")
+				                attributes.Interval.rateintervalvalue.ratetype = monthlyType;
+				                attributes.Interval.rateintervalvalue.monthlyfrequency = $('#' + o.ID + '_monthly_rate').val();
+				                if (monthlyType === "MonthlyByDate") {
+				                    attributes.Interval.rateintervalvalue.monthlydate = $('#' + o.ID + '_monthly_date').val();
+				                } else // MonthlyByWeekAndDay
 				                {
-				                    RIValue.monthlydate = $('#' + o.ID + '_monthly_date').val();
+				                    attributes.Interval.rateintervalvalue.monthlyweek = $('#' + o.ID + '_monthly_week').val();
+				                    attributes.Interval.rateintervalvalue.monthlyday = getWeekDayChecked(o.ID + '_monthly_day');
 				                }
-				                else // MonthlyByWeekAndDay
-				                {
-				                    RIValue.monthlyweek = $('#' + o.ID + '_monthly_week').val();
-				                    RIValue.monthlyday = getWeekDayChecked(o.ID + '_monthly_day');
-				                }
-				                RIValue.startingmonth = $('#' + o.ID + '_monthly_startMonth').val();
-				                RIValue.startingyear = $('#' + o.ID + '_monthly_startYear').val();
+				                attributes.Interval.rateintervalvalue.startingmonth = $('#' + o.ID + '_monthly_startMonth').val();
+				                attributes.Interval.rateintervalvalue.startingyear = $('#' + o.ID + '_monthly_startYear').val();
 				                break;
-
 				            case 'yearly':
-				                RIValue.ratetype = 'YearlyByDate';
-				                RIValue.yearlydate = { };
-				                RIValue.yearlydate.date = $('#' + o.ID + '_yearly_sd').CswDateTimePicker('value').Date;
-				                RIValue.yearlydate.dateformat = RIValue.dateformat;
+				                attributes.Interval.rateintervalvalue.ratetype = 'YearlyByDate';
+				                attributes.Interval.rateintervalvalue.yearlydate = { };
+				                attributes.Interval.rateintervalvalue.yearlydate.date = $('#' + o.ID + '_yearly_sd').CswDateTimePicker('value').Date;
+				                attributes.Interval.rateintervalvalue.yearlydate.dateformat = dateFormat;
 				                break;
 				        } // switch(RateType)
 				    } 
+				    preparePropJsonForSave(o.Multi, o.propData.values, attributes);
 				} catch(e) {
 				    if(debugOn()) {
 				        log('Error updating propData: ' + e);

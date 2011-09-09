@@ -55,7 +55,7 @@
             if (false === isNullOrEmpty($unit)) {
                 attributes.units = $unit.val();
             } 
-            preparePropJsonForSave(o.Multi, o, attributes);
+            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
         }
     };
     

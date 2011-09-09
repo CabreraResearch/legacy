@@ -29,8 +29,8 @@
             return ret;
         },
         save: function(o) {
-                
-            }
+            o.wasmodified = false;        
+        }
     };
     
     // Method calling logic

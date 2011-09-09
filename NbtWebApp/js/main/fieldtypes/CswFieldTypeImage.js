@@ -30,12 +30,9 @@
 				$('<a href="'+ href +'" target="_blank"><img src="' + href + '" alt="' + fileName + '" width="'+ width +'" height="'+ height +'"/></a>')
 									.appendTo($cell11);
 				$cell21.append('<a href="'+ href +'" target="_blank">'+ fileName +'</a>');
-			}
-            else
-            {
+			} else {
 			    $cell21.append('(no image selected)');
             }
-
 
             if(!o.ReadOnly && o.EditMode != EditMode.AddInPopup.name) {
                 //Edit button
@@ -87,7 +84,7 @@
 
         },
         save: function(o) { 
-
+            o.wasmodified = false;
         }
     };
     

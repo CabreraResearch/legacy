@@ -115,9 +115,10 @@
 			} // if(o.EditMode !== EditMode.AuditHistoryInPopup.name)
 		},
 		save: function(o) {
-//                var $TextBox = $propdiv.find('input');
-//                $xml.children('barcode').text($TextBox.val());
-			}
+//          var $TextBox = $propdiv.find('input');
+//          $xml.children('barcode').text($TextBox.val());
+		    o.wasmodified = false;
+		}
 	};
 	
 	// Method calling logic

@@ -38,19 +38,19 @@
 					var $locationtree = $('<div />')
     					                    .CswNodeTree('init', {  
     					                        ID: o.ID,
-												viewid: viewId,
-												nodeid: nodeId,
-												cswnbtnodekey: nodeKey,
-												onSelectNode: function (optSelect) {
-													onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onchange);
-												},
-												onInitialSelectNode: function(optSelect) {
-													onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function() {}); 
-												}, 
-												SelectFirstChild: false,
-												UsePaging: false,
-												IncludeInQuickLaunch: false
-											});
+											    viewid: viewId,
+											    nodeid: nodeId,
+											    cswnbtnodekey: nodeKey,
+											    onSelectNode: function (optSelect) {
+												    onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onchange);
+											    },
+											    onInitialSelectNode: function(optSelect) {
+												    onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function() {}); 
+											    }, 
+											    SelectFirstChild: false,
+											    UsePaging: false,
+											    IncludeInQuickLaunch: false
+										    });
 	
 					$selectdiv.CswComboBox( 'init', {	'ID': o.ID + '_combo', 
 														'TopContent': name,
@@ -83,7 +83,7 @@
 			    if (false === isNullOrEmpty($selectdiv)) {
 			        attributes.nodeid = $selectdiv.val();
 			    }
-			    preparePropJsonForSave(o.Multi, o, attributes);
+			    preparePropJsonForSave(o.Multi, o.propData.values, attributes);
 			}
 		};
 	

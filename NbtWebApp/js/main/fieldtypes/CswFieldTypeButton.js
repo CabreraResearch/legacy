@@ -1,11 +1,12 @@
-﻿/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../_Global.js" />
+﻿/// <reference path="_CswFieldTypeFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         
-    var PluginName = 'CswFieldTypeButton';
+    var pluginName = 'CswFieldTypeButton';
 
     var methods = {
         init: function(o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
@@ -13,41 +14,38 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var Value = o.$propxml.children('text').text().trim();
-            var Mode = o.$propxml.children('text').CswAttrXml('mode');
+            var value = o.$propxml.children('text').text().trim();
+            var mode = o.$propxml.children('text').CswAttrXml('mode');
 
-            if(o.ReadOnly)
-            {
-                $Div.append(Value);
-            }
-            else 
-            {
+            if(o.ReadOnly) {
+                $Div.append(value);
+            } else {
                 var $Ctrl = "";
-                if(Mode.toString().toLowerCase()=="button"){
+                if(mode.toString().toLowerCase()=="button"){
                     $Ctrl = $Div.CswButton('init', {'ID': o.ID,
-				                                        'enabledText': Value,
-				                                        'disabledText': Value,
+				                                        'enabledText': value,
+				                                        'disabledText': value,
 				                                        'onclick': function () { alert('clicked!'); }
                                                       });
                 }
                 else{
                     $Ctrl = $Div.CswLink('init', {'ID': o.ID,
-				                                        'value': Value,
+				                                        'value': value,
                                                         'href': '#',
 				                                        'onClick': function() { alert('clicked!'); }
                                                       });
                 }
 
 
-                if(o.Required)
-                {
+                if(o.Required) {
                     $Ctrl.addClass("required");
                 }
 
             }
         },
         save: function(o) {
-            }
+            o.wasmodified = false; //preparePropJsonForSave();
+        }
     };
     
     // Method calling logic
@@ -58,7 +56,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

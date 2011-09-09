@@ -20,13 +20,10 @@
 			var compliantAnswers = tryParseString(propVals.compliantanswers).trim();
 			var comments =  (false === o.Multi) ? tryParseString(propVals.comments).trim() : CswMultiEditDefaultValue;
 			var correctiveAction = (false === o.Multi) ? tryParseString(propVals.correctiveaction).trim() : CswMultiEditDefaultValue;
-            var isCompliant = (false === o.Multi) ? isTrue(propVals.iscompliant) : true;
             multi = o.Multi;
             
 			var dateAnswered =  (false === o.Multi) ? tryParseString(propVals.dateanswered.date).trim() : ''; 
 			var dateCorrected =  (false === o.Multi) ? tryParseString(propVals.datecorrected.date).trim() : '';
-			var dateAnsweredFormat =  ServerDateFormatToJQuery(propVals.dateanswered.dateformat);
-			var dateCorrectedFormat =  ServerDateFormatToJQuery(propVals.datecorrected.dateformat);
 
             if(o.ReadOnly) {
                 $Div.append('Answer: ' + answer);
@@ -74,7 +71,7 @@
 									});
 
 				$table.CswTable('cell', 3, 1).append('Comments');
-				var $CommentsTextBox = $('<textarea id="'+ o.ID +'_com" />')
+				$('<textarea id="'+ o.ID +'_com" />')
 									.appendTo($table.CswTable('cell', 3, 2))
 									.text(comments)
 									.change(o.onchange);
@@ -100,7 +97,7 @@
             if (false === isNullOrEmpty($comments)) {
                 attributes.comments = $comments.val();
             }
-            preparePropJsonForSave(o.Multi, o, attributes);
+            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
         }
     };
     
