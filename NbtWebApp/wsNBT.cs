@@ -583,49 +583,85 @@ namespace ChemSW.Nbt.WebServices
 
         } // getMainMenu()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getGrid( string ViewId, string SafeNodeKey, string ShowEmpty )
-        {
-            JObject ReturnVal = new JObject();
-            string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getGrid( string ViewId, string SafeNodeKey, string ShowEmpty )
+		{
+			JObject ReturnVal = new JObject();
+			string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    bool ShowEmptyGrid = CswConvert.ToBoolean( ShowEmpty );
-                    CswNbtView View = _getView( ViewId );
-                    if( null != View )
-                    {
-                        CswNbtNodeKey ParentNodeKey = null;
-                        if( !string.IsNullOrEmpty( ParsedNodeKey ) )
-                        {
-                            ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
-                        }
-                        var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
-                        ReturnVal = g.getGrid( ShowEmptyGrid );
-                        //CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
-                        View.SaveToCache( true );
-                    }
-                }
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					bool ShowEmptyGrid = CswConvert.ToBoolean( ShowEmpty );
+					CswNbtView View = _getView( ViewId );
+					if( null != View )
+					{
+						CswNbtNodeKey ParentNodeKey = null;
+						if( !string.IsNullOrEmpty( ParsedNodeKey ) )
+						{
+							ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
+						}
+						var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
+						ReturnVal = g.getGrid( ShowEmptyGrid );
+						//CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
+						View.SaveToCache( true );
+					}
+				}
 
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = jError( Ex );
-            }
+				_deInitResources();
+			}
+			catch( Exception Ex )
+			{
+				ReturnVal = jError( Ex );
+			}
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+			return ReturnVal.ToString();
 
-        } // getGrid()
+		} // getGrid()
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getTable( string ViewId, string NodeId, string NodeKey )
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					CswNbtView View = _getView( ViewId );
+					if( null != View )
+					{
+						CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+						CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources );
+						ReturnVal = wsTable.getTable( View, Node );
+						View.SaveToCache( true );
+					}
+				}
+
+				_deInitResources();
+			}
+			catch( Exception Ex )
+			{
+				ReturnVal = jError( Ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+
+		} // getGrid()
 
         /// <summary>
         /// Generates a tree of nodes from the view
@@ -2669,6 +2705,7 @@ namespace ChemSW.Nbt.WebServices
             }
             return View;
         } // _getView()
+
 
         #region Import Inspection Questions
 

@@ -105,6 +105,7 @@
     <Content Include="Act_ImportFireExtinguisher.aspx" />
     <Content Include="Act_Receiving.aspx" />
     <Content Include="Act_SplitSamples.aspx" />
+    <Compile Include="App_Code\CswNbtWebServiceTable.cs" />
     <Compile Include="App_Code\CswNbtWebServiceAuditing.cs" />
     <Compile Include="App_Code\CswNbtWebServiceImportInspectionQuestions.cs" />
     <Compile Include="App_Code\CswNbtWebServiceInspections.cs" />
@@ -115,6 +116,7 @@
     <Content Include="js\main\controls\CswGrid.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeButton.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeMol.js" />
+    <Content Include="js\main\node\CswNodeTable.js" />
     <Content Include="js\thirdparty\js\jmol-12.0.49\CHANGES.txt" />
     <Content Include="js\thirdparty\js\jmol-12.0.49\COPYRIGHT.txt" />
     <Content Include="js\thirdparty\js\jmol-12.0.49\Jmol.jar" />

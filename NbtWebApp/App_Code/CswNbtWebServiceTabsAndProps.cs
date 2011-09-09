@@ -29,31 +29,6 @@ namespace ChemSW.Nbt.WebServices
             _IsMultiEdit = Multi;
         }
 
-        private CswNbtNode _getNode( string NodeId, string NodeKey, CswDateTime Date )
-        {
-            CswNbtNode Node = null;
-            if( !string.IsNullOrEmpty( NodeKey ) )
-            {
-                CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-                Node = _CswNbtResources.getNode( RealNodeKey, Date.ToDateTime() );
-            }
-            else if( !string.IsNullOrEmpty( NodeId ) )
-            {
-				CswPrimaryKey RealNodeId = new CswPrimaryKey();
-				if( CswTools.IsInteger( NodeId ) )
-				{
-					RealNodeId.TableName = "nodes";
-					RealNodeId.PrimaryKey = CswConvert.ToInt32( NodeId );
-				}
-				else
-				{
-					RealNodeId.FromString( NodeId );
-				}
-				Node = _CswNbtResources.getNode( RealNodeId, Date.ToDateTime() );
-            }
-            return Node;
-        } // _getNode()
-
 		public JObject getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
 		{
 			JObject Ret = new JObject();
@@ -70,7 +45,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			else
 			{
-				CswNbtNode Node = _getNode( NodeId, NodeKey, Date );
+				CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, Date );
 				//switch( EditMode )
 				//{
 				//    case NodeEditMode.AddInPopup:
@@ -145,7 +120,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( false == _IsMultiEdit && TabId.StartsWith( HistoryTabPrefix ) )
 			{
-				CswNbtNode Node = _getNode( NodeId, NodeKey, Date );
+				CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, Date );
 				if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType ) )
 				{
 					_getAuditHistoryGridProp( Ret, Node );
@@ -162,7 +137,7 @@ namespace ChemSW.Nbt.WebServices
 				}
 				else
 				{
-					Node = _getNode( NodeId, NodeKey, Date );
+					Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, Date );
 				}
 
 				if( Node != null )
@@ -199,7 +174,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNode Node = null;
             Node = EditMode == NodeEditMode.AddInPopup && NodeTypeId != Int32.MinValue ?
                                     _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing ) :
-                                    _getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+									wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
 
             if( Node != null )
             {
@@ -383,7 +358,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey NbtNodeKey = null;
             Node = EditMode == NodeEditMode.AddInPopup ?
                                     _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode ) :
-                                    _getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+									wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
 
             if( Node != null &&
                 ( EditMode == NodeEditMode.AddInPopup &&
@@ -482,7 +457,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			else
 			{
-				CswNbtNode Node = _getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+				CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
 				NodeType = Node.NodeType;
 			}
 
