@@ -44,8 +44,7 @@
                                 }
                             });
                 }
-                if(o.Required)
-                {
+                if(o.Required) {
                     $TextBox.addClass("required");
                 }
 				
@@ -53,8 +52,12 @@
             }
         },
         save: function(o) {
+            var attributes = { barcode: null };
             var $TextBox = o.$propdiv.find('input');
-            o.propData.values.barcode = $TextBox.val();
+            if(false === isNullOrEmpty($TextBox)) {
+                attributes.barcode = $TextBox.val();
+            }
+            preparePropJsonForSave(o.Multi, o, attributes);
         }
     };
     

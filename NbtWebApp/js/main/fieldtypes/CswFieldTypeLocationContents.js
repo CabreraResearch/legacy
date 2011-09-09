@@ -27,9 +27,9 @@
 //                }
             },
         save: function(o) {
-//                var $TextBox = $propdiv.find('input');
-//                $xml.children('barcode').text($TextBox.val());
-            }
+//          var $TextBox = $propdiv.find('input');
+//          $xml.children('barcode').text($TextBox.val());
+        }
     };
     
     // Method calling logic

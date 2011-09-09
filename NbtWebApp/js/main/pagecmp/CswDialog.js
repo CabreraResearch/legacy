@@ -154,16 +154,15 @@
 			});
 
 		}, // AddNodeDialog
-		'EditLayoutDialog': function (CswNodeTabOptions) 
-		{
-			CswNodeTabOptions.ID = CswNodeTabOptions.ID + '_editlayout';
-			CswNodeTabOptions.Config = true;
-			CswNodeTabOptions.ShowAsReport = false;
-			CswNodeTabOptions.onTabSelect = function(tabid) {
-				CswNodeTabOptions.tabid = tabid;
+        EditLayoutDialog: function (cswNodeTabOptions) {
+            cswNodeTabOptions.ID = cswNodeTabOptions.ID + '_editlayout';
+			cswNodeTabOptions.Config = true;
+			cswNodeTabOptions.ShowAsReport = false;
+			cswNodeTabOptions.onTabSelect = function(tabid) {
+				cswNodeTabOptions.tabid = tabid;
 				_configAddOptions();
 			};
-			CswNodeTabOptions.onPropertyRemove = function(propid) {
+			cswNodeTabOptions.onPropertyRemove = function(propid) {
 				_configAddOptions();
 			};
 
@@ -180,7 +179,7 @@
 												{ value: 'Edit', display: 'Edit' },
 												{ value: 'Preview', display: 'Preview' } ],
 									onChange: function () {
-										CswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
+										cswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
 										_resetLayout();
 									}
 								});
@@ -194,7 +193,7 @@
 
 										var ajaxdata = {
 												PropId: $addSelect.val(),
-												TabId: CswNodeTabOptions.tabid,
+												TabId: cswNodeTabOptions.tabid,
 												EditMode: $layoutSelect.val()
 										};
 										CswAjaxJson({ 
@@ -210,7 +209,7 @@
 			function _resetLayout()
 			{
 				$cell12.contents().remove();
-				$cell12.CswNodeTabs(CswNodeTabOptions);
+				$cell12.CswNodeTabs(cswNodeTabOptions);
 				_configAddOptions();
 			}
 
@@ -219,10 +218,10 @@
 				CswAjaxJson({ 
 					url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd', 
 					data: {
-							NodeId: CswNodeTabOptions.nodeid, 
-							NodeKey: CswNodeTabOptions.cswnbtnodekey, 
-							NodeTypeId: CswNodeTabOptions.nodetypeid, 
-							TabId: CswNodeTabOptions.tabid, 
+							NodeId: cswNodeTabOptions.nodeid, 
+							NodeKey: cswNodeTabOptions.cswnbtnodekey, 
+							NodeTypeId: cswNodeTabOptions.nodetypeid, 
+							TabId: cswNodeTabOptions.tabid, 
 							EditMode: $layoutSelect.val()
 						},
 					success: function(data) {
@@ -244,18 +243,19 @@
 
 			function _onclose()
 			{
-				CswNodeTabOptions.Refresh();
+				cswNodeTabOptions.Refresh();
 			}
 
 			_resetLayout();
 
 			_openDiv($div, 900, 600, _onclose);
 		}, // EditLayoutDialog
-        EditNodeDialog: function (options) {
-			var o = {
-				nodeid: '',
-				nodepk: '',
-				cswnbtnodekey: '',
+	    EditNodeDialog: function (options) {
+	        var o = {
+				nodeids: [],
+				nodepks: [],
+				nodekeys: [],
+	            nodenames: [],
 				Multi: false,
 				filterToPropId: '',
 				title: '',
@@ -263,14 +263,14 @@
 				date: ''     // viewing audit records
 			};
 			if (options) $.extend(o, options);
-            var nodeid, nodekey;
-            if (o.Multi && isArray(o.nodeid)) {
-                nodeid = o.nodeid[0];
-                nodekey = o.cswnbtnodekey[0];
-            } else {
-                nodeid = tryParseString(o.nodeid, o.nodepk);
-                nodekey = o.cswnbtnodekey;
-            }
+//            var nodeid, nodekey;
+//            if (o.Multi && isArray(o.nodeid)) {
+//                nodeid = o.nodeid[0];
+//                nodekey = o.cswnbtnodekey[0];
+//            } else {
+//                nodeid = tryParseString(o.nodeid, o.nodepk);
+//                nodekey = o.cswnbtnodekey;
+//            }
             
 		    var $div = $('<div></div>');
 							
@@ -279,8 +279,8 @@
 			if(false === isNullOrEmpty(o.date) && false === o.Multi) {
 				myEditMode = EditMode.AuditHistoryInPopup.name;
 				$table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
-					ID: nodeid + '_history',
-					nodeid: nodeid,
+					ID: nodeids[0] + '_history',
+					nodeid: nodeids[0],
 					onEditNode: o.onEditNode,
 					JustDateColumn: true,
 					selectedDate: o.date,
@@ -296,18 +296,16 @@
 			{
 				$tabcell.empty();
 				$tabcell.CswNodeTabs({
-					nodeid: nodeid,
-					cswnbtnodekey: nodekey,
+					nodeids: o.nodeids,
+					nodekeys: o.nodekeys,
+				    nodenames: o.nodenames,
 					filterToPropId: o.filterToPropId,
 				    Multi: o.Multi,    
 					EditMode: myEditMode,
 					title: o.title,
 					tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
 					date: date,
-				    onMultiSave: function () {
-				        
-				    }, 
-					onSave: function (nodeid, nodekey, tabcount) {
+					onSave: function (nodeids, nodekeys, tabcount) {
 						unsetChanged();
 						if(tabcount === 1)
 						{
@@ -315,7 +313,7 @@
 						}
 						setupTabs(date);
 						if (isFunction(o.onEditNode)) {
-							o.onEditNode(nodeid, nodekey);
+							o.onEditNode(nodeids, nodekeys);
 						}
 					},
 					onBeforeTabSelect: function (tabid) {

@@ -28,13 +28,13 @@
 /// <reference path="CswFieldTypeSequence.js" />
 /// <reference path="CswFieldTypeStatic.js" />
 /// <reference path="CswFieldTypeText.js" />
-/// <reference path="CswFieldTypeTime.js" />
 /// <reference path="CswFieldTypeTimeInterval.js" />
 /// <reference path="CswFieldTypeUserSelect.js" />
 /// <reference path="CswFieldTypeViewPickList.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 
 $.CswFieldTypeFactory = function (method)
 {
@@ -58,9 +58,9 @@ $.CswFieldTypeFactory = function (method)
 	var methods = {
 		'make': function (options)
 		{
-			if (options)
-			{
-				$.extend(m, options);
+			if (options) {
+				//$.extend(m, options);
+			    m = options;
 			}
 			m.ID = m.propData.id;
 			m.Required = isTrue(m.propData.required);
@@ -187,9 +187,9 @@ $.CswFieldTypeFactory = function (method)
 
 		'save': function (options)
 		{
-			if (options)
-			{
-				$.extend(m, options);
+			if (options) {
+				//$.extend(m, options);
+			    m = options;
 			}
 			m.ID = m.propData.id;
 			m.Required = isTrue(m.propData.required);

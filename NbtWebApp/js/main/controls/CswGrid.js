@@ -227,43 +227,33 @@ function CswGrid(options, $parent) {
     function opGridRows(opts, rowid, onSelect, onEmpty) {
         var ret = false;
         var haveSelectedRows = false;
-        if (false === multiEdit) {
-            if (isNullOrEmpty(rowid)) {
-                rowid = getSelectedRowId();
-            }
-            if (false === isNullOrEmpty(rowid)) {
-                haveSelectedRows = true;
-                crawlObject(opts, function (prop, key, parent)
-                {
-                	if (false === isFunction(parent[key]))
-                	{
-                		parent[key] = getValueForColumn(key, rowid);
-                	}
-                	return true;
-                }, false);
-            }
-        } else { // if (false === multiEdit)
-            var rows = getSelectedRowsIds();
-            if (rows.length > 0) {
-                haveSelectedRows = true;
-                //loop once to guarantee we have Arrays
+        
+        var rowids = [];
+        if(multiEdit) {
+            rowids = getSelectedRowsIds();
+        } 
+        else if(false === isNullOrEmpty(rowid)) {
+            rowids.push(rowid);
+        } else {
+            rowids.push(getSelectedRowId());
+        }
+
+        if (rowids.length > 0) {
+            haveSelectedRows = true;
+            for (var i = 0; i < rowids.length; i++) {
                 crawlObject(opts, function(prop, key, parent) {
                     if (false === isFunction(parent[key])) {
-                        parent[key] = [];
-                    }
-                    return true;
-                }, false);
-                for (var i = 0; i < rows.length; i++) {
-                    crawlObject(opts, function(prop, key, parent) {
                         if (isArray(parent[key])) {
-                            rowid = rows[i];
+                            rowid = rowids[i];
                             parent[key].push(getValueForColumn(key, rowid));
+                        } else {
+                            parent[key] = getValueForColumn(key, rowid);
                         }
-						return true;
-					}, false);
-                }
+                    }
+					return true;
+                }, false);
             }
-        } // else
+        }
         
         if (haveSelectedRows) {
             if (isFunction(onSelect)) {

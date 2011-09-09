@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../controls/CswSelect.js" />
 
 ; (function ($) {
         
@@ -14,17 +15,26 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = tryParseString(propVals.value).trim();
+            var value = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue;
             var gestalt = tryParseString(o.propData.gestalt).trim();
             var options = propVals.options;
             
             if (o.ReadOnly) {
                 $Div.append(gestalt);
             } else {
-				var $SelectBox = $('<select id="'+ o.ID +'" name="'+ o.ID +'" class="selectinput" />"' )
-                                    .appendTo($Div)
-                                    .change(function() { _handleOnChange(); })
-									.append('<option value="">Select...</option>');
+                var values = ['Select...'];
+                var selected = 'Select...';
+                if(o.Multi) {
+                    values.push(CswMultiEditDefaultValue);
+                    selected = CswMultiEditDefaultValue;
+                }
+                var $SelectBox = $Div.CswSelect('init', {
+                                        ID: o.ID,
+                                        cssclass: 'selectinput',
+                                        values: values,
+                                        selected: selected,
+                                        onChange: function() { _handleOnChange(); }
+                                     }); 
 
                 var $ValueTableDiv = $('<div />')
 									.appendTo($Div)
@@ -42,8 +52,7 @@
 
 
 				// ClosureCompiler broke if I didn't define these functions first
-				function _handleOnChange()
-				{
+				function _handleOnChange() {
 					var optionvalue = $SelectBox.children('option:selected').CswAttrDom('value');
 					var optiontext = $SelectBox.children('option:selected').text();
 
@@ -61,8 +70,7 @@
 					}
 				} // _handleOnChange()
 
-				function _addValue(optionvalue, optiontext, doAnimation)
-				{
+				function _addValue(optionvalue, optiontext, doAnimation) {
 					$SelectBox.children('option[value="'+ optionvalue +'"]').remove();
 
 					$ValueTableDiv.show();
@@ -114,20 +122,15 @@
 //                    $SelectBox.append('<option value="' + SplitOptions[i] + '">' + SplitOptions[i] + '</option>');
 //                }
 
-                for (var key in options) {
-                    if(options.hasOwnProperty(key)) {
-                        var thisOption = options[key];
-                        
-                        if (isTrue(thisOption.selected)) {
+                crawlObject(options, function(thisOption, key) {
+                        if (isTrue(thisOption.selected) && false === o.Multi ) {
                             _addValue(thisOption.value, thisOption.text, false);
                         } else {
                             $SelectBox.append('<option value="' + thisOption.value + '">' + thisOption.text + '</option>');
                         }
-                    }
-                }
+                }, false);
 
-                if(isNullOrEmpty(value))
-				{
+                if(isNullOrEmpty(value)) {
 					$ValueTableDiv.hide();
 				}
 
@@ -139,9 +142,13 @@
             } // if-else(o.ReadOnly)
         },
         save: function(o) { //$propdiv, $xml
-                var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
-                o.propData.values.value = $HiddenValue.val();
+            var attributes = { value: null };
+            var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
+            if (false === isNullOrEmpty($HiddenValue)) {
+                attributes.value = $HiddenValue.val();
             }
+            preparePropJsonForSave(o.Multi, o, attributes);
+        }
     };
     
     // Method calling logic

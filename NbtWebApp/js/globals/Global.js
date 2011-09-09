@@ -359,11 +359,11 @@ function _handleAuthenticationStatus(options)
 			GoodEnoughForMobile = true;
 			if( !o.ForMobile ) {
 				$.CswDialog('EditNodeDialog', {
-					'nodeid': o.usernodeid,
-					'cswnbtnodekey': o.usernodekey,
-					'filterToPropId': o.passwordpropid,
-					'title': 'Your password has expired.  Please change it now:',
-					'onEditNode': function () { o.success(); }
+					nodeids: [ o.usernodeid ],
+					nodekeys: [ o.usernodekey ],
+					filterToPropId: o.passwordpropid,
+					title: 'Your password has expired.  Please change it now:',
+					onEditNode: function () { o.success(); }
 				});
 			}
 			break;
@@ -739,6 +739,45 @@ function nodeHoverOut()
 	}
 }
 
+function preparePropJsonForSave(isMulti,propJson,attributes,subSubFunc) {
+    var propVals = propJson.propData.values;
+    var modifiedPropCount = 0;
+    if(false === isMulti) {
+        crawlObject(propVals, function(prop, key, par) {
+            if (contains(attributes, key)) {
+                var attr = attributes[key];
+                //don't bother sending this to server unless it's changed
+                if(propVals[key] !== attr) {
+                    modifiedPropCount++;
+                    propVals[key] = attr;
+                }
+                //use recursion here instead. someday.
+                if(isFunction(subSubFunc)) {
+                    subSubFunc(propVals[key], key, modifiedPropCount);
+                }
+            }
+        }, false);
+    } else {
+        crawlObject(propVals, function(prop, key, par) {
+            if (contains(attributes, key)) {
+                var attr = attributes[key];
+                if (false === isNullOrUndefined(attr) && attr !== CswMultiEditDefaultValue) {
+                    //unlike in single-prop mode, identical values still represent a change (for other nodes)
+                    modifiedPropCount++;
+                    propVals[key] = attr; 
+                    //use recursion here instead. someday.
+                    if(isFunction(subSubFunc)) {
+                        subSubFunc(propVals[key], key);
+                    }
+                }
+            }
+        }, false);
+    }
+    if(modifiedPropCount > 0) {
+        propJson.wasmodified = true;
+    }
+    return propJson;
+}
 
 //#region Node interactions
 
@@ -883,8 +922,7 @@ function HandleMenuItem(options)
 				$a.click(function ()
 				{
 					$.CswDialog('EditNodeDialog', {
-						nodeid: json.userid,
-						cswnbtnodekey: '',
+						nodeids: [ json.userid ],
 						filterToPropId: '',
 						title: 'User Profile',
 						onEditNode: null // function (nodeid, nodekey) { }

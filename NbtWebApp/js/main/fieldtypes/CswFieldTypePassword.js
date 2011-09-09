@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../controls/CswInput.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         
@@ -14,15 +15,12 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-			var isExpired = isTrue(propVals.isexpired);
-			var isAdmin = isTrue(propVals.isadmin);
+			var isExpired = (false === o.Multi) ? isTrue(propVals.isexpired) : null;
+			var isAdmin = (false === o.Multi) ? isTrue(propVals.isadmin) : null;
 
-            if(o.ReadOnly)
-            {
+            if(o.ReadOnly) {
                 // show nothing
-            }
-            else 
-            {
+            } else {
                 var $table = $Div.CswTable('init', { 
 					ID: o.ID + '_tbl', 
 					'OddCellRightAlign': true 
@@ -38,26 +36,26 @@
 				var $TextBox1 = $cell12.CswInput('init',{ID: o.ID + '_pwd1',
                                                          type: CswInput_Types.password,
                                                          cssclass: 'textinput',
+				                                         value: (false === o.Multi) ? '' : CswMultiEditDefaultValue,
                                                          onChange: o.onchange
                                                  }); 
                 $cell21.append('Confirm');
                 var $TextBox2 = $cell22.CswInput('init',{ID: o.ID + '_pwd2',
                                                          type: CswInput_Types.password,
+                                                         value: (false === o.Multi) ? '' : CswMultiEditDefaultValue,
                                                          cssclass: 'textinput password2',
                                                          onChange: o.onchange
                                                  }); 
-                if(isTrue(isAdmin))
-				{
+                if(isAdmin) {
 					var $IsExpiredCheck = $cell31.CswInput({ 
 							'id': o.ID + '_exp',
 							'name': o.ID + '_exp',
 							'type': CswInput_Types.checkbox
 						});
-					if(isTrue(isExpired))
-					{
+					if(isExpired) {
 						$IsExpiredCheck.CswAttrDom('checked', 'true');
 					}
-					$cell32.append('Expired');
+                    $cell32.append('Expired');
 				}
                 
                 if (o.Required && isNullOrEmpty(propVals.password)) {
@@ -72,20 +70,21 @@
             }
         },
         save: function(o) { //$propdiv, $xml
-            var $IsExpiredCheck = o.$propdiv.find('input#' + o.ID + '_exp');
-			var propVals = o.propData.values;	
-            if($IsExpiredCheck.length > 0)
-			{
-				propVals.isexpired = $IsExpiredCheck.is(':checked');
+            var attributes = {
+                isexpired: null,
+                newpassword: null
+            };
+            var $newpw = o.$propdiv.find('input#' + o.ID + '_pwd1');
+            if (false === isNullOrEmpty($newpw)) {
+                attributes.newpassword = $newpw.val();
             }
-				
-            var $TextBox = o.$propdiv.find('input#' + o.ID + '_pwd1');
-			var newpw = $TextBox.val();
-			if(newpw !== '')
-			{
-				propVals.newpassword = newpw;
-			}
-		}
+            
+            var $IsExpiredCheck = o.$propdiv.find('input#' + o.ID + '_exp');
+            if (false === isNullOrEmpty($IsExpiredCheck) && $IsExpiredCheck.length > 0) {
+                attributes.isexpired = $IsExpiredCheck.is(':checked');    
+            }
+            preparePropJsonForSave(o.Multi, o, attributes);
+        }
     };
     
     // Method calling logic

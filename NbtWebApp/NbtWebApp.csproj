@@ -228,7 +228,6 @@
     <Content Include="js\globals\CswEnums.js" />
     <Content Include="js\main\tools\CswProfileMethod.js" />
     <Content Include="js\mobile\controls\CswMobileListView.js" />
-    <Content Include="js\actions\CswImportInspectionQuestions.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeMultiList.js" />
     <Content Include="js\mobile\globals\CswMobileEnums.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeBarcode.js" />
@@ -730,7 +729,6 @@
     <Content Include="js\main\fieldtypes\CswFieldTypeSequence.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeStatic.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeText.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeTime.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeTimeInterval.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeUserSelect.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeViewPickList.js" />

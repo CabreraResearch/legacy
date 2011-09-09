@@ -13,30 +13,34 @@
   
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function(o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
             var logicalSetJson = propVals.logicalsetjson;
             
-            var $cbaDiv = $('<div />')
-                            .appendTo($Div)
-                            .CswCheckBoxArray('init', {
-                                ID: o.ID + '_cba',
-                                onchange: o.onchange,
-								ReadOnly: o.ReadOnly,
-                                dataAry: logicalSetJson,
-			                    nameCol: nameCol,
-			                    keyCol: keyCol
-                            });
+            $('<div />')
+                .appendTo($Div)
+                .CswCheckBoxArray('init', {
+                    ID: o.ID + '_cba',
+                    onchange: o.onchange,
+					ReadOnly: o.ReadOnly,
+                    dataAry: logicalSetJson,
+			        nameCol: nameCol,
+			        keyCol: keyCol,
+                    Multi: o.Multi
+                });
             return $Div;
 
         },
         save: function(o) { //$propdiv, $xml
             var $CBADiv = o.$propdiv.children('div').first();
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-            o.propData.values.logicalsetjson = formdata;
+            if(false === o.Multi || false === formdata.MultiIsUnchanged) {
+                o.propData.values.logicalsetjson = formdata;
+                o.wasmodified = true;
+            } 
             return $(this);
         } // save()
     };

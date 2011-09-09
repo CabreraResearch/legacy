@@ -14,40 +14,41 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var startDate = tryParseString(propVals.startdatetime.date);
+            var startDate = (false === o.Multi) ? tryParseString(propVals.startdatetime.date) : CswMultiEditDefaultValue; 
             var dateFormat = ServerDateFormatToJQuery(propVals.startdatetime.dateformat);
 
-            var value = tryParseString(propVals.value).trim();
-            var units = tryParseString(propVals.units).trim();
+            var value = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue; 
+            var units = (false === o.Multi) ? tryParseString(propVals.units).trim() : CswMultiEditDefaultValue; 
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1);
             var $cell12 = $table.CswTable('cell', 1, 2);
 
-            $cell11.append(value + '&nbsp;' + units);
-            if(!o.ReadOnly)
-            {
-                var $EditButton = $cell12.CswImageButton({
-                                                ButtonType: CswImageButton_ButtonType.Edit,
-                                                AlternateText: 'Edit',
-                                                'ID': o.ID,
-                                                onClick: function ($ImageDiv) { 
-													$edittable.show();
-												}
-                                            });
+            var mtbfStatic = (units !== CswMultiEditDefaultValue) ? value + '&nbsp;' + units : value;
+            $cell11.append(mtbfStatic);
+            if(!o.ReadOnly) {
+                $cell12.CswImageButton({
+                            ButtonType: CswImageButton_ButtonType.Edit,
+                            AlternateText: 'Edit',
+                            'ID': o.ID,
+                            onClick: function ($ImageDiv) { 
+								$edittable.show();
+							}
+                        });
 				
 				var $edittable = $table.CswTable('cell', 2, 2).CswTable('init', { 'ID': o.ID + '_edittbl' });
 				$edittable.CswTable('cell', 1, 1).append('Start Date');
                 var $StartDateBoxCell = $edittable.CswTable('cell', 1, 2);
 				
-				var $StartDateDiv = $StartDateBoxCell.CswDateTimePicker('init', { ID: o.ID + '_sd',
-																					Date: startDate,
-																					DateFormat: dateFormat,
-																					DisplayMode: 'Date',
-																					ReadOnly: o.ReadOnly,
-																					Required: o.Required,
-																					OnChange: o.onchange
-																				});
+				$StartDateBoxCell.CswDateTimePicker('init', { 
+				                    ID: o.ID + '_sd',
+									Date: startDate,
+									DateFormat: dateFormat,
+									DisplayMode: 'Date',
+									ReadOnly: o.ReadOnly,
+									Required: o.Required,
+									OnChange: o.onchange
+								});
 
 //                var $StartDateBox = $StartDateBoxCell.CswInput('init',{ID: o.ID + '_sd',
 //                                                                  type: CswInput_Types.text,
@@ -63,14 +64,18 @@
 //                                    .datepicker();
 				
 				$edittable.CswTable('cell', 3, 1).append('Units');
-				var $UnitsSelect = $('<select id="'+ o.ID + '_units" />')
-									.appendTo($edittable.CswTable('cell', 3, 2))
-									.change(o.onchange);
-				var $hoursopt = $('<option value="hours">hours</option>').appendTo($UnitsSelect);
-				if(units === 'hours') $hoursopt.CswAttrDom('selected', 'true');
-				var $daysopt = $('<option value="days">days</option>').appendTo($UnitsSelect);
-				if(units === 'days') $daysopt.CswAttrDom('selected', 'true');
-
+                var unitVals = ['hours', 'days'];
+                if (o.Multi) {
+                    unitVals.push(CswMultiEditDefaultValue);
+                }
+                $edittable.CswTable('cell', 3, 2)
+                          .CswSelect('init', {
+                                ID: o.ID + '_units',
+                                onChange: o.onchange,
+                                values: unitVals,
+                                selected: units
+                            });
+                
 //				var $refreshbtn = $('<input type="button" id="'+ o.ID + '_refresh" value="Refresh">')
 //									.appendTo($edittable.CswTable('cell', 4, 2));
 
@@ -78,11 +83,25 @@
             }
         },
         save: function(o) { //$propdiv, $xml
-            var StartDate = o.$propdiv.find('#'+ o.ID +'_sd').CswDateTimePicker('value').Date;
-            var Units = o.$propdiv.find('#'+ o.ID +'_units').val();
-            var propVals = o.propData.values;    
-            propVals.startdatetime.date = StartDate;
-            propVals.units = Units;
+
+            var attributes = { startdate: null, units: null };
+            var $StartDate = o.$propdiv.find('#' + o.ID + '_sd');
+            if (false === isNullOrEmpty($StartDate)) {
+                attributes.startdate = $StartDate.CswDateTimePicker('value').Date;
+            }
+
+            var $Units = o.$propdiv.find('#' + o.ID + '_units');
+            if (false === isNullOrEmpty($Units)) {
+                attributes.units = $Units.val();
+            }
+
+            var subSubFunc = function(startDate, key) {
+                if(key === 'startdate' && false === isNullOrUndefined(attributes.startdate.date)) {
+                    startDate.date = attributes.startdate.date;
+                }
+            };
+
+            preparePropJsonForSave(o.Multi, o, attributes, subSubFunc);
         }
     };
     

@@ -16,16 +16,13 @@
 
             //var Value = extractCDataValue($xml.children('text'));
             var propVals = o.propData.values;
-            var value = tryParseString(propVals.text).trim();
+            var value = (false === o.Multi) ? tryParseString(propVals.text).trim() : CswMultiEditDefaultValue;
             var rows = tryParseString(propVals.rows);
             var columns = tryParseString(propVals.columns);
 
-            if(o.ReadOnly)
-            {
+            if(o.ReadOnly) {
                 $Div.append(value);
-            }
-            else 
-            {
+            } else {
                 var $TextArea = $('<textarea id="'+ o.ID +'" name="' + o.ID + '" rows="'+rows+'" cols="'+columns+'">'+ value +'</textarea>' )
                                     .appendTo($Div)
                                     .change(o.onchange); 
@@ -34,12 +31,15 @@
                     $TextArea.addClass("required");
                 }
             }
-
         },
         save: function(o) { //$propdiv, $xml
-                var $TextArea = o.$propdiv.find('textarea');
-                o.propData.values.text = $TextArea.val();
+            var attributes = { text: null };
+            var $TextArea = o.$propdiv.find('textarea');
+            if (false === isNullOrEmpty($TextArea)) {
+                attributes.text = $TextArea.val();
             }
+            preparePropJsonForSave(o.Multi, o, attributes);
+        }
     };
     
     // Method calling logic

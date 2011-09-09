@@ -14,9 +14,9 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = tryParseString(propVals.sequence).trim();
+            var value = (false === o.Multi) ? tryParseString(propVals.sequence).trim() : CswMultiEditDefaultValue;
 
-            if (o.ReadOnly) {
+            if (o.ReadOnly || o.Multi) {
                 $Div.append(value);
             } else {
                 var $TextBox = $Div.CswInput('init',{ID: o.ID,
@@ -33,9 +33,15 @@
             }
         },
         save: function(o) {
-                var $TextBox = o.$propdiv.find('input');
-                o.propData.values.sequence = $TextBox.val();
+            var attributes = {
+                sequence: null
+            };
+            var $sequence = o.$propdiv.find('input');
+            if (false === isNullOrEmpty($sequence)) {
+                attributes.sequence = $sequence.val();
             }
+            preparePropJsonForSave(o.Multi, o, attributes);
+        }
     };
     
     // Method calling logic
