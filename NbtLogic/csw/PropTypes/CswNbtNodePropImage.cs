@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
             ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
-            ParentObject[CswNbtSubField.SubFieldName.Href.ToString()] = ImageUrl;
+            ParentObject[CswNbtSubField.SubFieldName.Href.ToString().ToLower()] = ImageUrl;
             ParentObject["width"] = Width.ToString();
             ParentObject["height"] = Height.ToString();
         }

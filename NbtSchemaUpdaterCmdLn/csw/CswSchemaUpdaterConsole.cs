@@ -200,12 +200,12 @@ namespace ChemSW.Nbt.Schema.CmdLn
 									CswCommaDelimitedString.FromString( _UserArgs[_ArgKey_IgnoreTestCasesCsv] );
 									TestCasesToIgnore = CswCommaDelimitedString.ToList<string>();
 								}
-								CswSchemaScripts = new CswSchemaScriptsTest( CswNbtResources, StartAtTestCase, EndAtTestCase, TestCasesToIgnore );
+								CswSchemaScripts = new CswSchemaScriptsTest( StartAtTestCase, EndAtTestCase, TestCasesToIgnore );
 							}
 							else
 							{
 								// Use production scripts
-								CswSchemaScripts = new CswSchemaScriptsProd( CswNbtResources );
+								CswSchemaScripts = new CswSchemaScriptsProd();
 							}
 
 							CswSchemaUpdater CswSchemaUpdater = new CswSchemaUpdater( CurrentAccessId, new CswSchemaUpdater.ResourcesInitHandler( _makeResources ), CswSchemaScripts );
@@ -243,10 +243,10 @@ namespace ChemSW.Nbt.Schema.CmdLn
 			CswSchemaUpdateThread CswSchemaUpdateThread = new CswSchemaUpdateThread( CswSchemaUpdater );
 			
 			//string AccessId = _CswNbtResources.AccessId;
-            CswSchemaVersion CurrentVersion = CswSchemaUpdater.CurrentVersion;
+			CswSchemaVersion CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
             if( CswSchemaUpdater.LatestVersion != CurrentVersion )
             {
-                CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "AccessId " + AccessId + ": schema version " + CswSchemaUpdater.CurrentVersion.ToString() + " to schema version " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
+				CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "AccessId " + AccessId + ": schema version " + CswSchemaUpdater.CurrentVersion( CswNbtResources ).ToString() + " to schema version " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
 
 				bool UpdateSucceeded = true;
                 while( UpdateSucceeded && CurrentVersion != CswSchemaUpdater.LatestVersion )
@@ -293,7 +293,9 @@ namespace ChemSW.Nbt.Schema.CmdLn
 							CswConsoleOutput.write( " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine + _Separator_NuLine );
                         }
 
-                        CurrentVersion = CswSchemaUpdater.CurrentVersion;
+						CswNbtResources.ClearCache();
+
+						CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
                     } // if( CurrentVersion < CswSchemaUpdater.MinimumVersion )
 				}// while( UpdateSucceeded && CurrentVersion != CswSchemaUpdater.LatestVersion )
 

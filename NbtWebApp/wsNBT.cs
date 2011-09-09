@@ -1547,6 +1547,7 @@ namespace ChemSW.Nbt.WebServices
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
                     string FileName = Context.Request["qqfile"];
                     string PropId = Context.Request["propid"];
+                    string Column = Context.Request["column"];
                     string Multi = Context.Request["multi"];
 
                     if( !string.IsNullOrEmpty( FileName ) && !string.IsNullOrEmpty( PropId ) )
@@ -1583,7 +1584,7 @@ namespace ChemSW.Nbt.WebServices
 
                             // Save the binary data
                             CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                            bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId );
+                            bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId, Column );
 
                             ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
 

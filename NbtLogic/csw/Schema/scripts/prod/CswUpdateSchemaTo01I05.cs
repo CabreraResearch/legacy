@@ -141,6 +141,22 @@ namespace ChemSW.Nbt.Schema
 			{
 				RoleNode.postChanges( false );
 			}
+			
+			// case 8635
+
+			CswTableUpdate FieldTypesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01I05_FieldTypes_Update", "field_types" );
+			DataTable FieldTypeTable = FieldTypesUpdate.getEmptyTable();
+			DataRow NewFTRow = FieldTypeTable.NewRow();
+			NewFTRow["auditflag"] = "0";
+			NewFTRow["datatype"] = "text";
+			NewFTRow["deleted"] = CswConvert.ToDbVal(false);
+			NewFTRow["fieldtype"] = CswNbtMetaDataFieldType.NbtFieldType.Button.ToString();
+			FieldTypeTable.Rows.Add( NewFTRow );
+			FieldTypesUpdate.update( FieldTypeTable );
+
+
+	
+			
 		} // Update()
 
 

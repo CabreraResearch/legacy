@@ -97,11 +97,8 @@
         var cswViewGrid;
         var rowid;
         var $viewgrid;
-        function onViewGridSuccess($vg) {
-            $viewgrid = $vg;
-        }
 
-        _getViewsGrid(onViewGridSuccess, o.viewid);
+        _getViewsGrid(o.viewid);
 
         var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: '100%' });
         var $div1_btntbl_cell11 = $div1_btntbl.CswTable('cell', 1, 1);
@@ -114,7 +111,7 @@
                     var $showOther = $allcheck_div.CswInput('init', {ID: o.ID + '_all',
                         type: CswInput_Types.checkbox,
                         onChange: function() {
-                            _getViewsGrid(onViewGridSuccess);
+                            _getViewsGrid();
                         }
                     });
                     $allcheck_div.append('Show Other Roles/Users');
@@ -137,7 +134,7 @@
                                 url: o.CopyViewUrl,
                                 data: dataJson,
                                 success: function(gridJson) {
-                                    _getViewsGrid(onViewGridSuccess, gridJson.copyviewid);
+                                    _getViewsGrid(gridJson.copyviewid);
                                 },
                                 error: function() {
                                     $copyviewbtn.CswButton('enable');
@@ -166,7 +163,7 @@
                                     url: o.DeleteViewUrl,
                                     data: dataJson,
                                     success: function() {
-                                        _getViewsGrid(onViewGridSuccess);
+                                        _getViewsGrid();
                                         $copyviewbtn.CswButton('disable');
                                     },
                                     error: function() {
@@ -185,10 +182,10 @@
                 'disableOnClick': false,
                 'onclick': function() {
                     $.CswDialog('AddViewDialog', {
-                        'onAddView': function(newviewid) {
-                            $viewgrid = _getViewsGrid(onViewGridSuccess, newviewid);
+                        onAddView: function(newviewid) {
+                            _getViewsGrid(newviewid);
                         },
-                        'onClose': function() {
+                        onClose: function() {
                             $newviewbtn.CswButton('enable');
                         }
                     }); // CswDialog
@@ -440,7 +437,7 @@
             } // ajax
         } //_handleFinish
 
-        function _getViewsGrid(onSuccess, selectedviewid)
+        function _getViewsGrid(selectedviewid)
         {
             var all = false;
             if ($('#' + o.ID + '_all:checked').length > 0)
@@ -461,13 +458,12 @@
                     data: dataJson,
                     success: function(gridJson) {
 
-                        var viewGridId = o.ID + '_csw_viewGrid_outer';
-                        var $viewGrid = $div1.find('#' + viewGridId);
-                        if (isNullOrEmpty($viewGrid) || $viewGrid.length === 0) {
-                            $viewGrid = $('<div id="' + o.ID + '"></div>').appendTo($div1);
+                        if (isNullOrEmpty($viewgrid) || $viewgrid.length === 0) {
+                            $viewgrid = $('<div id="' + o.ID + '_csw_viewGrid_outer"></div>').appendTo($div1);
                         } else {
-                            $viewGrid.empty();
+                            $viewgrid.empty();
                         }
+
                         var g = {
                             ID: o.ID,
                             hasPager: false,
@@ -494,19 +490,16 @@
                             }
                         };
                         $.extend(g.gridOpts, gridJson);
-
-                        cswViewGrid = new CswGrid(g, $viewGrid);
+                        cswViewGrid = new CswGrid(g, $viewgrid);
                         cswViewGrid.$gridPager.css({width: '100%', height: '20px' });
                         
                         cswViewGrid.hideColumn(o.ColumnFullViewId);
-
                         if (!isNullOrEmpty(gridJson.selectedpk))
                         {
                             rowid = cswViewGrid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
                             cswViewGrid.setSelection(rowid);
                             cswViewGrid.scrollToRow(rowid);
                         }
-                        onSuccess($viewgrid);
                     } // success
                 }); // ajax
         } // _getViewsGrid()
@@ -821,11 +814,6 @@
             var $root = makeViewRootHtml(stepno, viewJson, types)
                             .appendTo($ret);
 
-            if(viewJson.hasOwnProperty(childPropNames.childrelationships.name)) {
-                var rootRelationships = viewJson[childPropNames.childrelationships.name];
-                makeViewRelationshipsRecursive(stepno, rootRelationships, types, $root);
-            }
-            
             return { html: xmlToString($ret), types: types };
         }
         
@@ -837,7 +825,18 @@
             var linkclass = viewEditClasses.vieweditor_viewrootlink.name;
 
             var $ret = makeViewListItem(arbid, linkclass, name, false, stepno, childPropNames.root, rel);
-            return $ret;
+            
+            if(itemJson.hasOwnProperty(childPropNames.childrelationships.name)) {
+                var rootRelationships = itemJson[childPropNames.childrelationships.name];
+                makeViewRelationshipsRecursive(stepno, rootRelationships, types, $ret);
+            }
+            
+			var $selectLi = makeChildSelect(stepno, arbid, childPropNames.childrelationships);
+            if (false === isNullOrEmpty($selectLi)) {
+                $ret.append($selectLi);
+            }
+
+			return $ret;
         }
         
         function makeViewRelationshipHtml(stepno, itemJson, types) {

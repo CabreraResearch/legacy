@@ -575,9 +575,11 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // ClearPropValue()
 
-        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr )
+        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column )
         {
             bool ret = false;
+            if( String.IsNullOrEmpty(Column) ) Column = "blobdata";
+
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
             if( Int32.MinValue != PropId.NodeId.PrimaryKey )
@@ -591,7 +593,14 @@ namespace ChemSW.Nbt.WebServices
                 if( PropWrapper.JctNodePropId > 0 )
                 {
                     DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
-                    JctTable.Rows[0]["blobdata"] = Data;
+                    if( JctTable.Columns[Column].DataType == typeof( string ) )
+                    {
+                        JctTable.Rows[0][Column] = CswTools.ByteArrayToString( Data );
+                    }
+                    else
+                    {
+                        JctTable.Rows[0][Column] = Data ;
+                    }
                     JctTable.Rows[0]["field1"] = FileName;
                     JctTable.Rows[0]["field2"] = ContentType;
                     JctUpdate.update( JctTable );
@@ -603,7 +612,7 @@ namespace ChemSW.Nbt.WebServices
                     JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
                     JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
                     JRow["nodeidtablename"] = Node.NodeId.TableName;
-                    JRow["blobdata"] = Data;
+                    JRow[Column] = Data;
                     JRow["field1"] = FileName;
                     JRow["field2"] = ContentType;
                     JctTable.Rows.Add( JRow );

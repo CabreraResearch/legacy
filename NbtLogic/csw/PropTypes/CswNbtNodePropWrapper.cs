@@ -298,6 +298,16 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Barcode
 
+        public CswNbtNodePropButton AsButton
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropButton ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropButton ) ) ) );
+                return ( (CswNbtNodePropButton) _CswNbtNodeProp );
+            }
+        }//Button
+
         public CswNbtNodePropBlob AsBlob
         {
             get

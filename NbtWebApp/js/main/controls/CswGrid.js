@@ -231,6 +231,8 @@ function CswGrid(options, $parent) {
         var rowids = [];
         if(multiEdit) {
             rowids = getSelectedRowsIds();
+                	if (false === isFunction(parent[key]))
+                	{
         } 
         else if(false === isNullOrEmpty(rowid)) {
             rowids.push(rowid);
@@ -243,6 +245,7 @@ function CswGrid(options, $parent) {
             for (var i = 0; i < rowids.length; i++) {
                 crawlObject(opts, function(prop, key, parent) {
                     if (false === isFunction(parent[key])) {
+                    return true;
                         if (isArray(parent[key])) {
                             rowid = rowids[i];
                             parent[key].push(getValueForColumn(key, rowid));
@@ -250,6 +253,7 @@ function CswGrid(options, $parent) {
                             parent[key] = getValueForColumn(key, rowid);
                         }
                     }
+						return true;
                 }, false);
             }
         }

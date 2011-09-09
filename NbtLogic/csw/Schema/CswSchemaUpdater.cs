@@ -63,12 +63,18 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaVersion MinimumVersion { get { return ( _CswSchemaScripts.MinimumVersion ); } }
 
 
-        public CswSchemaVersion CurrentVersion { get { return ( _CswSchemaScripts.CurrentVersion ); } }
+		public CswSchemaVersion CurrentVersion( CswNbtResources CswNbtResources )
+		{
+			return ( _CswSchemaScripts.CurrentVersion( CswNbtResources ) );
+		}
 
         /// <summary>
         /// Schema version of the currently targeted schema
         /// </summary>
-        public CswSchemaVersion TargetVersion { get { return ( _CswSchemaScripts.TargetVersion ); } }
+		public CswSchemaVersion TargetVersion( CswNbtResources CswNbtResources )
+		{
+			return ( _CswSchemaScripts.TargetVersion( CswNbtResources ) );
+		}
 
         private string _ErrorMessage = string.Empty;
         public string ErrorMessage { get { return ( _ErrorMessage ); } }
@@ -91,7 +97,7 @@ namespace ChemSW.Nbt.Schema
 
             CswSchemaUpdateDriver CurrentUpdateDriver = null;
             bool UpdateSuccessful = true;
-            if( null != ( CurrentUpdateDriver = _CswSchemaScripts.Next ) )
+            if( null != ( CurrentUpdateDriver = _CswSchemaScripts.Next( CswNbtResources ) ) )
             {
 				CurrentUpdateDriver.CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
                 CurrentUpdateDriver.update();
@@ -105,8 +111,7 @@ namespace ChemSW.Nbt.Schema
                 }
                 else
                 {
-                    _CswSchemaScripts.stampSchemaVersion( CurrentUpdateDriver );
-
+                    _CswSchemaScripts.stampSchemaVersion( CswNbtResources, CurrentUpdateDriver );
                 }
 
                 DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();

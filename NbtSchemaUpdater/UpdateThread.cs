@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Schema
 				CswNbtResources.AccessId = AccessId;
 				CswNbtResources.InitCurrentUser = InitUser;
 
-				_CswSchemaScriptsProd = new CswSchemaScriptsProd( CswNbtResources );
+				_CswSchemaScriptsProd = new CswSchemaScriptsProd();
 				_CswLogger = CswNbtResources.CswLogger;
             }
             catch( Exception ex )
@@ -266,17 +266,19 @@ namespace ChemSW.Nbt.Schema
 
                 bool UpdateSucceeded = true;
                 SchemaInfoEventArgs e = new SchemaInfoEventArgs();
-                CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion;
+				CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
                 while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
                 {
-                    SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion.ToString() );
+					SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ).ToString() );
 
                     UpdateSucceeded = _CswSchemaUpdater.Update();
+					
+					CswNbtResources.ClearCache();
 
                     e.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
                     e.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
 
-                    CurrentVersion = _CswSchemaUpdater.CurrentVersion;
+					CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
                     e.CurrentSchemaVersion = CurrentVersion;
 
 					CswTableSelect UpdateHistorySelect = CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
