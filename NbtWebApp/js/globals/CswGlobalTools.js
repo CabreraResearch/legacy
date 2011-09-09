@@ -356,40 +356,28 @@ function ObjectHelper(obj) {
         /// <param name="value" type="Object"> Property value to match </param>
 	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
         var ret = false;
-		var onSuccess = function (childObj)
+		var onSuccess = function (childObj, childKey, parentObj) {
             var found = false;
-			if (foundMatch(childObj, key, value))
-			{
-                found = true;
-				return false;
-				//eval('break;');
-			} else
-			{
-				return true;
-            }
-            return found;
+			if (foundMatch(childObj, key, value)) {
+			    ret = parentObj;
+			    found = true;
+			}
+		    return found;
 		};
         crawlObject(thisObj, onSuccess, true);
         return ret;
     }
     
     function remove(key, value) {
-    	var ret;
+        var onSuccess = function (childObj, childKey, parentObj) {
             var deleted = false;
-    	{
-    		if (foundMatch(childObj, key, value))
+            if (foundMatch(childObj, key, value)) {
                 deleted = true;
-				delete parentObj[childKey];
-    			return false;
-    		} else
-    		{
-    			return true;
-    		}
+                delete parentObj[childKey];
+            }
             return deleted;
     	};
-        crawlObject(thisObj, onSuccess, true);
-        
-        return ret;
+        return crawlObject(thisObj, onSuccess, true);
     }
     
     this.find = find;
@@ -403,16 +391,15 @@ function each(thisObj, onSuccess) {
 	/// <param name="thisObj" type="Object"> An object to crawl </param>
 	/// <param name="onSuccess" type="Function"> A function to execute on finding a property, which should return true to continue</param>
     /// <returns type="Object">Returns the return of onSuccess</returns>
-
+    var ret = false;
     if(isFunction(onSuccess)) {
         if(isArray(thisObj) || (isPlainObject(thisObj) && false === thisObj.hasOwnProperty('length'))) {
             $.each(thisObj, function(childKey, value) {
-		$.each(thisObj, function (childKey, value)
-		{
-			if (KeepGoing)
-			{
                 var childObj = thisObj[childKey];
                 ret = onSuccess(childObj, childKey, thisObj, value);
+                if(ret) {
+                    return false;
+                }
             });
         }
         else if(isPlainObject(thisObj)) {
@@ -420,14 +407,15 @@ function each(thisObj, onSuccess) {
                 if (contains(thisObj, childKey)) {
                     var childObj = thisObj[childKey];
                     ret = onSuccess(childObj, childKey, thisObj);
+                    if(ret) {
+                        break;
+                    }
                 }
-				KeepGoing = crawlObject(childObj, onSuccess, doRecursion);
             }
         }
     }
-	}
-	return KeepGoing;
-} // crawlObject()
+    return ret;
+} // each()
 
 //borrowed from http://code.google.com/p/shadejs
 function crawlObject(thisObj, onSuccess, doRecursion) {
@@ -437,13 +425,14 @@ function crawlObject(thisObj, onSuccess, doRecursion) {
     /// <param name="doRecursion" type="Boolean"> If true, recurse on all properties </param>
     /// <returns type="Object">Returns the return of onSuccess</returns>
     var stopCrawling = false;
-    var onEach = function(childObj, childKey, thisObj, value) {
+    var onEach = function(childObj, childKey, parentObj, value) {
         if (false === stopCrawling) {
-            stopCrawling = isTrue(onSuccess(childObj, childKey, thisObj, value));
+            stopCrawling = isTrue(onSuccess(childObj, childKey, parentObj, value));
         }
         if (false === stopCrawling && doRecursion) {
             stopCrawling = isTrue(crawlObject(childObj, onSuccess, doRecursion));
         }
+        return stopCrawling;
     };
     stopCrawling = each(thisObj, onEach);
     return stopCrawling;
