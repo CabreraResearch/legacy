@@ -183,7 +183,7 @@
 									data: newData, 
 									url: url,
 									$treediv: $treediv, 
-									IDPrefix: idPrefix, 
+									IdPrefix: idPrefix, 
 									onSelectNode: o.onSelectNode,
 									onInitialSelectNode: o.onInitialSelectNode,
 									viewid: o.viewid,
@@ -216,7 +216,7 @@
 													var retDataParam = {
 														UsePaging: o.UsePaging,
 														ViewId: o.viewid,
-														IDPrefix: idPrefix,
+														IdPrefix: idPrefix,
 														IsFirstLoad: false,
 														ParentNodeKey: nodekey,
 														IncludeNodeRequired: false,
@@ -303,7 +303,7 @@
 			data: '', 
 			url: '',
 			$treediv: '', 
-			IDPrefix: '', 
+			IdPrefix: '', 
 			onSelectNode: null, //function() {},
 			onInitialSelectNode: null, //function() {},
 			viewid: '',
@@ -330,7 +330,7 @@
 			data: '', 
 			url: '',
 			$treediv: '', 
-			IDPrefix: '', 
+			IdPrefix: '', 
 			onSelectNode: function() {},
 			viewid: '',
 			UsePaging: '',
@@ -360,7 +360,7 @@
 			var nextDataParam = { 
 				UsePaging: m.UsePaging,
 				ViewId: m.viewid,
-				IDPrefix: m.IDPrefix,
+				IdPrefix: m.IdPrefix,
 				IsFirstLoad: false,
 				ParentNodeKey: parentNodeKey,
 				IncludeNodeRequired: false,
@@ -377,7 +377,7 @@
 				data: nextDataParam,
 				success: function (data) 
 					{
-						var afterNodeId = m.IDPrefix + optSelect.nodeid;
+						var afterNodeId = m.IdPrefix + optSelect.nodeid;
 						var itemJson = data.tree;
 																
 						// we have to do these one at a time in successive OnSuccess callbacks, 
@@ -405,7 +405,7 @@
 										// remove 'More' node
 										if(afterNodeId === itemJson.attr.id)
 										{
-											m.$treediv.jstree('remove', '#' + m.IDPrefix + optSelect.nodeid + '[species="More"]' );
+											m.$treediv.jstree('remove', '#' + m.IdPrefix + optSelect.nodeid + '[species="More"]' );
 										}
 
 										afterNodeId = itemJson.attr.id;
@@ -422,7 +422,7 @@
 		}
 		else 
 		{
-			clearChecks(m.IDPrefix);
+			clearChecks(m.IdPrefix);
 			m.onSelectNode(optSelect);
 		}
 	}
@@ -433,9 +433,9 @@
 		return ($selected.$item.CswAttrDom('rel') === $checkbox.CswAttrDom('rel'));
 	}
 
-	function clearChecks(IDPrefix)
+	function clearChecks(IdPrefix)
 	{
-		$('.'+ IDPrefix +'check').CswAttrDom('checked', '');
+		$('.'+ IdPrefix +'check').CswAttrDom('checked', '');
 	}
 
 	// Method calling logic

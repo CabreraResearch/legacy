@@ -784,11 +784,11 @@ function preparePropJsonForSave(isMulti,propJson,attributes,subSubFunc) {
 //#region jsTree
 function jsTreeGetSelected($treediv)
 { /// <param name="$" type="jQuery" />
-	var IDPrefix = $treediv.CswAttrDom('id');
+	var IdPrefix = $treediv.CswAttrDom('id');
 	var $SelectedItem = $treediv.jstree('get_selected');
 	var ret = {
 		'iconurl': $SelectedItem.children('a').children('ins').css('background-image'),
-		'id': $SelectedItem.CswAttrDom('id').substring(IDPrefix.length),
+		'id': $SelectedItem.CswAttrDom('id').substring(IdPrefix.length),
 		'text': $SelectedItem.children('a').first().text().trim(),
 		'$item': $SelectedItem
 	};
