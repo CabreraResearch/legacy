@@ -43,7 +43,7 @@
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.options = formdata;
             } 
-            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

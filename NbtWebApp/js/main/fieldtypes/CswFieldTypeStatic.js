@@ -37,7 +37,7 @@
                             .appendTo($Div); 
         },
         save: function(o) {
-            o.wasmodified = false;
+            preparePropJsonForSave(o.propData);
         }
     };
     

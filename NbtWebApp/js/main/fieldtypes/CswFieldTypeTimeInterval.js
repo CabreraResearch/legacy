@@ -297,7 +297,7 @@
 				                break;
 				        } // switch(RateType)
 				    } 
-				    preparePropJsonForSave(o.Multi, o.propData.values, attributes);
+				    preparePropJsonForSave(o.Multi, o.propData, attributes);
 				} catch(e) {
 				    if(debugOn()) {
 				        log('Error updating propData: ' + e);

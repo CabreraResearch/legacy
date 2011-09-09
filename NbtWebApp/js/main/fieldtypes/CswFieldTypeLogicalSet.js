@@ -40,7 +40,7 @@
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.logicalsetjson = formdata;
             }
-            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
             return $(this);
         } // save()
     };

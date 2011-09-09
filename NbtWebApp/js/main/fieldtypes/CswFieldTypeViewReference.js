@@ -54,7 +54,7 @@
 				} // if(o.EditMode != EditMode.AddInPopup.name)
             },
         save: function(o) {
-			o.wasmodified = false;
+            preparePropJsonForSave(o.propData);
         }
     };
     

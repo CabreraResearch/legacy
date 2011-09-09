@@ -44,7 +44,7 @@
             }
         },
         save: function(o) {
-            o.wasmodified = false; //preparePropJsonForSave();
+            preparePropJsonForSave(o.propData);
         }
     };
     

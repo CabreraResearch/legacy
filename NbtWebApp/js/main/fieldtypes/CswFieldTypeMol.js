@@ -91,7 +91,7 @@
 
         },
         save: function (o) { //$propdiv, o.propData
-            o.wasmodified = false;
+            preparePropJsonForSave(o.propData);
         }
     };
 

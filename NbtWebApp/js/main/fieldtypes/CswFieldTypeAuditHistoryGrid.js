@@ -29,7 +29,7 @@
             return ret;
         },
         save: function(o) {
-            o.wasmodified = false;        
+            preparePropJsonForSave(o.propData);
         }
     };
     

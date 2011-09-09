@@ -43,7 +43,7 @@
             if (false === isNullOrEmpty($text)) {
                 attributes.text = $text.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

@@ -80,7 +80,7 @@
                 if (false === isNullOrEmpty($nodeid)) {
                     attributes.nodeid = $nodeid.val();
                 }
-                preparePropJsonForSave(o.Multi, o.propData.values, attributes);
+                preparePropJsonForSave(o.Multi, o.propData, attributes);
             }
         };
     

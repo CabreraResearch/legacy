@@ -83,7 +83,7 @@
 			    if (false === isNullOrEmpty($selectdiv)) {
 			        attributes.nodeid = $selectdiv.val();
 			    }
-			    preparePropJsonForSave(o.Multi, o.propData.values, attributes);
+			    preparePropJsonForSave(o.Multi, o.propData, attributes);
 			}
 		};
 	

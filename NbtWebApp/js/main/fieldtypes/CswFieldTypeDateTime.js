@@ -41,7 +41,7 @@
 			if (false === isNullOrEmpty($DTPickerDiv)) {
 			    attributes.value = $DTPickerDiv.CswDateTimePicker('value');
 			}
-            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

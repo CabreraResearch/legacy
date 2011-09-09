@@ -147,7 +147,7 @@
             if (false === isNullOrEmpty($HiddenValue)) {
                 attributes.value = $HiddenValue.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

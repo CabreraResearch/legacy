@@ -121,7 +121,7 @@
                 imageList = $HiddenValue.text();
             }
             var attributes = { value: imageList };
-            preparePropJsonForSave(o.Multi, o.propData.values, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     
