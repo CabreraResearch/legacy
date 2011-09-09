@@ -77,6 +77,7 @@ namespace ChemSW.Nbt.WebServices
                         _CswNbtResources.Permit.can( Action.Name ) )
                     {
                         JObject ActionNode = _makeViewTreeObject( ref TreeData, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );
+                        ActionNode["isleaf"] = true;
                         ActionNode["actionurl"] = Action.Url;
                         ActionNode["actionname"] = Action.Name.ToString();   // not using CswNbtAction.ActionNameEnumToString here
                     }
