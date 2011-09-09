@@ -153,106 +153,104 @@
 			});
 
 		}, // AddNodeDialog
-        EditNodeDialog: function (options) {
-		'EditLayoutDialog': function (CswNodeTabOptions)
-						{
-							CswNodeTabOptions.ID = CswNodeTabOptions.ID + '_editlayout';
-							CswNodeTabOptions.Config = true;
-							CswNodeTabOptions.ShowAsReport = false;
-							CswNodeTabOptions.onTabSelect = function(tabid) {
-								CswNodeTabOptions.tabid = tabid;
-								_configAddOptions();
-							};
-							CswNodeTabOptions.onPropertyRemove = function(propid) {
-								_configAddOptions();
-							};
+        EditLayoutDialog: function (cswNodeTabOptions) {
+            cswNodeTabOptions.ID = cswNodeTabOptions.ID + '_editlayout';
+			cswNodeTabOptions.Config = true;
+			cswNodeTabOptions.ShowAsReport = false;
+			cswNodeTabOptions.onTabSelect = function(tabid) {
+				cswNodeTabOptions.tabid = tabid;
+				_configAddOptions();
+			};
+			cswNodeTabOptions.onPropertyRemove = function(propid) {
+				_configAddOptions();
+			};
 
-							var $div = $('<div></div>');
-							var $table = $div.CswTable('init', { ID: 'EditLayoutDialog_table', width: '100%' });
-							var $cell11 = $table.CswTable('cell', 1, 1);
-							var $cell12 = $table.CswTable('cell', 1, 2);
+			var $div = $('<div></div>');
+			var $table = $div.CswTable('init', { ID: 'EditLayoutDialog_table', width: '100%' });
+			var $cell11 = $table.CswTable('cell', 1, 1);
+			var $cell12 = $table.CswTable('cell', 1, 2);
 
-							$cell11.append("Configure:<br/>");
-							var $layoutSelect = $cell11.CswSelect('init', {
-													ID: 'EditLayoutDialog_layoutselect',
-													selected: 'Edit',
-													values: [ { value: 'AddInPopup', display: 'Add' },
-																{ value: 'Edit', display: 'Edit' },
-																{ value: 'Preview', display: 'Preview' } ],
-													onChange: function () {
-														CswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
-														_resetLayout();
-													}
-												});
+			$cell11.append("Configure:<br/>");
+			var $layoutSelect = $cell11.CswSelect('init', {
+									ID: 'EditLayoutDialog_layoutselect',
+									selected: 'Edit',
+									values: [ { value: 'AddInPopup', display: 'Add' },
+												{ value: 'Edit', display: 'Edit' },
+												{ value: 'Preview', display: 'Preview' } ],
+									onChange: function () {
+										cswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
+										_resetLayout();
+									}
+								});
 
-							$cell11.append("<br/><br/>Add:<br/>");
-							var $addSelect = $cell11.CswSelect('init', {
-													ID: 'EditLayoutDialog_addselect',
-													selected: '',
-													values: [],
-													onChange: function () {
+			$cell11.append("<br/><br/>Add:<br/>");
+			var $addSelect = $cell11.CswSelect('init', {
+									ID: 'EditLayoutDialog_addselect',
+									selected: '',
+									values: [],
+									onChange: function () {
 
-														var ajaxdata = {
-																PropId: $addSelect.val(),
-																TabId: CswNodeTabOptions.tabid,
-																EditMode: $layoutSelect.val()
-														};
-														CswAjaxJson({ 
-															url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout', 
-															data: ajaxdata,
-															success: function(data) {
-																_resetLayout();
-															}
-														}); // CswAjaxJson
-													} // onChange
-												}); // CswSelect
-							
-							function _resetLayout()
-							{
-								$cell12.contents().remove();
-								$cell12.CswNodeTabs(CswNodeTabOptions);
-								_configAddOptions();
-							}
-
-							function _configAddOptions()
-							{
-								CswAjaxJson({ 
-									url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd', 
-									data: {
-											NodeId: CswNodeTabOptions.nodeid, 
-											NodeKey: CswNodeTabOptions.cswnbtnodekey, 
-											NodeTypeId: CswNodeTabOptions.nodetypeid, 
-											TabId: CswNodeTabOptions.tabid, 
-											EditMode: $layoutSelect.val()
-										},
-									success: function(data) {
-										var propOpts = [{ value: '', display: 'Select...' }];
-										for(var p in data) 
-										{
-											if(data.hasOwnProperty(p))
-											{
-												propOpts.push({
-													value: data[p].propid, 
-													display: data[p].propname
-												});
+										var ajaxdata = {
+												PropId: $addSelect.val(),
+												TabId: cswNodeTabOptions.tabid,
+												EditMode: $layoutSelect.val()
+										};
+										CswAjaxJson({ 
+											url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout', 
+											data: ajaxdata,
+											success: function(data) {
+												_resetLayout();
 											}
-										}
-										$addSelect.CswSelect('setoptions', propOpts, '', true);
-									} // success
-								});  // CswAjaxJson
-							} // _configAddOptions()
+										}); // CswAjaxJson
+									} // onChange
+								}); // CswSelect
+							
+			function _resetLayout()
+			{
+				$cell12.contents().remove();
+				$cell12.CswNodeTabs(cswNodeTabOptions);
+				_configAddOptions();
+			}
 
-							function _onclose()
-							{
-								CswNodeTabOptions.Refresh();
-							}
-
-							_resetLayout();
-
-							_openDiv($div, 900, 600, _onclose);
+			function _configAddOptions()
+			{
+				CswAjaxJson({ 
+					url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd', 
+					data: {
+							NodeId: cswNodeTabOptions.nodeid, 
+							NodeKey: cswNodeTabOptions.cswnbtnodekey, 
+							NodeTypeId: cswNodeTabOptions.nodetypeid, 
+							TabId: cswNodeTabOptions.tabid, 
+							EditMode: $layoutSelect.val()
 						},
+					success: function(data) {
+						var propOpts = [{ value: '', display: 'Select...' }];
+						for(var p in data) 
+						{
+							if(data.hasOwnProperty(p))
+							{
+								propOpts.push({
+									value: data[p].propid, 
+									display: data[p].propname
+								});
+							}
+						}
+						$addSelect.CswSelect('setoptions', propOpts, '', true);
+					} // success
+				});  // CswAjaxJson
+			} // _configAddOptions()
 
-			var o = {
+			function _onclose()
+			{
+				cswNodeTabOptions.Refresh();
+			}
+
+			_resetLayout();
+
+			_openDiv($div, 900, 600, _onclose);
+		}, // EditLayoutDialog
+	    EditNodeDialog: function (options) {
+	        var o = {
 				nodeid: '',
 				nodepk: '',
 				cswnbtnodekey: '',
