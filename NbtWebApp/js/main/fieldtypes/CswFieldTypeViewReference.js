@@ -54,8 +54,8 @@
 				} // if(o.EditMode != EditMode.AddInPopup.name)
             },
         save: function(o) {
-				// nothing to save
-            }
+			// nothing to save
+        }
     };
     
     // Method calling logic
