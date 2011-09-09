@@ -42,7 +42,7 @@
 				var dataParam = { 
 					UsePaging: o.UsePaging,
 					ViewId: o.viewid,
-					IDPrefix: idPrefix,
+					IdPrefix: tryParseString(idPrefix),
 					IsFirstLoad: true,
 					ParentNodeKey: '',
 					IncludeNodeRequired: o.IncludeNodeRequired,
