@@ -125,6 +125,7 @@
 					            selectedtabno = tabno;
 					        }
 					        tabno++;
+				            return false;
 				        };  
 				        crawlObject(data, tabFunc, false);
 
@@ -238,6 +239,7 @@
                                     _updateSubProps(fieldOpt, propId, thisProp, $propcell, $tabcontentdiv, tabid, configOn, $savetab);
                                 }
                             }
+				            return false;
 				        };
 				        crawlObject(data, updOnSuccess, false);
 				    }
@@ -423,6 +425,7 @@
 			var AtLeastOneSaveable = false;
 		    var handleSuccess = function(propObj, propKey) {
 		        AtLeastOneSaveable = handleProp($layouttable, propObj, $tabcontentdiv, tabid, configMode, $savebtn) || AtLeastOneSaveable;
+		        return false;
 		    };
 		    crawlObject(data, handleSuccess, false);
 		    
@@ -504,6 +507,7 @@
 			                    $subtable.CswLayoutTable('ConfigOff');
 			                }
 			            }
+			            return false;
 			        };
 			        crawlObject(subProps, subOnSuccess, true);
 			    }
@@ -637,12 +641,12 @@
 				    var subProps = thisProp.subprops;
 				    if (!isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
 				        var $subtable = propOpt.$propcell.children('#' + thisProp.id + '_subproptable').first();
-				        if ($subtable.length > 0)
-				        {
+				        if ($subtable.length > 0) {
 				            _updatePropJsonFromForm($subtable, subProps);
 				        }
 				    }
 				}
+		        return false;
 		    };
 
 		    crawlObject(propData, updSuccess, false);

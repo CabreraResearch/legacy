@@ -741,24 +741,31 @@ function nodeHoverOut()
 
 function preparePropJsonForSave(isMulti,propJson,attributes,subSubFunc) {
     var propVals = propJson.propData.values;
-    var validPropCount = 0;
+    var modifiedPropCount = 0;
     if(false === isMulti) {
-        crawlObject(propVals, function(prop, key) {
-            if (attributes.hasOwnProperty(key)) {
-                validPropCount++;
-                propVals[key] = attributes[key];
+        crawlObject(propVals, function(prop, key, par) {
+            if (contains(attributes, key)) {
+                var attr = attributes[key];
+                //don't bother sending this to server unless it's changed
+                if(propVals[key] !== attr) {
+                    modifiedPropCount++;
+                    propVals[key] = attr;
+                }
+                //use recursion here instead. someday.
                 if(isFunction(subSubFunc)) {
-                    subSubFunc(propVals[key], key);
+                    subSubFunc(propVals[key], key, modifiedPropCount);
                 }
             }
         }, false);
     } else {
-        crawlObject(propVals, function(prop, key) {
-            if (attributes.hasOwnProperty(key)) {
+        crawlObject(propVals, function(prop, key, par) {
+            if (contains(attributes, key)) {
                 var attr = attributes[key];
                 if (false === isNullOrUndefined(attr) && attr !== CswMultiEditDefaultValue) {
-                    validPropCount++;
+                    //unlike in single-prop mode, identical values still represent a change (for other nodes)
+                    modifiedPropCount++;
                     propVals[key] = attr; 
+                    //use recursion here instead. someday.
                     if(isFunction(subSubFunc)) {
                         subSubFunc(propVals[key], key);
                     }
@@ -766,7 +773,7 @@ function preparePropJsonForSave(isMulti,propJson,attributes,subSubFunc) {
             }
         }, false);
     }
-    if(validPropCount > 0) {
+    if(modifiedPropCount > 0) {
         propJson.wasmodified = true;
     }
     return propJson;
