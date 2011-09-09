@@ -632,7 +632,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getTreeOfView( string ViewId, string IDPrefix, bool IsFirstLoad, string ParentNodeKey, string IncludeNodeKey, bool IncludeNodeRequired,
+        public string getTreeOfView( string ViewId, string IdPrefix, bool IsFirstLoad, string ParentNodeKey, string IncludeNodeKey, bool IncludeNodeRequired,
                                        bool UsePaging, string ShowEmpty, bool ForSearch, bool IncludeInQuickLaunch )
         {
             JObject ReturnVal = new JObject();
@@ -660,7 +660,7 @@ namespace ChemSW.Nbt.WebServices
                         if( !string.IsNullOrEmpty( IncludeNodeKey ) )
                             RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( IncludeNodeKey ) );
 
-                        ReturnVal = ws.getTree( View, IDPrefix, IsFirstLoad, RealParentNodeKey, RealIncludeNodeKey, IncludeNodeRequired, UsePaging, ShowEmptyTree, ForSearch, IncludeInQuickLaunch );
+                        ReturnVal = ws.getTree( View, IdPrefix, IsFirstLoad, RealParentNodeKey, RealIncludeNodeKey, IncludeNodeRequired, UsePaging, ShowEmptyTree, ForSearch, IncludeInQuickLaunch );
 
                         //CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
                         //View.SaveToCache(true);
