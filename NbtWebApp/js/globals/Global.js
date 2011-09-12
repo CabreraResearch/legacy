@@ -388,6 +388,7 @@ function _handleAuthenticationStatus(options)
 	}
 } // _handleAuthenticationStatus()
 
+//#endregion Ajax
 
 function Logout(options)
 {
@@ -718,7 +719,9 @@ function deleteNodes(options)
 	});
 }
 
-// Node Preview
+//#endregion Node interactions
+
+//#region Node Preview
 
 var $nodepreview = undefined;
 function nodeHoverIn(event, nodeid, cswnbtnodekey) {
@@ -738,15 +741,24 @@ function nodeHoverOut() {
 	}
 }
 
+//#endregion Node Preview
+
+//#region Node Props
+
 function preparePropJsonForSave(isMulti, propData, attributes) {
     ///<summary>Takes property JSON from the form and modifies it in order to send back to the server.</summary>
     ///<param name="isMulti" type="Boolean">True if this is Multi-Edit</param>
     ///<param name="propVals" type="Object">Likely an o.propData.values object. This contains the cached prop JSON.</param>
     ///<param name="attributes" type="Object">An object which mirrors the structure of propVals. This contains the new prop JSON derived from the form.</param>
     ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
-    var propVals = propData.values;
-    var wasModified = preparePropJsonForSaveRecursive(isMulti, propVals, attributes);
-    propData.wasmodified = wasModified;
+    var wasModified = false;
+    if(false === isNullOrEmpty(propData)) {
+        if (contains(propData, 'values')) {
+            var propVals = propData.values;
+            wasModified = preparePropJsonForSaveRecursive(isMulti, propVals, attributes);
+        }
+        propData.wasmodified = wasModified;
+    }
 }
 
 function preparePropJsonForSaveRecursive(isMulti, propVals, attributes) {
@@ -777,7 +789,7 @@ function preparePropJsonForSaveRecursive(isMulti, propVals, attributes) {
     return wasModified;
 }
 
-//#region Node interactions
+//#endregion Node Props
 
 //#region jsTree
 function jsTreeGetSelected($treediv)

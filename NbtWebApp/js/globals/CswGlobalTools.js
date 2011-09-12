@@ -249,24 +249,24 @@ function tryParseNumber(inputNum, defaultNum) {
 }
 
 function contains(object, index) {
-    /// <summary>Determines whether an object or an array contains a property or index</summary>
+    /// <summary>Determines whether an object or an array contains a property or index. Null-safe.</summary>
 	/// <param name="object" type="Object"> An object to evaluate </param>
 	/// <param name="index" type="String"> An index or property to find </param>
     /// <returns type="Boolean" />
     var ret = false;
-    if ((isArray(object) && object.indexOf(index) !== -1) || object.hasOwnProperty(index)) {
+    if (false === isNullOrUndefined(object) && 
+        (isArray(object) && object.indexOf(index) !== -1) || 
+        object.hasOwnProperty(index)) {
         ret = true;
     }
     return ret;
 }
 
 function tryParseObjByIdx(object, index, defaultStr) {
-    /// <summary>
-	///   Attempts to fetch the value at an array index
-	/// </summary>
+    /// <summary> Attempts to fetch the value at an array index. Null-safe.</summary>
 	/// <param name="object" type="Object"> Object or array to parse </param>
 	/// <param name="index" type="String"> Index or property to find </param>
-    /// <param name="defaultStr" type="String"> Optional. String to use instead of '' if not index does not exist. </param>
+    /// <param name="defaultStr" type="String"> Optional. String to use instead of '' if index does not exist. </param>
 	/// <returns type="String">Parsed string</returns>
     var ret = '';
     if (false === isNullOrEmpty(defaultStr)) {
@@ -281,9 +281,7 @@ function tryParseObjByIdx(object, index, defaultStr) {
 }
 
 function tryParseElement(elementId, $context) {
-	/// <summary>
-	///   Attempts to fetch an element from the DOM first through jQuery, then through JavaScript
-	/// </summary>
+	/// <summary>Attempts to fetch an element from the DOM first through jQuery, then through JavaScript.</summary>
 	/// <param name="elementId" type="String"> ElementId to find </param>
 	/// <param name="$context" type="jQuery"> Optional context to limit the search </param>
 	/// <returns type="jQuery">jQuery object, empty if no match found.</returns>
