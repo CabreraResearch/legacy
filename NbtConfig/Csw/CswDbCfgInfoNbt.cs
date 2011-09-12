@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Specialized;
 using ChemSW.Config;
 
 namespace ChemSW.Nbt.Config
@@ -179,7 +181,7 @@ namespace ChemSW.Nbt.Config
 
 
 
-        public ArrayList AccessIds
+        public StringCollection AccessIds
         {
             get
             {
