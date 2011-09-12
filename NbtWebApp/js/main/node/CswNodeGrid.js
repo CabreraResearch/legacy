@@ -63,26 +63,23 @@
 				        g.gridOpts.width = '650px';
 				    }
 
-				    if (o.EditMode === EditMode.PrintReport.name)
-				    {
+				    if (o.EditMode === EditMode.PrintReport.name) {
 				        g.gridOpts.caption = '';
 				        g.hasPager = false;
-				    }
-				    else
-				    {
-				        g.optNavEdit =
-    				    {
-    				        editfunc: function(rowid)
-    				        {
+				    } else {
+				        g.optNavEdit = {
+    				        editfunc: function(rowid) {
     				            var editOpt = {
     				                cswnbtnodekey: [],
     				                nodeid: [],
+    				                nodepk: [],
     				                nodename: []
     				            };
     				            var editFunc = function(opts) {
     				                opts.onEditNode = o.onEditNode;
     				                opts.renameProperty('cswnbtnodekey', 'nodekeys');
     				                opts.renameProperty('nodeid', 'nodeids');
+    				                opts.renameProperty('nodepk', 'nodepks');
     				                opts.renameProperty('nodename', 'nodenames');
     				                $.CswDialog('EditNodeDialog', opts);
     				            };
@@ -94,8 +91,7 @@
     				    };
 						
 				        g.optNavDelete = {
-						    delfunc: function(rowid)
-						    {
+						    delfunc: function(rowid) {
 						        var delOpt = {
 						            cswnbtnodekey: '',
 						            nodeid: '',

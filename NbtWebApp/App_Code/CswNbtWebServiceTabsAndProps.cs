@@ -462,20 +462,22 @@ namespace ChemSW.Nbt.WebServices
                 {
                     foreach( string NodeIdStr in CopyNodeIds )
                     {
-                        CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
-                        CopyToNodePk.FromString( NodeIdStr );
-                        CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
-                        if( CopyToNode != null &&
-                            _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.NodeType, false, null, null, CopyToNode, null ) )
+                        CswPrimaryKey CopyToNodePk = new CswPrimaryKey( NodeIdStr, "nodes" );
+                        if( Int32.MinValue != CopyToNodePk.PrimaryKey )
                         {
-                            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
-                                                                                       .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
+                            CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
+                            if( CopyToNode != null &&
+                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.NodeType, false, null, null, CopyToNode, null ) )
                             {
-                                CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
-                            }
+                                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
+                                    .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
+                                {
+                                    CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
+                                }
 
-                            CopyToNode.postChanges( false );
-                        } // if( CopyToNode != null )
+                                CopyToNode.postChanges( false );
+                            } // if( CopyToNode != null )
+                        }
                         else
                         {
                             ret = false;
@@ -578,7 +580,7 @@ namespace ChemSW.Nbt.WebServices
         public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column )
         {
             bool ret = false;
-            if( String.IsNullOrEmpty(Column) ) Column = "blobdata";
+            if( String.IsNullOrEmpty( Column ) ) Column = "blobdata";
 
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
@@ -599,7 +601,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        JctTable.Rows[0][Column] = Data ;
+                        JctTable.Rows[0][Column] = Data;
                     }
                     JctTable.Rows[0]["field1"] = FileName;
                     JctTable.Rows[0]["field2"] = ContentType;

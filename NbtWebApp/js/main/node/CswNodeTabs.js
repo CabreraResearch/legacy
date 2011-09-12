@@ -19,8 +19,8 @@
 			CopyPropValuesUrl: '/NbtWebApp/wsNBT.asmx/copyPropValues',
 			NodePreviewUrl: '/NbtWebApp/wsNBT.asmx/getNodePreview',
 		    nodeids: [],
+		    nodepks: [],
 		    nodekeys: [],
-            nodenames: [],
 		    relatednodeid: '',
 			tabid: '',                
 			nodetypeid: '',           
@@ -50,9 +50,6 @@
 
 		var $outertabdiv = $('<div id="' + o.ID + '_tabdiv" />')
 						.appendTo($parent);
-		if (o.Multi && o.nodenames.length > 0) {
-		    $outertabdiv.append(o.nodenames.join(', '));
-		}
 		var tabcnt = 0;
 
 		getTabs(o);
@@ -552,7 +549,7 @@
 		function Save($form, $layouttable, propsData, $savebtn, tabid) {
 			if($form.valid())
 			{
-				_updatePropJsonFromForm($layouttable, propsData);
+				var propIds = _updatePropJsonFromForm($layouttable, propsData);
 				var data = {
 					EditMode: o.EditMode,
 					NodeIds: tryParseObjByIdx(o.nodeids, 0), // o.nodeids.join(','),
@@ -566,8 +563,7 @@
 				CswAjaxJson({
 					url: o.SavePropUrl,
 					data: data,
-					success: function (data)
-					{
+					success: function (data) {
 					    var doSave = true;
 						var dataJson = {
 							SourceNodeKey: tryParseObjByIdx(o.nodekeys, 0),
@@ -580,8 +576,7 @@
 								data: dataJson
 							}); // ajax						        
 						}
-					    if(o.ShowCheckboxes)
-						{
+					    if(o.ShowCheckboxes) {
 							// apply the newly saved checked property values on this node to the checked nodes
 							var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
 							var $propchecks = $('.' + o.ID + '_check:checked');
@@ -604,57 +599,60 @@
 							}
 						} // if(o.ShowCheckboxes)
 					    else if(o.Multi) {
-						    dataJson.CopyNodeIds = o.nodeids.join(',');
+						    dataJson.CopyNodeIds = o.nodeids;
+					        dataJson.PropIds = propIds;
 						    copyNodeProps();
 					    }
 						if (isFunction(o.onSave) && doSave) o.onSave(data.nodeid, data.cswnbtnodekey, tabcnt);
 						$savebtn.CswButton('enable');
 					}, // success
-					error: function()
-					{
+					error: function() {
 						$savebtn.CswButton('enable');
 					}
 				}); // ajax
 			} // if($form.valid())
-			else 
-			{
+			else {
 				$savebtn.CswButton('enable');
 			}
 		} // Save()
 
 		function _updatePropJsonFromForm($layouttable, propData) {
+		    var propIds = [];
 		    var updSuccess = function(thisProp, propKey, propData) {
-                var propOpt = {
-				    propData: thisProp,
-				    $propdiv: '',
-				    $propCell: '',
-				    fieldtype: thisProp.fieldtype,
-				    nodeid: tryParseObjByIdx(o.nodeids, 0),
-                    Multi: o.Multi,
-				    cswnbtnodekey: o.cswnbtnodekey
-				};
-				    
-				var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
-				propOpt.$propcell = _getPropertyCell($cellset);
-				propOpt.$propdiv = propOpt.$propcell.children('div').first();
+		        var propOpt = {
+		            propData: thisProp,
+		            $propdiv: '',
+		            $propCell: '',
+		            fieldtype: thisProp.fieldtype,
+		            nodeid: tryParseObjByIdx(o.nodeids, 0),
+		            Multi: o.Multi,
+		            cswnbtnodekey: o.cswnbtnodekey
+		        };
 
-				$.CswFieldTypeFactory('save', propOpt);
+		        var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
+		        propOpt.$propcell = _getPropertyCell($cellset);
+		        propOpt.$propdiv = propOpt.$propcell.children('div').first();
 
-				// recurse on subprops
-				if (isTrue(thisProp.hassubprops) && contains(thisProp, 'subprops')) {
-				    var subProps = thisProp.subprops;
-				    if (false === isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
-				        var $subtable = propOpt.$propcell.children('#' + thisProp.id + '_subproptable').first();
-				        if ($subtable.length > 0) {
-				            _updatePropJsonFromForm($subtable, subProps);
-				        }
-				    }
-				}
+		        $.CswFieldTypeFactory('save', propOpt);
+		        if (propOpt.propData.wasmodified) {
+		            propIds.push(propOpt.propData.id);
+		        }
+
+		        // recurse on subprops
+		        if (isTrue(thisProp.hassubprops) && contains(thisProp, 'subprops')) {
+		            var subProps = thisProp.subprops;
+		            if (false === isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
+		                var $subtable = propOpt.$propcell.children('#' + thisProp.id + '_subproptable').first();
+		                if ($subtable.length > 0) {
+		                    _updatePropJsonFromForm($subtable, subProps);
+		                }
+		            }
+		        }
 		        return false;
 		    };
-
 		    crawlObject(propData, updSuccess, false);
-	} // _updatePropXmlFromForm()
+		    return propIds;
+		} // _updatePropXmlFromForm()
 
 		// For proper chaining support
 		return this;
