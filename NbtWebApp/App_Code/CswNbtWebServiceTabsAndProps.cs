@@ -381,14 +381,14 @@ namespace ChemSW.Nbt.WebServices
             bool AllSucceeded = false;
             Int32 Succeeded = 0;
             CswNbtNode Node = null;
-            switch (EditMode)
+            switch( EditMode )
             {
                 case NodeEditMode.AddInPopup:
                     Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                     RetNbtNodeKey = _saveProp( Node, PropsObj, View );
                     if( null != RetNbtNodeKey )
                     {
-                        Succeeded++;
+                        AllSucceeded = true;
                     }
                     break;
                 default:
@@ -407,7 +407,7 @@ namespace ChemSW.Nbt.WebServices
                     AllSucceeded = NodeIds.Count == Succeeded;
                     break;
             }
-            if( AllSucceeded && null != RetNbtNodeKey)
+            if( AllSucceeded && null != RetNbtNodeKey )
             {
                 string RetNodeKey = wsTools.ToSafeJavaScriptParam( RetNbtNodeKey );
                 string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
@@ -418,7 +418,16 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
-                ret = new JObject( new JProperty( "result", Succeeded + " out of " + NodeIds.Count + " prop updates succeeded. Remaining prop updates failed" ) );
+                string ErrString = string.Empty;
+                if( EditMode == NodeEditMode.AddInPopup )
+                {
+                    ErrString = "Attempt to Add failed.";
+                }
+                else
+                {
+                    ErrString = Succeeded + " out of " + NodeIds.Count + " prop updates succeeded. Remaining prop updates failed";
+                }
+                ret = new JObject( new JProperty( "result", ErrString ) );
             }
 
             return ret;
