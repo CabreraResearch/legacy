@@ -2675,11 +2675,11 @@ namespace ChemSW.Nbt.WebServices
             return View;
         } // _getView()
 
-        #region Import Inspection Questions
+        #region Import New Inspection 
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string uploadInspectionFile()
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string uploadInspectionFile(string NewInspectionName, string TargetName, string TempFileName)
         {
             JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2695,7 +2695,80 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    PurgeTempFiles( "xls" );
+                    if (!string.IsNullOrEmpty(TempFileName))
+                    {
+                        if (!string.IsNullOrEmpty(NewInspectionName))
+                        {
+                            if (!string.IsNullOrEmpty(TargetName))
+                            {
+                                 string FullPathAndFileName = _TempPath + "\\" + TempFileName;
+ 
+                                // Load the excel file into a data table
+                                CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                                ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName, ref ErrorMessage, ref WarningMessage);
+                                if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
+                                {
+                                    NumRowsImported = ws.CreateNodes(ExcelDataTable, NewInspectionName, TargetName, ref ErrorMessage, ref WarningMessage);
+ 
+                                    ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
+
+                                    if (!string.IsNullOrEmpty(WarningMessage))
+                                         ReturnVal.Add(new JProperty("error", WarningMessage));
+                                 
+                                }
+                                else
+                                {
+                                    if (string.IsNullOrEmpty(ErrorMessage))
+                                        ErrorMessage = "Could not read Excel file.";
+                                    ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", ErrorMessage));
+                                }
+                            } // if( Context.Request.InputStream != null )
+                            else
+                            {
+                                ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "Did not receive target name."));
+                            }
+                        } // if (!string.IsNullOrEmpty(FileName))
+                        else
+                        {
+                            ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "Did not receive new inspection name."));
+                        }
+                    } // if (!string.IsNullOrEmpty(FileName))
+                    else
+                    {
+                        ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "Did not receive temp file name."));
+                    }
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch (Exception ex)
+            {
+                ReturnVal = jError(ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+
+        } // uploadInspectionFile()
+
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string previewInspectionFile()
+        {
+            JObject ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            DataTable ExcelDataTable = null;
+            string ErrorMessage = string.Empty;
+            string WarningMessage = string.Empty;
+
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    PurgeTempFiles("xls");
 
                     // putting these in the param list causes the webservice to fail with
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
@@ -2703,8 +2776,8 @@ namespace ChemSW.Nbt.WebServices
                     string FileName = Context.Request["qqfile"];
                     //string PropId = Context.Request["propid"];
                     string NewInspectionName = Context.Request["InspectionName"];
-
-                    if( !string.IsNullOrEmpty( FileName ) )
+ 
+                    if (!string.IsNullOrEmpty(FileName))
                     {
                         if( !string.IsNullOrEmpty( NewInspectionName ) )
                         {
@@ -2721,20 +2794,23 @@ namespace ChemSW.Nbt.WebServices
                                 }
 
                                 // Load the excel file into a data table
-                                CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions( _CswNbtResources );
-                                ExcelDataTable = ws.ConvertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
-                                if( ( ExcelDataTable != null ) && ( string.IsNullOrEmpty( ErrorMessage ) ) )
-                                {
-                                    NumRowsImported = ws.CreateNodes( ExcelDataTable, NewInspectionName, ref ErrorMessage, ref WarningMessage );
-                                }
+                                CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                                ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName, ref ErrorMessage, ref WarningMessage);
 
                                 // determine if we were successful or failure
                                 if( ( ExcelDataTable != null ) && ( string.IsNullOrEmpty( ErrorMessage ) ) )
                                 {
-                                    if( string.IsNullOrEmpty( WarningMessage ) )
-                                        ReturnVal = new JObject( new JProperty( "success", true.ToString().ToLower() ) );
-                                    else
-                                        ReturnVal = new JObject( new JProperty( "success", true.ToString().ToLower() ), new JProperty( "error", WarningMessage ) );
+                                    ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
+                                    ReturnVal.Add(new JProperty("tempFileName", TempFileName));
+
+                                    ws.AddPrimaryKeys(ref ExcelDataTable);
+                                    CswGridData gd = new CswGridData(_CswNbtResources);
+                                    gd.PkColumn = "RowNumber";
+ 
+                                    ReturnVal.Add(new JProperty("jqGridOpt", gd.DataTableToJSON(ExcelDataTable)));
+
+                                    if (!string.IsNullOrEmpty(WarningMessage))
+                                        ReturnVal.Add(new JProperty("error", WarningMessage));
                                 }
                                 else
                                 {
@@ -2797,6 +2873,64 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string getInspectionTargets()
+        {
+            JObject ReturnVal = null;
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                    ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()), new JProperty("inspectiontargetsselect", ws.getInspectionTargets()));
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch (Exception ex)
+            {
+                ReturnVal = jError(ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+
+        }
+
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string IsNewInspectionNameUnique(string NewInspectionName)
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                    if (ws.IsNodeTypeNameUnique(NewInspectionName))
+                        ReturnVal = new JObject(new JProperty("succeeded", "true"));
+                    else
+                        ReturnVal = new JObject(new JProperty("succeeded", "false"));
+                }
+                _deInitResources();
+            }
+            catch (Exception Ex)
+            {
+                ReturnVal = jError(Ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+        } // IsNewInspectionNameUnique()
 
         #endregion
 
