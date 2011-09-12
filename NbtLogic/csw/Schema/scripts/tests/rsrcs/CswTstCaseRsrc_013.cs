@@ -43,10 +43,6 @@ namespace ChemSW.Nbt.Schema
         public string LocalAribtiraryValue02Delta { get { return ( this.GetType().Name + "Y" ); } }
 
 
-        public DataTable TheSuspectUpdateTable = null;
-        public CswTableUpdate TheSuspectUpdateTablesUpdater = null; 
-
-
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 
 }//ChemSW.Nbt.Schema
