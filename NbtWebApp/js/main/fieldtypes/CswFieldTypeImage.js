@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../pagecmp/CswDialog.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         

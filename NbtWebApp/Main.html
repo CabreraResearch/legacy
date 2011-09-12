@@ -224,86 +224,74 @@
 	function handleItemSelect(options)
 	{
 		//if (debugOn()) log('Main.handleItemSelect()');
+        var o = {
+			type: 'view', // Action, Report, View
+			viewmode: 'tree', // Grid, Tree, List
+			linktype: 'link', // WelcomeComponentType: Link, Search, Text, Add
+            viewid: '',
+			actionname: '',
+			actionurl: '',
+			reportid: '',
+			nodeid: '',
+			cswnbtnodekey: ''
+		};
+		if (options) $.extend(o, options);
 
-		if (manuallyCheckChanges())
-		{
+	    var linkType = tryParseString(o.linktype).toLowerCase();
+	    
+	    var type = tryParseString(o.type).toLowerCase();
+	    
+	    function itemIsSupported() {
+	        var ret = (linkType === 'search' || false === isNullOrEmpty(o.viewid) ||
+	                   type === 'action' || type === 'report');
+	        return ret;
+	    }
+	    
+		if (manuallyCheckChanges() && itemIsSupported()) {
 			clear({ all: true });
-			var o = {
-				type: 'view', // Action, Report, View
-				viewmode: 'tree', // Grid, Tree, List
-				linktype: 'link', // WelcomeComponentType: Link, Search, Text, Add
-                viewid: '',
-				actionname: '',
-				actionurl: '',
-				reportid: '',
-				nodeid: '',
-				cswnbtnodekey: ''
-			};
-			if (options) $.extend(o, options);
-
-			if ( !isNullOrEmpty( o.viewid ) )
-			{
+			
+			if (!isNullOrEmpty(o.viewid)) {
 			    setCurrentView(o.viewid, o.viewmode);
 
 			    var linkOpt = {
-                    'showempty': false,
-                    'forsearch': false
+                    showempty: false,
+                    forsearch: false
 			    };
 
-			    switch (o.linktype.toLowerCase())
-			    {
+			    switch (linkType) {
 			        case 'search':
 			            linkOpt.showempty = true;
 			            linkOpt.forsearch = true;
 			            break;
 			    }
-
-			    switch ( o.viewmode.toLowerCase() )
-			    {
+                var viewMode = tryParseString(o.viewmode).toLowerCase();
+			    switch (viewMode) {
 			    	case 'grid':
-			    	    {
-			    	        getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
-			                break;
-			            }
+			    	    getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+			            break;
 			        default:
-			            {
-			                refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
-			                break;
-			            }
+			            refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+			            break;
 			    }
 			}
-			else if (!isNullOrEmpty(o.type))
-			{
-			    switch ( o.type.toLowerCase() )
-			    {
+			else if (!isNullOrEmpty(type)) {
+			    switch (type) {
 			    	case 'action':
-			    		{
-							_handleAction({
-								'actionname': o.actionname,
-								'actionurl': o.actionurl
-							});
-			    			break;
-			    		}
+						_handleAction({
+							'actionname': o.actionname,
+							'actionurl': o.actionurl
+						});
+			    		break;
 			    	case 'report':
-			    		{
-			    			window.location = "Report.aspx?reportid=" + o.reportid;
-			    			break;
-			    		}
-			        default:
-			            {
-			                alert('Handling for link type ' + o.type + ' is not implemented yet.');
-			                break;
-			            }
+			    		window.location = "Report.aspx?reportid=" + o.reportid;
+			    		break;
 			    }
-			}
-			else
-			{
-			    alert('Handling for this action is not yet implemented');
-			}
+			} 
 
 			refreshQuickLaunch();
-
-		} // if (manuallyCheckChanges())
+		} else { // if (manuallyCheckChanges() && itemIsSupported())
+            //do nothing
+		}
 	} // handleItemSelect()
 
 	function refreshMainMenu(options) 
@@ -312,6 +300,7 @@
 
 		var o = {
 			viewid: '',
+		    viewmode: '',
 			nodeid: '',
 			cswnbtnodekey: '',
             prefix: 'csw'
@@ -326,14 +315,25 @@
 			'viewid': o.viewid,
 			'nodeid': o.nodeid,
 			'cswnbtnodekey': o.cswnbtnodekey,
-			'onAddNode': function (nodeid, cswnbtnodekey)
-			{
+			'onAddNode': function (nodeid, cswnbtnodekey) {
 				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
 			},
-			'onMultiEdit': function ()
-			{
+			'onMultiEdit': function () {
 				multi = !multi;
-				refreshSelected({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			    switch (o.viewmode) {
+			        case CswViewMode.grid.name:
+			            var g = {
+			                gridOpts: {
+			                    //reinit: true,
+			                    multiselect: true
+			                }
+			            };
+			            o.grid.changeGridOpts(g);
+			            break;
+			        default:
+                        refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
+			            break;
+			    }
 			},
 			'onSearch':
                 {
@@ -535,16 +535,23 @@
         
         clear({ centerbottom: true});
         
-        $('#CenterBottomDiv').CswNodeGrid({ 
-                                'viewid': o.viewid, 
-                                'nodeid': o.nodeid,
-                                'cswnbtnodekey': o.cswnbtnodekey, 
-                                'showempty': getEmptyGrid,
-                                'ID': MainGridId, 
+        $('#CenterBottomDiv').CswNodeGrid('init', { 
+                                viewid: o.viewid, 
+                                nodeid: o.nodeid,
+                                cswnbtnodekey: o.cswnbtnodekey, 
+                                showempty: getEmptyGrid,
+                                ID: MainGridId, 
                                 //'onAddNode': o.onAddNode,
-                                'onEditNode': o.onEditNode,
-                                'onDeleteNode': o.onDeleteNode });
-        if(o.doMenuRefresh) refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+                                onEditNode: o.onEditNode,
+                                onDeleteNode: o.onDeleteNode,
+                                onSuccess: function(grid) {
+                                    if(o.doMenuRefresh) refreshMainMenu({ viewid: o.viewid, 
+                                              viewmode: CswViewMode.grid.name,
+                                              grid: grid,
+                                              nodeid: o.nodeid, 
+                                              cswnbtnodekey: o.cswnbtnodekey });                                    
+                                }
+        });
 	}
 
 	function onSelectTreeNode(options)
@@ -571,12 +578,12 @@
 			if (o.nodeid !== '' && o.nodeid !== 'root')
 			{
 				getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-				refreshMainMenu({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+				refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
 			} 
 			else
 			{
 				clear({ 'right': true });
-				refreshMainMenu({ 'viewid': o.viewid, 'nodeid': '', 'cswnbtnodekey': '' });
+				refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
 			}
 		}
 	} // onSelectTreeNode()
@@ -596,47 +603,47 @@
 
 		clear({ right: true });
 		$('#RightDiv').CswNodeTabs({
-			'ID': 'nodetabs',
-			'nodeid': o.nodeid,
-			'cswnbtnodekey': o.cswnbtnodekey,
-			'onSave': function (nodeid, cswnbtnodekey)
+			ID: 'nodetabs',
+			nodeid: o.nodeid,
+			cswnbtnodekey: o.cswnbtnodekey,
+			onSave: function (nodeid, cswnbtnodekey)
 			{
 				unsetChanged();
 				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
+			},
+			tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
+			onBeforeTabSelect: function (tabid)
+                        {
+				return manuallyCheckChanges();
 			},
 			'Refresh': function (nodeid, cswnbtnodekey)
 			{
 				unsetChanged();
 				refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey });
 			},
-			'tabid': $.CswCookie('get', CswCookieName.CurrentTabId),
-			'onBeforeTabSelect': function (tabid)
-			{
-				return manuallyCheckChanges();
-			},
-			'onTabSelect': function (tabid)
+			onTabSelect: function (tabid)
 			{
 				$.CswCookie('set', CswCookieName.CurrentTabId, tabid);
 			},
-			'onPropertyChange': function (propid, propname)
+			onPropertyChange: function (propid, propname)
 			{
 				//if(debug) log('Property Changed: propid = ' + propid + ', propname = ' + propname);
 				setChanged();
             },
-            'onEditView': function (viewid)
+            onEditView: function (viewid)
             {
 				_handleAction({ 
 					'actionname': 'Edit_View', 
 					'ActionOptions': {
-						'viewid': viewid,
-						'viewmode': 'Grid',
-						'startingStep': 2,
-						'IgnoreReturn': true,
+						viewid: viewid,
+						viewmode: CswViewMode.grid.name,
+						startingStep: 2,
+						IgnoreReturn: true
 					}
 				});
             },
-			'ShowCheckboxes': multi,
-			'NodeCheckTreeId': MainTreeId
+			ShowCheckboxes: multi,
+			NodeCheckTreeId: MainTreeId
 		});
 	}
 

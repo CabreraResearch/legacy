@@ -14,7 +14,7 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = tryParseString(propVals.barcode).trim();
+            var value = (false === o.Multi) ? tryParseString(propVals.barcode).trim() : CswMultiEditDefaultValue;
 
             if(o.ReadOnly)
             {
@@ -31,19 +31,19 @@
                                                        onChange: o.onchange,
                                                        value: value
                                                });
-
-                var $cell2 = $table.CswTable('cell', 1, 2);
-                var $PrintButton = $('<div/>' )
-                                        .appendTo($cell2)
-                                        .CswImageButton({  ButtonType: CswImageButton_ButtonType.Print,
-                                                        AlternateText: '',
-                                                        ID: o.ID + '_print',
-                                                        onClick: function ($ImageDiv) { 
-															$.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.ID });
-                                                            return CswImageButton_ButtonType.None; 
-                                                        }
-                                                        });
-
+                if (false === o.Multi) {
+                    var $cell2 = $table.CswTable('cell', 1, 2);
+                    $('<div/>')
+                        .appendTo($cell2)
+                        .CswImageButton({  ButtonType: CswImageButton_ButtonType.Print,
+                                AlternateText: '',
+                                ID: o.ID + '_print',
+                                onClick: function($ImageDiv) {
+                                    $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.ID });
+                                    return CswImageButton_ButtonType.None;
+                                }
+                            });
+                }
                 if(o.Required)
                 {
                     $TextBox.addClass("required");

@@ -56,7 +56,7 @@
 				return CswImageButton_ButtonType.None; 
 			}
 		})
-
+	    $('html, body').animate({ scrollTop: 0 }, 0);
 		return $errordiv;
 
 	}; // function(options) {

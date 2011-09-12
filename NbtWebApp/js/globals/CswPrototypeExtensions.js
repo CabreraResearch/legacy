@@ -1,4 +1,5 @@
-/// <reference path="_Global.js" />
+/// <reference path="CswEnums.js" />
+/// <reference path="CswGlobalTools.js" />
 
 //#region Browser Compatibility
 
@@ -13,7 +14,7 @@ if (typeof String.prototype.trim !== 'function')
 
 //#endregion Browser Compatibility
 
-//#region Inheritance
+//#region Function
 
 Function.prototype.inheritsFrom = function(parentClassOrObject)
 {
@@ -34,4 +35,25 @@ Function.prototype.inheritsFrom = function(parentClassOrObject)
     return this;
 };
 
-//#endregion Inheritance
+//#endregion Function
+
+//#region Object
+
+Object.defineProperty(
+    Object.prototype, 
+    'renameProperty',
+    {
+        writable : false, // Cannot alter this property
+        enumerable : false, // Will not show up in a for-in loop.
+        configurable : false, // Cannot be deleted via the delete operator
+        value : function (oldName, newName) {
+            if (this.hasOwnProperty(oldName)) {
+                this[newName] = this[oldName];
+                delete this[oldName];
+            }
+            return this;
+        }
+    }
+);
+
+//#endregion Object

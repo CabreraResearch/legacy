@@ -125,6 +125,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Attributes = new JObject();
             if( ViewMode != NbtViewRenderingMode.Unknown )
             {
+                Attributes["isleaf"] = true;
                 Attributes["viewmode"] = ViewMode.ToString().ToLower();
                 Rel += Mode;
             }
@@ -160,6 +161,8 @@ namespace ChemSW.Nbt.WebServices
                     // Make one
                     CategoryObj = new JObject(
                         new JProperty( "data", Category ),
+                        new JProperty( "id", "category_" + Category + "_viewselect" ),
+                        new JProperty( "attr", new JObject( new JProperty( "isleaf", false ) ) ),
                         new JProperty( "children", Children ) );
                     DocRoot.Add( CategoryObj );
                     Categories.Add( Category, CategoryObj ); //_makeItemObject( DocRoot, ItemType.Category, _Catcount, Category );
