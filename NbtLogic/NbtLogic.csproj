@@ -322,9 +322,6 @@
     <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_05.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_06.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_07.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_08.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_09.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_10.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_03.cs" />

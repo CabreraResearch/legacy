@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.Schema
     public class CswTestCase_013_07 : CswUpdateSchemaTo
     {
 
-        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_013.Purpose, "Post update of table that was rolled back" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_013.Purpose, "Verify clean up" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_013 _CswTstCaseRsrc_013 = null;
@@ -36,9 +36,7 @@ namespace ChemSW.Nbt.Schema
 			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
 			_CswTstCaseRsrc_013.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 			
-			_CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.update( _CswTstCaseRsrc_013.TheSuspectUpdateTable );
-
-
+			_CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_013.FakeTestTableName ); 
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
