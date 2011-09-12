@@ -60,12 +60,10 @@
 
 						crawlObject(nodeObj.props, function(propObj, propid) {
 							$textcell.append('' + propObj.propname + ': ' + propObj.gestalt + '<br/>');
-							return true;
 						});
 			
 						c++;
 						if(c > 3) { c = 1; r++; }
-						return true;
 					});
 
 

@@ -250,7 +250,6 @@ function CswGrid(options, $parent) {
                             parent[key] = getValueForColumn(key, rowid);
                         }
                     }
-					return true;
                 }, false);
             }
         }
