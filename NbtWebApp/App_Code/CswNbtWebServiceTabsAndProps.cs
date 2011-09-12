@@ -377,79 +377,92 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = null;
             JObject PropsObj = JObject.Parse( NewPropsJson );
-            string RetNodeKey = string.Empty;
-            string RetNodeId = string.Empty;
-            bool AllSucceeded = NodeIds.Count > 0;
-            for( Int32 i = 0; i < NodeIds.Count; i++ )
+            CswNbtNodeKey RetNbtNodeKey = null;
+            bool AllSucceeded = false;
+            Int32 Succeeded = 0;
+            CswNbtNode Node = null;
+            switch (EditMode)
             {
-                string NodeId = NodeIds[i];
-                string NodeKey = NodeKeys[i];
-                CswNbtNode Node = null;
-                CswNbtNodeKey NbtNodeKey = null;
-                Node = EditMode == NodeEditMode.AddInPopup ?
-                                                        _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode ) :
-                                                        _getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
-
-                if( Node != null &&
-                    ( EditMode == NodeEditMode.AddInPopup &&
-                      _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) ) ||
-                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Node.NodeType, false, Node.NodeType.getNodeTypeTab( TabId ), null, Node, null ) )
-                {
-                    foreach( JObject PropObj in
-                        from PropJProp
-                            in PropsObj.Properties()
-                        where null != PropJProp.Value
-                        select (JObject) PropJProp.Value
-                            into PropObj
-                            where PropObj.HasValues
-                            select PropObj )
+                case NodeEditMode.AddInPopup:
+                    Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    RetNbtNodeKey = _saveProp( Node, PropsObj, View );
+                    if( null != RetNbtNodeKey )
                     {
-                        _applyPropJson( Node, PropObj );
+                        Succeeded++;
                     }
-
-                    // BZ 8517 - this sets sequences that have setvalonadd = 0
-                    _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( Node );
-
-                    Node.postChanges( false );
-
-                    if( View != null )
+                    break;
+                default:
+                    for( Int32 i = 0; i < NodeIds.Count; i++ )
                     {
-                        // Get the nodekey of this node in the current view
-                        ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-                        NbtNodeKey = Tree.getNodeKeyByNodeId( Node.NodeId );
-                        if( NbtNodeKey == null )
+                        string NodeId = NodeIds[i];
+                        string NodeKey = NodeKeys[i];
+                        Node = _getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+
+                        RetNbtNodeKey = _saveProp( Node, PropsObj, View );
+                        if( null != RetNbtNodeKey )
                         {
-                            // Make a nodekey from the default view
-                            View = Node.NodeType.CreateDefaultView();
-                            View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Node.NodeId );
-                            Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-                            NbtNodeKey = Tree.getNodeKeyByNodeId( Node.NodeId );
-                            if( false == string.IsNullOrEmpty( RetNodeKey ) )
-                            {
-                                RetNodeKey = wsTools.ToSafeJavaScriptParam( NbtNodeKey );
-                                RetNodeId = NodeId;
-                            }
+                            Succeeded++;
                         }
                     }
-                }
-                else
-                {
-                    AllSucceeded = false;
-                }
+                    AllSucceeded = NodeIds.Count == Succeeded;
+                    break;
             }
-            if( AllSucceeded )
+            if( AllSucceeded && null != RetNbtNodeKey)
             {
+                string RetNodeKey = wsTools.ToSafeJavaScriptParam( RetNbtNodeKey );
+                string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
+
                 ret = new JObject( new JProperty( "result", "Succeeded" ),
                                    new JProperty( "nodeid", RetNodeId ),
                                    new JProperty( "cswnbtnodekey", RetNodeKey ) );
             }
             else
             {
-                ret = new JObject( new JProperty( "result", "Failed" ) );
+                ret = new JObject( new JProperty( "result", Succeeded + " out of " + NodeIds.Count + " prop updates succeeded. Remaining prop updates failed" ) );
             }
 
             return ret;
         } // saveProps()
+
+        private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View )
+        {
+            CswNbtNodeKey Ret = null;
+            if( Node != null )
+            {
+                foreach( JObject PropObj in
+                    from PropJProp
+                        in PropsObj.Properties()
+                    where null != PropJProp.Value
+                    select (JObject) PropJProp.Value
+                        into PropObj
+                        where PropObj.HasValues
+                        select PropObj )
+                {
+                    _applyPropJson( Node, PropObj );
+                }
+
+                // BZ 8517 - this sets sequences that have setvalonadd = 0
+                _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( Node );
+
+                Node.postChanges( false );
+
+                if( View != null )
+                {
+                    // Get the nodekey of this node in the current view
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                    Ret = Tree.getNodeKeyByNodeId( Node.NodeId );
+                    if( Ret == null )
+                    {
+                        // Make a nodekey from the default view
+                        View = Node.NodeType.CreateDefaultView();
+                        View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Node.NodeId );
+                        Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                        Ret = Tree.getNodeKeyByNodeId( Node.NodeId );
+                    }
+                }
+            }
+            return Ret;
+        }
 
         public bool copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] PropIds )
         {
