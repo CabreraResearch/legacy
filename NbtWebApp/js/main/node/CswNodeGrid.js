@@ -46,6 +46,7 @@
 				    var jqGridOpt = gridJson.jqGridOpt;
 
 				    var g = {
+				        ID: o.ID,
 				        canEdit: isTrue(jqGridOpt.CanEdit),
 				        canDelete: isTrue(jqGridOpt.CanDelete),
 				        hasPager: true,

@@ -37,7 +37,7 @@
 				var viewid = tryParseString(propVals.viewid).trim();
 			    var cswGrid;
 			    var gridOpts = {
-					ID: o.ID,
+					ID: o.ID + '_fieldtypegrid',
 					viewid: viewid, 
 					nodeid: o.nodeid, 
 					cswnbtnodekey: o.cswnbtnodekey, 
