@@ -8,6 +8,7 @@ using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -36,17 +37,6 @@ namespace ChemSW.Nbt.WebServices
         private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
 
         /// <summary>
-        /// These are files that we want to keep around
-        /// </summary>
-        private string _FilesPath
-        {
-            get
-            {
-                return ( System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc" );
-            }
-        }
-
-        /// <summary>
         /// These are files we do NOT want to keep around after temporarily using them.  There is a function that purges old files.  
         /// </summary>
         private string _TempPath
@@ -60,7 +50,7 @@ namespace ChemSW.Nbt.WebServices
 
         private void _initResources()
         {
-            _CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.NbtWeb );
+            _CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, SetupMode.NbtWeb );
             _CswNbtResources = _CswSessionResources.CswNbtResources;
             _CswNbtStatisticsEvents = _CswSessionResources.CswNbtStatisticsEvents;
             _CswNbtResources.beginTransaction();
@@ -280,7 +270,63 @@ namespace ChemSW.Nbt.WebServices
 
         #region Authentication
 
-        [WebMethod( EnableSession = false )]
+		// Authenticates and sets up resources for an accessid and user
+		private AuthenticationStatus _authenticate( string AccessId, string UserName, string Password, bool IsMobile )
+		{
+			AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
+			try
+			{
+				string ParsedAccessId = AccessId.ToLower().Trim();
+				if( !string.IsNullOrEmpty( ParsedAccessId ) )
+				{
+					_CswSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
+				}
+				else
+				{
+					throw new CswDniException( ErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
+				}
+			}
+			catch( CswDniException ex )
+			{
+				if( !ex.Message.Contains( "There is no configuration information for this AccessId" ) )
+				{
+					throw ex;
+				}
+				else
+				{
+					AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
+				}
+			}
+
+			if( AuthenticationStatus == AuthenticationStatus.Unknown )
+				AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), IsMobile );
+
+			// case 21211
+			if( AuthenticationStatus == AuthenticationStatus.Authenticated )
+			{
+				CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
+				//Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "passwordexpiry_days" ) );
+
+				if( _CswNbtResources.CurrentNbtUser.PasswordProperty.IsExpired )
+				{
+					// BZ 9077 - Password expired
+					AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
+				}
+				else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
+				{
+					// BZ 8133 - make sure they've seen the License
+					AuthenticationStatus = AuthenticationStatus.ShowLicense;
+				}
+
+			}
+
+			//bury the overhead of nuking old sessions in the overhead of authenticating
+			_CswSessionResources.purgeExpiredSessions(); 
+
+			return AuthenticationStatus;
+		}
+
+		[WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string authenticate( string AccessId, string UserName, string Password, string ForMobile )
         {
@@ -288,72 +334,34 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 _initResources();
+			
+				bool IsMobile = CswConvert.ToBoolean( ForMobile );
+				AuthenticationStatus AuthenticationStatus = _authenticate( AccessId, UserName, Password, IsMobile );
 
-                AuthenticationStatus AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown;
+				if( AuthenticationStatus == ChemSW.Security.AuthenticationStatus.ExpiredPassword )
+				{
+					CswNbtObjClassUser CurrentUser = _CswNbtResources.CurrentNbtUser.UserNode;
+					ReturnVal.Add( new JProperty( "nodeid", CurrentUser.NodeId.ToString() ) );
+					CswNbtNodeKey FakeKey = new CswNbtNodeKey( _CswNbtResources );
+					FakeKey.NodeId = CurrentUser.NodeId;
+					FakeKey.NodeSpecies = CurrentUser.Node.NodeSpecies;
+					FakeKey.NodeTypeId = CurrentUser.NodeTypeId;
+					FakeKey.ObjectClassId = CurrentUser.ObjectClass.ObjectClassId;
+					ReturnVal.Add( new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( FakeKey.ToString() ) ) );
+					CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.Node, CurrentUser.PasswordProperty.NodeTypeProp );
+					ReturnVal.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
+				}
 
-                try
-                {
-                    string ParsedAccessId = AccessId.ToLower().Trim();
-                    if( !string.IsNullOrEmpty( ParsedAccessId ) )
-                    {
-                        _CswSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
-                    }
-                    else
-                    {
-                        throw new CswDniException( ErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
-                    }
-                }
-                catch( CswDniException ex )
-                {
-                    if( !ex.Message.Contains( "There is no configuration information for this AccessId" ) )
-                    {
-                        throw ex;
-                    }
-                    else
-                    {
-                        AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
-                    }
-                }
-                bool IsMobile = CswConvert.ToBoolean( ForMobile );
-                if( AuthenticationStatus == AuthenticationStatus.Unknown )
-                    AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), IsMobile );
+				if( AuthenticationStatus == AuthenticationStatus.Authenticated ||
+					AuthenticationStatus == AuthenticationStatus.ExpiredPassword ||
+					AuthenticationStatus == AuthenticationStatus.ShowLicense )
+				{
+					// initial quick launch setup
+					CswNbtWebServiceQuickLaunchItems wsQL = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
+					wsQL.initQuickLaunchItems();
+				}
 
-                // case 21211
-                if( AuthenticationStatus == AuthenticationStatus.Authenticated )
-                {
-                    CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
-                    //Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "passwordexpiry_days" ) );
-
-                    if( _CswNbtResources.CurrentNbtUser.PasswordProperty.IsExpired )
-                    //_CswNbtResources.CurrentNbtUser.PasswordProperty.ChangedDate == DateTime.MinValue ||
-                    //_CswNbtResources.CurrentNbtUser.PasswordProperty.ChangedDate.AddDays( PasswordExpiryDays ).Date <= DateTime.Now.Date )
-                    {
-                        // BZ 9077 - Password expired
-                        AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
-                        ReturnVal.Add( new JProperty( "nodeid", _CswNbtResources.CurrentNbtUser.UserNode.NodeId.ToString() ) );
-                        CswNbtNodeKey FakeKey = new CswNbtNodeKey( _CswNbtResources );
-                        FakeKey.NodeId = _CswNbtResources.CurrentNbtUser.UserNode.NodeId;
-                        FakeKey.NodeSpecies = _CswNbtResources.CurrentNbtUser.UserNode.Node.NodeSpecies;
-                        FakeKey.NodeTypeId = _CswNbtResources.CurrentNbtUser.UserNode.NodeTypeId;
-                        FakeKey.ObjectClassId = _CswNbtResources.CurrentNbtUser.UserNode.ObjectClass.ObjectClassId;
-                        ReturnVal.Add( new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( FakeKey.ToString() ) ) );
-                        CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( _CswNbtResources.CurrentNbtUser.UserNode.Node, _CswNbtResources.CurrentNbtUser.PasswordProperty.NodeTypeProp );
-                        ReturnVal.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
-                    }
-                    else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
-                    {
-                        // BZ 8133 - make sure they've seen the License
-                        AuthenticationStatus = AuthenticationStatus.ShowLicense;
-                    }
-
-                    // initial quick launch setup
-                    CswNbtWebServiceQuickLaunchItems wsQL = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
-                    wsQL.initQuickLaunchItems();
-                }
-
-                _CswSessionResources.purgeExpiredSessions(); //bury the overhead of nuking old sessions in the overhead of authenticating
-
-                _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus, IsMobile );
+				_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus, IsMobile );
                 _deInitResources();
             }
             catch( Exception ex )
@@ -2405,16 +2413,47 @@ namespace ChemSW.Nbt.WebServices
         #endregion Permissions
 
         #region Connectivity
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string ConnectTest()
-        {
-            // no session needed here
-            JObject Connected = new JObject();
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string ConnectTest()
+		{
+			// no session needed here
+			JObject Connected = new JObject();
 			Connected["result"] = "OK";
 			_jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
-            return ( Connected.ToString() );
-        }
+			return ( Connected.ToString() );
+		}
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string ConnectTestDb()
+		{
+			JObject Connected = new JObject();
+
+			// init resources
+			CswNbtResources myResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtWeb, true, false );
+			myResources.InitCurrentUser = ConnectTestDb_InitUser;
+
+			// use the first accessid
+			myResources.AccessId = myResources.CswDbCfgInfo.AccessIds[0];
+
+			// try the database
+			CswTableSelect ConfigVarsTableSelect = myResources.makeCswTableSelect( "ConnectTestDb_Select", "configuration_variables" );
+			DataTable ConfigVarsTable = ConfigVarsTableSelect.getTable();
+			if( ConfigVarsTable.Rows.Count > 0 )
+			{
+				Connected["result"] = "OK";
+			}
+
+			_jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
+			return ( Connected.ToString() );
+		} // ConnectTestDb()
+
+		public ICswUser ConnectTestDb_InitUser( ICswResources Resources )
+		{
+			return new CswNbtSystemUser( Resources, "ConnectTestDb" );
+		}
+
 
 
         [WebMethod( EnableSession = false )]

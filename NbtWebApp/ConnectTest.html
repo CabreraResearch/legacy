@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Connect Test</title>
-	<!--#include file="MainIncludes.html" -->
+	<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.1.min.js"></script>
 </head>
 <body>
 <span id="results"></span>
@@ -10,19 +10,31 @@
 
 	$(document).ready(function ()
 	{
-		CswAjaxJson({
-			'url': '/NbtWebApp/wsNBT.asmx/ConnectTest',
-			'data': {},
-			'success': function (data)
+		$.ajax({
+			type: 'POST',
+			url: '/NbtWebApp/wsNBT.asmx/ConnectTestDb',
+			dataType: "json",
+			contentType: 'application/json; charset=utf-8',
+			data: '',
+			success: function (data, textStatus, XMLHttpRequest)
 			{
-				$('#results').text(data.result);
-			},
-			'error': function (data)
+				var dataresult = $.parseJSON(data.d);
+				if (dataresult.error !== undefined)
+				{
+					$('#results').text( "ERROR: " + dataresult.error );
+				}
+				else
+				{
+					$('#results').text( dataresult.result );
+				}
+			}, // success{}
+			error: function (XMLHttpRequest, textStatus, errorThrown)
 			{
-				$('#results').text("ERROR");
+				$('#results').text( "ERROR: Webservice Error" );
 			}
-		});
-	});
+		}); // $.ajax({
+	}); // $(document).ready(function() {
+
 
 </script>
 </body>
