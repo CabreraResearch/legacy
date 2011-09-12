@@ -23,7 +23,8 @@ namespace ChemSW.Nbt.WebServices
 			CswNbtNode Node = null;
 			if( !string.IsNullOrEmpty( NodeKey ) )
 			{
-				CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, FromSafeJavaScriptParam( NodeKey ) );
+				//CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, FromSafeJavaScriptParam( NodeKey ) );
+				CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, NodeKey );
 				Node = CswNbtResources.getNode( RealNodeKey, Date.ToDateTime() );
 			}
 			else if( !string.IsNullOrEmpty( NodeId ) )
