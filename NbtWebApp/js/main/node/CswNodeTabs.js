@@ -5,10 +5,8 @@
 /// <reference path="../fieldtypes/_CswFieldTypeFactory.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
-    $.fn.CswNodeTabs = function (options)
-	{
-
-		var o = {
+    $.fn.CswNodeTabs = function (options) {
+    	var o = {
 			ID: '',
 			TabsUrl: '/NbtWebApp/wsNBT.asmx/getTabs',
 			SinglePropUrl: '/NbtWebApp/wsNBT.asmx/getSingleProp',
@@ -73,7 +71,7 @@
 		function makeTabContentDiv($parent, tabid, canEditLayout)
 		{
 			var $tabcontentdiv = $('<div id="' + tabid + '"><form onsubmit="return false;" id="' + tabid + '_form" /></div>')
-				.appendTo($parent);
+				                    .appendTo($parent);
 			$tabcontentdiv.data('canEditLayout', canEditLayout);
 			return $tabcontentdiv;
 		}
@@ -92,17 +90,15 @@
 
 			// For performance, don't bother getting tabs if we're in Add or Preview
 			if( o.EditMode == EditMode.AddInPopup.name || 
-				o.EditMode == EditMode.Preview.name )
-			{
+				o.EditMode == EditMode.Preview.name ) {
 				var tabid = o.EditMode + "_tab";
-				var $tabcontentdiv = makeTabContentDiv($parent, tabid, false)
+			    var $tabcontentdiv = makeTabContentDiv($parent, tabid, false);
 				getProps($tabcontentdiv, tabid);
 			} else {
 				CswAjaxJson({
 					url: o.TabsUrl,
 					data: jsonData,
-					success: function (data)
-					{
+					success: function (data) {
 						clearTabs();
 						var tabdivs = [];
 						var selectedtabno = 0;
@@ -128,8 +124,7 @@
 
 						tabcnt = tabno;
 
-						for(var t in tabdivs)
-						{
+						for(var t in tabdivs) {
 							var $tabdiv = tabdivs[t];
 							$tabdiv.tabs({
 							selected: selectedtabno,
@@ -486,8 +481,7 @@
 						    rows: 1,
 						    columns: 2
 					    },
-					    onSwap: function (e, onSwapData)
-					    {
+					    onSwap: function (e, onSwapData) {
 						    onSwap(onSwapData);
 					    },
 					showConfigButton: false,
@@ -562,7 +556,8 @@
 
 				CswAjaxJson({
 					url: o.SavePropUrl,
-					data: data,
+					async: (false === o.Multi),
+				    data: data,
 					success: function (data) {
 					    var doSave = true;
 						var dataJson = {
@@ -570,10 +565,15 @@
 							CopyNodeIds: [],
 							PropIds: []
 						};
-					    function copyNodeProps() {
+					    function copyNodeProps(onSuccess) {
 							CswAjaxJson({
 								url: o.CopyPropValuesUrl,
-								data: dataJson
+								data: dataJson,
+							    success: function (copy) {
+							        if(isFunction(onSuccess)) {
+							            onSuccess(copy);
+							        }
+							    }
 							}); // ajax						        
 						}
 					    if(o.ShowCheckboxes) {
@@ -601,7 +601,7 @@
 					    else if(o.Multi) {
 						    dataJson.CopyNodeIds = o.nodeids;
 					        dataJson.PropIds = propIds;
-						    copyNodeProps();
+					        copyNodeProps(function () { window.location.reload(); });
 					    }
 						if (isFunction(o.onSave) && doSave) o.onSave(data.nodeid, data.cswnbtnodekey, tabcnt);
 						$savebtn.CswButton('enable');
