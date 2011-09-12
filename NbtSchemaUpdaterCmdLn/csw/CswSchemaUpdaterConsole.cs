@@ -25,8 +25,6 @@ namespace ChemSW.Nbt.Schema.CmdLn
     /// </summary>
     public class CswSchemaUpdaterConsole
     {
-		private CswDbCfgInfoNbt _CswDbCfgInfoNbt = null;
-		private CswSetupVblsNbt _CswSetupVblsNbt = null;
 		private CswSchemaUpdateThread _CswSchemaUpdateThread = null;
 
 		private const string _Separator_OrArgs = " | ";
@@ -44,8 +42,6 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
 		public CswSchemaUpdaterConsole()
 		{
-			_CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe );
-			_CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
 		}//ctor
 
 		private string _VersionInfo
@@ -114,9 +110,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         private CswNbtResources _makeResources( string AccessId )
 		{
-			CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, 
-																			  CswTools.getConfigurationFilePath( SetupMode.NbtExe ), 
-																			  false, false );
+			CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, false, false );
 			ret.InitCurrentUser = InitUser;
 			if( AccessId != string.Empty )
 			{
@@ -153,7 +147,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 					}
 					else if( _UserArgs.ContainsKey( _ArgKey_All ) )
 					{
-						foreach( string AccessId in _CswDbCfgInfoNbt.AccessIds )
+						foreach( string AccessId in CswNbtResources.CswDbCfgInfo.AccessIds )
 						{
 							AccessIdsToUpdate.Add( AccessId );
 						}
@@ -166,7 +160,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
 					foreach( string CurrentAccessId in AccessIdsToUpdate )
 					{
-						if( false == _CswDbCfgInfoNbt.AccessIds.Contains( CurrentAccessId ) )
+						if( false == CswNbtResources.CswDbCfgInfo.AccessIds.Contains( CurrentAccessId ) )
 						{
 							CswConsoleOutput.write( "AccessId " + CurrentAccessId + " unknown" );
 						}
@@ -226,7 +220,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
 							CswConsoleOutput.write( _Separator_NuLine );
 
-						} // if-else( false == _CswDbCfgInfoNbt.AccessIds.Contains( AccessId ) )
+						} // if-else( false == CswNbtResources.CswDbCfgInfo.AccessIds.Contains( CurrentAccessId ) )
 					} // foreach( string CurrentAccessId in AccessIdsToUpdate )
 				} // if-else( _UserArgs.ContainsKey( _ArgKey_Help ) )
 			}//try
