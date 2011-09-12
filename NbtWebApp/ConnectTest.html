@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Connect Test</title>
+	<!--#include file="MainIncludes.html" -->
+</head>
+<body>
+<span id="results"></span>
+<script language="javascript">
+
+	$(document).ready(function ()
+	{
+		CswAjaxJson({
+			'url': '/NbtWebApp/wsNBT.asmx/ConnectTest',
+			'data': {},
+			'success': function (data)
+			{
+				$('#results').text(data.result);
+			},
+			'error': function (data)
+			{
+				$('#results').text("ERROR");
+			}
+		});
+	});
+
+</script>
+</body>
+</html>

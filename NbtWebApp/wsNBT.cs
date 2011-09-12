@@ -2411,7 +2411,8 @@ namespace ChemSW.Nbt.WebServices
         {
             // no session needed here
             JObject Connected = new JObject();
-            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
+			Connected["result"] = "OK";
+			_jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
         }
 
