@@ -23,7 +23,8 @@
 				//onAddNode: function(nodeid,cswnbtnodekey){},
 				onEditNode: null, //function(nodeid,cswnbtnodekey){},
 				onDeleteNode: null, //function(nodeid,cswnbtnodekey){}
-			    onSuccess: null // function() {}
+			    onSuccess: null, // function() {}
+				rowsize: 3
 			};
 			if (options) $.extend(o, options);
 			
@@ -63,7 +64,7 @@
 						});
 			
 						c++;
-						if(c > 3) { c = 1; r++; }
+						if(c > o.rowsize) { c = 1; r++; }
 					});
 
 
