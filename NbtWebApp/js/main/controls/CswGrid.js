@@ -267,6 +267,8 @@ function CswGrid(options, $parent) {
         return ret;
     }
     
+    //#region public, priveleged
+    
     this.$gridTable = $gridTable;
     this.$gridPager = $gridPager;
     this.$topPager = $topPager;
@@ -279,5 +281,5 @@ function CswGrid(options, $parent) {
     this.changeGridOpts = changeGridOpts;
     this.opGridRows = opGridRows;
     
-    //#region public, priveleged
+    //#endregion public, priveleged
 }
