@@ -1969,6 +1969,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
+    <Folder Include="js\actions\" />
     <Folder Include="temp\" />
   </ItemGroup>
   <ItemGroup>

@@ -2,8 +2,11 @@
 /// <reference path="../_Global.js" />
 
 var CswImportInspectionQuestions_WizardSteps = {
-    'step1': { step: 1, description: 'Select File For Upload' },
-    'step2': { step: 2, description: 'Upload Completed Okay' }
+	'step1': { step: 1, description: 'Download template' },
+	'step2': { step: 2, description: 'Select name and target' },
+	'step3': { step: 3, description: 'Select File For Upload' },
+	'step4': { step: 4, description: 'Preview' },
+	'step5': { step: 5, description: 'Results' }
 };
 
 ; (function ($) { /// <param name="$" type="jQuery" />
@@ -11,18 +14,18 @@ var CswImportInspectionQuestions_WizardSteps = {
 	$.fn.CswImportInspectionQuestions = function (options) 
 	{
 		var o = {
-			ImportFileUrl: '/NbtWebApp/wsNBT.asmx/ImportInspectionQuestions',
+			ImportFileUrl: '',
 			viewid: '',
 			viewname: '',
 			viewmode: '',
-			ID: 'importinspectionquestions',
+			ID: 'importInspectionQuestions',
 			onCancel: function($wizard) {},
 			onFinish: function($wizard) {},
 			startingStep: 1
 		};
 		if(options) $.extend(o, options);
 
-		var WizardStepArray = [ CswImportInspectionQuestions_WizardSteps.step1, CswImportInspectionQuestions_WizardSteps.step2];
+		var WizardStepArray = [ CswImportInspectionQuestions_WizardSteps.step1, CswImportInspectionQuestions_WizardSteps.step2, CswImportInspectionQuestions_WizardSteps.step3, CswImportInspectionQuestions_WizardSteps.step4, CswImportInspectionQuestions_WizardSteps.step5];
 		var WizardSteps = {};                
 		for( var i = 1; i <= WizardStepArray.length; i++ )
 		{                
@@ -37,14 +40,13 @@ var CswImportInspectionQuestions_WizardSteps = {
 
 		var $wizard = $div.CswWizard('init', { 
 				'ID': o.ID + '_wizard',
-				'Title': 'Import Inspection Questions',
+				'Title': 'Create New Inspection',
 				'StepCount': WizardStepArray.length,
 				'Steps': WizardSteps,
 				'StartingStep': o.startingStep,
-				'FinishText': 'Save and Finish',
+				'FinishText': 'Finish',
 				'onNext': _handleNext,
 				'onPrevious': _handlePrevious,
-				'onBeforePrevious': _onBeforePrevious,
 				'onCancel': o.onCancel,
 				'onFinish': o.onFinish
 			});
@@ -53,109 +55,242 @@ var CswImportInspectionQuestions_WizardSteps = {
 		if(o.startingStep === 1)
 			$wizard.CswWizard('button', 'finish', 'disable');
 
-		// Step 1 - Select file for Upload
-		var $div1 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step1.step);
-        var downloadbutton = "<a href=\"/NbtWebApp/etc/InspectionDesign.xls\">Download the Excel template</a>";
-		$div1.append(downloadbutton);
+		// Step 1 - Download the Excel template
+		var $divStep1 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step1.step);
+		var downloadButton = "<a href=\"/NbtWebApp/etc/InspectionDesign.xls\">Download the Excel template</a>";
+		$divStep1.append(downloadButton);
 
-        var inspectionname = "<br/><br/>Please enter the name of the new inspection: ";
-        $div1.append(inspectionname);
-        var $TextBox = $div1.CswInput('init',{ID: o.ID + '_inspectionname', type: CswInput_Types.text});
+		// Step 2 - Get new inspection name and target type
+		var $divStep2 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step2.step);
+		var inspectionName = "<br/><br/>Please enter the name of the new inspection:<br />";
+		$divStep2.append(inspectionName);
+		var $textBox = $divStep2.CswInput('init', {ID: o.ID + '_inspectionName', type: CswInput_Types.text});
+		var $errorLabel = $('<div ID="inspectionNameErrorLabel" style="visibility:hidden">ERROR: inspection name is NOT unique.</div>');
+		$divStep2.append($errorLabel);
+		var targetName = "<br/><br/>Please enter the target of the new inspection:<br />";
+		$divStep2.append(targetName);
+		var $nodeTypeSelect = $('<div></div>');
+		$nodeTypeSelect.CswNodeTypeSelect('init', {ID: 'step2_nodeTypeSelect'});
+		//var $nodetypeselect = $div2.CswNodeTypeSelect('init', {ID: 'step2_nodettypeselect'});
+		$divStep2.append($nodeTypeSelect);
 
-		var instructions1 = "<br/><br/>Please select your Excel file containing your inspection questions.<br/><br/>";
-		$div1.append(instructions1);
-		var $fileuploaddiv = $('<div></div>');
-    
-        // define parameters to pass into FileUploader
+		// step 3 - Upload file
+		var $divStep3 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step3.step);
+		var instructions3 = "<br/><br/>Please select your Excel file containing your inspection questions.<br/><br/>";
+		$divStep3.append(instructions3);
+		var $fileUploadDiv = $('<div></div>');
+
+		 // step 4 - Preview results
+		var $divStep4 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step4.step);
+
+		 // step 4 - Results
+		var $divStep5 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step5.step);
+
+	   // define parameters to pass into FileUploader
 		var o = {
-			url: '/NbtWebApp/wsNBT.asmx/uploadInspectionFile',
+			url: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
 			params: 
-            {
-            InspectionName: _getNewInspectionName()
-            },
-			onSuccess: function() 
-            { 
-            _handleNext($wizard, CswImportInspectionQuestions_WizardSteps.step2.step);
-            }
+			{
+    			InspectionName: _getNewInspectionName()
+			},
+			onSuccess: function(id, fileName, responseJSON) 
+			{ 
+		        var $textBoxTempFileName = $divStep4.CswInput('init', {ID: 'step4_tempFileName', type: CswInput_Types.hidden, value: responseJSON.tempFileName});
+				var instructions4b = "Inspection Name: ";
+				$divStep4.append(instructions4b);
+				var $newInspectionName = _getNewInspectionName();
+				$divStep4.append($newInspectionName);
+				var instructions4c = "<br/><br/>Target: ";
+				$divStep4.append(instructions4c);
+				 var $targetName = _getTargetInspection($nodeTypeSelect);
+				$divStep4.append($targetName);
+				var instructions4d = "<br/><br/>Your data from the Excel spreadsheet is shown below.  If this all looks correct then click the 'Save and Finish' button to create the new inspection.<br/><br/>";
+				$divStep4.append(instructions4d);
+
+				var step4PreviewGridId = o.ID + '_step4_previewGrid_outer';
+				var $previewGrid = $div.find('#' + step4PreviewGridId);
+				if (isNullOrEmpty($previewGrid) || $previewGrid.length === 0) {
+					$previewGrid = $('<div id="' + o.ID + '"></div>').appendTo($divStep4);
+				} 
+                else {
+					$previewGrid.empty();
+				}
+
+				var g = {
+					Id: o.ID,
+					gridOpts: {
+						autowidth: true,
+						rowNum: 20
+					},
+					optNav: {
+						add: false,
+						view: false,
+						del: false,
+						refresh: false,
+						edit: false
+					}
+				};
+
+				$.extend(g.gridOpts, responseJSON.jqGridOpt);
+
+				var grid = new CswGrid(g, $previewGrid);
+			//_handleNext($wizard, CswImportInspectionQuestions_WizardSteps.step4.step);
+			$wizard.CswWizard('button', 'next', 'click');
+			}
 		};
 
 		var uploader = new qq.FileUploader({
-			element: $fileuploaddiv.get(0),
-			action: o.url,
+			element: $fileUploadDiv.get(0),
+			action: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
 			params: o.params,
 			debug: false,
-            onSubmit: function()
-            {
-                o.params['InspectionName'] = _getNewInspectionName();
-            },
-			onComplete: function() 
-				{ 
-					o.onSuccess(); 
-				}
+			onSubmit: function()
+			{
+				o.params['InspectionName'] = _getNewInspectionName();
+			},
+			onComplete: function(id, fileName, responseJSON) 
+			{ 
+				o.onSuccess(id, fileName, responseJSON); 
+			}
 		});
-		$div1.append($fileuploaddiv);
-
-		//$wizard.CswWizard('button', 'next', 'disable');
-
-        function _getNewInspectionName()
-        {
-            // I am doing one basic step at a time to help with debugging
-            var inspectionNameElement = $div1.find('#importinspectionquestions_inspectionname');
-            var inspectionNameValue = inspectionNameElement.val();
-            return (inspectionNameValue);
-        }
-
-		// Step 2 - Upload File
-		var $div2 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step2.step);
-		var instructions2 = "Thanks for using the Inspections Questions import wizard.<br/><br/>";
-		$div2.append(instructions2);
-		
-		function _onBeforePrevious($wizard, stepno)
+		$divStep3.append($fileUploadDiv);
+	
+		function _getNewInspectionName()
 		{
-			return (stepno !== CswImportInspectionQuestions_WizardSteps.step2.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?") );
+			// I am doing one basic step at a time to help with debugging
+			var inspectionNameElement = $divStep2.find('#importInspectionQuestions_inspectionName');
+			var inspectionNameValue = inspectionNameElement.val();
+			return (inspectionNameValue);
 		}
 
-		function _handleNext($wizard, newstepno)
+		function _getTargetInspection(targetInspectionSelect)
 		{
-			CurrentStep = newstepno;
-			switch(newstepno)
+			// I am doing one basic step at a time to help with debugging
+			//var nodettypeselectElement = $div2.find('#step2_nodettypeselect');
+			//var nodettypeselectValue = nodettypeselectElement.val();
+			//return (nodettypeselectValue);
+			return (targetInspectionSelect.find(':selected').text());
+		}
+
+		function _getTempFileName()
+		{
+			// I am doing one basic step at a time to help with debugging
+			var tempFileNameElement = $divStep4.find('#step4_tempFileName');
+			var tempFileNameValue = tempFileNameElement.val();
+			return (tempFileNameValue);
+		}
+
+		function _handleNext($wizard, newStepNo)
+		{
+			CurrentStep = newStepNo;
+			switch(newStepNo)
 			{
 				case CswImportInspectionQuestions_WizardSteps.step1.step:
+					// dont think well ever have a step one in next
+					$wizard.CswWizard('button', 'previous', 'disable');
+					$wizard.CswWizard('button', 'next', 'enable');
+					$wizard.CswWizard('button', 'finish', 'disable');
 					break;
 				case CswImportInspectionQuestions_WizardSteps.step2.step:
- 					$wizard.CswWizard('button', 'finish', 'enable');
-					$wizard.CswWizard('button', 'next', 'click');
+					$wizard.CswWizard('button', 'previous', 'enable');
+					$wizard.CswWizard('button', 'next', 'enable');
+					$wizard.CswWizard('button', 'finish', 'disable');
+					break;
+				case CswImportInspectionQuestions_WizardSteps.step3.step:
+					$wizard.CswWizard('button', 'previous', 'enable');
+					$wizard.CswWizard('button', 'next', 'enable');
+					$wizard.CswWizard('button', 'finish', 'disable');
+					CswAjaxJson({
+						'url': '/NbtWebApp/wsNBT.asmx/IsNewInspectionNameUnique',
+						'data': { 'NewInspectionName': _getNewInspectionName() },
+						'success': function (response) { 
+							if (response.succeeded == 'true')
+							{
+								var control = document.getElementById('inspectionNameErrorLabel');
+								control.style.visibility = "hidden";
+								// Why does this not work?
+								//$('#InspectionNameErrorLabel').hide();
+							}
+							else 
+							{
+								var control = document.getElementById('inspectionNameErrorLabel');
+								control.style.visibility = "visible";
+								//$('#InspectionNameErrorLabel').show();
+								$wizard.CswWizard('button', 'previous', 'click');
+							}
+						}
+					});
+					break;
+				case CswImportInspectionQuestions_WizardSteps.step4.step:
+					$wizard.CswWizard('button', 'previous', 'enable');
+					$wizard.CswWizard('button', 'next', 'enable');
+					$wizard.CswWizard('button', 'finish', 'disable');
+					break;
+				case CswImportInspectionQuestions_WizardSteps.step5.step:
+					$wizard.CswWizard('button', 'previous', 'enable');
 					$wizard.CswWizard('button', 'next', 'disable');
+					$wizard.CswWizard('button', 'finish', 'enable');
+                    var newInspectionName =  _getNewInspectionName();
+                    var targetInspection =  _getTargetInspection($nodeTypeSelect);
+                    var tempFileName =  _getTempFileName();
 
+			        CswAjaxJson({
+				        'url': '/NbtWebApp/wsNBT.asmx/uploadInspectionFile',
+				        'data': { 
+					        'NewInspectionName': newInspectionName, 
+                            'TargetName': targetInspection, 
+                            'TempFileName': tempFileName
+				        },
+				        'success': function (response) { 
+					        if (response.success == 'true')
+					        {
+                                $wizard.CswWizard('button', 'previous', 'disable');
+                                $wizard.CswWizard('button', 'cancel', 'disable');
+                                $divStep5.append("Your design was created successfully");
+					        }
+					        else 
+					        {
+                                $divStep5.append("Error: " + response.error);
+					        }
+				        }
+			        });
 					break;
 			} // switch(newstepno)
 		} // _handleNext()
 
-
-		function _handlePrevious($wizard, newstepno)
+		function _handlePrevious($wizard, newStepNo)
 		{
-			if(newstepno === 1)
-				$wizard.CswWizard('button', 'finish', 'disable');
-			
-			CurrentStep = newstepno;
-			switch(newstepno)
+			CurrentStep = newStepNo;
+			switch(newStepNo)
 			{
 				case CswImportInspectionQuestions_WizardSteps.step1.step: 
+					$wizard.CswWizard('button', 'previous', 'disable');
+					$wizard.CswWizard('button', 'next', 'enable');
+					$wizard.CswWizard('button', 'finish', 'disable');
 					break;
 				case CswImportInspectionQuestions_WizardSteps.step2.step: 
+					$wizard.CswWizard('button', 'previous', 'enable');
+					$wizard.CswWizard('button', 'next', 'enable');
+					$wizard.CswWizard('button', 'finish', 'disable');
+					break;
+				case CswImportInspectionQuestions_WizardSteps.step3.step: 
+					$wizard.CswWizard('button', 'previous', 'enable');
+					$wizard.CswWizard('button', 'next', 'enable');
+					$wizard.CswWizard('button', 'finish', 'disable');
+					break;
+				case CswImportInspectionQuestions_WizardSteps.step4.step: 
+					$wizard.CswWizard('button', 'previous', 'enable');
+					$wizard.CswWizard('button', 'next', 'enable');
+					$wizard.CswWizard('button', 'finish', 'disable');
 					break;
 			}
 		}
-
 
 		function _handleFinish($wizard)
 		{
 		} //_handleFinish
 
-
-
 		return $div;
-
 	} // $.fn.CswImportInspectionQuestions_WizardSteps
 }) (jQuery);
 

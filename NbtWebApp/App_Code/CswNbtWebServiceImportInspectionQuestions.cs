@@ -140,7 +140,19 @@ namespace ChemSW.Nbt.WebServices
             return ExcelDataTable;
         } // ConvertExcelFileToDataTable()
 
-        public int CreateNodes(DataTable ExcelDataTable, string NewInspectionName, ref string ErrorMessage, ref string WarningMessage)
+    public void AddPrimaryKeys(ref DataTable myDataTable)
+    {
+        if (myDataTable.Columns["RowNumber"] == null)
+        {
+            myDataTable.Columns.Add("RowNumber");
+            for (int RowIndex = 0; RowIndex < myDataTable.Rows.Count; RowIndex++)
+            {
+                myDataTable.Rows[RowIndex]["RowNumber"] = RowIndex;
+            }
+        }
+    }
+
+        public int CreateNodes(DataTable ExcelDataTable, string NewInspectionName, string TargetName, ref string ErrorMessage, ref string WarningMessage)
         {
             int NumRowsImported = 0;
 
@@ -162,9 +174,9 @@ namespace ChemSW.Nbt.WebServices
 
                             // Set the target nodeType of the Target relationship property
                             // For now - we are setting the target relationship type to FE Inspection Point
-                            CswNbtMetaDataNodeType FeInspectionPointNodeType = _CswNbtResources.MetaData.getNodeType("FE Inspection Point");
+                            CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType(TargetName);
                             string NewFKType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
-                            Int32 NewFKValue = FeInspectionPointNodeType.NodeTypeId;
+                            Int32 NewFKValue = TargetNodeType.NodeTypeId;
                             CswNbtMetaDataNodeTypeProp TargetProperty = NewInspectionNodeType.getNodeTypePropByObjectClassPropName(CswNbtObjClassInspectionDesign.TargetPropertyName);
                             TargetProperty.SetFK(NewFKType, NewFKValue, string.Empty, Int32.MinValue);
 
@@ -254,6 +266,34 @@ namespace ChemSW.Nbt.WebServices
                 ErrorMessage += "Exception: " + ex.Message;
             }
             return NumRowsImported;
+        }
+
+        public string getInspectionTargets()
+        {
+            System.Text.StringBuilder HtmlSelectBuilder = new System.Text.StringBuilder();
+            CswNbtMetaDataObjectClass InspectionObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass);
+
+            HtmlSelectBuilder.Append("<select>");
+            
+            foreach (CswNbtMetaDataObjectClassProp Property in InspectionObjectClass.ObjectClassProps)
+            {
+                if (Property.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship)
+                {
+                    HtmlSelectBuilder.Append("<option value=\"" + Property.PropId.ToString() + "\">" + Property.PropName + "</option>");
+                }
+            }
+
+            HtmlSelectBuilder.Append("</select>");
+            return HtmlSelectBuilder.ToString();
+        }
+
+        public bool IsNodeTypeNameUnique(string NewInsepctionName)
+        {
+            CswNbtMetaDataNodeType aNodeType = _CswNbtResources.MetaData.getNodeType(NewInsepctionName);
+            if (aNodeType == null)
+                return true;
+            else
+                return false;
         }
     }
 }
