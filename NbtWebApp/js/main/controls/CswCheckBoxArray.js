@@ -36,7 +36,8 @@
                     dataAry: [],
                     nameCol: '',
                     keyCol: '',
-                    valCol: ''
+                    valCol: '',
+                    valColName: ''
                 };
                 
                 if (options) {
@@ -74,15 +75,17 @@
                         var first = true;
                         for (var c = 0; c < o.cols.length; c++) {
                             if (isTrue(rRow.values[c])) {
-                                if (false === rowlabeled) {
-                                    $OuterDiv.append(rRow.label + ": ");
-                                    rowlabeled = true;
-                                }
                                 if (false === o.Multi) {
+                                    if (false === rowlabeled) {
+                                        $OuterDiv.append(rRow.label + ": ");
+                                        rowlabeled = true;
+                                    }
                                     if (false === first) {
                                         $OuterDiv.append(", ");
                                     }
-                                    $OuterDiv.append(o.cols[c]);
+                                    if(false === o.UseRadios) {
+                                        $OuterDiv.append(o.cols[c]);
+                                    }
                                     first = false;
                                 }
                             }
@@ -103,7 +106,11 @@
                     for(var d = 0; d < o.cols.length; d++) {
                         var $dCell = $table.CswTable('cell', tablerow, d+2);
                         $dCell.addClass('cbarraycell');
-                        $dCell.append(o.cols[d]);
+                        var colName = o.cols[d];
+                        if (colName === o.valCol && false === isNullOrEmpty(o.valColName)) {
+                            colName = o.valColName;
+                        }
+                        $dCell.append(colName);
                     }
                     tablerow++;
 
