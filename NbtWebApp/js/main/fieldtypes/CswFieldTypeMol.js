@@ -19,9 +19,9 @@
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
-            var $cell21 = $table.CswTable('cell', 2, 1).CswAttrDom('width', width - 36);
-            var $cell22 = $table.CswTable('cell', 2, 2).CswAttrDom('align', 'right');
-            var $cell23 = $table.CswTable('cell', 2, 3).CswAttrDom('align', 'right');
+            var $cell21 = $table.CswTable('cell', 2, 1).css('width', width - 36);
+            var $cell22 = $table.CswTable('cell', 2, 2).css('textAlign', 'right');
+            var $cell23 = $table.CswTable('cell', 2, 3).css('textAlign', 'right');
 
             if (mol !== '') {
 
