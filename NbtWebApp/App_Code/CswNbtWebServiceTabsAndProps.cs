@@ -484,7 +484,8 @@ namespace ChemSW.Nbt.WebServices
                 {
                     foreach( string NodeIdStr in CopyNodeIds )
                     {
-                        CswPrimaryKey CopyToNodePk = new CswPrimaryKey( NodeIdStr );
+                        CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
+                        CopyToNodePk.FromString( NodeIdStr );
                         if( Int32.MinValue != CopyToNodePk.PrimaryKey )
                         {
                             CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
