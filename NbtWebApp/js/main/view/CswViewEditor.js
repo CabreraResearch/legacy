@@ -401,6 +401,25 @@
             }
         }
 
+        function gridHasOneProp() {
+            var ret = false;
+            if(contains(currentViewJson, 'childrelationships')) {
+                crawlObject(currentViewJson.childrelationships, function(childObj) {
+                    if (ret) {
+                        return false;
+                    } 
+                    else if (contains(childObj, 'properties')) {
+                        crawlObject(childObj.properties, function(propObj) {
+                            if(false === isNullOrUndefined(propObj)) {
+                                ret = true;
+                                return false;
+                            }
+                        }, false);
+                    }
+                }, true);
+            }
+            return ret;
+        }
 
         function _handleFinish($wizard)
         {
@@ -411,12 +430,10 @@
                 if (CurrentStep === CswViewEditor_WizardSteps.attributes.step) {
                     cacheStepTwo();
                 }
-                if (currentViewJson.mode === 'Grid' &&
-                    (currentViewJson.children('relationship').length === 0 ||
-                        currentViewJson.children('relationship').children('property').length === 0))
-                {
+                
+                if (currentViewJson.mode === 'Grid' && false === gridHasOneProp()) {
                     processView = confirm('You are attempting to create a Grid without properties. This will not display any information. Do you want to continue?');
-                    if (!processView) $wizard.CswWizard('button', 'finish', 'enable');
+                    if (false === processView) $wizard.CswWizard('button', 'finish', 'enable');
                 }
             }
 
