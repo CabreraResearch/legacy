@@ -13,56 +13,45 @@
 			
 			var $Div = $(this);
             var propVals = o.propData.values;
-            var value = tryParseString(propVals.value).trim();
+            var value = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue;
             var options = propVals.options;
             var width = tryParseString(propVals.width);
             var height = tryParseString(propVals.height);
             
-            if (!o.ReadOnly) 
-			{
+            if (false === o.ReadOnly) {
 				var $select = $('<select id="' + o.ID + '"></select>')
 								.append('<option value="">Select...</option>')
 								.appendTo($Div);
-
+                if (o.Multi) {
+                    $select.append('<option value="' + CswMultiEditDefaultValue + ' selected="selected">' + CswMultiEditDefaultValue + '</option>');
+                }
 				var $HiddenValue = $('<textarea style="display: none;" name="' + o.ID + '_value" id="' + o.ID + '_value">'+ value +'</textarea>')
 		                            .appendTo($Div);
-			}
-
-            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
-			var currCol = 1;
-
-            if (!o.ReadOnly) 
-			{
-				$select.change(function() { 
+                $select.change(function() { 
 					var $selected = $select.children(':selected');
 					addImage($selected.text(), $selected.CswAttrDom('value'), true);
 					addValue($selected.CswAttrDom('value'));
 					$selected.remove();
 					o.onchange();
 				});
+                
+                crawlObject(options, 
+				    function(thisOpt, key) {
+				        if (isTrue(thisOpt.selected)) {
+						    addImage(thisOpt.text, thisOpt.value, false);
+					    } else {
+						    if (false === o.ReadOnly) {			
+							    $select.append('<option value="'+ thisOpt.value +'">'+ thisOpt.text +'</option>');
+						    }
+					    }
+				    }, 
+				    false);
 			}
 
-			for(var opt in options)
-			{
-				if(options.hasOwnProperty(opt))
-				{
-					var thisOpt = options[opt];
-					if(isTrue(thisOpt.selected))
-					{
-						addImage(thisOpt.text, thisOpt.value, false);
-					} 
-					else 
-					{
-						if (!o.ReadOnly) 
-						{			
-							$select.append('<option value="'+ thisOpt.value +'">'+ thisOpt.text +'</option>');
-						}
-					}
-				}
-			}
+            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+			var currCol = 1;
 
-			function addImage(name, href, doAnimation)
-			{
+            function addImage(name, href, doAnimation) {
 				var $imagecell = $table.CswTable('cell', 1, currCol)
 									.css({ 'text-align': 'center',
 											'padding-left': '10px' });
@@ -71,19 +60,16 @@
 											'padding-left': '10px' });
 				currCol++;
 
-				if(doAnimation)
-				{
+				if (doAnimation) {
 					$imagecell.hide();
 					$namecell.hide();
 				}
 
-				$imagecell.append('<a href="'+ href +'" target="_blank"><img src="' + href + '" alt="' + name + '" width="'+ width +'" height="'+ height +'"/></a>')
-				if(name !== href)
-				{
+                $imagecell.append('<a href="' + href + '" target="_blank"><img src="' + href + '" alt="' + name + '" width="' + width + '" height="' + height + '"/></a>');
+				if (name !== href) {
 					$namecell.append('<a href="'+ href +'" target="_blank">'+ name +'</a>');
 				}
-				if(!o.ReadOnly)
-				{
+				if (false === o.ReadOnly) {
 					$namecell.CswImageButton({
 						ButtonType: CswImageButton_ButtonType.Delete,
 						AlternateText: 'Remove',
@@ -101,29 +87,25 @@
 					}); // CswImageButton
 				} // if(!o.ReadOnly)
 
-				if(doAnimation)
-				{
+				if(doAnimation) {
 					$imagecell.fadeIn('fast');
 					$namecell.fadeIn('fast'); 
 				}
 
 			} // addImage()
 
-			function addValue(valueToAdd)
-			{
+			function addValue(valueToAdd) {
 				var currentvalue = $HiddenValue.val();
 				if(!isNullOrEmpty(currentvalue)) currentvalue += '\n';
 				$HiddenValue.text(currentvalue + valueToAdd);
 			}
-			function removeValue(valueToRemove)
-			{
+            
+			function removeValue(valueToRemove) {
 				var currentvalue = $HiddenValue.val();
 				var splitvalue = currentvalue.split('\n');
 				var newvalue = '';
-				for(var i = 0; i < splitvalue.length; i++)
-				{
-					if(splitvalue[i] != valueToRemove)
-					{
+				for(var i = 0; i < splitvalue.length; i++) {
+					if(splitvalue[i] != valueToRemove) {
 						if(!isNullOrEmpty(newvalue)) newvalue += '\n';
 						newvalue += splitvalue[i];
 					}
@@ -133,8 +115,13 @@
 
         },
         save: function(o) {
-			var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
-			o.propData.values.value = $HiddenValue.text();
+            var imageList = null;
+            var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
+            if (false === isNullOrEmpty($HiddenValue)) {
+                imageList = $HiddenValue.text();
+            }
+            var attributes = { value: imageList };
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

@@ -401,6 +401,25 @@
             }
         }
 
+        function gridHasOneProp() {
+            var ret = false;
+            if(contains(currentViewJson, 'childrelationships')) {
+                crawlObject(currentViewJson.childrelationships, function(childObj) {
+                    if (ret) {
+                        return false;
+                    } 
+                    else if (contains(childObj, 'properties')) {
+                        crawlObject(childObj.properties, function(propObj) {
+                            if(false === isNullOrUndefined(propObj)) {
+                                ret = true;
+                                return false;
+                            }
+                        }, false);
+                    }
+                }, true);
+            }
+            return ret;
+        }
 
         function _handleFinish($wizard)
         {
@@ -411,12 +430,10 @@
                 if (CurrentStep === CswViewEditor_WizardSteps.attributes.step) {
                     cacheStepTwo();
                 }
-                if (currentViewJson.mode === 'Grid' &&
-                    (currentViewJson.children('relationship').length === 0 ||
-                        currentViewJson.children('relationship').children('property').length === 0))
-                {
+                
+                if (currentViewJson.mode === 'Grid' && false === gridHasOneProp()) {
                     processView = confirm('You are attempting to create a Grid without properties. This will not display any information. Do you want to continue?');
-                    if (!processView) $wizard.CswWizard('button', 'finish', 'enable');
+                    if (false === processView) $wizard.CswWizard('button', 'finish', 'enable');
                 }
             }
 
@@ -814,11 +831,6 @@
             var $root = makeViewRootHtml(stepno, viewJson, types)
                             .appendTo($ret);
 
-            if(viewJson.hasOwnProperty(childPropNames.childrelationships.name)) {
-                var rootRelationships = viewJson[childPropNames.childrelationships.name];
-                makeViewRelationshipsRecursive(stepno, rootRelationships, types, $root);
-            }
-            
             return { html: xmlToString($ret), types: types };
         }
         
@@ -830,7 +842,18 @@
             var linkclass = viewEditClasses.vieweditor_viewrootlink.name;
 
             var $ret = makeViewListItem(arbid, linkclass, name, false, stepno, childPropNames.root, rel);
-            return $ret;
+            
+            if(itemJson.hasOwnProperty(childPropNames.childrelationships.name)) {
+                var rootRelationships = itemJson[childPropNames.childrelationships.name];
+                makeViewRelationshipsRecursive(stepno, rootRelationships, types, $ret);
+            }
+            
+			var $selectLi = makeChildSelect(stepno, arbid, childPropNames.childrelationships);
+            if (false === isNullOrEmpty($selectLi)) {
+                $ret.append($selectLi);
+            }
+
+			return $ret;
         }
         
         function makeViewRelationshipHtml(stepno, itemJson, types) {

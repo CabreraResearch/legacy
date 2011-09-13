@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../controls/CswTristateCheckBox.js" />
 
 ; (function ($) {
 		
@@ -14,25 +15,24 @@
 			var $Div = $(this);
 		    var propVals = o.propData.values;
 		    var checkOpt = {
-                    Checked: tryParseString(propVals.checked).trim(),
+                    Checked: (false === o.Multi) ? tryParseString(propVals.checked).trim() : null,
                     Required: isTrue(o.Required),
                     ReadOnly: isTrue(o.ReadOnly),
+		            Multi: o.Multi,
                     onchange: o.onchange
             };
 
 			$Div.CswTristateCheckBox('init',checkOpt);
 		},
-		save: function(o) { //$propdiv, $xml
+		save: function(o) { 
 			var $Div = o.$propdiv.find('div');
-			var propVals = o.propData.values;
-		    var checked = $Div.CswTristateCheckBox('value');
-			propVals.checked = checked;
+            var attributes = { checked: $Div.CswTristateCheckBox('value') };
+		    preparePropJsonForSave(o.Multi, o.propData, attributes);
 		}
 	};
 	
 	// Method calling logic
 	$.fn.CswFieldTypeLogical = function (method) {
-		
 		if ( methods[method] ) {
 		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
 		} else if ( typeof method === 'object' || ! method ) {

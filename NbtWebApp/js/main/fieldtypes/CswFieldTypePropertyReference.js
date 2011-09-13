@@ -15,14 +15,14 @@
             $Div.contents().remove();
                 
             var propVals = o.propData.values;
-            var text = tryParseString(propVals.value).trim();
+            var text = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue;
             text += '&nbsp;';
 
             var $StaticDiv = $('<div id="'+ o.ID +'" class="staticvalue">' + text + '</div>' )
                             .appendTo($Div); 
         },
         save: function(o) { //$propdiv, $xml
-                // no changes to save
+            preparePropJsonForSave(o.propData);
         }
     };
     

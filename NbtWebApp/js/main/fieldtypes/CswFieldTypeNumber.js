@@ -15,7 +15,7 @@
             var propVals = o.propData.values;
 			var $NumberTextBox = $Div.CswNumberTextBox({
 				ID: o.ID,
-				Value: tryParseString(propVals.value).trim(),
+				Value: (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue,
 				MinValue: tryParseString(propVals.minvalue),
 				MaxValue: tryParseString(propVals.maxvalue),
 				Precision: tryParseString(propVals.precision),
@@ -24,14 +24,14 @@
 				onchange: o.onchange
 			});
 
-			if(!isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0)
-			{
+			if(!isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0) {
 				$NumberTextBox.clickOnEnter(o.$savebtn);
 			}
         },
         save: function(o) { //$propdiv, $xml
-				o.propData.values.value = o.$propdiv.CswNumberTextBox('value', o.ID);
-            }
+            var attributes = { value: o.$propdiv.CswNumberTextBox('value', o.ID) };
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
+        }
     };
     
     // Method calling logic

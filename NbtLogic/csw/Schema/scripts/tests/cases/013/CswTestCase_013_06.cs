@@ -17,8 +17,7 @@ namespace ChemSW.Nbt.Schema
 
     public class CswTestCase_013_06 : CswUpdateSchemaTo
     {
-
-        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_013.Purpose, "Modify col 1 and cause rollback" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_013.Purpose, "Tear down test table" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_013 _CswTstCaseRsrc_013 = null;
@@ -36,13 +35,7 @@ namespace ChemSW.Nbt.Schema
 			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
 			_CswTstCaseRsrc_013.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
-            _CswTstCaseRsrc_013.TheSuspectUpdateTable = _CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.getTable();
-
-            _CswTstCaseRsrc_013.TheSuspectUpdateTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName01] = _CswTstCaseRsrc_013.LocalAribtiraryValue01Delta;
-            _CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.update( _CswTstCaseRsrc_013.TheSuspectUpdateTable );
-            throw ( new CswDniExceptionIgnoreDeliberately() );
-
-
+			_CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_013.FakeTestTableName );
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback

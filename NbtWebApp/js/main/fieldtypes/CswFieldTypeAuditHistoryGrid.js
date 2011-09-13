@@ -19,7 +19,7 @@
                         nodeid: o.nodeid,
                         onEditRow: function(date) {
                             $.CswDialog('EditNodeDialog', {
-                                nodeid: o.nodeid,
+                                nodeids: [ o.nodeid ],
                                 onEditNode: o.onEditNode,
                                 date: date
                             });
@@ -29,8 +29,8 @@
             return ret;
         },
         save: function(o) {
-                
-            }
+            preparePropJsonForSave(o.propData);
+        }
     };
     
     // Method calling logic

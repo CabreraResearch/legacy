@@ -35,13 +35,16 @@ namespace ChemSW.Nbt.Schema
         {
 			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
 			_CswTstCaseRsrc_013.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-            
-            _CswTstCaseRsrc_013.TheSuspectUpdateTable = _CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.getTable();
 
-            _CswTstCaseRsrc_013.TheSuspectUpdateTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName01] = _CswTstCaseRsrc_013.LocalAribtiraryValue01Delta;
-            _CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.update( _CswTstCaseRsrc_013.TheSuspectUpdateTable );
+            CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_013.FakeTestTableName );
+            CswTableUpdate.StorageMode = StorageMode.Cached; // causes the rolback behavior we want
+            DataTable DataTable = CswTableUpdate.getTable();
+
+            DataTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName01] = _CswTstCaseRsrc_013.LocalAribtiraryValue01Delta;
+            CswTableUpdate.update( DataTable );
 
             throw ( new CswDniExceptionIgnoreDeliberately() ); 
+
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback

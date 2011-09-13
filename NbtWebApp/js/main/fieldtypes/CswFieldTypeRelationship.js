@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../controls/CswSelect.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         
@@ -17,37 +18,38 @@
 
                 var propVals = o.propData.values;
                 
-                var selectedNodeId = tryParseString(propVals.nodeid).trim();
-                if (!isNullOrEmpty(o.relatednodeid) && isNullOrEmpty(selectedNodeId)) {
+                var selectedNodeId = (false === o.Multi) ? tryParseString(propVals.nodeid).trim() : CswMultiEditDefaultValue;
+                if (false === isNullOrEmpty(o.relatednodeid) && isNullOrEmpty(selectedNodeId) && false === o.Multi) {
                     selectedNodeId = o.relatednodeid;
                 }
-                var selectedName = tryParseString(propVals.name).trim();
+                var selectedName = (false === o.Multi) ? tryParseString(propVals.name).trim() : CswMultiEditDefaultValue;
                 var nodeTypeId = tryParseString(propVals.nodetypeid).trim();
                 var allowAdd = isTrue(propVals.allowadd);
                 var options = propVals.options;
-
+                var relationships = [];
+                crawlObject(options, function(relatedObj, key) {
+                                        relationships.push({ value: key, display: relatedObj });
+                }, false);
+                if(o.Multi) {
+                    relationships.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
+                }
+                
                 if(o.ReadOnly) {
                     $Div.append(selectedName);
-                } 
-				else 
-				{
+                } else {
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
                     var $selectcell = $table.CswTable('cell', 1, 1);
-                    var $SelectBox = $('<select id="'+ o.ID +'" name="'+ o.ID +'" class="selectinput" />"' )
-                                        .appendTo($selectcell)
-                                        .change(o.onchange);
 
-                    for (var optId in options) {
-                        if (options.hasOwnProperty(optId)) {
-                            var optVal = options[optId];
-                            $SelectBox.append('<option value="' + optId + '">' + optVal + '</option>');
-                        }
-                    }
-
-                    $SelectBox.val( selectedNodeId );
+                    var $SelectBox = $selectcell.CswSelect('init', {
+                                                    ID: o.ID,
+                                                    cssclass: 'selectinput',
+                                                    onChange: o.onchange,
+                                                    values: relationships,
+                                                    selected: selectedNodeId
+                                                });
                     
-                    if (!isNullOrEmpty(nodeTypeId) && allowAdd) {
+                    if (false === isNullOrEmpty(nodeTypeId) && allowAdd) {
 						var $addcell = $table.CswTable('cell', 1, 2);
 						var $AddButton = $('<div />').appendTo($addcell);
 						$AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
@@ -71,9 +73,15 @@
 				
             },
             save: function(o) {
-                    var $SelectBox = o.$propdiv.find('select');
-                    o.propData.values.nodeid = $SelectBox.val();
+                var attributes = {
+                    nodeid: null
+                };
+                var $nodeid = o.$propdiv.find('select');
+                if (false === isNullOrEmpty($nodeid)) {
+                    attributes.nodeid = $nodeid.val();
                 }
+                preparePropJsonForSave(o.Multi, o.propData, attributes);
+            }
         };
     
         // Method calling logic

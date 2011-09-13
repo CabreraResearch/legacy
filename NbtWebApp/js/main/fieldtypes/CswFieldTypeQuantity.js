@@ -3,6 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../controls/CswSelect.js" />
 
 ; (function ($) {
         
@@ -16,7 +17,7 @@
             var propVals = o.propData.values;
 			var $NumberTextBox = $Div.CswNumberTextBox({
 				ID: o.ID + '_qty',
-				Value: tryParseString(propVals.value).trim(),
+				Value: (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue,
 				MinValue: tryParseString(propVals.minvalue),
 				MaxValue: tryParseString(propVals.maxvalue),
 				Precision: tryParseString(propVals.precision),
@@ -25,33 +26,36 @@
 				onchange: o.onchange
 			});
 			
-			if(!isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0)
-			{
+			if(!isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0) {
 				$NumberTextBox.clickOnEnter(o.$savebtn);
 			}
 
             //this is an array
             var units = propVals.units;
             var selectedUnit = units[0];
-			var $unitsel = $('<select id="'+ o.ID + '_units" />')
-							.appendTo($Div)
-							.change(o.onchange);
-			for (var i=0; i < units.length; i++) {
-			    var unit = units[i];
-			    var $option = $('<option value="' + unit + '">' + unit + '</option>')
-    			                .appendTo($unitsel);
-			    if (selectedUnit === unit)
-			    {
-			        $option.CswAttrDom('selected', 'true');
-			    }
-			}
-
+            if (o.Multi) {
+                units.push(CswMultiEditDefaultValue);
+                selectedUnit = CswMultiEditDefaultValue;
+            }
+            
+            $Div.CswSelect('init', {
+                    ID: o.ID,
+                    onChange: o.onchange,
+                    values: units,
+                    selected: selectedUnit
+                }); 
         },
         save: function(o) {
-			var propVals = o.propData.values;	
-            propVals.value = o.$propdiv.CswNumberTextBox('value', o.ID + '_qty');
-			var unit = o.$propdiv.find('#' + o.ID + '_units').val();
-			propVals.units = unit;
+            var attributes = {
+                value: o.$propdiv.CswNumberTextBox('value', o.ID + '_qty'),
+                units: null
+            };
+            
+            var $unit = o.$propdiv.find('#' + o.ID + '_units');
+            if (false === isNullOrEmpty($unit)) {
+                attributes.units = $unit.val();
+            } 
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

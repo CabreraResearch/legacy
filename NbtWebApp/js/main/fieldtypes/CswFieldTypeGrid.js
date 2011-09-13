@@ -21,7 +21,7 @@
             var $Div = $(this);
 			$Div.empty();
             var propVals = o.propData.values;
-			if(o.EditMode === EditMode.AuditHistoryInPopup.name || o.Multi) {
+			if (o.EditMode === EditMode.AuditHistoryInPopup.name || o.Multi) {
 				$Div.append('[Grid display disabled]');
 			} else {
 
@@ -35,9 +35,9 @@
 				var $GridDiv = $('<div id="' + gridDivId + '" name="' + gridDivId + '"></div>');
 
 				var viewid = tryParseString(propVals.viewid).trim();
-			    var cswGrid = new CswGrid();
-				var gridOpts = {
-					ID: o.ID,
+			    var cswGrid;
+			    var gridOpts = {
+					ID: o.ID + '_fieldtypegrid',
 					viewid: viewid, 
 					nodeid: o.nodeid, 
 					cswnbtnodekey: o.cswnbtnodekey, 
@@ -45,81 +45,87 @@
 					reinit: false,
 					EditMode: o.EditMode,
 					onEditNode: function() { 
-						refreshGrid(gridOpts);
+						refreshGrid(gridOpts, cswGrid);
 					},
 	//                'onAddNode': function() { 
 	//                    refreshGrid(gridOpts);
 	//                },
 					onDeleteNode: function() { 
-						refreshGrid(gridOpts);
-					}
-				};
-
-				function refreshGrid(options) { 
-					var g ={
-						gridOpts: {
-						    reinit: true,
-					        multiselect: false
-					    }
-					};
-					if( options ) $.extend(options,o);
-				    cswGrid.changeGridOpts(g);
+						refreshGrid(gridOpts, cswGrid);
+					},
+			        onSuccess: function (cswGrid) {
+			            makeGridMenu($MenuDiv, o, gridOpts, cswGrid, viewid);
+			        }
 				};
 
 				cswGrid = $GridDiv.CswNodeGrid('init', gridOpts);
-				//Case 21741
-				if( o.EditMode !== EditMode.PrintReport.name )
-				{
-					$MenuDiv.CswMenuMain({
-							viewid: viewid,
-							nodeid: o.nodeid,
-							cswnbtnodekey: o.cswnbtnodekey,
-							propid: o.ID,
-							onAddNode: function (nodeid, cswnbtnodekey) {
-								refreshGrid(gridOpts);
-							},
-							onSearch:
-								{
-									onViewSearch: function ()
-									{
-										var onSearchSubmit = function(searchviewid) {
-											var s = {};
-											$.extend(s,gridOpts);
-											s.viewid = searchviewid;
-											refreshGrid(s);
-										};
-                                
-										var onClearSubmit = function(parentviewid) {
-											var s = {};
-											$.extend(s,gridOpts);
-											s.viewid = parentviewid;
-											refreshGrid(s);
-										};
-
-										$SearchDiv.empty();
-										$SearchDiv.CswSearch({'parentviewid': viewid,
-															  'cswnbtnodekey': o.cswnbtnodekey,
-															  'ID': searchDivId,
-															  'onSearchSubmit': onSearchSubmit,
-															  'onClearSubmit': onClearSubmit
-															  });
-									},
-									onGenericSearch: function () { /*not possible here*/ }
-								},
-							onEditView: function () {
-								o.onEditView(viewid);                    
-							}
-					}); // CswMenuMain
-				} // if( o.EditMode !== EditMode.PrintReport.name )
+				
 				$Div.append($MenuDiv, $('<br/>'), $SearchDiv, $('<br/>'), $GridDiv);
 			} // if(o.EditMode !== EditMode.AuditHistoryInPopup.name)
 		},
 		save: function(o) {
-//                var $TextBox = $propdiv.find('input');
-//                $xml.children('barcode').text($TextBox.val());
-			}
+//          var $TextBox = $propdiv.find('input');
+//          $xml.children('barcode').text($TextBox.val());
+		    preparePropJsonForSave(o.propData);
+		}
 	};
 	
+    function refreshGrid(options, cswGrid) { 
+		var g = {
+			gridOpts: {
+				reinit: true,
+				multiselect: false
+			}
+		};
+		if( options ) $.extend(options,g);
+		cswGrid.changeGridOpts(g);
+	};
+    
+    function makeGridMenu($MenuDiv, o, gridOpts, cswGrid, viewid) {
+        //Case 21741
+		if (o.EditMode !== EditMode.PrintReport.name) {
+			$MenuDiv.CswMenuMain({
+					viewid: viewid,
+					nodeid: o.nodeid,
+					cswnbtnodekey: o.cswnbtnodekey,
+					propid: o.ID,
+					onAddNode: function () {
+						refreshGrid(gridOpts, cswGrid);
+					},
+//					onSearch: {
+//						onViewSearch: function () {
+//							var onSearchSubmit = function(searchviewid) {
+//								var s = {};
+//								$.extend(s,gridOpts);
+//								s.viewid = searchviewid;
+//								refreshGrid(s, cswGrid);
+//							};
+//                                
+//							var onClearSubmit = function(parentviewid) {
+//								var s = {};
+//								$.extend(s,gridOpts);
+//								s.viewid = parentviewid;
+//								refreshGrid(s, cswGrid);
+//							};
+
+//							$SearchDiv.empty();
+//							$SearchDiv.CswSearch({parentviewid: viewid,
+//													cswnbtnodekey: o.cswnbtnodekey,
+//													ID: searchDivId,
+//													onSearchSubmit: onSearchSubmit,
+//													onClearSubmit: onClearSubmit
+//													});
+//						},
+//						onGenericSearch: function () { /*not possible here*/ }
+//					},
+					onEditView: function () {
+						o.onEditView(viewid);                    
+					}
+			}); // CswMenuMain
+		} // if( o.EditMode !== EditMode.PrintReport.name )
+    }
+    
+    
 	// Method calling logic
 	$.fn.CswFieldTypeGrid = function (method) {
 		

@@ -15,40 +15,36 @@
             $Div.contents().remove();
 
             var propVals = o.propData.values;
-            var text = tryParseString(propVals.text).trim();
-            var href = tryParseString(propVals.href).trim();
+            var text = (false === o.Multi) ? tryParseString(propVals.text).trim() : CswMultiEditDefaultValue;
+            var href = (false === o.Multi) ? tryParseString(propVals.href).trim() : CswMultiEditDefaultValue;
 
             var $Link = $('<a href="' + href + '" target="_blank">' + text + '</a>&nbsp;&nbsp;');
 
-            if(o.ReadOnly)
-            {
+            if(o.ReadOnly) {
                 $Div.append($Link);
-            }
-            else 
-            {
+            } else {
                 var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
 				$Link.appendTo($table.CswTable('cell', 1, 1));
 
-                var $EditButton = $('<div/>')
-                                .appendTo($table.CswTable('cell', 1, 2))
-                                .CswImageButton({
-                                                ButtonType: CswImageButton_ButtonType.Edit,
-                                                AlternateText: 'Edit',
-                                                ID: o.ID + '_edit',
-                                                Required: o.Required,
-                                                onClick: function ($ImageDiv) 
-													{ 
-														$edittable.show();
-														return CswImageButton_ButtonType.None; 
-													}
-                                                });
+                $('<div/>')
+                    .appendTo($table.CswTable('cell', 1, 2))
+                    .CswImageButton({
+                        ButtonType: CswImageButton_ButtonType.Edit,
+                        AlternateText: 'Edit',
+                        ID: o.ID + '_edit',
+                        Required: o.Required,
+                        onClick: function ($ImageDiv) { 
+								$edittable.show();
+								return CswImageButton_ButtonType.None; 
+							}
+                    });
 
 				var $edittable = $Div.CswTable('init', { ID: o.ID + '_edittbl' })
 									.hide();
 
-                var $edittext_label = $( '<span>Text</span>' )
-                                .appendTo($edittable.CswTable('cell', 1, 1));
+                $( '<span>Text</span>' )
+                    .appendTo($edittable.CswTable('cell', 1, 1));
                 
                 var $edittextcell = $edittable.CswTable('cell', 1, 2);
                 var $edittext = $edittextcell.CswInput('init',{ID: o.ID + '_text',
@@ -57,8 +53,8 @@
                                                                 onChange: o.onchange
                                                                 }); 
                 
-                var $edithref_label = $( '<span>URL</span>' )
-                                .appendTo($edittable.CswTable('cell', 2, 1));
+                $( '<span>URL</span>' )
+                    .appendTo($edittable.CswTable('cell', 2, 1));
                 
                 var $edithrefcell = $edittable.CswTable('cell', 2, 2);
 				var $edithref = $edithrefcell.CswInput('init',{ID: o.ID + '_href',
@@ -67,8 +63,7 @@
                                                                onChange: o.onchange
                                                        }); 
 
-                if(o.Required && href === '')
-                {
+                if(o.Required && href === '') {
                     $edittable.show();
 					$edittext.addClass("required");
 					$edithref.addClass("required");
@@ -77,12 +72,20 @@
 				$edithref.clickOnEnter(o.$savebtn);
             }
         },
-        save: function(o) { 
+        save: function(o) {
+            var attributes = {
+                text: null,
+                href: null
+            };
             var $edittext = o.$propdiv.find('#' + o.ID + '_text');
+            if (false === isNullOrEmpty($edittext)) {
+                attributes.text = $edittext.val();
+            }
             var $edithref = o.$propdiv.find('#' + o.ID + '_href');
-			var propVals = o.propData.values;	
-            propVals.text = $edittext.val();
-			propVals.href = $edithref.val();
+			if (false === isNullOrEmpty($edithref)) {
+                attributes.href = $edithref.val();
+            }
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

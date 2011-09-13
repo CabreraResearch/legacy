@@ -31,11 +31,20 @@
             $DTPickerDiv.find('input').clickOnEnter(o.$savebtn);
         },
         save: function(o) { //$propdiv, $xml
-            var $DTPickerDiv = o.$propdiv.find('#' + o.ID);
-			var dateval = $DTPickerDiv.CswDateTimePicker('value');
-			var propVals = o.propData.values;
-            propVals.value.date = dateval.Date;
-			propVals.value.time = dateval.Time;
+            var attributes, $DTPickerDiv, dateVal;
+            attributes = { 
+                value: {
+                    date: null,
+                    time: null
+                } 
+            };
+            $DTPickerDiv = o.$propdiv.find('#' + o.ID);
+			if (false === isNullOrEmpty($DTPickerDiv)) {
+			    dateVal = $DTPickerDiv.CswDateTimePicker('value');
+			    attributes.value.date = dateVal.Date;
+			    attributes.value.time = dateVal.Time;
+			}
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

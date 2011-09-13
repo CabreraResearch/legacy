@@ -632,7 +632,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getTreeOfView( string ViewId, string IDPrefix, bool IsFirstLoad, string ParentNodeKey, string IncludeNodeKey, bool IncludeNodeRequired,
+        public string getTreeOfView( string ViewId, string IdPrefix, bool IsFirstLoad, string ParentNodeKey, string IncludeNodeKey, bool IncludeNodeRequired,
                                        bool UsePaging, string ShowEmpty, bool ForSearch, bool IncludeInQuickLaunch )
         {
             JObject ReturnVal = new JObject();
@@ -660,7 +660,7 @@ namespace ChemSW.Nbt.WebServices
                         if( !string.IsNullOrEmpty( IncludeNodeKey ) )
                             RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( IncludeNodeKey ) );
 
-                        ReturnVal = ws.getTree( View, IDPrefix, IsFirstLoad, RealParentNodeKey, RealIncludeNodeKey, IncludeNodeRequired, UsePaging, ShowEmptyTree, ForSearch, IncludeInQuickLaunch );
+                        ReturnVal = ws.getTree( View, IdPrefix, IsFirstLoad, RealParentNodeKey, RealIncludeNodeKey, IncludeNodeRequired, UsePaging, ShowEmptyTree, ForSearch, IncludeInQuickLaunch );
 
                         //CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
                         //View.SaveToCache(true);
@@ -1250,8 +1250,8 @@ namespace ChemSW.Nbt.WebServices
                     string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
                     //if( !string.IsNullOrEmpty( ParsedNodeKey ) )
                     //{
-					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-					NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
                     ReturnVal = ws.getSingleProp( RealEditMode, NodeId, ParsedNodeKey, PropId, CswConvert.ToInt32( NodeTypeId ), NewPropJson );
                     //}
                 }
@@ -1333,7 +1333,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NewPropsJson, string NodeTypeId, string ViewId )
+        public string saveProps( string EditMode, string NodeIds, string SafeNodeKeys, string TabId, string NewPropsJson, string NodeTypeId, string ViewId )
         {
             JObject ReturnVal = new JObject();
 
@@ -1345,13 +1345,15 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-					NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
+                    CswCommaDelimitedString ParsedNodeKeys = new CswCommaDelimitedString();
+                    ParsedNodeKeys.FromString( wsTools.FromSafeJavaScriptParam( SafeNodeKeys ) );
+                    CswCommaDelimitedString ParsedNodeIds = new CswCommaDelimitedString();
+                    ParsedNodeIds.FromString( NodeIds );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.saveProps( RealEditMode, NodeId, ParsedNodeKey, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View );
+                    ReturnVal = ws.saveProps( RealEditMode, ParsedNodeIds, ParsedNodeKeys, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View );
                 }
-
                 _deInitResources();
             }
             catch( Exception ex )
@@ -1530,6 +1532,7 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string fileForProp()
         {
+            //Come back to implement Multi
             JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -1545,6 +1548,7 @@ namespace ChemSW.Nbt.WebServices
                     string FileName = Context.Request["qqfile"];
                     string PropId = Context.Request["propid"];
                     string Column = Context.Request["column"];
+                    string Multi = Context.Request["multi"];
 
                     if( !string.IsNullOrEmpty( FileName ) && !string.IsNullOrEmpty( PropId ) )
                     {
@@ -1761,73 +1765,73 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
-		#endregion Misc
+        #endregion Misc
 
-		#region NodeType Layout
+        #region NodeType Layout
 
-		[WebMethod( EnableSession = false )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string MoveProp( string PropId, string NewRow, string NewColumn, string EditMode )
-		{
-			JObject ReturnVal = new JObject();
-			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-			try
-			{
-				_initResources();
-				AuthenticationStatus = _attemptRefresh();
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string MoveProp( string PropId, string NewRow, string NewColumn, string EditMode )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
 
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-					NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
-					bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ), RealEditMode );
-					ReturnVal.Add( new JProperty( "moveprop", ret.ToString().ToLower() ) );
-				}
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
+                    bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ), RealEditMode );
+                    ReturnVal.Add( new JProperty( "moveprop", ret.ToString().ToLower() ) );
+                }
 
-				_deInitResources();
-			}
-			catch( Exception ex )
-			{
-				ReturnVal = jError( ex );
-			}
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
 
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-			return ReturnVal.ToString();
+            return ReturnVal.ToString();
 
-		} // MoveProp()
+        } // MoveProp()
 
-		[WebMethod( EnableSession = false )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string removeProp( string PropId, string EditMode )
-		{
-			JObject ReturnVal = new JObject();
-			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-			try
-			{
-				_initResources();
-				AuthenticationStatus = _attemptRefresh();
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string removeProp( string PropId, string EditMode )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
 
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-					NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
-					bool ret = ws.removeProp( PropId, RealEditMode );
-					ReturnVal.Add( new JProperty( "removeprop", ret.ToString().ToLower() ) );
-				}
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
+                    bool ret = ws.removeProp( PropId, RealEditMode );
+                    ReturnVal.Add( new JProperty( "removeprop", ret.ToString().ToLower() ) );
+                }
 
-				_deInitResources();
-			}
-			catch( Exception ex )
-			{
-				ReturnVal = jError( ex );
-			}
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
 
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-			return ReturnVal.ToString();
+            return ReturnVal.ToString();
 
-		} // removeProp()
+        } // removeProp()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -1841,19 +1845,19 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
-					CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Unknown;
-					switch( RealEditMode )
-					{
-						case NodeEditMode.AddInPopup: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add; break;
-						case NodeEditMode.Preview: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview; break;
-						default: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit; break;
-					}
-					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-					ReturnVal = ws.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, LayoutType );
-				}
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
+                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Unknown;
+                    switch( RealEditMode )
+                    {
+                        case NodeEditMode.AddInPopup: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add; break;
+                        case NodeEditMode.Preview: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview; break;
+                        default: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit; break;
+                    }
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    ReturnVal = ws.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, LayoutType );
+                }
 
                 _deInitResources();
             }
@@ -1868,45 +1872,45 @@ namespace ChemSW.Nbt.WebServices
 
         } // getPropertiesForLayoutAdd()
 
-		[WebMethod( EnableSession = false )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string addPropertyToLayout( string PropId, string TabId, string EditMode )
-		{
-			JObject ReturnVal = new JObject();
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string addPropertyToLayout( string PropId, string TabId, string EditMode )
+        {
+            JObject ReturnVal = new JObject();
 
-			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-			try
-			{
-				_initResources();
-				AuthenticationStatus = _attemptRefresh();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
 
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode );
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode );
 
-					CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-					bool ret = ws.addPropertyToLayout( PropId, TabId, LayoutType );
-					ReturnVal.Add( new JProperty( "result", ret.ToString().ToLower() ) );
-				}
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    bool ret = ws.addPropertyToLayout( PropId, TabId, LayoutType );
+                    ReturnVal.Add( new JProperty( "result", ret.ToString().ToLower() ) );
+                }
 
-				_deInitResources();
-			}
-			catch( Exception ex )
-			{
-				ReturnVal = jError( ex );
-			}
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
 
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-			return ReturnVal.ToString();
+            return ReturnVal.ToString();
 
-		} // addPropertyToLayout()
+        } // addPropertyToLayout()
 
-		#endregion NodeType Layout
+        #endregion NodeType Layout
 
-		#region Search
+        #region Search
 
-		[WebMethod( EnableSession = false )]
+        [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getClientSearchXml( string ViewId, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
         {
@@ -2197,8 +2201,9 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string clearProp( string PropId, bool IncludeBlob )
+        public string clearProp( string PropId, string IncludeBlob, string Multi )
         {
+            //Come back to implement Multi
             JObject ReturnVal = new JObject( new JProperty( "Succeeded", false.ToString().ToLower() ) );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -2209,7 +2214,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                    bool ret = ws.ClearPropValue( PropId, IncludeBlob );
+                    bool ret = ws.ClearPropValue( PropId, CswConvert.ToBoolean( IncludeBlob ) );
                     ReturnVal = new JObject( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
                 }
 
@@ -2766,11 +2771,11 @@ namespace ChemSW.Nbt.WebServices
             return View;
         } // _getView()
 
-        #region Import Inspection Questions
+        #region Import New Inspection 
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string uploadInspectionFile()
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string uploadInspectionFile(string NewInspectionName, string TargetName, string TempFileName)
         {
             JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2786,7 +2791,80 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    PurgeTempFiles( "xls" );
+                    if (!string.IsNullOrEmpty(TempFileName))
+                    {
+                        if (!string.IsNullOrEmpty(NewInspectionName))
+                        {
+                            if (!string.IsNullOrEmpty(TargetName))
+                            {
+                                 string FullPathAndFileName = _TempPath + "\\" + TempFileName;
+ 
+                                // Load the excel file into a data table
+                                CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                                ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName, ref ErrorMessage, ref WarningMessage);
+                                if ((ExcelDataTable != null) && (string.IsNullOrEmpty(ErrorMessage)))
+                                {
+                                    NumRowsImported = ws.CreateNodes(ExcelDataTable, NewInspectionName, TargetName, ref ErrorMessage, ref WarningMessage);
+ 
+                                    ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
+
+                                    if (!string.IsNullOrEmpty(WarningMessage))
+                                         ReturnVal.Add(new JProperty("error", WarningMessage));
+                                 
+                                }
+                                else
+                                {
+                                    if (string.IsNullOrEmpty(ErrorMessage))
+                                        ErrorMessage = "Could not read Excel file.";
+                                    ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", ErrorMessage));
+                                }
+                            } // if( Context.Request.InputStream != null )
+                            else
+                            {
+                                ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "Did not receive target name."));
+                            }
+                        } // if (!string.IsNullOrEmpty(FileName))
+                        else
+                        {
+                            ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "Did not receive new inspection name."));
+                        }
+                    } // if (!string.IsNullOrEmpty(FileName))
+                    else
+                    {
+                        ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()), new JProperty("error", "Did not receive temp file name."));
+                    }
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch (Exception ex)
+            {
+                ReturnVal = jError(ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+
+        } // uploadInspectionFile()
+
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string previewInspectionFile()
+        {
+            JObject ReturnVal = new JObject(new JProperty("success", false.ToString().ToLower()));
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            DataTable ExcelDataTable = null;
+            string ErrorMessage = string.Empty;
+            string WarningMessage = string.Empty;
+
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    PurgeTempFiles("xls");
 
                     // putting these in the param list causes the webservice to fail with
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
@@ -2794,8 +2872,8 @@ namespace ChemSW.Nbt.WebServices
                     string FileName = Context.Request["qqfile"];
                     //string PropId = Context.Request["propid"];
                     string NewInspectionName = Context.Request["InspectionName"];
-
-                    if( !string.IsNullOrEmpty( FileName ) )
+ 
+                    if (!string.IsNullOrEmpty(FileName))
                     {
                         if( !string.IsNullOrEmpty( NewInspectionName ) )
                         {
@@ -2812,20 +2890,23 @@ namespace ChemSW.Nbt.WebServices
                                 }
 
                                 // Load the excel file into a data table
-                                CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions( _CswNbtResources );
-                                ExcelDataTable = ws.ConvertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
-                                if( ( ExcelDataTable != null ) && ( string.IsNullOrEmpty( ErrorMessage ) ) )
-                                {
-                                    NumRowsImported = ws.CreateNodes( ExcelDataTable, NewInspectionName, ref ErrorMessage, ref WarningMessage );
-                                }
+                                CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                                ExcelDataTable = ws.ConvertExcelFileToDataTable(FullPathAndFileName, ref ErrorMessage, ref WarningMessage);
 
                                 // determine if we were successful or failure
                                 if( ( ExcelDataTable != null ) && ( string.IsNullOrEmpty( ErrorMessage ) ) )
                                 {
-                                    if( string.IsNullOrEmpty( WarningMessage ) )
-                                        ReturnVal = new JObject( new JProperty( "success", true.ToString().ToLower() ) );
-                                    else
-                                        ReturnVal = new JObject( new JProperty( "success", true.ToString().ToLower() ), new JProperty( "error", WarningMessage ) );
+                                    ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()));
+                                    ReturnVal.Add(new JProperty("tempFileName", TempFileName));
+
+                                    ws.AddPrimaryKeys(ref ExcelDataTable);
+                                    CswGridData gd = new CswGridData(_CswNbtResources);
+                                    gd.PkColumn = "RowNumber";
+ 
+                                    ReturnVal.Add(new JProperty("jqGridOpt", gd.DataTableToJSON(ExcelDataTable)));
+
+                                    if (!string.IsNullOrEmpty(WarningMessage))
+                                        ReturnVal.Add(new JProperty("error", WarningMessage));
                                 }
                                 else
                                 {
@@ -2888,6 +2969,64 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string getInspectionTargets()
+        {
+            JObject ReturnVal = null;
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                    ReturnVal = new JObject(new JProperty("success", true.ToString().ToLower()), new JProperty("inspectiontargetsselect", ws.getInspectionTargets()));
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch (Exception ex)
+            {
+                ReturnVal = jError(ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+
+        }
+
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string IsNewInspectionNameUnique(string NewInspectionName)
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                {
+                    CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions(_CswNbtResources);
+                    if (ws.IsNodeTypeNameUnique(NewInspectionName))
+                        ReturnVal = new JObject(new JProperty("succeeded", "true"));
+                    else
+                        ReturnVal = new JObject(new JProperty("succeeded", "false"));
+                }
+                _deInitResources();
+            }
+            catch (Exception Ex)
+            {
+                ReturnVal = jError(Ex);
+            }
+
+            _jAddAuthenticationStatus(ReturnVal, AuthenticationStatus);
+
+            return ReturnVal.ToString();
+        } // IsNewInspectionNameUnique()
 
         #endregion
 

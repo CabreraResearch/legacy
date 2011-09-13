@@ -14,15 +14,12 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = tryParseString(propVals.text).trim();
+            var value = (false === o.Multi) ? tryParseString(propVals.text).trim() : CswMultiEditDefaultValue;
             var length = tryParseNumber( propVals.length, 14 );
 
-            if(o.ReadOnly)
-            {
+            if(o.ReadOnly) {
                 $Div.append(value);
-            }
-            else 
-            {
+            } else {
                 var $TextBox = $Div.CswInput('init', {ID: o.ID,
                                                         type: CswInput_Types.text,
                                                         value: value,
@@ -31,8 +28,7 @@
                                                         onChange: o.onchange
                                                       });
 
-                if(o.Required)
-                {
+                if(o.Required) {
                     $TextBox.addClass("required");
                 }
 
@@ -40,9 +36,15 @@
             }
         },
         save: function(o) {
-                var $TextBox = o.$propdiv.find('input');
-                o.propData.values.text = $TextBox.val();
+            var attributes = {
+                text: null
+            };
+            var $text = o.$propdiv.find('input');
+            if (false === isNullOrEmpty($text)) {
+                attributes.text = $text.val();
             }
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
+        }
     };
     
     // Method calling logic

@@ -9,7 +9,7 @@
     
     var methods = {
 	
-		'init': function(options) {
+		init: function(options) {
             var o = {
                 ID: '',
                 selected: '',
@@ -30,8 +30,8 @@
             if (!isNullOrEmpty( o.cssclass )) $select.addClass(o.cssclass);
             if (!isNullOrEmpty( o.value )) $select.text( o.value );
 
-		    
-		    setOptions(o.values, o.selected, $select);
+		    var values = makeOptions(o.values);
+		    setOptions(values, o.selected, $select);
             
             if (isFunction(o.onChange)) {
                  $select.bind('change', function () {
@@ -43,13 +43,35 @@
             $parent.append($select);
             return $select;
         },
-        'setoptions': function (values, selected, doEmpty) {
+        setoptions: function (values, selected, doEmpty) {
             var $select = $(this);
+            setOptions(values, selected, $select, doEmpty);
+            return $select;
+        },
+        makeoptions: function (valueArray, selected, doEmpty) {
+            var $select = $(this);
+            var values = makeOptions(valueArray);
             setOptions(values, selected, $select, doEmpty);
             return $select;
         }
         
     };
+    
+    function makeOptions(valueArray) {
+        var values = [];
+        crawlObject(valueArray, function(val) {
+            if (val.hasOwnProperty('value') && val.hasOwnProperty('display')) {
+                values.push(val);
+            }
+            else if (val.hasOwnProperty('value')) {
+                var display = tryParseString(val.display, val.value);
+                values.push({ value: val.value, display: display });
+            } else {
+                values.push({ value: val, display: val });
+            }
+        }, false);
+        return values;
+    }
     
     function setOptions(values, selected, $select, doEmpty) {
         if (isArray(values) && values.length > 0) {
@@ -77,7 +99,9 @@
     
     // Method calling logic
 	$.fn.CswSelect = function (method) {
-		
+		///<summary>Generates and manipulates a well-formed pick list</summary>
+	    ///<param name="method">Options: 'init', 'setoptions', 'makeoptions'</param>
+	    ///<returns type="JQuery">A JQuery select element</returns>
 		if ( methods[method] ) {
 		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
 		} else if ( typeof method === 'object' || ! method ) {

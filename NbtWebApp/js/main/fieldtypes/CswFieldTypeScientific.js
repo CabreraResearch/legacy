@@ -20,7 +20,7 @@
 			{
 				var $ValueNTB = $Div.CswNumberTextBox({
 					ID: o.ID + '_val',
-					Value: tryParseString(propVals.base).trim(),
+					Value: (false === o.Multi) ? tryParseString(propVals.base).trim() : CswMultiEditDefaultValue,
 					Precision: 6,
 					ReadOnly: o.ReadOnly,
 					Required: o.Required,
@@ -30,7 +30,7 @@
 				$Div.append('E');
 				var $ExponentNTB = $Div.CswNumberTextBox({
 					ID:  o.ID + '_exp',
-					Value: tryParseString(propVals.exponent).trim(),
+					Value: (false === o.Multi) ? tryParseString(propVals.exponent).trim() : CswMultiEditDefaultValue,
 					ReadOnly: o.ReadOnly,
 					Required: o.Required,
 					onchange: o.onchange,
@@ -46,9 +46,11 @@
 			}
         },
         save: function(o) { //$propdiv, $xml
-			var propVals = o.propData.values;	
-            propVals.base = o.$propdiv.CswNumberTextBox('value', o.ID + '_val');
-			propVals.exponent =o.$propdiv.CswNumberTextBox('value', o.ID + '_exp');
+            var attributes = {
+                base: o.$propdiv.CswNumberTextBox('value', o.ID + '_val'),
+                exponent: o.$propdiv.CswNumberTextBox('value', o.ID + '_exp')
+            };
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

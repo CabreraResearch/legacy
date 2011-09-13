@@ -27,6 +27,7 @@
                         UseRadios: (selectMode === 'Single'),
                         Required: o.Required,
                         ReadOnly: o.ReadOnly,
+                        Multi: o.Multi,
                         onchange: o.onchange,
                         dataAry: optData,
 			            nameCol: nameCol,
@@ -37,9 +38,13 @@
             return $Div;
         },
         save: function (o) { //$propdiv, $xml
+            var attributes = { options: null };
             var $CBADiv = o.$propdiv.children('div').first();
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-            o.propData.values.options = formdata;
+            if(false === o.Multi || false === formdata.MultiIsUnchanged) {
+                attributes.options = formdata;
+            } 
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
             return $(this);
         } // save()
     };

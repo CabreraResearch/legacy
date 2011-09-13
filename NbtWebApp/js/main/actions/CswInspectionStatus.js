@@ -49,11 +49,11 @@
 						edittitle: "Edit row",
 						editfunc: function(rowid) {
 							var editOpt = {
-								nodeid: '',
+								nodeids: [],
 								onEditNode: o.onEditNode
 							};
 							if (false === isNullOrEmpty(rowid))  {
-								editOpt.nodeid = grid.getValueForColumn('NODEPK', rowid);
+							    editOpt.nodeids.push(grid.getValueForColumn('NODEPK', rowid));
 								$.CswDialog('EditNodeDialog', editOpt);
 							} else {
 								alert('Please select a row to edit');

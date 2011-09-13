@@ -227,38 +227,33 @@ function CswGrid(options, $parent) {
     function opGridRows(opts, rowid, onSelect, onEmpty) {
         var ret = false;
         var haveSelectedRows = false;
-        if (false === multiEdit) {
-            if (isNullOrEmpty(rowid)) {
-                rowid = getSelectedRowId();
-            }
-            if (false === isNullOrEmpty(rowid)) {
-                haveSelectedRows = true;
+        
+        var rowids = [];
+        if(multiEdit) {
+            rowids = getSelectedRowsIds();
+        } 
+        else if(false === isNullOrEmpty(rowid)) {
+            rowids.push(rowid);
+        } else {
+            rowids.push(getSelectedRowId());
+        }
+
+        if (rowids.length > 0) {
+            haveSelectedRows = true;
+            for (var i = 0; i < rowids.length; i++) {
                 crawlObject(opts, function(prop, key, parent) {
                     if (false === isFunction(parent[key])) {
-                        parent[key] = getValueForColumn(key, rowid);
-                    }
-                }, false);
-            }
-        } else { // if (false === multiEdit)
-            var rows = getSelectedRowsIds();
-            if (rows.length > 0) {
-                haveSelectedRows = true;
-                //loop once to guarantee we have Arrays
-                crawlObject(opts, function(prop, key, parent) {
-                    if (false === isFunction(parent[key])) {
-                        parent[key] = [];
-                    }
-                }, false);
-                for (var i = 0; i < rows.length; i++) {
-                    crawlObject(opts, function(prop, key, parent) {
                         if (isArray(parent[key])) {
-                            rowid = rows[i];
+                            rowid = rowids[i];
                             parent[key].push(getValueForColumn(key, rowid));
+                        } else {
+                            parent[key] = getValueForColumn(key, rowid);
                         }
-                    }, false);
-                }
+                    }
+					return false;
+                }, false);
             }
-        } // else
+        }
         
         if (haveSelectedRows) {
             if (isFunction(onSelect)) {
@@ -272,6 +267,8 @@ function CswGrid(options, $parent) {
         return ret;
     }
     
+    //#region public, priveleged
+    
     this.$gridTable = $gridTable;
     this.$gridPager = $gridPager;
     this.$topPager = $topPager;
@@ -284,5 +281,5 @@ function CswGrid(options, $parent) {
     this.changeGridOpts = changeGridOpts;
     this.opGridRows = opGridRows;
     
-    //#region public, priveleged
+    //#endregion public, priveleged
 }

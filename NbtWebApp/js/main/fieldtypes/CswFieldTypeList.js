@@ -21,29 +21,30 @@
             if(o.ReadOnly) {
                 $Div.append(value);
             } else {
-                var $SelectBox = $Div.CswSelect('init', {
-                    
-                });        $('<select id="'+ o.ID +'" name="'+ o.ID +'" class="selectinput" />"' )
-                                    .appendTo($Div)
-                                    .change(o.onchange);
-
-                var splitOptions = options.split(',');
-                for(var i = 0; i < splitOptions.length; i++)
-                {
-                    $SelectBox.append('<option value="' + splitOptions[i] + '">' + splitOptions[i] + '</option>');
+                var values = options.split(',');
+                if (o.Multi) {
+                    values.push(CswMultiEditDefaultValue);
                 }
-                $SelectBox.val( value );
+                var $SelectBox = $Div.CswSelect('init', { ID: o.ID, 
+                                                          cssclass: 'selectinput', 
+                                                          onChange: o.onchange,
+                                                          values: values,
+                                                          selected: value
+                                      });
 
-                if(o.Required)
-                {
+                if(o.Required) {
                     $SelectBox.addClass("required");
                 }
             }
 
         },
         save: function(o) { //$propdiv, $xml
+            var attributes = { value: null };
             var $SelectBox = o.$propdiv.find('select');
-            o.propData.values.value = $SelectBox.val();
+            if (false === isNullOrEmpty($SelectBox)) {
+                attributes.value = $SelectBox.val();
+            }
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     
