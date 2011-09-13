@@ -360,7 +360,14 @@ function ObjectHelper(obj) {
         var ret = false;
 		var onSuccess = function (childObj, childKey, parObj) {
             var found = false;
-			if (foundMatch(childObj, key, value)) {
+			if (foundMatch(parObj, key, value)) {
+				ret = par;
+			    currentObj = ret;
+			    parentObj = parObj;
+			    currentKey = key;
+			    found = true;
+			}
+			else if (foundMatch(childObj, key, value)) {
 			    ret = childObj;
 			    currentObj = ret;
 			    parentObj = parObj;
