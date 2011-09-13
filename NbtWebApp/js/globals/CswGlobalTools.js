@@ -358,25 +358,26 @@ function ObjectHelper(obj) {
         /// <param name="value" type="Object"> Property value to match </param>
 	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
         var ret = false;
-		var onSuccess = function (childObj, childKey, parObj) {
-            var found = false;
-			if (foundMatch(parObj, key, value)) {
-				ret = par;
-			    currentObj = ret;
-			    parentObj = parObj;
-			    currentKey = key;
-			    found = true;
-			}
-			else if (foundMatch(childObj, key, value)) {
-			    ret = childObj;
-			    currentObj = ret;
-			    parentObj = parObj;
-			    currentKey = childKey;
-			    found = true;
-			}
-		    return found;
+		if (foundMatch(thisObj, key, value)) {
+			ret = thisObj;
+			currentObj = ret;
+			parentObj = ret;
+			currentKey = key;
 		};
-        crawlObject(thisObj, onSuccess, true);
+		if (false === ret) {
+			var onSuccess = function (childObj, childKey, parObj) {
+				var found = false;
+				if (foundMatch(childObj, key, value)) {
+					ret = childObj;
+					currentObj = ret;
+					parentObj = parObj;
+					currentKey = childKey;
+					found = true;
+				}
+				return found;
+			};
+			crawlObject(thisObj, onSuccess, true);
+		}
         return ret;
     }
     
