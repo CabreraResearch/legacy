@@ -156,10 +156,10 @@ namespace ChemSW.Nbt.PropTypes
             return Data;
         } // UserOptions()
 
-        public const string NameColumn = "User Name";
-        public const string KeyColumn = "UserId";
+        public const string NameColumn = "label";
+        public const string KeyColumn = "key";
         public const string StringKeyColumn = "UserIdString";
-        public const string ValueColumn = "Include";
+        public const string ValueColumn = "value";
 
         public override void ToXml( XmlNode ParentNode )
         {

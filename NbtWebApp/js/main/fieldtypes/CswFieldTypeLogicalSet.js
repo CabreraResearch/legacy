@@ -14,29 +14,32 @@
     var methods = {
         init: function(o) { 
 
-            var $Div = $(this);
-            $Div.contents().remove();
-            var propVals = o.propData.values;
-            var logicalSetJson = propVals.logicalsetjson;
+            var $Div = $(this),
+                propVals = o.propData.values,
+                logicalSetJson = propVals.logicalsetjson,
+                $cbaDiv = $('<div />')
+                    .CswCheckBoxArray('init', {
+                        ID: o.ID + '_cba',
+                        onchange: o.onchange,
+					    ReadOnly: o.ReadOnly,
+                        dataAry: logicalSetJson,
+			            nameCol: nameCol,
+			            keyCol: keyCol,
+                        Multi: o.Multi
+                    });
             
-            $('<div />')
-                .appendTo($Div)
-                .CswCheckBoxArray('init', {
-                    ID: o.ID + '_cba',
-                    onchange: o.onchange,
-					ReadOnly: o.ReadOnly,
-                    dataAry: logicalSetJson,
-			        nameCol: nameCol,
-			        keyCol: keyCol,
-                    Multi: o.Multi
-                });
+            $Div.contents().remove();
+            $Div.append($cbaDiv);
             return $Div;
-
         },
         save: function(o) { //$propdiv, $xml
-            var $CBADiv = o.$propdiv.children('div').first();
-            var attributes = { logicalsetjson: null };
-            var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+            var $CBADiv = o.$propdiv.children('div').first(),
+                attributes = { logicalsetjson: 
+                    data: null,
+                    columns: null
+                },
+                formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+            
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.logicalsetjson = formdata;
             }

@@ -16,16 +16,16 @@
 //#region CswMobilePageLogin
 
 function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
-	/// <summary>
-	///   Login Page class. Responsible for generating a Mobile login page.
-	/// </summary>
+    /// <summary>
+    ///   Login Page class. Responsible for generating a Mobile login page.
+    /// </summary>
     /// <param name="loginDef" type="Object">Login definitional data.</param>
-	/// <param name="$page" type="jQuery">Parent page element to attach to.</param>
+    /// <param name="$page" type="jQuery">Parent page element to attach to.</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="loginSuccess" type="Function">Function to execute on login success.</param>
-	/// <returns type="CswMobilePageLogin">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobilePageLogin">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var pageDef = { };
     var id = CswMobilePage_Type.login.id;
@@ -68,7 +68,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
         buttons[CswMobileFooterButtons.fullsite.name] = '';
         buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
         
-        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
 
         getContent();
     })(); //ctor
@@ -121,7 +121,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
 
                 CswAjaxJson({
                         formobile: true,
-					    //async: false,
+                        //async: false,
                         url: authenticateUrl,
                         data: ajaxData,
                         onloginfail: function(text) {
@@ -142,7 +142,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
         return $content;
     }
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

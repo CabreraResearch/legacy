@@ -16,15 +16,15 @@
 //#region CswMobilePageSearch
 
 function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
-	/// <summary>
-	///   Search Page class. Responsible for generating a Mobile search page.
-	/// </summary>
+    /// <summary>
+    ///   Search Page class. Responsible for generating a Mobile search page.
+    /// </summary>
     /// <param name="searchDef" type="Object">Search definitional data.</param>
-	/// <param name="$parent" type="jQuery">Parent element to attach to.</param>
+    /// <param name="$parent" type="jQuery">Parent element to attach to.</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
-	/// <returns type="CswMobilePageSearch">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobilePageSearch">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var $content = '';
     var pageDef = { };
@@ -74,7 +74,7 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
         buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
         buttons[CswMobileHeaderButtons.back.name] = '';
 
-        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
 
         getContent();
     })(); //ctor
@@ -192,7 +192,7 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
         return $content;
     }
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

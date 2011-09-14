@@ -7,21 +7,20 @@
 ; (function ($) {
         
     var pluginName = 'CswFieldTypeUserSelect';
-	var nameCol = "User Name";
-	var keyCol = "UserId";
+	var nameCol = 'label';
+	var keyCol = "key";
     var stringKeyCol = "UserIdString";
-	var valueCol = "Include";
+	var valueCol = "value";
 
     var methods = {
         'init': function(o) { 
 
             var $Div = $(this);
-            $Div.contents().remove();
+            
             var propVals = o.propData.values;
 			var options = propVals.options;
                 
             var $cbaDiv = $('<div />')
-                    .appendTo($Div)
                     .CswCheckBoxArray('init', {
                         ID: o.ID + '_cba',
                         UseRadios: false,
@@ -32,8 +31,12 @@
                         dataAry: options,
 			            nameCol: nameCol,
 			            keyCol: keyCol,
-                        valCol: valueCol
+                        valCol: valueCol,
+                        valColName: 'Include'
                     });
+            
+            $Div.contents().remove();
+            $Div.append($cbaDiv);
             return $Div;
         },
         'save': function(o) {
@@ -41,7 +44,7 @@
             var $CBADiv = o.$propdiv.children('div').first();
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
-                attributes.options = formdata;
+                attributes.options = formdata.data;
             } 
             preparePropJsonForSave(o.Multi, o.propData, attributes);
         }

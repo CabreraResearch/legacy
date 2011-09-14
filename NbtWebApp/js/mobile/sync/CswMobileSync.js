@@ -1,9 +1,9 @@
 /// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../_Global.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
-/// <reference path="../../_CswPrototypeExtensions.js" />
 /// <reference path="CswMobileBackgroundTask.js" />
-/// <reference path="../CswMobileTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 //#region CswMobileSync
 
@@ -29,7 +29,7 @@ function CswMobileSync(options,mobileStorage) {
         onSync: function () {},
         onSuccess: function () {},
         onError: onError,
-	    onLoginFailure: onLoginFail,
+        onLoginFailure: onLoginFail,
         onComplete: function () {},
         syncUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
         ForMobile: true
