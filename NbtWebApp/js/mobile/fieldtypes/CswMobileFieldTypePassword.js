@@ -8,13 +8,13 @@
 //#region CswMobileFieldTypePassword
 
 function CswMobileFieldTypePassword(ftDef) {
-	/// <summary>
-	///   Password field type. Responsible for generating prop according to Field Type rules.
-	/// </summary>
+    /// <summary>
+    ///   Password field type. Responsible for generating prop according to Field Type rules.
+    /// </summary>
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
-	/// <returns type="CswMobileFieldTypePassword">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileFieldTypePassword">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
     
     var divSuffix = '_propdiv';
     var propSuffix = '_input';
@@ -23,11 +23,12 @@ function CswMobileFieldTypePassword(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propId: '',
-            propName: '',
-            gestalt: '',
-            value: ''
-        };
+                propId: '',
+                propName: '',
+                gestalt: '',
+                value: ''
+            },
+            propVals = p.values;
         if (ftDef) $.extend(p, ftDef);
 
         propId = p.propId;
@@ -35,12 +36,11 @@ function CswMobileFieldTypePassword(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        var propVals = p.values;
         subfields = CswSubFields_Map.Password.subfields;        
         value = tryParseString(propVals[subfields.Value.name]);
         gestalt = tryParseString(p.gestalt);
         
-        $content = ensureContent(contentDivId);
+        $content = ensureContent($content, contentDivId);
         $content.append($('<p style="white-space:normal;" id="' + elementId + '">********</p>'));
     })(); //ctor
         
@@ -53,7 +53,7 @@ function CswMobileFieldTypePassword(ftDef) {
         return json;
     }    
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

@@ -8,13 +8,13 @@
 //#region CswMobileFieldTypeNumber
 
 function CswMobileFieldTypeNumber(ftDef) {
-	/// <summary>
-	///   Number field type. Responsible for generating prop according to Field Type rules.
-	/// </summary>
+    /// <summary>
+    ///   Number field type. Responsible for generating prop according to Field Type rules.
+    /// </summary>
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
-	/// <returns type="CswMobileFieldTypeNumber">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileFieldTypeNumber">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var divSuffix = '_propdiv';
     var propSuffix = '_input';
@@ -23,11 +23,12 @@ function CswMobileFieldTypeNumber(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propId: '',
-            propName: '',
-            gestalt: '',
-            value: ''
-        };
+                propId: '',
+                propName: '',
+                gestalt: '',
+                value: ''
+            },
+            propVals = p.values;
         if (ftDef) $.extend(p, ftDef);
 
         propId = p.propId;
@@ -35,12 +36,11 @@ function CswMobileFieldTypeNumber(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        var propVals = p.values;
         subfields = CswSubFields_Map.Number.subfields;        
         value = tryParseString(propVals[subfields.Value.name]);
         gestalt = tryParseString(p.gestalt, '');
         
-        $content = ensureContent(contentDivId);
+        $content = ensureContent($content, contentDivId);
         $content.CswInput('init', { type: CswInput_Types.number, ID: elementId, value: value });
     })(); //ctor
         
@@ -52,7 +52,7 @@ function CswMobileFieldTypeNumber(ftDef) {
         json = modifyPropJson(json, subfields.Value.name, newValue);
         return json;
     }    
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

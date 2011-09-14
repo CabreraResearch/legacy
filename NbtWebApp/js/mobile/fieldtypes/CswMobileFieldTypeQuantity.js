@@ -8,13 +8,13 @@
 //#region CswMobileFieldTypeQuantity
 
 function CswMobileFieldTypeQuantity(ftDef) {
-	/// <summary>
-	///   Quantity field type. Responsible for generating prop according to Field Type rules.
-	/// </summary>
+    /// <summary>
+    ///   Quantity field type. Responsible for generating prop according to Field Type rules.
+    /// </summary>
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
-	/// <returns type="CswMobileFieldTypeQuantity">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileFieldTypeQuantity">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var divSuffix = '_propdiv';
     var propSuffix = '_input';
@@ -23,12 +23,13 @@ function CswMobileFieldTypeQuantity(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propId: '',
-            propName: '',
-            gestalt: '',
-            value: '',
-            units: ''
-        };
+                propId: '',
+                propName: '',
+                gestalt: '',
+                value: '',
+                units: ''
+            },
+            propVals = p.values;
         if (ftDef) $.extend(p, ftDef);
 
         propId = p.propId;
@@ -36,7 +37,6 @@ function CswMobileFieldTypeQuantity(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
         
-        var propVals = p.values;
         subfields = CswSubFields_Map.Quantity.subfields;        
         value = tryParseString(propVals[subfields.Value.name]);
         units = tryParseString(propVals[subfields.Units.name]);
@@ -45,7 +45,7 @@ function CswMobileFieldTypeQuantity(ftDef) {
         }
         gestalt = tryParseString(p.gestalt);
         
-        $content = ensureContent(contentDivId);
+        $content = ensureContent($content, contentDivId);
         $content.CswInput('init', { type: CswInput_Types.text, ID: elementId, value: value });
     })(); //ctor
             
@@ -58,7 +58,7 @@ function CswMobileFieldTypeQuantity(ftDef) {
         return json;
     }    
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

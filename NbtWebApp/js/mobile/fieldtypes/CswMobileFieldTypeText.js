@@ -8,13 +8,13 @@
 //#region CswMobileFieldTypeText
 
 function CswMobileFieldTypeText(ftDef) {
-	/// <summary>
-	///   Text field type. Responsible for generating prop according to Field Type rules.
-	/// </summary>
+    /// <summary>
+    ///   Text field type. Responsible for generating prop according to Field Type rules.
+    /// </summary>
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
-	/// <returns type="CswMobileFieldTypeText">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileFieldTypeText">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var divSuffix = '_propdiv';
     var propSuffix = '_input';
@@ -23,11 +23,12 @@ function CswMobileFieldTypeText(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propId: '',
-            propName: '',
-            gestalt: '',
-            text: ''
-        };
+                propId: '',
+                propName: '',
+                gestalt: '',
+                text: ''
+            },
+            propVals = p.values;
         if (ftDef) $.extend(p, ftDef);
 
         propId = p.propId;
@@ -35,12 +36,11 @@ function CswMobileFieldTypeText(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        var propVals = p.values;
         subfields = CswSubFields_Map.Text.subfields;
         value = tryParseString(propVals[subfields.Text.name]);
         gestalt = tryParseString(p.gestalt, '');
         
-        $content = ensureContent(contentDivId);
+        $content = ensureContent($content, contentDivId);
         $content.CswInput('init', { type: CswInput_Types.text, ID: elementId, value: value });
     })(); //ctor
         
@@ -52,7 +52,7 @@ function CswMobileFieldTypeText(ftDef) {
         json = modifyPropJson(json, subfields.Text.name, newValue);
         return json;
     }    
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

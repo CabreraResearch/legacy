@@ -8,13 +8,13 @@
 //#region CswMobileFieldTypeLink
 
 function CswMobileFieldTypeLink(ftDef) {
-	/// <summary>
-	///   Link field type. Responsible for generating prop according to Field Type rules.
-	/// </summary>
+    /// <summary>
+    ///   Link field type. Responsible for generating prop according to Field Type rules.
+    /// </summary>
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
-	/// <returns type="CswMobileFieldTypeLink">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileFieldTypeLink">Instance of itself. Must instance with 'new' keyword.</returns>
 
- 	//#region private
+    //#region private
 
     var divSuffix = '_propdiv';
     var propSuffix = '_input';
@@ -23,12 +23,14 @@ function CswMobileFieldTypeLink(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propId: '',
-            propName: '',
-            gestalt: '',
-            text: '',
-            href: ''
-        };
+                propId: '',
+                propName: '',
+                gestalt: '',
+                text: '',
+                href: ''
+            },
+            propVals = p.values;
+        
         if (ftDef) $.extend(p, ftDef);
 
         propId = p.propId;
@@ -36,13 +38,12 @@ function CswMobileFieldTypeLink(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        var propVals = p.values;
         subfields = CswSubFields_Map.Link.subfields;
         href = tryParseString(propVals[subfields.Href.name]);
         value = tryParseString(propVals[subfields.Text.name]);
         gestalt = tryParseString(p.gestalt, '');
         
-        $content = ensureContent(contentDivId);
+        $content = ensureContent($content, contentDivId);
         $content.CswLink('init', { ID: elementId, href: p.href, rel: 'external', value: value });
     })(); //ctor
         
@@ -54,7 +55,7 @@ function CswMobileFieldTypeLink(ftDef) {
         return json;
     }
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

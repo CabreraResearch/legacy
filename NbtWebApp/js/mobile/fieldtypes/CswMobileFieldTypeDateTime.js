@@ -8,13 +8,13 @@
 //#region CswMobileFieldTypeDate
 
 function CswMobileFieldTypeDate(ftDef) {
-	/// <summary>
-	///   Date field type. Responsible for generating prop according to Field Type rules.
-	/// </summary>
+    /// <summary>
+    ///   Date field type. Responsible for generating prop according to Field Type rules.
+    /// </summary>
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
-	/// <returns type="CswMobileFieldTypeDate">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileFieldTypeDate">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var divSuffix = '_propdiv';
     var propSuffix = '_input';
@@ -23,11 +23,18 @@ function CswMobileFieldTypeDate(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propId: '',
-            propName: '',
-            gestalt: '',
-            value: ''
-        };
+                propId: '',
+                propName: '',
+                gestalt: '',
+                value: ''
+            },
+            propVals = p.values,
+            date = tryParseString(propVals.value.date).trim(),
+            time = tryParseString(propVals.value.time).trim(),
+            dateFormat = ServerDateFormatToJQuery(propVals.value.dateformat),
+            timeFormat = ServerTimeFormatToJQuery(propVals.value.timeformat),
+            displayMode = propVals.displaymode;
+        
         if (ftDef) $.extend(p, ftDef);
 
         propId = p.propId;
@@ -35,16 +42,9 @@ function CswMobileFieldTypeDate(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
         
-        var propVals = p.values;
         subfields = CswSubFields_Map.Date.subfields;
         
-        var date = tryParseString(propVals.value.date).trim();
-        var time = tryParseString(propVals.value.time).trim();
-        var dateFormat = ServerDateFormatToJQuery(propVals.value.dateformat);
-        var timeFormat = ServerTimeFormatToJQuery(propVals.value.timeformat);
-        var displayMode = propVals.displaymode;
-
-        $content = ensureContent(contentDivId);
+        $content = ensureContent($content, contentDivId);
         gestalt = tryParseString(p.gestalt, '');
         
         value = '';
@@ -77,7 +77,7 @@ function CswMobileFieldTypeDate(ftDef) {
         return json;
     }
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

@@ -57,9 +57,9 @@
 
 function startLoadingMsg(onSuccess) {
     /// <summary> Starts the JQM "loading.." message and executes a function.
-	/// </summary>
-	/// <param name="onSuccess" type="Function">Function to execute.</param>
-	/// <returns type="Boolean">False (to support 'click' events)</returns>
+    /// </summary>
+    /// <param name="onSuccess" type="Function">Function to execute.</param>
+    /// <returns type="Boolean">False (to support 'click' events)</returns>
     $.mobile.showPageLoadingMsg();
     if (arguments.length === 1 && isFunction(onSuccess)) {
         onSuccess();
@@ -69,10 +69,10 @@ function startLoadingMsg(onSuccess) {
         
 function stopLoadingMsg(onSuccess,mobilePage) {
     /// <summary> Stops the JQM "loading.." message and executes a function.
-	/// </summary>
-	/// <param name="onSuccess" type="Function">Function to execute.</param>
+    /// </summary>
+    /// <param name="onSuccess" type="Function">Function to execute.</param>
     /// <param name="mobilePage" type="CswMobilePageFactory">A Csw Mobile Page</param>
-	/// <returns type="Boolean">False (to support 'click' events)</returns>
+    /// <returns type="Boolean">False (to support 'click' events)</returns>
     if (isFunction(onSuccess)) {
         onSuccess();
     } 
@@ -86,123 +86,123 @@ function stopLoadingMsg(onSuccess,mobilePage) {
 }
 
 function onError() {
-	/// <summary> Stops the JQM "loading.." message on error. </summary> 
+    /// <summary> Stops the JQM "loading.." message on error. </summary> 
     stopLoadingMsg();
 }
 
 function onLoginFail(text,mobileStorage) {
-	/// <summary> On login failure event </summary>
-	/// <param name="text" type="String">Login failure text</param>
+    /// <summary> On login failure event </summary>
+    /// <param name="text" type="String">Login failure text</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
-	/// <returns type="void"></returns>
+    /// <returns type="void"></returns>
     Logout(mobileStorage,true);
-	mobileStorage.setItem('loginFailure', text);
-	stopLoadingMsg();
+    mobileStorage.setItem('loginFailure', text);
+    stopLoadingMsg();
 }
 
 function onLogout(mobileStorage) {
-	/// <summary> Calls Logout() </summary>
+    /// <summary> Calls Logout() </summary>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
-	/// <returns type="Boolean">false, for use in 'click' event.</returns>
+    /// <returns type="Boolean">false, for use in 'click' event.</returns>
     Logout(mobileStorage,true);
     return false;
 }
 
-	
+    
 function Logout(mobileStorage, reloadWindow) {
-	/// <summary> On login failure event </summary>
-	/// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
+    /// <summary> On login failure event </summary>
+    /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="reloadWindow" type="Boolean">If true, reload the login page.</param>
     /// <returns type="void"></returns>
     
     if (mobileStorage.checkNoPendingChanges()) {
-				
-		var loginFailure = tryParseString(mobileStorage.getItem('loginFailure'), '');
+                
+        var loginFailure = tryParseString(mobileStorage.getItem('loginFailure'), '');
 
-		mobileStorage.clear();
-				
-		mobileStorage.amOnline(true, loginFailure);
-		// reloading browser window is the easiest way to reset
-		if (reloadWindow) {
-			window.location.href = window.location.pathname;
-		}
-	}
+        mobileStorage.clear();
+                
+        mobileStorage.amOnline(true, loginFailure);
+        // reloading browser window is the easiest way to reset
+        if (reloadWindow) {
+            window.location.href = window.location.pathname;
+        }
+    }
 }
 
 function setOffline(mobileStorage, onComplete) {
     /// <summary>
-	///   Sets 'Online' button style 'offline'
-	/// </summary>
+    ///   Sets 'Online' button style 'offline'
+    /// </summary>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="onComplete" type="Function">Event to fire on complete.</param>
-	if (isNullOrEmpty(mobileStorage)) {
-	    mobileStorage = new CswMobileClientDbResources();
-	}
+    if (isNullOrEmpty(mobileStorage)) {
+        mobileStorage = new CswMobileClientDbResources();
+    }
     mobileStorage.amOnline(false);
-			
-	$('.onlineStatus').removeClass('online')
-						.addClass('offline')
-						.find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-						.text('Offline')
-						.removeClass('online')
-						.addClass('offline')
-						.end();
-			
-	$('.refresh').each(function () {
-		var $this = $(this);
-		try { //we'd prefer to simply disable it, but it might not be initialized yet.
-		    $this.button('disable');
-		} catch (e) {
-		    $this.css({ display: 'none', visibility: 'hidden' }).hide();
-		}
-	});
+            
+    $('.onlineStatus').removeClass('online')
+                        .addClass('offline')
+                        .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                        .text('Offline')
+                        .removeClass('online')
+                        .addClass('offline')
+                        .end();
+            
+    $('.refresh').each(function () {
+        var $this = $(this);
+        try { //we'd prefer to simply disable it, but it might not be initialized yet.
+            $this.button('disable');
+        } catch (e) {
+            $this.css({ display: 'none', visibility: 'hidden' }).hide();
+        }
+    });
 
     if (onComplete) {
         onComplete();
     }
-	//$viewsdiv = reloadViews(); //no changePage
+    //$viewsdiv = reloadViews(); //no changePage
 }
 
 function setOnline(mobileStorage, onComplete) {
-	/// <summary>
-	///   Sets 'Online' button style 'online'
-	/// </summary>
+    /// <summary>
+    ///   Sets 'Online' button style 'online'
+    /// </summary>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="onComplete" type="Function">Event to fire on complete.</param>
     if (isNullOrEmpty(mobileStorage)) {
-	    mobileStorage = new CswMobileClientDbResources();
-	}
+        mobileStorage = new CswMobileClientDbResources();
+    }
     
-	mobileStorage.amOnline(true);
-	mobileStorage.removeItem('loginFailure');
-	if (!mobileStorage.stayOffline())
-	{
-		$('.onlineStatus').removeClass('offline')
-							.addClass('online')
-							.find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-							.text('Online')
-							.removeClass('offline')
-							.addClass('online')
-							.end();
-		$('.refresh').each(function () {
-			var $this = $(this);
-		    try { //we may not be initialized
-		        $this.removeAttr('display').removeAttr('visibility').show();
-		        $this.button('enable');
-		    } catch (e) {
-		        //suppress error
-		    }
-		});
-	    if (onComplete) {
-		    onComplete();
-		}
-	}
+    mobileStorage.amOnline(true);
+    mobileStorage.removeItem('loginFailure');
+    if (!mobileStorage.stayOffline())
+    {
+        $('.onlineStatus').removeClass('offline')
+                            .addClass('online')
+                            .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                            .text('Online')
+                            .removeClass('offline')
+                            .addClass('online')
+                            .end();
+        $('.refresh').each(function () {
+            var $this = $(this);
+            try { //we may not be initialized
+                $this.removeAttr('display').removeAttr('visibility').show();
+                $this.button('enable');
+            } catch (e) {
+                //suppress error
+            }
+        });
+        if (onComplete) {
+            onComplete();
+        }
+    }
 }
 
 function toggleOnline(mobileStorage, onComplete) {
     /// <summary>
-	///   Toggles the online status displayed in UI according to actual status.
-	/// </summary>
+    ///   Toggles the online status displayed in UI according to actual status.
+    /// </summary>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="onComplete" type="Function">Event to fire on complete.</param>
     if (isNullOrEmpty(mobileStorage)) {
@@ -272,13 +272,13 @@ function makeHeaderButtonDef(name, id, onClick) {
     switch (name) {
         case CswMobileHeaderButtons.back:
             var back = CswMobileHeaderButtons.back;
-	        back.ID = id + '_back';
+            back.ID = id + '_back';
 
             ret = back;
             break;
         case CswMobileHeaderButtons.search:
             var search = CswMobileHeaderButtons.search;
-	        search.ID = id + '_search';
+            search.ID = id + '_search';
                 
             ret = search;
             break;
@@ -375,8 +375,8 @@ function ensureContent($content, contentDivId) {
     /// <param name="$content" type="jQuery">Some content element.</param>
     /// <param name="contentDivId" type="String">DivId</param>
     /// <returns type="jQuery">An empty content div.</returns>
-    if (isNullOrEmpty($content)) {
-        $content = $('<div id="' + contentDivId + '"></div>');
+    if (isNullOrEmpty($content) || false === isJQuery($content)) {
+        $content = $('<div id="' + tryParseString(contentDivId) + '"></div>');
     } else {
         $content.empty();   
     }
@@ -389,15 +389,16 @@ function modifyPropJson(json,key,value) {
     /// <param name="key" type="String">A JSON property name (key).</param>
     /// <param name="value" type="Object">A value to set.</param>
     /// <returns type="Object">The modified JSON</returns>
-    if (!isNullOrEmpty(key)) {
+    var oldValue;
+    if (false === isNullOrEmpty(key)) {
         if (json.hasOwnProperty('values') && json['values'].hasOwnProperty(key)) {
-            var oldValue = json['values'][key];
+            oldValue = json['values'][key];
             json['values'][key] = value;
             if (oldValue !== value) {
                 json.wasmodified = true;
             }
         } else if (json.hasOwnProperty(key)) {
-            var oldValue = json[key];
+            oldValue = json[key];
             json[key] = value;
             if (oldValue !== value) {
                 json.wasmodified = true;
@@ -405,6 +406,23 @@ function modifyPropJson(json,key,value) {
         }
     }
     return json;
+}
+
+function isTimeToRefresh(mobileStorage,refreshInterval) {
+    /// <summary> Determines whether to use cached data or request new data from server.</summary>
+    /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
+    /// <param name="refreshInterval" type="Number">A refresh interval. Default is 5 minutes (300000).</param>
+    /// <returns type="Boolean">True if online and refreshInterval has passed (lastSyncTime - interval).</returns>
+    var ret = true,
+        now = new Date(),
+        lastSync = new Date(mobileStorage.lastSyncTime),
+        interval = tryParseNumber(refreshInterval, 300000);
+        
+        if (false === mobileStorage.amOnline() || 
+            ( now.getTime() - lastSync.getTime() < interval ) ) {
+            ret = false;
+        }
+    return ret;
 }
 
 //#endregion functions

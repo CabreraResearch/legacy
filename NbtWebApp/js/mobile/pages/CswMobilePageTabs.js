@@ -13,15 +13,15 @@
 //#region CswMobilePageTabs
 
 function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
-	/// <summary>
-	///   Nodes Page class. Responsible for generating a Mobile nodes page.
-	/// </summary>
+    /// <summary>
+    ///   Nodes Page class. Responsible for generating a Mobile nodes page.
+    /// </summary>
     /// <param name="nodesDef" type="Object">Nodes definitional data.</param>
-	/// <param name="$page" type="jQuery">Parent page element to attach to.</param>
+    /// <param name="$page" type="jQuery">Parent page element to attach to.</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
-	/// <returns type="CswMobilePageTabs">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobilePageTabs">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
     if (isNullOrEmpty(mobileStorage)) {
         mobileStorage = new CswMobileClientDbResources();
     }
@@ -40,16 +40,16 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
     (function () {
         
         var p = {
-	        level: 2,
-	        ParentId: '',
+            level: 2,
+            ParentId: '',
             DivId: '', 
             viewId: mobileStorage.currentViewId(),
             nodeId: mobileStorage.currentNodeId(),
-	        title: '',
-	        theme: CswMobileGlobal_Config.theme,
+            title: '',
+            theme: CswMobileGlobal_Config.theme,
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },
-	        onHelpClick: null, //function () {},
+            onHelpClick: null, //function () {},
             onOnlineClick: null, //function () {},
             onRefreshClick: null, //function () {},
             onSearchClick: null //function () {}
@@ -81,7 +81,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
         buttons[CswMobileHeaderButtons.back.name] = '';
         buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
-        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
         $content = ensureContent($content, contentDivId);
     })(); //ctor
    
@@ -89,16 +89,16 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
         ///<summary>Rebuilds the tabs list from JSON</summary>
         ///<param name="onSuccess" type="Function">A function to execute after the list is built.</param>
         var cachedJson = mobileStorage.fetchCachedNodeJson(nodeId);
-		if( !isNullOrEmpty(cachedJson) && 
-    		cachedJson.hasOwnProperty('subitems') &&
-		    !isNullOrEmpty(cachedJson['subitems'])) 
-		{
-			var nodeJson = cachedJson['subitems'];
-			refreshTabContent(nodeJson, onSuccess, postSuccess);
-		} else {
-		    makeEmptyListView(null, $content, 'No Tabs to Display');
-			stopLoadingMsg();
-		}
+        if( !isNullOrEmpty(cachedJson) && 
+            cachedJson.hasOwnProperty('subitems') &&
+            !isNullOrEmpty(cachedJson['subitems'])) 
+        {
+            var nodeJson = cachedJson['subitems'];
+            refreshTabContent(nodeJson, onSuccess, postSuccess);
+        } else {
+            makeEmptyListView(null, $content, 'No Tabs to Display');
+            stopLoadingMsg();
+        }
     }
     
     function refreshTabContent(nodeJson, onSuccess, postSuccess) {
@@ -112,29 +112,28 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
         
         var listView = new CswMobileListView(ulDef, $content);
         var tabCount = 0;
-        if (!isNullOrEmpty(nodeJson)) {
-            for (var tabName in nodeJson)
-            {
+        if (false === isNullOrEmpty(nodeJson)) {
+            for (var tabName in nodeJson) {
                 if (nodeJson.hasOwnProperty(tabName)) {
-					var tabId = makeSafeId({prefix: tabName, ID: nodeId }); 
-					
+                    var tabId = makeSafeId({prefix: tabName, ID: nodeId }); 
+                    
                     var opts = {
-		                ParentId: id,
-		                DivId: tabId,
-		                viewId: viewId,
+                        ParentId: id,
+                        DivId: tabId,
+                        viewId: viewId,
                         nodeId: nodeId,
                         tabId: tabId,
                         tabName: tabName,
                         tabJson: nodeJson[tabName],
-		                level: 3,
-		                title: tabName,
-		                onHelpClick: pageDef.onHelpClick,
-		                onOnlineClick: pageDef.onOnlineClick,
-		                onRefreshClick: pageDef.onRefreshClick,
-		                mobileStorage: mobileStorage
-		            };
+                        level: 3,
+                        title: tabName,
+                        onHelpClick: pageDef.onHelpClick,
+                        onOnlineClick: pageDef.onOnlineClick,
+                        onRefreshClick: pageDef.onRefreshClick,
+                        mobileStorage: mobileStorage
+                    };
 
-		            var onClick = makeDelegate(pageDef.onListItemSelect, opts);
+                    var onClick = makeDelegate(pageDef.onListItemSelect, opts);
                     
                     listView.addListItemLink(tabId, tabName, onClick);
                     tabCount++;
@@ -145,8 +144,8 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
             listView.addListItemLink('no_results', 'No Tabs to Display');
         }
         if (!mobileStorage.stayOffline()) {
-			toggleOnline(mobileStorage);
-		}
+            toggleOnline(mobileStorage);
+        }
         if (isFunction(onSuccess)) {
             onSuccess($content);
         }
@@ -155,7 +154,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
         }
     }
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

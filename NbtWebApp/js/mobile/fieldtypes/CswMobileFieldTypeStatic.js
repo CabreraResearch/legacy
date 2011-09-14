@@ -8,13 +8,13 @@
 //#region CswMobileFieldTypeStatic
 
 function CswMobileFieldTypeStatic(ftDef) {
-	/// <summary>
-	///   Static field type. Responsible for generating prop according to Field Type rules.
-	/// </summary>
+    /// <summary>
+    ///   Static field type. Responsible for generating prop according to Field Type rules.
+    /// </summary>
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
-	/// <returns type="CswMobileFieldTypeStatic">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileFieldTypeStatic">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var divSuffix = '_propdiv';
     var propSuffix = '_input';
@@ -23,12 +23,13 @@ function CswMobileFieldTypeStatic(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propId: '',
-            propName: '',
-            gestalt: '',
-            value: '',
-            text: ''
-        };
+                propId: '',
+                propName: '',
+                gestalt: '',
+                value: '',
+                text: ''
+            },
+            propVals = p.values;
         if (ftDef) $.extend(p, ftDef);
 
         propId = p.propId;
@@ -36,12 +37,11 @@ function CswMobileFieldTypeStatic(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
         
-        var propVals = p.values;
         subfields = CswSubFields_Map.Static.subfields; //don't use this yet. Non-implemented Field Types default to Static.
         value = tryParseString(propVals.value,propVals.text);
         gestalt = tryParseString(p.gestalt, '');
         
-        $content = ensureContent(contentDivId);
+        $content = ensureContent($content, contentDivId);
         $content.append($('<p style="white-space:normal;" id="' + elementId + '">' + tryParseString(value,gestalt) + '</p>'));
     })(); //ctor
         
@@ -53,7 +53,7 @@ function CswMobileFieldTypeStatic(ftDef) {
         return json;
     }    
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

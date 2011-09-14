@@ -15,15 +15,15 @@
 //#region CswMobilePageViews
 
 function CswMobilePageViews(viewsDef,$page,mobileStorage) {
-	/// <summary>
-	///   Views Page class. Responsible for generating a Mobile views page.
-	/// </summary>
+    /// <summary>
+    ///   Views Page class. Responsible for generating a Mobile views page.
+    /// </summary>
     /// <param name="viewsDef" type="Object">Views definitional data.</param>
-	/// <param name="$page" type="jQuery">Mobile page element to attach to.</param>
+    /// <param name="$page" type="jQuery">Mobile page element to attach to.</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
-	/// <returns type="CswMobilePageViews">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobilePageViews">Instance of itself. Must instance with 'new' keyword.</returns>
     
-	//#region private
+    //#region private
     var pageDef = { };
     var id = CswMobilePage_Type.views.id;
     var title = CswMobilePage_Type.views.title;
@@ -80,44 +80,40 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
     })(); //ctor
     
     function getContent(onSuccess,postSuccess) {
-        var now = new Date();
-        var lastSync = new Date(mobileStorage.lastSyncTime);
-        if (!mobileStorage.amOnline() || 
-            ( now.getTime() - lastSync.getTime() < 300000 ) ) //it's been less than 5 minutes since the last sync
-        {
-            refreshViewContent('', onSuccess,postSuccess); 
-        } else {
+        if (isTimeToRefresh(mobileStorage)) { 
             refreshViewJson(onSuccess,postSuccess);
-        }
+        } else { //it's been less than 5 minutes since the last sync or we're offline
+             refreshViewContent('', onSuccess,postSuccess); 
+        } 
     }
     
     function refreshViewJson(onSuccess,postSuccess) {
         ///<summary>Fetches the current views list from the web server and rebuilds the list.</summary>
-		var getViewsUrl = '/NbtWebApp/wsNBT.asmx/GetViewsList';
-		
-		var jsonData = {
-			SessionId: mobileStorage.sessionid(),
-			ParentId: 'logindiv',
-			ForMobile: true
-		};
+        var getViewsUrl = '/NbtWebApp/wsNBT.asmx/GetViewsList';
+        
+        var jsonData = {
+            SessionId: mobileStorage.sessionid(),
+            ParentId: 'logindiv',
+            ForMobile: true
+        };
 
         CswAjaxJson({
-				//async: false,   // required so that the link will wait for the content before navigating
-				formobile: true,
-				url: getViewsUrl,
-				data: jsonData,
-				onloginfail: function(text) { onLoginFail(text, mobileStorage); },
-				success: function(data) {
-					setOnline(mobileStorage);
+                //async: false,   // required so that the link will wait for the content before navigating
+                formobile: true,
+                url: getViewsUrl,
+                data: jsonData,
+                onloginfail: function(text) { onLoginFail(text, mobileStorage); },
+                success: function(data) {
+                    setOnline(mobileStorage);
 
-					mobileStorage.storeViewJson(id, title, data, 0);
+                    mobileStorage.storeViewJson(id, title, data, 0);
 
-				    refreshViewContent(data,onSuccess,postSuccess);
-				},
-				error: function() {
-					onError();
-				}
-			});
+                    refreshViewContent(data,onSuccess,postSuccess);
+                },
+                error: function() {
+                    onError();
+                }
+            });
     }
     
     function refreshViewContent(viewJson,onSuccess,postSuccess) {
@@ -136,34 +132,34 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         var listView = new CswMobileListView(ulDef, $content);
 
         var viewCount = 0;
-		for(var viewId in viewJson)
-		{
-		    if(viewJson.hasOwnProperty(viewId)) {
-		        var viewName = viewJson[viewId];
-		        var opts = {
-		            ParentId: id,
-		            DivId: viewId,
-		            viewId: viewId,
-		            level: 1,
-		            title: viewName,
-		            onHelpClick: pageDef.onHelpClick,
-		            onOnlineClick: pageDef.onOnlineClick,
-		            onRefreshClick: pageDef.onRefreshClick,
-		            mobileStorage: mobileStorage
-		        };
+        for(var viewId in viewJson)
+        {
+            if(viewJson.hasOwnProperty(viewId)) {
+                var viewName = viewJson[viewId];
+                var opts = {
+                    ParentId: id,
+                    DivId: viewId,
+                    viewId: viewId,
+                    level: 1,
+                    title: viewName,
+                    onHelpClick: pageDef.onHelpClick,
+                    onOnlineClick: pageDef.onOnlineClick,
+                    onRefreshClick: pageDef.onRefreshClick,
+                    mobileStorage: mobileStorage
+                };
 
-		        var onClick = makeDelegate(pageDef.onListItemSelect,opts);
+                var onClick = makeDelegate(pageDef.onListItemSelect,opts);
                 listView.addListItemLink(viewId, viewName, onClick);
-		        viewCount++;
-		    }
-		}
+                viewCount++;
+            }
+        }
         if (viewCount === 0) {
             listView.addListItemLink('no_results', 'No Mobile Views to Display');
         }
         
-		if (!mobileStorage.stayOffline()) {
-			toggleOnline(mobileStorage);
-		}
+        if (!mobileStorage.stayOffline()) {
+            toggleOnline(mobileStorage);
+        }
         if (isFunction(onSuccess)) {
             onSuccess($content);
         }
@@ -172,7 +168,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         }
     }
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

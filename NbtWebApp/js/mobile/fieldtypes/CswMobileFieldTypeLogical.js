@@ -8,13 +8,13 @@
 //#region CswMobileFieldTypeLogical
 
 function CswMobileFieldTypeLogical(ftDef) {
-	/// <summary>
-	///   Logical field type. Responsible for generating prop according to Field Type rules.
-	/// </summary>
+    /// <summary>
+    ///   Logical field type. Responsible for generating prop according to Field Type rules.
+    /// </summary>
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
-	/// <returns type="CswMobileFieldTypeLogical">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileFieldTypeLogical">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var divSuffix = '_propdiv';
     var propSuffix = '_input';
@@ -23,13 +23,19 @@ function CswMobileFieldTypeLogical(ftDef) {
     //ctor
     (function () {
         var p = { 
-            propId: '',
-            propName: '',
-            gestalt: '',
-            value: '',
-            checked: 'false',
-            required: false
-        };
+                propId: '',
+                propName: '',
+                gestalt: '',
+                value: '',
+                checked: 'false',
+                required: false
+            },
+            propVals = p.values,
+            suffix = 'ans',
+            answers = ['True', 'False'],
+            answertext = '',
+            $fieldset, i, inputName, inputId, $input;
+            
         if (ftDef) $.extend(p, ftDef);
 
         propId = p.propId;
@@ -37,60 +43,56 @@ function CswMobileFieldTypeLogical(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        var propVals = p.values;
         subfields = CswSubFields_Map.Logical.subfields;
         value = tryParseString(propVals[subfields.Checked.name]);
         gestalt = tryParseString(p.gestalt, '');
         
-        $content = ensureContent(contentDivId);
+        $content = ensureContent($content, contentDivId);
         contentDivId = p.nodekey;
         
-        var suffix = 'ans';
-		var $fieldset = $('<fieldset class="csw_fieldset"></fieldset>')
-							.CswAttrDom({
-								'class': CswMobileCssClasses.fieldset.name,
-								'id': id + divSuffix
-							})
-							.CswAttrXml({
-								'data-role': 'controlgroup',
-								'data-type': 'horizontal'
-							})
-		                    .appendTo($content);
-									 
-		var answers = ['True', 'False'];
-		if (!isTrue(p.required)) {
-			answers.push = 'Null';
-		}
-		var inputName = makeSafeId({ prefix: propId, ID: suffix }); //Name needs to be non-unique and shared
+        $fieldset = $('<fieldset class="csw_fieldset"></fieldset>')
+                            .CswAttrDom({
+                                'class': CswMobileCssClasses.fieldset.name,
+                                'id': id + divSuffix
+                            })
+                            .CswAttrXml({
+                                'data-role': 'controlgroup',
+                                'data-type': 'horizontal'
+                            })
+                            .appendTo($content);
+                                     
+        if (false === isTrue(p.required)) {
+            answers.push = 'Null';
+        }
+        inputName = makeSafeId({ prefix: propId, ID: suffix }); //Name needs to be non-unique and shared
 
-		for (var i = 0; i < answers.length; i++) {
-			if (answers.hasOwnProperty(i)) {
-			    var answertext = '';
-			    switch (answers[i]) {
-			        case 'Null':
-			            answertext = '?';
-			            break;
-			        case 'True':
-			            answertext = 'Yes';
-			            break;
-			        case 'False':
-			            answertext = 'No';
-			            break;
-			    }
+        for (i = 0; i < answers.length; i++) {
+            if (contains(answers, i)) {
+                switch (answers[i]) {
+                    case 'Null':
+                        answertext = '?';
+                        break;
+                    case 'True':
+                        answertext = 'Yes';
+                        break;
+                    case 'False':
+                        answertext = 'No';
+                        break;
+                }
 
-			    var inputId = makeSafeId({ prefix: id, ID: suffix, suffix: answers[i] });
+                inputId = makeSafeId({ prefix: id, ID: suffix, suffix: answers[i] });
 
-			    $fieldset.append('<label for="' + inputId + '">' + answertext + '</label>');
-			    var $input = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i] });
+                $fieldset.append('<label for="' + inputId + '">' + answertext + '</label>');
+                $input = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i] });
 
-			    // Checked is a Tristate, so isTrue() is not useful here
-			    if ((value === 'false' && answers[i] === 'False') ||
-    			    (value === 'true' && answers[i] === 'True') ||
-        			    (value === '' && answers[i] === 'Null')) {
-			        $input.CswAttrXml({ 'checked': 'checked' });
-			    }
-			} // if (answers.hasOwnProperty(i))
-		} // for (var i = 0; i < answers.length; i++)
+                // Checked is a Tristate, so isTrue() is not useful here
+                if ((value === 'false' && answers[i] === 'False') ||
+                    (value === 'true' && answers[i] === 'True') ||
+                        (value === '' && answers[i] === 'Null')) {
+                    $input.CswAttrXml({ 'checked': 'checked' });
+                }
+            } // if (answers.hasOwnProperty(i))
+        } // for (var i = 0; i < answers.length; i++)
         
     })(); //ctor
         
@@ -103,7 +105,7 @@ function CswMobileFieldTypeLogical(ftDef) {
         return json;
     }
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 
