@@ -83,7 +83,11 @@ function CswMobileClientDbResources() {
         /// </summary>
         /// <param name="sessionid" type="String">Optional. An NBT sessionid</param>
         /// <returns type="String">Stored sessionid</returns>
-        return handleStorageRequest('sessionid', sessionid, this);
+        var sessionId = $.CswCookie('get', CswCookieName.SessionId);
+        if (false === isNullOrEmpty(sessionId)) {
+            sessionId = handleStorageRequest('sessionid', sessionid, this);
+        }
+        return sessionId;
     };
 
     this.lastSyncSuccess = function () {
@@ -156,6 +160,7 @@ function CswMobileClientDbResources() {
         /// <param name="loginFailure" type="String">Text of login failure, if any.</param>
         /// <returns type="Boolean">True if online. False otherwise.</returns>
         var mobileStorage = this;
+        isOnline = isOnline && (false === isNullOrEmpty(mobileStorage.sessionid()));
         if (arguments.length > 0 ) {
             mobileStorage.setItem('online', isTrue(isOnline) );
         } 
