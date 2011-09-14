@@ -18,17 +18,17 @@
 //#region CswMobilePageOnline
 
 function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTask) {
-	/// <summary>
-	///   Online Page class. Responsible for generating a Mobile login page.
-	/// </summary>
+    /// <summary>
+    ///   Online Page class. Responsible for generating a Mobile login page.
+    /// </summary>
     /// <param name="onlineDef" type="Object">Online definitional data.</param>
-	/// <param name="$parent" type="jQuery">Parent element to attach to.</param>
+    /// <param name="$parent" type="jQuery">Parent element to attach to.</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="mobileSync" type="CswMobileSync">Mobile sync object</param>
     /// <param name="mobileBgTask" type="CswMobileBackgroundTask">Mobile background task object</param>
-	/// <returns type="CswMobilePageOnline">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobilePageOnline">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var pageDef = { };
     var id = CswMobilePage_Type.online.id;
@@ -84,7 +84,7 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
         buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
         buttons[CswMobileHeaderButtons.back.name] = '';
 
-        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
 
         getContent();
     })(); //ctor
@@ -127,68 +127,68 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
         }
     }
     
-	function toggleOffline(doWaitForData) {
-		///<summary>Sets the Go Online/Offline button text.</summary>
-	    ///<param name="doWaitForData" type="Boolean">True if background task(s) should be restarted.</param>
-		if (mobileStorage.amOnline() || $onlineBtn.text() === 'Go Online') {
-			setOnline();
-			if (doWaitForData) {
-			    mobileBgTask.reset();
-			}
-			$onlineBtn.text('Go Offline');
-		}
-		else {
-			setOffline();
-			if (doWaitForData) {
-				mobileBgTask.reset();
-			}
-			$onlineBtn.text('Go Online');
-		}
-	}
-	
-	function toggleLogging() {
-			var logging = !doLogging();
-			doLogging(logging);
-			if (logging) {
-				setStartLog();
-			} else {
-				setStopLog();
-			}
-		}
+    function toggleOffline(doWaitForData) {
+        ///<summary>Sets the Go Online/Offline button text.</summary>
+        ///<param name="doWaitForData" type="Boolean">True if background task(s) should be restarted.</param>
+        if (mobileStorage.amOnline() || $onlineBtn.text() === 'Go Online') {
+            setOnline();
+            if (doWaitForData) {
+                mobileBgTask.reset();
+            }
+            $onlineBtn.text('Go Offline');
+        }
+        else {
+            setOffline();
+            if (doWaitForData) {
+                mobileBgTask.reset();
+            }
+            $onlineBtn.text('Go Online');
+        }
+    }
+    
+    function toggleLogging() {
+            var logging = !doLogging();
+            doLogging(logging);
+            if (logging) {
+                setStartLog();
+            } else {
+                setStopLog();
+            }
+        }
 
-	function setStartLog() {
-		if (doLogging()) {
-			var logger = new CswProfileMethod('setStartLog');
-			cacheLogInfo(logger);
-			$('.debug').removeClass('debug-off')
-						.addClass('debug-on')
-						.find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-						.text('Sync Log')
-						.addClass('debug-on')
-						.removeClass('debug-off')
-						.end();
-		}
-	}
+    function setStartLog() {
+        if (doLogging()) {
+            var logger = new CswProfileMethod('setStartLog');
+            cacheLogInfo(logger);
+            $('.debug').removeClass('debug-off')
+                        .addClass('debug-on')
+                        .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                        .text('Sync Log')
+                        .addClass('debug-on')
+                        .removeClass('debug-off')
+                        .end();
+        }
+    }
 
     var SendLogUrl = '/NbtWebApp/wsNBT.asmx/collectClientLogInfo';
-	function setStopLog() {
-		if (!doLogging()) {
-			$('.debug').removeClass('debug-on')
-						.addClass('debug-off')
-						.find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
-						.text('Sync Log')
-						.addClass('debug-off')
-						.removeClass('debug-on')
-						.end();
-			var logger = new CswProfileMethod('setStopLog');
-			cacheLogInfo(logger);
+    function setStopLog() {
+        if (!doLogging()) {
+            $('.debug').removeClass('debug-on')
+                        .addClass('debug-off')
+                        .find('span.ui-btn-text') // case 22254: this type of hack is likely to break in the future
+                        .text('Sync Log')
+                        .addClass('debug-off')
+                        .removeClass('debug-on')
+                        .end();
+            var logger = new CswProfileMethod('setStopLog');
+            cacheLogInfo(logger);
 
-			var dataJson = {
-				'Context': 'CswMobile',
-				'UserName': mobileStorage.username(),
-				'CustomerId': mobileStorage.customerid(),
-				'LogInfo': mobileStorage.getItem('debuglog')
-			};
+            var dataJson = {
+                'Context': 'CswMobile',
+                'UserName': mobileStorage.username(),
+                'CustomerId': mobileStorage.customerid(),
+                'LogInfo': mobileStorage.getItem('debuglog')
+            };
 
 //                CswAjaxJson({
 //                        url: opts.SendLogUrl,
@@ -215,9 +215,9 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
 //			};
 //			var $logDiv = _addPageDivToBody(params);
 //			$logDiv.CswChangePage();
-		}
-	}
-	
+        }
+    }
+    
     function setLastSync(succeeded) {
         if (succeeded) {
             $content.find('#ss_lastsync_success').text(mobileStorage.lastSyncSuccess());

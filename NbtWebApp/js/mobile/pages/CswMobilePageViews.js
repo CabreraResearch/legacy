@@ -74,7 +74,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         buttons[CswMobileFooterButtons.fullsite.name] = '';
         buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
 
-        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
         
         $content = ensureContent($content, contentDivId);
     })(); //ctor

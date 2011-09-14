@@ -74,7 +74,7 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
         buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
         buttons[CswMobileHeaderButtons.back.name] = '';
 
-        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
 
         getContent();
     })(); //ctor
