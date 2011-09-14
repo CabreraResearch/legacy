@@ -63,10 +63,10 @@ namespace ChemSW.Nbt.WebServices
                                          "dash_biosafety",
                                          "http://www.chemswlive.com/19002.htm",
                                          CswNbtResources.CswNbtModule.BioSafety ) );
-            DashIcons.Add( new DashIcon( "Mobile",
-                                         "dash_hh",
-                                         "http://www.chemswlive.com/cis-pro-mobile.htm",
-                                         CswNbtResources.CswNbtModule.Mobile ) );
+			//DashIcons.Add( new DashIcon( "Mobile",
+			//                             "dash_hh",
+			//                             "http://www.chemswlive.com/cis-pro-mobile.htm",
+			//                             CswNbtResources.CswNbtModule.Mobile ) );
             DashIcons.Add( new DashIcon( "NBTManager",
                                          "dash_nbtmgr",
                                          "",
