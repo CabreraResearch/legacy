@@ -86,7 +86,7 @@ function CswMobileClientDb() {
 
         if (!isNullOrEmpty(nodeId) && !isNullOrEmpty(nodeJson))
         {
-            if (wasModified)
+            if (isTrue(wasModified))
             {
                 nodeJson['wasmodified'] = true;
             } else

@@ -1,8 +1,10 @@
 /// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
 /// <reference path="CswMobileClientDb.js" />
-/// <reference path="../../CswClientDb.js" />
-/// <reference path="../../_Global.js" />
-/// <reference path="../../_CswPrototypeExtensions.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 //#region CswMobileClientDbResources
 
@@ -150,23 +152,23 @@ function CswMobileClientDbResources() {
 
     this.amOnline = function (isOnline, loginFailure) {
         /// <summary>Evaluates or sets the user's online status.</summary>
-	    /// <param name="isOnline" type="Boolean">True if online.</param>
-	    /// <param name="loginFailure" type="String">Text of login failure, if any.</param>
-	    /// <returns type="Boolean">True if online. False otherwise.</returns>
+        /// <param name="isOnline" type="Boolean">True if online.</param>
+        /// <param name="loginFailure" type="String">Text of login failure, if any.</param>
+        /// <returns type="Boolean">True if online. False otherwise.</returns>
         var mobileStorage = this;
         if (arguments.length > 0 ) {
-		    mobileStorage.setItem('online', isTrue(isOnline) );
-	    } 
-	    if (loginFailure) {
-		    mobileStorage.setItem('loginFailure', loginFailure );
-	    }
-	    var ret = (isTrue(mobileStorage.getItem('online')) && !mobileStorage.stayOffline());
-	    return ret;
+            mobileStorage.setItem('online', isTrue(isOnline) );
+        } 
+        if (loginFailure) {
+            mobileStorage.setItem('loginFailure', loginFailure );
+        }
+        var ret = (isTrue(mobileStorage.getItem('online')) && !mobileStorage.stayOffline());
+        return ret;
     };
 
     this.onlineStatus = function () {
         /// <summary>Evaluates the user's online status for display.</summary>
-	    /// <returns type="String">'Online' or 'Offline'</returns>
+        /// <returns type="String">'Online' or 'Offline'</returns>
         var mobileStorage = this;
         var ret = (!mobileStorage.amOnline() || mobileStorage.stayOffline()) ? 'Offline' : 'Online';
         return ret;
@@ -187,4 +189,4 @@ function CswMobileClientDbResources() {
     
 }
 
-//#endregion CswMobileClientDbResources
+//#endregion CswMobileClientDbResourcesz

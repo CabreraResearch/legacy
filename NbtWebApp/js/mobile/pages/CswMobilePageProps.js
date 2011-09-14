@@ -194,28 +194,27 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
     
     function onPropertyChange(eventObj,options) {
         var o = {
-                elementId: '',
-                prop: '',
-                control: '',
-                onSuccess: '',
-                onUpdate: ''
-            },
-            nodeJson = mobileStorage.fetchCachedNodeJson(nodeId),
+            elementId: '',
+            prop: '',
+            control: '',
+            onSuccess: '',
+            onUpdate: ''
+        };
+        if(options) {
+            $.extend(o, options);
+        }
+        var nodeJson = mobileStorage.fetchCachedNodeJson(nodeId),
             propId = o.prop.propId,
             elementId = new CswString(eventObj.target.id),
             value = eventObj.target.value,
             propJson = null;
         
-        if(options) {
-            $.extend(o, options);
-        }
-        
         if (false === isNullOrEmpty(nodeJson)) {
             mobileStorage.addUnsyncedChange();
 
-            if (nodeJson.hasOwnProperty('subitems') &&
-                nodeJson.subitems.hasOwnProperty(tabName) &&
-                nodeJson.subitems[tabName].hasOwnProperty(propId)) {
+            if (contains(nodeJson, 'subitems') &&
+                contains(nodeJson.subitems, tabName) &&
+                contains(nodeJson.subitems[tabName], propId)) {
                 propJson = nodeJson.subitems[tabName][propId];
             }
             if (false === isNullOrEmpty(propJson)) {
