@@ -201,11 +201,8 @@ namespace ChemSW.Nbt.Sched
         {
             _AlwaysRunItems.Clear();
 
-
-            //_CswNbtObjClassFactory = new CswNbtObjClassFactory();
-            //_CswNbtResources = new CswNbtResources( AppType.Sched, _CswSetupVblsNbt, _CswDbCfgInfoNbt, true, false );
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Sched, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.NbtExe ), true, false ); 
-
+			_CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Sched, SetupMode.NbtExe, true, false ); 
+			
             _CswNbtResources.SetDbResources( new CswNbtTreeFactory( _Path ) );
 
             string CloseSchedulerDbConnectionsVariableName = "CloseSchedulerDbConnections";
@@ -218,14 +215,7 @@ namespace ChemSW.Nbt.Sched
                 _CswNbtResources.PooledConnectionState = ChemSW.RscAdo.PooledConnectionState.Open;
             }
 
-
-            //_CswNbtResources.CswTblFactory = new CswNbtTblFactory( _CswNbtResources );
-            //_CswNbtResources.CswTableCaddyFactory = new CswTableCaddyFactoryNbt( _CswNbtResources );
-
-            //            _CswNbtResources.InitDbResources();
-
             _CswLogger = _CswNbtResources.CswLogger;
-            //            _CswLogger.setConfigurationMode( LogConfigMode.AppConfig );
             //END: Formerlly init cycle resources
 
 

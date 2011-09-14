@@ -1,5 +1,6 @@
 ﻿using System.Web.Script.Serialization;
 using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -16,6 +17,32 @@ namespace ChemSW.Nbt.WebServices
         {
 
         } //ctor
+
+		public static CswNbtNode getNode( CswNbtResources CswNbtResources, string NodeId, string NodeKey, CswDateTime Date )
+		{
+			CswNbtNode Node = null;
+			if( !string.IsNullOrEmpty( NodeKey ) )
+			{
+				//CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, FromSafeJavaScriptParam( NodeKey ) );
+				CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, NodeKey );
+				Node = CswNbtResources.getNode( RealNodeKey, Date.ToDateTime() );
+			}
+			else if( !string.IsNullOrEmpty( NodeId ) )
+			{
+				CswPrimaryKey RealNodeId = new CswPrimaryKey();
+				if( CswTools.IsInteger( NodeId ) )
+				{
+					RealNodeId.TableName = "nodes";
+					RealNodeId.PrimaryKey = CswConvert.ToInt32( NodeId );
+				}
+				else
+				{
+					RealNodeId.FromString( NodeId );
+				}
+				Node = CswNbtResources.getNode( RealNodeId, Date.ToDateTime() );
+			}
+			return Node;
+		} // getNode()
 
         #region Conversion
 

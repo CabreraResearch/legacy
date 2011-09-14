@@ -60,6 +60,7 @@
 
 	var MainTreeId = 'main';
 	var MainGridId = 'CswNodeGrid';
+	var MainTableId = 'CswNodeTable';
 	var MainSearchId = 'CswSearchForm';
 
 
@@ -267,9 +268,12 @@
                 var viewMode = tryParseString(o.viewmode).toLowerCase();
 			    switch (viewMode) {
 			    	case 'grid':
-			    	    getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
-			            break;
-			        default:
+			    		getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+			    		break;
+			    	case 'table':
+			    		getViewTable({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+			    		break;
+			    	default:
 			            refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
 			            break;
 			    }
@@ -554,6 +558,59 @@
         });
 	}
 
+
+	function getViewTable(options)
+	{
+		var o = {
+			viewid: '',
+			nodeid: '',
+			cswnbtnodekey: '',
+//			doMenuRefresh: true,
+//			onAddNode: '',
+			onEditNode: '',
+			onDeleteNode: ''
+		};
+		if (options) $.extend(o, options);
+
+		// Defaults
+		if (isNullOrEmpty(o.nodeid))
+			o.nodeid = $.CswCookie('get', CswCookieName.CurrentNodeId);
+		if (isNullOrEmpty(o.cswnbtnodekey))
+			o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNodeKey);
+		if (!isNullOrEmpty(o.viewid))
+			$.CswCookie('get', CswCookieName.CurrentViewId);
+
+		//		o.onAddNode = function (nodeid, cswnbtnodekey)
+		//			{
+		//				var ocopy = o;
+		//				var x = { 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey };
+		//				$.extend(ocopy, x);
+		//				getViewTable(ocopy);
+		//			};
+		o.onEditNode = function () { getViewTable(o); };
+		o.onDeleteNode = function () { getViewTable(o); };
+
+		clear({ centerbottom: true });
+
+		$('#CenterBottomDiv').CswNodeTable('init', {
+			viewid: o.viewid,
+			nodeid: o.nodeid,
+			cswnbtnodekey: o.cswnbtnodekey,
+			ID: MainTableId,
+			//'onAddNode': o.onAddNode,
+			onEditNode: o.onEditNode,
+			onDeleteNode: o.onDeleteNode,
+			onSuccess: function ()
+			{
+//				refreshMainMenu({ viewid: o.viewid,
+//					viewmode: CswViewMode.table.name,
+//					nodeid: o.nodeid,
+//					cswnbtnodekey: o.cswnbtnodekey
+//				});
+			}
+		});
+	}
+
 	function onSelectTreeNode(options)
 	{
 		//if (debugOn()) log('Main.onSelectTreeNode()');
@@ -684,6 +741,15 @@
                         });
 						break;
 					}
+				case 'table':
+					{
+						getViewTable({
+							'viewid': o.viewid,
+							'nodeid': o.nodeid,
+							'cswnbtnodekey': o.cswnbtnodekey
+						});
+						break;
+					}					
 				default: //tree
 					{
 						refreshNodesTree({

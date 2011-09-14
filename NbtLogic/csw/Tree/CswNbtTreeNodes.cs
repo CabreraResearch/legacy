@@ -71,6 +71,7 @@ namespace ChemSW.Nbt
         //******************** NbtNodeProp element
         public static string _ElemName_NodeProp = "NbtNodeProp";
         private static string _AttrName_NodePropId = "nodetypepropid";
+		private static string _AttrName_JctNodePropId = "jctnodepropid";
         private static string _AttrName_NodePropName = "name";
         private static string _AttrName_NodePropGestalt = "gestalt";
         private static string _AttrName_NodePropFieldType = "fieldtype";
@@ -1024,15 +1025,16 @@ namespace ChemSW.Nbt
 
 
 
-        public void addProperty( Int32 NodeTypePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType )
+        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType )
         {
             if( null == _CurrentNode )
                 throw ( new CswDniException( "There is no current node" ) );
             
             XmlNode NewXmlNode = _XmlDoc.CreateElement( _ElemName_NodeProp );
             _CurrentNode.AppendChild( NewXmlNode );
-            NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_NodePropId, NodeTypePropId.ToString() ) );
-            NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_NodePropName, Name ) );
+			NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_NodePropId, NodeTypePropId.ToString() ) );
+			NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_JctNodePropId, JctNodePropId.ToString() ) );
+			NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_NodePropName, Name ) );
             // BZ 7135 - write dates in XML format
             string PropValue = Gestalt;
             switch( FieldType.FieldType )

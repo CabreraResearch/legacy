@@ -18,25 +18,22 @@ namespace ChemSW.Nbt
         public CswNbtStatisticsEvents CswNbtStatisticsEvents = null;
         private CswNbtStatistics _CswNbtStatistics = null;
 
-		public CswSessionResourcesNbt( HttpApplicationState HttpApplicationState, HttpRequest HttpRequest, HttpResponse HttpResponse, string LoginAccessId, string FilesPath, SetupMode SetupMode )
+		public CswSessionResourcesNbt( HttpApplicationState HttpApplicationState, HttpRequest HttpRequest, HttpResponse HttpResponse, string LoginAccessId, SetupMode SetupMode )
         {
-            CswDbCfgInfoNbt CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode );
-            CswSetupVblsNbt CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode );
-
-            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, FilesPath, true, false );
+			CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false );
 
             string RecordStatisticsVblName = "RecordUserStatistics";
             bool RecordStatistics = false;
-            if( CswSetupVblsNbt.doesSettingExist( RecordStatisticsVblName ) )
+            if( CswNbtResources.SetupVbls.doesSettingExist( RecordStatisticsVblName ) )
             {
-                RecordStatistics = ( "1" == CswSetupVblsNbt[RecordStatisticsVblName] );
+				RecordStatistics = ( "1" == CswNbtResources.SetupVbls[RecordStatisticsVblName] );
             }
 
             CswSessionManager = new CswSessionManager( AppType.Nbt, 
 													   new CswWebClientStorageCookies( HttpRequest, HttpResponse ), 
-													   LoginAccessId, 
-													   CswSetupVblsNbt, 
-													   CswDbCfgInfoNbt, 
+													   LoginAccessId,
+													   CswNbtResources.SetupVbls,
+													   CswNbtResources.CswDbCfgInfo, 
 													   true, 
 													   CswNbtResources, 
 													   new CswNbtSchemaAuthenticator( CswNbtResources ), 

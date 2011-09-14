@@ -20,19 +20,11 @@ public class TreeViewService : System.Web.Services.WebService
     public CswNbtResources CswNbtResources;
 
 
-    private string _FilesPath
-    {
-        get
-        {
-            return ( System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc" );
-        }
-    }
-
     public TreeViewService()
     {
         //        CswNbtSession CswSessionWeb = new CswNbtSession( Context.Application, Context.Session, Context.Request, Context.Response );
 
-        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.NbtWeb );
+        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, SetupMode.NbtWeb );
         CswNbtResources = CswInitialization.CswNbtResources;
         //        CswSessionWeb.CswNbtResources = CswNbtResources;
 
