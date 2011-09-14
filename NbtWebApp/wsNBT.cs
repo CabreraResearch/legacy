@@ -304,6 +304,12 @@ namespace ChemSW.Nbt.WebServices
 			// case 21211
 			if( AuthenticationStatus == AuthenticationStatus.Authenticated )
 			{
+				// case 21036
+				if( IsMobile && false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+				{
+					AuthenticationStatus = AuthenticationStatus.Deactivated;
+					_CswSessionResources.CswSessionManager.clearSession();
+				}
 				CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
 				//Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "passwordexpiry_days" ) );
 

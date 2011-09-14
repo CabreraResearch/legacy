@@ -77,7 +77,12 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
         $content = ensureContent($content, contentDivId);
         
         $content.append('<p style="text-align: center;">Login to Mobile Inspection Manager</p><br/>');
-        var $customerId = $('<input type="text" id="login_customerid" placeholder="Customer Id" />')
+        var loginFailure = mobileStorage.getItem('loginFailure');
+        if (loginFailure)
+        {
+        	$content.append('<span class="error">' + loginFailure + '</span><br/>');
+        }
+		var $customerId = $('<input type="text" id="login_customerid" placeholder="Customer Id" />')
                             .appendTo($content);
         $content.append('<br/>');
         var $username = $('<input type="text" id="login_username" placeholder="User Name" />')
