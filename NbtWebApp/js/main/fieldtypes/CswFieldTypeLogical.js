@@ -27,7 +27,7 @@
 		save: function(o) { 
 			var $Div = o.$propdiv.find('div');
             var attributes = { checked: $Div.CswTristateCheckBox('value') };
-		    preparePropJsonForSave(o.Multi, o, attributes);
+		    preparePropJsonForSave(o.Multi, o.propData, attributes);
 		}
 	};
 	

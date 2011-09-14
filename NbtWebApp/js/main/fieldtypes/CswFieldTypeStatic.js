@@ -37,8 +37,8 @@
                             .appendTo($Div); 
         },
         save: function(o) {
-                // no changes to save
-            }
+            preparePropJsonForSave(o.propData);
+        }
     };
     
     // Method calling logic

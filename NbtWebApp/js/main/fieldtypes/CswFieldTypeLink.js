@@ -85,7 +85,7 @@
 			if (false === isNullOrEmpty($edithref)) {
                 attributes.href = $edithref.val();
             }
-            preparePropJsonForSave(o.Multi, o, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

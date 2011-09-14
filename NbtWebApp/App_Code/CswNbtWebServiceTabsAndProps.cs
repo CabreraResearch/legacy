@@ -352,79 +352,101 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = null;
             JObject PropsObj = JObject.Parse( NewPropsJson );
-            string RetNodeKey = string.Empty;
-            string RetNodeId = string.Empty;
-            bool AllSucceeded = NodeIds.Count > 0;
-            for( Int32 i = 0; i < NodeIds.Count; i++ )
+            CswNbtNodeKey RetNbtNodeKey = null;
+            bool AllSucceeded = false;
+            Int32 Succeeded = 0;
+            CswNbtNode Node = null;
+            switch( EditMode )
             {
-                string NodeId = NodeIds[i];
-                string NodeKey = NodeKeys[i];
-                CswNbtNode Node = null;
-                CswNbtNodeKey NbtNodeKey = null;
-                Node = EditMode == NodeEditMode.AddInPopup ?
-                                                        _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode ) :
-									wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
-
-                if( Node != null &&
-                    ( EditMode == NodeEditMode.AddInPopup &&
-                      _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) ) ||
-                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Node.NodeType, false, Node.NodeType.getNodeTypeTab( TabId ), null, Node, null ) )
-                {
-                    foreach( JObject PropObj in
-                        from PropJProp
-                            in PropsObj.Properties()
-                        where null != PropJProp.Value
-                        select (JObject) PropJProp.Value
-                            into PropObj
-                            where PropObj.HasValues
-                            select PropObj )
+                case NodeEditMode.AddInPopup:
+                    Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    RetNbtNodeKey = _saveProp( Node, PropsObj, View );
+                    if( null != RetNbtNodeKey )
                     {
-                        _applyPropJson( Node, PropObj );
+                        AllSucceeded = true;
                     }
-
-                    // BZ 8517 - this sets sequences that have setvalonadd = 0
-                    _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( Node );
-
-                    Node.postChanges( false );
-
-                    if( View != null )
+                    break;
+                default:
+                    for( Int32 i = 0; i < NodeIds.Count; i++ )
                     {
-                        // Get the nodekey of this node in the current view
-                        ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-                        NbtNodeKey = Tree.getNodeKeyByNodeId( Node.NodeId );
-                        if( NbtNodeKey == null )
+                        string NodeId = NodeIds[i];
+                        string NodeKey = NodeKeys[i];
+                        Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+
+                        RetNbtNodeKey = _saveProp( Node, PropsObj, View );
+                        if( null != RetNbtNodeKey )
                         {
-                            // Make a nodekey from the default view
-                            View = Node.NodeType.CreateDefaultView();
-                            View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Node.NodeId );
-                            Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-                            NbtNodeKey = Tree.getNodeKeyByNodeId( Node.NodeId );
-                            if( false == string.IsNullOrEmpty( RetNodeKey ) )
-                            {
-                                RetNodeKey = wsTools.ToSafeJavaScriptParam( NbtNodeKey );
-                                RetNodeId = NodeId;
-                            }
+                            Succeeded++;
                         }
                     }
-                }
-                else
-                {
-                    AllSucceeded = false;
-                }
+                    AllSucceeded = NodeIds.Count == Succeeded;
+                    break;
             }
-            if( AllSucceeded )
+            if( AllSucceeded && null != RetNbtNodeKey )
             {
+                string RetNodeKey = wsTools.ToSafeJavaScriptParam( RetNbtNodeKey );
+                string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
+
                 ret = new JObject( new JProperty( "result", "Succeeded" ),
                                    new JProperty( "nodeid", RetNodeId ),
                                    new JProperty( "cswnbtnodekey", RetNodeKey ) );
             }
             else
             {
-                ret = new JObject( new JProperty( "result", "Failed" ) );
+                string ErrString = string.Empty;
+                if( EditMode == NodeEditMode.AddInPopup )
+                {
+                    ErrString = "Attempt to Add failed.";
+                }
+                else
+                {
+                    ErrString = Succeeded + " out of " + NodeIds.Count + " prop updates succeeded. Remaining prop updates failed";
+                }
+                ret = new JObject( new JProperty( "result", ErrString ) );
             }
 
             return ret;
         } // saveProps()
+
+        private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View )
+        {
+            CswNbtNodeKey Ret = null;
+            if( Node != null )
+            {
+                foreach( JObject PropObj in
+                    from PropJProp
+                        in PropsObj.Properties()
+                    where null != PropJProp.Value
+                    select (JObject) PropJProp.Value
+                        into PropObj
+                        where PropObj.HasValues
+                        select PropObj )
+                {
+                    _applyPropJson( Node, PropObj );
+                }
+
+                // BZ 8517 - this sets sequences that have setvalonadd = 0
+                _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( Node );
+
+                Node.postChanges( false );
+
+                if( View != null )
+                {
+                    // Get the nodekey of this node in the current view
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                    Ret = Tree.getNodeKeyByNodeId( Node.NodeId );
+                    if( Ret == null )
+                    {
+                        // Make a nodekey from the default view
+                        View = Node.NodeType.CreateDefaultView();
+                        View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Node.NodeId );
+                        Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                        Ret = Tree.getNodeKeyByNodeId( Node.NodeId );
+                    }
+                }
+            }
+            return Ret;
+        }
 
         public bool copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] PropIds )
         {
@@ -439,18 +461,21 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
                         CopyToNodePk.FromString( NodeIdStr );
-                        CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
-                        if( CopyToNode != null &&
-                            _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.NodeType, false, null, null, CopyToNode, null ) )
+                        if( Int32.MinValue != CopyToNodePk.PrimaryKey )
                         {
-                            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
-                                                                                       .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
+                            CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
+                            if( CopyToNode != null &&
+                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.NodeType, false, null, null, CopyToNode, null ) )
                             {
-                                CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
-                            }
+                                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
+                                    .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
+                                {
+                                    CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
+                                }
 
-                            CopyToNode.postChanges( false );
-                        } // if( CopyToNode != null )
+                                CopyToNode.postChanges( false );
+                            } // if( CopyToNode != null )
+                        }
                         else
                         {
                             ret = false;
@@ -553,7 +578,7 @@ namespace ChemSW.Nbt.WebServices
         public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column )
         {
             bool ret = false;
-            if( String.IsNullOrEmpty(Column) ) Column = "blobdata";
+            if( String.IsNullOrEmpty( Column ) ) Column = "blobdata";
 
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
@@ -574,7 +599,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        JctTable.Rows[0][Column] = Data ;
+                        JctTable.Rows[0][Column] = Data;
                     }
                     JctTable.Rows[0]["field1"] = FileName;
                     JctTable.Rows[0]["field2"] = ContentType;

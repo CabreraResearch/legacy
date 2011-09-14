@@ -59,15 +59,14 @@
     
     function makeOptions(valueArray) {
         var values = [];
-        crawlObject(valueArray, function(val, key) {
-            if ($.isPlainObject(val) && val.hasOwnProperty('value') && val.hasOwnProperty('display')) {
+        crawlObject(valueArray, function(val) {
+            if (val.hasOwnProperty('value') && val.hasOwnProperty('display')) {
                 values.push(val);
             }
-            else if ($.isPlainObject(val) && val.hasOwnProperty('value')) {
+            else if (val.hasOwnProperty('value')) {
                 var display = tryParseString(val.display, val.value);
                 values.push({ value: val.value, display: display });
-            }
-            else if (typeof val === 'string') {
+            } else {
                 values.push({ value: val, display: val });
             }
         }, false);

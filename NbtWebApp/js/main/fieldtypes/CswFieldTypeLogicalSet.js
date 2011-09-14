@@ -11,7 +11,6 @@
     var nameCol = 'name';
     var keyCol = 'key';
   
-
     var methods = {
         init: function(o) { 
 
@@ -36,11 +35,12 @@
         },
         save: function(o) { //$propdiv, $xml
             var $CBADiv = o.$propdiv.children('div').first();
+            var attributes = { logicalsetjson: null };
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
-                o.propData.values.logicalsetjson = formdata;
-                o.wasmodified = true;
-            } 
+                attributes.logicalsetjson = formdata;
+            }
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
             return $(this);
         } // save()
     };

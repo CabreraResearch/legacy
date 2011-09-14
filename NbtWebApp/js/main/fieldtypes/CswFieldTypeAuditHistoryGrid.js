@@ -29,8 +29,8 @@
             return ret;
         },
         save: function(o) {
-                
-            }
+            preparePropJsonForSave(o.propData);
+        }
     };
     
     // Method calling logic

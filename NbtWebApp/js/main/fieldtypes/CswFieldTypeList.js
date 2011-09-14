@@ -44,7 +44,7 @@
             if (false === isNullOrEmpty($SelectBox)) {
                 attributes.value = $SelectBox.val();
             }
-            preparePropJsonForSave(o.Multi, o, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

@@ -19,7 +19,7 @@
 
         },
         save: function (o) { //$propdiv, $xml
-            // no changes to save
+            preparePropJsonForSave(o.propData);
         }
     };
 

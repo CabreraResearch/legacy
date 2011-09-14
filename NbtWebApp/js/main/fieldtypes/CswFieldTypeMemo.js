@@ -38,7 +38,7 @@
             if (false === isNullOrEmpty($TextArea)) {
                 attributes.text = $TextArea.val();
             }
-            preparePropJsonForSave(o.Multi, o, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

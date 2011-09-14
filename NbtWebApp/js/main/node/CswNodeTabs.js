@@ -5,10 +5,8 @@
 /// <reference path="../fieldtypes/_CswFieldTypeFactory.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
-    $.fn.CswNodeTabs = function (options)
-	{
-
-		var o = {
+    $.fn.CswNodeTabs = function (options) {
+    	var o = {
 			ID: '',
 			TabsUrl: '/NbtWebApp/wsNBT.asmx/getTabs',
 			SinglePropUrl: '/NbtWebApp/wsNBT.asmx/getSingleProp',
@@ -19,8 +17,8 @@
 			CopyPropValuesUrl: '/NbtWebApp/wsNBT.asmx/copyPropValues',
 			NodePreviewUrl: '/NbtWebApp/wsNBT.asmx/getNodePreview',
 		    nodeids: [],
+		    nodepks: [],
 		    nodekeys: [],
-            nodenames: [],
 		    relatednodeid: '',
 			tabid: '',                
 			nodetypeid: '',           
@@ -50,9 +48,6 @@
 
 		var $outertabdiv = $('<div id="' + o.ID + '_tabdiv" />')
 						.appendTo($parent);
-		if (o.Multi && o.nodenames.length > 0) {
-		    $outertabdiv.append(o.nodenames.join(', '));
-		}
 		var tabcnt = 0;
 
 		getTabs(o);
@@ -76,7 +71,7 @@
 		function makeTabContentDiv($parent, tabid, canEditLayout)
 		{
 			var $tabcontentdiv = $('<div id="' + tabid + '"><form onsubmit="return false;" id="' + tabid + '_form" /></div>')
-				.appendTo($parent);
+				                    .appendTo($parent);
 			$tabcontentdiv.data('canEditLayout', canEditLayout);
 			return $tabcontentdiv;
 		}
@@ -95,17 +90,15 @@
 
 			// For performance, don't bother getting tabs if we're in Add or Preview
 			if( o.EditMode == EditMode.AddInPopup.name || 
-				o.EditMode == EditMode.Preview.name )
-			{
+				o.EditMode == EditMode.Preview.name ) {
 				var tabid = o.EditMode + "_tab";
-				var $tabcontentdiv = makeTabContentDiv($parent, tabid, false)
+			    var $tabcontentdiv = makeTabContentDiv($parent, tabid, false);
 				getProps($tabcontentdiv, tabid);
 			} else {
 				CswAjaxJson({
 					url: o.TabsUrl,
 					data: jsonData,
-					success: function (data)
-					{
+					success: function (data) {
 						clearTabs();
 						var tabdivs = [];
 						var selectedtabno = 0;
@@ -131,8 +124,7 @@
 
 						tabcnt = tabno;
 
-						for(var t in tabdivs)
-						{
+						for(var t in tabdivs) {
 							var $tabdiv = tabdivs[t];
 							$tabdiv.tabs({
 							selected: selectedtabno,
@@ -489,8 +481,7 @@
 						    rows: 1,
 						    columns: 2
 					    },
-					    onSwap: function (e, onSwapData)
-					    {
+					    onSwap: function (e, onSwapData) {
 						    onSwap(onSwapData);
 					    },
 					showConfigButton: false,
@@ -528,35 +519,35 @@
 		    
 		    // do a fake 'save' to update the json with the current value
 			$.CswFieldTypeFactory('save', fieldOpt);
+            if(fieldOpt.wasmodified) {
+                // update the propxml from the server
+                var jsonData = {
+                    EditMode: fieldOpt.editMode,
+                    NodeId: tryParseObjByIdx(o.nodeids, 0),
+                    SafeNodeKey: fieldOpt.cswnbtnodekey,
+                    PropId: propId,
+                    NodeTypeId: o.nodetypeid,
+                    NewPropJson: JSON.stringify(propData)
+                };
 
-			// update the propxml from the server
-			var jsonData = {
-				EditMode: fieldOpt.editMode,
-				NodeId: tryParseObjByIdx(o.nodeids, 0),
-				SafeNodeKey: fieldOpt.cswnbtnodekey,
-				PropId: propId,
-				NodeTypeId: o.nodetypeid,
-				NewPropJson: JSON.stringify(propData)
-			};
-
-			CswAjaxJson({
-				url: o.SinglePropUrl,
-				data: jsonData,
-				success: function (data)
-				{
-				    _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn );
-				}
-			});
+                CswAjaxJson({
+                    url: o.SinglePropUrl,
+                    data: jsonData,
+                    success: function(data) {
+                        _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn);
+                    }
+                });
+            }
 		} // _updateSubProps()
 
 		function Save($form, $layouttable, propsData, $savebtn, tabid) {
 			if($form.valid())
 			{
-				_updatePropJsonFromForm($layouttable, propsData);
+				var propIds = _updatePropJsonFromForm($layouttable, propsData);
 				var data = {
 					EditMode: o.EditMode,
-					NodeIds: o.nodeids.join(','),
-					SafeNodeKeys: o.nodekeys.join(','),
+					NodeIds: tryParseObjByIdx(o.nodeids, 0), // o.nodeids.join(','),
+					SafeNodeKeys: tryParseObjByIdx(o.nodekeys, 0), // o.nodekeys.join(','),
 					TabId: tabid,
 					NodeTypeId: o.nodetypeid,
 					NewPropsJson: JSON.stringify(propsData),
@@ -565,24 +556,33 @@
 
 				CswAjaxJson({
 					url: o.SavePropUrl,
-					data: data,
-					success: function (data)
-					{
+					async: (false === o.Multi),
+				    data: data,
+					success: function (data) {
 					    var doSave = true;
-						if(o.ShowCheckboxes)
-						{
+						var dataJson = {
+							SourceNodeKey: tryParseObjByIdx(o.nodekeys, 0),
+							CopyNodeIds: [],
+							PropIds: []
+						};
+					    function copyNodeProps(onSuccess) {
+							CswAjaxJson({
+								url: o.CopyPropValuesUrl,
+								data: dataJson,
+							    success: function (copy) {
+							        if(isFunction(onSuccess)) {
+							            onSuccess(copy);
+							        }
+							    }
+							}); // ajax						        
+						}
+					    if(o.ShowCheckboxes) {
 							// apply the newly saved checked property values on this node to the checked nodes
 							var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
 							var $propchecks = $('.' + o.ID + '_check:checked');
-							if($nodechecks.length > 0 && $propchecks.length > 0)
-							{
-								var dataJson = {
-									SourceNodeKey: tryParseObjByIdx(o.nodekeys, 0),
-									CopyNodeIds: [],
-									PropIds: []
-								};
-								
-								$nodechecks.each(function() { 
+							
+						    if($nodechecks.length > 0 && $propchecks.length > 0) {
+						        $nodechecks.each(function() { 
 									var nodeid = $(this).CswAttrDom('nodeid');
 									dataJson.CopyNodeIds.push(nodeid); 
 								});
@@ -591,66 +591,68 @@
 									var propid = $(this).CswAttrDom('propid');
 									dataJson.PropIds.push(propid);
 								});
-
-								CswAjaxJson({
-									url: o.CopyPropValuesUrl,
-									data: dataJson
-								}); // ajax
+						        copyNodeProps();
 							} // if($nodechecks.length > 0 && $propchecks.length > 0)
-							else
-							{
+							else {
 								doSave = false;
 								alert('You have not selected any properties to save.');
 							}
 						} // if(o.ShowCheckboxes)
+					    else if(o.Multi) {
+						    dataJson.CopyNodeIds = o.nodeids;
+					        dataJson.PropIds = propIds;
+					        copyNodeProps(function () { window.location.reload(); });
+					    }
 						if (isFunction(o.onSave) && doSave) o.onSave(data.nodeid, data.cswnbtnodekey, tabcnt);
 						$savebtn.CswButton('enable');
 					}, // success
-					error: function()
-					{
+					error: function() {
 						$savebtn.CswButton('enable');
 					}
 				}); // ajax
 			} // if($form.valid())
-			else 
-			{
+			else {
 				$savebtn.CswButton('enable');
 			}
 		} // Save()
 
 		function _updatePropJsonFromForm($layouttable, propData) {
-		    var updSuccess = function(thisProp, propKey) {
-                var propOpt = {
-				    propData: thisProp,
-				    $propdiv: '',
-				    $propCell: '',
-				    fieldtype: thisProp.fieldtype,
-				    nodeid: tryParseObjByIdx(o.nodeids, 0),
-                    Multi: o.Multi,
-				    cswnbtnodekey: o.cswnbtnodekey
-				};
-				    
-				var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
-				propOpt.$propcell = _getPropertyCell($cellset);
-				propOpt.$propdiv = propOpt.$propcell.children('div').first();
+		    var propIds = [];
+		    var updSuccess = function(thisProp, propKey, propData) {
+		        var propOpt = {
+		            propData: thisProp,
+		            $propdiv: '',
+		            $propCell: '',
+		            fieldtype: thisProp.fieldtype,
+		            nodeid: tryParseObjByIdx(o.nodeids, 0),
+		            Multi: o.Multi,
+		            cswnbtnodekey: o.cswnbtnodekey
+		        };
 
-				$.CswFieldTypeFactory('save', propOpt);
+		        var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
+		        propOpt.$propcell = _getPropertyCell($cellset);
+		        propOpt.$propdiv = propOpt.$propcell.children('div').first();
 
-				// recurse on subprops
-				if (isTrue(thisProp.hassubprops) && thisProp.hasOwnProperty('subprops')) {
-				    var subProps = thisProp.subprops;
-				    if (!isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
-				        var $subtable = propOpt.$propcell.children('#' + thisProp.id + '_subproptable').first();
-				        if ($subtable.length > 0) {
-				            _updatePropJsonFromForm($subtable, subProps);
-				        }
-				    }
-				}
+		        $.CswFieldTypeFactory('save', propOpt);
+		        if (propOpt.propData.wasmodified) {
+		            propIds.push(propOpt.propData.id);
+		        }
+
+		        // recurse on subprops
+		        if (isTrue(thisProp.hassubprops) && contains(thisProp, 'subprops')) {
+		            var subProps = thisProp.subprops;
+		            if (false === isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
+		                var $subtable = propOpt.$propcell.children('#' + thisProp.id + '_subproptable').first();
+		                if ($subtable.length > 0) {
+		                    _updatePropJsonFromForm($subtable, subProps);
+		                }
+		            }
+		        }
 		        return false;
 		    };
-
 		    crawlObject(propData, updSuccess, false);
-	} // _updatePropXmlFromForm()
+		    return propIds;
+		} // _updatePropXmlFromForm()
 
 		// For proper chaining support
 		return this;

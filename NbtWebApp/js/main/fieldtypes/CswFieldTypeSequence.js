@@ -40,7 +40,7 @@
             if (false === isNullOrEmpty($sequence)) {
                 attributes.sequence = $sequence.val();
             }
-            preparePropJsonForSave(o.Multi, o, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

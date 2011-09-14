@@ -46,6 +46,7 @@
 				    var jqGridOpt = gridJson.jqGridOpt;
 
 				    var g = {
+				        ID: o.ID,
 				        canEdit: isTrue(jqGridOpt.CanEdit),
 				        canDelete: isTrue(jqGridOpt.CanDelete),
 				        hasPager: true,
@@ -63,26 +64,21 @@
 				        g.gridOpts.width = '650px';
 				    }
 
-				    if (o.EditMode === EditMode.PrintReport.name)
-				    {
+				    if (o.EditMode === EditMode.PrintReport.name) {
 				        g.gridOpts.caption = '';
 				        g.hasPager = false;
-				    }
-				    else
-				    {
-				        g.optNavEdit =
-    				    {
-    				        editfunc: function(rowid)
-    				        {
+				    } else {
+				        g.optNavEdit = {
+    				        editfunc: function(rowid) {
     				            var editOpt = {
     				                cswnbtnodekey: [],
-    				                nodeid: [],
+    				                nodepk: [],
     				                nodename: []
     				            };
     				            var editFunc = function(opts) {
     				                opts.onEditNode = o.onEditNode;
     				                opts.renameProperty('cswnbtnodekey', 'nodekeys');
-    				                opts.renameProperty('nodeid', 'nodeids');
+    				                opts.renameProperty('nodepk', 'nodeids');
     				                opts.renameProperty('nodename', 'nodenames');
     				                $.CswDialog('EditNodeDialog', opts);
     				            };
@@ -94,17 +90,16 @@
     				    };
 						
 				        g.optNavDelete = {
-						    delfunc: function(rowid)
-						    {
+						    delfunc: function(rowid) {
 						        var delOpt = {
 						            cswnbtnodekey: '',
-						            nodeid: '',
+						            nodepk: '',
 						            nodename: ''
 						        };
     				            var delFunc = function(opts) {
     				                opts.onDeleteNode = o.onDeleteNode;
     				                opts.renameProperty('cswnbtnodekey', 'cswnbtnodekeys');
-    				                opts.renameProperty('nodeid', 'nodeids');
+    				                opts.renameProperty('nodepk', 'nodeids');
     				                opts.renameProperty('nodename', 'nodenames');
     				                $.CswDialog('DeleteNodeDialog', opts);
     				            };

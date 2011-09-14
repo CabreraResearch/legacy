@@ -83,7 +83,7 @@
             if (false === isNullOrEmpty($IsExpiredCheck) && $IsExpiredCheck.length > 0) {
                 attributes.isexpired = $IsExpiredCheck.is(':checked');    
             }
-            preparePropJsonForSave(o.Multi, o, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

@@ -50,7 +50,7 @@
                 base: o.$propdiv.CswNumberTextBox('value', o.ID + '_val'),
                 exponent: o.$propdiv.CswNumberTextBox('value', o.ID + '_exp')
             };
-            preparePropJsonForSave(o.Multi, o, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

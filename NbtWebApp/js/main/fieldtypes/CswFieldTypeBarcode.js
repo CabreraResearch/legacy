@@ -57,7 +57,7 @@
             if(false === isNullOrEmpty($TextBox)) {
                 attributes.barcode = $TextBox.val();
             }
-            preparePropJsonForSave(o.Multi, o, attributes);
+            preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

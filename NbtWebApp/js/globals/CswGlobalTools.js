@@ -249,24 +249,24 @@ function tryParseNumber(inputNum, defaultNum) {
 }
 
 function contains(object, index) {
-    /// <summary>Determines whether an object or an array contains a property or index</summary>
+    /// <summary>Determines whether an object or an array contains a property or index. Null-safe.</summary>
 	/// <param name="object" type="Object"> An object to evaluate </param>
 	/// <param name="index" type="String"> An index or property to find </param>
     /// <returns type="Boolean" />
     var ret = false;
-    if ((isArray(object) && object.indexOf(index) !== -1) || object.hasOwnProperty(index)) {
+    if (false === isNullOrUndefined(object) && 
+        (isArray(object) && object.indexOf(index) !== -1) || 
+        object.hasOwnProperty(index)) {
         ret = true;
     }
     return ret;
 }
 
 function tryParseObjByIdx(object, index, defaultStr) {
-    /// <summary>
-	///   Attempts to fetch the value at an array index
-	/// </summary>
+    /// <summary> Attempts to fetch the value at an array index. Null-safe.</summary>
 	/// <param name="object" type="Object"> Object or array to parse </param>
 	/// <param name="index" type="String"> Index or property to find </param>
-    /// <param name="defaultStr" type="String"> Optional. String to use instead of '' if not index does not exist. </param>
+    /// <param name="defaultStr" type="String"> Optional. String to use instead of '' if index does not exist. </param>
 	/// <returns type="String">Parsed string</returns>
     var ret = '';
     if (false === isNullOrEmpty(defaultStr)) {
@@ -281,9 +281,7 @@ function tryParseObjByIdx(object, index, defaultStr) {
 }
 
 function tryParseElement(elementId, $context) {
-	/// <summary>
-	///   Attempts to fetch an element from the DOM first through jQuery, then through JavaScript
-	/// </summary>
+	/// <summary>Attempts to fetch an element from the DOM first through jQuery, then through JavaScript.</summary>
 	/// <param name="elementId" type="String"> ElementId to find </param>
 	/// <param name="$context" type="jQuery"> Optional context to limit the search </param>
 	/// <returns type="jQuery">jQuery object, empty if no match found.</returns>
@@ -349,31 +347,49 @@ function ObjectHelper(obj) {
 	/// <param name="obj" type="Object"> Object to search </param>
 	/// <returns type="ObjectHelper"></returns>
     var thisObj = obj;
+    var currentObj = null;
+    var parentObj = thisObj;
+    var currentKey = null;
+    var parentKey = null;
     
     function find(key, value) {
-         /// <summary>Find a property's parent</summary>
+        /// <summary>Find a property's parent</summary>
         /// <param name="key" type="String"> Property name to match. </param>
         /// <param name="value" type="Object"> Property value to match </param>
 	    /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
         var ret = false;
-		var onSuccess = function (childObj, childKey, parentObj) {
-            var found = false;
-			if (foundMatch(childObj, key, value)) {
-			    ret = parentObj;
-			    found = true;
-			}
-		    return found;
+		if (foundMatch(thisObj, key, value)) {
+			ret = thisObj;
+			currentObj = ret;
+			parentObj = ret;
+			currentKey = key;
 		};
-        crawlObject(thisObj, onSuccess, true);
+		if (false === ret) {
+			var onSuccess = function (childObj, childKey, parObj) {
+				var found = false;
+				if (foundMatch(childObj, key, value)) {
+					ret = childObj;
+					currentObj = ret;
+					parentObj = parObj;
+					currentKey = childKey;
+					found = true;
+				}
+				return found;
+			};
+			crawlObject(thisObj, onSuccess, true);
+		}
         return ret;
     }
     
     function remove(key, value) {
-        var onSuccess = function (childObj, childKey, parentObj) {
+        var onSuccess = function (childObj, childKey, parObj) {
             var deleted = false;
             if (foundMatch(childObj, key, value)) {
                 deleted = true;
-                delete parentObj[childKey];
+                delete parObj[childKey];
+                currentKey = null;
+                currentObj = null;
+                parentObj = parentObj;
             }
             return deleted;
     	};
@@ -383,6 +399,9 @@ function ObjectHelper(obj) {
     this.find = find;
     this.remove = remove;
     this.obj = thisObj;
+    this.parentObj = parentObj;
+    this.currentObj = currentObj;
+    this.currentKey = currentObj;
 }
 
 //http://stackoverflow.com/questions/7356835/jquery-each-fumbles-if-non-array-object-has-length-property
@@ -398,7 +417,7 @@ function each(thisObj, onSuccess) {
                 var childObj = thisObj[childKey];
                 ret = onSuccess(childObj, childKey, thisObj, value);
                 if(ret) {
-                    return false;
+                    return false; //false signals break
                 }
             });
         }
@@ -419,10 +438,10 @@ function each(thisObj, onSuccess) {
 
 //borrowed from http://code.google.com/p/shadejs
 function crawlObject(thisObj, onSuccess, doRecursion) {
-    /// <summary>Iterates (optionally recursively) an object and exec a function on each of its properties.</summary>
+    /// <summary>Iterates (optionally recursively) an object and executes a function on each of its properties.</summary>
 	/// <param name="thisObj" type="Object"> An object to crawl </param>
-	/// <param name="onSuccess" type="Function"> A function to execute on finding a property </param>
-    /// <param name="doRecursion" type="Boolean"> If true, recurse on all properties </param>
+	/// <param name="onSuccess" type="Function"> A function to execute on finding a property. To force iteration to stop, onSuccess should return false. </param>
+    /// <param name="doRecursion" type="Boolean"> If true, recurse on all properties. Recursion will stop if onSuccess returns false. </param>
     /// <returns type="Object">Returns the return of onSuccess</returns>
     var stopCrawling = false;
     var onEach = function(childObj, childKey, parentObj, value) {
