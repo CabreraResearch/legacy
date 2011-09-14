@@ -25,13 +25,13 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
     
     //#region private
     var pageDef = { };
-    var id = CswMobilePage_Type.views.id;
-    var title = CswMobilePage_Type.views.title;
-    var divSuffix = '_views';
-    var ulSuffix = '_list';
-    var $contentPage = $page.find('div:jqmData(role="content")');
-    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null: $contentPage.find('#' + id + divSuffix);
-    var contentDivId;
+    var id = CswMobilePage_Type.views.id,
+        title = CswMobilePage_Type.views.title,
+        divSuffix = '_views',
+        ulSuffix = '_list',
+        $contentPage = $page.find('div:jqmData(role="content")'),
+        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null: $contentPage.find('#' + id + divSuffix),
+        contentDivId;
     
     //ctor
     (function() {
@@ -120,7 +120,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         if (isNullOrEmpty(viewJson)) {
-            viewJson = mobileStorage.fetchCachedViewJson(id);
+            viewJson = mobileStorage.fetchCachedViewJson(CswMobileGlobal_Config.storedViews);
         }
         
         $content = ensureContent($content, contentDivId);
@@ -132,8 +132,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         var listView = new CswMobileListView(ulDef, $content);
 
         var viewCount = 0;
-        for(var viewId in viewJson)
-        {
+        for(var viewId in viewJson) {
             if(viewJson.hasOwnProperty(viewId)) {
                 var viewName = viewJson[viewId];
                 var opts = {

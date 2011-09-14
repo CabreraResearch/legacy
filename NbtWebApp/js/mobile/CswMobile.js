@@ -51,7 +51,7 @@ CswAppMode.mode = 'mobile';
             Logout(mobileStorage);
         }
 
-        var storedViews = mobileStorage.getItem('storedViews');
+        var storedViews = mobileStorage.getItem(CswMobileGlobal_Config.storedViews);
         
         var mobileSyncOptions = {
             onSync: processModifiedNodes,
@@ -164,7 +164,8 @@ CswAppMode.mode = 'mobile';
                 onRefreshClick: onRefreshClick,
                 onHelpClick: onHelpClick,
                 mobileStorage: mobileStorage,
-                mobileSync: mobileSync
+                mobileSync: mobileSync,
+                mobileBgTask: mobileBgTask
             };
             onlinePage = new CswMobilePageFactory(CswMobilePage_Type.online, syncDef, $('body') );
             return onlinePage;
@@ -382,30 +383,23 @@ CswAppMode.mode = 'mobile';
         function processModifiedNodes(onSuccess) {
             if(!isNullOrEmpty(onSuccess)) {
                 var modified = false;
-                if (isNullOrEmpty(storedViews))
-                {
-                    storedViews = mobileStorage.getItem('storedviews');
+                if (isNullOrEmpty(storedViews)) {
+                    storedViews = mobileStorage.getItem(CswMobileGlobal_Config.storedViews);
                 }
-                if (!isNullOrEmpty(storedViews))
-                {
-                    for (var viewid in storedViews)
-                    {
+                if (!isNullOrEmpty(storedViews)) {
+                    for (var viewid in storedViews) {
                         var view = mobileStorage.getItem(viewid);
-                        if (!isNullOrEmpty(view))
-                        {
-                            for (var nodeId in view['json'])
-                            {
+                        if (!isNullOrEmpty(view)) {
+                            for (var nodeId in view['json']) {
                                 var node = mobileStorage.getItem(nodeId);
-                                if (!isNullOrEmpty(node) && node['wasmodified'])
-                                {
+                                if (!isNullOrEmpty(node) && node['wasmodified']) {
                                     modified = true;
                                     onSuccess(nodeId, node);
                                 }
                             }
                         }
                     }
-                    if (!modified)
-                    {
+                    if (!modified) {
                         onSuccess();
                     }
                 }
@@ -419,22 +413,18 @@ CswAppMode.mode = 'mobile';
                 setOnline(mobileStorage);
                 var completed = isTrue(data['completed']);
                 var isView = !isNullOrEmpty(data['nodes']);
-                if (isView)
-                {
+                if (isView) {
                     var json = data['nodes'];
                     mobileStorage.updateStoredViewJson(objectId, json, false);
-                } else if (!completed)
-                {
+                } else if (!completed) {
                     mobileStorage.updateStoredNodeJson(objectId, objectJson, false);
                 }
 
                 resetPendingChanges(true);
 
-                if (completed && !isView)
-                {
+                if (completed && !isView) {
                     mobileStorage.deleteNode(objectId, objectJson['viewid']);
-                    if (!isBackgroundTask)
-                    {
+                    if (!isBackgroundTask) {
                         $('#' + objectJson['viewid']).CswChangePage();
                     }
                 }

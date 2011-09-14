@@ -12,43 +12,43 @@ var CswMobileCssClasses = {
 var CswMobileHeaderButtons = {
     back: {name: 'back', 
             ID: 'back',
-	        text: 'Back',
-	        cssClass: 'ui-btn-left',
-	        dataDir: 'reverse',
-	        dataIcon: 'arrow-l',
+            text: 'Back',
+            cssClass: 'ui-btn-left',
+            dataDir: 'reverse',
+            dataIcon: 'arrow-l',
             dataRelationship: 'back'
     },
     search: {name: 'search',
              ID: 'search',
-			 text: 'Search',
-			 cssClass: 'ui-btn-right'
+             text: 'Search',
+             cssClass: 'ui-btn-right'
     }
 };
 var CswMobileFooterButtons = {
     online: {name: 'online',
              ID: 'online',
              text: 'Online',
-			 cssClass: CswMobileCssClasses.onlineStatus.name + ' ui-btn-active ',
-			 dataIcon: 'gear'
+             cssClass: CswMobileCssClasses.onlineStatus.name + ' ui-btn-active ',
+             dataIcon: 'gear'
     },
     refresh: {name: 'refresh',
               ID: 'refresh',
-			  text: 'Refresh',
-		      cssClass: 'refresh',
-			  dataIcon: 'refresh'
+              text: 'Refresh',
+              cssClass: 'refresh',
+              dataIcon: 'refresh'
     
     },
     fullsite: {name: 'main',
                ID: 'main',
-	           text: 'Full Site',
-	           href: 'Main.html',
-	           rel: 'external',
-	           dataIcon: 'home'
+               text: 'Full Site',
+               href: 'Main.html',
+               rel: 'external',
+               dataIcon: 'home'
     },
     help: {name: 'help',
            ID: 'help',
-		   text: 'Help',
-		   dataIcon: 'info'
+           text: 'Help',
+           dataIcon: 'info'
     }
 };
 var CswMobilePage_Type = {
@@ -63,5 +63,6 @@ var CswMobilePage_Type = {
     views: { name: 'views', id: 'viewsdiv', title: 'Views' }
 };
 var CswMobileGlobal_Config = {
-    theme: 'b'
+    theme: 'b',
+    storedViews: 'storedviews'
 };
