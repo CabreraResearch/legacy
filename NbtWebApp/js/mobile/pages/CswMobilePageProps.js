@@ -39,27 +39,27 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
     
     //ctor
     (function () {
-        
+
         var p = {
-                level: 1,
-                ParentId: '',
-                DivId: '', 
-                viewId: mobileStorage.currentViewId(),
-                tabId: mobileStorage.currentTabId(),
-                tabName: '',
-                nodeId: mobileStorage.currentNodeId(),
-                title: '',
-                theme: CswMobileGlobal_Config.theme,
-                headerDef: { buttons: {} },
-                footerDef: { buttons: {} },
-                onHelpClick: null, //function () {},
-                onOnlineClick: null, //function () {},
-                onRefreshClick: null, //function () {},
-                onSearchClick: null, //function () {}
-                onListItemSelect: null, //function () {}
-                onPropChange: null //function () {}s
-            },
-            buttons = { };
+            level: 1,
+            ParentId: '',
+            DivId: '',
+            viewId: mobileStorage.currentViewId(),
+            tabId: mobileStorage.currentTabId(),
+            tabName: '',
+            nodeId: mobileStorage.currentNodeId(),
+            title: '',
+            theme: CswMobileGlobal_Config.theme,
+            headerDef: { buttons: { } },
+            footerDef: { buttons: { } },
+            onHelpClick: null, //function () {},
+            onOnlineClick: null, //function () {},
+            onRefreshClick: null, //function () {},
+            onSearchClick: null, //function () {}
+            onListItemSelect: null, //function () {}
+            onPropChange: null //function () {}s
+        };
+        var buttons = { };
         
         if (propsDef) $.extend(p, propsDef);
         if (false === isNullOrEmpty(p.DivId)) {
@@ -122,7 +122,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         for (propId in tabJson) {
             if (contains(tabJson, propId)) {
                 propJson = tabJson[propId];
-                if (false == isNullOrEmpty(propJson) && propId !== 'nexttab') {
+                if (false === isNullOrEmpty(propJson) && propId !== 'nexttab') {
                     propName = propJson['prop_name'];
                     ftDef = {
                         propId: propId,
@@ -174,9 +174,9 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
                     onRefreshClick: pageDef.onRefreshClick,
                     mobileStorage: mobileStorage
                 };
-                onClick = function() { pageDef.onListItemSelect(opts); }; //makeDelegate(pageDef.onListItemSelect, opts);    
+                onClick = makeDelegate(pageDef.onListItemSelect, opts);    
             }
-            listView.addListItemLink(makeSafeId({ prefix: id, ID: nextTab }), nextTab, onClick);    
+            listView.addListItemLink(makeSafeId({ prefix: id, ID: nextTab }), nextTab, { event: onClick, name: CswDomElementEvent.click.name });    
         }
         if (propCount === 0) {
             makeEmptyListView(listView, $content, 'No Properties to Display');

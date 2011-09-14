@@ -1,9 +1,10 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
 /// <reference path="ICswMobileWebControls.js" />
-/// <reference path="../../CswEnums.js" />
-/// <reference path="../CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 //#region CswMobileListView
 
@@ -23,62 +24,65 @@ function CswMobileListView(listDef, $parent, bindEvent) {
 
     ICswMobileWebControls.call(this);
     
-    var o, $control, classes, styles, cssClass, enabled, visible, listId;
-    var liSuffix = '_li';
-    var ulSuffix = '_ul';
-    var aSuffix = '_a';
-    var eventName = CswDomElementEvent.click.name;
-    if (!isNullOrEmpty(bindEvent)) {
+    var liSuffix = '_li',
+        ulSuffix = '_ul',
+        aSuffix = '_a',
+        eventName = CswDomElementEvent.click.name,
+        o, $control, classes, styles, cssClass, enabled, visible, listId;
+    
+    if (false === isNullOrEmpty(bindEvent)) {
         eventName = bindEvent.name;
     }
     
     //ctor
     (function() {
-        var p = {
-            ID: '',
-            enabled: true,
-            visible: true,
-            cssStyles: { 'display': '' },
-            cssClass: '',
-            'data-filter': false,
-            'data-inset': true,
-            showLoading: true
-            //onClick: '' //function () {}
-        };
-
+            var p = {
+                ID: '',
+                enabled: true,
+                visible: true,
+                cssStyles: { 'display': '' },
+                cssClass: '',
+                'data-filter': false,
+                'data-inset': true,
+                showLoading: true
+                //onClick: '' //function () {}
+            }, 
+            $ul, ulAttr;
         if (listDef) $.extend(p, listDef);
-
+        
         if (isNullOrEmpty($parent)) {
             throw ('Cannot create a list view without a parent');
+        } else {
+            listId = p.ID + ulSuffix;
+            $ul = $parent.find('#' + listId);
+            
+            if (isNullOrEmpty($ul) || $ul.length === 0) {
+                $ul = $('<ul id="' + listId + '"></ul>').appendTo($parent);
+            }
+
+            ulAttr = {
+                'data-filter': p['data-filter'],
+                'data-role': 'listview',
+                'data-inset': p['data-inset']
+            };
+
+            $ul.CswAttrXml(ulAttr)
+                .css(p.cssStyles);
+
+            classes = p.cssClass.split(' ');
+
+            if (classes.length > 0) {
+                $ul.addClass(p.cssClass);
+            }
+
+            if (p.showLoading) {
+                $ul.bind('click', startLoadingMsg);
+            }
+
+            o = p;
+            cssClass = p.cssClass;
+            $control = $ul.trigger('create');
         }
-        listId = p.ID + ulSuffix;
-        var $ul = $parent.find('#' + listId);
-        if (isNullOrEmpty($ul) || $ul.length === 0) {
-            $ul = $('<ul id="' + listId + '"></ul>').appendTo($parent);
-        }
-
-        var ulAttr = {
-            'data-filter': p['data-filter'],
-            'data-role': 'listview',
-            'data-inset': p['data-inset']
-        };
-
-        $ul.CswAttrXml(ulAttr)
-            .css(p.cssStyles);
-
-        classes = p.cssClass.split(' ');
-
-        if (classes.length > 0) {
-            $ul.addClass(p.cssClass);
-        }
-
-        if (p.showLoading) {
-            $ul.bind('click', startLoadingMsg);
-        }
-
-        o = p;
-        cssClass = p.cssClass;
-        $control = $ul.trigger('create');
     })(); //ctor
     
     function addListItemLink(id, text, onEvent, options) {
@@ -100,11 +104,11 @@ function CswMobileListView(listDef, $parent, bindEvent) {
 
         var $li = addListItem(id, '', onEvent, p);
         $li.CswLink('init', { ID: id + aSuffix, href: 'javascript:void(0);', value: text })
-											  .css('white-space', 'normal')
-											  .CswAttrXml({
-											  'data-identity': id,
-											  'data-url': id
-										  });
+                                              .css('white-space', 'normal')
+                                              .CswAttrXml({
+                                              'data-identity': id,
+                                              'data-url': id
+                                          });
         $control.trigger('create');
         return $li;
     }
@@ -196,15 +200,22 @@ function CswMobileListView(listDef, $parent, bindEvent) {
     }
     
     function doEventBind($li,onEvent) {
-        if (!isNullOrEmpty(onEvent)) {
+        /// <summary> Binds an event to the list item on either the global eventName or on the { name: eventName, event: function() }</summary>
+        /// <param name="$li" type="JQuery">LI Element</param>
+        /// <param name="onEvent" type="String">Text to display</param>
+        /// <param name="options" type="Object">JSON options to append.</param>
+        /// <returns type="jQuery">The list item created.</returns>
+        if (false === isNullOrUndefined(onEvent)) {
             if (isFunction(onEvent)) {
                 $li.bind(eventName, onEvent);
             }
-            else if (onEvent.hasOwnProperty('name') &&
-                     onEvent.hasOwnProperty('event')) {
-                var name = onEvent.eventname;
-                var event = onEvent.event;
-                $li.bind(name, event);
+            else if (contains(onEvent, 'name') &&
+                     contains(onEvent, 'event')) {
+                var name = onEvent.name,
+                    event = onEvent.event;
+                if (false === isNullOrEmpty(name) && isFunction(event)) {
+                    $li.bind(name, event);
+                }
             }
         }
     }
