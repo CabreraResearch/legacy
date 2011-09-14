@@ -16,9 +16,9 @@ function CswMobileFieldTypeQuantity(ftDef) {
 
     //#region private
 
-    var divSuffix = '_propdiv';
-    var propSuffix = '_input';
-    var $content, contentDivId, elementId, propId, propName, subfields, value, units, gestalt;
+    var divSuffix = '_propdiv',
+        propSuffix = '_input',
+        $content, contentDivId, elementId, propId, propName, subfields, value, units, gestalt;
     
     //ctor
     (function () {
@@ -28,9 +28,9 @@ function CswMobileFieldTypeQuantity(ftDef) {
                 gestalt: '',
                 value: '',
                 units: ''
-            },
-            propVals = p.values;
+            };
         if (ftDef) $.extend(p, ftDef);
+        var propVals = p.values;
 
         propId = p.propId;
         propName = p.propName;
@@ -40,7 +40,7 @@ function CswMobileFieldTypeQuantity(ftDef) {
         subfields = CswSubFields_Map.Quantity.subfields;        
         value = tryParseString(propVals[subfields.Value.name]);
         units = tryParseString(propVals[subfields.Units.name]);
-        if (!isNullOrEmpty(units)) {
+        if (false === isNullOrEmpty(units)) {
             value += ' ' + units;
         }
         gestalt = tryParseString(p.gestalt);

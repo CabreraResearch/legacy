@@ -16,9 +16,9 @@ function CswMobileFieldTypeLink(ftDef) {
 
     //#region private
 
-    var divSuffix = '_propdiv';
-    var propSuffix = '_input';
-    var $content, contentDivId, elementId, propId, propName, subfields, value, href, gestalt;
+    var divSuffix = '_propdiv',
+        propSuffix = '_input',
+        $content, contentDivId, elementId, propId, propName, subfields, value, href, gestalt;
     
     //ctor
     (function () {
@@ -28,10 +28,9 @@ function CswMobileFieldTypeLink(ftDef) {
                 gestalt: '',
                 text: '',
                 href: ''
-            },
-            propVals = p.values;
-        
+            };
         if (ftDef) $.extend(p, ftDef);
+        var propVals = p.values;
 
         propId = p.propId;
         propName = p.propName;

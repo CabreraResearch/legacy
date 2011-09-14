@@ -16,9 +16,10 @@ function CswMobileFieldTypeDate(ftDef) {
 
     //#region private
 
-    var divSuffix = '_propdiv';
-    var propSuffix = '_input';
-    var $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
+    var divSuffix = '_propdiv',
+        propSuffix = '_input',
+        value = '',
+        $content, contentDivId, elementId, propId, propName, subfields, gestalt;
     
     //ctor
     (function () {
@@ -27,15 +28,14 @@ function CswMobileFieldTypeDate(ftDef) {
                 propName: '',
                 gestalt: '',
                 value: ''
-            },
-            propVals = p.values,
+            };
+        if (ftDef) $.extend(p, ftDef);
+        var propVals = p.values,
             date = tryParseString(propVals.value.date).trim(),
             time = tryParseString(propVals.value.time).trim(),
             dateFormat = ServerDateFormatToJQuery(propVals.value.dateformat),
             timeFormat = ServerTimeFormatToJQuery(propVals.value.timeformat),
             displayMode = propVals.displaymode;
-        
-        if (ftDef) $.extend(p, ftDef);
 
         propId = p.propId;
         propName = p.propName;
@@ -46,8 +46,7 @@ function CswMobileFieldTypeDate(ftDef) {
         
         $content = ensureContent($content, contentDivId);
         gestalt = tryParseString(p.gestalt, '');
-        
-        value = '';
+
         switch (displayMode.toLowerCase()) {
             case subfields.DisplayMode.DateTime.name.toLowerCase():
                 value = date + ' ' + time;

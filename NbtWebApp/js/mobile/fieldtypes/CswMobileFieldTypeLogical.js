@@ -16,9 +16,9 @@ function CswMobileFieldTypeLogical(ftDef) {
 
     //#region private
 
-    var divSuffix = '_propdiv';
-    var propSuffix = '_input';
-    var $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
+    var divSuffix = '_propdiv',
+        propSuffix = '_input',
+        $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
     
     //ctor
     (function () {
@@ -29,14 +29,13 @@ function CswMobileFieldTypeLogical(ftDef) {
                 value: '',
                 checked: 'false',
                 required: false
-            },
-            propVals = p.values,
+            };
+        if (ftDef) $.extend(p, ftDef);
+        var propVals = p.values,
             suffix = 'ans',
             answers = ['True', 'False'],
             answertext = '',
             $fieldset, i, inputName, inputId, $input;
-            
-        if (ftDef) $.extend(p, ftDef);
 
         propId = p.propId;
         propName = p.propName;
@@ -53,7 +52,7 @@ function CswMobileFieldTypeLogical(ftDef) {
         $fieldset = $('<fieldset class="csw_fieldset"></fieldset>')
                             .CswAttrDom({
                                 'class': CswMobileCssClasses.fieldset.name,
-                                'id': id + divSuffix
+                                'id': propId + divSuffix
                             })
                             .CswAttrXml({
                                 'data-role': 'controlgroup',
@@ -80,7 +79,7 @@ function CswMobileFieldTypeLogical(ftDef) {
                         break;
                 }
 
-                inputId = makeSafeId({ prefix: id, ID: suffix, suffix: answers[i] });
+                inputId = makeSafeId({ prefix: propId, ID: suffix, suffix: answers[i] });
 
                 $fieldset.append('<label for="' + inputId + '">' + answertext + '</label>');
                 $input = $fieldset.CswInput('init', { type: CswInput_Types.radio, name: inputName, ID: inputId, value: answers[i] });

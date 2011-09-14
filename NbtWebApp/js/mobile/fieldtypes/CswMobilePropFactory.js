@@ -34,20 +34,24 @@ function CswMobilePropsFactory(propDef) {
     
     //ctor
     (function () {
-        
-        var p = {
-                nodeId: '',
-                tabId: '',
-                viewId: '',
-                propId: '',
-                propName: '',
-                fieldtype: CswSubFields_Map.Static.name
-                //prop data follows
-            },
-            field = tryParseString(p.fieldtype, '');
-        
-        if (propDef) $.extend(p, propDef);
 
+        var p = {
+            nodeId: '',
+            tabId: '',
+            viewId: '',
+            isreadonly: false,
+            propId: '',
+            propName: '',
+            fieldtype: CswSubFields_Map.Static.name
+            //prop data follows
+        };
+        if (propDef) $.extend(p, propDef);
+        var field = tryParseString(p.fieldtype, '');
+        
+        if (p.isreadonly) {
+            field = CswSubFields_Map.Static.name;
+        }
+        
         nodeId = p.nodeId;
         tabId = p.tabId;
         viewId = p.viewId;

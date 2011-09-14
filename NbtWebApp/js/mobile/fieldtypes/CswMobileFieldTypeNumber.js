@@ -16,9 +16,9 @@ function CswMobileFieldTypeNumber(ftDef) {
 
     //#region private
 
-    var divSuffix = '_propdiv';
-    var propSuffix = '_input';
-    var $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
+    var divSuffix = '_propdiv',
+        propSuffix = '_input',
+        $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
     
     //ctor
     (function () {
@@ -27,9 +27,9 @@ function CswMobileFieldTypeNumber(ftDef) {
                 propName: '',
                 gestalt: '',
                 value: ''
-            },
-            propVals = p.values;
+            };
         if (ftDef) $.extend(p, ftDef);
+        var propVals = p.values;
 
         propId = p.propId;
         propName = p.propName;

@@ -9,17 +9,17 @@
 //#region CswMobileFieldTypeList
 
 function CswMobileFieldTypeList(ftDef) {
-	/// <summary>
-	///   List field type. Responsible for generating prop according to Field Type rules.
-	/// </summary>
+    /// <summary>
+    ///   List field type. Responsible for generating prop according to Field Type rules.
+    /// </summary>
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
-	/// <returns type="CswMobileFieldTypeList">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileFieldTypeList">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
-    var divSuffix = '_propdiv';
-    var propSuffix = '_input';
-    var $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
+    var divSuffix = '_propdiv',
+        propSuffix = '_input',
+        $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
     
     //ctor
     (function () {
@@ -31,35 +31,36 @@ function CswMobileFieldTypeList(ftDef) {
             options: ''
         };
         if (ftDef) $.extend(p, ftDef);
+        var propVals = p.values,
+            values = [],
+            options = propVals.options.split(','),
+            i, optval, optdis;
 
         propId = p.propId;
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
         
-        var propVals = p.values;
         subfields = CswSubFields_Map.List.subfields;
         value = tryParseString(propVals[subfields.Value.name]);
-        var optionsstr = propVals.options;
         gestalt = tryParseString(p.gestalt, '');
         
-        var values = [];
-        var options = optionsstr.split(',');
-		for (var i = 0; i < options.length; i++) {
-			if (options.hasOwnProperty(i)) {
-			    var optval = options[i];
-			    var optdis = tryParseString(optval, '[blank]');
-			    values.push({ value: optval, display: optdis });
-			}
-		}
+        for (i = 0; i < options.length; i++) {
+            if (contains(options, i)) {
+                optval = options[i];
+                optdis = tryParseString(optval, '[blank]');
+                values.push({ value: optval, display: optdis });
+            }
+        }
         
-        $content = ensureContent(contentDivId);
+        $content = ensureContent($content, contentDivId);
         $content.CswSelect('init', {
                                 ID: elementId,
                                 selected: value,
                                 values: values,
                                 cssclass: CswMobileCssClasses.select.name
-                            });
+                            })
+                .CswAttrXml({ 'data-native-menu': 'false' });
     })(); //ctor
         
     function applyFieldTypeLogicToContent($control) {
@@ -71,7 +72,7 @@ function CswMobileFieldTypeList(ftDef) {
         return json;
     }
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 
