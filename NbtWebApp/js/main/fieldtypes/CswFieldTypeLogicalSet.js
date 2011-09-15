@@ -39,7 +39,7 @@
 					logicalsetjson: {
 						data: null,
 						columns: null
-					},
+					}
                 };
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             
