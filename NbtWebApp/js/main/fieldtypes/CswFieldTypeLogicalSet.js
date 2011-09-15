@@ -16,8 +16,9 @@
 
             var $Div = $(this),
                 propVals = o.propData.values,
-                logicalSetJson = propVals.logicalsetjson,
-                $cbaDiv = $('<div />')
+                logicalSetJson = propVals.logicalsetjson;
+
+            var $cbaDiv = $('<div />')
                     .CswCheckBoxArray('init', {
                         ID: o.ID + '_cba',
                         onchange: o.onchange,
@@ -33,12 +34,14 @@
             return $Div;
         },
         save: function(o) { //$propdiv, $xml
-            var $CBADiv = o.$propdiv.children('div').first(),
-                attributes = { logicalsetjson: 
-                    data: null,
-                    columns: null
-                },
-                formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+            var $CBADiv = o.$propdiv.children('div').first();
+            var attributes = { 
+					logicalsetjson: {
+						data: null,
+						columns: null
+					},
+                };
+            var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.logicalsetjson = formdata;
