@@ -24,16 +24,16 @@
 //#region CswMobilePageFactory
 
 function CswMobilePageFactory(pageType, pageDef, $parent) {
-	/// <summary>
-	///   Page factory class. Responsible for generating a Mobile page.
-	/// </summary>
+    /// <summary>
+    ///   Page factory class. Responsible for generating a Mobile page.
+    /// </summary>
     /// <param name="pageType" type="CswMobilePage_Type">CswMobilePage_Type enum value.</param>
-	/// <param name="pageDef" type="Object">JSON definition of content to display, including header/footerDef properties.</param>
-	/// <param name="$parent" type="jQuery">Parent element to attach to.</param>
-	/// <returns type="CswMobilePageFactory">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <param name="pageDef" type="Object">JSON definition of content to display, including header/footerDef properties.</param>
+    /// <param name="$parent" type="jQuery">Parent element to attach to.</param>
+    /// <returns type="CswMobilePageFactory">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
-	var mobileHeader, mobileFooter, $contentRole, $pageDiv, id, title, getContent;
+    //#region private
+    var mobileHeader, mobileFooter, $contentRole, $pageDiv, id, title, getContent;
     var cswMobilePage;
     //ctor
     (function () {
@@ -120,17 +120,17 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     
     function getPageDiv(headerText, theme) {
         var $ret = $('#' + id);
-			
-	    if (isNullOrEmpty($ret) || $ret.length === 0) {
-		    $ret = $parent.CswDiv('init', { ID: id })
-			                .CswAttrXml({
-					                'data-role': 'page',
-					                'data-url': id,
-					                'data-title': headerText,
-					                'data-rel': 'page',
-			                        'data-theme': theme
-				                });
-	    }
+            
+        if (isNullOrEmpty($ret) || $ret.length === 0) {
+            $ret = $parent.CswDiv('init', { ID: id })
+                            .CswAttrXml({
+                                    'data-role': 'page',
+                                    'data-url': id,
+                                    'data-title': headerText,
+                                    'data-rel': 'page',
+                                    'data-theme': theme
+                                });
+        }
         return $ret;
     }
     
@@ -162,8 +162,8 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     function getContentDiv(theme) {
         /// <summary> Refreshes the content of a page.</summary>
         /// <param name="theme" type="String">JQM theme to style content.</param>
-	    /// <param name="forceRefresh" type="Boolean">True to force a refresh from the page class, false to load from memory.</param>
-	    /// <returns type="void"></returns>
+        /// <param name="forceRefresh" type="Boolean">True to force a refresh from the page class, false to load from memory.</param>
+        /// <returns type="void"></returns>
         
         $contentRole = $pageDiv.find('div:jqmData(role="content")');
 
@@ -220,13 +220,13 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         }
     }
     //#endregion private	
-	
-	//#region public, priveleged
+    
+    //#region public, priveleged
 
-	this.mobileHeader = mobileHeader;
-	this.mobileFooter = mobileFooter;
+    this.mobileHeader = mobileHeader;
+    this.mobileFooter = mobileFooter;
     this.page = cswMobilePage;
-	this.$content = $contentRole;
+    this.$content = $contentRole;
     this.$pageDiv = $pageDiv;
     this.fillContent = fillContent;
     this.remove = function() {
@@ -240,7 +240,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         $pageDiv.CswSetPath();
     };
 
-	//#region public, priveleged
+    //#region public, priveleged
 }
 
 //#endregion CswMobilePageFactory

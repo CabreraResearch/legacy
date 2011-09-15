@@ -8,39 +8,39 @@
 //#region CswMobileFieldTypePassword
 
 function CswMobileFieldTypePassword(ftDef) {
-	/// <summary>
-	///   Password field type. Responsible for generating prop according to Field Type rules.
-	/// </summary>
+    /// <summary>
+    ///   Password field type. Responsible for generating prop according to Field Type rules.
+    /// </summary>
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
-	/// <returns type="CswMobileFieldTypePassword">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileFieldTypePassword">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
     
-    var divSuffix = '_propdiv';
-    var propSuffix = '_input';
-    var $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
+    var divSuffix = '_propdiv',
+        propSuffix = '_input',
+        $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
     
     //ctor
     (function () {
         var p = { 
-            propId: '',
-            propName: '',
-            gestalt: '',
-            value: ''
-        };
+                propId: '',
+                propName: '',
+                gestalt: '',
+                value: ''
+            };
         if (ftDef) $.extend(p, ftDef);
+        var propVals = p.values;
 
         propId = p.propId;
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        var propVals = p.values;
         subfields = CswSubFields_Map.Password.subfields;        
         value = tryParseString(propVals[subfields.Value.name]);
         gestalt = tryParseString(p.gestalt);
         
-        $content = ensureContent(contentDivId);
+        $content = ensureContent($content, contentDivId);
         $content.append($('<p style="white-space:normal;" id="' + elementId + '">********</p>'));
     })(); //ctor
         
@@ -53,7 +53,7 @@ function CswMobileFieldTypePassword(ftDef) {
         return json;
     }    
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

@@ -1,7 +1,10 @@
 /// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../CswClientDb.js" />
-/// <reference path="../../_Global.js" />
-/// <reference path="../../_CswPrototypeExtensions.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../main/tools/CswClientDb.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../globals/CswMobileTools.js" />
 
 //#region CswMobileClientDb
 
@@ -28,18 +31,14 @@ function CswMobileClientDb() {
         /// <param name="viewJson" type="JSON">JSON representation of the nodes of the view</param>
         /// <param name="level" type="Number">Number indicating tree depth</param>
         /// <param name="viewSearch" type="JSON">JSON representation of the possible mobile searches on this view</param>
-        if (level === 0 && !isNullOrEmpty(viewJson))
-        {
+        if (level === 0 && !isNullOrEmpty(viewJson)) {
             storedViews = { }; //the viewnames may have changed. clear to be sure.
-            for (var view in viewJson)
-            {
+            for (var view in viewJson) {
                 storedViews[view] = viewJson[view];
             }
             //no need to cache the viewsdiv, just store ViewNames
-            this.setItem("storedviews", storedViews);
-        }
-        else
-        {
+            this.setItem(CswMobileGlobal_Config.storedViews, storedViews);
+        } else {
             var viewNodes = { };
             for (var nodeId in viewJson)
             {
@@ -87,7 +86,7 @@ function CswMobileClientDb() {
 
         if (!isNullOrEmpty(nodeId) && !isNullOrEmpty(nodeJson))
         {
-            if (wasModified)
+            if (isTrue(wasModified))
             {
                 nodeJson['wasmodified'] = true;
             } else

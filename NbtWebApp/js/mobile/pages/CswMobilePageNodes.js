@@ -27,36 +27,39 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         mobileStorage = new CswMobileClientDbResources();
     }
     
-    var pageDef = { };
-    var id = CswMobilePage_Type.nodes.id;
-    var title = CswMobilePage_Type.nodes.title;
-    var viewId, level;
-    var divSuffix = '_nodes';
-    var ulSuffix = '_list';
-    var $contentPage = $page.find('div:jqmData(role="content")');
-    var contentDivId = id + divSuffix;
-    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+    var pageDef = { },
+        id = CswMobilePage_Type.nodes.id,
+        title = CswMobilePage_Type.nodes.title,
+        viewId, 
+        level,
+        divSuffix = '_nodes',
+        ulSuffix = '_list',
+        $contentPage = $page.find('div:jqmData(role="content")'),
+        contentDivId = id + divSuffix,
+        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
     
     //ctor
     (function () {
         
         var p = {
-	        level: 1,
-	        ParentId: '',
-            DivId: '', 
-	        title: '',
-            viewId: mobileStorage.currentViewId(),
-	        theme: CswMobileGlobal_Config.theme,
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
-	        onHelpClick: null, //function () {},
-            onOnlineClick: null, //function () {},
-            onRefreshClick: null, //function () {},
-            onSearchClick: null //function () {}
-        };
+	            level: 1,
+	            ParentId: '',
+                DivId: '', 
+	            title: '',
+                viewId: mobileStorage.currentViewId(),
+	            theme: CswMobileGlobal_Config.theme,
+                headerDef: { buttons: {} },
+                footerDef: { buttons: {} },
+	            onHelpClick: null, //function () {},
+                onOnlineClick: null, //function () {},
+                onRefreshClick: null, //function () {},
+                onSearchClick: null //function () {}
+            },
+            buttons = { };
+        
         if (nodesDef) $.extend(p, nodesDef);
 
-        if (!isNullOrEmpty(p.DivId)) {
+        if (false === isNullOrEmpty(p.DivId)) {
             id = p.DivId;
         } else {
             p.DivId = id;
@@ -64,7 +67,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         
         contentDivId = id + divSuffix;
         
-        if (!isNullOrEmpty(p.title)) {
+        if (false === isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
             p.title = title;
@@ -73,7 +76,6 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         viewId = p.viewId;
         level = tryParseNumber(p.level, 1);
         
-        var buttons = { };
         buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
         buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
         buttons[CswMobileFooterButtons.fullsite.name] = '';
@@ -81,17 +83,17 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         buttons[CswMobileHeaderButtons.back.name] = '';
         buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
-        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
         $content = ensureContent($content, contentDivId);
     })(); //ctor
 
     function getContent(onSuccess, postSuccess) {
         var cachedJson = mobileStorage.fetchCachedViewJson(viewId);
 
-		if (!isNullOrEmpty(cachedJson)) {
-			refreshNodeContent(cachedJson, onSuccess, postSuccess);
-		} else if (mobileStorage.amOnline()) {
+		if (isTimeToRefresh(mobileStorage)) {
 			refreshNodeJson(onSuccess, postSuccess);
+		} else if (false === isNullOrEmpty(cachedJson)) {
+			refreshNodeContent(cachedJson, onSuccess, postSuccess);
 		} else {
 		    makeEmptyListView(null, $content, 'No Results');
 			stopLoadingMsg();
@@ -100,13 +102,12 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     
     function refreshNodeJson(onSuccess, postSuccess) {
         ///<summary>Fetches the nodes from the selected view from the web server and rebuilds the list.</summary>
-		var getView = '/NbtWebApp/wsNBT.asmx/GetView';
-		
-		var jsonData = {
-			SessionId: mobileStorage.sessionid(),
-			ParentId: viewId,
-			ForMobile: true
-		};
+		var getView = '/NbtWebApp/wsNBT.asmx/GetView',
+		    jsonData = {
+			    SessionId: mobileStorage.sessionid(),
+			    ParentId: viewId,
+			    ForMobile: true
+		    };
 
         CswAjaxJson({
 				formobile: true,
@@ -114,12 +115,11 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
 				data: jsonData,
 				onloginfail: function(text) { onLoginFail(text, mobileStorage); },
 				success: function(data) {
-					setOnline(mobileStorage);
-
-					var searchJson = data['searches'];
-				    var nodesJson = data['nodes'];
-					mobileStorage.storeViewJson(id, title, nodesJson, level, searchJson);
-			    
+					var searchJson = data['searches'],
+					    nodesJson = data['nodes'];
+				    
+				    setOnline(mobileStorage);
+                    mobileStorage.storeViewJson(id, title, nodesJson, level, searchJson);
 				    refreshNodeContent(nodesJson,onSuccess,postSuccess);
 				},
 				error: function() {
@@ -131,30 +131,31 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     function refreshNodeContent(viewJson, onSuccess, postSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
+        var ulDef = {
+                ID: id + ulSuffix,
+                cssclass: CswMobileCssClasses.listview.name
+            },
+            listView = new CswMobileListView(ulDef, $content),
+            nodeCount = 0,
+            nodeKey, nodeJson, ocDef, node, opts, onClick; 
+        
         if (isNullOrEmpty(viewJson)) {
             viewJson = mobileStorage.fetchCachedViewJson(id);
         }
-        var ulDef = {
-            ID: id + ulSuffix,
-            cssclass: CswMobileCssClasses.listview.name
-        };
         
-        var listView = new CswMobileListView(ulDef, $content);
-        var nodeCount = 0;
-        if (!isNullOrEmpty(viewJson)) {
-            for (var nodeKey in viewJson)
-            {
+        if (false === isNullOrEmpty(viewJson)) {
+            for (nodeKey in viewJson) {
                 if(viewJson.hasOwnProperty(nodeKey)) {
-                    var nodeJson = viewJson[nodeKey];
+                    nodeJson = viewJson[nodeKey];
                     if (Int32MinVal === nodeKey.split('_')[1] || 'No Results' === nodeJson) {
                         makeEmptyListView(listView, null, 'No Results');
                     } else {
                         delete nodeJson.subitems;
-                        var ocDef = { nodeKey: nodeKey };
+                        ocDef = { nodeKey: nodeKey };
                         $.extend(ocDef, nodeJson);
-                        var node = new CswMobileNodesFactory(ocDef);
+                        node = new CswMobileNodesFactory(ocDef);
                         
-                        var opts = {
+                        opts = {
                             ParentId: id,
                             DivId: nodeKey,
                             viewId: viewId,
@@ -167,7 +168,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
                             mobileStorage: mobileStorage
                         };
 
-                        var onClick = makeDelegate(pageDef.onListItemSelect, opts);
+                        onClick = makeDelegate(pageDef.onListItemSelect, opts);
 
                         if (node.nodeSpecies !== CswNodeSpecies.More) {
                             listView.addListItemLinkHtml(nodeKey, node.$content, onClick, { icon: node.icon });
@@ -182,7 +183,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         if (nodeCount === 0) {
             makeEmptyListView(listView, null, 'No Results');
         }
-        if (!mobileStorage.stayOffline()) {
+        if (false === mobileStorage.stayOffline()) {
 			toggleOnline(mobileStorage);
 		}
         if (isFunction(onSuccess)) {

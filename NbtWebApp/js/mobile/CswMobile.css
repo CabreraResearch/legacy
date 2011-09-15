@@ -58,3 +58,11 @@
 .ui-li .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li {
     padding: .7em 15px .7em 15px;
 }
+
+.error
+{
+	border: 1px solid #ff0000;
+	background-color: #ffff00;
+	color: #000000;
+	padding: 2px;
+}

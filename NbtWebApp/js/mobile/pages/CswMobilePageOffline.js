@@ -17,15 +17,15 @@
 //#region CswMobilePageOffline
 
 function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
-	/// <summary>
-	///   Offline Page class. Responsible for generating a Mobile offline page.
-	/// </summary>
+    /// <summary>
+    ///   Offline Page class. Responsible for generating a Mobile offline page.
+    /// </summary>
     /// <param name="offlineDef" type="Object">Offline definitional data.</param>
-	/// <param name="$parent" type="jQuery">Parent element to attach to.</param>
+    /// <param name="$parent" type="jQuery">Parent element to attach to.</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
-	/// <returns type="CswMobilePageOffline">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobilePageOffline">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var $content = '';
     var pageDef = { };
@@ -42,13 +42,13 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
         }
         
         var p = {
-	        level: -1,
-	        DivId: '', 
-	        title: '',
-	        theme: CswMobileGlobal_Config.theme,
+            level: -1,
+            DivId: '', 
+            title: '',
+            theme: CswMobileGlobal_Config.theme,
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },
-	        onHelpClick: function () {},
+            onHelpClick: function () {},
             onOnlineClick: function () {}
         };
         if(offlineDef) $.extend(p, offlineDef);
@@ -72,7 +72,7 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
         buttons[CswMobileFooterButtons.fullsite.name] = '';
         buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
 
-        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
 
         getContent();
     })();
@@ -82,7 +82,7 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
         $content.append($('<p>You must have internet connectivity to login.</p>'));
     }
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

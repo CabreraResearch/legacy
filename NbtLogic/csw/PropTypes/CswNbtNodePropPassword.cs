@@ -136,7 +136,9 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
             ParentObject["newpassword"] = string.Empty;
-        }
+			ParentObject["isexpired"] = IsExpired.ToString().ToLower();
+			ParentObject["isadmin"] = _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower();
+		}
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

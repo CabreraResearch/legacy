@@ -53,15 +53,9 @@ namespace ChemSW.Nbt.Schema
 
         #region Session and Database
 
-        private CswDbCfgInfoNbt _CswDbCfgInfoNbt = null;
-        private CswSetupVblsNbt _CswSetupVblsNbt = null;
-
         private string _ConfigurationFilesFQPN { get { return ( Application.StartupPath + "\\..\\etc" ); } }
         private ICswLogger _CswLogger = null;
-        //private CswNbtResources _CswNbtResources = null;
         private CswSchemaUpdater _CswSchemaUpdater;
-        //private CswNbtObjClassFactory _CswNbtObjClassFactory;
-        //private CswNbtMetaDataEvents _CswNbtMetaDataEvents = null;
 
 
         private CswSchemaScriptsProd _CswSchemaScriptsProd = null;
@@ -70,10 +64,7 @@ namespace ChemSW.Nbt.Schema
 			CswNbtResources CswNbtResources = null;
             try
             {
-                _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe );
-                _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
-
-				CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.NbtExe ), false, false );
+				CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe , false, false );
 				CswNbtResources.AccessId = AccessId;
 				CswNbtResources.InitCurrentUser = InitUser;
 
@@ -142,7 +133,7 @@ namespace ChemSW.Nbt.Schema
 
 				CswNbtResources CswNbtResources = _InitSessionResources( string.Empty );
 
-                if( _CswDbCfgInfoNbt.TotalDbInstances > 0 )
+				if( CswNbtResources.CswDbCfgInfo.TotalDbInstances > 0 )
                 {
                     CswDataTable DbInstances = new CswDataTable( "SchemaUpdaterForm1DataTable", "" );
                     DbInstances.Columns.Add( _ColName_AccessId, typeof( string ) );
@@ -153,17 +144,17 @@ namespace ChemSW.Nbt.Schema
                     DbInstances.Columns.Add( _ColName_Deactivated, typeof( bool ) );
                     DbInstances.Columns.Add( _ColName_Display, typeof( string ) );
                     DbInstances.Rows.Clear();
-                    foreach( string CurrentAccessId in _CswDbCfgInfoNbt.AccessIds )
+					foreach( string CurrentAccessId in CswNbtResources.CswDbCfgInfo.AccessIds )
                     {
-                        _CswDbCfgInfoNbt.makeConfigurationCurrent( CurrentAccessId );
+						CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CurrentAccessId );
                         DataRow CurrentRow = DbInstances.NewRow();
                         CurrentRow[_ColName_AccessId] = CurrentAccessId.ToString();
-                        CurrentRow[_ColName_ServerType] = _CswDbCfgInfoNbt.CurrentServerType;
-                        CurrentRow[_ColName_ServerName] = _CswDbCfgInfoNbt.CurrentServerName;
-                        CurrentRow[_ColName_UserName] = _CswDbCfgInfoNbt.CurrentUserName;
-                        CurrentRow[_ColName_UserCount] = _CswDbCfgInfoNbt.CurrentUserCount;
-                        CurrentRow[_ColName_Deactivated] = _CswDbCfgInfoNbt.CurrentDeactivated;
-                        CurrentRow[_ColName_Display] = CurrentAccessId + " (" + _CswDbCfgInfoNbt.CurrentUserName + "@" + _CswDbCfgInfoNbt.CurrentServerName + ")";
+						CurrentRow[_ColName_ServerType] = CswNbtResources.CswDbCfgInfo.CurrentServerType;
+						CurrentRow[_ColName_ServerName] = CswNbtResources.CswDbCfgInfo.CurrentServerName;
+						CurrentRow[_ColName_UserName] = CswNbtResources.CswDbCfgInfo.CurrentUserName;
+						CurrentRow[_ColName_UserCount] = CswNbtResources.CswDbCfgInfo.CurrentUserCount;
+						CurrentRow[_ColName_Deactivated] = CswNbtResources.CswDbCfgInfo.CurrentDeactivated;
+						CurrentRow[_ColName_Display] = CurrentAccessId + " (" + CswNbtResources.CswDbCfgInfo.CurrentUserName + "@" + CswNbtResources.CswDbCfgInfo.CurrentServerName + ")";
                         DbInstances.Rows.Add( CurrentRow );
                     }
 
@@ -177,7 +168,7 @@ namespace ChemSW.Nbt.Schema
                         e.Succeeded = false;
                         e.Message = "Database configuration file does not contain any instances.";
                     }
-                } // if( _CswDbCfgInfoNbt.TotalDbInstances > 0 )
+				} // if( CswNbtResources.CswDbCfgInfo.TotalDbInstances > 0 )
                 else
                 {
                     e.Succeeded = false;

@@ -28,12 +28,8 @@ namespace ChemSW.Nbt.Schema
 {
     class WorkerThread
     {
-        private CswDbCfgInfoNbt _CswDbCfgInfoNbt = null;
-        private CswSetupVblsNbt _CswSetupVblsNbt = null;
         private ICswLogger _CswLogger = null;
         private CswNbtResources _CswNbtResources = null;
-        //private CswNbtObjClassFactory _CswNbtObjClassFactory;
-        //private CswNbtMetaDataEvents _CswNbtMetaDataEvents = null;
 
         public static string ColName_AccessId = "AccessId";
         public static string ColName_ServerType = "Server Type";
@@ -63,31 +59,13 @@ namespace ChemSW.Nbt.Schema
         {
             _ConfigurationPath = ConfigurationPath;
 
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe );
-            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
-
             _InitSessionResources();
         }
 
         private void _InitSessionResources()
         {
-            //_CswNbtObjClassFactory = new CswNbtObjClassFactory();
-
-            //_CswNbtResources = new CswNbtResources( AppType.SchemInit, _CswSetupVblsNbt, _CswDbCfgInfoNbt, false, false );
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.NbtExe ), false, false );
-            //_CswNbtResources.SetDbResources( new CswNbtTreeFactory( _ConfigurationPath ) );
-
-            //_CswNbtMetaDataEvents = new CswNbtMetaDataEvents( _CswNbtResources );
-            //_CswNbtResources.OnMakeNewNodeType += new CswNbtResources.NewNodeTypeEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeType );
-            //_CswNbtResources.OnCopyNodeType += new CswNbtResources.CopyNodeTypeEventHandler( _CswNbtMetaDataEvents.OnCopyNodeType );
-            //_CswNbtResources.OnMakeNewNodeTypeProp += new CswNbtResources.NewNodeTypePropEventHandler( _CswNbtMetaDataEvents.OnMakeNewNodeTypeProp );
-            //_CswNbtResources.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypePropName );
-            //_CswNbtResources.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( _CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
-            //_CswNbtResources.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( _CswNbtMetaDataEvents.OnEditNodeTypeName );
-
+			_CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, SetupMode.NbtExe, false, false );
             _CswLogger = _CswNbtResources.CswLogger;
-
-            //_CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaImporterUser" );
             _CswNbtResources.InitCurrentUser = InitUser;
         }//constructor
 
@@ -107,17 +85,17 @@ namespace ChemSW.Nbt.Schema
             DbInstances.Columns.Add( ColName_Deactivated, typeof( bool ) );
             DbInstances.Columns.Add( ColName_Display, typeof( string ) );
             DbInstances.Rows.Clear();
-            foreach( string CurrentAccessId in _CswDbCfgInfoNbt.AccessIds )
+            foreach( string CurrentAccessId in _CswNbtResources.CswDbCfgInfo.AccessIds )
             {
-                _CswDbCfgInfoNbt.makeConfigurationCurrent( CurrentAccessId );
+				_CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CurrentAccessId );
                 DataRow CurrentRow = DbInstances.NewRow();
                 CurrentRow[ColName_AccessId] = CurrentAccessId.ToString();
-                CurrentRow[ColName_ServerType] = _CswDbCfgInfoNbt.CurrentServerType;
-                CurrentRow[ColName_ServerName] = _CswDbCfgInfoNbt.CurrentServerName;
-                CurrentRow[ColName_UserName] = _CswDbCfgInfoNbt.CurrentUserName;
-                CurrentRow[ColName_UserCount] = _CswDbCfgInfoNbt.CurrentUserCount;
-                CurrentRow[ColName_Deactivated] = _CswDbCfgInfoNbt.CurrentDeactivated;
-                CurrentRow[ColName_Display] = CurrentAccessId + " (" + _CswDbCfgInfoNbt.CurrentUserName + "@" + _CswDbCfgInfoNbt.CurrentServerName + ")";
+				CurrentRow[ColName_ServerType] = _CswNbtResources.CswDbCfgInfo.CurrentServerType;
+				CurrentRow[ColName_ServerName] = _CswNbtResources.CswDbCfgInfo.CurrentServerName;
+				CurrentRow[ColName_UserName] = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
+				CurrentRow[ColName_UserCount] = _CswNbtResources.CswDbCfgInfo.CurrentUserCount;
+				CurrentRow[ColName_Deactivated] = _CswNbtResources.CswDbCfgInfo.CurrentDeactivated;
+				CurrentRow[ColName_Display] = CurrentAccessId + " (" + _CswNbtResources.CswDbCfgInfo.CurrentUserName + "@" + _CswNbtResources.CswDbCfgInfo.CurrentServerName + ")";
                 DbInstances.Rows.Add( CurrentRow );
             }
             return DbInstances;

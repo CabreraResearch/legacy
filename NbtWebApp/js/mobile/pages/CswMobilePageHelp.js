@@ -17,15 +17,15 @@
 //#region CswMobilePageHelp
 
 function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
-	/// <summary>
-	///   Help Page class. Responsible for generating a Mobile help page.
-	/// </summary>
+    /// <summary>
+    ///   Help Page class. Responsible for generating a Mobile help page.
+    /// </summary>
     /// <param name="helpDef" type="Object">Help definitional data.</param>
-	/// <param name="$parent" type="jQuery">Parent element to attach to.</param>
+    /// <param name="$parent" type="jQuery">Parent element to attach to.</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
-	/// <returns type="CswMobilePageHelp">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobilePageHelp">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var $content = '';
     var pageDef = { };
@@ -39,18 +39,18 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
         if(isNullOrEmpty(mobileStorage)) {
             mobileStorage = new CswMobileClientDbResources();
         }
-	
+    
         var p = {
-	        level: -1,
-	        DivId: '',
-	        title: '',
-	        theme: CswMobileGlobal_Config.theme,
+            level: -1,
+            DivId: '',
+            title: '',
+            theme: CswMobileGlobal_Config.theme,
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },
             onOnlineClick: function () {},
             onRefreshClick: function () {}
-	    };
-	    if (helpDef) $.extend(p, helpDef);
+        };
+        if (helpDef) $.extend(p, helpDef);
         
         if(!isNullOrEmpty(p.DivId)) {
             id = p.DivId;
@@ -72,42 +72,42 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
         buttons[CswMobileFooterButtons.fullsite.name] = '';
         buttons[CswMobileHeaderButtons.back.name] = '';
 
-        pageDef = p = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
 
         getContent();
     })();
-	
+    
     function getContent() {
         $content = ensureContent($content, contentDivId);
         
         var $help = $('<p>Help</p>').appendTo($content);
 
-	    if (debugOn()) //this is set onLoad based on the includes variable 'debug'
-	    {
-		    $help.append('</br></br></br>');
-		    var $logLevelDiv = $help.CswDiv('init')
-								    .CswAttrXml({ 'data-role': 'fieldcontain' });
-		    $('<label for="mobile_log_level">Logging</label>')
-								    .appendTo($logLevelDiv);
+        if (debugOn()) //this is set onLoad based on the includes variable 'debug'
+        {
+            $help.append('</br></br></br>');
+            var $logLevelDiv = $help.CswDiv('init')
+                                    .CswAttrXml({ 'data-role': 'fieldcontain' });
+            $('<label for="mobile_log_level">Logging</label>')
+                                    .appendTo($logLevelDiv);
 
-		    $logLevelDiv.CswSelect('init', {
-								ID: 'mobile_log_level',
-								selected: debugOn() ? 'on' : 'off',
-								values: [{ value: 'off', display: 'Logging Disabled' },
-									{ value: 'on', display: 'Logging Enabled' }],
-								onChange: function($select) {
-									if ($select.val() === 'on') {
-										debugOn(true);
-										$('.debug').css('display', '').show();
-									} else {
-										debugOn(false);
-										$('.debug').css('diplay', 'none').hide();
-									}
-								}
-							})
-							.CswAttrXml({ 'data-role': 'slider' });
+            $logLevelDiv.CswSelect('init', {
+                                ID: 'mobile_log_level',
+                                selected: debugOn() ? 'on' : 'off',
+                                values: [{ value: 'off', display: 'Logging Disabled' },
+                                    { value: 'on', display: 'Logging Enabled' }],
+                                onChange: function($select) {
+                                    if ($select.val() === 'on') {
+                                        debugOn(true);
+                                        $('.debug').css('display', '').show();
+                                    } else {
+                                        debugOn(false);
+                                        $('.debug').css('diplay', 'none').hide();
+                                    }
+                                }
+                            })
+                            .CswAttrXml({ 'data-role': 'slider' });
 
-	    }
+        }
     }
     
     //#endregion private

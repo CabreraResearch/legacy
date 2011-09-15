@@ -139,9 +139,9 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public const string NameColumn = "NodeTypeName";
-        public const string KeyColumn = "nodetypeid";
-        public const string ValueColumn = "Include";
+        public const string NameColumn = "label";
+        public const string KeyColumn = "key";
+        public const string ValueColumn = "value";
         public const string TableName = "nodetypeselectdatatable";
 
         public override void ToXml( XmlNode ParentNode )
@@ -231,10 +231,9 @@ namespace ChemSW.Nbt.PropTypes
             //SelectedNodeTypeIds.FromString( _HandleReferences( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName() ), NodeTypeMap ) );
             CswCommaDelimitedString NewSelectedNodeTypeIds = new CswCommaDelimitedString();
 
-            if( null != JObject["options"] &&
-                null != JObject["options"]["data"] )
+            if( null != JObject["options"] )
             {
-                JArray Data = (JArray) JObject["options"]["data"];
+                JArray Data = (JArray) JObject["options"];
 
                 foreach( JObject ItemObj in Data )
                 {

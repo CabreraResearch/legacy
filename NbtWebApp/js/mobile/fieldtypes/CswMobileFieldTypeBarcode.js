@@ -8,40 +8,40 @@
 //#region CswMobileFieldTypeBarcode
 
 function CswMobileFieldTypeBarcode(ftDef) {
-	/// <summary>
-	///   Barcode field type. Responsible for generating prop according to Field Type rules.
-	/// </summary>
+    /// <summary>
+    ///   Barcode field type. Responsible for generating prop according to Field Type rules.
+    /// </summary>
     /// <param name="ftDef" type="Object">Field Type definitional data.</param>
-	/// <returns type="CswMobileFieldTypeBarcode">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileFieldTypeBarcode">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
-    var divSuffix = '_propdiv';
-    var propSuffix = '_input';
-    var $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
+    var divSuffix = '_propdiv',
+        propSuffix = '_input',
+        $content, contentDivId, elementId, propId, propName, subfields, value, gestalt;
     
     //ctor
     (function () {
-        var p = { 
+        var p = {
             propId: '',
             propName: '',
             gestalt: '',
             value: ''
         };
         if (ftDef) $.extend(p, ftDef);
-
+        var propVals = p.values;
+        
         propId = p.propId;
         propName = p.propName;
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
 
-        var propVals = p.values;
         subfields = CswSubFields_Map.Barcode.subfields;
         
         value = tryParseString(propVals[subfields.Barcode.name]);
         gestalt = tryParseString(p.gestalt);
         
-        $content = ensureContent(contentDivId);
+        $content = ensureContent($content, contentDivId);
         $content.CswInput('init', { type: CswInput_Types.text, ID: elementId, value: value });
     })(); //ctor
         
@@ -54,7 +54,7 @@ function CswMobileFieldTypeBarcode(ftDef) {
         return json;
     }
     
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 

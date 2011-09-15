@@ -231,9 +231,9 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public const string NameColumn = "View Name";
-        public const string KeyColumn = "nodeviewid";
-        public const string ValueColumn = "Include";
+        public const string NameColumn = "label";
+        public const string KeyColumn = "key";
+        public const string ValueColumn = "value";
 
         public DataTable ViewsForCBA()
         {
@@ -360,9 +360,9 @@ namespace ChemSW.Nbt.PropTypes
         {
             CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
 
-            if( null != JObject["options"] && null != JObject["options"]["data"] )
+            if( null != JObject["options"] )
             {
-                JArray OptionsObj = (JArray) JObject["options"]["data"];
+                JArray OptionsObj = (JArray) JObject["options"];
 
                 foreach( JObject ViewObj in OptionsObj )
                 {
