@@ -90,7 +90,8 @@
 					cswnbtnodekey: o.cswnbtnodekey,
 					propid: o.ID,
 					onAddNode: function () {
-						refreshGrid(gridOpts, cswGrid);
+						//refreshGrid(gridOpts, cswGrid);
+						o.onReload();
 					},
 //					onSearch: {
 //						onViewSearch: function () {
