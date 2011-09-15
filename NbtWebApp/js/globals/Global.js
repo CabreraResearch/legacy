@@ -694,15 +694,18 @@ function deleteNodes(options)
         'onSuccess': function (nodeid, nodekey) { },
         'onError': function () { }
     };
-    if (options)
+    if (options) $.extend(o, options);
+
+    if (!isArray(o.nodeids))  // case 22722
     {
-        $.extend(o, options);
+    	o.nodeids = [o.nodeids];
+    	o.nodekeys = [o.nodekeys];
     }
 
-    var jData = {
-        NodePks: o.nodeids,
-        NodeKeys: o.nodekeys
-    };
+	var jData = {
+		NodePks: o.nodeids,
+		NodeKeys: o.nodekeys
+	};
 
     CswAjaxJson({
         url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',
