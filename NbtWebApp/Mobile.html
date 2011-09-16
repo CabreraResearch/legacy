@@ -41,7 +41,8 @@
 
 		        $(document).ready(function ()
 		        {
-		            $(window).bind("orientationchange resize scrollstart", fixGeometry);
+		            // This causes case 22968!
+					//$(window).bind("orientationchange resize scrollstart", fixGeometry);
 
 		            $('body').CswMobile({
 		                'Theme': 'b'
