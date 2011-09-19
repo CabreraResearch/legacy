@@ -111,6 +111,7 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="wsTests1.html" />
     <Content Include="js\main\actions\CswImportInspectionQuestions.js" />
     <Content Include="js\main\controls\CswGrid.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeButton.js" />
