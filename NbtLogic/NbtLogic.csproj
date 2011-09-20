@@ -60,6 +60,9 @@
     <Compile Include="csw\CswNbtResourcesFactory.cs" />
     <Compile Include="csw\CswNbtNotificationKey.cs" />
     <Compile Include="csw\CswNbtResources.cs" />
+    <Compile Include="csw\ImportExport\CswImporterLegacy.cs" />
+    <Compile Include="csw\ImportExport\CswImporterFactory.cs" />
+    <Compile Include="csw\ImportExport\ICswImporter.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportExport.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportExportFrame.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeLayoutMgr.cs" />
