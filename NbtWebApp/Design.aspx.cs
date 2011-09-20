@@ -465,7 +465,7 @@ namespace ChemSW.Nbt.WebPages
                         _RequiredValue.Attributes.Add( "onclick", onclick );
 
                         if( _DefaultValueControl != null &&
-                            _SelectedNodeTypeProp.AddLayout != null &&
+                            _SelectedNodeTypeProp.AddLayout == null &&
                             _SelectedNodeTypeProp.IsRequired &&
                             _SelectedNodeTypeProp.DefaultValue.Empty )
                         {
@@ -1421,7 +1421,7 @@ namespace ChemSW.Nbt.WebPages
                     TextBox DisplayColAddValue = new TextBox();
                     DisplayColAddValue.CssClass = "textinput";
                     DisplayColAddValue.ID = "EditProp_DisplayColAddValue" + SelectedNodeTypeProp.PropId.ToString();
-                    if( SelectedNodeTypeProp.AddLayout.DisplayColumn != Int32.MinValue )
+                    if( SelectedNodeTypeProp.AddLayout!=null && SelectedNodeTypeProp.AddLayout.DisplayColumn != Int32.MinValue )
                         DisplayColAddValue.Text = SelectedNodeTypeProp.AddLayout.DisplayColumn.ToString();
                     DisplayColAdd.Cells[1].Controls.Add( DisplayColAddValue );
 
@@ -1430,7 +1430,7 @@ namespace ChemSW.Nbt.WebPages
                     TextBox DisplayRowAddValue = new TextBox();
                     DisplayRowAddValue.CssClass = "textinput";
                     DisplayRowAddValue.ID = "EditProp_DisplayRowAddValue" + SelectedNodeTypeProp.PropId.ToString();
-                    if( SelectedNodeTypeProp.AddLayout.DisplayRow != Int32.MinValue )
+                    if( SelectedNodeTypeProp.AddLayout != null && SelectedNodeTypeProp.AddLayout.DisplayRow != Int32.MinValue )
 						DisplayRowAddValue.Text = SelectedNodeTypeProp.AddLayout.DisplayRow.ToString();
                     DisplayRowAdd.Cells[1].Controls.Add( DisplayRowAddValue );
 

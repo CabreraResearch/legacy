@@ -112,6 +112,7 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="wsTests1.html" />
     <Content Include="ConnectTest.html" />
     <Content Include="js\main\actions\CswImportInspectionQuestions.js" />
     <Content Include="js\main\controls\CswGrid.js" />
@@ -1925,6 +1926,13 @@
     <None Include="js\thirdparty\js\jmol-12.0.49\jmol.bat" />
     <None Include="js\thirdparty\js\jmol-12.0.49\jmol.mac" />
     <None Include="js\thirdparty\js\jmol-12.0.49\jmol.sh" />
+    <None Include="js\thirdparty\js\jmol\Acetone %28acetaldehyde%29.mol" />
+    <None Include="js\thirdparty\js\jmol\Acetonitrile.mol" />
+    <None Include="js\thirdparty\js\jmol\aspirina.mol" />
+    <None Include="js\thirdparty\js\jmol\cefixime_syn.mol" />
+    <None Include="js\thirdparty\js\jmol\Dibutyl phthalate.mol" />
+    <None Include="js\thirdparty\js\jmol\JmolApplet.properties" />
+    <None Include="js\thirdparty\js\jmol\test.mol" />
     <None Include="js\_compileMobile.pl" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\demo\captcha\fonts\Anorexia.ttf" />
     <None Include="js\thirdparty\jquery\plugins\jquery-validate-1.8\demo\captcha\images\.htaccess" />

@@ -1,0 +1,165 @@
+    <!--#include file="MainIncludes.html" -->
+
+<html>
+<head>
+
+<script type="text/javascript">
+
+debugOn(debug);
+
+var began = new Date();
+
+
+function showTestOutput($table, lineno, action, status, msg) {
+	var now = new Date();
+    $table.append('<tr><td>' + ((now.getTime()-began.getTime())/1000) + '</td><td>' + lineno + '</td><td>' + action + '</td><td>' + status + '</td><td>' + msg + '</td></tr>');
+}
+
+function _execAction($table,testno, actname, actdata, resname, valStrIn, nextfunc) {
+    var status = '?';
+    var propval = '';
+
+    CswAjaxJson({
+        'url': '/NbtWebApp/wsNBT.asmx/' + actname,
+        'data': actdata,
+        success: function (outputdata) {
+
+
+            var objHelper = new ObjectHelper(outputdata);
+            if (resname !== '' && valStrIn !== '') {
+                if (false !== objHelper.find(resname, valStrIn)) {
+                    status = 'succeeded';
+                    propval = ' result=' + objHelper.find(resname, valStrIn)[resname];
+                }
+                else {
+                    status = 'FAILED';
+                }
+            }
+            else {
+                status = 'not_validated';
+                propval = outputdata;
+            }
+
+            showTestOutput($table, testno, actname, status, propval);
+            //$('#div1').append('#' + testno + ' action=' + actname + propval + ' validation=' + status + '<br/>');
+            if (isFunction(nextfunc)) nextfunc();
+        },
+        error: function () {
+            showTestOutput($table, testno, actname, 'ERROR', 'failed web service call');
+            //$('#div1').append('#' + testno + ' ERROR on: ' + actname + '<br/>');
+            if (isFunction(nextfunc)) nextfunc();
+        }
+    });
+
+}
+
+/////////////////// TESTS begin ///////////////////
+function test_getQuickLaunchItems($table,testno,nextfunc) {
+    _execAction($table,testno, 'getQuickLaunchItems', { "UserId": "" }, '', '',
+         nextfunc);
+}
+
+function test_getMainMenu($table, testno, nextfunc) {
+    _execAction($table, testno, 'getMainMenu', { "ViewId": "", "SafeNodeKey": "", "PropIdAttr": "" }, 'action', 'GenericSearch',
+         nextfunc);
+}
+
+function test_getWelcomeItems($table, testno, nextfunc) {
+    _execAction($table, testno, 'getWelcomeItems', { "RoleId": "" }, '', '',
+         nextfunc);
+}
+
+function test_getViewTree($table, testno, nextfunc) {
+    _execAction($table, testno, 'getViewTree', { "IsSearchable": "false", "UseSession": "true" }, '', '',
+         nextfunc);
+}
+
+function test_getHeaderMenu($table, testno, nextfunc) {
+    _execAction($table, testno, 'getHeaderMenu', {}, 'action', 'Home',
+         nextfunc);
+}
+
+function test_getHeaderMenu($table, testno, nextfunc) {
+    _execAction($table, testno, 'getHeaderMenu', {}, 'action', 'Home',
+         nextfunc);
+}
+
+function test_getDashboard($table, testno, nextfunc) {
+    _execAction($table, testno, 'getDashboard', {}, 'text', 'IMCS - Instrument Maintenance and Calibration',
+         nextfunc);
+}
+/////////////////// TESTS end ///////////////////
+
+
+function _beginTests() {
+
+    //authenticate or bust
+    var $table = $('<table border="1" width="100%"/>').appendTo($('#div1'));
+    $table.append('<tr><td>Elapsed (sec)</td><td>Test#</td><td>ServiceName</td><td>Status</td><td>Details</td></tr>');
+
+    CswAjaxJson({
+        'url': '/NbtWebApp/wsNBT.asmx/authenticate',
+        'data': { "AccessId": "1", "UserName": "chemsw_admin", "Password": "chemsw123", "ForMobile": "false" },
+        success: function (outputdata) {
+            var status = 'failed';
+            if (outputdata['AuthenticationStatus'].toString().indexOf('Authenticated') > -1) {
+                status = 'succeeded';
+            }
+
+            showTestOutput($table, 'BEGIN', 'authenticate', status, began.toString());
+
+            //test series here...
+            test_getDashboard($table,1, function () {
+                test_getHeaderMenu($table, 2, function () {
+                    test_getViewTree($table, 3, function () {
+                        test_getWelcomeItems($table, 4, function () {
+                            test_getMainMenu($table, 5, function () {
+                                test_getQuickLaunchItems($table, 6, function () { _endTests($table,'Ended OK'); });
+                                });
+                            });
+                        });
+                    });
+                });
+            },
+        error: function () {
+            showTestOutput($table, 'BEGIN', 'authenticate', 'ERROR', 'failed web service call');
+            _endTests($table,'Ended with errors.');
+        }
+    });
+
+}
+
+function _endTests($table,errorstr) {
+
+
+	//deauthenticate or bust
+    CswAjaxJson({
+        'url': '/NbtWebApp/wsNBT.asmx/deauthenticate',
+        'data': {},
+        success: function (outputdata) {
+            showTestOutput($table,  'END', 'deauthenticate', 'OK', errorstr );
+        },
+        error: function () {
+            showTestOutput($table,  'END', 'deauthenticate', 'ERROR', 'failed web service call' );
+        }
+    });
+
+}
+
+
+//execution steps
+$(document).ready(function () {
+
+    _beginTests();
+
+});
+
+
+</script>
+
+
+</head>
+<body>
+<div id="div1"><h1>wsNBT Test harness</h1></div>
+</body>
+</html>
