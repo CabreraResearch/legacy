@@ -45,66 +45,74 @@ function CswMobileSync(options,mobileStorage) {
     
     //#region public, priveleged
 
-    this.initSync = function() {
-        /// <summary>
-        ///   Initiates a sync event  
-        /// </summary>
-        /// <returns type="void"></returns>
-        
-        var sessionId = mobileStorage.sessionid();
-        if (!isNullOrEmpty(o.onSync) &&
+    this.initSync = function (afterComplete) {
+    	/// <summary>
+    	///   Initiates a sync event  
+    	/// </summary>
+    	/// <returns type="void"></returns>
+
+    	var sessionId = mobileStorage.sessionid();
+    	if (!isNullOrEmpty(o.onSync) &&
             !isNullOrEmpty(sessionId) &&
-                !mobileStorage.stayOffline()) {
+			!mobileStorage.stayOffline()) {
 
-            o.onSync(function(objectId, objectJSON) {
-                if (!isNullOrEmpty(objectId) && !isNullOrEmpty(objectJSON))
-                {
+    		o.onSync(function (objectId, objectJSON) {
+    			if (!isNullOrEmpty(objectId) && !isNullOrEmpty(objectJSON)) {
 
-                    var dataJson = {
-                        SessionId: sessionId,
-                        ParentId: objectId,
-                        UpdatedViewJson: JSON.stringify(objectJSON),
-                        ForMobile: o.ForMobile
-                    };
+    				var dataJson = {
+    					SessionId: sessionId,
+    					ParentId: objectId,
+    					UpdatedViewJson: JSON.stringify(objectJSON),
+    					ForMobile: o.ForMobile
+    				};
 
-                    CswAjaxJson({
-                            formobile: o.ForMobile,
-                            url: o.syncUrl,
-                            data: dataJson,
-                            onloginfail: function(text)
-                            {
-                                if (!isNullOrEmpty(o.onLoginFailure)) {
-                                    o.onLoginFailure(text);
-                                }
-                            },
-                            success: function(data)
-                            {
-                                if (!isNullOrEmpty(o.onSuccess)) {
-                                    o.onSuccess(data,objectId,objectJSON,false);
-                                }
-                            },
-                            error: function()
-                            {
-                                if (!isNullOrEmpty(o.onFailure)) {
-                                    o.onError();
-                                }
-                            }
-                        });
-                }
-            }); // o.onSync();
-        } else
-        {
-            if (!isNullOrEmpty(o.onSuccess)) {
-                o.onSuccess();
-            }
+    				CswAjaxJson({
+    					formobile: o.ForMobile,
+    					url: o.syncUrl,
+    					data: dataJson,
+    					onloginfail: function (text) {
+    						if (!isNullOrEmpty(o.onLoginFailure)) {
+    							o.onLoginFailure(text);
+    						}
+    					},
+    					success: function (data) {
+    						if (!isNullOrEmpty(o.onSuccess)) {
+    							o.onSuccess(data, objectId, objectJSON, false);
+    						}
+    						if (!isNullOrEmpty(o.onComplete)) {
+    							o.onComplete();
+    						}
+    						if (!isNullOrEmpty(afterComplete)) {
+    							afterComplete();
+    						}
+    					},
+    					error: function () {
+    						if (!isNullOrEmpty(o.onFailure)) {
+    							o.onError();
+    						}
+    						if (!isNullOrEmpty(o.onComplete)) {
+    							o.onComplete();
+    						}
+    						if (!isNullOrEmpty(afterComplete)) {
+    							afterComplete();
+    						}
+    					}
+    				});
+    			}
+    		}); // o.onSync();
+    	} else {
+    		if (!isNullOrEmpty(o.onSuccess)) {
+    			o.onSuccess();
+    		}
+    		if (!isNullOrEmpty(o.onComplete)) {
+    			o.onComplete();
+    		}
+    		if (!isNullOrEmpty(afterComplete)) {
+    			afterComplete();
+    		}
+    	} // if-else(SessionId != '') 
 
-        } // if(SessionId != '') 
-
-        if (!isNullOrEmpty(o.onComplete)) {
-            o.onComplete();
-        }
-
-    }; //initSync();
+    };  //initSync();
     
     //#endregion public, priveleged
 }
