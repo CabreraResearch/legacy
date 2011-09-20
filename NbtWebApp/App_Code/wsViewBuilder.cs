@@ -184,7 +184,10 @@ namespace ChemSW.Nbt.WebServices
                 ParentObj["proptype"] = ViewBuilderProp.Type.ToString();
                 ParentObj["metadatatypename"] = ViewBuilderProp.MetaDataTypeName;
                 ParentObj["fieldtype"] = ViewBuilderProp.FieldType.FieldType.ToString();
-                ParentObj["proparbitraryid"] = ViewBuilderProp.ViewProp.ArbitraryId;
+				if( ViewBuilderProp.ViewProp != null )
+				{
+					ParentObj["proparbitraryid"] = ViewBuilderProp.ViewProp.ArbitraryId;
+				}
                 ParentObj["filtarbitraryid"] = string.Empty;
                 ParentObj["defaultsubfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
                 ParentObj["defaultfiltermode"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.DefaultFilterMode.ToString();
