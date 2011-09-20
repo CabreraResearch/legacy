@@ -1297,27 +1297,28 @@ function hasWebStorage()
     return ret;
 }
 
+// This caused case 22968!
 // for Mobile Safari
-function fixGeometry()
-{
-    //thanks to: http://www.semicomplete.com/blog/geekery/jquery-mobile-full-height-content.html
-    /* Some orientation changes leave the scroll position at something
-    * that isn't 0,0. This is annoying for user experience. */
-    scroll(0, 0);
+//function fixGeometry()
+//{
+//    //thanks to: http://www.semicomplete.com/blog/geekery/jquery-mobile-full-height-content.html
+//    /* Some orientation changes leave the scroll position at something
+//    * that isn't 0,0. This is annoying for user experience. */
+//    scroll(0, 0);
 
-    /* Calculate the geometry that our content area should take */
-    var $header = $('div:jqmData(role="header"):visible');
-    var $footer = $('div:jqmData(role="footer"):visible');
-    var $content = $('div:jqmData(role="content"):visible');
+//    /* Calculate the geometry that our content area should take */
+//    var $header = $('div:jqmData(role="header"):visible');
+//    var $footer = $('div:jqmData(role="footer"):visible');
+//    var $content = $('div:jqmData(role="content"):visible');
 
-    var viewport_height = $(window).height();
-    var content_height = viewport_height - $header.outerHeight() - $footer.outerHeight();
+//    var viewport_height = $(window).height();
+//    var content_height = viewport_height - $header.outerHeight() - $footer.outerHeight();
 
-    //if ((content.outerHeight() - header.outerHeight() - footer.outerHeight()) <= viewport_height)
-    //{
-    content_height -= ($content.outerHeight() - $content.height());
-    $content.height(content_height);
-    //} /* Trim margin/border/padding height */
-};
+//    //if ((content.outerHeight() - header.outerHeight() - footer.outerHeight()) <= viewport_height)
+//    //{
+//    content_height -= ($content.outerHeight() - $content.height());
+//    $content.height(content_height);
+//    //} /* Trim margin/border/padding height */
+//};
 
 //#endregion Browser Compatibility

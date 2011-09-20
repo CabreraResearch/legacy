@@ -122,7 +122,7 @@ function CswMobileFieldTypeQuestion(ftDef) {
                 $control.find('h2').addClass(CswMobileCssClasses.OOC.name);
             }
         }
-        fixGeometry();
+        //fixGeometry();
     }
     
     function updatePropValue(json,id,newValue) {
