@@ -10,19 +10,33 @@ debugOn(debug);
 var began = new Date();
 
 
-function showTestOutput($table, lineno, action, status, msg) {
-	var now = new Date();
-    $table.append('<tr><td>' + ((now.getTime()-began.getTime())/1000) + '</td><td>' + lineno + '</td><td>' + action + '</td><td>' + status + '</td><td>' + msg + '</td></tr>');
+function showTestOutput($table, lineno, action, status, msg,started,ended) {
+    var now = new Date();
+
+    var $tr = $('<tr></tr>').appendTo($table);
+    $tr.append('<td>' + ((now.getTime() - began.getTime()) / 1000) + '</td>');
+    if (started !== undefined && ended !== undefined) {
+        $tr.append('<td>' + ((ended.getTime() - started.getTime()) / 1000) + '</td>');
+    }
+    else {
+        $tr.append('<td>&nbsp;</td>');
+    }
+    $tr.append('<td>' + lineno + '</td>');
+    $tr.append('<td>' + action + '</td>');
+    $tr.append('<td>' + status + '</td>');
+    $tr.append('<td>' + msg + '</td>');
 }
 
 function _execAction($table,testno, actname, actdata, resname, valStrIn, nextfunc) {
     var status = '?';
     var propval = '';
+    var ajaxStartTime = new Date();
 
     CswAjaxJson({
         'url': '/NbtWebApp/wsNBT.asmx/' + actname,
         'data': actdata,
         success: function (outputdata) {
+            var ajaxEndTime = new Date();
 
 
             var objHelper = new ObjectHelper(outputdata);
@@ -40,7 +54,7 @@ function _execAction($table,testno, actname, actdata, resname, valStrIn, nextfun
                 propval = outputdata;
             }
 
-            showTestOutput($table, testno, actname, status, propval);
+            showTestOutput($table, testno, actname, status, propval,ajaxStartTime,ajaxEndTime);
             //$('#div1').append('#' + testno + ' action=' + actname + propval + ' validation=' + status + '<br/>');
             if (isFunction(nextfunc)) nextfunc();
         },
@@ -95,35 +109,39 @@ function _beginTests() {
 
     //authenticate or bust
     var $table = $('<table border="1" width="100%"/>').appendTo($('#div1'));
-    $table.append('<tr><td>Elapsed (sec)</td><td>Test#</td><td>ServiceName</td><td>Status</td><td>Details</td></tr>');
+    $table.append('<tr><td>Elapsed (sec)</td><td>Ajax Time (sec)</td><td>Test#</td><td>ServiceName</td><td>Status</td><td>Details</td></tr>');
+
+    var ajaxstart = new Date();
+    var ajaxend;
 
     CswAjaxJson({
         'url': '/NbtWebApp/wsNBT.asmx/authenticate',
         'data': { "AccessId": "1", "UserName": "chemsw_admin", "Password": "chemsw123", "ForMobile": "false" },
+        showAuth: true,
         success: function (outputdata) {
             var status = 'failed';
             if (outputdata['AuthenticationStatus'].toString().indexOf('Authenticated') > -1) {
                 status = 'succeeded';
             }
-
-            showTestOutput($table, 'BEGIN', 'authenticate', status, began.toString());
+            ajaxend = new Date();
+            showTestOutput($table, 'BEGIN', 'authenticate', status, began.toString(),ajaxstart,ajaxend);
 
             //test series here...
-            test_getDashboard($table,1, function () {
+            test_getDashboard($table, 1, function () {
                 test_getHeaderMenu($table, 2, function () {
                     test_getViewTree($table, 3, function () {
                         test_getWelcomeItems($table, 4, function () {
                             test_getMainMenu($table, 5, function () {
-                                test_getQuickLaunchItems($table, 6, function () { _endTests($table,'Ended OK'); });
-                                });
+                                test_getQuickLaunchItems($table, 6, function () { _endTests($table, 'Ended OK'); });
                             });
                         });
                     });
                 });
-            },
+            });
+        },
         error: function () {
             showTestOutput($table, 'BEGIN', 'authenticate', 'ERROR', 'failed web service call');
-            _endTests($table,'Ended with errors.');
+            _endTests($table, 'Ended with errors.');
         }
     });
 
@@ -137,7 +155,7 @@ function _endTests($table,errorstr) {
         'url': '/NbtWebApp/wsNBT.asmx/deauthenticate',
         'data': {},
         success: function (outputdata) {
-            showTestOutput($table,  'END', 'deauthenticate', 'OK', errorstr );
+            showTestOutput($table,  'END', 'deauthenticate', 'succeeded', errorstr );
         },
         error: function () {
             showTestOutput($table,  'END', 'deauthenticate', 'ERROR', 'failed web service call' );
@@ -160,6 +178,6 @@ $(document).ready(function () {
 
 </head>
 <body>
-<div id="div1"><h1>wsNBT Test harness</h1></div>
+<div id="div1"><h1>wsNBT Test Harness v0.1</h1></div>
 </body>
 </html>

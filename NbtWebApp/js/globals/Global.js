@@ -136,7 +136,8 @@ function CswAjaxJson(options)
 		success: null, //function () { },
 		error: null, //function () { },
 		formobile: false,
-		async: true
+		async: true,
+        showAuth: false
 	};
 
 	if (options) $.extend(o, options);
@@ -174,8 +175,10 @@ function CswAjaxJson(options)
 	                setExpireTime(tryParseString(result.timeout, ''));
 	            }
 
-	            //delete result['AuthenticationStatus'];
-	            //delete result['timeout'];
+	            if (true !== o.showAuth) {
+	                delete result['AuthenticationStatus'];
+	                delete result['timeout'];
+	            }
 
 	            _handleAuthenticationStatus({
 	                status: auth,
@@ -196,7 +199,7 @@ function CswAjaxJson(options)
 	            o.error();
 	        }
 	    }
-	});                   // $.ajax({
+	});                    // $.ajax({
 } // CswAjaxJson()
 
 
