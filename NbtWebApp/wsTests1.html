@@ -5,16 +5,15 @@
 
 <script type="text/javascript">
 
-	debugOn(debug);
+debugOn(debug);
+
+var began = new Date();
 
 
-
-	//david's second pass
-	function showTestOutput($table, lineno, action, status, msg) {
-	    var now = new Date();
-	    var dateStr = now.getMonth() + '/' + now.getDate() + '/' + now.getYear() + ' @ ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
-        $table.append('<tr><td>' + dateStr + '</td><td>' + lineno + '</td><td>' + action + '</td><td>' + status + '</td><td>' + msg + '</td></tr>');
-	}
+function showTestOutput($table, lineno, action, status, msg) {
+	var now = new Date();
+    $table.append('<tr><td>' + ((now.getTime()-began.getTime())/1000) + '</td><td>' + lineno + '</td><td>' + action + '</td><td>' + status + '</td><td>' + msg + '</td></tr>');
+}
 
 function _execAction($table,testno, actname, actdata, resname, valStrIn, nextfunc) {
     var status = '?';
@@ -54,16 +53,49 @@ function _execAction($table,testno, actname, actdata, resname, valStrIn, nextfun
 
 }
 
+/////////////////// TESTS begin ///////////////////
 function test_getQuickLaunchItems($table,testno,nextfunc) {
     _execAction($table,testno, 'getQuickLaunchItems', { "UserId": "" }, '', '',
          nextfunc);
 }
 
+function test_getMainMenu($table, testno, nextfunc) {
+    _execAction($table, testno, 'getMainMenu', { "ViewId": "", "SafeNodeKey": "", "PropIdAttr": "" }, 'action', 'GenericSearch',
+         nextfunc);
+}
+
+function test_getWelcomeItems($table, testno, nextfunc) {
+    _execAction($table, testno, 'getWelcomeItems', { "RoleId": "" }, '', '',
+         nextfunc);
+}
+
+function test_getViewTree($table, testno, nextfunc) {
+    _execAction($table, testno, 'getViewTree', { "IsSearchable": "false", "UseSession": "true" }, '', '',
+         nextfunc);
+}
+
+function test_getHeaderMenu($table, testno, nextfunc) {
+    _execAction($table, testno, 'getHeaderMenu', {}, 'action', 'Home',
+         nextfunc);
+}
+
+function test_getHeaderMenu($table, testno, nextfunc) {
+    _execAction($table, testno, 'getHeaderMenu', {}, 'action', 'Home',
+         nextfunc);
+}
+
+function test_getDashboard($table, testno, nextfunc) {
+    _execAction($table, testno, 'getDashboard', {}, 'text', 'IMCS - Instrument Maintenance and Calibration',
+         nextfunc);
+}
+/////////////////// TESTS end ///////////////////
+
+
 function _beginTests() {
 
     //authenticate or bust
     var $table = $('<table border="1" width="100%"/>').appendTo($('#div1'));
-    $table.append('<tr><td>Time</td><td>Test#</td><td>ServiceName</td><td>Status</td><td>Details</td></tr>');
+    $table.append('<tr><td>Elapsed (sec)</td><td>Test#</td><td>ServiceName</td><td>Status</td><td>Details</td></tr>');
 
     CswAjaxJson({
         'url': '/NbtWebApp/wsNBT.asmx/authenticate',
@@ -74,35 +106,23 @@ function _beginTests() {
                 status = 'succeeded';
             }
 
-            showTestOutput($table, 'BEGIN', 'authenticate', status, '');
+            showTestOutput($table, 'BEGIN', 'authenticate', status, began.toString());
 
-            //$('#div1').append('BEGIN Authenticate status=' + status + '<br/>');
             //test series here...
-            _execAction($table,1, 'getDashboard', {}, 'text', 'IMCS - Instrument Maintenance and Calibration',
-                    function () {
-                        _execAction($table, 2, 'getHeaderMenu', {}, 'action', 'Home',
-                            function () {
-                                _execAction($table, 3, 'getViewTree', { "IsSearchable": "false", "UseSession": "true" }, '', '',
-                                    function () {
-                                        _execAction($table, 4, 'getWelcomeItems', { "RoleId": "" }, '', '',
-                                            function () {
-                                                _execAction($table, 5, 'getMainMenu', { "ViewId": "", "SafeNodeKey": "", "PropIdAttr": "" }, 'action2', 'GenericSearch',
-                                                    function () {
-                                                        //_execAction(6, 'getQuickLaunchItems', { "UserId": "" }, '', '',
-                                                        //    function () {
-                                                        //        _endTests('Ended OK<br/>');
-                                                        //    });
-                                                        test_getQuickLaunchItems($table, 6, function () { _endTests($table,'Ended OK'); });
-                                                    });
-                                            });
-                                    });
+            test_getDashboard($table,1, function () {
+                test_getHeaderMenu($table, 2, function () {
+                    test_getViewTree($table, 3, function () {
+                        test_getWelcomeItems($table, 4, function () {
+                            test_getMainMenu($table, 5, function () {
+                                test_getQuickLaunchItems($table, 6, function () { _endTests($table,'Ended OK'); });
+                                });
                             });
+                        });
                     });
-
-        },
+                });
+            },
         error: function () {
             showTestOutput($table, 'BEGIN', 'authenticate', 'ERROR', 'failed web service call');
-            //$('#div1').append('ERROR on: authenticate<br/>');
             _endTests($table,'Ended with errors.');
         }
     });
@@ -112,18 +132,15 @@ function _beginTests() {
 function _endTests($table,errorstr) {
 
 
-	    //authenticate or bust
+	//deauthenticate or bust
     CswAjaxJson({
         'url': '/NbtWebApp/wsNBT.asmx/deauthenticate',
         'data': {},
         success: function (outputdata) {
             showTestOutput($table,  'END', 'deauthenticate', 'OK', errorstr );
-            //$('#div1').append('END Deauthenticate status=' + outputdata['AuthenticationStatus'] + '<br/>');
-            //$('#div1').append(errorStr + ' @ ' + now.toString() + '<hr/>');
         },
         error: function () {
             showTestOutput($table,  'END', 'deauthenticate', 'ERROR', 'failed web service call' );
-            //$('#div1').append('Error on: deauthenticate');
         }
     });
 
@@ -143,6 +160,6 @@ $(document).ready(function () {
 
 </head>
 <body>
-<div id="div1">wsNBT Test harness<hr/></div>
+<div id="div1"><h1>wsNBT Test harness</h1></div>
 </body>
 </html>
