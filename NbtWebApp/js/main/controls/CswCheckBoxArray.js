@@ -43,30 +43,29 @@
                     $.extend(o, options);
                 }
 
-                var $Div = transmogrify({ 
+                var storeDataId = o.ID + storedDataSuffix;
+                var $Div = $(this);
+                var clientDb = new CswClientDb();
+                var cbaData = transmogrify({ 
+                                    storeDataId: storeDataId,
                                     dataAry: o.dataAry,
                                     nameCol: o.nameCol,
                                     keyCol: o.keyCol,
                                     valCol: o.valCol,
                                     cols: o.cols
-                                }, 
-                                $(this));
-                var storeDataId = o.ID + storedDataSuffix;
-                var clientDb = new CswClientDb();
-                var cbaData = clientDb.getItem(storeDataId);
+                                });
                 if (false === isNullOrEmpty(cbaData)) {
                     $.extend(o, cbaData);
                 }
-                if(o.Multi) {
-                    o.MultiIsUnchanged = true;
-                }
+                o.MultiIsUnchanged = o.Multi;
+
                 var checkType = CswInput_Types.checkbox.name;
-                if(o.UseRadios)
+                if(o.UseRadios) {
                     checkType = CswInput_Types.radio.name;
+                }
                 
-                $Div.contents().remove();
-                var $OuterDiv = $('<div id="' + storeDataId + '"/>')
-                                    .appendTo($Div);
+                var $OuterDiv = $('<div id="' + storeDataId + '"/>');
+
                 clientDb.setItem(storeDataId, {columns: o.cols, data: o.data});
                 
                 if (o.ReadOnly) {
@@ -198,6 +197,9 @@
                     }
 
                 } // if-else(o.ReadOnly)
+                
+                $Div.contents().remove();
+                $Div.append($OuterDiv);
                 return $Div;
             }, // init
 
@@ -217,10 +219,13 @@
             }
         };
         
-        function transmogrify (options, $control) {
-            var $this = $control;
-
+        function transmogrify (options) {
+            var dataStore = {
+                cols: [],
+                data: []
+            };
             var o = {
+                storeDataId: '',
                 dataAry: [],
                 nameCol: '',
                 keyCol: '',
@@ -229,8 +234,6 @@
             };
             if(options) $.extend(o, options);
             
-            var storeDataId = o.ID + storedDataSuffix;
-            
             if (false === isNullOrEmpty(o.dataAry) && o.dataAry.length > 0) {
                 // get columns
                 var cols = o.cols;
@@ -238,7 +241,7 @@
                     var firstProp = o.dataAry[0];
                     for (var column in firstProp) {
 
-                        if (firstProp.hasOwnProperty(column)) {
+                        if (contains(firstProp, column)) {
                             var fieldname = column;
                             if (fieldname !== o.nameCol && fieldname !== o.keyCol)
                             {
@@ -248,7 +251,7 @@
                     }
                 }
                 if (false === isNullOrEmpty(o.valCol) && cols.indexOf(o.valCol) === -1) {
-                    cols.push(o.valCol);			        
+                    cols.push(o.valCol);
                 }
 
                 // get data
@@ -257,10 +260,10 @@
                 for (var i = 0; i < o.dataAry.length; i++) {
                     var thisSet = o.dataAry[i];
 
-                    if (thisSet.hasOwnProperty(o.keyCol) && thisSet.hasOwnProperty(o.nameCol)) {
+                    if (contains(thisSet, o.keyCol) && contains(thisSet, o.nameCol)) {
                         var values = [];
                         for (var v = 0; v < cols.length; v++) {
-                            if (thisSet.hasOwnProperty(cols[v])) {
+                            if (contains(thisSet, cols[v])) {
                                 values.push(isTrue(thisSet[cols[v]]));
                             }
                         }
@@ -271,15 +274,12 @@
                     }
                 }
 
-                var dataStore = {
-                    cols: cols,
-                    data: data
-                };
-
+                dataStore.cols = cols;
+                dataStore.data = data;
                 var clientDb = new CswClientDb();
-                clientDb.setItem(storeDataId, dataStore);
+                clientDb.setItem(o.storeDataId, dataStore);
             }
-            return $this;
+            return dataStore;
         }
         
         function toggleCheckAll($checkalllink, id)
