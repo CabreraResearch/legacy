@@ -484,8 +484,8 @@
 					    onSwap: function (e, onSwapData) {
 						    onSwap(onSwapData);
 					    },
-					showConfigButton: false,
-					showRemoveButton: false
+						showConfigButton: false,
+						showRemoveButton: false
 				    });
 			        
 			        var subOnSuccess = function(subProp, key) {
@@ -516,13 +516,13 @@
 		    /// <param name="configMode" type="Boolean"> True if config mode </param>
 		    /// <param name="$savebtn" type="JQuery"> A save button </param>
             /// <returns type="void"></returns>
-		    
+	    
 		    // do a fake 'save' to update the json with the current value
 			$.CswFieldTypeFactory('save', fieldOpt);
-            if(fieldOpt.wasmodified) {
+            if(fieldOpt.propData.wasmodified) {
                 // update the propxml from the server
                 var jsonData = {
-                    EditMode: fieldOpt.editMode,
+                    EditMode: fieldOpt.EditMode,
                     NodeId: tryParseObjByIdx(o.nodeids, 0),
                     SafeNodeKey: fieldOpt.cswnbtnodekey,
                     PropId: propId,
