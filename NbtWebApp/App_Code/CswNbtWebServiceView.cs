@@ -123,9 +123,9 @@ namespace ChemSW.Nbt.WebServices
             ItemNodeObj["data"] = Text;
 
             JObject Attributes = new JObject();
-            if( ViewMode != NbtViewRenderingMode.Unknown )
+			Attributes["isleaf"] = true;
+			if( ViewMode != NbtViewRenderingMode.Unknown )
             {
-                Attributes["isleaf"] = true;
                 Attributes["viewmode"] = ViewMode.ToString().ToLower();
                 Rel += Mode;
             }
