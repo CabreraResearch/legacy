@@ -25,10 +25,21 @@ namespace ChemSW.Nbt.ImportExport
         {
             ICswImporter ReturnVal = null;
 
-            if( ImportAlgorithm.Legacy == ImportAlgorithm )
+
+            switch( ImportAlgorithm )
             {
-                ReturnVal = new CswImporterLegacy( CswNbtResources, CswNbtImportExportFrame, OnStatusUpdate );
-            }
+
+                case ImportAlgorithm.Legacy:
+                    ReturnVal = new CswImporterLegacy( CswNbtResources, CswNbtImportExportFrame, OnStatusUpdate );
+                    break;
+
+                case ImportAlgorithm.Experimental:
+                    ReturnVal = new CswImporterExperimental( CswNbtResources, CswNbtImportExportFrame, new CswImportExportStatusReporter( OnStatusUpdate, CswNbtResources.CswLogger ) );
+                    break;
+
+                default:
+                    throw ( new CswDniException( "Unknown Import altorithm: " + ImportAlgorithm.ToString() ) );
+            }//switch
 
             return ( ReturnVal );
         }

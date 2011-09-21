@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.ImportExport
 
             CswNbtImportExportFrame Frame = new CswNbtImportExportFrame( _CswNbtResources, XmlStr );
 
-            ICswImporter CswImporter = CswImporterFactory.make( ImportAlgorithm.Legacy, _CswNbtResources, Frame, OnStatusUpdate );
+            ICswImporter CswImporter = CswImporterFactory.make( ImportAlgorithm.Experimental, _CswNbtResources, Frame, OnStatusUpdate );
 
             CswImporter.ImportXml( IMode, XmlStr, ref ViewXml, ref ResultXml, ref ErrorLog );
 
