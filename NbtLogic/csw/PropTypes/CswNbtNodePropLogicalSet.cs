@@ -337,18 +337,32 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            JArray LsArray = new JArray();
-            ParentObject[_ElemName_LogicalSetJson] = LsArray;
+            ParentObject[_ElemName_LogicalSetJson] = new JObject();
+
+            JArray DataArray = new JArray();
+            ParentObject[_ElemName_LogicalSetJson]["data"] = DataArray;
+
+            JArray ColumnArray = new JArray();
+            ParentObject[_ElemName_LogicalSetJson]["columns"] = ColumnArray;
+            CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
 
             DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
             foreach( DataRow Row in Data.Rows )
             {
                 JObject ItemNodeObj = new JObject();
-                LsArray.Add( ItemNodeObj );
+                DataArray.Add( ItemNodeObj );
                 foreach( DataColumn Column in Data.Columns )
                 {
                     ItemNodeObj[Column.ColumnName] = Row[Column].ToString();
+                    if( Column.ColumnName != _NameColumn && Column.ColumnName != _KeyColumn && false == ColumnNames.Contains( Column.ColumnName ) )
+                    {
+                        ColumnNames.Add( Column.ColumnName );
+                    }
                 }
+            }
+            foreach( string ColumnName in ColumnNames )
+            {
+                ColumnArray.Add( ColumnName );
             }
         }
 
@@ -396,7 +410,6 @@ namespace ChemSW.Nbt.PropTypes
 
             if( null != JObject["logicalsetjson"] )
             {
-
                 JArray Data = (JArray) JObject["logicalsetjson"]["data"];
                 JArray ColumnsAry = (JArray) JObject["logicalsetjson"]["columns"];
                 CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();

@@ -22,10 +22,11 @@
                     .CswCheckBoxArray('init', {
                         ID: o.ID + '_cba',
                         onchange: o.onchange,
-					    ReadOnly: o.ReadOnly,
-                        dataAry: logicalSetJson,
-			            nameCol: nameCol,
-			            keyCol: keyCol,
+                        ReadOnly: o.ReadOnly,
+                        dataAry: logicalSetJson.data,
+                        cols: logicalSetJson.columns,
+                        nameCol: nameCol,
+                        keyCol: keyCol,
                         Multi: o.Multi
                     });
             
@@ -35,12 +36,7 @@
         },
         save: function(o) { //$propdiv, $xml
             var $CBADiv = o.$propdiv.children('div').first();
-            var attributes = { 
-					logicalsetjson: {
-						data: null,
-						columns: null
-					}
-                };
+            var attributes = { logicalsetjson: null };
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {

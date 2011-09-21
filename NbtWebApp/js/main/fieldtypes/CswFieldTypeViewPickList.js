@@ -7,7 +7,7 @@
 ; (function ($) {
         
     var pluginName = 'CswFieldTypeViewPickList';
-	var nameCol = 'label';
+    var nameCol = 'label';
     var keyCol = 'key';
     var valueCol = 'value';
 
@@ -16,22 +16,22 @@
 
             var $Div = $(this);
             var propVals = o.propData.values;
-			var optionData = propVals.options;
-			var selectMode = propVals.selectmode;
-			var $cbaDiv = $('<div />')
-			                .CswCheckBoxArray('init', {
-				                ID: o.ID + '_cba',
-				                UseRadios: (selectMode === 'Single'),
-				                Required: o.Required,
-				                ReadOnly: o.ReadOnly,
+            var optionData = propVals.options;
+            var selectMode = propVals.selectmode;
+            var $cbaDiv = $('<div />')
+                            .CswCheckBoxArray('init', {
+                                ID: o.ID + '_cba',
+                                UseRadios: (selectMode === 'Single'),
+                                Required: o.Required,
+                                ReadOnly: o.ReadOnly,
                                 Multi: o.Multi,
-				                onchange: o.onchange,
+                                onchange: o.onchange,
                                 dataAry: optionData,
-			                    nameCol: nameCol,
-			                    keyCol: keyCol,
-                                valueCol: valueCol,
-			                    valueColName: 'View Name'
-			                });
+                                nameCol: nameCol,
+                                keyCol: keyCol,
+                                valCol: valueCol,
+                                valColName: 'Include'
+                            });
             $Div.contents().remove();
             $Div.append($cbaDiv);
             return $Div;    
@@ -39,7 +39,7 @@
         'save': function(o) {
             var attributes = { options: null };
             var $cbaDiv = o.$propdiv.children('div').first();
-			var formdata = $cbaDiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+            var formdata = $cbaDiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.options = formdata.data;
             } 

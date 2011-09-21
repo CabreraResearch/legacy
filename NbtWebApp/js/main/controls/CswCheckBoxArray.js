@@ -8,23 +8,22 @@
     $.fn.CswCheckBoxArray = function (method) {
     
         var pluginName = 'CswCheckBoxArray';
-        var storedData = 'CbaData';
-        
+        var storedDataSuffix = '_cswCbaArrayDataStore';
         var methods = {
             init: function(options) {
         
                 var o = {
                     ID: '',
-                    cols: ['col1', 'col2', 'col3'],
-                    data: [{ label: 'row1', 
-                             key: 1,
-                             values: [ true, false, true ] },
-                           { label: 'row2', 
-                             key: 2,
-                             values: [ false, true, false ] },
-                           { label: 'row3', 
-                             key: 3,
-                             values: [ true, false, true ] }],
+                    cols: [], //['col1', 'col2', 'col3'],
+                    data: [], //[{ label: 'row1', 
+//                             key: 1,
+//                             values: [ true, false, true ] },
+//                           { label: 'row2', 
+//                             key: 2,
+//                             values: [ false, true, false ] },
+//                           { label: 'row3', 
+//                             key: 3,
+//                             values: [ true, false, true ] }],
                     HeightInRows: 4,
                     //CheckboxesOnLeft: false,
                     UseRadios: false,
@@ -44,15 +43,18 @@
                     $.extend(o, options);
                 }
 
-                var $Div = transmorgify({ dataAry: o.dataAry,
-                                          nameCol: o.nameCol,
-                                          keyCol: o.keyCol,
-                                          valCol: o.valCol 
-                                         }, 
-                                         $(this));
+                var $Div = transmogrify({ 
+                                    dataAry: o.dataAry,
+                                    nameCol: o.nameCol,
+                                    keyCol: o.keyCol,
+                                    valCol: o.valCol,
+                                    cols: o.cols
+                                }, 
+                                $(this));
+                var storeDataId = o.ID + storedDataSuffix;
                 var clientDb = new CswClientDb();
-                var cbaData = clientDb.getItem(storedData);
-                if (false === isNullOrEmpty(storedData)) {
+                var cbaData = clientDb.getItem(storeDataId);
+                if (false === isNullOrEmpty(cbaData)) {
                     $.extend(o, cbaData);
                 }
                 if(o.Multi) {
@@ -63,10 +65,9 @@
                     checkType = CswInput_Types.radio.name;
                 
                 $Div.contents().remove();
-                var storeDataId = o.ID + '_cswCbaArrayDataStore';
                 var $OuterDiv = $('<div id="' + storeDataId + '"/>')
                                     .appendTo($Div);
-                clientDb.setItem(storedData, {columns: o.cols, data: o.data});
+                clientDb.setItem(storeDataId, {columns: o.cols, data: o.data});
                 
                 if (o.ReadOnly) {
                     for (var r = 0; r < o.data.length; r++) {
@@ -110,7 +111,9 @@
                         if (colName === o.valCol && false === isNullOrEmpty(o.valColName)) {
                             colName = o.valColName;
                         }
-                        $dCell.append(colName);
+                        if ((colName !== o.keyCol && colName !== o.nameCol)) {
+                            $dCell.append(colName);
+                        }
                     }
                     tablerow++;
 
@@ -142,7 +145,7 @@
                         //var cB = this;
                         var col = cB.attributes['col'].value;
                         var row = cB.attributes['row'].value;
-                        var cache = clientDb.getItem(storedData);
+                        var cache = clientDb.getItem(storeDataId);
                         cache.MultiIsUnchanged = false;
                         if (contains(cache.data, row) && contains(cache.data[row],'values')) {
                             cache.data[row].values[col] = cB.checked;
@@ -152,7 +155,7 @@
                                 clientDb.setItem('currentSelected', {row: row, col: col});
                             }
                         }      
-                        clientDb.setItem(storedData, cache);
+                        clientDb.setItem(storeDataId, cache);
                     };
                     
                     // Data
@@ -207,42 +210,46 @@
                 if (options) {
                     $.extend(o, options);
                 }
-
+                var storeDataId = o.ID + storedDataSuffix;
                 var clientDb = new CswClientDb();
-                var data = clientDb.getItem(storedData);
+                var data = clientDb.getItem(storeDataId);
                 return data;
             }
         };
         
-        function transmorgify (options, $control) {
+        function transmogrify (options, $control) {
             var $this = $control;
 
             var o = {
                 dataAry: [],
                 nameCol: '',
                 keyCol: '',
-                valCol: ''
+                valCol: '',
+                cols: []
             };
             if(options) $.extend(o, options);
-
+            
+            var storeDataId = o.ID + storedDataSuffix;
+            
             if (false === isNullOrEmpty(o.dataAry) && o.dataAry.length > 0) {
                 // get columns
-                var cols = [];
+                var cols = o.cols;
+                if (hasLength(cols) && cols.length === 0) {
+                    var firstProp = o.dataAry[0];
+                    for (var column in firstProp) {
 
-                var firstProp = o.dataAry[0];
-                for (var column in firstProp) {
-
-                    if (firstProp.hasOwnProperty(column)) {
-                        var fieldname = column;
-                        if (fieldname !== o.nameCol && fieldname !== o.keyCol)
-                        {
-                            cols.push(fieldname);
+                        if (firstProp.hasOwnProperty(column)) {
+                            var fieldname = column;
+                            if (fieldname !== o.nameCol && fieldname !== o.keyCol)
+                            {
+                                cols.push(fieldname);
+                            }
                         }
                     }
                 }
                 if (false === isNullOrEmpty(o.valCol) && cols.indexOf(o.valCol) === -1) {
-                    cols.push(o.valCol)
-                        ;			        }
+                    cols.push(o.valCol);			        
+                }
 
                 // get data
                 var data = [];
@@ -270,7 +277,7 @@
                 };
 
                 var clientDb = new CswClientDb();
-                clientDb.setItem(storedData, dataStore);
+                clientDb.setItem(storeDataId, dataStore);
             }
             return $this;
         }
