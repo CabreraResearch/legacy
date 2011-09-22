@@ -18,6 +18,7 @@
 /// <reference path="objectclasses/CswMobileNodesFactory.js" />
 /// <reference path="globals/CswMobileTools.js" />
 /// <reference path="globals/CswMobileEnums.js" />
+/// <reference path="../main/tools/CswCookie.js" />
 
 CswAppMode.mode = 'mobile';
 
@@ -83,7 +84,7 @@ CswAppMode.mode = 'mobile';
         var loginPage, viewsPage, offlinePage, helpPage, onlinePage;
 
         // case 20355 - error on browser refresh
-        if (!isNullOrEmpty(sessionId)) {
+        if (false === isNullOrEmpty(sessionId)) {
             if (isNullOrEmpty(viewsPage)) {
                 viewsPage = makeViewsPage();
             }

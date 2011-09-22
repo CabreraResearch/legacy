@@ -1,8 +1,9 @@
 /// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../_Global.js" />
-/// <reference path="../../_CswPrototypeExtensions.js" />
 /// <reference path="CswMobileMenuButton.js" />
 /// <reference path="ICswMobileWebControls.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswPrototypeExtensions.js" />
 
 //#region CswMobilePageFooter
 
