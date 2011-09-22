@@ -80,9 +80,9 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
         var loginFailure = mobileStorage.getItem('loginFailure');
         if (loginFailure)
         {
-        	$content.append('<span class="error">' + loginFailure + '</span><br/>');
+            $content.append('<span class="error">' + loginFailure + '</span><br/>');
         }
-		var $customerId = $('<input type="text" id="login_customerid" placeholder="Customer Id" />')
+        var $customerId = $('<input type="text" id="login_customerid" placeholder="Customer Id" />')
                             .appendTo($content);
         $content.append('<br/>');
         var $username = $('<input type="text" id="login_username" placeholder="User Name" />')
@@ -107,7 +107,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
         $password.clickOnEnter($loginBtn);
 
         function onLoginSubmit() {
-            var authenticateUrl = '/NbtWebApp/wsNBT.asmx/Authenticate';
+            var authenticateUrl = '/NbtWebApp/wsNBT.asmx/authenticate';
             if (mobileStorage.amOnline()) {
                 var userName = $username.val();
                 var accessId = $customerId.val();
