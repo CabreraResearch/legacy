@@ -177,11 +177,17 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     }
     
     function bindPageEvents() {
+        var documentHeight = $(document).height(),
+            windowHeight = $(window).height();
         $pageDiv.bind('pageshow', function() {
+            var $this = $(this);
             startLoadingMsg();
             setTimeout(function() {
                 fillContent(false, function() {
                     stopLoadingMsg();
+                    if(documentHeight > windowHeight) {
+                        $this.find('div:jqmData(role="footer")').css('top', $(document).height() - 542);
+                    }
                 });
             }, 500);
         });
