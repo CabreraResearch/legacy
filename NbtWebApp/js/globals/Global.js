@@ -129,16 +129,16 @@ function CswAjaxJson(options)
 	///     &#10;3 - options.success: function() {}
 	///     &#10;4 - options.error: function() {}
 	/// </param>
-	var o = {
-		url: '',
-		data: {},
-		onloginfail: function () { _finishLogout(); },
-		success: null, //function () { },
-		error: null, //function () { },
-		formobile: false,
-		async: true,
+    var o = {
+        url: '',
+        data: {},
+        onloginfail: function () { _finishLogout(); },
+        success: null, //function (result) { },
+        error: null, //function (errorJSON) { },
+        formobile: false,
+        async: true,
         showAuth: false
-	};
+    };
 
 	if (options) $.extend(o, options);
 	//var starttime = new Date();
@@ -165,7 +165,7 @@ function CswAjaxJson(options)
 	                'detail': result.error.detail
 	            }, '');
 	            if (isFunction(o.error)) {
-	                o.error();
+	                o.error(result.error);
 	            }
 	        }
 	        else {
@@ -196,10 +196,10 @@ function CswAjaxJson(options)
 	        //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
 	        log("Webservice Request (" + o.url + ") Failed: " + textStatus);
 	        if (isFunction(o.error)) {
-	            o.error();
+	            o.error({ message: errorThrown, detail: 'Webservice Request (' + o.url + ') Failed: ', type: 'error', display: 'true' });
 	        }
 	    }
-	});                    // $.ajax({
+	});                     // $.ajax({
 } // CswAjaxJson()
 
 
