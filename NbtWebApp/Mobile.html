@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html> <!-- manifest="Mobile.manifest"> <!--Still not ready for primetime-->
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <base href="Mobile.html"/>
     <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1" />
     <title>Main</title>
     <link rel="shortcut icon" href="images/favicon.ico" />
 </head>
 <body>
-    <!--#include file="Mobile_Includes.html" -->
+    <!--#include file="MobileIncludes.html" -->
     <script type="text/javascript">
 
         function redirectOnError(e)
@@ -37,17 +37,17 @@
             if( hasWebStorage() ) {
 
                 // override value in _Globals.js
-		        homeUrl = "Mobile.html";
+                homeUrl = "Mobile.html";
 
-		        $(document).ready(function ()
-		        {
-		            // This causes case 22968!
-					//$(window).bind("orientationchange resize scrollstart", fixGeometry);
+                $(document).ready(function ()
+                {
+                    // This causes case 22968!
+                    //$(window).bind("orientationchange resize scrollstart", fixGeometry);
 
-		            $('body').CswMobile({
-		                'Theme': 'b'
-		            });
-		        });
+                    $('body').CswMobile({
+                        'Theme': 'b'
+                    });
+                });
             }
             else {
                 throw('This browser does not support localStorage.');
