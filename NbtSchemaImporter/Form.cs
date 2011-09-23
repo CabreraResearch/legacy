@@ -80,7 +80,10 @@ namespace ChemSW.Nbt.Schema
         private delegate void AddStatusMsgHandler( string Msg );
         private void _AddStatusMsg( string Msg )
         {
-            ResultsTextBox.Text = DateTime.Now.ToString() + ": " + Msg + "\r\n" + ResultsTextBox.Text;
+            //ResultsTextBox.Text = DateTime.Now.ToString() + ": " + Msg + "\r\n" + ResultsTextBox.Text;
+            ResultsTextBox.AppendText( DateTime.Now.ToString() + ": " + Msg + "\r\n" ); 
+
+            
         }
 
         void SchemaSelectBox_SelectedIndexChanged( object sender, EventArgs e )

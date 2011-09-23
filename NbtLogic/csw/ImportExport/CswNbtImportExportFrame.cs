@@ -227,9 +227,16 @@ namespace ChemSW.Nbt.ImportExport
             }
         }
 
+
+        public void replaceNodeIdReferenceValues( string OldValue, string NewValue )
+        {
+            string Xpath = "//IMCSProData/Nodes/Node/PropValue/NodeID[.='" + OldValue + "']";
+            //string Xpath = "//IMCSProData/Nodes/Node/PropValue/NodeID";
+            XmlNodeList TargetNodeIdElements = CswXmlDocument.getNodeListFromArbitraryXpath( _XmlDoc, Xpath );
+        }
         #endregion Interacting with XML
 
-        #region Modifying XML
+        #region Reading XML
 
         public Dictionary<string, string> NodeTypes
         {
@@ -259,7 +266,7 @@ namespace ChemSW.Nbt.ImportExport
 
         }//Nodes
 
-        #endregion Modifying XML
+        #endregion Reading XML
 
 
         #region Output
