@@ -26,91 +26,87 @@ function CswMobileSync(options,mobileStorage) {
     //#region private
     
     var o = {
-        onSync: function () {},
-        onSuccess: function () {},
+        onSync: null, //function () {},
+        onSuccess: null, //function () {},
         onError: onError,
-        onLoginFailure: onLoginFail,
+        onLoginFailure: null,
         onComplete: function () {},
         syncUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
         ForMobile: true
     };
 
     if(options) $().extend(o, options);
-
-    if (isNullOrEmpty(mobileStorage)) { //this enables Intellisense
-        mobileStorage = new CswMobileClientDbResources();
-    }
     
     //#endregion private
     
     //#region public, priveleged
 
     this.initSync = function (afterComplete) {
-    	/// <summary>
-    	///   Initiates a sync event  
-    	/// </summary>
-    	/// <returns type="void"></returns>
+        /// <summary>
+        ///   Initiates a sync event  
+        /// </summary>
+        /// <returns type="void"></returns>
 
-    	var sessionId = mobileStorage.sessionid();
-    	if (!isNullOrEmpty(o.onSync) &&
+        var sessionId = mobileStorage.sessionid();
+        if (!isNullOrEmpty(o.onSync) &&
             !isNullOrEmpty(sessionId) &&
-			!mobileStorage.stayOffline()) {
+            !mobileStorage.stayOffline()) {
 
-    		o.onSync(function (objectId, objectJSON) {
-    			if (!isNullOrEmpty(objectId) && !isNullOrEmpty(objectJSON)) {
+            o.onSync(function (objectId, objectJSON) {
+                if (false === isNullOrEmpty(objectId) && false === isNullOrEmpty(objectJSON)) {
 
-    				var dataJson = {
-    					SessionId: sessionId,
-    					ParentId: objectId,
-    					UpdatedViewJson: JSON.stringify(objectJSON),
-    					ForMobile: o.ForMobile
-    				};
+                    var dataJson = {
+                        SessionId: sessionId,
+                        ParentId: objectId,
+                        UpdatedViewJson: JSON.stringify(objectJSON),
+                        ForMobile: o.ForMobile
+                    };
 
-    				CswAjaxJson({
-    					formobile: o.ForMobile,
-    					url: o.syncUrl,
-    					data: dataJson,
-    					onloginfail: function (text) {
-    						if (!isNullOrEmpty(o.onLoginFailure)) {
-    							o.onLoginFailure(text);
-    						}
-    					},
-    					success: function (data) {
-    						if (!isNullOrEmpty(o.onSuccess)) {
-    							o.onSuccess(data, objectId, objectJSON, false);
-    						}
-    						if (!isNullOrEmpty(o.onComplete)) {
-    							o.onComplete();
-    						}
-    						if (!isNullOrEmpty(afterComplete)) {
-    							afterComplete();
-    						}
-    					},
-    					error: function () {
-    						if (!isNullOrEmpty(o.onFailure)) {
-    							o.onError();
-    						}
-    						if (!isNullOrEmpty(o.onComplete)) {
-    							o.onComplete();
-    						}
-    						if (!isNullOrEmpty(afterComplete)) {
-    							afterComplete();
-    						}
-    					}
-    				});
-    			}
-    		}); // o.onSync();
-    	} else {
-    		if (!isNullOrEmpty(o.onSuccess)) {
-    			o.onSuccess();
-    		}
-    		if (!isNullOrEmpty(o.onComplete)) {
-    			o.onComplete();
-    		}
-    		if (!isNullOrEmpty(afterComplete)) {
-    			afterComplete();
-    		}
-    	} // if-else(SessionId != '') 
+                    CswAjaxJson({
+                        formobile: o.ForMobile,
+                        url: o.syncUrl,
+                        data: dataJson,
+                        onloginfail: function (text) {
+                            if (isFunction(o.onLoginFailure)) {
+                                o.onLoginFailure(text);
+                            }
+                        },
+                        success: function (data) {
+                            if (isFunction(o.onSuccess)) {
+                                o.onSuccess(data, objectId, objectJSON, false);
+                            }
+                            if (isFunction(o.onComplete)) {
+                                o.onComplete();
+                            }
+                            if (isFunction(afterComplete)) {
+                                afterComplete();
+                            }
+                        },
+                        error: function () {
+                            if (isFunction(o.onFailure)) {
+                                o.onError();
+                            }
+                            if (isFunction(o.onComplete)) {
+                                o.onComplete();
+                            }
+                            if (isFunction(afterComplete)) {
+                                afterComplete();
+                            }
+                        }
+                    });
+                }
+            }); // o.onSync();
+        } else {
+            if (isFunction(o.onSuccess)) {
+                o.onSuccess();
+            }
+            if (isFunction(o.onComplete)) {
+                o.onComplete();
+            }
+            if (isFunction(afterComplete)) {
+                afterComplete();
+            }
+        } // if-else(SessionId != '') 
 
     };  //initSync();
     
