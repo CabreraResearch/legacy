@@ -177,16 +177,21 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     }
     
     function bindPageEvents() {
-        var documentHeight = $(document).height(),
-            windowHeight = $(window).height();
+        
         $pageDiv.bind('pageshow', function() {
             var $this = $(this);
             startLoadingMsg();
             setTimeout(function() {
                 fillContent(false, function() {
                     stopLoadingMsg();
-                    if(documentHeight > windowHeight) {
-                        $this.find('div:jqmData(role="footer")').css('top', $(document).height() - 542);
+                    
+                    var documentHeight = $(document).height(),
+                        windowHeight = $(window).height(),
+                        adjustedHeight = windowHeight - 333, // documentHeight - 542,
+                        winDocHeightDif = documentHeight - windowHeight;
+                    
+                    if(winDocHeightDif > 0) {
+                        $this.find('div:jqmData(role="footer")').css('top', adjustedHeight);
                     }
                 });
             }, 500);
