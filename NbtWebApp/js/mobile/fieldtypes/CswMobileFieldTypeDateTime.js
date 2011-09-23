@@ -42,7 +42,7 @@ function CswMobileFieldTypeDate(ftDef) {
         contentDivId = propId + divSuffix;
         elementId = propId + propSuffix;
         
-        subfields = CswSubFields_Map.Date.subfields;
+        subfields = CswSubFields_Map.DateTime.subfields;
         
         $content = ensureContent($content, contentDivId);
         gestalt = tryParseString(p.gestalt, '');

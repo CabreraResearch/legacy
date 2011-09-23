@@ -137,29 +137,29 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
             },
             listView = new CswMobileListView(ulDef, $content),
             nodeCount = 0,
-            nodeKey, nodeJson, ocDef, node, opts, onClick; 
+            nodeId, nodeJson, ocDef, node, opts, onClick; 
         
         if (isNullOrEmpty(viewJson)) {
             viewJson = mobileStorage.fetchCachedViewJson(id);
         }
         
         if (false === isNullOrEmpty(viewJson)) {
-            for (nodeKey in viewJson) {
-                if(viewJson.hasOwnProperty(nodeKey)) {
-                    nodeJson = viewJson[nodeKey];
-                    if (Int32MinVal === nodeKey.split('_')[1] || 'No Results' === nodeJson) {
+            for (nodeId in viewJson) {
+                if(viewJson.hasOwnProperty(nodeId)) {
+                    nodeJson = viewJson[nodeId];
+                    if (Int32MinVal === nodeId.split('_')[1] || 'No Results' === nodeJson) {
                         makeEmptyListView(listView, null, 'No Results');
                     } else {
                         delete nodeJson.subitems;
-                        ocDef = { nodeKey: nodeKey };
+                        ocDef = { nodeKey: nodeId };
                         $.extend(ocDef, nodeJson);
                         node = new CswMobileNodesFactory(ocDef);
                         
                         opts = {
                             ParentId: id,
-                            DivId: nodeKey,
+                            DivId: nodeId,
                             viewId: viewId,
-                            nodeId: mobileStorage.currentNodeId(nodeKey),
+                            nodeId: mobileStorage.currentNodeId(nodeId),
                             level: 2,
                             title: node.nodeName,
                             onHelpClick: pageDef.onHelpClick,
@@ -171,9 +171,9 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
                         onClick = makeDelegate(pageDef.onListItemSelect, opts);
 
                         if (node.nodeSpecies !== CswNodeSpecies.More) {
-                            listView.addListItemLinkHtml(nodeKey, node.$content, onClick, { icon: node.icon });
+                            listView.addListItemLinkHtml(nodeId, node.$content, onClick, { icon: node.icon });
                         } else {
-                            listView.addListItemHtml(nodeKey, node.$content, null, { icon: node.icon });
+                            listView.addListItemHtml(nodeId, node.$content, null, { icon: node.icon });
                         }
                     }
                     nodeCount++;
