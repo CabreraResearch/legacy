@@ -30,12 +30,10 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     //#region private
 
     var pageDef = { };
-    var id = CswMobilePage_Type.online.id;
-    var title = CswMobilePage_Type.online.title;
-    var divSuffix = '_contpage';
-    var $content = '';
-    var $onlineBtn, $syncBtn, $logoutBtn, $logBtn;
-    var contentDivId;
+    var id = CswMobilePage_Type.online.id,
+        title = CswMobilePage_Type.online.title,
+        divSuffix = '_contpage',
+        $contentPage, $content, $onlineBtn, $syncBtn, $logoutBtn, $logBtn, contentDivId;
     
     //ctor
     (function() {
@@ -69,6 +67,8 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
         }
 
         contentDivId = id + divSuffix;
+        $contentPage = $page.find('div:jqmData(role="content")');
+        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
         
         if( !isNullOrEmpty(p.title)) {
             title = p.title;
@@ -98,11 +98,11 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
         $syncBtn = $('<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>')
                         .appendTo($content)
                         .bind('click', function () {
-                        	return startLoadingMsg(function () {
-                        		mobileSync.initSync(function () {
-                        			stopLoadingMsg(); 
-								});
-                        	});
+                            return startLoadingMsg(function () {
+                                mobileSync.initSync(function () {
+                                    stopLoadingMsg(); 
+                                });
+                            });
                         });
         $onlineBtn = $('<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>')
                         .appendTo($content)
