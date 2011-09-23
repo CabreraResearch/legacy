@@ -2522,7 +2522,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             return new JObject( new JProperty( "succeeded", "true" ) ).ToString();
-        } // UpdateProperties()
+        } // collectClientLogInfo()
 
         #endregion Logging
 
@@ -2601,7 +2601,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtWebServiceMobile wsM = new CswNbtWebServiceMobile( _CswNbtResources, ForMobile );
                     bool CompletedNodes = wsM.updateViewProps( UpdatedViewJson );
-                    ReturnVal = wsM.getView( ParentId, _CswNbtResources.CurrentNbtUser );
+                    ReturnVal = wsM.getNode( ParentId );
                     if( CompletedNodes )
                     {
                         ReturnVal.Add( new JProperty( "completed", true ) );

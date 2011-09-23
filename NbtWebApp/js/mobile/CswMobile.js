@@ -290,7 +290,7 @@ CswAppMode.mode = 'mobile';
                     var nextPropsPage = makePropsPage(param);
                     nextPropsPage.CswChangePage();
                 },
-                onPropChange: function(param) {
+                onPropChange: function() {
                     mobileSync.initSync();
                     resetPendingChanges();
                     mobileBgTask.reset();
@@ -358,7 +358,7 @@ CswAppMode.mode = 'mobile';
         }
 
         function resetPendingChanges(succeeded) {
-            if ( mobileStorage.pendingChanges() ) {
+            if (mobileStorage.pendingChanges()) {
                 $('.' + CswMobileCssClasses.onlineStatus.name)
                     .addClass(CswMobileCssClasses.pendingChanges.name)
                     .find('span.ui-btn-text')
@@ -410,22 +410,25 @@ CswAppMode.mode = 'mobile';
         }
         
         function processUpdatedNodes(data,objectId,objectJson,isBackgroundTask) {
-            if( !isNullOrEmpty(data) ) {
+            var isView, isNode, json, completed;
+            if (false === isNullOrEmpty(data)) {
                 setOnline(mobileStorage);
-                var completed = isTrue(data['completed']);
-                var isView = !isNullOrEmpty(data['nodes']);
+                completed = isTrue(data['completed']);
+                isView = contains(data, 'nodes') && false === isNullOrEmpty(data.nodes);
+                isNode = contains(data, objectId) && false === isNullOrEmpty(data[objectId]);
                 if (isView) {
-                    var json = data['nodes'];
+                    json = data.nodes;
                     mobileStorage.updateStoredViewJson(objectId, json, false);
-                } else if (!completed) {
-                    mobileStorage.updateStoredNodeJson(objectId, objectJson, false);
+                } else if (isNode && false === completed) {
+                    json = data[objectId];
+                    mobileStorage.updateStoredNodeJson(objectId, json, false);
                 }
 
                 resetPendingChanges(true);
 
-                if (completed && !isView) {
+                if (completed && false === isView) {
                     mobileStorage.deleteNode(objectId, objectJson['viewid']);
-                    if (!isBackgroundTask) {
+                    if (false === isBackgroundTask) {
                         $('#' + objectJson['viewid']).CswChangePage();
                     }
                 }
