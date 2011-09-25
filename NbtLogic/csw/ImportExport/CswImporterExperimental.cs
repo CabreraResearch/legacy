@@ -28,14 +28,24 @@ namespace ChemSW.Nbt.ImportExport
 
 
 
-
+        enum ProcessStati { Unprocessed, Imported, PropsAdded, Error };
+        enum ProcessPhase { NothingDoneYet, TempTablesPopulated, NbtNodesPopulated, NbtPropsPouplated, RandomTestComplete };
         public CswImporterExperimental( CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, CswImportExportStatusReporter CswImportExportStatusReporter )
         {
             _CswNbtResources = CswNbtResources;
+
+
             _CswNbtImportExportFrame = CswNbtImportExportFrame;
             _CswImportExportStatusReporter = CswImportExportStatusReporter;
             _CswNbtSchemaModTrnsctn = new Schema.CswNbtSchemaModTrnsctn( _CswNbtResources );
+
+
         }
+
+
+
+        private string _ProcessStatusColumnName = "processstatus";
+        private string _StatusMessageColumnName = "statusmessage";
 
 
         /// <summary>
@@ -101,31 +111,35 @@ namespace ChemSW.Nbt.ImportExport
             string TempPropsRealPropIdColName = "nodepropid";
 
 
-            Int32 MaxInsertRecordsPerTransaction = 100;
+            Collection<string> _AdditonalColumns = new Collection<string>();
+            _AdditonalColumns.Add( _ProcessStatusColumnName );
+            _AdditonalColumns.Add( _StatusMessageColumnName );
+
+
+
+            Int32 MaxInsertRecordsPerTransaction = 500;
             Int32 MaxInsertRecordsPerDisplayUpdate = 1000;
 
-            Int32 NodeCreatePageSize = 25;
+            Int32 NodeCreatePageSize = 10; //number of nodes to create per cycle
+            Int32 NodeAddPropsPageSize = 10; //Number of nodes to create properties for per cycle
 
-            bool ResumeMode = false;
+            ProcessPhase CurrentProcessPhase = ProcessPhase.TempTablesPopulated; //setting this manually for now during testing
 
 
             //*********************************************************************************************************
             //*********************** Create Temporary Tables
-            if( false == ResumeMode )
+            if( ProcessPhase.NothingDoneYet == CurrentProcessPhase )
             {
-
-
-
 
 
                 _CswImportExportStatusReporter.reportStatus( "Creating temporary tables in database" );
                 _CswNbtSchemaModTrnsctn.beginTransaction();
-                if( _CswNbtSchemaModTrnsctn.isTableDefined( TempNodesTableName ) )
+                if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TempNodesTableName ) || _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TempNodesTableName ) ) //belt and suspenders
                 {
                     _CswNbtSchemaModTrnsctn.dropTable( TempNodesTableName );
                 }
 
-                if( _CswNbtSchemaModTrnsctn.isTableDefined( TempPropsTableName ) )
+                if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TempPropsTableName ) || _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TempPropsTableName ) ) //belt and suspenders
                 {
                     _CswNbtSchemaModTrnsctn.dropTable( TempPropsTableName );
                 }
@@ -135,12 +149,12 @@ namespace ChemSW.Nbt.ImportExport
 
                 _CswNbtSchemaModTrnsctn.beginTransaction();
 
-                _makeTempTable( TempNodesTableName, TempNodesTablePkColName, TableOfNodesFromXml.Columns, 512 );
+                _makeTempTable( TempNodesTableName, TempNodesTablePkColName, TableOfNodesFromXml.Columns, 512, _AdditonalColumns );
                 _CswNbtSchemaModTrnsctn.addLongColumn( TempNodesTableName, TempNodesRealNodeIdColName, "to be filled in when the node is actually created", false, false );
 
 
 
-                _makeTempTable( TempPropsTableName, TempPropsTablePkColName, TableOfPropsFromXml.Columns, 512 );
+                _makeTempTable( TempPropsTableName, TempPropsTablePkColName, TableOfPropsFromXml.Columns, 512, _AdditonalColumns );
                 //            _CswNbtSchemaModTrnsctn.addForeignKeyColumn( TempPropsTableName, TempNodesTablePkColName, "refers to node records in " + TempNodesTableName + ";", false, false, TempNodesTableName, TempNodesTablePkColName );
                 _CswNbtSchemaModTrnsctn.addLongColumn( TempPropsTableName, TempPropsRealPropIdColName, "to be filled in when the node is actually created", false, false );
 
@@ -156,107 +170,179 @@ namespace ChemSW.Nbt.ImportExport
                 _createTempRecords( TableOfNodesFromXml, TempNodesTableName, MaxInsertRecordsPerTransaction, MaxInsertRecordsPerDisplayUpdate );
                 _createTempRecords( TableOfPropsFromXml, TempPropsTableName, MaxInsertRecordsPerTransaction, MaxInsertRecordsPerDisplayUpdate );
 
-            }//if we're not resuming
+                CurrentProcessPhase = ProcessPhase.TempTablesPopulated;
+
+            }//if we haven't done anything yet
 
 
-            CswArbitrarySelect CswArbitrarySelectCountOfUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select count(*) from " + TempNodesTableName + " where " + TempNodesRealNodeIdColName + " is null" );
-            Int32 TotalNodesToCreate = Convert.ToInt32( CswArbitrarySelectCountOfUnprocessedNodes.getTable().Rows[0][0] );
-            Int32 TotalNodesCreatedSoFar = 0;
-            CswArbitrarySelect CswArbitrarySelectUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select nodename,nodetypename,nodeid from " + TempNodesTableName + " where " + TempNodesRealNodeIdColName + " is null" );
-            CswTableUpdate CswTableUpdateTempNodesTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatenodesfornodeid", TempNodesTableName );
-            CswTableUpdate CswTableUpdateTempPropsTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatepropsfornodeid", TempPropsTableName );
-            DataTable RawNodesTable = null;
-            do
+            if( ProcessPhase.TempTablesPopulated == CurrentProcessPhase )
             {
-                if( null != RawNodesTable )
+                //string WhereClauseForUnprocessedRecords = " where " + _ProcessStatusColumnName + "='" + ProcessStati.Unprocessed.ToString() + "' and nodetypename <> 'User'";
+                string WhereClauseForUnprocessedRecords = " where " + _ProcessStatusColumnName + "='" + ProcessStati.Unprocessed.ToString() + "'";
+                CswArbitrarySelect CswArbitrarySelectCountOfUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select count(*) from " + TempNodesTableName + WhereClauseForUnprocessedRecords );
+                Int32 TotalNodesToProcess = Convert.ToInt32( CswArbitrarySelectCountOfUnprocessedNodes.getTable().Rows[0][0] );
+                Int32 TotalNodesProcesssedSoFar = 0;
+                CswArbitrarySelect CswArbitrarySelectUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select nodename,nodetypename,nodeid from " + TempNodesTableName + WhereClauseForUnprocessedRecords );
+                CswTableUpdate CswTableUpdateTempNodesTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatenodesfornodeid", TempNodesTableName );
+                CswTableUpdate CswTableUpdateTempPropsTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatepropsfornodeid", TempPropsTableName );
+                DataTable RawNodesTable = null;
+                do
                 {
-                    foreach( DataRow CurrentRow in RawNodesTable.Rows ) //will be empty on 1st interation
+                    if( null != RawNodesTable )
                     {
-                        string CurrentNodeTypeNameInTempTable = CurrentRow["nodetypename"].ToString();
-                        string CurrentNodeNameInTempTable = CurrentRow["nodename"].ToString();
-                        string CurrentNodeIdInTempTable = CurrentRow["nodeid"].ToString();
-
-                        if( false == String.IsNullOrEmpty ( CurrentNodeNameInTempTable ) )
+                        foreach( DataRow CurrentRow in RawNodesTable.Rows ) //will be empty on 1st interation
                         {
+                            string CurrentNodeTypeNameInTempTable = CurrentRow["nodetypename"].ToString();
+                            string CurrentNodeNameInTempTable = CurrentRow["nodename"].ToString();
+                            string CurrentNodeIdInTempTable = CurrentRow["nodeid"].ToString();
 
-                            if( Int32.MinValue == _doesNodeNameAlreadyExist( CurrentNodeIdInTempTable ) )
+                            DataTable TempNodesUpdateTable = CswTableUpdateTempNodesTable.getTable( "where nodeid='" + CurrentNodeIdInTempTable + "'" );
+                            DataRow TempNodesUpdateRow = TempNodesUpdateTable.Rows[0];
+
+                            if( false == String.IsNullOrEmpty( CurrentNodeNameInTempTable ) )
                             {
 
-                                CswNbtMetaDataNodeType CurrentNodeType = _CswNbtResources.MetaData.getNodeType( CurrentNodeTypeNameInTempTable );
-                                if( null != CurrentNodeType )
+                                if( Int32.MinValue == _doesNodeNameAlreadyExist( CurrentNodeIdInTempTable ) )
                                 {
-                                    try
+                                    CswNbtMetaDataNodeType CurrentNodeType = _CswNbtResources.MetaData.getNodeType( CurrentNodeTypeNameInTempTable );
+                                    if( null != CurrentNodeType )
                                     {
-                                        CswNbtNode CswNbtNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
-                                        CswNbtNode.NodeName = CurrentNodeNameInTempTable;
-                                        CswNbtNode.postChanges( false );
-
-                                        Int32 RealNbtNodeId = CswNbtNode.NodeId.PrimaryKey;
-
-
-                                        DataTable TempNodesUpdateTable = CswTableUpdateTempNodesTable.getTable( "where nodeid='" + CurrentNodeIdInTempTable + "'" );
-                                        TempNodesUpdateTable.Rows[0][TempNodesRealNodeIdColName] = RealNbtNodeId;
-                                        CswTableUpdateTempNodesTable.update( TempNodesUpdateTable );
-
-                                        DataTable TempPropsUpdateTable = CswTableUpdateTempPropsTable.getTable( " where nodeid = '" + CurrentNodeIdInTempTable + "'" );
-                                        foreach( DataRow CurrentPropsUpdateRow in TempPropsUpdateTable.Rows )
+                                        try
                                         {
-                                            CurrentPropsUpdateRow[TempPropsRealPropIdColName] = RealNbtNodeId;
+                                            CswNbtNode CswNbtNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+                                            CswNbtNode.NodeName = CurrentNodeNameInTempTable;
+                                            CswNbtNode.postChanges( false );
+
+                                            Int32 RealNbtNodeId = CswNbtNode.NodeId.PrimaryKey;
+
+
+                                            TempNodesUpdateRow[TempNodesRealNodeIdColName] = RealNbtNodeId;
+                                            CswTableUpdateTempNodesTable.update( TempNodesUpdateTable );
+
+                                            DataTable TempPropsUpdateTable = CswTableUpdateTempPropsTable.getTable( " where nodeid = '" + CurrentNodeIdInTempTable + "'" );
+                                            foreach( DataRow CurrentPropsUpdateRow in TempPropsUpdateTable.Rows )
+                                            {
+                                                CurrentPropsUpdateRow[TempPropsRealPropIdColName] = RealNbtNodeId;
+                                            }
+
+                                            TempNodesUpdateRow[_ProcessStatusColumnName] = ProcessStati.Imported;
+
+
                                         }
-                                        CswTableUpdateTempPropsTable.update( TempPropsUpdateTable );
 
-                                        TotalNodesCreatedSoFar++;
+                                        catch( Exception Exception )
+                                        {
+                                            TempNodesUpdateRow[_ProcessStatusColumnName] = ProcessStati.Error;
+                                            TempNodesUpdateRow[_StatusMessageColumnName] = Exception.Message;
+
+                                            _CswImportExportStatusReporter.reportException( Exception );
+                                        }
 
                                     }
-
-                                    catch( Exception Exception )
+                                    else
                                     {
-                                        _CswImportExportStatusReporter.reportException( Exception );
-                                    }
+                                        string Error = "Unable to import node  " + CurrentNodeNameInTempTable + " @ nodeid " + CurrentNodeIdInTempTable + ",  because its nodetype (" + CurrentNodeTypeNameInTempTable + ") does not exist in the target schema";
+                                        _CswImportExportStatusReporter.reportError( Error );
+                                        TempNodesUpdateRow[_ProcessStatusColumnName] = ProcessStati.Error;
+                                        TempNodesUpdateRow[_StatusMessageColumnName] = Error;
+
+                                    }//if-else current node's nodetype exists
+
                                 }
                                 else
                                 {
-                                    _CswImportExportStatusReporter.reportError( "Unable to import node  " + CurrentNodeNameInTempTable + " @ nodeid " + CurrentNodeIdInTempTable + ",  because its nodetype (" + CurrentNodeTypeNameInTempTable + ") does not exist in the target schema" );
-                                }//if-else current node's nodetype exists
+                                    string Error = "Unable to import node " + CurrentNodeNameInTempTable + ",  because it already exists in the database";
+                                    _CswImportExportStatusReporter.reportError( Error );
+                                    TempNodesUpdateRow[_ProcessStatusColumnName] = ProcessStati.Error;
+                                    TempNodesUpdateRow[_StatusMessageColumnName] = Error;
+
+
+                                }//if-else name is not already defined
 
                             }
                             else
                             {
-                                _CswImportExportStatusReporter.reportError( "Unable to import node " + CurrentNodeNameInTempTable + ",  because it already exists in the database" );
+                                string Error = "Unable to import node  with nodeid " + CurrentNodeIdInTempTable + ",  because its node name is empty";
+                                TempNodesUpdateRow[_ProcessStatusColumnName] = ProcessStati.Error;
+                                TempNodesUpdateRow[_StatusMessageColumnName] = Error;
+                                _CswImportExportStatusReporter.reportError( Error );
 
-                            }//if-else name is not already defined
+                            }//if-else there is a name for the current node
 
-                        }
-                        else
+                            CswTableUpdateTempNodesTable.update( TempNodesUpdateTable );
+                            TotalNodesProcesssedSoFar++;
+
+                        }//iterate raw node rows
+
+
+                        if( RawNodesTable.Rows.Count > 0 )
                         {
-                            _CswImportExportStatusReporter.reportError( "Unable to import node  with nodeid " + CurrentNodeIdInTempTable + ",  because its node name is empty" );
+                            _CswNbtResources.finalize();
+                            _CswNbtResources.clearUpdates();
+                        }
 
-                        }//if-else there is a name for the current node
+                    }//if we're not on the first iteration
 
-                    }//iterate rows
+                    _CswNbtSchemaModTrnsctn.beginTransaction();
+                    RawNodesTable = CswArbitrarySelectUnprocessedNodes.getTable( 0, NodeCreatePageSize, false, false );
+
+                    _CswImportExportStatusReporter.reportStatus( TotalNodesProcesssedSoFar.ToString() + " of " + TotalNodesToProcess.ToString() + " nodes processed so far; processing the next " + RawNodesTable.Rows.Count.ToString() + " nodes." );
 
 
-                    if( RawNodesTable.Rows.Count > 0 )
+                } while( RawNodesTable.Rows.Count > 0 );
+
+                CurrentProcessPhase = ProcessPhase.NbtNodesPopulated;
+            }//if temptables have been populated
+
+
+            if( ProcessPhase.NbtNodesPopulated == CurrentProcessPhase )
+            {
+                string WhereClauseForImportedNodeRecords = " where " + _ProcessStatusColumnName + "='" + ProcessStati.PropsAdded.ToString() + "'";
+                CswArbitrarySelect CswArbitrarySelectCountOfUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select count(*) from " + TempNodesTableName + WhereClauseForImportedNodeRecords );
+                Int32 TotalNodesToProcess = Convert.ToInt32( CswArbitrarySelectCountOfUnprocessedNodes.getTable().Rows[0][0] );
+                Int32 TotalNodesProcesssedSoFar = 0;
+                CswArbitrarySelect CswArbitrarySelectUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select nodename,nodetypename,nodeid from " + TempNodesTableName + WhereClauseForImportedNodeRecords );
+
+                DataTable NodeRecordsToProcess = null;
+                do
+                {
+
+                    List<CswPrimaryKey> NodeKeysToProcess = new List<CswPrimaryKey>();
+
+                    if( NodeKeysToProcess.Count > 0 )
                     {
-                        //_CswNbtSchemaModTrnsctn.commitTransaction();
-                        _CswNbtResources.finalize();
-                        _CswNbtResources.clearUpdates();
-                    }
 
-                }//if we're on the first iteration
-
-                _CswNbtSchemaModTrnsctn.beginTransaction();
-                RawNodesTable = CswArbitrarySelectUnprocessedNodes.getTable( 0, NodeCreatePageSize, false, false );
-                _CswImportExportStatusReporter.reportStatus( "Creating " + ( TotalNodesCreatedSoFar + NodeCreatePageSize ).ToString() + " of " + TotalNodesToCreate.ToString() + " nodes" );
+                        if( NodeKeysToProcess.Count > 0 )
+                        {
+                            _CswNbtResources.finalize();
+                            _CswNbtResources.clearUpdates();
+                        }
 
 
-            } while( RawNodesTable.Rows.Count > 0 );
+                    }//if we are not on the first iteration
+
+                    _CswNbtSchemaModTrnsctn.beginTransaction();
+
+                    NodeRecordsToProcess = CswArbitrarySelectUnprocessedNodes.getTable(); 
+
+                } while( NodeRecordsToProcess.Rows.Count > 0 );
+
+
+            }//if nodes have been populated
+
+            if( ProcessPhase.NbtPropsPouplated == CurrentProcessPhase )
+            {
+                /* 
+                 * This will be the phase in which we do random testing of the data in NBT against the temp tables (and possibly even against the import XML file)
+                 */
+
+            }//if props have been populated
 
 
 
         } // ImportXml()
 
-        private void _makeTempTable( string TableName, string PkColumnName, DataColumnCollection Columns, Int32 ArbitraryStringColumnLength )
+        private void _makeTempTable( string TableName, string PkColumnName, DataColumnCollection Columns, Int32 ArbitraryStringColumnLength, Collection<string> AdditionalStringColumns )
         {
 
             _CswNbtSchemaModTrnsctn.addTable( TableName, PkColumnName );
@@ -269,6 +355,11 @@ namespace ChemSW.Nbt.ImportExport
                 }
 
                 _CswNbtSchemaModTrnsctn.addStringColumn( TableName, ColumnName, string.Empty, false, false, ArbitraryStringColumnLength );
+            }
+
+            foreach( string CurrentColumName in AdditionalStringColumns )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( TableName, CurrentColumName, string.Empty, false, false, ArbitraryStringColumnLength );
             }
 
         }//_makeTempTable() 
@@ -289,6 +380,9 @@ namespace ChemSW.Nbt.ImportExport
                 TotalRecordsInsertedSoFar++;
                 DataRow NewRow = DestinationDataTable.NewRow();
                 DestinationDataTable.Rows.Add( NewRow );
+
+
+                NewRow[_ProcessStatusColumnName] = ProcessStati.Unprocessed.ToString();
 
                 foreach( DataColumn CurrentColum in SourceTable.Columns )
                 {

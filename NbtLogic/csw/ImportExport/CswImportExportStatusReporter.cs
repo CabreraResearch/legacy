@@ -25,11 +25,14 @@ namespace ChemSW.Nbt.ImportExport
         private StatusUpdateHandler _WriteToGui = null;
         private ICswLogger _CswLogger = null;
 
+        private string _ImportExportLogFilter = "importexport";
 
         public CswImportExportStatusReporter( StatusUpdateHandler StatusUpdateHandler, ICswLogger CswLogger )
         {
             _WriteToGui = StatusUpdateHandler;
             _CswLogger = CswLogger;
+            _CswLogger.addFilter(_ImportExportLogFilter);
+            _CswLogger.RestrictByFilter = true; 
         }//ctor
 
         public void reportException( Exception Exception )
@@ -47,7 +50,7 @@ namespace ChemSW.Nbt.ImportExport
 
         public void reportStatus( string StatusMessage )
         {
-            _CswLogger.reportAppState( StatusMessage );
+            _CswLogger.reportAppState( StatusMessage, _ImportExportLogFilter );
             _WriteToGui( StatusMessage );
         }//reportStatus()
 
