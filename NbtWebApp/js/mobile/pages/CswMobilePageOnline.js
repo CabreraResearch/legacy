@@ -95,12 +95,14 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
         $content.append('<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess() + '</span></p>');
         var hideFailure = isNullOrEmpty(mobileStorage.lastSyncAttempt()) ? '' : 'none';
         $content.append('<p style="display:' + hideFailure + ' ;">Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt() + '</span></p>');
-        $syncBtn =  $('<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>')
+        $syncBtn = $('<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>')
                         .appendTo($content)
-                        .bind('click', function() {
-                            return startLoadingMsg(function() {
-                                mobileSync.initSync();
-                            });
+                        .bind('click', function () {
+                        	return startLoadingMsg(function () {
+                        		mobileSync.initSync(function () {
+                        			stopLoadingMsg(); 
+								});
+                        	});
                         });
         $onlineBtn = $('<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>')
                         .appendTo($content)

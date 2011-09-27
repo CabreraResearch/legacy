@@ -383,7 +383,7 @@
 				$.extend(o, options);
 			}
 
-			var $div = $('<div><span>Are you sure you want to delete:</span></div>');
+			var $div = $('<div><span>Are you sure you want to delete:&nbsp;</span></div>');
             
 			if(o.Multi) {
 				if (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0 ) {
@@ -402,7 +402,7 @@
 				    }
 				}
 			} else {
-				$div.append('<span>' + o.nodenames[0] + '?</span>');
+				$div.append('<span>' + o.nodenames + '?</span>');
 			}
 			$div.append('<br/><br/>');
 	

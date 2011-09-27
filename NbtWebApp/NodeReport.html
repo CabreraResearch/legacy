@@ -25,8 +25,8 @@
 			var qs = $.CswQueryString();
 			$('#ReportContent').CswNodeTabs({
 				'ID': 'nodereporttabs',
-				'nodeid': qs.nodeid,
-				'cswnbtnodekey': qs.cswnbtnodekey,
+				'nodeids': [ qs.nodeid ],
+				'cswnbtnodekeys': [ qs.cswnbtnodekey ],
 				'EditMode': EditMode.PrintReport.name
 			});
 		});

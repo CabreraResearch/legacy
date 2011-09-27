@@ -45,13 +45,15 @@
 					reinit: false,
 					EditMode: o.EditMode,
 					onEditNode: function() { 
-						refreshGrid(gridOpts, cswGrid);
+						//refreshGrid(gridOpts, cswGrid);
+						o.onReload();
 					},
 	//                'onAddNode': function() { 
 	//                    refreshGrid(gridOpts);
 	//                },
 					onDeleteNode: function() { 
-						refreshGrid(gridOpts, cswGrid);
+						//refreshGrid(gridOpts, cswGrid);
+						o.onReload();
 					},
 			        onSuccess: function (cswGrid) {
 			            makeGridMenu($MenuDiv, o, gridOpts, cswGrid, viewid);
@@ -70,16 +72,16 @@
 		}
 	};
 	
-    function refreshGrid(options, cswGrid) { 
-		var g = {
-			gridOpts: {
-				reinit: true,
-				multiselect: false
-			}
-		};
-		if( options ) $.extend(options,g);
-		cswGrid.changeGridOpts(g);
-	};
+//    function refreshGrid(options, cswGrid) { 
+//		var g = {
+//			gridOpts: {
+//				reinit: true,
+//				multiselect: false
+//			}
+//		};
+//		if( options ) $.extend(options,g);
+//		cswGrid.changeGridOpts(g);
+//	};
     
     function makeGridMenu($MenuDiv, o, gridOpts, cswGrid, viewid) {
         //Case 21741
@@ -90,7 +92,8 @@
 					cswnbtnodekey: o.cswnbtnodekey,
 					propid: o.ID,
 					onAddNode: function () {
-						refreshGrid(gridOpts, cswGrid);
+						//refreshGrid(gridOpts, cswGrid);
+						o.onReload();
 					},
 //					onSearch: {
 //						onViewSearch: function () {
