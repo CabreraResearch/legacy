@@ -46,12 +46,16 @@
 				            case 'view':
 				                $('<a href="#' + text + '_' + launchtype + '_' + viewmode + '_' + viewid + '">' + text + '</a>')
     				                .appendTo($li)
-    				                .click(function() { o.onViewClick(viewid, viewmode); return false; });
+									//.click(function() { o.onViewClick(viewid, viewmode); return false; });
+    				                .click(makeDelegate(function(x) { o.onViewClick(x.viewid, x.viewmode); return false; }, 
+														{ viewid: viewid, viewmode: viewmode }));
 				                break;
 				            case 'action':
 				                $('<a href="#">' + text + '</a>')
     				                .appendTo($li)
-    				                .click(function() { o.onActionClick(actionname, actionurl); return false; });
+    				                //.click(function() { o.onActionClick(actionname, actionurl); return false; });
+    				                .click(makeDelegate(function(x) { o.onActionClick(x.actionname, x.actionurl); return false; }, 
+														{ actionname: actionname, actionurl: actionurl }));
 				                break;
 				        }
 				    }
