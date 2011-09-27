@@ -438,7 +438,7 @@ namespace ChemSW.Nbt.ImportExport
 
             //---------------------------------------------------------------------------
             // Set property values
-            CswNbtNode GeneralUserRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "General User" );
+            CswNbtNode GeneralUserRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "Equipment User" );
             Collection<CswNbtNode> ImportedNodes = new Collection<CswNbtNode>();
             if( NodesTable != null )
             {
