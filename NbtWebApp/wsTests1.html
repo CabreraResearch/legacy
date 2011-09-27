@@ -188,6 +188,55 @@ function _endTests($table,errorstr) {
 
 }
 
+function _noAuthTests() {
+
+    //authenticate or bust
+    var $table = $('<table border="1" width="100%"/>').appendTo($('#div1'));
+    $table.append('<tr><td>Elapsed (sec)</td><td>Ajax Time (sec)</td><td>Test#</td><td>ServiceName</td><td>Status</td><td>Details</td></tr>');
+
+    var ajaxstart = new Date();
+    var ajaxend;
+
+    CswAjaxJson({
+        'url': '/NbtWebApp/wsNBT.asmx/authenticate',
+        'data': { "AccessId": 1, "UserName": 'bogus', "Password": 'junk876$', "ForMobile": "false" },
+        showAuth: true,
+        success: function (outputdata) {
+            var status = 'failed';
+            if (outputdata['AuthenticationStatus'].toString().indexOf('Authenticated') > -1) {
+                status = 'succeeded';
+            }
+            ajaxend = new Date();
+            showTestOutput($table, 'BEGIN', 'authenticate', status, began.toString(), ajaxstart, ajaxend);
+
+        },
+        error: function (data) {
+            showTestOutput($table, 'BEGIN', 'authenticate', 'ERROR', 'failed web service call');
+        }
+    });
+
+    //test series here...
+    test_getDashboard($table, 1); //, function () {
+    test_getHeaderMenu($table, 2); //, function () {
+    test_getViewTree($table, 3); //, function () {
+    test_getWelcomeItems($table, 4); //, function () {
+    test_getMainMenu($table, 5); //, function () {
+    test_getQuickLaunchItems($table, 6); //, function () {
+    test_getTreeOfViewInit($table, 7); //, function () {
+    test_getTabsForEquipNode($table, 8); //, function () {
+    _endTests($table, 'Ended OK');
+    // });
+    // });
+    // });
+    // });
+    // });
+    //  });
+    // });
+    // });
+
+
+
+}
 
 //execution steps
 $(document).ready(function () {
@@ -206,6 +255,7 @@ $(document).ready(function () {
 Accessid:<input type="text" id="accessid" value="1" size="6" />
  User:<input type="text" id="username" value="chemsw_admin" />
  Password:<input type="password" id="password" value="chemsw123" />
-<input type="button" id="run" value="Run Tests" onclick="_beginTests($('#accessid').val(),$('#username').val(),$('#password').val());" /></div>
+<input type="button" id="run" value="Run Tests" onclick="_beginTests($('#accessid').val(),$('#username').val(),$('#password').val());" />
+<input type="button" id="noauth" value="Run NO_AUTH Tests" onclick="_noAuthTests();" /></div>
 </body>
 </html>
