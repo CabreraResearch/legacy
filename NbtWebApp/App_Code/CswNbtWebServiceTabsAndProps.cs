@@ -390,7 +390,8 @@ namespace ChemSW.Nbt.WebServices
             if( AllSucceeded && null != RetNbtNodeKey )
             {
                 string RetNodeKey = wsTools.ToSafeJavaScriptParam( RetNbtNodeKey );
-                string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
+                //string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
+				string RetNodeId = RetNbtNodeKey.NodeId.ToString();
 
                 ret = new JObject( new JProperty( "result", "Succeeded" ),
                                    new JProperty( "nodeid", RetNodeId ),
