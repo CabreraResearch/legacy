@@ -130,7 +130,10 @@ namespace ChemSW.Nbt.PropTypes
             CswCommaDelimitedString NewGestalt = new CswCommaDelimitedString();
             foreach( string Key in this.Value )
             {
-                NewGestalt.Add( Options[Key] );
+				if( Options.ContainsKey( Key ) )
+				{
+					NewGestalt.Add( Options[Key] );
+				}
             }
             _CswNbtNodePropData.Gestalt = NewGestalt.ToString();
         } // _setGestalt()
