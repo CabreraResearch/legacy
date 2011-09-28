@@ -132,20 +132,22 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         var ulDef = {
-                ID: id + ulSuffix,
-                cssclass: CswMobileCssClasses.listview.name
-            },
-            listView = new CswMobileListView(ulDef, $content),
+            ID: id + ulSuffix,
+            cssclass: CswMobileCssClasses.listview.name
+        };
+        var listView = new CswMobileListView(ulDef, $content),
             nodeCount = 0,
-            nodeId, nodeJson, ocDef, node, opts, onClick; 
-        
+            nodeId, nodeJson, ocDef, node, opts, onClick;
+
         if (isNullOrEmpty(viewJson)) {
             viewJson = mobileStorage.fetchCachedViewJson(id);
         }
-        
-        if (false === isNullOrEmpty(viewJson)) {
+
+        if (isNullOrEmpty(viewJson)) {
+            refreshNodeJson(onSuccess, postSuccess);
+        } else {
             for (nodeId in viewJson) {
-                if(viewJson.hasOwnProperty(nodeId)) {
+                if (viewJson.hasOwnProperty(nodeId)) {
                     nodeJson = viewJson[nodeId];
                     if (Int32MinVal === nodeId.split('_')[1] || 'No Results' === nodeJson) {
                         makeEmptyListView(listView, null, 'No Results');
@@ -154,7 +156,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
                         ocDef = { nodeKey: nodeId };
                         $.extend(ocDef, nodeJson);
                         node = new CswMobileNodesFactory(ocDef);
-                        
+
                         opts = {
                             ParentId: id,
                             DivId: nodeId,
@@ -179,21 +181,21 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
                     nodeCount++;
                 }
             }
-        } 
-        if (nodeCount === 0) {
-            makeEmptyListView(listView, null, 'No Results');
-        }
-        if (false === mobileStorage.stayOffline()) {
-            toggleOnline(mobileStorage);
-        }
-        if (isFunction(onSuccess)) {
-            onSuccess($content);
-        }
-        if (isFunction(postSuccess)) {
-            postSuccess();
+            if (nodeCount === 0) {
+                makeEmptyListView(listView, null, 'No Results');
+            }
+            if (false === mobileStorage.stayOffline()) {
+                toggleOnline(mobileStorage);
+            }
+            if (isFunction(onSuccess)) {
+                onSuccess($content);
+            }
+            if (isFunction(postSuccess)) {
+                postSuccess();
+            }
         }
     }
-    
+
     //#endregion private
     
     //#region public, priveleged

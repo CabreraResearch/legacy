@@ -416,12 +416,13 @@ function isTimeToRefresh(mobileStorage,refreshInterval) {
     var ret = true,
         now = new Date(),
         lastSync = new Date(Date(mobileStorage.lastSyncTime)),
-        interval = tryParseNumber(refreshInterval, 300000);
+        interval = tryParseNumber(refreshInterval, 1000);
         
-        if (false === mobileStorage.amOnline() || 
-            ( now.getTime() - lastSync.getTime() < interval ) ) {
-            ret = false;
-        }
+    if ((false === mobileStorage.amOnline()) || 
+        (false === isNullOrEmpty(mobileStorage.lastSyncTime) && 
+        ( now.getTime() - lastSync.getTime() < interval ))) {
+        ret = false;
+    }
     return ret;
 }
 
@@ -431,7 +432,7 @@ function recalculateFooter($page, startingHeight) {
     /// <returns type="void" />
     var documentHeight = $(document).height(),
         windowHeight = $(window).height(),
-        adjustedHeight = windowHeight - 333, // documentHeight - 542,
+        adjustedHeight = windowHeight - 333, // documentHeight - 542,,
         winDocHeightDif = documentHeight - windowHeight,
         footer = $page.find('div:jqmData(role="footer")'),
         top = footer.css('top'),
