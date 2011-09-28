@@ -37,8 +37,8 @@
 				var timeoutHandle = setTimeout(function() {
 						$div.CswNodeTabs({
 										ID: o.ID + 'tabs',
-										nodeid: o.nodeid,               
-										cswnbtnodekey: o.cswnbtnodekey,        
+										nodeids: [ o.nodeid ],
+										cswnbtnodekeys: [ o.cswnbtnodekey ],
 										EditMode: EditMode.Preview.name,
 										ShowAsReport: false,
 										onInitFinish: function() {
