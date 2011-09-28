@@ -113,11 +113,17 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns JObject for all properties in a given tab
         /// </summary>
-        public JObject getProps( NodeEditMode EditMode, string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date )
+		public JObject getProps( NodeEditMode EditMode, string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
         {
             JObject Ret = new JObject();
 
-            if( false == _IsMultiEdit && TabId.StartsWith( HistoryTabPrefix ) )
+			CswPropIdAttr FilterPropIdAttr = null;
+			if( filterToPropId != string.Empty )
+			{
+				FilterPropIdAttr = new CswPropIdAttr( filterToPropId );
+			}
+            
+			if( false == _IsMultiEdit && TabId.StartsWith( HistoryTabPrefix ) )
             {
 				CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, Date );
                 if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType ) )
@@ -152,11 +158,12 @@ namespace ChemSW.Nbt.WebServices
 
                     foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                     {
-                        if( ( EditMode == NodeEditMode.AddInPopup && CanCreate && Prop.EditProp( Node, _ThisUser, true ) ) ||
-                           ( EditMode != NodeEditMode.AddInPopup && Prop.ShowProp( Node, _ThisUser ) ) )
-                        {
-                            _addProp( Ret, EditMode, Node, Prop );
-                        }
+						if( ( ( EditMode == NodeEditMode.AddInPopup && CanCreate && Prop.EditProp( Node, _ThisUser, true ) ) ||
+							  ( EditMode != NodeEditMode.AddInPopup && Prop.ShowProp( Node, _ThisUser ) ) ) &&
+							FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId )
+						{
+							_addProp( Ret, EditMode, Node, Prop );
+						}
                     }
                 } // if(Node != null)
             } // if-else( TabId.StartsWith( HistoryTabPrefix ) )
