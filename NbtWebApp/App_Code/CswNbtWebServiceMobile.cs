@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.WebServices
                 if( Tree.getNodeShowInTreeForCurrentPosition() )
                 {
                     bool RunProps = ( _ForMobile && Tree.getChildNodeCount() == 0 && NodeSpecies.More != ThisNodeKey.NodeSpecies );   // is a leaf
-                    ParentJsonO.Add( _getNode( ThisNode, RunProps ) );
+                    ParentJsonO.Add( _getNode( ThisNode, RunProps, ThisNodeKey.NodeSpecies ) );
                 } // if( Tree.getNodeShowInTreeForCurrentPosition() )
                 else
                 {
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.WebServices
             return _getNode( ThisNode, RunProps );
         }
 
-        private JProperty _getNode( CswNbtNode ThisNode, bool RunProps = true )
+        private JProperty _getNode( CswNbtNode ThisNode, bool RunProps = true, NodeSpecies ThisNodeKey = NodeSpecies.UnKnown )
         {
             JProperty Ret = new JProperty( "No Results" );
             if( null != ThisNode )
@@ -166,7 +166,8 @@ namespace ChemSW.Nbt.WebServices
                 JObject NodeProps = new JObject();
                 Ret.Value = NodeProps;
 
-                if( NodeSpecies.More == ThisNode.NodeSpecies )
+                NodeSpecies NodeSpecie = ( ThisNodeKey != NodeSpecies.UnKnown ) ? ThisNodeKey : ThisNode.NodeSpecies;
+                if( NodeSpecies.More == NodeSpecie )
                 {
                     ThisNodeName = "Results Truncated at " + _MobilePageSize;
                 }
@@ -174,7 +175,7 @@ namespace ChemSW.Nbt.WebServices
                 NodeProps["node_name"] = CswTools.SafeJavascriptParam( ThisNodeName );
                 NodeProps["nodetype"] = CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName );
                 NodeProps["objectclass"] = CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() );
-                NodeProps["nodespecies"] = CswTools.SafeJavascriptParam( ThisNode.NodeSpecies.ToString() );
+                NodeProps["nodespecies"] = CswTools.SafeJavascriptParam( NodeSpecie.ToString() );
                 NodeProps.Add( ThisJProp );
 
                 if( false == string.IsNullOrEmpty( ThisNode.NodeType.IconFileName ) )

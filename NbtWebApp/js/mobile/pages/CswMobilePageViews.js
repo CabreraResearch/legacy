@@ -153,7 +153,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
                 }
             }
             if (viewCount === 0) {
-                listView.addListItemLink('no_results', 'No Mobile Views to Display');
+                listView.addListItemHtml('no_results', 'No Mobile Views to Display');
             }
 
             if (!mobileStorage.stayOffline()) {
