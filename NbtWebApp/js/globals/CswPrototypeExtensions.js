@@ -36,7 +36,7 @@ Function.prototype.inheritsFrom = function(parentClassOrObject) {
 //#region Object
 
 //ECMA 5 first
-if(contains(Object(, 'defineProperty'))) {
+if(contains(Object,'defineProperty')) {
     try {
         Object.defineProperty(
             Object.prototype,
