@@ -350,7 +350,7 @@ namespace ChemSW.Nbt.ImportExport
                         // Record the matching nodetype in the table
                         NodeTypeMap.Add( SourceNodeTypeId, DestNodeType.NodeTypeId );          // for property value references
                         NodeTypeRow["destnodetypeid"] = DestNodeType.NodeTypeId.ToString();    // for posterity
-                        NodeTypeRow["destnodetypename"] = DestNodeType.NodeTypeName;
+                         NodeTypeRow["destnodetypename"] = DestNodeType.NodeTypeName;
 
                         foreach( DataRow NodeTypeTabRow in NodeTypeRow.GetChildRows( CswNbtMetaDataNodeType._Element_MetaDataNodeType + "_" + CswNbtMetaDataNodeTypeTab._Element_MetaDataNodeTypeTab ) )
                         {
@@ -451,7 +451,6 @@ namespace ChemSW.Nbt.ImportExport
                         if( !NodeIdMap.ContainsKey( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString().ToLower() ) )
                         {
                             CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
-                            NodeIdMap.Add( CswTools.XmlRealAttributeName( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString() ).ToLower(), Node.NodeId.PrimaryKey );    // for property value references
                             NodeRow["destnodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );                       // for posterity
 
                             NodeMap.Add( Node.NodeId, Node );
