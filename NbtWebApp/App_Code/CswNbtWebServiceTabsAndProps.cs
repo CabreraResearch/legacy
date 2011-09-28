@@ -286,17 +286,22 @@ namespace ChemSW.Nbt.WebServices
 
         public void _getAuditHistoryGridProp( JObject ParentObj, CswNbtNode Node )
         {
-            Random Num = new Random();
-            JObject PropObj = new JObject();
-            ParentObj["prop" + Num.Next()] = PropObj;
-            PropObj["name"] = "Audit History";
-            PropObj["helptext"] = string.Empty;
-            PropObj["fieldtype"] = "AuditHistoryGrid";
-            PropObj["displayrow"] = "1";
-            PropObj["displaycol"] = "1";
-            PropObj["required"] = "false";
-            PropObj["readonly"] = "true";
-
+			if( Node != null )
+			{
+				JObject PropObj = new JObject();
+				//Random Num = new Random();
+				//ParentObj["prop" + Num.Next()] = PropObj;
+				string FakePropIdAttr = Node.NodeId.ToString() + "_audit";
+				ParentObj["prop_" + FakePropIdAttr] = PropObj;
+				PropObj["name"] = "Audit History";
+				PropObj["helptext"] = string.Empty;
+				PropObj["fieldtype"] = "AuditHistoryGrid";
+				PropObj["displayrow"] = "1";
+				PropObj["displaycol"] = "1";
+				PropObj["required"] = "false";
+				PropObj["readonly"] = "true";
+				PropObj["id"] = FakePropIdAttr;
+			}
             //CswNbtWebServiceAuditing wsAuditing = new CswNbtWebServiceAuditing(_CswNbtResources);
             //PropXmlNode.InnerText = wsAuditing.getAuditHistoryGrid( Node ).ToString();
 
@@ -385,7 +390,8 @@ namespace ChemSW.Nbt.WebServices
             if( AllSucceeded && null != RetNbtNodeKey )
             {
                 string RetNodeKey = wsTools.ToSafeJavaScriptParam( RetNbtNodeKey );
-                string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
+                //string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
+				string RetNodeId = RetNbtNodeKey.NodeId.ToString();
 
                 ret = new JObject( new JProperty( "result", "Succeeded" ),
                                    new JProperty( "nodeid", RetNodeId ),
