@@ -594,7 +594,7 @@
                                             .CswSelect('init', 
                                                 { ID: o.ID + '_gbs',
                                                   onChange: function() {
-                                                      var $this = $(this).find(':selected');
+                                                      var $this = $('#' + o.ID + '_gbs').find(':selected');
                                                       var propData = { };
                                                       var valSelected = (false === isNullOrEmpty($this.val()));
                                                       if (valSelected) {
