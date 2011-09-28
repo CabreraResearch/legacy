@@ -123,6 +123,17 @@ function CswMobileClientDb() {
         }
     };
 
+    this.fetchStoredViews = function() {
+        /// <summary> Retrieve the cached View names from LocalStorage </summary>
+        /// <returns type="Object">Cached views</returns>
+        var ret = { };
+        var viewObj = this.getItem(CswMobileGlobal_Config.storedViews);
+        if (false === isNullOrEmpty(viewObj)) {
+            ret = viewObj;
+        }
+        return ret;
+    };
+    
     this.fetchCachedViewJson = function(viewId, viewObj) {
         /// <summary>
         ///   Retrieve a view from localStorage

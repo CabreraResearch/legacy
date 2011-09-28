@@ -160,7 +160,7 @@ function CswMobileClientDbResources() {
         /// <param name="loginFailure" type="String">Text of login failure, if any.</param>
         /// <returns type="Boolean">True if online. False otherwise.</returns>
         var mobileStorage = this;
-        if (arguments.length > 0 ) {
+        if (arguments.length > 0) {
             mobileStorage.setItem('online', isTrue(isOnline) );
         } 
         if (loginFailure) {

@@ -29,15 +29,10 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         title = CswMobilePage_Type.views.title,
         divSuffix = '_views',
         ulSuffix = '_list',
-        $contentPage = $page.find('div:jqmData(role="content")'),
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null: $contentPage.find('#' + id + divSuffix),
-        contentDivId;
+        $contentPage, $content, contentDivId;
     
     //ctor
     (function() {
-        if (isNullOrEmpty(mobileStorage)) {
-            mobileStorage = new CswMobileClientDbResources();
-        }
         var p = {
             parentlevel: -1,
             level: -1,
@@ -61,6 +56,8 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
             p.DivId = id;
         }
         contentDivId = id + divSuffix;
+        $contentPage = $page.find('div:jqmData(role="content")');
+        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
         
         if( !isNullOrEmpty(p.title)) {
             title = p.title;
@@ -120,7 +117,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         if (isNullOrEmpty(viewJson)) {
-            viewJson = mobileStorage.fetchCachedViewJson(CswMobileGlobal_Config.storedViews);
+            viewJson = mobileStorage.fetchStoredViews();
         }
         
         $content = ensureContent($content, contentDivId);

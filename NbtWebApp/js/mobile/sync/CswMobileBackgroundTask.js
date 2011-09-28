@@ -1,12 +1,13 @@
 /// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../_Global.js" />
-/// <reference path="../../_CswPrototypeExtensions.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
 /// <reference path="CswMobileSync.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswPrototypeExtensions.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
 
 //#region CswMobileBackgroundTask
 
-function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
+function CswMobileBackgroundTask(mobileStorage, mobileSync, options) {
     /// <summary>
     ///   Mobile background task class.  
     /// </summary>
@@ -17,21 +18,15 @@ function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
 
     //#region private
     var o = {
-        onSuccess: function () { },
-        onError: function () { },
-        onLoginFailure: function () { },
+        onSuccess: null, //function () { },
+        onError: null, //function () { },
+        onLoginFailure: null, //function () { },
         PollingInterval: '30000', //30 seconds
         taskUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest'
     };
 
     if (options) $.extend(o, options);
 
-    if (isNullOrEmpty(mobileStorage) ||
-        typeof mobileStorage.sessionid !== 'function') //this test is admittedly arbitrary
-    {
-        mobileStorage = new CswMobileClientDbResources();
-    }
-   
     var backgroundTaskId;
 
     function handleDataCheckTimer(onSuccessOveride, onFailureOveride) {
@@ -41,22 +36,21 @@ function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
         /// <param name="onSuccessOveride" type="Object">Override the onSuccess event</param>
         /// <param name="onFailureOveride" type="Object">Override the onFailure event</param>
         /// <returns type="void"></returns>
-        if ( !mobileStorage.stayOffline() )
+        if (false === mobileStorage.stayOffline())
         {
             CswAjaxJson({
                 formobile: o.ForMobile,
                 url: o.taskUrl,
                 data: {},
                 onloginfail: function (data) { o.onLoginFailure(data); },
-                success: function (data)
-                {
-                    if(!isNullOrEmpty(mobileSync)) {
+                success: function (data) {
+                    if (false === isNullOrEmpty(mobileSync)) {
                         mobileSync.initSync();
                     }
-                    if (!isNullOrEmpty(onSuccessOveride))
+                    if (isFunction(onSuccessOveride))
                     {
                         onSuccessOveride(data);
-                    } else if (!isNullOrEmpty(o.onSuccess)) {
+                    } else if (isFunction(o.onSuccess)) {
                         o.onSuccess(data);
                     }
                     //we don't want to start the next iteration until ajax completes
@@ -64,18 +58,15 @@ function CswMobileBackgroundTask(mobileStorage,mobileSync,options) {
                 },
                 error: function (data)
                 {
-                    if (!isNullOrEmpty(onFailureOveride))
-                    {
+                    if (isFunction(onFailureOveride)) {
                         onFailureOveride(data);
-                    } else if( !isNullOrEmpty(o.onError)) {
+                    } else if (isFunction(o.onError)) {
                         o.onError(data);  
                     }
                     _startBackgroundTask();
                 }
             });
-        } // if(amOnline())
-        else
-        {
+        } else { // if(amOnline())
             _startBackgroundTask();
         }
     } //_handleDataCheckTimer()

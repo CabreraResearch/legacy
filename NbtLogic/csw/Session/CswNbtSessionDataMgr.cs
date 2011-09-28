@@ -104,19 +104,19 @@ namespace ChemSW.Nbt
             }
         }
 
-        private void _addQuickLaunchView( JObject ParentObj, object LaunchType, object Text, object ViewMode, object ItemId )
+        private void _addQuickLaunchView( JObject ParentObj, object LaunchType, object Text, object ViewMode, Int32 ItemId )
         {
             ParentObj["launchtype"] = CswConvert.ToString( LaunchType );
             ParentObj["text"] = CswConvert.ToString( Text );
             ParentObj["viewmode"] = CswConvert.ToString( ViewMode );
-            ParentObj["itemid"] = new CswNbtSessionDataId( CswConvert.ToString( ItemId ) ).ToString();
+            ParentObj["itemid"] = new CswNbtSessionDataId( ItemId ).ToString();
         }
 
-        private void _addQuickLaunchAction( JObject ParentObj, object LaunchType, object Text, object ActionName, object ItemId, object ActionUrl )
+		private void _addQuickLaunchAction( JObject ParentObj, object LaunchType, object Text, object ActionName, Int32 ItemId, object ActionUrl )
         {
             ParentObj["launchtype"] = CswConvert.ToString( LaunchType );
             ParentObj["text"] = CswConvert.ToString( Text );
-            ParentObj["itemid"] = new CswNbtSessionDataId( CswConvert.ToString( ItemId ) ).ToString();
+			ParentObj["itemid"] = new CswNbtSessionDataId( ItemId ).ToString();
             ParentObj["actionname"] = CswConvert.ToString( ActionName );
             ParentObj["actionurl"] = CswConvert.ToString( ActionUrl );
         }

@@ -206,7 +206,6 @@ namespace ChemSW.Nbt.PropTypes
                 OptionsAry.Add( OptionObj );
                 OptionObj[NameColumn] = Row[NameColumn].ToString();
                 OptionObj[KeyColumn] = Row[KeyColumn].ToString();
-                OptionObj[StringKeyColumn] = Row[StringKeyColumn].ToString();
                 OptionObj[ValueColumn] = Row[ValueColumn].ToString();
             }
         }
@@ -259,20 +258,18 @@ namespace ChemSW.Nbt.PropTypes
 
             if( null != JObject["options"] )
             {
-                JObject OptionsObj = (JObject) JObject["options"];
+                JArray OptionsObj = (JArray) JObject["options"];
 
-                foreach( JProperty ItemNode in OptionsObj.Properties() )
+                foreach( JObject UserObj in OptionsObj )
                 {
-                    JObject UserObj = (JObject) ItemNode.Value;
-
-                    string key = CswConvert.ToString( UserObj[KeyColumn] );
-                    string name = CswConvert.ToString( UserObj[NameColumn] );
-                    bool value = CswConvert.ToBoolean( UserObj[ValueColumn] );
-                    if( value )
+                    string Key = CswConvert.ToString( UserObj[KeyColumn] );
+                    JArray Values = (JArray) UserObj["values"];
+                    bool Value = CswConvert.ToBoolean( Values[0] );
+                    if( Value )
                     {
-                        NewSelectedUserIds.Add( key );
+                        NewSelectedUserIds.Add( Key );
                     }
-                } // foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "Options" ).ChildNodes )
+                } // foreach( JObject UserObj in OptionsObj )
 
                 SelectedUserIds = NewSelectedUserIds;
             }

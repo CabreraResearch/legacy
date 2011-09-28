@@ -114,7 +114,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
         var tabCount = 0;
         if (false === isNullOrEmpty(nodeJson)) {
             for (var tabName in nodeJson) {
-                if (nodeJson.hasOwnProperty(tabName)) {
+                if (contains(nodeJson, tabName)) {
                     var tabId = makeSafeId({prefix: tabName, ID: nodeId }); 
                     
                     var opts = {

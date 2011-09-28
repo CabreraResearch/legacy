@@ -465,7 +465,7 @@ namespace ChemSW.Nbt.WebPages
                         _RequiredValue.Attributes.Add( "onclick", onclick );
 
                         if( _DefaultValueControl != null &&
-                            _SelectedNodeTypeProp.AddLayout == null &&
+                            _SelectedNodeTypeProp.AddLayout != null &&
                             _SelectedNodeTypeProp.IsRequired &&
                             _SelectedNodeTypeProp.DefaultValue.Empty )
                         {
@@ -1421,7 +1421,7 @@ namespace ChemSW.Nbt.WebPages
                     TextBox DisplayColAddValue = new TextBox();
                     DisplayColAddValue.CssClass = "textinput";
                     DisplayColAddValue.ID = "EditProp_DisplayColAddValue" + SelectedNodeTypeProp.PropId.ToString();
-                    if( SelectedNodeTypeProp.AddLayout!=null && SelectedNodeTypeProp.AddLayout.DisplayColumn != Int32.MinValue )
+					if( SelectedNodeTypeProp.AddLayout != null && SelectedNodeTypeProp.AddLayout.DisplayColumn != Int32.MinValue )
                         DisplayColAddValue.Text = SelectedNodeTypeProp.AddLayout.DisplayColumn.ToString();
                     DisplayColAdd.Cells[1].Controls.Add( DisplayColAddValue );
 
@@ -1430,7 +1430,7 @@ namespace ChemSW.Nbt.WebPages
                     TextBox DisplayRowAddValue = new TextBox();
                     DisplayRowAddValue.CssClass = "textinput";
                     DisplayRowAddValue.ID = "EditProp_DisplayRowAddValue" + SelectedNodeTypeProp.PropId.ToString();
-                    if( SelectedNodeTypeProp.AddLayout != null && SelectedNodeTypeProp.AddLayout.DisplayRow != Int32.MinValue )
+					if( SelectedNodeTypeProp.AddLayout != null && SelectedNodeTypeProp.AddLayout.DisplayRow != Int32.MinValue )
 						DisplayRowAddValue.Text = SelectedNodeTypeProp.AddLayout.DisplayRow.ToString();
                     DisplayRowAdd.Cells[1].Controls.Add( DisplayRowAddValue );
 
@@ -1461,28 +1461,6 @@ namespace ChemSW.Nbt.WebPages
                             BarcodeEditor.DataBind();
                             BarcodeRow.Cells[1].Controls.Add( BarcodeEditor );
                             break;
-
-                        case CswNbtMetaDataFieldType.NbtFieldType.Button:
-                            TableRow ButtonTextRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal) ButtonTextRow.Cells[0].Controls[0] ).Text = "Button Text:";
-                            TextBox ButtonTextValue = new TextBox();
-                            ButtonTextValue.CssClass = "textinput";
-                            ButtonTextValue.ID = "EditProp_TextValue" + SelectedNodeTypeProp.PropId.ToString();
-                            if( SelectedNodeTypeProp.StaticText != string.Empty )
-                                ButtonTextValue.Text = SelectedNodeTypeProp.StaticText.ToString();
-                            ButtonTextRow.Cells[1].Controls.Add( ButtonTextValue );
-
-							TableRow ButtonModeRow = makeEditPropTableRow( EditPropPlaceHolder );
-							( (Literal) ButtonModeRow.Cells[0].Controls[0] ).Text = "Mode:";
-                            DropDownList ButtonModeValue = new DropDownList();
-							ButtonModeValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
-							ButtonModeValue.Items.Add( new ListItem( "Button", CswNbtNodePropButton.ButtonMode.button.ToString() ) );
-							ButtonModeValue.Items.Add( new ListItem( "Link", CswNbtNodePropButton.ButtonMode.link.ToString() ) );
-							ButtonModeValue.SelectedValue = SelectedNodeTypeProp.Extended;
-							ButtonModeRow.Cells[1].Controls.Add( ButtonModeValue );
-                            break;
-
-
 
                         case CswNbtMetaDataFieldType.NbtFieldType.Composite:
                             TableRow TemplateRow = makeEditPropTableRow( EditPropPlaceHolder );
@@ -2301,8 +2279,7 @@ namespace ChemSW.Nbt.WebPages
 						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ImageList &&    // temporary until ported into new UI
 						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.NFPA &&         // temporary until ported into new UI
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MOL &&         // temporary until ported into new UI
-                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MultiList &&
-                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button)     // temporary until ported into new UI
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MultiList )     // temporary until ported into new UI
 					{
                         TableRow DefaultValueRow = makeEditPropTableRow( EditPropPlaceHolder );
                         ( (Literal) DefaultValueRow.Cells[0].Controls[0] ).Text = "Default Value:";

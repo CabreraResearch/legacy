@@ -33,9 +33,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         title = CswMobilePage_Type.tabs.title,
         divSuffix = '_props',
         ulSuffix = '_list',
-        $contentPage = $page.find('#' + id).find('div:jqmData(role="content")'),
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + divSuffix),
-        contentDivId, viewId, level, nodeId, tabId, tabName, tabJson;
+        $contentPage, $content, contentDivId, viewId, level, nodeId, tabId, tabName, tabJson;
     
     //ctor
     (function () {
@@ -57,7 +55,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
             onRefreshClick: null, //function () {},
             onSearchClick: null, //function () {}
             onListItemSelect: null, //function () {}
-            onPropChange: null //function () {}s
+            onPropChange: null //function () {}
         };
         var buttons = { };
         
@@ -69,6 +67,8 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         }
 
         contentDivId = id + divSuffix;
+        $contentPage = $page.find('div:jqmData(role="content")');
+        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
         
         if (false === isNullOrEmpty(p.title)) {
             title = p.title;
@@ -76,7 +76,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
             p.title = title;
         }
         nodeId = p.nodeId;
-        tabId = p.tabId;
+        tabId = mobileStorage.currentTabId(p.tabId);
         tabName = p.tabName;
         tabJson = p.tabJson;
         viewId = p.viewId;
@@ -97,7 +97,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         ///<summary>Rebuilds the tabs list from JSON</summary>
         ///<param name="onSuccess" type="Function">A function to execute after the list is built.</param>
         $content = ensureContent($content, contentDivId);
-        if (!isNullOrEmpty(tabJson)) {
+        if (false === isNullOrEmpty(tabJson)) {
             refreshPropContent(onSuccess, postSuccess);
         } else {
             makeEmptyListView(null, $content, 'No Properties to Display');
@@ -117,7 +117,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
             propCount = 0,
             nextTab = '', 
             onClick = null,
-            propId, propJson, propName, ftDef, prop, $li, onChange, cachedJson, newTabJson, opts;
+            propId, propJson, propName, ftDef, prop, $li, onChange, cachedJson, newTabJson, opts, nextTabId;
         
         for (propId in tabJson) {
             if (contains(tabJson, propId)) {
@@ -159,22 +159,23 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
                 contains(cachedJson.subitems, nextTab)) {
                 
                 newTabJson = cachedJson.subitems[nextTab];
+                nextTabId = mobileStorage.currentTabId(makeSafeId({ID: nextTab, suffix: nodeId}));
                 opts = {
                     ParentId: id,
-                    DivId: tabId,
+                    DivId: nextTabId,
                     viewId: viewId,
                     nodeId: nodeId,
-                    tabId: tabId,
+                    tabId: nextTabId,
                     tabName: nextTab,
                     tabJson: newTabJson,
                     level: 3,
-                    title: tabName,
+                    title: nextTab,
                     onHelpClick: pageDef.onHelpClick,
                     onOnlineClick: pageDef.onOnlineClick,
                     onRefreshClick: pageDef.onRefreshClick,
                     mobileStorage: mobileStorage
                 };
-                onClick = makeDelegate(pageDef.onListItemSelect, opts);    
+                onClick = makeDelegate(pageDef.onListItemSelect, opts); 
             }
             listView.addListItemLink(makeSafeId({ prefix: id, ID: nextTab }), nextTab, { event: onClick, name: CswDomElementEvent.click.name });    
         }

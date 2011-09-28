@@ -415,7 +415,7 @@ function isTimeToRefresh(mobileStorage,refreshInterval) {
     /// <returns type="Boolean">True if online and refreshInterval has passed (lastSyncTime - interval).</returns>
     var ret = true,
         now = new Date(),
-        lastSync = new Date(mobileStorage.lastSyncTime),
+        lastSync = new Date(Date(mobileStorage.lastSyncTime)),
         interval = tryParseNumber(refreshInterval, 300000);
         
         if (false === mobileStorage.amOnline() || 
@@ -423,6 +423,27 @@ function isTimeToRefresh(mobileStorage,refreshInterval) {
             ret = false;
         }
     return ret;
+}
+
+function recalculateFooter($page, startingHeight) {
+    /// <summary> JQM's footer position calculation is based on document height, which for some as-of-yet-unknown reason is WAY off (too high). So let's recalibrate using the window height.</summary>
+    /// <param name="$page" type="JQuery">A page to fix</param>
+    /// <returns type="void" />
+    var documentHeight = $(document).height(),
+        windowHeight = $(window).height(),
+        adjustedHeight = windowHeight - 333, // documentHeight - 542,
+        winDocHeightDif = documentHeight - windowHeight,
+        footer = $page.find('div:jqmData(role="footer")'),
+        top = footer.css('top'),
+        heightChange = documentHeight - startingHeight;
+    
+    if( isNumeric(heightChange) && heightChange !== 0) {
+        top += heightChange;
+        footer.css('top', top);
+    }
+    else if (winDocHeightDif > 0) {
+        footer.css('top', adjustedHeight);
+    }
 }
 
 //#endregion functions

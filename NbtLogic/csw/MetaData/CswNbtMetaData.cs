@@ -1072,16 +1072,22 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeProp = NodeType.getNodeTypeProp(OriginalPropName);
             }
 
-            // Delete Jct_Nodes_Props records
-            CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate("DeleteNodeTypeProp_jct_update", "jct_nodes_props");
-            DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable("nodetypepropid", NodeTypeProp.PropId);
-            foreach (DataRow CurrentJctNodesPropsRow in JctNodesPropsTable.Rows)
-            {
-                CurrentJctNodesPropsRow.Delete();
-            }
-            JctNodesPropsUpdate.update(JctNodesPropsTable);
+			// Delete Jct_Nodes_Props records
+			CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_jct_update", "jct_nodes_props" );
+			DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", NodeTypeProp.PropId );
+			foreach( DataRow CurrentJctNodesPropsRow in JctNodesPropsTable.Rows )
+			{
+				CurrentJctNodesPropsRow.Delete();
+			}
+			JctNodesPropsUpdate.update( JctNodesPropsTable );
 
-            // Delete Views
+			// Delete nodetype_layout records
+			foreach( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType in Enum.GetValues( typeof( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType ) ) )
+			{
+				NodeTypeLayout.removePropFromLayout( LayoutType, NodeTypeProp );
+			}
+
+			// Delete Views
             // This has to come after because nodetype_props has an fk to node_views.
             CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate("DeleteNodeTypeProp_nodeview_update", "node_views");
             CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();

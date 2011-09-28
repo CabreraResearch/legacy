@@ -7,10 +7,10 @@
 ; (function ($) {
         
     var pluginName = 'CswFieldTypeUserSelect';
-	var nameCol = 'label';
-	var keyCol = "key";
+    var nameCol = 'label';
+    var keyCol = "key";
     var stringKeyCol = "UserIdString";
-	var valueCol = "value";
+    var valueCol = "value";
 
     var methods = {
         'init': function(o) { 
@@ -18,7 +18,7 @@
             var $Div = $(this);
             
             var propVals = o.propData.values;
-			var options = propVals.options;
+            var options = propVals.options;
                 
             var $cbaDiv = $('<div />')
                     .CswCheckBoxArray('init', {
@@ -29,8 +29,8 @@
                         ReadOnly: o.ReadOnly,
                         onchange: o.onchange,
                         dataAry: options,
-			            nameCol: nameCol,
-			            keyCol: keyCol,
+                        nameCol: nameCol,
+                        keyCol: keyCol,
                         valCol: valueCol,
                         valColName: 'Include'
                     });

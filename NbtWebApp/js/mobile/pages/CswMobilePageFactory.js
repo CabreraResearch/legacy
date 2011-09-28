@@ -177,11 +177,14 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     }
     
     function bindPageEvents() {
+        
         $pageDiv.bind('pageshow', function() {
+            var $this = $(this);
             startLoadingMsg();
             setTimeout(function() {
                 fillContent(false, function() {
                     stopLoadingMsg();
+                    recalculateFooter($this);
                 });
             }, 500);
         });

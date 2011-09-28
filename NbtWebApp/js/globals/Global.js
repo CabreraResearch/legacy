@@ -347,6 +347,7 @@ function _handleAuthenticationStatus(options)
         case 'Failed': txt = "Invalid login."; break;
         case 'Locked': txt = "Your account is locked.  Please see your account administrator."; break;
         case 'Deactivated': txt = "Your account is deactivated.  Please see your account administrator."; break;
+        case 'ModuleNotEnabled': txt = "This feature is not enabled.  Please see your account administrator."; break;
         case 'TooManyUsers': txt = "Too many users are currently connected.  Try again later."; break;
         case 'NonExistentAccessId': txt = "Invalid login."; break;
         case 'NonExistentSession': txt = "Your session has timed out.  Please login again."; break;
@@ -698,14 +699,14 @@ function deleteNodes(options)
 
     if (!isArray(o.nodeids))  // case 22722
     {
-    	o.nodeids = [o.nodeids];
-    	o.nodekeys = [o.nodekeys];
+        o.nodeids = [o.nodeids];
+        o.nodekeys = [o.nodekeys];
     }
 
-	var jData = {
-		NodePks: o.nodeids,
-		NodeKeys: o.nodekeys
-	};
+    var jData = {
+        NodePks: o.nodeids,
+        NodeKeys: o.nodekeys
+    };
 
     CswAjaxJson({
         url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',
