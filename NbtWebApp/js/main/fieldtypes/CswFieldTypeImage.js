@@ -61,29 +61,31 @@
                                     return CswImageButton_ButtonType.None;
                                 }
                             });
-                    //Clear button
-                    $('<div/>')
-                        .appendTo($cell23)
-                        .CswImageButton({
-                                ButtonType: CswImageButton_ButtonType.Clear,
-                                AlternateText: 'Clear',
-                                ID: o.ID + '_clr',
-                                onClick: function($ImageDiv) {
-                                    if (confirm("Are you sure you want to clear this image?")) {
-                                        var dataJson = {
-                                            PropId: o.propData.id,
-                                            IncludeBlob: true
-                                        };
+                    if(fileName!== '') {
+                        //Clear button
+                        $('<div/>')
+                            .appendTo($cell23)
+                            .CswImageButton({
+                                    ButtonType: CswImageButton_ButtonType.Clear,
+                                    AlternateText: 'Clear',
+                                    ID: o.ID + '_clr',
+                                    onClick: function($ImageDiv) {
+                                        if (confirm("Are you sure you want to clear this image?")) {
+                                            var dataJson = {
+                                                PropId: o.propData.id,
+                                                IncludeBlob: true
+                                            };
 
-                                        CswAjaxJson({
-                                                url: '/NbtWebApp/wsNBT.asmx/clearProp',
-                                                data: dataJson,
-                                                success: function() { o.onReload(); }
-                                            });
+                                            CswAjaxJson({
+                                                    url: '/NbtWebApp/wsNBT.asmx/clearProp',
+                                                    data: dataJson,
+                                                    success: function() { o.onReload(); }
+                                                });
+                                        }
+                                        return CswImageButton_ButtonType.None;
                                     }
-                                    return CswImageButton_ButtonType.None;
-                                }
-                            });
+                                });
+                    }
                 }
             }
         },
