@@ -4,12 +4,12 @@
 /// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
-	
+    
     var pluginName = "CswSelect";
     
     var methods = {
-	
-		init: function(options) {
+    
+        init: function(options) {
             var o = {
                 ID: '',
                 selected: '',
@@ -30,8 +30,8 @@
             if (!isNullOrEmpty( o.cssclass )) $select.addClass(o.cssclass);
             if (!isNullOrEmpty( o.value )) $select.text( o.value );
 
-		    var values = makeOptions(o.values);
-		    setOptions(values, o.selected, $select);
+            var values = makeOptions(o.values);
+            setOptions(values, o.selected, $select);
             
             if (isFunction(o.onChange)) {
                  $select.bind('change', function () {
@@ -54,7 +54,6 @@
             setOptions(values, selected, $select, doEmpty);
             return $select;
         }
-        
     };
     
     function makeOptions(valueArray) {
@@ -98,19 +97,19 @@
     }
     
     // Method calling logic
-	$.fn.CswSelect = function (method) {
-		///<summary>Generates and manipulates a well-formed pick list</summary>
-	    ///<param name="method">Options: 'init', 'setoptions', 'makeoptions'</param>
-	    ///<returns type="JQuery">A JQuery select element</returns>
-		if ( methods[method] ) {
-		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-		} else if ( typeof method === 'object' || ! method ) {
-		  return methods.init.apply( this, arguments );
-		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
-		}    
+    $.fn.CswSelect = function (method) {
+        ///<summary>Generates and manipulates a well-formed pick list</summary>
+        ///<param name="method">Options: 'init', 'setoptions', 'makeoptions'</param>
+        ///<returns type="JQuery">A JQuery select element</returns>
+        if ( methods[method] ) {
+          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+        } else if ( typeof method === 'object' || ! method ) {
+          return methods.init.apply( this, arguments );
+        } else {
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+        }    
   
-	};
+    };
 
 
 })(jQuery);
