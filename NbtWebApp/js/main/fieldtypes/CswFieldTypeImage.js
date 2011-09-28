@@ -32,7 +32,8 @@
                 var $cell23 = $table.CswTable('cell', 2, 3).CswAttrDom('align', 'right');
 
                 if ( false === isNullOrEmpty(fileName) ) {
-                    $('<a href="' + href + '" target="_blank"><img src="' + href + '&file=' + fileName + '" alt="' + fileName + '" width="' + width + '" height="' + height + '"/></a>')
+                    href = href + '&file=' + fileName;
+                    $('<a href="' + href + '" target="_blank"><img src="' + href + '" alt="' + fileName + '" width="' + width + '" height="' + height + '"/></a>')
                         .appendTo($cell11);
                     $cell21.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');
                 } else {
