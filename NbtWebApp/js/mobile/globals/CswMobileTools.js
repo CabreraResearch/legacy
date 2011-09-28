@@ -416,7 +416,7 @@ function isTimeToRefresh(mobileStorage,refreshInterval) {
     var ret = true,
         now = new Date(),
         lastSync = new Date(Date(mobileStorage.lastSyncTime)),
-        interval = tryParseNumber(refreshInterval, 1000);
+        interval = tryParseNumber(refreshInterval, 300000);
         
     if ((false === mobileStorage.amOnline()) || 
         (false === isNullOrEmpty(mobileStorage.lastSyncTime) && 
