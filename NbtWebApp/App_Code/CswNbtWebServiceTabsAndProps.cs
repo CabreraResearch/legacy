@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.WebServices
                     {
 						if( ( ( EditMode == NodeEditMode.AddInPopup && CanCreate && Prop.EditProp( Node, _ThisUser, true ) ) ||
 							  ( EditMode != NodeEditMode.AddInPopup && Prop.ShowProp( Node, _ThisUser ) ) ) &&
-							FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId )
+							( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId ) )
 						{
 							_addProp( Ret, EditMode, Node, Prop );
 						}
