@@ -80,13 +80,14 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         if (isTimeToRefresh(mobileStorage)) { 
             refreshViewJson(onSuccess,postSuccess);
         } else { //it's been less than 5 minutes since the last sync or we're offline
-             refreshViewContent('', onSuccess,postSuccess); 
+            refreshViewContent('', onSuccess,postSuccess); 
         } 
     }
     
     function refreshViewJson(onSuccess,postSuccess) {
         ///<summary>Fetches the current views list from the web server and rebuilds the list.</summary>
-        var getViewsUrl = '/NbtWebApp/wsNBT.asmx/GetViewsList';
+        var getViewsUrl = '/NbtWebApp/wsNBT.asmx/GetViewsList',
+            ret = {};
         
         var jsonData = {
             SessionId: mobileStorage.sessionid(),
@@ -119,48 +120,51 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         if (isNullOrEmpty(viewJson)) {
             viewJson = mobileStorage.fetchStoredViews();
         }
-        
-        $content = ensureContent($content, contentDivId);
-        
-        var ulDef = {
-            ID: id + ulSuffix,
-            cssclass: CswMobileCssClasses.listview.name
-        };
-        var listView = new CswMobileListView(ulDef, $content);
+        if (isNullOrEmpty(viewJson)) {
+            refreshViewJson(onSuccess, postSuccess);
+        } else {
+            $content = ensureContent($content, contentDivId);
 
-        var viewCount = 0;
-        for(var viewId in viewJson) {
-            if(viewJson.hasOwnProperty(viewId)) {
-                var viewName = viewJson[viewId];
-                var opts = {
-                    ParentId: id,
-                    DivId: viewId,
-                    viewId: viewId,
-                    level: 1,
-                    title: viewName,
-                    onHelpClick: pageDef.onHelpClick,
-                    onOnlineClick: pageDef.onOnlineClick,
-                    onRefreshClick: pageDef.onRefreshClick,
-                    mobileStorage: mobileStorage
-                };
+            var ulDef = {
+                ID: id + ulSuffix,
+                cssclass: CswMobileCssClasses.listview.name
+            };
+            var listView = new CswMobileListView(ulDef, $content);
 
-                var onClick = makeDelegate(pageDef.onListItemSelect,opts);
-                listView.addListItemLink(viewId, viewName, onClick);
-                viewCount++;
+            var viewCount = 0;
+            for (var viewId in viewJson) {
+                if (viewJson.hasOwnProperty(viewId)) {
+                    var viewName = viewJson[viewId];
+                    var opts = {
+                        ParentId: id,
+                        DivId: viewId,
+                        viewId: viewId,
+                        level: 1,
+                        title: viewName,
+                        onHelpClick: pageDef.onHelpClick,
+                        onOnlineClick: pageDef.onOnlineClick,
+                        onRefreshClick: pageDef.onRefreshClick,
+                        mobileStorage: mobileStorage
+                    };
+
+                    var onClick = makeDelegate(pageDef.onListItemSelect, opts);
+                    listView.addListItemLink(viewId, viewName, onClick);
+                    viewCount++;
+                }
             }
-        }
-        if (viewCount === 0) {
-            listView.addListItemLink('no_results', 'No Mobile Views to Display');
-        }
-        
-        if (!mobileStorage.stayOffline()) {
-            toggleOnline(mobileStorage);
-        }
-        if (isFunction(onSuccess)) {
-            onSuccess($content);
-        }
-        if (isFunction(postSuccess)) {
-            postSuccess();
+            if (viewCount === 0) {
+                listView.addListItemLink('no_results', 'No Mobile Views to Display');
+            }
+
+            if (!mobileStorage.stayOffline()) {
+                toggleOnline(mobileStorage);
+            }
+            if (isFunction(onSuccess)) {
+                onSuccess($content);
+            }
+            if (isFunction(postSuccess)) {
+                postSuccess();
+            }
         }
     }
     
