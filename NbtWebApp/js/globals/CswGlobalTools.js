@@ -255,8 +255,8 @@ function contains(object, index) {
     /// <returns type="Boolean" />
     var ret = false;
     if (false === isNullOrUndefined(object) && 
-        (isArray(object) && object.indexOf(index) !== -1) || 
-        object.hasOwnProperty(index)) {
+        (isArray(object) && isFunction(object.indexOf) && object.indexOf(index) !== -1) || 
+        (object.hasOwnProperty(index))) {
         ret = true;
     }
     return ret;
@@ -301,6 +301,14 @@ function tryParseElement(elementId, $context) {
         }
     }
     return $ret;
+}
+
+function renameProperty(obj, oldName, newName) {
+    if(false === isNullOrUndefined(obj) && contains(obj, oldName)) {
+        obj[newName] = obj[oldName];
+        delete obj[oldName];
+    }
+    return obj;
 }
 
 function trim(str) {
