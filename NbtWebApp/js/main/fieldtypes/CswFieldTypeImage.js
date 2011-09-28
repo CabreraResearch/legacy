@@ -31,7 +31,7 @@
                 var $cell22 = $table.CswTable('cell', 2, 2).CswAttrDom('align', 'right');
                 var $cell23 = $table.CswTable('cell', 2, 3).CswAttrDom('align', 'right');
 
-                if (fileName !== '') {
+                if ( false === isNullOrEmpty(fileName) ) {
                     $('<a href="' + href + '" target="_blank"><img src="' + href + '&file=' + fileName + '" alt="' + fileName + '" width="' + width + '" height="' + height + '"/></a>')
                         .appendTo($cell11);
                     $cell21.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');
@@ -61,7 +61,7 @@
                                     return CswImageButton_ButtonType.None;
                                 }
                             });
-                    if(fileName!== '') {
+                    if( false === isNullOrEmpty(fileName) ) {
                         //Clear button
                         $('<div/>')
                             .appendTo($cell23)
