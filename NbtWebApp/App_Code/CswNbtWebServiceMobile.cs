@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.WebServices
             return _getNode( ThisNode, RunProps );
         }
 
-        private JProperty _getNode( CswNbtNode ThisNode, bool RunProps = true, NodeSpecies ThisNodeKey = NodeSpecies.UnKnown )
+        private JProperty _getNode( CswNbtNode ThisNode, bool RunProps = true, NodeSpecies ThisNodeSpecies = NodeSpecies.UnKnown )
         {
             JProperty Ret = new JProperty( "No Results" );
             if( null != ThisNode )
@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.WebServices
                 JObject NodeProps = new JObject();
                 Ret.Value = NodeProps;
 
-                NodeSpecies NodeSpecie = ( ThisNodeKey != NodeSpecies.UnKnown ) ? ThisNodeKey : ThisNode.NodeSpecies;
+                NodeSpecies NodeSpecie = ( ThisNodeSpecies != NodeSpecies.UnKnown ) ? ThisNodeSpecies : ThisNode.NodeSpecies;
                 if( NodeSpecies.More == NodeSpecie )
                 {
                     ThisNodeName = "Results Truncated at " + _MobilePageSize;
