@@ -864,7 +864,7 @@ function HandleMenuItem(options)
         var nodeid = tryParseString(json.nodeid);
         var nodename = tryParseString(json.nodename);
         var viewid = tryParseString(json.viewid);
-        
+
         switch (action)
         {
             case 'About':
@@ -902,8 +902,7 @@ function HandleMenuItem(options)
                 break;
 
             case 'CopyNode':
-                $a.click(function ()
-                {
+                $a.click(function () {
                     $.CswDialog('CopyNodeDialog', {
                         nodename: nodename,
                         nodeid: nodeid,
