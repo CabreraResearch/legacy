@@ -496,7 +496,7 @@
 							}
 			});
 
-							_openDiv($div, 400, 300);
+							openDialog($div, 400, 300);
 						},
 
 		'EditMolDialog': function (options) {

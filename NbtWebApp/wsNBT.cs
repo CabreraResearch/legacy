@@ -2251,7 +2251,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string clearProp( string PropId, string IncludeBlob, string Multi )
+        public string clearProp( string PropId, string IncludeBlob)
         {
             //Come back to implement Multi
             JObject ReturnVal = new JObject( new JProperty( "Succeeded", false.ToString().ToLower() ) );
