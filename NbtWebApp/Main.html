@@ -884,7 +884,8 @@
                     'onCancel': function ()
                     {
                         clear({ 'all': true });
-                        refreshSelected();
+//                        refreshSelected();
+                        handleItemSelect({ 'viewid': o.ActionOptions.viewid, 'viewmode': o.ActionOptions.viewmode });
                     },
                     'onFinish': function (viewid, viewmode)
                     {
