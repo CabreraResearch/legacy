@@ -35,21 +35,34 @@ Function.prototype.inheritsFrom = function(parentClassOrObject) {
 
 //#region Object
 
-Object.defineProperty(
-    Object.prototype, 
-    'renameProperty',
-    {
-        writable : false, // Cannot alter this property
-        enumerable : false, // Will show up in a for-in loop.
-        configurable : false, // Cannot be deleted via the delete operator
-        value : function (oldName, newName) {
-            if (this.hasOwnProperty(oldName)) {
-                this[newName] = this[oldName];
-                delete this[oldName];
+//ECMA 5 first
+if(contains(Object(, 'defineProperty'))) {
+    try {
+        Object.defineProperty(
+            Object.prototype,
+            'renameProperty',
+            {
+                writable: false, // Cannot alter this property
+                enumerable: false, // Will show up in a for-in loop.
+                configurable: false, // Cannot be deleted via the delete operator
+                value: function(oldName, newName) {
+                    if (this.hasOwnProperty(oldName)) {
+                        this[newName] = this[oldName];
+                        delete this[oldName];
+                    }
+                    return this;
+                }
             }
-            return this;
-        }
+        );
     }
-);
+} else {
+    Object.prototype.renameProperty = function (oldName, newName) {
+        if (this.hasOwnProperty(oldName)) {
+            this[newName] = this[oldName];
+            delete this[oldName];
+        }
+        return this;
+    };
+}
 
 //#endregion Object
