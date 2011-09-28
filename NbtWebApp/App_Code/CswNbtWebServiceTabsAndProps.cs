@@ -517,10 +517,10 @@ namespace ChemSW.Nbt.WebServices
             if( NodeType != null )
             {
                 CswNbtMetaDataNodeTypeTab Tab = null;
-                if( TabId != string.Empty )
-                {
-                    Tab = NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
-                }
+				if( TabId != string.Empty && LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+				{
+					Tab = NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
+				}
 
                 Collection<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( NodeType, Tab, LayoutType );
                 foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
