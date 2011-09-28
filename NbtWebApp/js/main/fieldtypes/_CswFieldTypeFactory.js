@@ -74,6 +74,9 @@ $.CswFieldTypeFactory = function (method)
 				case "Barcode":
 					m.$propdiv.CswFieldTypeBarcode('init', m); //'init', nodeid, propData, onchange
 					break;
+	            case "Button":
+	                m.$propdiv.CswFieldTypeButton('init', m); //'init', nodeid, propData, onchange
+	                break;
 				case "Composite":
 					m.$propdiv.CswFieldTypeComposite('init', m); //'init', nodeid, propData, onchange
 					break;
@@ -200,6 +203,9 @@ $.CswFieldTypeFactory = function (method)
 				case "Barcode":
 					m.$propdiv.CswFieldTypeBarcode('save', m); //('save', $propdiv, propData);
 					break;
+	            case "Button":
+	                m.$propdiv.CswFieldTypeButton('save', m); //('save', $propdiv, propData);
+	                break;
 				case "Composite":
 					m.$propdiv.CswFieldTypeComposite('save', m); //('save', $propdiv, propData);
 					break;

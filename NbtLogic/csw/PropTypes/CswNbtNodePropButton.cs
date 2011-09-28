@@ -13,6 +13,7 @@ namespace ChemSW.Nbt.PropTypes
 
     public class CswNbtNodePropButton : CswNbtNodeProp
     {
+        public enum ButtonMode { button, link };
 
         public CswNbtNodePropButton( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
@@ -69,7 +70,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject.Add( new JProperty( "text", Text ) );
-            ParentObject.Add( new JProperty( "mode", Mode.ToString() ) );
+            ParentObject.Add( new JProperty( "mode", Mode.ToString().ToLower() ) );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
