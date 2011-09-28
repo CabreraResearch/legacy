@@ -184,15 +184,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
             setTimeout(function() {
                 fillContent(false, function() {
                     stopLoadingMsg();
-                    
-                    var documentHeight = $(document).height(),
-                        windowHeight = $(window).height(),
-                        adjustedHeight = windowHeight - 333, // documentHeight - 542,
-                        winDocHeightDif = documentHeight - windowHeight;
-                    
-                    if(winDocHeightDif > 0) {
-                        $this.find('div:jqmData(role="footer")').css('top', adjustedHeight);
-                    }
+                    recalculateFooter($this);
                 });
             }, 500);
         });
