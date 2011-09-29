@@ -441,13 +441,18 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         }
 
-        public bool ShowProp( CswNbtNode Node, ICswNbtUser User )
-        {
-            CswNbtMetaDataNodeTypeProp Prop = this;
-            var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, false, Prop.EditLayout.Tab, User, Node, Prop ) );
-            return ret;
-        }
+		public bool ShowProp( CswNbtNode Node, ICswNbtUser User )
+		{
+			CswNbtMetaDataNodeTypeProp Prop = this;
+			CswNbtMetaDataNodeTypeTab Tab = null;
+			if( Prop.EditLayout != null )
+			{
+				Tab = Prop.EditLayout.Tab;
+			}
+			var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
+						_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, false, Tab, User, Node, Prop ) );
+			return ret;
+		}
 
         /// <summary>
         /// Set the FK for relationship props

@@ -253,42 +253,48 @@ namespace ChemSW.Nbt.WebServices
             } // if-else( EditMode == NodeEditMode.AddInPopup )
         } // addProp()
 
-        private JObject _makePropJson( NodeEditMode EditMode, JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 Row, Int32 Column )
-        {
-            CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
+		private JObject _makePropJson( NodeEditMode EditMode, JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 Row, Int32 Column )
+		{
+			CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
 
-            CswPropIdAttr PropIdAttr = null;
-            PropIdAttr = Node.NodeId != null ? new CswPropIdAttr( Node, Prop ) : new CswPropIdAttr( null, Prop );
+			CswPropIdAttr PropIdAttr = null;
+			PropIdAttr = Node.NodeId != null ? new CswPropIdAttr( Node, Prop ) : new CswPropIdAttr( null, Prop );
 
-            JObject PropObj = new JObject();
-            ParentObj["prop_" + PropIdAttr] = PropObj;
+			JObject PropObj = new JObject();
+			ParentObj["prop_" + PropIdAttr] = PropObj;
 
-            PropObj["id"] = PropIdAttr.ToString();
-            PropObj["name"] = Prop.PropNameWithQuestionNo;
-            PropObj["helptext"] = PropWrapper.HelpText;
-            PropObj["fieldtype"] = Prop.FieldType.FieldType.ToString();
-            if( Prop.ObjectClassProp != null )
-            {
-                PropObj["ocpname"] = Prop.ObjectClassProp.PropName;
-            }
-            PropObj["displayrow"] = Row.ToString();
-            PropObj["displaycol"] = Column.ToString();
-            PropObj["required"] = Prop.IsRequired.ToString().ToLower();
-            bool IsReadOnly = ( Prop.ReadOnly ||                  // nodetype_props.readonly
-                                PropWrapper.ReadOnly ||           // jct_nodes_props.readonly
-                                Node.ReadOnly ||                  // nodes.readonly
-                                EditMode == NodeEditMode.Preview ||
-                                !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, Prop.EditLayout.Tab, null, Node, Prop ) );
+			PropObj["id"] = PropIdAttr.ToString();
+			PropObj["name"] = Prop.PropNameWithQuestionNo;
+			PropObj["helptext"] = PropWrapper.HelpText;
+			PropObj["fieldtype"] = Prop.FieldType.FieldType.ToString();
+			if( Prop.ObjectClassProp != null )
+			{
+				PropObj["ocpname"] = Prop.ObjectClassProp.PropName;
+			}
+			PropObj["displayrow"] = Row.ToString();
+			PropObj["displaycol"] = Column.ToString();
+			PropObj["required"] = Prop.IsRequired.ToString().ToLower();
+			
+			CswNbtMetaDataNodeTypeTab Tab = null;
+			if( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) && Prop.EditLayout != null )
+			{
+				Tab = Prop.EditLayout.Tab;
+			}
+			bool IsReadOnly = ( Prop.ReadOnly ||                                      // nodetype_props.readonly
+								( PropWrapper != null && PropWrapper.ReadOnly ) ||    // jct_nodes_props.readonly
+								( Node != null && Node.ReadOnly ) ||                  // nodes.readonly
+								EditMode == NodeEditMode.Preview ||
+								!_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, Tab, null, Node, Prop ) );
 
-            PropObj["readonly"] = IsReadOnly.ToString().ToLower();
-            PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
-            PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
-            PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
+			PropObj["readonly"] = IsReadOnly.ToString().ToLower();
+			PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
+			PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
+			PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
 
-            PropWrapper.ToJSON( PropObj );
+			PropWrapper.ToJSON( PropObj );
 
-            return PropObj;
-        } // _makePropJson()
+			return PropObj;
+		} // _makePropJson()
 
 
         public void _getAuditHistoryGridProp( JObject ParentObj, CswNbtNode Node )
