@@ -14,17 +14,19 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            var value = o.$propxml.children('text').text().trim();
-            var mode = o.$propxml.children('text').CswAttrXml('mode');
+            var propVals = o.propData.values;
+            var value = tryParseString(propVals.text,o.propData.name);
+            var mode = tryParseString(propVals.mode,'button');
 
             if(o.ReadOnly) {
                 $Div.append(value);
             } else {
                 var $Ctrl = "";
-                if(mode.toString().toLowerCase()=="button"){
+                if(mode==="button"){
                     $Ctrl = $Div.CswButton('init', {'ID': o.ID,
 				                                        'enabledText': value,
 				                                        'disabledText': value,
+                                                        'disableOnClick': false,
 				                                        'onclick': function () { alert('clicked!'); }
                                                       });
                 }
@@ -40,7 +42,6 @@
                 if(o.Required) {
                     $Ctrl.addClass("required");
                 }
-
             }
         },
         save: function(o) {

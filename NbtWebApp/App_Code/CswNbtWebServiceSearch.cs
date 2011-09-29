@@ -209,7 +209,6 @@ namespace ChemSW.Nbt.WebServices
                     }
                     _ViewBuilder.addVbPropFilters( PropObj, SearchProp );
                 }
-                SearchNode.Add( PropNode );
             }
 
             return SearchNode;

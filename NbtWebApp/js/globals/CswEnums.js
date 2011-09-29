@@ -49,14 +49,19 @@ var CswMultiEditDefaultValue = '[Unchanged]';
 var CswCookieName = {
     SessionId: 'CswSessionId',
     Username: 'csw_username',
+	CurrentNodeId: 'csw_currentnodeid',
+	CurrentNodeKey: 'csw_currentnodekey',
+	CurrentTabId: 'csw_currenttabid',
     CurrentActionName: 'csw_currentactionname',
     CurrentActionUrl: 'csw_currentactionurl',
     CurrentViewId: 'csw_currentviewid',
     CurrentViewMode: 'csw_currentviewmode',
-    CurrentNodeId: 'csw_currentnodeid',
-    CurrentNodeKey: 'csw_currentnodekey',
-    CurrentTabId: 'csw_currenttabid',
-    CurrentReportId: 'csw_currentreportid'
+	CurrentReportId: 'csw_currentreportid',
+	LastActionName: 'csw_lastactionname',
+	LastActionUrl: 'csw_lastactionurl',
+	LastViewId: 'csw_lastviewid',
+	LastViewMode: 'csw_lastviewmode',
+	LastReportId: 'csw_lastreportid'
 };
 
 var CswAppMode = {

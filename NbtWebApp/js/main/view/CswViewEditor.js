@@ -594,20 +594,24 @@
                                             .CswSelect('init', 
                                                 { ID: o.ID + '_gbs',
                                                   onChange: function() {
-                                                      var $this = $('#' + o.ID + '_gbs').find(':selected');
+                                                      var $selected = $groupbyselect.find(':selected');
+													  var selval = $selected.val();
                                                       var propData = { };
-                                                      var valSelected = (false === isNullOrEmpty($this.val()));
-                                                      if (valSelected) {
-                                                          propData = $this.data('thisPropData');
-                                                      }      
-                                                      propData.propid = viewnodejson.groupbypropid = tryParseString(propData.propid);
-                                                      propData.proptype = viewnodejson.groupbyproptype = tryParseString(propData.proptype);
-                                                      propData.propname = viewnodejson.groupbypropname = tryParseString(propData.propname);
-                                                      if (valSelected) {
-                                                          $this.data('thisPropData', propData);
-                                                      }
-                                                }
-                                            });
+
+                                                      if (false === isNullOrEmpty(selval)) {
+                                                          if(selval === 'none') {
+															  viewnodejson.groupbypropid = '';
+															  viewnodejson.groupbyproptype = '';
+															  viewnodejson.groupbypropname = '';
+														  } else {
+															  propData = $selected.data('thisPropData');
+															  viewnodejson.groupbypropid = tryParseString(propData.propid);
+															  viewnodejson.groupbyproptype = tryParseString(propData.proptype);
+															  viewnodejson.groupbypropname = tryParseString(propData.propname);
+														  }
+													  } // if (false === isNullOrEmpty(selval)) {
+                                                } // onChange
+                                            }); // CswSelect
                 
                 var jsonData = {
                     Type: viewnodejson.secondtype,

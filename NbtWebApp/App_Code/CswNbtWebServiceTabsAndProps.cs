@@ -253,42 +253,48 @@ namespace ChemSW.Nbt.WebServices
             } // if-else( EditMode == NodeEditMode.AddInPopup )
         } // addProp()
 
-        private JObject _makePropJson( NodeEditMode EditMode, JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 Row, Int32 Column )
-        {
-            CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
+		private JObject _makePropJson( NodeEditMode EditMode, JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 Row, Int32 Column )
+		{
+			CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
 
-            CswPropIdAttr PropIdAttr = null;
-            PropIdAttr = Node.NodeId != null ? new CswPropIdAttr( Node, Prop ) : new CswPropIdAttr( null, Prop );
+			CswPropIdAttr PropIdAttr = null;
+			PropIdAttr = Node.NodeId != null ? new CswPropIdAttr( Node, Prop ) : new CswPropIdAttr( null, Prop );
 
-            JObject PropObj = new JObject();
-            ParentObj["prop_" + PropIdAttr] = PropObj;
+			JObject PropObj = new JObject();
+			ParentObj["prop_" + PropIdAttr] = PropObj;
 
-            PropObj["id"] = PropIdAttr.ToString();
-            PropObj["name"] = Prop.PropNameWithQuestionNo;
-            PropObj["helptext"] = PropWrapper.HelpText;
-            PropObj["fieldtype"] = Prop.FieldType.FieldType.ToString();
-            if( Prop.ObjectClassProp != null )
-            {
-                PropObj["ocpname"] = Prop.ObjectClassProp.PropName;
-            }
-            PropObj["displayrow"] = Row.ToString();
-            PropObj["displaycol"] = Column.ToString();
-            PropObj["required"] = Prop.IsRequired.ToString().ToLower();
-            bool IsReadOnly = ( Prop.ReadOnly ||                  // nodetype_props.readonly
-                                PropWrapper.ReadOnly ||           // jct_nodes_props.readonly
-                                Node.ReadOnly ||                  // nodes.readonly
-                                EditMode == NodeEditMode.Preview ||
-                                !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, Prop.EditLayout.Tab, null, Node, Prop ) );
+			PropObj["id"] = PropIdAttr.ToString();
+			PropObj["name"] = Prop.PropNameWithQuestionNo;
+			PropObj["helptext"] = PropWrapper.HelpText;
+			PropObj["fieldtype"] = Prop.FieldType.FieldType.ToString();
+			if( Prop.ObjectClassProp != null )
+			{
+				PropObj["ocpname"] = Prop.ObjectClassProp.PropName;
+			}
+			PropObj["displayrow"] = Row.ToString();
+			PropObj["displaycol"] = Column.ToString();
+			PropObj["required"] = Prop.IsRequired.ToString().ToLower();
+			
+			CswNbtMetaDataNodeTypeTab Tab = null;
+			if( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) && Prop.EditLayout != null )
+			{
+				Tab = Prop.EditLayout.Tab;
+			}
+			bool IsReadOnly = ( Prop.ReadOnly ||                                      // nodetype_props.readonly
+								( PropWrapper != null && PropWrapper.ReadOnly ) ||    // jct_nodes_props.readonly
+								( Node != null && Node.ReadOnly ) ||                  // nodes.readonly
+								EditMode == NodeEditMode.Preview ||
+								!_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, Tab, null, Node, Prop ) );
 
-            PropObj["readonly"] = IsReadOnly.ToString().ToLower();
-            PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
-            PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
-            PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
+			PropObj["readonly"] = IsReadOnly.ToString().ToLower();
+			PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
+			PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
+			PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
 
-            PropWrapper.ToJSON( PropObj );
+			PropWrapper.ToJSON( PropObj );
 
-            return PropObj;
-        } // _makePropJson()
+			return PropObj;
+		} // _makePropJson()
 
 
         public void _getAuditHistoryGridProp( JObject ParentObj, CswNbtNode Node )
@@ -588,10 +594,46 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // ClearPropValue()
 
+        public bool saveMolProp( string moldata, string propIdAttr )
+        {
+            bool ret = false;
+
+            CswPropIdAttr PropId = new CswPropIdAttr( propIdAttr );
+            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
+            if( Int32.MinValue != PropId.NodeId.PrimaryKey )
+            {
+                CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
+                CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
+
+                // Do the update directly
+                CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
+                //JctUpdate.AllowBlobColumns = true;
+                if( PropWrapper.JctNodePropId > 0 )
+                {
+                    DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
+                    JctTable.Rows[0]["clobdata"] = moldata;
+                    JctUpdate.update( JctTable );
+                }
+                else
+                {
+                    DataTable JctTable = JctUpdate.getEmptyTable();
+                    DataRow JRow = JctTable.NewRow();
+                    JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
+                    JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
+                    JRow["nodeidtablename"] = Node.NodeId.TableName;
+                    JRow["clobdata"] = moldata;
+                    JctTable.Rows.Add( JRow );
+                    JctUpdate.update( JctTable );
+                }
+                ret = true;
+            } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
+            return ret;
+        }
+
         public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column )
         {
             bool ret = false;
-            if( String.IsNullOrEmpty( Column ) ) Column = "blobdata";
+            if( String.IsNullOrEmpty(Column) ) Column = "blobdata";
 
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
