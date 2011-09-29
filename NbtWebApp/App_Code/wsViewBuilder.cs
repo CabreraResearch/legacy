@@ -89,18 +89,11 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject PropObj = new JObject();
 
-            JObject PropertiesObj = new JObject();
-            PropObj["properties"] = PropertiesObj;
+            PropObj["properties"] = new JObject();
+            PropObj["properties"]["Specific Properties"] = new JObject();
+            PropObj["properties"]["Generic Properties"] = new JObject();
 
-            JObject PropGroups = new JObject();
-            JObject NodeTypePropsGrpObj = new JObject();
-            PropGroups["Specific Properties"] = NodeTypePropsGrpObj;
-
-            JObject ObjectClassPropsGrpObj = new JObject();
-            PropGroups["Generic Properties"] = ObjectClassPropsGrpObj;
-            PropObj["select"] = PropGroups;
-
-            bool Selected = false;
+            bool Selected = true;
             if( null != ViewBuilderProperties )
             {
                 foreach( CswViewBuilderProp Prop in from ViewBuilderProp in ViewBuilderProperties
@@ -111,26 +104,26 @@ namespace ChemSW.Nbt.WebServices
                     JObject PropNodeObj = new JObject();
                     PropNodeObj["type"] = RelatedIdType.ToString();
                     PropNodeObj["name"] = Prop.MetaDataPropName;
-                    PropNodeObj["id"] = Prop.MetaDataPropId;
+                    PropNodeObj["id"] = Prop.MetaDataPropId.ToString();
 
-                    if( !Selected )
+                    if( Selected )
                     {
                         PropNodeObj["selected"] = true;
                         PropObj["defaultprop"] = Prop.MetaDataPropName;
-                        Selected = true;
+                        Selected = false;
                     }
 
                     switch( RelatedIdType )
                     {
                         case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                            NodeTypePropsGrpObj[Prop.MetaDataPropName] = PropNodeObj;
+                            PropObj["properties"]["Specific Properties"][Prop.MetaDataPropName] = PropNodeObj;
                             break;
                         case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                            ObjectClassPropsGrpObj[Prop.MetaDataPropName] = PropNodeObj;
+                            PropObj["properties"]["Generic Properties"][Prop.MetaDataPropName] = PropNodeObj;
                             break;
                     }
 
-                    _getVbPropData( PropertiesObj, Prop );
+                    _getVbPropData( PropNodeObj, Prop );
                 }
 
             }
@@ -179,7 +172,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtSubFieldColl SubFields = ViewBuilderProp.FieldTypeRule.SubFields;
 
                 ParentObj["propname"] = ViewBuilderProp.MetaDataPropName;
-                ParentObj["viewbuilderpropid"] = ViewBuilderProp.MetaDataPropId;
+                ParentObj["viewbuilderpropid"] = ViewBuilderProp.MetaDataPropId.ToString();
                 ParentObj["relatedidtype"] = ViewBuilderProp.RelatedIdType.ToString();
                 ParentObj["proptype"] = ViewBuilderProp.Type.ToString();
                 ParentObj["metadatatypename"] = ViewBuilderProp.MetaDataTypeName;
