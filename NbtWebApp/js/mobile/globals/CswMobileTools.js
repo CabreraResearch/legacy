@@ -375,6 +375,10 @@ function ensureContent($content, contentDivId) {
     /// <param name="$content" type="jQuery">Some content element.</param>
     /// <param name="contentDivId" type="String">DivId</param>
     /// <returns type="jQuery">An empty content div.</returns>
+    var $contentById = $(contentDivId);
+    if (false === isNullOrEmpty($contentById)) {
+        $contentById.remove();
+    }
     if (isNullOrEmpty($content) || false === isJQuery($content)) {
         $content = $('<div id="' + tryParseString(contentDivId) + '"></div>');
     } else {
