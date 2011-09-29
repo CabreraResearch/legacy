@@ -145,41 +145,41 @@
             renderSearchButtons();
         } // renderViewBasedSearchContent()
 
+        function makeSelect(optionGroup1, optionGroup2) {
+            var $select = $('<select></select>');
+            
+            function makeOptions(optionGroup) {
+                var opt, option, value, optionCol = '', selected = '';
+                for (opt in optionGroup) {
+                    if (contains(optionGroup, opt)) {
+                        option = optionGroup[opt];
+                        value = tryParseString(option.value, option.id);
+                        if(contains(option,'name') && false === isNullOrEmpty(value)) {
+                            selected = (isTrue(option.selected)) ? 'selected="true"' : '';
+                            optionCol += '<option ' + selected + ' id="' + option.id + '" type="' + option.type + '" value="' + value + '">' + option.name + '</option>';
+                        }
+                    }
+                }
+                if (false === isNullOrEmpty(optionCol)) {
+                    $select.append('<optgroup label="' + optionGroup.label + '">' + optionCol + '</optgroup>');
+                }    
+            }
+
+            makeOptions(optionGroup1);
+            makeOptions(optionGroup2);
+            return $select;
+        }
+        
         function renderNodeTypeSearchContent()
         {
             //Row 1, Column 1: empty (contains 'and' for View search)
             //Row 1, Column 2: nodetypeselect picklist
             var nodeTypeSelectId = makeId({ID: 'nodetype_select',prefix: o.ID}),
-                $typeSelectCell, $select, n, oc, nodeTypeSelect, objectClassSelect, nodeType, objectClass, ntCol = '', ocCol = '';
+                $typeSelectCell, $select, ocpSelect;
             
             $typeSelectCell = o.$searchTable.CswTable('cell', 2, 2) //1
                                                 .empty();
-            $select = $('<select></select>');
-            nodeTypeSelect = o.nodeTypesData.nodetypeselect;
-            for (n in nodeTypeSelect) {
-                if (contains(nodeTypeSelect, n)) {
-                    nodeType = nodeTypeSelect[n];
-                    if(contains(nodeType,'name') && contains(nodeType, 'value')) {
-                        ntCol += '<option id="' + nodeType.id + '" type="' + nodeType.type + '" value="' + nodeType.value + '">' + nodeType.name + '</option>';
-                    }
-                }
-            }
-            if (false === isNullOrEmpty(ntCol)) {
-                $select.append('<optgroup label="' + nodeTypeSelect.label + '">' + ntCol + '</optgroup>');
-            }
-            
-            objectClassSelect = o.nodeTypesData.objectclassselect;
-            for (oc in objectClassSelect) {
-                if (contains(objectClassSelect, oc)) {
-                    objectClass = objectClassSelect[oc];
-                    if(contains(objectClass,'name') && contains(objectClass, 'value')) {
-                        ocCol += '<option id="' + objectClass.id + '" type="' + objectClass.type + '" value="' + objectClass.value + '">' + objectClass.name + '</option>';
-                    }
-                }
-            }
-            if (false === isNullOrEmpty(ocCol)) {
-                $select.append('<optgroup label="' + objectClassSelect.label + '">' + ocCol + '</optgroup>');
-            }
+            $select = makeSelect(o.nodeTypesData.nodetypeselect, o.nodeTypesData.objectclassselect);
             
             o.$nodeTypesSelect = $select
                                     .CswAttrDom('id', nodeTypeSelectId)
@@ -200,60 +200,63 @@
                                     });
             o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrDom('type');
             
-            if(o.nodetypeorobjectclassid !== '' )
-            {
+            if (false === isNullOrEmpty(o.nodetypeorobjectclassid)) {
                 o.$nodeTypesSelect.find('option[id="' + o.optionId + '"]').CswAttrDom('selected',true);
             }
             $typeSelectCell.append(o.$nodeTypesSelect);
         
-            var propRow = 2; //1
+            var propRow = 2, //1
+                genProps = o.propsData.select['Generic Properties'],
+                specProps = o.propsData.select['Specific Properties']; 
             //Row propRow, Column 3: properties 
             var $propSelectCell = o.$searchTable.CswTable('cell', propRow, 3)
                                     .empty();
             var propSelectId = makeId({ID: 'property_select', prefix: o.ID});
 
-            var selectOpt = o.propsData.properties.select;
-            var selectAry = [];
-            var selected = '';
-            for (var id in selectOpt) {
-                if (selectOpt.hasOwnProperty(id)) {
-                    selectAry.push({ value: id, display: selectOpt[id] });
-                }
-            }
-            var $propSelect = $propSelectCell.CswSelect('init', {ID: propSelectId,
-                                                                 values: selectAry,
-                                                                 cssclass: CswSearch_CssClasses.property_select.name,
-                                                                 onChange: function() {
-                                                                     var $this = $(this),
-                                                                         thisPropId = $this.val(),
-                                                                         oH = new ObjectHelper(o.propsData.propertyfilters.property);
-                                                                     var r = {
-                                                                        propertyid: thisPropId,
-                                                                        selectedSubfieldVal: '',
-                                                                        selectedFilterVal: '',
-                                                                        selectedPropData: oH.find('viewbuilderpropid', thisPropId)
-                                                                    };
-                                                                    $.extend(o,r);
-                                                                    o.$searchTable.CswViewPropFilter('init', {
-                                                                                ID: o.ID,
-                                                                                propRow: propRow,
-                                                                                firstColumn: 3,
-                                                                                includePropertyName: false,
-                                                                                propsData: o.selectedPropData,
-                                                                                viewbuilderpropid: thisPropId,
-                                                                                advancedIsHidden: o.advancedIsHidden
-                                                                            }); 
-                                                                   }
-            });
+//            ocpSelect = o.propsData.select['Generic Properties'];
+//            
+//            var selectOpt = o.propsData.properties.select;
+//            var selectAry = [];
+//            var selected = '';
+//            for (var id in selectOpt) {
+//                if (selectOpt.hasOwnProperty(id)) {
+//                    selectAry.push({ value: id, display: selectOpt[id] });
+//                }
+//            }
+            genProps.label = 'Generic Properties';
+            specProps.label = 'Specific Properties';
+            var $propSelect = makeSelect(genProps, specProps)
+                                .CswAttrDom('id', propSelectId)
+                                .addClass(CswSearch_CssClasses.property_select.name)
+                                .change(function () {
+                                    var $this = $(this),
+                                        thisPropId = $this.val(),
+                                        oH = new ObjectHelper(o.propsData.properties);
+                                    var r = {
+                                    propertyid: thisPropId,
+                                    selectedSubfieldVal: '',
+                                    selectedFilterVal: '',
+                                    selectedPropData: oH.find('viewbuilderpropid', thisPropId)
+                                };
+                                $.extend(o,r);
+                                o.$searchTable.CswViewPropFilter('init', {
+                                            ID: o.ID,
+                                            propRow: propRow,
+                                            firstColumn: 3,
+                                            includePropertyName: false,
+                                            propsData: o.selectedPropData,
+                                            viewbuilderpropid: thisPropId,
+                                            advancedIsHidden: o.advancedIsHidden
+                                        }); 
+                                });
                                 
-            if(o.propertyid !== '' )
-            {
+            if (false === isNullOrEmpty(o.propertyid)) {
                 $propSelect.val(o.propertyid).CswAttrDom('selected',true);
             }
             $propSelectCell.append($propSelect);
             
             o.propertyid = $propSelect.find(':selected').val();
-            var oH = new ObjectHelper(o.propsData.propertyfilters.property);
+            var oH = new ObjectHelper(o.propsData.properties);
             o.selectedPropData = oH.find('viewbuilderpropid', o.propertyid);
         
             o.$searchTable.CswViewPropFilter('init', {
