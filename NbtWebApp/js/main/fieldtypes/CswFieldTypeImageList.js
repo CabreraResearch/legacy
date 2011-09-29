@@ -13,10 +13,14 @@
 			
 			var $Div = $(this);
             var propVals = o.propData.values;
+
             var value = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue;
             var options = propVals.options;
             var width = tryParseString(propVals.width);
             var height = tryParseString(propVals.height);
+            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+			var currCol = 1;
+
             
             if (false === o.ReadOnly) {
 				var $select = $('<select id="' + o.ID + '"></select>')
@@ -47,9 +51,6 @@
 				    }, 
 				    false);
 			}
-
-            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
-			var currCol = 1;
 
             function addImage(name, href, doAnimation) {
 				var $imagecell = $table.CswTable('cell', 1, currCol)
