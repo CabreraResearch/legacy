@@ -159,7 +159,8 @@
 				SafeNodeKey: tryParseObjByIdx(o.nodekeys, 0),
 				NodeTypeId: o.nodetypeid,
 				Date: o.date,
-			    Multi: o.Multi
+			    Multi: o.Multi,
+				filterToPropId: o.filterToPropId
 			};
 
 			CswAjaxJson({

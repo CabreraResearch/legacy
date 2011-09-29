@@ -188,7 +188,9 @@ namespace ChemSW.Nbt.MetaData
 			DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
 			foreach( DataRow Row in LayoutTable.Rows )
 			{
-				ret.Add( _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( CswConvert.ToInt32( Row["nodetypepropid"] ) ) );
+				CswNbtMetaDataNodeTypeProp Prop = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( CswConvert.ToInt32( Row["nodetypepropid"] ) );
+				if( Prop != null )
+					ret.Add( Prop );
 			}
 			return ret;
 		} // getPropsInLayout()

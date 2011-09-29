@@ -217,15 +217,16 @@
 
 			function _configAddOptions()
 			{
+				var ajaxdata = {
+					NodeId: cswNodeTabOptions.nodeids[0], 
+					NodeKey: cswNodeTabOptions.nodekeys[0], 
+					NodeTypeId: cswNodeTabOptions.nodetypeid, 
+					TabId: cswNodeTabOptions.tabid, 
+					EditMode: $layoutSelect.val()
+				};
 				CswAjaxJson({ 
 					url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd', 
-					data: {
-							NodeId: cswNodeTabOptions.nodeid, 
-							NodeKey: cswNodeTabOptions.cswnbtnodekey, 
-							NodeTypeId: cswNodeTabOptions.nodetypeid, 
-							TabId: cswNodeTabOptions.tabid, 
-							EditMode: $layoutSelect.val()
-						},
+					data: ajaxdata,
 					success: function(data) {
 						var propOpts = [{ value: '', display: 'Select...' }];
 						for(var p in data) 
