@@ -7,11 +7,12 @@
 ; (function ($) { /// <param name="$" type="jQuery" />
     $.fn.CswCheckBoxArray = function (method) {
     
-        var pluginName = 'CswCheckBoxArray';
-        var storedDataSuffix = '_cswCbaArrayDataStore';
+        var pluginName = 'CswCheckBoxArray',
+            storedDataSuffix = '_cswCbaArrayDataStore',
+            cbaPrevSelected = 'cswCba_prevSelected';
+        
         var methods = {
             init: function(options) {
-        
                 var o = {
                     ID: '',
                     cols: [], //['col1', 'col2', 'col3'],
@@ -42,10 +43,13 @@
                 if (options) {
                     $.extend(o, options);
                 }
-
+                
                 var storeDataId = o.ID + storedDataSuffix;
-                var $Div = $(this);
                 var clientDb = new CswClientDb();
+                clientDb.removeItem(storeDataId);
+                clientDb.removeItem(cbaPrevSelected);
+                
+                var $Div = $(this);
                 var cbaData = transmogrify({ 
                                     storeDataId: storeDataId,
                                     dataAry: o.dataAry,
@@ -148,10 +152,12 @@
                         cache.MultiIsUnchanged = false;
                         if (contains(cache.data, row) && contains(cache.data[row],'values')) {
                             cache.data[row].values[col] = cB.checked;
-                            if(o.UseRadios) { //we're toggling
-                                var data = clientDb.getItem('currentSelected');
-                                cache.data[data.row].values[data.col] = false;
-                                clientDb.setItem('currentSelected', {row: row, col: col});
+                            if(o.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
+                                var data = clientDb.getItem(cbaPrevSelected);
+                                if(contains(data,'row') && contains(data,'col')) {
+                                    cache.data[data.row].values[data.col] = false;
+                                }
+                                clientDb.setItem(cbaPrevSelected, {row: row, col: col});
                             }
                         }      
                         clientDb.setItem(storeDataId, cache);

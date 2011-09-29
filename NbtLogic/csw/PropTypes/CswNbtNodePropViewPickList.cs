@@ -368,11 +368,14 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     string key = CswConvert.ToString( ViewObj["key"] );
                     //string name = CswConvert.ToString( ViewObj["label"] );
-                    JArray Values = (JArray) ViewObj["values"];
-                    bool value = CswConvert.ToBoolean( Values[0] );
-                    if( value )
+                    if( null != ViewObj.Property( "values" ) && JTokenType.Array == ViewObj.Property( "values" ).Value.Type )
                     {
-                        NewSelectedViewIds.Add( key );
+                        JArray Values = (JArray) ViewObj["values"];
+                        bool value = CswConvert.ToBoolean( Values[0] );
+                        if( value )
+                        {
+                            NewSelectedViewIds.Add( key );
+                        }
                     }
                 } // foreach( JProperty UserProp in OptionsObj.Properties() )
 
