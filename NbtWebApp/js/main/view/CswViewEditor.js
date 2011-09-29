@@ -599,7 +599,6 @@
                                                       var propData = { };
 
                                                       if (false === isNullOrEmpty(selval)) {
-log(selval);
                                                           if(selval === 'none') {
 															  viewnodejson.groupbypropid = '';
 															  viewnodejson.groupbyproptype = '';
