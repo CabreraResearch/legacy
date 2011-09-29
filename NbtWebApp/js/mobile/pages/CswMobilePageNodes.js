@@ -133,7 +133,8 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         var ulDef = {
             ID: id + ulSuffix,
-            cssclass: CswMobileCssClasses.listview.name
+            cssclass: CswMobileCssClasses.listview.name,
+            showLoading: false
         };
         var listView = new CswMobileListView(ulDef, $content),
             nodeCount = 0,
@@ -172,10 +173,10 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
 
                         onClick = makeDelegate(pageDef.onListItemSelect, opts);
 
-                        if (node.nodeSpecies !== CswNodeSpecies.More) {
+                        if (node.nodeSpecies.name !== CswNodeSpecies.More.name) {
                             listView.addListItemLinkHtml(nodeId, node.$content, onClick, { icon: node.icon });
                         } else {
-                            listView.addListItemHtml(nodeId, node.$content, null, { icon: node.icon });
+                            listView.addListItem(nodeId, node.nodeName, null, { icon: node.icon });
                         }
                     }
                     nodeCount++;
