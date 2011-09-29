@@ -424,19 +424,17 @@
                     o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrDom('type');
 
                     $('.' + CswSearch_CssClasses.property_select.name).each(function() {
-                        var $thisProp = $(this);
-//						var propName = $thisProp.text();
-                        var viewbuildpropid = $thisProp.val();
-//							var fieldtype = o.propsData.children('propertyfilters')
-//													   .children('property[propname="' + propName + '"][viewbuilderpropid="' + viewbuildpropid + '"]')
-//													   .CswAttrDom('fieldtype');
-                        var oH = new ObjectHelper(o.propsData.properties);
-                        var selectedProp = oH.find('viewbuilderpropid', viewbuildpropid);
-                        var fieldtype = selectedProp.fieldtype;
-                        var thisNodeProp = $thisProp.CswViewPropFilter('getFilterJson',{
+                        var $thisProp = $(this),
+                            viewbuildpropid = $thisProp.val(),
+                            oH = new ObjectHelper(o.propsData.properties),
+                            selectedProp = oH.find('viewbuilderpropid', viewbuildpropid),
+                            fieldtype = selectedProp.fieldtype,
+                            thisNodeProp = $thisProp.parent()
+                                                    .parent() //we need the <tr> which contains the context for the whole prop
+                                                    .CswViewPropFilter('getFilterJson',{
                                                         nodetypeorobjectclassid: o.nodetypeorobjectclassid,
                                                         relatedidtype: o.relatedidtype,  
-                                                        fieldtype: fieldtype,
+                                                        filtJson: { fieldtype: fieldtype },
                                                         ID: o.ID,
                                                         $parent: o.$searchTable,
                                                         viewbuilderpropid: viewbuildpropid,
