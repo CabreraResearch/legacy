@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Generates the JSON for a NodeTypeSelect pick list
         /// </summary>
-		private JObject _getNodeTypeBasedSearch( CswNbtMetaDataNodeType SelectedNodeType )
+        private JObject _getNodeTypeBasedSearch( CswNbtMetaDataNodeType SelectedNodeType )
         {
             Int32 SelectWidth = 0;
             //var SelectedNodeType = Node.NodeType; //_CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
@@ -143,16 +143,16 @@ namespace ChemSW.Nbt.WebServices
             //NodeTypeSearch.Add( SelectOptions );
 
             JObject NodeTypeProps = null;
-			if( null != SelectedNodeType )
-			{
-				NodeTypeProps = _ViewBuilder.getNodeTypeProps( SelectedNodeType );
-			}
-			else
-			{
-				NodeTypeProps = _ViewBuilder.getNodeTypeProps( SearchOC );
-			}
-			
-			JObject NodeTypeSearch = new JObject( new JProperty( "searchtype", "nodetypesearch" ),
+            if( null != SelectedNodeType )
+            {
+                NodeTypeProps = _ViewBuilder.getNodeTypeProps( SelectedNodeType );
+            }
+            else
+            {
+                NodeTypeProps = _ViewBuilder.getNodeTypeProps( SearchOC );
+            }
+
+            JObject NodeTypeSearch = new JObject( new JProperty( "searchtype", "nodetypesearch" ),
                                             new JProperty( "nodetypes",
                                                 new JObject(
                                                         NodeTypeSelect,

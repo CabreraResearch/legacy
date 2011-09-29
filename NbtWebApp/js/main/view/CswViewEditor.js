@@ -320,13 +320,13 @@
                         }); // ajax
                     break;
                 case CswViewEditor_WizardSteps.relationships.step:
-					// save step 2 content to currentviewjson
+                    // save step 2 content to currentviewjson
                     if (currentViewJson !== undefined)
                     {
                         cacheStepTwo();
                     } // if(currentViewJson !== undefined)
 
-					// make step 3 tree
+                    // make step 3 tree
                     _makeViewTree(CswViewEditor_WizardSteps.relationships.step, $treediv3);
                     break;
                 case CswViewEditor_WizardSteps.properties.step:
@@ -848,12 +848,12 @@
                 makeViewRelationshipsRecursive(stepno, rootRelationships, types, $ret);
             }
             
-			var $selectLi = makeChildSelect(stepno, arbid, childPropNames.childrelationships);
+            var $selectLi = makeChildSelect(stepno, arbid, childPropNames.childrelationships);
             if (false === isNullOrEmpty($selectLi)) {
                 $ret.append($selectLi);
             }
 
-			return $ret;
+            return $ret;
         }
         
         function makeViewRelationshipHtml(stepno, itemJson, types) {
@@ -988,8 +988,8 @@
                     var filtArbitraryId = tryParseString(itemJson.arbitraryid);
                     if (stepno === CswViewEditor_WizardSteps.tuning.step) {
                         var selectedSubfield = tryParseString(itemJson.subfield);
-			            var selectedFilterMode = tryParseString(itemJson.filtermode);
-			            var filterValue = tryParseString(itemJson.value);
+                        var selectedFilterMode = tryParseString(itemJson.filtermode);
+                        var filterValue = tryParseString(itemJson.value);
                         var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
                         var $filtLink = makeViewListItem(filtArbitraryId, viewEditClasses.vieweditor_viewfilterlink.name, name, false, stepno, childPropNames.filters, rel);
                         if (false === isNullOrEmpty($filtLink)) {
