@@ -998,7 +998,7 @@ body a
 	overflow: auto;
 }
 .jstree-default.jstree-focused {
-	background-color: transparent;
+	background-color: transparent !important;
 }
 
 .warning
