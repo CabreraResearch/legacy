@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 string OptionId = "option_" + NodeType.FirstVersionNodeTypeId;
                 NodeTypeSelObj[OptionId] = new JObject();
-                NodeTypeSelObj[OptionId]["type"] = "objectclassid";
+                NodeTypeSelObj[OptionId]["type"] = "nodetypeid";
                 NodeTypeSelObj[OptionId]["name"] = NodeType.NodeTypeName;
                 NodeTypeSelObj[OptionId]["value"] = NodeType.FirstVersionNodeTypeId.ToString();
                 NodeTypeSelObj[OptionId]["id"] = _NodeTypePrefix + NodeType.FirstVersionNodeTypeId;
