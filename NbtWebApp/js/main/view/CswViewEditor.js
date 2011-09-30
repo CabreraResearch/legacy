@@ -320,13 +320,13 @@
                         }); // ajax
                     break;
                 case CswViewEditor_WizardSteps.relationships.step:
-					// save step 2 content to currentviewjson
+                    // save step 2 content to currentviewjson
                     if (currentViewJson !== undefined)
                     {
                         cacheStepTwo();
                     } // if(currentViewJson !== undefined)
 
-					// make step 3 tree
+                    // make step 3 tree
                     _makeViewTree(CswViewEditor_WizardSteps.relationships.step, $treediv3);
                     break;
                 case CswViewEditor_WizardSteps.properties.step:
@@ -594,20 +594,24 @@
                                             .CswSelect('init', 
                                                 { ID: o.ID + '_gbs',
                                                   onChange: function() {
-                                                      var $this = $('#' + o.ID + '_gbs').find(':selected');
+                                                      var $selected = $groupbyselect.find(':selected');
+													  var selval = $selected.val();
                                                       var propData = { };
-                                                      var valSelected = (false === isNullOrEmpty($this.val()));
-                                                      if (valSelected) {
-                                                          propData = $this.data('thisPropData');
-                                                      }      
-                                                      propData.propid = viewnodejson.groupbypropid = tryParseString(propData.propid);
-                                                      propData.proptype = viewnodejson.groupbyproptype = tryParseString(propData.proptype);
-                                                      propData.propname = viewnodejson.groupbypropname = tryParseString(propData.propname);
-                                                      if (valSelected) {
-                                                          $this.data('thisPropData', propData);
-                                                      }
-                                                }
-                                            });
+
+                                                      if (false === isNullOrEmpty(selval)) {
+                                                          if(selval === 'none') {
+															  viewnodejson.groupbypropid = '';
+															  viewnodejson.groupbyproptype = '';
+															  viewnodejson.groupbypropname = '';
+														  } else {
+															  propData = $selected.data('thisPropData');
+															  viewnodejson.groupbypropid = tryParseString(propData.propid);
+															  viewnodejson.groupbyproptype = tryParseString(propData.proptype);
+															  viewnodejson.groupbypropname = tryParseString(propData.propname);
+														  }
+													  } // if (false === isNullOrEmpty(selval)) {
+                                                } // onChange
+                                            }); // CswSelect
                 
                 var jsonData = {
                     Type: viewnodejson.secondtype,
@@ -848,12 +852,12 @@
                 makeViewRelationshipsRecursive(stepno, rootRelationships, types, $ret);
             }
             
-			var $selectLi = makeChildSelect(stepno, arbid, childPropNames.childrelationships);
+            var $selectLi = makeChildSelect(stepno, arbid, childPropNames.childrelationships);
             if (false === isNullOrEmpty($selectLi)) {
                 $ret.append($selectLi);
             }
 
-			return $ret;
+            return $ret;
         }
         
         function makeViewRelationshipHtml(stepno, itemJson, types) {
@@ -988,8 +992,8 @@
                     var filtArbitraryId = tryParseString(itemJson.arbitraryid);
                     if (stepno === CswViewEditor_WizardSteps.tuning.step) {
                         var selectedSubfield = tryParseString(itemJson.subfield);
-			            var selectedFilterMode = tryParseString(itemJson.filtermode);
-			            var filterValue = tryParseString(itemJson.value);
+                        var selectedFilterMode = tryParseString(itemJson.filtermode);
+                        var filterValue = tryParseString(itemJson.value);
                         var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
                         var $filtLink = makeViewListItem(filtArbitraryId, viewEditClasses.vieweditor_viewfilterlink.name, name, false, stepno, childPropNames.filters, rel);
                         if (false === isNullOrEmpty($filtLink)) {

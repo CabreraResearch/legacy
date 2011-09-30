@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.WebServices
                     if( !Node.NodeType.IsUniqueAndRequired( ref BadPropertyName ) )
                     {
                         Ret["Copy"] = new JObject(
-                            new JProperty( "action", "AddNode" ),
+                            new JProperty( "action", "CopyNode" ),
                             new JProperty( "nodeid", Node.NodeId.ToString() ),
                             new JProperty( "nodename", Node.NodeName )
                             );

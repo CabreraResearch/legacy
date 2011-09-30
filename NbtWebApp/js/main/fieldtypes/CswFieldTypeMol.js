@@ -15,31 +15,25 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            //var href = tryParseString(propVals.href).trim();
             var width = 100; //tryParseString(propVals.width);
-            //var height = tryParseString(propVals.height);
-            //var fileName = tryParseString(propVals.name).trim();
             var mol = tryParseString(propVals.mol).trim();
-            var col = tryParseString(propVals.column).trim();
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
-            var $cell21 = $table.CswTable('cell', 2, 1).CswAttrDom('width', width - 36);
-            var $cell22 = $table.CswTable('cell', 2, 2).CswAttrDom('align', 'right');
-            var $cell23 = $table.CswTable('cell', 2, 3).CswAttrDom('align', 'right');
+            var $cell21 = $table.CswTable('cell', 2, 1).css('width', width - 36);
+            var $cell22 = $table.CswTable('cell', 2, 2).css('textAlign', 'right');
+            var $cell23 = $table.CswTable('cell', 2, 3).css('textAlign', 'right');
 
             if (mol !== '') {
-                var $TextBox = $('<pre>' + mol + '</pre>')
-									.appendTo($cell11);
 
 				var JmolFolder = "./js/thirdparty/js/jmol-12.0.49/";
 				jmolInitialize(JmolFolder);
 				jmolSetDocument(false);
 				var myApplet = jmolAppletInline('300px', mol);
-                jmolCheckbox("spin on", "spin off", "0");
-				$Div.append(myApplet);
-
-                //$cell21.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');
+				$cell11.append(myApplet); 
+                var myCheck = jmolCheckbox("spin on", "spin off", "Rotate");
+                $cell21.append(myCheck);
+                //$Div.css('z-index', '0'); //this doesn't prevent jmol overlapping dialog
             }
 
             if (!o.ReadOnly && o.EditMode != EditMode.AddInPopup.name) {
@@ -50,13 +44,11 @@
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',
                         onClick: function ($ImageDiv) {
-
-                            $.CswDialog('FileUploadDialog', {
-                                url: '/NbtWebApp/wsNBT.asmx/fileForProp',
-                                params: {
-                                    'PropId': o.propData.id,
-                                    'Column': col
-                                },
+                            $.CswDialog('EditMolDialog', {
+                                TextUrl: '/NbtWebApp/wsNBT.asmx/saveMolProp',
+                                FileUrl: '/NbtWebApp/wsNBT.asmx/saveMolPropFile',
+                                PropId: o.propData.id,
+                                molData: mol,
                                 onSuccess: function () {
                                     o.onReload();
                                 }

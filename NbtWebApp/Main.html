@@ -856,7 +856,8 @@
                     'onCancel': function ()
                     {
                         clear({ 'all': true });
-                        refreshSelected();
+                        setCurrent(getLast());
+						refreshSelected();
                     },
                     'onFinish': function (viewid, viewmode)
                     {
@@ -884,13 +885,17 @@
                     'onCancel': function ()
                     {
                         clear({ 'all': true });
-                        refreshSelected();
+                        setCurrent(getLast());
+						refreshSelected();
                     },
                     'onFinish': function (viewid, viewmode)
                     {
                         clear({ 'all': true });
                         if(isTrue(o.ActionOptions.IgnoreReturn))
-                            refreshSelected();
+                        {
+							setCurrent(getLast());
+						    refreshSelected();
+						}
                         else
                             handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
                     },

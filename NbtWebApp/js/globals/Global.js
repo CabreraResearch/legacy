@@ -91,23 +91,46 @@ function setCurrentReport(reportid)
 
 function clearCurrent()
 {
-    $.CswCookie('clear', CswCookieName.CurrentViewId);
+	$.CswCookie('set', CswCookieName.LastViewId, $.CswCookie('get', CswCookieName.CurrentViewId));
+	$.CswCookie('set', CswCookieName.LastViewMode, $.CswCookie('get', CswCookieName.CurrentViewMode));
+	$.CswCookie('set', CswCookieName.LastActionName, $.CswCookie('get', CswCookieName.CurrentActionName));
+	$.CswCookie('set', CswCookieName.LastActionUrl, $.CswCookie('get', CswCookieName.CurrentActionUrl));
+	$.CswCookie('set', CswCookieName.LastReportId, $.CswCookie('get', CswCookieName.CurrentReportId));
+
+	$.CswCookie('clear', CswCookieName.CurrentViewId);
     $.CswCookie('clear', CswCookieName.CurrentViewMode);
     $.CswCookie('clear', CswCookieName.CurrentActionName);
     $.CswCookie('clear', CswCookieName.CurrentActionUrl);
     $.CswCookie('clear', CswCookieName.CurrentReportId);
 }
 
-function getCurrent()
-{
-    return {
-        'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
-        'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
-        'actionname': $.CswCookie('get', CswCookieName.CurrentActionName),
-        'actionurl': $.CswCookie('get', CswCookieName.CurrentActionUrl),
-        'reportid': $.CswCookie('get', CswCookieName.CurrentReportId)
-    };
+function getCurrent() {
+	return {
+		'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
+		'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
+		'actionname': $.CswCookie('get', CswCookieName.CurrentActionName),
+		'actionurl': $.CswCookie('get', CswCookieName.CurrentActionUrl),
+		'reportid': $.CswCookie('get', CswCookieName.CurrentReportId)
+	};
 }
+function getLast() {
+	return {
+		'viewid': $.CswCookie('get', CswCookieName.LastViewId),
+		'viewmode': $.CswCookie('get', CswCookieName.LastViewMode),
+		'actionname': $.CswCookie('get', CswCookieName.LastActionName),
+		'actionurl': $.CswCookie('get', CswCookieName.LastActionUrl),
+		'reportid': $.CswCookie('get', CswCookieName.LastReportId)
+	};
+}
+function setCurrent(json) {
+	clearCurrent();
+	$.CswCookie('set', CswCookieName.CurrentViewId, json.viewid);
+	$.CswCookie('set', CswCookieName.CurrentViewMode, json.viewmode);
+	$.CswCookie('set', CswCookieName.CurrentActionName, json.actionname);
+	$.CswCookie('set', CswCookieName.CurrentActionUrl, json.actionurl);
+	$.CswCookie('set', CswCookieName.CurrentReportId, json.reportid);
+}
+
 //#endregion Current State
 
 //#region Ajax
@@ -864,7 +887,7 @@ function HandleMenuItem(options)
         var nodeid = tryParseString(json.nodeid);
         var nodename = tryParseString(json.nodename);
         var viewid = tryParseString(json.viewid);
-        
+
         switch (action)
         {
             case 'About':
@@ -902,8 +925,7 @@ function HandleMenuItem(options)
                 break;
 
             case 'CopyNode':
-                $a.click(function ()
-                {
+                $a.click(function () {
                     $.CswDialog('CopyNodeDialog', {
                         nodename: nodename,
                         nodeid: nodeid,

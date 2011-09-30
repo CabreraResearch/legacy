@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Generates the JSON for a NodeTypeSelect pick list
         /// </summary>
-		private JObject _getNodeTypeBasedSearch( CswNbtMetaDataNodeType SelectedNodeType )
+        private JObject _getNodeTypeBasedSearch( CswNbtMetaDataNodeType SelectedNodeType )
         {
             Int32 SelectWidth = 0;
             //var SelectedNodeType = Node.NodeType; //_CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
@@ -88,23 +88,22 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            JObject NodeTypeSelObj = new JObject( new JProperty( "label", "Specific Types" ) );
-            JProperty NodeTypeSelect = new JProperty( "nodetypeselect", NodeTypeSelObj );
+            JObject NodeTypeSelObj = new JObject();
+            NodeTypeSelObj["label"] = "Specific Types";
 
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes.Cast<CswNbtMetaDataNodeType>()
                                                         .Where( NodeType => ( NodeType.NodeTypeProps.Count > 0 ) ) )
             {
-                JObject ThisOptObj = new JObject(
-                                            new JProperty( "type", "nodetypeid" ),
-                                            new JProperty( "name", NodeType.NodeTypeName ),
-                                            new JProperty( "value", NodeType.FirstVersionNodeTypeId ),
-                                            new JProperty( "id", _NodeTypePrefix + NodeType.FirstVersionNodeTypeId ) );
-                JProperty ThisOption = new JProperty( "option_" + NodeType.FirstVersionNodeTypeId, ThisOptObj );
-                NodeTypeSelObj.Add( ThisOption );
+                string OptionId = "option_" + NodeType.FirstVersionNodeTypeId;
+                NodeTypeSelObj[OptionId] = new JObject();
+                NodeTypeSelObj[OptionId]["type"] = "nodetypeid";
+                NodeTypeSelObj[OptionId]["name"] = NodeType.NodeTypeName;
+                NodeTypeSelObj[OptionId]["value"] = NodeType.FirstVersionNodeTypeId.ToString();
+                NodeTypeSelObj[OptionId]["id"] = _NodeTypePrefix + NodeType.FirstVersionNodeTypeId;
 
                 if( SelectedNodeType == NodeType )
                 {
-                    ThisOptObj.Add( new JProperty( "selected", "selected" ) );
+                    NodeTypeSelObj[OptionId]["selected"] = "selected";
                 }
                 if( NodeType.NodeTypeName.Length > SelectWidth )
                 {
@@ -112,24 +111,24 @@ namespace ChemSW.Nbt.WebServices
                 }
             } //SelectOptions.Add( NodeTypeSelect );
 
-            JObject ObjectClassSelObj = new JObject( new JProperty( "label", "Generic Types" ) );
-            JProperty ObjectClassSelect = new JProperty( "objectclassselect", ObjectClassSelObj );
+            JObject ObjectClassSelObj = new JObject();
+            ObjectClassSelObj["label"] = "Generic Types";
+
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses.Cast<CswNbtMetaDataObjectClass>()
                                                               .Where( ObjectClass => CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass != ObjectClass.ObjectClass &&
                                                                       ( ObjectClass.ObjectClassProps.Count > 0 &&
                                                                         ObjectClass.NodeTypes.Count > 0 ) ) )
             {
-                JObject ThisOptObj = new JObject(
-                                            new JProperty( "type", "objectclassid" ),
-                                            new JProperty( "name", "All " + ObjectClass.ObjectClass ),
-                                            new JProperty( "value", ObjectClass.ObjectClassId ),
-                                            new JProperty( "id", _ObjectClassPrefix + ObjectClass.ObjectClassId ) );
-                JProperty ThisOption = new JProperty( "option_" + ObjectClass.ObjectClassId, ThisOptObj );
-                ObjectClassSelObj.Add( ThisOption );
+                string OptionId = "option_" + ObjectClass.ObjectClassId;
+                ObjectClassSelObj[OptionId] = new JObject();
+                ObjectClassSelObj[OptionId]["type"] = "objectclassid";
+                ObjectClassSelObj[OptionId]["name"] = "All " + ObjectClass.ObjectClass;
+                ObjectClassSelObj[OptionId]["value"] = ObjectClass.ObjectClassId.ToString();
+                ObjectClassSelObj[OptionId]["id"] = _ObjectClassPrefix + ObjectClass.ObjectClassId;
 
                 if( null == SelectedNodeType && SearchOC == ObjectClass )
                 {
-                    ThisOptObj.Add( new JProperty( "selected", "selected" ) );
+                    ObjectClassSelObj[OptionId]["selected"] = "selected";
                 }
                 if( ObjectClass.ObjectClass.ToString().Length > SelectWidth )
                 {
@@ -143,22 +142,22 @@ namespace ChemSW.Nbt.WebServices
             //NodeTypeSearch.Add( SelectOptions );
 
             JObject NodeTypeProps = null;
-			if( null != SelectedNodeType )
-			{
-				NodeTypeProps = _ViewBuilder.getNodeTypeProps( SelectedNodeType );
-			}
-			else
-			{
-				NodeTypeProps = _ViewBuilder.getNodeTypeProps( SearchOC );
-			}
-			
-			JObject NodeTypeSearch = new JObject( new JProperty( "searchtype", "nodetypesearch" ),
-                                            new JProperty( "nodetypes",
-                                                new JObject(
-                                                        NodeTypeSelect,
-                                                        ObjectClassSelect ) ),
-                                            new JProperty( "props", NodeTypeProps )
-                                     );
+            if( null != SelectedNodeType )
+            {
+                NodeTypeProps = _ViewBuilder.getNodeTypeProps( SelectedNodeType );
+            }
+            else
+            {
+                NodeTypeProps = _ViewBuilder.getNodeTypeProps( SearchOC );
+            }
+
+            JObject NodeTypeSearch = new JObject();
+            NodeTypeSearch["searchtype"] = "nodetypesearch";
+            NodeTypeSearch["nodetypes"] = new JObject();
+            NodeTypeSearch["nodetypes"]["nodetypeselect"] = NodeTypeSelObj;
+            NodeTypeSearch["nodetypes"]["objectclassselect"] = ObjectClassSelObj;
+            NodeTypeSearch["props"] = NodeTypeProps;
+
             return NodeTypeSearch;
         } // getNodeTypeBasedSearch()
 
@@ -210,7 +209,6 @@ namespace ChemSW.Nbt.WebServices
                     }
                     _ViewBuilder.addVbPropFilters( PropObj, SearchProp );
                 }
-                SearchNode.Add( PropNode );
             }
 
             return SearchNode;

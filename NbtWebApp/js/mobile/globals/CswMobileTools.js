@@ -153,7 +153,7 @@ function setOffline(mobileStorage, onComplete) {
         try { //we'd prefer to simply disable it, but it might not be initialized yet.
             $this.button('disable');
         } catch (e) {
-            $this.css({ display: 'none', visibility: 'hidden' }).hide();
+            $this.hide().css({ display: 'none', visibility: 'hidden' });
         }
     });
 
@@ -187,7 +187,7 @@ function setOnline(mobileStorage, onComplete) {
         $('.refresh').each(function () {
             var $this = $(this);
             try { //we may not be initialized
-                $this.removeAttr('display').removeAttr('visibility').show();
+                $this.css('display', '').css('visibility', '').show();
                 $this.button('enable');
             } catch (e) {
                 //suppress error
@@ -375,6 +375,10 @@ function ensureContent($content, contentDivId) {
     /// <param name="$content" type="jQuery">Some content element.</param>
     /// <param name="contentDivId" type="String">DivId</param>
     /// <returns type="jQuery">An empty content div.</returns>
+    var $contentById = $(contentDivId);
+    if (false === isNullOrEmpty($contentById)) {
+        $contentById.remove();
+    }
     if (isNullOrEmpty($content) || false === isJQuery($content)) {
         $content = $('<div id="' + tryParseString(contentDivId) + '"></div>');
     } else {

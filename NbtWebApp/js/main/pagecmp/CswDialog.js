@@ -274,8 +274,8 @@
 			if(false === isNullOrEmpty(o.date) && false === o.Multi) {
 				myEditMode = EditMode.AuditHistoryInPopup.name;
 				$table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
-					ID: nodeids[0] + '_history',
-					nodeid: nodeids[0],
+					ID: o.nodeids[0] + '_history',
+					nodeid: o.nodeids[0],
 					onEditNode: o.onEditNode,
 					JustDateColumn: true,
 					selectedDate: o.date,
@@ -496,6 +496,71 @@
 										$div.dialog('close');
 							}
 			});
+
+							openDialog($div, 400, 300);
+						},
+
+		'EditMolDialog': function (options) {
+							var o = {
+								TextUrl: '',
+                                FileUrl: '',
+                                PropId: '',
+                                molData: '',
+								onSuccess: function() { }
+							};
+							if(options) {
+								$.extend(o, options);
+							}
+
+							var $div = $('<div></div>');
+								
+							var uploader = new qq.FileUploader({
+								element: $div.get(0),
+								action: o.FileUrl,
+								params: {PropId: o.PropId},
+								debug: false,
+								onComplete: function() 
+									{ 
+										$div.dialog('close'); 
+										o.onSuccess(); 
+									}
+							});
+
+							var $fileuploadcancel = $div.CswButton({ID: 'fileupload_cancel', 
+																	enabledText: 'Cancel', 
+																	disabledText: 'Canceling', 
+																	onclick: function() {
+																				$div.dialog('close');
+																	}
+                                                                    });
+							
+							$div.append('<br/>MOL Text (Paste from Clipboard):<br/>');
+							var $moltxtarea = $('<textarea id="moltxt" rows="4" cols="40">' + o.molData + '</textarea>')
+													.appendTo($div);
+							$div.append('<br/>');
+                            var $txtsave = $div.CswButton({ID: 'txt_save', 
+															enabledText: 'Save MOL Text', 
+															disabledText: 'Saving MOL...', 
+															onclick: function() {
+																	CswAjaxJson({
+																		url: o.TextUrl,
+                                                                        data: {
+                                                                                molData: $moltxtarea.val(),
+                                                                                PropId: o.PropId
+                                                                               },
+																		success: function(data) 
+																			{
+																				$div.dialog('close');
+                                                                                o.onSuccess();
+																			},
+																		error: function() 
+																			{
+																				$txtsave.CswButton('enable');	
+																			}
+																	}); // ajax
+																} // onclick
+															}); // CswButton
+							
 
 			openDialog($div, 400, 300);
 		}, // FileUploadDialog

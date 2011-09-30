@@ -77,7 +77,7 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
         }
         
         var buttons = { };
-        buttons[CswMobileFooterButtons.online.name] = '';
+        //buttons[CswMobileFooterButtons.online.name] = '';
         buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
         buttons[CswMobileFooterButtons.fullsite.name] = '';
         buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
@@ -89,11 +89,13 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     })(); //ctor
     
     function getContent() {
+        var hideFailure = isNullOrEmpty(mobileStorage.lastSyncAttempt()) ? '' : 'none',
+            onlineBtnText = mobileStorage.stayOffline() ? 'Go Online' : 'Go Offline',
+            onlineClass = mobileStorage.stayOffline() ? 'offline' : 'online';
         $content = ensureContent($content, contentDivId);
         
         $content.append('<p>Pending Unsynced Changes: <span id="ss_pendingchangecnt">' + tryParseString(mobileStorage.getItem('unSyncedChanges'), '0') + '</span></p>');
         $content.append('<p>Last Sync Success: <span id="ss_lastsync_success">' + mobileStorage.lastSyncSuccess() + '</span></p>');
-        var hideFailure = isNullOrEmpty(mobileStorage.lastSyncAttempt()) ? '' : 'none';
         $content.append('<p style="display:' + hideFailure + ' ;">Last Sync Failure: <span id="ss_lastsync_attempt">' + mobileStorage.lastSyncAttempt() + '</span></p>');
         $syncBtn = $('<a id="ss_forcesync" data-identity="ss_forcesync" data-url="ss_forcesync" href="javascript:void(0)" data-role="button">Force Sync Now</a>')
                         .appendTo($content)
@@ -104,10 +106,10 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
                                 });
                             });
                         });
-        $onlineBtn = $('<a id="ss_gooffline" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">Go Offline</a>')
+        $onlineBtn = $('<a id="ss_gooffline" class="' + onlineClass + '" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">' + onlineBtnText + '</a>')
                         .appendTo($content)
-                        .bind('click', function() {
-                            var stayOffline = !mobileStorage.stayOffline();
+                        .click( function() {
+                            var stayOffline = false === mobileStorage.stayOffline();
                             mobileStorage.stayOffline(stayOffline);
                             toggleOffline(true);
                             return false;
@@ -131,19 +133,21 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     function toggleOffline(doWaitForData) {
         ///<summary>Sets the Go Online/Offline button text.</summary>
         ///<param name="doWaitForData" type="Boolean">True if background task(s) should be restarted.</param>
-        if (mobileStorage.amOnline() || $onlineBtn.text() === 'Go Online') {
-            setOnline();
+        if (mobileStorage.amOnline() || $onlineBtn.find('span.ui-btn-text').text() === 'Go Online') {
+            setOnline(mobileStorage);
             if (doWaitForData) {
                 mobileBgTask.reset();
             }
-            $onlineBtn.text('Go Offline');
+            $onlineBtn.find('span.ui-btn-text').text('Go Offline');
+            $onlineBtn.removeClass('offline').addClass('online');
         }
         else {
-            setOffline();
+            setOffline(mobileStorage);
             if (doWaitForData) {
                 mobileBgTask.reset();
             }
-            $onlineBtn.text('Go Online');
+            $onlineBtn.find('span.ui-btn-text').text('Go Online');
+            $onlineBtn.removeClass('online').addClass('offline');
         }
     }
     
