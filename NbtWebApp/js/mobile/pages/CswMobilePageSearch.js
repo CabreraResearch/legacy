@@ -1,21 +1,21 @@
-/// <reference path="../../_Global.js" />
 /// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
 /// <reference path="../controls/CswMobileMenuButton.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
 /// <reference path="CswMobilePageFactory.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
-/// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../controls/CswMobileListView.js" />
-/// <reference path="../objectclasses/CswMobileObjectClassFactory.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../objectclasses/CswMobileNodesFactory.js" />
 
 //#region CswMobilePageSearch
 
-function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
+function CswMobilePageSearch(searchDef,$page,mobileStorage) {
     /// <summary>
     ///   Search Page class. Responsible for generating a Mobile search page.
     /// </summary>
@@ -26,13 +26,13 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
 
     //#region private
 
-    var $content = '';
     var pageDef = { };
-    var id = CswMobilePage_Type.search.id;
-    var title = CswMobilePage_Type.search.title;
-    var divSuffix = '_search';
-    var ulSuffix = '_ul';
-    var contentDivId;
+    var id = CswMobilePage_Type.search.id,
+        title = CswMobilePage_Type.search.title,
+        divSuffix = '_search',
+        ulSuffix = '_ul',
+        contentDivId, $contentPage, $content, viewId;
+    
     
     //ctor
     (function() {
@@ -41,7 +41,7 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
             mobileStorage = new CswMobileClientDbResources();
         }
 
-        var viewId = mobileStorage.currentViewId();
+        viewId = mobileStorage.currentViewId();
         
         var p = {
             level: -1,
@@ -55,15 +55,17 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
         };
         if (searchDef) $.extend(p, searchDef);
         
-        if(!isNullOrEmpty(p.DivId)) {
+        if (false === isNullOrEmpty(p.DivId)) {
             id = p.DivId;
         } else {
             p.DivId = id;
         }
 
         contentDivId = id + divSuffix;
+        $contentPage = $page.find('div:jqmData(role="content")');
+        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
         
-        if( !isNullOrEmpty(p.title)) {
+        if (false === isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
             p.title = title;
@@ -79,109 +81,105 @@ function CswMobilePageSearch(searchDef,$parent,mobileStorage) {
         getContent();
     })(); //ctor
         
-    function getContent(viewId) {
+    function getContent() {
         $content = ensureContent($content, contentDivId);
         
-        if(isNullOrEmpty(viewId)) {
-            viewId = mobileStorage.currentViewId();
-        }
-        var searchJson = mobileStorage.fetchCachedViewJson(viewId, 'search');
+        var searchJson = mobileStorage.fetchCachedViewJson(viewId, 'search'),
+            $fieldCtn = $('<div data-role="fieldcontain"></div>')
+                            .appendTo($content),
+            values = [],
+            selected = '', key, $searchCtn;
 
-        var $fieldCtn = $('<div data-role="fieldcontain"></div>')
-            .appendTo($content);
-        var values = [];
-        var selected;
-
-        if (!isNullOrEmpty(searchJson)) {
-            for (var key in searchJson) {
-                if (!selected) selected = key;
+        if (false === isNullOrEmpty(searchJson)) {
+            for (key in searchJson) {
+                if (false === selected) selected = key;
                 values.push({ 'value': key, 'display': searchJson[key] });
             }
 
             $fieldCtn.CswSelect('init', {
-                    ID: id + '_searchprop',
-                    selected: selected,
-                    cssclass: 'csw_search_select',
-                    values: values
-                })
-                .CswAttrXml({ 'data-native-menu': 'false' });
+                          ID: id + '_searchprop',
+                          selected: selected,
+                          cssclass: 'csw_search_select',
+                          values: values
+                      })  
+                      .CswAttrXml({ 'data-native-menu': 'false' });
 
-            var $searchCtn = $('<div data-role="fieldcontain"></div>')
-                .appendTo($content);
+            $searchCtn = $('<div data-role="fieldcontain"></div>')
+                            .appendTo($content);
             $searchCtn.CswInput('init', { type: CswInput_Types.search, ID: id + '_searchfor' })
-                .CswAttrXml({
-                        'placeholder': 'Search',
-                        'data-placeholder': 'Search'
-                    });
+                       .CswAttrXml({
+                            'placeholder': 'Search',
+                            'data-placeholder': 'Search'
+                        });
             $content.CswLink('init', { type: 'button', ID: id + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
                 .CswAttrXml({ 'data-role': 'button' })
                 .unbind('click')
                 .bind('click', function() {
-                    return startLoadingMsg(function() { onSearchSubmit(); });
+                    return startLoadingMsg(function() { onSearchSubmit(viewId); });
                 });
             $content.CswDiv('init', { ID: id + '_searchresults' });
         }
 
         function onSearchSubmit() {
-            var searchprop = $('#' + id + '_searchprop').val();
-            var searchfor = $('#' + id + '_searchfor').val();
-            var $resultsDiv = $('#' + id + '_searchresults')
-                .empty();
-            
             var ulDef = {
                 ID: id + ulSuffix,
                 cssclass: CswMobileCssClasses.listview.name
             };
-        
-            var listView = new CswMobileListView(ulDef, $content);
-            var nodeCount = 0;
-            if (!isNullOrEmpty(searchJson)) {
+            
+            var searchprop = $('#' + id + '_searchprop').val(),
+                searchfor = $('#' + id + '_searchfor').val(),
+                $resultsDiv = $('#' + id + '_searchresults')
+                                .empty(),
+                listView = new CswMobileListView(ulDef, $content),
+                nodeCount = 0,
+                viewNodes = mobileStorage.fetchCachedViewJson(viewId),
+                nodeKey, node, nodePk, nodeId = '', nodeJson, nodeProp, onClick, opts;
+            
+            if (false === isNullOrEmpty(viewNodes)) {
                 listView.addListItem(id + '_results', 'Results', null, { 'data-role': 'list-divider' });
-                for (var nodeKey in searchJson)
-                {
-                    if (searchJson.hasOwnProperty(nodeKey) &&
-                        searchJson[nodeKey].hasOwnProperty(searchprop)) {
-
-                        var node = searchJson[nodeKey];
-                        if (node[searchprop].toLowerCase().indexOf(searchfor.toLowerCase()) >= 0) {
-                            var nodePk = nodeKey.split('_');
-                            if (nodePk.hasOwnProperty(1)) {
-                                var nodeId = nodeKey[1];
+                each(viewNodes, function (nodeObj) { //, childKey, thisObj, value) {
+                    var ret = true;
+                    if (contains(nodeObj, searchprop)) {
+                        nodeProp = nodeObj[searchprop];
+                        if (nodeProp.toLowerCase().indexOf(searchfor.toLowerCase()) !== -1) {
+                            nodePk = nodeKey.split('_');
+                            if (contains(nodePk, 1)) {
+                                nodeId = nodeKey[1];
                             }
                             if (Int32MinVal === nodeId || 'No Results' === searchJson[nodeKey]) {
                                 makeEmptyListView(listView, null, 'No Results');
+                                ret = false; //to break loop
                             } else {
+                                nodeJson = { ID: nodeKey, value: searchJson[nodeKey] };
+                                
+                                node = new CswMobileNodesFactory(nodeObj);
 
-                                var nodeJson = { ID: nodeKey, value: searchJson[nodeKey] };
-                                //we need CswMobileObjectClassFactory to finish here.
-                                //var nodeOc = makeOcContent(nodeJson);
-
-                                var opts = {
+                                opts = {
                                     ParentId: id,
-                                    DivId: nodeKey,
+                                    DivId: nodeId,
                                     viewId: viewId,
-                                    nodeId: mobileStorage.currentNodeId(nodeKey),
+                                    nodeId: mobileStorage.currentNodeId(nodeId),
                                     level: 2,
-                                    title: searchJson[nodeKey]['node_name'],
+                                    title: node.nodeName,
                                     onHelpClick: pageDef.onHelpClick,
                                     onOnlineClick: pageDef.onOnlineClick,
                                     onRefreshClick: pageDef.onRefreshClick,
                                     mobileStorage: mobileStorage
                                 };
 
-                                var onClick = makeDelegate(pageDef.onListItemSelect, opts);
+                                onClick = makeDelegate(pageDef.onListItemSelect, opts);
 
-//                                if (nodeOc.isLink) {
-//                                    listView.addListItemLinkHtml(nodeKey, nodeOc.$html, onClick);
-//                                } else {
-//                                    listView.addListItemHtml(nodeKey, nodeOc.$html, onClick);
-//                                }
+                                if (node.nodeSpecies.name !== CswNodeSpecies.More.name) {
+                                    listView.addListItemLinkHtml(nodeId, node.$content, onClick, { icon: node.icon });
+                                } else {
+                                    listView.addListItem(nodeId, node.nodeName, null, { icon: node.icon });
+                                }
                                 nodeCount++;
                             }
                         }
-
                     }
-                }
+                    return ret;
+                });
             }
             if (nodeCount === 0) {
                 makeEmptyListView(listView, null, 'No Results');
