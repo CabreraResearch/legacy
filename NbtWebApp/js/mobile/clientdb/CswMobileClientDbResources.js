@@ -190,7 +190,21 @@ function CswMobileClientDbResources() {
         var changes = new Number(tryParseString(mobileStorage.getItem('unSyncedChanges'), '0'));
         return (changes > 0);
     };
-    
+
+    this.forceContentRefresh = function(value) {
+        /// <summary>
+        ///   On 'Refresh' force a call to the relevant webservice. 
+        /// </summary>
+        /// <returns type="Boolean">True if the very next request should specify a server refresh.</returns>
+        var mobileStorage = this,
+            ret;
+        if (arguments.length === 1) {
+            mobileStorage.setItem('forceContentRefresh', isTrue(value));
+        }
+        ret = isTrue(mobileStorage.getItem('forceContentRefresh'));
+        return ret;
+    };
+
 }
 
 //#endregion CswMobileClientDbResourcesz

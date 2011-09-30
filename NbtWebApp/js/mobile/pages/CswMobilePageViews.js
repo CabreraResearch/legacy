@@ -29,7 +29,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         title = CswMobilePage_Type.views.title,
         divSuffix = '_views',
         ulSuffix = '_list',
-        $contentPage, $content, contentDivId;
+        $contentPage, $content, contentDivId, forceRefresh;
     
     //ctor
     (function() {
@@ -49,7 +49,9 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
             PageType: CswMobilePage_Type.views
         };
         if (viewsDef) $.extend(p, viewsDef);
-
+        forceRefresh = mobileStorage.forceContentRefresh();
+        mobileStorage.forceContentRefresh(false);
+        
         if(!isNullOrEmpty(p.DivId)) {
             id = p.DivId;
         } else {
@@ -77,7 +79,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
     })(); //ctor
     
     function getContent(onSuccess,postSuccess) {
-        if (isTimeToRefresh(mobileStorage)) { 
+        if (isTimeToRefresh(mobileStorage) || forceRefresh) { 
             refreshViewJson(onSuccess,postSuccess);
         } else { //it's been less than 5 minutes since the last sync or we're offline
             refreshViewContent('', onSuccess,postSuccess); 
