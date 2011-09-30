@@ -96,7 +96,7 @@
                         o.onReload();
                     },
                     onMultiEdit: function () {
-                        var multi = !gridOpts.multiselect;
+                        var multi = (false === cswGrid.isMulti());
                         var g = {
                             gridOpts: {
                                 multiselect: multi

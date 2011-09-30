@@ -323,13 +323,13 @@
                 refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
             },
             'onMultiEdit': function () {
-                multi = !multi;
+                multi = (false === o.grid.isMulti());
                 switch (o.viewmode) {
                     case CswViewMode.grid.name:
                         var g = {
                             gridOpts: {
                                 //reinit: true,
-                                multiselect: true
+                                multiselect: multi
                             }
                         };
                         o.grid.changeGridOpts(g);
@@ -857,7 +857,7 @@
                     {
                         clear({ 'all': true });
                         setCurrent(getLast());
-						refreshSelected();
+                        refreshSelected();
                     },
                     'onFinish': function (viewid, viewmode)
                     {
@@ -886,16 +886,16 @@
                     {
                         clear({ 'all': true });
                         setCurrent(getLast());
-						refreshSelected();
+                        refreshSelected();
                     },
                     'onFinish': function (viewid, viewmode)
                     {
                         clear({ 'all': true });
                         if(isTrue(o.ActionOptions.IgnoreReturn))
                         {
-							setCurrent(getLast());
-						    refreshSelected();
-						}
+                            setCurrent(getLast());
+                            refreshSelected();
+                        }
                         else
                             handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
                     },
