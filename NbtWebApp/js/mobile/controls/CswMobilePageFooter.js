@@ -53,11 +53,10 @@ function CswMobilePageFooter(footerDef, $parent) {
             var $footerNav = $('<div data-role="navbar">').appendTo($footer);
             $footerCtn = $('<ul class="csw_fieldctn"></ul>').appendTo($footerNav);
             makeButtons($footerCtn, o.buttons);
-            $footer.trigger('create');
+            //$footer.trigger('create');
         } else {
             $footerCtn = $footer.find('.csw_fieldctn');
         }
-        recalculateFooter($parent);
     })();
     //#endregion private
     

@@ -313,7 +313,8 @@ CswAppMode.mode = 'mobile';
         
         function onRefreshClick() {
             ///<summary>Event to fire on 'Refresh' button click.</summary>
-            var divId = mobileStorage.currentViewId();
+            var divId = $.mobile.activePage.CswAttrDom('id');
+            mobileStorage.forceContentRefresh(true);
             if(isNullOrEmpty(divId)) {
                 window.location.reload();
             }
@@ -324,7 +325,8 @@ CswAppMode.mode = 'mobile';
                     window.location.reload();
                 }
                 else {
-                    makeViewsPage();
+                    viewsPage = makeViewsPage();
+                    viewsPage.CswChangePage();
                 }
             }
         }
@@ -435,6 +437,7 @@ CswAppMode.mode = 'mobile';
                 if (completed && false === isView) {
                     mobileStorage.deleteNode(objectId, objectJson.viewid);
                     if (false === isBackgroundTask) {
+                        mobileStorage.forceContentRefresh(true);
                         $('#' + objectJson.viewid).CswChangePage();
                     }
                 }

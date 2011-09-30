@@ -450,13 +450,13 @@ function recalculateFooter($page, startingHeight) {
         top = footer.css('top'),
         heightChange = documentHeight - startingHeight;
     
-    if( isNumeric(heightChange) && heightChange !== 0) {
-        top += heightChange;
-        footer.css('top', top);
-    }
-    else if (winDocHeightDif > 0) {
-        footer.css('top', adjustedHeight);
-    }
+//    if( isNumeric(heightChange) && heightChange !== 0) {
+//        top += heightChange;
+//        footer.css('top', top);
+//    }
+//    else if (winDocHeightDif > 0) {
+        footer.css('top', 0);
+//    }
 }
 
 //#endregion functions

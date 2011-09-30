@@ -33,7 +33,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     /// <returns type="CswMobilePageFactory">Instance of itself. Must instance with 'new' keyword.</returns>
 
     //#region private
-    var mobileHeader, mobileFooter, $contentRole, $pageDiv, id, title, getContent, footerDef;
+    var mobileHeader, mobileFooter, $contentRole, $pageDiv, id, title, getContent, footerDef, theme;
     var cswMobilePage;
     //ctor
     (function () {
@@ -72,7 +72,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         if (isNullOrEmpty(p.title)) {
             title = p.title = pageType.title;
         }
-        
+        theme = p.theme;
         $pageDiv = getPageDiv(title, p.theme, p.doChangePage);
 
         switch (pageType.name) {
@@ -112,8 +112,8 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         
             mobileHeader = getMenuHeader(p.headerDef);
             $contentRole = getContentDiv(p.theme);
-            //mobileFooter = getMenuFooter(p.footerDef);
-            footerDef = p.footerDef;
+            mobileFooter = getMenuFooter(p.footerDef);
+            //footerDef = p.footerDef;
             getContent = cswMobilePage.getContent;
             bindPageEvents();
         }
@@ -162,7 +162,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         return ret;
     }
     
-    function getContentDiv(theme) {
+    function getContentDiv() {
         /// <summary> Refreshes the content of a page.</summary>
         /// <param name="theme" type="String">JQM theme to style content.</param>
         /// <param name="forceRefresh" type="Boolean">True to force a refresh from the page class, false to load from memory.</param>
@@ -179,6 +179,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     }
     
     function bindPageEvents() {
+        $pageDiv.unbind('pageshow');
         $pageDiv.bind('pageshow', function() {
             startLoadingMsg();
             setTimeout(function() {
@@ -190,6 +191,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     }
     
     function fillContent(forceRefresh,onSuccess) {
+        
         if (contentIsFullyPopulated() && !forceRefresh) {
             $contentRole.append(cswMobilePage.$content);
             onPageComplete(onSuccess);
@@ -200,8 +202,8 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         if($contentRole.height() < 300) {
             $contentRole.css('min-height', 300);
         }
-        mobileFooter = getMenuFooter(footerDef);
-        $pageDiv.unbind('pageshow');
+        recalculateFooter($pageDiv);
+        
         return $contentRole;        
     }
     

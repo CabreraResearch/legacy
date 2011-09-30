@@ -30,8 +30,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     var pageDef = { },
         id = CswMobilePage_Type.nodes.id,
         title = CswMobilePage_Type.nodes.title,
-        viewId, 
-        level,
+        viewId, level, forceRefresh,
         divSuffix = '_nodes',
         ulSuffix = '_list',
         $contentPage = $page.find('div:jqmData(role="content")'),
@@ -58,7 +57,9 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
             buttons = { };
         
         if (nodesDef) $.extend(p, nodesDef);
-
+        forceRefresh = mobileStorage.forceContentRefresh();
+        mobileStorage.forceContentRefresh(false);
+        
         if (false === isNullOrEmpty(p.DivId)) {
             id = p.DivId;
         } else {
@@ -90,7 +91,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     function getContent(onSuccess, postSuccess) {
         var cachedJson = mobileStorage.fetchCachedViewJson(viewId);
 
-        if (isTimeToRefresh(mobileStorage)) {
+        if (isTimeToRefresh(mobileStorage) || forceRefresh) {
             refreshNodeJson(onSuccess, postSuccess);
         } else if (false === isNullOrEmpty(cachedJson)) {
             refreshNodeContent(cachedJson, onSuccess, postSuccess);
