@@ -125,40 +125,41 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
                 ID: id + ulSuffix,
                 cssclass: CswMobileCssClasses.listview.name
             };
-            
+
             var searchprop = $('#' + id + '_searchprop').val(),
                 searchfor = $('#' + id + '_searchfor').val(),
                 $resultsDiv = $('#' + id + '_searchresults')
                                 .empty(),
-                listView = new CswMobileListView(ulDef, $content),
+                listView = new CswMobileListView(ulDef, $resultsDiv),
                 nodeCount = 0,
-                viewNodes = mobileStorage.fetchCachedViewJson(viewId),
-                nodeKey, node, nodePk, nodeId = '', nodeJson, nodeProp, onClick, opts;
-            
+                viewNodes = mobileStorage.fetchCachedViewJson(viewId);
+                
             if (false === isNullOrEmpty(viewNodes)) {
                 listView.addListItem(id + '_results', 'Results', null, { 'data-role': 'list-divider' });
-                each(viewNodes, function (nodeObj) { //, childKey, thisObj, value) {
-                    var ret = true;
+                each(viewNodes, function (nodeObj, nodeKey) { //, childKey, thisObj, value) {
+                    var ret = false,
+                        node, nodePk, nodeId = '', nodeProp, onClick, opts;
+                    
                     if (contains(nodeObj, searchprop)) {
                         nodeProp = nodeObj[searchprop];
                         if (nodeProp.toLowerCase().indexOf(searchfor.toLowerCase()) !== -1) {
                             nodePk = nodeKey.split('_');
-                            if (contains(nodePk, 1)) {
-                                nodeId = nodeKey[1];
+                            if (contains(nodePk, 2)) {
+                                nodeId = nodePk[2];
                             }
-                            if (Int32MinVal === nodeId || 'No Results' === searchJson[nodeKey]) {
+                            if (Int32MinVal === nodeId) { // || 'No Results' === searchJson[nodeKey]) {
                                 makeEmptyListView(listView, null, 'No Results');
-                                ret = false; //to break loop
+                                ret = true; //to break loop
                             } else {
-                                nodeJson = { ID: nodeKey, value: searchJson[nodeKey] };
+                                //nodeJson = { ID: nodeKey, value: searchJson[nodeKey] };
                                 
                                 node = new CswMobileNodesFactory(nodeObj);
 
                                 opts = {
                                     ParentId: id,
-                                    DivId: nodeId,
+                                    DivId: nodeKey,
                                     viewId: viewId,
-                                    nodeId: mobileStorage.currentNodeId(nodeId),
+                                    nodeId: mobileStorage.currentNodeId(nodeKey),
                                     level: 2,
                                     title: node.nodeName,
                                     onHelpClick: pageDef.onHelpClick,
@@ -170,9 +171,9 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
                                 onClick = makeDelegate(pageDef.onListItemSelect, opts);
 
                                 if (node.nodeSpecies.name !== CswNodeSpecies.More.name) {
-                                    listView.addListItemLinkHtml(nodeId, node.$content, onClick, { icon: node.icon });
+                                    listView.addListItemLinkHtml(nodeKey, node.$content, onClick, { icon: node.icon });
                                 } else {
-                                    listView.addListItem(nodeId, node.nodeName, null, { icon: node.icon });
+                                    listView.addListItem(nodeKey, node.nodeName, null, { icon: node.icon });
                                 }
                                 nodeCount++;
                             }
@@ -184,6 +185,7 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
             if (nodeCount === 0) {
                 makeEmptyListView(listView, null, 'No Results');
             }
+            $content.trigger('create');
             stopLoadingMsg();
         } // onSearchSubmit()
         
