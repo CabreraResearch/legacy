@@ -279,7 +279,7 @@
                     $propSelectCell.CswSpan('init',{ID: propCellId, value: propertyName});
                 }
 
-                var selectedSubfield = tryParseString(propsData.subfield);
+                var selectedSubfield = tryParseString(propsData.subfieldname);
                 var selectedFilterMode = tryParseString(propsData.filtermode);
                 var filterValue = tryParseString(propsData.value);
                 
@@ -360,7 +360,7 @@
                 }
                 
                 retJson = {
-                    nodetypeorobjectclassid: nodetypeorobjectclassid,
+					nodetypeorobjectclassid: nodetypeorobjectclassid,
                     proptype: tryParseString(o.filtJson.type, o.relatedidtype),
                     viewbuilderpropid: o.viewbuilderpropid,
                     filtarbitraryid: o.filtarbitraryid,

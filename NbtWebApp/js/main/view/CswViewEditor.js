@@ -38,7 +38,7 @@
             childrelationships: { name: 'childrelationships' },
             properties: { name: 'properties' },
             filters: { name: 'filters' },
-            propfilters: { name: 'propfilters' },
+            propfilters: { name: 'filters' },
             filtermodes: { name: 'filtermodes' }
         };
 
