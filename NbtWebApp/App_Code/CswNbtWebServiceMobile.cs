@@ -186,14 +186,18 @@ namespace ChemSW.Nbt.WebServices
                 _addObjectClassProps( ThisNode, ref NodeProps );
 
                 foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps
-                    .Cast<CswNbtMetaDataNodeTypeProp>()
-                    .Where( MetaDataProp => MetaDataProp.MobileSearch ) )
+                                                                            .Cast<CswNbtMetaDataNodeTypeProp>()
+                                                                            .Where( MetaDataProp => MetaDataProp.MobileSearch ) )
                 {
-                    NodeProps.Add( ( MetaDataProp.ObjectClassProp != null ) ?
-                                                                                new JProperty( "search_ocp_" + MetaDataProp.ObjectClassPropId,
-                                                                                               CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) ) :
-                                                                                                                                                                               new JProperty( "search_ntp_" + MetaDataProp.PropId,
-                                                                                                                                                                                              CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt ) ) );
+                    if( ( MetaDataProp.ObjectClassProp != null ) )
+                    {
+                        NodeProps["search_ocp_" + MetaDataProp.ObjectClassPropId] = CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt );
+                    }
+                    else
+                    {
+                        NodeProps["search_ntp_" + MetaDataProp.PropId] = CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt );
+                    }
+
                 }
             }
             return Ret;
