@@ -1,8 +1,9 @@
 /// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../_Global.js" />
-/// <reference path="../../_CswPrototypeExtensions.js" />
 /// <reference path="CswMobileMenuButton.js" />
 /// <reference path="ICswMobileWebControls.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
 
 //#region CswMobilePageHeader
 
@@ -35,21 +36,20 @@ function CswMobilePageHeader(headerDef, $page) {
 
         buttonNames = [];
         id = o.ID + '_header';
-        $header = $page.find('div:jqmData(role="header")');
+        $header = $('#' + id);
 
-        if (isNullOrEmpty($header) || $header.length === 0)
-        {
+        if (isNullOrEmpty($header) || $header.length === 0) {
             $header = $page.CswDiv('init', { ID: id });
-        }
-        $header.CswAttrXml({
+            $header.CswAttrXml({
                 'data-role': 'header',
                 'data-position': 'fixed',
                 'data-id': o.dataId,
                 'data-theme': o.dataTheme
             });
-
-        pageHeader(o.text);
-        makeButtons(o.buttons);
+            pageHeader(o.text);
+            makeButtons(o.buttons);
+        }
+        
     })(); //ctor
     
     function pageHeader(text) {

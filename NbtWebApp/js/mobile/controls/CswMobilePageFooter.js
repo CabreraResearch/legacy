@@ -4,6 +4,8 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswPrototypeExtensions.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
 
 //#region CswMobilePageFooter
 
@@ -38,7 +40,7 @@ function CswMobilePageFooter(footerDef, $parent) {
         buttonNames = [];
         id = o.ID + '_footer';
 
-        $footer = $parent.find('div:jqmData(role="footer")');
+        $footer = $('#' + id);
         if (isNullOrEmpty($footer) || $footer.length === 0)
         {
             $footer = $parent.CswDiv('init', { ID: id })
@@ -50,10 +52,12 @@ function CswMobilePageFooter(footerDef, $parent) {
                     });
             var $footerNav = $('<div data-role="navbar">').appendTo($footer);
             $footerCtn = $('<ul class="csw_fieldctn"></ul>').appendTo($footerNav);
+            makeButtons($footerCtn, o.buttons);
+            $footer.trigger('create');
         } else {
             $footerCtn = $footer.find('.csw_fieldctn');
         }
-        makeButtons($footerCtn, o.buttons);
+        recalculateFooter($parent);
     })();
     //#endregion private
     
