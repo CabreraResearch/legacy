@@ -412,6 +412,7 @@ CswAppMode.mode = 'mobile';
             } else {
                 resetPendingChanges(true);
             }
+            stopLoadingMsg();
         }
         
         function processUpdatedNodes(data,objectId,objectJson,isBackgroundTask) {
