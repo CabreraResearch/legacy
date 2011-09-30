@@ -25,14 +25,14 @@ function CswGrid(options, $parent) {
             ID: '',
             gridOpts: {
                 autoencode: true,
-	            //autowidth: true,
+                //autowidth: true,
                 altRows: false,
                 caption: '',
                 datatype: 'local',
                 emptyrecords: 'No Results',
                 height: '300',
                 loadtext: 'Loading...',
-	            multiselect: false,
+                multiselect: false,
                 pager: $gridPager,
                 rowList: [10, 25, 50],
                 rowNum: 10,
@@ -70,19 +70,19 @@ function CswGrid(options, $parent) {
                 add: false,
                 del: false,
                 edit: false,
-						
-		        //search
+                        
+                //search
                 search: true,
                 searchtext: "",
                 searchtitle: "Find records",
-						
-		        //refresh
+                        
+                //refresh
                 refreshtext: "",
                 refreshtitle: "Reload Grid",
                 alertcap: "Warning",
                 alerttext: "Please, select row",
-						
-		        //view
+                        
+                //view
                 view: true,
                 viewtext: "",
                 viewtitle: "View row"
@@ -123,19 +123,19 @@ function CswGrid(options, $parent) {
         $topPager = $('#' + $gridTable[0].id + '_toppager')[0];
     }
     
-  	// Row scrolling adapted from 
-	// http://stackoverflow.com/questions/2549466/is-there-a-way-to-make-jqgrid-scroll-to-the-bottom-when-a-new-row-is-added/2549654#2549654
+    // Row scrolling adapted from 
+    // http://stackoverflow.com/questions/2549466/is-there-a-way-to-make-jqgrid-scroll-to-the-bottom-when-a-new-row-is-added/2549654#2549654
     function getGridRowHeight () {
-		
+        
         var height = null; // Default
-		try{
-			height = $gridTable.find('tbody').find('tr:first').outerHeight();
-		}
-		catch(e){
-			//catch and just suppress error
-		}
-		return height;
-	}
+        try{
+            height = $gridTable.find('tbody').find('tr:first').outerHeight();
+        }
+        catch(e){
+            //catch and just suppress error
+        }
+        return height;
+    }
 
     function getCell (rowid, key) {
         var ret = '';
@@ -173,15 +173,15 @@ function CswGrid(options, $parent) {
     }
     
     function scrollToRow (rowid) {
-	    ///<summary>Scrolls the grid to the specified rowid</summary>
+        ///<summary>Scrolls the grid to the specified rowid</summary>
         ///<param name="rowid" type="String">Optional. jqGrid rowid. If null, selected row is assumed.</param>
         ///<returns type="Void"></returns>
         if (isNullOrEmpty(rowid)) {
-	        rowid = getSelectedRowId();
-	    }
+            rowid = getSelectedRowId();
+        }
         var rowHeight = getGridRowHeight($gridTable) || 23; // Default height
-	    var index = $gridTable.getInd(rowid);
-	    $gridTable.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
+        var index = $gridTable.getInd(rowid);
+        $gridTable.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
     }
     
     function getRowIdForVal(value, column) {
@@ -250,7 +250,7 @@ function CswGrid(options, $parent) {
                             parent[key] = getValueForColumn(key, rowid);
                         }
                     }
-					return false;
+                    return false;
                 }, false);
             }
         }
@@ -263,7 +263,7 @@ function CswGrid(options, $parent) {
         } 
         else if (isFunction(onEmpty)) {
             onEmpty(opts);
-    	}
+        }
         return ret;
     }
     
@@ -280,6 +280,6 @@ function CswGrid(options, $parent) {
     this.getValueForColumn = getValueForColumn;
     this.changeGridOpts = changeGridOpts;
     this.opGridRows = opGridRows;
-    
+    this.isMulti = function() { return multiEdit };
     //#endregion public, priveleged
 }

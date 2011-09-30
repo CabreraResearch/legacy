@@ -81,7 +81,7 @@ CswAppMode.mode = 'mobile';
         
         //#endregion Resource Initialization
         
-        var loginPage, viewsPage, offlinePage, helpPage, onlinePage;
+        var loginPage = null, viewsPage = null, offlinePage, helpPage, onlinePage;
 
         // case 20355 - error on browser refresh
         if (false === isNullOrEmpty(sessionId)) {
@@ -192,7 +192,11 @@ CswAppMode.mode = 'mobile';
                 ParentId: mobileStorage.currentViewId(),
                 theme: x.Theme,
                 onOnlineClick: onOnlineClick,
-                mobileStorage: mobileStorage
+                mobileStorage: mobileStorage,
+                onListItemSelect: function(param) {
+                    var tabsPage = makeTabsPage(param);
+                    tabsPage.CswChangePage();
+                }
             };
             var searchPage = new CswMobilePageFactory(CswMobilePage_Type.search, searchDef, $('body') );
             return searchPage;
@@ -408,6 +412,7 @@ CswAppMode.mode = 'mobile';
             } else {
                 resetPendingChanges(true);
             }
+            stopLoadingMsg();
         }
         
         function processUpdatedNodes(data,objectId,objectJson,isBackgroundTask) {

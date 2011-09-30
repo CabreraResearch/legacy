@@ -33,7 +33,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     /// <returns type="CswMobilePageFactory">Instance of itself. Must instance with 'new' keyword.</returns>
 
     //#region private
-    var mobileHeader, mobileFooter, $contentRole, $pageDiv, id, title, getContent;
+    var mobileHeader, mobileFooter, $contentRole, $pageDiv, id, title, getContent, footerDef;
     var cswMobilePage;
     //ctor
     (function () {
@@ -112,7 +112,8 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         
             mobileHeader = getMenuHeader(p.headerDef);
             $contentRole = getContentDiv(p.theme);
-            mobileFooter = getMenuFooter(p.footerDef);
+            //mobileFooter = getMenuFooter(p.footerDef);
+            footerDef = p.footerDef;
             getContent = cswMobilePage.getContent;
             bindPageEvents();
         }
@@ -120,17 +121,18 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
     
     function getPageDiv(headerText, theme) {
         var $ret = $('#' + id);
-            
-        if (isNullOrEmpty($ret) || $ret.length === 0) {
-            $ret = $parent.CswDiv('init', { ID: id })
-                            .CswAttrXml({
-                                    'data-role': 'page',
-                                    'data-url': id,
-                                    'data-title': headerText,
-                                    'data-rel': 'page',
-                                    'data-theme': theme
-                                });
+        if (false === isNullOrEmpty($ret) || $ret.length > 0) {
+            $ret.remove();
         }
+        
+        $ret = $parent.CswDiv('init', { ID: id })
+                      .CswAttrXml({
+                            'data-role': 'page',
+                            'data-url': id,
+                            'data-title': headerText,
+                            'data-rel': 'page',
+                            'data-theme': theme
+                        });
         return $ret;
     }
     
@@ -155,6 +157,7 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         if (options) {
             $.extend(footerDef, options);
         }
+        
         ret = new CswMobilePageFooter(footerDef, $pageDiv);
         return ret;
     }
@@ -165,26 +168,22 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
         /// <param name="forceRefresh" type="Boolean">True to force a refresh from the page class, false to load from memory.</param>
         /// <returns type="void"></returns>
         
-        $contentRole = $pageDiv.find('div:jqmData(role="content")');
-
-        if (!isNullOrEmpty($contentRole) && $contentRole.length > 0) {
-            $contentRole.empty();
-        } else {
-            $contentRole = $pageDiv.CswDiv('init', { ID: id + '_content' })
-                .CswAttrXml({ 'data-role': 'content', 'data-theme': theme });
-        }
+        $contentRole = $('#' + id + '_content');
+        if (false === isNullOrEmpty($contentRole) && $contentRole.length > 0) {
+            $contentRole.remove();
+        } 
+        $contentRole = $pageDiv.CswDiv('init', { ID: id + '_content' })
+                               .CswAttrXml({ 'data-role': 'content', 'data-theme': theme });
+        
         return $contentRole;
     }
     
     function bindPageEvents() {
-        
         $pageDiv.bind('pageshow', function() {
-            var $this = $(this);
             startLoadingMsg();
             setTimeout(function() {
                 fillContent(false, function() {
                     stopLoadingMsg();
-                    recalculateFooter($this);
                 });
             }, 500);
         });
@@ -196,7 +195,13 @@ function CswMobilePageFactory(pageType, pageDef, $parent) {
             onPageComplete(onSuccess);
         } else {
             $contentRole.append(cswMobilePage.getContent(refreshPageContent,onSuccess));
+            //onPageComplete(onSuccess);
         }
+        if($contentRole.height() < 300) {
+            $contentRole.css('min-height', 300);
+        }
+        mobileFooter = getMenuFooter(footerDef);
+        $pageDiv.unbind('pageshow');
         return $contentRole;        
     }
     

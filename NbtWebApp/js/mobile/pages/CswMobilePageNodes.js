@@ -46,7 +46,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
                 ParentId: '',
                 DivId: '', 
                 title: '',
-                viewId: mobileStorage.currentViewId(),
+                viewId: '',
                 theme: CswMobileGlobal_Config.theme,
                 headerDef: { buttons: {} },
                 footerDef: { buttons: {} },
@@ -73,7 +73,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
             p.title = title;
         }
         
-        viewId = p.viewId;
+        viewId =  mobileStorage.currentViewId(p.viewId);
         level = tryParseNumber(p.level, 1);
         
         buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;

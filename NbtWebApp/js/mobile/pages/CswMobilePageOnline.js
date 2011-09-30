@@ -37,17 +37,6 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     
     //ctor
     (function() {
-
-        if (isNullOrEmpty(mobileStorage)) {
-            mobileStorage = new CswMobileClientDbResources();
-        }
-        if (isNullOrEmpty(mobileSync)) {
-            mobileSync = new CswMobileSync({ }, mobileStorage);
-        }
-        if (isNullOrEmpty(mobileBgTask)) {
-            mobileBgTask = new CswMobileBackgroundTask(mobileStorage, mobileSync, { });
-        }
-
         var p = {
             level: -1,
             DivId: '',
@@ -60,7 +49,7 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
         };
         if (onlineDef) $.extend(p, onlineDef);
 
-        if(!isNullOrEmpty(p.DivId)) {
+        if (false === isNullOrEmpty(p.DivId)) {
             id = p.DivId;
         } else {
             p.DivId = id;
@@ -70,7 +59,7 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
         $contentPage = $page.find('div:jqmData(role="content")');
         $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
         
-        if( !isNullOrEmpty(p.title)) {
+        if (false === isNullOrEmpty(p.title)) {
             title = p.title;
         } else {
             p.title = title;

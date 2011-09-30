@@ -17,16 +17,24 @@
         /// </summary>
         /// <param name="options" type="JSON">JQM options for the $.mobile.changePage() method</param>
         /// <returns type="void"></returns>
-        var ret = false;
+        var ret = false,
+            $div = $(this),
+            $currentPage = $.mobile.activePage;
         
         var o = {
-            transition: 'fade'
+            transition: 'fade',
+            removeActivePage: false
         };
         if (options) $.extend(o, options);
-        var $div = $(this);
-        if (!isNullOrEmpty($div)) {
+        
+        if (false === isNullOrEmpty($div)) {
             try {
                 ret = $.mobile.changePage($div, o);
+                if (o.removeActivePage) {
+                    setTimeout(function() {
+                        $currentPage.remove();
+                    }, 1000);
+                }
             } catch (e) {
                 if (debugOn()) {
                     log('changePage() failed.',true);
