@@ -324,7 +324,8 @@ CswAppMode.mode = 'mobile';
                     window.location.reload();
                 }
                 else {
-                    makeViewsPage();
+                    viewsPage = makeViewsPage();
+                    viewsPage.CswChangePage();
                 }
             }
         }
