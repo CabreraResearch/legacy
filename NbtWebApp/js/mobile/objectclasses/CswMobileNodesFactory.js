@@ -12,13 +12,13 @@
 //#region CswMobileNodesFactory
 
 function CswMobileNodesFactory(ocDef) {
-	/// <summary>
-	///   Object class factory. Responsible for generating nodes according to Object Class rules.
-	/// </summary>
+    /// <summary>
+    ///   Object class factory. Responsible for generating nodes according to Object Class rules.
+    /// </summary>
     /// <param name="ocDef" type="Object">Object Class definitional data.</param>
-	/// <returns type="CswMobileNodesFactory">Instance of itself. Must instance with 'new' keyword.</returns>
+    /// <returns type="CswMobileNodesFactory">Instance of itself. Must instance with 'new' keyword.</returns>
 
-	//#region private
+    //#region private
 
     var $content, nodeKey, nodeId, nodeSpecies, nodeName, objectClass, icon;
     
@@ -34,7 +34,7 @@ function CswMobileNodesFactory(ocDef) {
         };
         if (ocDef) $.extend(p, ocDef);
 
-		nodeKey = makeSafeId({ ID: p.nodeKey });
+        nodeKey = makeSafeId({ ID: p.nodeKey });
         nodeName = 'No Results';
         icon = '';
         
@@ -76,7 +76,7 @@ function CswMobileNodesFactory(ocDef) {
         }
     })(); //ctor
 
-	//#endregion private
+    //#endregion private
     
     //#region public, priveleged
 
