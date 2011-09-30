@@ -38,7 +38,7 @@
             childrelationships: { name: 'childrelationships' },
             properties: { name: 'properties' },
             filters: { name: 'filters' },
-            propfilters: { name: 'propfilters' },
+            propfilters: { name: 'filters' },
             filtermodes: { name: 'filtermodes' }
         };
 
@@ -782,7 +782,7 @@
             $('.' + viewEditClasses.vieweditor_deletespan.name).each(function() {
                 var $span = $(this);
                 var arbid = $span.CswAttrXml('arbid');
-                var $btn = $span.find('#' + arbid + '_delete');
+                var $btn = $span.children('div').first();
                 $btn.bind('click', function() {
                     var objUtil = new ObjectHelper(currentViewJson);
                     objUtil.remove('arbitraryid', arbid);
