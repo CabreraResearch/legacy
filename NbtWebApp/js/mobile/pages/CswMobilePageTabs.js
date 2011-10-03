@@ -88,12 +88,13 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
     function getContent(onSuccess, postSuccess) {
         ///<summary>Rebuilds the tabs list from JSON</summary>
         ///<param name="onSuccess" type="Function">A function to execute after the list is built.</param>
-        var cachedJson = mobileStorage.fetchCachedNodeJson(nodeId);
-        if( !isNullOrEmpty(cachedJson) && 
-            cachedJson.hasOwnProperty('subitems') &&
-            !isNullOrEmpty(cachedJson['subitems'])) 
+        var cachedJson = mobileStorage.fetchCachedNodeJson(nodeId),
+            nodeJson;
+        if (false === isNullOrEmpty(cachedJson) && 
+            contains(cachedJson, 'subitems') &&
+            false === isNullOrEmpty(cachedJson['subitems'])) 
         {
-            var nodeJson = cachedJson['subitems'];
+            nodeJson = cachedJson['subitems'];
             refreshTabContent(nodeJson, onSuccess, postSuccess);
         } else {
             makeEmptyListView(null, $content, 'No Tabs to Display');
@@ -124,7 +125,6 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
                         nodeId: nodeId,
                         tabId: tabId,
                         tabName: tabName,
-                        tabJson: nodeJson[tabName],
                         level: 3,
                         title: tabName,
                         onHelpClick: pageDef.onHelpClick,

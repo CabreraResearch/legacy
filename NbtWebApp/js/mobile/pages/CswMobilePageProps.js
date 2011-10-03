@@ -57,9 +57,12 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
             onListItemSelect: null, //function () {}
             onPropChange: null //function () {}
         };
-        var buttons = { };
-        
         if (propsDef) $.extend(p, propsDef);
+        
+        var buttons = { },
+            cachedJson, nodeJson;
+        
+        
         if (false === isNullOrEmpty(p.DivId)) {
             id = p.DivId;
         } else {
@@ -78,19 +81,30 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         nodeId = p.nodeId;
         tabId = mobileStorage.currentTabId(p.tabId);
         tabName = p.tabName;
-        tabJson = p.tabJson;
-        viewId = p.viewId;
-        level = tryParseNumber(p.level, 2);
-        
-        buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
-        buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-        buttons[CswMobileHeaderButtons.back.name] = '';
-        buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
-        $content = ensureContent($content, contentDivId);
+        cachedJson = mobileStorage.fetchCachedNodeJson(nodeId);
+        if (false === isNullOrEmpty(cachedJson) && 
+            contains(cachedJson, 'subitems') &&
+            false === isNullOrEmpty(cachedJson['subitems']))
+        {
+            nodeJson = cachedJson['subitems'];
+            tabJson = nodeJson[tabName];
+
+            viewId = p.viewId;
+            level = tryParseNumber(p.level, 2);
+
+            buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
+            buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
+            buttons[CswMobileFooterButtons.fullsite.name] = '';
+            buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
+            buttons[CswMobileHeaderButtons.back.name] = '';
+            buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
+
+            pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
+            $content = ensureContent($content, contentDivId);
+        } else {
+            throw new Error('Cannot create a property pages without Tab content', tabId);
+        }
     })(); //ctor
    
     function getContent(onSuccess, postSuccess) {
