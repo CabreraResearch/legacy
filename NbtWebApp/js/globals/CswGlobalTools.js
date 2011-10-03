@@ -253,13 +253,13 @@ function cswIndexOf (object, property) {
     ///   Because IE 8 doesn't implement indexOf on the Array prototype.
     /// </summary>
     var ret = -1,
-        i = 0,
+        i,
         len = object.length;
     if (isFunction(object.indexOf)) {
         ret = object.indexOf(property);
     }
     else if (hasLength(object) && len > 0) {
-        for (i; i < len; i++) {
+        for (i = 0; i < len; i++) {
             if(object[i] === property) {
                 ret = i;
                 break;
