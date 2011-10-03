@@ -18,7 +18,7 @@ function CswString(string)
             return value;
         }
     };
-    this.contains = function (findString) { return contains(value,findString); };
+    this.contains = function (findString) { return value.indexOf(findString) !== -1; };
     this.toString = function () { return value; };
 }
 
