@@ -4,7 +4,7 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../controls/CswSelect.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
+(function ($) { /// <param name="$" type="jQuery" />
     
     var pluginName = "CswViewPropFilter";
 
@@ -219,8 +219,8 @@
                 }
                 else if (fieldtype === CswSubFields_Map.Logical.name) {
                     $propFilterValueCell.CswTristateCheckBox('init', { ID: filtValInputId, 
-                                                                       Checked: defaultSubfieldVal,
-                                                                       cssclass: ViewBuilder_CssClasses.filter_value.name});
+                                                                       Checked: (defaultSubfieldVal === 'checked') ? 'true' : 'false',
+                                                                       cssclass: 'ViewPropFilterLogical ' + ViewBuilder_CssClasses.filter_value.name});
                 } else {
                     var placeholder = '';
                     if (isNullOrEmpty(defaultSubfieldVal)) {
@@ -360,7 +360,7 @@
                 }
                 
                 retJson = {
-					nodetypeorobjectclassid: nodetypeorobjectclassid,
+                    nodetypeorobjectclassid: nodetypeorobjectclassid,
                     proptype: tryParseString(o.filtJson.type, o.relatedidtype),
                     viewbuilderpropid: o.viewbuilderpropid,
                     filtarbitraryid: o.filtarbitraryid,

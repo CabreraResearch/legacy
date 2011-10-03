@@ -8,7 +8,7 @@
 /// <reference path="../controls/CswSelect.js" />
 /// <reference path="../controls/CswGrid.js" />
 
-;  (function ($) { /// <param name="$" type="jQuery" />
+(function ($) { /// <param name="$" type="jQuery" />
 
     $.fn.CswViewEditor = function(options) {
         var o = {
@@ -595,21 +595,21 @@
                                                 { ID: o.ID + '_gbs',
                                                   onChange: function() {
                                                       var $selected = $groupbyselect.find(':selected');
-													  var selval = $selected.val();
+                                                      var selval = $selected.val();
                                                       var propData = { };
 
                                                       if (false === isNullOrEmpty(selval)) {
                                                           if(selval === 'none') {
-															  viewnodejson.groupbypropid = '';
-															  viewnodejson.groupbyproptype = '';
-															  viewnodejson.groupbypropname = '';
-														  } else {
-															  propData = $selected.data('thisPropData');
-															  viewnodejson.groupbypropid = tryParseString(propData.propid);
-															  viewnodejson.groupbyproptype = tryParseString(propData.proptype);
-															  viewnodejson.groupbypropname = tryParseString(propData.propname);
-														  }
-													  } // if (false === isNullOrEmpty(selval)) {
+                                                              viewnodejson.groupbypropid = '';
+                                                              viewnodejson.groupbyproptype = '';
+                                                              viewnodejson.groupbypropname = '';
+                                                          } else {
+                                                              propData = $selected.data('thisPropData');
+                                                              viewnodejson.groupbypropid = tryParseString(propData.propid);
+                                                              viewnodejson.groupbyproptype = tryParseString(propData.proptype);
+                                                              viewnodejson.groupbypropname = tryParseString(propData.propname);
+                                                          }
+                                                      } // if (false === isNullOrEmpty(selval)) {
                                                 } // onChange
                                             }); // CswSelect
                 
@@ -826,6 +826,12 @@
                         } // onSuccess
                     }); // CswViewPropFilter
                 });
+
+                $span.find('.ViewPropFilterLogical').each(function() {
+                    var $this = $(this);
+                    $this.CswTristateCheckBox('reBindClick');
+                });
+                
             }); 
         }
         
