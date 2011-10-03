@@ -92,9 +92,8 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( DataRow WelcomeRow in WelcomeTable.Rows )
             {
-                JObject ItemObj = new JObject();
-                JProperty ItemProp = new JProperty( WelcomeRow["welcomeid"].ToString(), ItemObj );
-                Ret.Add( ItemProp );
+                string WelcomeId = WelcomeRow["welcomeid"].ToString();
+                Ret[WelcomeId] = new JObject();
 
                 WelcomeComponentType ThisType = (WelcomeComponentType) Enum.Parse( typeof( WelcomeComponentType ), WelcomeRow["componenttype"].ToString(), true );
                 string LinkText = string.Empty;
@@ -109,8 +108,8 @@ namespace ChemSW.Nbt.WebServices
                                 LinkText = WelcomeRow["displaytext"].ToString();
                             else
                                 LinkText = "Add New " + NodeType.NodeTypeName;
-                            ItemObj.Add( new JProperty( "nodetypeid", WelcomeRow["nodetypeid"].ToString() ) );
-                            ItemObj.Add( new JProperty( "type", "add_new_nodetype" ) );
+                            Ret[WelcomeId]["nodetypeid"] = WelcomeRow["nodetypeid"].ToString();
+                            Ret[WelcomeId]["type"] = "add_new_nodetype";
                         }
                         break;
 
@@ -120,16 +119,16 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
                             if( null != ThisView && ThisView.IsFullyEnabled() )
                             {
-                                    // FogBugz case 9552, Keith Baldwin 7/27/2011
+                                // FogBugz case 9552, Keith Baldwin 7/27/2011
                                 LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
-                                    ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView(ThisView, false, true, false, false);
-                                    if (null != CswNbtTree)
-                                    {
-                                        LinkText += " (" + CswNbtTree.getChildNodeCount().ToString() + ")";
-                                    }
-                                ItemObj.Add( new JProperty( "viewid", new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString() ) );
-                                ItemObj.Add( new JProperty( "viewmode", ThisView.ViewMode.ToString().ToLower() ) );
-                                ItemObj.Add( new JProperty( "type", "view" ) );
+                                ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( ThisView, false, true, false, false );
+                                if( null != CswNbtTree )
+                                {
+                                    LinkText += " (" + CswNbtTree.getChildNodeCount().ToString() + ")";
+                                }
+                                Ret[WelcomeId]["viewid"] = new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString();
+                                Ret[WelcomeId]["viewmode"] = ThisView.ViewMode.ToString().ToLower();
+                                Ret[WelcomeId]["type"] = "view";
 
                             }
                         }
@@ -140,17 +139,17 @@ namespace ChemSW.Nbt.WebServices
                             {
                                 LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : CswNbtAction.ActionNameEnumToString( ThisAction.Name );
                             }
-                            ItemObj.Add( new JProperty( "actionid", WelcomeRow["actionid"].ToString() ) );
-                            ItemObj.Add( new JProperty( "actionname", ThisAction.Name.ToString() ) );      // not using CswNbtAction.ActionNameEnumToString here
-                            ItemObj.Add( new JProperty( "actionurl", ThisAction.Url ) );
-                            ItemObj.Add( new JProperty( "type", "action" ) );
+                            Ret[WelcomeId]["actionid"] = WelcomeRow["actionid"].ToString();
+                            Ret[WelcomeId]["actionname"] = ThisAction.Name.ToString();      // not using CswNbtAction.ActionNameEnumToString here
+                            Ret[WelcomeId]["actionurl"] = ThisAction.Url;
+                            Ret[WelcomeId]["type"] = "action";
                         }
                         if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )
                         {
                             CswNbtNode ThisReportNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", CswConvert.ToInt32( WelcomeRow["reportid"] ) )];
                             LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisReportNode.NodeName;
-                            ItemObj.Add( new JProperty( "reportid", WelcomeRow["reportid"].ToString() ) );
-                            ItemObj.Add( new JProperty( "type", "report" ) );
+                            Ret[WelcomeId]["reportid"] = WelcomeRow["reportid"].ToString();
+                            Ret[WelcomeId]["type"] = "report";
                         }
                         break;
                     case WelcomeComponentType.Search:
@@ -160,9 +159,9 @@ namespace ChemSW.Nbt.WebServices
                             if( null != ThisView && ThisView.IsSearchable() )
                             {
                                 LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
-                                ItemObj.Add( new JProperty( "viewid", new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString() ) );
-                                ItemObj.Add( new JProperty( "viewmode", ThisView.ViewMode.ToString().ToLower() ) );
-                                ItemObj.Add( new JProperty( "type", "view" ) );
+                                Ret[WelcomeId]["viewid"] = new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString();
+                                Ret[WelcomeId]["viewmode"] = ThisView.ViewMode.ToString().ToLower();
+                                Ret[WelcomeId]["type"] = "view";
                             }
                         }
                         break;
@@ -175,14 +174,14 @@ namespace ChemSW.Nbt.WebServices
 
                 if( LinkText != string.Empty )
                 {
-                    ItemObj.Add( new JProperty( "linktype", WelcomeRow["componenttype"].ToString() ) );
+                    Ret[WelcomeId]["linktype"] = WelcomeRow["componenttype"].ToString();
                     if( WelcomeRow["buttonicon"].ToString() != string.Empty )
                     {
-                        ItemObj.Add( new JProperty( "buttonicon", IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString() ) );
+                        Ret[WelcomeId]["buttonicon"] = IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString();
                     }
-                    ItemObj.Add( new JProperty( "text", LinkText ) );
-                    ItemObj.Add( new JProperty( "displayrow", WelcomeRow["display_row"].ToString() ) );
-                    ItemObj.Add( new JProperty( "displaycol", WelcomeRow["display_col"].ToString() ) );
+                    Ret[WelcomeId]["text"] = LinkText;
+                    Ret[WelcomeId]["displayrow"] = WelcomeRow["display_row"].ToString();
+                    Ret[WelcomeId]["displaycol"] = WelcomeRow["display_col"].ToString();
                 }
 
             } // foreach( DataRow WelcomeRow in WelcomeTable.Rows )
@@ -289,9 +288,9 @@ namespace ChemSW.Nbt.WebServices
             if( Row == Int32.MinValue )
             {
                 string SqlText = @"select max(display_row) maxcol
-									 from welcome
-									where display_col = 1
-									  and (roleid = " + RoleId.ToString() + @")";
+                                     from welcome
+                                    where display_col = 1
+                                      and (roleid = " + RoleId.ToString() + @")";
                 CswArbitrarySelect WelcomeSelect = _CswNbtResources.makeCswArbitrarySelect( "AddButton_Click_WelcomeSelect", SqlText );
                 DataTable WelcomeSelectTable = WelcomeSelect.getTable();
                 Int32 MaxRow = 0;
