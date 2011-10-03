@@ -248,16 +248,40 @@ function tryParseNumber(inputNum, defaultNum) {
     return ret;
 }
 
+function cswIndexOf (object, property) {
+    /// <summary>
+    ///   Because IE 8 doesn't implement indexOf on the Array prototype.
+    /// </summary>
+    var ret = -1,
+        i = 0,
+        len = object.length;
+    if (isFunction(object.indexOf)) {
+        ret = object.indexOf(property);
+    }
+    else if (hasLength(object) && len > 0) {
+        for (i; i < len; i++) {
+            if(object[i] === property) {
+                ret = i;
+                break;
+            }
+        }
+    }
+    return ret;
+}
+
 function contains(object, index) {
     /// <summary>Determines whether an object or an array contains a property or index. Null-safe.</summary>
     /// <param name="object" type="Object"> An object to evaluate </param>
     /// <param name="index" type="String"> An index or property to find </param>
     /// <returns type="Boolean" />
     var ret = false;
-    if (false === isNullOrUndefined(object) && 
-        (isArray(object) && isFunction(object.indexOf) && object.indexOf(index) !== -1) || 
-        (object.hasOwnProperty(index))) {
-        ret = true;
+    if (false === isNullOrUndefined(object))  {
+        if (isArray(object)) {
+            ret = cswIndexOf(object, index) !== -1;
+        } 
+        if (false === ret && object.hasOwnProperty(index)) {
+            ret = true;
+        }
     }
     return ret;
 }

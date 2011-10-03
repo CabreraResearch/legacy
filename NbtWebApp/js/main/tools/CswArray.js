@@ -1,7 +1,5 @@
-/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="_Global.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../globals/Global.js" />
 
 //#region CswArray
 function CswArray()
@@ -13,13 +11,11 @@ function CswArray()
 }
 CswArray.prototype = new Array;
 CswArray.prototype = {
-    last: function ()
-    {
+    last: function () {
         return this[this.length - 1];
     },
-    contains: function (key)
-    {
-        return (this.indexOf(key) !== -1);
+    contains: function (key) {
+        return contains(this,key);
     }
 };
 

@@ -256,7 +256,7 @@
                         }
                     }
                 }
-                if (false === isNullOrEmpty(o.valCol) && cols.indexOf(o.valCol) === -1) {
+                if (false === isNullOrEmpty(o.valCol) && false === contains(cols,o.valCol)) {
                     cols.push(o.valCol);
                 }
 

@@ -1,6 +1,5 @@
-/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="_Global.js" />
-/// <reference path="_CswPrototypeExtensions.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../globals/Global.js" />
 
 //#region CswString
 CswString.inheritsFrom(String);
@@ -12,17 +11,14 @@ function CswString(string)
     var value = string;
     this.val = function (newString)
     {
-        if (arguments.length === 1)
-        {
+        if (arguments.length === 1) {
             value = newString;
             return this; //for chaining
-        }
-        else
-        {
+        } else {
             return value;
         }
     };
-    this.contains = function (findString) { return value.indexOf(findString) !== -1; };
+    this.contains = function (findString) { return contains(value,findString); };
     this.toString = function () { return value; };
 }
 

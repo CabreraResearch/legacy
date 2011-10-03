@@ -27,28 +27,20 @@ function CswClientDb() {
         return this;
     };
 
-    this.getItem = function(key)
-    {
+    this.getItem = function(key) {
         var ret = '';
-        if (!isNullOrEmpty(key))
-        {
+        if (false === isNullOrEmpty(key)) {
             var value = tryParseString(localStorage.getItem(key), '');
-            if (isNullOrEmpty(value) || value === 'undefined')
-            {
+            if (isNullOrEmpty(value) || value === 'undefined') {
                 value = tryParseString(sessionStorage.getItem(key), '');
             }
-            if (isNullOrEmpty(value) || value === 'undefined')
-            {
+            if (isNullOrEmpty(value) || value === 'undefined') {
                 value = tryParseString( storedInMemory[key], '');
             }
-            if (!isNullOrEmpty(value) && value !== 'undefined')
-            {
-                try
-                {
+            if (!isNullOrEmpty(value) && value !== 'undefined') {
+                try {
                     ret = deserialize(value);
-                }
-                catch(e)
-                {
+                } catch(e) {
                     ret = value;
                 }
             }
@@ -56,48 +48,39 @@ function CswClientDb() {
         return ret;
     };
 
-    this.getKeys = function ()
-    {
-        if (isNullOrEmpty(keys) && localStorage.length > 0)
-        {
-            for (var key in localStorage)
-            {
-                keys.push(key);
+    this.getKeys = function () {
+        var locKey, sesKey, memKey;
+        if (isNullOrEmpty(keys) && localStorage.length > 0) {
+            for (locKey in localStorage) {
+                keys.push(locKey);
             }
-            if (sessionStorage.length > 0)
-            {
-                for (var key in sessionStorage)
-                {
-                    keys.push(key);
+            if (sessionStorage.length > 0) {
+                for (sesKey in sessionStorage) {
+                    keys.push(sesKey);
                 }
             }
-            if (storedInMemory.length > 0)
-            {
-                for (var key in storedInMemory)
-                {
-                    keys.push(key);
+            if (storedInMemory.length > 0) {
+                for (memKey in storedInMemory) {
+                    keys.push(memKey);
                 }
             }
         }
         return keys;
     };
 
-    this.hasKey = function(key)
-    {
-        var ret = (this.getKeys().indexOf(key) !== -1);
+    this.hasKey = function(key) {
+        var ret = contains(this.getKeys(), key);
         return ret;
     };
 
-    this.removeItem = function(key)
-    {
+    this.removeItem = function(key) {
         localStorage.removeItem(key);
         sessionStorage.removeItem(key);
         delete storedInMemory[key];
         delete keys[key];
     };
 
-    this.setItem = function (key, value)
-    {
+    this.setItem = function (key, value) {
         /// <summary>
         ///   Stores a key/value pair in localStorage. 
         ///   If localStorage is full, use sessionStorage. 
@@ -107,10 +90,8 @@ function CswClientDb() {
         /// <param name="value" type="String">The property value to store. If not a string, serializer will be called.</param>
         /// <returns type="Boolean">True if successful</returns>
         var ret = true;
-        if (!isNullOrEmpty(key))
-        {
-            if (!this.hasKey(key))
-            {
+        if (false === isNullOrEmpty(key)) {
+            if (false === this.hasKey(key)) {
                 keys.push(key);
             }
             var val = (typeof value === 'object') ? serialize(value) : value;
