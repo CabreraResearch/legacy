@@ -401,11 +401,9 @@
     function _moveItem(MoveWelcomeItemUrl, cellset, newrow, newcolumn)
     {
         var $textcell = $(cellset[2][1]);
-        if($textcell.length > 0)
-        {
-            var welcomeid = $textcell.find('input').CswAttrDom('welcomeid');
-            if(!isNullOrEmpty(welcomeid))
-            {
+        if($textcell.length > 0) {
+            var welcomeid = $textcell.find('input').CswAttrXml('welcomeid');
+            if(false === isNullOrEmpty(welcomeid)) {
                 var dataJson = {
                     RoleId: '', 
                     WelcomeId: welcomeid, 
@@ -415,8 +413,7 @@
             
                 CswAjaxJson({
                     url: MoveWelcomeItemUrl,
-                    data: dataJson,
-                    success: function (result) {}
+                    data: dataJson
                 });
             }
         }
@@ -444,8 +441,7 @@
             $.extend(o, options);
         }
 
-        switch(o.$typeselect.val())
-        {
+        switch(o.$typeselect.val()) {
             case "Add":
                 o.$viewselect_label.hide();
                 o.$viewselect.hide();
