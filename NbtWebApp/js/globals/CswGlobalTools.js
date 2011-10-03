@@ -69,7 +69,7 @@ function makeSafeId(options)
     return elementId;
 }
 
-function isNullOrEmpty(obj)
+function isNullOrEmpty(obj, checkLength)
 {
     /// <summary> Returns true if the input is null, undefined, or ''</summary>
     /// <param name="obj" type="Object"> Object to test</param>
@@ -80,8 +80,8 @@ function isNullOrEmpty(obj)
                (isDate(obj) && obj === dateTimeMinValue) ||
                (isNumber(obj) && obj === Int32MinVal));
     }
-    else if (hasLength(obj)) {
-        //ret = (obj.length === 0);
+    else if (checkLength && hasLength(obj)) {
+        ret = (obj.length === 0);
     }
      
     return ret;
