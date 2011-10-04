@@ -42,16 +42,16 @@ namespace ChemSW.Nbt.Sched
             CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( _CswNbtNodeGenerator);
             if( GeneratorNode.Enabled.Checked == Tristate.True )
             {
-                DateTime ThisDueDateValue = GeneratorNode.NextDueDate.DateValue.Date;
+				DateTime ThisDueDateValue = GeneratorNode.NextDueDate.DateTimeValue.Date;
                 DateTime InitialDueDateValue = GeneratorNode.DueDateInterval.getStartDate().Date;
-                DateTime FinalDueDateValue = GeneratorNode.FinalDueDate.DateValue.Date;
+				DateTime FinalDueDateValue = GeneratorNode.FinalDueDate.DateTimeValue.Date;
 
                 // BZ 7866
                 if( ThisDueDateValue != DateTime.MinValue )
                 {
                     // BZ 7124 - set runtime
-                    if( GeneratorNode.RunTime.TimeValue != DateTime.MinValue )
-                        ThisDueDateValue = ThisDueDateValue.AddTicks( GeneratorNode.RunTime.TimeValue.TimeOfDay.Ticks );
+					if( GeneratorNode.RunTime.DateTimeValue != DateTime.MinValue )
+						ThisDueDateValue = ThisDueDateValue.AddTicks( GeneratorNode.RunTime.DateTimeValue.TimeOfDay.Ticks );
 
                     Int32 WarnDays = (Int32) GeneratorNode.WarningDays.Value;
                     if( WarnDays > 0 )

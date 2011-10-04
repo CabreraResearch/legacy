@@ -24,7 +24,8 @@ my @components = (
 	"CswLogService", 
 	"Nbt",
 	"NbtImport",
-	"NbtHelp"
+	"NbtHelp",
+	"DailyBuildTools"
 );
 
 my $orclserver = "golem";
@@ -37,13 +38,6 @@ $schemata{"nbt_master"} = "nbt";   # master
 $schemata{"nbt_schema1"} = "nbt";  # 1
 $schemata{"nbt_schema2"} = "nbt";  # 2
 $schemata{"sales"} = "nbt";  # sales
-$schemata{"import"} = "nbt";  # import
-$schemata{"muehlhan"} = "nbt";  # Muehlhan
-$schemata{"crfireline"} = "nbt";  # CRFireline
-$schemata{"clorox"} = "nbt";  # Clorox
-$schemata{"mcmaster"} = "nbt";  # McMaster
-$schemata{"riverside"} = "nbt";  # riverside
-$schemata{"marshfield"} = "nbt";  # Marshfield
 
 # this one will always be reset to the master
 my $masterschema = "nbt_master";
@@ -58,6 +52,10 @@ foreach my $component (@components)
 	elsif($component eq "Nbt" || $component eq "NbtImport")
 	{
 		$repopaths{$component} = "c:/kiln/Nbt/$component";
+	}
+	elsif($component eq "DailyBuildTools")
+	{
+		$repopaths{$component} = "c:/kiln/$component";
 	} else {
 		$repopaths{$component} = "c:/kiln/Common/$component";
 	}
@@ -90,9 +88,9 @@ open( ASSEMBLYFILE, "< ". $repopaths{"Nbt"} ."/NbtWebApp/_Assembly.txt" )
 	or die( "Could not open _Assembly.txt" );
 my $assemblyname = <ASSEMBLYFILE>;
 close( ASSEMBLYFILE );
-$assemblyname =~ /^(\w+)\s?.*$/;
+$assemblyname =~ /^(\w+?)_.*$/;
 my $releasename = $1;
-my $assemblyno = "$releasename $datestr.$increment"; 
+my $assemblyno = $releasename ."_". $datestr .".". $increment; 
 
 foreach my $component (@components)
 {
@@ -170,7 +168,7 @@ foreach my $component (@components)
 #&runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
 
 &runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
-            "devenv ". $repopaths{"Nbt"} ."/Nbt.sln /Build \"Release\"");
+            "devenv ". $repopaths{"Nbt"} ."/Nbt.sln /Rebuild \"Release\"");
 
 &runCommand( "net start \"ChemSW Log Service\"");
 
@@ -213,7 +211,8 @@ foreach my $component (@components)
 {
 	my $path = $repopaths{$component};
 	&runCommand("hg commit -R $path -m \"Automated commit for release: $assemblyno\"");
-	&runCommand("hg tag -R $path \"$component $datestr.$increment\"");
+      # &runCommand("hg tag -R $path \"$component $datestr.$increment\"");
+	&runCommand("hg tag -R $path \"$assemblyno\"");
 	&runCommand("hg push -R $path");
 }
 

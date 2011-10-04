@@ -1,27 +1,19 @@
 using System;
-using System.Data;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
+using System.Data;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using System.Xml;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt;
-using ChemSW.Exceptions;
+using System.Web.UI.WebControls;
 using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.DB;
-using Telerik.Web.UI;
 using ChemSW.CswWebControls;
+using ChemSW.DB;
+using ChemSW.Exceptions;
+using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
+using ChemSW.NbtWebControls;
+using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -44,7 +36,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     if( CswConvert.ToInt32( Request.QueryString["viewid"] ) > 0 )
                     {
-						CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) ) );
+                        CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) ) );
                         _ViewEditorWizard = new CswViewEditorWizard( Master.CswNbtResources, View, null, Master.AjaxManager );
                     }
                 }
@@ -188,7 +180,7 @@ namespace ChemSW.NbtWebControls
         //private CheckBox _IncludeInQuickLaunch;
         private CheckBox _ForMobileCheckBox;
         private Label _ForMobileLabel;
-        
+
         // SetRelationshipsStep
         private CswWizardStep _SetRelationshipsStep;
         private CswAutoTable _SetRelationshipsStepTable;
@@ -1221,7 +1213,7 @@ namespace ChemSW.NbtWebControls
                                     _GroupByDropDown.SelectedValue = CurrentRelationship.GroupByPropId.ToString();
                             }
                             else
-								throw new CswDniException( ErrorType.Error, "A Data Misconfiguration has occurred", "CswViewEditor2._initNextOptions() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
+                                throw new CswDniException( ErrorType.Error, "A Data Misconfiguration has occurred", "CswViewEditor2._initNextOptions() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
 
                             foreach( CswNbtViewRelationship R in Relationships )
                             {
@@ -1287,7 +1279,7 @@ namespace ChemSW.NbtWebControls
 
                             foreach( CswNbtMetaDataNodeType LatestNodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
                             {
-								if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, LatestNodeType.NodeTypeId ) )
+                                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, LatestNodeType ) )
                                 {
                                     // This is purposefully not the typical way of creating CswNbtViewRelationships.
                                     CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, _View, LatestNodeType.FirstVersionNodeType, false );
@@ -1778,7 +1770,7 @@ namespace ChemSW.NbtWebControls
                 {
                     case 1:
                         // Set values from SelectViewStep
-						_View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _LoadViewList.SelectedValue ) ) );
+                        _View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _LoadViewList.SelectedValue ) ) );
                         break;
 
                     case 2:
@@ -1848,7 +1840,7 @@ namespace ChemSW.NbtWebControls
                                 {
                                     CurrentRelationship.clearGroupBy();
                                 }
-                                if( _View.ViewMode == NbtViewRenderingMode.Tree )   
+                                if( _View.ViewMode == NbtViewRenderingMode.Tree )
                                     CurrentRelationship.ShowInTree = _ShowInTreeCheck.Checked;
 
                             }
@@ -1945,14 +1937,14 @@ namespace ChemSW.NbtWebControls
         {
             try
             {
-				CswNbtViewId ViewId = new CswNbtViewId(CswConvert.ToInt32( _LoadViewList.SelectedValue ));
-				_View = _CswNbtResources.ViewSelect.restoreView( ViewId );
+                CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( _LoadViewList.SelectedValue ) );
+                _View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 _View.Delete();
 
                 _SelectViewStep_OnStepLoad();
 
-				if( CswTools.IsInteger( _LoadViewList.SelectedValue ) )
-					_View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _LoadViewList.SelectedValue ) ) );
+                if( CswTools.IsInteger( _LoadViewList.SelectedValue ) )
+                    _View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _LoadViewList.SelectedValue ) ) );
 
                 _setView( true );
             }
@@ -2042,7 +2034,7 @@ namespace ChemSW.NbtWebControls
                     }
                     else
                     {
-						throw new CswDniException( ErrorType.Error, "Could not find view node to remove", "_HiddenRemoveButton_Click could not find match for: " + _HiddenNodeToRemoveField.Value + " in the current view." );
+                        throw new CswDniException( ErrorType.Error, "Could not find view node to remove", "_HiddenRemoveButton_Click could not find match for: " + _HiddenNodeToRemoveField.Value + " in the current view." );
                     }
                 }
             }
@@ -2095,7 +2087,7 @@ namespace ChemSW.NbtWebControls
             CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.ObjectClass;
 
             CswStaticSelect RelationshipPropsSelect = _CswNbtResources.makeCswStaticSelect( "getRelationsForNodeTypeId_select", "getRelationsForNodeTypeId" );
-            RelationshipPropsSelect.S4Parameters.Add( "getnodetypeid", FirstVersionNodeType.NodeTypeId );
+            RelationshipPropsSelect.S4Parameters.Add( "getnodetypeid", new CswStaticParam( "getnodetypeid", FirstVersionNodeType.NodeTypeId ) );
             //RelationshipPropsQueryCaddy.S4Parameters.Add("getroleid", _CswNbtResources.CurrentUser.RoleId);
             DataTable RelationshipPropsTable = RelationshipPropsSelect.getTable();
 
@@ -2112,7 +2104,7 @@ namespace ChemSW.NbtWebControls
                         ( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
                           PropRow["fkvalue"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) )
                     {
-						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, FirstVersionNodeType.NodeTypeId ) )
+                        if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, FirstVersionNodeType ) )
                         {
                             // Special case -- relationship to my own type
                             // We need to create two relationships from this
@@ -2173,7 +2165,7 @@ namespace ChemSW.NbtWebControls
                                 R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
 
                             if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-								_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId ) )
+                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
                             {
                                 Relationships.Add( R );
                             }
@@ -2193,7 +2185,7 @@ namespace ChemSW.NbtWebControls
                                     R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["typeid"] ) ) );
 
                                 if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-									_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId ) )
+                                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
                                 {
                                     Relationships.Add( R );
                                 }
@@ -2201,7 +2193,7 @@ namespace ChemSW.NbtWebControls
                         }
                         else
                         {
-							throw new CswDniException( ErrorType.Error, "An unexpected data condition has occurred", "CswDataSourceNodeType.getRelatedNodeTypesAndObjectClasses found a relationship which did not match the original nodetypeid" );
+                            throw new CswDniException( ErrorType.Error, "An unexpected data condition has occurred", "CswDataSourceNodeType.getRelatedNodeTypesAndObjectClasses found a relationship which did not match the original nodetypeid" );
                         }
                         if( R != null )
                             R.overrideFirst( FirstVersionNodeType );
@@ -2226,7 +2218,7 @@ namespace ChemSW.NbtWebControls
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
 
             CswStaticSelect RelationshipPropsSelect = _CswNbtResources.makeCswStaticSelect( "getRelationsForObjectClassId_select", "getRelationsForObjectClassId" );
-            RelationshipPropsSelect.S4Parameters.Add( "getobjectclassid", ObjectClassId );
+            RelationshipPropsSelect.S4Parameters.Add( "getobjectclassid", new CswStaticParam( "getobjectclassid", ObjectClassId ) );
             DataTable RelationshipPropsTable = RelationshipPropsSelect.getTable();
 
             foreach( DataRow PropRow in RelationshipPropsTable.Rows )
@@ -2299,7 +2291,7 @@ namespace ChemSW.NbtWebControls
                         }
                         else
                         {
-							throw new CswDniException( ErrorType.Error, "An unexpected data condition has occurred", "CswDataSourceObjectClass.getRelatedNodeTypesAndObjectClasses found a relationship which did not match the original objectclassid" );
+                            throw new CswDniException( ErrorType.Error, "An unexpected data condition has occurred", "CswDataSourceObjectClass.getRelatedNodeTypesAndObjectClasses found a relationship which did not match the original objectclassid" );
                         }
                     }
                 }
@@ -2333,7 +2325,7 @@ namespace ChemSW.NbtWebControls
                 }
                 else
                 {
-					throw new CswDniException( ErrorType.Error, "A Data Misconfiguration has occurred", "CswViewEditor.initPropDataTable() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
+                    throw new CswDniException( ErrorType.Error, "A Data Misconfiguration has occurred", "CswViewEditor.initPropDataTable() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
                 }
 
                 foreach( CswNbtMetaDataNodeTypeProp ThisProp in PropsCollection )

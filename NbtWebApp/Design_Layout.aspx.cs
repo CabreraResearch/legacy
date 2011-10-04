@@ -259,20 +259,20 @@ namespace ChemSW.Nbt.WebPages
                 {
                     SetValOnAddCheckBox = new CheckBox();
                     SetValOnAddCheckBox.ID = SetValOnAddIdPrefix + Prop.PropId.ToString();
-                    SetValOnAddCheckBox.Checked = Prop.SetValueOnAdd;
+					SetValOnAddCheckBox.Checked = ( Prop.AddLayout != null );
                     PropDataTable.addControl( row, SetValOnAddColumn, SetValOnAddCheckBox );
 
-                    if( Prop.DisplayRowAdd != Int32.MinValue )
-                        DisplayRowTextBox.Text = Prop.DisplayRowAdd.ToString();
-                    if( Prop.DisplayColAdd != Int32.MinValue )
-                        DisplayColTextBox.Text = Prop.DisplayColAdd.ToString();
+                    if( Prop.AddLayout.DisplayRow != Int32.MinValue )
+						DisplayRowTextBox.Text = Prop.AddLayout.DisplayRow.ToString();
+					if( Prop.AddLayout.DisplayColumn != Int32.MinValue )
+                        DisplayColTextBox.Text = Prop.AddLayout.DisplayColumn.ToString();
                 }
                 else
                 {
-                    if( Prop.DisplayRow != Int32.MinValue )
-                        DisplayRowTextBox.Text = Prop.DisplayRow.ToString();
-                    if( Prop.DisplayColumn != Int32.MinValue )
-                        DisplayColTextBox.Text = Prop.DisplayColumn.ToString();
+                    if( Prop.EditLayout.DisplayRow != Int32.MinValue )
+						DisplayRowTextBox.Text = Prop.EditLayout.DisplayRow.ToString();
+					if( Prop.EditLayout.DisplayColumn != Int32.MinValue )
+						DisplayColTextBox.Text = Prop.EditLayout.DisplayColumn.ToString();
                 }
 
                 if( _Mode == LayoutMode.Inspection )
@@ -357,11 +357,11 @@ namespace ChemSW.Nbt.WebPages
                     CswNbtMetaDataNodeTypeProp Prop = NodeType.getNodeTypePropByFirstVersionId( FirstPropVersionId );
                     LayoutControlSet LCS = LayoutControlsHash[FirstPropVersionId] as LayoutControlSet;
 
-                    bool SetValOnAdd = Prop.SetValueOnAdd;
-                    Int32 DisplayRow = Prop.DisplayRow;
-                    Int32 DisplayColumn = Prop.DisplayColumn;
-                    Int32 DisplayRowAdd = Prop.DisplayRowAdd;
-                    Int32 DisplayColAdd = Prop.DisplayColAdd;
+                    bool SetValOnAdd = (Prop.AddLayout != null);
+                    Int32 DisplayRow = Prop.EditLayout.DisplayRow;
+					Int32 DisplayColumn = Prop.EditLayout.DisplayColumn;
+                    Int32 DisplayRowAdd = Prop.AddLayout.DisplayRow;
+                    Int32 DisplayColAdd = Prop.AddLayout.DisplayColumn;
 
                     if( _Mode == LayoutMode.Inspection )
                     {
@@ -386,11 +386,21 @@ namespace ChemSW.Nbt.WebPages
                             DisplayColumn = CswConvert.ToInt32( LCS.DisplayColTextBox.Text );
                     }
 
-                    Prop.DisplayRow = DisplayRow;
-                    Prop.DisplayColumn = DisplayColumn;
-                    Prop.DisplayRowAdd = DisplayRowAdd;
-                    Prop.DisplayColAdd = DisplayColAdd;
-                    Prop.SetValueOnAdd = SetValOnAdd;
+					//Prop.DisplayRow = DisplayRow;
+					//Prop.DisplayColumn = DisplayColumn;
+					//Prop.DisplayRowAdd = DisplayRowAdd;
+					//Prop.DisplayColAdd = DisplayColAdd;
+					//Prop.SetValueOnAdd = SetValOnAdd;
+					Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, null, DisplayRow, DisplayColumn );
+					if( SetValOnAdd )
+					{
+						Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, null, DisplayRowAdd, DisplayColAdd );
+					}
+					else
+					{
+						Prop.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+					}
+
                 }
 
                 initLeftContents();

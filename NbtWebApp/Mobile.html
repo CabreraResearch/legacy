@@ -1,15 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html> <!-- manifest="Mobile.manifest"> <!--Still not ready for primetime-->
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <base href="Mobile.html"/>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1" />
     <title>Main</title>
-    <!--#include file="Mobile_Includes_Head.html" -->
+    <link rel="shortcut icon" href="images/favicon.ico" />
 </head>
-
-<body id="CswMobile_Body">
-    <!--#include file="Mobile_Includes_Body.html" -->
+<body>
+    <!--#include file="MobileIncludes.html" -->
     <script type="text/javascript">
 
         function redirectOnError(e)
@@ -23,33 +22,31 @@
             {
                 window.location.href = window.location.pathname;
             }
-
+            onError();
             if (debugOn())
             {
-                errorHandler(e, true, true);
+                errorHandler(e, true, true, true);
             }
             else
             {
                 errorHandler(e);
             }
         }
-
-        window.onerror = function(e)
-        {
-            redirectOnError(e);
-        };
         
         try {
             if( hasWebStorage() ) {
 
                 // override value in _Globals.js
-		        homeUrl = "Mobile.html";
+                homeUrl = "Mobile.html";
 
-                $(document).ready(function()
-                    {
+                $(document).ready(function ()
+                {
+                    // This causes case 22968!
+                    //$(window).bind("orientationchange resize scrollstart", fixGeometry);
+
                     $('body').CswMobile({
-                            'Theme': 'b'
-                        });
+                        'Theme': 'b'
+                    });
                 });
             }
             else {
@@ -59,9 +56,7 @@
         catch(e) {
             redirectOnError();
         }
-
-
-        
+       
     </script>
 </body>
 </html>

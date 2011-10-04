@@ -47,11 +47,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             _setDefaultMessage();
 
-            _CswNbtObjClassDefault.beforeCreateNode();
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
         private void _setDefaultMessage()
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
             // If TargetType changes or Event is set to Create or Delete, 
             // clear value for Property and Value
@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( TargetType.WasModified || Property.WasModified || Event.WasModified )
                 _setDefaultMessage();
 
-            _CswNbtObjClassDefault.beforeWriteNode();
+            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()

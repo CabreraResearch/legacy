@@ -34,8 +34,8 @@ namespace ChemSW.Nbt.WebPages
         private Button SaveButton;
         private CswPrimaryKey _ThisUser;
 
-        private string NotifPrefix = "notif_";
-        private string MailReportPrefix = "mr_";
+		//private string NotifPrefix = "notif_";
+		//private string MailReportPrefix = "mr_";
 
         protected override void OnInit( EventArgs e )
         {

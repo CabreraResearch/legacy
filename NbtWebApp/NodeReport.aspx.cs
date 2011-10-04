@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.WebPages
                     _Node = Master.CswNbtResources.Nodes[NodeId];
                     _NodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, "", NodeId, _Node.NodeSpecies, _Node.NodeTypeId, _Node.ObjectClassId, "", "" );
 
-					if( Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _Node.NodeTypeId ) )
+					if( Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _Node.NodeType ) )
                     {
                         bGetOut = false;
                     }

@@ -366,7 +366,7 @@ namespace ChemSW.NbtWebControls
         /// True if the menu is used in Design Mode (which changes the Add menu)
         /// </summary>
         public bool IsDesignMode = false;
-        public NbtDesignMode DesignMode = NbtDesignMode.Standard;
+        public new NbtDesignMode DesignMode = NbtDesignMode.Standard;
 
         /// <summary>
         /// Type of node selected, for Design Mode
@@ -546,7 +546,7 @@ namespace ChemSW.NbtWebControls
                     else if( DesignSelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Tab )
                     {
                         CswNbtMetaDataNodeTypeTab SelectedTab = CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) );
-						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedTab.NodeType.NodeTypeId ) )
+						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedTab.NodeType ) )
                         {
                             if( SelectedTab.NodeType.IsLatestVersion )
                             {
@@ -572,7 +572,7 @@ namespace ChemSW.NbtWebControls
                     else if( DesignSelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType )
                     {
                         CswNbtMetaDataNodeType SelectedNodeType = CswNbtResources.MetaData.getNodeType( Convert.ToInt32( DesignSelectedValue ) );
-						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType.NodeTypeId ) )
+						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType ) )
                         {
                             if( SelectedNodeType != null && SelectedNodeType.IsLatestVersion )
                             {
@@ -661,7 +661,7 @@ namespace ChemSW.NbtWebControls
                 // Copy
                 if( AllowCopy && SelectedNodeKey != null &&
                     SelectedNodeKey.NodeSpecies == NodeSpecies.Plain &&
-                    _CswNbtResources.Permit.can( Nbt.Security.CswNbtPermit.NodeTypePermission.Create, SelectedNodeKey.NodeTypeId ) )
+                    _CswNbtResources.Permit.can( Nbt.Security.CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType(SelectedNodeKey.NodeTypeId )) )
                 {
                     if( SelectedNodeKeyViewNode != null && SelectedNodeKeyViewNode is CswNbtViewRelationship &&
                       ( (CswNbtViewRelationship) SelectedNodeKeyViewNode ).NodeIdsToFilterIn.Count == 0 )   // BZ 8022
@@ -913,7 +913,7 @@ namespace ChemSW.NbtWebControls
                     {
                         if( SelectedNodeKeyViewNode is CswNbtViewRelationship &&
                             ( (CswNbtViewRelationship) SelectedNodeKeyViewNode ).AllowDelete &&
-							_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, SelectedNodeKey.NodeTypeId, CswNbtResources.Nodes[SelectedNodeKey], null ) )
+							_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, _CswNbtResources.MetaData.getNodeType(SelectedNodeKey.NodeTypeId), false, null, null, CswNbtResources.Nodes[SelectedNodeKey], null ) )
                         {
                             DeleteMenuItem.Visible = true;
 

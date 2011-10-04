@@ -61,13 +61,13 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             if( Assembly.WasModified )
                 //_CswNbtNode.PendingUpdate = true;
                 SynchEquipmentToAssembly();
 
-            _CswNbtObjClassDefault.beforeCreateNode();
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
         public override void afterCreateNode()
@@ -75,13 +75,13 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
             if( Assembly.WasModified )
                 //_CswNbtNode.PendingUpdate = true;
                 SynchEquipmentToAssembly();
 
-            _CswNbtObjClassDefault.beforeWriteNode();
+            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -113,6 +113,10 @@ namespace ChemSW.Nbt.ObjClasses
                     this.Parts.YValues = PartsString;
                 }
             }
+
+			// case 21809
+			SynchEquipmentToAssembly();
+
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -189,6 +193,8 @@ namespace ChemSW.Nbt.ObjClasses
                                 EquipProp.copy( AssemblyProp );
                                 EquipProp.ReadOnly = true;
                                 FoundMatch = true;
+								// case 21809
+								EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
                             }
                         }
                         if( !FoundMatch )

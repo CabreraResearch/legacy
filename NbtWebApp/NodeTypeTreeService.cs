@@ -24,7 +24,7 @@ public class NodeTypeTreeService : System.Web.Services.WebService
         //bz # 9278
 
 
-        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, _FilesPath, SetupMode.Web );
+        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, SetupMode.NbtWeb );
         _CswNbtResources = CswInitialization.CswNbtResources;
 
 
@@ -65,14 +65,6 @@ public class NodeTypeTreeService : System.Web.Services.WebService
     }//ctor
 
     public CswNbtResources _CswNbtResources;
-
-    private string _FilesPath
-    {
-        get
-        {
-            return ( System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\etc" );
-        }
-    }
 
     [WebMethod( EnableSession = true )]
     public RadTreeNodeData[] GetNodeChildren( RadTreeNodeData node, object context )

@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Statistics
     {
 
 
-        private string _StatisticsKey = "CswStatistics";
+        //private string _StatisticsKey = "CswStatistics";
         public CswNbtStatisticsStorageStateServer(  )
         {
         }

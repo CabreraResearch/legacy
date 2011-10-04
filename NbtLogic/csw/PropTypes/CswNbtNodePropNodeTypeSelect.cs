@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -138,9 +139,9 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public const string NameColumn = "NodeTypeName";
-        public const string KeyColumn = "nodetypeid";
-        public const string ValueColumn = "Include";
+        public const string NameColumn = "label";
+        public const string KeyColumn = "key";
+        public const string ValueColumn = "value";
         public const string TableName = "nodetypeselectdatatable";
 
         public override void ToXml( XmlNode ParentNode )
@@ -162,6 +163,30 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override void ToXElement( XElement ParentNode )
+        {
+            //Not yet implemented
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject[_SelectedNodeTypeIdsSubField.ToXmlNodeName().ToLower()] = SelectedNodeTypeIds.ToString();
+            ParentObject["selectmode"] = SelectMode.ToString();
+
+            JArray OptionsAry = new JArray();
+            ParentObject["options"] = OptionsAry;
+
+            DataTable Data = Options;
+            foreach( DataRow Row in Data.Rows )
+            {
+                JObject OptionObj = new JObject();
+                OptionsAry.Add( OptionObj );
+                foreach( DataColumn Column in Data.Columns )
+                {
+                    OptionObj[Column.ColumnName] = Row[Column].ToString();
+                }
+            }
+        }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
@@ -191,19 +216,40 @@ namespace ChemSW.Nbt.PropTypes
             SelectedNodeTypeIds = NewSelectedNodeTypeIds;
         } // ReadXml()
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            //Not yet implemented
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             SelectedNodeTypeIds.FromString( _HandleReferences( CswTools.XmlRealAttributeName( PropRow[_SelectedNodeTypeIdsSubField.ToXmlNodeName()].ToString() ), NodeTypeMap ) );
+        }
+
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            //SelectedNodeTypeIds.FromString( _HandleReferences( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName() ), NodeTypeMap ) );
+            CswCommaDelimitedString NewSelectedNodeTypeIds = new CswCommaDelimitedString();
+
+            if( null != JObject["options"] )
+            {
+                JArray Data = (JArray) JObject["options"];
+
+                foreach( JObject ItemObj in Data )
+                {
+                    string key = CswConvert.ToString( ItemObj["key"] );
+                    //string name = CswConvert.ToString( ItemObj["label"] );
+                    JArray Values = (JArray) ItemObj["values"];
+                    bool value = CswConvert.ToBoolean( Values[0] );
+                    if( value )
+                    {
+                        NewSelectedNodeTypeIds.Add( key );
+                    }
+                }
+            }
+
+            SelectedNodeTypeIds = NewSelectedNodeTypeIds;
+
         }
 
         private string _HandleReferences( string NodeTypeIds, Dictionary<Int32, Int32> NodeTypeMap )

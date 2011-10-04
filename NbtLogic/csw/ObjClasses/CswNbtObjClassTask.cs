@@ -52,17 +52,17 @@ namespace ChemSW.Nbt.ObjClasses
         //BZ 10247
         private void setDoneOnDate()
         {
-            if( Completed.Checked == Tristate.True && DoneOn.DateValue == DateTime.MinValue )
-                DoneOn.DateValue = DateTime.Today;
+			if( Completed.Checked == Tristate.True && DoneOn.DateTimeValue == DateTime.MinValue )
+				DoneOn.DateTimeValue = DateTime.Today;
 
-            if( Completed.Checked == Tristate.False && DoneOn.DateValue != DateTime.MinValue )
-                DoneOn.DateValue = DateTime.MinValue;
+			if( Completed.Checked == Tristate.False && DoneOn.DateTimeValue != DateTime.MinValue )
+				DoneOn.DateTimeValue = DateTime.MinValue;
         }
 
         #region Inherited Events
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeCreateNode();
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
             setDoneOnDate();
         } // beforeCreateNode()
 
@@ -71,9 +71,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode();
+            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
             setDoneOnDate();
             // Set the IsFuture flag = false if the node is modified
             if( !_CswNbtNode.New && ( NodeModificationState.Modified == _CswNbtNode.ModificationState ) )
@@ -118,25 +118,25 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropDate GeneratedDate
+        public CswNbtNodePropDateTime GeneratedDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName].AsDateTime );
             }
         }
-        public CswNbtNodePropDate DoneOn
+		public CswNbtNodePropDateTime DoneOn
         {
             get
             {
-                return ( _CswNbtNode.Properties[DoneOnPropertyName].AsDate );
+                return ( _CswNbtNode.Properties[DoneOnPropertyName].AsDateTime );
             }
         }
-        public CswNbtNodePropDate DueDate
+		public CswNbtNodePropDateTime DueDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[DueDatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[DueDatePropertyName].AsDateTime );
             }
         }
 

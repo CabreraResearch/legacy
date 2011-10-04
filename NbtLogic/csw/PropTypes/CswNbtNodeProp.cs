@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -206,10 +207,10 @@ namespace ChemSW.Nbt.PropTypes
         /// Event which fires before the node prop data row is written to the database
         /// </summary>
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
-        virtual public void onBeforeUpdateNodePropRow( bool IsCopy )
+        virtual public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
             //bz # 6686
-            if( IsUnique && WasModified )
+			if( IsUnique && WasModified && !OverrideUniqueValidation )
             {
                 CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
                 CswNbtView.ViewName = "Other Nodes, for Property Uniqueness";
@@ -243,7 +244,7 @@ namespace ChemSW.Nbt.PropTypes
                         EsotericMessage += "of nodetype '" + NodeTypeProp.NodeType.NodeTypeName + "' ";
                         EsotericMessage += "is invalid because the same value is already set for node '" + CswNbtNode.NodeName + "' (" + CswNbtNode.NodeId.ToString() + ").";
                         string ExotericMessage = "The " + NodeTypeProp.PropName + " property value must be unique";
-						throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                        throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
                     }
                     else
                     {
@@ -284,6 +285,8 @@ namespace ChemSW.Nbt.PropTypes
         abstract public void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
         abstract public void ReadXElement( XElement XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
         abstract public void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
+        public abstract void ToJSON( JObject ParentObject );
+        public abstract void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
 
         #endregion Xml Operations
 

@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp(CswConvert.ToInt32(_SelectedValue));
                         _SelectedNodeType = _SelectedNodeTypeProp.NodeType;
-                        _SelectedNodeTypeTab = _SelectedNodeTypeProp.NodeTypeTab;
+						_SelectedNodeTypeTab = _SelectedNodeTypeProp.EditLayout.Tab;
                     }
                     else
                     {
@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.WebPages
                 switch( _AddType )
                 {
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.Property:
-						if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeTypeTab.NodeType.NodeTypeId ) )
+						if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeTypeTab.NodeType ) )
                             throw new CswDniException( "You do not have permission to add properties to this NodeType" );
 
                         create_AddPropertyPage();
@@ -215,7 +215,7 @@ namespace ChemSW.Nbt.WebPages
                         //LeftHeaderContentLiteral.Text = "Add " + LabelNodeTypeProp + " to " + LabelNodeTypeTab + ": " + SelectedNodeTypeTab.TabName;
                         break;
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.Tab:
-                        if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType.NodeTypeId ) )
+                        if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType ) )
                             throw new CswDniException( "You do not have permission to add tabs to this NodeType" );
 
                         create_AddTabPage();
@@ -504,8 +504,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     // Temporarily skip unimplemented ones
                     // If Inspection, filter to allowed question field types
-                    if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.External &&
-                            FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MOL ) 
+                    if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.External) 
                     {
                         AddPropNewFieldTypeIdSelect.Items.Add( new ListItem( FieldType.FieldType.ToString(),
                                                                              FieldType.FieldTypeId.ToString() ) );
@@ -525,8 +524,8 @@ namespace ChemSW.Nbt.WebPages
             if (SelectedNodeTypeProp != null)
             {
                 // Edit Property Select box
-                if (SelectedNodeTypeProp != null && SelectedNodeTypeProp.NodeTypeTab != null)
-                    AddPropTabSelect.SelectedIndex = AddPropTabSelect.Items.IndexOf(AddPropTabSelect.Items.FindByValue(SelectedNodeTypeProp.NodeTypeTab.TabId.ToString()));
+				if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.EditLayout.Tab != null )
+					AddPropTabSelect.SelectedIndex = AddPropTabSelect.Items.IndexOf( AddPropTabSelect.Items.FindByValue( SelectedNodeTypeProp.EditLayout.Tab.TabId.ToString() ) );
             }
         }
     }

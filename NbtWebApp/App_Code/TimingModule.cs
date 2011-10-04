@@ -24,7 +24,7 @@ namespace ChemSW.HTTPModules
             _ServerStartTimer = new CswTimer();
 //            _LogFileStream = File.CreateText( @"D:/vault/dn/logs/httplog.txt" );
 
-            _CswSetupVbls = new CswSetupVblsNbt( SetupMode.Web );
+            _CswSetupVbls = new CswSetupVblsNbt( SetupMode.NbtWeb );
             _CswLogger = new CswAppStatusReporter( null, _CswSetupVbls, AppType.Nbt );
 
         }//ctor()
