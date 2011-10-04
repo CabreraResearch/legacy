@@ -159,7 +159,13 @@ namespace ChemSW.Nbt.ObjClasses
             return ( (CswNbtObjClassUnitOfMeasure) Node.ObjClass );
         }//AsUnitOfMeasure
 
-        public static CswNbtObjClassUser AsUser( CswNbtNode Node )
+        public static CswNbtObjClassUnitType AsUnitType(CswNbtNode Node)
+        {
+            _Validate(Node, CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass);
+            return ((CswNbtObjClassUnitType)Node.ObjClass);
+        }//AsUnitType
+
+        public static CswNbtObjClassUser AsUser(CswNbtNode Node)
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             return ( (CswNbtObjClassUser) Node.ObjClass );

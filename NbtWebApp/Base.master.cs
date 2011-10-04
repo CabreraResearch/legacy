@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.WebPages
             if( CswSessionManager.IsAuthenticated() )
             {
                 ReturnVal = true;
-                CswSessionManager.updateLastAccess();
+                CswSessionManager.updateLastAccess(false);
             }
 
             return ( ReturnVal );
@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.WebPages
                 //bz # 9278
 
 
-                CswSessionResourcesNbt = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, CswNbtWebTools.getFilePath(), SetupMode.Web );
+                CswSessionResourcesNbt = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, SetupMode.NbtWeb );
 
 
                 CswNbtResources = CswSessionResourcesNbt.CswNbtResources;

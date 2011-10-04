@@ -78,7 +78,7 @@ namespace ChemSW.Nbt
             /// <summary>
             /// Number of results to display for views on Mobile
             /// </summary>
-            mobileview_resultlimit,
+            mobileview_resultlim,
             /// <summary>
             /// Number of days before a password expires
             /// </summary>
@@ -433,7 +433,7 @@ namespace ChemSW.Nbt
                     }
                     catch( Exception ex )
                     {
-						throw new CswDniException( ErrorType.Error, "Invalid Module", "An invalid module was detected in the Modules table: " + ModuleRow["name"].ToString(), ex );
+                        throw new CswDniException( ErrorType.Error, "Invalid Module", "An invalid module was detected in the Modules table: " + ModuleRow["name"].ToString(), ex );
                     }
                 }
             } // if( _CswResources.IsInitializedForDbAccess )
@@ -578,17 +578,17 @@ namespace ChemSW.Nbt
             // Override jct_nodes_props audit level with level set on nodetype prop
             if( DataRow.Table.TableName == "jct_nodes_props" )
             {
-				Int32 NodeTypePropId = Int32.MinValue;
-				if( DataRowState.Deleted != DataRow.RowState )
-				{
-					NodeTypePropId = CswConvert.ToInt32( DataRow["nodetypepropid"] );
-				}
-				else
-				{
-					NodeTypePropId = CswConvert.ToInt32( DataRow["nodetypepropid", DataRowVersion.Original] );
-				}
+                Int32 NodeTypePropId = Int32.MinValue;
+                if( DataRowState.Deleted != DataRow.RowState )
+                {
+                    NodeTypePropId = CswConvert.ToInt32( DataRow["nodetypepropid"] );
+                }
+                else
+                {
+                    NodeTypePropId = CswConvert.ToInt32( DataRow["nodetypepropid", DataRowVersion.Original] );
+                }
 
-				if( NodeTypePropId != Int32.MinValue )
+                if( NodeTypePropId != Int32.MinValue )
                 {
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtMetaData.getNodeTypeProp( NodeTypePropId );
                     if( null != NodeTypeProp )
@@ -900,7 +900,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Refreshes data dictionary content stored in cache
         /// </summary>
-        public void refreshDataDictionary() { _CswResources.refreshDataDictionary(); }
+        public void refresh() { _CswResources.refresh(); }
         /// <summary>
         /// Table factory used to create datatables
         /// </summary>

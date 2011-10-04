@@ -133,8 +133,8 @@ namespace ChemSW.Nbt.Sched
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler( GlobalExceptionHandler );
             //*** Main resource objects
             _Path = Application.StartupPath + "\\..\\etc";
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Executable );
-            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Executable  );
+            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe );
+            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
 
             _SessionAccessIds.Clear();
             foreach( string CurrentAccessId in _CswDbCfgInfoNbt.AccessIds )
@@ -201,11 +201,8 @@ namespace ChemSW.Nbt.Sched
         {
             _AlwaysRunItems.Clear();
 
-
-            //_CswNbtObjClassFactory = new CswNbtObjClassFactory();
-            //_CswNbtResources = new CswNbtResources( AppType.Sched, _CswSetupVblsNbt, _CswDbCfgInfoNbt, true, false );
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Sched, _CswSetupVblsNbt, _CswDbCfgInfoNbt , CswTools.getConfigurationFilePath( SetupMode.Executable ), true, false ); 
-
+			_CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Sched, SetupMode.NbtExe, true, false ); 
+			
             _CswNbtResources.SetDbResources( new CswNbtTreeFactory( _Path ) );
 
             string CloseSchedulerDbConnectionsVariableName = "CloseSchedulerDbConnections";
@@ -218,14 +215,7 @@ namespace ChemSW.Nbt.Sched
                 _CswNbtResources.PooledConnectionState = ChemSW.RscAdo.PooledConnectionState.Open;
             }
 
-
-            //_CswNbtResources.CswTblFactory = new CswNbtTblFactory( _CswNbtResources );
-            //_CswNbtResources.CswTableCaddyFactory = new CswTableCaddyFactoryNbt( _CswNbtResources );
-
-            //            _CswNbtResources.InitDbResources();
-
             _CswLogger = _CswNbtResources.CswLogger;
-            //            _CswLogger.setConfigurationMode( LogConfigMode.AppConfig );
             //END: Formerlly init cycle resources
 
 
@@ -256,7 +246,7 @@ namespace ChemSW.Nbt.Sched
 
         }//_setNbtResources()
 
-        CswNbtObjClassFactory _CswNbtObjClassFactory = null;
+        //CswNbtObjClassFactory _CswNbtObjClassFactory = null;
         private void _initCycleResources( string AccessId )
         {
             //_CswNbtResources.CswResources.clearUpdates();
@@ -273,7 +263,7 @@ namespace ChemSW.Nbt.Sched
 
 
             _CswNbtResources.AccessId = AccessId;
-            _CswNbtResources.refreshDataDictionary();
+            _CswNbtResources.refresh();
             //_CswNbtResources.CurrentUser = CswNbtNodeCaster.AsUser( _CswNbtResources.Nodes.makeUserNodeFromUsername( "ScheduleRunner" ) );
             //_CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchedItemRunnerUser" );
 			_CswNbtResources.InitCurrentUser = InitUser;

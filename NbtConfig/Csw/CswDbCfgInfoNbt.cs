@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Specialized;
 using ChemSW.Config;
 
 namespace ChemSW.Nbt.Config
@@ -15,14 +17,19 @@ namespace ChemSW.Nbt.Config
 
         public void fill() { _CswDbCfgInfo.fill(); }
 
-        public void setSetupMode( SetupMode SetupMode, string SetupFilePath )
+        public string MasterAccessId
         {
-            _CswDbCfgInfo.setSetupMode( SetupMode, SetupFilePath );
+            set
+            {
+                _CswDbCfgInfo.MasterAccessId = value;
+            }
 
-        }//SetConfigMode()
+            get
+            {
+                return ( _CswDbCfgInfo.MasterAccessId ); 
+            }
 
-
-
+        }
 
         public void makeNewDbInstance( string AccessId, string ServerType, string ServerName, string UserName, string PlainPwd, string UserCount, bool Deactivated, string IPFilterRegex )
         {
@@ -34,6 +41,7 @@ namespace ChemSW.Nbt.Config
         {
             _CswDbCfgInfo.removeDbInstance( AccessId );
         }//removeDbInstance()
+
 
         public void makeConfigurationCurrent( string AccessId )
         {
@@ -172,7 +180,8 @@ namespace ChemSW.Nbt.Config
         }
 
 
-        public ArrayList AccessIds
+
+        public StringCollection AccessIds
         {
             get
             {

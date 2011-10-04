@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -67,8 +68,20 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.ToXmlNodeName(), Text );
-            XmlNode HrefNode = CswXmlDocument.AppendXmlNode( ParentNode, _HrefSubField.ToXmlNodeName(), Href );
+            CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.ToXmlNodeName(), Text );
+            CswXmlDocument.AppendXmlNode( ParentNode, _HrefSubField.ToXmlNodeName(), Href );
+        }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName( true ), Text ),
+                new XElement( _HrefSubField.ToXmlNodeName( true ), Href ) );
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject[_HrefSubField.ToXmlNodeName( true )] = Href;
+            ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -77,14 +90,16 @@ namespace ChemSW.Nbt.PropTypes
             Href = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _HrefSubField.ToXmlNodeName() );
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ) )
+            {
+                Text = XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != XmlNode.Element( _HrefSubField.ToXmlNodeName( true ) ) )
+            {
+                Href = XmlNode.Element( _HrefSubField.ToXmlNodeName( true ) ).Value;
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -93,8 +108,17 @@ namespace ChemSW.Nbt.PropTypes
             Href = CswTools.XmlRealAttributeName( PropRow[_HrefSubField.ToXmlNodeName()].ToString() );
         }
 
-
-
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _HrefSubField.ToXmlNodeName( true ) ) )
+            {
+                Href = (string) JObject.Property( _HrefSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != JObject.Property( _TextSubField.ToXmlNodeName( true ) ) )
+            {
+                Text = (string) JObject.Property( _TextSubField.ToXmlNodeName( true ) ).Value;
+            }
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

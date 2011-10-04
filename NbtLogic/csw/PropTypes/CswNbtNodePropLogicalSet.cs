@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.PropTypes
@@ -289,10 +290,11 @@ namespace ChemSW.Nbt.PropTypes
 
 
         private string _ElemName_LogicalSetXml = "LogicalSetXml";
+        private string _ElemName_LogicalSetJson = "logicalsetjson";
 
         private string _NameColumn = "name";
         private string _KeyColumn = "key";
-        private string _TableName = "logicalsetitem";
+        //private string _TableName = "logicalsetitem";
 
         /// <summary>
         /// Convert this data to XML format, and add beneath the given parent node
@@ -313,6 +315,56 @@ namespace ChemSW.Nbt.PropTypes
                 }
             }
         } // ToXml()
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            XElement LSXmlNode = new XElement( _ElemName_LogicalSetXml.ToLower() );
+            ParentNode.Add( LSXmlNode );
+
+            DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
+            foreach( DataRow Row in Data.Rows )
+            {
+                XElement ItemNode = new XElement( "item" );
+                LSXmlNode.Add( ItemNode );
+                foreach( DataColumn Column in Data.Columns )
+                {
+                    ItemNode.Add( new XElement( "column",
+                        new XAttribute( "field", Column.ColumnName ),
+                        new XAttribute( "value", Row[Column].ToString() ) ) );
+                }
+            }
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject[_ElemName_LogicalSetJson] = new JObject();
+
+            JArray DataArray = new JArray();
+            ParentObject[_ElemName_LogicalSetJson]["data"] = DataArray;
+
+            JArray ColumnArray = new JArray();
+            ParentObject[_ElemName_LogicalSetJson]["columns"] = ColumnArray;
+            CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
+
+            DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
+            foreach( DataRow Row in Data.Rows )
+            {
+                JObject ItemNodeObj = new JObject();
+                DataArray.Add( ItemNodeObj );
+                foreach( DataColumn Column in Data.Columns )
+                {
+                    ItemNodeObj[Column.ColumnName] = Row[Column].ToString();
+                    if( Column.ColumnName != _NameColumn && Column.ColumnName != _KeyColumn && false == ColumnNames.Contains( Column.ColumnName ) )
+                    {
+                        ColumnNames.Add( Column.ColumnName );
+                    }
+                }
+            }
+            foreach( string ColumnName in ColumnNames )
+            {
+                ColumnArray.Add( ColumnName );
+            }
+        }
 
         /// <summary>
         /// Initialize this object with data from the given XmlNode
@@ -347,14 +399,36 @@ namespace ChemSW.Nbt.PropTypes
             Save();
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            //Not yet implemented
+        }
+
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+
+            if( null != JObject["logicalsetjson"] )
+            {
+                JArray Data = (JArray) JObject["logicalsetjson"]["data"];
+                JArray ColumnsAry = (JArray) JObject["logicalsetjson"]["columns"];
+                CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
+                ColumnNames.FromArray( ColumnsAry );
+
+                foreach( JObject ItemObj in Data )
+                {
+                    string key = CswConvert.ToString( ItemObj["key"] );
+                    string name = CswConvert.ToString( ItemObj["label"] );
+                    JArray Values = (JArray) ItemObj["values"];
+                    for( Int32 i = 0; i < ColumnNames.Count; i++ )
+                    {
+                        bool Val = CswConvert.ToBoolean( Values[i] );
+                        SetValue( ColumnNames[i], name, Val );
+                    }
+                }
+            }
+
+            Save();
         }
 
         /// <summary>

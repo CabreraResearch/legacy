@@ -3,21 +3,21 @@
  * Locale: TW (Taiwan - Traditional Chinese)
  */
 jQuery.extend(jQuery.validator.messages, {
-        required: "必填",
-		remote: "請修正此欄位",
-		email: "請輸入正確的電子信箱",
-		url: "請輸入合法的URL",
-		date: "請輸入合法的日期",
-		dateISO: "請輸入合法的日期 (ISO).",
-		number: "請輸入數字",
-		digits: "請輸入整數",
-		creditcard: "請輸入合法的信用卡號碼",
-		equalTo: "請重複輸入一次",
-		accept: "請輸入有效的後缀字串",
-		maxlength: jQuery.validator.format("請輸入長度不大於{0} 的字串"),
-		minlength: jQuery.validator.format("請輸入長度不小於 {0} 的字串"),
-		rangelength: jQuery.validator.format("請輸入長度介於 {0} 和 {1} 之間的字串"),
-		range: jQuery.validator.format("請輸入介於 {0} 和 {1} 之間的數值"),
-		max: jQuery.validator.format("請輸入不大於 {0} 的數值"),
-		min: jQuery.validator.format("請輸入不小於 {0} 的數值")
+        required: "å¿…å¡«",
+		remote: "è«‹ä¿®æ­£æ­¤æ¬„ä½",
+		email: "è«‹è¼¸å…¥æ­£ç¢ºçš„é›»å­ä¿¡ç®±",
+		url: "è«‹è¼¸å…¥åˆæ³•çš„URL",
+		date: "è«‹è¼¸å…¥åˆæ³•çš„æ—¥æœŸ",
+		dateISO: "è«‹è¼¸å…¥åˆæ³•çš„æ—¥æœŸ (ISO).",
+		number: "è«‹è¼¸å…¥æ•¸å­—",
+		digits: "è«‹è¼¸å…¥æ•´æ•¸",
+		creditcard: "è«‹è¼¸å…¥åˆæ³•çš„ä¿¡ç”¨å¡è™Ÿç¢¼",
+		equalTo: "è«‹é‡è¤‡è¼¸å…¥ä¸€æ¬¡",
+		accept: "è«‹è¼¸å…¥æœ‰æ•ˆçš„å¾Œç¼€å­—ä¸²",
+		maxlength: jQuery.validator.format("è«‹è¼¸å…¥é•·åº¦ä¸å¤§æ–¼{0} çš„å­—ä¸²"),
+		minlength: jQuery.validator.format("è«‹è¼¸å…¥é•·åº¦ä¸å°æ–¼ {0} çš„å­—ä¸²"),
+		rangelength: jQuery.validator.format("è«‹è¼¸å…¥é•·åº¦ä»‹æ–¼ {0} å’Œ {1} ä¹‹é–“çš„å­—ä¸²"),
+		range: jQuery.validator.format("è«‹è¼¸å…¥ä»‹æ–¼ {0} å’Œ {1} ä¹‹é–“çš„æ•¸å€¼"),
+		max: jQuery.validator.format("è«‹è¼¸å…¥ä¸å¤§æ–¼ {0} çš„æ•¸å€¼"),
+		min: jQuery.validator.format("è«‹è¼¸å…¥ä¸å°æ–¼ {0} çš„æ•¸å€¼")
 });

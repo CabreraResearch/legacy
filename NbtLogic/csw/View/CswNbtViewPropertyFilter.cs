@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -79,7 +80,52 @@ namespace ChemSW.Nbt
 
             catch( Exception ex )
             {
-				throw new CswDniException( ErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
+                                          "CswViewPropertyFilterValue.constructor(xmlnode) encountered an invalid attribute value",
+                                          ex );
+            }//catch
+
+        }//ctor
+
+        /// <summary>
+        /// For loading from JSON
+        /// </summary>
+        public CswNbtViewPropertyFilter( CswNbtResources CswNbtResources, CswNbtView View, JObject FilterObj )
+            : base( CswNbtResources, View )
+        {
+            try
+            {
+                string _Value = CswConvert.ToString( FilterObj["value"] );
+                if( !string.IsNullOrEmpty( _Value ) )
+                {
+                    Value = _Value;
+                }
+
+                string _FilterMode = CswConvert.ToString( FilterObj["filtermode"] );
+                if( !string.IsNullOrEmpty( _FilterMode ) )
+                {
+                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), _FilterMode, true );
+                }
+
+                if( FilterObj["casesensitive"] != null )
+                {
+                    bool _CaseSensitive = CswConvert.ToBoolean( FilterObj["casesensitive"] );
+                    CaseSensitive = _CaseSensitive;
+                }
+
+                string _SfName = CswConvert.ToString( FilterObj["subfieldname"] );
+                if( !string.IsNullOrEmpty( _SfName ) )
+                {
+                    SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), _SfName );
+                }
+
+                _validate();
+
+            }//try
+
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
                                           "CswViewPropertyFilterValue.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }//catch
@@ -205,6 +251,22 @@ namespace ChemSW.Nbt
                                      new XAttribute( "casesensitive", CaseSensitive.ToString() ),
                                      new XAttribute( "arbitraryid", ArbitraryId ),
                                      new XAttribute( "subfieldname", SubfieldName.ToString() )
+                );
+            return PropFilter;
+        }
+
+        public JProperty ToJson()
+        {
+            JProperty PropFilter = new JProperty( CswNbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
+                                            new JObject(
+                                                new JProperty( "nodename", CswNbtViewXmlNodeName.Filter.ToString().ToLower() ),
+                                                new JProperty( "value", Value ),
+                                                new JProperty( "filtermode", FilterMode.ToString() ),
+                                                new JProperty( "casesensitive", CaseSensitive.ToString() ),
+                                                new JProperty( "arbitraryid", ArbitraryId ),
+                                                new JProperty( "subfieldname", SubfieldName.ToString() )
+                                                )
+
                 );
             return PropFilter;
         }

@@ -1,20 +1,19 @@
 using System;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Text;
+using System.Data;
+using System.Linq;
 using System.Xml;
-using ChemSW.Exceptions;
 using ChemSW.Core;
 using ChemSW.DB;
-using System.Data;
+using ChemSW.Exceptions;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
     public class CswNbtViewRoot : CswNbtViewNode
     {
         private CswDelimitedString _RootString;
-
+        private const string _ChildRelationshipsName = "childrelationships";
         #region Properties in _RootString
 
         // 0 - ViewNodeType
@@ -43,7 +42,8 @@ namespace ChemSW.Nbt
                     {
                         // Update ViewPickList properties
                         CswStaticSelect RelatedsQuery = _CswNbtResources.makeCswStaticSelect( "RelatedsQuery", "getViewPickListsForViewId" );
-                        RelatedsQuery.S4Parameters.Add( "getviewid", ViewId.get() );
+                        CswStaticParam StaticParam = new CswStaticParam( "getviewid", ViewId.get() );
+                        RelatedsQuery.S4Parameters.Add( "getviewid", StaticParam );
                         DataTable RelatedsTable = RelatedsQuery.getTable();
 
                         // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node referencing this view
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt
         // 7 - ViewId
         public CswNbtViewId ViewId
         {
-			get { return new CswNbtViewId( _RootString[7] ); }
+            get { return new CswNbtViewId( _RootString[7] ); }
             set { _RootString[7] = value.ToString(); }
         }
 
@@ -273,8 +273,8 @@ namespace ChemSW.Nbt
         {
             _RootString = RootString;
             _RootString.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _RootString_OnChange );
-            if(ViewNodeType != NbtViewNodeType.CswNbtViewRoot)
-				throw new CswDniException( ErrorType.Error, "Invalid View Root", "CswNbtViewRoot was given an invalid RootString: " + RootString.ToString() );
+            if( ViewNodeType != NbtViewNodeType.CswNbtViewRoot )
+                throw new CswDniException( ErrorType.Error, "Invalid View Root", "CswNbtViewRoot was given an invalid RootString: " + RootString.ToString() );
         }
 
 
@@ -298,8 +298,8 @@ namespace ChemSW.Nbt
                     Width = CswConvert.ToInt32( Node.Attributes["width"].Value );
                 //if( Node.Attributes[ "editmode" ] != null )
                 //    EditMode = ( GridEditMode ) Enum.Parse( typeof( GridEditMode ), Node.Attributes[ "editmode" ].Value, true );
-				if( Node.Attributes["viewid"] != null && Node.Attributes["viewid"].Value != String.Empty )
-					ViewId = new CswNbtViewId( CswConvert.ToInt32( Node.Attributes["viewid"].Value ) );
+                if( Node.Attributes["viewid"] != null && Node.Attributes["viewid"].Value != String.Empty )
+                    ViewId = new CswNbtViewId( CswConvert.ToInt32( Node.Attributes["viewid"].Value ) );
                 if( Node.Attributes["category"] != null && Node.Attributes["category"].Value != String.Empty )
                     Category = Node.Attributes["category"].Value;
                 if( Node.Attributes["visibility"] != null && Node.Attributes["visibility"].Value != String.Empty )
@@ -319,7 +319,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-				throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
                                           "CswNbtViewNodeRoot.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }
@@ -327,7 +327,7 @@ namespace ChemSW.Nbt
             {
                 foreach( XmlNode ChildNode in Node.ChildNodes )
                 {
-					if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Relationship.ToString().ToLower() )
+                    if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Relationship.ToString().ToLower() )
                     {
                         CswNbtViewRelationship ChildRelationship = new CswNbtViewRelationship( CswNbtResources, _View, ChildNode );
                         this.addChildRelationship( ChildRelationship );
@@ -336,7 +336,108 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-				throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
+                                          "CswNbtViewNodeRoot.constructor(xmlnode) encountered an invalid child definition",
+                                          ex );
+            }
+        }
+
+        public CswNbtViewRoot( CswNbtResources CswNbtResources, CswNbtView View, JObject Node )
+            : base( CswNbtResources, View )
+        {
+            try
+            {
+                _RootString = new CswDelimitedString( CswNbtView.delimiter, _PropCount );
+                _RootString.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _RootString_OnChange );
+
+                string _ViewName = CswConvert.ToString( Node["viewname"] );
+                if( !string.IsNullOrEmpty( _ViewName ) )
+                {
+                    _RootString[1] = _ViewName; // set _RootString[1], not ViewName, because we're not *changing* the name of the view
+                }
+
+                if( null != Node["selectable"] )
+                {
+                    bool _Selectable = CswConvert.ToBoolean( Node["selectable"] );
+                    Selectable = _Selectable;
+                }
+
+                string _Mode = CswConvert.ToString( Node["mode"] );
+                if( !string.IsNullOrEmpty( _Mode ) )
+                {
+                    ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), _Mode, true );
+                }
+
+                Int32 _Width = CswConvert.ToInt32( Node["width"] );
+                if( Int32.MinValue != _Width )
+                {
+                    Width = _Width;
+                }
+
+                Int32 _ViewId = CswConvert.ToInt32( Node["viewid"] );
+                if( Int32.MinValue != _ViewId )
+                {
+                    ViewId = new CswNbtViewId( _ViewId );
+                }
+
+                string _Category = CswConvert.ToString( Node["category"] );
+                if( !string.IsNullOrEmpty( _Category ) )
+                {
+                    Category = _Category;
+                }
+
+                string _Visibility = CswConvert.ToString( Node["visibility"] );
+                if( !string.IsNullOrEmpty( _Visibility ) )
+                {
+                    Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), _Visibility, true );
+                }
+
+                Int32 _VisibilityRoleId = CswConvert.ToInt32( Node["visibilityroleid"] );
+                if( Int32.MinValue != _VisibilityRoleId )
+                {
+                    VisibilityRoleId = new CswPrimaryKey( "nodes", _VisibilityRoleId );
+                }
+
+                Int32 _VisibilityUserId = CswConvert.ToInt32( Node["visibilityuserid"] );
+                if( Int32.MinValue != _VisibilityUserId )
+                {
+                    VisibilityUserId = new CswPrimaryKey( "nodes", _VisibilityUserId );
+                }
+
+                if( Node["formobile"] != null )
+                {
+                    bool _ForMobile = CswConvert.ToBoolean( Node["formobile"] );
+                    ForMobile = _ForMobile;
+                }
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
+                                          "CswNbtViewNodeRoot.constructor(xmlnode) encountered an invalid attribute value",
+                                          ex );
+            }
+            try
+            {
+                JProperty Children = Node.Property( _ChildRelationshipsName );
+                if( null != Children )
+                {
+                    JObject Relationships = (JObject) Children.Value;
+                    foreach( CswNbtViewRelationship ChildRelationship in
+                        from Relationship
+                            in Relationships.Properties()
+                        select (JObject) Relationship.Value
+                            into RelationshipObj
+                            let NodeName = CswConvert.ToString( RelationshipObj["nodename"] )
+                            where NodeName == CswNbtViewXmlNodeName.Relationship.ToString().ToLower()
+                            select new CswNbtViewRelationship( CswNbtResources, _View, RelationshipObj ) )
+                    {
+                        this.addChildRelationship( ChildRelationship );
+                    }
+                }
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
                                           "CswNbtViewNodeRoot.constructor(xmlnode) encountered an invalid child definition",
                                           ex );
             }
@@ -440,6 +541,40 @@ namespace ChemSW.Nbt
             }
 
             return RootXmlNode;
+        }//ToXml()
+
+        public JObject ToJson()
+        {
+            JObject Ret = new JObject();
+
+            JObject RootPropObj = new JObject();
+            JProperty RootProperty = new JProperty( CswNbtViewXmlNodeName.TreeView.ToString(), RootPropObj );
+
+            Ret.Add( RootProperty );
+
+            RootPropObj.Add( new JProperty( "nodename", CswNbtViewXmlNodeName.TreeView.ToString().ToLower() ) );
+            RootPropObj.Add( new JProperty( "viewname", ViewName ) );
+            RootPropObj.Add( new JProperty( "version", "1.0" ) );
+            RootPropObj.Add( new JProperty( "iconfilename", IconFileName ) );
+            RootPropObj.Add( new JProperty( "selectable", Selectable.ToString().ToLower() ) );
+            RootPropObj.Add( new JProperty( "mode", ViewMode.ToString() ) );
+            RootPropObj.Add( new JProperty( "width", ( Width > 0 ) ? Width.ToString() : "" ) );
+            RootPropObj.Add( new JProperty( "viewid", ( ViewId.isSet() ) ? ViewId.get().ToString() : "" ) );
+            RootPropObj.Add( new JProperty( "category", Category.ToString() ) );
+            RootPropObj.Add( new JProperty( "visibility", Visibility.ToString() ) );
+            RootPropObj.Add( new JProperty( "visibilityroleid", ( VisibilityRoleId != null ) ? VisibilityRoleId.PrimaryKey.ToString() : "" ) );
+            RootPropObj.Add( new JProperty( "visibilityuserid", ( VisibilityUserId != null ) ? VisibilityUserId.PrimaryKey.ToString() : "" ) );
+            RootPropObj.Add( new JProperty( "formobile", ForMobile.ToString().ToLower() ) );
+
+            JObject ChildObject = new JObject();
+            RootPropObj.Add( new JProperty( _ChildRelationshipsName, ChildObject ) );
+            // Recurse on child ViewNodes
+            foreach( CswNbtViewRelationship ChildRelationship in this.ChildRelationships )
+            {
+                ChildObject.Add( ChildRelationship.ToJson() );
+            }
+
+            return Ret;
         }//ToXml()
 
         public override string ToString()

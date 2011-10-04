@@ -26,9 +26,9 @@
 //        }
 
 //        #region Inherited Events
-//        public override void beforeWriteNode()
+//        public override void beforeWriteNode( bool OverrideUniqueValidation )
 //        {
-//            _CswNbtObjClassDefault.beforeWriteNode();
+//            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
 //        }//beforeWriteNode()
 
 //        public override void afterWriteNode()
