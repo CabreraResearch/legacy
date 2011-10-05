@@ -19,12 +19,12 @@ namespace ChemSW.Nbt.PropertySets
         string SchedulerDueDateIntervalPropertyName { get; }
         string SchedulerRunTimePropertyName { get; }
 
-        CswNbtNodePropDate FinalDueDate { get; }
-        CswNbtNodePropDate NextDueDate { get; }
+		CswNbtNodePropDateTime FinalDueDate { get; }
+		CswNbtNodePropDateTime NextDueDate { get; }
         CswNbtNodePropStatic RunStatus { get; }
         CswNbtNodePropNumber WarningDays { get; }
         CswNbtNodePropTimeInterval DueDateInterval { get; }
-        CswNbtNodePropTime RunTime { get; }
+        CswNbtNodePropDateTime RunTime { get; }
         CswNbtNodePropLogical Enabled { get; }
 
     }//ICswNbtPropertySetScheduler

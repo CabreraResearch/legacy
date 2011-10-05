@@ -179,15 +179,15 @@ namespace ChemSW.Nbt
             return
                 (
                 CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Date ||
+                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.DateTime ||
                 CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical ||
                 CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Memo ||
                 CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Number ||
                 CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Password ||
                 CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence ||
                 CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Static ||
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Text ||
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Time
+                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Text //||
+                //CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Time
                 );
         }//_isPropTypeSupported() 
 

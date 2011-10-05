@@ -40,9 +40,9 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeCreateNode();
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
         public override void afterCreateNode()
@@ -50,9 +50,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode();
+            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -70,7 +70,8 @@ namespace ChemSW.Nbt.ObjClasses
             if( NodeModificationState.Modified == _CswNbtNode.ModificationState )
             {
                 CswStaticSelect PropRefsSelect = _CswNbtResources.makeCswStaticSelect( "afterWriteNode_select", "getMatchingEquipPropsForAssembly" );
-                PropRefsSelect.S4Parameters.Add( "getassemblynodeid", _CswNbtNode.NodeId.PrimaryKey );
+                CswStaticParam StaticParam = new CswStaticParam( "getassemblynodeid", _CswNbtNode.NodeId.PrimaryKey );
+                PropRefsSelect.S4Parameters.Add( "getassemblynodeid", StaticParam );
                 DataTable PropRefsTable = PropRefsSelect.getTable();
 
                 // Update the nodes.pendingupdate directly, to avoid having to fetch all the node info for every related node 

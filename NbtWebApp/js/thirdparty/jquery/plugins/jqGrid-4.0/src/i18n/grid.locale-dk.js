@@ -15,7 +15,7 @@ $.jgrid = {
 		pgtext : "Page {0} of {1}"
 	},
 	search : {
-	    caption: "Søg...",
+	    caption: "SÃ¸g...",
 	    Find: "Find",
 	    Reset: "Nulstil",
 	    odata : ['equal', 'not equal', 'less', 'less or equal','greater','greater or equal', 'begins with','does not begin with','is in','is not in','ends with','does not end with','contains','does not contain'],
@@ -24,7 +24,7 @@ $.jgrid = {
 		rulesText: " rules"
 	},
 	edit : {
-	    addCaption: "Tilføj",
+	    addCaption: "TilfÃ¸j",
 	    editCaption: "Ret",
 	    bSubmit: "Send",
 	    bCancel: "Annuller",
@@ -34,13 +34,13 @@ $.jgrid = {
 		bNo : "No",
 		bExit : "Cancel",
 	    msg: {
-	        required:"Felt er nødvendigt",
+	        required:"Felt er nÃ¸dvendigt",
 	        number:"Indtast venligst et validt tal",
-	        minValue:"værdi skal være større end eller lig med",
-	        maxValue:"værdi skal være mindre end eller lig med",
+	        minValue:"vÃ¦rdi skal vÃ¦re stÃ¸rre end eller lig med",
+	        maxValue:"vÃ¦rdi skal vÃ¦re mindre end eller lig med",
 	        email: "er ikke en valid email",
 	        integer: "Indtast venligst et validt heltalt",
-			date: "Indtast venligst en valid datoværdi",
+			date: "Indtast venligst en valid datovÃ¦rdi",
 			url: "is not a valid URL. Prefix required ('http://' or 'https://')",
 			nodefined : " is not defined!",
 			novalue : " return value is required!",
@@ -54,23 +54,23 @@ $.jgrid = {
 	},
 	del : {
 	    caption: "Slet",
-	    msg: "Slet valgte række(r)?",
+	    msg: "Slet valgte rÃ¦kke(r)?",
 	    bSubmit: "Slet",
 	    bCancel: "Annuller"
 	},
 	nav : {
 		edittext: " ",
-	    edittitle: "Rediger valgte række",
+	    edittitle: "Rediger valgte rÃ¦kke",
 		addtext:" ",
-	    addtitle: "Tilføj ny række",
+	    addtitle: "TilfÃ¸j ny rÃ¦kke",
 	    deltext: " ",
-	    deltitle: "Slet valgte række",
+	    deltitle: "Slet valgte rÃ¦kke",
 	    searchtext: " ",
 	    searchtitle: "Find poster",
 	    refreshtext: "",
-	    refreshtitle: "Indlæs igen",
+	    refreshtitle: "IndlÃ¦s igen",
 	    alertcap: "Advarsel",
-	    alerttext: "Vælg venligst række",
+	    alerttext: "VÃ¦lg venligst rÃ¦kke",
 		viewtext: "",
 		viewtitle: "View selected row"
 	},
@@ -83,7 +83,7 @@ $.jgrid = {
 		errcap : "Fejl",
 		nourl : "Ingel url valgt",
 		norecords: "Ingen poster at behandle",
-	    model : "colNames og colModel har ikke samme længde!"
+	    model : "colNames og colModel har ikke samme lÃ¦ngde!"
 	},
 	formatter : {
 		integer : {thousandsSeparator: " ", defaultValue: '0'},
@@ -91,8 +91,8 @@ $.jgrid = {
 		currency : {decimalSeparator:",", thousandsSeparator: " ", decimalPlaces: 2, prefix: "", suffix:"", defaultValue: '0,00'},
 		date : {
 			dayNames:   [
-				"Søn", "Man", "Tirs", "Ons", "Tors", "Fre", "Lør",
-				"Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"
+				"SÃ¸n", "Man", "Tirs", "Ons", "Tors", "Fre", "LÃ¸r",
+				"SÃ¸ndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "LÃ¸rdag"
 			],
 			monthNames: [
 				"Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec",

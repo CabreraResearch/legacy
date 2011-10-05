@@ -18,18 +18,18 @@ namespace ChemSW.Nbt.Schema
     public class CswTstCaseRsrc_012
     {
 
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		private CswTestCaseRsrc _CswTestCaseRsrc;
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+		{
+			set
+			{
+				_CswNbtSchemaModTrnsctn = value;
+				_CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			}
+		}
 
-        private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        public CswTstCaseRsrc_012( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-
-        }//ctor
-
-
-        public string Purpose = "Rollback stale column value";
+        public static string Purpose = "Rollback stale column value";
 
         public string FakeTestTableName { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
         public string FakeValColumnName { get { return ( _CswTestCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) ); } }
@@ -41,10 +41,6 @@ namespace ChemSW.Nbt.Schema
         public string Val_Row_1 { get { return( "eenie"); } } 
         public string Val_Row_2 { get { return( "meeny"); } } 
         public string Val_Row_3 { get { return( "minie"); } }
-
-        public DataTable TheSuspectUpdateTable = null;
-        public CswTableUpdate TheSuspectUpdateTablesUpdater = null; 
-
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

@@ -12,7 +12,6 @@ using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Nbt.Schema;
 using ChemSW.Audit;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -51,17 +50,17 @@ namespace ChemSW.Nbt.Schema
         CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
 
 
-        private string _ForeignKeyTableStem = "fk_Table_";
-        private string _PrimeKeyTableStem = "pk_Table_";
+        //private string _ForeignKeyTableStem = "fk_Table_";
+        //private string _PrimeKeyTableStem = "pk_Table_";
 
-        private string _ArbitraryValCol = "arbitraryvalue";
-        private string _TestValStem = "Test val ";
+        //private string _ArbitraryValCol = "arbitraryvalue";
+        //private string _TestValStem = "Test val ";
 
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-        public CswTestCaseRsrc( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
 
+		public CswTestCaseRsrc( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
+        {
+			_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
 
             _TestTableNamesReal.Add( TestTableNamesReal.Modules, "modules" );
             _TestTableNamesReal.Add( TestTableNamesReal.DataDictionary, "data_dictionary" );
@@ -122,7 +121,7 @@ namespace ChemSW.Nbt.Schema
 
         }//_testAddColumnValues() 
 
-        public string makeTestCaseDescription( string RawClassName, string TestCasePurpose, string SubPurpose )
+        public static string makeTestCaseDescription( string RawClassName, string TestCasePurpose, string SubPurpose )
         {
             return ( "Test Case " + RawClassName.Substring( 12 ) + ": " + TestCasePurpose + "--" + SubPurpose );
         }

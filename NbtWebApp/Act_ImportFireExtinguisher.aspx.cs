@@ -281,8 +281,8 @@ namespace ChemSW.Nbt.WebPages
                     Collection<CswPrimaryKey> NodeKeysToInclude = new Collection<CswPrimaryKey>();
 
                     String MpLegacyBarcodeName = "Legacy Barcode";
-                    String FeLegacyBarcodeName = "Extinguisher Legacy Barcode";
-                    String FeBarcodeName = "Barcode";
+                    //String FeLegacyBarcodeName = "Extinguisher Legacy Barcode";
+                    //String FeBarcodeName = "Barcode";
                     bool hasLegacyBarcode = false;
 
                     foreach( DataRow Row in ExcelData.Rows )
@@ -439,7 +439,7 @@ namespace ChemSW.Nbt.WebPages
                             }
 
 							InspectionPointAsMP.Description.Text = InspectionPointDescription;
-							InspectionPointAsMP.LastInspectionDate.DateValue = LastInspectionDate;
+							InspectionPointAsMP.LastInspectionDate.DateTimeValue = LastInspectionDate;
                             InspectionPointAsMP.Location.SelectedNodeId = RoomNode.NodeId;
                             InspectionPointAsMP.Location.RefreshNodeName();
                             InspectionPointAsMP.Type.Value = Type;

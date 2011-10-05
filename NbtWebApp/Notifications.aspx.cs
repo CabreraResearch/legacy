@@ -33,8 +33,8 @@ namespace ChemSW.Nbt.WebPages
         private DropDownList _NodeTypeList;
         private DropDownList _EventList;
 
-        private static string _ObjectClassPrefix = "oc_";
-        private static string _NodeTypePrefix = "nt_";
+		//private static string _ObjectClassPrefix = "oc_";
+		//private static string _NodeTypePrefix = "nt_";
 
         protected override void CreateChildControls()
         {

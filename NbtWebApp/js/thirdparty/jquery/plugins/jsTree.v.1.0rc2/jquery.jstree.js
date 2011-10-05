@@ -8,7 +8,7 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
- * $Date: 2010-07-01 10:51:11 +0300 (четв, 01 юли 2010) $
+ * $Date: 2010-07-01 10:51:11 +0300 (Ñ‡ÐµÑ‚Ð², 01 ÑŽÐ»Ð¸ 2010) $
  * $Revision: 191 $
  */
 
@@ -840,10 +840,10 @@
 						this.select_node(event.currentTarget, true, event);
 					}, this))
 				.delegate("a", "mouseenter.jstree", $.proxy(function (event) {
-						this.hover_node(event.target);
+						this.hover_node(event.target, event);
 					}, this))
 				.delegate("a", "mouseleave.jstree", $.proxy(function (event) {
-						this.dehover_node(event.target);
+						this.dehover_node(event.target, event);
 					}, this))
 				.bind("reopen.jstree", $.proxy(function () { 
 						this.reselect();

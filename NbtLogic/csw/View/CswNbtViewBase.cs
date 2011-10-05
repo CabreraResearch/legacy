@@ -16,11 +16,15 @@ namespace ChemSW.Nbt
         /// The View should be rendered as a Grid
         /// </summary>
         Grid,
-        /// <summary>
-        /// The View should be rendered as a List
-        /// </summary>
-        List,
-        /// <summary>
+		/// <summary>
+		/// The View should be rendered as a List
+		/// </summary>
+		List,
+		/// <summary>
+		/// The View should be rendered as a Table
+		/// </summary>
+		Table,
+		/// <summary>
         /// Unknown rendering mode
         /// </summary>
         Unknown,

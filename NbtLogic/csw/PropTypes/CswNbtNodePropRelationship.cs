@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
@@ -9,6 +10,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -100,7 +102,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     if( value.TableName != TargetTableName )
                     {
-						throw new CswDniException( ErrorType.Error, "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
+                        throw new CswDniException( ErrorType.Error, "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
                     }
                     if( RelatedNodeId != value )
                     {
@@ -236,7 +238,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
             }
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetId ) )
+            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "allowadd", "true" );
             }
@@ -258,11 +260,66 @@ namespace ChemSW.Nbt.PropTypes
                 }
             }
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            ParentNode.Add( new XElement( _NodeIDSubField.ToXmlNodeName( true ), ( RelatedNodeId != null ) ?
+                RelatedNodeId.PrimaryKey.ToString() : string.Empty ),
+                            new XElement( _NameSubField.ToXmlNodeName( true ), CachedNodeName ) );
+
+            if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+            {
+                ParentNode.Add( new XElement( "nodetypeid", TargetId.ToString() ) );
+            }
+            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
+            {
+                ParentNode.Add( new XElement( "allowadd", "true" ) );
+            }
+
+            XElement OptionsNode = new XElement( "options" );
+            ParentNode.Add( OptionsNode );
+
+            Dictionary<CswPrimaryKey, string> Options = getOptions();
+            foreach( CswPrimaryKey NodePk in Options.Keys )
+            {
+                OptionsNode.Add( new XElement( "option",
+                                               new XAttribute( "id", ( NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) ?
+                                                   NodePk.PrimaryKey.ToString() : "" ),
+                                               new XAttribute( "value", ( NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) ?
+                                                   Options[NodePk] : "" ) ) );
+            }
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = ( RelatedNodeId != null ) ?
+                                RelatedNodeId.PrimaryKey.ToString() : string.Empty;
+            ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
+
+            if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+            {
+                ParentObject["nodetypeid"] = TargetId.ToString();
+            }
+            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
+            {
+                ParentObject["allowadd"] = "true";
+            }
+
+            JObject OptionsNodeObj = new JObject();
+            ParentObject["options"] = OptionsNodeObj;
+
+            Dictionary<CswPrimaryKey, string> Options = getOptions();
+            foreach( CswPrimaryKey NodePk in Options.Keys.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
+            {
+                // options: { id: value, id: value }
+                OptionsNodeObj[NodePk.PrimaryKey.ToString().ToLower()] = Options[NodePk];
+            }
+        }
+
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // Getting the value as a string is on purpose.
             //RelatedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIDSubField.ToXmlNodeName() ), NodeMap ) );
-
             Int32 NodeId = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIDSubField.ToXmlNodeName() );
             if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
             {
@@ -276,14 +333,24 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
+
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _NodeIDSubField.ToXmlNodeName( true ) ) )
+            {
+                Int32 NodeId = CswConvert.ToInt32( XmlNode.Element( _NodeIDSubField.ToXmlNodeName( true ) ).Value );
+                if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
+                {
+                    NodeId = NodeMap[NodeId];
+                }
+                RelatedNodeId = new CswPrimaryKey( "nodes", NodeId );
+                if( null != RelatedNodeId )
+                {
+                    XmlNode.Add( new XElement( "destnodeid", RelatedNodeId.PrimaryKey.ToString() ) );
+                    PendingUpdate = true;
+                }
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -299,13 +366,38 @@ namespace ChemSW.Nbt.PropTypes
             else
                 RelatedNodeId = null;
 
+
+            /* As per steve, the intention of this side effect was that the input table from which the PropRow parameter
+               comes would be written back to the original input xml. As Steve says, "it's a bit kookie." Since 
+              the exeprimental algorithm keeps track of all this data in the temporary database tables, we don't need
+              to maintain this. And since it brakes with the column structure of the temp tables, I'm commenting it 
+              out at least for now. Bye bye . . . */
+            /*
             if( RelatedNodeId != null )
             {
                 PropRow["destnodeid"] = RelatedNodeId.PrimaryKey;
                 PendingUpdate = true;
             }
+             */
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _NodeIDSubField.ToXmlNodeName( true ) ) )
+            {
+                Int32 NodeId = CswConvert.ToInt32( JObject.Property( _NodeIDSubField.ToXmlNodeName( true ) ).Value );
+                if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
+                {
+                    NodeId = NodeMap[NodeId];
+                }
+                RelatedNodeId = new CswPrimaryKey( "nodes", NodeId );
+                if( null != RelatedNodeId )
+                {
+                    JObject.Add( new JProperty( "destnodeid", RelatedNodeId.PrimaryKey.ToString() ) );
+                    PendingUpdate = true;
+                }
+            }
+        }
         //private Int32 _HandleReference( Int32 NodeId, Dictionary<string, Int32> NodeMap )
         //{
         //    Int32 ret = Int32.MinValue;

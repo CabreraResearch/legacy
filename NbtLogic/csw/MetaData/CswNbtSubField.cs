@@ -14,8 +14,9 @@ namespace ChemSW.Nbt.MetaData
             Field1,
             Field1_FK,
             Field1_Date,
-            Field1_Numeric,
-            Field2,
+			Field1_Numeric,
+			Field2_Numeric,
+			Field2,
             Field2_Date,
             Field3,
             Field4,
@@ -65,7 +66,13 @@ namespace ChemSW.Nbt.MetaData
             Units,
             Value,
             ViewID,
-            ChangedDate
+            ChangedDate,
+			Base,
+			Exponent,
+			Health,
+			Flammability,
+			Reactivity,
+			Special
         }
 
         public SubFieldName Name = SubFieldName.Value;
@@ -133,11 +140,16 @@ namespace ChemSW.Nbt.MetaData
 
         }//FilterModes
 
-        public string ToXmlNodeName()
+        public string ToXmlNodeName( bool ToLower = false )
         {
             // case 20371 - In the NBT property importer, need to distinguish between NodeID (the subfield) and nodeid (the pk column)
             //return this.Name.ToString().ToLower();
-            return this.Name.ToString();
+            string ret = this.Name.ToString();
+            if( ToLower )
+            {
+                ret = ret.ToLower();
+            }
+            return ret;
         }
 
     }//CswNbtSubField

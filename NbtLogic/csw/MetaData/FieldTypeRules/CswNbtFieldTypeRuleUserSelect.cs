@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     break;
                 default:
                     throw ( new CswDniException( "Filter mode " + CswNbtViewPropertyFilterIn.FilterMode.ToString() + " is not supported for UserSelect fields" ) );
-                    break;
+                    //break;
             }
 
             return ( ReturnVal );

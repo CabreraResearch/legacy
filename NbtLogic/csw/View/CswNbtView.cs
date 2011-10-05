@@ -10,6 +10,7 @@ using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -325,6 +326,24 @@ namespace ChemSW.Nbt
             ViewXmlDoc.LoadXml( ViewXmlAsString );
             return _load( ViewXmlDoc );
         }
+
+        /// <summary>
+        /// Load View JSON into this View (String)
+        /// </summary>
+        public bool LoadJson( string ViewString )
+        {
+            JObject ViewJson = new JObject();
+            try
+            {
+                ViewJson = JObject.Parse( ViewString );
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
+            }
+            return _load( ViewJson );
+        }
+
         /// <summary>
         /// Load View XML into this View (XML)
         /// </summary>
@@ -343,6 +362,12 @@ namespace ChemSW.Nbt
             return true;
         }
 
+        private bool _load( JObject ViewJson )
+        {
+            // This handles the recursive load operation internally
+            Root = new CswNbtViewRoot( _CswNbtResources, this, ViewJson );
+            return true;
+        }
 
         public delegate void BeforeEditViewEventHandler( CswNbtView View );
         public delegate void AfterEditViewEventHandler( CswNbtView View );
@@ -355,22 +380,22 @@ namespace ChemSW.Nbt
         public void save()
         {
             if( !ViewId.isSet() )
-				throw new CswDniException( ErrorType.Error, "Invalid View", "You must call makeNewView() before calling save() on a new view" );
+                throw new CswDniException( ErrorType.Error, "Invalid View", "You must call makeNewView() before calling save() on a new view" );
 
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtView_save_update", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId.get(), true );
             if( ViewTable.Rows.Count == 0 )
-				throw new CswDniException( ErrorType.Error, "Invalid View", "No views that match viewid = " + ViewId.ToString() + " were found while attempting to save" );
+                throw new CswDniException( ErrorType.Error, "Invalid View", "No views that match viewid = " + ViewId.ToString() + " were found while attempting to save" );
 
             // Enforce name-visibility compound unique constraint
             if( ViewName == string.Empty )
-				throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "View name cannot be blank" );
+                throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "View name cannot be blank" );
 
             if( Visibility == NbtViewVisibility.Unknown )
                 throw new CswDniException( ErrorType.Error, "View visibility is Unknown", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Unknown" );
 
             if( !ViewIsUnique( _CswNbtResources, ViewId, ViewName, Visibility, VisibilityUserId, VisibilityRoleId ) )
-				throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with name: " + ViewName + " and visibility setting: " + Visibility.ToString() );
+                throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with name: " + ViewName + " and visibility setting: " + Visibility.ToString() );
 
             // Before Edit View Events
             Collection<object> BeforeEditEvents = _CswNbtResources.CswEventLinker.Trigger( BeforeEditViewEventName );
@@ -448,11 +473,11 @@ namespace ChemSW.Nbt
         public void makeNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, CswNbtView CopyView )
         {
             if( ViewName == string.Empty )
-				throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "CswNbtView.makeNew() called with empty ViewName parameter" );
+                throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "CswNbtView.makeNew() called with empty ViewName parameter" );
 
             // Enforce name-visibility compound unique constraint
             if( !ViewIsUnique( _CswNbtResources, new CswNbtViewId(), ViewName, Visibility, UserId, RoleId ) )
-				throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with conflicting name and visibility settings" );
+                throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with conflicting name and visibility settings" );
 
             // Before New View Events
             Collection<object> BeforeNewEvents = _CswNbtResources.CswEventLinker.Trigger( BeforeNewViewEventName );
@@ -699,6 +724,16 @@ namespace ChemSW.Nbt
         {
             XmlDocument Doc = new XmlDocument();
             Doc.AppendChild( Root.ToXml( Doc ) );
+            return Doc;
+        }
+
+        /// <summary>
+        /// Returns the View as JSON
+        /// </summary>
+        /// <returns></returns>
+        public JObject ToJson()
+        {
+            JObject Doc = Root.ToJson();
             return Doc;
         }
 
@@ -1328,13 +1363,13 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Save this View to Session's data cache
         /// </summary>
-        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false )
+        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
         {
             // don't cache twice
             if( SessionViewId == null || ForceCache )
             {
                 bool ForQuickLaunch = ( IncludeInQuickLaunch && IsQuickLaunch );
-                _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch );
+                _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch, KeepInQuickLaunch );
             }
         } // SaveToCache()
 

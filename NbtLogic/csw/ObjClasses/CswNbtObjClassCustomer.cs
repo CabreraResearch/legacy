@@ -39,10 +39,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             _checkForConfigFileUpdate();
-            _CswNbtObjClassDefault.beforeCreateNode();
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
         public override void afterCreateNode()
@@ -52,10 +52,10 @@ namespace ChemSW.Nbt.ObjClasses
         } // afterCreateNode()
 
 
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
             _checkForConfigFileUpdate();
-            _CswNbtObjClassDefault.beforeWriteNode();
+            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
         }
 
         public override void afterWriteNode()
@@ -161,11 +161,11 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[IPFilterRegexPropertyName].AsText );
             }
         }
-        public CswNbtNodePropDate SubscriptionExpirationDate
+		public CswNbtNodePropDateTime SubscriptionExpirationDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[SubscriptionExpirationDatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[SubscriptionExpirationDatePropertyName].AsDateTime );
             }
         }
         public CswNbtNodePropLogical Deactivated

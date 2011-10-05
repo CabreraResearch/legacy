@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -19,7 +17,7 @@ namespace ChemSW.Nbt.Actions
         Assign_Inspection,
         Receiving,
         Import_Fire_Extinguisher_Data,
-		OOC_Inspections
+        OOC_Inspections
     }
 
     public class CswNbtAction
@@ -37,11 +35,11 @@ namespace ChemSW.Nbt.Actions
             get { return Name.ToString().Replace( '_', ' ' ); }
         }
 
-		private CswNbtResources _CswNbtResources;
-		
-		public CswNbtAction( CswNbtResources CswNbtResources, Int32 TheActionId, string ActionUrl, CswNbtActionName ActionName, bool ActionShowInList, string ActionCategory )
+        private CswNbtResources _CswNbtResources;
+
+        public CswNbtAction( CswNbtResources CswNbtResources, Int32 TheActionId, string ActionUrl, CswNbtActionName ActionName, bool ActionShowInList, string ActionCategory )
         {
-			_CswNbtResources = CswNbtResources;
+            _CswNbtResources = CswNbtResources;
             ActionId = TheActionId;
             Url = ActionUrl;
             Name = ActionName;
@@ -58,9 +56,9 @@ namespace ChemSW.Nbt.Actions
             return (CswNbtActionName) Enum.Parse( typeof( CswNbtActionName ), ActionName.Replace( ' ', '_' ) );
         }
 
-		public CswNbtSessionDataId SaveToCache( bool IncludeInQuickLaunch )
-		{
-			return _CswNbtResources.SessionDataMgr.saveSessionData( this, IncludeInQuickLaunch );
-		}
+        public CswNbtSessionDataId SaveToCache( bool IncludeInQuickLaunch, bool KeepInQuickLaunch )
+        {
+            return _CswNbtResources.SessionDataMgr.saveSessionData( this, IncludeInQuickLaunch, KeepInQuickLaunch );
+        }
     }
 }

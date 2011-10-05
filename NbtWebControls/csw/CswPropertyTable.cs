@@ -18,12 +18,12 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.NbtWebControls
 {
-    public enum NodeEditMode { Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, AuditHistoryInPopup };
+    //public enum NodeEditMode { Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, AuditHistoryInPopup, Preview };
 
     public class CswPropertyTable : CompositeControl
     {
         private CswNbtResources _CswNbtResources;
-        private CswFieldTypeWebControlFactory _CswFieldTypeWebControlFactory;
+        //private CswFieldTypeWebControlFactory _CswFieldTypeWebControlFactory;
         private Dictionary<Int32, PropertyControlSet> _PropertyControlSetHash;
 
         public bool BatchMode = false;
@@ -271,14 +271,16 @@ namespace ChemSW.NbtWebControls
                 CswNbtMetaDataNodeTypeProp MovedProp = _CswNbtResources.MetaData.getNodeTypeProp( LayoutComponentId );
                 if( EditMode == NodeEditMode.AddInPopup )
                 {
-                    MovedProp.DisplayRowAdd = NewDisplayRow;
-                    MovedProp.DisplayColAdd = NewDisplayColumn;
+					//MovedProp.DisplayRowAdd = NewDisplayRow;
+					//MovedProp.DisplayColAdd = NewDisplayColumn;
+					MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, null, NewDisplayRow, NewDisplayColumn );
                 }
                 else
                 {
-                    MovedProp.DisplayRow = NewDisplayRow;
-                    MovedProp.DisplayColumn = NewDisplayColumn;
-                }
+					//MovedProp.DisplayRow = NewDisplayRow;
+					//MovedProp.DisplayColumn = NewDisplayColumn;
+					MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, null, NewDisplayRow, NewDisplayColumn );
+				}
             }
             catch( Exception ex )
             {
@@ -594,7 +596,7 @@ namespace ChemSW.NbtWebControls
                 // Non-conditionals first
                 foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
                 {
-                    if( Prop.NodeTypeTab != null && Prop.NodeTypeTab.TabId.ToString() == SelectedTabId.ToString() )
+                    if( Prop.EditLayout.Tab != null && Prop.EditLayout.Tab.TabId.ToString() == SelectedTabId.ToString() )
                     {
                         if( !Prop.hasFilter() )
                         {
@@ -610,7 +612,7 @@ namespace ChemSW.NbtWebControls
                 // Conditionals second
                 foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
                 {
-                    if( Prop.NodeTypeTab != null && Prop.NodeTypeTab.TabId.ToString() == SelectedTabId.ToString() )
+                    if( Prop.EditLayout.Tab != null && Prop.EditLayout.Tab.TabId.ToString() == SelectedTabId.ToString() )
                     {
                         // Conditional Filter on Properties
                         if( Prop.hasFilter() )
@@ -661,7 +663,7 @@ namespace ChemSW.NbtWebControls
                     } // if( Prop.NodeTypeTab != null && Prop.NodeTypeTab.TabId.ToString() == SelectedTabId.ToString() )
                 } // foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
 
-				if( !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, SelectedNodeTypeId, SelectedNode, null ) )
+				if( !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.MetaData.getNodeType(SelectedNodeTypeId),false, null, null, SelectedNode, null ) )
                 {
                     SaveButton.Visible = false;
                 }
@@ -674,7 +676,7 @@ namespace ChemSW.NbtWebControls
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
                 foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
                 {
-                    if( ( ( Prop.IsRequired && Prop.DefaultValue.Empty ) || SelectedNode.Properties[Prop].TemporarilyRequired || Prop.SetValueOnAdd ) && Prop.FilterNodeTypePropId == Int32.MinValue )
+                    if( ( ( Prop.IsRequired && Prop.DefaultValue.Empty ) || SelectedNode.Properties[Prop].TemporarilyRequired || Prop.AddLayout != null ) && Prop.FilterNodeTypePropId == Int32.MinValue )
                     {
                         PropertyControlSet PCS = addPropertyToTable( _CswNbtResources, _LayoutTable, Prop, SelectedNode, true, BatchMode, EditMode, HandleError );
                         if( _PropertyControlSetHash.ContainsKey( Prop.FirstPropVersionId ) )
@@ -683,7 +685,7 @@ namespace ChemSW.NbtWebControls
                             _PropertyControlSetHash.Add( Prop.FirstPropVersionId, PCS );
                     }
                 }
-				if( !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType.NodeTypeId ) )
+				if( !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType ) )
                 {
                     SaveButton.Visible = false;
                 }
@@ -796,9 +798,9 @@ namespace ChemSW.NbtWebControls
 
                 CswLayoutTable.LayoutComponent ThisComponent = null;
                 if( EditMode == NodeEditMode.AddInPopup )
-                    ThisComponent = new CswLayoutTable.LayoutComponent( MetaDataProp.PropId, MetaDataProp.DisplayRowAdd, MetaDataProp.DisplayColAdd, PropLabel, PropControl, false ); //MetaDataProp.IsDeletable() );
+                    ThisComponent = new CswLayoutTable.LayoutComponent( MetaDataProp.PropId, MetaDataProp.AddLayout.DisplayRow, MetaDataProp.AddLayout.DisplayColumn, PropLabel, PropControl, false ); //MetaDataProp.IsDeletable() );
                 else
-                    ThisComponent = new CswLayoutTable.LayoutComponent( MetaDataProp.PropId, MetaDataProp.DisplayRow, MetaDataProp.DisplayColumn, PropLabel, PropControl, false ); //MetaDataProp.IsDeletable() );
+                    ThisComponent = new CswLayoutTable.LayoutComponent( MetaDataProp.PropId, MetaDataProp.EditLayout.DisplayRow, MetaDataProp.EditLayout.DisplayColumn, PropLabel, PropControl, false ); //MetaDataProp.IsDeletable() );
                 LayoutTable.Components.Add( MetaDataProp.PropId, ThisComponent );
 
                 if( PropControl != null )

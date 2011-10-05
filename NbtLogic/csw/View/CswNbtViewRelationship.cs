@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -38,6 +40,9 @@ namespace ChemSW.Nbt
         private Int32 _GroupByPropId = Int32.MinValue;
         private PropIdType _GroupByPropType = PropIdType.NodeTypePropId;
         private string _GroupByPropName = "";
+
+        private const string _ChildRelationshipsName = "childrelationships";
+        private const string _PropertiesName = "properties";
 
         public PropIdType PropType { get { return _PropType; } }
         public PropOwnerType PropOwner { get { return _PropOwner; } }
@@ -125,7 +130,7 @@ namespace ChemSW.Nbt
             if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
                 Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
             {
-				throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
+                throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
 
             setPropValue( InOwnerType, PropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.PropName );
@@ -148,7 +153,7 @@ namespace ChemSW.Nbt
             }
             else
             {
-				throw new CswDniException( ErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
+                throw new CswDniException( ErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
             }
         }
 
@@ -157,7 +162,7 @@ namespace ChemSW.Nbt
             if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
                 Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
             {
-				throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
+                throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
 
             setPropValue( InOwnerType, PropIdType.ObjectClassPropId, Prop.PropId, Prop.PropName );
@@ -174,7 +179,7 @@ namespace ChemSW.Nbt
             }
             else
             {
-				throw new CswDniException( ErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
+                throw new CswDniException( ErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
             }
         }
 
@@ -420,7 +425,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-				throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
                                           "CswNbtViewRelationship.constructor(string) encountered an invalid property value",
                                           ex );
             }
@@ -458,19 +463,19 @@ namespace ChemSW.Nbt
                                RelationshipNode.Attributes[SecondNameAttrName].Value,
                                icon );
                 }
-				if( RelationshipNode.Attributes[GroupByPropIdAttrName] != null )
-				{
-					if( RelationshipNode.Attributes[GroupByPropTypeAttrName].Value != string.Empty )
-					{
-						setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), RelationshipNode.Attributes[GroupByPropTypeAttrName].Value, true ),
-										CswConvert.ToInt32( RelationshipNode.Attributes[GroupByPropIdAttrName].Value ),
-										RelationshipNode.Attributes[GroupByPropNameAttrName].Value );
-					}
-					else
-					{
-						clearGroupBy();
-					}
-				} 
+                if( RelationshipNode.Attributes[GroupByPropIdAttrName] != null )
+                {
+                    if( RelationshipNode.Attributes[GroupByPropTypeAttrName].Value != string.Empty )
+                    {
+                        setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), RelationshipNode.Attributes[GroupByPropTypeAttrName].Value, true ),
+                                        CswConvert.ToInt32( RelationshipNode.Attributes[GroupByPropIdAttrName].Value ),
+                                        RelationshipNode.Attributes[GroupByPropNameAttrName].Value );
+                    }
+                    else
+                    {
+                        clearGroupBy();
+                    }
+                }
 
                 if( RelationshipNode.Attributes[SelectableAttrName] != null )
                     Selectable = Convert.ToBoolean( RelationshipNode.Attributes[SelectableAttrName].Value );
@@ -499,7 +504,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-				throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
                                           "CswNbtViewRelationship.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }
@@ -507,12 +512,12 @@ namespace ChemSW.Nbt
             {
                 foreach( XmlNode ChildNode in RelationshipNode.ChildNodes )
                 {
-					if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Relationship.ToString().ToLower() )
+                    if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Relationship.ToString().ToLower() )
                     {
                         CswNbtViewRelationship ChildRelationshipNode = new CswNbtViewRelationship( CswNbtResources, _View, ChildNode );
                         this.addChildRelationship( ChildRelationshipNode );
                     }
-					if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Property.ToString().ToLower() )
+                    if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Property.ToString().ToLower() )
                     {
                         CswNbtViewProperty ChildProp = new CswNbtViewProperty( CswNbtResources, _View, ChildNode );
                         this.addProperty( ChildProp );
@@ -521,12 +526,164 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-				throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
                                           "CswNbtViewRelationship.constructor(xmlnode) encountered an invalid child definition",
                                           ex );
             }
         }
 
+        /// <summary>
+        /// Construct from JSON
+        /// </summary>
+        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, JObject RelationshipObj )
+            : base( CswNbtResources, View )
+        {
+            try
+            {
+                string _PropOwnerAttrName = CswConvert.ToString( RelationshipObj[PropOwnerAttrName] );
+                string _PropIdAttrName = CswConvert.ToString( RelationshipObj[PropIdAttrName] );
+                string _PropTypeAttrName = CswConvert.ToString( RelationshipObj[PropTypeAttrName] );
+                string _PropNameAttrName = CswConvert.ToString( RelationshipObj[PropNameAttrName] );
+                if( !string.IsNullOrEmpty( _PropIdAttrName ) )
+                {
+                    setPropValue( (PropOwnerType) Enum.Parse( typeof( PropOwnerType ), _PropOwnerAttrName, true ),
+                                  (PropIdType) Enum.Parse( typeof( PropIdType ), _PropTypeAttrName, true ),
+                                  CswConvert.ToInt32( _PropIdAttrName ),
+                                  _PropNameAttrName );
+                }
+
+                string _FirstTypeAttrName = CswConvert.ToString( RelationshipObj[FirstTypeAttrName] );
+                string _FirstNameAttrName = CswConvert.ToString( RelationshipObj[FirstNameAttrName] );
+                string _FirstIdAttrName = CswConvert.ToString( RelationshipObj[FirstIdAttrName] );
+                if( !string.IsNullOrEmpty( _FirstIdAttrName ) )
+                {
+                    setFirst( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), _FirstTypeAttrName, true ),
+                              CswConvert.ToInt32( _FirstIdAttrName ),
+                              _FirstNameAttrName );
+                }
+
+                string _SecondIdAttrName = CswConvert.ToString( RelationshipObj[SecondIdAttrName] );
+                string _SecondIconFileNameAttrName = CswConvert.ToString( RelationshipObj[SecondIconFileNameAttrName] );
+                string _SecondTypeAttrName = CswConvert.ToString( RelationshipObj[SecondTypeAttrName] );
+                string _SecondNameAttrName = CswConvert.ToString( RelationshipObj[SecondNameAttrName] );
+                if( !string.IsNullOrEmpty( _SecondIdAttrName ) )
+                {
+                    string icon = string.Empty;
+                    if( !string.IsNullOrEmpty( _SecondIconFileNameAttrName ) )
+                    {
+                        icon = _SecondIconFileNameAttrName;
+                    }
+
+                    setSecond( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), _SecondTypeAttrName, true ),
+                               CswConvert.ToInt32( _SecondIdAttrName ),
+                               _SecondNameAttrName,
+                               icon );
+                }
+
+                string _GroupByPropIdAttrName = CswConvert.ToString( RelationshipObj[GroupByPropIdAttrName] );
+                string _GroupByPropTypeAttrName = CswConvert.ToString( RelationshipObj[GroupByPropTypeAttrName] );
+                string _GroupByPropNameAttrName = CswConvert.ToString( RelationshipObj[GroupByPropNameAttrName] );
+                if( !string.IsNullOrEmpty( _GroupByPropIdAttrName ) )
+                {
+                    if( !string.IsNullOrEmpty( _GroupByPropTypeAttrName ) )
+                    {
+                        setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), _GroupByPropTypeAttrName, true ),
+                                        CswConvert.ToInt32( _GroupByPropIdAttrName ),
+                                        _GroupByPropNameAttrName );
+                    }
+                    else
+                    {
+                        clearGroupBy();
+                    }
+                }
+
+                if( RelationshipObj[SelectableAttrName] != null )
+                {
+                    bool _Selectable = CswConvert.ToBoolean( RelationshipObj[SelectableAttrName] );
+                    Selectable = _Selectable;
+                }
+
+                if( RelationshipObj[ShowInTreeAttrName] != null )
+                {
+                    bool _ShowInTree = CswConvert.ToBoolean( RelationshipObj[ShowInTreeAttrName] );
+                    ShowInTree = _ShowInTree;
+                }
+
+                string _AllowAddChildrenAttrName = CswConvert.ToString( RelationshipObj[AllowAddChildrenAttrName] );
+                if( !string.IsNullOrEmpty( _AllowAddChildrenAttrName ) )
+                {
+                    AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), _AllowAddChildrenAttrName, true );
+                }
+
+                if( RelationshipObj[AllowDeleteAttrName] != null )
+                {
+                    bool _AllowDelete = CswConvert.ToBoolean( RelationshipObj[AllowDeleteAttrName] );
+                    AllowDelete = _AllowDelete;
+                }
+
+                string _NodeIdFilterInAttrName = CswConvert.ToString( RelationshipObj[NodeIdFilterInAttrName] );
+                if( !string.IsNullOrEmpty( _NodeIdFilterInAttrName ) )
+                {
+                    NodeIdsToFilterIn = _commaDelimitedToFilterAttribute( NodeIdFilterInAttrName );
+                }
+
+                string _NodeIdFilterOutAttrName = CswConvert.ToString( RelationshipObj[NodeIdFilterOutAttrName] );
+                if( !string.IsNullOrEmpty( _NodeIdFilterOutAttrName ) )
+                {
+                    NodeIdsToFilterOut = _commaDelimitedToFilterAttribute( _NodeIdFilterOutAttrName );
+                }
+
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
+                                          "CswNbtViewRelationship.constructor(xmlnode) encountered an invalid attribute value",
+                                          ex );
+            }
+            try
+            {
+                JProperty Children = RelationshipObj.Property( _ChildRelationshipsName );
+                if( null != Children )
+                {
+                    JObject Relationships = (JObject) Children.Value;
+                    foreach( CswNbtViewRelationship ChildRelationship in
+                        from Relationship
+                            in Relationships.Properties()
+                        select (JObject) Relationship.Value
+                            into ChildRelationObj
+                            let NodeName = CswConvert.ToString( ChildRelationObj["nodename"] )
+                            where NodeName == CswNbtViewXmlNodeName.Relationship.ToString().ToLower()
+                            select new CswNbtViewRelationship( CswNbtResources, _View, ChildRelationObj ) )
+                    {
+                        this.addChildRelationship( ChildRelationship );
+                    }
+                }
+
+                JProperty Properties = RelationshipObj.Property( _PropertiesName );
+                if( null != Properties )
+                {
+                    JObject PropsObj = (JObject) Properties.Value;
+                    foreach( CswNbtViewProperty ChildProp in
+                        from Property
+                            in PropsObj.Properties()
+                        select (JObject) Property.Value
+                            into PropObj
+                            let NodeName = CswConvert.ToString( PropObj["nodename"] )
+                            where NodeName == CswNbtViewXmlNodeName.Property.ToString().ToLower()
+                            select new CswNbtViewProperty( CswNbtResources, _View, PropObj ) )
+                    {
+                        this.addProperty( ChildProp );
+                    }
+                }
+
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
+                                          "CswNbtViewRelationship.constructor(xmlnode) encountered an invalid child definition",
+                                          ex );
+            }
+        }
 
         private void _setDefaultFilters()
         {
@@ -799,6 +956,104 @@ namespace ChemSW.Nbt
             return RelationshipNode;
         }
 
+        public JProperty ToJson( string RPropName = null, bool FirstLevelOnly = false )
+        {
+            JObject RelationshipObj = new JObject();
+
+            RelationshipObj["nodename"] = CswNbtViewXmlNodeName.Relationship.ToString().ToLower();
+
+            string RelationshipId = string.Empty;
+            if( PropId != Int32.MinValue )
+            {
+                RelationshipId = PropId.ToString();
+                RelationshipObj[PropIdAttrName] = PropId.ToString();
+                RelationshipObj[PropNameAttrName] = PropName.ToString();
+                RelationshipObj[PropTypeAttrName] = PropType.ToString();
+                RelationshipObj[PropOwnerAttrName] = PropOwner.ToString();
+            }
+
+            if( GroupByPropId != Int32.MinValue )
+            {
+                RelationshipObj[GroupByPropIdAttrName] = GroupByPropId.ToString();
+                RelationshipObj[GroupByPropNameAttrName] = GroupByPropName.ToString();
+                RelationshipObj[GroupByPropTypeAttrName] = GroupByPropType.ToString();
+            }
+
+            if( FirstId != Int32.MinValue )
+            {
+                if( string.IsNullOrEmpty( RelationshipId ) )
+                {
+                    RelationshipId = FirstId.ToString();
+                }
+                RelationshipObj[FirstNameAttrName] = FirstName.ToString();
+                RelationshipObj[FirstTypeAttrName] = FirstType.ToString();
+                RelationshipObj[FirstIdAttrName] = FirstId.ToString();
+            }
+
+            if( SecondId != Int32.MinValue )
+            {
+                if( string.IsNullOrEmpty( RelationshipId ) )
+                {
+                    RelationshipId = SecondId.ToString();
+                }
+                RelationshipObj[SecondNameAttrName] = SecondName.ToString();
+                RelationshipObj[SecondTypeAttrName] = SecondType.ToString();
+                RelationshipObj[SecondIdAttrName] = SecondId.ToString();
+                RelationshipObj[SecondIconFileNameAttrName] = SecondIconFileName.ToString();
+            }
+
+            RelationshipObj[SelectableAttrName] = Selectable.ToString().ToLower();
+            RelationshipObj[ArbitraryIdAttrName] = ArbitraryId.ToString();
+            RelationshipObj[ShowInTreeAttrName] = ShowInTree.ToString().ToLower();
+            RelationshipObj[AllowAddChildrenAttrName] = AddChildren.ToString();
+            RelationshipObj[AllowDeleteAttrName] = AllowDelete.ToString();
+
+            string FilterInString = "";
+            bool bFirst = true;
+            foreach( CswPrimaryKey Child in NodeIdsToFilterIn.Where( Child => null != Child ) )
+            {
+                if( !bFirst ) FilterInString += ','.ToString();
+                FilterInString += Child.ToString();
+                bFirst = false;
+            }
+            RelationshipObj[NodeIdFilterInAttrName] = FilterInString;
+
+            string FilterOutString = "";
+            bFirst = true;
+            foreach( CswPrimaryKey Child in NodeIdsToFilterOut )
+            {
+                if( !bFirst ) FilterOutString += ','.ToString();
+                FilterOutString += Child.ToString();
+                bFirst = false;
+            }
+            RelationshipObj[NodeIdFilterOutAttrName] = FilterOutString;
+
+            if( !FirstLevelOnly )
+            {
+                // Handle props and propfilters
+                JObject PropObj = new JObject();
+                RelationshipObj[_PropertiesName] = PropObj;
+                foreach( CswNbtViewProperty Prop in this.Properties )
+                {
+                    PropObj.Add( Prop.ToJson() );
+                }
+
+                // Recurse on child ViewNodes
+                JObject ChildObj = new JObject();
+                RelationshipObj[_ChildRelationshipsName] = ChildObj;
+                foreach( CswNbtViewRelationship ChildRelationship in this.ChildRelationships )
+                {
+                    ChildObj.Add( ChildRelationship.ToJson() );
+                }
+                if( string.IsNullOrEmpty( RPropName ) )
+                {
+                    RPropName = CswNbtViewXmlNodeName.Relationship.ToString() + "_" + RelationshipId; ;
+                }
+            }
+            JProperty RelationshipProp = new JProperty( RPropName, RelationshipObj );
+            return RelationshipProp;
+        }
+
         #endregion Exporters
 
         #region Child relationships and properties
@@ -865,7 +1120,7 @@ namespace ChemSW.Nbt
             if( obj is CswNbtViewRelationship )
                 return CompareTo( (CswNbtViewRelationship) obj );
             else
-				throw new CswDniException( ErrorType.Error, "Illegal comparison", "Can't compare CswNbtViewRelationship to object: " + obj.ToString() );
+                throw new CswDniException( ErrorType.Error, "Illegal comparison", "Can't compare CswNbtViewRelationship to object: " + obj.ToString() );
         }
 
         public int CompareTo( CswNbtViewRelationship rel )

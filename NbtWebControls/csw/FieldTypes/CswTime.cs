@@ -30,7 +30,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             _DateControl.Required = Required;
             if( Prop != null && !Prop.Empty )
-                SelectedTime = Convert.ToDateTime( Prop.AsTime.TimeValue );
+				SelectedTime = Convert.ToDateTime( Prop.AsDateTime.DateTimeValue );
             else
                 SelectedTime = DateTime.MinValue;
         }
@@ -42,7 +42,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 //if( _DateControl.HiddenClearValue )
                 //    Prop.AsTime.TimeValue = DateTime.MinValue;
                 //else
-                    Prop.AsTime.TimeValue = SelectedTime;
+				Prop.AsDateTime.DateTimeValue = SelectedTime;
             }
         }
         public override void AfterSave()

@@ -1,0 +1,31 @@
+
+.CswComboBox_TopDiv
+{
+    background: #fff;
+    border: 1px solid #abadb3;
+    height: 18px;
+    padding: 0px 0px 0px 3px;
+}
+.CswComboBox_TopDiv_click
+{
+    border: 1px solid #eec77d;
+}
+
+.CswComboBox_ImageCell
+{
+    text-align: right;
+    width: 18px;
+    height: 18px;
+}
+
+.CswComboBox_ChildDiv
+{
+    position: absolute;
+    background: #fff;
+    height: 200px;
+    border: 1px solid #abadb3;
+    display: none;
+    overflow-y: scroll;
+    padding: 0px 0px 0px 3px;
+    z-index: 100;
+}

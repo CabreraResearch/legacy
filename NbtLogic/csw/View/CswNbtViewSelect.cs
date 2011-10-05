@@ -64,7 +64,7 @@ namespace ChemSW.Nbt
             }
             else
             {
-				throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "CswNbtViewSelect was handed an invalid NbtViewId in restoreView()." );
+                throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "CswNbtViewSelect was handed an invalid NbtViewId in restoreView()." );
             }
             //}
             return ( ReturnVal );
@@ -105,9 +105,9 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Save a view to the session view collection.  Sets the SessionViewId on the view.
         /// </summary>
-        public CswNbtSessionDataId saveSessionView( CswNbtView View, bool IncludeInQuickLaunch )
+        public CswNbtSessionDataId saveSessionView( CswNbtView View, bool IncludeInQuickLaunch, bool KeepInQuickLaunch )
         {
-            return _CswNbtResources.SessionDataMgr.saveSessionData( View, IncludeInQuickLaunch );
+            return _CswNbtResources.SessionDataMgr.saveSessionData( View, IncludeInQuickLaunch, false, KeepInQuickLaunch );
         } // saveSessionView()
 
         /// <summary>
@@ -189,9 +189,9 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all views visible to the provided user
         /// </summary>
-        public Collection<CswNbtView> getVisibleViews( ICswNbtUser User, bool IncludeEmptyViews )
+        public Collection<CswNbtView> getVisibleViews( ICswNbtUser User, bool IncludeEmptyViews, CswCommaDelimitedString LimitToViews = null )
         {
-            return getVisibleViews( string.Empty, User, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any );
+            return getVisibleViews( string.Empty, User, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any, LimitToViews );
         }
 
         /// <summary>
@@ -219,61 +219,71 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a Collection of all views visible to the current user
         /// </summary>
-        public Collection<CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode )
+        public Collection<CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode, CswCommaDelimitedString LimitToViews = null )
         {
             CswTimer VisibleViewsTimer = new CswTimer();
 
-            DataTable ViewsTable = null;
-            Collection<CswNbtView> VisibleViews = new Collection<CswNbtView>();
-            //if( _LastVisibleViews != null &&
-            //    _LastOrderBy == OrderBy &&
-            //    _LastUser == User &&
-            //    _LastIncludeEmptyViews == IncludeEmptyViews )
-            //{
-            //    ViewsTable = _LastVisibleViews;
-            //}
-            //else
-            //{
-            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
-            ViewsSelect.S4Parameters.Add( "getroleid", User.RoleId.PrimaryKey.ToString() );
-            ViewsSelect.S4Parameters.Add( "getuserid", User.UserId.PrimaryKey.ToString() );
-            string AddClause = " ";
-            if( MobileOnly )
+            Collection<CswNbtView> Ret = new Collection<CswNbtView>();
+            if( null == LimitToViews || LimitToViews.Count > 0 )
             {
-                AddClause += "and formobile = '" + CswConvert.ToDbVal( true ) + "'";
-            }
-            if( ViewRenderingMode != NbtViewRenderingMode.Any )
-            {
-                AddClause += "and viewmode = '" + ViewRenderingMode.ToString() + "'";
-            }
-            ViewsSelect.S4Parameters.Add( "addclause", AddClause );
-            if( OrderBy != string.Empty )
-                ViewsSelect.S4Parameters.Add( "orderbyclause", OrderBy );
-            else
-                ViewsSelect.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );
-            ViewsTable = ViewsSelect.getTable();
-
-            _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() data fetched", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
-            //}
-
-            // BZ 7074 - Make sure the user has permissions to at least one root node
-            foreach( DataRow Row in ViewsTable.Rows )
-            {
-                CswNbtView ThisView = new CswNbtView( _CswNbtResources );
-                ThisView.LoadXml( Row["viewxml"].ToString() );
-
-                if( ( ( ThisView.Root.ChildRelationships.Count > 0 &&
-                            ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
-                                                                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, R.SecondId, User ) ).Count() > 0 )
-                        ) || IncludeEmptyViews ) &&
-                    ThisView.IsFullyEnabled() &&
-					( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
-                    ( !SearchableOnly || ThisView.IsSearchable() ) )
+                DataTable ViewsTable = null;
+                //if( _LastVisibleViews != null &&
+                //    _LastOrderBy == OrderBy &&
+                //    _LastUser == User &&
+                //    _LastIncludeEmptyViews == IncludeEmptyViews )
+                //{
+                //    ViewsTable = _LastVisibleViews;
+                //}
+                //else
+                //{
+                CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
+                ViewsSelect.S4Parameters.Add( "getroleid", new CswStaticParam( "getroleid", User.RoleId.PrimaryKey.ToString() ) );
+                ViewsSelect.S4Parameters.Add( "getuserid", new CswStaticParam( "getuserid", User.UserId.PrimaryKey.ToString() ) );
+                string AddClause = " ";
+                if( MobileOnly )
                 {
-                    VisibleViews.Add( ThisView );
+                    AddClause += "and formobile = '" + CswConvert.ToDbVal( true ) + "'";
                 }
-            } // foreach( DataRow Row in ViewsTable.Rows )
+                if( ViewRenderingMode != NbtViewRenderingMode.Any )
+                {
+                    AddClause += "and viewmode = '" + ViewRenderingMode.ToString() + "'";
+                }
+                if( null != LimitToViews )
+                {
+                    AddClause += "and nodeviewid in (" + LimitToViews.ToString() + ")";
+                }
+                ViewsSelect.S4Parameters.Add( "addclause", new CswStaticParam( "addclause", AddClause, true ) );
+                if( OrderBy != string.Empty )
+                {
+                    ViewsSelect.S4Parameters.Add( "orderbyclause", new CswStaticParam( "orderbyclause", OrderBy ) );
+                }
+                else
+                {
+                    ViewsSelect.S4Parameters.Add( "orderbyclause", new CswStaticParam( "orderbyclause", "lower(v.viewname)" ) );
+                }
+                ViewsTable = ViewsSelect.getTable();
 
+                _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() data fetched", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
+                //}
+
+                // BZ 7074 - Make sure the user has permissions to at least one root node
+                foreach( DataRow Row in ViewsTable.Rows )
+                {
+                    CswNbtView ThisView = new CswNbtView( _CswNbtResources );
+                    ThisView.LoadXml( Row["viewxml"].ToString() );
+
+                    if( ( ( ThisView.Root.ChildRelationships.Count > 0 &&
+                            ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+                                                                           _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ), true, null, User ) ).Count() > 0 )
+                          ) || IncludeEmptyViews ) &&
+                        ThisView.IsFullyEnabled() &&
+                        ( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
+                        ( !SearchableOnly || ThisView.IsSearchable() ) )
+                    {
+                        Ret.Add( ThisView );
+                    }
+                } // foreach( DataRow Row in ViewsTable.Rows )
+            }
             _LastIncludeEmptyViews = IncludeEmptyViews;
             _LastOrderBy = OrderBy;
             _LastUser = User;
@@ -281,7 +291,7 @@ namespace ChemSW.Nbt
 
             _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() finished", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
 
-            return VisibleViews;
+            return Ret;
         }
 
         /// <summary>
@@ -290,7 +300,7 @@ namespace ChemSW.Nbt
         public DataTable getUserViews()
         {
             CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getUserViews_select", "getUserViewInfo" );
-            ViewsSelect.S4Parameters.Add( "getuserid", _CswNbtResources.CurrentUser.UserId.PrimaryKey.ToString() );
+            ViewsSelect.S4Parameters.Add( "getuserid", new CswStaticParam( "getuserid", _CswNbtResources.CurrentUser.UserId.PrimaryKey.ToString() ) );
             return ViewsSelect.getTable();
         }
 

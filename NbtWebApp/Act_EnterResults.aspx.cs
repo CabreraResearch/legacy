@@ -237,22 +237,22 @@ namespace ChemSW.Nbt.WebPages
                                 ThisCell.Locked = false;
                                 switch( NodeTypeProp.FieldType.FieldType )
                                 {
-                                    case CswNbtMetaDataFieldType.NbtFieldType.Date:
+                                    case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                                         FarPoint.Web.Spread.DateTimeCellType datecell = new FarPoint.Web.Spread.DateTimeCellType();
                                         datecell.ErrorMessage = "Invalid Date";
                                         datecell.FormatString = "M/d/yyyy";
                                         ThisCell.CellType = datecell;
-                                        if(ResultNode.Properties[NodeTypeProp].AsDate.DateValue > DateTime.MinValue)
-                                            ThisCell.Text = ResultNode.Properties[NodeTypeProp].AsDate.DateValue.ToString();
+										if( ResultNode.Properties[NodeTypeProp].AsDateTime.DateTimeValue > DateTime.MinValue )
+											ThisCell.Text = ResultNode.Properties[NodeTypeProp].AsDateTime.DateTimeValue.ToString();
                                         break;
-                                    case CswNbtMetaDataFieldType.NbtFieldType.Time:
-                                        FarPoint.Web.Spread.DateTimeCellType timecell = new FarPoint.Web.Spread.DateTimeCellType();
-                                        timecell.ErrorMessage = "Invalid Time";
-                                        timecell.FormatString = "h:m:s";
-                                        ThisCell.CellType = timecell;
-                                        if( ResultNode.Properties[NodeTypeProp].AsDate.DateValue > DateTime.MinValue ) 
-                                            ThisCell.Text = ResultNode.Properties[NodeTypeProp].AsTime.TimeValue.ToString();
-                                        break;
+									//case CswNbtMetaDataFieldType.NbtFieldType.Time:
+									//    FarPoint.Web.Spread.DateTimeCellType timecell = new FarPoint.Web.Spread.DateTimeCellType();
+									//    timecell.ErrorMessage = "Invalid Time";
+									//    timecell.FormatString = "h:m:s";
+									//    ThisCell.CellType = timecell;
+									//    if( ResultNode.Properties[NodeTypeProp].AsDate.DateValue > DateTime.MinValue ) 
+									//        ThisCell.Text = ResultNode.Properties[NodeTypeProp].AsTime.TimeValue.ToString();
+									//    break;
                                     case CswNbtMetaDataFieldType.NbtFieldType.List:
                                         FarPoint.Web.Spread.ComboBoxCellType listcell = new FarPoint.Web.Spread.ComboBoxCellType();
                                         listcell.Items = CswTools.SplitAndTrim( NodeTypeProp.ListOptions, ',' );
@@ -354,15 +354,15 @@ namespace ChemSW.Nbt.WebPages
                         string NewValue = e.EditValues[CswConvert.ToInt32( ColumnHash[PropName.ToLower()] )].ToString();
                         switch( Prop.FieldType.FieldType )
                         {
-                            case CswNbtMetaDataFieldType.NbtFieldType.Date:
-                                ResultNode.Properties[Prop].AsDate.DateValue = Convert.ToDateTime( NewValue );
+                            case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+								ResultNode.Properties[Prop].AsDateTime.DateTimeValue = Convert.ToDateTime( NewValue );
                                 break;
                             case CswNbtMetaDataFieldType.NbtFieldType.Text:
                                 ResultNode.Properties[Prop].AsText.Text = NewValue;
                                 break;
-                            case CswNbtMetaDataFieldType.NbtFieldType.Time:
-                                ResultNode.Properties[Prop].AsTime.TimeValue = Convert.ToDateTime( NewValue );
-                                break;
+							//case CswNbtMetaDataFieldType.NbtFieldType.Time:
+							//    ResultNode.Properties[Prop].AsTime.TimeValue = Convert.ToDateTime( NewValue );
+							//    break;
                             case CswNbtMetaDataFieldType.NbtFieldType.List:
                                 ResultNode.Properties[Prop].AsList.Value = NewValue;
                                 break;

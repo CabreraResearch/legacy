@@ -43,16 +43,16 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             // BZ 10051 - Set the Date Opened to today
-            DateOpened.DateValue = DateTime.Today;
+			DateOpened.DateTimeValue = DateTime.Today;
             ReportedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
             ReportedBy.CachedNodeName = _CswNbtResources.CurrentNbtUser.Username;
 
             _checkClosed();
 
-            _CswNbtObjClassDefault.beforeCreateNode();
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
         public override void afterCreateNode()
@@ -60,22 +60,22 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
             _checkClosed();
 
-            _CswNbtObjClassDefault.beforeWriteNode();
+            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
         }//beforeWriteNode()
 
         private void _checkClosed()
         {
             // BZ 10051 - If we're closing the Problem, set the Date Closed to today
-            if( Closed.Checked == Tristate.True && DateClosed.DateValue == DateTime.MinValue )
-                DateClosed.DateValue = DateTime.Today;
+			if( Closed.Checked == Tristate.True && DateClosed.DateTimeValue == DateTime.MinValue )
+				DateClosed.DateTimeValue = DateTime.Today;
 
             // BZ 10051 - If we're reopening the Problem, clear the Date Closed
-            if( Closed.Checked == Tristate.False && DateClosed.DateValue != DateTime.MinValue )
-                DateClosed.DateValue = DateTime.MinValue;
+			if( Closed.Checked == Tristate.False && DateClosed.DateTimeValue != DateTime.MinValue )
+				DateClosed.DateTimeValue = DateTime.MinValue;
         }
 
         public override void afterWriteNode()
@@ -178,18 +178,18 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropDate DateOpened
+		public CswNbtNodePropDateTime DateOpened
         {
             get
             {
-                return ( _CswNbtNode.Properties[DateOpenedPropertyName].AsDate );
+                return ( _CswNbtNode.Properties[DateOpenedPropertyName].AsDateTime );
             }
         }
-        public CswNbtNodePropDate DateClosed
+		public CswNbtNodePropDateTime DateClosed
         {
             get
             {
-                return ( _CswNbtNode.Properties[DateClosedPropertyName].AsDate );
+                return ( _CswNbtNode.Properties[DateClosedPropertyName].AsDateTime );
             }
         }
         public CswNbtNodePropLogical Failure

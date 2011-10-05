@@ -20,8 +20,8 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Meta data collection with extra functionality for schema updater
         /// </summary>
-        public CswNbtMetaDataForSchemaUpdater( CswNbtResources Resources, CswNbtMetaDataResources MetaDataResources, bool ExcludeDisabledModules )
-            : base( Resources, MetaDataResources, ExcludeDisabledModules )
+        public CswNbtMetaDataForSchemaUpdater( CswNbtResources Resources, CswNbtMetaDataResources MetaDataResources )
+            : base( Resources, MetaDataResources, false )  // Schema updater should always see all object classes, regardless of modules
         {
         }
 
