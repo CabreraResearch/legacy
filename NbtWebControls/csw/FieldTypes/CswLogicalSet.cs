@@ -85,7 +85,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         }
 
         private CswCheckBoxArray _CBArray;
-        private Label _Label;
+        //private Label _Label;
         protected override void CreateChildControls()
         {
             _CBArray = new CswCheckBoxArray( _CswNbtResources );

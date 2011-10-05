@@ -32,6 +32,9 @@ namespace ChemSW.Nbt.MetaData
 				//PropPermissions.Save();
 				//_CswNbtResources.CurrentNbtUser.RoleNode.postChanges( false );
 
+				// case 23185 - reset permission options
+				_CswNbtResources.CurrentNbtUser.RoleNode.afterPopulateProps();
+
 				_CswNbtResources.Permit.set( new CswNbtPermit.NodeTypePermission[] {
 												CswNbtPermit.NodeTypePermission.Delete, 
 												CswNbtPermit.NodeTypePermission.Create, 
@@ -241,19 +244,22 @@ namespace ChemSW.Nbt.MetaData
 				}
 
 				CswNbtMetaDataNodeTypeProp FinishedProp = NewNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.FinishedPropertyName );
-				FinishedProp.NodeTypeTab = ActionTab;
-				FinishedProp.DisplayRow = 1;
-				FinishedProp.DisplayColumn = 1;
+				//FinishedProp.NodeTypeTab = ActionTab;
+				//FinishedProp.DisplayRow = 1;
+				//FinishedProp.DisplayColumn = 1;
+				FinishedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab, 1, 1 );
 
 				CswNbtMetaDataNodeTypeProp CancelledProp = NewNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.CancelledPropertyName );
-				CancelledProp.NodeTypeTab = ActionTab;
-				CancelledProp.DisplayRow = 2;
-				CancelledProp.DisplayColumn = 1;
+				//CancelledProp.NodeTypeTab = ActionTab;
+				//CancelledProp.DisplayRow = 2;
+				//CancelledProp.DisplayColumn = 1;
+				CancelledProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab, 2, 1 );
 
 				CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.CancelReasonPropertyName );
-				CancelReasonProp.NodeTypeTab = ActionTab;
-				CancelReasonProp.DisplayRow = 3;  // even though webapp interprets this independently, Mobile needs this to be 3
-				CancelReasonProp.DisplayColumn = 1;
+				//CancelReasonProp.NodeTypeTab = ActionTab;
+				//CancelReasonProp.DisplayRow = 3;  // even though webapp interprets this independently, Mobile needs this to be 3
+				//CancelReasonProp.DisplayColumn = 1;
+				CancelReasonProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab, 3, 1 );
 
 
 				// Add a "Section 1" tab

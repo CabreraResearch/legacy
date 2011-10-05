@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Connect Test</title>
+	<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.1.min.js"></script>
+</head>
+<body>
+<span id="results"></span>
+<script language="javascript">
+
+	$(document).ready(function ()
+	{
+		$.ajax({
+			type: 'POST',
+			url: '/NbtWebApp/wsNBT.asmx/ConnectTestDb',
+			dataType: "json",
+			contentType: 'application/json; charset=utf-8',
+			data: '',
+			success: function (data, textStatus, XMLHttpRequest)
+			{
+				var dataresult = $.parseJSON(data.d);
+				if (dataresult.error !== undefined)
+				{
+					$('#results').text( "ERROR: " + dataresult.error );
+				}
+				else
+				{
+					$('#results').text( dataresult.result );
+				}
+			}, // success{}
+			error: function (XMLHttpRequest, textStatus, errorThrown)
+			{
+				$('#results').text( "ERROR: Webservice Error" );
+			}
+		}); // $.ajax({
+	}); // $(document).ready(function() {
+
+
+</script>
+</body>
+</html>

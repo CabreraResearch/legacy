@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Actions
                         CswNbtNode CurrentTargetNode = TargetNodeTree.getNodeForCurrentPosition();
                         ICswNbtPropertySetGeneratorTarget CurrentTargetNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( CurrentTargetNode );
 
-                        DateTime CurrentDate = CurrentTargetNodeAsGeneratorTarget.GeneratedDate.DateValue;
+						DateTime CurrentDate = CurrentTargetNodeAsGeneratorTarget.GeneratedDate.DateTimeValue;
                         if( CurrentDate.Date > ReturnVal.Date )
                         {
                             ReturnVal = CurrentDate.Date;
@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Actions
             Int32 ReturnVal = 0;
 
             // Must have create permissions on this generator's target's nodetype
-			if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetNodeTypeId ) )
+			if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId ) ) )
 			{
 				deleteExistingFutureNodes( CswNbtNodeGenerator );
 
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.Actions
 
 				DateTime PreviousDateOfNextOccurance = DateOfNextOccurance;  // infinite loop guard
 				while( DateOfNextOccurance.Date <= FutureDate.Date &&
-					   ( GeneratorNode.FinalDueDate.Empty || DateOfNextOccurance.Date <= GeneratorNode.FinalDueDate.DateValue.Date ) )
+					   ( GeneratorNode.FinalDueDate.Empty || DateOfNextOccurance.Date <= GeneratorNode.FinalDueDate.DateTimeValue.Date ) )
 				{
 					bool taskgenerated = _CswNbtActGenerateNodes.makeNode( CswNbtNodeGenerator, DateOfNextOccurance );
 					if( taskgenerated )

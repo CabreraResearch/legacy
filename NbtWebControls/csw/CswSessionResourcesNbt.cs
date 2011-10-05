@@ -13,33 +13,30 @@ namespace ChemSW.Nbt
     public class CswSessionResourcesNbt
     {
 		public CswNbtResources CswNbtResources = null;
-        private CswNbtMetaDataEvents _CswNbtMetaDataEvents;
+        //private CswNbtMetaDataEvents _CswNbtMetaDataEvents;
         public CswSessionManager CswSessionManager = null;
         public CswNbtStatisticsEvents CswNbtStatisticsEvents = null;
         private CswNbtStatistics _CswNbtStatistics = null;
 
-		public CswSessionResourcesNbt( HttpApplicationState HttpApplicationState, HttpRequest HttpRequest, HttpResponse HttpResponse, string LoginAccessId, string FilesPath, SetupMode SetupMode )
+		public CswSessionResourcesNbt( HttpApplicationState HttpApplicationState, HttpRequest HttpRequest, HttpResponse HttpResponse, string LoginAccessId, SetupMode SetupMode )
         {
-            CswDbCfgInfoNbt CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode );
-            CswSetupVblsNbt CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode );
-
-            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, CswSetupVblsNbt, CswDbCfgInfoNbt, FilesPath, true, false );
+			CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false );
 
             string RecordStatisticsVblName = "RecordUserStatistics";
             bool RecordStatistics = false;
-            if( CswSetupVblsNbt.doesSettingExist( RecordStatisticsVblName ) )
+            if( CswNbtResources.SetupVbls.doesSettingExist( RecordStatisticsVblName ) )
             {
-                RecordStatistics = ( "1" == CswSetupVblsNbt[RecordStatisticsVblName] );
+				RecordStatistics = ( "1" == CswNbtResources.SetupVbls[RecordStatisticsVblName] );
             }
 
             CswSessionManager = new CswSessionManager( AppType.Nbt, 
 													   new CswWebClientStorageCookies( HttpRequest, HttpResponse ), 
-													   LoginAccessId, 
-													   CswSetupVblsNbt, 
-													   CswDbCfgInfoNbt, 
+													   LoginAccessId,
+													   CswNbtResources.SetupVbls,
+													   CswNbtResources.CswDbCfgInfo, 
 													   true, 
 													   CswNbtResources, 
-													   new CswNbtAuthenticator( CswNbtResources ), 
+													   new CswNbtSchemaAuthenticator( CswNbtResources ), 
 													   _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ), 
 																								  new CswNbtStatisticsStorageStateServer(), 
 																								  RecordStatistics ) );
@@ -54,7 +51,7 @@ namespace ChemSW.Nbt
 
 
         public AuthenticationStatus attemptRefresh() { return ( CswSessionManager.attemptRefresh() ); }
-        public void endSession() { CswSessionManager.updateLastAccess(); }
+        public void endSession() { CswSessionManager.updateLastAccess(false); }
 
         public void purgeExpiredSessions() { CswSessionManager.SessionsList.purgeExpiredSessions(); }
 

@@ -101,7 +101,6 @@ namespace ChemSW.Nbt.Sched
 
                 catch( Exception Exception )
                 {
-
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;//last line
                 }
 

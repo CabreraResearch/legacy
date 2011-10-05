@@ -18,3 +18,6 @@ relre:.gitignore
 glob:PrecompiledWeb
 glob:Nbt.sln.docstates
 glob:NbtWebApp/js/CswAll.min.js
+glob:NbtWebApp/js/mobile/CswAllMobile.min.js
+glob:pullMainKeith.bat
+pullMainKeith.bat

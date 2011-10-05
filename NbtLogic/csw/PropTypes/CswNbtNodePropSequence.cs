@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -17,7 +18,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Sequence )
             {
-				throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
                                             "CswNbtNodePropSequence() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
             }
 
@@ -99,18 +100,18 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        override public void onBeforeUpdateNodePropRow( bool IsCopy )
+		override public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
             if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Sequence )
             {
-				throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
                                             "CswNbtNodePropSequence.onBeforeUpdateNodePropRow() was called on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType.ToString() ) );
             }
 
             // Automatically generate a value.  This will not overwrite existing values.
             setSequenceValue();
 
-            base.onBeforeUpdateNodePropRow( IsCopy );
+			base.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
         }//onBeforeUpdateNodePropRow()
 
         public override void Copy( CswNbtNodePropData Source )
@@ -123,25 +124,33 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode SequenceNode = CswXmlDocument.AppendXmlNode( ParentNode, _SequenceSubField.ToXmlNodeName(), Sequence );
-            XmlNode SequenceNumberNode = CswXmlDocument.AppendXmlNode( ParentNode, _SequenceNumberSubField.ToXmlNodeName(), SequenceNumber );
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            string ProspectiveSequence = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SequenceSubField.ToXmlNodeName() );
-            if( ProspectiveSequence != string.Empty )
-                setSequenceValueOverride( ProspectiveSequence, false );
+            CswXmlDocument.AppendXmlNode( ParentNode, _SequenceSubField.ToXmlNodeName(), Sequence );
+            CswXmlDocument.AppendXmlNode( ParentNode, _SequenceNumberSubField.ToXmlNodeName(), SequenceNumber );
         }
 
         public override void ToXElement( XElement ParentNode )
         {
-            throw new NotImplementedException();
+            ParentNode.Add( new XElement( _SequenceSubField.ToXmlNodeName( true ), Sequence ),
+                new XElement( _SequenceNumberSubField.ToXmlNodeName( true ), SequenceNumber ) );
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject[_SequenceSubField.ToXmlNodeName( true )] = Sequence;
+            ParentObject[_SequenceNumberSubField.ToXmlNodeName( true )] = SequenceNumber;
+        }
+
+        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            _saveProp( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SequenceSubField.ToXmlNodeName() ) );
         }
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( null != XmlNode.Element( _SequenceSubField.ToXmlNodeName( true ) ) )
+            {
+                _saveProp( XmlNode.Element( _SequenceSubField.ToXmlNodeName( true ) ).Value );
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -151,6 +160,21 @@ namespace ChemSW.Nbt.PropTypes
                 setSequenceValueOverride( ProspectiveSequence, false );
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _SequenceSubField.ToXmlNodeName( true ) ) )
+            {
+                _saveProp( (string) JObject.Property( _SequenceSubField.ToXmlNodeName( true ) ).Value );
+            }
+        }
+
+        private void _saveProp( string ProspectiveSequence )
+        {
+            if( ProspectiveSequence != string.Empty )
+            {
+                setSequenceValueOverride( ProspectiveSequence, false );
+            }
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

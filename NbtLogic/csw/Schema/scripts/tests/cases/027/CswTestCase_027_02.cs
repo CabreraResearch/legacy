@@ -17,32 +17,29 @@ using ChemSW.Log;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_027_02 : ICswUpdateSchemaTo
+    public class CswTestCase_027_02 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_027.Purpose, "fill tables" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_027.Purpose, "fill tables" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_027 _CswTstCaseRsrc_027 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_027_02( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_027_02( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_027 = (CswTstCaseRsrc_027) CswTstCaseRsrc;
+			_CswTstCaseRsrc_027 = (CswTstCaseRsrc_027) CswTstCaseRsc;
 
         }//ctor
 
 
-        public void update()
+        public override void update()
         {
-            _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( Description + ": Total Process Memory before: " + _CswTstCaseRsrc_027.TotalProcessMemory );
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_027.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+			
+			_CswNbtSchemaModTrnsctn.CswLogger.reportAppState( Description + ": Total Process Memory before: " + _CswTstCaseRsrc_027.TotalProcessMemory );
             _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( Description + ": Total GC Memory before: " + _CswTstCaseRsrc_027.TotalGCMemorySansCollection );
 
             _CswTstCaseRsrc_027.memoryTestBegin();

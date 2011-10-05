@@ -1,21 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Web;
-using System.Web.Services;
-using System.Xml;
-using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Config;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.NbtWebControls;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -43,9 +31,9 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public string getDashboard()
+        public JObject getDashboard()
         {
-            string ret = string.Empty;
+            JObject Ret = new JObject();
             Collection<DashIcon> DashIcons = new Collection<DashIcon>();
             DashIcons.Add( new DashIcon( "IMCS - Instrument Maintenance and Calibration",
                                          "dash_imcs",
@@ -75,80 +63,104 @@ namespace ChemSW.Nbt.WebServices
                                          "dash_biosafety",
                                          "http://www.chemswlive.com/19002.htm",
                                          CswNbtResources.CswNbtModule.BioSafety ) );
-            DashIcons.Add( new DashIcon( "Mobile",
-                                         "dash_hh",
-                                         "http://www.chemswlive.com/cis-pro-mobile.htm",
-                                         CswNbtResources.CswNbtModule.Mobile ) );
+			//DashIcons.Add( new DashIcon( "Mobile",
+			//                             "dash_hh",
+			//                             "http://www.chemswlive.com/cis-pro-mobile.htm",
+			//                             CswNbtResources.CswNbtModule.Mobile ) );
             DashIcons.Add( new DashIcon( "NBTManager",
                                          "dash_nbtmgr",
                                          "",
                                          CswNbtResources.CswNbtModule.NBTManager ) );
 
-            foreach( DashIcon DashIcon in DashIcons )
+            foreach( DashIcon DashIcon in DashIcons.Where( DashIcon => _CswNbtResources.IsModuleEnabled( DashIcon.Module ) || DashIcon.Module != CswNbtResources.CswNbtModule.NBTManager ) )
             {
-                if( _CswNbtResources.IsModuleEnabled( DashIcon.Module ) )
-                {
-                    ret += "<dash id=\"" + DashIcon.Id + "\" text=\"" + DashIcon.Text + "\" href=\"" + DashIcon.Href + "\" />";
-                }
-                else if( DashIcon.Module != CswNbtResources.CswNbtModule.NBTManager )
-                {
-                    ret += "<dash id=\"" + DashIcon.Id + "_off\" text=\"" + DashIcon.Text + "\" href=\"" + DashIcon.Href + "\" />";
-                }
+                Ret.Add( new JProperty( ( _CswNbtResources.IsModuleEnabled( DashIcon.Module ) ) ? DashIcon.Id : DashIcon.Id + "_off",
+                                        new JObject(
+                                            new JProperty( "text", DashIcon.Text ),
+                                            new JProperty( "href", DashIcon.Href )
+                                            )
+                             ) );
             }
 
-            return "<dashboard>" + ret + "</dashboard>";
+            return Ret;
         } // getDashboard()
 
 
-        public string getHeaderMenu()
+        public JObject getHeaderMenu()
         {
-            string ret = string.Empty;
+            JObject Ret = new JObject();
 
-            ret += "<item text=\"Home\" action=\"Home\" />";
-			if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-			{
-				ret += "<item text=\"Admin\">";
-				ret += "  <item text=\"Current User List\" href=\"UserList.aspx\" />";
-				ret += "  <item text=\"View Log\" href=\"DisplayLog.aspx\" />";
-				ret += "  <item text=\"Edit Config Vars\" href=\"ConfigVars.aspx\" />";
-				ret += "  <item text=\"Statistics\" href=\"Statistics.aspx\" />";
-				ret += "</item>";
-			}
-			ret += "<item text=\"Preferences\">";
-			ret += "  <item text=\"Profile\" action=\"Profile\" userid=\"" + _CswNbtResources.CurrentNbtUser.UserNode.NodeId.ToString() + "\" />";
-			ret += "  <item text=\"Subscriptions\" href=\"Subscriptions.aspx\" />";
-            ret += "</item>";
-            ret += "<item text=\"Help\">";
-            ret += "  <item text=\"Help\" popup=\"help/index.htm\" />";
-            ret += "  <item text=\"About\" action=\"About\" />";
-            ret += "</item>";
-            ret += "<item text=\"Logout\" action=\"Logout\" />";
+            Ret["Home"] = new JObject( new JProperty( "action", "Home" ) );
+            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            {
+                Ret["Admin"] = new JObject(
+                                new JProperty( "haschildren", true ),
+                                new JProperty( "Current User List", new JObject(
+                                    new JProperty( "href", "UserList.aspx" )
+                                ) ),
+                                new JProperty( "View Log", new JObject(
+                                    new JProperty( "href", "DisplayLog.aspx" )
+                                ) ),
+                                new JProperty( "Edit Config Vars", new JObject(
+                                    new JProperty( "href", "ConfigVars.aspx" )
+                                ) ),
+                                new JProperty( "Statistics", new JObject(
+                                    new JProperty( "href", "Statistics.aspx" )
+                                ) )
+                        );
+            }
+            Ret["Preferences"] = new JObject(
+                                    new JProperty( "haschildren", true ),
+                                    new JProperty( "Profile", new JObject(
+                                        new JProperty( "action", "Profile" ),
+                                        new JProperty( "userid", _CswNbtResources.CurrentNbtUser.UserNode.NodeId.ToString() )
+                                    ) ),
+                                    new JProperty( "Subscriptions", new JObject(
+                                        new JProperty( "href", "Subscriptions.aspx" )
+                                    ) )
+                        );
+            Ret["Help"] = new JObject(
+                                new JProperty( "haschildren", true ),
+                                new JProperty( "Help", new JObject(
+                                    new JProperty( "popup", "help/index.htm" )
+                                ) ),
+                                new JProperty( "About", new JObject(
+                                    new JProperty( "action", "About" )
+                                ) )
+                        );
+            Ret["Logout"] = new JObject( new JProperty( "action", "Logout" ) );
 
-            return "<menu>" + ret + "</menu>";
+            return Ret;
         }
 
 
-        public string makeVersionXml()
+        public JObject makeVersionJson()
         {
-            string ret = string.Empty;
+            JObject ret = new JObject();
 
             string AssemblyFilePath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "/_Assembly.txt";
             if( File.Exists( AssemblyFilePath ) )
             {
                 TextReader AssemblyFileReader = new StreamReader( AssemblyFilePath );
-                ret += "<assembly>" + AssemblyFileReader.ReadLine() + "</assembly>";
+                ret.Add( new JProperty( "assembly", AssemblyFileReader.ReadLine() ) );
                 AssemblyFileReader.Close();
             }
+
+            JObject ComponentObj = new JObject();
+            JProperty ComponentsProp = new JProperty( "components", ComponentObj );
+            ret.Add( ComponentsProp );
 
             string VersionFilePath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "/_Version.txt";
             if( File.Exists( VersionFilePath ) )
             {
                 TextReader VersionFileReader = new StreamReader( VersionFilePath );
-                ret += "<component>";
-                ret += " <name>NbtWebApp</name>";
-                ret += " <version>" + VersionFileReader.ReadLine() + "</version>";
-                ret += " <copyright>Copyright &copy; ChemSW, Inc. 2005-2011</copyright>";
-                ret += "</component>";
+                ComponentObj.Add( new JProperty( "NbtWebApp",
+                                        new JObject(
+                                            new JProperty( "name", "NbtWebApp" ),
+                                            new JProperty( "version", VersionFileReader.ReadLine() ),
+                                            new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-2011" )
+                                            )
+                             ) );
                 VersionFileReader.Close();
             }
 
@@ -164,44 +176,37 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( string AssemblyName in Assemblies )
             {
-                ret += "<component>";
-                if( AssemblyName.Contains( "," ) )
-                    ret += "<name>" + AssemblyName.Substring( 0, AssemblyName.IndexOf( ',' ) ) + "</name>";
-                else
-                    ret += "<name>" + AssemblyName + "</name>";
+                string name = string.Empty;
+                name = AssemblyName.Contains( "," ) ? AssemblyName.Substring( 0, AssemblyName.IndexOf( ',' ) ) : AssemblyName;
+
+                JObject AssemObj = new JObject();
+                ComponentObj.Add( new JProperty( name, AssemObj ) );
+
                 Assembly AssemblyInfo = Assembly.Load( AssemblyName );
                 object[] AssemblyAttributes = (object[]) AssemblyInfo.GetCustomAttributes( true );
 
                 string Version = AssemblyInfo.GetName().Version.ToString();
                 string Copyright = string.Empty;
-                foreach( object AssemblyAttribute in AssemblyAttributes )
+                foreach( AssemblyCopyrightAttribute AssemblyAttribute in AssemblyAttributes.OfType<AssemblyCopyrightAttribute>() )
                 {
-                    //if (AssemblyAttribute is AssemblyFileVersionAttribute)
-                    //{
-                    //    Version = ( (AssemblyFileVersionAttribute) AssemblyAttribute ).Version;
-                    //}
-                    if( AssemblyAttribute is AssemblyCopyrightAttribute )
-                    {
-                        Copyright = ( (AssemblyCopyrightAttribute) AssemblyAttribute ).Copyright;
-                    }
+                    Copyright = ( AssemblyAttribute ).Copyright;
                 }
-                ret += "<version>" + Version + "</version>";
-                ret += "<copyright>" + Copyright + "</copyright>";
-                ret += "</component>";
+                AssemObj.Add( new JProperty( "name", name ) );
+                AssemObj.Add( new JProperty( "version", Version ) );
+                AssemObj.Add( new JProperty( "copyright", Copyright ) );
             }
 
-            //CswTableCaddy ConfigVarsTableCaddy = Master.CswNbtResources.makeCswTableCaddy("configuration_variables");
-            //ConfigVarsTableCaddy.WhereClause = "where variablename = 'schemaversion'";
-            //DataTable ConfigVarsTable = ConfigVarsTableCaddy.Table;
+            ComponentObj.Add( new JProperty( "Schema",
+                                    new JObject(
+                                        new JProperty( "name", "Schema" ),
+                                        new JProperty( "version", _CswNbtResources.getConfigVariableValue( "schemaversion" ) ),
+                                        new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-2011" )
+                                        )
 
-            ret += "<component>";
-            ret += " <name>Schema</name>";
-            ret += " <version>" + _CswNbtResources.getConfigVariableValue( "schemaversion" ) + "</version>";
-            ret += " <copyright>Copyright &copy; ChemSW, Inc. 2005-2011</copyright>";
-            ret += "</component>"; 
+                         ) );
 
-            return "<versions>" + ret + "</versions>";
-        } // makeVersionXml()
+            return ret;
+        } // makeVersionJson()
 
 
 

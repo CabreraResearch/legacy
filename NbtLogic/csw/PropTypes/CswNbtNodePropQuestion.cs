@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -20,16 +21,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question )
             {
-				throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
                                             "CswNbtNodePropQuestion() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
             }
 
-            _AnswerSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).AnswerSubField;
-            _CommentsSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CommentsSubField;
-            _CorrectiveActionSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CorrectiveActionSubField;
-            _DateAnsweredSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).DateAnsweredSubField;
-            _DateCorrectedSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).DateCorrectedSubField;
-            _IsCompliantSubField = ( (CswNbtFieldTypeRuleQuestion) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).IsCompliantSubField;
+            CswNbtFieldTypeRuleQuestion FieldTypeRuleQuestion = (CswNbtFieldTypeRuleQuestion) _CswNbtMetaDataNodeTypeProp.FieldTypeRule;
+
+            _AnswerSubField = FieldTypeRuleQuestion.AnswerSubField;
+            _CommentsSubField = FieldTypeRuleQuestion.CommentsSubField;
+            _CorrectiveActionSubField = FieldTypeRuleQuestion.CorrectiveActionSubField;
+            _DateAnsweredSubField = FieldTypeRuleQuestion.DateAnsweredSubField;
+            _DateCorrectedSubField = FieldTypeRuleQuestion.DateCorrectedSubField;
+            _IsCompliantSubField = FieldTypeRuleQuestion.IsCompliantSubField;
 
         }//ctor
 
@@ -64,28 +67,28 @@ namespace ChemSW.Nbt.PropTypes
             get { return _CswNbtNodePropData.GetPropRowValue( _AnswerSubField.Column ); }
             set
             {
-				if( value != _CswNbtNodePropData.GetPropRowValue( _AnswerSubField.Column ) )
-				{
-					string AnswerVal = value;
+                if( value != _CswNbtNodePropData.GetPropRowValue( _AnswerSubField.Column ) )
+                {
+                    string AnswerVal = value;
 
-					DateTime UpdateDateAnswered = DateAnswered;
-					if( !string.IsNullOrEmpty( AnswerVal ) )
-					{
-						if( UpdateDateAnswered == DateTime.MinValue )  // case 21056
-						{
-							UpdateDateAnswered = DateTime.Today;
-						}
-					}
-					else
-					{
-						UpdateDateAnswered = DateTime.MinValue;
-					}
-					DateAnswered = UpdateDateAnswered;
-					//IsCompliant = _IsCompliant;
-					_CswNbtNodePropData.SetPropRowValue( _AnswerSubField.Column, AnswerVal );
+                    DateTime UpdateDateAnswered = DateAnswered;
+                    if( !string.IsNullOrEmpty( AnswerVal ) )
+                    {
+                        if( UpdateDateAnswered == DateTime.MinValue )  // case 21056
+                        {
+                            UpdateDateAnswered = DateTime.Today;
+                        }
+                    }
+                    else
+                    {
+                        UpdateDateAnswered = DateTime.MinValue;
+                    }
+                    DateAnswered = UpdateDateAnswered;
+                    //IsCompliant = _IsCompliant;
+                    _CswNbtNodePropData.SetPropRowValue( _AnswerSubField.Column, AnswerVal );
 
-					_synchGestalt( AnswerVal );
-				}
+                    _synchGestalt( AnswerVal );
+                }
             }
         }
 
@@ -97,20 +100,20 @@ namespace ChemSW.Nbt.PropTypes
             get { return _CswNbtNodePropData.GetPropRowValue( _CorrectiveActionSubField.Column ); }
             set
             {
-				if( value != _CswNbtNodePropData.GetPropRowValue( _CorrectiveActionSubField.Column ) )
-				{
-					string val = value;
-					DateTime UpdateDateCorrected = DateTime.Today;
+                if( value != _CswNbtNodePropData.GetPropRowValue( _CorrectiveActionSubField.Column ) )
+                {
+                    string val = value;
+                    DateTime UpdateDateCorrected = DateTime.Today;
 
-					if( string.IsNullOrEmpty( val ) )
-					{
-						UpdateDateCorrected = DateTime.MinValue;
-					}
+                    if( string.IsNullOrEmpty( val ) )
+                    {
+                        UpdateDateCorrected = DateTime.MinValue;
+                    }
 
-					DateCorrected = UpdateDateCorrected;
-					//IsCompliant = _IsCompliant;
-					_CswNbtNodePropData.SetPropRowValue( _CorrectiveActionSubField.Column, val );
-				}
+                    DateCorrected = UpdateDateCorrected;
+                    //IsCompliant = _IsCompliant;
+                    _CswNbtNodePropData.SetPropRowValue( _CorrectiveActionSubField.Column, val );
+                }
             }
         }
 
@@ -127,7 +130,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public DateTime DateAnswered
         {
-            get { return CswConvert.ToDateTime( _CswNbtNodePropData.GetPropRowValue( _DateAnsweredSubField.Column ) ); }
+            get { return _CswNbtNodePropData.GetPropRowValueDate( _DateAnsweredSubField.Column ); }
             private set
             {
                 _CswNbtNodePropData.SetPropRowValue( _DateAnsweredSubField.Column, value );
@@ -139,7 +142,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public DateTime DateCorrected
         {
-            get { return CswConvert.ToDateTime( _CswNbtNodePropData.GetPropRowValue( _DateCorrectedSubField.Column ) ); }
+            get { return _CswNbtNodePropData.GetPropRowValueDate( _DateCorrectedSubField.Column ); }
             private set
             {
                 _CswNbtNodePropData.SetPropRowValue( _DateCorrectedSubField.Column, value );
@@ -256,45 +259,94 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToXml( XmlNode ParentNode )
         {
-            XmlNode AnswerNode = CswXmlDocument.AppendXmlNode( ParentNode, _AnswerSubField.ToXmlNodeName(), Answer.ToString() );
-            XmlNode AllowedAnswersNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.AllowedAnswers.ToString().ToLower(), AllowedAnswersString );
-            XmlNode CompliantAnswersNode = CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.CompliantAnswers.ToString().ToLower(), CompliantAnswersString );
-            XmlNode CommentsNode = CswXmlDocument.AppendXmlNode( ParentNode, _CommentsSubField.ToXmlNodeName(), Comments.ToString() );
-            XmlNode CorrectiveActionNode = CswXmlDocument.AppendXmlNode( ParentNode, _CorrectiveActionSubField.ToXmlNodeName(), CorrectiveAction.ToString() );
-			XmlNode IsCompliantNode = CswXmlDocument.AppendXmlNode( ParentNode, _IsCompliantSubField.ToXmlNodeName(), IsCompliant.ToString() );
-		
-			if( DateAnswered != DateTime.MinValue )
-				CswXmlDocument.AppendXmlNode( ParentNode, _DateAnsweredSubField.ToXmlNodeName(), DateAnswered.ToShortDateString() );
-			else
-				CswXmlDocument.AppendXmlNode( ParentNode, _DateAnsweredSubField.ToXmlNodeName(), string.Empty );
+            CswXmlDocument.AppendXmlNode( ParentNode, _AnswerSubField.ToXmlNodeName(), Answer );
+            CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.AllowedAnswers.ToString().ToLower(), AllowedAnswersString );
+            CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.CompliantAnswers.ToString().ToLower(), CompliantAnswersString );
+            CswXmlDocument.AppendXmlNode( ParentNode, _CommentsSubField.ToXmlNodeName(), Comments );
+            CswXmlDocument.AppendXmlNode( ParentNode, _CorrectiveActionSubField.ToXmlNodeName(), CorrectiveAction );
+            CswXmlDocument.AppendXmlNode( ParentNode, _IsCompliantSubField.ToXmlNodeName(), IsCompliant.ToString() );
 
-			if( DateCorrected != DateTime.MinValue )
-				CswXmlDocument.AppendXmlNode( ParentNode, _DateCorrectedSubField.ToXmlNodeName(), DateCorrected.ToShortDateString() );
-			else
-				CswXmlDocument.AppendXmlNode( ParentNode, _DateCorrectedSubField.ToXmlNodeName(), string.Empty );
-		}
+            CswXmlDocument.AppendXmlNode( ParentNode, _DateAnsweredSubField.ToXmlNodeName(), ( DateAnswered != DateTime.MinValue ) ?
+                DateAnswered.ToShortDateString() : string.Empty );
 
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-			// case 21010 - set dates from data first, and only if they are currently blank
-			if( DateAnswered == DateTime.MinValue )
-				DateAnswered = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateAnsweredSubField.ToXmlNodeName() );
-			if( DateCorrected == DateTime.MinValue )
-				DateCorrected = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateCorrectedSubField.ToXmlNodeName() );
-
-			Answer = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _AnswerSubField.ToXmlNodeName() );
-            Comments = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CommentsSubField.ToXmlNodeName() );
-            CorrectiveAction = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CorrectiveActionSubField.ToXmlNodeName() );
+            CswXmlDocument.AppendXmlNode( ParentNode, _DateCorrectedSubField.ToXmlNodeName(), ( DateCorrected != DateTime.MinValue ) ?
+                DateCorrected.ToShortDateString() : string.Empty );
         }
 
         public override void ToXElement( XElement ParentNode )
         {
-            throw new NotImplementedException();
+            ParentNode.Add( new XElement( _AnswerSubField.ToXmlNodeName( true ), Answer ),
+                            new XElement( CswNbtSubField.SubFieldName.AllowedAnswers.ToString().ToLower(), AllowedAnswersString ),
+                            new XElement( CswNbtSubField.SubFieldName.CompliantAnswers.ToString().ToLower(), CompliantAnswersString ),
+                            new XElement( _CommentsSubField.ToXmlNodeName( true ), Comments ),
+                            new XElement( _CorrectiveActionSubField.ToXmlNodeName( true ), CorrectiveAction ),
+                            new XElement( _IsCompliantSubField.ToXmlNodeName( true ), IsCompliant.ToString() ),
+                            new XElement( _DateAnsweredSubField.ToXmlNodeName( true ), ( DateAnswered != DateTime.MinValue ) ?
+                                    DateAnswered.ToShortDateString() : string.Empty ),
+                            new XElement( _DateCorrectedSubField.ToXmlNodeName( true ), ( DateCorrected != DateTime.MinValue ) ?
+                                    DateCorrected.ToShortDateString() : string.Empty ) );
+        }
+
+		public override void ToJSON( JObject ParentObject )
+		{
+			ParentObject[_AnswerSubField.ToXmlNodeName( true )] = Answer;
+			ParentObject[CswNbtSubField.SubFieldName.AllowedAnswers.ToString().ToLower()] = AllowedAnswersString;
+			ParentObject[CswNbtSubField.SubFieldName.CompliantAnswers.ToString().ToLower()] = CompliantAnswersString;
+			ParentObject[_CommentsSubField.ToXmlNodeName( true )] = Comments;
+			ParentObject[_CorrectiveActionSubField.ToXmlNodeName( true )] = CorrectiveAction;
+			ParentObject[_IsCompliantSubField.ToXmlNodeName( true )] = IsCompliant.ToString();
+			//ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = ( DateAnswered != DateTime.MinValue ) ?
+			//        DateAnswered.ToShortDateString() : string.Empty;
+			//ParentObject[_DateCorrectedSubField.ToXmlNodeName( true )] = ( DateCorrected != DateTime.MinValue ) ?
+			//        DateCorrected.ToShortDateString() : string.Empty;
+
+			CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources, DateAnswered );
+			ParentObject.Add( new JProperty( _DateAnsweredSubField.ToXmlNodeName( true ), CswDateAnswered.ToClientAsDateTimeJObject() ) );
+			CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources, DateCorrected );
+			ParentObject.Add( new JProperty( _DateCorrectedSubField.ToXmlNodeName( true ), CswDateCorrected.ToClientAsDateTimeJObject() ) );
+		}
+
+        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            // case 21010 - set dates from data first, and only if they are currently blank
+            if( DateAnswered == DateTime.MinValue )
+                DateAnswered = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateAnsweredSubField.ToXmlNodeName() );
+            if( DateCorrected == DateTime.MinValue )
+                DateCorrected = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateCorrectedSubField.ToXmlNodeName() );
+
+            Answer = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _AnswerSubField.ToXmlNodeName() );
+            Comments = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CommentsSubField.ToXmlNodeName() );
+            CorrectiveAction = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CorrectiveActionSubField.ToXmlNodeName() );
         }
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            if( DateAnswered == DateTime.MinValue )
+            {
+                if( null != XmlNode.Element( _DateAnsweredSubField.ToXmlNodeName( true ) ) )
+                {
+                    DateAnswered = CswConvert.ToDateTime( XmlNode.Element( _DateAnsweredSubField.ToXmlNodeName( true ) ).Value );
+                }
+            }
+            if( DateCorrected == DateTime.MinValue )
+            {
+                if( null != XmlNode.Element( _DateCorrectedSubField.ToXmlNodeName( true ) ) )
+                {
+                    DateCorrected = CswConvert.ToDateTime( XmlNode.Element( _DateCorrectedSubField.ToXmlNodeName( true ) ).Value );
+                }
+            }
+            if( null != XmlNode.Element( _AnswerSubField.ToXmlNodeName( true ) ) )
+            {
+                Answer = XmlNode.Element( _AnswerSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != XmlNode.Element( _CommentsSubField.ToXmlNodeName( true ) ) )
+            {
+                Comments = XmlNode.Element( _CommentsSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != XmlNode.Element( _CorrectiveActionSubField.ToXmlNodeName( true ) ) )
+            {
+                CorrectiveAction = XmlNode.Element( _CorrectiveActionSubField.ToXmlNodeName( true ) ).Value;
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -310,6 +362,42 @@ namespace ChemSW.Nbt.PropTypes
                 DateCorrected = Convert.ToDateTime( DateCorrectedString );
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+			if( DateAnswered == DateTime.MinValue )
+			{
+				//    if( null != JObject.Property( _DateAnsweredSubField.ToXmlNodeName( true ) ) )
+				//    {
+				//        DateAnswered = CswConvert.ToDateTime( JObject.Property( _DateAnsweredSubField.ToXmlNodeName( true ) ).Value );
+				//    }
+				CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources );
+				CswDateAnswered.FromClientDateTimeJObject( (JObject) JObject[_DateAnsweredSubField.ToXmlNodeName( true )] );
+				DateAnswered = CswDateAnswered.ToDateTime();
+			}
+			if( DateCorrected == DateTime.MinValue )
+			{
+				//    if( null != JObject.Property( _DateCorrectedSubField.ToXmlNodeName( true ) ) )
+				//    {
+				//        DateCorrected = CswConvert.ToDateTime( JObject.Property( _DateCorrectedSubField.ToXmlNodeName( true ) ).Value );
+				//    }
+				CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources );
+				CswDateCorrected.FromClientDateTimeJObject( (JObject) JObject[_DateCorrectedSubField.ToXmlNodeName( true )] );
+				DateCorrected = CswDateCorrected.ToDateTime();
+			}
+
+			if( null != JObject.Property( _AnswerSubField.ToXmlNodeName( true ) ) )
+            {
+                Answer = (string) JObject.Property( _AnswerSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != JObject.Property( _CommentsSubField.ToXmlNodeName( true ) ) )
+            {
+                Comments = (string) JObject.Property( _CommentsSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != JObject.Property( _CorrectiveActionSubField.ToXmlNodeName( true ) ) )
+            {
+                CorrectiveAction = (string) JObject.Property( _CorrectiveActionSubField.ToXmlNodeName( true ) ).Value;
+            }
+        }
     }//CswNbtNodePropQuestion
 
 }//namespace 

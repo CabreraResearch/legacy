@@ -30,7 +30,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         }
 
         private CswTriStateCheckBox _TriStateCheckBox;
-        private DropDownList _ListBox;
+        //private DropDownList _ListBox;
         protected override void CreateChildControls()
         {
 
@@ -77,7 +77,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         /// <summary>
         /// AutoPostBack setting of control
         /// </summary>
-        private bool _AutoPostBack = false;
+        //private bool _AutoPostBack = false;
         public bool AutoPostBack
         {
             get

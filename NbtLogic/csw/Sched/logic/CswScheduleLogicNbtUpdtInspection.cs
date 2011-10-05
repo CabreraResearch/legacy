@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.Sched
 			_CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
 		}
 
-        private CswNbtNode _CswNbtNodeGenerator;
+        //private CswNbtNode _CswNbtNodeGenerator;
         private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending );
         private string _Overdue = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Overdue );
         public void threadCallBack()
@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.Sched
                     {
                         CswNbtObjClassInspectionDesign CurrentInspectionDesign = InspectionDesigns[idx];
 
-                        DateTime DueDate = CurrentInspectionDesign.Date.DateValue;
+						DateTime DueDate = CurrentInspectionDesign.Date.DateTimeValue;
                         CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( CurrentInspectionDesign.Generator.RelatedNodeId );
                         if( null != GeneratorNode &&
                             _Pending == CurrentInspectionDesign.Status.Value &&

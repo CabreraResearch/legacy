@@ -20,7 +20,7 @@
 * http://bassistance.de/jquery-plugins/jquery-plugin-validation/
 * http://docs.jquery.com/Plugins/Validation
 *
-* Copyright (c) 2006 - 2011 Jörn Zaefferer
+* Copyright (c) 2006 - 2011 JÃ¶rn Zaefferer
 *
 */
 

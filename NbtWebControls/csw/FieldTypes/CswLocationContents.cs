@@ -7,7 +7,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswLocationContents : CswFieldTypeWebControl
     {
-        private CswNbtNodeKey _SelectedNodeKey;
+        //private CswNbtNodeKey _SelectedNodeKey;
 
         public CswLocationContents( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )

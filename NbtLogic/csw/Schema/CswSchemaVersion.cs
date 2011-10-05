@@ -411,7 +411,8 @@ namespace ChemSW.Nbt.Schema
             field1_date,
             field1_numeric,
             field2_date,
-            objectclasspropid,
+			field2_numeric,
+			objectclasspropid,
             isdemo
         }
 

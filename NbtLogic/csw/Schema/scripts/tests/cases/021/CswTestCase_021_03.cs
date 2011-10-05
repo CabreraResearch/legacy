@@ -15,32 +15,29 @@ using ChemSW.Audit;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_021_03 : ICswUpdateSchemaTo
+    public class CswTestCase_021_03 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_021.Purpose, "verify contents of audit" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_021.Purpose, "verify contents of audit" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_021 _CswTstCaseRsrc_021 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_021_03( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_021_03( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_021 = (CswTstCaseRsrc_021) CswTstCaseRsrc;
+			_CswTstCaseRsrc_021 = (CswTstCaseRsrc_021) CswTstCaseRsc;
 
         }//ctor
 
 
-        public void update()
+        public override void update()
         {
-            string MisMatchMessage = string.Empty;
+			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			_CswTstCaseRsrc_021.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+			
+			string MisMatchMessage = string.Empty;
             if( false == _CswTstCaseRsrc_021.compareTargetAndAuditedData( ref MisMatchMessage ) )
             {
                 throw ( new CswDniException( "Auditing test failed: " + MisMatchMessage ) );

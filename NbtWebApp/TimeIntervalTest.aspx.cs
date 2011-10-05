@@ -33,7 +33,7 @@ public partial class TimeIntervalTest : System.Web.UI.Page
         TimeIntervalLiteral.Text = "Time Interval: ";
         Table.addControl(0,0,TimeIntervalLiteral);
 
-        TimeIntervalSelector = new CswTimeIntervalSelector(false);
+        TimeIntervalSelector = new CswTimeIntervalSelector(null, false);
         TimeIntervalSelector.ID = "TimeIntervalSelector";
         Table.addControl(0,1,TimeIntervalSelector);
 

@@ -15,31 +15,35 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public class CswTestCase_013_04 : ICswUpdateSchemaTo
+    public class CswTestCase_013_04 : CswUpdateSchemaTo
     {
-
-
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
-        public string Description { get { return ( _CswTstCaseRsrc.makeTestCaseDescription( this.GetType().Name, _CswTstCaseRsrc_013.Purpose, "Modify col 2 and commit" ) ); } }
+        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_013.Purpose, "Modify col 2 and commit" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_013 _CswTstCaseRsrc_013 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
-        public CswTestCase_013_04( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, CswSchemaVersion CswSchemaVersion, object CswTstCaseRsrc )
+        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        public CswTestCase_013_04( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-            _CswTstCaseRsrc_013 =   ( CswTstCaseRsrc_013) CswTstCaseRsrc;
+            _CswTstCaseRsrc_013 = (CswTstCaseRsrc_013) CswTstCaseRsc;
         }//ctor
 
-        public void update()
+        public override void update()
         {
-            _CswTstCaseRsrc_013.TheSuspectUpdateTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName02] = _CswTstCaseRsrc_013.LocalAribtiraryValue02Delta;
-            _CswTstCaseRsrc_013.TheSuspectUpdateTablesUpdater.update( _CswTstCaseRsrc_013.TheSuspectUpdateTable );
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_013.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+
+
+            CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_013.FakeTestTableName );
+            CswTableUpdate.StorageMode = StorageMode.Cached; // causes the rolback behavior we want
+            DataTable DataTable = CswTableUpdate.getTable();
+
+            DataTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName02] = _CswTstCaseRsrc_013.LocalAribtiraryValue02Delta;
+
+            CswTableUpdate.update( DataTable );
         }//runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
