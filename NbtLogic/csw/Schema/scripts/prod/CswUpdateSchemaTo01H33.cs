@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -55,10 +56,10 @@ namespace ChemSW.Nbt.Schema
                 //Perms.Save();
 
                 _CswNbtSchemaModTrnsctn.Permit.set( new CswNbtPermit.NodeTypePermission[] { 
-														CswNbtPermit.NodeTypePermission.Create,
-														CswNbtPermit.NodeTypePermission.View,
-														CswNbtPermit.NodeTypePermission.Edit,
-														CswNbtPermit.NodeTypePermission.Delete },
+                                                        CswNbtPermit.NodeTypePermission.Create,
+                                                        CswNbtPermit.NodeTypePermission.View,
+                                                        CswNbtPermit.NodeTypePermission.Edit,
+                                                        CswNbtPermit.NodeTypePermission.Delete },
                                                     OtherNodeType,
                                                     CswAdminRole,
                                                     true );
@@ -73,14 +74,9 @@ namespace ChemSW.Nbt.Schema
             }
 
             // add 'chemsw_admin' user
-            CswNbtNode CswAdminUserNode = null;
-            foreach( CswNbtNode User in UserNT.getNodes( true, false ) )
-            {
-                if( "chemsw_admin" == User.Properties[CswNbtObjClassUser.UsernamePropertyName].AsText.Text )
-                {
-                    CswAdminUserNode = User;
-                }
-            }
+            CswNbtNode CswAdminUserNode = UserNT.getNodes( true, false )
+                                                .Where( User => "chemsw_admin" == User.Properties[CswNbtObjClassUser.UsernamePropertyName].AsText.Text )
+                                                .FirstOrDefault(); //equivalent to a foreach({ break; })
             if( null == CswAdminUserNode )
             {
                 CswAdminUserNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UserNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
