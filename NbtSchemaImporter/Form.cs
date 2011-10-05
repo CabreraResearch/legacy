@@ -80,7 +80,10 @@ namespace ChemSW.Nbt.Schema
         private delegate void AddStatusMsgHandler( string Msg );
         private void _AddStatusMsg( string Msg )
         {
-            ResultsTextBox.Text = DateTime.Now.ToString() + ": " + Msg + "\r\n" + ResultsTextBox.Text;
+            //ResultsTextBox.Text = DateTime.Now.ToString() + ": " + Msg + "\r\n" + ResultsTextBox.Text;
+            ResultsTextBox.AppendText( DateTime.Now.ToString() + ": " + Msg + "\r\n" ); 
+
+            
         }
 
         void SchemaSelectBox_SelectedIndexChanged( object sender, EventArgs e )
@@ -121,7 +124,7 @@ namespace ChemSW.Nbt.Schema
 
                 //string DataFileName = DataFileSelectBox.SelectedText;
                 //bool ClearExisting = ClearExistingCheckBox.Checked;
-                CswNbtImportExport.ImportMode Mode = (CswNbtImportExport.ImportMode) Enum.Parse( typeof( CswNbtImportExport.ImportMode ), ModeComboBox.SelectedItem.ToString() );
+                ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
 
                 WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
                 ImportHandler.BeginInvoke( _DataFilePath, Mode, new AsyncCallback( ImportButton_Callback ), null );
@@ -223,16 +226,16 @@ namespace ChemSW.Nbt.Schema
             switch( FileTypeSelectBox.SelectedItem.ToString() )
             {
                 case "IMCS Desktop Export XML File":
-                    ModeComboBox.Items.Add( CswNbtImportExport.ImportMode.Duplicate.ToString() );
-                    ModeComboBox.Items.Add( CswNbtImportExport.ImportMode.Overwrite.ToString() );
-                    ModeComboBox.SelectedItem = CswNbtImportExport.ImportMode.Duplicate.ToString();
+                    ModeComboBox.Items.Add( ImportMode.Duplicate.ToString() );
+                    ModeComboBox.Items.Add( ImportMode.Overwrite.ToString() );
+                    ModeComboBox.SelectedItem = ImportMode.Duplicate.ToString();
                     break;
 
                 default:
-                    ModeComboBox.Items.Add( CswNbtImportExport.ImportMode.Duplicate.ToString() );
-                    ModeComboBox.Items.Add( CswNbtImportExport.ImportMode.Overwrite.ToString() );
-                    ModeComboBox.Items.Add( CswNbtImportExport.ImportMode.Update.ToString() );
-                    ModeComboBox.SelectedItem = CswNbtImportExport.ImportMode.Duplicate.ToString();
+                    ModeComboBox.Items.Add( ImportMode.Duplicate.ToString() );
+                    ModeComboBox.Items.Add( ImportMode.Overwrite.ToString() );
+                    ModeComboBox.Items.Add( ImportMode.Update.ToString() );
+                    ModeComboBox.SelectedItem = ImportMode.Duplicate.ToString();
                     break;
             }
         } // FileTypeSelectBox_OnChange

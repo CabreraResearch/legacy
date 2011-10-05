@@ -366,11 +366,19 @@ namespace ChemSW.Nbt.PropTypes
             else
                 RelatedNodeId = null;
 
+
+            /* As per steve, the intention of this side effect was that the input table from which the PropRow parameter
+               comes would be written back to the original input xml. As Steve says, "it's a bit kookie." Since 
+              the exeprimental algorithm keeps track of all this data in the temporary database tables, we don't need
+              to maintain this. And since it brakes with the column structure of the temp tables, I'm commenting it 
+              out at least for now. Bye bye . . . */
+            /*
             if( RelatedNodeId != null )
             {
                 PropRow["destnodeid"] = RelatedNodeId.PrimaryKey;
                 PendingUpdate = true;
             }
+             */
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

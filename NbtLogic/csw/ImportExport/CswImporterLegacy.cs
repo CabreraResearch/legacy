@@ -1,4 +1,80 @@
-﻿using System;
+﻿/*
+NOTE:
+After having simply moved the import algorithm from the CswNbtImportExport class into 
+this sublclass of ICswIMporter, iterator works no worse thanit did before. Meaning that 
+if I export the SM IMCS test schema (behaaaave!) with the BCB exporter tool, do xsl it 
+into our standard format, and do an import, the following chain of messages occur, 
+which were exactly the same before I did this refactoring: 
+9/20/2011 4:41:03 PM: Error: Object reference not set to an instance of an object.
+   at ChemSW.Nbt.ObjClasses.CswNbtObjClassUser.beforeDeleteNode() in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtObjClassUser.cs:line 175
+   at ChemSW.Nbt.ObjClasses.CswNbtNode.delete() in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNode.cs:line 530
+   at ChemSW.Nbt.ImportExport.CswImporterLegacy.ImportXml(ImportMode IMode, String XmlStr, String& ViewXml, String& ResultXml, String& ErrorLog) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ImportExport\CswImporterLegacy.cs:line 513
+   at ChemSW.Nbt.ImportExport.CswNbtImportExport.ImportXml(ImportMode IMode, String XmlStr, String& ViewXml, String& ResultXml, String& ErrorLog) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ImportExport\CswNbtImportExport.cs:line 96
+   at ChemSW.Nbt.Schema.WorkerThread.DoImport(String FilePath, ImportMode Mode) in C:\allHertzel\Kiln\Nbt\Nbt\NbtSchemaImporter\WorkerThread.cs:line 167
+9/20/2011 4:41:03 PM: ERROR: Could not save node: Invalid node: CswNbtNodeCaster was given a null node as a parameter; Exception occurred in NbtLogic:    at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster._Validate(CswNbtNode Node, NbtObjectClass TargetObjectClass) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 12
+   at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster.AsRole(CswNbtNode Node) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 128
+   at ChemSW.Nbt.ObjClasses.CswNbtObjClassUser.beforeWriteNode(Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtObjClassUser.cs:line 119
+   at ChemSW.Nbt.ObjClasses.CswNbtNode.postChanges(Boolean ForceUpdate, Boolean IsCopy, Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNode.cs:line 476
+   at ChemSW.Nbt.ImportExport.CswImporterLegacy.ImportXml(ImportMode IMode, String XmlStr, String& ViewXml, String& ResultXml, String& ErrorLog) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ImportExport\CswImporterLegacy.cs:line 522
+9/20/2011 4:41:02 PM: ERROR: Could not save node: Invalid node: CswNbtNodeCaster was given a null node as a parameter; Exception occurred in NbtLogic:    at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster._Validate(CswNbtNode Node, NbtObjectClass TargetObjectClass) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 12
+   at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster.AsRole(CswNbtNode Node) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 128
+   at ChemSW.Nbt.ObjClasses.CswNbtObjClassUser.beforeWriteNode(Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtObjClassUser.cs:line 119
+   at ChemSW.Nbt.ObjClasses.CswNbtNode.postChanges(Boolean ForceUpdate, Boolean IsCopy, Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNode.cs:line 476
+   at ChemSW.Nbt.ImportExport.CswImporterLegacy.ImportXml(ImportMode IMode, String XmlStr, String& ViewXml, String& ResultXml, String& ErrorLog) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ImportExport\CswImporterLegacy.cs:line 522
+9/20/2011 4:41:02 PM: ERROR: Could not save node: Invalid node: CswNbtNodeCaster was given a null node as a parameter; Exception occurred in NbtLogic:    at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster._Validate(CswNbtNode Node, NbtObjectClass TargetObjectClass) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 12
+   at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster.AsRole(CswNbtNode Node) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 128
+   at ChemSW.Nbt.ObjClasses.CswNbtObjClassUser.beforeWriteNode(Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtObjClassUser.cs:line 119
+   at ChemSW.Nbt.ObjClasses.CswNbtNode.postChanges(Boolean ForceUpdate, Boolean IsCopy, Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNode.cs:line 476
+   at ChemSW.Nbt.ImportExport.CswImporterLegacy.ImportXml(ImportMode IMode, String XmlStr, String& ViewXml, String& ResultXml, String& ErrorLog) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ImportExport\CswImporterLegacy.cs:line 522
+9/20/2011 4:41:02 PM: ERROR: Could not save node: Invalid node: CswNbtNodeCaster was given a null node as a parameter; Exception occurred in NbtLogic:    at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster._Validate(CswNbtNode Node, NbtObjectClass TargetObjectClass) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 12
+   at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster.AsRole(CswNbtNode Node) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 128
+   at ChemSW.Nbt.ObjClasses.CswNbtObjClassUser.beforeWriteNode(Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtObjClassUser.cs:line 119
+   at ChemSW.Nbt.ObjClasses.CswNbtNode.postChanges(Boolean ForceUpdate, Boolean IsCopy, Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNode.cs:line 476
+   at ChemSW.Nbt.ImportExport.CswImporterLegacy.ImportXml(ImportMode IMode, String XmlStr, String& ViewXml, String& ResultXml, String& ErrorLog) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ImportExport\CswImporterLegacy.cs:line 522
+9/20/2011 4:41:02 PM: ERROR: Could not save node: Invalid node: CswNbtNodeCaster was given a null node as a parameter; Exception occurred in NbtLogic:    at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster._Validate(CswNbtNode Node, NbtObjectClass TargetObjectClass) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 12
+   at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster.AsRole(CswNbtNode Node) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 128
+   at ChemSW.Nbt.ObjClasses.CswNbtObjClassUser.beforeWriteNode(Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtObjClassUser.cs:line 119
+   at ChemSW.Nbt.ObjClasses.CswNbtNode.postChanges(Boolean ForceUpdate, Boolean IsCopy, Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNode.cs:line 476
+   at ChemSW.Nbt.ImportExport.CswImporterLegacy.ImportXml(ImportMode IMode, String XmlStr, String& ViewXml, String& ResultXml, String& ErrorLog) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ImportExport\CswImporterLegacy.cs:line 522
+9/20/2011 4:41:02 PM: ERROR: Could not save node: Invalid node: CswNbtNodeCaster was given a null node as a parameter; Exception occurred in NbtLogic:    at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster._Validate(CswNbtNode Node, NbtObjectClass TargetObjectClass) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 12
+   at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster.AsRole(CswNbtNode Node) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 128
+   at ChemSW.Nbt.ObjClasses.CswNbtObjClassUser.beforeWriteNode(Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtObjClassUser.cs:line 119
+   at ChemSW.Nbt.ObjClasses.CswNbtNode.postChanges(Boolean ForceUpdate, Boolean IsCopy, Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNode.cs:line 476
+   at ChemSW.Nbt.ImportExport.CswImporterLegacy.ImportXml(ImportMode IMode, String XmlStr, String& ViewXml, String& ResultXml, String& ErrorLog) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ImportExport\CswImporterLegacy.cs:line 522
+9/20/2011 4:41:02 PM: ERROR: Could not save node: Invalid node: CswNbtNodeCaster was given a null node as a parameter; Exception occurred in NbtLogic:    at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster._Validate(CswNbtNode Node, NbtObjectClass TargetObjectClass) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 12
+   at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster.AsRole(CswNbtNode Node) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 128
+   at ChemSW.Nbt.ObjClasses.CswNbtObjClassUser.beforeWriteNode(Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtObjClassUser.cs:line 119
+   at ChemSW.Nbt.ObjClasses.CswNbtNode.postChanges(Boolean ForceUpdate, Boolean IsCopy, Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNode.cs:line 476
+   at ChemSW.Nbt.ImportExport.CswImporterLegacy.ImportXml(ImportMode IMode, String XmlStr, String& ViewXml, String& ResultXml, String& ErrorLog) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ImportExport\CswImporterLegacy.cs:line 522
+9/20/2011 4:41:02 PM: ERROR: Could not save node: Invalid node: CswNbtNodeCaster was given a null node as a parameter; Exception occurred in NbtLogic:    at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster._Validate(CswNbtNode Node, NbtObjectClass TargetObjectClass) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 12
+   at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster.AsRole(CswNbtNode Node) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 128
+   at ChemSW.Nbt.ObjClasses.CswNbtObjClassUser.beforeWriteNode(Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtObjClassUser.cs:line 119
+   at ChemSW.Nbt.ObjClasses.CswNbtNode.postChanges(Boolean ForceUpdate, Boolean IsCopy, Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNode.cs:line 476
+   at ChemSW.Nbt.ImportExport.CswImporterLegacy.ImportXml(ImportMode IMode, String XmlStr, String& ViewXml, String& ResultXml, String& ErrorLog) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ImportExport\CswImporterLegacy.cs:line 522
+9/20/2011 4:41:02 PM: ERROR: Could not save node: Invalid node: CswNbtNodeCaster was given a null node as a parameter; Exception occurred in NbtLogic:    at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster._Validate(CswNbtNode Node, NbtObjectClass TargetObjectClass) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 12
+   at ChemSW.Nbt.ObjClasses.CswNbtNodeCaster.AsRole(CswNbtNode Node) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNodeCaster.cs:line 128
+   at ChemSW.Nbt.ObjClasses.CswNbtObjClassUser.beforeWriteNode(Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtObjClassUser.cs:line 119
+   at ChemSW.Nbt.ObjClasses.CswNbtNode.postChanges(Boolean ForceUpdate, Boolean IsCopy, Boolean OverrideUniqueValidation) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ObjClasses\CswNbtNode.cs:line 476
+   at ChemSW.Nbt.ImportExport.CswImporterLegacy.ImportXml(ImportMode IMode, String XmlStr, String& ViewXml, String& ResultXml, String& ErrorLog) in C:\allHertzel\Kiln\Nbt\Nbt\NbtLogic\csw\ImportExport\CswImporterLegacy.cs:line 522
+9/20/2011 4:40:56 PM: Processing Node: 1 of 79
+9/20/2011 4:40:56 PM: Started Setting Property Values
+9/20/2011 4:40:56 PM: Finished Copying Nodes
+9/20/2011 4:40:45 PM: Copying Node: 1 of 79
+9/20/2011 4:40:45 PM: Started Copying Nodes
+9/20/2011 4:40:45 PM: Done Fixing Relationship References
+9/20/2011 4:40:45 PM: Fixing Relationship References
+9/20/2011 4:40:45 PM: Tables Initialized
+9/20/2011 4:40:45 PM: Initializing DataSet
+9/20/2011 4:40:45 PM: Starting Import
+9/20/2011 4:40:45 PM: Initializing Import Data
+9/20/2011 4:40:45 PM: Starting Import
+
+*/
+
+
+
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -16,50 +92,22 @@ using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.ImportExport
 {
-    /// <summary>
-    /// Controls data exports and imports
-    /// </summary>
-    /// 
-    public delegate void StatusUpdateHandler( string Message );
 
-    public class CswNbtImportExport
+
+    public class CswImporterLegacy : ICswImporter
     {
 
-        private CswNbtResources _CswNbtResources;
-
-        /// <summary>
-        /// Constructor, requires a CswNbtResources object
-        /// </summary>
-        public CswNbtImportExport( CswNbtResources R )
+        CswNbtResources _CswNbtResources = null;
+        CswNbtImportExportFrame _CswNbtImportExportFrame = null;
+        public CswImporterLegacy( CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, StatusUpdateHandler OnStatusUpdateIn )
         {
-            _CswNbtResources = R;
-        }
-
-        /// <summary>
-        /// Describes how data is to be treated when importing
-        /// </summary>
-
-
-        #region Import
-
-        /// <summary>
-        /// Imports data from an Xml Document
-        /// </summary>
-        /// <param name="IMode">Describes how data is to be treated when importing</param>
-        /// <param name="XmlDoc">Source XML document</param>
-        /// <param name="ViewXml">Will be filled with the exported view's XML as String </param>
-        /// <param name="ResultXml">Will be filled with an XML Document record of new primary keys and references</param>
-        /// <param name="ErrorLog">Will be filled with a summary of recoverable errors</param>
-        public void ImportXml( ImportMode IMode, XmlDocument XmlDoc, ref string ViewXml, ref XmlDocument ResultXml, ref string ErrorLog )
-        {
-            string XmlResultString = string.Empty;
-            ImportXml( IMode, XmlDoc.InnerXml, ref ViewXml, ref XmlResultString, ref ErrorLog );
-            ResultXml = new XmlDocument();
-            ResultXml.LoadXml( XmlResultString );
+            _CswNbtResources = CswNbtResources;
+            OnStatusUpdate = OnStatusUpdateIn;
+            _CswNbtImportExportFrame = CswNbtImportExportFrame;
         }
 
 
-        public event StatusUpdateHandler OnStatusUpdate = null; 
+        public event StatusUpdateHandler OnStatusUpdate = null;
 
 
         private void _StatusUpdate( string Msg )
@@ -87,18 +135,9 @@ namespace ChemSW.Nbt.ImportExport
             //DataSet XmlData = new DataSet();
             //XmlData.ReadXml( new System.IO.StringReader( XmlStr ) );
 
-            _StatusUpdate( "Initializing Import Data" );
+            _StatusUpdate( "Initializing DataSet" );
 
-            CswNbtImportExportFrame Frame = new CswNbtImportExportFrame( _CswNbtResources, XmlStr );
-
-            ICswImporter CswImporter = CswImporterFactory.make( ImportAlgorithm.Experimental, _CswNbtResources, Frame, OnStatusUpdate );
-
-            CswImporter.ImportXml( IMode, XmlStr, ref ViewXml, ref ResultXml, ref ErrorLog );
-
-
-
-            /*
-            DataSet XmlData = Frame.AsDataSet();
+            DataSet XmlData = _CswNbtImportExportFrame.AsDataSet();
 
             DataTable NodeTypesTable = XmlData.Tables[CswNbtMetaDataNodeType._Element_MetaDataNodeType];
             DataTable NodeTypeTabsTable = XmlData.Tables[CswNbtMetaDataNodeTypeTab._Element_MetaDataNodeTypeTab];
@@ -160,11 +199,11 @@ namespace ChemSW.Nbt.ImportExport
                 PropValuesTable.Columns.Add( "error" );
             }
 
-			Dictionary<CswPrimaryKey, CswNbtNode> NodeMap = new Dictionary<CswPrimaryKey, CswNbtNode>();
-			Dictionary<string, Int32> NodeIdMap = new Dictionary<string, Int32>();
-			Dictionary<Int32, Int32> NodeTypeMap = new Dictionary<Int32, Int32>();
+            Dictionary<CswPrimaryKey, CswNbtNode> NodeMap = new Dictionary<CswPrimaryKey, CswNbtNode>();
+            Dictionary<string, Int32> NodeIdMap = new Dictionary<string, Int32>();
+            Dictionary<Int32, Int32> NodeTypeMap = new Dictionary<Int32, Int32>();
             Dictionary<Int32, Int32> NodeTypePropMap = new Dictionary<Int32, Int32>();
-			Dictionary<Int32, CswNbtViewId> ViewMap = new Dictionary<Int32, CswNbtViewId>();
+            Dictionary<Int32, CswNbtViewId> ViewMap = new Dictionary<Int32, CswNbtViewId>();
 
             _StatusUpdate( "Tables Initialized" );
 
@@ -284,7 +323,7 @@ namespace ChemSW.Nbt.ImportExport
                                 if( ThisProp != null )
                                 {
                                     ThisProp.SetFromXmlDataRow( NodeTypePropRow );
-									ThisProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ThisTab, Int32.MinValue, Int32.MinValue );
+                                    ThisProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ThisTab, Int32.MinValue, Int32.MinValue );
                                 }
                                 else
                                 {
@@ -311,7 +350,7 @@ namespace ChemSW.Nbt.ImportExport
                         // Record the matching nodetype in the table
                         NodeTypeMap.Add( SourceNodeTypeId, DestNodeType.NodeTypeId );          // for property value references
                         NodeTypeRow["destnodetypeid"] = DestNodeType.NodeTypeId.ToString();    // for posterity
-                        NodeTypeRow["destnodetypename"] = DestNodeType.NodeTypeName;
+                         NodeTypeRow["destnodetypename"] = DestNodeType.NodeTypeName;
 
                         foreach( DataRow NodeTypeTabRow in NodeTypeRow.GetChildRows( CswNbtMetaDataNodeType._Element_MetaDataNodeType + "_" + CswNbtMetaDataNodeTypeTab._Element_MetaDataNodeTypeTab ) )
                         {
@@ -412,11 +451,10 @@ namespace ChemSW.Nbt.ImportExport
                         if( !NodeIdMap.ContainsKey( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString().ToLower() ) )
                         {
                             CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
-                            NodeIdMap.Add( CswTools.XmlRealAttributeName( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString() ).ToLower(), Node.NodeId.PrimaryKey );    // for property value references
                             NodeRow["destnodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );                       // for posterity
 
-							NodeMap.Add( Node.NodeId, Node );
-						}
+                            NodeMap.Add( Node.NodeId, Node );
+                        }
                     }
                     else
                     {
@@ -434,7 +472,7 @@ namespace ChemSW.Nbt.ImportExport
 
             //---------------------------------------------------------------------------
             // Set property values
-            CswNbtNode GeneralUserRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "Equipment User" );
+            CswNbtNode GeneralUserRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "General User" );
             Collection<CswNbtNode> ImportedNodes = new Collection<CswNbtNode>();
             if( NodesTable != null )
             {
@@ -465,8 +503,8 @@ namespace ChemSW.Nbt.ImportExport
                     if( NodeId != null )
                     {
                         //Node = _CswNbtResources.Nodes.GetNode( NodeId );
-						Node = NodeMap[NodeId];
-						ImportedNodes.Add( Node );
+                        Node = NodeMap[NodeId];
+                        ImportedNodes.Add( Node );
 
                         if( Node != null )
                         {
@@ -556,7 +594,7 @@ namespace ChemSW.Nbt.ImportExport
 
                             try
                             {
-								Node.postChanges( false, false, true );
+                                Node.postChanges( false, false, true );
                             }
                             catch( Exception ex )
                             {
@@ -593,7 +631,7 @@ namespace ChemSW.Nbt.ImportExport
                     if( Node.Properties[Node.NodeType.getNodeTypePropByObjectClassPropName( "Assembly" )].AsRelationship.RelatedNodeId != null )
                     {
                         Node.PendingUpdate = true;
-						Node.postChanges( false, false, true );
+                        Node.postChanges( false, false, true );
                     }
                 }
             }
@@ -630,10 +668,10 @@ namespace ChemSW.Nbt.ImportExport
                     bool SkipView = false;
                     if( ExistingView.Rows.Count > 0 )
                     {
-						if( IMode == ImportMode.Duplicate )
-							SkipView = true;
-						else  // Update or Overwrite
-							ThisView.ViewId = new CswNbtViewId( CswConvert.ToInt32( ExistingView.Rows[0]["nodeviewid"] ) );
+                        if( IMode == ImportMode.Duplicate )
+                            SkipView = true;
+                        else  // Update or Overwrite
+                            ThisView.ViewId = new CswNbtViewId( CswConvert.ToInt32( ExistingView.Rows[0]["nodeviewid"] ) );
                     }
                     else
                     {
@@ -659,7 +697,7 @@ namespace ChemSW.Nbt.ImportExport
                 if( i % 100 == 1 )
                     _StatusUpdate( "Processing Node: " + i.ToString() + " of " + ImportedNodes.Count.ToString() );
 
-				foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.ViewPickList] )
+                foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.ViewPickList] )
                 {
                     CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
                     Collection<int> SelectedViewIds = ViewProp.AsViewPickList.SelectedViewIds.ToIntCollection();
@@ -670,8 +708,8 @@ namespace ChemSW.Nbt.ImportExport
                     }
                     ViewProp.AsViewPickList.SelectedViewIds = NewSelectedViewIds;
                     ViewProp.AsViewPickList.PendingUpdate = true;
-				} // foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[ViewPickList] )
-				Node.postChanges( false, false, true );
+                } // foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[ViewPickList] )
+                Node.postChanges( false, false, true );
             } // foreach( CswNbtNode Node in ImportedNodes )
 
             _StatusUpdate( "Done ViewSelect Property Values" );
@@ -679,8 +717,6 @@ namespace ChemSW.Nbt.ImportExport
             _StatusUpdate( "Import Finished" );
 
             ResultXml = XmlData.GetXml();
-             * 
-             */
         } // ImportXml()
 
 
@@ -720,7 +756,7 @@ namespace ChemSW.Nbt.ImportExport
             }
             else
             {
-				throw new CswDniException( ErrorType.Error, "Invalid Node import row", "ImportXml encountered a Node row with no nodetypeid or nodetypename" );
+                throw new CswDniException( ErrorType.Error, "Invalid Node import row", "ImportXml encountered a Node row with no nodetypeid or nodetypename" );
             }
             return NodeType;
         } // _decodeNodeType()
@@ -749,182 +785,6 @@ namespace ChemSW.Nbt.ImportExport
             return NodeTypeProp;
         } // _decodeNodeTypeProp()
 
-        #endregion Import
 
-        #region Export
-
-        /// <summary>
-        /// Exports all content from a schema
-        /// </summary>
-        /// <param name="DoNodeTypes">Include all nodetypes</param>
-        /// <param name="DoViews">Include all views</param>
-        /// <param name="DoNodes">Include all nodes</param>
-        public XmlDocument ExportAll( bool DoNodeTypes, bool DoViews, bool DoNodes )
-        {
-            if( DoNodeTypes )
-                return ExportAll( _CswNbtResources.MetaData.NodeTypes, DoViews, DoNodes );
-            else
-                return ExportAll( new Collection<CswNbtMetaDataNodeType>(), DoViews, DoNodes );
-        }
-        public XmlDocument ExportAll( ICollection NodeTypes, bool DoViews, bool DoNodes )
-        {
-            _StatusUpdate( "Starting Export" );
-
-            CswNbtImportExportFrame Frame = new CswNbtImportExportFrame( _CswNbtResources );
-
-            //if( DoNodeTypes )
-            //{
-            //    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
-
-            _StatusUpdate( "Saving Selected NodeTypes" );
-            Int32 t = 0;
-            foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
-            {
-                t++;
-                if( t % 10 == 1 )
-                    _StatusUpdate( "Processing NodeType: " + t.ToString() + " of " + NodeTypes.Count.ToString() );
-                Frame.AddNodeType( NodeType );
-            }
-            // }
-            _StatusUpdate( "Finished Saving Selected NodeTypes" );
-
-
-            if( DoViews )
-            {
-                _StatusUpdate( "Saving Views" );
-
-                DataTable ViewsTable = _CswNbtResources.ViewSelect.getAllViews();
-                Int32 v = 0;
-                foreach( DataRow ViewRow in ViewsTable.Rows )
-                {
-                    v++;
-                    if( v % 10 == 1 )
-                        _StatusUpdate( "Processing View: " + v.ToString() + " of " + ViewsTable.Rows.Count.ToString() );
-
-					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( ViewRow["nodeviewid"] ) ) );
-                    bool IncludeView = false;
-                    foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
-                        IncludeView = IncludeView || View.ContainsNodeType( NodeType );
-                    if( IncludeView )
-                        Frame.AddView( View );
-                }
-
-                _StatusUpdate( "Finished Saving Views" );
-            }
-
-
-            if( DoNodes )
-            {
-                _StatusUpdate( "Saving Nodes" );
-
-                CswTableSelect AllNodesSelect = _CswNbtResources.makeCswTableSelect( "SchemaInitializer_nodesselect", "nodes" );
-                string WhereClause = string.Empty;
-                foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
-                {
-                    if( WhereClause != string.Empty ) WhereClause += ",";
-                    WhereClause += "'" + NodeType.NodeTypeId.ToString() + "'";
-                }
-                WhereClause = "where nodetypeid in (" + WhereClause + ")";
-                DataTable AllNodesTable = AllNodesSelect.getTable( WhereClause );
-                Collection<CswPrimaryKey> NodeIds = new Collection<CswPrimaryKey>();
-
-                Int32 n = 0;
-                foreach( DataRow NodeRow in AllNodesTable.Rows )
-                {
-                    n++;
-                    if( n % 10 == 1 )
-                        _StatusUpdate( "Processing Node: " + n.ToString() + " of " + AllNodesTable.Rows.Count.ToString() );
-
-                    CswNbtNode Node = _CswNbtResources.Nodes.GetNode( new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) ) );
-                    Frame.AddNode( Node );
-                }
-
-                _StatusUpdate( "Finished Saving Nodes" );
-            }
-
-            _StatusUpdate( "Export Finished" );
-
-            return Frame.AsXmlDoc();
-        } // ExportAll()
-
-
-
-        /// <summary>
-        /// Exports a NodeType, tabs, and properties
-        /// </summary>
-        /// <param name="NodeType"></param>
-        /// <returns></returns>
-        public XmlDocument ExportNodeType( CswNbtMetaDataNodeType NodeType )
-        {
-            CswNbtImportExportFrame Frame = new CswNbtImportExportFrame( _CswNbtResources );
-            Frame.AddNodeType( NodeType );
-            return Frame.AsXmlDoc();
-        } // ExportNodeType()
-
-        /// <summary>
-        /// Exports a set of nodes
-        /// </summary>
-        public XmlDocument ExportNodes( Collection<CswPrimaryKey> NodeIds )
-        {
-            Collection<CswNbtNode> NodesCol = new Collection<CswNbtNode>();
-            foreach( CswPrimaryKey NodeId in NodeIds )
-                NodesCol.Add( _CswNbtResources.Nodes[NodeId] );
-            return ExportNodes( NodesCol );
-        } // ExportNodes()
-
-        /// <summary>
-        /// Exports a set of nodes
-        /// </summary>
-        public XmlDocument ExportNodes( Collection<CswNbtNode> Nodes )
-        {
-            CswNbtImportExportFrame Frame = new CswNbtImportExportFrame( _CswNbtResources );
-            foreach( CswNbtNode Node in Nodes )
-                Frame.AddNode( Node );
-            return Frame.AsXmlDoc();
-        } // ExportNodes()
-
-        /// <summary>
-        /// Exports a view into XML
-        /// </summary>
-        /// <param name="ViewId">Primary key of View to Export</param>
-        /// <param name="ForMobile">True if this export is for the mobile device</param>
-        /// <param name="PropsInViewOnly">Include properties included in the view only</param>
-        /// <returns>XmlDocument of all metadata, node, and property data from this view</returns>
-		public XmlDocument ExportView( CswNbtViewId ViewId, bool ForMobile, bool PropsInViewOnly )
-        {
-			CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
-            return ExportView( View, ForMobile, PropsInViewOnly );
-        } // ExportView()
-
-        /// <summary>
-        /// Exports a view into XML
-        /// </summary>
-        /// <param name="View">View to Export</param>
-        /// <param name="ForMobile">True if this export is for the mobile device</param>
-        /// <param name="PropsInViewOnly">Include properties included in the view only</param>
-        /// <returns>XmlDocument of all metadata, node, and property data from this view</returns>
-        public XmlDocument ExportView( CswNbtView View, bool ForMobile, bool PropsInViewOnly )
-        {
-            CswNbtImportExportFrame Frame = new CswNbtImportExportFrame( _CswNbtResources );
-
-            Frame.AddView( View );
-
-            foreach( CswNbtMetaDataNodeType MetaDataNodeType in _CswNbtResources.MetaData.NodeTypes )
-            {
-                if( View.ContainsNodeType( MetaDataNodeType ) )
-                    Frame.AddNodeType( MetaDataNodeType );
-            }
-
-            ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, true );
-            Frame.AddTree( View, CswNbtTree, PropsInViewOnly );
-
-            return Frame.AsXmlDoc();
-        } // ExportView()
-
-        #endregion Export
-
-    } // class CswNbtImportExport
+    } // class CswImporterLegacy
 } // namespace ChemSW.Nbt
-
-
-
