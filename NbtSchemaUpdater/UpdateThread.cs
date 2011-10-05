@@ -53,36 +53,29 @@ namespace ChemSW.Nbt.Schema
 
         #region Session and Database
 
-        private CswDbCfgInfoNbt _CswDbCfgInfoNbt = null;
-        private CswSetupVblsNbt _CswSetupVblsNbt = null;
-
         private string _ConfigurationFilesFQPN { get { return ( Application.StartupPath + "\\..\\etc" ); } }
         private ICswLogger _CswLogger = null;
-        private CswNbtResources _CswNbtResources = null;
         private CswSchemaUpdater _CswSchemaUpdater;
-        private CswNbtObjClassFactory _CswNbtObjClassFactory;
-        private CswNbtMetaDataEvents _CswNbtMetaDataEvents = null;
 
 
         private CswSchemaScriptsProd _CswSchemaScriptsProd = null;
-        private void _InitSessionResources()
+        private CswNbtResources _InitSessionResources(string AccessId)
         {
+			CswNbtResources CswNbtResources = null;
             try
             {
-                _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Executable );
-                _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Executable );
+				CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe , false, false );
+				CswNbtResources.AccessId = AccessId;
+				CswNbtResources.InitCurrentUser = InitUser;
 
-                _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, _CswSetupVblsNbt, _CswDbCfgInfoNbt, CswTools.getConfigurationFilePath( SetupMode.Executable ) ,false , false );
-                _CswSchemaScriptsProd = new CswSchemaScriptsProd( _CswNbtResources );
-                _CswLogger = _CswNbtResources.CswLogger;
-
-                //_CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
-				_CswNbtResources.InitCurrentUser = InitUser;
+				_CswSchemaScriptsProd = new CswSchemaScriptsProd();
+				_CswLogger = CswNbtResources.CswLogger;
             }
             catch( Exception ex )
             {
                 SetStatus( "ERROR: " + ex.Message );
             }
+			return CswNbtResources;
         }//_InitSessionResources()
 
 		public ICswUser InitUser(ICswResources Resources)
@@ -90,10 +83,10 @@ namespace ChemSW.Nbt.Schema
 			return new CswNbtSystemUser( Resources, "_SchemaUpdaterUser" );
 		}
 
-        private void _CloseSessionResources()
+		private void _CloseSessionResources( CswNbtResources CswNbtResources )
         {
             // BZ 8756 - close the transaction even if we have no updates
-            _CswNbtResources.finalize();
+            CswNbtResources.finalize();
         }
 
         #endregion Session and Database
@@ -138,9 +131,9 @@ namespace ChemSW.Nbt.Schema
 
                 FetchSchemataEventArgs e = new FetchSchemataEventArgs();
 
-                _InitSessionResources();
+				CswNbtResources CswNbtResources = _InitSessionResources( string.Empty );
 
-                if( _CswDbCfgInfoNbt.TotalDbInstances > 0 )
+				if( CswNbtResources.CswDbCfgInfo.TotalDbInstances > 0 )
                 {
                     CswDataTable DbInstances = new CswDataTable( "SchemaUpdaterForm1DataTable", "" );
                     DbInstances.Columns.Add( _ColName_AccessId, typeof( string ) );
@@ -151,17 +144,17 @@ namespace ChemSW.Nbt.Schema
                     DbInstances.Columns.Add( _ColName_Deactivated, typeof( bool ) );
                     DbInstances.Columns.Add( _ColName_Display, typeof( string ) );
                     DbInstances.Rows.Clear();
-                    foreach( string CurrentAccessId in _CswDbCfgInfoNbt.AccessIds )
+					foreach( string CurrentAccessId in CswNbtResources.CswDbCfgInfo.AccessIds )
                     {
-                        _CswDbCfgInfoNbt.makeConfigurationCurrent( CurrentAccessId );
+						CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CurrentAccessId );
                         DataRow CurrentRow = DbInstances.NewRow();
                         CurrentRow[_ColName_AccessId] = CurrentAccessId.ToString();
-                        CurrentRow[_ColName_ServerType] = _CswDbCfgInfoNbt.CurrentServerType;
-                        CurrentRow[_ColName_ServerName] = _CswDbCfgInfoNbt.CurrentServerName;
-                        CurrentRow[_ColName_UserName] = _CswDbCfgInfoNbt.CurrentUserName;
-                        CurrentRow[_ColName_UserCount] = _CswDbCfgInfoNbt.CurrentUserCount;
-                        CurrentRow[_ColName_Deactivated] = _CswDbCfgInfoNbt.CurrentDeactivated;
-                        CurrentRow[_ColName_Display] = CurrentAccessId + " (" + _CswDbCfgInfoNbt.CurrentUserName + "@" + _CswDbCfgInfoNbt.CurrentServerName + ")";
+						CurrentRow[_ColName_ServerType] = CswNbtResources.CswDbCfgInfo.CurrentServerType;
+						CurrentRow[_ColName_ServerName] = CswNbtResources.CswDbCfgInfo.CurrentServerName;
+						CurrentRow[_ColName_UserName] = CswNbtResources.CswDbCfgInfo.CurrentUserName;
+						CurrentRow[_ColName_UserCount] = CswNbtResources.CswDbCfgInfo.CurrentUserCount;
+						CurrentRow[_ColName_Deactivated] = CswNbtResources.CswDbCfgInfo.CurrentDeactivated;
+						CurrentRow[_ColName_Display] = CurrentAccessId + " (" + CswNbtResources.CswDbCfgInfo.CurrentUserName + "@" + CswNbtResources.CswDbCfgInfo.CurrentServerName + ")";
                         DbInstances.Rows.Add( CurrentRow );
                     }
 
@@ -175,7 +168,7 @@ namespace ChemSW.Nbt.Schema
                         e.Succeeded = false;
                         e.Message = "Database configuration file does not contain any instances.";
                     }
-                } // if( _CswDbCfgInfoNbt.TotalDbInstances > 0 )
+				} // if( CswNbtResources.CswDbCfgInfo.TotalDbInstances > 0 )
                 else
                 {
                     e.Succeeded = false;
@@ -185,7 +178,7 @@ namespace ChemSW.Nbt.Schema
                 if( OnFetchSchemata != null )
                     OnFetchSchemata( e );
 
-                _CloseSessionResources();
+				_CloseSessionResources( CswNbtResources );
 
                 SetStatus( "Fetching Available Schemata: Done" );
             }
@@ -218,26 +211,25 @@ namespace ChemSW.Nbt.Schema
             {
                 SetStatus( "Initializing Selected Schema" );
 
-                _InitSessionResources();
-                _CswNbtResources.AccessId = AccessId;
+				CswNbtResources CswNbtResources = _InitSessionResources( AccessId );
 
                 SchemaInfoEventArgs e = new SchemaInfoEventArgs();
 
-                _CswSchemaUpdater = new CswSchemaUpdater( _CswNbtResources, _CswSchemaScriptsProd ); //wait to create updater until resource initiation is thoroughly done
+				_CswSchemaUpdater = new CswSchemaUpdater( AccessId, new CswSchemaUpdater.ResourcesInitHandler( _InitSessionResources ), _CswSchemaScriptsProd );  
                 e.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
                 e.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
 
-                CswSchemaVersion CurrentVersion = new CswSchemaVersion( _CswNbtResources.getConfigVariableValue( "schemaversion" ).ToString() );
+				CswSchemaVersion CurrentVersion = new CswSchemaVersion( CswNbtResources.getConfigVariableValue( "schemaversion" ).ToString() );
                 e.CurrentSchemaVersion = CurrentVersion;
 
-                CswTableSelect UpdateHistorySelect = _CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
+				CswTableSelect UpdateHistorySelect = CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
                 DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", OrderByType.Descending ) } );
                 e.UpdateHistoryTable = UpdateHistoryTable;
 
                 if( OnGetSchemaInfo != null )
                     OnGetSchemaInfo( e );
 
-                _CloseSessionResources();
+				_CloseSessionResources( CswNbtResources );
 
                 SetStatus( "Initializing Selected Schema: Done" );
             }
@@ -259,27 +251,28 @@ namespace ChemSW.Nbt.Schema
             {
                 SetStatus( "Updating Selected Schema" );
 
-                _InitSessionResources();
-                _CswNbtResources.AccessId = AccessId;
+				CswNbtResources CswNbtResources = _InitSessionResources( AccessId );
 
-                _CswSchemaUpdater = new CswSchemaUpdater( _CswNbtResources, _CswSchemaScriptsProd ); //wait to create updater until resource initiation is thoroughly done
+                _CswSchemaUpdater = new CswSchemaUpdater( AccessId, new CswSchemaUpdater.ResourcesInitHandler(_InitSessionResources), _CswSchemaScriptsProd ); //wait to create updater until resource initiation is thoroughly done
 
                 bool UpdateSucceeded = true;
                 SchemaInfoEventArgs e = new SchemaInfoEventArgs();
-                CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion;
+				CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
                 while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
                 {
-                    SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion.ToString() );
+					SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ).ToString() );
 
                     UpdateSucceeded = _CswSchemaUpdater.Update();
+					
+					CswNbtResources.ClearCache();
 
                     e.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
                     e.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
 
-                    CurrentVersion = _CswSchemaUpdater.CurrentVersion;
+					CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
                     e.CurrentSchemaVersion = CurrentVersion;
 
-                    CswTableSelect UpdateHistorySelect = _CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
+					CswTableSelect UpdateHistorySelect = CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
                     DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", OrderByType.Descending ) } );
                     e.UpdateHistoryTable = UpdateHistoryTable;
 
@@ -308,7 +301,7 @@ namespace ChemSW.Nbt.Schema
                     SetStatus( "Update process completed" );
                 }
 
-                _CloseSessionResources();
+				_CloseSessionResources( CswNbtResources );
             }
             catch( Exception ex )
             {
@@ -316,7 +309,7 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        #endregion DoUpdate/
+        #endregion DoUpdate
 
     } // class UpdateThread
 

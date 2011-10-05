@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
         private string _TableName = string.Empty;
         private string _TableCopyName = string.Empty;
 
-        private bool _BackTableExists = false;
+        //private bool _BackTableExists = false;
 
         /// <summary>
         /// Constructor
@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.Schema
             if( _DropColumnExists || DdlTableOpType.Drop == DdlTableOpType )
             {
                 _copyTable();
-                _BackTableExists = true;
+                //_BackTableExists = true;
 
             }//if we're dropping
 

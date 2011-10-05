@@ -1,1 +1,1 @@
-C:\Kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\nbtupdt -all -mode test -ignore 006,007,014
+C:\allHertzel\Kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Debug\nbtupdt -all -mode test -ignore 006,007,010,014,027,028

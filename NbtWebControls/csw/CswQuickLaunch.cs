@@ -78,7 +78,11 @@ namespace ChemSW.NbtWebControls
                     }
                 }
                 DataTable ActionTable = UsersActions.GetDataAsTable( "actionname", "actionid" );
-                foreach( int ThisActionId in from DataRow ActionRow in ActionTable.Rows where CswConvert.ToBoolean( ActionRow["Include"] ) select _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() )].ActionId into ThisActionId where ThisActionId > 0 select ThisActionId )
+                foreach( int ThisActionId in from DataRow ActionRow in ActionTable.Rows 
+											 where CswConvert.ToBoolean( ActionRow["Include"] ) 
+											 select _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() )].ActionId into ThisActionId 
+											 where ThisActionId > 0 
+											 select ThisActionId )
                 {
                     _AddQuickLaunchLinkAction( ThisActionId, true );
                 }

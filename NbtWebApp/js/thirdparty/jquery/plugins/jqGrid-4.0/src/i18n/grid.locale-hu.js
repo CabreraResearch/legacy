@@ -1,7 +1,7 @@
 ;(function($){
 /**
  * jqGrid Hungarian Translation
- * Őrszigety Ádám udx6bs@freemail.hu
+ * Årszigety ÃdÃ¡m udx6bs@freemail.hu
  * http://trirand.com/blog/ 
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
@@ -11,81 +11,81 @@
 $.jgrid = {
 	defaults : {
 		recordtext: "Oldal {0} - {1} / {2}",
-		emptyrecords: "Nincs találat",
-		loadtext: "Betöltés...",
+		emptyrecords: "Nincs talÃ¡lat",
+		loadtext: "BetÃ¶ltÃ©s...",
 		pgtext : "Oldal {0} / {1}"
 	},
 	search : {
-		caption: "Keresés...",
+		caption: "KeresÃ©s...",
 		Find: "Keres",
-		Reset: "Alapértelmezett",
-		odata : ['egyenlő', 'nem egyenlő', 'kevesebb', 'kevesebb vagy egyenlő','nagyobb','nagyobb vagy egyenlő', 'ezzel kezdődik','nem ezzel kezdődik','tartalmaz','nem tartalmaz','végződik','nem végződik','tartalmaz','nem tartalmaz'],
+		Reset: "AlapÃ©rtelmezett",
+		odata : ['egyenlÅ‘', 'nem egyenlÅ‘', 'kevesebb', 'kevesebb vagy egyenlÅ‘','nagyobb','nagyobb vagy egyenlÅ‘', 'ezzel kezdÅ‘dik','nem ezzel kezdÅ‘dik','tartalmaz','nem tartalmaz','vÃ©gzÅ‘dik','nem vÃ©gzÅ‘dik','tartalmaz','nem tartalmaz'],
 		groupOps: [	{ op: "AND", text: "all" },	{ op: "OR",  text: "any" }	],
 		matchText: " match",
 		rulesText: " rules"
 	},
 	edit : {
-		addCaption: "Új tétel",
-		editCaption: "Tétel szerkesztése",
-		bSubmit: "Mentés",
-		bCancel: "Mégse",
-		bClose: "Bezárás",
-		saveData: "A tétel megváltozott! Tétel mentése?",
+		addCaption: "Ãšj tÃ©tel",
+		editCaption: "TÃ©tel szerkesztÃ©se",
+		bSubmit: "MentÃ©s",
+		bCancel: "MÃ©gse",
+		bClose: "BezÃ¡rÃ¡s",
+		saveData: "A tÃ©tel megvÃ¡ltozott! TÃ©tel mentÃ©se?",
 		bYes : "Igen",
 		bNo : "Nem",
-		bExit : "Mégse",
+		bExit : "MÃ©gse",
 		msg: {
-			required:"Kötelező mező",
-			number:"Kérjük, adjon meg egy helyes számot",
-			minValue:"Nagyobb vagy egyenlőnek kell lenni mint ",
-			maxValue:"Kisebb vagy egyenlőnek kell lennie mint",
-			email: "hibás emailcím",
-			integer: "Kérjük adjon meg egy helyes egész számot",
-			date: "Kérjük adjon meg egy helyes dátumot",
-			url: "nem helyes cím. Előtag kötelező ('http://' vagy 'https://')",
-			nodefined : " nem definiált!",
-			novalue : " visszatérési érték kötelező!!",
+			required:"KÃ¶telezÅ‘ mezÅ‘",
+			number:"KÃ©rjÃ¼k, adjon meg egy helyes szÃ¡mot",
+			minValue:"Nagyobb vagy egyenlÅ‘nek kell lenni mint ",
+			maxValue:"Kisebb vagy egyenlÅ‘nek kell lennie mint",
+			email: "hibÃ¡s emailcÃ­m",
+			integer: "KÃ©rjÃ¼k adjon meg egy helyes egÃ©sz szÃ¡mot",
+			date: "KÃ©rjÃ¼k adjon meg egy helyes dÃ¡tumot",
+			url: "nem helyes cÃ­m. ElÅ‘tag kÃ¶telezÅ‘ ('http://' vagy 'https://')",
+			nodefined : " nem definiÃ¡lt!",
+			novalue : " visszatÃ©rÃ©si Ã©rtÃ©k kÃ¶telezÅ‘!!",
 			customarray : "Custom function should return array!",
 			customfcheck : "Custom function should be present in case of custom checking!"
 			
 		}
 	},
 	view : {
-		caption: "Tétel megtekintése",
-		bClose: "Bezárás"
+		caption: "TÃ©tel megtekintÃ©se",
+		bClose: "BezÃ¡rÃ¡s"
 	},
 	del : {
-		caption: "Törlés",
-		msg: "Kiválaztott tétel(ek) törlése?",
-		bSubmit: "Törlés",
-		bCancel: "Mégse"
+		caption: "TÃ¶rlÃ©s",
+		msg: "KivÃ¡laztott tÃ©tel(ek) tÃ¶rlÃ©se?",
+		bSubmit: "TÃ¶rlÃ©s",
+		bCancel: "MÃ©gse"
 	},
 	nav : {
 		edittext: "",
-		edittitle: "Tétel szerkesztése",
+		edittitle: "TÃ©tel szerkesztÃ©se",
 		addtext:"",
-		addtitle: "Új tétel hozzáadása",
+		addtitle: "Ãšj tÃ©tel hozzÃ¡adÃ¡sa",
 		deltext: "",
-		deltitle: "Tétel törlése",
+		deltitle: "TÃ©tel tÃ¶rlÃ©se",
 		searchtext: "",
-		searchtitle: "Keresés",
+		searchtitle: "KeresÃ©s",
 		refreshtext: "",
-		refreshtitle: "Frissítés",
-		alertcap: "Figyelmeztetés",
-		alerttext: "Kérem válasszon tételt.",
+		refreshtitle: "FrissÃ­tÃ©s",
+		alertcap: "FigyelmeztetÃ©s",
+		alerttext: "KÃ©rem vÃ¡lasszon tÃ©telt.",
 		viewtext: "",
-		viewtitle: "Tétel megtekintése"
+		viewtitle: "TÃ©tel megtekintÃ©se"
 	},
 	col : {
-		caption: "Oszlopok kiválasztása",
+		caption: "Oszlopok kivÃ¡lasztÃ¡sa",
 		bSubmit: "Ok",
-		bCancel: "Mégse"
+		bCancel: "MÃ©gse"
 	},
 	errors : {
 		errcap : "Hiba",
-		nourl : "Nincs URL beállítva",
-		norecords: "Nincs feldolgozásra váró tétel",
-		model : "colNames és colModel hossza nem egyenlő!"
+		nourl : "Nincs URL beÃ¡llÃ­tva",
+		norecords: "Nincs feldolgozÃ¡sra vÃ¡rÃ³ tÃ©tel",
+		model : "colNames Ã©s colModel hossza nem egyenlÅ‘!"
 	},
 	formatter : {
 		integer : {thousandsSeparator: " ", defaultValue: '0'},
@@ -93,12 +93,12 @@ $.jgrid = {
 		currency : {decimalSeparator:",", thousandsSeparator: " ", decimalPlaces: 2, prefix: "", suffix:"", defaultValue: '0,00'},
 		date : {
 			dayNames:   [
-				"Va", "Hé", "Ke", "Sze", "Csü", "Pé", "Szo",
-				"Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"
+				"Va", "HÃ©", "Ke", "Sze", "CsÃ¼", "PÃ©", "Szo",
+				"VasÃ¡rnap", "HÃ©tfÅ‘", "Kedd", "Szerda", "CsÃ¼tÃ¶rtÃ¶k", "PÃ©ntek", "Szombat"
 			],
 			monthNames: [
-				"Jan", "Feb", "Már", "Ápr", "Máj", "Jún", "Júl", "Aug", "Szep", "Okt", "Nov", "Dec",
-				"Január", "Február", "Március", "Áprili", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"
+				"Jan", "Feb", "MÃ¡r", "Ãpr", "MÃ¡j", "JÃºn", "JÃºl", "Aug", "Szep", "Okt", "Nov", "Dec",
+				"JanuÃ¡r", "FebruÃ¡r", "MÃ¡rcius", "Ãprili", "MÃ¡jus", "JÃºnius", "JÃºlius", "Augusztus", "Szeptember", "OktÃ³ber", "November", "December"
 			],
 			AmPm : ["de","du","DE","DU"],
 			S: function (j) {return '.-ik';},
@@ -108,7 +108,7 @@ $.jgrid = {
 				ISO8601Long:"Y-m-d H:i:s",
 				ISO8601Short:"Y-m-d",
 				ShortDate: "Y/j/n",
-				LongDate: "Y. F hó d., l",
+				LongDate: "Y. F hÃ³ d., l",
 				FullDateTime: "l, F d, Y g:i:s A",
 				MonthDay: "F d",
 				ShortTime: "a g:i",

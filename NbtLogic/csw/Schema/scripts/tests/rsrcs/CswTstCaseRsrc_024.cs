@@ -21,21 +21,21 @@ namespace ChemSW.Nbt.Schema
     public class CswTstCaseRsrc_024
     {
 
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
-        private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
-        public CswTstCaseRsrc_024( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-        }//ctor
-
+		private CswTestCaseRsrc _CswTestCaseRsrc;
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+		{
+			set
+			{
+				_CswNbtSchemaModTrnsctn = value;
+				_CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			}
+		}
+		private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
 
         private Int32 _TheNumberOfRowsToAffect = 20;
 
-        public string Purpose = "Basic audit mechanism for update";
+        public static string Purpose = "Basic audit mechanism for update";
 
         public string ArbitraryTableName_01 { get { return ( _CswTestCaseRsrc.getFakeTestTableName( TestTableNamesFake.TestTable01 ) ); } }
 

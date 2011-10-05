@@ -364,7 +364,7 @@ namespace ChemSW.Nbt
         /// <param name="Name">Name of Property</param>
         /// <param name="Gestalt">Text representation of the value of the property</param>
         /// <param name="FieldType">FieldType of the property</param>
-        void addProperty(Int32 NodeTypePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType);
+        void addProperty(Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType);
 
         //CswNbtNodeKey loadNodeAsChildFromDb( System.Int32 NodeId, string GroupName );
 

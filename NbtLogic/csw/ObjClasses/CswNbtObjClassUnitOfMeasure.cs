@@ -14,6 +14,8 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtObjClassUnitOfMeasure : CswNbtObjClass
     {
         public static string NamePropertyName { get { return "Name"; } }
+        public static string UnitTypePropertyName { get { return "Unit Type"; } }
+        public static string ConversionFactorPropertyName { get { return "Conversion Factor"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -35,9 +37,9 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeCreateNode();
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
         public override void afterCreateNode()
@@ -45,9 +47,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode();
+            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -85,6 +87,22 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[NamePropertyName].AsText );
+            }
+        }
+
+        public CswNbtNodePropScientific ConversionFactor
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[ConversionFactorPropertyName].AsScientific );
+            }
+        }
+
+        public CswNbtNodePropRelationship UnitType
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[UnitTypePropertyName].AsRelationship );
             }
         }
         #endregion

@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.WebPages
                 _ModeList = new DropDownList();
                 _ModeList.ID = "ModeList";
                 _ModeList.CssClass = "selectinput";
-                foreach( CswNbtImportExport.ImportMode Mode in Enum.GetValues( typeof( CswNbtImportExport.ImportMode ) ) )
+                foreach( ImportMode Mode in Enum.GetValues( typeof( ImportMode ) ) )
                     _ModeList.Items.Add( new ListItem( Mode.ToString() ) );
             }
 
@@ -298,9 +298,9 @@ namespace ChemSW.Nbt.WebPages
                     Encoding Latin9Encoding = Encoding.GetEncoding( "iso-8859-15" );
                     string ImportXml = Latin9Encoding.GetString( Data, _GarbageCharacterOffset, (int) _HHFileUpload.FileContent.Length - _GarbageCharacterOffset );
 
-                    CswNbtImportExport.ImportMode ImportMode = CswNbtImportExport.ImportMode.Update;
+                    ImportMode ImportMode = ImportMode.Update;
                     if( Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ) )
-                        ImportMode = (CswNbtImportExport.ImportMode) Enum.Parse( typeof( CswNbtImportExport.ImportMode ), _ModeList.SelectedValue );
+                        ImportMode = (ImportMode) Enum.Parse( typeof( ImportMode ), _ModeList.SelectedValue );
 
                     _DoImport( ImportMode, ImportXml );
                 }
@@ -356,7 +356,7 @@ namespace ChemSW.Nbt.WebPages
                         }
                         XmlString += "</Nodes>";
 
-                        _DoImport( CswNbtImportExport.ImportMode.Duplicate, XmlString );
+                        _DoImport( ImportMode.Duplicate, XmlString );
                     }
                     else  //xls
                     {  
@@ -399,7 +399,7 @@ namespace ChemSW.Nbt.WebPages
                         }
                         XmlString += "</Nodes>";
 
-                        _DoImport( CswNbtImportExport.ImportMode.Duplicate, XmlString );
+                        _DoImport( ImportMode.Duplicate, XmlString );
                     }
                 } // else if( _ExcelFileUpload.HasFile )
                 else
@@ -413,7 +413,7 @@ namespace ChemSW.Nbt.WebPages
             }
         }
 
-        private void _DoImport(CswNbtImportExport.ImportMode ImportMode, string ImportXml )
+        private void _DoImport(ImportMode ImportMode, string ImportXml )
         {
             CswNbtImportExport Importer = new CswNbtImportExport( Master.CswNbtResources ); 
             

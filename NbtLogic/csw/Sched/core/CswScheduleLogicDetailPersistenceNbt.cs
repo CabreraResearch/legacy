@@ -184,6 +184,8 @@ namespace ChemSW.Nbt.Sched
 
 
                     _CswResources.commitTransaction();
+                    _CswResources.clearUpdates(); 
+
 
                 } //try 
 

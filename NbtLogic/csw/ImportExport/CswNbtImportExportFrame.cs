@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.ImportExport
     /// </summary>
     public class CswNbtImportExportFrame
     {
-        
+
         #region XML Elements and Attributes
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.ImportExport
 
         // When we make changes to the structure of this document, we need to handle version issues
         private Int32 _Version = 1;
-        
+
 
         private CswNbtResources _CswNbtResources;
 
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.ImportExport
         public CswNbtImportExportFrame( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
- 
+
             _XmlDoc = new XmlDocument();
             _RootNode = CswXmlDocument.SetDocumentElement( _XmlDoc, _Element_NbtData );
             CswXmlDocument.AppendXmlNode( _RootNode, _Element_AccessId, _CswNbtResources.AccessId.ToString() );
@@ -149,11 +149,11 @@ namespace ChemSW.Nbt.ImportExport
         #endregion Constructors
 
 
-        #region Interacting with XML
+        #region Modifying XML
 
         public void AddNodeType( CswNbtMetaDataNodeType NodeType )
         {
-            if(_MetaDataNode  == null)
+            if( _MetaDataNode == null )
                 _MetaDataNode = CswXmlDocument.AppendXmlNode( _RootNode, CswNbtMetaData._Element_MetaData );
             _MetaDataNode.InnerXml += NodeType.ToXml( null, false, false ).InnerXml;
         }
@@ -226,20 +226,59 @@ namespace ChemSW.Nbt.ImportExport
                 }
             }
         }
-        
+
+
+        public void replaceNodeIdReferenceValues( string OldValue, string NewValue )
+        {
+            string Xpath = "//IMCSProData/Nodes/Node/PropValue/NodeID[.='" + OldValue + "']";
+            //string Xpath = "//IMCSProData/Nodes/Node/PropValue/NodeID";
+            XmlNodeList TargetNodeIdElements = CswXmlDocument.getNodeListFromArbitraryXpath( _XmlDoc, Xpath );
+        }
         #endregion Interacting with XML
+
+        #region Reading XML
+
+        public Dictionary<string, string> NodeTypes
+        {
+            get
+            {
+                Dictionary<string, string> ReturnVal = new Dictionary<string, string>();
+
+                XmlNodeList XmlNodeList = CswXmlDocument.getNodesWithUniqueAttributeValues( _XmlDoc, "//IMCSProData/Nodes/Node", "Node", "nodetypename" );
+                return ( ReturnVal );
+            }//get
+        }
+
+
+        private XmlNodeList _Nodes = null;
+        public XmlNodeList Nodes
+        {
+            get
+            {
+                if( null == _Nodes )
+                {
+                    _Nodes = CswXmlDocument.getNodeListFromArbitraryXpath( _XmlDoc, "//IMCSProData/Nodes/Node" );
+                }
+
+                return ( _Nodes );
+
+            }//get
+
+        }//Nodes
+
+        #endregion Reading XML
 
 
         #region Output
-        
+
         /// <summary>
         /// Get the XML Document
         /// </summary>
         public XmlDocument AsXmlDoc()
         {
-            return _XmlDoc; 
+            return _XmlDoc;
         }
-        
+
         /// <summary>
         /// Get the XML Document as a string
         /// </summary>

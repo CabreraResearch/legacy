@@ -543,7 +543,7 @@ namespace ChemSW.NbtWebControls
             {
                 if( NodeTypeProp.FieldTypeRule.SearchAllowed &&
                     ( !_IsQuickSearch || NodeTypeProp.IsQuickSearch ) &&
-                    ( FilterPropertiesToTabId == Int32.MinValue || NodeTypeProp.NodeTypeTab.TabId == FilterPropertiesToTabId ) &&
+                    ( FilterPropertiesToTabId == Int32.MinValue || NodeTypeProp.EditLayout.Tab.TabId == FilterPropertiesToTabId ) &&
                     ( FilterOutPropertyId == Int32.MinValue || NodeTypeProp.PropId != FilterOutPropertyId ) &&
                     ( AllowedFieldTypes.Count == 0 || AllowedFieldTypes.Contains( NodeTypeProp.FieldType.FieldType ) ) &&
                     ( !FilterOutConditionalProperties || !NodeTypeProp.hasFilter() ) )
@@ -627,7 +627,7 @@ namespace ChemSW.NbtWebControls
                 {
                     switch( SelectedPropLatestVersion.FieldType.FieldType )
                     {
-                        case CswNbtMetaDataFieldType.NbtFieldType.Date:
+                        case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                             FilterValueDatePicker.Style[HtmlTextWriterStyle.Display] = "";
                             if( Value != string.Empty && Value != null )
                                 if( Value.Substring( 0, "today".Length ) == "today" )
@@ -713,7 +713,7 @@ namespace ChemSW.NbtWebControls
                                     {
                                         switch( MetaDataProp.FieldType.FieldType )
                                         {
-                                            case CswNbtMetaDataFieldType.NbtFieldType.Date:
+                                            case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                                                 if( FilterValueDatePicker.Today )
                                                 {
                                                     NewFilterValue = "today+" + FilterValueDatePicker.TodayPlusDays.ToString();
@@ -958,7 +958,7 @@ namespace ChemSW.NbtWebControls
                 object ret = null;
                 switch( SelectedPropLatestVersion.FieldType.FieldType )
                 {
-                    case CswNbtMetaDataFieldType.NbtFieldType.Date:
+                    case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                         if( FilterValueDatePicker.Today )
                         {
                             ret = "today+" + FilterValueDatePicker.TodayPlusDays.ToString();
@@ -1067,7 +1067,7 @@ namespace ChemSW.NbtWebControls
                 return ( SelectedFilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull ||
                          SelectedFilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null ||
                          ( FilterValue.ToString() != string.Empty &&
-                           ( SelectedPropLatestVersion.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Date ||
+                           ( SelectedPropLatestVersion.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.DateTime ||
                              FilterValue.ToString().Substring( 0, "today".Length ) == "today" ||
                              CswConvert.ToDateTime( FilterValue ) != DateTime.MinValue ) ) );
             }
