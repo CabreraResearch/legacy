@@ -1680,20 +1680,20 @@ namespace ChemSW.Nbt.WebServices
 
                     if( !string.IsNullOrEmpty( FileName ) && !string.IsNullOrEmpty( PropId ) )
                     {
-                            // Read the binary data
-                            BinaryReader br = new BinaryReader( Context.Request.InputStream );
-                            long Length = Context.Request.InputStream.Length;
-                            byte[] FileData = new byte[Length];
-                            for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
-                            {
-                                FileData[CurrentIndex] = br.ReadByte();
-                            }
+                        // Read the binary data
+                        BinaryReader br = new BinaryReader( Context.Request.InputStream );
+                        long Length = Context.Request.InputStream.Length;
+                        byte[] FileData = new byte[Length];
+                        for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
+                        {
+                            FileData[CurrentIndex] = br.ReadByte();
+                        }
 
-                            // Save the binary data
-                            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                            bool ret = ws.saveMolProp( CswTools.ByteArrayToString( FileData ),PropId);
-           
-                            ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
+                        // Save the binary data
+                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                        bool ret = ws.saveMolProp( CswTools.ByteArrayToString( FileData ), PropId );
+
+                        ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
 
                     } // if( FileName != string.Empty && PropId != string.Empty )
 
@@ -1713,7 +1713,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveMolProp(string molData,string PropId)
+        public string saveMolProp( string molData, string PropId )
         {
             JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1962,7 +1962,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getClientSearchXml( string ViewId, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
+        public string getClientSearchJson( string ViewId, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
         {
             JObject ReturnVal = new JObject();
 
@@ -2251,7 +2251,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string clearProp( string PropId, string IncludeBlob)
+        public string clearProp( string PropId, string IncludeBlob )
         {
             //Come back to implement Multi
             JObject ReturnVal = new JObject( new JProperty( "Succeeded", false.ToString().ToLower() ) );

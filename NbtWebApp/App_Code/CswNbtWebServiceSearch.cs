@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebServices
             //wsViewBuilder.CswViewBuilderProp 
         }//ctor
 
-        #region Generic Search Form XML
+        #region Generic Search Form JSON
 
         /// <summary>
         /// Generates the JSON for a NodeTypeSelect pick list
@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
-        #region Get Search XML
+        #region Get Search JSON
 
         /// <summary>
         /// Returns the JSON for filtered (searchable) View properties, if the View is searchable.
@@ -171,34 +171,32 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JObject getSearchJson( CswNbtView View, string SelectedNodeTypeIdNum, string NodeKey )
         {
-            JObject SearchNode = new JObject( new JProperty( "searchtype", "viewsearch" ) );
-
-            JObject PropObj = new JObject();
-            JProperty PropNode = new JProperty( "properties", PropObj );
-            SearchNode.Add( PropNode );
-
-            if( null == View || !View.IsSearchable() )
+            JObject RetObj = new JObject(); 
+            
+            if( null == View || false == View.IsSearchable() )
             {
                 CswNbtMetaDataNodeType SelectedNodeType = null;
-                if( string.IsNullOrEmpty( SelectedNodeTypeIdNum ) && !string.IsNullOrEmpty( NodeKey ) )
+                if( string.IsNullOrEmpty( SelectedNodeTypeIdNum ) && false == string.IsNullOrEmpty( NodeKey ) )
                 {
                     string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
                     CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
                     CswNbtNode Node = _CswNbtResources.Nodes[NbtNodeKey];
                     SelectedNodeType = Node.NodeType;
                 }
-                else if( !string.IsNullOrEmpty( SelectedNodeTypeIdNum ) )
+                else if( false == string.IsNullOrEmpty( SelectedNodeTypeIdNum ) )
                 {
                     Int32 SelectedNodeTypeId = CswConvert.ToInt32( SelectedNodeTypeIdNum );
                     SelectedNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
                 }
-                SearchNode = _getNodeTypeBasedSearch( SelectedNodeType );
+                RetObj = _getNodeTypeBasedSearch( SelectedNodeType );
             }
             else
             {
+                RetObj["searchtype"] = "viewsearch";
+                RetObj["properties"] = new JObject();
                 foreach( CswViewBuilderProp SearchProp in View.getOrderedViewProps( false )
                                                      .Where( Prop => Prop.Filters.Count > 0 &&
-                                                        !_ProhibittedFieldTypes.Contains( Prop.FieldType ) )
+                                                        false == _ProhibittedFieldTypes.Contains( Prop.FieldType ) )
                                                      .Select( Prop => new CswViewBuilderProp( Prop ) ) )
                 {
 
@@ -207,11 +205,11 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ViewPropFilters.Add( Filt );
                     }
-                    _ViewBuilder.addVbPropFilters( PropObj, SearchProp );
+                    _ViewBuilder.addVbPropFilters( (JObject) RetObj["properties"], SearchProp );
                 }
             }
 
-            return SearchNode;
+            return RetObj;
         } // getViewBasedSearch()
 
         public JObject getSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
@@ -220,7 +218,7 @@ namespace ChemSW.Nbt.WebServices
             return SearchProps;
         }
 
-        #endregion Get Search XML
+        #endregion Get Search JSON
 
         #region Execute Search
 
@@ -238,7 +236,9 @@ namespace ChemSW.Nbt.WebServices
                 string ParentViewId = (string) ViewSearch.Property( "parentviewid" ).Value;
                 string SearchViewId = (string) ViewSearch.Property( "searchviewid" ).Value;
                 SearchPair = new CswNbtViewSearchPair( _CswNbtResources, ParentViewId, SearchViewId );
-                if( null != ViewSearch.Property( "viewprops" ) && null != SearchPair.SearchView )
+                if( null != ViewSearch.Property( "viewprops" ) &&
+                    null != SearchPair.SearchView &&
+                    JTokenType.Array == ViewSearch.Property( "viewprops" ).Value.Type )
                 {
                     JArray Props = (JArray) ViewSearch.Property( "viewprops" ).Value;
 
@@ -268,15 +268,22 @@ namespace ChemSW.Nbt.WebServices
             if( null != SearchJson )
             {
                 NodesSearch = JObject.FromObject( SearchJson );
-                //NodesSearch = XElement.Parse( SearchJson );
-                CswNbtView SearchView = new CswNbtView( _CswNbtResources ) { ViewMode = NbtViewRenderingMode.Tree };
+
+                CswNbtView SearchView = new CswNbtView( _CswNbtResources )
+                                            {
+                                                ViewMode = NbtViewRenderingMode.Tree,
+                                                VisibilityUserId = _CswNbtResources.CurrentNbtUser.UserId,
+                                                Category = "Search",
+                                                Visibility = NbtViewVisibility.User
+                                            };
 
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
 
                 string ParentViewId = (string) NodesSearch.Property( "parentviewid" ).Value;
 
-                if( null != NodesSearch.Property( "viewbuilderprops" ) )
+                if( null != NodesSearch.Property( "viewbuilderprops" ) &&
+                    JTokenType.Array == NodesSearch.Property( "viewbuilderprops" ).Value.Type )
                 {
                     JArray Props = (JArray) NodesSearch.Property( "viewbuilderprops" ).Value;
 
@@ -284,11 +291,21 @@ namespace ChemSW.Nbt.WebServices
                                                         .Cast<JObject>()
                                                         .Where( FilterProp => FilterProp.HasValues ) )
                     {
-                        var PropType = CswNbtViewRelationship.RelatedIdType.Unknown;
-                        CswNbtViewRelationship.RelatedIdType.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );
+                        CswNbtViewRelationship.RelatedIdType PropType;
+                        Enum.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );
+
                         Int32 NodeTypeOrObjectClassId = CswConvert.ToInt32( (string) FilterProp["nodetypeorobjectclassid"] );
                         Int32 PropId = CswConvert.ToInt32( (string) FilterProp["viewbuilderpropid"] );
                         CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
+
+                        CswNbtSubField.SubFieldName SubField;
+                        Enum.TryParse( (string) FilterProp["subfield"], true, out SubField );
+
+                        CswNbtPropFilterSql.PropertyFilterMode FilterMode;
+                        Enum.TryParse( (string) FilterProp["filter"], true, out FilterMode );
+
+                        string FilterValue = CswConvert.ToString( FilterProp["filtervalue"] );
+
                         if( PropType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
                             Int32.MinValue != NodeTypeProp.ObjectClassPropId )
                         {
@@ -298,7 +315,7 @@ namespace ChemSW.Nbt.WebServices
                             {
 
                                 CswNbtViewRelationship OcRelationship;
-                                if( !ViewOcRelationships.ContainsKey( ObjectClass ) )
+                                if( false == ViewOcRelationships.ContainsKey( ObjectClass ) )
                                 {
                                     OcRelationship = SearchView.AddViewRelationship( ObjectClass, false );
                                     ViewOcRelationships.Add( ObjectClass, OcRelationship );
@@ -310,7 +327,7 @@ namespace ChemSW.Nbt.WebServices
 
                                 CswNbtMetaDataObjectClassProp ObjectClassProp = NodeTypeProp.ObjectClassProp;
                                 CswNbtViewProperty ViewOcProperty = SearchView.AddViewProperty( OcRelationship, ObjectClassProp );
-                                CswNbtViewPropertyFilter ViewOcPropFilt = SearchView.AddViewPropertyFilter( ViewOcProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+                                SearchView.AddViewPropertyFilter( ViewOcProperty, SubField, FilterMode, FilterValue, false );
                                 _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
                             }
                         }
@@ -318,11 +335,14 @@ namespace ChemSW.Nbt.WebServices
                             Int32.MinValue != NodeTypeProp.PropId )
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );
-                            if( string.IsNullOrEmpty( ViewName ) ) ViewName = NodeType.NodeTypeName + " Search";
+                            if( string.IsNullOrEmpty( ViewName ) )
+                            {
+                                ViewName = NodeType.NodeTypeName + " Search";
+                            }
                             if( NodeTypeProp.NodeType == NodeType )
                             {
                                 CswNbtViewRelationship NtRelationship;
-                                if( !ViewNtRelationships.ContainsKey( NodeType ) )
+                                if( false == ViewNtRelationships.ContainsKey( NodeType ) )
                                 {
                                     NtRelationship = SearchView.AddViewRelationship( NodeType, false );
                                     ViewNtRelationships.Add( NodeType, NtRelationship );
@@ -333,13 +353,16 @@ namespace ChemSW.Nbt.WebServices
                                 }
 
                                 CswNbtViewProperty ViewNtProperty = SearchView.AddViewProperty( NtRelationship, NodeTypeProp );
-                                CswNbtViewPropertyFilter ViewNtPropFilt = SearchView.AddViewPropertyFilter( ViewNtProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+                                SearchView.AddViewPropertyFilter( ViewNtProperty, SubField, FilterMode, FilterValue, false );
                                 _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
                             }
                         }
                     }
                 }
-                if( string.IsNullOrEmpty( ViewName ) ) ViewName = "No Results for Search";
+                if( string.IsNullOrEmpty( ViewName ) )
+                {
+                    ViewName = "No Results for Search";
+                }
                 SearchView.ViewName = ViewName;
                 SearchView.SaveToCache( true );
                 string SearchViewId = SearchView.SessionViewId.ToString();
