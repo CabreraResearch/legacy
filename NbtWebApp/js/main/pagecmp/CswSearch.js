@@ -96,7 +96,7 @@
         function renderViewBasedSearchContent() {
             //skip cell 1,1
             var andRow = 3, //2
-                properties = o.propsData.propfilters,
+                properties = o.propsData,
                 $andCell, $andText, prop, thisProp, $nodeTypeCell, nodeTypeId, filtArbitraryId,
                 propRow = 2; //1
             

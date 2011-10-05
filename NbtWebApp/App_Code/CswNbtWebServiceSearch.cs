@@ -171,8 +171,8 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JObject getSearchJson( CswNbtView View, string SelectedNodeTypeIdNum, string NodeKey )
         {
-            JObject RetObj = new JObject(); 
-            
+            JObject RetObj = new JObject();
+
             if( null == View || false == View.IsSearchable() )
             {
                 CswNbtMetaDataNodeType SelectedNodeType = null;
@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ViewPropFilters.Add( Filt );
                     }
-                    _ViewBuilder.addVbPropFilters( (JObject) RetObj["properties"], SearchProp );
+                    RetObj["properties"][SearchProp.ViewProp.ArbitraryId] = _ViewBuilder.getVbProp( View, SearchProp );
                 }
             }
 

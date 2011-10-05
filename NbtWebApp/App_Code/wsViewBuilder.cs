@@ -273,12 +273,22 @@ namespace ChemSW.Nbt.WebServices
                 if( null != ThisProp )
                 {
                     CswViewBuilderProp VbProp = new CswViewBuilderProp( ThisProp );
-                    CswNbtViewRelationship.RelatedIdType Relationship = VbProp.RelatedIdType;
-                    Int32 NodeTypeOrObjectClassId = VbProp.MetaDataPropId;
-                    if( Int32.MinValue != NodeTypeOrObjectClassId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
-                    {
-                        _getVbPropData( Ret, VbProp );
-                    }
+                    Ret = getVbProp( View, VbProp );
+                }
+            }
+            return Ret;
+        }
+
+        public JObject getVbProp( CswNbtView View, CswViewBuilderProp VbProp )
+        {
+            JObject Ret = new JObject();
+            if( null != VbProp )
+            {
+                CswNbtViewRelationship.RelatedIdType Relationship = VbProp.RelatedIdType;
+                Int32 NodeTypeOrObjectClassId = VbProp.MetaDataPropId;
+                if( Int32.MinValue != NodeTypeOrObjectClassId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
+                {
+                    _getVbPropData( Ret, VbProp );
                 }
             }
             return Ret;
@@ -336,7 +346,6 @@ namespace ChemSW.Nbt.WebServices
                     _addVbPropFilter( PropFilters, Filter );
 
                 }
-                _getVbPropData( ParentObj, ViewBuilderProp );
             }
         }
 
