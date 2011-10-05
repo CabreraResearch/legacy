@@ -28,7 +28,8 @@ namespace ChemSW.Nbt.Schema
         public void update()
         {
 
-            //Nuke the old audit data -- who knows where it came from? 
+            //STEP I: Nuke the old audit data -- who knows where it came from? 
+            /*
             CswTableUpdate JctNodePropsAuditUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, "jct_nodes_props_audit" );
             DataTable JctNodePropsAuditOldRecords = JctNodePropsAuditUpdate.getTable();
             foreach( DataRow CurrentRow in JctNodePropsAuditOldRecords.Rows )
@@ -36,19 +37,14 @@ namespace ChemSW.Nbt.Schema
                 CurrentRow.Delete();
             }
             JctNodePropsAuditUpdate.update( JctNodePropsAuditOldRecords );
+             */
+
+            //STEP I: With raw SQL
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from jct_nodes_props_audit" );
 
 
-            ////Make all current props auditable
-            //CswAuditMetaData CswAuditMetaData = new Audit.CswAuditMetaData(); 
-            //CswTableUpdate JctNodesPropsUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, "jct_nodes_props" );
-            //DataTable JctNodesPropsRecords = JctNodesPropsUpdate.getTable();
-            //foreach( DataRow CurrentRow in JctNodesPropsRecords.Rows )
-            //{
-            //    CurrentRow[CswAuditMetaData.AuditLevelColName] = AuditLevel.PlainAudit; 
-            //}
-            //JctNodesPropsUpdate.update( JctNodesPropsRecords );
 
-
+            //STEP II: Set the default audit level for auditable tables
             //To deal with tables to which we added the audit level column, but previously neglected to set the default aduit level value
             CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( Description, "select distinct tablename from data_dictionary where lower(tablename) like '%_audit'" );
             CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
@@ -58,6 +54,12 @@ namespace ChemSW.Nbt.Schema
             {
 
                 string AuditedTableName = CswAuditMetaData.makeNameOfAuditedTable( CurrentAuditTableRow["tablename"].ToString() );
+
+                //Core of STEP II code with raw SQL:
+                string FrickinUpdateCommand = "update " + AuditedTableName + " set " + CswAuditMetaData.AuditLevelColName + "='" + CswAuditMetaData.DefaultAuditLevel.ToString() + "'";
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( FrickinUpdateCommand);
+
+                /*
                 CswTableUpdate CurrentCswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description + "_" + AuditedTableName, AuditedTableName );
                 DataTable CurrentTargetOfAuditTable = CurrentCswTableUpdate.getTable();
                 foreach( DataRow CurrentRowOfTargetOfAuditTable in CurrentTargetOfAuditTable.Rows )
@@ -66,6 +68,7 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 CurrentCswTableUpdate.update( CurrentTargetOfAuditTable );
+                 */
 
             }//iterate audit tables
 
@@ -73,7 +76,7 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate CswTableUpdateConfigVals = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description + "__configuration_variables", "configuration_variables" );
             DataTable DataTableConfigVals = CswTableUpdateConfigVals.getTable( " where lower(variablename)='auditing'" );
             DataTableConfigVals.Rows[0]["variablevalue"] = "1";
-            CswTableUpdateConfigVals.update( DataTableConfigVals ); 
+            CswTableUpdateConfigVals.update( DataTableConfigVals );
 
 
 
