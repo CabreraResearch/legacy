@@ -334,7 +334,9 @@ namespace ChemSW.Nbt.WebServices
                 foreach( CswNbtViewPropertyFilter Filter in Filters )
                 {
                     _addVbPropFilter( PropFilters, Filter );
+
                 }
+                _getVbPropData( ParentObj, ViewBuilderProp );
             }
         }
 

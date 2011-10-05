@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebServices
             //wsViewBuilder.CswViewBuilderProp 
         }//ctor
 
-        #region Generic Search Form XML
+        #region Generic Search Form JSON
 
         /// <summary>
         /// Generates the JSON for a NodeTypeSelect pick list
@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
-        #region Get Search XML
+        #region Get Search JSON
 
         /// <summary>
         /// Returns the JSON for filtered (searchable) View properties, if the View is searchable.
@@ -218,7 +218,7 @@ namespace ChemSW.Nbt.WebServices
             return SearchProps;
         }
 
-        #endregion Get Search XML
+        #endregion Get Search JSON
 
         #region Execute Search
 
