@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.ImportExport
         /// <param name="ErrorLog">Will be filled with a summary of recoverable errors</param>
         public void ImportXml( ImportMode IMode, string XmlStr, ref string ViewXml, ref string ResultXml, ref string ErrorLog )
         {
-            _CswImportExportStatusReporter.reportStatus( _StatusMessageDivider + "Starting Import -- Experimental" );
+            _CswImportExportStatusReporter.reportProgress( _StatusMessageDivider + "Starting Import -- Experimental" );
 
             ErrorLog = string.Empty;
 
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.ImportExport
 
             //*********************************************************************************************************
             //*********************** Load to dataset
-            _CswImportExportStatusReporter.reportStatus( "Loading XML document to in memory tables" );
+            _CswImportExportStatusReporter.reportProgress( "Loading XML document to in memory tables" );
             DataSet DataSet = _CswNbtImportExportFrame.AsDataSet();
 
 
@@ -135,14 +135,15 @@ namespace ChemSW.Nbt.ImportExport
             ProcessPhase CurrentProcessPhase = ProcessPhase.NothingDoneYet; //setting this manually for now during testing
             //ProcessPhase CurrentProcessPhase = ProcessPhase.NbtNodesPopulated;
 
-
+            _CswImportExportStatusReporter.MessageTypesToBeLogged.Remove( ImportExportMessageType.Progress );
+            _CswImportExportStatusReporter.MessageTypesToBeLogged.Add( ImportExportMessageType.Stat ); 
             //*********************************************************************************************************
             //*********************** Create Temporary Tables
             if( ProcessPhase.NothingDoneYet == CurrentProcessPhase )
             {
 
 
-                _CswImportExportStatusReporter.reportStatus( _StatusMessageDivider + "Creating temporary tables in database" );
+                _CswImportExportStatusReporter.reportProgress( _StatusMessageDivider + "Creating temporary tables in database" );
                 _CswNbtSchemaModTrnsctn.beginTransaction();
                 if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TblName_TempNodes ) || _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TblName_TempNodes ) ) //belt and suspenders
                 {
@@ -177,7 +178,7 @@ namespace ChemSW.Nbt.ImportExport
 
                 //*********************************************************************************************************
                 //*********************** Fill Temporary tables
-                _CswImportExportStatusReporter.reportStatus( "Filling temporary tables (this may take a while)" );
+                _CswImportExportStatusReporter.reportProgress( "Filling temporary tables (this may take a while)" );
                 _createTempRecords( TableOfNodesFromXml, TblName_TempNodes, MaxInsertRecordsPerTransaction, MaxInsertRecordsPerDisplayUpdate );
                 _createTempRecords( TableOfPropsFromXml, TblName_TempProps, MaxInsertRecordsPerTransaction, MaxInsertRecordsPerDisplayUpdate );
 
@@ -189,7 +190,7 @@ namespace ChemSW.Nbt.ImportExport
             if( ProcessPhase.TempTablesPopulated == CurrentProcessPhase )
             {
 
-                _CswImportExportStatusReporter.reportStatus( _StatusMessageDivider + "Creating NBT Nodes" );
+                _CswImportExportStatusReporter.reportProgress( _StatusMessageDivider + "Creating NBT Nodes" );
 
                 //string WhereClauseForUnprocessedRecords = " where " + _ProcessStatusColumnName + "='" + ProcessStati.Unprocessed.ToString() + "' and nodetypename <> 'User'";
                 string WhereClauseForUnprocessedRecords = " where " + _ColName_ProcessStatus + "='" + ProcessStati.Unprocessed.ToString() + "'" + " and nodetypename <> 'User'";
@@ -311,7 +312,7 @@ namespace ChemSW.Nbt.ImportExport
                     _CswNbtSchemaModTrnsctn.beginTransaction();
                     RawNodesTable = CswArbitrarySelectUnprocessedNodes.getTable( 0, NodeCreatePageSize, false, false );
 
-                    _CswImportExportStatusReporter.reportStatus( TotalNodesProcesssedSoFar.ToString() + " of " + TotalNodesToProcess.ToString() + " nodes processed so far; processing the next " + RawNodesTable.Rows.Count.ToString() + " nodes." );
+                    _CswImportExportStatusReporter.reportProgress( TotalNodesProcesssedSoFar.ToString() + " of " + TotalNodesToProcess.ToString() + " nodes processed so far; processing the next " + RawNodesTable.Rows.Count.ToString() + " nodes." );
 
 
                 } while( RawNodesTable.Rows.Count > 0 );
@@ -323,7 +324,7 @@ namespace ChemSW.Nbt.ImportExport
 
             if( ProcessPhase.NbtNodesPopulated == CurrentProcessPhase )
             {
-                _CswImportExportStatusReporter.reportStatus( _StatusMessageDivider + "Creating NBT Properties" );
+                _CswImportExportStatusReporter.reportProgress( _StatusMessageDivider + "Creating NBT Properties" );
 
 
                 string WhereClauseForImportedNodeRecords = " where " + _ColName_ProcessStatus + "='" + ProcessStati.Imported.ToString() + "'";
@@ -350,12 +351,13 @@ namespace ChemSW.Nbt.ImportExport
                     if( ( null != NodeRecordsToProcess ) && ( NodeRecordsToProcess.Rows.Count > 0 ) )
                     {
 
-
+                        CswTimer AddPropsToNodeTimer = new CswTimer(); 
                         //******************************************************************
                         //Luke, close your eyes and let The Force guide you now . . . .
                         foreach( DataRow CurrentImportNodeRow in NodeRecordsToProcess.Rows )
                         {
 
+                            AddPropsToNodeTimer.Start(); 
 
                             string CurrentRowError = string.Empty;
                             string CurrentNodeTypeName = CurrentImportNodeRow["nodetypename"].ToString();
@@ -504,7 +506,11 @@ namespace ChemSW.Nbt.ImportExport
 
                                 }//iterate prop rows
 
+
+
                                 CurrentNbtNode.postChanges( false );//write node when done iterating prop rows
+                                _CswImportExportStatusReporter.reportTiming( AddPropsToNodeTimer, "Add props to one node" );
+
 
                             }
                             else
@@ -535,7 +541,7 @@ namespace ChemSW.Nbt.ImportExport
                         _CswNbtResources.finalize();
                         _CswNbtResources.clearUpdates();
 
-                        _CswImportExportStatusReporter.reportStatus( "The properties of " + TotalNodesProcesssedSoFar.ToString() + " of " + TotalNodesToProcess.ToString() + " nodes have been imported" );
+                        _CswImportExportStatusReporter.reportProgress( "The properties of " + TotalNodesProcesssedSoFar.ToString() + " of " + TotalNodesToProcess.ToString() + " nodes have been imported" );
 
 
                     }//if we are not on the first iteration
@@ -584,7 +590,7 @@ namespace ChemSW.Nbt.ImportExport
             Int32 TotalRecordsToInsert = SourceTable.Rows.Count;
             Int32 TotalRecordsInsertedSoFar = 0;
 
-            _CswImportExportStatusReporter.reportStatus( "inserting " + TotalRecordsToInsert.ToString() + " into table " + DestinationTableName );
+            _CswImportExportStatusReporter.reportProgress( "inserting " + TotalRecordsToInsert.ToString() + " into table " + DestinationTableName );
             Int32 TotalInsertsThisTransaction = 0;
             foreach( DataRow CurrentSourceRow in SourceTable.Rows )
             {
@@ -615,7 +621,7 @@ namespace ChemSW.Nbt.ImportExport
 
                 if( 0 == ( TotalInsertsThisTransaction % MaxInsertRecordsPerDisplayUpdate ) )
                 {
-                    _CswImportExportStatusReporter.reportStatus( TotalRecordsInsertedSoFar.ToString() + " of " + TotalRecordsToInsert.ToString() + " temporary records have been inserted into " + DestinationDataTable );
+                    _CswImportExportStatusReporter.reportProgress( TotalRecordsInsertedSoFar.ToString() + " of " + TotalRecordsToInsert.ToString() + " temporary records have been inserted into " + DestinationDataTable );
                 }
 
             }//iterate source table rows

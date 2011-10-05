@@ -18,10 +18,11 @@ using ChemSW.Exceptions;
 namespace ChemSW.Nbt.ImportExport
 {
 
-
+    public enum ImportExportMessageType { Progress, Stat }
     public class CswImportExportStatusReporter
     {
 
+        public List<ImportExportMessageType> MessageTypesToBeLogged = new List<ImportExportMessageType>();
         private StatusUpdateHandler _WriteToGui = null;
         private ICswLogger _CswLogger = null;
 
@@ -29,10 +30,11 @@ namespace ChemSW.Nbt.ImportExport
 
         public CswImportExportStatusReporter( StatusUpdateHandler StatusUpdateHandler, ICswLogger CswLogger )
         {
+            MessageTypesToBeLogged.Add( ImportExportMessageType.Progress );
             _WriteToGui = StatusUpdateHandler;
             _CswLogger = CswLogger;
-            _CswLogger.addFilter(_ImportExportLogFilter);
-            _CswLogger.RestrictByFilter = true; 
+            _CswLogger.addFilter( _ImportExportLogFilter );
+            _CswLogger.RestrictByFilter = true;
         }//ctor
 
         public void reportException( Exception Exception )
@@ -48,11 +50,22 @@ namespace ChemSW.Nbt.ImportExport
             _WriteToGui( ErrorMessage );
         }//reportError()
 
-        public void reportStatus( string StatusMessage )
+        public void reportProgress( string StatusMessage )
         {
-            _CswLogger.reportAppState( StatusMessage, _ImportExportLogFilter );
-            _WriteToGui( StatusMessage );
+            if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Stat ) )
+            {
+                _CswLogger.reportAppState( StatusMessage, _ImportExportLogFilter );
+                _WriteToGui( StatusMessage );
+            }
         }//reportStatus()
+
+        public void reportTiming( CswTimer CswTimer, string Action )
+        {
+            if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Stat ) )
+            {
+                _CswLogger.reportAppState( "Total time to " + Action + ": " + CswTimer.ElapsedDurationInMilliseconds.ToString() + " ms" );
+            }
+        }//
 
     } // class CswImportExportStatusReporter
 } // namespace ChemSW.Nbt
