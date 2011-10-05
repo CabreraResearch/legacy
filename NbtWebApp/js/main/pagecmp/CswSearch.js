@@ -5,7 +5,7 @@
 /// <reference path="../controls/CswSelect.js" />
 /// <reference path="../view/CswViewPropFilter.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
+(function ($) { /// <param name="$" type="jQuery" />
     $.fn.CswSearch = function (options) {
 
         var o = { 
@@ -18,7 +18,7 @@
             doViewSearchUrl: '/NbtWebApp/wsNBT.asmx/doViewSearch',
             doNodeSearchUrl: '/NbtWebApp/wsNBT.asmx/doNodeTypeSearch',
             getSearchableViewsUrl: '/NbtWebApp/wsNBT.asmx/getSearchableViews',
-            getClientSearchXmlUrl: '/NbtWebApp/wsNBT.asmx/getClientSearchXml',
+            getClientSearchXmlUrl: '/NbtWebApp/wsNBT.asmx/getClientSearchJson',
 
             //options
             searchviewid: '',
@@ -95,24 +95,26 @@
 
         function renderViewBasedSearchContent() {
             //skip cell 1,1
-            var andRow = 3; //2
+            var andRow = 3, //2
+                properties = o.propsData.propfilters,
+                $andCell, $andText, prop, thisProp, $nodeTypeCell, nodeTypeId, filtArbitraryId,
+                propRow = 2; //1
+            
             while(andRow <= o.propsCount) //eventually this will be configurable: and/or, or, and/not, etc
             {
                 //Row i, Column 1: and
-                var $andCell = o.$searchTable.CswTable('cell', andRow, 1)
+                $andCell = o.$searchTable.CswTable('cell', andRow, 1)
                                .CswAttrDom({align:"right"});
-                var $andText = $('<span>&nbsp;and&nbsp;</span>');
+                $andText = $('<span>&nbsp;and&nbsp;</span>');
                 $andCell.append($andText);
                 andRow++;
             }
         
-            var propRow = 2; //1
-            var properties = o.propsData.property;
-            for (var prop in properties) {
-                if (properties.hasOwnProperty(prop)) {
-                    var thisProp = properties[prop];
-                    var $nodeTypeCell = o.$searchTable.CswTable('cell', propRow, 2);
-                    var nodeTypeId = makeId({ ID: 'viewbuilderpropid', suffix: thisProp.viewbuilderpropid, prefix: o.ID });
+            for (prop in properties) {
+                if (contains(properties, prop)) {
+                    thisProp = properties[prop];
+                    $nodeTypeCell = o.$searchTable.CswTable('cell', propRow, 2);
+                    nodeTypeId = makeId({ ID: 'viewbuilderpropid', suffix: thisProp.viewbuilderpropid, prefix: o.ID });
                     //node type
                     $nodeTypeCell.CswSpan('init', { ID: nodeTypeId,
                         value: thisProp.metadatatypename,
@@ -121,7 +123,7 @@
                     o.selectedSubfieldVal = '';
                     o.selectedFilterVal = '';
 
-                    var filtArbitraryId = thisProp.filtarbitraryid;
+                    filtArbitraryId = thisProp.filtarbitraryid;
                     //prop filter row
                     o.$searchTable.CswViewPropFilter('init', {
                         ID: o.ID,
