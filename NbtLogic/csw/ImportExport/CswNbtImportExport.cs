@@ -683,7 +683,6 @@ namespace ChemSW.Nbt.ImportExport
              */
         } // ImportXml()
 
-
         private void _addEntryToErrorLog( ref string ErrorLog, DataRow ArbitraryDataRow, string Error )
         {
             string FullError = string.Empty;

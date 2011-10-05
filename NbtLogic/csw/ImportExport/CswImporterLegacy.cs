@@ -118,6 +118,8 @@ namespace ChemSW.Nbt.ImportExport
 
 
 
+
+
         /// <summary>
         /// Imports data from an Xml String
         /// </summary>
@@ -137,7 +139,8 @@ namespace ChemSW.Nbt.ImportExport
 
             _StatusUpdate( "Initializing DataSet" );
 
-            DataSet XmlData = _CswNbtImportExportFrame.AsDataSet();
+            CswNbtImportExportFrame Frame = new CswNbtImportExportFrame( _CswNbtResources, XmlStr );
+            DataSet XmlData = Frame.AsDataSet();
 
             DataTable NodeTypesTable = XmlData.Tables[CswNbtMetaDataNodeType._Element_MetaDataNodeType];
             DataTable NodeTypeTabsTable = XmlData.Tables[CswNbtMetaDataNodeTypeTab._Element_MetaDataNodeTypeTab];
@@ -350,7 +353,7 @@ namespace ChemSW.Nbt.ImportExport
                         // Record the matching nodetype in the table
                         NodeTypeMap.Add( SourceNodeTypeId, DestNodeType.NodeTypeId );          // for property value references
                         NodeTypeRow["destnodetypeid"] = DestNodeType.NodeTypeId.ToString();    // for posterity
-                         NodeTypeRow["destnodetypename"] = DestNodeType.NodeTypeName;
+                        NodeTypeRow["destnodetypename"] = DestNodeType.NodeTypeName;
 
                         foreach( DataRow NodeTypeTabRow in NodeTypeRow.GetChildRows( CswNbtMetaDataNodeType._Element_MetaDataNodeType + "_" + CswNbtMetaDataNodeTypeTab._Element_MetaDataNodeTypeTab ) )
                         {
@@ -451,6 +454,7 @@ namespace ChemSW.Nbt.ImportExport
                         if( !NodeIdMap.ContainsKey( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString().ToLower() ) )
                         {
                             CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+                            NodeIdMap.Add( CswTools.XmlRealAttributeName( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString() ).ToLower(), Node.NodeId.PrimaryKey );    // for property value references
                             NodeRow["destnodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );                       // for posterity
 
                             NodeMap.Add( Node.NodeId, Node );
@@ -472,7 +476,7 @@ namespace ChemSW.Nbt.ImportExport
 
             //---------------------------------------------------------------------------
             // Set property values
-            CswNbtNode GeneralUserRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "General User" );
+            CswNbtNode GeneralUserRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "Equipment User" );
             Collection<CswNbtNode> ImportedNodes = new Collection<CswNbtNode>();
             if( NodesTable != null )
             {
@@ -784,7 +788,6 @@ namespace ChemSW.Nbt.ImportExport
             }
             return NodeTypeProp;
         } // _decodeNodeTypeProp()
-
 
     } // class CswImporterLegacy
 } // namespace ChemSW.Nbt
