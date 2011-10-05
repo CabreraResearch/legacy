@@ -136,8 +136,8 @@ namespace ChemSW.Nbt.Schema
         }
 
 
-        public delegate void ImportHandler( string FileName, CswNbtImportExport.ImportMode Mode ); //, bool ClearExisting );
-        public void DoImport( string FilePath, CswNbtImportExport.ImportMode Mode ) //, bool ClearExisting )
+        public delegate void ImportHandler( string FileName, ImportMode Mode ); //, bool ClearExisting );
+        public void DoImport( string FilePath, ImportMode Mode ) //, bool ClearExisting )
         {
             try
             {
@@ -158,7 +158,7 @@ namespace ChemSW.Nbt.Schema
 
                         // Restore selected data
                         CswNbtImportExport Importer = new CswNbtImportExport( _CswNbtResources );
-                        Importer.OnStatusUpdate += new CswNbtImportExport.StatusUpdateHandler( SetStatus );
+                        Importer.OnStatusUpdate += new StatusUpdateHandler( SetStatus );
 
                         string ViewXml = string.Empty;
                         string ResultXml = string.Empty;
@@ -195,7 +195,7 @@ namespace ChemSW.Nbt.Schema
             try
             {
                 CswNbtImportExport Exporter = new CswNbtImportExport( _CswNbtResources );
-                Exporter.OnStatusUpdate += new CswNbtImportExport.StatusUpdateHandler( SetStatus );
+                Exporter.OnStatusUpdate += new StatusUpdateHandler( SetStatus );
 
                 XmlDocument ExportXml = Exporter.ExportAll( SelectedNodeTypes, ExportViews, ExportNodes );
 
