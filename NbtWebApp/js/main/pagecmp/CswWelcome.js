@@ -294,10 +294,10 @@
                     if (isFunction(c.onAddClick)) { c.onAddClick(c.itemData.nodetypeid); }
                     break;
                 case 'link':
-                    if (isFunction(c.onLinkClick())) { c.onLinkClick(optSelect); }
+                    if (isFunction(c.onLinkClick)) { c.onLinkClick(optSelect); }
                     break;
                 case 'search': 
-                    if (isFunction(c.onSearchClick())) { c.onSearchClick(optSelect); }
+                    if (isFunction(c.onSearchClick)) { c.onSearchClick(optSelect); }
                     break;
                 case 'text':
                     break;

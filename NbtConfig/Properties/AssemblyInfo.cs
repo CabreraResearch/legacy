@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "ChemSW, Inc." )]
 [assembly: AssemblyProduct( "NbtConfig" )]
-[assembly: AssemblyCopyright("Copyright © ChemSW, Inc. 2005-2009")]
+[assembly: AssemblyCopyright( "Copyright © ChemSW, Inc. 2005-2009" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 

@@ -240,9 +240,9 @@ namespace ChemSW.Nbt.WebServices
         {
             string FiltId = Filter.ArbitraryId;
             ParentObj[FiltId] = new JObject();
-			ParentObj[FiltId]["arbitraryid"] = Filter.ArbitraryId;
-			ParentObj[FiltId]["nodename"] = CswNbtViewXmlNodeName.Filter.ToString().ToLower();
-			ParentObj[FiltId]["subfield"] = Filter.SubfieldName.ToString();
+            ParentObj[FiltId]["arbitraryid"] = Filter.ArbitraryId;
+            ParentObj[FiltId]["nodename"] = CswNbtViewXmlNodeName.Filter.ToString().ToLower();
+            ParentObj[FiltId]["subfield"] = Filter.SubfieldName.ToString();
             ParentObj[FiltId]["value"] = Filter.Value;
             ParentObj[FiltId]["filtermode"] = Filter.FilterMode.ToString();
             ParentObj[FiltId]["casesensitive"] = Filter.CaseSensitive;
@@ -273,12 +273,22 @@ namespace ChemSW.Nbt.WebServices
                 if( null != ThisProp )
                 {
                     CswViewBuilderProp VbProp = new CswViewBuilderProp( ThisProp );
-                    CswNbtViewRelationship.RelatedIdType Relationship = VbProp.RelatedIdType;
-                    Int32 NodeTypeOrObjectClassId = VbProp.MetaDataPropId;
-                    if( Int32.MinValue != NodeTypeOrObjectClassId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
-                    {
-                        _getVbPropData( Ret, VbProp );
-                    }
+                    Ret = getVbProp( View, VbProp );
+                }
+            }
+            return Ret;
+        }
+
+        public JObject getVbProp( CswNbtView View, CswViewBuilderProp VbProp )
+        {
+            JObject Ret = new JObject();
+            if( null != VbProp )
+            {
+                CswNbtViewRelationship.RelatedIdType Relationship = VbProp.RelatedIdType;
+                Int32 NodeTypeOrObjectClassId = VbProp.MetaDataPropId;
+                if( Int32.MinValue != NodeTypeOrObjectClassId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
+                {
+                    _getVbPropData( Ret, VbProp );
                 }
             }
             return Ret;
@@ -310,7 +320,7 @@ namespace ChemSW.Nbt.WebServices
                         Relationship = CswNbtViewRelationship.RelatedIdType.ObjectClassId;
                     }
                 }
-                else if( !string.IsNullOrEmpty( NodeTypeOrObjectClassId ) )
+                else if( false == string.IsNullOrEmpty( NodeTypeOrObjectClassId ) )
                 {
                     TypeOrObjectClassId = CswConvert.ToInt32( NodeTypeOrObjectClassId );
                     CswNbtViewRelationship.RelatedIdType.TryParse( RelatedIdType, true, out Relationship );
@@ -334,6 +344,7 @@ namespace ChemSW.Nbt.WebServices
                 foreach( CswNbtViewPropertyFilter Filter in Filters )
                 {
                     _addVbPropFilter( PropFilters, Filter );
+
                 }
             }
         }
@@ -394,7 +405,7 @@ namespace ChemSW.Nbt.WebServices
                 if( FieldName != CswNbtSubField.SubFieldName.Unknown &&
                     FilterMode != CswNbtPropFilterSql.PropertyFilterMode.Undefined )
                 {
-					ViewPropFilt.FilterMode = FilterMode;
+                    ViewPropFilt.FilterMode = FilterMode;
                     ViewPropFilt.SubfieldName = FieldName;
                     ViewPropFilt.Value = FilterValue;
                     _addVbPropFilter( Ret, ViewPropFilt );
