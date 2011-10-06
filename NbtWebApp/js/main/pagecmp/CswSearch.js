@@ -293,8 +293,7 @@
                     });
         } // getNewProps()
 
-        function renderSearchButtons()
-        {
+        function renderSearchButtons() {
             var $clearPosition = o.$searchTable;
             var clearCellNumber = o.bottomCell;
             var advancedCellNumber = clearCellNumber + 1;
@@ -358,9 +357,8 @@
            $searchButton.CswViewPropFilter('bindToButton');
         } // renderSearchButtons()
 
-        function init()
-        {
-            var thisViewId = ( !isNullOrEmpty(o.searchviewid) ) ? o.searchviewid : o.parentviewid; 
+        function init() {
+            var thisViewId = (false === isNullOrEmpty(o.searchviewid)) ? o.searchviewid : o.parentviewid; 
             var jsonData = {
                 ViewId: thisViewId, 
                 SelectedNodeTypeIdNum: o.nodetypeorobjectclassid, 
@@ -413,37 +411,41 @@
             }); // CswAjaxJson
         } // init()
 
-        function doSearch()
-        {
+        function doSearch() {
             var searchOpt,
                 props = [],
-                searchUrl;
+                searchUrl = '',
+                dataJson;
 
+            function collectPropFilters(cssclass) {
+                $('.' + ViewBuilder_CssClasses.filter_value.name).each(function() {
+                    var $thisProp = $(this),
+                        propsData = $thisProp.data('propsData'),
+                        thisNodeProp = $thisProp.parent()
+                                                .parent() //we need the <tr> which contains the context for the whole prop
+                                                .CswViewPropFilter('getFilterJson',{
+                                                    nodetypeorobjectclassid: o.nodetypeorobjectclassid,
+                                                    relatedidtype: propsData.relatedidtype,  
+                                                    filtJson: { fieldtype: propsData.fieldtype },
+                                                    ID: o.ID,   
+                                                    $parent: o.$searchTable,
+                                                    filtarbitraryid: propsData.filtarbitraryid,
+                                                    proparbitraryid: propsData.proparbitraryid,
+                                                    viewbuilderpropid: propsData.viewbuilderpropid,
+                                                    advancedIsHidden: o.advancedIsHidden
+                                                }); 
+                    props.push( thisNodeProp );
+                });
+            }
+            
             switch (o.searchtype) {
                 case 'nodetypesearch':
                     searchUrl = o.doNodeSearchUrl;
                     o.nodetypeorobjectclassid = o.$nodeTypesSelect.val();
                     o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrDom('type');
-
-                    $('.' + CswSearch_CssClasses.property_select.name).each(function() {
-                        var $thisProp = $(this),
-                            viewbuildpropid = $thisProp.val(),
-                            oH = new ObjectHelper(o.propsData.properties),
-                            selectedProp = oH.find('viewbuilderpropid', viewbuildpropid),
-                            fieldtype = selectedProp.fieldtype,
-                            thisNodeProp = $thisProp.parent()
-                                                    .parent() //we need the <tr> which contains the context for the whole prop
-                                                    .CswViewPropFilter('getFilterJson',{
-                                                        nodetypeorobjectclassid: o.nodetypeorobjectclassid,
-                                                        relatedidtype: o.relatedidtype,  
-                                                        filtJson: { fieldtype: fieldtype },
-                                                        ID: o.ID,
-                                                        $parent: o.$searchTable,
-                                                        viewbuilderpropid: viewbuildpropid,
-                                                        advancedIsHidden: o.advancedIsHidden
-                                                    }); 
-                        props.push( thisNodeProp );
-                    });
+                    
+                    collectPropFilters();
+                    
                     searchOpt = {
                         viewbuilderprops : props,
                         parentviewid: $.CswCookie('get', CswCookieName.CurrentViewId)
@@ -451,16 +453,7 @@
                     break;
                 case 'viewsearch':
                     searchUrl = o.doViewSearchUrl;
-                    var properties = o.propsData.property;
-                    for (var prop in properties) {
-                        if (properties.hasOwnProperty(prop)) {
-                            var thisProp = properties[prop];
-                            var PropFilter = thisProp.CswViewPropFilter('getFilterJson', {ID: o.ID,
-                                $parent: o.$searchTable
-                            });
-                            props.push(PropFilter);
-                        }
-                    }
+                    collectPropFilters();
                     searchOpt = { 
                             viewprops: props,
                             searchviewid: o.searchviewid,
@@ -469,8 +462,8 @@
                     break;
             }
 
-            if (searchOpt) {
-                var dataJson = {
+            if (false === isNullOrEmpty(searchOpt)) {
+                dataJson = {
                     SearchJson: searchOpt
                 };
                 CswAjaxJson({ 
