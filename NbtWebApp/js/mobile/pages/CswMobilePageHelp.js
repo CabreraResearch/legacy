@@ -1,5 +1,5 @@
 /// <reference path="../../_Global.js" />
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../../jquery/common/CswAttr.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />

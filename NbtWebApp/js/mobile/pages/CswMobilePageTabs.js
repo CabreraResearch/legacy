@@ -1,4 +1,4 @@
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.4-vsdoc.js" />
 /// <reference path="CswMobilePageFactory.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
 /// <reference path="../controls/CswMobileListView.js" />

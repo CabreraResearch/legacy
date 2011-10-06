@@ -1,4 +1,4 @@
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../thirdparty/jquery/core/jquery-1.6.4-vsdoc.js" />
 /// <reference path="ICswMobileWebControls.js" />
 /// <reference path="../globals/CswMobileEnums.js" />
 /// <reference path="../globals/CswMobileTools.js" />
