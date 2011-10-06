@@ -46,7 +46,7 @@
 
     var methods = {
 
-        'init': function(options) {
+        init: function(options) {
             var o = { 
                 //options
                 viewid: '',
@@ -68,8 +68,7 @@
         
             var $propFilterTable = $(this); //must call on a table
             
-            if ( isNullOrEmpty( o.propsData ) && !isNullOrEmpty( o.proparbitraryid ) )
-            {
+            if (isNullOrEmpty(o.propsData) && false === isNullOrEmpty(o.proparbitraryid)) {
                 var jsonData = {
                     ViewJson: JSON.stringify(o.viewJson),
                     PropArbitraryId: o.proparbitraryid
@@ -229,15 +228,17 @@
                             placeholder += "'s " + $subfieldsList.find(':selected').text();
                         }
                     }
-                    $propFilterValueCell.CswInput('init', {ID: filtValInputId,
-                        type: CswInput_Types.text,
-                        cssclass: ViewBuilder_CssClasses.filter_value.name,
-                        value: '',
-                        placeholder: placeholder,
-                        width: "200px",
-                        autofocus: filtOpt.autoFocusInput,
-                        autocomplete: 'on'
-                    });
+                    $propFilterValueCell.CswInput('init', {
+                                            ID: filtValInputId,
+                                            type: CswInput_Types.text,
+                                            cssclass: ViewBuilder_CssClasses.filter_value.name,
+                                            value: '',
+                                            placeholder: placeholder,
+                                            width: "200px",
+                                            autofocus: filtOpt.autoFocusInput,
+                                            autocomplete: 'on'
+                                        })
+                                        .data('propsData', filtOpt.propsData);
                 }
             }
             return $propFilterTable;
@@ -263,8 +264,7 @@
                 renderPropFiltRow(o);
             }
 
-            function renderPropFiltRow(filtOpt)
-            {
+            function renderPropFiltRow(filtOpt) {
                 var propsData = filtOpt.propsData;
                 var propertyName = tryParseString(filtOpt.propname);
                 
@@ -318,7 +318,8 @@
                                     ID: filtValInputId,
                                     value: filterValue,
                                     cssclass: ViewBuilder_CssClasses.default_filter.name })
-                                .css({ 'text-align': "center" });
+                                .css({ 'text-align': "center" })
+                                .data('propsData', filtOpt.propsData);
             }
             return $propFilterTable;
         }, // 'add': function(options) {
@@ -397,7 +398,7 @@
                 }
             });
         }, // 'makefilter': function(options)
-        'bindToButton': function()
+        bindToButton: function()
         {
             var $button = $(this);
 
