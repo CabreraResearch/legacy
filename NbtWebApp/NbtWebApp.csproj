@@ -112,6 +112,13 @@
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="js\thirdparty\jquery\core\jquery-1.6.4-vsdoc.js" />
+    <Content Include="js\thirdparty\jquery\core\jquery-1.6.4.js" />
+    <Content Include="js\thirdparty\jquery\core\jquery-1.6.4.min.js" />
+    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0rc1.css" />
+    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0rc1.js" />
+    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0rc1.min.css" />
+    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0rc1.min.js" />
     <Content Include="wsTests1.html" />
     <Content Include="ConnectTest.html" />
     <Content Include="js\main\actions\CswImportInspectionQuestions.js" />
@@ -262,10 +269,6 @@
     <Content Include="js\mobile\pages\CswMobilePageFactory.js" />
     <Content Include="js\mobile\controls\CswMobilePageFooter.js" />
     <Content Include="js\mobile\controls\CswMobilePageHeader.js" />
-    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b2.css" />
-    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b2.js" />
-    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b2.min.css" />
-    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b2.min.js" />
     <Content Include="js\globals\CswPrototypeExtensions.js" />
     <Content Include="js\main\tools\CswString.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeScientific.js" />
@@ -279,9 +282,6 @@
     <Content Include="js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-1.6.1.js" />
     <Content Include="js\thirdparty\jquery\core\jquery-1.6.1.min.js" />
-    <Content Include="js\thirdparty\jquery\core\jquery-1.6.2-vsdoc.js" />
-    <Content Include="js\thirdparty\jquery\core\jquery-1.6.2.js" />
-    <Content Include="js\thirdparty\jquery\core\jquery-1.6.2.min.js" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.js" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.min.js" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\themes\apple\bg.jpg" />
@@ -306,8 +306,6 @@
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.js" />
     <Content Include="NewMain.html" />
-    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css" />
-    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.js" />
     <Content Include="Design.aspx" />
     <Content Include="Design_Layout.aspx" />
     <Content Include="DisplayLog.aspx" />
@@ -937,8 +935,6 @@
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\images\icons-18-white.png" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\images\icons-36-black.png" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\images\icons-36-white.png" />
-    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.css" />
-    <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.js" />
     <Content Include="js\thirdparty\jquery\plugins\fileuploader.css" />
     <Content Include="js\thirdparty\jquery\plugins\fileuploader.js" />
     <Content Include="js\thirdparty\jquery\plugins\jpopit\jpopit.css" />
