@@ -1,5 +1,5 @@
 /// <reference path="../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b1.js" />
+/// <reference path="../thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0rc1.js" />
 /// <reference path="../globals/CswGlobalTools.js" />
 /// <reference path="../globals/Global.js" />
 /// <reference path="../mobile/clientdb/CswMobileClientDb.js" />
@@ -22,7 +22,7 @@
 
 CswAppMode.mode = 'mobile';
 
-;(function($) {
+(function($) {
     /// <param name="$" type="jQuery" />
 
     $.fn.CswMobile = function(options) {

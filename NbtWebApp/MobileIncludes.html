@@ -1,17 +1,16 @@
-<script type="text/javascript" src="js/thirdparty/js/modernizr-2.0.3.js"></script>
 <script type="text/javascript">
         var debug = false;
         if(debug) {
             //CSS
-            document.write('<link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.css" />');
+            document.write('<script type="text/javascript" src="js/thirdparty/js/modernizr-2.0.6.js"><\/script>');
+            document.write('<link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0rc1.css" />');
             //Case 23547
             //http://stackoverflow.com/questions/6235115/jquery-mobile-listview-not-filling-right-part-of-the-list
             document.write('<link type="text/css" rel="stylesheet" href="js/mobile/CswMobile.css" />');
             //JQ
-            document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.2.js"><\/script>');
             document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.js"><\/script>');
             //JQM
-            document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.js"><\/script>');
+            document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0rc1.js"><\/script>');
             // Globals (load first)
             document.write('<script type="text/javascript" src="js/globals/CswEnums.js"><\/script>');
             document.write('<script type="text/javascript" src="js/mobile/globals/CswMobileEnums.js"><\/script>');
@@ -81,11 +80,12 @@
             document.write('<script type="text/javascript" src="js/mobile/CswMobile.js"><\/script>');
         }
         else {
-            document.write('<link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.min.css" />');
+            document.write('<script type="text/javascript" src="js/thirdparty/js/modernizr-2.0.6.min.js"><\/script>');
+            document.write('<link type="text/css" rel="stylesheet" href="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0rc1.min.css" />');
             document.write('<link type="text/css" rel="stylesheet" href="js/mobile/CswMobile.css" />');
-            document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.2.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery-1.6.4.min.js"><\/script>');
             document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.cookie.min.js"><\/script>');
-            document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0b2.min.js"><\/script>');
+            document.write('<script type="text/javascript" src="js/thirdparty/jquery/core/jquery.mobile/jquery.mobile-1.0rc1.min.js"><\/script>');
             document.write('<script type="text/javascript" src="js/mobile/CswAllMobile.min.js"><\/script>');
         }
 </script>
