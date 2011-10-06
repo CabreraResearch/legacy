@@ -14,21 +14,15 @@
         function redirectOnError(e)
         {
             var $refreshPage = $('#' + localStorage['refreshPage']);
-            if ($refreshPage)
-            {
+            if ($refreshPage) {
                 $.mobile.changePage($refreshPage);
-            }
-            else
-            {
+            } else {
                 window.location.href = window.location.pathname;
             }
             onError();
-            if (debugOn())
-            {
+            if (debugOn()) {
                 errorHandler(e, true, true, true);
-            }
-            else
-            {
+            } else {
                 errorHandler(e);
             }
         }
@@ -39,15 +33,13 @@
                 // override value in _Globals.js
                 homeUrl = "Mobile.html";
 
-                $(document).ready(function ()
-                {
-                    // This causes case 22968!
-                    //$(window).bind("orientationchange resize scrollstart", fixGeometry);
+                // This causes case 22968!
+                //$(window).bind("orientationchange resize scrollstart", fixGeometry);
 
-                    $('body').CswMobile({
-                        'Theme': 'b'
-                    });
+                $('body').CswMobile({
+                    'Theme': 'b'
                 });
+
             }
             else {
                 throw('This browser does not support localStorage.');
