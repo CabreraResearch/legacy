@@ -119,6 +119,8 @@
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0rc1.js" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0rc1.min.css" />
     <Content Include="js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0rc1.min.js" />
+    <Content Include="js\thirdparty\js\modernizr.2.0.6.js" />
+    <Content Include="js\thirdparty\js\modernizr.2.0.6.min.js" />
     <Content Include="wsTests1.html" />
     <Content Include="ConnectTest.html" />
     <Content Include="js\main\actions\CswImportInspectionQuestions.js" />
@@ -1223,8 +1225,6 @@
     <Content Include="js\thirdparty\js\gserializer.js" />
     <Content Include="js\thirdparty\js\jblas-profiler\profiler-dump.js" />
     <Content Include="js\thirdparty\js\jblas-profiler\profiler.js" />
-    <Content Include="js\thirdparty\js\modernizr-2.0.3.js" />
-    <Content Include="js\thirdparty\js\modernizr-2.0.3.min.js" />
     <Content Include="js\globals\Global.js" />
     <Content Include="License.aspx" />
     <Content Include="Location.aspx" />
