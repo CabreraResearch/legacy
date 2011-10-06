@@ -176,6 +176,10 @@ namespace ChemSW.Nbt.Schema
         }//renameColumn() 
 
 
+        public void indexColumn( string TableName, string ColumnName, string IndexNameIn = null )
+        {
+        }//
+
         public Int32 makeSequence( CswSequenceName SequenceName, string Prepend, string Postpend, Int32 Pad, Int32 InitialValue )
         {
 

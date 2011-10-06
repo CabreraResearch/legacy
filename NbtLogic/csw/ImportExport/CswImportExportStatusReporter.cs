@@ -18,7 +18,7 @@ using ChemSW.Exceptions;
 namespace ChemSW.Nbt.ImportExport
 {
 
-    public enum ImportExportMessageType { Progress, Stat }
+    public enum ImportExportMessageType { Progress, Timing, Error }
     public class CswImportExportStatusReporter
     {
 
@@ -39,20 +39,27 @@ namespace ChemSW.Nbt.ImportExport
 
         public void reportException( Exception Exception )
         {
-            _CswLogger.reportError( Exception );
+            if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Error ) )
+            {
+                _CswLogger.reportError( Exception );
+            }
 
             _WriteToGui( Exception.ToString() );
         }//reportException()
 
         public void reportError( string ErrorMessage )
         {
-            _CswLogger.reportError( new CswDniException( ErrorType.Error, ErrorMessage, null ) );
+            if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Error ) )
+            {
+                _CswLogger.reportError( new CswDniException( ErrorType.Error, ErrorMessage, null ) );
+            }
+
             _WriteToGui( ErrorMessage );
         }//reportError()
 
         public void reportProgress( string StatusMessage )
         {
-            if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Stat ) )
+            if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Timing ) )
             {
                 _CswLogger.reportAppState( StatusMessage, _ImportExportLogFilter );
                 _WriteToGui( StatusMessage );
@@ -61,9 +68,9 @@ namespace ChemSW.Nbt.ImportExport
 
         public void reportTiming( CswTimer CswTimer, string Action )
         {
-            if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Stat ) )
+            if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Timing ) )
             {
-                _CswLogger.reportAppState( "Total time to " + Action + ": " + CswTimer.ElapsedDurationInMilliseconds.ToString() + " ms" );
+                _CswLogger.reportAppState( "Total time to " + Action + ": " + CswTimer.ElapsedDurationInMilliseconds.ToString() + " ms", _ImportExportLogFilter );
             }
         }//
 
