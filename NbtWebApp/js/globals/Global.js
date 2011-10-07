@@ -10,8 +10,7 @@
 /// <reference path="../main/tools/CswQueryString.js" />
 /// <reference path="../main/tools/CswString.js" />
 /// <reference path="../../Scripts/jquery-1.6.4-vsdoc.js" />
-/// <reference path="../thirdparty/jquery/core/jquery.cookie.js" />
-/// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
+/// <reference path="../../Scripts/jquery.cookie.js" />
 
 //#region Globals (yuck)
 "use strict";
@@ -91,13 +90,13 @@ function setCurrentReport(reportid)
 
 function clearCurrent()
 {
-	$.CswCookie('set', CswCookieName.LastViewId, $.CswCookie('get', CswCookieName.CurrentViewId));
-	$.CswCookie('set', CswCookieName.LastViewMode, $.CswCookie('get', CswCookieName.CurrentViewMode));
-	$.CswCookie('set', CswCookieName.LastActionName, $.CswCookie('get', CswCookieName.CurrentActionName));
-	$.CswCookie('set', CswCookieName.LastActionUrl, $.CswCookie('get', CswCookieName.CurrentActionUrl));
-	$.CswCookie('set', CswCookieName.LastReportId, $.CswCookie('get', CswCookieName.CurrentReportId));
+    $.CswCookie('set', CswCookieName.LastViewId, $.CswCookie('get', CswCookieName.CurrentViewId));
+    $.CswCookie('set', CswCookieName.LastViewMode, $.CswCookie('get', CswCookieName.CurrentViewMode));
+    $.CswCookie('set', CswCookieName.LastActionName, $.CswCookie('get', CswCookieName.CurrentActionName));
+    $.CswCookie('set', CswCookieName.LastActionUrl, $.CswCookie('get', CswCookieName.CurrentActionUrl));
+    $.CswCookie('set', CswCookieName.LastReportId, $.CswCookie('get', CswCookieName.CurrentReportId));
 
-	$.CswCookie('clear', CswCookieName.CurrentViewId);
+    $.CswCookie('clear', CswCookieName.CurrentViewId);
     $.CswCookie('clear', CswCookieName.CurrentViewMode);
     $.CswCookie('clear', CswCookieName.CurrentActionName);
     $.CswCookie('clear', CswCookieName.CurrentActionUrl);
@@ -105,30 +104,30 @@ function clearCurrent()
 }
 
 function getCurrent() {
-	return {
-		'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
-		'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
-		'actionname': $.CswCookie('get', CswCookieName.CurrentActionName),
-		'actionurl': $.CswCookie('get', CswCookieName.CurrentActionUrl),
-		'reportid': $.CswCookie('get', CswCookieName.CurrentReportId)
-	};
+    return {
+        'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
+        'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
+        'actionname': $.CswCookie('get', CswCookieName.CurrentActionName),
+        'actionurl': $.CswCookie('get', CswCookieName.CurrentActionUrl),
+        'reportid': $.CswCookie('get', CswCookieName.CurrentReportId)
+    };
 }
 function getLast() {
-	return {
-		'viewid': $.CswCookie('get', CswCookieName.LastViewId),
-		'viewmode': $.CswCookie('get', CswCookieName.LastViewMode),
-		'actionname': $.CswCookie('get', CswCookieName.LastActionName),
-		'actionurl': $.CswCookie('get', CswCookieName.LastActionUrl),
-		'reportid': $.CswCookie('get', CswCookieName.LastReportId)
-	};
+    return {
+        'viewid': $.CswCookie('get', CswCookieName.LastViewId),
+        'viewmode': $.CswCookie('get', CswCookieName.LastViewMode),
+        'actionname': $.CswCookie('get', CswCookieName.LastActionName),
+        'actionurl': $.CswCookie('get', CswCookieName.LastActionUrl),
+        'reportid': $.CswCookie('get', CswCookieName.LastReportId)
+    };
 }
 function setCurrent(json) {
-	clearCurrent();
-	$.CswCookie('set', CswCookieName.CurrentViewId, json.viewid);
-	$.CswCookie('set', CswCookieName.CurrentViewMode, json.viewmode);
-	$.CswCookie('set', CswCookieName.CurrentActionName, json.actionname);
-	$.CswCookie('set', CswCookieName.CurrentActionUrl, json.actionurl);
-	$.CswCookie('set', CswCookieName.CurrentReportId, json.reportid);
+    clearCurrent();
+    $.CswCookie('set', CswCookieName.CurrentViewId, json.viewid);
+    $.CswCookie('set', CswCookieName.CurrentViewMode, json.viewmode);
+    $.CswCookie('set', CswCookieName.CurrentActionName, json.actionname);
+    $.CswCookie('set', CswCookieName.CurrentActionUrl, json.actionurl);
+    $.CswCookie('set', CswCookieName.CurrentReportId, json.reportid);
 }
 
 //#endregion Current State

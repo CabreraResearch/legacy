@@ -1569,7 +1569,6 @@
     <None Include="js\thirdparty\jquery\themes\theme-aristo\icons.psd" />
     <None Include="js\thirdparty\jquery\themes\theme-aristo\README.rdoc" />
     <None Include="js\_compile.pl" />
-    <None Include="Mobile.manifest" />
     <Content Include="packages.config" />
     <None Include="SkinPrint\Calendar\Thumbs.db" />
     <None Include="SkinPrint\ComboBox\Thumbs.db" />

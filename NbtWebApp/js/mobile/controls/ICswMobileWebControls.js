@@ -1,7 +1,5 @@
-/// <reference path="../../_Global.js" />
+/// <reference path="../../globals/Global.js" />
 /// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
-/// <reference path="../../CswEnums.js" />
 
 //#region ICswMobileWebControls
 

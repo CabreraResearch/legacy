@@ -1,17 +1,14 @@
-/// <reference path="../../_Global.js" />
+/// <reference path="../../globals/Global.js" />
 /// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
 /// <reference path="../controls/CswMobileMenuButton.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
-/// <reference path="../../jquery/common/CswCookie.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../../main/tools/CswCookie.js" />
 /// <reference path="CswMobilePageFactory.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
 /// <reference path="../sync/CswMobileSync.js" />
-/// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../sync/CswMobileBackgroundTask.js" />
 
 //#region CswMobilePageHelp
