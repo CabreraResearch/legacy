@@ -9,7 +9,7 @@
 /// <reference path="../main/tools/CswProfileMethod.js" />
 /// <reference path="../main/tools/CswQueryString.js" />
 /// <reference path="../main/tools/CswString.js" />
-/// <reference path="../thirdparty/jquery/core/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../thirdparty/jquery/core/jquery.cookie.js" />
 /// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
 

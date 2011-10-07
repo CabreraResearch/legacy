@@ -1,4 +1,4 @@
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../../main/tools/CswTools.js" />
 /// <reference path="../../main/tools/CswAttr.js" />
 /// <reference path="../globals/CswMobileTools.js" />

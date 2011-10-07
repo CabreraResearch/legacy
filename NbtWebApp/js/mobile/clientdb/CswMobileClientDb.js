@@ -1,4 +1,4 @@
-/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../globals/CswMobileEnums.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../main/tools/CswClientDb.js" />
