@@ -31,23 +31,19 @@ CswAppMode.mode = 'mobile';
         /// </summary>
 
         //#region Resource Initialization
-        
+        debugOn(debug);
         var x = {
             Theme: CswMobileGlobal_Config.theme,
             PollingInterval: 30000 //30 seconds
         };
-
         if (options) {
             $.extend(x, options);
         }
         
-        var mobileStorage = new CswMobileClientDbResources(); 
+        var mobileStorage = new CswMobileClientDbResources(),
+            forMobile = true,
+            sessionId = mobileStorage.sessionid();
         
-        debugOn(debug);
-        
-        var forMobile = true;
-        
-        var sessionId = mobileStorage.sessionid();
         if(isNullOrEmpty(sessionId)) {
             Logout(mobileStorage);
         }
@@ -78,6 +74,8 @@ CswAppMode.mode = 'mobile';
         };
 
         var mobileBgTask = new CswMobileBackgroundTask(mobileStorage, mobileSync, mobileBackgroundTaskOptions);
+
+        var mobilePageFactory = CswMobilePageFactory(x.Theme, mobileStorage);
         
         //#endregion Resource Initialization
         
@@ -123,8 +121,7 @@ CswAppMode.mode = 'mobile';
         function makeLoginPage() {
             ///<summary>Create a Mobile login page</summary>
             ///<returns type="CswMobilePageLogin">CswMobilePageLogin page.</returns>
-            
-            var loginDef = {
+            var pageDef = {
                 theme: x.Theme,
                 onHelpClick: onHelpClick,
                 onSuccess: function (data,userName,accessId) {
@@ -141,26 +138,28 @@ CswAppMode.mode = 'mobile';
                 },
                 mobileStorage: mobileStorage
             };
-            loginPage = new CswMobilePageFactory(CswMobilePage_Type.login, loginDef, $('body'));
+            //loginPage = new CswMobilePageFactory(CswMobilePage_Type.login, loginDef, $('body'));
+            loginPage = mobilePageFactory.makePage(CswMobilePage_Type.login, pageDef);
             return loginPage;
         }
         
         function makeOfflinePage() {
             ///<summary>Create a Mobile offline (Sorry Charlie) page</summary>
             ///<returns type="CswMobilePageOffline">CswMobilePageOffline page.</returns>
-            var offlineDef = {
+            var pageDef = {
                 theme: x.Theme,
                 onHelpClick: onHelpClick,
                 mobileStorage: mobileStorage
             };
-            offlinePage = new CswMobilePageFactory(CswMobilePage_Type.offline, offlineDef, $('body'));
+            //offlinePage = new CswMobilePageFactory(CswMobilePage_Type.offline, offlineDef, $('body'));
+            offlinePage = mobilePageFactory.makePage(CswMobilePage_Type.offline, pageDef);
             return offlinePage;
         }
 
         function makeOnlinePage() {
             ///<summary>Create a Mobile online (Sync Status) page</summary>
             ///<returns type="CswMobilePageOnline">CswMobilePageOnline page.</returns>
-            var syncDef = {
+            var pageDef = {
                 theme: x.Theme,
                 onRefreshClick: onRefreshClick,
                 onHelpClick: onHelpClick,
@@ -168,7 +167,8 @@ CswAppMode.mode = 'mobile';
                 mobileSync: mobileSync,
                 mobileBgTask: mobileBgTask
             };
-            onlinePage = new CswMobilePageFactory(CswMobilePage_Type.online, syncDef, $('body') );
+            //onlinePage = new CswMobilePageFactory(CswMobilePage_Type.online, syncDef, $('body') );
+            onlinePage = mobilePageFactory.makePage(CswMobilePage_Type.online, pageDef);
             return onlinePage;
         }
         
@@ -188,7 +188,7 @@ CswAppMode.mode = 'mobile';
         function makeSearchPage() {
             ///<summary>Create a Mobile search page</summary>
             ///<returns type="CswMobilePageSearch">CswMobilePageSearch page.</returns>
-            var searchDef = {
+            var pageDef = {
                 ParentId: mobileStorage.currentViewId(),
                 theme: x.Theme,
                 onOnlineClick: onOnlineClick,
@@ -198,7 +198,8 @@ CswAppMode.mode = 'mobile';
                     tabsPage.CswChangePage();
                 }
             };
-            var searchPage = new CswMobilePageFactory(CswMobilePage_Type.search, searchDef, $('body') );
+            //var searchPage = new CswMobilePageFactory(CswMobilePage_Type.search, searchDef, $('body') );
+            var searchPage = mobilePageFactory.makePage(CswMobilePage_Type.search, pageDef);
             return searchPage;
         }
 
@@ -209,7 +210,7 @@ CswAppMode.mode = 'mobile';
         function makeViewsPage() {
             ///<summary>Create a Mobile views page</summary>
             ///<returns type="CswMobilePageViews">CswMobilePageViews page.</returns>
-            var viewsDef = {
+            var pageDef = {
                 theme: x.Theme,
                 onHelpClick: onHelpClick,   
                 onOnlineClick: onOnlineClick,
@@ -220,14 +221,15 @@ CswAppMode.mode = 'mobile';
                     nodePage.CswChangePage();
                 }
             };
-            viewsPage = new CswMobilePageFactory(CswMobilePage_Type.views, viewsDef, $('body') );
+            //viewsPage = new CswMobilePageFactory(CswMobilePage_Type.views, viewsDef, $('body') );
+            viewsPage = mobilePageFactory.makePage(CswMobilePage_Type.views, pageDef);
             return viewsPage;
         }
         
         function makeNodesPage(opts) {
             ///<summary>Create a Mobile nodes page</summary>
             ///<returns type="CswMobilePageNodes">CswMobilePageNodes page.</returns>
-            var nodesDef = {
+            var pageDef = {
                 ParentId: '',
                 DivId: '',
                 level: 1,
@@ -244,16 +246,17 @@ CswAppMode.mode = 'mobile';
                 }
             };
             if(opts) {
-                $.extend(nodesDef, opts);
+                $.extend(pageDef, opts);
             }
-            var nodesPage = new CswMobilePageFactory(CswMobilePage_Type.nodes, nodesDef, $('body') );
+            //var nodesPage = new CswMobilePageFactory(CswMobilePage_Type.nodes, nodesDef, $('body') );
+            var nodesPage = mobilePageFactory.makePage(CswMobilePage_Type.nodes, pageDef);
             return nodesPage;
         }
         
         function makeTabsPage(opts) {
             ///<summary>Create a Mobile tabs page</summary>
             ///<returns type="CswMobilePageTabs">CswMobilePageTabs page.</returns>
-            var tabsDef = {
+            var pageDef = {
                 ParentId: '',
                 DivId: '',
                 level: 1,
@@ -270,16 +273,17 @@ CswAppMode.mode = 'mobile';
                 }
             };
             if(opts) {
-                $.extend(tabsDef, opts);
+                $.extend(pageDef, opts);
             }
-            var tabsPage = new CswMobilePageFactory(CswMobilePage_Type.tabs, tabsDef, $('body') );
+            //var tabsPage = new CswMobilePageFactory(CswMobilePage_Type.tabs, pageDef, $('body') );
+            var tabsPage = mobilePageFactory.makePage(CswMobilePage_Type.tabs, pageDef);
             return tabsPage;
         }
         
         function makePropsPage(opts) {
             ///<summary>Create a Mobile nodes page</summary>
             ///<returns type="CswMobilePageViews">CswMobilePageViews page.</returns>
-            var propsDef = {
+            var pageDef = {
                 ParentId: '',
                 DivId: '',
                 level: 1,
@@ -301,9 +305,10 @@ CswAppMode.mode = 'mobile';
                 }
             };
             if(opts) {
-                $.extend(propsDef, opts);
+                $.extend(pageDef, opts);
             }
-            var propsPage = new CswMobilePageFactory(CswMobilePage_Type.props, propsDef, $('body') );
+            //var propsPage = new CswMobilePageFactory(CswMobilePage_Type.props, pageDef, $('body') );
+            var propsPage = mobilePageFactory.makePage(CswMobilePage_Type.props, pageDef);
             return propsPage;
         }
         
@@ -355,7 +360,7 @@ CswAppMode.mode = 'mobile';
 
         function updatedUnsyncedChanges() {
             ///<summary> Updates the count of unsynced changes on the Online page.</summary>
-            if (!isNullOrEmpty(onlinePage)) {
+            if (false === isNullOrEmpty(onlinePage)) {
                 var pendingChngCnt = onlinePage.$content.find('#ss_pendingchangecnt');
                 if (!isNullOrEmpty(pendingChngCnt)) {
                     pendingChngCnt.text(tryParseString(mobileStorage.getItem('unSyncedChanges'), '0'));

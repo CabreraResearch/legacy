@@ -22,103 +22,76 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
     /// <returns type="CswMobilePageTabs">Instance of itself. Must instance with 'new' keyword.</returns>
 
     //#region private
-    if (isNullOrEmpty(mobileStorage)) {
-        mobileStorage = new CswMobileClientDbResources();
-    }
-    
     var pageDef = { };
-    var id = CswMobilePage_Type.tabs.id;
-    var title = CswMobilePage_Type.tabs.title;
-    var viewId, level, nodeId;
-    var divSuffix = '_tabs';
-    var ulSuffix = '_list';
-    var $contentPage = $page.find('div:jqmData(role="content")');
-    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + id + divSuffix);
-    var contentDivId;
+    var id, title, contentDivId, $contentPage, $content, viewId, level, nodeId,
+        divSuffix = '_tabs',
+        ulSuffix = '_list';
     
     //ctor
     (function () {
-        
+
         var p = {
             level: 2,
             ParentId: '',
-            DivId: '', 
+            DivId: '',
             viewId: mobileStorage.currentViewId(),
             nodeId: mobileStorage.currentNodeId(),
             title: '',
-            theme: CswMobileGlobal_Config.theme,
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
-            onHelpClick: null, //function () {},
-            onOnlineClick: null, //function () {},
-            onRefreshClick: null, //function () {},
-            onSearchClick: null //function () {}
+            theme: CswMobileGlobal_Config.theme
         };
-        if (tabsDef) $.extend(p, tabsDef);
-
-        if (!isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
+        if (tabsDef) {
+            $.extend(p, tabsDef);
         }
 
+        id = tryParseString(p.DivId, CswMobilePage_Type.tabs.id);
         contentDivId = id + divSuffix;
-        
-        if (!isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
+        title = tryParseString(p.title, CswMobilePage_Type.tabs.title);
+        $contentPage = $page.find('div:jqmData(role="content")');
+        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+
         nodeId = p.nodeId;
         viewId = p.viewId;
         level = tryParseNumber(p.level, 2);
-        
-        var buttons = { };
-        buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
-        buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-        buttons[CswMobileHeaderButtons.back.name] = '';
-        buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
         $content = ensureContent($content, contentDivId);
-    })(); //ctor
+    })();   //ctor
    
-    function getContent(onSuccess, postSuccess) {
+    function getContent(onSuccess) {
         ///<summary>Rebuilds the tabs list from JSON</summary>
         ///<param name="onSuccess" type="Function">A function to execute after the list is built.</param>
         var cachedJson = mobileStorage.fetchCachedNodeJson(nodeId),
             nodeJson;
         if (false === isNullOrEmpty(cachedJson) && 
             contains(cachedJson, 'subitems') &&
-            false === isNullOrEmpty(cachedJson['subitems'])) 
+            false === isNullOrEmpty(cachedJson.subitems)) 
         {
-            nodeJson = cachedJson['subitems'];
-            refreshTabContent(nodeJson, onSuccess, postSuccess);
+            nodeJson = cachedJson.subitems;
+            refreshTabContent(nodeJson, onSuccess);
         } else {
             makeEmptyListView(null, $content, 'No Tabs to Display');
             stopLoadingMsg();
         }
     }
     
-    function refreshTabContent(nodeJson, onSuccess, postSuccess) {
+    function refreshTabContent(nodeJson, onSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
-        $content = ensureContent($content, contentDivId);
         var ulDef = {
             ID: id + ulSuffix,
             cssclass: CswMobileCssClasses.listview.name
         };
+        var tabName, tabId, opts, onClick,
+            listView = new CswMobileListView(ulDef, $content),
+            tabCount = 0;
         
-        var listView = new CswMobileListView(ulDef, $content);
-        var tabCount = 0;
+        $content = ensureContent($content, contentDivId);
+
         if (false === isNullOrEmpty(nodeJson)) {
-            for (var tabName in nodeJson) {
+            for (tabName in nodeJson) {
                 if (contains(nodeJson, tabName)) {
-                    var tabId = makeSafeId({prefix: tabName, ID: nodeId }); 
+                    tabId = makeSafeId({prefix: tabName, ID: nodeId }); 
                     
-                    var opts = {
+                    opts = {
                         ParentId: id,
                         DivId: tabId,
                         viewId: viewId,
@@ -133,7 +106,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
                         mobileStorage: mobileStorage
                     };
 
-                    var onClick = makeDelegate(pageDef.onListItemSelect, opts);
+                    onClick = makeDelegate(pageDef.onListItemSelect, opts);
                     
                     listView.addListItemLink(tabId, tabName, onClick);
                     tabCount++;
@@ -143,28 +116,24 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
         if (tabCount === 0) {
             listView.addListItemLink('no_results', 'No Tabs to Display');
         }
-        if (!mobileStorage.stayOffline()) {
+        if (false === mobileStorage.stayOffline()) {
             toggleOnline(mobileStorage);
         }
-        if (isFunction(onSuccess)) {
-            onSuccess($content);
-        }
-        if (isFunction(postSuccess)) {
-            postSuccess();
-        }
+        doSuccess(onSuccess, $content);
     }
     
     //#endregion private
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
-    
+    return {
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent
+    };
     //#endregion public, priveleged
 }
 

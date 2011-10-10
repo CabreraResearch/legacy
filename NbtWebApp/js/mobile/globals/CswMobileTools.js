@@ -8,10 +8,8 @@
 
 //#region plugins
 
-; (function ($)
-{ /// <param name="$" type="jQuery" />
-    
-    $.fn.CswChangePage = function(options) {
+(function ($) { /// <param name="$" type="jQuery" />
+    $.fn.CswChangePage = function (options) {
         /// <summary>
         ///   Initiates page transition between CswMobilePages
         /// </summary>
@@ -20,43 +18,45 @@
         var ret = false,
             $div = $(this),
             $currentPage = $.mobile.activePage;
-        
+
         var o = {
             transition: 'fade',
             removeActivePage: false
         };
-        if (options) $.extend(o, options);
-        
+        if (options) {
+            $.extend(o, options);
+        }
+
         if (false === isNullOrEmpty($div)) {
             try {
                 ret = $.mobile.changePage($div, o);
                 if (o.removeActivePage) {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         $currentPage.remove();
                     }, 1000);
                 }
             } catch (e) {
                 if (debugOn()) {
-                    log('changePage() failed.',true);
+                    log('changePage() failed.', true);
                 }
             }
         }
         return ret;
     };
-    
-    $.fn.CswSetPath = function() {
+
+    $.fn.CswSetPath = function () {
         /// <summary>
         ///   Updates the JQM path
         /// </summary>
         /// <returns type="jQuery">Returns self for chaining</returns>
-        var $ret = $(this); 
+        var $ret = $(this);
         var id = $ret.CswAttrDom('id');
-        if (!isNullOrEmpty(id)) {
+        if (false === isNullOrEmpty(id)) {
             $.mobile.path.set('#' + id);
         }
         return $ret;
     };
-    
+
 })(jQuery);
 
 //#endregion plugins
@@ -459,4 +459,19 @@ function recalculateFooter($page, startingHeight) {
 //    }
 }
 
+function doSuccess(onSuccess) {
+
+    var args = Array.prototype.slice.call(arguments);
+    args.shift();
+    if (isFunction(onSuccess)) {
+        onSuccess(args);
+    } else {
+        onSuccess.forEach(function (key) {
+            if (isFunction(onSuccess[key])) {
+                onSuccess[key](args);
+            }
+        });
+
+    }
+}
 //#endregion functions

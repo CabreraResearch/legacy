@@ -26,67 +26,40 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     if (isNullOrEmpty(mobileStorage)) {
         mobileStorage = new CswMobileClientDbResources();
     }
-    
-    var pageDef = { },
-        id = CswMobilePage_Type.nodes.id,
-        title = CswMobilePage_Type.nodes.title,
-        viewId, level, forceRefresh,
+
+    var pageDef = { };
+    var id, title, contentDivId, $contentPage, $content, viewId, level, forceRefresh,
         divSuffix = '_nodes',
-        ulSuffix = '_list',
-        $contentPage = $page.find('div:jqmData(role="content")'),
-        contentDivId = id + divSuffix,
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+        ulSuffix = '_list';
     
     //ctor
     (function () {
-        
+
         var p = {
-                level: 1,
-                ParentId: '',
-                DivId: '', 
-                title: '',
-                viewId: '',
-                theme: CswMobileGlobal_Config.theme,
-                headerDef: { buttons: {} },
-                footerDef: { buttons: {} },
-                onHelpClick: null, //function () {},
-                onOnlineClick: null, //function () {},
-                onRefreshClick: null, //function () {},
-                onSearchClick: null //function () {}
-            },
-            buttons = { };
-        
-        if (nodesDef) $.extend(p, nodesDef);
+            level: 1,
+            ParentId: '',
+            DivId: '',
+            title: '',
+            viewId: '',
+            theme: CswMobileGlobal_Config.theme
+        };
+        if (nodesDef) {
+            $.extend(p, nodesDef);
+        }
         forceRefresh = mobileStorage.forceContentRefresh();
         mobileStorage.forceContentRefresh(false);
-        
-        if (false === isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
-        }
-        
-        contentDivId = id + divSuffix;
-        
-        if (false === isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
-        
-        viewId =  mobileStorage.currentViewId(p.viewId);
-        level = tryParseNumber(p.level, 1);
-        
-        buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
-        buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-        buttons[CswMobileHeaderButtons.back.name] = '';
-        buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
 
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        id = tryParseString(p.DivId, CswMobilePage_Type.nodes.id);
+        contentDivId = id + divSuffix;
+        title = tryParseString(p.title, CswMobilePage_Type.nodes.title);
+        $contentPage = $page.find('div:jqmData(role="content")');
+        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+
+        viewId = mobileStorage.currentViewId(p.viewId);
+        level = tryParseNumber(p.level, 1);
+
         $content = ensureContent($content, contentDivId);
-    })(); //ctor
+    })();    //ctor
 
     function getContent(onSuccess, postSuccess) {
         var cachedJson = mobileStorage.fetchCachedViewJson(viewId);
@@ -116,8 +89,8 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
                 data: jsonData,
                 onloginfail: function(text) { onLoginFail(text, mobileStorage); },
                 success: function(data) {
-                    var searchJson = data['searches'],
-                        nodesJson = data['nodes'];
+                    var searchJson = data.searches,
+                        nodesJson = data.nodes;
                     
                     setOnline(mobileStorage);
                     mobileStorage.storeViewJson(id, title, nodesJson, level, searchJson);
@@ -189,12 +162,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
             if (false === mobileStorage.stayOffline()) {
                 toggleOnline(mobileStorage);
             }
-            if (isFunction(onSuccess)) {
-                onSuccess($content);
-            }
-            if (isFunction(postSuccess)) {
-                postSuccess();
-            }
+            doSuccess(onSuccess, $content);
         }
     }
 
@@ -202,13 +170,14 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
-    
+    return {
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent
+    };
     //#endregion public, priveleged
 }
 

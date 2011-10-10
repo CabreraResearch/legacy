@@ -10,10 +10,12 @@
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
 /// <reference path="../sync/CswMobileSync.js" />
 /// <reference path="../sync/CswMobileBackgroundTask.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
 
 //#region CswMobilePageOffline
 
-function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
+function CswMobilePageOffline(offlineDef,$page,mobileStorage) {
     /// <summary>
     ///   Offline Page class. Responsible for generating a Mobile offline page.
     /// </summary>
@@ -24,52 +26,36 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
 
     //#region private
 
-    var $content = '';
     var pageDef = { };
-    var id = CswMobilePage_Type.offline.id;
-    var title = CswMobilePage_Type.offline.title;
-    var divSuffix = '_offline';
-    var contentDivId;
+    var id, title, contentDivId, $contentPage, $content,
+        divSuffix = '_offline';
     
     //ctor
-    (function(){
-    
-        if(isNullOrEmpty(mobileStorage)) {
+    (function () {
+
+        if (isNullOrEmpty(mobileStorage)) {
             mobileStorage = new CswMobileClientDbResources();
         }
-        
+
         var p = {
             level: -1,
-            DivId: '', 
+            DivId: '',
             title: '',
             theme: CswMobileGlobal_Config.theme,
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },
-            onHelpClick: function () {},
-            onOnlineClick: function () {}
+            onHelpClick: function () { },
+            onOnlineClick: function () { }
         };
-        if(offlineDef) $.extend(p, offlineDef);
-
-        if(!isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
+        if (offlineDef) {
+            $.extend(p, offlineDef);
         }
 
+        id = tryParseString(p.DivId, CswMobilePage_Type.offline.id);
         contentDivId = id + divSuffix;
-        
-        if( !isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
-
-        var buttons = { };
-        buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        title = tryParseString(p.title, CswMobilePage_Type.offline.title);
+        $contentPage = $page.find('div:jqmData(role="content")');
+        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
 
         getContent();
     })();
@@ -83,13 +69,14 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
-    
+    return {
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent
+    };
     //#endregion public, priveleged
 }
 

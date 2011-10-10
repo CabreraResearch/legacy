@@ -30,13 +30,11 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     //#region private
 
     var pageDef = { };
-    var id = CswMobilePage_Type.online.id,
-        title = CswMobilePage_Type.online.title,
-        divSuffix = '_contpage',
-        $contentPage, $content, $onlineBtn, $syncBtn, $logoutBtn, $logBtn, contentDivId;
+    var id, title, contentDivId, $contentPage, $content, $onlineBtn, $syncBtn, $logoutBtn, $logBtn,
+        divSuffix = '_contpage';
     
     //ctor
-    (function() {
+    (function () {
         var p = {
             level: -1,
             DivId: '',
@@ -44,38 +42,21 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
             headerDef: { buttons: {} },
             footerDef: { buttons: {} },
             theme: CswMobileGlobal_Config.theme,
-            onRefreshClick: function() {},
-            onHelpClick: function() {}
+            onRefreshClick: function () { },
+            onHelpClick: function () { }
         };
-        if (onlineDef) $.extend(p, onlineDef);
-
-        if (false === isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
+        if (onlineDef) {
+            $.extend(p, onlineDef);
         }
 
+        id = tryParseString(p.DivId, CswMobilePage_Type.login.id);
         contentDivId = id + divSuffix;
+        title = tryParseString(p.title, CswMobilePage_Type.login.title);
         $contentPage = $page.find('div:jqmData(role="content")');
         $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
-        
-        if (false === isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
-        
-        var buttons = { };
-        //buttons[CswMobileFooterButtons.online.name] = '';
-        buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-        buttons[CswMobileHeaderButtons.back.name] = '';
-
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
 
         getContent();
-    })(); //ctor
+    })();   //ctor
     
     function getContent() {
         var hideFailure = isNullOrEmpty(mobileStorage.lastSyncAttempt()) ? '' : 'none',
@@ -224,14 +205,15 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
-    this.setLastSync = setLastSync;
-    
+    return {
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent,
+        setLastSync: setLastSync
+    };
     //#endregion public, priveleged
 }
 

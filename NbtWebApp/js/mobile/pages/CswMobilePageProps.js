@@ -24,16 +24,10 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
     /// <returns type="CswMobilePageProps">Instance of itself. Must instance with 'new' keyword.</returns>
 
     //#region private
-    if (isNullOrEmpty(mobileStorage)) {
-        mobileStorage = new CswMobileClientDbResources();
-    }
-    
-    var pageDef = { },
-        id = CswMobilePage_Type.props.id,
-        title = CswMobilePage_Type.tabs.title,
+    var pageDef = { };
+    var id, title, contentDivId, $contentPage, $content, viewId, level, nodeId, tabId, tabName, tabJson,
         divSuffix = '_props',
-        ulSuffix = '_list',
-        $contentPage, $content, contentDivId, viewId, level, nodeId, tabId, tabName, tabJson;
+        ulSuffix = '_list';
     
     //ctor
     (function () {
@@ -48,78 +42,54 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
             nodeId: mobileStorage.currentNodeId(),
             title: '',
             theme: CswMobileGlobal_Config.theme,
-            headerDef: { buttons: { } },
-            footerDef: { buttons: { } },
-            onHelpClick: null, //function () {},
-            onOnlineClick: null, //function () {},
-            onRefreshClick: null, //function () {},
-            onSearchClick: null, //function () {}
             onListItemSelect: null, //function () {}
             onPropChange: null //function () {}
         };
-        if (propsDef) $.extend(p, propsDef);
-        
-        var buttons = { },
-            cachedJson, nodeJson;
-        
-        
-        if (false === isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
+        if (propsDef) {
+            $.extend(p, propsDef);
         }
 
+        var cachedJson, nodeJson;
+
+        id = tryParseString(p.DivId, CswMobilePage_Type.props.id);
         contentDivId = id + divSuffix;
+        title = tryParseString(p.title, CswMobilePage_Type.props.title);
         $contentPage = $page.find('div:jqmData(role="content")');
         $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
-        
-        if (false === isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
+
         nodeId = p.nodeId;
         tabId = mobileStorage.currentTabId(p.tabId);
         tabName = p.tabName;
 
         cachedJson = mobileStorage.fetchCachedNodeJson(nodeId);
-        if (false === isNullOrEmpty(cachedJson) && 
+        if (false === isNullOrEmpty(cachedJson) &&
             contains(cachedJson, 'subitems') &&
-            false === isNullOrEmpty(cachedJson['subitems']))
-        {
-            nodeJson = cachedJson['subitems'];
+            false === isNullOrEmpty(cachedJson.subitems)) {
+            nodeJson = cachedJson.subitems;
             tabJson = nodeJson[tabName];
 
             viewId = p.viewId;
             level = tryParseNumber(p.level, 2);
 
-            buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
-            buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
-            buttons[CswMobileFooterButtons.fullsite.name] = '';
-            buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-            buttons[CswMobileHeaderButtons.back.name] = '';
-            buttons[CswMobileHeaderButtons.search.name] = p.onSearchClick;
-
-            pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
             $content = ensureContent($content, contentDivId);
         } else {
             throw new Error('Cannot create a property pages without Tab content', tabId);
         }
-    })(); //ctor
+    })();   //ctor
    
-    function getContent(onSuccess, postSuccess) {
+    function getContent(onSuccess) {
         ///<summary>Rebuilds the tabs list from JSON</summary>
-        ///<param name="onSuccess" type="Function">A function to execute after the list is built.</param>
+        ///<param name="onSuccess" type="Function">A function or Array of functions to execute after the list is built.</param>
         $content = ensureContent($content, contentDivId);
         if (false === isNullOrEmpty(tabJson)) {
-            refreshPropContent(onSuccess, postSuccess);
+            refreshPropContent(onSuccess);
         } else {
             makeEmptyListView(null, $content, 'No Properties to Display');
             stopLoadingMsg();
         }
     }
     
-    function refreshPropContent(onSuccess, postSuccess) {
+    function refreshPropContent(onSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         var ulDef = {
@@ -137,7 +107,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
             if (contains(tabJson, propId)) {
                 propJson = tabJson[propId];
                 if (false === isNullOrEmpty(propJson) && propId !== 'nexttab') {
-                    propName = propJson['prop_name'];
+                    propName = propJson.prop_name;
                     ftDef = {
                         propId: propId,
                         propName: propName,
@@ -155,8 +125,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
                     onChange = makeEventDelegate(onPropertyChange, {
                         prop: prop,
                         control: $li,
-                        onSuccess: prop.applyFieldTypeLogicToContent,
-                        onUpdate: pageDef.onPropChange
+                        onSuccess: [ prop.applyFieldTypeLogicToContent, pageDef.onPropChange ]
                     });
                     
                     $li.bind('change', onChange);
@@ -199,12 +168,8 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         if (false === mobileStorage.stayOffline()) {
             toggleOnline(mobileStorage);
         }
-        if (isFunction(onSuccess)) {
-            onSuccess($content);
-        }
-        if (isFunction(postSuccess)) {
-            postSuccess();
-        }
+
+        doSuccess(onSuccess, $content);
     }
     
     function onPropertyChange(eventObj,options) {
@@ -212,8 +177,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
             elementId: '',
             prop: '',
             control: '',
-            onSuccess: '',
-            onUpdate: ''
+            onSuccess: []
         };
         if(options) {
             $.extend(o, options);
@@ -240,25 +204,21 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
                 errorHandler('Could not find a prop to update');
             }
         }
-        if (isFunction(o.onSuccess)) {
-            o.onSuccess(o.control);
-        }
-        if (isFunction(o.onUpdate)) {
-            o.onUpdate();
-        }
-        
+        doSuccess(o.onSuccess, o.control);
     } // onPropertyChange()
     
     //#endregion private
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
+    return {
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent
+    };
     
     //#endregion public, priveleged
 }

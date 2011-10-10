@@ -27,59 +27,38 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
     //#region private
 
     var pageDef = { };
-    var id = CswMobilePage_Type.search.id,
-        title = CswMobilePage_Type.search.title,
+    var id, title, contentDivId, $contentPage, $content, viewId,
         divSuffix = '_search',
-        ulSuffix = '_ul',
-        contentDivId, $contentPage, $content, viewId;
-    
+        ulSuffix = '_ul';
     
     //ctor
-    (function() {
+    (function () {
 
         if (isNullOrEmpty(mobileStorage)) {
             mobileStorage = new CswMobileClientDbResources();
         }
 
         viewId = mobileStorage.currentViewId();
-        
+
         var p = {
             level: -1,
             ParentId: '',
             DivId: CswMobilePage_Type.search.id + viewId,
             title: '',
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
-            theme: CswMobileGlobal_Config.theme,
-            onHelpClick: function() {}
+            theme: CswMobileGlobal_Config.theme
         };
-        if (searchDef) $.extend(p, searchDef);
-        
-        if (false === isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
+        if (searchDef) {
+            $.extend(p, searchDef);
         }
 
+        id = tryParseString(p.DivId, CswMobilePage_Type.search.id);
         contentDivId = id + divSuffix;
+        title = tryParseString(p.title, CswMobilePage_Type.search.title);
         $contentPage = $page.find('div:jqmData(role="content")');
         $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
-        
-        if (false === isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
-       
-        var buttons = { };
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-        buttons[CswMobileHeaderButtons.back.name] = '';
-
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
 
         getContent();
-    })(); //ctor
+    })();   //ctor
         
     function getContent() {
         $content = ensureContent($content, contentDivId);
@@ -92,7 +71,9 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
 
         if (false === isNullOrEmpty(searchJson)) {
             for (key in searchJson) {
-                if (false === selected) selected = key;
+                if (false === selected) {
+                    selected = key;
+                }
                 values.push({ 'value': key, 'display': searchJson[key] });
             }
 
@@ -196,13 +177,14 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
-    
+    return {
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent
+    };
     //#endregion public, priveleged
 }
 

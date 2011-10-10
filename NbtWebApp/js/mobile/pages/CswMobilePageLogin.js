@@ -28,50 +28,30 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
     //#region private
 
     var pageDef = { };
-    var id = CswMobilePage_Type.login.id;
-    var title = CswMobilePage_Type.login.title;
-    var loginSuffix = '_login';
-    var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
-    var contentDivId = id + loginSuffix;
-    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
-    
+    var id, title, contentDivId, $contentPage, $content,
+        divSuffix = '_login';
     
     //ctor
-    (function() {
-        
+    (function () {
+
         var p = {
             level: -1,
             DivId: '',
             title: '',
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
-            theme: CswMobileGlobal_Config.theme,
-            onHelpClick: null // function () {}
+            theme: CswMobileGlobal_Config.theme
         };
-        if (loginDef) $.extend(p, loginDef);
-        
-        if(!isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
+        if (loginDef) {
+            $.extend(p, loginDef);s   
         }
-        
-        contentDivId = id + loginSuffix;
-        
-        if( !isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
-        
-        var buttons = { };
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-        
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
+
+        id = tryParseString(p.DivId, CswMobilePage_Type.login.id);
+        contentDivId = id + divSuffix;
+        title = tryParseString(p.title, CswMobilePage_Type.login.title);
+        $contentPage = $page.find('div:jqmData(role="content")');
+        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
 
         getContent();
-    })(); //ctor
+    })();  //ctor
     
     function getContent() {
         $content = ensureContent($content, contentDivId);
@@ -98,7 +78,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
                                 return startLoadingMsg(function() { onLoginSubmit(); });
                             });
         
-        if( !isNullOrEmpty($contentPage) && $contentPage.length > 0 ) {
+        if (false === isNullOrEmpty($contentPage) && $contentPage.length > 0 ) {
             $contentPage.append($content);
         }
         
@@ -128,9 +108,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
                             onLoginFail(text, mobileStorage);
                         },
                         success: function(data) {
-                            if (!isNullOrEmpty(loginSuccess)) {
-                                loginSuccess(data, userName, accessId);
-                            }
+                            doSuccess(loginSuccess, data, userName, accessId);
                         },
                         error: function() {
                             onError();
@@ -146,13 +124,15 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
-
+    return {
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent
+    };
+    
     //#endregion public, priveleged
 }
 
