@@ -61,20 +61,20 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         $content = ensureContent($content, contentDivId);
     })();    //ctor
 
-    function getContent(onSuccess, postSuccess) {
+    function getContent(onSuccess) {
         var cachedJson = mobileStorage.fetchCachedViewJson(viewId);
 
         if (isTimeToRefresh(mobileStorage) || forceRefresh) {
-            refreshNodeJson(onSuccess, postSuccess);
+            refreshNodeJson(onSuccess);
         } else if (false === isNullOrEmpty(cachedJson)) {
-            refreshNodeContent(cachedJson, onSuccess, postSuccess);
+            refreshNodeContent(cachedJson, onSuccess);
         } else {
             makeEmptyListView(null, $content, 'No Results');
             stopLoadingMsg();
         }
     }
     
-    function refreshNodeJson(onSuccess, postSuccess) {
+    function refreshNodeJson(onSuccess) {
         ///<summary>Fetches the nodes from the selected view from the web server and rebuilds the list.</summary>
         var getView = '/NbtWebApp/wsNBT.asmx/GetView',
             jsonData = {
@@ -94,7 +94,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
                     
                     setOnline(mobileStorage);
                     mobileStorage.storeViewJson(id, title, nodesJson, level, searchJson);
-                    refreshNodeContent(nodesJson,onSuccess,postSuccess);
+                    refreshNodeContent(nodesJson,onSuccess);
                 },
                 error: function() {
                     onError();
@@ -102,7 +102,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
             });
     }
     
-    function refreshNodeContent(viewJson, onSuccess, postSuccess) {
+    function refreshNodeContent(viewJson, onSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         var ulDef = {
@@ -119,7 +119,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         }
 
         if (isNullOrEmpty(viewJson)) {
-            refreshNodeJson(onSuccess, postSuccess);
+            refreshNodeJson(onSuccess);
         } else {
             for (nodeId in viewJson) {
                 if (viewJson.hasOwnProperty(nodeId)) {
@@ -153,7 +153,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
                             listView.addListItem(nodeId, node.nodeName, null, { icon: node.icon });
                         }
                     }
-                    nodeCount++;
+                    nodeCount += 1;
                 }
             }
             if (nodeCount === 0) {

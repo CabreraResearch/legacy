@@ -109,7 +109,7 @@ function CswMobilePageFactory(theme, mobileStorage) {
             $contentRole.append(cswMobilePage.$content);
             onPageComplete(onSuccess);
         } else {
-            $contentRole.append(cswMobilePage.getContent(refreshPageContent,onSuccess));
+            $contentRole.append(cswMobilePage.getContent([refreshPageContent,onSuccess]));
             //onPageComplete(onSuccess);
         }
         if($contentRole.height() < 300) {
