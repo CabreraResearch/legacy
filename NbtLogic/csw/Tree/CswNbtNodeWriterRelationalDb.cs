@@ -23,6 +23,10 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }
 
+        public void clear()
+        {
+        }//clear()
+
         public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase )
         {
 
