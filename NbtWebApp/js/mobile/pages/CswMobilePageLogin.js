@@ -41,7 +41,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
             theme: CswMobileGlobal_Config.theme
         };
         if (loginDef) {
-            $.extend(p, loginDef);s   
+            $.extend(p, loginDef);
         }
 
         id = tryParseString(p.DivId, CswMobilePage_Type.login.id);
