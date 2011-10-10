@@ -80,10 +80,20 @@ namespace ChemSW.Nbt.Schema
         private delegate void AddStatusMsgHandler( string Msg );
         private void _AddStatusMsg( string Msg )
         {
-            //ResultsTextBox.Text = DateTime.Now.ToString() + ": " + Msg + "\r\n" + ResultsTextBox.Text;
-            ResultsTextBox.AppendText( DateTime.Now.ToString() + ": " + Msg + "\r\n" ); 
+            if( ResultsTextBox.Lines.Length > 110 )
+            {
+                Int32 TotalCharactersToRemove = 0;
+                for( Int32 idx = 0; idx < 10; idx++ )
+                {
+                    TotalCharactersToRemove += ResultsTextBox.Lines[idx].Length; 
+                }
 
-            
+                ResultsTextBox.Text = ResultsTextBox.Text.Remove( ResultsTextBox.Text.Length - TotalCharactersToRemove );
+            }
+
+
+            ResultsTextBox.AppendText( DateTime.Now.ToString() + ": " + Msg + "\r\n" );
+
         }
 
         void SchemaSelectBox_SelectedIndexChanged( object sender, EventArgs e )
@@ -218,7 +228,7 @@ namespace ChemSW.Nbt.Schema
         private void FileTypeSelectBox_OnChange( object sender, EventArgs e )
         {
             _initModeComboBox();
-        } 
+        }
 
         private void _initModeComboBox()
         {
