@@ -108,12 +108,12 @@ function CswMobilePageFactory(theme, mobileStorage, $parent) {
             $contentRole.append($content);
             onPageComplete(onSuccess, $contentRole);
         } else {
-            cswMobilePage.getContent([refreshPageContent, onSuccess]);
+            cswMobilePage.getContent([refreshPageContent, onSuccess ]);
             //$contentRole.append(cswMobilePage.getContent([refreshPageContent, onSuccess]));
             //onPageComplete(onSuccess);
         }
         if ($contentRole.height() < 300) {
-            //$contentRole.css('min-height', 300);
+            $contentRole.css('min-height', $(document).height() - 125);
         }
         recalculateFooter($pageDiv);
         
@@ -137,8 +137,9 @@ function CswMobilePageFactory(theme, mobileStorage, $parent) {
     }
     
     function onPageComplete(onSuccess, $contentRole) {
-        log($contentRole);
-        $contentRole.find(':jqmData(role=listview)').listview();
+        $contentRole.parent().trigger('create');
+        //$contentRole.trigger('create');
+        //$contentRole.find(':jqmData(role=listview)').listview();
         doSuccess(onSuccess, $contentRole);
     }
 
