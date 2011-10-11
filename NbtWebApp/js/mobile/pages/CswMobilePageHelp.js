@@ -32,19 +32,19 @@ function CswMobilePageHelp(helpDef, $parent, mobileStorage, $contentRole) {
     
     //ctor
     (function () {
-        var p = {
+        pageDef = {
             level: -1,
             DivId: '',
             title: '',
             theme: CswMobileGlobal_Config.theme
         };
         if (helpDef) {
-            $.extend(p, helpDef);
+            $.extend(pageDef, helpDef);
         }
 
-        id = tryParseString(p.DivId, CswMobilePage_Type.help.id);
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.help.id);
         contentDivId = id + divSuffix;
-        title = tryParseString(p.title, CswMobilePage_Type.help.title);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.help.title);
         $content = ensureContent($contentRole, contentDivId);
 
         getContent();

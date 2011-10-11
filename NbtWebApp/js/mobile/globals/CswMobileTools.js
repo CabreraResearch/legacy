@@ -383,10 +383,9 @@ function ensureContent($contentRole, contentDivId) {
     /// <param name="$contentRole" type="jQuery">Some contentRole element.</param>
     /// <param name="contentDivId" type="String">DivId</param>
     /// <returns type="jQuery">An empty content div.</returns>
-    var $content = null;
+    var $content = $('<div id="' + tryParseString(contentDivId) + '"></div>'); ;
     if (false === isNullOrEmpty($contentRole)) {
         $contentRole.empty();
-        $content = $('<div id="' + tryParseString(contentDivId) + '"></div>');
     }
     return $content;
 }    

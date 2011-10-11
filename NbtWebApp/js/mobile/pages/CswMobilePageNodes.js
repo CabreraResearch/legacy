@@ -23,10 +23,6 @@ function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
     /// <returns type="CswMobilePageNodes">Instance of itself. Must instance with 'new' keyword.</returns>
 
     //#region private
-    if (isNullOrEmpty(mobileStorage)) {
-        mobileStorage = new CswMobileClientDbResources();
-    }
-
     var pageDef = { };
     var id, title, contentDivId, $content, viewId, level, forceRefresh,
         divSuffix = '_nodes',
@@ -34,8 +30,7 @@ function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
     
     //ctor
     (function () {
-
-        var p = {
+        pageDef = {
             level: 1,
             ParentId: '',
             DivId: '',
@@ -44,18 +39,18 @@ function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
             theme: CswMobileGlobal_Config.theme
         };
         if (nodesDef) {
-            $.extend(p, nodesDef);
+            $.extend(pageDef, nodesDef);
         }
         forceRefresh = mobileStorage.forceContentRefresh();
         mobileStorage.forceContentRefresh(false);
 
-        id = tryParseString(p.DivId, CswMobilePage_Type.nodes.id);
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.nodes.id);
         contentDivId = id + divSuffix;
-        title = tryParseString(p.title, CswMobilePage_Type.nodes.title);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.nodes.title);
         $content = ensureContent($contentRole, contentDivId);
         
-        viewId = mobileStorage.currentViewId(p.viewId);
-        level = tryParseNumber(p.level, 1);
+        viewId = mobileStorage.currentViewId(pageDef.viewId);
+        level = tryParseNumber(pageDef.level, 1);
     })();    //ctor
 
     function getContent(onSuccess) {

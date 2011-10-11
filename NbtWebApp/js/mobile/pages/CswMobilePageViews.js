@@ -31,7 +31,7 @@ function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
     
     //ctor
     (function () {
-        var p = {
+        pageDef = {
             parentlevel: -1,
             level: -1,
             ParentId: '',
@@ -41,14 +41,14 @@ function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
             PageType: CswMobilePage_Type.views
         };
         if (viewsDef) {
-            $.extend(p, viewsDef);
+            $.extend(pageDef, viewsDef);
         }
         forceRefresh = mobileStorage.forceContentRefresh();
         mobileStorage.forceContentRefresh(false);
 
-        id = tryParseString(p.DivId, CswMobilePage_Type.views.id);
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.views.id);
         contentDivId = id + divSuffix;
-        title = tryParseString(p.title, CswMobilePage_Type.views.title);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.views.title);
         $content = ensureContent($contentRole, contentDivId);
     })();   //ctor
     

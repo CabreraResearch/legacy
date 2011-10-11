@@ -32,7 +32,7 @@ function CswMobilePageOffline(offlineDef, $parent, mobileStorage, $contentRole) 
     
     //ctor
     (function () {
-        var p = {
+        pageDef = {
             level: -1,
             DivId: '',
             title: '',
@@ -43,12 +43,12 @@ function CswMobilePageOffline(offlineDef, $parent, mobileStorage, $contentRole) 
             onOnlineClick: function () { }
         };
         if (offlineDef) {
-            $.extend(p, offlineDef);
+            $.extend(pageDef, offlineDef);
         }
 
-        id = tryParseString(p.DivId, CswMobilePage_Type.offline.id);
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.offline.id);
         contentDivId = id + divSuffix;
-        title = tryParseString(p.title, CswMobilePage_Type.offline.title);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.offline.title);
         $content = ensureContent($contentRole, contentDivId);
 
         getContent();

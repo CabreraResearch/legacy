@@ -31,8 +31,7 @@ function CswMobilePageProps(propsDef, $parent, mobileStorage, $contentRole) {
     
     //ctor
     (function () {
-
-        var p = {
+        pageDef = {
             level: 1,
             ParentId: '',
             DivId: '',
@@ -46,19 +45,19 @@ function CswMobilePageProps(propsDef, $parent, mobileStorage, $contentRole) {
             onPropChange: null //function () {}
         };
         if (propsDef) {
-            $.extend(p, propsDef);
+            $.extend(pageDef, propsDef);
         }
 
         var cachedJson, nodeJson;
 
-        id = tryParseString(p.DivId, CswMobilePage_Type.props.id);
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.props.id);
         contentDivId = id + divSuffix;
-        title = tryParseString(p.title, CswMobilePage_Type.props.title);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.props.title);
         $content = ensureContent($contentRole, contentDivId);
 
-        nodeId = p.nodeId;
-        tabId = mobileStorage.currentTabId(p.tabId);
-        tabName = p.tabName;
+        nodeId = pageDef.nodeId;
+        tabId = mobileStorage.currentTabId(pageDef.tabId);
+        tabName = pageDef.tabName;
 
         cachedJson = mobileStorage.fetchCachedNodeJson(nodeId);
         if (false === isNullOrEmpty(cachedJson) &&
@@ -67,8 +66,8 @@ function CswMobilePageProps(propsDef, $parent, mobileStorage, $contentRole) {
             nodeJson = cachedJson.subitems;
             tabJson = nodeJson[tabName];
 
-            viewId = p.viewId;
-            level = tryParseNumber(p.level, 2);
+            viewId = pageDef.viewId;
+            level = tryParseNumber(pageDef.level, 2);
         } else {
             throw new Error('Cannot create a property pages without Tab content', tabId);
         }

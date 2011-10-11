@@ -35,7 +35,7 @@ function CswMobilePageSearch(searchDef, $parent, mobileStorage, $contentRole) {
     (function () {
         viewId = mobileStorage.currentViewId();
 
-        var p = {
+        pageDef = {
             level: -1,
             ParentId: '',
             DivId: CswMobilePage_Type.search.id + viewId,
@@ -43,12 +43,12 @@ function CswMobilePageSearch(searchDef, $parent, mobileStorage, $contentRole) {
             theme: CswMobileGlobal_Config.theme
         };
         if (searchDef) {
-            $.extend(p, searchDef);
+            $.extend(pageDef, searchDef);
         }
 
-        id = tryParseString(p.DivId, CswMobilePage_Type.search.id);
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.search.id);
         contentDivId = id + divSuffix;
-        title = tryParseString(p.title, CswMobilePage_Type.search.title);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.search.title);
         $content = ensureContent($contentRole, contentDivId);
 
         getContent();

@@ -29,8 +29,7 @@ function CswMobilePageTabs(tabsDef, $parent, mobileStorage, $contentRole) {
     
     //ctor
     (function () {
-
-        var p = {
+        pageDef = {
             level: 2,
             ParentId: '',
             DivId: '',
@@ -40,22 +39,23 @@ function CswMobilePageTabs(tabsDef, $parent, mobileStorage, $contentRole) {
             theme: CswMobileGlobal_Config.theme
         };
         if (tabsDef) {
-            $.extend(p, tabsDef);
+            $.extend(pageDef, tabsDef);
         }
 
-        id = tryParseString(p.DivId, CswMobilePage_Type.tabs.id);
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.tabs.id);
         contentDivId = id + divSuffix;
-        title = tryParseString(p.title, CswMobilePage_Type.tabs.title);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.tabs.title);
         $content = ensureContent($contentRole, contentDivId);
 
-        nodeId = p.nodeId;
-        viewId = p.viewId;
-        level = tryParseNumber(p.level, 2);
+        nodeId = pageDef.nodeId;
+        viewId = pageDef.viewId;
+        level = tryParseNumber(pageDef.level, 2);
     })();   //ctor
    
     function getContent(onSuccess) {
         ///<summary>Rebuilds the tabs list from JSON</summary>
         ///<param name="onSuccess" type="Function">A function to execute after the list is built.</param>
+        $content = ensureContent($contentRole, contentDivId);
         var cachedJson = mobileStorage.fetchCachedNodeJson(nodeId),
             nodeJson;
         if (false === isNullOrEmpty(cachedJson) && 
@@ -79,8 +79,6 @@ function CswMobilePageTabs(tabsDef, $parent, mobileStorage, $contentRole) {
         var tabName, tabId, opts, onClick,
             listView = new CswMobileListView(ulDef, $content),
             tabCount = 0;
-        
-        $content = ensureContent($contentRole, contentDivId);
 
         if (false === isNullOrEmpty(nodeJson)) {
             for (tabName in nodeJson) {

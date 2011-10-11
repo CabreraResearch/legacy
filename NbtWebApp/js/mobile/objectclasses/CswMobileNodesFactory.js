@@ -5,6 +5,8 @@
 /// <reference path="../controls/CswMobileListView.js" />
 /// <reference path="CswMobileInspectionDesignClass.js" />
 /// <reference path="CswMobileGenericClass.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 //#region CswMobileNodesFactory
 
@@ -36,7 +38,7 @@ function CswMobileNodesFactory(ocDef) {
         icon = '';
         
         var nodePk = nodeKey.split('_');
-        if(nodePk.hasOwnProperty(1)) {
+        if(contains(nodePk, 1)) {
             nodeId = nodeKey[1];
         }
         if(Int32MinVal !== nodeId && 'No Results' !== p) {

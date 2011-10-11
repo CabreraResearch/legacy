@@ -35,7 +35,7 @@ function CswMobilePageOnline(onlineDef, $parent, mobileStorage, mobileSync, mobi
     
     //ctor
     (function () {
-        var p = {
+        pageDef = {
             level: -1,
             DivId: '',
             title: '',
@@ -46,12 +46,12 @@ function CswMobilePageOnline(onlineDef, $parent, mobileStorage, mobileSync, mobi
             onHelpClick: function () { }
         };
         if (onlineDef) {
-            $.extend(p, onlineDef);
+            $.extend(pageDef, onlineDef);
         }
 
-        id = tryParseString(p.DivId, CswMobilePage_Type.login.id);
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.login.id);
         contentDivId = id + divSuffix;
-        title = tryParseString(p.title, CswMobilePage_Type.login.title);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.login.title);
         $content = ensureContent($contentRole, contentDivId);
 
         getContent();
