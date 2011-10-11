@@ -236,8 +236,17 @@ CswAppMode.mode = 'mobile';
                 onSearchClick: onSearchClick,
                 mobileStorage: mobileStorage,
                 onListItemSelect: function(param) {
-                    var tabsPage = makeTabsPage(param);
-                    tabsPage.CswChangePage();
+                    var nodeJson = mobileStorage.fetchCachedNodeJson(param.nodeId),
+                        nextPage;
+                    if(isNullOrEmpty(nodeJson)) {
+                        nodeJson = param.cachedJson;
+                    }
+                    if (contains(nodeJson, 'tabs')) {
+                        nextPage = makeTabsPage(param);
+                    } else {
+                        nextPage = makeNodesPage(param);
+                    }
+                    nextPage.CswChangePage();
                 }
             };
             if(opts) {

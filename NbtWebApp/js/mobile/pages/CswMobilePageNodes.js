@@ -37,6 +37,7 @@ function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
             buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back, CswMobileHeaderButtons.search],
             title: '',
             viewId: '',
+            nodeId: '',
             theme: CswMobileGlobal_Config.theme
         };
         if (nodesDef) {
@@ -55,9 +56,16 @@ function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
     })();    //ctor
 
     function getContent(onSuccess) {
-        var cachedJson = mobileStorage.fetchCachedViewJson(viewId);
-
-        if (isTimeToRefresh(mobileStorage) || forceRefresh) {
+        var cachedJson,
+            doServerRefresh = isTimeToRefresh(mobileStorage) || forceRefresh; 
+        if(false === isNullOrEmpty(pageDef.nodeId)) {
+            cachedJson = mobileStorage.fetchCachedNodeJson(pageDef.nodeId).nodes;
+            doServerRefresh = false;
+        } else {
+            cachedJson = mobileStorage.fetchCachedViewJson(viewId);
+        }
+        
+        if (doServerRefresh) {
             refreshNodeJson(onSuccess);
         } else if (false === isNullOrEmpty(cachedJson)) {
             refreshNodeContent(cachedJson, onSuccess);
@@ -76,26 +84,26 @@ function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
                 ForMobile: true
             };
 
-        CswAjaxJson({
+            CswAjaxJson({
                 formobile: true,
                 url: getView,
                 data: jsonData,
-                onloginfail: function(text) { onLoginFail(text, mobileStorage); },
-                success: function(data) {
+                onloginfail: function (text) { onLoginFail(text, mobileStorage); },
+                success: function (data) {
                     var searchJson = data.searches,
                         nodesJson = data.nodes;
-                    
+
                     setOnline(mobileStorage);
                     mobileStorage.storeViewJson(id, title, nodesJson, level, searchJson);
-                    refreshNodeContent(nodesJson,onSuccess);
+                    refreshNodeContent(nodesJson, onSuccess);
                 },
-                error: function() {
+                error: function () {
                     onError();
                 }
             });
     }
     
-    function refreshNodeContent(viewJson, onSuccess) {
+    function refreshNodeContent(cachedJson, onSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         var ulDef = {
@@ -107,20 +115,16 @@ function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
             nodeCount = 0,
             nodeId, nodeJson, ocDef, node, opts, onClick;
 
-        if (isNullOrEmpty(viewJson)) {
-            viewJson = mobileStorage.fetchCachedViewJson(id);
-        }
-
-        if (isNullOrEmpty(viewJson)) {
-            refreshNodeJson(onSuccess);
+        if (isNullOrEmpty(cachedJson)) {
+            getContent(onSuccess);
         } else {
-            for (nodeId in viewJson) {
-                if (viewJson.hasOwnProperty(nodeId)) {
-                    nodeJson = viewJson[nodeId];
+            for (nodeId in cachedJson) {
+                if (contains(cachedJson, nodeId)) {
+                    nodeJson = cachedJson[nodeId];
                     if (Int32MinVal === nodeId.split('_')[1] || 'No Results' === nodeJson) {
                         makeEmptyListView(listView, null, 'No Results');
                     } else {
-                        delete nodeJson.subitems;
+                        //delete nodeJson.subitems;
                         ocDef = { nodeKey: nodeId };
                         $.extend(ocDef, nodeJson);
                         node = new CswMobileNodesFactory(ocDef);

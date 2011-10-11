@@ -59,10 +59,11 @@ function CswMobilePageTabs(tabsDef, $parent, mobileStorage, $contentRole) {
         $content = ensureContent($contentRole, contentDivId);
         var cachedJson = mobileStorage.fetchCachedNodeJson(nodeId),
             nodeJson;
+
         if (false === isNullOrEmpty(cachedJson) && 
-            contains(cachedJson, 'subitems') &&
-            false === isNullOrEmpty(cachedJson.subitems)) {
-            nodeJson = cachedJson.subitems;
+            contains(cachedJson, 'tabs') &&
+            false === isNullOrEmpty(cachedJson.tabs)) {
+            nodeJson = cachedJson.tabs;
             refreshTabContent(nodeJson, onSuccess);
         } else {
             makeEmptyListView(null, $content, 'No Tabs to Display');
