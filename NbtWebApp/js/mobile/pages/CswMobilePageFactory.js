@@ -23,18 +23,17 @@
 
 //#region CswMobilePageFactory
 
-function CswMobilePageFactory(theme, mobileStorage) {
+function CswMobilePageFactory(theme, mobileStorage, $parent) {
     /// <summary> Page factory class. Responsible for generating a Mobile page.  </summary>
     /// <param name="$" type="jQuery"></param>
     /// <returns type="CswMobilePageFactory">Instance of itself.</returns>
 
     //#region private
     
-    function getPageRoleDiv(headerText, $parent) {
+    function getPageRoleDiv(headerText, id) {
         if (false === isNullOrEmpty($parent, true)) {
             var $ret = $('#' + id);
-            if (false === isNullOrEmpty($ret) || $ret.length > 0)
-            {
+            if (false === isNullOrEmpty($ret) || $ret.length > 0) {
                 $ret.remove();
             }
 
@@ -50,7 +49,7 @@ function CswMobilePageFactory(theme, mobileStorage) {
         }
     }
     
-    function getMenuHeader(options, $pageDiv) {
+    function getMenuHeader(options, $pageDiv, title) {
         var ret;
         var headerDef = {
             dataId: 'csw_header',
@@ -76,44 +75,45 @@ function CswMobilePageFactory(theme, mobileStorage) {
         return ret;
     }
 
-    function getContentDiv($pageDiv) {
+    function getContentDiv($pageDiv, id) {
         /// <summary> Refreshes the content of a page.</summary>
         /// <param name="theme" type="String">JQM theme to style content.</param>
         /// <param name="forceRefresh" type="Boolean">True to force a refresh from the page class, false to load from memory.</param>
         /// <returns type="void"></returns>
-        var $contentRole = $('#' + id + '_content');
+        var $contentRole = $pageDiv.find('div:jqmData(role="content")');
         if (false === isNullOrEmpty($contentRole) && $contentRole.length > 0) {
             $contentRole.remove();
-        } 
-        $contentRole = $pageDiv.CswDiv('init', { ID: id + '_content' })
-                               .CswAttrXml({ 'data-role': 'content', 'data-theme': theme });
-        
+        }
+        $contentRole = $('<div id="' + id + '_content" data-role="content" data-theme="' + theme + '"></div>');
         return $contentRole;
     }
     
-    function bindPageEvents($pageDiv) {
+    function bindPageEvents($pageDiv, cswMobilePage) {
         $pageDiv.unbind('pageshow');
         $pageDiv.bind('pageshow', function() {
             startLoadingMsg();
             setTimeout(function() {
                 fillContent(false, function() {
-                    stopLoadingMsg();
-                });
+                        stopLoadingMsg();
+                    },
+                    $pageDiv, cswMobilePage);
             }, 500);
         });
     }
 
-    function fillContent(forceRefresh, onSuccess, $contentRole, $pageDiv, cswMobilePage) {
-
-        if (contentIsFullyPopulated(cswMobilePage.$content) && false === forceRefresh) {
-            $contentRole.append(cswMobilePage.$content);
-            onPageComplete(onSuccess);
+    function fillContent(forceRefresh, onSuccess, $pageDiv, cswMobilePage) {
+        var $contentRole = cswMobilePage.$contentRole,
+            $content = cswMobilePage.$content;
+        if (contentIsFullyPopulated($content) && false === forceRefresh) {
+            $contentRole.append($content);
+            onPageComplete(onSuccess, $contentRole);
         } else {
-            $contentRole.append(cswMobilePage.getContent([refreshPageContent,onSuccess]));
+            cswMobilePage.getContent([refreshPageContent, onSuccess]);
+            //$contentRole.append(cswMobilePage.getContent([refreshPageContent, onSuccess]));
             //onPageComplete(onSuccess);
         }
-        if($contentRole.height() < 300) {
-            $contentRole.css('min-height', 300);
+        if ($contentRole.height() < 300) {
+            //$contentRole.css('min-height', 300);
         }
         recalculateFooter($pageDiv);
         
@@ -131,17 +131,15 @@ function CswMobilePageFactory(theme, mobileStorage) {
         return ret;
     }
     
-    function refreshPageContent($contentRole, $newContent) {
+    function refreshPageContent($contentRole) {
         ///<summary>Append content to page</summary>
-        $contentRole.append($newContent);
-        onPageComplete();
+        onPageComplete([], $contentRole);
     }
     
     function onPageComplete(onSuccess, $contentRole) {
-        $contentRole.trigger('create');
-        if (isFunction(onSuccess)) {
-            onSuccess();
-        }
+        log($contentRole);
+        $contentRole.find(':jqmData(role=listview)').listview();
+        doSuccess(onSuccess, $contentRole);
     }
 
     function makeButtonDef(options, id) {
@@ -196,13 +194,9 @@ function CswMobilePageFactory(theme, mobileStorage) {
             $.extend(p, pageDef);
         }
         var ret = null,
-            $pageDiv, id, 
+            $pageDiv, id, $contentRole,
             cswMobilePage = null;
         
-        if (isNullOrEmpty(p.mobileStorage)) {
-            p.mobileStorage = new CswMobileClientDbResources();
-        }
-
         if (isNullOrEmpty(p.DivId)) {
             p.DivId = pageType.id;
         }
@@ -212,35 +206,36 @@ function CswMobilePageFactory(theme, mobileStorage) {
             title = pageType.title;
             p.title = title;
         }
-        $pageDiv = getPageRoleDiv(title, theme, p.doChangePage);
-
+        $pageDiv = getPageRoleDiv(title, id);
+        $contentRole = getContentDiv($pageDiv, id);
+        
         switch (pageType.name) {
             case CswMobilePage_Type.help.name:
-                cswMobilePage = CswMobilePageHelp(p, $pageDiv, mobileStorage);
+                cswMobilePage = CswMobilePageHelp(p, $pageDiv, mobileStorage, $contentRole);
                 break;
             case CswMobilePage_Type.login.name:
-                cswMobilePage = CswMobilePageLogin(p, $pageDiv, mobileStorage, p.onSuccess);
+                cswMobilePage = CswMobilePageLogin(p, $pageDiv, mobileStorage, p.onSuccess, $contentRole);
                 break;
             case CswMobilePage_Type.nodes.name:
-                cswMobilePage = CswMobilePageNodes(p, $pageDiv, mobileStorage);
+                cswMobilePage = CswMobilePageNodes(p, $pageDiv, mobileStorage, $contentRole);
                 break;
             case CswMobilePage_Type.offline.name:
-                cswMobilePage = CswMobilePageOffline(p, $pageDiv, mobileStorage);
+                cswMobilePage = CswMobilePageOffline(p, $pageDiv, mobileStorage, $contentRole);
                 break;
             case CswMobilePage_Type.online.name:
-                cswMobilePage = CswMobilePageOnline(p, $pageDiv, mobileStorage, p.mobileSync, p.mobileBgTask);
+                cswMobilePage = CswMobilePageOnline(p, $pageDiv, mobileStorage, p.mobileSync, p.mobileBgTask, $contentRole);
                 break;
             case CswMobilePage_Type.props.name:
-                cswMobilePage = CswMobilePageProps(p, $pageDiv, mobileStorage);
+                cswMobilePage = CswMobilePageProps(p, $pageDiv, mobileStorage, $contentRole);
                 break;
             case CswMobilePage_Type.search.name:
-                cswMobilePage = CswMobilePageSearch(p, $pageDiv, mobileStorage);
+                cswMobilePage = CswMobilePageSearch(p, $pageDiv, mobileStorage, $contentRole);
                 break;
             case CswMobilePage_Type.tabs.name:
-                cswMobilePage = CswMobilePageTabs(p, $pageDiv, mobileStorage);
+                cswMobilePage = CswMobilePageTabs(p, $pageDiv, mobileStorage, $contentRole);
                 break;
             case CswMobilePage_Type.views.name:
-                cswMobilePage = CswMobilePageViews(p, $pageDiv, mobileStorage);
+                cswMobilePage = CswMobilePageViews(p, $pageDiv, mobileStorage, $contentRole);
                 break;
             default:
                 throw ('makePage() called without CswMobilePage_Type');
@@ -252,8 +247,8 @@ function CswMobilePageFactory(theme, mobileStorage) {
 
             var buttonDef = makeButtonDef(cswMobilePage.pageDef, id);
             
-            ret.mobileHeader = getMenuHeader(buttonDef.headerDef, $pageDiv);
-            ret.$contentRole = getContentDiv($pageDiv);
+            ret.mobileHeader = getMenuHeader(buttonDef.headerDef, $pageDiv, title);
+            $pageDiv.append($contentRole);
             ret.mobileFooter = getMenuFooter(buttonDef.footerDef, $pageDiv);
             ret.remove = function () {
                 $pageDiv.remove();
@@ -265,7 +260,7 @@ function CswMobilePageFactory(theme, mobileStorage) {
             ret.CswSetPath = function() {
                 $pageDiv.CswSetPath();
             };
-            bindPageEvents($pageDiv);
+            bindPageEvents($pageDiv, ret);
         }
         return ret;
     } //makePage()

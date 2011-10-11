@@ -14,7 +14,7 @@
 
 //#region CswMobilePageViews
 
-function CswMobilePageViews(viewsDef,$page,mobileStorage) {
+function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
     /// <summary>
     ///   Views Page class. Responsible for generating a Mobile views page.
     /// </summary>
@@ -25,7 +25,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
     
     //#region private
     var pageDef = { };
-    var id, title, contentDivId, $contentPage, $content, forceRefresh,
+    var id, title, contentDivId, $content, forceRefresh,
         divSuffix = '_views',
         ulSuffix = '_list';
     
@@ -49,13 +49,11 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         id = tryParseString(p.DivId, CswMobilePage_Type.views.id);
         contentDivId = id + divSuffix;
         title = tryParseString(p.title, CswMobilePage_Type.views.title);
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
-
-        $content = ensureContent($content, contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
     })();   //ctor
     
     function getContent(onSuccess) {
+        $content = ensureContent($contentRole, contentDivId);
         if (isTimeToRefresh(mobileStorage) || forceRefresh) { 
             refreshViewJson(onSuccess);
         } else { //it's been less than 5 minutes since the last sync or we're offline
@@ -106,8 +104,6 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
         if (isNullOrEmpty(viewJson)) {
             refreshViewJson(onSuccess);
         } else {
-            $content = ensureContent($content, contentDivId);
-
             ulDef = {
                 ID: id + ulSuffix,
                 cssclass: CswMobileCssClasses.listview.name
@@ -131,7 +127,7 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
 
                     onClick = makeDelegate(pageDef.onListItemSelect, opts);
                     listView.addListItemLink(viewId, viewName, onClick);
-                    viewCount++;
+                    viewCount += 1;
                 }
             }
             if (viewCount === 0) {
@@ -141,19 +137,23 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
             if (false === mobileStorage.stayOffline()) {
                 toggleOnline(mobileStorage);
             }
-            doSuccess(onSuccess, $content);
+            $contentRole.append($content);
+            doSuccess(onSuccess, $contentRole, { 1: 1 }, 1, $content);
         }
     }
     
     //#endregion private
     
     //#region public, priveleged
-
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.title = title;
-    this.getContent = getContent;
+    return {
+        $parent: $parent,
+        $contentRole: $contentRole,
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        title: title,
+        getContent: getContent
+    };
     //#endregion public, priveleged
 }
 

@@ -75,7 +75,7 @@ CswAppMode.mode = 'mobile';
 
         var mobileBgTask = new CswMobileBackgroundTask(mobileStorage, mobileSync, mobileBackgroundTaskOptions);
 
-        var mobilePageFactory = CswMobilePageFactory(x.Theme, mobileStorage);
+        var mobilePageFactory = CswMobilePageFactory(x.Theme, mobileStorage, $('body'));
         
         //#endregion Resource Initialization
         

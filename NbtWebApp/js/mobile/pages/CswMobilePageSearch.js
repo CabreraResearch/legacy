@@ -15,7 +15,7 @@
 
 //#region CswMobilePageSearch
 
-function CswMobilePageSearch(searchDef,$page,mobileStorage) {
+function CswMobilePageSearch(searchDef, $parent, mobileStorage, $contentRole) {
     /// <summary>
     ///   Search Page class. Responsible for generating a Mobile search page.
     /// </summary>
@@ -27,17 +27,12 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
     //#region private
 
     var pageDef = { };
-    var id, title, contentDivId, $contentPage, $content, viewId,
+    var id, title, contentDivId, $content, viewId,
         divSuffix = '_search',
         ulSuffix = '_ul';
     
     //ctor
     (function () {
-
-        if (isNullOrEmpty(mobileStorage)) {
-            mobileStorage = new CswMobileClientDbResources();
-        }
-
         viewId = mobileStorage.currentViewId();
 
         var p = {
@@ -54,14 +49,13 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
         id = tryParseString(p.DivId, CswMobilePage_Type.search.id);
         contentDivId = id + divSuffix;
         title = tryParseString(p.title, CswMobilePage_Type.search.title);
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
 
         getContent();
     })();   //ctor
         
     function getContent() {
-        $content = ensureContent($content, contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
         
         var searchJson = mobileStorage.fetchCachedViewJson(viewId, 'search'),
             $fieldCtn = $('<div data-role="fieldcontain"></div>')
@@ -99,6 +93,7 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
                     return startLoadingMsg(function() { onSearchSubmit(viewId); });
                 });
             $content.CswDiv('init', { ID: id + '_searchresults' });
+            $contentRole.append($content);
         }
 
         function onSearchSubmit() {
@@ -156,7 +151,7 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
                                 } else {
                                     listView.addListItem(nodeKey, node.nodeName, null, { icon: node.icon });
                                 }
-                                nodeCount++;
+                                nodeCount += 1;
                             }
                         }
                     }
@@ -178,6 +173,8 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
     //#region public, priveleged
 
     return {
+        $parent: $parent,
+        $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,
         pageDef: pageDef,

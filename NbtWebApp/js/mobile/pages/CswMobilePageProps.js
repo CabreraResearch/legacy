@@ -14,7 +14,7 @@
 
 //#region CswMobilePageProps
 
-function CswMobilePageProps(propsDef, $page, mobileStorage) {
+function CswMobilePageProps(propsDef, $parent, mobileStorage, $contentRole) {
     /// <summary>
     ///   Props Page class. Responsible for generating a Mobile props page.
     /// </summary>
@@ -25,7 +25,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 
     //#region private
     var pageDef = { };
-    var id, title, contentDivId, $contentPage, $content, viewId, level, nodeId, tabId, tabName, tabJson,
+    var id, title, contentDivId, $content, viewId, level, nodeId, tabId, tabName, tabJson,
         divSuffix = '_props',
         ulSuffix = '_list';
     
@@ -54,8 +54,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         id = tryParseString(p.DivId, CswMobilePage_Type.props.id);
         contentDivId = id + divSuffix;
         title = tryParseString(p.title, CswMobilePage_Type.props.title);
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
 
         nodeId = p.nodeId;
         tabId = mobileStorage.currentTabId(p.tabId);
@@ -70,8 +69,6 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
 
             viewId = p.viewId;
             level = tryParseNumber(p.level, 2);
-
-            $content = ensureContent($content, contentDivId);
         } else {
             throw new Error('Cannot create a property pages without Tab content', tabId);
         }
@@ -80,7 +77,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
     function getContent(onSuccess) {
         ///<summary>Rebuilds the tabs list from JSON</summary>
         ///<param name="onSuccess" type="Function">A function or Array of functions to execute after the list is built.</param>
-        $content = ensureContent($content, contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
         if (false === isNullOrEmpty(tabJson)) {
             refreshPropContent(onSuccess);
         } else {
@@ -168,7 +165,7 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
         if (false === mobileStorage.stayOffline()) {
             toggleOnline(mobileStorage);
         }
-
+        $contentRole.append($content);
         doSuccess(onSuccess, $content);
     }
     
@@ -212,6 +209,8 @@ function CswMobilePageProps(propsDef, $page, mobileStorage) {
     //#region public, priveleged
 
     return {
+        $parent: $parent,
+        $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,
         pageDef: pageDef,

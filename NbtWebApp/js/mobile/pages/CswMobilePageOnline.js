@@ -16,7 +16,7 @@
 
 //#region CswMobilePageOnline
 
-function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTask) {
+function CswMobilePageOnline(onlineDef, $parent, mobileStorage, mobileSync, mobileBgTask, $contentRole) {
     /// <summary>
     ///   Online Page class. Responsible for generating a Mobile login page.
     /// </summary>
@@ -30,7 +30,7 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     //#region private
 
     var pageDef = { };
-    var id, title, contentDivId, $contentPage, $content, $onlineBtn, $syncBtn, $logoutBtn, $logBtn,
+    var id, title, contentDivId, $content, $onlineBtn, $syncBtn, $logoutBtn, $logBtn,
         divSuffix = '_contpage';
     
     //ctor
@@ -52,8 +52,7 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
         id = tryParseString(p.DivId, CswMobilePage_Type.login.id);
         contentDivId = id + divSuffix;
         title = tryParseString(p.title, CswMobilePage_Type.login.title);
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
 
         getContent();
     })();   //ctor
@@ -98,6 +97,7 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
                             return false;
                         });
         }
+        $contentRole.append($content);
     }
     
     function toggleOffline(doWaitForData) {
@@ -206,6 +206,8 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     //#region public, priveleged
 
     return {
+        $parent: $parent,
+        $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,
         pageDef: pageDef,

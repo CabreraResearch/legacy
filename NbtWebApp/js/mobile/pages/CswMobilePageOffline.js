@@ -15,7 +15,7 @@
 
 //#region CswMobilePageOffline
 
-function CswMobilePageOffline(offlineDef,$page,mobileStorage) {
+function CswMobilePageOffline(offlineDef, $parent, mobileStorage, $contentRole) {
     /// <summary>
     ///   Offline Page class. Responsible for generating a Mobile offline page.
     /// </summary>
@@ -27,16 +27,11 @@ function CswMobilePageOffline(offlineDef,$page,mobileStorage) {
     //#region private
 
     var pageDef = { };
-    var id, title, contentDivId, $contentPage, $content,
+    var id, title, contentDivId, $content,
         divSuffix = '_offline';
     
     //ctor
     (function () {
-
-        if (isNullOrEmpty(mobileStorage)) {
-            mobileStorage = new CswMobileClientDbResources();
-        }
-
         var p = {
             level: -1,
             DivId: '',
@@ -54,14 +49,13 @@ function CswMobilePageOffline(offlineDef,$page,mobileStorage) {
         id = tryParseString(p.DivId, CswMobilePage_Type.offline.id);
         contentDivId = id + divSuffix;
         title = tryParseString(p.title, CswMobilePage_Type.offline.title);
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
 
         getContent();
     })();
     
     function getContent() {
-        $content = ensureContent($content, contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
         $content.append($('<p>You must have internet connectivity to login.</p>'));
     }
     
@@ -70,6 +64,8 @@ function CswMobilePageOffline(offlineDef,$page,mobileStorage) {
     //#region public, priveleged
 
     return {
+        $parent: $parent,
+        $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,
         pageDef: pageDef,

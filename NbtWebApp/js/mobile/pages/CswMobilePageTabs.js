@@ -12,7 +12,7 @@
 
 //#region CswMobilePageTabs
 
-function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
+function CswMobilePageTabs(tabsDef, $parent, mobileStorage, $contentRole) {
     /// <summary>
     ///   Nodes Page class. Responsible for generating a Mobile nodes page.
     /// </summary>
@@ -23,7 +23,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
 
     //#region private
     var pageDef = { };
-    var id, title, contentDivId, $contentPage, $content, viewId, level, nodeId,
+    var id, title, contentDivId, $content, viewId, level, nodeId,
         divSuffix = '_tabs',
         ulSuffix = '_list';
     
@@ -46,14 +46,11 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
         id = tryParseString(p.DivId, CswMobilePage_Type.tabs.id);
         contentDivId = id + divSuffix;
         title = tryParseString(p.title, CswMobilePage_Type.tabs.title);
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
 
         nodeId = p.nodeId;
         viewId = p.viewId;
         level = tryParseNumber(p.level, 2);
-
-        $content = ensureContent($content, contentDivId);
     })();   //ctor
    
     function getContent(onSuccess) {
@@ -63,8 +60,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
             nodeJson;
         if (false === isNullOrEmpty(cachedJson) && 
             contains(cachedJson, 'subitems') &&
-            false === isNullOrEmpty(cachedJson.subitems)) 
-        {
+            false === isNullOrEmpty(cachedJson.subitems)) {
             nodeJson = cachedJson.subitems;
             refreshTabContent(nodeJson, onSuccess);
         } else {
@@ -84,7 +80,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
             listView = new CswMobileListView(ulDef, $content),
             tabCount = 0;
         
-        $content = ensureContent($content, contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
 
         if (false === isNullOrEmpty(nodeJson)) {
             for (tabName in nodeJson) {
@@ -109,7 +105,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
                     onClick = makeDelegate(pageDef.onListItemSelect, opts);
                     
                     listView.addListItemLink(tabId, tabName, onClick);
-                    tabCount++;
+                    tabCount += 1;
                 }
             }
         } 
@@ -119,6 +115,7 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
         if (false === mobileStorage.stayOffline()) {
             toggleOnline(mobileStorage);
         }
+        $contentRole.append($content);
         doSuccess(onSuccess, $content);
     }
     
@@ -127,6 +124,8 @@ function CswMobilePageTabs(tabsDef, $page, mobileStorage) {
     //#region public, priveleged
 
     return {
+        $parent: $parent,
+        $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,
         pageDef: pageDef,

@@ -15,7 +15,7 @@
 
 //#region CswMobilePageLogin
 
-function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
+function CswMobilePageLogin(loginDef, $parent, mobileStorage, loginSuccess, $contentRole) {
     /// <summary>
     ///   Login Page class. Responsible for generating a Mobile login page.
     /// </summary>
@@ -28,7 +28,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
     //#region private
 
     var pageDef = { };
-    var id, title, contentDivId, $contentPage, $content,
+    var id, title, contentDivId, $content,
         divSuffix = '_login';
     
     //ctor
@@ -47,14 +47,13 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
         id = tryParseString(p.DivId, CswMobilePage_Type.login.id);
         contentDivId = id + divSuffix;
         title = tryParseString(p.title, CswMobilePage_Type.login.title);
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
 
         getContent();
     })();  //ctor
     
     function getContent() {
-        $content = ensureContent($content, contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
         
         $content.append('<p style="text-align: center;">Login to Mobile Inspection Manager</p><br/>');
         var loginFailure = mobileStorage.getItem('loginFailure');
@@ -78,8 +77,8 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
                                 return startLoadingMsg(function() { onLoginSubmit(); });
                             });
         
-        if (false === isNullOrEmpty($contentPage) && $contentPage.length > 0 ) {
-            $contentPage.append($content);
+        if (false === isNullOrEmpty($contentRole) && $contentRole.length > 0 ) {
+            $contentRole.append($content);
         }
         
         $customerId.clickOnEnter($loginBtn);
@@ -116,7 +115,8 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
                     });
             }
 
-        } //onLoginSubmit() 
+            } //onLoginSubmit()
+        $contentRole.append($content);
         return $content;
     }
     
@@ -125,6 +125,8 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
     //#region public, priveleged
 
     return {
+        $parent: $parent,
+        $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,
         pageDef: pageDef,

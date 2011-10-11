@@ -15,7 +15,7 @@
 
 //#region CswMobilePageHelp
 
-function CswMobilePageHelp(helpDef,$page,mobileStorage) {
+function CswMobilePageHelp(helpDef, $parent, mobileStorage, $contentRole) {
     /// <summary>
     ///   Help Page class. Responsible for generating a Mobile help page.
     /// </summary>
@@ -27,7 +27,7 @@ function CswMobilePageHelp(helpDef,$page,mobileStorage) {
     //#region private
 
     var pageDef = { };
-    var id, title, contentDivId, $contentPage, $content,
+    var id, title, contentDivId, $content,
         divSuffix = '_help';
     
     //ctor
@@ -45,8 +45,7 @@ function CswMobilePageHelp(helpDef,$page,mobileStorage) {
         id = tryParseString(p.DivId, CswMobilePage_Type.help.id);
         contentDivId = id + divSuffix;
         title = tryParseString(p.title, CswMobilePage_Type.help.title);
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
 
         getContent();
     })();
@@ -55,7 +54,7 @@ function CswMobilePageHelp(helpDef,$page,mobileStorage) {
         ///<summary></summary>
         ///<param name="refreshPageContent" type="Function"></param>
         ///<param name="onSuccess" type="Function"></param>
-        $content = ensureContent($content, contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
         
         var $help = $('<p>Help</p>').appendTo($content);
 
@@ -82,8 +81,9 @@ function CswMobilePageHelp(helpDef,$page,mobileStorage) {
                                 }
                             })
                             .CswAttrXml({ 'data-role': 'slider' });
-            doSuccess(onSuccess, $content);
+            doSuccess(onSuccess, $contentRole);
         }
+        $contentRole.append($content);
     }
     
     //#endregion private
@@ -91,7 +91,8 @@ function CswMobilePageHelp(helpDef,$page,mobileStorage) {
     //#region public, priveleged
 
     return {
-        $parent: $page,
+        $parent: $parent,
+        $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,
         pageDef: pageDef,

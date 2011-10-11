@@ -13,7 +13,7 @@
 
 //#region CswMobilePageNodes
 
-function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
+function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
     /// <summary>
     ///   Nodes Page class. Responsible for generating a Mobile nodes page.
     /// </summary>
@@ -28,7 +28,7 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     }
 
     var pageDef = { };
-    var id, title, contentDivId, $contentPage, $content, viewId, level, forceRefresh,
+    var id, title, contentDivId, $content, viewId, level, forceRefresh,
         divSuffix = '_nodes',
         ulSuffix = '_list';
     
@@ -52,13 +52,10 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
         id = tryParseString(p.DivId, CswMobilePage_Type.nodes.id);
         contentDivId = id + divSuffix;
         title = tryParseString(p.title, CswMobilePage_Type.nodes.title);
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
-
+        $content = ensureContent($contentRole, contentDivId);
+        
         viewId = mobileStorage.currentViewId(p.viewId);
         level = tryParseNumber(p.level, 1);
-
-        $content = ensureContent($content, contentDivId);
     })();    //ctor
 
     function getContent(onSuccess) {
@@ -162,7 +159,8 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
             if (false === mobileStorage.stayOffline()) {
                 toggleOnline(mobileStorage);
             }
-            doSuccess(onSuccess, $content);
+            $contentRole.append($content);
+            doSuccess(onSuccess, $contentRole);
         }
     }
 
@@ -171,6 +169,8 @@ function CswMobilePageNodes(nodesDef, $page, mobileStorage) {
     //#region public, priveleged
 
     return {
+        $parent: $parent,
+        $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,
         pageDef: pageDef,
