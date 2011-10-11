@@ -35,6 +35,7 @@ function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
             parentlevel: -1,
             level: -1,
             ParentId: '',
+            buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help],
             DivId: '',
             title: '',
             theme: 'b',
@@ -146,7 +147,7 @@ function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
     
     //#region public, priveleged
     return {
-        $parent: $parent,
+        $pageDiv: $parent,
         $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,

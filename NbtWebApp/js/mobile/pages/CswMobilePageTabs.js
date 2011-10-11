@@ -33,6 +33,7 @@ function CswMobilePageTabs(tabsDef, $parent, mobileStorage, $contentRole) {
             level: 2,
             ParentId: '',
             DivId: '',
+            buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back, CswMobileHeaderButtons.search],
             viewId: mobileStorage.currentViewId(),
             nodeId: mobileStorage.currentNodeId(),
             title: '',
@@ -122,7 +123,7 @@ function CswMobilePageTabs(tabsDef, $parent, mobileStorage, $contentRole) {
     //#region public, priveleged
 
     return {
-        $parent: $parent,
+        $pageDiv: $parent,
         $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,

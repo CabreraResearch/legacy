@@ -39,11 +39,8 @@ function CswMobilePageOnline(onlineDef, $parent, mobileStorage, mobileSync, mobi
             level: -1,
             DivId: '',
             title: '',
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
             theme: CswMobileGlobal_Config.theme,
-            onRefreshClick: function () { },
-            onHelpClick: function () { }
+            buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back]
         };
         if (onlineDef) {
             $.extend(pageDef, onlineDef);
@@ -206,7 +203,7 @@ function CswMobilePageOnline(onlineDef, $parent, mobileStorage, mobileSync, mobi
     //#region public, priveleged
 
     return {
-        $parent: $parent,
+        $pageDiv: $parent,
         $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,

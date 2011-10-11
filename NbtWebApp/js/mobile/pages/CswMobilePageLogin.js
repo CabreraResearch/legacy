@@ -36,6 +36,7 @@ function CswMobilePageLogin(loginDef, $parent, mobileStorage, loginSuccess, $con
         pageDef = {
             level: -1,
             DivId: '',
+            buttons: [CswMobileFooterButtons.fullsite, CswMobileFooterButtons.help],
             title: '',
             theme: CswMobileGlobal_Config.theme
         };
@@ -124,7 +125,7 @@ function CswMobilePageLogin(loginDef, $parent, mobileStorage, loginSuccess, $con
     //#region public, priveleged
 
     return {
-        $parent: $parent,
+        $pageDiv: $parent,
         $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,

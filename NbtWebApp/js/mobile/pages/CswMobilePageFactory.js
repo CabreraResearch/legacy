@@ -114,8 +114,9 @@ function CswMobilePageFactory(theme, mobileStorage, $parent) {
         }
         if ($contentRole.height() < 300) {
             $contentRole.css('min-height', $(document).height() - 125);
+            recalculateFooter($pageDiv);
         }
-        recalculateFooter($pageDiv);
+        
         
         return $contentRole;        
     }
@@ -147,6 +148,7 @@ function CswMobilePageFactory(theme, mobileStorage, $parent) {
         var ret,
             buttons = {},
             p = {
+                buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back, CswMobileHeaderButtons.search],
                 onOnlineClick: null,
                 onRefreshClick: null,
                 onHelpClick: null,
@@ -155,13 +157,25 @@ function CswMobilePageFactory(theme, mobileStorage, $parent) {
         if (options) {
             $.extend(p, options);
         }
-        
-        buttons[CswMobileFooterButtons.online.name] = isFunction(p.onOnlineClick) ? p.onOnlineClick : '';
-        buttons[CswMobileFooterButtons.refresh.name] = isFunction(p.onRefreshClick) ? p.onRefreshClick : '';
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = isFunction(p.onHelpClick) ? p.onHelpClick : '';
-        buttons[CswMobileHeaderButtons.back.name] = '';
-        buttons[CswMobileHeaderButtons.search.name] = isFunction(p.onSearchClick) ? p.onSearchClick : '';
+
+        if (contains(p.buttons, CswMobileFooterButtons.online)) {
+            buttons[CswMobileFooterButtons.online.name] = isFunction(p.onOnlineClick) ? p.onOnlineClick : '';
+        }
+        if (contains(p.buttons, CswMobileFooterButtons.refresh)) {
+            buttons[CswMobileFooterButtons.refresh.name] = isFunction(p.onRefreshClick) ? p.onRefreshClick : '';
+        }
+        if (contains(p.buttons, CswMobileFooterButtons.fullsite)) {
+            buttons[CswMobileFooterButtons.fullsite.name] = '';
+        }
+        if (contains(p.buttons, CswMobileFooterButtons.help)) {
+            buttons[CswMobileFooterButtons.help.name] = isFunction(p.onHelpClick) ? p.onHelpClick : '';
+        }
+        if (contains(p.buttons, CswMobileHeaderButtons.back)) {
+            buttons[CswMobileHeaderButtons.back.name] = '';
+        }
+        if (contains(p.buttons, CswMobileHeaderButtons.search)) {
+            buttons[CswMobileHeaderButtons.search.name] = isFunction(p.onSearchClick) ? p.onSearchClick : '';
+        }
 
         ret = makeMenuButtonDef(p, id, buttons, mobileStorage);
         return ret;

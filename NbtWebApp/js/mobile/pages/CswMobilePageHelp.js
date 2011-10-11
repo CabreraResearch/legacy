@@ -35,6 +35,7 @@ function CswMobilePageHelp(helpDef, $parent, mobileStorage, $contentRole) {
         pageDef = {
             level: -1,
             DivId: '',
+            buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back ],
             title: '',
             theme: CswMobileGlobal_Config.theme
         };
@@ -91,7 +92,7 @@ function CswMobilePageHelp(helpDef, $parent, mobileStorage, $contentRole) {
     //#region public, priveleged
 
     return {
-        $parent: $parent,
+        $pageDiv: $parent,  
         $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,

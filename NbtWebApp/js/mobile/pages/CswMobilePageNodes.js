@@ -34,6 +34,7 @@ function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
             level: 1,
             ParentId: '',
             DivId: '',
+            buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back, CswMobileHeaderButtons.search],
             title: '',
             viewId: '',
             theme: CswMobileGlobal_Config.theme

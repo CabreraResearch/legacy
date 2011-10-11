@@ -37,10 +37,7 @@ function CswMobilePageOffline(offlineDef, $parent, mobileStorage, $contentRole) 
             DivId: '',
             title: '',
             theme: CswMobileGlobal_Config.theme,
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
-            onHelpClick: function () { },
-            onOnlineClick: function () { }
+            buttons: [CswMobileFooterButtons.fullsite, CswMobileFooterButtons.help]
         };
         if (offlineDef) {
             $.extend(pageDef, offlineDef);
@@ -64,7 +61,7 @@ function CswMobilePageOffline(offlineDef, $parent, mobileStorage, $contentRole) 
     //#region public, priveleged
 
     return {
-        $parent: $parent,
+        $pageDiv: $parent,
         $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,

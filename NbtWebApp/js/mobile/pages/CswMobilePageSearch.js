@@ -39,6 +39,7 @@ function CswMobilePageSearch(searchDef, $parent, mobileStorage, $contentRole) {
             level: -1,
             ParentId: '',
             DivId: CswMobilePage_Type.search.id + viewId,
+            buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back],
             title: '',
             theme: CswMobileGlobal_Config.theme
         };
@@ -173,7 +174,7 @@ function CswMobilePageSearch(searchDef, $parent, mobileStorage, $contentRole) {
     //#region public, priveleged
 
     return {
-        $parent: $parent,
+        $pageDiv: $parent,
         $contentRole: $contentRole,
         $content: $content,
         contentDivId: contentDivId,
