@@ -138,7 +138,6 @@ CswAppMode.mode = 'mobile';
                 },
                 mobileStorage: mobileStorage
             };
-            //loginPage = new CswMobilePageFactory(CswMobilePage_Type.login, loginDef, $('body'));
             loginPage = mobilePageFactory.makePage(CswMobilePage_Type.login, pageDef);
             return loginPage;
         }
@@ -151,7 +150,6 @@ CswAppMode.mode = 'mobile';
                 onHelpClick: onHelpClick,
                 mobileStorage: mobileStorage
             };
-            //offlinePage = new CswMobilePageFactory(CswMobilePage_Type.offline, offlineDef, $('body'));
             offlinePage = mobilePageFactory.makePage(CswMobilePage_Type.offline, pageDef);
             return offlinePage;
         }
@@ -167,7 +165,6 @@ CswAppMode.mode = 'mobile';
                 mobileSync: mobileSync,
                 mobileBgTask: mobileBgTask
             };
-            //onlinePage = new CswMobilePageFactory(CswMobilePage_Type.online, syncDef, $('body') );
             onlinePage = mobilePageFactory.makePage(CswMobilePage_Type.online, pageDef);
             return onlinePage;
         }
@@ -175,13 +172,13 @@ CswAppMode.mode = 'mobile';
         function makeHelpPage() {
             ///<summary>Create a Mobile help page</summary>
             ///<returns type="CswMobilePageHelp">CswMobilePageHelp page.</returns>
-            var helpDef = {
+            var pageDef = {
                 theme: x.Theme,
                 onOnlineClick: onOnlineClick,
                 onRefreshClick: onRefreshClick,
                 mobileStorage: mobileStorage
             };
-            helpPage = new CswMobilePageFactory(CswMobilePage_Type.help, helpDef, $('body') );
+            helpPage = mobilePageFactory.makePage(CswMobilePage_Type.help, pageDef);
             return helpPage;
         }
         
@@ -198,7 +195,6 @@ CswAppMode.mode = 'mobile';
                     tabsPage.CswChangePage();
                 }
             };
-            //var searchPage = new CswMobilePageFactory(CswMobilePage_Type.search, searchDef, $('body') );
             var searchPage = mobilePageFactory.makePage(CswMobilePage_Type.search, pageDef);
             return searchPage;
         }
@@ -221,7 +217,6 @@ CswAppMode.mode = 'mobile';
                     nodePage.CswChangePage();
                 }
             };
-            //viewsPage = new CswMobilePageFactory(CswMobilePage_Type.views, viewsDef, $('body') );
             viewsPage = mobilePageFactory.makePage(CswMobilePage_Type.views, pageDef);
             return viewsPage;
         }
@@ -248,7 +243,6 @@ CswAppMode.mode = 'mobile';
             if(opts) {
                 $.extend(pageDef, opts);
             }
-            //var nodesPage = new CswMobilePageFactory(CswMobilePage_Type.nodes, nodesDef, $('body') );
             var nodesPage = mobilePageFactory.makePage(CswMobilePage_Type.nodes, pageDef);
             return nodesPage;
         }
@@ -275,7 +269,6 @@ CswAppMode.mode = 'mobile';
             if(opts) {
                 $.extend(pageDef, opts);
             }
-            //var tabsPage = new CswMobilePageFactory(CswMobilePage_Type.tabs, pageDef, $('body') );
             var tabsPage = mobilePageFactory.makePage(CswMobilePage_Type.tabs, pageDef);
             return tabsPage;
         }
@@ -307,7 +300,6 @@ CswAppMode.mode = 'mobile';
             if(opts) {
                 $.extend(pageDef, opts);
             }
-            //var propsPage = new CswMobilePageFactory(CswMobilePage_Type.props, pageDef, $('body') );
             var propsPage = mobilePageFactory.makePage(CswMobilePage_Type.props, pageDef);
             return propsPage;
         }
