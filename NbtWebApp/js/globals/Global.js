@@ -13,8 +13,6 @@
 /// <reference path="../../Scripts/jquery.cookie.js" />
 
 //#region Globals (yuck)
-"use strict";
-
 var homeUrl = 'Main.html';
 //#endregion Globals (yuck)
 

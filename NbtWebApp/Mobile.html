@@ -11,44 +11,46 @@
     <!--#include file="MobileIncludes.html" -->
     <script type="text/javascript">
 
-        function redirectOnError(e)
-        {
-            var $refreshPage = $('#' + localStorage['refreshPage']);
-            if (false === isNullOrEmpty($refreshPage, true)) {
-                $.mobile.changePage($refreshPage);
-            } else {
-                window.location.href = window.location.pathname;
-            }
-            onError();
-            if (debugOn()) {
-                errorHandler(e, true, true, true);
-            } else {
-                errorHandler(e);
-            }
-        }
-        
-        try {
-            if( hasWebStorage() ) {
+        (function() {
+            "use strict";
 
-                // override value in _Globals.js
-                homeUrl = "Mobile.html";
-
-                // This causes case 22968!
-                //$(window).bind("orientationchange resize scrollstart", fixGeometry);
-
-                $('body').CswMobile({
-                    'Theme': 'b'
-                });
-
+            function redirectOnError(e) {
+                var $refreshPage = $('#' + localStorage['refreshPage']);
+                if (false === isNullOrEmpty($refreshPage, true)) {
+                    $.mobile.changePage($refreshPage);
+                } else {
+                    window.location.href = window.location.pathname;
+                }
+                onError();
+                if (debugOn()) {
+                    errorHandler(e, true, true, true);
+                } else {
+                    errorHandler(e);
+                }
             }
-            else {
-                throw('This browser does not support localStorage.');
+
+            try {
+                if (hasWebStorage()) {
+
+                    // override value in _Globals.js
+                    homeUrl = "Mobile.html";
+
+                    // This causes case 22968!
+                    //$(window).bind("orientationchange resize scrollstart", fixGeometry);
+
+                    $('body').CswMobile({
+                            'Theme': 'b'
+                        });
+
+                }
+                else {
+                    throw ('This browser does not support localStorage.');
+                }
             }
-        }
-        catch(e) {
-            redirectOnError();
-        }
-       
+            catch(e) {
+                redirectOnError();
+            }
+        })();
     </script>
 </body>
 </html>
