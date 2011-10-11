@@ -308,6 +308,7 @@ function makeMenuButtonDef(pageDef,id,buttonNames,mobileStorage) {
         headerDef: { buttons: { } },
         footerDef: { buttons: { } }
     };
+    var onClick, name;
     if (pageDef) {
         $.extend(newPageDef, pageDef);
     }
@@ -323,9 +324,8 @@ function makeMenuButtonDef(pageDef,id,buttonNames,mobileStorage) {
     if (isNullOrEmpty(newPageDef.footerDef.ID)) {
         newPageDef.footerDef.ID = id;
     }
-    var onClick;
-    for (var name in buttonNames ) {
-        if (buttonNames.hasOwnProperty(name)) {
+    for (name in buttonNames ) {
+        if (contains(buttonNames, name)) {
             onClick = buttonNames[name];
             switch (name) {
                 case CswMobileHeaderButtons.back.name:
