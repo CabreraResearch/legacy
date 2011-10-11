@@ -374,23 +374,19 @@ function makeEmptyListView(listView, $parent, noResultsText) {
     }
 }
 
-function ensureContent($content, contentDivId) {
+function ensureContent($contentRole, contentDivId) {
     /// <summary>
     ///    Ensures every page has a valid content Div to insert new HTML.
     ///    if content is populated, empty it.
-    ///    This is a child element of the JQM 'content' page.
+    ///    This will become a child element of the JQM 'content' page.
     /// </summary>
-    /// <param name="$content" type="jQuery">Some content element.</param>
+    /// <param name="$contentRole" type="jQuery">Some contentRole element.</param>
     /// <param name="contentDivId" type="String">DivId</param>
     /// <returns type="jQuery">An empty content div.</returns>
-    var $contentById = $(contentDivId);
-    if (false === isNullOrEmpty($contentById)) {
-        $contentById.remove();
-    }
-    if (isNullOrEmpty($content) || false === isJQuery($content)) {
+    var $content = null;
+    if (false === isNullOrEmpty($contentRole)) {
+        $contentRole.empty();
         $content = $('<div id="' + tryParseString(contentDivId) + '"></div>');
-    } else {
-        $content.empty();   
     }
     return $content;
 }    
@@ -462,15 +458,19 @@ function recalculateFooter($page, startingHeight) {
 function doSuccess(onSuccess) {
 
     var args = Array.prototype.slice.call(arguments);
-    args.shift();
+    if (args.length > 0) {
+        args.shift();
+    } else {
+        args = [];
+    }
     if (isFunction(onSuccess)) {
         onSuccess(args);
     } else {
-        onSuccess.forEach(function (key) {
-            if (isFunction(onSuccess[key])) {
-                onSuccess[key](args);
-            }
-        });
+    onSuccess.forEach(function (func) {
+        if (isFunction(func)) {
+            func.apply(null, args);
+        }
+    });
 
     }
 }
