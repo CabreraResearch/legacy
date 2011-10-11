@@ -201,6 +201,7 @@ function CswMobilePageProps(propsDef, $parent, mobileStorage, $contentRole) {
                 errorHandler('Could not find a prop to update');
             }
         }
+        recalculateFooter($parent);
         doSuccess(o.onSuccess, o.control);
     } // onPropertyChange()
     
