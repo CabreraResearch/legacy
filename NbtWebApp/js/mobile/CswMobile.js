@@ -52,14 +52,12 @@ CswAppMode.mode = 'mobile';
         
         var mobileSyncOptions = {
             onSync: processModifiedNodes,
-            onSuccess: processUpdatedNodes,
-            onComplete: function () {
-                updatedUnsyncedChanges();
-            },
+            onSuccess: [ processUpdatedNodes, function () { updatedUnsyncedChanges(); } ],
+            onError: [ onError, function () { updatedUnsyncedChanges(); } ],
             ForMobile: true
         };
 
-        var mobileSync = new CswMobileSync(mobileSyncOptions, mobileStorage);
+        var mobileSync = CswMobileSync(mobileSyncOptions, mobileStorage);
         
         var mobileBackgroundTaskOptions = {
             onSuccess: function () {

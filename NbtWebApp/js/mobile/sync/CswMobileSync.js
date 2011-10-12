@@ -4,6 +4,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
+/// <reference path="../globals/CswMobileTools.js" />
 
 //#region CswMobileSync
 
@@ -26,90 +27,78 @@ function CswMobileSync(options,mobileStorage) {
     //#region private
     
     var o = {
-        onSync: null, //function () {},
-        onSuccess: null, //function () {},
-        onError: onError,
+        onSync: null, 
+        onSuccess: [], 
+        onError: [],
         onLoginFailure: null,
-        onComplete: function () {},
         syncUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
         ForMobile: true
     };
-
-    if(options) $().extend(o, options);
-    
+    if (options) $().extend(o, options);
+    var onSuccess = o.onSuccess,
+        onError = o.onError;
     //#endregion private
     
     //#region public, priveleged
 
-    this.initSync = function (afterComplete) {
-        /// <summary>
-        ///   Initiates a sync event  
-        /// </summary>
-        /// <returns type="void"></returns>
+    return {
+        initSync: function () {
+            /// <summary>
+            ///   Initiates a sync event  
+            /// </summary>
+            /// <returns type="void"></returns>
 
-        var sessionId = mobileStorage.sessionid();
-        if (!isNullOrEmpty(o.onSync) &&
-            !isNullOrEmpty(sessionId) &&
-            !mobileStorage.stayOffline()) {
+            var sessionId = mobileStorage.sessionid();
+            if (false === isNullOrEmpty(o.onSync) &&
+                false === isNullOrEmpty(sessionId) &&
+                    false === mobileStorage.stayOffline()) {
 
-            o.onSync(function (objectId, objectJSON) {
-                if (false === isNullOrEmpty(objectId) && false === isNullOrEmpty(objectJSON)) {
+                o.onSync(function (objectId, objectJSON) {
+                    if (false === isNullOrEmpty(objectId) && false === isNullOrEmpty(objectJSON)) {
 
-                    var dataJson = {
-                        SessionId: sessionId,
-                        ParentId: objectId,
-                        UpdatedViewJson: JSON.stringify(objectJSON),
-                        ForMobile: o.ForMobile
-                    };
+                        var dataJson = {
+                            SessionId: sessionId,
+                            ParentId: objectId,
+                            UpdatedViewJson: JSON.stringify(objectJSON),
+                            ForMobile: o.ForMobile
+                        };
 
-                    CswAjaxJson({
-                        formobile: o.ForMobile,
-                        url: o.syncUrl,
-                        data: dataJson,
-                        onloginfail: function (text) {
-                            if (isFunction(o.onLoginFailure)) {
-                                o.onLoginFailure(text);
+                        CswAjaxJson({
+                            formobile: o.ForMobile,
+                            url: o.syncUrl,
+                            data: dataJson,
+                            onloginfail: function (text) {
+                                if (isFunction(o.onLoginFailure)) {
+                                    o.onLoginFailure(text);
+                                }
+                            },
+                            success: function (data) {
+                                doSuccess(onSuccess, data, objectId, objectJSON, false);
+                            },
+                            error: function () {
+                                doSuccess(onError);
                             }
-                        },
-                        success: function (data) {
-                            if (isFunction(o.onSuccess)) {
-                                o.onSuccess(data, objectId, objectJSON, false);
-                            }
-                            if (isFunction(o.onComplete)) {
-                                o.onComplete();
-                            }
-                            if (isFunction(afterComplete)) {
-                                afterComplete();
-                            }
-                        },
-                        error: function () {
-                            if (isFunction(o.onFailure)) {
-                                o.onError();
-                            }
-                            if (isFunction(o.onComplete)) {
-                                o.onComplete();
-                            }
-                            if (isFunction(afterComplete)) {
-                                afterComplete();
-                            }
-                        }
-                    });
-                }
-            }); // o.onSync();
-        } else {
-            if (isFunction(o.onSuccess)) {
-                o.onSuccess();
+                        });
+                    }
+                }); // o.onSync();
+            } else {
+                doSuccess(onSuccess);
+            } // if-else(SessionId != '') 
+
+        }, //initSync();
+        queueOnSuccess: function (func) {
+            if (isFunction(func)) {
+                onSuccess.push(func);
             }
-            if (isFunction(o.onComplete)) {
-                o.onComplete();
+            return onSuccess;
+        },
+        queueOnError: function (func) {
+            if (isFunction(func)) {
+                onError.push(func);
             }
-            if (isFunction(afterComplete)) {
-                afterComplete();
-            }
-        } // if-else(SessionId != '') 
-
-    };  //initSync();
-    
+            return onError;
+        }
+    };
     //#endregion public, priveleged
 }
 

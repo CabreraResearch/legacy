@@ -67,9 +67,13 @@ function CswMobilePageOnline(onlineDef, $parent, mobileStorage, mobileSync, mobi
                         .appendTo($content)
                         .bind('click', function () {
                             return startLoadingMsg(function () {
-                                mobileSync.initSync(function () {
-                                    stopLoadingMsg(); 
+                                mobileSync.queueOnSuccess(function() {
+                                    stopLoadingMsg();
                                 });
+                                mobileSync.queueOnError(function () {
+                                    stopLoadingMsg();
+                                });
+                                mobileSync.initSync();
                             });
                         });
         $onlineBtn = $('<a id="ss_gooffline" class="' + onlineClass + '" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">' + onlineBtnText + '</a>')
