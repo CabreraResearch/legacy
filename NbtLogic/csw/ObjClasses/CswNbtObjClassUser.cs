@@ -5,12 +5,15 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassUser : CswNbtObjClass, ICswNbtUser
     {
-        public static string RolePropertyName { get { return "Role"; } }
+		public static string ChemSWAdminUsername { get { return CswAuthenticator.ChemSWAdminUsername; } }
+		
+		public static string RolePropertyName { get { return "Role"; } }
         public static string AccountLockedPropertyName { get { return "AccountLocked"; } }
         public static string FailedLoginCountPropertyName { get { return "FailedLoginCount"; } }
         public static string PasswordPropertyName { get { return "Password"; } }
@@ -116,20 +119,20 @@ namespace ChemSW.Nbt.ObjClasses
 				{
 					throw new CswDniException( ErrorType.Warning, "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
 				}
-				if( this.Username != "chemsw_admin" &&
-					CswNbtNodeCaster.AsRole(_CswNbtResources.Nodes[Role.RelatedNodeId]).Name.Text == "chemsw_admin_role" )
+				if( this.Username != ChemSWAdminUsername &&
+					CswNbtNodeCaster.AsRole(_CswNbtResources.Nodes[Role.RelatedNodeId]).Name.Text == CswNbtObjClassRole.ChemSWAdminRoleName )
 				{
-					throw new CswDniException( ErrorType.Warning, "New users may not be assigned to the 'chemsw_admin_role' role", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to assign a new user to the 'chemsw_admin_role' role." );
+					throw new CswDniException( ErrorType.Warning, "New users may not be assigned to the '" + CswNbtObjClassRole.ChemSWAdminRoleName + "' role", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to assign a new user to the '" + CswNbtObjClassRole.ChemSWAdminRoleName + "' role." );
 				}
 			}
 
 			// case 22512
-			if( this.Username == "chemsw_admin" &&
+			if( this.Username == ChemSWAdminUsername &&
 				_CswNbtResources.CurrentNbtUser != null &&
-				_CswNbtResources.CurrentNbtUser.Username != "chemsw_admin" &&
+				_CswNbtResources.CurrentNbtUser.Username != ChemSWAdminUsername &&
 				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
 			{
-				throw new CswDniException( ErrorType.Warning, "The 'chemsw_admin' user cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the 'chemsw_admin' user account." );
+				throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminUsername + "' user cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the '" + ChemSWAdminUsername + "' user account." );
 			}
 
 		}//beforeWriteNode()
@@ -158,12 +161,12 @@ namespace ChemSW.Nbt.ObjClasses
 				throw ( new CswDniException( ErrorType.Warning, "You can not delete your own user account.", "Current user (" + _CswNbtResources.CurrentUser.Username + ") can not delete own UserClass node." ) );
             }
 
-			// case 22635 - prevent deleting chemsw_admin user
+			// case 22635 - prevent deleting chemsw admin user
 			CswNbtNodePropWrapper UsernamePropWrapper = Node.Properties[UsernamePropertyName];
-			if( UsernamePropWrapper.GetOriginalPropRowValue( UsernamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == "chemsw_admin" &&
+			if( UsernamePropWrapper.GetOriginalPropRowValue( UsernamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == ChemSWAdminUsername &&
 				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
 			{
-				throw new CswDniException( ErrorType.Warning, "The 'chemsw_admin' user cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the 'chemsw_admin' user." );
+				throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminUsername + "' user cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminUsername + "' user." );
 			}
 			
             CswPrimaryKey RoleId = Role.RelatedNodeId;
