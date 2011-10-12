@@ -738,7 +738,7 @@ namespace ChemSW.Nbt.WebServices
         {
             get
             {
-                JProperty ReturnProp = new JProperty( "index", _ColumnName );
+                JProperty ReturnProp = new JProperty( "index", _UniqueColumnName );
                 return ReturnProp;
             }
         }
