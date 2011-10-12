@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.Security
 
 			if( User != null )
 			{
-				if( User is CswNbtSystemUser )
+				if( User is CswNbtSystemUser || User.Username == CswNbtObjClassUser.ChemSWAdminUsername )
 				{
 					ret = true;
 				}
@@ -313,7 +313,7 @@ namespace ChemSW.Nbt.Security
 		public bool can( CswNbtAction Action, ICswNbtUser User )
 		{
 			bool ret = false;
-			if( User is CswNbtSystemUser )
+			if( User is CswNbtSystemUser || User.Username == CswNbtObjClassUser.ChemSWAdminUsername )
 			{
 				ret = true;
 			}
