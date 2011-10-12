@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.ObjClasses
 			if( ActionPermissions.WasModified )
 			{
 				// You can never grant your own action permissions
-				if( _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
+				if( _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId && this.Name.Text != ChemSWAdminRoleName )
 				{
 					throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
 						"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit their own action permissions on role: " + _CswNbtNode.NodeName );
@@ -87,12 +87,20 @@ namespace ChemSW.Nbt.ObjClasses
 				// You can only grant action permissions on other roles to which you have access
 				foreach( CswNbtAction Action in _CswNbtResources.Actions )
 				{
-					if( true == _CswNbtResources.Permit.can( Action, this ) &&
-						false == _CswNbtResources.Permit.can( Action, _CswNbtResources.CurrentNbtUser ) )
+					if( true == _CswNbtResources.Permit.can( Action, this ) ) // permission is being granted
 					{
-						throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
-							"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
-					}
+						if( Action.Name == CswNbtActionName.Design && this.Name.Text != ChemSWAdminRoleName )
+						{
+							// case 23677
+							throw new CswDniException( ErrorType.Warning, "You may not grant access to Design to this role",
+								"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
+						}
+						if( false == _CswNbtResources.Permit.can( Action, _CswNbtResources.CurrentNbtUser ) )
+						{
+							throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
+								"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
+						}
+					} // if( true == _CswNbtResources.Permit.can( Action, this ) )
 				} // foreach( string ActionNameString in ActionPermissions.YValues )
 			} // if( ActionPermissions.WasModified )
 
