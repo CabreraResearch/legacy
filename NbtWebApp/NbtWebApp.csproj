@@ -60,8 +60,9 @@
     <Reference Include="FarPoint.Web.Spread.Extender">
       <HintPath>..\..\..\ThirdParty\FarPoint\Spread.ASP.4.dotNet35\v4.0.3505\Bin\FarPoint.Web.Spread.Extender.dll</HintPath>
     </Reference>
-    <Reference Include="GoogleClosure">
-      <HintPath>..\packages\GoogleClosure.1.0\lib\net40\GoogleClosure.dll</HintPath>
+    <Reference Include="GoogleClosure, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GoogleClosure.1.1\lib\net40\GoogleClosure.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=4.0.3.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
