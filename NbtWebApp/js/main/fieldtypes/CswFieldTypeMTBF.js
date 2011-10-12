@@ -85,14 +85,17 @@
         save: function(o) { //$propdiv, $xml
 
             var attributes = {
-                startdate: {
-                    date: null
+                startdatetime: {
+                    date: null,
+					time: null
                 }, 
                 units: null
             };
             var $StartDate = o.$propdiv.find('#' + o.ID + '_sd');
             if (false === isNullOrEmpty($StartDate)) {
-                attributes.startdate = $StartDate.CswDateTimePicker('value').Date;
+			    dateVal = $StartDate.CswDateTimePicker('value');
+                attributes.startdatetime.date = dateVal.Date;
+                attributes.startdatetime.time = dateVal.Time;
             }
 
             var $Units = o.$propdiv.find('#' + o.ID + '_units');
