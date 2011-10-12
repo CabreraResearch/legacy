@@ -779,6 +779,16 @@
                     'data': { 'ActionName': o.actionname }
                 });
 
+            function _setupOOCInspections() {
+                clear({ 'all': true });
+
+                $('#CenterTopDiv').CswInspectionStatus({
+                    'onEditNode': function () {
+                        _setupOOCInspections();
+                    }
+                });
+            }
+            
             switch (o.actionname) {
                 //			case 'Assign_Inspection': 
                 //				break; 
@@ -848,16 +858,6 @@
                 //			case 'Inspection_Design': 
                 //				break; 
                 case 'OOC_Inspections':
-
-                    function _setupOOCInspections() {
-                        clear({ 'all': true });
-
-                        $('#CenterTopDiv').CswInspectionStatus({
-                                'onEditNode': function() {
-                                    _setupOOCInspections();
-                                }
-                            });
-                    }
 
                     _setupOOCInspections();
 
