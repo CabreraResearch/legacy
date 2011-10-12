@@ -62,9 +62,9 @@ function CswMobilePageProps(propsDef, $parent, mobileStorage, $contentRole) {
 
         cachedJson = mobileStorage.fetchCachedNodeJson(nodeId);
         if (false === isNullOrEmpty(cachedJson) &&
-            contains(cachedJson, 'subitems') &&
-            false === isNullOrEmpty(cachedJson.subitems)) {
-            nodeJson = cachedJson.subitems;
+            contains(cachedJson, 'tabs') &&
+            false === isNullOrEmpty(cachedJson.tabs)) {
+            nodeJson = cachedJson.tabs;
             tabJson = nodeJson[tabName];
 
             viewId = pageDef.viewId;
@@ -72,7 +72,7 @@ function CswMobilePageProps(propsDef, $parent, mobileStorage, $contentRole) {
         } else {
             throw new Error('Cannot create a property pages without Tab content', tabId);
         }
-    })();   //ctor
+    })();    //ctor
    
     function getContent(onSuccess) {
         ///<summary>Rebuilds the tabs list from JSON</summary>
@@ -135,10 +135,10 @@ function CswMobilePageProps(propsDef, $parent, mobileStorage, $contentRole) {
         }
         if (false === isNullOrEmpty(nextTab)) {
             cachedJson = mobileStorage.fetchCachedNodeJson(nodeId);
-            if (contains(cachedJson,'subitems') &&
-                contains(cachedJson.subitems, nextTab)) {
+            if (contains(cachedJson,'tabs') &&
+                contains(cachedJson.tabs, nextTab)) {
                 
-                newTabJson = cachedJson.subitems[nextTab];
+                newTabJson = cachedJson.tabs[nextTab];
                 nextTabId = mobileStorage.currentTabId(makeSafeId({ID: nextTab, suffix: nodeId}));
                 opts = {
                     ParentId: id,
@@ -188,14 +188,14 @@ function CswMobilePageProps(propsDef, $parent, mobileStorage, $contentRole) {
         if (false === isNullOrEmpty(nodeJson)) {
             mobileStorage.addUnsyncedChange();
 
-            if (contains(nodeJson, 'subitems') &&
-                contains(nodeJson.subitems, tabName) &&
-                contains(nodeJson.subitems[tabName], propId)) {
-                propJson = nodeJson.subitems[tabName][propId];
+            if (contains(nodeJson, 'tabs') &&
+                contains(nodeJson.tabs, tabName) &&
+                contains(nodeJson.tabs[tabName], propId)) {
+                propJson = nodeJson.tabs[tabName][propId];
             }
             if (false === isNullOrEmpty(propJson)) {
                 propJson = o.prop.updatePropValue(propJson, elementId, value);
-                nodeJson.subitems[tabName][propId] = propJson;
+                nodeJson.tabs[tabName][propId] = propJson;
                 mobileStorage.updateStoredNodeJson(nodeId, nodeJson, '1');
             } else { 
                 errorHandler('Could not find a prop to update');

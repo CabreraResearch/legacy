@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.WebServices
 
             // Get the full XML for the entire view
             CswNbtViewId NbtViewId = new CswNbtViewId( ViewId );
-            if( null != NbtViewId && NbtViewId.isSet() )
+            if( NbtViewId.isSet() )
             {
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( NbtViewId );
 
@@ -106,20 +106,22 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
                 CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
 
-                JProperty ThisJProp = new JProperty( "subitems" );
-                JObject ThisSubItems = new JObject();
-                ThisJProp.Value = ThisSubItems;
-
-                _runTreeNodesRecursive( Tree, ref ThisSubItems );
-
                 if( Tree.getNodeShowInTreeForCurrentPosition() )
                 {
-                    bool RunProps = ( _ForMobile && Tree.getChildNodeCount() == 0 && NodeSpecies.More != ThisNodeKey.NodeSpecies );   // is a leaf
-                    ParentJsonO.Add( _getNode( ThisNode, RunProps, ThisNodeKey.NodeSpecies ) );
+                    bool RunProps = ( _ForMobile && Tree.getChildNodeCount() == 0 && NodeSpecies.More != ThisNodeKey.NodeSpecies ); // is a leaf
+                    JProperty ThisJProp = _getNode( ThisNode, RunProps, ThisNodeKey.NodeSpecies );
+                    ParentJsonO.Add( ThisJProp );
+                    if( Tree.getChildNodeCount() > 0 )
+                    {
+                        JObject ThisNodeObj = (JObject) ThisJProp.Value;
+                        JObject NodesObj = new JObject();
+                        ThisNodeObj["nodes"] = NodesObj;
+                        _runTreeNodesRecursive( Tree, ref NodesObj );
+                    }
                 } // if( Tree.getNodeShowInTreeForCurrentPosition() )
                 else
                 {
-                    ParentJsonO.Add( ThisSubItems );
+                    _runTreeNodesRecursive( Tree, ref ParentJsonO );
                 }
                 Tree.goToParentNode();
             }
@@ -152,15 +154,7 @@ namespace ChemSW.Nbt.WebServices
             JProperty Ret = new JProperty( "No Results" );
             if( null != ThisNode )
             {
-                JProperty ThisJProp = new JProperty( "subitems" );
-                JObject ThisSubItems = new JObject();
-                ThisJProp.Value = ThisSubItems;
-
                 string ThisNodeName = ThisNode.NodeName;
-                if( RunProps )
-                {
-                    _runProperties( ThisNode, ref ThisSubItems );
-                }
 
                 Ret = new JProperty( NodeIdPrefix + ThisNode.NodeId );
                 JObject NodeProps = new JObject();
@@ -176,7 +170,12 @@ namespace ChemSW.Nbt.WebServices
                 NodeProps["nodetype"] = CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName );
                 NodeProps["objectclass"] = CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() );
                 NodeProps["nodespecies"] = CswTools.SafeJavascriptParam( NodeSpecie.ToString() );
-                NodeProps.Add( ThisJProp );
+                if( RunProps )
+                {
+                    JObject TabsObj = new JObject();
+                    NodeProps["tabs"] = TabsObj;
+                    _runProperties( ThisNode, ref TabsObj );
+                }
 
                 if( false == string.IsNullOrEmpty( ThisNode.NodeType.IconFileName ) )
                 {
@@ -209,16 +208,21 @@ namespace ChemSW.Nbt.WebServices
             {
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
                     {
-                        string Location = Node.Properties[CswNbtObjClassInspectionDesign.LocationPropertyName].Gestalt;
-                        string DueDate = Node.Properties[CswNbtObjClassInspectionDesign.DatePropertyName].Gestalt;
-                        string Status = Node.Properties[CswNbtObjClassInspectionDesign.StatusPropertyName].Gestalt;
-                        string Target = Node.Properties[CswNbtObjClassInspectionDesign.TargetPropertyName].Gestalt;
-                        NodeProps["location"] = Location;
-                        NodeProps["duedate"] = DueDate;
-                        NodeProps["status"] = Status;
-                        NodeProps["target"] = Target;
+                        NodeProps["location"] = Node.Properties[CswNbtObjClassInspectionDesign.LocationPropertyName].Gestalt;
+                        NodeProps["duedate"] = Node.Properties[CswNbtObjClassInspectionDesign.DatePropertyName].Gestalt;
+                        NodeProps["status"] = Node.Properties[CswNbtObjClassInspectionDesign.StatusPropertyName].Gestalt;
+                        NodeProps["target"] = Node.Properties[CswNbtObjClassInspectionDesign.TargetPropertyName].Gestalt;
                         break;
                     }
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
+                    {
+                        NodeProps["location"] = Node.Properties[CswNbtObjClassInspectionTarget.LocationPropertyName].Gestalt;
+                        NodeProps["description"] = Node.Properties[CswNbtObjClassInspectionTarget.DescriptionPropertyName].Gestalt;
+                        NodeProps["status"] = Node.Properties[CswNbtObjClassInspectionTarget.StatusPropertyName].Gestalt;
+                        NodeProps["lastinspectiondate"] = Node.Properties[CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName].Gestalt;
+                        break;
+                    }
+
             }
         }
 
@@ -247,7 +251,7 @@ namespace ChemSW.Nbt.WebServices
                 if( i < Tabs.Count - 1 )
                 {
                     CswNbtMetaDataNodeTypeTab NextTab = Tabs[i + 1];
-                    TabObj.Add( new JProperty( "nexttab", NextTab.TabName ) );
+                    TabObj["nexttab"] = NextTab.TabName;
                 }
 
                 foreach( CswNbtMetaDataNodeTypeProp Prop in CurrentTab.NodeTypePropsByDisplayOrder
@@ -258,22 +262,18 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
 
+                    string PropId = PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId;
+                    TabObj[PropId] = new JObject();
+                    TabObj[PropId]["prop_name"] = CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo );
+                    TabObj[PropId]["fieldtype"] = Prop.FieldType.FieldType.ToString();
+                    TabObj[PropId]["gestalt"] = CswTools.SafeJavascriptParam( PropWrapper.Gestalt );
+                    TabObj[PropId]["ocpname"] = CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName );
 
-                    JProperty ThisProp = new JProperty( PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId );
-                    TabObj.Add( ThisProp );
-
-                    JObject ThisPropAttr = new JObject(
-                                                new JProperty( "prop_name", CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo ) ),
-                                                new JProperty( "fieldtype", Prop.FieldType.FieldType.ToString() ),
-                                                new JProperty( "gestalt", CswTools.SafeJavascriptParam( PropWrapper.Gestalt ) ),
-                                                new JProperty( "ocpname", CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName ) )
-                                           );
                     if( Node.ReadOnly || Prop.ReadOnly )
                     {
-                        ThisPropAttr.Add( new JProperty( "isreadonly", true ) );
+                        TabObj[PropId]["isreadonly"] = "true";
                     }
-                    PropWrapper.ToJSON( ThisPropAttr );
-                    ThisProp.Value = ThisPropAttr;
+                    PropWrapper.ToJSON( (JObject) TabObj[PropId] );
                 }
 
             }
@@ -331,9 +331,9 @@ namespace ChemSW.Nbt.WebServices
             Collection<JProperty> Props = new Collection<JProperty>();
 
 
-            if( null != NodeObj.Property( "subitems" ) )
+            if( null != NodeObj.Property( "tabs" ) )
             {
-                JObject Tabs = (JObject) NodeObj.Property( "subitems" ).Value;
+                JObject Tabs = (JObject) NodeObj.Property( "tabs" ).Value;
                 foreach( JProperty Prop in from Tab
                                                in Tabs.Properties()
                                            where ( null != Tab.Value )
@@ -369,7 +369,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
                     //Case 20964. Client needs to know whether the inspection is complete.
-                    if( !Ret && Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
+                    if( false == Ret && Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
                     {
                         CswNbtMetaDataObjectClassProp Finished = Node.ObjectClass.getObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
                         CswNbtMetaDataObjectClassProp Cancelled = Node.ObjectClass.getObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
@@ -386,7 +386,7 @@ namespace ChemSW.Nbt.WebServices
 
                     Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
 
-                    if( !NodesToPost.Contains( Node ) )
+                    if( false == NodesToPost.Contains( Node ) )
                     {
                         NodesToPost.Add( Node );
                     }

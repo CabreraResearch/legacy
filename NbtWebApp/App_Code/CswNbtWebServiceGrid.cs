@@ -90,19 +90,22 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         private JObject _getGridOuterJson( bool ShowEmpty )
         {
-            JObject GridShellJObj = null;
+            JObject RetObj = new JObject();
+            RetObj["nodetypeid"] = _View.ViewMetaDataTypeId;
+
             IEnumerable<XElement> GridNodes = _getGridXElements();
-            IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( true );
+            IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( false );
 
             JArray GridRows = new JArray();
-            var HasResults = ( !ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
+            var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
             if( HasResults )
             {
                 GridRows = _CswGridData.getGridRowsJSON( GridNodes ); //_getGridRowsJson( GridNodes );
             }
 
-            JArray GridOrderedColumnDisplayNames = _CswGridData.getGridColumnNamesJson( ColumnCollection );   //_getGridColumnNamesJson( ColumnCollection );
-            _AddHiddenColumnNames( ref GridOrderedColumnDisplayNames );
+            JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
+            _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, ColumnCollection );   //_getGridColumnNamesJson( ColumnCollection );
+            //_makeHiddenColumnNames( ref GridOrderedColumnDisplayNames );
 
             JArray GridColumnDefinitions = _CswGridData.getGridColumnDefinitionJson( ColumnCollection );
             _AddHiddenColumnDefiniton( ref GridColumnDefinitions );
@@ -117,27 +120,23 @@ namespace ChemSW.Nbt.WebServices
 
             _CswGridData.GridSortName = "nodeid";
 
-            JObject JqGridOpt = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
+            RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
 
-            GridShellJObj = new JObject(
-                new JProperty( "nodetypeid", _View.ViewMetaDataTypeId ),
-                new JProperty( "jqGridOpt", JqGridOpt )
-                );
-
-            return GridShellJObj;
+            return RetObj;
         } // getGridOuterJson()
 
         /// <summary>
         /// Adds required columns for edit/add/delete functions
         /// </summary>
-        private void _AddHiddenColumnNames( ref JArray ColumnNameArray )
+        private JArray _makeHiddenColumnNames()
         {
-            ColumnNameArray.AddFirst( new JValue( "nodename" ) ); //better to use int for jqGrid key
-            ColumnNameArray.AddFirst( new JValue( "cswnbtnodekey" ) ); //we'll want CswNbtNodeKey for add/edit/delete
-            ColumnNameArray.AddFirst( new JValue( "nodeid" ) ); //better to use int for jqGrid key
-            ColumnNameArray.AddFirst( new JValue( "nodepk" ) );
-
-        } // _AddHiddenColumnNames()
+            JArray Ret = new JArray();
+            Ret.Add( "nodepk" );
+            Ret.Add( "nodeid" ); //better to use int for jqGrid key
+            Ret.Add( "cswnbtnodekey" ); //we'll want CswNbtNodeKey for add/edit/delete
+            Ret.Add( "nodename" );
+            return Ret;
+        } // _makeHiddenColumnNames()
 
         /// <summary>
         /// Generates a JSON property with the definitional data for a jqGrid Column Array

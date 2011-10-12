@@ -21,8 +21,8 @@ function CswMobileClientDb() {
     var storedViews = {};
 
     this.storedViews = storedViews;
-    
-    this.storeViewJson = function(viewId, viewName, viewJson, level, viewSearch, wasModified) {
+
+    this.storeViewJson = function (viewId, viewName, viewJson, level, viewSearch, wasModified) {
         /// <summary>
         ///   Stores a view in localStorage
         /// </summary>
@@ -31,31 +31,45 @@ function CswMobileClientDb() {
         /// <param name="viewJson" type="JSON">JSON representation of the nodes of the view</param>
         /// <param name="level" type="Number">Number indicating tree depth</param>
         /// <param name="viewSearch" type="JSON">JSON representation of the possible mobile searches on this view</param>
-        if (level === 0 && !isNullOrEmpty(viewJson)) {
-            storedViews = { }; //the viewnames may have changed. clear to be sure.
-            for (var view in viewJson) {
+        var view, viewNodes,
+            db = this;
+
+        if (level === 0 && false === isNullOrEmpty(viewJson)) {
+            storedViews = {}; //the viewnames may have changed. clear to be sure.
+            for (view in viewJson) {
                 storedViews[view] = viewJson[view];
             }
             //no need to cache the viewsdiv, just store ViewNames
-            this.setItem(CswMobileGlobal_Config.storedViews, storedViews);
+            db.setItem(CswMobileGlobal_Config.storedViews, storedViews);
         } else {
-            var viewNodes = { };
-            for (var nodeId in viewJson)
-            {
-                viewNodes[nodeId] = viewJson[nodeId];
-                if (wasModified)
-                {
-                    viewNodes[nodeId]['wasmodified'] = true;
+            viewNodes = {};
+            function storeNodeJson(json, nodeId, parentNodeId) {
+                if (wasModified) {
+                    json.wasmodified = true;
                 }
-                viewNodes[nodeId]['viewid'] = viewId;
-                this.setItem(nodeId, viewNodes[nodeId]);
-                delete viewNodes[nodeId]['subitems'];
+                json.parentnodeid = tryParseString(parentNodeId);
+                json.viewid = viewId;
+                db.setItem(nodeId, json);
+                if (contains(json, 'nodes')) {
+                    iterateNodes(json.nodes, nodeId);
+                }
+                delete json.nodes;
+                delete json.tabs;
+                viewNodes[nodeId] = json; //for search we need the OC props
             }
-            if (wasModified)
-            {
-                viewNodes['wasmodified'] = true;
+            function iterateNodes(json, parentNodeId) {
+                for (var nodeId in json) {
+                    if (contains(json, nodeId)) {
+                        storeNodeJson(json[nodeId], nodeId, parentNodeId);
+                    }
+                }
             }
-            this.setItem(viewId, { 'name': viewName, 'json': viewNodes, 'search': viewSearch });
+            iterateNodes(viewJson);
+
+            if (wasModified) {
+                viewNodes.wasmodified = true;
+            }
+            this.setItem(viewId, { name: viewName, json: viewNodes, search: viewSearch });
         }
     };
 
@@ -67,10 +81,9 @@ function CswMobileClientDb() {
         /// <param name="viewName" type="String">Human readable view name</param>
         /// <param name="wasModified" type="Boolean">Indicates whether this update modifies the view</param>
 
-        if (!isNullOrEmpty(viewId) && !isNullOrEmpty(viewJson))
-        {
+        if (false === isNullOrEmpty(viewId) && false === isNullOrEmpty(viewJson)) {
             var currentView = this.getItem(viewId);
-            var viewName = currentView['name'];
+            var viewName = currentView.name;
             this.storeViewJson(viewId, viewName, viewJson, 1, '', wasModified);
         }
         return viewJson;
@@ -84,13 +97,10 @@ function CswMobileClientDb() {
         /// <param name="nodeJson" type="JSON">JSON representation of the node</param>
         /// <param name="wasModified" type="Boolean">Indicates whether this update modifies the view</param>
 
-        if (!isNullOrEmpty(nodeId) && !isNullOrEmpty(nodeJson))
-        {
-            if (isTrue(wasModified))
-            {
+        if (false === isNullOrEmpty(nodeId) && false === isNullOrEmpty(nodeJson)) {
+            if (isTrue(wasModified)) {
                 nodeJson['wasmodified'] = true;
-            } else
-            {
+            } else {
                 delete nodeJson['wasmodified'];
             }
             this.setItem(nodeId, nodeJson);
@@ -98,26 +108,25 @@ function CswMobileClientDb() {
         return nodeJson;
     };
 
-    this.deleteNode = function(nodeId, viewId) {
+    this.deleteNode = function (nodeId, viewId) {
         /// <summary>
         ///   Remove a node from localStorage and the DOM
         /// </summary>
         /// <param name="nodeId" type="String">An NBT ViewId</param>
         /// <param name="viewId" type="String">Optional. The JSON property to retrieve. 'json' if omitted.</param>
-        
+
         //remove the cached node JSON
+        var view;
         this.removeItem(nodeId);
 
         //remove the Div
         $('#' + nodeId).remove();
 
         //remove the node from the View JSON
-        if (!isNullOrEmpty(viewId))
-        {
-            var view = this.getItem(viewId);
-            if (!isNullOrEmpty(view['json']))
-            {
-                delete view['json'][nodeId];
+        if (false === isNullOrEmpty(viewId)) {
+            view = this.getItem(viewId);
+            if (false === isNullOrEmpty(view.json)) {
+                delete view.json[nodeId];
                 this.setItem(viewId, view);
             }
         }
@@ -141,12 +150,11 @@ function CswMobileClientDb() {
         /// <param name="viewId" type="String">An NBT ViewId</param>
         /// <param name="viewObj" type="String">Optional. The JSON property to retrieve. 'json' if omitted.</param>
         var ret = { };
-        var rootObj = this.getItem(viewId);
-        if (!isNullOrEmpty(rootObj))
-        {
-            var jProp = 'json';
-            if (arguments.length === 2 && viewObj)
-            {
+        var rootObj = this.getItem(viewId),
+            jProp;
+        if (false === isNullOrEmpty(rootObj)) {
+            jProp = 'json';
+            if (arguments.length === 2 && viewObj) {
                 jProp = viewObj;
             }
             ret = rootObj[jProp];
@@ -160,8 +168,7 @@ function CswMobileClientDb() {
         /// </summary>
         /// <param name="nodeId" type="String">An NBT NodeId</param>
         var ret = {};
-        if (!isNullOrEmpty(nodeId))
-        {
+        if (false === isNullOrEmpty(nodeId)) {
             ret = this.getItem(nodeId);
         }
         return ret;

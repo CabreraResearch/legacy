@@ -60,8 +60,9 @@
     <Reference Include="FarPoint.Web.Spread.Extender">
       <HintPath>..\..\..\ThirdParty\FarPoint\Spread.ASP.4.dotNet35\v4.0.3505\Bin\FarPoint.Web.Spread.Extender.dll</HintPath>
     </Reference>
-    <Reference Include="GoogleClosure">
-      <HintPath>..\packages\GoogleClosure.1.0\lib\net40\GoogleClosure.dll</HintPath>
+    <Reference Include="GoogleClosure, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GoogleClosure.1.1\lib\net40\GoogleClosure.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=4.0.3.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -180,6 +181,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
     <Content Include="Scripts\modernizr.2.0.6.min.js" />
     <Content Include="README.jQuery.vsdoc.txt" />
     <Content Include="Scripts\i18n\grid.locale-ar.js" />
@@ -866,7 +868,6 @@
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\slider_handles.png" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\ui-icons_222222_256x240.png" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\ui-icons_454545_256x240.png" />
-    <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\jquery-ui-1.8.7.custom.css" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\demo.html" />
     <Content Include="js\globals\Global.js" />
     <Content Include="License.aspx" />
