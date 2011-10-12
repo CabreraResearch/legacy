@@ -170,17 +170,22 @@ namespace ChemSW.Nbt.PropTypes
             EncryptedPassword = CswTools.XmlRealAttributeName( PropRow[_EncryptedPasswordSubField.ToXmlNodeName()].ToString() );
         }
 
-        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            if( null != JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName( true ) ) )
-            {
-                EncryptedPassword = (string) JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName( true ) ).Value;
-            }
-            if( null != JObject.Property( "newpassword" ) )
-            {
-                _saveProp( (string) JObject.Property( "newpassword" ).Value );
-            }
-        }
+		public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+		{
+			if( null != JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName( true ) ) )
+			{
+				EncryptedPassword = (string) JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName( true ) ).Value;
+			}
+			if( null != JObject.Property( "newpassword" ) )
+			{
+				_saveProp( (string) JObject.Property( "newpassword" ).Value );
+			}
+			bool inIsExpired = (bool) JObject.Property( "isexpired" ).Value;
+			if( inIsExpired && !IsExpired )
+			{
+				ChangedDate = DateTime.MinValue;
+			}
+		}
 
         private void _saveProp( string NewPassword )
         {
