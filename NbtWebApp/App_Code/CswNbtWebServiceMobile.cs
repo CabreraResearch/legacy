@@ -331,9 +331,9 @@ namespace ChemSW.Nbt.WebServices
             Collection<JProperty> Props = new Collection<JProperty>();
 
 
-            if( null != NodeObj.Property( "subitems" ) )
+            if( null != NodeObj.Property( "tabs" ) )
             {
-                JObject Tabs = (JObject) NodeObj.Property( "subitems" ).Value;
+                JObject Tabs = (JObject) NodeObj.Property( "tabs" ).Value;
                 foreach( JProperty Prop in from Tab
                                                in Tabs.Properties()
                                            where ( null != Tab.Value )
@@ -369,7 +369,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
                     //Case 20964. Client needs to know whether the inspection is complete.
-                    if( !Ret && Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
+                    if( false == Ret && Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
                     {
                         CswNbtMetaDataObjectClassProp Finished = Node.ObjectClass.getObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
                         CswNbtMetaDataObjectClassProp Cancelled = Node.ObjectClass.getObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
@@ -386,7 +386,7 @@ namespace ChemSW.Nbt.WebServices
 
                     Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
 
-                    if( !NodesToPost.Contains( Node ) )
+                    if( false == NodesToPost.Contains( Node ) )
                     {
                         NodesToPost.Add( Node );
                     }
