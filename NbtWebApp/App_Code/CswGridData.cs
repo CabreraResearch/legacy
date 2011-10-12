@@ -169,7 +169,6 @@ namespace ChemSW.Nbt.WebServices
 
         public void dataRowToJson( DataRow Row, JArray JRows )
         {
-
             JObject RowObj = new JObject();
             foreach( DataColumn Column in Row.Table.Columns )
             {
@@ -189,44 +188,66 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JArray getGridRowsJSON( IEnumerable<XElement> GridNodes )
         {
-            JArray RowsArray = new JArray(
-                                from Element in GridNodes //not recursive
-                                select new JObject(
-                                    new JProperty( "nodeid", Element.Attribute( "nodeid" ).Value ),
-                                    new JProperty( "nodepk", new CswPrimaryKey( "nodes", CswConvert.ToInt32( Element.Attribute( "nodeid" ).Value ) ).ToString() ),
-                                    new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( Element.Attribute( "key" ).Value ) ),
-                                    new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
-                                        from DirtyElement in Element.DescendantNodes().OfType<XElement>() // recursive
-                                        where DirtyElement.Name == ( "NbtNodeProp" )
-                                        select _massageGridCell( DirtyElement )
-                                    )
-                                );
+            JArray GridRows = new JArray();
+            foreach( XElement GridNode in GridNodes )
+            {
+                JObject Row = new JObject();
+                Row["nodeid"] = GridNode.Attribute( "nodeid" ).Value;
+                Row["nodepk"] = new CswPrimaryKey( "nodes", CswConvert.ToInt32( GridNode.Attribute( "nodeid" ).Value ) ).ToString();
+                Row["cswnbtnodekey"] = wsTools.ToSafeJavaScriptParam( GridNode.Attribute( "key" ).Value );
+                Row["nodename"] = GridNode.Attribute( "nodename" ).Value;
+                foreach( XElement Related in GridNode.DescendantNodes().OfType<XElement>() )
+                {
+                    if( Related.Name == "NbtNodeProp" )
+                    {
+                        _addSafeCellContent( Related, Row );
+                    }
+                }
+                GridRows.Add( Row );
+            }
 
-            return RowsArray;
+            return GridRows;
         } // getGridRowsJSON()
 
         /// <summary>
         /// Translates property value into human readable text.
         /// Currently only handles Logical fieldtype.
         /// </summary>
-        private static JProperty _massageGridCell( XElement DirtyElement )
+        private static void _addSafeCellContent( XElement DirtyElement, JObject ParentObj )
         {
-            string CleanPropName = DirtyElement.Attribute( "name" ).Value.ToLower().Replace( " ", "_" );
-            string CleanValue = string.Empty;
-            string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
-            string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
-            var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
-            switch( PropFieldType )
+            if( null != DirtyElement )
             {
-                case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-                    CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
-                    break;
-                default:
-                    CleanValue = DirtyValue;
-                    break;
+                string CleanPropName = DirtyElement.Attribute( "name" ).Value.ToLower().Replace( " ", "_" );
+                string CleanValue;
+                string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
+                string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
+                string PropId = DirtyElement.Attribute( "nodetypepropid" ).Value;
+                var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
+                switch( PropFieldType )
+                {
+                    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                        CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
+                        break;
+                    default:
+                        CleanValue = DirtyValue;
+                        break;
+                }
+                CleanPropName += "_" + PropId;
+                ParentObj[CleanPropName] = CleanValue;
             }
-            JProperty CleanProp = new JProperty( CleanPropName, CleanValue );
-            return CleanProp;
+        }
+
+        /// <summary>
+        /// Generates a JSON array of friendly Column Names
+        /// </summary>
+        public JArray getGridColumnNamesJson( JArray ColumnArrary, IEnumerable<CswNbtViewProperty> PropCollection )
+        {
+            foreach( CswNbtViewProperty ViewProp in PropCollection )
+            {
+                CswViewBuilderProp Prop = new CswViewBuilderProp( ViewProp );
+                ColumnArrary.Add( Prop.PropName );
+            }
+            return ColumnArrary;
         }
 
         /// <summary>
@@ -234,11 +255,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JArray getGridColumnNamesJson( IEnumerable<CswNbtViewProperty> PropCollection )
         {
-            JArray ColumnArray = new JArray(
-                from ViewProp in PropCollection.Select( Prop => new CswViewBuilderProp( Prop ) )
-                select new JValue( ViewProp.PropName )
-                );
-            return ColumnArray;
+            return getGridColumnNamesJson( new JArray(), PropCollection );
         }
 
         /// <summary>
@@ -268,11 +285,11 @@ namespace ChemSW.Nbt.WebServices
             Ret[JqGridJsonOptions.rowNum.ToString()] = PageSize;
             Ret[JqGridJsonOptions.viewrecords.ToString()] = true;
             Ret[JqGridJsonOptions.emptyrecords.ToString()] = _NoResultsDisplayString;
-			if( GridWidth == Int32.MinValue )
-			{
-				Int32 ColWidth = _ColumnsWidth * 14;
-				GridWidth = ColWidth < 800 ? ColWidth : 450;
-			}
+            if( GridWidth == Int32.MinValue )
+            {
+                Int32 ColWidth = _ColumnsWidth * 14;
+                GridWidth = ColWidth < 800 ? ColWidth : 450;
+            }
             Ret[JqGridJsonOptions.width.ToString()] = GridWidth;
             //Ret[JqGridJsonOptions.autowidth.ToString()] = true;
             Ret[JqGridJsonOptions.sortname.ToString()] = GridSortName;
@@ -293,6 +310,7 @@ namespace ChemSW.Nbt.WebServices
     public class JqGridViewProperty
     {
         private readonly bool _DoCssOverride = false;
+        private readonly string _UniqueColumnName = string.Empty;
         private readonly string _LiteralColumnName = string.Empty;
         private readonly string _FriendlyColumnName = string.Empty;
         private readonly Int32 _ColumnWidth = Int32.MinValue;
@@ -373,6 +391,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             _LiteralColumnName = ViewProperty.PropName.ToLower();
+            _UniqueColumnName = _LiteralColumnName + "_" + ViewProperty.MetaDataPropId;
             _FriendlyColumnName = ViewProperty.PropName.ToLower().Replace( " ", "_" );
             _ColumnWidth = ViewProperty.Width;
 
@@ -746,7 +765,7 @@ namespace ChemSW.Nbt.WebServices
         {
             get
             {
-                JProperty ReturnProp = new JProperty( "name", _ColumnName );
+                JProperty ReturnProp = new JProperty( "name", _UniqueColumnName );
                 return ReturnProp;
             }
         }
