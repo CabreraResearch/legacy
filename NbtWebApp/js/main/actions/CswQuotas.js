@@ -20,7 +20,7 @@
 			var $Div = $(this);
 			var $table;
 			var row;
-			var $cell1, $cell2, $cell3;
+			var $cell1, $cell2, $cell3, $cell4;
 			var $savebtn;
 			var quotaJson;
 
@@ -36,7 +36,9 @@
 				$cell2 = $table.CswTable('cell', row, 2);
 				$cell2.append('<b>Includes</b>');
 				$cell3 = $table.CswTable('cell', row, 3);
-				$cell3.append('<b>Quota</b>');
+				$cell3.append('<b>Current Usage</b>');
+				$cell4 = $table.CswTable('cell', row, 4);
+				$cell4.append('<b>Quota</b>');
 				row += 1;
 
 				// Quota table
@@ -59,15 +61,18 @@
 								}, false);
 
 								$cell3 = $table.CswTable('cell', row, 3);
+								$cell3.append(childObj.currentusage);
+								
+								$cell4 = $table.CswTable('cell', row, 4);
 								if(canedit) {
-									$cell3.CswInput({	ID: o.ID + '_' + childObj.objectclassid + '_quota',
+									$cell4.CswInput({	ID: o.ID + '_' + childObj.objectclassid + '_quota',
 														name: o.ID + '_' + childObj.objectclassid + '_quota',
 														type: CswInput_Types.text,
 														value: childObj.quota,
 														width: '50px'
 													});
 								} else {
-									$cell3.append(childObj.quota);
+									$cell4.append(childObj.quota);
 								}
 
 								row += 1;

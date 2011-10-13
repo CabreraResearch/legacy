@@ -2895,6 +2895,36 @@ namespace ChemSW.Nbt.WebServices
 			return ReturnVal.ToString();
 		} // saveQuotas()
 
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getQuotaPercent()
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+					ReturnVal["result"] = Math.Round( ws.GetQuotaPercent() ).ToString();
+				}
+
+				_deInitResources();
+			}
+
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+		} // getQuotaPercent()
+
 		#endregion Quotas
 
 		#endregion Web Methods

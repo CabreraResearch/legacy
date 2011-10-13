@@ -94,6 +94,8 @@
                         .hover(function() { $(this).CswAttrDom('title', getExpireTime()); });
                     $('#header_dashboard').CswDashboard();
 
+					$('#header_quota').CswQuotaImage();
+
                     $('#header_menu').CswMenuHeader({
                             'onLogout': function() {
                                 Logout();

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
@@ -26,6 +28,9 @@ namespace ChemSW.Nbt.WebServices
 		public JObject GetQuotas()
 		{
 			JObject ret = new JObject();
+
+			Dictionary<Int32, Int32> NodeCounts = _getNodeCounts();
+
 			ret["canedit"] = CanEditQuotas.ToString().ToLower();
 			ret["objectclasses"] = new JObject();
 			foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
@@ -34,6 +39,14 @@ namespace ChemSW.Nbt.WebServices
 				ret["objectclasses"][OCId] = new JObject();
 				ret["objectclasses"][OCId]["objectclass"] = ObjectClass.ObjectClass.ToString();
 				ret["objectclasses"][OCId]["objectclassid"] = ObjectClass.ObjectClassId.ToString();
+				if( NodeCounts.ContainsKey( ObjectClass.ObjectClassId ) )
+				{
+					ret["objectclasses"][OCId]["currentusage"] = NodeCounts[ObjectClass.ObjectClassId];
+				}
+				else
+				{
+					ret["objectclasses"][OCId]["currentusage"] = "0";
+				}
 				if( ObjectClass.Quota != Int32.MinValue )
 				{
 					ret["objectclasses"][OCId]["quota"] = ObjectClass.Quota;
@@ -59,6 +72,32 @@ namespace ChemSW.Nbt.WebServices
 	
 			return ret;
 		} // GetQuotas()
+
+		private Dictionary<Int32, Int32> _getNodeCounts()
+		{
+			Dictionary<Int32, Int32> NodeCounts = new Dictionary<Int32,Int32>();
+			
+			// Look up the object class of all nodes (deleted or no)
+			string SqlSelect = @"select count(distinct nodeid) cnt, objectclassid
+								   from (select n.nodeid, o.objectclassid
+										   from nodes_audit n
+										   left outer join nodetypes t on n.nodetypeid = t.nodetypeid
+										   left outer join object_class o on t.objectclassid = o.objectclassid
+										UNION
+										 select n.nodeid, oa.objectclassid
+										   from nodes_audit n
+										   left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid
+										   left outer join object_class_audit oa on ta.objectclassid = oa.objectclassid)
+								  group by objectclassid";
+			CswArbitrarySelect NodeCountSelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceQuotas_historicalNodeCount", SqlSelect );
+			DataTable NodeCountTable = NodeCountSelect.getTable();
+			foreach( DataRow NodeCountRow in NodeCountTable.Rows )
+			{
+				NodeCounts.Add( CswConvert.ToInt32( NodeCountRow["objectclassid"] ), 
+								CswConvert.ToInt32( NodeCountRow["cnt"] ) );
+			} // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
+			return NodeCounts;
+		} // _getNodeCount()
 
 		public bool SaveQuotas( string inQuotas )
 		{
@@ -90,6 +129,27 @@ namespace ChemSW.Nbt.WebServices
 			}
 		} // SaveQuotas()
 
+		public Double GetQuotaPercent()
+		{
+			Double TotalUsed = 0;
+			Double TotalQuota = 0;
+
+			Dictionary<Int32, Int32> NodeCounts = _getNodeCounts();
+			foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
+			{
+				if( ObjectClass.Quota > 0 )
+				{
+					TotalQuota += ObjectClass.Quota;
+					if( NodeCounts.ContainsKey( ObjectClass.ObjectClassId ) &&
+					NodeCounts[ObjectClass.ObjectClassId] > 0 )
+					{
+						TotalUsed += NodeCounts[ObjectClass.ObjectClassId];
+					}
+				}
+			} // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
+
+			return ( TotalUsed / TotalQuota * 100);
+		} // GetQuotaPercent()
 
     } // class CswNbtWebServiceInspections
 } // namespace ChemSW.Nbt.WebServices

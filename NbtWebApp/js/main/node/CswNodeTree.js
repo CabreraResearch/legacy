@@ -142,7 +142,7 @@
 					                }
 					            }
 					            if(locked) {
-									treestr += '<img src="Images/lock.gif" title="Your subscription does not include this node" />';
+									treestr += '<img src="Images/quota/lock.gif" title="Your subscription does not include this node" />';
 								}
 								treestr += '</li>';
 					        } else {
