@@ -28,6 +28,8 @@ namespace ChemSW.Nbt.Schema
 			// This is where you add new versions.
 			CswSchemaUpdateDriver Schema01J01Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J01() );
 			_UpdateDrivers.Add( Schema01J01Driver.SchemaVersion, Schema01J01Driver );
+			CswSchemaUpdateDriver Schema02J02Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo02J02() );
+			_UpdateDrivers.Add( Schema02J02Driver.SchemaVersion, Schema02J02Driver );
 
 
 

@@ -21,7 +21,16 @@ namespace ChemSW.Nbt.Schema
             // which need to take place before any other changes can be made.
 
 
-		
+			// case 20970 - Add 'locked' column to nodes
+			// These are in 01J-02 as well
+			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodes", "locked" ) )
+			{
+				_CswNbtSchemaModTrnsctn.addBooleanColumn( "nodes", "locked", "Prevents access to a node, for nodes beyond subscription level", false, false );
+			}
+			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodes_audit", "locked" ) )
+			{
+				_CswNbtSchemaModTrnsctn.addBooleanColumn( "nodes_audit", "locked", "Prevents access to a node, for nodes beyond subscription level", false, false );
+			}
 		
 		}//Update()
 
