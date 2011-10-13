@@ -116,7 +116,9 @@ foreach my $component (@components)
 					   $subdir eq ".hg" ||
 					   $subdir eq "NbtSetup" ||
 					   $subdir eq "Schema" ||
-					   $subdir eq "TestApps"))
+					   $subdir eq "TestApps" ||
+					   $subdir eq "packages"
+					   ))
 				{
 					if($subdir eq "NbtWebApp")   # special case
 					{
@@ -137,8 +139,14 @@ foreach my $component (@components)
 							printf("ERROR: Could not open $file \n");
 						}
 					} else {
-						$file = $repopaths{$component} ."/$subdir/Properties/AssemblyInfo.cs";
-						&setversion($file, "$datestr.$increment");
+						if($subdir eq "DailyBuildTools")   # special case
+						{
+							$file = $repopaths{$component} ."/$subdir/DailyBuildWeb/DailyBuildWeb/Properties/AssemblyInfo.cs";
+							&setversion($file, "$datestr.$increment");
+						} else {
+							$file = $repopaths{$component} ."/$subdir/Properties/AssemblyInfo.cs";
+							&setversion($file, "$datestr.$increment");
+						}
 					}
 				}
 			}
