@@ -11,17 +11,17 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
-    /// <summary>
-    /// Webservice for object class quota management
-    /// </summary>
-    public class CswNbtWebServiceQuotas
-    {
-        private CswNbtResources _CswNbtResources;
+	/// <summary>
+	/// Webservice for object class quota management
+	/// </summary>
+	public class CswNbtWebServiceQuotas
+	{
+		private CswNbtResources _CswNbtResources;
 
 		public CswNbtWebServiceQuotas( CswNbtResources CswNbtResources )
-        {
-            _CswNbtResources = CswNbtResources;
-        }
+		{
+			_CswNbtResources = CswNbtResources;
+		}
 
 		private bool CanEditQuotas { get { return ( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername ); } }
 
@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.WebServices
 		{
 			JObject ret = new JObject();
 
-			Dictionary<Int32, Int32> NodeCounts = _getNodeCounts();
+			Dictionary<Int32, Int32> NodeCounts = _getNodeCounts( Int32.MinValue );
 
 			ret["canedit"] = CanEditQuotas.ToString().ToLower();
 			ret["objectclasses"] = new JObject();
@@ -69,17 +69,21 @@ namespace ChemSW.Nbt.WebServices
 					} // if( NodeType.IsLatestVersion )
 				} // foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
 			} // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
-	
+
 			return ret;
 		} // GetQuotas()
 
-		private Dictionary<Int32, Int32> _getNodeCounts()
+		private Dictionary<Int32, Int32> _getNodeCounts( Int32 ObjectClassId )
 		{
-			Dictionary<Int32, Int32> NodeCounts = new Dictionary<Int32,Int32>();
-			
+			Dictionary<Int32, Int32> NodeCounts = new Dictionary<Int32, Int32>();
+
 			// Look up the object class of all nodes (deleted or no)
-			string SqlSelect = @"select count(distinct nodeid) cnt, objectclassid
-								   from (select n.nodeid, o.objectclassid
+			string SqlSelect = "select count(distinct nodeid) cnt ";
+			if( ObjectClassId == Int32.MinValue )
+			{
+				SqlSelect += "         , objectclassid ";
+			}
+			SqlSelect += @"       from (select n.nodeid, o.objectclassid
 										   from nodes_audit n
 										   left outer join nodetypes t on n.nodetypeid = t.nodetypeid
 										   left outer join object_class o on t.objectclassid = o.objectclassid
@@ -87,13 +91,20 @@ namespace ChemSW.Nbt.WebServices
 										 select n.nodeid, oa.objectclassid
 										   from nodes_audit n
 										   left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid
-										   left outer join object_class_audit oa on ta.objectclassid = oa.objectclassid)
-								  group by objectclassid";
+										   left outer join object_class_audit oa on ta.objectclassid = oa.objectclassid)";
+			if( ObjectClassId != Int32.MinValue )
+			{
+				SqlSelect += "where objectclassid = '" + ObjectClassId.ToString() + "'";
+			}
+			else
+			{
+				SqlSelect += "group by objectclassid";
+			}
 			CswArbitrarySelect NodeCountSelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceQuotas_historicalNodeCount", SqlSelect );
 			DataTable NodeCountTable = NodeCountSelect.getTable();
 			foreach( DataRow NodeCountRow in NodeCountTable.Rows )
 			{
-				NodeCounts.Add( CswConvert.ToInt32( NodeCountRow["objectclassid"] ), 
+				NodeCounts.Add( CswConvert.ToInt32( NodeCountRow["objectclassid"] ),
 								CswConvert.ToInt32( NodeCountRow["cnt"] ) );
 			} // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
 			return NodeCounts;
@@ -101,14 +112,17 @@ namespace ChemSW.Nbt.WebServices
 
 		public bool SaveQuotas( string inQuotas )
 		{
-			JObject inQuotasJson = JObject.Parse( inQuotas ); 
+			Dictionary<Int32, Int32> NodeCounts = _getNodeCounts( Int32.MinValue );
+
+			JObject inQuotasJson = JObject.Parse( inQuotas );
 			if( CanEditQuotas )
 			{
 				CswTableUpdate OCUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtWebServiceQuotas_UpdateOC", "object_class" );
 				DataTable OCTable = OCUpdate.getTable();
 				foreach( DataRow OCRow in OCTable.Rows )
 				{
-					string OCId = "oc_" + OCRow["objectclassid"].ToString();
+					Int32 ObjectClassId = CswConvert.ToInt32( OCRow["objectclassid"] );
+					string OCId = "oc_" + ObjectClassId.ToString();
 					if( inQuotasJson["objectclasses"][OCId] != null )
 					{
 						Int32 OldQuota = CswConvert.ToInt32( OCRow["quota"] );
@@ -116,6 +130,32 @@ namespace ChemSW.Nbt.WebServices
 						if( OldQuota != NewQuota )
 						{
 							OCRow["quota"] = CswConvert.ToDbVal( NewQuota );
+
+							// If the quota is increasing, we can unlock some nodes
+							if( NewQuota > OldQuota )
+							{
+								if( NodeCounts.ContainsKey( ObjectClassId ) )
+								{
+									Int32 Count = NodeCounts[ObjectClassId];
+									if( Count > OldQuota )
+									{
+										CswTableUpdate NodesUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtWebSErviceQuotas_UpdateNodes", "nodes" );
+										OrderByClause OrderBy = new OrderByClause( "nodeid", OrderByType.Ascending );
+										string WhereClause = @"where nodetypeid in (select nodetypeid 
+																					  from nodetypes 
+																					 where objectclassid = " + ObjectClassId.ToString() + @") 
+																 and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
+										DataTable NodesTable = NodesUpdate.getTable( WhereClause, new Collection<OrderByClause> { OrderBy } );
+										for( Int32 i = 0; i < ( NewQuota - OldQuota ) && i < NodesTable.Rows.Count; i++ )
+										{
+											DataRow NodesRow = NodesTable.Rows[i];
+											NodesRow["locked"] = CswConvert.ToDbVal( false );
+										}
+										NodesUpdate.update( NodesTable );
+
+									}	 // if( Count > OldQuota )
+								} // if( NodeCounts.ContainsKey( ObjectClassId ) )
+							} // if( NewQuota > OldQuota )
 						} // if(OldQuota != NewQuota)
 					}
 				} // foreach( DataRow OCRow in OCTable.Rows )
@@ -134,7 +174,7 @@ namespace ChemSW.Nbt.WebServices
 			Double TotalUsed = 0;
 			Double TotalQuota = 0;
 
-			Dictionary<Int32, Int32> NodeCounts = _getNodeCounts();
+			Dictionary<Int32, Int32> NodeCounts = _getNodeCounts( Int32.MinValue );
 			foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
 			{
 				if( ObjectClass.Quota > 0 )
@@ -148,9 +188,28 @@ namespace ChemSW.Nbt.WebServices
 				}
 			} // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
 
-			return ( TotalUsed / TotalQuota * 100);
+			return ( TotalUsed / TotalQuota * 100 );
 		} // GetQuotaPercent()
 
-    } // class CswNbtWebServiceInspections
+		/// <summary>
+		/// Returns true if the quota has not been reached for the given nodetype
+		/// </summary>
+		public bool CheckQuota( Int32 NodeTypeId )
+		{
+			bool ret = false;
+			CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+			if( NodeType != null )
+			{
+				Dictionary<Int32, Int32> NodeCounts = _getNodeCounts( NodeType.ObjectClass.ObjectClassId );
+				Int32 NodeCount = NodeCounts[NodeType.ObjectClass.ObjectClassId];
+				if( NodeCount < NodeType.ObjectClass.Quota )
+				{
+					ret = true;
+				}
+			} // if( NodeType != null )
+			return ret;
+		} // CheckQuota()
+
+	} // class CswNbtWebServiceInspections
 } // namespace ChemSW.Nbt.WebServices
 
