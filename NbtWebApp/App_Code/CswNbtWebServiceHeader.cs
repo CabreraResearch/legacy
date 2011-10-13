@@ -106,6 +106,9 @@ namespace ChemSW.Nbt.WebServices
                                 ) ),
                                 new JProperty( "Statistics", new JObject(
                                     new JProperty( "href", "Statistics.aspx" )
+                                ) ),
+                                new JProperty( "Quotas", new JObject(
+                                    new JProperty( "action", "Quotas" )
                                 ) )
                         );
             }

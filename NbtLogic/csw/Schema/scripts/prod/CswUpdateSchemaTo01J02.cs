@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Schema
 
 			// case 20970 - Add an action for viewing/editing object class quotas
 			// permissions are granted in next script
-			_CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Quotas, true, "", "System" );
+			_CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Quotas, false, "", "System" );
 
 		}//Update()
 

@@ -97,7 +97,10 @@
                     $('#header_menu').CswMenuHeader({
                             'onLogout': function() {
                                 Logout();
-                            } // onLogout
+                            },
+							'onQuotas': function () {
+								_handleAction({ 'actionname': 'Quotas' });
+							}
                         }); // CswMenuHeader
 
                     $('#ViewSelectDiv').CswViewSelect({
@@ -347,7 +350,7 @@
                                 }
                             });
                     },
-                    'onSaveView': function(newviewid) {
+                    'onSaveView': function (newviewid) {
                         handleItemSelect({ 'viewid': newviewid, 'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode) });
                     },
                     'Multi': multi,
