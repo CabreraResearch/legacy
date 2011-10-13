@@ -194,8 +194,8 @@ namespace ChemSW.Nbt.WebServices
                                                                   .Cast<ExportOutputFormat>()
                                                                   .Where( FormatType => ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) ) )
                     {
-                        ExportObj[FormatType] = new JObject();
-                        ExportObj[FormatType]["popup"] = Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+                        ExportObj[FormatType.ToString()] = new JObject();
+                        ExportObj[FormatType.ToString()]["popup"] = Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
                     }
                     if( ExportObj.HasValues )
                     {
