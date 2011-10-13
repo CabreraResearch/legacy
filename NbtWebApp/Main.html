@@ -291,7 +291,7 @@
             if (options) {
                 $.extend(o, options);
             }
-           
+
             $('#MainMenuDiv').CswMenuMain({
                 'viewid': o.viewid,
                 'nodeid': o.nodeid,
@@ -312,7 +312,7 @@
                             o.grid.changeGridOpts(g);
                             break;
                         default:
-                            multi = false === multi;
+                            multi = (false === multi);
                             refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
                             break;
                     }
@@ -397,7 +397,7 @@
                 nodetypeid: '',
                 cswnbtnodekey: '',
                 ID: ''
-            }
+            };
             if (options) $.extend(o, options);
 
             clear({ centertop: true });
@@ -449,10 +449,10 @@
                         nodeid: ''
                     });
                 }
-            }
-            var onSearchClose = function () {
+            };
+            var onSearchClose = function() {
                 clear({ centertop: true });
-            }
+            };
             var $search = $('#CenterTopDiv').CswSearch({
                 'parentviewid': o.viewid,
                 'cswnbtnodekey': o.cswnbtnodekey,
@@ -791,12 +791,12 @@
             }
 
             switch (o.actionname) {
-                //			case 'Assign_Inspection':  
-                //				break;  
-                //			case 'Assign_Tests':  
-                //				break;  
+                //			case 'Assign_Inspection':     
+                //				break;     
+                //			case 'Assign_Tests':     
+                //				break;     
 
-                // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin  
+                // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin     
                 case 'Create_Inspection':
                     clear({ 'all': true });
 
@@ -821,8 +821,8 @@
 
                     break;
 
-                //			case 'Design':  
-                //				break;  
+                //			case 'Design':     
+                //				break;     
                 case 'Edit_View':
 
                     clear({ 'all': true });
@@ -850,14 +850,14 @@
                     $('#CenterTopDiv').CswViewEditor(EditViewOptions);
 
                     break;
-                //			case 'Enter_Results':  
-                //				break;  
-                //			case 'Future_Scheduling':  
-                //				break;  
-                //			case 'Import_Fire_Extinguisher_Data':  
-                //				break;  
-                //			case 'Inspection_Design':  
-                //				break;  
+                //			case 'Enter_Results':     
+                //				break;     
+                //			case 'Future_Scheduling':     
+                //				break;     
+                //			case 'Import_Fire_Extinguisher_Data':     
+                //				break;     
+                //			case 'Inspection_Design':     
+                //				break;     
                 case 'OOC_Inspections':
 
                     _setupOOCInspections();
@@ -865,14 +865,14 @@
                     break;
 
 
-                //			case 'Load_Mobile_Data':  
-                //				break;  
-                //			case 'Receiving':  
-                //				break;  
-                //			case 'Split_Samples':  
-                //				break;  
-                //			case 'View_By_Location':  
-                //				break;  
+                //			case 'Load_Mobile_Data':     
+                //				break;     
+                //			case 'Receiving':     
+                //				break;     
+                //			case 'Split_Samples':     
+                //				break;     
+                //			case 'View_By_Location':     
+                //				break;     
                 default:
                     if (!isNullOrEmpty(o.actionurl)) {
                         window.location = o.actionurl;
