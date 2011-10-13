@@ -103,7 +103,7 @@
                         var ret = false;
                         if ('No Results' !== json &&
                             contains(json, 'attr') &&
-                            (false == contains(json, 'children') ||
+                            (false === contains(json, 'children') ||
                            (json.children.length > 1 ||
                              'No Results' !== json.children[0]) ) ) {
                             ret = true;
