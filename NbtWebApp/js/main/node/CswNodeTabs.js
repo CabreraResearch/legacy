@@ -16,6 +16,7 @@
 			SavePropUrl: '/NbtWebApp/wsNBT.asmx/saveProps',
 			CopyPropValuesUrl: '/NbtWebApp/wsNBT.asmx/copyPropValues',
 			NodePreviewUrl: '/NbtWebApp/wsNBT.asmx/getNodePreview',
+			QuotaUrl: '/NbtWebApp/wsNBT.asmx/checkQuota',
 		    nodeids: [],
 		    nodepks: [],
 		    nodekeys: [],
@@ -152,6 +153,26 @@
 		} // getTabs()
 
 		function getProps($tabcontentdiv, tabid) {
+			if( o.EditMode === EditMode.AddInPopup.name ) {
+				// case 20970 - make sure there's room in the quota
+				CswAjaxJson({
+					url: o.QuotaUrl,
+					data: { NodeTypeId: o.nodetypeid },
+					success: function (data) {
+						if(isTrue(data.result))
+						{
+							getPropsImpl($tabcontentdiv, tabid);
+						} else {
+							$tabcontentdiv.append('You have used all of your purchased quota, and must purchase additional quota space in order to add');
+						}
+					}
+				});
+			} else {
+				getPropsImpl($tabcontentdiv, tabid);
+			}
+		} // getProps()
+
+		function getPropsImpl($tabcontentdiv, tabid) {
 			var jsonData = {
 				EditMode: o.EditMode,
 				NodeId: tryParseObjByIdx(o.nodeids, 0),
@@ -159,7 +180,7 @@
 				SafeNodeKey: tryParseObjByIdx(o.nodekeys, 0),
 				NodeTypeId: o.nodetypeid,
 				Date: o.date,
-			    Multi: o.Multi,
+				Multi: o.Multi,
 				filterToPropId: o.filterToPropId
 			};
 
@@ -167,18 +188,18 @@
 				url: o.PropsUrl,
 				data: jsonData,
 				success: function (data) {
-				    var $form = $tabcontentdiv.children('form');
+					var $form = $tabcontentdiv.children('form');
 					$form.contents().remove();
 
 					if(o.title !== '') {
-					    $form.append(o.title);
+						$form.append(o.title);
 					}
 
 					var $formtbl = $form.CswTable('init', { ID: o.ID + '_formtbl', width: '100%' });
 					var $formtblcell11 = $formtbl.CswTable('cell', 1, 1);
 					var $formtblcell12 = $formtbl.CswTable('cell', 1, 2);
 
-				    var $savetab;
+					var $savetab;
 					var $layouttable = $formtblcell11.CswLayoutTable('init', {
 						ID: o.ID + '_props',
 						OddCellRightAlign: true,
@@ -194,48 +215,48 @@
 						showConfigButton: o.Config,
 						showRemoveButton: o.Config,
 						onConfigOn: function() {
-						    doUpdateSubProps(true);
+							doUpdateSubProps(true);
 						}, // onConfigOn
 						onConfigOff: function() {
-						    doUpdateSubProps(false);
+							doUpdateSubProps(false);
 						}, // onConfigOff
-                        onRemove: function(event, onRemoveData) { 
+						onRemove: function(event, onRemoveData) { 
 							onRemove(onRemoveData);
 						} // onRemove
 					}); // CswLayoutTable()
 
-				    function doUpdateSubProps(configOn) {
-				        var updOnSuccess = function(thisProp, key) {
-                            if(isTrue(thisProp.hassubprops)) {
-                                var propId = key; //key
-                                var $subtable = $layouttable.find('#' + propId + '_subproptable');
-                                var $parentcell = $subtable.parent().parent();
-                                var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrXml('row'), $parentcell.CswAttrXml('column'));
-                                var $propcell = _getPropertyCell($cellset);
+					function doUpdateSubProps(configOn) {
+						var updOnSuccess = function(thisProp, key) {
+							if(isTrue(thisProp.hassubprops)) {
+								var propId = key; //key
+								var $subtable = $layouttable.find('#' + propId + '_subproptable');
+								var $parentcell = $subtable.parent().parent();
+								var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrXml('row'), $parentcell.CswAttrXml('column'));
+								var $propcell = _getPropertyCell($cellset);
 
-                                if ($subtable.length > 0)
-                                {
-                                    var fieldOpt = {
-                                        fieldtype: thisProp.fieldtype,
-                                        nodeid: tryParseObjByIdx(o.nodeids, 0),
-                                        relatednodeid: o.relatednodeid,
-                                        propid: propId,
-                                        $propdiv: $propcell.children('div'),
-                                        propData: thisProp,
-                                        onchange: function() { },
-                                        onReload: function() { getProps($tabcontentdiv, tabid); },
-                                        EditMode: o.EditMode,
-                                        Multi: o.Multi,
-                                        cswnbtnodekey: tryParseObjByIdx(o.nodekeys, 0)
-                                    };
+								if ($subtable.length > 0)
+								{
+									var fieldOpt = {
+										fieldtype: thisProp.fieldtype,
+										nodeid: tryParseObjByIdx(o.nodeids, 0),
+										relatednodeid: o.relatednodeid,
+										propid: propId,
+										$propdiv: $propcell.children('div'),
+										propData: thisProp,
+										onchange: function() { },
+										onReload: function() { getProps($tabcontentdiv, tabid); },
+										EditMode: o.EditMode,
+										Multi: o.Multi,
+										cswnbtnodekey: tryParseObjByIdx(o.nodekeys, 0)
+									};
 
-                                    _updateSubProps(fieldOpt, propId, thisProp, $propcell, $tabcontentdiv, tabid, configOn, $savetab);
-                                }
-                            }
-				            return false;
-				        };
-				        crawlObject(data, updOnSuccess, false);
-				    }
+									_updateSubProps(fieldOpt, propId, thisProp, $propcell, $tabcontentdiv, tabid, configOn, $savetab);
+								}
+							}
+							return false;
+						};
+						crawlObject(data, updOnSuccess, false);
+					}
 
 					if( o.EditMode !== EditMode.PrintReport.Name)
 					{
@@ -261,7 +282,7 @@
 							if($elm.CswAttrDom('csw_invalid') === '1')  // only unhighlight where we highlighted
 							{
 								$elm.css('background-color', '#66ff66');
-							    $elm.CswAttrDom('csw_invalid', '0');
+								$elm.CswAttrDom('csw_invalid', '0');
 								setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
 							}
 						}
@@ -302,7 +323,7 @@
 					}
 				} // success{}
 			}); // ajax
-		} // getProps()
+		} // getPropsImpl()
 	   
 		function onRemove(onRemoveData)
 		{
