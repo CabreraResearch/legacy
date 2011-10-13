@@ -120,6 +120,7 @@
 					            var rel = tryParseString(json.attr.rel);
 					            var species = tryParseString(json.attr.species);
 					            var state = tryParseString(json.attr.state, 'open');
+								var locked = isTrue(json.attr.locked);
 
 					            treestr += '<li id="' + id + '" rel="' + rel + '" species="' + species + '" class="jstree-' + state + '" ';
 					            if (!isNullOrEmpty(nbtnodekey)) {
@@ -140,7 +141,10 @@
 					                    treestr += '</ul>';
 					                }
 					            }
-					            treestr += '</li>';
+					            if(locked) {
+									treestr += '<img src="Images/lock.gif" title="Your subscription does not include this node" />';
+								}
+								treestr += '</li>';
 					        } else {
 					            treestr += '<li id="' + Int32MinVal + '" rel="leaf" class="jstree-leaf">No Results</li>';
 					        }

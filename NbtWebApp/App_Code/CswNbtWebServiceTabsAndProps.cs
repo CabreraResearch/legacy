@@ -282,7 +282,7 @@ namespace ChemSW.Nbt.WebServices
 			}
 			bool IsReadOnly = ( Prop.ReadOnly ||                                      // nodetype_props.readonly
 								( PropWrapper != null && PropWrapper.ReadOnly ) ||    // jct_nodes_props.readonly
-								( Node != null && Node.ReadOnly ) ||                  // nodes.readonly
+								( Node != null && ( Node.ReadOnly || Node.Locked ) ) ||                  // nodes.readonly or nodes.locked
 								EditMode == NodeEditMode.Preview ||
 								!_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, Tab, null, Node, Prop ) );
 
