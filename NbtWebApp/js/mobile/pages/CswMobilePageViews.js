@@ -112,7 +112,7 @@ function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
             listView = new CswMobileListView(ulDef, $content);
 
             for (viewId in viewJson) {
-                if (viewJson.hasOwnProperty(viewId)) {
+                if (contains(viewJson, viewId)) {
                     viewName = viewJson[viewId];
                     opts = {
                         ParentId: id,

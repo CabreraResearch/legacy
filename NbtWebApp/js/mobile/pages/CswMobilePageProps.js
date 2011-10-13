@@ -148,7 +148,7 @@ function CswMobilePageProps(propsDef, $parent, mobileStorage, $contentRole) {
                     tabId: nextTabId,
                     tabName: nextTab,
                     tabJson: newTabJson,
-                    level: 3,
+                    level: level,
                     title: nextTab,
                     onHelpClick: pageDef.onHelpClick,
                     onOnlineClick: pageDef.onOnlineClick,

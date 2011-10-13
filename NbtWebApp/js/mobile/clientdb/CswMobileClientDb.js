@@ -43,28 +43,30 @@ function CswMobileClientDb() {
             db.setItem(CswMobileGlobal_Config.storedViews, storedViews);
         } else {
             viewNodes = {};
-            function storeNodeJson(json, nodeId, parentNodeId) {
+            function storeNodeJson(json, nodeId, parentNodeId, nodeLevel) {
+                var nextLevel = nodeLevel + 1;
                 if (wasModified) {
                     json.wasmodified = true;
                 }
                 json.parentnodeid = tryParseString(parentNodeId);
                 json.viewid = viewId;
+                json.nodeLevel = nodeLevel;
                 db.setItem(nodeId, json);
                 if (contains(json, 'nodes')) {
-                    iterateNodes(json.nodes, nodeId);
+                    iterateNodes(json.nodes, nodeId, nextLevel);
                 }
                 delete json.nodes;
                 delete json.tabs;
                 viewNodes[nodeId] = json; //for search we need the OC props
             }
-            function iterateNodes(json, parentNodeId) {
+            function iterateNodes(json, parentNodeId, nodeLevel) {
                 for (var nodeId in json) {
                     if (contains(json, nodeId)) {
-                        storeNodeJson(json[nodeId], nodeId, parentNodeId);
+                        storeNodeJson(json[nodeId], nodeId, parentNodeId, nodeLevel);
                     }
                 }
             }
-            iterateNodes(viewJson);
+            iterateNodes(viewJson, '', 1);
 
             if (wasModified) {
                 viewNodes.wasmodified = true;

@@ -94,7 +94,7 @@ function CswMobilePageTabs(tabsDef, $parent, mobileStorage, $contentRole) {
                         nodeId: nodeId,
                         tabId: tabId,
                         tabName: tabName,
-                        level: 3,
+                        level: level + 1,
                         title: tabName,
                         onHelpClick: pageDef.onHelpClick,
                         onOnlineClick: pageDef.onOnlineClick,
