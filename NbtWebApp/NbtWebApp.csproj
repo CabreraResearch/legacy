@@ -109,6 +109,7 @@
     <Content Include="Act_ImportFireExtinguisher.aspx" />
     <Content Include="Act_Receiving.aspx" />
     <Content Include="Act_SplitSamples.aspx" />
+    <Compile Include="App_Code\CswNbtWebServiceQuotas.cs" />
     <Compile Include="App_Code\CswNbtWebServiceTable.cs" />
     <Compile Include="App_Code\CswNbtWebServiceAuditing.cs" />
     <Compile Include="App_Code\CswNbtWebServiceImportInspectionQuestions.cs" />
@@ -181,6 +182,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="js\main\actions\CswQuotas.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
     <Content Include="Scripts\modernizr.2.0.6.min.js" />
     <Content Include="README.jQuery.vsdoc.txt" />

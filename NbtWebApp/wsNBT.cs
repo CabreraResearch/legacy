@@ -2835,9 +2835,71 @@ namespace ChemSW.Nbt.WebServices
         } // RunView()
         #endregion test
 
-        #endregion Web Methods
+		#region Quotas
 
-        private CswNbtView _getView( string ViewId )
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getQuotas()
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+					ReturnVal = ws.GetQuotas();
+				}
+
+				_deInitResources();
+			}
+
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+		} // getQuotas()
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string saveQuotas( string Quotas )
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+					ReturnVal["result"] = ws.SaveQuotas( Quotas ).ToString().ToLower();
+				}
+
+				_deInitResources();
+			}
+
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+		} // saveQuotas()
+
+		#endregion Quotas
+
+		#endregion Web Methods
+
+		private CswNbtView _getView( string ViewId )
         {
             CswNbtView View = null;
             if( CswNbtViewId.isViewIdString( ViewId ) )

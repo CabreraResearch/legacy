@@ -859,9 +859,16 @@
                 //				break; 
                 case 'OOC_Inspections':
 
-                    _setupOOCInspections();
+                   	_setupOOCInspections();
 
-                    break;
+                   	break;
+
+                case 'Quotas':
+
+                	clear({ 'all': true });
+                	$('#CenterTopDiv').CswQuotas();
+
+                   	break;
 
 
                 //			case 'Load_Mobile_Data': 
@@ -872,6 +879,7 @@
                 //				break; 
                 //			case 'View_By_Location': 
                 //				break; 
+
                 default:
                     if (!isNullOrEmpty(o.actionurl)) {
                         window.location = o.actionurl;
