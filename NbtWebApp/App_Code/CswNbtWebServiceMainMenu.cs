@@ -52,49 +52,39 @@ namespace ChemSW.Nbt.WebServices
 
             // SEARCH
 
-            JObject SearchObj = new JObject(
-                new JProperty( "haschildren", true )
-                );
-            Ret["Search"] = SearchObj;
-
+            Ret["Search"] = new JObject();
+            Ret["Search"]["haschildren"] = true;
             // Generic search
             if( View != null )
             {
-                if( View.Visibility != NbtViewVisibility.Property )
-                {
-                    SearchObj.Add( new JProperty( "Generic Search",
-                                                  new JObject(
-                                                      new JProperty( "nodeid", NodeId ),
-                                                      new JProperty( "nodetypeid", NodeTypeId ),
-                                                      new JProperty( "action", "GenericSearch" )
-                                                      ) ) );
-                }
-                else
-                {
-                    SearchObj.Add( new JProperty( "Generic Search",
-                                                  new JObject(
-                                                      new JProperty( "action", "GenericSearch" )
-                                                      ) ) );
-                }
                 if( View.IsSearchable() )
                 {
                     View.SaveToCache( false );
-                    SearchObj.AddFirst( new JProperty( "This View",
-                                                       new JObject(
-                                                           new JProperty( "text", "This View" ),
-                                                           new JProperty( "nodeid", NodeId ),
-                                                           new JProperty( "nodetypeid", NodeTypeId ),
-                                                           new JProperty( "sessionviewid", View.SessionViewId.ToString() ),
-                                                           new JProperty( "action", "ViewSearch" )
-                                                           ) ) );
+                    Ret["Search"]["This View"] = new JObject();
+                    Ret["Search"]["This View"]["text"] = "This View";
+                    Ret["Search"]["This View"]["nodeid"] = NodeId;
+                    Ret["Search"]["This View"]["nodetypeid"] = NodeTypeId;
+                    Ret["Search"]["This View"]["sessionviewid"] = View.SessionViewId.ToString();
+                    Ret["Search"]["This View"]["action"] = "ViewSearch";
                 }
+                if( View.Visibility != NbtViewVisibility.Property )
+                {
+                    Ret["Search"]["Generic Search"] = new JObject();
+                    Ret["Search"]["Generic Search"]["nodeid"] = NodeId;
+                    Ret["Search"]["Generic Search"]["nodetypeid"] = NodeTypeId;
+                    Ret["Search"]["Generic Search"]["action"] = "GenericSearch";
+                }
+                else
+                {
+                    Ret["Search"]["Generic Search"] = new JObject();
+                    Ret["Search"]["Generic Search"]["action"] = "GenericSearch";
+                }
+
             }
             else
             {
-                SearchObj.Add( new JProperty( "Generic Search",
-                                              new JObject(
-                                                  new JProperty( "action", "GenericSearch" )
-                                                  ) ) );
+                Ret["Search"]["Generic Search"] = new JObject();
+                Ret["Search"]["Generic Search"]["action"] = "GenericSearch";
             }
 
             if( View != null )
@@ -122,7 +112,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AddObj.HasValues )
                 {
-                    AddObj.Add( new JProperty( "haschildren", true ) );
+                    AddObj["haschildren"] = true;
                     Ret["Add"] = AddObj;
                 }
 
@@ -132,63 +122,56 @@ namespace ChemSW.Nbt.WebServices
                     _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) )
                 {
                     string BadPropertyName = string.Empty;
-                    if( !Node.NodeType.IsUniqueAndRequired( ref BadPropertyName ) )
+                    if( false == Node.NodeType.IsUniqueAndRequired( ref BadPropertyName ) )
                     {
-                        Ret["Copy"] = new JObject(
-                            new JProperty( "action", "CopyNode" ),
-                            new JProperty( "nodeid", Node.NodeId.ToString() ),
-                            new JProperty( "nodename", Node.NodeName )
-                            );
+                        Ret["Copy"] = new JObject();
+                        Ret["Copy"]["action"] = "CopyNode";
+                        Ret["Copy"]["nodeid"] = Node.NodeId.ToString();
+                        Ret["Copy"]["nodename"] = Node.NodeName;
                     }
                 }
 
                 // DELETE
-                if( !string.IsNullOrEmpty( NodeKey ) &&
+                if( false == string.IsNullOrEmpty( NodeKey ) &&
                     null != Node &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
                     Node.NodeSpecies == NodeSpecies.Plain &&
                     _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.NodeType, false, null, null, Node, null ) )
                 {
-
-                    Ret["Delete"] = new JObject(
-                        new JProperty( "action", "DeleteNode" ),
-                        new JProperty( "nodeid", Node.NodeId.ToString() ),
-                        new JProperty( "nodename", Node.NodeName )
-                        );
+                    Ret["Delete"] = new JObject();
+                    Ret["Delete"]["action"] = "DeleteNode";
+                    Ret["Delete"]["nodeid"] = Node.NodeId.ToString();
+                    Ret["Delete"]["nodename"] = Node.NodeName;
                 }
 
                 // SAVE VIEW AS
-                if( !View.ViewId.isSet() && _CswNbtResources.Permit.can( _CswNbtResources.Actions[CswNbtActionName.Edit_View] ) )
+                if( false == View.ViewId.isSet() && _CswNbtResources.Permit.can( _CswNbtResources.Actions[CswNbtActionName.Edit_View] ) )
                 {
                     View.SaveToCache( false );
-                    Ret["Save View As"] = new JObject(
-                        new JProperty( "action", "SaveViewAs" ),
-                        new JProperty( "viewid", View.SessionViewId.ToString() ),
-                        new JProperty( "viewmode", View.ViewMode.ToString() )
-                        );
+                    Ret["Save View As"] = new JObject();
+                    Ret["Save View As"]["action"] = "SaveViewAs";
+                    Ret["Save View As"]["viewid"] = View.SessionViewId.ToString();
+                    Ret["Save View As"]["viewmode"] = View.ViewMode.ToString();
                 }
 
                 // PRINT LABEL
-                if( !string.IsNullOrEmpty( NodeKey ) && null != Node && Node.NodeType != null )
+                if( false == string.IsNullOrEmpty( NodeKey ) && null != Node && null != Node.NodeType )
                 {
                     CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.NodeType.BarcodeProperty;
-                    if( BarcodeProperty != null )
+                    if( null != BarcodeProperty )
                     {
-                        Ret["Print Label"] = new JObject(
-                            new JProperty( "nodeid", Node.NodeId.ToString() ),
-                            new JProperty( "propid", new CswPropIdAttr( Node, BarcodeProperty ).ToString() ),
-                            new JProperty( "action", "PrintLabel" )
-                            );
-
+                        Ret["Print Label"] = new JObject();
+                        Ret["Print Label"]["nodeid"] = Node.NodeId.ToString();
+                        Ret["Print Label"]["propid"] = new CswPropIdAttr( Node, BarcodeProperty ).ToString();
+                        Ret["Print Label"]["action"] = "PrintLabel";
                     }
                 }
                 // PRINT
                 if( View.ViewMode == NbtViewRenderingMode.Grid )
                 {
                     View.SaveToCache( false );
-                    Ret["Print"] = new JObject(
-                        new JProperty( "popup", "PrintGrid.aspx?sessionviewid=" + View.SessionViewId.ToString() )
-                        );
+                    Ret["Print"] = new JObject();
+                    Ret["Print"]["popup"] = "PrintGrid.aspx?sessionviewid=" + View.SessionViewId.ToString();
                 }
 
                 // EXPORT
@@ -200,39 +183,39 @@ namespace ChemSW.Nbt.WebServices
                     string Url = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString();
                     if( View.Visibility == NbtViewVisibility.Property &&
                         null != Node &&
-                        string.Empty != PropIdAttr )
+                        false == string.IsNullOrEmpty( PropIdAttr ) )
                     {
                         // Grid Property is a special case
                         CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
                         Url = "Popup_Export.aspx?nodeid=" + Node.NodeId.ToString() + "&propid=" + PropId.NodeTypePropId;
                     }
 
-                    foreach( JProperty ExportType in from ExportOutputFormat FormatType
-                                                         in Enum.GetValues( typeof( ExportOutputFormat ) )
-                                                     where ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile )
-                                                     select new JProperty( FormatType.ToString(),
-                                                                           new JObject(
-                                                                               new JProperty( "popup", Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode ) ) ) )
+                    foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) )
+                                                                  .Cast<ExportOutputFormat>()
+                                                                  .Where( FormatType => ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) ) )
                     {
-                        ExportObj.Add( ExportType );
+                        ExportObj[FormatType] = new JObject();
+                        ExportObj[FormatType]["popup"] = Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
                     }
                     if( ExportObj.HasValues )
                     {
-                        ExportObj.Add( new JProperty( "haschildren", true ) );
+                        ExportObj["haschildren"] = true;
                     }
                 }
                 else // tree or list
                 {
-                    ExportObj.Add( new JProperty( "haschildren", true ) );
-                    ExportObj.Add( new JProperty( "Report XML" ) );
+                    ExportObj["haschildren"] = true;
+                    ExportObj["Report XML"] = "";
                     if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
                     {
+                        if( null == View.SessionViewId )
+                        {
+                            View.SaveToCache( false, false );
+                        }
                         string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
                                        ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
-                        ExportObj.Add( new JProperty( "Mobile XML",
-                                                      new JObject(
-                                                          new JProperty( "popup", PopUp ) )
-                                           ) );
+                        ExportObj["Mobile XML"] = new JObject();
+                        ExportObj["Mobile XML"]["popup"] = PopUp;
                     }
                 }
             } // if( null != View )
@@ -240,12 +223,14 @@ namespace ChemSW.Nbt.WebServices
             // EDIT VIEW
             if( _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) )
             {
-                Ret["Edit View"] = new JObject( new JProperty( "action", "editview" ) );
+                Ret["Edit View"] = new JObject();
+                Ret["Edit View"]["action"] = "editview";
             }
 
             if( null != View )
             {
-                Ret["Multi-Edit"] = new JObject( new JProperty( "action", "multiedit" ) );
+                Ret["Multi-Edit"] = new JObject();
+                Ret["Multi-Edit"]["action"] = "multiedit";
             }
 
             return Ret;

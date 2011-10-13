@@ -3,7 +3,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
+(function ($) { /// <param name="$" type="jQuery" />
     
     $.fn.CswMenuMain = function (options) {
     /// <summary>
@@ -40,7 +40,7 @@
 
         var $MenuDiv = $(this);
 
-        var dataXml = {
+        var jsonData = {
             ViewId: o.viewid,
             SafeNodeKey: o.cswnbtnodekey,
             PropIdAttr: o.propid
@@ -48,7 +48,7 @@
 
         CswAjaxJson({
             url: o.Url,
-            data: dataXml,
+            data: jsonData,
             stringify: false,
             success: function (data) {
                 var $ul = $('<ul class="topnav"></ul>');

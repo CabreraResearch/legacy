@@ -69,8 +69,10 @@ function checkExpireTime()
 function setCurrentView(viewid, viewmode)
 {
     clearCurrent();
-    $.CswCookie('set', CswCookieName.CurrentViewId, viewid);
-    $.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
+    if (false === isNullOrEmpty(viewid) && false === isNullOrEmpty(viewmode)) {
+        $.CswCookie('set', CswCookieName.CurrentViewId, viewid);
+        $.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
+    }
 }
 
 function setCurrentAction(actionname, actionurl)
