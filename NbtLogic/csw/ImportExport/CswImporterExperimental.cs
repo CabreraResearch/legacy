@@ -28,9 +28,9 @@ namespace ChemSW.Nbt.ImportExport
 
 
 
-        enum ProcessStati { Unprocessed, Imported, PropsAdded, Error };
+        enum ProcessStati { Unprocessed, Imported, PropsAdded, RedundancyChecked, Error };
         enum Source { ImportData, Deduced }
-        enum ProcessPhase { NothingDoneYet, TempTablesPopulated, NbtNodesPopulated, TargetNodesPresent, NbtPropsPouplated, RandomTestComplete };
+        enum ProcessPhase { NothingDoneYet, TempTablesPopulated, NbtNodesPopulated, TargetNodesPresent, NbtPropsPouplated, PostProcessed, RandomTestComplete };
         enum AbsentNodeHandling { DeduceAndCreate, RejectImport }
         public CswImporterExperimental( CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, CswImportExportStatusReporter CswImportExportStatusReporter )
         {
@@ -355,54 +355,75 @@ namespace ChemSW.Nbt.ImportExport
                 }
                 else if( AbsentNodeHandling.DeduceAndCreate == _AbsentNodeHandling )
                 {
-                    Int32 TotalNodesAdded = 0;
+                    Int32 AddedNodesCounter = 0;
                     CswNbtNode GeneralUserRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "Equipment User" );
+
                     foreach( DataRow CurrentRow in DataTable.Rows )
                     {
                         string ImportNodeIdOfAbsentNode = CurrentRow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
-                        if( ImportNodeIdOfAbsentNode.StartsWith( "ND--" ) )
+                        string[] SplitRelatedNodeID = ImportNodeIdOfAbsentNode.Split( new string[] { "--" }, StringSplitOptions.None );
+
+                        if( SplitRelatedNodeID.Length >= 2 )
                         {
-                            // Ex: ND--USER--dch
-                            string[] SplitRelatedNodeID = ImportNodeIdOfAbsentNode.Split( new string[] { "--" }, StringSplitOptions.None );
-                            CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( SplitRelatedNodeID[1] );
-                            if( RelatedNodeType != null && SplitRelatedNodeID.Length >= 2 && SplitRelatedNodeID[2] != string.Empty )
+                            string AbsentNodeNodeIdType = SplitRelatedNodeID[0];
+                            string AbsentNodeNodeType = SplitRelatedNodeID[1];
+                            string AbsentNodeNodeName = SplitRelatedNodeID.Length >= 3 ? SplitRelatedNodeID[2] : string.Empty;
+                            if( "ND" == AbsentNodeNodeIdType )
                             {
-
-                                //****************************
-                                //Create the node
-                                CswNbtNode TargetNodeThatWasMissing = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RelatedNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
-                                TargetNodeThatWasMissing.NodeName = SplitRelatedNodeID[2]; // Kludge to make the node have a value even when no property values are supplied for it
-
-                                // Kludge specifically for 10340:
-                                if( SplitRelatedNodeID[1].ToLower() == "user" )
+                                CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( AbsentNodeNodeType );
+                                if( RelatedNodeType != null )
                                 {
-                                    TargetNodeThatWasMissing.Properties["Username"].AsText.Text = SplitRelatedNodeID[2].ToLower();
-                                    if( GeneralUserRole != null )
-                                        TargetNodeThatWasMissing.Properties["Role"].AsRelationship.RelatedNodeId = GeneralUserRole.NodeId;
-                                    TargetNodeThatWasMissing.Properties["AccountLocked"].AsLogical.Checked = Tristate.True;
+
+                                    if( string.Empty == AbsentNodeNodeName )
+                                    {
+                                        AbsentNodeNodeName = AbsentNodeNodeType + "-" + ( AddedNodesCounter + 1 ).ToString();
+                                    }
+
+                                    //****************************
+                                    //Create the node
+                                    CswNbtNode TargetNodeThatWasMissing = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RelatedNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+                                    TargetNodeThatWasMissing.NodeName = AbsentNodeNodeName; // Kludge to make the node have a value even when no property values are supplied for it
+
+                                    // Kludge specifically for 10340:
+                                    if( SplitRelatedNodeID[1].ToLower() == "user" )
+                                    {
+                                        TargetNodeThatWasMissing.Properties["Username"].AsText.Text = SplitRelatedNodeID[2].ToLower();
+                                        if( GeneralUserRole != null )
+                                            TargetNodeThatWasMissing.Properties["Role"].AsRelationship.RelatedNodeId = GeneralUserRole.NodeId;
+                                        TargetNodeThatWasMissing.Properties["AccountLocked"].AsLogical.Checked = Tristate.True;
+                                    }
+
+                                    TargetNodeThatWasMissing.postChanges( false, false, true );
+
+                                    //NodeIdMap.Add( CswTools.XmlRealAttributeName( ImportNodeIdOfAbsentNode ).ToLower(), TargetNodeThatWasMissing.NodeId.PrimaryKey );    // for property value references
+                                    //NodeRow["destnodeid"] = CswConvert.ToDbVal( TargetNodeThatWasMissing.NodeId.PrimaryKey );       // for posterity
+
+
+                                    //****************************
+                                    //Create the temp node tables so that the references will be there when we create target props
+                                    DataTable AddMissingNodeEntryTable = CswTableUpdateTempNodesTable.getEmptyTable();
+                                    DataRow NewNodeEntryRow = AddMissingNodeEntryTable.NewRow();
+                                    AddMissingNodeEntryTable.Rows.Add( NewNodeEntryRow );
+                                    NewNodeEntryRow[_ColName_ImportNodeId] = ImportNodeIdOfAbsentNode;
+                                    NewNodeEntryRow[_ColName_Nodes_NodeName] = TargetNodeThatWasMissing.NodeName;
+                                    NewNodeEntryRow[_ColName_ProcessStatus] = Source.Deduced.ToString();
+                                    NewNodeEntryRow[Colname_NbtNodeId] = TargetNodeThatWasMissing.NodeId.PrimaryKey.ToString();
+
+                                    CswTableUpdateTempNodesTable.update( AddMissingNodeEntryTable );
+
+                                    _CswImportExportStatusReporter.reportProgress( "Added missing node " + TargetNodeThatWasMissing.NodeName );
+                                    AddedNodesCounter++;
                                 }
+                                else
+                                {
+                                    _CswImportExportStatusReporter.reportError( "Unable to auto-create node for ID " + ImportNodeIdOfAbsentNode + ": there is no node type '" + AbsentNodeNodeType + "'" );
+                                }//if there was a nodetype for the missing node
 
-                                TargetNodeThatWasMissing.postChanges( false, false, true );
-
-                                //NodeIdMap.Add( CswTools.XmlRealAttributeName( ImportNodeIdOfAbsentNode ).ToLower(), TargetNodeThatWasMissing.NodeId.PrimaryKey );    // for property value references
-                                //NodeRow["destnodeid"] = CswConvert.ToDbVal( TargetNodeThatWasMissing.NodeId.PrimaryKey );       // for posterity
-
-
-                                //****************************
-                                //Create the temp node tables so that the references will be there when we create target props
-                                DataTable AddMissingNodeEntryTable = CswTableUpdateTempNodesTable.getEmptyTable();
-                                DataRow NewNodeEntryRow = AddMissingNodeEntryTable.NewRow();
-                                AddMissingNodeEntryTable.Rows.Add( NewNodeEntryRow );
-                                NewNodeEntryRow[_ColName_ImportNodeId] = ImportNodeIdOfAbsentNode;
-                                NewNodeEntryRow[_ColName_Nodes_NodeName] = TargetNodeThatWasMissing.NodeName; ;
-                                NewNodeEntryRow[_ColName_ProcessStatus] = Source.Deduced.ToString();
-                                NewNodeEntryRow[Colname_NbtNodeId] = TargetNodeThatWasMissing.NodeId.PrimaryKey.ToString();
-
-                                CswTableUpdateTempNodesTable.update( AddMissingNodeEntryTable );
-
-                                _CswImportExportStatusReporter.reportProgress( "Added missing node " + TargetNodeThatWasMissing.NodeName );
-                                TotalNodesAdded++;
-                            }
+                            }//if node _id_ type is ND
+                        }
+                        else
+                        {
+                            _CswImportExportStatusReporter.reportError( "Unable to auto-create node for ID " + ImportNodeIdOfAbsentNode + ": there are not enough segments" );
                         }
 
                     }//iterate absent target nodes rows
@@ -414,7 +435,7 @@ namespace ChemSW.Nbt.ImportExport
                     _CswNbtResources.clearUpdates();
                     _CswNbtResources.releaseDbResources();
 
-                    _CswImportExportStatusReporter.reportProgress( "Added " + TotalNodesAdded.ToString() + " missing nodes" );
+                    _CswImportExportStatusReporter.reportProgress( "Added " + AddedNodesCounter.ToString() + " missing nodes" );
 
                     CurrentProcessPhase = ProcessPhase.TargetNodesPresent;
 
@@ -624,13 +645,182 @@ namespace ChemSW.Nbt.ImportExport
                 } while( NodeRecordsToProcess.Rows.Count > 0 );
 
 
+                CurrentProcessPhase = ProcessPhase.NbtPropsPouplated;
+
             }//if nodes have been populated
 
             if( ProcessPhase.NbtPropsPouplated == CurrentProcessPhase )
             {
+                //Unforunately, we have to wait until _everything_ else is populated in order to see all the nodes and their various relationships 
+
+                _CswImportExportStatusReporter.reportProgress( _StatusMessageDivider + "Removing duplicate nodes" );
+
+
+                string WhereClauseForImportedNodeRecords = " where " + _ColName_ProcessStatus + "='" + ProcessStati.PropsAdded.ToString() + "'";
+                CswArbitrarySelect CswArbitrarySelectCountOfUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select count(*) from " + TblName_TempNodes + WhereClauseForImportedNodeRecords );
+                Int32 TotalNodesToProcess = Convert.ToInt32( CswArbitrarySelectCountOfUnprocessedNodes.getTable().Rows[0][0] );
+                Int32 TotalNodesProcesssedSoFar = 0;
+
+                CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
+                SelectColumns.Add( _ColName_ImportNodeId );
+                SelectColumns.Add( Colname_NbtNodeId );
+                CswArbitrarySelect CswArbitrarySelectUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectpossibleduplicatenodes", "select " + SelectColumns + " from " + TblName_TempNodes + WhereClauseForImportedNodeRecords );
+                CswTableUpdate CswTableUpdateNodes = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatefornodepropupdatestatus", TblName_TempNodes );
+
+                DataTable NodeRecordsToProcess = null;
+                do
+                {
+
+                    CswTimer PostProcessNodesAndPropsTimer = new CswTimer();
+
+                    if( ( null != NodeRecordsToProcess ) && ( NodeRecordsToProcess.Rows.Count > 0 ) )
+                    {
+
+                        string CurrentImportNodeId = string.Empty;
+                        string CurrentRowError = string.Empty;
+
+                        List<CswPrimaryKey> DeletedImportNodesThisCycle = new List<CswPrimaryKey>();
+                        List<CswPrimaryKey> MarkedPendingNodesThisCycle = new List<CswPrimaryKey>();
+
+                        foreach( DataRow CurrentImportNodeRow in NodeRecordsToProcess.Rows )
+                        {
+                            CurrentImportNodeId = CurrentImportNodeRow[_ColName_ImportNodeId].ToString();
+                            Int32 CurrentNbtNodeId = CswConvert.ToInt32( CurrentImportNodeRow[Colname_NbtNodeId] );
+                            CswPrimaryKey CurrentNbtPrimeKey = new CswPrimaryKey( "nodes", CurrentNbtNodeId );
+                            CswNbtNode CurrentNbtNode = _CswNbtResources.Nodes[CurrentNbtPrimeKey];
+
+                            if( null != CurrentNbtNode )
+                            {
+
+                                //First check for dundancy
+                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in CurrentNbtNode.NodeType.NodeTypeProps )
+                                {
+                                    if( MetaDataProp.IsUnique )
+                                    {
+                                        CswNbtNode OtherNode = _CswNbtResources.Nodes.FindNodeByUniqueProperty( MetaDataProp, CurrentNbtNode.Properties[MetaDataProp] );
+                                        if( OtherNode != null && OtherNode.NodeId != CurrentNbtNode.NodeId )
+                                        {
+                                            if( IMode == ImportMode.Overwrite )
+                                            {
+                                                OtherNode.delete();
+                                            }
+                                            else if( IMode == ImportMode.Duplicate )
+                                            {
+                                                // It would be better not to create the node in the first place
+                                                // but we're waiting on BZ 9650 to be fixed.
+                                                CurrentNbtNode.delete();
+                                                DeletedImportNodesThisCycle.Add( CurrentNbtNode.NodeId );
+                                                break;
+                                            }
+
+                                        } // if( OtherNode != null )
+
+                                    } // if( MetaDataProp.IsUnique )
+
+                                } // foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in Node.NodeType.NodeTypeProps )
+
+                                if( false == DeletedImportNodesThisCycle.Contains( CurrentNbtNode.NodeId ) )
+                                {
+                                    if( CurrentNbtNode.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+                                    {
+                                        if( CurrentNbtNode.Properties[CurrentNbtNode.NodeType.getNodeTypePropByObjectClassPropName( "Assembly" )].AsRelationship.RelatedNodeId != null )
+                                        {
+                                            CurrentNbtNode.PendingUpdate = true;
+                                            CurrentNbtNode.postChanges( false, false, true );
+                                            MarkedPendingNodesThisCycle.Add( CurrentNbtNode.NodeId );
+                                        }
+                                    }
+
+                                }//if we haven't already deleted this node
+
+                            }
+                            else
+                            {
+                                CurrentRowError += "Unable to retrieve NBT node with " + _ColName_ImportNodeId + " of " + CurrentImportNodeId + " and NodeId of " + CurrentNbtNode.ToString();
+                            }//if-else we were able to retrieve the node
+
+                            TotalNodesProcesssedSoFar++;
+
+
+                            DataTable DataTableCurrentNodeTable = CswTableUpdateNodes.getTable( " where " + _ColName_ImportNodeId + "='" + CurrentImportNodeId + "'" );
+                            if( DataTableCurrentNodeTable.Rows.Count > 0 )
+                            {
+                                if( string.Empty == CurrentRowError )
+                                {
+                                    DataTableCurrentNodeTable.Rows[0][_ColName_ProcessStatus] = ProcessStati.RedundancyChecked.ToString();
+                                }
+                                else
+                                {
+                                    //we're not putting the errors into the prop records because that would add to the expense of the process. 
+                                    DataTableCurrentNodeTable.Rows[0][_ColName_ProcessStatus] = ProcessStati.Error.ToString();
+                                    DataTableCurrentNodeTable.Rows[0][_ColName_StatusMessage] = CurrentRowError;
+                                    _CswImportExportStatusReporter.reportError( CurrentRowError );
+                                }//if else there was an error on the current row
+
+                                CurrentRowError = string.Empty;
+                                TotalNodesProcesssedSoFar++;
+                                CswTableUpdateNodes.update( DataTableCurrentNodeTable );
+
+                            }//for some reason, it _can_ happen that this row is empty
+
+
+                        }//iterate node records
+
+
+                        if( DeletedImportNodesThisCycle.Count > 0 )
+                        {
+                            string ActionTaken = ( ImportMode.Overwrite == IMode ) ? "nodes in target schema were deleted" : "import nodes were deleted";
+                            string NodeList = string.Empty;
+                            foreach( CswPrimaryKey CurrentKey in DeletedImportNodesThisCycle )
+                            {
+                                NodeList += CurrentKey.ToString() + ", "; 
+                            }
+                            _CswImportExportStatusReporter.reportProgress( "The following " + ActionTaken + ": " + NodeList );
+
+                            DeletedImportNodesThisCycle.Clear();
+                        }
+
+                        if( MarkedPendingNodesThisCycle.Count > 0 )
+                        {
+                            string NodeList = string.Empty;
+                            foreach( CswPrimaryKey CurrentKey in DeletedImportNodesThisCycle )
+                            {
+                                NodeList += CurrentKey.ToString() + ", ";
+                            }
+                            _CswImportExportStatusReporter.reportProgress( "The following nodes were marked pending update: " + NodeList );
+
+                            MarkedPendingNodesThisCycle.Clear(); 
+                        }
+
+                        //CswCommaDelimitedStringOfPendingUpdateNodes
+
+                        _CswNbtResources.finalize();
+                        _CswNbtResources.clearUpdates();
+                        _CswNbtResources.releaseDbResources();
+                        _CswImportExportStatusReporter.reportTiming( PostProcessNodesAndPropsTimer, "Post processing of " + NodeAddPropsPageSize.ToString() + " Nodes" );
+
+                    }//if we have node records to process
+
+                    _CswNbtSchemaModTrnsctn.beginTransaction();
+                    NodeRecordsToProcess = CswArbitrarySelectUnprocessedNodes.getTable( 0, NodeAddPropsPageSize, false, false );
+                    PostProcessNodesAndPropsTimer.Start();
+
+                    _CswImportExportStatusReporter.reportProgress( TotalNodesProcesssedSoFar.ToString() + " of " + TotalNodesToProcess.ToString() + " nodes have been post-processed for redundancy and pending update" );
+
+
+                } while( NodeRecordsToProcess.Rows.Count > 0 );
+
+                CurrentProcessPhase = ProcessPhase.PostProcessed;
+
+            }
+
+            if( ProcessPhase.PostProcessed == CurrentProcessPhase )
+            {
                 /* 
                  * This will be the phase in which we do random testing of the data in NBT against the temp tables (and possibly even against the import XML file)
                  */
+
+                CurrentProcessPhase = ProcessPhase.RandomTestComplete;
 
             }//if props have been populated
 
