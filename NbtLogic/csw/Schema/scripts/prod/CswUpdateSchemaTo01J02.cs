@@ -12,10 +12,6 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // This script is reserved for schema changes, 
-            // such as adding tables or columns, 
-            // which need to take place before any other changes can be made.
-
             //Case 23809
             foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.restoreViews( "Roles and Users" ) )
             {
