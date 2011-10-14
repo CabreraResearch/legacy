@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Data;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.Actions;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.DB;
-using ChemSW.Nbt.Security;
-using ChemSW.Nbt.PropTypes;
+using System.Data;
 using ChemSW.Audit;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Log;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
+
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
@@ -81,7 +80,7 @@ namespace ChemSW.Nbt.Schema
         {
             //_CswResourcesForTableCaddy.commitTransaction();
             _CswNbtResources.Rollback();
-            _CswNbtResources.refreshDataDictionary();
+            _CswNbtResources.refresh();
             _CswDdl.revert();
             _CswDdl.clear();
 
@@ -89,7 +88,7 @@ namespace ChemSW.Nbt.Schema
 
         public void refreshDataDictionary()
         {
-            _CswNbtResources.refreshDataDictionary();
+            _CswNbtResources.refresh();
         }
 
 
@@ -166,7 +165,7 @@ namespace ChemSW.Nbt.Schema
         //limit usage of CswDbResources public interfaces as per bz # 9136
         //public void setSqlDmlText( SqlType SqlType, string DmlTable, string SqlDmlText, bool LoadParamsFromSql ) { _CswResourcesForTableCaddy.setSqlDmlText( SqlType, DmlTable, SqlDmlText, LoadParamsFromSql ); }
         //        public void setSqlDmlText( string AdapterName, SqlType SqlType, string DmlTable, string SqlDmlText, bool LoadParamsFromSql ) { _CswResourcesForTableCaddy.setSqlDmlText( AdapterName, SqlType, DmlTable, SqlDmlText, LoadParamsFromSql ); }
-        public void setParameterValue( SqlType SqlType, string parameterName, object val ) { _CswNbtResources.CswResources.setParameterValue( SqlType, parameterName, val ); }
+        public void setParameterValue( SqlType SqlType, CswStaticParam StaticParam ) { _CswNbtResources.CswResources.setParameterValue( SqlType, StaticParam ); }
         //limit usage of CswDbResources public interfaces as per bz # 9136
         //public void setParameterValue( string AdapterName, ChemSW.RscAdo.SqlType SqlType, string parameterName, object val ) { _CswResourcesForTableCaddy.setParameterValue( AdapterName, SqlType, parameterName, val ); }
         //public void clearCommand( SqlType SqlType ) { _CswResourcesForTableCaddy.clearCommand( SqlType ); }
@@ -307,7 +306,7 @@ namespace ChemSW.Nbt.Schema
             {
                 if( _CswNbtMetaDataForSchemaUpdater == null && _CswNbtResources.IsInitializedForDbAccess )
                 {
-                    _CswNbtMetaDataForSchemaUpdater = new CswNbtMetaDataForSchemaUpdater( _CswNbtResources, _CswNbtResources.MetaData._CswNbtMetaDataResources, false );
+                    _CswNbtMetaDataForSchemaUpdater = new CswNbtMetaDataForSchemaUpdater( _CswNbtResources, _CswNbtResources.MetaData._CswNbtMetaDataResources );
                     _CswNbtResources.assignMetaDataEvents( _CswNbtMetaDataForSchemaUpdater );
                 }
                 return _CswNbtMetaDataForSchemaUpdater;
@@ -450,11 +449,11 @@ namespace ChemSW.Nbt.Schema
             return ( ReturnVal );
         }//restoreView() 
 
-		//public void ClearCache()
-		//{
-		//    _CswNbtResources.ClearCache();
-		//    _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
-		//}
+        //public void ClearCache()
+        //{
+        //    _CswNbtResources.ClearCache();
+        //    _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
+        //}
 
         //public CswNbtView getTreeViewOfNodeType( Int32 NodeTypeId ) { return _CswNbtResources.Trees.getTreeViewOfNodeType( NodeTypeId ); }
         //public CswNbtView getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass ) { return _CswNbtResources.Trees.getTreeViewOfObjectClass( ObjectClass ); }
@@ -534,15 +533,15 @@ namespace ChemSW.Nbt.Schema
 
             // Grant permission to Administrator
             CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
-			if( RoleNode != null )
-			{
-				_CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode ), true );
-			}
-			CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" );
-			if( RoleNode2 != null )
-			{
-				_CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
-			}
+            if( RoleNode != null )
+            {
+                _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode ), true );
+            }
+			CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+            if( RoleNode2 != null )
+            {
+                _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
+            }
             return NewActionId;
         }
 
@@ -977,7 +976,7 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate S4Update = makeCswTableUpdate( "CswNbtSchemaModTrnsctn_UpdateS4", "static_sql_selects" );
             DataTable S4Table = S4Update.getTable( "where lower(queryid) = '" + QueryId.ToLower() + "'" );
             if( S4Table.Rows.Count < 0 )
-				throw new CswDniException( ErrorType.Error, "No Match for S4 QueryId: " + QueryId, "CswNbtSchemaModTrnsctn::UpdateS4() returned 0 rows for S4 queryid: " + QueryId );
+                throw new CswDniException( ErrorType.Error, "No Match for S4 QueryId: " + QueryId, "CswNbtSchemaModTrnsctn::UpdateS4() returned 0 rows for S4 queryid: " + QueryId );
             S4Table.Rows[0]["querytext"] = QueryText;
             S4Update.update( S4Table );
 

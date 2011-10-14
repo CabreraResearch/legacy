@@ -23,7 +23,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             _DateControl.Required = Required;
 
             if( Prop != null && !Prop.Empty )
-                SelectedDate = Convert.ToDateTime( Prop.AsDate.DateValue );
+				SelectedDate = Convert.ToDateTime( Prop.AsDateTime.DateTimeValue );
             else
                 SelectedDate = DateTime.MinValue;
         }
@@ -35,7 +35,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 //if( _DateControl.HiddenClearValue )
                 //    Prop.AsDate.DateValue = DateTime.MinValue;
                 //else
-                    Prop.AsDate.DateValue = SelectedDate;
+				Prop.AsDateTime.DateTimeValue = SelectedDate;
             }
         }
         public override void AfterSave()
@@ -91,7 +91,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             private CswNbtResources _CswNbtResources;
             private CswDatePicker _CswDatePicker;
-            private TextBox _DateBox;
+            //private TextBox _DateBox;
             private NodeEditMode _EditMode;
 
             public CswDateControl( CswNbtResources CswNbtResources, CswDatePicker.DateTimeMode DateTimeMode, NodeEditMode EditMode, string IDPrefix, Control ParentControl )

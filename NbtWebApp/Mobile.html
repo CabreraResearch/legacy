@@ -1,67 +1,56 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html> <!-- manifest="Mobile.manifest"> <!--Still not ready for primetime-->
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <base href="Mobile.html"/>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1" />
     <title>Main</title>
-    <!--#include file="Mobile_Includes_Head.html" -->
+    <link rel="shortcut icon" href="images/favicon.ico" />
 </head>
-
-<body id="CswMobile_Body">
-    <!--#include file="Mobile_Includes_Body.html" -->
+<body>
+    <!--#include file="MobileIncludes.html" -->
     <script type="text/javascript">
 
-        function redirectOnError(e)
-        {
-            var $refreshPage = $('#' + localStorage['refreshPage']);
-            if ($refreshPage)
-            {
-                $.mobile.changePage($refreshPage);
-            }
-            else
-            {
-                window.location.href = window.location.pathname;
+        (function(undefined) {
+            "use strict";
+
+            function redirectOnError(e) {
+                var $refreshPage = $('#' + localStorage['refreshPage']);
+                if (false === isNullOrEmpty($refreshPage, true)) {
+                    $.mobile.changePage($refreshPage);
+                } else {
+                    window.location.href = window.location.pathname;
+                }
+                onError();
+                if (debugOn()) {
+                    errorHandler(e, true, true, true);
+                } else {
+                    errorHandler(e);
+                }
             }
 
-            if (debugOn())
-            {
-                errorHandler(e, true, true);
-            }
-            else
-            {
-                errorHandler(e);
-            }
-        }
+            try {
+                if (hasWebStorage()) {
 
-        window.onerror = function(e)
-        {
-            redirectOnError(e);
-        };
-        
-        try {
-            if( hasWebStorage() ) {
+                    // override value in _Globals.js
+                    homeUrl = "Mobile.html";
 
-                // override value in _Globals.js
-		        homeUrl = "Mobile.html";
+                    // This causes case 22968!
+                    //$(window).bind("orientationchange resize scrollstart", fixGeometry);
 
-                $(document).ready(function()
-                    {
                     $('body').CswMobile({
                             'Theme': 'b'
                         });
-                });
-            }
-            else {
-                throw('This browser does not support localStorage.');
-            }
-        }
-        catch(e) {
-            redirectOnError();
-        }
 
-
-        
+                }
+                else {
+                    throw ('This browser does not support localStorage.');
+                }
+            }
+            catch(e) {
+                redirectOnError();
+            }
+        })();
     </script>
 </body>
 </html>

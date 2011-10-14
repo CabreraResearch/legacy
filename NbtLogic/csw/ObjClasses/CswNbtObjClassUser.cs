@@ -5,12 +5,15 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassUser : CswNbtObjClass, ICswNbtUser
     {
-        public static string RolePropertyName { get { return "Role"; } }
+		public static string ChemSWAdminUsername { get { return CswAuthenticator.ChemSWAdminUsername; } }
+		
+		public static string RolePropertyName { get { return "Role"; } }
         public static string AccountLockedPropertyName { get { return "AccountLocked"; } }
         public static string FailedLoginCountPropertyName { get { return "FailedLoginCount"; } }
         public static string PasswordPropertyName { get { return "Password"; } }
@@ -21,13 +24,15 @@ namespace ChemSW.Nbt.ObjClasses
         public static string QuickLaunchViewsPropertyName { get { return "Quick Launch Views"; } }
         public static string QuickLaunchActionsPropertyName { get { return "Quick Launch Actions"; } }
         public static string EmailPropertyName { get { return "Email"; } }
-        public static string PageSizePropertyName { get { return "Page Size"; } }
+		public static string PageSizePropertyName { get { return "Page Size"; } }
+		public static string DateFormatPropertyName { get { return "Date Format"; } }
+		public static string TimeFormatPropertyName { get { return "Time Format"; } }
 
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtObjClassRole _RoleNodeObjClass = null;
         private CswNbtNode _RoleNode = null;
-        private CswNbtNode _UserNode = null;
+        //private CswNbtNode _UserNode = null;
 
         public CswNbtObjClassUser( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
@@ -76,7 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//ctor()
 
-        public void postChanges( bool ForceUpdate ) //bz# 5446
+        public new void postChanges( bool ForceUpdate ) //bz# 5446
         {
             _CswNbtNode.postChanges( ForceUpdate );
             _RoleNodeObjClass.postChanges( ForceUpdate );
@@ -89,9 +94,9 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeCreateNode();
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
         public override void afterCreateNode()
@@ -101,9 +106,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode();
+            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
 
             // BZ 5906
             UsernameProperty.ReadOnly = true;
@@ -114,20 +119,20 @@ namespace ChemSW.Nbt.ObjClasses
 				{
 					throw new CswDniException( ErrorType.Warning, "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
 				}
-				if( this.Username != "chemsw_admin" &&
-					CswNbtNodeCaster.AsRole(_CswNbtResources.Nodes[Role.RelatedNodeId]).Name.Text == "chemsw_admin_role" )
+				if( this.Username != ChemSWAdminUsername &&
+					CswNbtNodeCaster.AsRole(_CswNbtResources.Nodes[Role.RelatedNodeId]).Name.Text == CswNbtObjClassRole.ChemSWAdminRoleName )
 				{
-					throw new CswDniException( ErrorType.Warning, "New users may not be assigned to the 'chemsw_admin_role' role", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to assign a new user to the 'chemsw_admin_role' role." );
+					throw new CswDniException( ErrorType.Warning, "New users may not be assigned to the '" + CswNbtObjClassRole.ChemSWAdminRoleName + "' role", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to assign a new user to the '" + CswNbtObjClassRole.ChemSWAdminRoleName + "' role." );
 				}
 			}
 
 			// case 22512
-			if( this.Username == "chemsw_admin" &&
+			if( this.Username == ChemSWAdminUsername &&
 				_CswNbtResources.CurrentNbtUser != null &&
-				_CswNbtResources.CurrentNbtUser.Username != "chemsw_admin" &&
+				_CswNbtResources.CurrentNbtUser.Username != ChemSWAdminUsername &&
 				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
 			{
-				throw new CswDniException( ErrorType.Warning, "The 'chemsw_admin' user cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the 'chemsw_admin' user account." );
+				throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminUsername + "' user cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the '" + ChemSWAdminUsername + "' user account." );
 			}
 
 		}//beforeWriteNode()
@@ -156,12 +161,12 @@ namespace ChemSW.Nbt.ObjClasses
 				throw ( new CswDniException( ErrorType.Warning, "You can not delete your own user account.", "Current user (" + _CswNbtResources.CurrentUser.Username + ") can not delete own UserClass node." ) );
             }
 
-			// case 22635 - prevent deleting chemsw_admin user
+			// case 22635 - prevent deleting chemsw admin user
 			CswNbtNodePropWrapper UsernamePropWrapper = Node.Properties[UsernamePropertyName];
-			if( UsernamePropWrapper.GetOriginalPropRowValue( UsernamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == "chemsw_admin" &&
+			if( UsernamePropWrapper.GetOriginalPropRowValue( UsernamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == ChemSWAdminUsername &&
 				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
 			{
-				throw new CswDniException( ErrorType.Warning, "The 'chemsw_admin' user cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the 'chemsw_admin' user." );
+				throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminUsername + "' user cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminUsername + "' user." );
 			}
 			
             CswPrimaryKey RoleId = Role.RelatedNodeId;
@@ -195,11 +200,11 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
 				
-				foreach( string YValue in _RoleNodeObjClass.ActionPermissions.YValues )
+				foreach( CswNbtAction Action in _CswNbtResources.Actions )
 				{
-					if( _CswNbtResources.Permit.can( CswNbtAction.ActionNameStringToEnum( YValue ), this ) )
+					if( _CswNbtResources.Permit.can( Action, this ) )
 					{
-						NewYValues.Add( YValue );
+						NewYValues.Add( Action.DisplayName.ToString() );
 					}
 				}
                 this.QuickLaunchActions.YValues = NewYValues;
@@ -232,8 +237,8 @@ namespace ChemSW.Nbt.ObjClasses
         public string Rolename { get { return _RoleNodeObjClass.Name.Text; } }
         public Int32 RoleTimeout { get { return CswConvert.ToInt32( _RoleNodeObjClass.Timeout.Value ); } }
 
-        public CswNbtNodePropRelationship Role { get { return ( _CswNbtNode.Properties[RolePropertyName].AsRelationship ); } }
-        public CswNbtNodePropLogical AccountLocked { get { return ( _CswNbtNode.Properties[AccountLockedPropertyName].AsLogical ); } }
+		public CswNbtNodePropRelationship Role { get { return ( _CswNbtNode.Properties[RolePropertyName].AsRelationship ); } }
+		public CswNbtNodePropLogical AccountLocked { get { return ( _CswNbtNode.Properties[AccountLockedPropertyName].AsLogical ); } }
         public CswNbtNodePropNumber FailedLoginCount { get { return ( _CswNbtNode.Properties[FailedLoginCountPropertyName].AsNumber ); } }
         public CswNbtNodePropPassword PasswordProperty { get { return ( _CswNbtNode.Properties[PasswordPropertyName].AsPassword ); } }
         public CswNbtNodePropText UsernameProperty { get { return ( _CswNbtNode.Properties[UsernamePropertyName].AsText ); } }
@@ -242,11 +247,37 @@ namespace ChemSW.Nbt.ObjClasses
         public string FirstName { get { return FirstNameProperty.Text; } }
         public string LastName { get { return LastNameProperty.Text; } }
         public string Username { get { return UsernameProperty.Text; } }
-        public CswNbtNodePropDate LastLogin { get { return ( _CswNbtNode.Properties[LastLoginPropertyName].AsDate ); } }
+		public CswNbtNodePropDateTime LastLogin { get { return ( _CswNbtNode.Properties[LastLoginPropertyName].AsDateTime ); } }
         public CswNbtNodePropViewPickList QuickLaunchViews { get { return _CswNbtNode.Properties[QuickLaunchViewsPropertyName].AsViewPickList; } }
         public CswNbtNodePropLogicalSet QuickLaunchActions { get { return _CswNbtNode.Properties[QuickLaunchActionsPropertyName].AsLogicalSet; } }
         public CswNbtNodePropText EmailProperty { get { return _CswNbtNode.Properties[EmailPropertyName].AsText; } }
         public string Email { get { return EmailProperty.Text; } }
+		public string DateFormat
+		{
+			get
+			{
+				string ret = DateFormatProperty.Value;
+				if( ret == string.Empty )
+				{
+					ret = CswDateTime.DefaultDateFormat;
+				}
+				return ret;
+			}
+		}
+		public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[DateFormatPropertyName].AsList ); } }
+		public string TimeFormat
+		{
+			get
+			{
+				string ret = TimeFormatProperty.Value;
+				if( ret == string.Empty )
+				{
+					ret = CswDateTime.DefaultTimeFormat;
+				}
+				return ret;
+			}
+		}
+		public CswNbtNodePropList TimeFormatProperty { get { return ( _CswNbtNode.Properties[TimeFormatPropertyName].AsList ); } }
 
         public string EncryptedPassword { get { return PasswordProperty.EncryptedPassword; } }
 
@@ -261,6 +292,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+	
         #endregion
 
 

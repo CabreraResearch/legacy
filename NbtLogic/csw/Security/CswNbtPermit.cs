@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using ChemSW.Nbt.MetaData;
@@ -37,6 +38,20 @@ namespace ChemSW.Nbt.Security
 			Edit
 		}
 
+		/// <summary>
+		/// Type of Permission on NodeTypeTabs
+		/// </summary>
+		public enum NodeTypeTabPermission
+		{
+			/// <summary>
+			/// Permission to view the tab
+			/// </summary>
+			View,
+			/// Permission to edit property values on this tab
+			/// </summary>
+			Edit
+		}
+
 		private CswNbtResources _CswNbtResources;
 		public CswNbtPermit( CswNbtResources Resources )
 		{
@@ -48,60 +63,13 @@ namespace ChemSW.Nbt.Security
 		/// <summary>
 		/// Returns true if the user has the appropriate permissions for the nodetype
 		/// </summary>
-		public bool can( NodeTypePermission Permission, Int32 NodeTypeId )
-		{
-			return can( Permission, _CswNbtResources.MetaData.getNodeType( NodeTypeId ) );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, Int32 NodeTypeId, ICswNbtUser User )
-		{
-			return can( Permission, _CswNbtResources.MetaData.getNodeType( NodeTypeId ), User );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, Int32 NodeTypeId, ICswNbtUser User, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
-		{
-			return can( Permission, _CswNbtResources.MetaData.getNodeType( NodeTypeId ), User, Node, Prop );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, Int32 NodeTypeId, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
-		{
-			return can( Permission, _CswNbtResources.MetaData.getNodeType( NodeTypeId ), null, Node, Prop );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType )
-		{
-			return can( Permission, NodeType, null );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User )
-		{
-			return can( Permission, NodeType, User, null, null );
-		}
-
-		public bool can( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
-		{
-			return can( Permission, NodeType, null, Node, Prop );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the nodetype
-		/// </summary>
-		public bool can( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User, CswNbtNode Node, CswNbtMetaDataNodeTypeProp MetaDataProp )
+		public bool can( NodeTypePermission Permission, 
+						 CswNbtMetaDataNodeType NodeType, 
+						 bool CheckAllTabPermissions = false, 
+						 CswNbtMetaDataNodeTypeTab NodeTypeTab = null, 
+						 ICswNbtUser User = null, 
+						 CswNbtNode Node = null, 
+						 CswNbtMetaDataNodeTypeProp MetaDataProp = null )
 		{
 			bool ret = false;
 
@@ -113,7 +81,7 @@ namespace ChemSW.Nbt.Security
 
 			if( User != null )
 			{
-				if( User is CswNbtSystemUser )
+				if( User is CswNbtSystemUser || User.Username == CswNbtObjClassUser.ChemSWAdminUsername )
 				{
 					ret = true;
 				}
@@ -123,7 +91,41 @@ namespace ChemSW.Nbt.Security
 					if( Role != null && NodeType != null )
 					{
 						// Base case
-						ret = Role.NodeTypePermissions.CheckValue( Permission.ToString(), NodeType.FirstVersionNodeTypeId.ToString() );
+						ret = Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType, Permission ) );
+						if( Permission == NodeTypePermission.View )
+						{
+							// Having 'Edit' grants 'View' automatically
+							ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType, NodeTypePermission.Edit ) );
+						}
+						
+						// case 8411 - Tab permissions
+						if( ( CheckAllTabPermissions || NodeTypeTab != null ) &&
+							( Permission == NodeTypePermission.View || Permission == NodeTypePermission.Edit ) )
+						{
+							NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), Permission.ToString() );
+							Collection<CswNbtMetaDataNodeTypeTab> TabsToCheck = new Collection<CswNbtMetaDataNodeTypeTab>();
+							if( NodeTypeTab != null )
+							{
+								TabsToCheck.Add( NodeTypeTab );
+							}
+							else if( CheckAllTabPermissions )
+							{
+								foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+								{
+									TabsToCheck.Add( Tab );
+								}
+							}
+
+							foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToCheck )
+							{
+								ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( Tab, TabPermission ) );
+								if( TabPermission == NodeTypeTabPermission.View )
+								{
+									// Having 'Edit' grants 'View' automatically
+									ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( Tab, NodeTypeTabPermission.Edit ) );
+								}
+							}
+						} // if checking tab permissions
 
 						// Only Administrators can edit Roles
 						if( ret &&
@@ -227,8 +229,12 @@ namespace ChemSW.Nbt.Security
 		{
 			if( Role != null )
 			{
-				Role.NodeTypePermissions.SetValue( Permission.ToString(), NodeType.FirstVersionNodeTypeId.ToString(), value );
-				Role.NodeTypePermissions.Save();
+				//Role.NodeTypePermissions.SetValue( Permission.ToString(), NodeType.FirstVersionNodeTypeId.ToString(), value );
+				//Role.NodeTypePermissions.Save();
+				if( value )
+					Role.NodeTypePermissions.AddValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType, Permission ) );
+				else
+					Role.NodeTypePermissions.RemoveValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType, Permission ) );
 				Role.postChanges( false );
 			}
 
@@ -254,9 +260,13 @@ namespace ChemSW.Nbt.Security
 			{
 				foreach( NodeTypePermission Permission in Permissions )
 				{
-					Role.NodeTypePermissions.SetValue( Permission.ToString(), NodeType.NodeTypeId.ToString(), value );
+					//Role.NodeTypePermissions.SetValue( Permission.ToString(), NodeType.NodeTypeId.ToString(), value );
+					if( value )
+						Role.NodeTypePermissions.AddValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType, Permission ) );
+					else
+						Role.NodeTypePermissions.RemoveValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType, Permission ) );
 				}
-				Role.NodeTypePermissions.Save();
+				//Role.NodeTypePermissions.Save();
 				Role.postChanges( false );
 			}
 		} // set( NodeTypePermission[] Permissions, CswNbtMetaDataNodeType NodeType, ICswNbtUser User, bool value )
@@ -266,27 +276,27 @@ namespace ChemSW.Nbt.Security
 		#region Actions
 
 		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the Action
+		/// Returns true if the current user has the appropriate permissions for the Action
 		/// </summary>
 		public bool can( Int32 ActionId )
 		{
-			return can( _CswNbtResources.Actions[ActionId].Name );
+			return can( _CswNbtResources.Actions[ActionId] );
 		}
 
 		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the Action
-		/// </summary>
-		public bool can( CswNbtAction Action )
-		{
-			return can( Action.Name );
-		}
-
-		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the Action
+		/// Returns true if the current user has the appropriate permissions for the Action
 		/// </summary>
 		public bool can( CswNbtActionName ActionName )
 		{
-			return can( ActionName, _CswNbtResources.CurrentNbtUser );
+			return can( _CswNbtResources.Actions[ActionName] );
+		}
+
+		/// <summary>
+		/// Returns true if the current user has the appropriate permissions for the Action
+		/// </summary>
+		public bool can( CswNbtAction Action )
+		{
+			return can( Action, _CswNbtResources.CurrentNbtUser );
 		}
 
 		/// <summary>
@@ -294,37 +304,53 @@ namespace ChemSW.Nbt.Security
 		/// </summary>
 		public bool can( CswNbtActionName ActionName, ICswNbtUser User )
 		{
+			return can( _CswNbtResources.Actions[ActionName], User );
+		}
+
+		/// <summary>
+		/// Returns true if the user has the appropriate permissions for the Action
+		/// </summary>
+		public bool can( CswNbtAction Action, ICswNbtUser User )
+		{
 			bool ret = false;
-			if( User is CswNbtSystemUser )
+			if( User is CswNbtSystemUser || User.Username == CswNbtObjClassUser.ChemSWAdminUsername )
 			{
 				ret = true;
 			}
 			else if( User != null )
 			{
-				ret = can( ActionName, User.RoleNode );
+				ret = can( Action, User.RoleNode );
 			}
 			return ret;
-		} // can( CswNbtActionName ActionName, ICswNbtUser User )
+		} // can( CswNbtAction Action, ICswNbtUser User )
 
 		/// <summary>
-		/// Returns true if the user has the appropriate permissions for the Action
+		/// Returns true if the role has the appropriate permissions for the Action
 		/// </summary>
 		public bool can( CswNbtActionName ActionName, CswNbtObjClassRole Role )
+		{
+			return can( _CswNbtResources.Actions[ActionName], Role );
+		}
+
+		/// <summary>
+		/// Returns true if the role has the appropriate permissions for the Action
+		/// </summary>
+		public bool can( CswNbtAction Action, CswNbtObjClassRole Role )
 		{
 			bool ret = false;
 			if( Role != null )
 			{
-				ret = Role.ActionPermissions.CheckValue( CswNbtAction.PermissionXValue, CswNbtAction.ActionNameEnumToString( ActionName ) );
+				ret = Role.ActionPermissions.CheckValue( CswNbtObjClassRole.MakeActionPermissionValue( Action ) );
 			}
 			return ret;
-		} // can( CswNbtActionName ActionName, CswNbtObjClassRole Role )
+		} // can( CswNbtAction Action, CswNbtObjClassRole Role )
 
 		/// <summary>
 		/// Sets access for the given Action for the user
 		/// </summary>
 		public void set( Int32 ActionId, bool value )
 		{
-			set( _CswNbtResources.Actions[ActionId].Name, value );
+			set( _CswNbtResources.Actions[ActionId], value );
 		}
 
 		/// <summary>
@@ -332,7 +358,7 @@ namespace ChemSW.Nbt.Security
 		/// </summary>
 		public void set( CswNbtAction Action, bool value )
 		{
-			set( Action.Name, value );
+			set( Action, _CswNbtResources.CurrentNbtUser, value );
 		}
 
 		/// <summary>
@@ -340,7 +366,7 @@ namespace ChemSW.Nbt.Security
 		/// </summary>
 		public void set( CswNbtActionName ActionName, bool value )
 		{
-			set( ActionName, _CswNbtResources.CurrentNbtUser, value );
+			set( _CswNbtResources.Actions[ActionName], _CswNbtResources.CurrentNbtUser, value );
 		}
 
 		/// <summary>
@@ -348,18 +374,35 @@ namespace ChemSW.Nbt.Security
 		/// </summary>
 		public void set( CswNbtActionName ActionName, ICswNbtUser User, bool value )
 		{
+			set( _CswNbtResources.Actions[ActionName], User, value );
+		}
+
+		/// <summary>
+		/// Sets a permission for the given Action for the user
+		/// </summary>
+		public void set( CswNbtAction Action, ICswNbtUser User, bool value )
+		{
 			if( User != null )
 			{
-				set( ActionName, User.RoleNode, value );
+				set( Action, User.RoleNode, value );
 			}
 		}
 
 		public void set( CswNbtActionName ActionName, CswNbtObjClassRole Role, bool value )
 		{
+			set( _CswNbtResources.Actions[ActionName], Role, value );
+		}
+
+		public void set( CswNbtAction Action, CswNbtObjClassRole Role, bool value )
+		{
 			if( Role != null )
 			{
-				Role.ActionPermissions.SetValue( CswNbtAction.PermissionXValue.ToString(), CswNbtAction.ActionNameEnumToString( ActionName ), value );
-				Role.ActionPermissions.Save();
+				//Role.ActionPermissions.SetValue( CswNbtAction.PermissionXValue.ToString(), CswNbtAction.ActionNameEnumToString( ActionName ), value );
+				//Role.ActionPermissions.Save();
+				if( value )
+					Role.ActionPermissions.AddValue( CswNbtObjClassRole.MakeActionPermissionValue( Action ) );
+				else
+					Role.ActionPermissions.RemoveValue( CswNbtObjClassRole.MakeActionPermissionValue( Action ) );
 				Role.postChanges( false );
 			}
 		} // set( CswNbtActionName ActionName, ICswNbtUser User, bool value )

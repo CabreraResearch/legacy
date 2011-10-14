@@ -18,18 +18,19 @@ namespace ChemSW.Nbt.Schema
     public class CswTstCaseRsrc_015
     {
 
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		private CswTestCaseRsrc _CswTestCaseRsrc;
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+		{
+			set
+			{
+				_CswNbtSchemaModTrnsctn = value;
+				_CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			}
+		}
 
-        private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        public CswTstCaseRsrc_015( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
 
-        }//ctor
-
-
-        public string Purpose = "Rename column";
+        public static string Purpose = "Rename column";
 
         public Int32 InsertedMaterialsRecordPk = Int32.MinValue; 
 

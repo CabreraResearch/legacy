@@ -379,7 +379,7 @@ namespace ChemSW.Nbt
         /// </summary>
         /// <param name="NodeTypeId">Primary Key of Nodetype</param>
         /// <param name="Op">Specifies the action to take with regard to the database</param>
-        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, MakeNodeOperation Op )
+        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, MakeNodeOperation Op, bool OverrideUniqueValidation = false )
         {
             CswNbtNode Node = _CswNbtNodeFactory.make( NodeSpecies.Plain, null, NodeTypeId, NodeHash.Count );
             Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
@@ -389,11 +389,11 @@ namespace ChemSW.Nbt
             if( Op == MakeNodeOperation.WriteNode )
             {
 				_CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
-				Node.postChanges( true );
+				Node.postChanges( true, false, OverrideUniqueValidation );
             }
             else if( Op == MakeNodeOperation.JustSetPk )
             {
-                _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, false );
+				_CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, false, false, OverrideUniqueValidation );
                 //_CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
             }
             else if( Op == MakeNodeOperation.DoNothing ) //right now there are only three enum values; I'm just making this explicit

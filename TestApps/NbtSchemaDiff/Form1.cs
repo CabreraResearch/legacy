@@ -146,8 +146,8 @@ namespace ChemSW.NbtSchemaDiff
         private void _InitSessionResources()
         {
 
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.Executable );
-            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.Executable );
+            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe );
+            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
 
 
             // Left resources
@@ -202,7 +202,7 @@ namespace ChemSW.NbtSchemaDiff
 
                 // get all nodes
                 _CswNbtResourcesLeft.AccessId = _LeftAccessId;
-                _CswNbtResourcesLeft.refreshDataDictionary();
+                _CswNbtResourcesLeft.refresh();
                 _CswNbtResourcesLeft.MetaData.refreshAll();
                 CswTableSelect LeftNodesSelect = _CswNbtResourcesLeft.makeCswTableSelect( "NbtSchemaDiff_Left_nodes_select", "nodes" );
                 DataTable LeftNodesTable = LeftNodesSelect.getTable();
@@ -215,7 +215,7 @@ namespace ChemSW.NbtSchemaDiff
                 }
 
                 _CswNbtResourcesRight.AccessId = _RightAccessId;
-                _CswNbtResourcesRight.refreshDataDictionary();
+                _CswNbtResourcesRight.refresh();
                 _CswNbtResourcesRight.MetaData.refreshAll();
                 CswTableSelect RightNodesSelect = _CswNbtResourcesRight.makeCswTableSelect( "NbtSchemaDiff_Right_nodes_select", "nodes" );
                 DataTable RightNodesTable = RightNodesSelect.getTable();
@@ -621,12 +621,12 @@ namespace ChemSW.NbtSchemaDiff
                     if( LeftWrapper.AsViewPickList.SelectMode == PropertySelectMode.Single && LeftWrapper.AsViewPickList.SelectedViewIds.Count != 0 )
                     {
                         LeftValue = LeftWrapper.AsViewPickList.SelectedViewIds.ToString();
-						LeftObj = _CswNbtResourcesLeft.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( LeftWrapper.AsViewPickList.SelectedViewIds ) ) );
+                        LeftObj = _CswNbtResourcesLeft.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( LeftWrapper.AsViewPickList.SelectedViewIds ) ) );
                     }
                     if( RightWrapper.AsViewPickList.SelectMode == PropertySelectMode.Single && RightWrapper.AsViewPickList.SelectedViewIds.Count != 0 )
                     {
                         RightValue = RightWrapper.AsViewPickList.SelectedViewIds.ToString();
-						RightObj = _CswNbtResourcesRight.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( RightWrapper.AsViewPickList.SelectedViewIds ) ) );
+                        RightObj = _CswNbtResourcesRight.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( RightWrapper.AsViewPickList.SelectedViewIds ) ) );
                     }
                     Condition = ( LeftObj != null && RightObj != null &&
                                   ( (CswNbtView) LeftObj ).ViewName == ( (CswNbtView) RightObj ).ViewName &&

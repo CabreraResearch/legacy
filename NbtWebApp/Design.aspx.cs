@@ -1,25 +1,20 @@
 using System;
-using System.Data;
-using System.Configuration;
 using System.Collections;
+using System.Data;
 using System.Web;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-using Telerik.Web.UI;
+using System.Web.UI.WebControls;
+using ChemSW.Audit;
+using ChemSW.Core;
+using ChemSW.CswWebControls;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.NbtWebControls;
-using ChemSW.Exceptions;
-using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.NbtWebControls.FieldTypes;
-using ChemSW.CswWebControls;
-using ChemSW.Nbt.Actions;
-using ChemSW.Audit;
+using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -135,7 +130,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( _SelectedValue ) );
                         _SelectedNodeType = _SelectedNodeTypeProp.NodeType;
-                        _SelectedNodeTypeTab = _SelectedNodeTypeProp.NodeTypeTab;
+                        _SelectedNodeTypeTab = _SelectedNodeTypeProp.EditLayout.Tab;
                     }
                     else
                     {
@@ -203,9 +198,9 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-				Master.CswNbtResources.AuditContext = "Design";
-				
-				//this.EnableViewState = false;
+                Master.CswNbtResources.AuditContext = "Design";
+
+                //this.EnableViewState = false;
 
                 if( Request.QueryString[QueryStringVarName_Mode] != null )
                 {
@@ -221,10 +216,10 @@ namespace ChemSW.Nbt.WebPages
                 }
 
                 EnsureChildControls();
-				if( !Master.CswNbtResources.Permit.can( CswNbtActionName.Design ) )
-				{
-					Master.GoHome();
-				}
+                if( !Master.CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+                {
+                    Master.GoHome();
+                }
                 NodeTypeTree.DataBind();
             }
             catch( Exception ex )
@@ -464,12 +459,14 @@ namespace ChemSW.Nbt.WebPages
                         onclick += "');";
                         _RequiredValue.Attributes.Add( "onclick", onclick );
 
-                        if( _DefaultValueControl != null &&
-                            !_SelectedNodeTypeProp.SetValueOnAdd &&
-                            _SelectedNodeTypeProp.IsRequired &&
-                            _SelectedNodeTypeProp.DefaultValue.Empty )
+                        if( null != _DefaultValueControl &&
+                            null != _SelectedNodeTypeProp.AddLayout &&
+                            true == _SelectedNodeTypeProp.IsRequired &&
+                            true == _SelectedNodeTypeProp.DefaultValue.Empty &&
+                            false == _SelectedNodeTypeProp.SetValueOnAddEnabled &&
+                            false == CswConvert.ToBoolean( _SetValueOnAddValue.Checked ) )
                         {
-							throw new CswDniException( ErrorType.Warning, "Required properties must have a default value if not Set Value on Add", "Default value was empty, with required true and setvalonadd false" );
+                            throw new CswDniException( ErrorType.Warning, "Required properties must have a default value if not Set Value on Add", "Default value was empty, with required true and setvalonadd false" );
                         }
                     } //if( _RequiredValue != null )
 
@@ -748,7 +745,7 @@ namespace ChemSW.Nbt.WebPages
                 Int32 OldSelectedNodeTypePropId = CswConvert.ToInt32( _SelectedValue );
                 if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property )
                 {
-                    CswNbtMetaDataNodeTypeTab OriginalTab = SelectedNodeTypeProp.NodeTypeTab;
+                    CswNbtMetaDataNodeTypeTab OriginalTab = SelectedNodeTypeProp.EditLayout.Tab;
 
                     string MultiString = getPropAttributeValue( "EditProp_MultiValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     if( MultiString == string.Empty )
@@ -799,34 +796,46 @@ namespace ChemSW.Nbt.WebPages
                     if( PropToSave.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                         String.Empty == ValueOptionsString )
                     {
-						throw new CswDniException( ErrorType.Warning, "Compliant Answer is a required field", "Value option string is null" );
+                        throw new CswDniException( ErrorType.Warning, "Compliant Answer is a required field", "Value option string is null" );
                     }
 
-					// case 21178 - trim options
-					CswCommaDelimitedString ValueOptionsCDS = new CswCommaDelimitedString();
-					ValueOptionsCDS.FromString( ValueOptionsString );
-					for( Int32 i = 0; i < ValueOptionsCDS.Count; i++ )
-					{
-						ValueOptionsCDS[i] = ValueOptionsCDS[i].Trim();
-					}
-					PropToSave.ValueOptions = ValueOptionsCDS.ToString();
+                    // case 21178 - trim options
+                    CswCommaDelimitedString ValueOptionsCDS = new CswCommaDelimitedString();
+                    ValueOptionsCDS.FromString( ValueOptionsString );
+                    for( Int32 i = 0; i < ValueOptionsCDS.Count; i++ )
+                    {
+                        ValueOptionsCDS[i] = ValueOptionsCDS[i].Trim();
+                    }
+                    PropToSave.ValueOptions = ValueOptionsCDS.ToString();
 
-					string ListOptionsString = getPropAttributeValue( "EditProp_OptionsValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-					CswCommaDelimitedString ListOptionsCDS = new CswCommaDelimitedString();
-					ListOptionsCDS.FromString( ListOptionsString );
-					for( Int32 i = 0; i < ListOptionsCDS.Count; i++ )
-					{
-						ListOptionsCDS[i] = ListOptionsCDS[i].Trim();
-					}
-					PropToSave.ListOptions = ListOptionsCDS.ToString();
-					
-					PropToSave.PropName = getPropAttributeValue( "EditProp_NameValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-                    PropToSave.NodeTypeTab = SelectedNodeType.getNodeTypeTab( EditPropTabSelect.SelectedValue.ToString() );   // BZ 8014 - need to use tabname, not tabid, for versioning
-                    PropToSave.DisplayRow = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    PropToSave.DisplayColumn = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    PropToSave.DisplayRowAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    PropToSave.DisplayColAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    PropToSave.SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
+                    string ListOptionsString = getPropAttributeValue( "EditProp_OptionsValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+                    CswCommaDelimitedString ListOptionsCDS = new CswCommaDelimitedString();
+                    ListOptionsCDS.FromString( ListOptionsString );
+                    for( Int32 i = 0; i < ListOptionsCDS.Count; i++ )
+                    {
+                        ListOptionsCDS[i] = ListOptionsCDS[i].Trim();
+                    }
+                    PropToSave.ListOptions = ListOptionsCDS.ToString();
+
+                    PropToSave.PropName = getPropAttributeValue( "EditProp_NameValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+
+                    CswNbtMetaDataNodeTypeTab Tab = SelectedNodeType.getNodeTypeTab( EditPropTabSelect.SelectedValue.ToString() );   // BZ 8014 - need to use tabname, not tabid, for versioning
+                    Int32 DisplayRow = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    Int32 DisplayColumn = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    Int32 DisplayRowAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    Int32 DisplayColAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    bool SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
+
+                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, Tab, DisplayRow, DisplayColumn );
+                    if( SetValueOnAdd )
+                    {
+                        PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, null, DisplayRowAdd, DisplayColAdd );
+                    }
+                    else
+                    {
+                        PropToSave.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                    }
+
                     PropToSave.DateToday = Convert.ToBoolean( getPropAttributeValue( "EditProp_DateTodayValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.Length = CswConvert.ToInt32( getPropAttributeValue( "EditProp_LengthValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.TextAreaRows = CswConvert.ToInt32( getPropAttributeValue( "EditProp_RowsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
@@ -848,7 +857,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.HelpText = getPropAttributeValue( "EditProp_HelpText" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.IsQuickSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsQuickSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.Extended = getPropAttributeValue( "EditProp_ExtendedValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-					PropToSave.AuditLevel = (AuditLevel) Enum.Parse( typeof( AuditLevel ), getPropAttributeValue( "EditProp_AuditLevel" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ) );
+                    PropToSave.AuditLevel = (AuditLevel) Enum.Parse( typeof( AuditLevel ), getPropAttributeValue( "EditProp_AuditLevel" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ) );
 
 
                     // Default Value
@@ -864,7 +873,7 @@ namespace ChemSW.Nbt.WebPages
 
                     // Conditional Filter
                     if( _ConditionalFilter != null && _ConditionalFilter.SelectedPropLatestVersion != null &&
-                        PropToSave.NodeTypeTab.TabName == OriginalTab.TabName ) //BZ 7415
+                        PropToSave.EditLayout.Tab.TabName == OriginalTab.TabName ) //BZ 7415
                     {
                         PropToSave.setFilter( _ConditionalFilter.SelectedNodeTypePropFirstVersionId, _ConditionalFilter.SelectedSubField, _ConditionalFilter.SelectedFilterMode, _ConditionalFilter.FilterValue );
                     }
@@ -874,7 +883,7 @@ namespace ChemSW.Nbt.WebPages
 
                         if( _ConditionalFilter != null )
                         {
-                            _ConditionalFilter.FilterPropertiesToTabId = PropToSave.NodeTypeTab.TabId;
+                            _ConditionalFilter.FilterPropertiesToTabId = PropToSave.EditLayout.Tab.TabId;
                             _ConditionalFilter.Set( SelectedNodeType.NodeTypeId, string.Empty );
                         }
                     }
@@ -888,7 +897,7 @@ namespace ChemSW.Nbt.WebPages
                     if( PropToSave.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                     {
                         // Reload the view
-						CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( PropToSave.ViewId );
+                        CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( PropToSave.ViewId );
                         _RelationshipViewTree.reinitTreeFromView( View, null, null, CswViewStructureTree.ViewTreeSelectType.None );
                     }
 
@@ -1339,9 +1348,9 @@ namespace ChemSW.Nbt.WebPages
                     if( CswConvert.ToInt32( _SelectedValue ) > 0 )
                     {
                         // Edit Property Select box
-                        if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.NodeTypeTab != null )
+                        if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.EditLayout.Tab != null )
                         {
-                            EditPropTabSelect.SelectedValue = SelectedNodeTypeProp.NodeTypeTab.TabName;
+                            EditPropTabSelect.SelectedValue = SelectedNodeTypeProp.EditLayout.Tab.TabName;
                         }
                     }
                     _SaveButton.Visible = true;
@@ -1390,7 +1399,7 @@ namespace ChemSW.Nbt.WebPages
                     TextBox DisplayColValue = new TextBox();
                     DisplayColValue.CssClass = "textinput";
                     DisplayColValue.ID = "EditProp_DisplayColValue" + SelectedNodeTypeProp.PropId.ToString();
-                    DisplayColValue.Text = SelectedNodeTypeProp.DisplayColumn.ToString();
+                    DisplayColValue.Text = SelectedNodeTypeProp.EditLayout.DisplayColumn.ToString();
                     DisplayColRow.Cells[1].Controls.Add( DisplayColValue );
 
                     TableRow DisplayRowRow = makeEditPropTableRow( EditPropPlaceHolder );
@@ -1401,7 +1410,7 @@ namespace ChemSW.Nbt.WebPages
                     TextBox DisplayRowValue = new TextBox();
                     DisplayRowValue.CssClass = "textinput";
                     DisplayRowValue.ID = "EditProp_DisplayRowValue" + SelectedNodeTypeProp.PropId.ToString();
-                    DisplayRowValue.Text = SelectedNodeTypeProp.DisplayRow.ToString();
+                    DisplayRowValue.Text = SelectedNodeTypeProp.EditLayout.DisplayRow.ToString();
                     DisplayRowRow.Cells[1].Controls.Add( DisplayRowValue );
 
                     TableRow DisplayColAdd = makeEditPropTableRow( EditPropPlaceHolder );
@@ -1409,8 +1418,8 @@ namespace ChemSW.Nbt.WebPages
                     TextBox DisplayColAddValue = new TextBox();
                     DisplayColAddValue.CssClass = "textinput";
                     DisplayColAddValue.ID = "EditProp_DisplayColAddValue" + SelectedNodeTypeProp.PropId.ToString();
-                    if( SelectedNodeTypeProp.DisplayColAdd != Int32.MinValue )
-                        DisplayColAddValue.Text = SelectedNodeTypeProp.DisplayColAdd.ToString();
+                    if( SelectedNodeTypeProp.AddLayout != null && SelectedNodeTypeProp.AddLayout.DisplayColumn != Int32.MinValue )
+                        DisplayColAddValue.Text = SelectedNodeTypeProp.AddLayout.DisplayColumn.ToString();
                     DisplayColAdd.Cells[1].Controls.Add( DisplayColAddValue );
 
                     TableRow DisplayRowAdd = makeEditPropTableRow( EditPropPlaceHolder );
@@ -1418,8 +1427,8 @@ namespace ChemSW.Nbt.WebPages
                     TextBox DisplayRowAddValue = new TextBox();
                     DisplayRowAddValue.CssClass = "textinput";
                     DisplayRowAddValue.ID = "EditProp_DisplayRowAddValue" + SelectedNodeTypeProp.PropId.ToString();
-                    if( SelectedNodeTypeProp.DisplayRowAdd != Int32.MinValue )
-                        DisplayRowAddValue.Text = SelectedNodeTypeProp.DisplayRowAdd.ToString();
+                    if( SelectedNodeTypeProp.AddLayout != null && SelectedNodeTypeProp.AddLayout.DisplayRow != Int32.MinValue )
+                        DisplayRowAddValue.Text = SelectedNodeTypeProp.AddLayout.DisplayRow.ToString();
                     DisplayRowAdd.Cells[1].Controls.Add( DisplayRowAddValue );
 
                     if( _Mode == NbtDesignMode.Inspection )
@@ -1475,7 +1484,7 @@ namespace ChemSW.Nbt.WebPages
 
                             break;
 
-                        case CswNbtMetaDataFieldType.NbtFieldType.Date:
+                        case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                             TableRow DateTodayRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) DateTodayRow.Cells[0].Controls[0] ).Text = "";
                             CheckBox DateTodayValue = new CheckBox();
@@ -1483,6 +1492,16 @@ namespace ChemSW.Nbt.WebPages
                             DateTodayValue.Text = "Default to Today";
                             DateTodayValue.Checked = SelectedNodeTypeProp.DateToday;
                             DateTodayRow.Cells[1].Controls.Add( DateTodayValue );
+
+                            TableRow DateTypeRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) DateTypeRow.Cells[0].Controls[0] ).Text = "Date Type";
+                            DropDownList DateTypeValue = new DropDownList();
+                            DateTypeValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
+                            DateTypeValue.Items.Add( new ListItem( "Date Only", CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ) );
+                            DateTypeValue.Items.Add( new ListItem( "Time Only", CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ) );
+                            DateTypeValue.Items.Add( new ListItem( "Date and Time", CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() ) );
+                            DateTypeValue.SelectedValue = SelectedNodeTypeProp.Extended;
+                            DateTypeRow.Cells[1].Controls.Add( DateTypeValue );
                             break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.External:
@@ -1536,7 +1555,7 @@ namespace ChemSW.Nbt.WebPages
                             //CswNbtView GridView = new CswNbtView( Master.CswNbtResources );
                             //if( SelectedNodeTypeProp.ViewId != Int32.MinValue )
                             //GridView.LoadXml(SelectedNodeTypeProp.ViewId);
-							CswNbtView GridView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
+                            CswNbtView GridView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
                             //else
                             //{
                             //    // This property is missing a view -- make a new one
@@ -1578,6 +1597,52 @@ namespace ChemSW.Nbt.WebPages
                             WidthRow.Cells[1].Controls.Add( WidthValue );
                             break;
 
+                        case CswNbtMetaDataFieldType.NbtFieldType.ImageList:
+                            TableRow ILHeightRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) ILHeightRow.Cells[0].Controls[0] ).Text = "Height (pixels):";
+                            TextBox ILHeightValue = new TextBox();
+                            ILHeightValue.CssClass = "textinput";
+                            ILHeightValue.ID = "EditProp_RowsValue" + SelectedNodeTypeProp.PropId.ToString();
+                            if( SelectedNodeTypeProp.TextAreaRows != Int32.MinValue )
+                                ILHeightValue.Text = SelectedNodeTypeProp.TextAreaRows.ToString();
+                            ILHeightRow.Cells[1].Controls.Add( ILHeightValue );
+
+                            TableRow ILWidthRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) ILWidthRow.Cells[0].Controls[0] ).Text = "Width (pixels):";
+                            TextBox ILWidthValue = new TextBox();
+                            ILWidthValue.CssClass = "textinput";
+                            ILWidthValue.ID = "EditProp_ColsValue" + SelectedNodeTypeProp.PropId.ToString();
+                            if( SelectedNodeTypeProp.TextAreaColumns != Int32.MinValue )
+                                ILWidthValue.Text = SelectedNodeTypeProp.TextAreaColumns.ToString();
+                            ILWidthRow.Cells[1].Controls.Add( ILWidthValue );
+
+                            TableRow ILNameOptionsRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) ILNameOptionsRow.Cells[0].Controls[0] ).Text = "Image Names, separated by newlines:";
+                            TextBox ILNameOptionsValue = new TextBox();
+                            if( DerivesFromObjectClassProp && ObjectClassProp.ListOptions != String.Empty )
+                                ILNameOptionsValue.Enabled = false;
+                            ILNameOptionsValue.CssClass = "textinput";
+                            ILNameOptionsValue.ID = "EditProp_OptionsValue" + SelectedNodeTypeProp.PropId.ToString();
+                            ILNameOptionsValue.Text = SelectedNodeTypeProp.ListOptions;
+                            ILNameOptionsValue.TextMode = TextBoxMode.MultiLine;
+                            ILNameOptionsValue.Rows = 5;
+                            ILNameOptionsValue.Columns = 100;
+                            ILNameOptionsRow.Cells[1].Controls.Add( ILNameOptionsValue );
+
+                            TableRow ILUrlOptionsRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) ILUrlOptionsRow.Cells[0].Controls[0] ).Text = "Image URLs, separated by newlines:";
+                            TextBox ILUrlOptionsValue = new TextBox();
+                            if( DerivesFromObjectClassProp && ObjectClassProp.ValueOptions != String.Empty )
+                                ILUrlOptionsValue.Enabled = false;
+                            ILUrlOptionsValue.CssClass = "textinput";
+                            ILUrlOptionsValue.ID = "EditProp_ValueOptionsValue" + SelectedNodeTypeProp.PropId.ToString();
+                            ILUrlOptionsValue.Text = SelectedNodeTypeProp.ValueOptions;
+                            ILUrlOptionsValue.TextMode = TextBoxMode.MultiLine;
+                            ILUrlOptionsValue.Rows = 5;
+                            ILUrlOptionsValue.Columns = 100;
+                            ILUrlOptionsRow.Cells[1].Controls.Add( ILUrlOptionsValue );
+                            break;
+
                         case CswNbtMetaDataFieldType.NbtFieldType.List:
                             TableRow OptionsRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) OptionsRow.Cells[0].Controls[0] ).Text = "Options:";
@@ -1611,7 +1676,7 @@ namespace ChemSW.Nbt.WebPages
                         case CswNbtMetaDataFieldType.NbtFieldType.LocationContents:
                             TableRow LCViewXmlRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) LCViewXmlRow.Cells[0].Controls[0] ).Text = "View:";
-							CswNbtView LCView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
+                            CswNbtView LCView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
 
                             CswViewStructureTree LCViewTree = new CswViewStructureTree( Master.CswNbtResources );
                             LCViewTree.ID = "LCViewTree";
@@ -1690,6 +1755,18 @@ namespace ChemSW.Nbt.WebPages
                             MTBFDateTodayValue.Text = "Default to Today";
                             MTBFDateTodayValue.Checked = SelectedNodeTypeProp.DateToday;
                             MTBFDateTodayRow.Cells[1].Controls.Add( MTBFDateTodayValue );
+                            break;
+
+                        case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
+                            TableRow MOptionsRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) MOptionsRow.Cells[0].Controls[0] ).Text = "Options:";
+                            TextBox MOptionsValue = new TextBox();
+                            if( DerivesFromObjectClassProp && ObjectClassProp.ListOptions != String.Empty )
+                                MOptionsValue.Enabled = false;
+                            MOptionsValue.CssClass = "textinput";
+                            MOptionsValue.ID = "EditProp_OptionsValue" + SelectedNodeTypeProp.PropId.ToString();
+                            MOptionsValue.Text = SelectedNodeTypeProp.ListOptions;
+                            MOptionsRow.Cells[1].Controls.Add( MOptionsValue );
                             break;
 
                         //case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
@@ -2024,7 +2101,7 @@ namespace ChemSW.Nbt.WebPages
                             //CswNbtView RelationshipView = new CswNbtView( Master.CswNbtResources );
                             //if( SelectedNodeTypeProp.ViewId != Int32.MinValue )
                             //{
-							CswNbtView RelationshipView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
+                            CswNbtView RelationshipView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
                             //}
                             //else
                             //{
@@ -2136,16 +2213,16 @@ namespace ChemSW.Nbt.WebPages
                             CswNbtSubField SubField = SelectedNodeTypeProp.FieldTypeRule.SubFields.Default;
                             CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
                             string FilterValue = null;
-							CswNbtMetaDataNodeTypeProp FilterProp = Master.CswNbtResources.MetaData.getNodeTypeProp( SelectedNodeTypeProp.FilterNodeTypePropId );
+                            CswNbtMetaDataNodeTypeProp FilterProp = Master.CswNbtResources.MetaData.getNodeTypeProp( SelectedNodeTypeProp.FilterNodeTypePropId );
                             SelectedNodeTypeProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
-                            _ConditionalFilter = new CswPropertyFilter( Master.CswNbtResources, 
-																		Master.AjaxManager, 
-																		SelectedNodeType.FirstVersionNodeTypeId,
-																		FilterProp.PropName, 
-																		SubField.Column.ToString(), 
-																		FilterMode, 
-																		FilterValue, 
-																		false, true, false, false );
+                            _ConditionalFilter = new CswPropertyFilter( Master.CswNbtResources,
+                                                                        Master.AjaxManager,
+                                                                        SelectedNodeType.FirstVersionNodeTypeId,
+                                                                        FilterProp.PropName,
+                                                                        SubField.Column.ToString(),
+                                                                        FilterMode,
+                                                                        FilterValue,
+                                                                        false, true, false, false );
                             _ConditionalFilter.ShowSubFieldAndMode = true;
                         }
                         else
@@ -2194,7 +2271,12 @@ namespace ChemSW.Nbt.WebPages
                     //}
 
                     // BZ 8058 - Default Value
-                    if( FieldType.CanHaveDefaultValue() )
+                    if( FieldType.CanHaveDefaultValue() &&
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Scientific &&   // temporary until ported into new UI
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ImageList &&    // temporary until ported into new UI
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.NFPA &&         // temporary until ported into new UI
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MOL &&         // temporary until ported into new UI
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MultiList )     // temporary until ported into new UI
                     {
                         TableRow DefaultValueRow = makeEditPropTableRow( EditPropPlaceHolder );
                         ( (Literal) DefaultValueRow.Cells[0].Controls[0] ).Text = "Default Value:";
@@ -2211,8 +2293,8 @@ namespace ChemSW.Nbt.WebPages
                     switch( FieldType.FieldType )
                     {
                         //case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Date:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Time:
+                        case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                        //case CswNbtMetaDataFieldType.NbtFieldType.Time:
                         //case CswNbtMetaDataFieldType.NbtFieldType.File:
                         //case CswNbtMetaDataFieldType.NbtFieldType.Image:
                         case CswNbtMetaDataFieldType.NbtFieldType.Link:
@@ -2308,7 +2390,7 @@ namespace ChemSW.Nbt.WebPages
                         //_SetValueOnAddValue.Enabled = false;
                         _SetValueOnAddValue.ID = "EditProp_SetValueOnAddValue" + SelectedNodeTypeProp.PropId.ToString();
                         _SetValueOnAddValue.Text = "Set Value On Add";
-                        _SetValueOnAddValue.Checked = SelectedNodeTypeProp.SetValueOnAdd;
+                        _SetValueOnAddValue.Checked = ( SelectedNodeTypeProp.AddLayout != null );
                         // BZ 7742
                         //if( _Mode == NbtDesignMode.Inspection )
                         //    _SetValueOnAddValue.Style.Add( HtmlTextWriterStyle.Display, "none" );
@@ -2369,15 +2451,15 @@ namespace ChemSW.Nbt.WebPages
                     }
 
                     TableRow AuditLevelRow = makeEditPropTableRow( EditPropPlaceHolder );
-					( (Literal) AuditLevelRow.Cells[0].Controls[0] ).Text = "Audit Level";
-					DropDownList AuditLevelList = new DropDownList();
-					AuditLevelList.ID = "EditProp_AuditLevel" + SelectedNodeTypeProp.PropId.ToString();
-					AuditLevelList.CssClass = "selectinput";
-					AuditLevelList.Items.Add( new ListItem( "No Audit", AuditLevel.NoAudit.ToString() ) );
-					AuditLevelList.Items.Add( new ListItem( "Audit", AuditLevel.PlainAudit.ToString() ) );
-					AuditLevelList.SelectedValue = SelectedNodeTypeProp.AuditLevel.ToString();
-					AuditLevelRow.Cells[1].Controls.Add( AuditLevelList );
-				
+                    ( (Literal) AuditLevelRow.Cells[0].Controls[0] ).Text = "Audit Level";
+                    DropDownList AuditLevelList = new DropDownList();
+                    AuditLevelList.ID = "EditProp_AuditLevel" + SelectedNodeTypeProp.PropId.ToString();
+                    AuditLevelList.CssClass = "selectinput";
+                    AuditLevelList.Items.Add( new ListItem( "No Audit", AuditLevel.NoAudit.ToString() ) );
+                    AuditLevelList.Items.Add( new ListItem( "Audit", AuditLevel.PlainAudit.ToString() ) );
+                    AuditLevelList.SelectedValue = SelectedNodeTypeProp.AuditLevel.ToString();
+                    AuditLevelRow.Cells[1].Controls.Add( AuditLevelList );
+
                 } // if (NodeTypePropId > 0)
             } // if (_SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property)
 

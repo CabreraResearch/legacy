@@ -10,7 +10,6 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 using ChemSW.DB;
-using ChemSW.Core;
 using ChemSW.Nbt.Schema;
 using ChemSW.Audit;
 using ChemSW.Nbt.ObjClasses;
@@ -23,20 +22,19 @@ namespace ChemSW.Nbt.Schema
     public class CswTstCaseRsrc_026
     {
 
-        private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
-
-        private CswTestCaseRsrc _CswTestCaseRsrc = null;
-        private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
-        public CswTstCaseRsrc_026( CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn )
-        {
-
-            _CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-            _CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-        }//ctor
-
-
-
-        public string Purpose = "Audit of NBT node and prop val changes";
+		private CswTestCaseRsrc _CswTestCaseRsrc;
+		private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
+		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+		{
+			set
+			{
+				_CswNbtSchemaModTrnsctn = value;
+				_CswTestCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+			}
+		}
+		private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
+       
+        public static string Purpose = "Audit of NBT node and prop val changes";
 
 
         public string InsertValOfBuiltInProp = "insert_val_foo";

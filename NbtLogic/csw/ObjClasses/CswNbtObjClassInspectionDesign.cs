@@ -65,6 +65,10 @@ namespace ChemSW.Nbt.ObjClasses
         /// Location of Inspection's Target
         /// </summary>
         public static string LocationPropertyName { get { return "Location"; } }
+		/// <summary>
+		/// Nodetype Version
+		/// </summary>
+		public static string VersionPropertyName { get { return "Version"; } }
 
         /// <summary>
         /// Possible status values for Inspection. Should match List values on ID Status attribute.
@@ -216,7 +220,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Set any existing pending or overdue inspections on the same parent to missed
         /// </summary>
-        public override void beforeCreateNode()
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             if( Tristate.True != this.IsFuture.Checked )
             {
@@ -247,10 +251,13 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-            _CswNbtObjClassDefault.beforeCreateNode();
-        }
 
-        // beforeCreateNode()
+			// case 8179 - set value of Version property
+			CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
+			Version.Text = ThisNodeType.NodeTypeName + " v" + ThisNodeType.VersionNo.ToString();
+
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
+        } // beforeCreateNode()
 
         /// <summary>
         /// Lock Node Type
@@ -288,7 +295,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Determine Inspection Status and set read-only
         /// </summary>
-        public override void beforeWriteNode()
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
 			CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
             _Finished = ( Tristate.True == this.Finished.Checked );
@@ -307,7 +314,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
                     _OOC = ( _OOC || !QuestionProp.IsCompliant );
                     _allAnswered = ( _allAnswered && QuestionProp.Answer != string.Empty );
-                    _allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered.Date <= this.Date.DateValue );
+					_allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
                 }
 
                 if( _allAnswered )
@@ -343,7 +350,7 @@ namespace ChemSW.Nbt.ObjClasses
 				_CswNbtNode.ReadOnly = true;
 			}
 		
-			_CswNbtObjClassDefault.beforeWriteNode();
+			_CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
 		}//beforeWriteNode()
 
         /// <summary>
@@ -358,7 +365,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( _allAnswered && _Finished )
                 {
                     Parent.Status.Value = _OOC ? "OOC" : "OK";
-                    Parent.LastInspectionDate.DateValue = DateTime.Now;
+					Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
                     ParentNode.postChanges( false );
                 }
             }
@@ -438,22 +445,22 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Due Date of inspection
         /// </summary>
-        public CswNbtNodePropDate Date
+		public CswNbtNodePropDateTime Date
         {
             get
             {
-                return ( _CswNbtNode.Properties[DatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[DatePropertyName].AsDateTime );
             }
         }
 
         /// <summary>
         /// Date the inspection was generated
         /// </summary>
-        public CswNbtNodePropDate GeneratedDate
+		public CswNbtNodePropDateTime GeneratedDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName].AsDate );
+                return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName].AsDateTime );
             }
         }
 
@@ -543,18 +550,29 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        /// <summary>
-        /// Location of Inspection's Target
-        /// </summary>
-        public CswNbtNodePropPropertyReference Location
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[LocationPropertyName].AsPropertyReference );
-            }
-        }
+		/// <summary>
+		/// Location of Inspection's Target
+		/// </summary>
+		public CswNbtNodePropPropertyReference Location
+		{
+			get
+			{
+				return ( _CswNbtNode.Properties[LocationPropertyName].AsPropertyReference );
+			}
+		}
 
-        #endregion
+		/// <summary>
+		/// Nodetype Version of the Inspection
+		/// </summary>
+		public CswNbtNodePropText Version
+		{
+			get
+			{
+				return ( _CswNbtNode.Properties[VersionPropertyName].AsText );
+			}
+		}
+
+		#endregion
 
 
 

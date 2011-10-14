@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Security
 
 		public CswNbtSystemUser( ICswResources CswNbtResources, string Username )
         {
-            _Resources = _Resources;
+			_Resources = CswNbtResources;
             _Username = Username;
         }
 
@@ -53,8 +53,9 @@ namespace ChemSW.Nbt.Security
         public string FirstName { get { return string.Empty; } }
         public string LastName { get { return string.Empty; } }
         public string Email { get { return string.Empty; } }
-
-        public Int32 PageSize { get { return 50; } }
+		public string DateFormat { get { return string.Empty; } }
+		public string TimeFormat { get { return string.Empty; } }
+		public Int32 PageSize { get { return 50; } }
 
         public void postChanges( bool ForceUpdate )
         {

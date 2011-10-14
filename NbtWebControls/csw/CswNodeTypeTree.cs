@@ -196,7 +196,7 @@ namespace ChemSW.NbtWebControls
                     SelectedProperty = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PriorSelectedValue ) );
                     if( SelectedProperty != null )
                     {
-                        SelectedTab = SelectedProperty.NodeTypeTab;
+                        SelectedTab = SelectedProperty.EditLayout.Tab;
                         SelectedNodeType = SelectedTab.NodeType;
                         SelectedBaseVersion = SelectedNodeType.FirstVersionNodeType;
                         SelectedCategory = SelectedBaseVersion.LatestVersionNodeType.Category;
@@ -215,7 +215,7 @@ namespace ChemSW.NbtWebControls
                     SelectedProperty = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PriorSelectedValue.Substring( 0, PriorSelectedValue.IndexOf( "_" ) ) ) );
                     if( SelectedProperty != null )
                     {
-                        SelectedTab = SelectedProperty.NodeTypeTab;
+                        SelectedTab = SelectedProperty.EditLayout.Tab;
                         SelectedNodeType = SelectedTab.NodeType;
                         SelectedBaseVersion = SelectedNodeType.FirstVersionNodeType;
                         SelectedCategory = SelectedBaseVersion.LatestVersionNodeType.Category;
@@ -487,7 +487,7 @@ namespace ChemSW.NbtWebControls
         private bool _IncludeThisNodeType( CswNbtMetaDataNodeType NodeType )
         {
             // BZ 7121 - Must have view permission on the nodetype
-			return ( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType.FirstVersionNodeTypeId ) &&
+			return ( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType.FirstVersionNodeType ) &&
                      ( ( NodeTypeIdsToFilterOut == null || !( delimiter + NodeTypeIdsToFilterOut + delimiter ).Contains( delimiter + NodeType.FirstVersionNodeTypeId.ToString() + delimiter ) ) &&
                        ( NodeTypeIdsToInclude == null || ( delimiter + NodeTypeIdsToInclude + delimiter ).Contains( delimiter + NodeType.FirstVersionNodeTypeId.ToString() + delimiter ) ) &&
                        ( ObjectClassIdsToInclude == null || ( delimiter + ObjectClassIdsToInclude + delimiter ).Contains( delimiter + NodeType.ObjectClass.ObjectClassId.ToString() + delimiter ) ) ) );

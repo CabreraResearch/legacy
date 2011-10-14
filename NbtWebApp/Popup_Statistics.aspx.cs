@@ -1,21 +1,12 @@
 ﻿using System;
 using System.Collections;
-using System.Configuration;
 using System.Data;
-using System.Linq;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.NbtWebControls;
-using ChemSW.Exceptions;
 using ChemSW.CswWebControls;
 using ChemSW.DB;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -54,7 +45,7 @@ namespace ChemSW.Nbt.WebPages
             Master.CswNbtResources.AccessId = AccessId;
 
             CswNbtNode UserNode = null;
-            if(UserId != null)
+            if( UserId != null )
                 UserNode = Master.CswNbtResources.Nodes[UserId];
 
             CswAutoTable UserDataTable = new CswAutoTable();
@@ -127,9 +118,9 @@ namespace ChemSW.Nbt.WebPages
                     Action = "modify";
                     break;
                 default:
-					throw new CswDniException( ErrorType.Error, "Invalid Mode: " + ShowMode, "Popup_Statistics encountered an unhandled ShowMode: " + ShowMode );
+                    throw new CswDniException( ErrorType.Error, "Invalid Mode: " + ShowMode, "Popup_Statistics encountered an unhandled ShowMode: " + ShowMode );
             }
-            if(UserId != null)
+            if( UserId != null )
                 Title += " for User " + UserNode.NodeName;
             else
                 Title += " for Access ID " + AccessId;
@@ -147,13 +138,13 @@ namespace ChemSW.Nbt.WebPages
             Row++;
             Col = 0;
 
-            CswStaticSelect.S4Parameters.Add( "getaction", Action );
-            if(UserId != null)
-                CswStaticSelect.S4Parameters.Add( "getuserid", UserId.PrimaryKey.ToString() );
+            CswStaticSelect.S4Parameters.Add( "getaction", new CswStaticParam( "getaction", Action ) );
+            if( UserId != null )
+            { CswStaticSelect.S4Parameters.Add( "getuserid", new CswStaticParam( "getuserid", UserId.PrimaryKey.ToString() ) ); }
             else
-                CswStaticSelect.S4Parameters.Add( "getuserid", "%" );
-            CswStaticSelect.S4Parameters.Add( "getbeforedate", Master.CswNbtResources.getDbNativeDate( EndDate ) );
-            CswStaticSelect.S4Parameters.Add( "getafterdate", Master.CswNbtResources.getDbNativeDate( StartDate ) );
+            { CswStaticSelect.S4Parameters.Add( "getuserid", new CswStaticParam( "getuserid", "%" ) ); }
+            CswStaticSelect.S4Parameters.Add( "getbeforedate", new CswStaticParam( "getbeforedate", Master.CswNbtResources.getDbNativeDate( EndDate ), true ) );
+            CswStaticSelect.S4Parameters.Add( "getafterdate", new CswStaticParam( "getafterdate", Master.CswNbtResources.getDbNativeDate( StartDate ), true ) );
             DataTable QueryData = CswStaticSelect.getTable();
 
             Hashtable DataHash = new Hashtable();

@@ -5,6 +5,7 @@ using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -17,7 +18,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.LocationContents )
             {
-				throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
                                             "CswNbtNodePropLocationContents() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
             }
         }//CswNbtNodePropLocationContents()
@@ -47,19 +48,25 @@ namespace ChemSW.Nbt.PropTypes
         {
             // Nothing to save
         }
+
+        public override void ToXElement( XElement ParentNode )
+        {
+            // Nothing to save
+        }
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            // Nothing to save
+        }
+
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // Nothing to restore
         }
 
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
         {
-            throw new NotImplementedException();
+            // Nothing to restore
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -67,6 +74,10 @@ namespace ChemSW.Nbt.PropTypes
             // Nothing to restore
         }
 
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            // Nothing to restore
+        }
     }
 
 }//namespace 

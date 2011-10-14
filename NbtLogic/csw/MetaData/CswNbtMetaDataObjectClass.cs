@@ -46,7 +46,8 @@ namespace ChemSW.Nbt.MetaData
             UnitOfMeasureClass,
             UserClass,
             Unknown,
-            VendorClass
+            VendorClass,
+            UnitTypeClass
         };
 
         public static NbtObjectClass getObjectClassFromString( string ObjectClassName )
@@ -107,6 +108,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _ObjectClassRow["iconfilename"].ToString(); }
         }
+
+		public Int32 Quota
+		{
+			get { return CswConvert.ToInt32( _ObjectClassRow["quota"] ); }
+		}
 
 		public ICollection NodeTypes
 		{

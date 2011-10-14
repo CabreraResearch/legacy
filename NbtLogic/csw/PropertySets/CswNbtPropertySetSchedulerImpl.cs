@@ -45,13 +45,13 @@ namespace ChemSW.Nbt.PropertySets
                 if( _Scheduler.DueDateInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
                 {
                     CandidateDueDate = _Scheduler.DueDateInterval.getNextOccuranceAfter( DateTime.Now.Date ).Date;
-                    if( _Scheduler.FinalDueDate.DateValue != DateTime.MinValue &&
-                        CandidateDueDate.Date > _Scheduler.FinalDueDate.DateValue.Date )
+					if( _Scheduler.FinalDueDate.DateTimeValue != DateTime.MinValue &&
+						CandidateDueDate.Date > _Scheduler.FinalDueDate.DateTimeValue.Date )
                     {
                         CandidateDueDate = DateTime.MinValue;
                     }
                 }
-                _Scheduler.NextDueDate.DateValue = CandidateDueDate;
+				_Scheduler.NextDueDate.DateTimeValue = CandidateDueDate;
                 _UpdateFutureTasks = true;
             }//If one of the main properties is modified
 

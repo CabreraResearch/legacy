@@ -216,8 +216,9 @@ namespace ChemSW.Nbt
                             Collection<CswNbtNodeKey> ChildKeys = null;
 							if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
 							{
+								CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( CurrentRow["nodetypeid"] ) );
 								if( !RequireViewPermissions ||
-									_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, CswConvert.ToInt32( CurrentRow["nodetypeid"] ), _RunAsUser ) )
+									_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType, true, null, _RunAsUser ) )
 								{
 									NodeIsAllowed = true;
 								}
@@ -350,12 +351,13 @@ namespace ChemSW.Nbt
                 foreach( DataRow CurrentRow in ResultTable.Rows )
                 {
                     _CswNbtTree.addProperty( CswConvert.ToInt32( CurrentRow["nodetypepropid"].ToString() ),
-                                            CurrentRow["propname"].ToString(),
-                                            CurrentRow["gestalt"].ToString(),
-                                            _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( CurrentRow["fieldtype"].ToString() ) ) );
+											 CswConvert.ToInt32( CurrentRow["jctnodepropid"].ToString() ), 
+											 CurrentRow["propname"].ToString(),
+                                             CurrentRow["gestalt"].ToString(),
+                                             _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( CurrentRow["fieldtype"].ToString() ) ) );
                 }
             }
-        }
+        } // _handleProperties()
 
         #region Query operations
 
@@ -379,8 +381,9 @@ namespace ChemSW.Nbt
             }
 
             ResultTable.Columns.Add( new DataColumn( "nodetypepropid" ) );
-            ResultTable.Columns.Add( new DataColumn( "propname" ) );
-            ResultTable.Columns.Add( new DataColumn( "gestalt" ) );
+			ResultTable.Columns.Add( new DataColumn( "propname" ) );
+			ResultTable.Columns.Add( new DataColumn( "jctnodepropid" ) );
+			ResultTable.Columns.Add( new DataColumn( "gestalt" ) );
             ResultTable.Columns.Add( new DataColumn( "fieldtype" ) );
 
             foreach( DataRow PropRow in PropTable.Rows )
@@ -389,7 +392,7 @@ namespace ChemSW.Nbt
                 string Sql2 = string.Empty;
                 if( PropRow["tablename"].ToString() == string.Empty )
                 {
-                    Sql2 = @"select p.nodetypepropid, p.propname, j.gestalt, f.fieldtype
+                    Sql2 = @"select p.nodetypepropid, p.propname, j.jctnodepropid, j.gestalt, f.fieldtype
                              from nodetype_props p
                              join field_types f on (p.fieldtypeid = f.fieldtypeid) 
                              left outer join jct_nodes_props j 
@@ -399,7 +402,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    Sql2 = @"select p.nodetypepropid, p.propname, j." + PropRow["columnname"].ToString() + @" gestalt, f.fieldtype
+					Sql2 = @"select p.nodetypepropid, p.propname, j.jctnodepropid, j." + PropRow["columnname"].ToString() + @" gestalt, f.fieldtype
                              from nodetype_props p
                              join field_types f on (p.fieldtypeid = f.fieldtypeid) 
                              left outer join " + PropRow["tablename"].ToString() + @" j 
@@ -418,8 +421,9 @@ namespace ChemSW.Nbt
 
                 DataRow ResultRow = ResultTable.NewRow();
                 ResultRow["nodetypepropid"] = ThisResultTable.Rows[0]["nodetypepropid"];
-                ResultRow["propname"] = ThisResultTable.Rows[0]["propname"];
-                ResultRow["gestalt"] = ThisResultTable.Rows[0]["gestalt"];
+				ResultRow["propname"] = ThisResultTable.Rows[0]["propname"];
+				ResultRow["jctnodepropid"] = ThisResultTable.Rows[0]["jctnodepropid"];
+				ResultRow["gestalt"] = ThisResultTable.Rows[0]["gestalt"];
                 ResultRow["fieldtype"] = ThisResultTable.Rows[0]["fieldtype"];
                 ResultTable.Rows.Add( ResultRow );
             }
@@ -567,9 +571,11 @@ namespace ChemSW.Nbt
                     // Case 10530
                     sortAlias++;
                     CswNbtSubField.PropColumn SubFieldColumn = Prop.NodeTypeProp.FieldTypeRule.SubFields.Default.Column;
-                    if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
-                        SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date )
-                    {
+					if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
+						SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
+						SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
+						SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
+						{
                         Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
                     }
                     else
@@ -767,7 +773,8 @@ namespace ChemSW.Nbt
                                                                                       j.nodeid, j.nodeidtablename,
                                                                                       j.field1, j.field2, j.field3, j.field4, j.field5,
                                                                                       j.gestalt,
-                                                                                      j.field1_fk, j.field1_numeric, j.field1_date
+                                                                                      j.field1_fk, j.field1_numeric, j.field1_date,
+                                                                                      j.field2_numeric, j.field2_date
                                                                                  from jct_nodes_props j) jnp
                                                                            ON (jnp.nodeid = s." + TargetPkColumnName + @" 
                                                                            and jnp.nodeidtablename = '" + TargetTable + @"'
@@ -793,7 +800,8 @@ namespace ChemSW.Nbt
                                                                                       j.nodeid, j.nodeidtablename,
                                                                                       j.field1, j.field2, j.field3, j.field4, j.field5,
                                                                                       j.gestalt,
-                                                                                      j.field1_fk, j.field1_numeric, j.field1_date
+                                                                                      j.field1_fk, j.field1_numeric, j.field1_date,
+                                                                                      j.field2_numeric, j.field2_date
                                                                                  from jct_nodes_props j) jnp
                                                                            ON (jnp.nodeid = s." + TargetPkColumnName + @" 
                                                                            and jnp.nodeidtablename = '" + TargetTable + @"'
@@ -814,7 +822,8 @@ namespace ChemSW.Nbt
                                                                                        j.nodeid, j.nodeidtablename,
                                                                                        j.field1, j.field2, j.field3, j.field4, j.field5,
                                                                                        j.gestalt,
-                                                                                       j.field1_fk, j.field1_numeric, j.field1_date
+                                                                                       j.field1_fk, j.field1_numeric, j.field1_date,
+                                                                                       j.field2_numeric, j.field2_date
                                                                                   from jct_nodes_props j) jnp
                                                                            ON (jnp.nodeid = s." + TargetPkColumnName + @" 
                                                                            and jnp.nodeidtablename = '" + TargetTable + @"'
@@ -833,7 +842,8 @@ namespace ChemSW.Nbt
                                                                                        j.nodeid, j.nodeidtablename,
                                                                                        j.field1, j.field2, j.field3, j.field4, j.field5,
                                                                                        j.gestalt,
-                                                                                       j.field1_fk, j.field1_numeric, j.field1_date
+                                                                                       j.field1_fk, j.field1_numeric, j.field1_date,
+                                                                                       j.field2_numeric, j.field2_date
                                                                                   from jct_nodes_props j) jnp 
                                                                            ON (jnp.nodeid = s." + TargetPkColumnName + @" 
                                                                            and jnp.nodeidtablename = '" + TargetTable + @"'
@@ -855,7 +865,8 @@ namespace ChemSW.Nbt
                                                                                        j.nodeid, j.nodeidtablename,
                                                                                        field1, field2, field3, field4, field5,
                                                                                        j.gestalt,
-                                                                                       j.field1_fk, j.field1_numeric, j.field1_date
+                                                                                       j.field1_fk, j.field1_numeric, j.field1_date,
+                                                                                       j.field2_numeric, j.field2_date
                                                                                   from jct_nodes_props j) jnp
                                                                            ON (jnp.nodeid = s." + TargetPkColumnName + @" 
                                                                            and jnp.nodeidtablename = '" + TargetTable + @"'
@@ -874,7 +885,8 @@ namespace ChemSW.Nbt
                                                                                        j.nodeid, j.nodeidtablename,
                                                                                        field1, field2, field3, field4, field5,
                                                                                        j.gestalt,
-                                                                                       j.field1_fk, j.field1_numeric, j.field1_date
+                                                                                       j.field1_fk, j.field1_numeric, j.field1_date,
+                                                                                       j.field2_numeric, j.field2_date
                                                                                   from jct_nodes_props j) jnp 
                                                                            ON (jnp.nodeid = s." + TargetPkColumnName + @" 
                                                                            and jnp.nodeidtablename = '" + TargetTable + @"'
