@@ -179,6 +179,7 @@ namespace ChemSW.Nbt.WebServices
 
 			    if( NbtViewRenderingMode.Grid == View.ViewMode )
 			    {
+					View.SaveToCache( false );
 					string Url = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString();
 					if( View.Visibility == NbtViewVisibility.Property &&
 						null != Node &&
@@ -206,7 +207,8 @@ namespace ChemSW.Nbt.WebServices
 			                                      new XAttribute( "text", "Report XML" ) ) );
 			        if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
 			        {
-			            string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
+						View.SaveToCache( false );
+						string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
 			                           ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
 			            ExportNode.Add( new XElement( "item",
 			                                          new XAttribute( "text", "Mobile XML" ),
