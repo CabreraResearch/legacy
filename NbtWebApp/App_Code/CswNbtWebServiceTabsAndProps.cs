@@ -378,19 +378,6 @@ namespace ChemSW.Nbt.WebServices
             {
                 case NodeEditMode.AddInPopup:
                     Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                    if( null == View )
-                    {
-                        View = new CswNbtView( _CswNbtResources )
-                                   {
-                                       ViewName = Node.NodeName, 
-                                       Visibility = NbtViewVisibility.User, 
-                                       VisibilityUserId = _CswNbtResources.CurrentNbtUser.UserId
-                                   };
-                        CswNbtViewRelationship NodeRel = View.AddViewRelationship( Node.NodeType, false );
-                        NodeRel.NodeIdsToFilterIn.Add( Node.NodeId );
-                        View.SaveToCache( false );
-                    }
-                    
                     RetNbtNodeKey = _saveProp( Node, PropsObj, View );
                     if( null != RetNbtNodeKey )
                     {
@@ -464,19 +451,20 @@ namespace ChemSW.Nbt.WebServices
 
                 Node.postChanges( false );
 
+                ICswNbtTree Tree;
                 if( View != null )
                 {
                     // Get the nodekey of this node in the current view
-                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                    Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
                     Ret = Tree.getNodeKeyByNodeId( Node.NodeId );
-                    if( Ret == null )
-                    {
-                        // Make a nodekey from the default view
-                        View = Node.NodeType.CreateDefaultView();
-                        View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Node.NodeId );
-                        Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-                        Ret = Tree.getNodeKeyByNodeId( Node.NodeId );
-                    }
+                }
+                if( Ret == null )
+                {
+                    // Make a nodekey from the default view
+                    View = Node.NodeType.CreateDefaultView();
+                    View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Node.NodeId );
+                    Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                    Ret = Tree.getNodeKeyByNodeId( Node.NodeId );
                 }
             }
             return Ret;
