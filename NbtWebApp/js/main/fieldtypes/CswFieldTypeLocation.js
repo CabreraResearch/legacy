@@ -24,6 +24,7 @@
 
 				if(o.ReadOnly) {
 					$Div.append(path);
+					$Div.hover(function(event) { nodeHoverIn(event, nodeId); }, nodeHoverOut);
 				} else {
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
@@ -72,10 +73,8 @@
 //                        {
 //                            $SelectBox.addClass("required");
 //                        }
+					$Div.hover(function(event) { nodeHoverIn(event, $selectdiv.val()); }, nodeHoverOut);
 				}
-
-				$Div.hover(function(event) { nodeHoverIn(event, $selectdiv.val()); }, nodeHoverOut);
-
 			},
 			save: function(o) { //($propdiv, $xml
 			    var attributes = { nodeid: null };

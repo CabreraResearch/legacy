@@ -773,6 +773,7 @@ function HandleMenuItem(options)
         onMultiEdit: null, //function () { },
         onEditView: null, //function (viewid) { },
         onSaveView: null, //function (newviewid) { },
+		onQuotas: null, // function () { },
         Multi: false,
         NodeCheckTreeId: ''
     };
@@ -914,7 +915,11 @@ function HandleMenuItem(options)
                     return false;
                 });
                 break;
-
+            case 'Quotas':
+               	$a.click(function () {
+               		o.onQuotas();
+               	});
+               	break;
         }
     }
     else
