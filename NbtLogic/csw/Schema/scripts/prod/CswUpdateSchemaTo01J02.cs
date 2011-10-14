@@ -83,6 +83,11 @@ namespace ChemSW.Nbt.Schema
                     LocationsTab.TabName = "Inspection Point Locations";
                 }
             }
+
+            //Case 23814
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from sessionlist" );
+
+
             _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
         }//Update()
 
