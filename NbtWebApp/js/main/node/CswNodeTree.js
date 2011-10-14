@@ -74,10 +74,11 @@
                     var newviewid = data.viewid;
                     if (false === isNullOrEmpty(newviewid) && o.viewid !== newviewid) {
                         o.viewid = newviewid;
+                        if (isFunction(o.onViewChange)) {
+                            o.onViewChange(o.viewid, 'tree');
+                        }
                     }
-                    if (isFunction(o.onViewChange)) {
-                        o.onViewChange(o.viewid, 'tree');
-                    }
+                    
                     var treeData = data.tree;
                     var jsonTypes = data.types;
 
