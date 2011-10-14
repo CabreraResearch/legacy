@@ -1,4 +1,5 @@
 ﻿
+
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
@@ -15,11 +16,13 @@ namespace ChemSW.Nbt.Schema
             // such as adding tables or columns, 
             // which need to take place before any other changes can be made.
 
+            //Case 23809
             foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.restoreViews( "Roles and Users" ) )
             {
                 View.Category = "System";
                 View.save();
             }
+
         }//Update()
 
     }//class CswUpdateSchemaTo01J02
