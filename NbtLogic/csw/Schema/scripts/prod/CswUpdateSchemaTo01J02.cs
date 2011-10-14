@@ -73,14 +73,17 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
-
-            //foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.restoreViews( "Mount Points Grid" ) )
-            //{
-            //    if( View.ViewMode == NbtViewRenderingMode.Grid && 
-            //        View.Visibility == NbtViewVisibility.Property && 
-            //        View.Root. )
-            //}
-
+            //Case 23775
+            CswNbtMetaDataObjectClass TargetGroupClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
+            foreach( CswNbtMetaDataNodeType GroupNT in TargetGroupClass.NodeTypes )
+            {
+                CswNbtMetaDataNodeTypeTab LocationsTab = GroupNT.getNodeTypeTab( "Mount Point Locations" );
+                if( null != LocationsTab )
+                {
+                    LocationsTab.TabName = "Inspection Point Locations";
+                }
+            }
+            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
         }//Update()
 
     }//class CswUpdateSchemaTo01J02
