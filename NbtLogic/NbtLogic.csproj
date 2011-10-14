@@ -51,6 +51,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Actions\CswNbtActQuotas.cs" />
     <Compile Include="csw\Actions\CswNbtActAssignTests.cs" />
     <Compile Include="csw\Actions\CswNbtActCopyNode.cs" />
     <Compile Include="csw\Actions\CswNbtActGenerateFutureNodes.cs" />
