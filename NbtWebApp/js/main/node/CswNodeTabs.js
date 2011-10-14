@@ -163,7 +163,11 @@
 						{
 							getPropsImpl($tabcontentdiv, tabid);
 						} else {
-							$tabcontentdiv.append('You have used all of your purchased quota, and must purchase additional quota space in order to add');
+							$tabcontentdiv.append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
+							if (isFunction(o.onInitFinish)) 
+							{
+								o.onInitFinish();
+							}
 						}
 					}
 				});

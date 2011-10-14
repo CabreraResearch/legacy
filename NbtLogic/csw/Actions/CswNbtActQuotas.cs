@@ -39,28 +39,46 @@ namespace ChemSW.Nbt.Actions
 		}
 
 		/// <summary>
-		/// Returns a dictionary of ObjectClassId::Node-Count for all object classes
+		/// Returns a dictionary of ObjectClassId=>Node-Count for all object classes
 		/// </summary>
 		public Dictionary<Int32, Int32> GetNodeCounts()
 		{
-			return GetNodeCounts( Int32.MinValue );
+			return _GetNodeCounts( Int32.MinValue );
 		}
 
 		/// <summary>
-		/// Returns a dictionary of ObjectClassId::Node-Count for one object class
+		/// Returns a Node Count for one object class
 		/// </summary>
-		/// <param name="ObjectClassId">Filter results to this object class</param>
-		public Dictionary<Int32, Int32> GetNodeCounts( Int32 ObjectClassId )
+		public Int32 GetNodeCount( Int32 ObjectClassId )
+		{
+			Int32 ret = 0;
+			Dictionary<Int32, Int32> NodeCounts = _GetNodeCounts( ObjectClassId );
+			if( NodeCounts.ContainsKey( ObjectClassId ) )
+			{
+				ret = NodeCounts[ObjectClassId];
+			}
+			return ret;
+		} // GetNodeCount
+
+		/// <summary>
+		/// Returns the number of locked nodes for an object class
+		/// </summary>
+		public Int32 GetLockedNodeCount( Int32 ObjectClassId )
+		{
+			CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "CswNbtActQuotas_SelectLockedNodes", "nodes" );
+			string WhereClause = @"where nodetypeid in (select nodetypeid from nodetypes 
+														 where objectclassid = " + ObjectClassId.ToString() + @") 
+										and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
+			return NodesSelect.getRecordCount( WhereClause );
+		} // GetLockedNodeCount()
+
+		private Dictionary<Int32, Int32> _GetNodeCounts( Int32 ObjectClassId )
 		{
 			Dictionary<Int32, Int32> NodeCounts = new Dictionary<Int32, Int32>();
 
 			// Look up the object class of all nodes (deleted or no)
-			string SqlSelect = "select count(distinct nodeid) cnt ";
-			if( ObjectClassId == Int32.MinValue )
-			{
-				SqlSelect += "         , objectclassid ";
-			}
-			SqlSelect += @"       from (select n.nodeid, o.objectclassid
+			string SqlSelect = @"select count(distinct nodeid) cnt, objectclassid 
+							       from (select n.nodeid, o.objectclassid
 										   from nodes_audit n
 										   left outer join nodetypes t on n.nodetypeid = t.nodetypeid
 										   left outer join object_class o on t.objectclassid = o.objectclassid
@@ -73,10 +91,8 @@ namespace ChemSW.Nbt.Actions
 			{
 				SqlSelect += "where objectclassid = '" + ObjectClassId.ToString() + "'";
 			}
-			else
-			{
-				SqlSelect += "group by objectclassid";
-			}
+			SqlSelect += "group by objectclassid";
+
 			CswArbitrarySelect NodeCountSelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtActQuotas_historicalNodeCount", SqlSelect );
 			DataTable NodeCountTable = NodeCountSelect.getTable();
 			foreach( DataRow NodeCountRow in NodeCountTable.Rows )
@@ -85,7 +101,7 @@ namespace ChemSW.Nbt.Actions
 								CswConvert.ToInt32( NodeCountRow["cnt"] ) );
 			} // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
 			return NodeCounts;
-		} // _getNodeCount()
+		} // _getNodeCounts()
 
 		/// <summary>
 		/// Set the quota for an object class
@@ -107,10 +123,19 @@ namespace ChemSW.Nbt.Actions
 							OCTable.Rows[0]["quota"] = CswConvert.ToDbVal( NewQuota );
 							OCUpdate.update( OCTable );
 
-							if( NewQuota > OldQuota )
+							if( NewQuota == Int32.MinValue )
+							{
+								// If the quota is cleared, we can unlock all nodes
+								_UnlockAllNodes( ObjectClassId );
+							}
+							else if( NewQuota > OldQuota )
 							{
 								// If the quota is increasing, we can unlock some nodes
-								_UnlockNodes( ObjectClassId, ( NewQuota - OldQuota ) );
+								// The number we can unlock is the difference between the new quota and the number of currently unlocked nodes
+								Int32 NodeCount = GetNodeCount( ObjectClassId );
+								Int32 LockedCount = GetLockedNodeCount( ObjectClassId );
+								Int32 UnlockedCount = NodeCount - LockedCount;
+								_UnlockNodes( ObjectClassId, ( NewQuota - UnlockedCount ) );
 							}
 						}
 					} // if( OldQuota != NewQuota )
@@ -121,6 +146,14 @@ namespace ChemSW.Nbt.Actions
 				throw new CswDniException( ErrorType.Warning, "Insufficient Permissions for Quota Edits", "You do not have permission to edit object class quotas" );
 			}
 		} // SetQuota()
+
+		/// <summary>
+		/// Unlocks all nodes of an object class
+		/// </summary>
+		private void _UnlockAllNodes( Int32 ObjectClassId )
+		{
+			_UnlockNodes( ObjectClassId, Int32.MinValue );
+		}
 
 		/// <summary>
 		/// Unlocks nodes of an object class
@@ -134,7 +167,7 @@ namespace ChemSW.Nbt.Actions
 										and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
 			DataTable NodesTable = NodesUpdate.getTable( WhereClause, new Collection<OrderByClause> { OrderBy } );
 
-			for( Int32 i = 0; i < NumberToUnlock && i < NodesTable.Rows.Count; i++ )
+			for( Int32 i = 0; ( NumberToUnlock == Int32.MinValue || i < NumberToUnlock ) && i < NodesTable.Rows.Count; i++ )
 			{
 				DataRow NodesRow = NodesTable.Rows[i];
 				NodesRow["locked"] = CswConvert.ToDbVal( false );
@@ -193,13 +226,8 @@ namespace ChemSW.Nbt.Actions
 		public bool CheckQuotaOC( Int32 ObjectClassId )
 		{
 			CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-			Dictionary<Int32, Int32> NodeCounts = GetNodeCounts( ObjectClassId );
-			Int32 NodeCount = 0;
-			if( NodeCounts.ContainsKey( ObjectClassId ) )
-			{
-				NodeCount = NodeCounts[ObjectClassId];
-			}
-			return ( NodeCount < ObjectClass.Quota );
+			Int32 NodeCount = GetNodeCount( ObjectClassId );
+			return ( ObjectClass.Quota <= 0 || NodeCount < ObjectClass.Quota );
 		} // CheckQuota()
 
 	} // class CswNbtActQuotas

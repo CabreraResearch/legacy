@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
 		{
 			JObject ret = new JObject();
 
-			Dictionary<Int32, Int32> NodeCounts = _CswNbtActQuotas.GetNodeCounts( Int32.MinValue );
+			Dictionary<Int32, Int32> NodeCounts = _CswNbtActQuotas.GetNodeCounts();
 
 			ret["canedit"] = _CanEditQuotas.ToString().ToLower();
 			ret["objectclasses"] = new JObject();
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.WebServices
 			JObject inQuotasJson = JObject.Parse( inQuotas );
 			if( _CanEditQuotas )
 			{
-				foreach(JObject JObjClass in inQuotasJson["objectclasses"].Children<JObject>())
+				foreach(JObject JObjClass in inQuotasJson["objectclasses"].Children().Values())
 				{
 					Int32 ObjectClassId = CswConvert.ToInt32( JObjClass["objectclassid"] );
 					Int32 NewQuota = CswConvert.ToInt32( JObjClass["quota"] );
