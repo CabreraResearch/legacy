@@ -41,13 +41,16 @@ namespace ChemSW.Nbt.WebServices
             Int32 NodeTypeId = Int32.MinValue;
             Int32 NodeId = Int32.MinValue;
 
-            if( !string.IsNullOrEmpty( NodeKey ) )
+            if( false == string.IsNullOrEmpty( NodeKey ) )
             {
                 CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
                 Node = _CswNbtResources.Nodes[NbtNodeKey];
-                NodeId = Node.NodeId.PrimaryKey;
-                NodeTypeId = Node.NodeTypeId;
-                NodeIdNum = NodeId.ToString();
+                if( null != Node )
+                {
+                    NodeId = Node.NodeId.PrimaryKey;
+                    NodeTypeId = Node.NodeTypeId;
+                    NodeIdNum = NodeId.ToString();
+                }
             }
 
             // SEARCH
@@ -119,7 +122,7 @@ namespace ChemSW.Nbt.WebServices
                 // COPY
                 if( null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
-                    _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) )
+                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) )
                 {
                     string BadPropertyName = string.Empty;
                     if( false == Node.NodeType.IsUniqueAndRequired( ref BadPropertyName ) )
