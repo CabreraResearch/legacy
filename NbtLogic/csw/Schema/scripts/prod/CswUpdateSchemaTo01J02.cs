@@ -17,6 +17,13 @@ namespace ChemSW.Nbt.Schema
 
 		public override void update()
 		{
+			//Case 23809
+            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.restoreViews( "Roles and Users" ) )
+            {
+                View.Category = "System";
+                View.save();
+            }
+
 			// case 20970 - Add 'locked' column to nodes
 			// These are in 01J-01 as well
 			if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodes", "locked" ) )
