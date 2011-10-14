@@ -78,7 +78,7 @@
                             o.onViewChange(o.viewid, 'tree');
                         }
                     }
-                    
+
                     var treeData = data.tree;
                     var jsonTypes = data.types;
 
@@ -106,7 +106,7 @@
                             contains(json, 'attr') &&
                             (false === contains(json, 'children') ||
                            (json.children.length > 1 ||
-                             'No Results' !== json.children[0]) ) ) {
+                             'No Results' !== json.children[0]))) {
                             ret = true;
                         }
                         return ret;
@@ -124,11 +124,11 @@
                                 rel = tryParseString(json.attr.rel),
                                 species = tryParseString(json.attr.species),
                                 state = tryParseString(json.attr.state, 'open');
-                            
+
                             if (idToSelect === id || (level === selectLevel && isNullOrEmpty(selectid))) {
                                 selectid = id;
                             }
-                            
+
                             treestr += '<li id="' + id + '" rel="' + rel + '" species="' + species + '" class="jstree-' + state + '" ';
                             if (!isNullOrEmpty(nbtnodekey)) {
                                 treestr += '    cswnbtnodekey="' + nbtnodekey.replace(/"/g, '&quot;') + '"';
@@ -280,7 +280,7 @@
 
                     } else {
                         $treediv.append('No Results');
-                        o.onInitialSelectNode({viewid: o.viewid});
+                        o.onInitialSelectNode({ viewid: o.viewid });
                     }
 
                 } // success{}
@@ -384,33 +384,28 @@
 
                     // we have to do these one at a time in successive OnSuccess callbacks, 
                     // or else they won't end up in the right place on the tree
-                    doContinue();
+                    doContinue(0);
 
-                    function doContinue() {
-                        if (itemJson.length > 0) {
-                            m.$treediv.jstree('create', '#' + afterNodeId, 'after',
-                            //									{ 
-                            //										'attr': {
-                            //													'id': itemJson.CswAttrXml('id'), 
-                            //													'rel': itemJson.CswAttrXml('rel'),
-                            //													'cswnbtnodekey': itemJson.CswAttrXml('cswnbtnodekey'),
-                            //													'species': itemJson.CswAttrXml('species')
-                            //												},
-                            //										'data': itemJson.children('content').children('name').text(), 
-                            //										'state': itemJson.CswAttrXml('state') 
-                                        itemJson,
-                            //									}, 
-                                    function () {
-                                        // remove 'More' node
-                                        if (afterNodeId === itemJson.attr.id) {
-                                            m.$treediv.jstree('remove', '#' + m.IdPrefix + optSelect.nodeid + '[species="More"]');
-                                        }
+                    function doContinue(index) {
+                        var thisItem;
+                        if (contains(itemJson, index)) {
+                            thisItem = itemJson[index];
+                            m.$treediv.jstree('create',
+                                              '#' + afterNodeId,
+                                              'after',
+                                              thisItem,
+                                                function () {
+                                                    // remove 'More' node
+                                                    if (afterNodeId === thisItem.attr.id) {
+                                                        m.$treediv.jstree('remove', '#' + m.IdPrefix + optSelect.nodeid + '[species="More"]');
+                                                    }
 
-                                        afterNodeId = itemJson.attr.id;
-                                        //										itemJson = itemJson.next();
-                                        //										_continue();
-                                    },
-                                    true, true);
+                                                    afterNodeId = thisItem.attr.id;
+                                                    index += 1;
+                                                    doContinue(index);
+                                                },
+                                               true,
+                                               true);
 
                         } // if($itemxml.length > 0)
                     } // _continue()
