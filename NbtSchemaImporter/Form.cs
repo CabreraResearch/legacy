@@ -45,7 +45,8 @@ namespace ChemSW.Nbt.Schema
             }
 
             _WorkerThread = new WorkerThread( _ConfigurationPath );
-            _WorkerThread.OnStatusChange += new WorkerThread.StatusHandler( _WorkerThread_OnStatusChange );
+            _WorkerThread.OnStatusChange += new WorkerThread.StatusMessageHandler( _WorkerThread_OnStatusChange );
+            _WorkerThread.OnImportPhaseChange += new WorkerThread.ImportPhaseMessageHandler( _WorkerThread_OnImportPhaseChange );
 
             _DbInstances = _WorkerThread.getDbInstances();
             _WorkerThread.AccessId = _DbInstances.Rows[0][WorkerThread.ColName_AccessId].ToString();
@@ -73,27 +74,38 @@ namespace ChemSW.Nbt.Schema
             _initModeComboBox();
         }
 
+
+        void _WorkerThread_OnImportPhaseChange( CswNbtImportStatus CswNbtImportStatus )
+        {
+            if( null != CswNbtImportStatus )
+            {
+                PhaseTextBox.BeginInvoke( new AddImportStatusHandler( _AddImportStatus ), new object[] { CswNbtImportStatus } );
+            }
+        }//_WorkerThread_OnImportPhaseChange
+
+        private delegate void AddImportStatusHandler( CswNbtImportStatus CswNbtImportStatus );
+        private void _AddImportStatus( CswNbtImportStatus CswNbtImportStatus )
+        {
+
+            ResultsTextBox.Clear();
+            ResultsTextBox.AppendText( "Current Phase " + ": " + CswNbtImportStatus.ProcessPhase.ToString() + "\r\n" );
+            ResultsTextBox.AppendText( "Statis " + ": " + CswNbtImportStatus.PhaseStatus + "\r\n" );
+        }
+
+
+
         void _WorkerThread_OnStatusChange( string Msg )
         {
-            ResultsTextBox.BeginInvoke( new AddStatusMsgHandler( _AddStatusMsg ), new object[] { Msg } );
+            if( string.Empty != Msg )
+            {
+                ResultsTextBox.BeginInvoke( new AddStatusMsgHandler( _AddStatusMsg ), new object[] { Msg } );
+            }
         }
+
         private delegate void AddStatusMsgHandler( string Msg );
         private void _AddStatusMsg( string Msg )
         {
-            if( ResultsTextBox.Lines.Length > 110 )
-            {
-                Int32 TotalCharactersToRemove = 0;
-                for( Int32 idx = 0; idx < 10; idx++ )
-                {
-                    TotalCharactersToRemove += ResultsTextBox.Lines[idx].Length; 
-                }
-
-                ResultsTextBox.Text = ResultsTextBox.Text.Remove( ResultsTextBox.Text.Length - TotalCharactersToRemove );
-            }
-
-
             ResultsTextBox.AppendText( DateTime.Now.ToString() + ": " + Msg + "\r\n" );
-
         }
 
         void SchemaSelectBox_SelectedIndexChanged( object sender, EventArgs e )

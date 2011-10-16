@@ -51,15 +51,16 @@
             this.FileTypeSelectBox = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.DataFileLink = new System.Windows.Forms.LinkLabel();
-            this.ResultsTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.ModeComboBox = new System.Windows.Forms.ComboBox();
             this.DataFileLabel = new System.Windows.Forms.Label();
             this.ImportCompleteLabel = new System.Windows.Forms.Label();
             this.ImportInProgressLabel = new System.Windows.Forms.Label();
+            this.ResultsTextBox = new System.Windows.Forms.TextBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.ErrorLabel = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.PhaseTextBox = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.ExportTab.SuspendLayout();
             this.ImportPage.SuspendLayout();
@@ -121,7 +122,7 @@
             this.tabControl1.Location = new System.Drawing.Point( 3, 5 );
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size( 358, 361 );
+            this.tabControl1.Size = new System.Drawing.Size( 358, 374 );
             this.tabControl1.TabIndex = 10;
             // 
             // ExportTab
@@ -141,7 +142,7 @@
             this.ExportTab.Location = new System.Drawing.Point( 4, 22 );
             this.ExportTab.Name = "ExportTab";
             this.ExportTab.Padding = new System.Windows.Forms.Padding( 3 );
-            this.ExportTab.Size = new System.Drawing.Size( 350, 335 );
+            this.ExportTab.Size = new System.Drawing.Size( 350, 348 );
             this.ExportTab.TabIndex = 1;
             this.ExportTab.Text = "Export";
             this.ExportTab.UseVisualStyleBackColor = true;
@@ -286,7 +287,7 @@
             this.ImportPage.Location = new System.Drawing.Point( 4, 22 );
             this.ImportPage.Name = "ImportPage";
             this.ImportPage.Padding = new System.Windows.Forms.Padding( 3 );
-            this.ImportPage.Size = new System.Drawing.Size( 350, 335 );
+            this.ImportPage.Size = new System.Drawing.Size( 350, 348 );
             this.ImportPage.TabIndex = 0;
             this.ImportPage.Text = "Import";
             this.ImportPage.UseVisualStyleBackColor = true;
@@ -323,18 +324,6 @@
             this.DataFileLink.TabStop = true;
             this.DataFileLink.Text = "Choose...";
             this.DataFileLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler( this.DataFileLink_LinkClicked );
-            // 
-            // ResultsTextBox
-            // 
-            this.ResultsTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles) ( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                        | System.Windows.Forms.AnchorStyles.Left )
-                        | System.Windows.Forms.AnchorStyles.Right ) ) );
-            this.ResultsTextBox.Location = new System.Drawing.Point( 367, 12 );
-            this.ResultsTextBox.Multiline = true;
-            this.ResultsTextBox.Name = "ResultsTextBox";
-            this.ResultsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ResultsTextBox.Size = new System.Drawing.Size( 418, 372 );
-            this.ResultsTextBox.TabIndex = 18;
             // 
             // label1
             // 
@@ -388,6 +377,18 @@
             this.ImportInProgressLabel.Text = "Import In Progress...";
             this.ImportInProgressLabel.Visible = false;
             // 
+            // ResultsTextBox
+            // 
+            this.ResultsTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles) ( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                        | System.Windows.Forms.AnchorStyles.Left )
+                        | System.Windows.Forms.AnchorStyles.Right ) ) );
+            this.ResultsTextBox.Location = new System.Drawing.Point( 367, 204 );
+            this.ResultsTextBox.Multiline = true;
+            this.ResultsTextBox.Name = "ResultsTextBox";
+            this.ResultsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.ResultsTextBox.Size = new System.Drawing.Size( 418, 175 );
+            this.ResultsTextBox.TabIndex = 18;
+            // 
             // ErrorLabel
             // 
             this.ErrorLabel.AutoSize = true;
@@ -401,11 +402,20 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // PhaseTextBox
+            // 
+            this.PhaseTextBox.Location = new System.Drawing.Point( 368, 27 );
+            this.PhaseTextBox.Multiline = true;
+            this.PhaseTextBox.Name = "PhaseTextBox";
+            this.PhaseTextBox.Size = new System.Drawing.Size( 411, 171 );
+            this.PhaseTextBox.TabIndex = 19;
+            // 
             // ImporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size( 791, 392 );
+            this.ClientSize = new System.Drawing.Size( 791, 405 );
+            this.Controls.Add( this.PhaseTextBox );
             this.Controls.Add( this.ErrorLabel );
             this.Controls.Add( this.tabControl1 );
             this.Controls.Add( this.ResultsTextBox );
@@ -456,6 +466,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ComboBox FileTypeSelectBox;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox PhaseTextBox;
     }
 }
 

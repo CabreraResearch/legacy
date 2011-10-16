@@ -24,14 +24,16 @@ namespace ChemSW.Nbt.ImportExport
 
         public List<ImportExportMessageType> MessageTypesToBeLogged = new List<ImportExportMessageType>();
         private StatusUpdateHandler _WriteToGui = null;
+        private ImportPhaseHandler _ReportPhaseChange = null;
         private ICswLogger _CswLogger = null;
 
         private string _ImportExportLogFilter = "importexport";
 
-        public CswImportExportStatusReporter( StatusUpdateHandler StatusUpdateHandler, ICswLogger CswLogger )
+        public CswImportExportStatusReporter( StatusUpdateHandler StatusUpdateHandler, ImportPhaseHandler ImportPhaseHandler, ICswLogger CswLogger )
         {
             MessageTypesToBeLogged.Add( ImportExportMessageType.Progress );
             _WriteToGui = StatusUpdateHandler;
+            _ReportPhaseChange = ImportPhaseHandler;
             _CswLogger = CswLogger;
             _CswLogger.addFilter( _ImportExportLogFilter );
             _CswLogger.RestrictByFilter = true;
@@ -64,7 +66,13 @@ namespace ChemSW.Nbt.ImportExport
                 _CswLogger.reportAppState( StatusMessage, _ImportExportLogFilter );
                 _WriteToGui( StatusMessage );
             }
-        }//reportStatus()
+        }//reportProgress()
+
+
+        public void reportProgress( ProcessPhase ProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar )
+        {
+            _ReportPhaseChange( new CswNbtImportStatus( ProcessPhase, TotalObjects, ObjectsSofar ) ); 
+        }
 
         public void reportTiming( CswTimer CswTimer, string Action )
         {

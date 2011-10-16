@@ -17,6 +17,7 @@ using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.ImportExport
 {
+    public enum ProcessPhase { NothingDoneYet, TempTableNodesPopulated, TempTablePropsPopulated, NbtNodesPopulated, TargetNodesChecked, MissingTargetNodesCreated, NbtPropsPouplated, NbtNodesPostProcessed, RandomTestComplete };
 
     public class CswImporterExperimental : ICswImporter
     {
@@ -30,7 +31,6 @@ namespace ChemSW.Nbt.ImportExport
 
         enum ProcessStati { Unprocessed, Imported, PropsAdded, RedundancyChecked, Error };
         enum Source { ImportData, Deduced }
-        enum ProcessPhase { NothingDoneYet, TempTablesPopulated, NbtNodesPopulated, TargetNodesPresent, NbtPropsPouplated, PostProcessed, RandomTestComplete };
         enum AbsentNodeHandling { DeduceAndCreate, RejectImport }
         public CswImporterExperimental( CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, CswImportExportStatusReporter CswImportExportStatusReporter )
         {
@@ -131,8 +131,8 @@ namespace ChemSW.Nbt.ImportExport
             Int32 NodeCreatePageSize = 10; //number of nodes to create per cycle
             Int32 NodeAddPropsPageSize = 10; //Number of nodes to create properties for per cycle
 
-            //ProcessPhase CurrentProcessPhase = _CswNbtSchemaModTrnsctn.isTableDefined( TblName_TempNodes ) ? ProcessPhase.TempTablesPopulated : ProcessPhase.NothingDoneYet;
-            ProcessPhase CurrentProcessPhase = ProcessPhase.NbtNodesPopulated;
+            ProcessPhase CurrentProcessPhase = _CswNbtSchemaModTrnsctn.isTableDefined( TblName_TempNodes ) ? ProcessPhase.TempTableNodesPopulated : ProcessPhase.NothingDoneYet;
+            //ProcessPhase CurrentProcessPhase = ProcessPhase.NbtNodesPopulated;
 
             //_CswImportExportStatusReporter.MessageTypesToBeLogged.Remove( ImportExportMessageType.Progress );
             _CswImportExportStatusReporter.MessageTypesToBeLogged.Remove( ImportExportMessageType.Error );
@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.ImportExport
                 _createTempRecords( TableOfNodesFromXml, TblName_TempNodes, MaxInsertRecordsPerTransaction, MaxInsertRecordsPerDisplayUpdate );
                 _createTempRecords( TableOfPropsFromXml, TblName_TempProps, MaxInsertRecordsPerTransaction, MaxInsertRecordsPerDisplayUpdate );
 
-                CurrentProcessPhase = ProcessPhase.TempTablesPopulated;
+                CurrentProcessPhase = ProcessPhase.TempTableNodesPopulated;
 
                 _CswNbtImportExportFrame.clear();
 
@@ -199,7 +199,7 @@ namespace ChemSW.Nbt.ImportExport
 
 
             CswTableUpdate CswTableUpdateTempNodesTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatenodesfornodeid", TblName_TempNodes );
-            if( ProcessPhase.TempTablesPopulated == CurrentProcessPhase )
+            if( ProcessPhase.TempTableNodesPopulated == CurrentProcessPhase )
             {
 
                 _CswImportExportStatusReporter.reportProgress( _StatusMessageDivider + "Creating NBT Nodes" );
@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.ImportExport
 
                 if( 0 == DataTable.Rows.Count )
                 {
-                    CurrentProcessPhase = ProcessPhase.TargetNodesPresent;
+                    CurrentProcessPhase = ProcessPhase.TargetNodesChecked;
                 }
                 else if( AbsentNodeHandling.DeduceAndCreate == _AbsentNodeHandling )
                 {
@@ -437,7 +437,7 @@ namespace ChemSW.Nbt.ImportExport
 
                     _CswImportExportStatusReporter.reportProgress( "Added " + AddedNodesCounter.ToString() + " missing nodes" );
 
-                    CurrentProcessPhase = ProcessPhase.TargetNodesPresent;
+                    CurrentProcessPhase = ProcessPhase.TargetNodesChecked;
 
 
                 }
@@ -458,7 +458,7 @@ namespace ChemSW.Nbt.ImportExport
                 }
             }//if nodes were processed
 
-            if( ProcessPhase.TargetNodesPresent == CurrentProcessPhase )
+            if( ProcessPhase.TargetNodesChecked == CurrentProcessPhase )
             {
                 _CswImportExportStatusReporter.reportProgress( _StatusMessageDivider + "Creating NBT Properties" );
 
@@ -810,11 +810,11 @@ namespace ChemSW.Nbt.ImportExport
 
                 } while( NodeRecordsToProcess.Rows.Count > 0 );
 
-                CurrentProcessPhase = ProcessPhase.PostProcessed;
+                CurrentProcessPhase = ProcessPhase.NbtNodesPostProcessed;
 
             }
 
-            if( ProcessPhase.PostProcessed == CurrentProcessPhase )
+            if( ProcessPhase.NbtNodesPostProcessed == CurrentProcessPhase )
             {
                 /* 
                  * This will be the phase in which we do random testing of the data in NBT against the temp tables (and possibly even against the import XML file)
