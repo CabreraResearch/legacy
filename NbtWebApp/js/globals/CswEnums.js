@@ -49,6 +49,7 @@ var CswMultiEditDefaultValue = '[Unchanged]';
 var CswCookieName = {
     SessionId: 'CswSessionId',
     Username: 'csw_username',
+	LogoutPath: 'csw_logoutpath',
 	CurrentNodeId: 'csw_currentnodeid',
 	CurrentNodeKey: 'csw_currentnodekey',
 	CurrentTabId: 'csw_currenttabid',
