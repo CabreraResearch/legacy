@@ -69,9 +69,9 @@ namespace ChemSW.Nbt.ImportExport
         }//reportProgress()
 
 
-        public void reportProgress( ProcessPhase ProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar )
+        public void updateProcessPhase( ProcessPhase ProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar, CswNbtImportStatus.ProcessStates ProcessState = CswNbtImportStatus.ProcessStates.InProcess )
         {
-            _ReportPhaseChange( new CswNbtImportStatus( ProcessPhase, TotalObjects, ObjectsSofar ) ); 
+            _ReportPhaseChange( new CswNbtImportStatus( ProcessPhase, TotalObjects, ObjectsSofar, ProcessState ) );
         }
 
         public void reportTiming( CswTimer CswTimer, string Action )

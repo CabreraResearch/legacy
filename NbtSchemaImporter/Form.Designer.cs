@@ -61,6 +61,7 @@
             this.ErrorLabel = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.PhaseTextBox = new System.Windows.Forms.TextBox();
+            this.gbx_PhaseStatus = new System.Windows.Forms.GroupBox();
             this.tabControl1.SuspendLayout();
             this.ExportTab.SuspendLayout();
             this.ImportPage.SuspendLayout();
@@ -382,11 +383,11 @@
             this.ResultsTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles) ( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
                         | System.Windows.Forms.AnchorStyles.Left )
                         | System.Windows.Forms.AnchorStyles.Right ) ) );
-            this.ResultsTextBox.Location = new System.Drawing.Point( 367, 204 );
+            this.ResultsTextBox.Location = new System.Drawing.Point( 367, 142 );
             this.ResultsTextBox.Multiline = true;
             this.ResultsTextBox.Name = "ResultsTextBox";
             this.ResultsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ResultsTextBox.Size = new System.Drawing.Size( 418, 175 );
+            this.ResultsTextBox.Size = new System.Drawing.Size( 418, 237 );
             this.ResultsTextBox.TabIndex = 18;
             // 
             // ErrorLabel
@@ -404,11 +405,23 @@
             // 
             // PhaseTextBox
             // 
-            this.PhaseTextBox.Location = new System.Drawing.Point( 368, 27 );
+            this.PhaseTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.PhaseTextBox.Enabled = false;
+            this.PhaseTextBox.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( (byte) ( 0 ) ) );
+            this.PhaseTextBox.Location = new System.Drawing.Point( 376, 59 );
             this.PhaseTextBox.Multiline = true;
             this.PhaseTextBox.Name = "PhaseTextBox";
-            this.PhaseTextBox.Size = new System.Drawing.Size( 411, 171 );
+            this.PhaseTextBox.Size = new System.Drawing.Size( 397, 67 );
             this.PhaseTextBox.TabIndex = 19;
+            // 
+            // gbx_PhaseStatus
+            // 
+            this.gbx_PhaseStatus.Location = new System.Drawing.Point( 368, 36 );
+            this.gbx_PhaseStatus.Name = "gbx_PhaseStatus";
+            this.gbx_PhaseStatus.Size = new System.Drawing.Size( 417, 100 );
+            this.gbx_PhaseStatus.TabIndex = 20;
+            this.gbx_PhaseStatus.TabStop = false;
+            this.gbx_PhaseStatus.Text = "Process Status";
             // 
             // ImporterForm
             // 
@@ -419,6 +432,7 @@
             this.Controls.Add( this.ErrorLabel );
             this.Controls.Add( this.tabControl1 );
             this.Controls.Add( this.ResultsTextBox );
+            this.Controls.Add( this.gbx_PhaseStatus );
             this.Name = "ImporterForm";
             this.Text = "NBT Schema Importer";
             this.tabControl1.ResumeLayout( false );
@@ -467,6 +481,7 @@
         private System.Windows.Forms.ComboBox FileTypeSelectBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox PhaseTextBox;
+        private System.Windows.Forms.GroupBox gbx_PhaseStatus;
     }
 }
 

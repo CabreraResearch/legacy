@@ -83,13 +83,53 @@ namespace ChemSW.Nbt.Schema
             }
         }//_WorkerThread_OnImportPhaseChange
 
+
+        private ProcessPhase _LastProcessPhase = ProcessPhase.NothingDoneYet;
         private delegate void AddImportStatusHandler( CswNbtImportStatus CswNbtImportStatus );
+
+
+        System.Threading.Timer _ProgressTimer = null;
+        private void _addTicTimerCallBack( object state )
+        {
+            PhaseTextBox.BeginInvoke( new AddTimerTicHandler( _addTimerTicToPhaseStatus ) );
+        }//_addTicTimerCallBack()
+
+
+        private delegate void AddTimerTicHandler();
+        private void _addTimerTicToPhaseStatus()
+        {
+            //PhaseTextBox.Text += " .";
+
+            PhaseTextBox.Lines[1] += " ."; ;
+        }//_addTimerTicToPhaseStatus() 
+
         private void _AddImportStatus( CswNbtImportStatus CswNbtImportStatus )
         {
+            if( _LastProcessPhase != CswNbtImportStatus.ProcessPhase )
+            {
+                _WorkerThread_OnStatusChange( PhaseTextBox.Text );
+                _LastProcessPhase = CswNbtImportStatus.ProcessPhase;
+            }
 
-            ResultsTextBox.Clear();
-            ResultsTextBox.AppendText( "Current Phase " + ": " + CswNbtImportStatus.ProcessPhase.ToString() + "\r\n" );
-            ResultsTextBox.AppendText( "Statis " + ": " + CswNbtImportStatus.PhaseStatus + "\r\n" );
+
+            if( CswNbtImportStatus.PhaseTypes.Monolithic == CswNbtImportStatus.PhaseType )
+            {
+                if( null == _ProgressTimer )
+                {
+                    _ProgressTimer = new System.Threading.Timer( _addTicTimerCallBack, null, 1000, 1000 );
+                }
+            }
+            else
+            {
+                if( null != _ProgressTimer )
+                {
+                    _ProgressTimer = null;
+                }
+            }
+
+            PhaseTextBox.Clear();
+            PhaseTextBox.AppendText( "Current Phase " + ": " + CswNbtImportStatus.PhaseDescription + "\r\n" );
+            PhaseTextBox.AppendText( "Status " + ": " + CswNbtImportStatus.PhaseStatus + "\r\n" );
         }
 
 
