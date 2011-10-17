@@ -144,13 +144,13 @@
 
                 //Generate subfields and filters picklist arrays
                 for (field in subfields) {
-                    if (subfields.hasOwnProperty(field)) {
+                    if (contains(subfields, field)) {
                         thisField = subfields[field];
                         subFieldVals.push({ value: thisField.column, display: field });
-                        if (field === defaultSubfieldVal && thisField.hasOwnProperty('filtermodes')) {
+                        if ((field === defaultSubfieldVal || thisField.column === defaultSubfieldVal) && contains(thisField, 'filtermodes')) {
                             filtermodes = thisField.filtermodes;
                             for (mode in filtermodes) {
-                                if (filtermodes.hasOwnProperty(mode)) {
+                                if (contains(filtermodes, mode)) {
                                     thisMode = filtermodes[mode];
                                     filterModeVals.push({ value: mode, display: thisMode });
                                 }
@@ -164,8 +164,7 @@
                     values: subFieldVals,
                     selected: defaultSubfieldVal,
                     cssclass: ViewBuilder_CssClasses.subfield_select.name,
-                    onChange: function () {
-                        var $this = $(this);
+                    onChange: function ($this) {
                         var r = {
                             selectedSubfieldVal: $this.val(),
                             selectedFilterVal: '',
@@ -185,8 +184,7 @@
                     values: filterModeVals,
                     selected: defaultFilterModeVal,
                     cssclass: ViewBuilder_CssClasses.filter_select.name,
-                    onChange: function () {
-                        var $this = $(this);
+                    onChange: function ($this) {
                         var r = {
                             selectedSubfieldVal: $subfieldsList.val(),
                             selectedFilterVal: $this.val(),
