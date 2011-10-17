@@ -22,46 +22,52 @@ namespace ChemSW.Nbt.Schema
 
             //Case 23782
             CswNbtMetaDataNodeType RouteNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Physical Inspection Route" );
-            if( null != RouteNt )
+            CswNbtMetaDataNodeType PiNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "FE Inspection Point" );
+            CswNbtMetaDataNodeTypeProp MpGridNtp = null;
+            CswNbtMetaDataNodeTypeProp RouteNtp = null;
+            CswNbtView MpgView = null;
+            if( null != RouteNt && null != PiNt )
             {
-                CswNbtMetaDataNodeTypeProp MpGridNtp = RouteNt.getNodeTypeProp( "FE Inspection Points Grid" );
+                MpGridNtp = RouteNt.getNodeTypeProp( "FE Inspection Points Grid" );
                 if( null != MpGridNtp && MpGridNtp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Grid )
                 {
+                    RouteNtp = PiNt.getNodeTypeProp( "Route" );
                     if( null != MpGridNtp.ViewId )
                     {
-                        CswNbtView MpgView = _CswNbtSchemaModTrnsctn.restoreView( MpGridNtp.ViewId );
+                        MpgView = _CswNbtSchemaModTrnsctn.restoreView( MpGridNtp.ViewId );
                         MpgView.Root.ChildRelationships.Clear();
-
-                        CswNbtMetaDataNodeType PiNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "FE Inspection Point" );
-                        if( null != PiNt )
-                        {
-                            CswNbtMetaDataNodeTypeProp RouteNtp = PiNt.getNodeTypeProp( "Route" );
-                            if( null != RouteNtp )
-                            {
-                                MpgView.Clear();
-                                CswNbtViewRelationship RouteRel = MpgView.AddViewRelationship( RouteNt, false );
-                                CswNbtViewRelationship InspectPointRel = MpgView.AddViewRelationship( RouteRel, CswNbtViewRelationship.PropOwnerType.Second, RouteNtp, false );
-
-                                CswNbtMetaDataNodeTypeProp BarcodeNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.BarcodePropertyName );
-                                MpgView.AddViewProperty( InspectPointRel, BarcodeNtp );
-
-                                CswNbtMetaDataNodeTypeProp DescNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
-                                MpgView.AddViewProperty( InspectPointRel, DescNtp );
-
-                                CswNbtMetaDataNodeTypeProp LocationNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
-                                MpgView.AddViewProperty( InspectPointRel, LocationNtp );
-
-                                CswNbtMetaDataNodeTypeProp LastIDateNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName );
-                                MpgView.AddViewProperty( InspectPointRel, LastIDateNtp );
-
-                                CswNbtMetaDataNodeTypeProp StatusNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.StatusPropertyName );
-                                MpgView.AddViewProperty( InspectPointRel, StatusNtp );
-
-                                MpgView.save();
-                            }
-                        }
+                    }
+                    else
+                    {
+                        MpgView = new CswNbtView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
+                        MpgView.ViewName = "Inspection Points Grid";
+                        MpgView.Visibility = NbtViewVisibility.Property;
+                        MpgView.ViewMode = NbtViewRenderingMode.Grid;
+                        MpGridNtp.ViewId.set( MpgView.ViewId.get() );
                     }
                 }
+            }
+            if( null != RouteNtp && null != MpgView )
+            {
+                CswNbtViewRelationship RouteRel = MpgView.AddViewRelationship( RouteNt, false );
+                CswNbtViewRelationship InspectPointRel = MpgView.AddViewRelationship( RouteRel, CswNbtViewRelationship.PropOwnerType.Second, RouteNtp, false );
+
+                CswNbtMetaDataNodeTypeProp BarcodeNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.BarcodePropertyName );
+                MpgView.AddViewProperty( InspectPointRel, BarcodeNtp );
+
+                CswNbtMetaDataNodeTypeProp DescNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
+                MpgView.AddViewProperty( InspectPointRel, DescNtp );
+
+                CswNbtMetaDataNodeTypeProp LocationNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
+                MpgView.AddViewProperty( InspectPointRel, LocationNtp );
+
+                CswNbtMetaDataNodeTypeProp LastIDateNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName );
+                MpgView.AddViewProperty( InspectPointRel, LastIDateNtp );
+
+                CswNbtMetaDataNodeTypeProp StatusNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.StatusPropertyName );
+                MpgView.AddViewProperty( InspectPointRel, StatusNtp );
+
+                MpgView.save();
             }
 
             //Case 23775
