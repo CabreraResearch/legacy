@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
                     if( null != MpGridNtp.ViewId )
                     {
                         CswNbtView MpgView = _CswNbtSchemaModTrnsctn.restoreView( MpGridNtp.ViewId );
-                        CswNbtView BackupView = _CswNbtSchemaModTrnsctn.restoreView( MpGridNtp.ViewId );
+                        MpgView.Root.ChildRelationships.Clear();
 
                         CswNbtMetaDataNodeType PiNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "FE Inspection Point" );
                         if( null != PiNt )
@@ -57,13 +57,6 @@ namespace ChemSW.Nbt.Schema
                                 CswNbtMetaDataNodeTypeProp StatusNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.StatusPropertyName );
                                 MpgView.AddViewProperty( InspectPointRel, StatusNtp );
 
-                                MpgView.ViewName = BackupView.ViewName;
-                                MpgView.ViewMode = BackupView.ViewMode;
-                                MpgView.Visibility = BackupView.Visibility;
-                                MpgView.VisibilityRoleId = BackupView.VisibilityRoleId;
-                                MpgView.VisibilityUserId = BackupView.VisibilityUserId;
-                                MpgView.Width = BackupView.Width;
-                                MpgView.Category = MpgView.Category;
                                 MpgView.save();
                             }
                         }
