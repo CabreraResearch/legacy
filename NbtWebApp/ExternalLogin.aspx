@@ -1,8 +1,9 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ExternalLogin.aspx.cs" Inherits="ChemSW.Nbt.WebPages.ExternalLogin" %>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title></title>
+	<meta http-equiv="X-UA-Compatible" content="IE=9">
+	<title>Login</title>
 	<!--#include file="MainIncludes.html" -->
 </head>
 <body>
