@@ -205,10 +205,10 @@
 
                 //Filter input (value)
                 if (fieldtype === CswSubFields_Map.List.name) {
-                    if (propsData.hasOwnProperty('filtersoptions')) {
+                    if (contains(propsData, 'filtersoptions')) {
                         for (filt in filtValOpt) {
-                            if (filtValOpt.hasOwnProperty(filt)) {
-                                filtValAry.push({ value: filt, display: filtValOpt[filt] });
+                            if (contains(filtValOpt, filt)) {
+                                filtValAry.push({ value: trim(filt), display: trim(filtValOpt[filt]) });
                             }
                         }
                         $filtInput = $propFilterValueCell.CswSelect('init', { ID: filtValInputId,
@@ -375,7 +375,7 @@
                     relatedidtype: o.relatedidtype,
                     subfield: subFieldText,
                     filter: filterText,
-                    filtervalue: filterValue
+                    filtervalue: trim(filterValue)
                 };
 
             } // if(filterValue !== '')
