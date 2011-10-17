@@ -84,9 +84,6 @@ namespace ChemSW.Nbt.Schema
             //Case 23814
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from sessionlist" );
 
-
-            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
-
         }//Update()
 
     }//class CswUpdateSchemaTo01J04
