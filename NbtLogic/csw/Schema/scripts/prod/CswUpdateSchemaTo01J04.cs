@@ -84,6 +84,49 @@ namespace ChemSW.Nbt.Schema
             //Case 23814
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from sessionlist" );
 
+            //Case 23868
+            CswNbtMetaDataNodeType GroupNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Inspection Group" );
+            CswNbtMetaDataNodeTypeProp PointGridNtp = null;
+            CswNbtMetaDataNodeTypeProp PointGroupNtp = null;
+            CswNbtView LocationView = null;
+            if( null != GroupNt && null != PiNt )
+            {
+                PointGridNtp = GroupNt.getNodeTypeProp( "FE Inspection Point Locations" );
+                if( null != PointGridNtp && PointGridNtp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Grid )
+                {
+                    PointGroupNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+                    if( null != PointGridNtp.ViewId )
+                    {
+                        LocationView = _CswNbtSchemaModTrnsctn.restoreView( PointGridNtp.ViewId );
+                        LocationView.Root.ChildRelationships.Clear();
+                    }
+                    else
+                    {
+                        LocationView = new CswNbtView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
+                        LocationView.ViewName = "Inspection Points Grid";
+                        LocationView.Visibility = NbtViewVisibility.Property;
+                        LocationView.ViewMode = NbtViewRenderingMode.Grid;
+                        PointGridNtp.ViewId.set( LocationView.ViewId.get() );
+                    }
+                }
+            }
+            if( null != PointGridNtp && null != LocationView )
+            {
+                CswNbtViewRelationship GroupRel = LocationView.AddViewRelationship( GroupNt, false );
+                CswNbtViewRelationship InspectPointRel = LocationView.AddViewRelationship( GroupRel, CswNbtViewRelationship.PropOwnerType.Second, PointGroupNtp, false );
+
+                CswNbtMetaDataNodeTypeProp BarcodeNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.BarcodePropertyName );
+                CswNbtViewProperty Bvp = LocationView.AddViewProperty( InspectPointRel, BarcodeNtp );
+                Bvp.Order = 0;
+
+                CswNbtMetaDataNodeTypeProp LocationNtp = PiNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
+                CswNbtViewProperty Lvp = LocationView.AddViewProperty( InspectPointRel, LocationNtp );
+                Lvp.Order = 1;
+                Lvp.SortBy = true;
+
+                LocationView.save();
+            }
+
         }//Update()
 
     }//class CswUpdateSchemaTo01J04
