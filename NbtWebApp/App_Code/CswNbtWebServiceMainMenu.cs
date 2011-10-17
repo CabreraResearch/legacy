@@ -183,6 +183,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( NbtViewRenderingMode.Grid == View.ViewMode )
                 {
+					View.SaveToCache( false );
                     string Url = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString();
                     if( View.Visibility == NbtViewVisibility.Property &&
                         null != Node &&

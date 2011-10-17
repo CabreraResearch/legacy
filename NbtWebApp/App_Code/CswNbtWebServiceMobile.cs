@@ -269,7 +269,7 @@ namespace ChemSW.Nbt.WebServices
                     TabObj[PropId]["gestalt"] = CswTools.SafeJavascriptParam( PropWrapper.Gestalt );
                     TabObj[PropId]["ocpname"] = CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName );
 
-                    if( Node.ReadOnly || Prop.ReadOnly )
+                    if( Node.ReadOnly || Node.Locked || Prop.ReadOnly )
                     {
                         TabObj[PropId]["isreadonly"] = "true";
                     }

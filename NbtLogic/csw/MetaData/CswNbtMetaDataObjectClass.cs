@@ -109,6 +109,11 @@ namespace ChemSW.Nbt.MetaData
             get { return _ObjectClassRow["iconfilename"].ToString(); }
         }
 
+		public Int32 Quota
+		{
+			get { return CswConvert.ToInt32( _ObjectClassRow["quota"] ); }
+		}
+
 		public ICollection NodeTypes
 		{
 			get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes( ObjectClassId ); }

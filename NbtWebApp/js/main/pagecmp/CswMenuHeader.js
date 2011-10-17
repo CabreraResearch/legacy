@@ -8,6 +8,7 @@
 		var o = {
 			Url: '/NbtWebApp/wsNBT.asmx/getHeaderMenu',
 			onLogout: function() { },
+			onQuotas: function () { },
 			onSuccess: function() { }
 		};
 
@@ -33,7 +34,8 @@
 			                var $li = HandleMenuItem({ $ul: $ul, 
 			                                            itemKey: menuItem,
 			                                            itemJson: thisItem, 
-			                                            onLogout: o.onLogout });
+			                                            onLogout: o.onLogout,
+														onQuotas: o.onQuotas });
 
 			                if (isTrue(thisItem.haschildren)) {
 			                    delete thisItem.haschildren;
@@ -45,7 +47,8 @@
 			                            HandleMenuItem({ $ul: $subul, 
 			                                             itemKey: childItem,
 			                                             itemJson: thisChild, 
-			                                             onLogout: o.onLogout });
+			                                             onLogout: o.onLogout,
+														 onQuotas: o.onQuotas });
 			                        }
 			                    }
 			                }

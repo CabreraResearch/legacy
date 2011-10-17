@@ -94,10 +94,15 @@
                         .hover(function () { $(this).CswAttrDom('title', getExpireTime()); });
                     $('#header_dashboard').CswDashboard();
 
+					$('#header_quota').CswQuotaImage();
+
                     $('#header_menu').CswMenuHeader({
                         'onLogout': function () {
                             Logout();
-                        } // onLogout
+                            },
+							'onQuotas': function () {
+								_handleAction({ 'actionname': 'Quotas' });
+							}
                     }); // CswMenuHeader
 
                     $('#ViewSelectDiv').CswViewSelect({
@@ -348,7 +353,7 @@
                         }
                     });
                 },
-                'onSaveView': function (newviewid) {
+                    'onSaveView': function (newviewid) {
                     handleItemSelect({ 'viewid': newviewid, 'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode) });
                 },
                 'Multi': multi,
@@ -860,9 +865,16 @@
                 //				break;     
                 case 'OOC_Inspections':
 
-                    _setupOOCInspections();
+                   	_setupOOCInspections();
 
-                    break;
+                   	break;
+
+                case 'Quotas':
+
+                	clear({ 'all': true });
+                	$('#CenterTopDiv').CswQuotas();
+
+                   	break;
 
 
                 //			case 'Load_Mobile_Data':     
@@ -873,6 +885,7 @@
                 //				break;     
                 //			case 'View_By_Location':     
                 //				break;     
+
                 default:
                     if (!isNullOrEmpty(o.actionurl)) {
                         window.location = o.actionurl;
