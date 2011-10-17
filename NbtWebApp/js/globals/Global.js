@@ -436,10 +436,14 @@ function Logout(options)
     });
 } // logout
 
-function _finishLogout()
-{
-    $.CswCookie('clearAll');
-    window.location = homeUrl;
+function _finishLogout() {
+	var logoutpath = $.CswCookie('get', CswCookieName.LogoutPath);
+	$.CswCookie('clearAll');
+	if (false === isNullOrEmpty(logoutpath)) {
+		window.location = logoutpath;
+	} else {
+		window.location = homeUrl;
+	}
 }
 
 

@@ -15,6 +15,12 @@ namespace ChemSW.Nbt.WebPages
 			string password = Request.Form["password"];
 			string accessid = Request.Form["accessid"];
 
+			string logoutpath = string.Empty;
+			if( false == String.IsNullOrEmpty( Request.Form["logoutpath"] ) )
+			{
+				logoutpath = Request.Form["logoutpath"];
+			}
+
 			if( false == String.IsNullOrEmpty( username ) &&
 				false == String.IsNullOrEmpty( password ) &&
 				false == String.IsNullOrEmpty( accessid ) )
@@ -28,7 +34,8 @@ namespace ChemSW.Nbt.WebPages
 									Password: '" + password + @"',
 									ForMobile: false,
 									onAuthenticate: function() { window.location = 'Main.html'; },
-									onFail: function() { window.location = 'Main.html'; }
+									onFail: function() { window.location = 'Main.html'; },
+									LogoutPath: '"+ logoutpath + @"'
 								});
 							});";
 				JSPlaceHolder.Controls.Add( JSLiteral );

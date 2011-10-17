@@ -122,7 +122,8 @@
 			Password: '',
 			ForMobile: false,
 			onAuthenticate: null, // function(UserName) {} 
-			onFail: null // function(errormessage) {} 
+			onFail: null, // function(errormessage) {} 
+			LogoutPath: ''
 		};
 		if(options) $.extend(o, options);
 		_handleLogin(o);				
@@ -135,7 +136,8 @@
 			Password: '',
 			ForMobile: false,
 			onAuthenticate: null, // function(UserName) {} 
-			onFail: null // function(errormessage) {} 
+			onFail: null, // function(errormessage) {} 
+			LogoutPath: ''
 		};
 		if(loginopts) $.extend(l, loginopts);
 		CswAjaxJson({
@@ -148,6 +150,7 @@
 						},
 					success: function (data) {
 							$.CswCookie('set', CswCookieName.Username, l.UserName);
+							$.CswCookie('set', CswCookieName.LogoutPath, l.LogoutPath);
 							if(isFunction(l.onAuthenticate)) {
 								l.onAuthenticate(l.UserName);
 							}

@@ -14,15 +14,17 @@
 			<script language="javascript">
 				<asp:PlaceHolder ID="JSPlaceHolder" runat="server"></asp:PlaceHolder>
 			</script>
-
-			<!--
+			
+<%--
+			<br /><br />
 			<form action="" method="post">
-			AccessId: <input type="text" name="accessid" id="accessid" /><br/>
-			Username: <input type="text" name="username" id="username" /><br/>
-			Password: <input type="text" name="password" id="password" /><br/>
+			AccessId: <input type="text" name="accessid" id="accessid" value="1" /><br/>
+			Username: <input type="text" name="username" id="username" value="admin" /><br/>
+			Password: <input type="text" name="password" id="password" value="admin" /><br/>
+			LogoutPath: <input type="text" name="logoutpath" id="logoutpath" value="http://www.cnn.com" /><br/>
 			<input type="submit" />
 			</form>
-			-->
+--%>
 
 		</div>
 		</form>
