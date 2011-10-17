@@ -130,11 +130,11 @@ namespace ChemSW.Nbt.Schema
             //Case 23888
             foreach( CswNbtView ElView in _CswNbtSchemaModTrnsctn.restoreViews( "Equipment List" ) )
             {
-                ElView.Root.ChildRelationships.Clear();
                 CswNbtMetaDataNodeType EquipmentNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment" );
                 CswNbtMetaDataNodeType TypeNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment Type" );
                 if( null != EquipmentNt && null != TypeNt )
                 {
+                    ElView.Root.ChildRelationships.Clear();
                     CswNbtMetaDataNodeTypeProp EidNtp = EquipmentNt.BarcodeProperty;
                     CswNbtMetaDataNodeTypeProp DescriptionNtp = EquipmentNt.getNodeTypeProp( "Description" );
                     CswNbtMetaDataNodeTypeProp LocationNtp = EquipmentNt.getNodeTypeProp( "Location" );
@@ -181,38 +181,9 @@ namespace ChemSW.Nbt.Schema
                     CswNbtViewProperty Pp = ElView.AddViewProperty( TypeRel, PartsNtp );
                     Pp.Order = 7;
                     ElView.AddViewPropertyFilter( Pp, PartsNtp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+
+                    ElView.save();
                 }
-                else
-                {
-                    CswNbtMetaDataObjectClass EquipmentOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
-                    CswNbtMetaDataObjectClass TypeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentTypeClass );
-
-                    CswNbtMetaDataObjectClassProp AssemblyOcp = EquipmentOc.getObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
-                    CswNbtMetaDataObjectClassProp StatusOcp = EquipmentOc.getObjectClassProp( CswNbtObjClassEquipment.StatusPropertyName );
-                    CswNbtMetaDataObjectClassProp TypeOcp = EquipmentOc.getObjectClassProp( CswNbtObjClassEquipment.TypePropertyName );
-                    CswNbtMetaDataObjectClassProp PartsOcp = TypeOc.getObjectClassProp( CswNbtObjClassEquipmentType.PartsPropertyName );
-
-                    CswNbtViewRelationship EquipRel = ElView.AddViewRelationship( EquipmentOc, false );
-                    CswNbtViewRelationship TypeRel = ElView.AddViewRelationship( EquipRel, CswNbtViewRelationship.PropOwnerType.First, TypeOcp, false );
-
-                    CswNbtViewProperty Ap = ElView.AddViewProperty( EquipRel, AssemblyOcp );
-                    Ap.Order = 1;
-                    ElView.AddViewPropertyFilter( Ap, AssemblyOcp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
-
-                    CswNbtViewProperty Sp = ElView.AddViewProperty( EquipRel, StatusOcp );
-                    Sp.Order = 2;
-                    ElView.AddViewPropertyFilter( Sp, StatusOcp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
-
-                    CswNbtViewProperty Tp = ElView.AddViewProperty( EquipRel, TypeOcp );
-                    Tp.Order = 3;
-                    ElView.AddViewPropertyFilter( Tp, TypeOcp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
-
-                    CswNbtViewProperty Pp = ElView.AddViewProperty( TypeRel, PartsOcp );
-                    Pp.Order = 4;
-                    ElView.AddViewPropertyFilter( Pp, PartsOcp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
-
-                }
-                ElView.save();
             }
 
 
