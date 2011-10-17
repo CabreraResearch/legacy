@@ -22,29 +22,13 @@ namespace ChemSW.Nbt.WebPages
 				Literal JSLiteral = new Literal();
 				JSLiteral.Text = @"
 							$(document).ready(function () {
-								var dataJson = {
+								$.CswLogin({
 									AccessId: '" + accessid + @"', 
 									UserName: '" + username + @"', 
 									Password: '" + password + @"',
-									ForMobile: false
-								};
-
-								CswAjaxJson({
-											url: '/NbtWebApp/wsNBT.asmx/authenticate',
-											data: dataJson,
-											success: function (data) 
-												{
-													$.CswCookie('set', CswCookieName.Username, dataJson.UserName);
-													window.location = 'Main.html';
-												},
-											onloginfail: function(txt) 
-												{
-													window.location = 'Main.html';
-												},
-											error: function() 
-												{
-													window.location = 'Main.html';
-												}
+									ForMobile: false,
+									onAuthenticate: function() { window.location = 'Main.html'; },
+									onFail: function() { window.location = 'Main.html'; }
 								});
 							});";
 				JSPlaceHolder.Controls.Add( JSLiteral );
