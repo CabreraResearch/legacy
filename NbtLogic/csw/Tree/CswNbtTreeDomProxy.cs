@@ -1,15 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections;
-using System.Text;
+using System.Collections.ObjectModel;
 using System.Data;
-using System.Xml;
 using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
-using ChemSW.Config;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
@@ -76,8 +72,8 @@ namespace ChemSW.Nbt
         {
             get
             {
-				//return _CswNbtResources.ViewSelect.getSessionView( _Key.SessionViewId ).ViewName;
-				return View.ViewName;
+                //return _CswNbtResources.ViewSelect.getSessionView( _Key.SessionViewId ).ViewName;
+                return View.ViewName;
             }
         }
 
@@ -91,10 +87,10 @@ namespace ChemSW.Nbt
         /// <param name="CswNbtNodeWriter">A CswNbtNodeWriter object</param>
         /// <param name="CswNbtNodeCollection">A reference to the CswNbtNodeCollection</param>
         public CswNbtTreeDomProxy( //CswNbtTreeKey CswNbtTreeKey, 
-								   CswNbtView View, CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, CswNbtNodeCollection CswNbtNodeCollection, bool IsFullyPopulated )
+                                   CswNbtView View, CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, CswNbtNodeCollection CswNbtNodeCollection, bool IsFullyPopulated )
         {
-			_View = View;
-			_Key = new CswNbtTreeKey( _CswNbtResources, _View );
+            _View = View;
+            _Key = new CswNbtTreeKey( _CswNbtResources, _View );
             //            CswNbtResources.CswLogger.reportTraceInfo( "CswNbtTreeDomProxy", "ctor", "entered" );
 
             _CswNbtNodeReader = new CswNbtNodeReader( CswNbtResources );
@@ -121,26 +117,26 @@ namespace ChemSW.Nbt
             _CswNbtNodeCollection = CswNbtNodeCollection;
             //_CswNbtNodes.PathBasedNodes[_Key] = new CswNbtPathBasedNodes(_Key, _CswNbtTreeNodes);
 
-			_IsFullyPopulated = IsFullyPopulated;
+            _IsFullyPopulated = IsFullyPopulated;
         }//ctor
 
-		private bool _IsFullyPopulated = false;
-		public bool IsFullyPopulated
-		{
-			get
-			{
-				return _IsFullyPopulated;
-			}
-		}
+        private bool _IsFullyPopulated = false;
+        public bool IsFullyPopulated
+        {
+            get
+            {
+                return _IsFullyPopulated;
+            }
+        }
 
-		private CswNbtTreeKey _Key = null;
-		/// <summary>
-		/// TreeKey which is used to index this tree.
-		/// </summary>
-		public CswNbtTreeKey Key
-		{
-			get { return ( _Key ); }
-		}
+        private CswNbtTreeKey _Key = null;
+        /// <summary>
+        /// TreeKey which is used to index this tree.
+        /// </summary>
+        public CswNbtTreeKey Key
+        {
+            get { return ( _Key ); }
+        }
 
         private CswNbtView _View = null;
         /// <summary>
@@ -194,22 +190,22 @@ namespace ChemSW.Nbt
         }//finalize()
          */
 
-		//private NbtAuditLevel _NbtAuditLevel = NbtAuditLevel.None;
-		///// <summary>
-		///// Audit Level for tree
-		///// </summary>
-		//public NbtAuditLevel NbtAuditLevel
-		//{
-		//    set
-		//    {
-		//        _NbtAuditLevel = value;
-		//    }//
+        //private NbtAuditLevel _NbtAuditLevel = NbtAuditLevel.None;
+        ///// <summary>
+        ///// Audit Level for tree
+        ///// </summary>
+        //public NbtAuditLevel NbtAuditLevel
+        //{
+        //    set
+        //    {
+        //        _NbtAuditLevel = value;
+        //    }//
 
-		//    get
-		//    {
-		//        return ( _NbtAuditLevel );
-		//    }//
-		//}//NbtAuditLevel
+        //    get
+        //    {
+        //        return ( _NbtAuditLevel );
+        //    }//
+        //}//NbtAuditLevel
 
         private string _SourceViewXml = "";
         /// <summary>
@@ -752,9 +748,9 @@ namespace ChemSW.Nbt
         /// <param name="Name">Name of Property</param>
         /// <param name="Gestalt">Text representation of the value of the property</param>
         /// <param name="FieldType">FieldType of the property</param>
-		public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType )
+        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType )
         {
-			_CswNbtTreeNodes.addProperty( NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType );
+            _CswNbtTreeNodes.addProperty( NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType );
         }//addProperty
 
 

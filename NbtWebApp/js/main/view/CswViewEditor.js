@@ -841,7 +841,7 @@
             var $root = makeViewRootHtml(stepno, viewJson, types)
                             .appendTo($ret);
 
-            return { html: xmlToString($ret), types: types };
+            return { html: $ret.html(), types: types };
         }
         
         function makeViewRootHtml(stepno, itemJson, types) {

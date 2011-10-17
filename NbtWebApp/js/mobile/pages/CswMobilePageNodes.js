@@ -134,7 +134,7 @@ function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
                             DivId: nodeId,
                             viewId: viewId,
                             nodeId: mobileStorage.currentNodeId(nodeId),
-                            level: 2,
+                            level: pageDef.level + 1,
                             title: node.nodeName,
                             onHelpClick: pageDef.onHelpClick,
                             onOnlineClick: pageDef.onOnlineClick,
@@ -149,8 +149,8 @@ function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
                         } else {
                             listView.addListItem(nodeId, node.nodeName, null, { icon: node.icon });
                         }
+                        nodeCount += 1;
                     }
-                    nodeCount += 1;
                 }
             }
             if (nodeCount === 0) {

@@ -182,19 +182,21 @@ namespace ChemSW.Nbt.WebServices
                 string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
                 string ThisNodeId = "";
                 string ThisNodeRel = "";
+				bool ThisNodeLocked = false;
 
                 switch( ThisNodeKey.NodeSpecies )
                 {
-                    case NodeSpecies.More:
-                    case NodeSpecies.Plain:
-                        {
-                            CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
-                            ThisNodeId = IdPrefix + ThisNode.NodeId.ToString();
-                            ThisNodeName = ThisNode.NodeName;
-                            ThisNodeIcon = ThisNode.IconFileName;
-                            ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
-                        }
-                        break;
+					case NodeSpecies.More:
+					case NodeSpecies.Plain:
+						{
+							CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
+							ThisNodeId = IdPrefix + ThisNode.NodeId.ToString();
+							ThisNodeName = ThisNode.NodeName;
+							ThisNodeIcon = ThisNode.IconFileName;
+							ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
+							ThisNodeLocked = ThisNode.Locked;
+						}
+						break;
                     case NodeSpecies.Group:
                         ThisNodeRel = "group";
                         break;
@@ -215,8 +217,8 @@ namespace ChemSW.Nbt.WebServices
                 ThisNodeObj["attr"]["rel"] = ThisNodeRel;
                 ThisNodeObj["attr"]["state"] = ThisNodeState;
                 ThisNodeObj["attr"]["species"] = ThisNodeKey.NodeSpecies.ToString();
-                ThisNodeObj["attr"]["cswnbtnodekey"] = ThisNodeKeyString;
-
+				ThisNodeObj["attr"]["cswnbtnodekey"] = ThisNodeKeyString;
+				ThisNodeObj["attr"]["locked"] = ThisNodeLocked.ToString().ToLower();
 
                 if( "leaf" != ThisNodeState && Tree.getChildNodeCount() > 0 )
                 {

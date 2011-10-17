@@ -204,6 +204,12 @@ namespace ChemSW.Nbt.ObjClasses
 			set { _ReadOnly = value; }
 		}
 
+		private bool _Locked = false;
+		public bool Locked
+		{
+			get { return _Locked; }
+			set { _Locked = value; }
+		}
 
         //bz # 5943
         //private bool _Modified = false;

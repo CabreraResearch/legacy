@@ -69,8 +69,10 @@ function checkExpireTime()
 function setCurrentView(viewid, viewmode)
 {
     clearCurrent();
-    $.CswCookie('set', CswCookieName.CurrentViewId, viewid);
-    $.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
+    if (false === isNullOrEmpty(viewid) && false === isNullOrEmpty(viewmode)) {
+        $.CswCookie('set', CswCookieName.CurrentViewId, viewid);
+        $.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
+    }
 }
 
 function setCurrentAction(actionname, actionurl)
@@ -441,92 +443,11 @@ function _finishLogout()
 }
 
 
-//function extractCDataValue($node) {
-//    // default
-//    ret = $node.text();
-
-//    // for some reason, CDATA fields come through from the webservice like this:
-//    // <node><!--[CDATA[some text]]--></node>
-//    var cdataval = $node.html();
-//    if (cdataval != undefined && cdataval != '') {
-//        var prefix = '<!--[CDATA[';
-//        var suffix = ']]-->';
-
-//        if (cdataval.substr(0, prefix.length) == prefix) {
-//            ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
-//        }
-//    }
-//    return ret;
-//}
-
-function xmlToString($xmlnode)
-{ /// <param name="$" type="jQuery" />
-    var xmlstring = '';
-    if (!($xmlnode instanceof jQuery))
-    {
-        $xmlnode = $($xmlnode);
-    }
-    if (!isNullOrEmpty($xmlnode))
-    {
-        xmlstring = $xmlnode.get(0).xml; // IE
-        if (!xmlstring)
-        {            // FF, Chrome, Safari
-            var s = new XMLSerializer();
-            xmlstring = s.serializeToString($xmlnode.get(0));
-        }
-        if (!xmlstring)
-        {
-            $.error("Browser does not support XML operations necessary to convert to string");
-        }
-    }
-    return xmlstring;
-}
-
 function jsonToString(j)
 {
-    /// <summary>
-    ///   Thin wrapper around JSON.stringify()
-    /// </summary>
-    /// <param name="j" type="Object">A JSON Object</param>
-    /// <returns type="String" />
-    //    if(typeof j === "object")
-    //	{
-    //		var ret = "{";
-    //	 	var first = true;
-    //		for (var property in j)
-    //		{
-    //			if (j.hasOwnProperty(property))
-    //			{
-    //				if (!first)
-    //					ret += ",";
-    //				ret += " '" + property + "': ";
-    //				ret += jsonToString(j[property]);
-    //				first = false;
-    //			}
-    //		}
-    //		ret += "}";
-    //	} 
-    //	else
-    //	{
-    //		ret = "'" + safeJsonParam(j) + "'";
-    //	}
     return JSON.stringify(j);
 } // jsonToString
 
-//function safeJsonParam(obj) {
-//    /// <summary>
-//    ///   Converts an object toString and returns a regex parsed, safe-for-JSON string
-//    /// </summary>
-//    /// <param name="options" type="Object">A JavaScript Object representing a string to parse</param>
-//    /// <returns type="String" />
-//    var ret = '';
-//    if (obj !== undefined)
-//    {
-//        var str = obj.toString();
-//        ret = str.replace(/'/g, "\\'");
-//    }
-//	return ret;
-//}
 //#endregion Ajax
 
 //#region Check Changes
@@ -852,6 +773,7 @@ function HandleMenuItem(options)
         onMultiEdit: null, //function () { },
         onEditView: null, //function (viewid) { },
         onSaveView: null, //function (newviewid) { },
+		onQuotas: null, // function () { },
         Multi: false,
         NodeCheckTreeId: ''
     };
@@ -993,7 +915,11 @@ function HandleMenuItem(options)
                     return false;
                 });
                 break;
-
+            case 'Quotas':
+               	$a.click(function () {
+               		o.onQuotas();
+               	});
+               	break;
         }
     }
     else

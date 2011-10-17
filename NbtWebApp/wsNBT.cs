@@ -149,45 +149,6 @@ namespace ChemSW.Nbt.WebServices
             Detail = newEx.MsgEscoteric + "; " + ex.StackTrace;
         } // _error()
 
-
-
-        /*
-         * The two _xAddAuthenticationStatus() methods must _not_ add the authentication status as a element. 
-         * I tried that, and it turned out that in the JQuery world the code that displays an xml tree
-         * ends up seeing the authentication node even if it is a peer of the tree and not in the tree. 
-         * Please trust me: we're talking major whackadelia. But it works fine as an attribute. 
-         */
-        //private void _xAddAuthenticationStatus( XElement XElement, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
-        //{
-        //    if( XElement != null )
-        //    {
-        //        XElement.SetAttributeValue( "authenticationstatus", AuthenticationStatusIn.ToString() );
-        //        if( _CswSessionResources != null &&
-        //            _CswSessionResources.CswSessionManager != null &&
-        //            !ForMobile )
-        //        {
-        //            XElement.SetAttributeValue( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
-        //        }
-        //    }
-        //}//_xAuthenticationStatus()
-
-
-        //private void _xAddAuthenticationStatus( XmlDocument XmlDocument, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
-        //{
-        //    if( XmlDocument != null )
-        //    {
-        //        if( XmlDocument.DocumentElement == null )
-        //            CswXmlDocument.SetDocumentElement( XmlDocument, "root" );
-        //        CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "authenticationstatus", AuthenticationStatusIn.ToString() );
-        //        if( _CswSessionResources != null &&
-        //            _CswSessionResources.CswSessionManager != null &&
-        //            !ForMobile )
-        //        {
-        //            CswXmlDocument.AppendXmlAttribute( XmlDocument.DocumentElement, "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() );
-        //        }
-        //    }
-        //}//_xAuthenticationStatus()
-
         private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
         {
             if( JObj != null )
@@ -201,46 +162,6 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
         }//_jAuthenticationStatus()
-
-
-
-        ///// <summary>
-        ///// Returns error as XmlDocument
-        ///// </summary>
-        //private XmlDocument xmlError( Exception ex )
-        //{
-        //    string Message = string.Empty;
-        //    string Detail = string.Empty;
-        //    ErrorType Type = ErrorType.Error;
-        //    bool Display = true;
-        //    _error( ex, out Type, out Message, out Detail, out Display );
-
-        //    XmlDocument ErrorXmlDoc = new XmlDocument();
-        //    CswXmlDocument.SetDocumentElement( ErrorXmlDoc, "error" );
-        //    CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "display", Display.ToString().ToLower() );
-        //    CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "type", Type.ToString() );
-        //    CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "message", Message );
-        //    CswXmlDocument.AppendXmlAttribute( ErrorXmlDoc.DocumentElement, "detail", Detail );
-        //    return ErrorXmlDoc;
-        //}
-
-        ///// <summary>
-        ///// Returns error as XElement
-        ///// </summary>
-        //private XElement _xError( Exception ex )
-        //{
-        //    string Message = string.Empty;
-        //    string Detail = string.Empty;
-        //    ErrorType Type = ErrorType.Error;
-        //    bool Display = true;
-        //    _error( ex, out Type, out Message, out Detail, out Display );
-
-        //    return new XElement( "error",
-        //        new XAttribute( "display", Display.ToString().ToLower() ),
-        //        new XAttribute( "type", Type.ToString() ),
-        //        new XAttribute( "message", Message ),
-        //        new XAttribute( "detail", Detail ) );
-        //}
 
         /// <summary>
         /// Returns error as JProperty
@@ -2835,9 +2756,131 @@ namespace ChemSW.Nbt.WebServices
         } // RunView()
         #endregion test
 
-        #endregion Web Methods
+		#region Quotas
 
-        private CswNbtView _getView( string ViewId )
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getQuotas()
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+					ReturnVal = ws.GetQuotas();
+				}
+
+				_deInitResources();
+			}
+
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+		} // getQuotas()
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string saveQuotas( string Quotas )
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+					ReturnVal["result"] = ws.SaveQuotas( Quotas ).ToString().ToLower();
+				}
+
+				_deInitResources();
+			}
+
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+		} // saveQuotas()
+
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getQuotaPercent()
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+					ReturnVal["result"] = Math.Round( ws.GetQuotaPercent() ).ToString();
+				}
+
+				_deInitResources();
+			}
+
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+		} // getQuotaPercent()
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string checkQuota( string NodeTypeId )
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+					ReturnVal["result"] = ws.CheckQuota( CswConvert.ToInt32( NodeTypeId ) ).ToString().ToLower();
+				}
+
+				_deInitResources();
+			}
+
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+		} // getQuotaPercent()
+
+
+		#endregion Quotas
+
+		#endregion Web Methods
+
+		private CswNbtView _getView( string ViewId )
         {
             CswNbtView View = null;
             if( CswNbtViewId.isViewIdString( ViewId ) )

@@ -56,7 +56,7 @@
                     
 <script type="text/javascript">
 
-    (function(undefined) {
+    (function (undefined) {
         "use strict";
         debugOn(debug);
 
@@ -89,42 +89,47 @@
             //if (debugOn()) log('Main.initAll()');
 
             $('#CenterBottomDiv').CswLogin('login', {
-                'onAuthenticate': function(u) {
+                'onAuthenticate': function (u) {
                     $('#header_username').text(u)
-                        .hover(function() { $(this).CswAttrDom('title', getExpireTime()); });
+                        .hover(function () { $(this).CswAttrDom('title', getExpireTime()); });
                     $('#header_dashboard').CswDashboard();
 
+					$('#header_quota').CswQuotaImage();
+
                     $('#header_menu').CswMenuHeader({
-                            'onLogout': function() {
-                                Logout();
-                            } // onLogout
-                        }); // CswMenuHeader
+                        'onLogout': function () {
+                            Logout();
+                            },
+							'onQuotas': function () {
+								_handleAction({ 'actionname': 'Quotas' });
+							}
+                    }); // CswMenuHeader
 
                     $('#ViewSelectDiv').CswViewSelect({
-                            'ID': 'mainviewselect',
-                            'onSelect': handleItemSelect
-                        }); // CswViewSelect
+                        'ID': 'mainviewselect',
+                        'onSelect': handleItemSelect
+                    }); // CswViewSelect
 
                     var current = getCurrent();
                     if (false === isNullOrEmpty(current.viewid)) {
                         handleItemSelect({
-                                'type': 'view',
-                                'viewid': current.viewid,
-                                'viewmode': current.viewmode
-                            });
+                            'type': 'view',
+                            'viewid': current.viewid,
+                            'viewmode': current.viewmode
+                        });
                     }
                     else if (false === isNullOrEmpty(current.actionname)) {
                         handleItemSelect({
-                                'type': 'action',
-                                'actionname': current.actionname,
-                                'actionurl': current.actionurl
-                            });
+                            'type': 'action',
+                            'actionname': current.actionname,
+                            'actionurl': current.actionurl
+                        });
                     }
                     else if (false === isNullOrEmpty(current.reportid)) {
                         handleItemSelect({
-                                'type': 'report',
-                                'reportid': current.reportid
-                            });
+                            'type': 'report',
+                            'reportid': current.reportid
+                        });
                     }
                     else {
                         refreshWelcome();
@@ -138,9 +143,9 @@
             $('#QuickLaunch').empty();
 
             $('#QuickLaunch').CswQuickLaunch({
-                    'onViewClick': function(viewid, viewmode) { handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode }); },
-                    'onActionClick': function(actionname, actionurl) { handleItemSelect({ 'type': 'action', 'actionname': actionname, 'actionurl': actionurl }); }
-                }); // CswQuickLaunch
+                'onViewClick': function (viewid, viewmode) { handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode }); },
+                'onActionClick': function (actionname, actionurl) { handleItemSelect({ 'type': 'action', 'actionname': actionname, 'actionurl': actionurl }); }
+            }); // CswQuickLaunch
         }
 
 
@@ -181,16 +186,16 @@
 
             $('#CenterBottomDiv').CswWelcome('initTable', {
                 'onLinkClick': handleItemSelect,
-                'onSearchClick': function(view) {
+                'onSearchClick': function (view) {
                     var viewid = view.viewid;
                     var viewmode = view.viewmode;
                     handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode, 'linktype': 'search' });
                     refreshSearchPanel({ 'viewid': viewid, 'searchType': 'view' });
                 },
-                'onAddClick': function(nodetypeid) {
+                'onAddClick': function (nodetypeid) {
                     $.CswDialog('AddNodeDialog', {
                         'nodetypeid': nodetypeid,
-                        'onAddNode': function(nodeid, cswnbtnodekey) {
+                        'onAddNode': function (nodeid, cswnbtnodekey) {
                             clear({ all: true });
                             refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
                         }
@@ -261,9 +266,9 @@
                     switch (type) {
                         case 'action':
                             _handleAction({
-                                    'actionname': o.actionname,
-                                    'actionurl': o.actionurl
-                                });
+                                'actionname': o.actionname,
+                                'actionurl': o.actionurl
+                            });
                             break;
                         case 'report':
                             window.location = "Report.aspx?reportid=" + o.reportid;
@@ -293,66 +298,67 @@
             }
 
             $('#MainMenuDiv').CswMenuMain({
-                    'viewid': o.viewid,
-                    'nodeid': o.nodeid,
-                    'cswnbtnodekey': o.cswnbtnodekey,
-                    'onAddNode': function(nodeid, cswnbtnodekey) {
-                        refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
-                    },
-                    'onMultiEdit': function() {
-                        multi = (false === o.grid.isMulti());
-                        switch (o.viewmode) {
-                            case CswViewMode.grid.name:
-                                var g = {
-                                    gridOpts: {
-                                        //reinit: true,
-                                        multiselect: multi
-                                    }
-                                };
-                                o.grid.changeGridOpts(g);
-                                break;
-                            default:
-                                refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
-                                break;
-                        }
-                    },
-                    'onSearch':
+                'viewid': o.viewid,
+                'nodeid': o.nodeid,
+                'cswnbtnodekey': o.cswnbtnodekey,
+                'onAddNode': function (nodeid, cswnbtnodekey) {
+                    refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+                },
+                'onMultiEdit': function () {
+                    switch (o.viewmode) {
+                        case CswViewMode.grid.name:
+                            multi = (false === o.grid.isMulti());
+                            var g = {
+                                gridOpts: {
+                                    //reinit: true,
+                                    multiselect: multi
+                                }
+                            };
+                            o.grid.changeGridOpts(g);
+                            break;
+                        default:
+                            multi = (false === multi);
+                            refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
+                            break;
+                    }
+                },
+                'onSearch':
                         {
-                            'onViewSearch': function() {
+                            'onViewSearch': function () {
                                 var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
                                 var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
                                 var $searchForm = refreshSearchPanel({ 'genericSearchId': genericSearchId,
-                                        'viewSearchId': viewSearchId,
-                                        'searchType': 'view',
-                                        'cswnbtnodekey': o.cswnbtnodekey,
-                                        'viewid': o.viewid
-                                    });
+                                    'viewSearchId': viewSearchId,
+                                    'searchType': 'view',
+                                    'cswnbtnodekey': o.cswnbtnodekey,
+                                    'viewid': o.viewid
+                                });
                             },
-                            'onGenericSearch': function() {
+                            'onGenericSearch': function () {
                                 var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
                                 var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
                                 var $searchForm = refreshSearchPanel({ 'genericSearchId': genericSearchId,
-                                        'viewSearchId': viewSearchId,
-                                        'searchType': 'generic',
-                                        'cswnbtnodekey': o.cswnbtnodekey
-                                    });
+                                    'viewSearchId': viewSearchId,
+                                    'searchType': 'generic',
+                                    'cswnbtnodekey': o.cswnbtnodekey
+                                });
                             }
                         },
-                    'onEditView': function(viewid) {
-                        _handleAction({
-                                'actionname': 'Edit_View',
-                                'ActionOptions': {
-                                    'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
-                                    'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode)
-                                }
-                            });
-                    },
-                    'onSaveView': function(newviewid) {
-                        handleItemSelect({ 'viewid': newviewid, 'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode) });
-                    },
-                    'Multi': multi,
-                    'NodeCheckTreeId': MainTreeId
-                });
+                'onEditView': function (viewid) {
+                    _handleAction({
+                        'actionname': 'Edit_View',
+                        'ActionOptions': {
+                            'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
+                            'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode)
+                        }
+                    });
+                },
+                    'onSaveView': function (newviewid) {
+                    handleItemSelect({ 'viewid': newviewid, 'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode) });
+                },
+                'Multi': multi,
+                'NodeCheckTreeId': MainTreeId
+            });
         }
 
         function refreshSearchPanel(options) {
@@ -396,27 +402,27 @@
                 nodetypeid: '',
                 cswnbtnodekey: '',
                 ID: ''
-            }
+            };
             if (options) $.extend(o, options);
 
             clear({ centertop: true });
 
-            var onSearchSubmit = function(searchviewid, searchviewmode) {
+            var onSearchSubmit = function (searchviewid, searchviewmode) {
                 clear({ right: true, centerbottom: true });
                 var viewMode = searchviewmode;
                 if (viewMode === 'list') viewMode = 'tree';
                 setCurrentView(searchviewid, viewMode);
 
                 refreshSelected({
-                        viewmode: viewMode,
-                        viewid: searchviewid,
-                        forsearch: true,
-                        showempty: false,
-                        cswnbtnodekey: '', //do not want a view of only this node
-                        nodeid: ''
-                    });
+                    viewmode: viewMode,
+                    viewid: searchviewid,
+                    forsearch: true,
+                    showempty: false,
+                    cswnbtnodekey: '', //do not want a view of only this node
+                    nodeid: ''
+                });
             };
-            var onClearSubmit = function(parentviewid, parentviewmode) {
+            var onClearSubmit = function (parentviewid, parentviewmode) {
                 clear({ centertop: true }); //clear Search first
 
                 var viewid;
@@ -440,27 +446,27 @@
                     setCurrentView(viewid, viewmode);
 
                     refreshSelected({
-                            viewmode: viewmode,
-                            viewid: viewid,
-                            forsearch: true,
-                            showempty: false,
-                            cswnbtnodekey: '', //do not want a view of only this node
-                            nodeid: ''
-                        });
+                        viewmode: viewmode,
+                        viewid: viewid,
+                        forsearch: true,
+                        showempty: false,
+                        cswnbtnodekey: '', //do not want a view of only this node
+                        nodeid: ''
+                    });
                 }
-            }
+            };
             var onSearchClose = function() {
                 clear({ centertop: true });
-            }
+            };
             var $search = $('#CenterTopDiv').CswSearch({
-                    'parentviewid': o.viewid,
-                    'cswnbtnodekey': o.cswnbtnodekey,
-                    'nodetypeid': o.nodetypeid,
-                    'ID': o.ID,
-                    'onSearchSubmit': onSearchSubmit,
-                    'onClearSubmit': onClearSubmit,
-                    'onSearchClose': onSearchClose
-                });
+                'parentviewid': o.viewid,
+                'cswnbtnodekey': o.cswnbtnodekey,
+                'nodetypeid': o.nodetypeid,
+                'ID': o.ID,
+                'onSearchSubmit': onSearchSubmit,
+                'onClearSubmit': onClearSubmit,
+                'onSearchClose': onSearchClose
+            });
             return $search;
         }
 
@@ -495,8 +501,8 @@
             //				$.extend(ocopy, x);
             //				getViewGrid(ocopy);
             //			};
-            o.onEditNode = function() { getViewGrid(o); };
-            o.onDeleteNode = function() { getViewGrid(o); };
+            o.onEditNode = function () { getViewGrid(o); };
+            o.onDeleteNode = function () { getViewGrid(o); };
 
             clear({ centerbottom: true });
 
@@ -509,13 +515,13 @@
                 //'onAddNode': o.onAddNode,
                 onEditNode: o.onEditNode,
                 onDeleteNode: o.onDeleteNode,
-                onSuccess: function(grid) {
+                onSuccess: function (grid) {
                     if (o.doMenuRefresh) refreshMainMenu({ viewid: o.viewid,
-                            viewmode: CswViewMode.grid.name,
-                            grid: grid,
-                            nodeid: o.nodeid,
-                            cswnbtnodekey: o.cswnbtnodekey
-                        });
+                        viewmode: CswViewMode.grid.name,
+                        grid: grid,
+                        nodeid: o.nodeid,
+                        cswnbtnodekey: o.cswnbtnodekey
+                    });
                 }
             });
         }
@@ -548,8 +554,8 @@
             //				$.extend(ocopy, x);
             //				getViewTable(ocopy);
             //			};
-            o.onEditNode = function() { getViewTable(o); };
-            o.onDeleteNode = function() { getViewTable(o); };
+            o.onEditNode = function () { getViewTable(o); };
+            o.onDeleteNode = function () { getViewTable(o); };
 
             clear({ centerbottom: true });
 
@@ -561,7 +567,7 @@
                 //'onAddNode': o.onAddNode,
                 onEditNode: o.onEditNode,
                 onDeleteNode: o.onDeleteNode,
-                onSuccess: function() {
+                onSuccess: function () {
                     //				refreshMainMenu({ viewid: o.viewid,
                     //					viewmode: CswViewMode.table.name,
                     //					nodeid: o.nodeid,
@@ -613,42 +619,42 @@
 
             clear({ right: true });
             $('#RightDiv').CswNodeTabs({
-                    ID: 'nodetabs',
-                    nodeids: [o.nodeid],
-                    nodekeys: [o.cswnbtnodekey],
-                    onSave: function(nodeid, nodekey) {
-                        unsetChanged();
-                        refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
-                    },
-                    tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
-                    onBeforeTabSelect: function(tabid) {
-                        return manuallyCheckChanges();
-                    },
-                    Refresh: function(nodeid, nodekey) {
-                        unsetChanged();
-                        refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
-                    },
-                    onTabSelect: function(tabid) {
-                        $.CswCookie('set', CswCookieName.CurrentTabId, tabid);
-                    },
-                    onPropertyChange: function(propid, propname) {
-                        //if(debug) log('Property Changed: propid = ' + propid + ', propname = ' + propname);
-                        setChanged();
-                    },
-                    onEditView: function(viewid) {
-                        _handleAction({
-                                'actionname': 'Edit_View',
-                                'ActionOptions': {
-                                    viewid: viewid,
-                                    viewmode: CswViewMode.grid.name,
-                                    startingStep: 2,
-                                    IgnoreReturn: true
-                                }
-                            });
-                    },
-                    ShowCheckboxes: multi,
-                    NodeCheckTreeId: MainTreeId
-                });
+                ID: 'nodetabs',
+                nodeids: [o.nodeid],
+                nodekeys: [o.cswnbtnodekey],
+                onSave: function (nodeid, nodekey) {
+                    unsetChanged();
+                    refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
+                },
+                tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
+                onBeforeTabSelect: function (tabid) {
+                    return manuallyCheckChanges();
+                },
+                Refresh: function (nodeid, nodekey) {
+                    unsetChanged();
+                    refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
+                },
+                onTabSelect: function (tabid) {
+                    $.CswCookie('set', CswCookieName.CurrentTabId, tabid);
+                },
+                onPropertyChange: function (propid, propname) {
+                    //if(debug) log('Property Changed: propid = ' + propid + ', propname = ' + propname);
+                    setChanged();
+                },
+                onEditView: function (viewid) {
+                    _handleAction({
+                        'actionname': 'Edit_View',
+                        'ActionOptions': {
+                            viewid: viewid,
+                            viewmode: CswViewMode.grid.name,
+                            startingStep: 2,
+                            IgnoreReturn: true
+                        }
+                    });
+                },
+                ShowCheckboxes: multi,
+                NodeCheckTreeId: MainTreeId
+            });
         }
 
         function refreshSelected(options) {
@@ -677,35 +683,35 @@
                     case 'grid':
                         {
                             getViewGrid({
-                                    'viewid': o.viewid,
-                                    'nodeid': o.nodeid,
-                                    'cswnbtnodekey': o.cswnbtnodekey,
-                                    'showempty': o.showempty,
-                                    'forsearch': o.forsearch
-                                });
+                                'viewid': o.viewid,
+                                'nodeid': o.nodeid,
+                                'cswnbtnodekey': o.cswnbtnodekey,
+                                'showempty': o.showempty,
+                                'forsearch': o.forsearch
+                            });
                             break;
                         }
                     case 'table':
                         {
                             getViewTable({
-                                    'viewid': o.viewid,
-                                    'nodeid': o.nodeid,
-                                    'cswnbtnodekey': o.cswnbtnodekey
-                                });
+                                'viewid': o.viewid,
+                                'nodeid': o.nodeid,
+                                'cswnbtnodekey': o.cswnbtnodekey
+                            });
                             break;
                         }
                     default: //tree
                         {
                             refreshNodesTree({
-                                    'nodeid': o.nodeid,
-                                    'cswnbtnodekey': o.cswnbtnodekey,
-                                    'nodename': o.nodename,
-                                    'viewid': o.viewid,
-                                    'viewmode': o.viewmode,
-                                    'showempty': o.showempty,
-                                    'forsearch': o.forsearch,
-                                    'IncludeNodeRequired': o.IncludeNodeRequired
-                                });
+                                'nodeid': o.nodeid,
+                                'cswnbtnodekey': o.cswnbtnodekey,
+                                'nodename': o.nodename,
+                                'viewid': o.viewid,
+                                'viewmode': o.viewmode,
+                                'showempty': o.showempty,
+                                'forsearch': o.forsearch,
+                                'IncludeNodeRequired': o.IncludeNodeRequired
+                            });
                             break;
                         }
                 } // switch
@@ -749,15 +755,15 @@
                 'showempty': getEmptyTree,
                 'forsearch': o.forsearch,
                 'IncludeNodeRequired': o.IncludeNodeRequired,
-                'onViewChange': function(newviewid, newviewmode) {
+                'onViewChange': function (newviewid, newviewmode) {
                     setCurrentView(newviewid, newviewmode);
                 },
-                'onSelectNode': function(optSelect) {
+                'onSelectNode': function (optSelect) {
                     onSelectTreeNode({
-                            'viewid': optSelect.viewid,
-                            'nodeid': optSelect.nodeid,
-                            'cswnbtnodekey': optSelect.cswnbtnodekey
-                        });
+                        'viewid': optSelect.viewid,
+                        'nodeid': optSelect.nodeid,
+                        'cswnbtnodekey': optSelect.cswnbtnodekey
+                    });
                 },
                 'ShowCheckboxes': multi
             }); // CswNodesTree
@@ -768,16 +774,16 @@
             var o = {
                 'actionname': '',
                 'actionurl': '',
-                'ActionOptions': { }
+                'ActionOptions': {}
             };
             if (options) $.extend(o, options);
 
             setCurrentAction(o.actionname, o.actionurl);
 
             CswAjaxJson({
-                    'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
-                    'data': { 'ActionName': o.actionname }
-                });
+                'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
+                'data': { 'ActionName': o.actionname }
+            });
 
             function _setupOOCInspections() {
                 clear({ 'all': true });
@@ -788,26 +794,26 @@
                     }
                 });
             }
-            
-            switch (o.actionname) {
-                //			case 'Assign_Inspection': 
-                //				break; 
-                //			case 'Assign_Tests': 
-                //				break; 
 
-                // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin 
+            switch (o.actionname) {
+                //			case 'Assign_Inspection':     
+                //				break;     
+                //			case 'Assign_Tests':     
+                //				break;     
+
+                // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin     
                 case 'Create_Inspection':
                     clear({ 'all': true });
 
                     var ImportInspectionQuestionsOptions = {
                         'viewid': o.ActionOptions.viewid,
                         'viewmode': o.ActionOptions.viewmode,
-                        'onCancel': function() {
+                        'onCancel': function () {
                             clear({ 'all': true });
                             setCurrent(getLast());
                             refreshSelected();
                         },
-                        'onFinish': function(viewid, viewmode) {
+                        'onFinish': function (viewid, viewmode) {
                             clear({ 'all': true });
                             refreshSelected();
                             // After the new inspection is imported, Phil and Steve want to send the system to Design Mode
@@ -820,8 +826,8 @@
 
                     break;
 
-                //			case 'Design': 
-                //				break; 
+                //			case 'Design':     
+                //				break;     
                 case 'Edit_View':
 
                     clear({ 'all': true });
@@ -829,12 +835,12 @@
                     var EditViewOptions = {
                         'viewid': o.ActionOptions.viewid,
                         'viewmode': o.ActionOptions.viewmode,
-                        'onCancel': function() {
+                        'onCancel': function () {
                             clear({ 'all': true });
                             setCurrent(getLast());
                             refreshSelected();
                         },
-                        'onFinish': function(viewid, viewmode) {
+                        'onFinish': function (viewid, viewmode) {
                             clear({ 'all': true });
                             if (isTrue(o.ActionOptions.IgnoreReturn)) {
                                 setCurrent(getLast());
@@ -849,29 +855,37 @@
                     $('#CenterTopDiv').CswViewEditor(EditViewOptions);
 
                     break;
-                //			case 'Enter_Results': 
-                //				break; 
-                //			case 'Future_Scheduling': 
-                //				break; 
-                //			case 'Import_Fire_Extinguisher_Data': 
-                //				break; 
-                //			case 'Inspection_Design': 
-                //				break; 
+                //			case 'Enter_Results':     
+                //				break;     
+                //			case 'Future_Scheduling':     
+                //				break;     
+                //			case 'Import_Fire_Extinguisher_Data':     
+                //				break;     
+                //			case 'Inspection_Design':     
+                //				break;     
                 case 'OOC_Inspections':
 
-                    _setupOOCInspections();
+                   	_setupOOCInspections();
 
-                    break;
+                   	break;
+
+                case 'Quotas':
+
+                	clear({ 'all': true });
+                	$('#CenterTopDiv').CswQuotas();
+
+                   	break;
 
 
-                //			case 'Load_Mobile_Data': 
-                //				break; 
-                //			case 'Receiving': 
-                //				break; 
-                //			case 'Split_Samples': 
-                //				break; 
-                //			case 'View_By_Location': 
-                //				break; 
+                //			case 'Load_Mobile_Data':     
+                //				break;     
+                //			case 'Receiving':     
+                //				break;     
+                //			case 'Split_Samples':     
+                //				break;     
+                //			case 'View_By_Location':     
+                //				break;     
+
                 default:
                     if (!isNullOrEmpty(o.actionurl)) {
                         window.location = o.actionurl;
