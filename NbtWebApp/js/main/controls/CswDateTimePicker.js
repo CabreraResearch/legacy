@@ -10,80 +10,84 @@
 
     var methods = {
         init: function(options) {
-			var o = {
-				ID: '',
-				Date: '',
-				Time: '',
-				DateFormat: '',
-				TimeFormat: '',
-				DisplayMode: 'Date',    // Date, Time, DateTime
-				ReadOnly: false,
-				Required: false,
-				OnChange: null
-			};
-			if(options) $.extend(o, options);
+            var o = {
+                ID: '',
+                Date: '',
+                Time: '',
+                DateFormat: '',
+                TimeFormat: '',
+                DisplayMode: 'Date',    // Date, Time, DateTime
+                ReadOnly: false,
+                Required: false,
+                OnChange: null
+            };
+            if(options) $.extend(o, options);
 
             var $ParentDiv = $(this);
             var $Div = $('<div id="'+ o.ID +'"></div>')
-						.appendTo($ParentDiv);
+                        .appendTo($ParentDiv);
 
-            if(o.ReadOnly)
-            {
-                switch(o.DisplayMode)
-				{
-					case "Date":     $Div.append(o.Date);                break;
-					case "Time":     $Div.append(o.Time);                break;
-					case "DateTime": $Div.append(o.Date + " " + o.Time); break;
-				}
-            }
-            else 
-            {
-                if( o.DisplayMode === "Date" || o.DisplayMode === "DateTime" )
-				{
-					var $DateBox = $Div.CswInput('init',{ ID: o.ID + "_date",
-														  type: CswInput_Types.text,
-														  value: o.Date,
-														  onChange: o.OnChange,
-														  width: '80px',
-														  cssclass: 'textinput' // date' date validation broken by alternative formats
-												  }); 
-					$DateBox.datepicker({ 'dateFormat': o.DateFormat });
-					if(o.Required) $DateBox.addClass("required");
-				}
+            if(o.ReadOnly) {
+                switch(o.DisplayMode) {
+                    case "Date":     
+                        $Div.CswDiv({ ID: o.ID + "_date", value: o.Date });
+                        break;
+                    case "Time":
+                        $Div.CswDiv({ ID: o.ID + "_time", value: o.Time });
+                        break;
+                    case "DateTime":
+                        $Div.CswDiv({ ID: o.ID + "_time", value: o.Date + " " + o.Time });
+                        break;
+                }
+            } else {
+                if( o.DisplayMode === "Date" || o.DisplayMode === "DateTime" ) {
+                    var $DateBox = $Div.CswInput('init',{ ID: o.ID + "_date",
+                                                          type: CswInput_Types.text,
+                                                          value: o.Date,
+                                                          onChange: o.OnChange,
+                                                          width: '80px',
+                                                          cssclass: 'textinput' // date' date validation broken by alternative formats
+                                                  }); 
+                    $DateBox.datepicker({ 'dateFormat': o.DateFormat });
+                    if(o.Required) $DateBox.addClass("required");
+                }
 
-                if( o.DisplayMode === "Time" || o.DisplayMode === "DateTime" )
-				{
-					var $TimeBox = $Div.CswInput('init',{ ID: o.ID + "_time",
-														  type: CswInput_Types.text,
-														  cssclass: 'textinput', // validateTime',
-														  onChange: o.onchange,
-														  value: o.Time,
-														  width: '80px'
-													 }); 
-					var $nowbutton = $Div.CswButton('init',{ 'ID': o.ID +'_now',
-															'disableOnClick': false,
-															'onclick': function() { $TimeBox.val( getTimeString(new Date(), o.TimeFormat) ); },
-															'enabledText': 'Now'
-													 }); 
+                if( o.DisplayMode === "Time" || o.DisplayMode === "DateTime" ) {
+                    var $TimeBox = $Div.CswInput('init',{ ID: o.ID + "_time",
+                                                          type: CswInput_Types.text,
+                                                          cssclass: 'textinput', // validateTime',
+                                                          onChange: o.onchange,
+                                                          value: o.Time,
+                                                          width: '80px'
+                                                     }); 
+                    var $nowbutton = $Div.CswButton('init',{ 'ID': o.ID +'_now',
+                                                            'disableOnClick': false,
+                                                            'onclick': function() { $TimeBox.val( getTimeString(new Date(), o.TimeFormat) ); },
+                                                            'enabledText': 'Now'
+                                                     }); 
                 
-	//				jQuery.validator.addMethod( "validateTime", function(value, element) { 
-	//                            return (this.optional(element) || validateTime($(element).val()));
-	//                        }, 'Enter a valid time (e.g. 12:30 PM)');
+    //				jQuery.validator.addMethod( "validateTime", function(value, element) { 
+    //                            return (this.optional(element) || validateTime($(element).val()));
+    //                        }, 'Enter a valid time (e.g. 12:30 PM)');
 
-					if(o.Required) $TimeBox.addClass("required");
-				}
-			} // if-else(o.ReadOnly)
-			return $Div;
+                    if(o.Required) $TimeBox.addClass("required");
+                }
+            } // if-else(o.ReadOnly)
+            return $Div;
         },
         value: function() {
-            var $Div = $(this);
-			var ID = $Div.CswAttrDom('id');
-			var $DateBox = $Div.find( '#' + ID + '_date');
-			var $TimeBox = $Div.find( '#' + ID + '_time');
-			var ret = {};
-			if($DateBox.length > 0) ret.Date = $DateBox.val();
-			if($TimeBox.length > 0) ret.Time = $TimeBox.val();
-			return ret;
+            var $Div = $(this),
+                id = this.id,
+                $DateBox = $Div.find( '#' + id + '_date'),
+                $TimeBox = $Div.find( '#' + id + '_time'),
+                ret = {};
+            if ($DateBox.length > 0) {
+                ret.Date = $DateBox.val(); 
+            } 
+            if ($TimeBox.length > 0) {
+                ret.Time = $TimeBox.val();
+            }
+            return ret;
         }
     };
     
