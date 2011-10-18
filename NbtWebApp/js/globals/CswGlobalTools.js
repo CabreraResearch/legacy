@@ -210,11 +210,15 @@ function tryParseString(inputStr, defaultStr) {
     /// <param name="defaultStr" type="String"> Default value if null or empty </param>
     /// <returns type="String" />
     var ret = '';
-    if (defaultStr) {
-        ret = defaultStr;
-    }
-    if (false === isNullOrEmpty(inputStr)) {
-        ret = inputStr;
+    if (false === isPlainObject(inputStr) &&
+        false === isFunction(inputStr) && 
+        false === isNullOrEmpty(inputStr)) {
+        ret = inputStr.toString();
+    } 
+    else if (false === isPlainObject(defaultStr) && 
+        false === isFunction(defaultStr) &&
+        false === isNullOrEmpty(defaultStr)) {
+        ret = defaultStr.toString();
     }
     return ret;
 }
