@@ -399,19 +399,19 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
                     }
-                    
+
                     //Case 23779
-                    if( null != ViewPropFilt && ViewProp.Filters.Count > 1 )
-                    {
-                        while( ViewProp.Filters.Count != 1 )
-                        {
-                            CswNbtViewPropertyFilter FiltToRemove = (CswNbtViewPropertyFilter) ViewProp.Filters[0];
-                            if( ViewPropFilt.ArbitraryId != FiltToRemove.ArbitraryId )
-                            {
-                                ViewProp.removeFilter( (CswNbtViewPropertyFilter) ViewProp.Filters[0] );
-                            }
-                        }
-                    }
+                    //if( null != ViewPropFilt && ViewProp.Filters.Count > 1 )
+                    //{
+                    //    while( ViewProp.Filters.Count != 1 )
+                    //    {
+                    //        CswNbtViewPropertyFilter FiltToRemove = (CswNbtViewPropertyFilter) ViewProp.Filters[0];
+                    //        if( ViewPropFilt.ArbitraryId != FiltToRemove.ArbitraryId )
+                    //        {
+                    //            ViewProp.removeFilter( (CswNbtViewPropertyFilter) ViewProp.Filters[0] );
+                    //        }
+                    //    }
+                    //}
                 }
             }
 
