@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 FilterPropIdAttr = new CswPropIdAttr( filterToPropId );
             }
-            
+
             if( false == _IsMultiEdit && TabId.StartsWith( HistoryTabPrefix ) )
             {
                 CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, Date );
@@ -274,17 +274,17 @@ namespace ChemSW.Nbt.WebServices
             PropObj["displayrow"] = Row.ToString();
             PropObj["displaycol"] = Column.ToString();
             PropObj["required"] = Prop.IsRequired.ToString().ToLower();
-            
+
             CswNbtMetaDataNodeTypeTab Tab = null;
             if( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) && Prop.EditLayout != null )
             {
                 Tab = Prop.EditLayout.Tab;
             }
             bool IsReadOnly = ( Prop.ReadOnly ||                                      // nodetype_props.readonly
-                                ( PropWrapper != null && PropWrapper.ReadOnly ) ||    // jct_nodes_props.readonly
-								( Node != null && ( Node.ReadOnly || Node.Locked ) ) ||                  // nodes.readonly or nodes.locked
+                                PropWrapper.ReadOnly ||    // jct_nodes_props.readonly
+                                ( Node.ReadOnly || Node.Locked ) ||                  // nodes.readonly or nodes.locked
                                 EditMode == NodeEditMode.Preview ||
-                                !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, Tab, null, Node, Prop ) );
+                                false == _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, Tab, null, Node, Prop ) );
 
             PropObj["readonly"] = IsReadOnly.ToString().ToLower();
             PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
@@ -377,20 +377,20 @@ namespace ChemSW.Nbt.WebServices
             switch( EditMode )
             {
                 case NodeEditMode.AddInPopup:
-					CswNbtWebServiceQuotas wsQ = new CswNbtWebServiceQuotas( _CswNbtResources );
-					if( wsQ.CheckQuota( NodeTypeId ) )
-					{
-						Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-						RetNbtNodeKey = _saveProp( Node, PropsObj, View );
-						if( null != RetNbtNodeKey )
-						{
-							AllSucceeded = true;
-						}
-					}
-					else
-					{
-						throw new CswDniException( ErrorType.Warning, "Quota Exceeded", "You have used all of your purchased quota, and must purchase additional quota space in order to add" );
-					}
+                    CswNbtWebServiceQuotas wsQ = new CswNbtWebServiceQuotas( _CswNbtResources );
+                    if( wsQ.CheckQuota( NodeTypeId ) )
+                    {
+                        Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                        RetNbtNodeKey = _saveProp( Node, PropsObj, View );
+                        if( null != RetNbtNodeKey )
+                        {
+                            AllSucceeded = true;
+                        }
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Warning, "Quota Exceeded", "You have used all of your purchased quota, and must purchase additional quota space in order to add" );
+                    }
                     break;
                 default:
                     for( Int32 i = 0; i < NodeIds.Count; i++ )
@@ -643,7 +643,7 @@ namespace ChemSW.Nbt.WebServices
         public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column )
         {
             bool ret = false;
-            if( String.IsNullOrEmpty(Column) ) Column = "blobdata";
+            if( String.IsNullOrEmpty( Column ) ) Column = "blobdata";
 
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
