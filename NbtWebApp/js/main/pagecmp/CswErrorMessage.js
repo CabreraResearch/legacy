@@ -56,7 +56,8 @@
 	                return CswImageButton_ButtonType.None;
 	            }
 	        });
-	    //$('html, body').animate({ scrollTop: 0 }, 0);
+	    $('html, body').animate({ scrollTop: 0 }, 0);
+	    //case 23675
 	    var $dialog = $(this).parent();
 	    if ($dialog.hasClass('ui-dialog-content')) {
 	        $dialog.animate({ scrollTop: 0 }, 0);
