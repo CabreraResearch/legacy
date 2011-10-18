@@ -272,7 +272,7 @@
                             attributes.Interval.rateintervalvalue.ratetype = 'WeeklyByDay';
                             attributes.Interval.rateintervalvalue.weeklyday = getWeekDayChecked(o.ID + '_weeklyday');
                             attributes.Interval.rateintervalvalue.startingdate = {};
-                            attributes.Interval.rateintervalvalue.startingdate.date = $('#' + o.ID + '_weekly_sd').CswDateTimePicker('value').Date;
+                            attributes.Interval.rateintervalvalue.startingdate.date = $('#' + o.ID + '_weekly_sd').CswDateTimePicker('value', o.propData.readonly).Date;
                             attributes.Interval.rateintervalvalue.startingdate.dateformat = dateFormat;
                             break;
                         case 'monthly':
@@ -292,7 +292,7 @@
                         case 'yearly':
                             attributes.Interval.rateintervalvalue.ratetype = 'YearlyByDate';
                             attributes.Interval.rateintervalvalue.yearlydate = {};
-                            attributes.Interval.rateintervalvalue.yearlydate.date = $('#' + o.ID + '_yearly_sd').CswDateTimePicker('value').Date;
+                            attributes.Interval.rateintervalvalue.yearlydate.date = $('#' + o.ID + '_yearly_sd').CswDateTimePicker('value', o.propData.readonly).Date;
                             attributes.Interval.rateintervalvalue.yearlydate.dateformat = dateFormat;
                             break;
                     } // switch(RateType)

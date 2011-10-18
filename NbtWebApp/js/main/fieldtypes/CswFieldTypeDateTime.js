@@ -40,7 +40,7 @@
             };
             $DTPickerDiv = o.$propdiv.find('#' + o.ID);
             if (false === isNullOrEmpty($DTPickerDiv)) {
-                dateVal = $DTPickerDiv.CswDateTimePicker('value');
+                dateVal = $DTPickerDiv.CswDateTimePicker('value', o.propData.readonlys);
                 attributes.value.date = dateVal.Date;
                 attributes.value.time = dateVal.Time;
             }

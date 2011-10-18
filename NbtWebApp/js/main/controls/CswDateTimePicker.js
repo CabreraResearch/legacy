@@ -1,4 +1,3 @@
-/// <reference path="_CswFieldTypeFactory.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -75,17 +74,17 @@
             } // if-else(o.ReadOnly)
             return $Div;
         },
-        value: function() {
+        value: function(readOnly) {
             var $Div = $(this),
-                id = this.id,
+                id = this.prop('id'),
                 $DateBox = $Div.find( '#' + id + '_date'),
                 $TimeBox = $Div.find( '#' + id + '_time'),
                 ret = {};
             if ($DateBox.length > 0) {
-                ret.Date = $DateBox.val(); 
+                ret.Date = (false === isTrue(readOnly)) ? $DateBox.val() : $DateBox.text(); 
             } 
             if ($TimeBox.length > 0) {
-                ret.Time = $TimeBox.val();
+                ret.Time = (false === isTrue(readOnly)) ? $TimeBox.val() : $TimeBox.text();
             }
             return ret;
         }
