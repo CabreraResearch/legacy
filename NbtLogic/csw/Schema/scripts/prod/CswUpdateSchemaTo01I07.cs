@@ -26,11 +26,17 @@ namespace ChemSW.Nbt.Schema
 
 			CswNbtView View1 = _CswNbtSchemaModTrnsctn.restoreView( "Task Work Order for Reports" );
 			if( View1 != null )
-				View1.Delete();
+			{
+				View1.Visibility = NbtViewVisibility.Property;
+				View1.save();
+			}
 
 			CswNbtView View2 = _CswNbtSchemaModTrnsctn.restoreView( "Open Problems for Report" );
 			if( View2 != null )
-				View2.Delete();
+			{
+				View2.Visibility = NbtViewVisibility.Property;
+				View2.save();
+			}
 
 		} // Update()
 
