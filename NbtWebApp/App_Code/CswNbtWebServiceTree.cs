@@ -182,20 +182,24 @@ namespace ChemSW.Nbt.WebServices
                 string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
                 string ThisNodeId = "";
                 string ThisNodeRel = "";
+                CswNbtNode ThisNode;
 				bool ThisNodeLocked = false;
-
                 switch( ThisNodeKey.NodeSpecies )
                 {
 					case NodeSpecies.More:
+                        ThisNode = Tree.getNodeForCurrentPosition();
+                        ThisNodeId = IdPrefix + ThisNode.NodeId.ToString();
+                        ThisNodeName = NodeSpecies.More.ToString() + "...";
+                        ThisNodeIcon = "triangle_blueS.gif";
+                        ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
+                        break;
 					case NodeSpecies.Plain:
-						{
-							CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
-							ThisNodeId = IdPrefix + ThisNode.NodeId.ToString();
-							ThisNodeName = ThisNode.NodeName;
-							ThisNodeIcon = ThisNode.IconFileName;
-							ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
+                        ThisNode = Tree.getNodeForCurrentPosition();
+                        ThisNodeId = IdPrefix + ThisNode.NodeId.ToString();
+                        ThisNodeName = ThisNode.NodeName;
+                        ThisNodeIcon = ThisNode.IconFileName;
+                        ThisNodeRel = "nt_" + ThisNode.NodeType.FirstVersionNodeTypeId;
 							ThisNodeLocked = ThisNode.Locked;
-						}
 						break;
                     case NodeSpecies.Group:
                         ThisNodeRel = "group";

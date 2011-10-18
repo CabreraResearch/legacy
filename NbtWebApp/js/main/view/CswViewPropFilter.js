@@ -144,13 +144,13 @@
 
                 //Generate subfields and filters picklist arrays
                 for (field in subfields) {
-                    if (subfields.hasOwnProperty(field)) {
+                    if (contains(subfields, field)) {
                         thisField = subfields[field];
                         subFieldVals.push({ value: thisField.column, display: field });
-                        if (field === defaultSubfieldVal && thisField.hasOwnProperty('filtermodes')) {
+                        if ((field === defaultSubfieldVal || thisField.column === defaultSubfieldVal) && contains(thisField, 'filtermodes')) {
                             filtermodes = thisField.filtermodes;
                             for (mode in filtermodes) {
-                                if (filtermodes.hasOwnProperty(mode)) {
+                                if (contains(filtermodes, mode)) {
                                     thisMode = filtermodes[mode];
                                     filterModeVals.push({ value: mode, display: thisMode });
                                 }
@@ -164,8 +164,7 @@
                     values: subFieldVals,
                     selected: defaultSubfieldVal,
                     cssclass: ViewBuilder_CssClasses.subfield_select.name,
-                    onChange: function () {
-                        var $this = $(this);
+                    onChange: function ($this) {
                         var r = {
                             selectedSubfieldVal: $this.val(),
                             selectedFilterVal: '',
@@ -185,8 +184,7 @@
                     values: filterModeVals,
                     selected: defaultFilterModeVal,
                     cssclass: ViewBuilder_CssClasses.filter_select.name,
-                    onChange: function () {
-                        var $this = $(this);
+                    onChange: function ($this) {
                         var r = {
                             selectedSubfieldVal: $subfieldsList.val(),
                             selectedFilterVal: $this.val(),
@@ -207,10 +205,10 @@
 
                 //Filter input (value)
                 if (fieldtype === CswSubFields_Map.List.name) {
-                    if (propsData.hasOwnProperty('filtersoptions')) {
+                    if (contains(propsData, 'filtersoptions')) {
                         for (filt in filtValOpt) {
-                            if (filtValOpt.hasOwnProperty(filt)) {
-                                filtValAry.push({ value: filt, display: filtValOpt[filt] });
+                            if (contains(filtValOpt, filt)) {
+                                filtValAry.push({ value: trim(filt), display: trim(filtValOpt[filt]) });
                             }
                         }
                         $filtInput = $propFilterValueCell.CswSelect('init', { ID: filtValInputId,
@@ -377,7 +375,7 @@
                     relatedidtype: o.relatedidtype,
                     subfield: subFieldText,
                     filter: filterText,
-                    filtervalue: filterValue
+                    filtervalue: trim(filterValue)
                 };
 
             } // if(filterValue !== '')

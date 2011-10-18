@@ -40,7 +40,7 @@ function CswMobilePageOnline(onlineDef, $parent, mobileStorage, mobileSync, mobi
             DivId: '',
             title: '',
             theme: CswMobileGlobal_Config.theme,
-            buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back]
+            buttons: [CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back]
         };
         if (onlineDef) {
             $.extend(pageDef, onlineDef);

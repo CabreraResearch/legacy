@@ -88,7 +88,7 @@
         function initAll() {
             //if (debugOn()) log('Main.initAll()');
 
-            $('#CenterBottomDiv').CswLogin('login', {
+        	$('#CenterBottomDiv').CswLogin('init', {
                 'onAuthenticate': function (u) {
                     $('#header_username').text(u)
                         .hover(function () { $(this).CswAttrDom('title', getExpireTime()); });
@@ -98,7 +98,7 @@
 
                     $('#header_menu').CswMenuHeader({
                         'onLogout': function () {
-                            Logout();
+								Logout();
                             },
 							'onQuotas': function () {
 								_handleAction({ 'actionname': 'Quotas' });

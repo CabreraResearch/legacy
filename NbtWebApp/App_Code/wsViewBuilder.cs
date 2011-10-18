@@ -181,7 +181,13 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ParentObj["proparbitraryid"] = ViewBuilderProp.ViewProp.ArbitraryId;
                 }
-                ParentObj["filtarbitraryid"] = string.Empty;
+                string FiltArbitraryId = string.Empty;
+                if( ViewBuilderProp.Filters.Count > 0 )
+                {
+                    CswNbtViewPropertyFilter Filt = (CswNbtViewPropertyFilter) ViewBuilderProp.Filters[0];
+                    FiltArbitraryId = Filt.ArbitraryId;
+                }
+                ParentObj["filtarbitraryid"] = FiltArbitraryId;
                 ParentObj["defaultsubfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
                 ParentObj["defaultfiltermode"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.DefaultFilterMode.ToString();
 
@@ -381,14 +387,31 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewPropertyFilter ViewPropFilt = null;
             if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown )
             {
-                if( false == string.IsNullOrEmpty( FiltArbitraryId ) )
-                {
-                    ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
-                }
-                else if( false == string.IsNullOrEmpty( PropArbitraryId ) )
+                if( false == string.IsNullOrEmpty( PropArbitraryId ) )
                 {
                     CswNbtViewProperty ViewProp = (CswNbtViewProperty) View.FindViewNodeByArbitraryId( PropArbitraryId );
-                    ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+
+                    if( false == string.IsNullOrEmpty( FiltArbitraryId ) )
+                    {
+                        ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
+                    }
+                    else
+                    {
+                        ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+                    }
+                    
+                    //Case 23779
+                    if( null != ViewPropFilt && ViewProp.Filters.Count > 1 )
+                    {
+                        while( ViewProp.Filters.Count != 1 )
+                        {
+                            CswNbtViewPropertyFilter FiltToRemove = (CswNbtViewPropertyFilter) ViewProp.Filters[0];
+                            if( ViewPropFilt.ArbitraryId != FiltToRemove.ArbitraryId )
+                            {
+                                ViewProp.removeFilter( (CswNbtViewPropertyFilter) ViewProp.Filters[0] );
+                            }
+                        }
+                    }
                 }
             }
 
