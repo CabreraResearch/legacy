@@ -66,17 +66,14 @@ namespace ChemSW.Nbt.WebServices
 
                 if( Tree.getChildNodeCount() > 0 )
                 {
-                    JProperty ParentNode = new JProperty( "nodes" );
-                    JObject Nodes = new JObject();
-                    ParentNode.Value = Nodes;
-                    _runTreeNodesRecursive( Tree, ref Nodes );
-                    RetJson.Add( ParentNode );
+                    JObject NodesObj = new JObject();
+                    RetJson["nodes"] = NodesObj;
+                    _runTreeNodesRecursive( Tree, NodesObj );
                 }
                 else
                 {
-                    RetJson.Add( new JProperty( "nodes",
-                                                new JObject(
-                                                    new JProperty( NodeIdPrefix + Int32.MinValue, "No Results" ) ) ) );
+                    RetJson["nodes"] = new JObject();
+                    RetJson["nodes"][NodeIdPrefix + Int32.MinValue] = "No Results";
                 }
             }
 
@@ -97,7 +94,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnJson;
         } // _getSearchNodes
 
-        private void _runTreeNodesRecursive( ICswNbtTree Tree, ref JObject ParentJsonO )
+        private void _runTreeNodesRecursive( ICswNbtTree Tree, JObject ParentJsonO )
         {
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
@@ -116,12 +113,12 @@ namespace ChemSW.Nbt.WebServices
                         JObject ThisNodeObj = (JObject) ThisJProp.Value;
                         JObject NodesObj = new JObject();
                         ThisNodeObj["nodes"] = NodesObj;
-                        _runTreeNodesRecursive( Tree, ref NodesObj );
+                        _runTreeNodesRecursive( Tree, NodesObj );
                     }
                 } // if( Tree.getNodeShowInTreeForCurrentPosition() )
                 else
                 {
-                    _runTreeNodesRecursive( Tree, ref ParentJsonO );
+                    _runTreeNodesRecursive( Tree, ParentJsonO );
                 }
                 Tree.goToParentNode();
             }
@@ -174,7 +171,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     JObject TabsObj = new JObject();
                     NodeProps["tabs"] = TabsObj;
-                    _runProperties( ThisNode, ref TabsObj );
+                    _runProperties( ThisNode, TabsObj );
                 }
 
                 if( false == string.IsNullOrEmpty( ThisNode.NodeType.IconFileName ) )
@@ -182,7 +179,7 @@ namespace ChemSW.Nbt.WebServices
                     NodeProps["iconfilename"] = CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName );
                 }
 
-                _addObjectClassProps( ThisNode, ref NodeProps );
+                _addObjectClassProps( ThisNode, NodeProps );
 
                 foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps
                                                                             .Cast<CswNbtMetaDataNodeTypeProp>()
@@ -202,7 +199,7 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
-        private static void _addObjectClassProps( CswNbtNode Node, ref JObject NodeProps )
+        private static void _addObjectClassProps( CswNbtNode Node, JObject NodeProps )
         {
             switch( Node.ObjectClass.ObjectClass )
             {
@@ -226,7 +223,7 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        private static void _runProperties( CswNbtNode Node, ref JObject SubItemsJProp )
+        private void _runProperties( CswNbtNode Node, JObject SubItemsJProp )
         {
             Collection<CswNbtMetaDataNodeTypeTab> Tabs = new Collection<CswNbtMetaDataNodeTypeTab>();
             foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
@@ -268,11 +265,14 @@ namespace ChemSW.Nbt.WebServices
                     TabObj[PropId]["fieldtype"] = Prop.FieldType.FieldType.ToString();
                     TabObj[PropId]["gestalt"] = CswTools.SafeJavascriptParam( PropWrapper.Gestalt );
                     TabObj[PropId]["ocpname"] = CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName );
+                    
+                    bool IsReadOnly = ( Prop.ReadOnly || // nodetype_props.readonly
+                                PropWrapper.ReadOnly ||  // jct_nodes_props.readonly
+                                ( Node.ReadOnly || Node.Locked ) || // nodes.readonly or nodes.locked
+                                false == _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, CurrentTab, null, Node, Prop ) );
 
-                    if( Node.ReadOnly || Node.Locked || Prop.ReadOnly )
-                    {
-                        TabObj[PropId]["isreadonly"] = "true";
-                    }
+                    TabObj[PropId]["isreadonly"] = IsReadOnly;
+
                     PropWrapper.ToJSON( (JObject) TabObj[PropId] );
                 }
 
