@@ -193,18 +193,18 @@ namespace ChemSW.Nbt.WebServices
                 //    Node.postChanges( false );
                 //}
 
-                if( !string.IsNullOrEmpty( NewPropJson ) )
+                if( false == string.IsNullOrEmpty( NewPropJson ) )
                 {
                     // for prop filters, update node prop value but don't save the change
                     JObject PropJson = JObject.Parse( NewPropJson );
-                    _applyPropJson( Node, PropJson );
+                    _applyPropJson( Node, PropJson, EditMode, null );
                 }
 
                 CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropIdFromJson );
                 CswNbtMetaDataNodeTypeProp Prop = Node.NodeType.getNodeTypeProp( PropIdAttr.NodeTypePropId );
                 _addProp( PropObj, EditMode, Node, Prop );
 
-                if( NewPropJson != string.Empty )
+                if( false == string.IsNullOrEmpty( NewPropJson ) )
                 {
                     //Node.Rollback();
                 }
@@ -253,6 +253,7 @@ namespace ChemSW.Nbt.WebServices
             } // if-else( EditMode == NodeEditMode.AddInPopup )
         } // addProp()
 
+
         private JObject _makePropJson( NodeEditMode EditMode, JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 Row, Int32 Column )
         {
             CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
@@ -280,12 +281,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 Tab = Prop.EditLayout.Tab;
             }
-            bool IsReadOnly = ( Prop.ReadOnly ||                                      // nodetype_props.readonly
-                                PropWrapper.ReadOnly ||    // jct_nodes_props.readonly
-                                ( Node.ReadOnly || Node.Locked ) ||                  // nodes.readonly or nodes.locked
-                                EditMode == NodeEditMode.Preview ||
-                                false == _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, Tab, null, Node, Prop ) );
-
+            bool IsReadOnly = PropWrapper.IsReadOnly( _CswNbtResources, Node, EditMode, Tab );
             PropObj["readonly"] = IsReadOnly.ToString().ToLower();
             PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
             PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
@@ -374,70 +370,84 @@ namespace ChemSW.Nbt.WebServices
             bool AllSucceeded = false;
             Int32 Succeeded = 0;
             CswNbtNode Node = null;
-            switch( EditMode )
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+            if( null != NodeType )
             {
-                case NodeEditMode.AddInPopup:
-                    CswNbtWebServiceQuotas wsQ = new CswNbtWebServiceQuotas( _CswNbtResources );
-                    if( wsQ.CheckQuota( NodeTypeId ) )
+                CswNbtMetaDataNodeTypeTab NodeTypeTab = NodeType.getNodeTypeTab( TabId );
+                if( null != NodeTypeTab )
+                {
+                    switch( EditMode )
                     {
-                        Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                        RetNbtNodeKey = _saveProp( Node, PropsObj, View );
-                        if( null != RetNbtNodeKey )
-                        {
-                            AllSucceeded = true;
-                        }
-                    }
+                        case NodeEditMode.AddInPopup:
+                            CswNbtWebServiceQuotas wsQ = new CswNbtWebServiceQuotas( _CswNbtResources );
+                            if( wsQ.CheckQuota( NodeTypeId ) )
+                            {
+                                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                                bool ReadOnly = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
+                                if( false == ReadOnly )
+                                {
+                                    RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
+                                    if( null != RetNbtNodeKey )
+                                    {
+                                        AllSucceeded = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                throw new CswDniException( ErrorType.Warning, "Quota Exceeded", "You have used all of your purchased quota, and must purchase additional quota space in order to add" );
+                            }
+                            break;
+                        default:
+                            for( Int32 i = 0; i < NodeIds.Count; i++ )
+                            {
+                                string NodeId = NodeIds[i];
+                                string NodeKey = NodeKeys[i];
+                                Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+                                bool ReadOnly = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
+                                if( false == ReadOnly )
+                                {
+                                    RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
+                                    if( null != RetNbtNodeKey )
+                                    {
+                                        Succeeded++;
+                                    }
+                                }
+                            }
+                            AllSucceeded = NodeIds.Count == Succeeded;
+                            break;
+                    } //switch( EditMode )
+                    if( AllSucceeded && null != RetNbtNodeKey )
+                    {
+                        string RetNodeKey = wsTools.ToSafeJavaScriptParam( RetNbtNodeKey );
+                        //string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
+                        string RetNodeId = RetNbtNodeKey.NodeId.ToString();
+
+                        ret = new JObject();
+                        ret["result"] = "Succeeded";
+                        ret["nodeid"] = RetNodeId;
+                        ret["cswnbtnodekey"] = RetNodeKey;
+                    } //if( AllSucceeded && null != RetNbtNodeKey )
                     else
                     {
-                        throw new CswDniException( ErrorType.Warning, "Quota Exceeded", "You have used all of your purchased quota, and must purchase additional quota space in order to add" );
-                    }
-                    break;
-                default:
-                    for( Int32 i = 0; i < NodeIds.Count; i++ )
-                    {
-                        string NodeId = NodeIds[i];
-                        string NodeKey = NodeKeys[i];
-                        Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
-
-                        RetNbtNodeKey = _saveProp( Node, PropsObj, View );
-                        if( null != RetNbtNodeKey )
+                        string ErrString;
+                        if( EditMode == NodeEditMode.AddInPopup )
                         {
-                            Succeeded++;
+                            ErrString = "Attempt to Add failed.";
                         }
-                    }
-                    AllSucceeded = NodeIds.Count == Succeeded;
-                    break;
-            }
-            if( AllSucceeded && null != RetNbtNodeKey )
-            {
-                string RetNodeKey = wsTools.ToSafeJavaScriptParam( RetNbtNodeKey );
-                //string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
-                string RetNodeId = RetNbtNodeKey.NodeId.ToString();
-
-                ret = new JObject();
-                ret["result"] = "Succeeded";
-                ret["nodeid"] = RetNodeId;
-                ret["cswnbtnodekey"] = RetNodeKey;
-            }
-            else
-            {
-                string ErrString = string.Empty;
-                if( EditMode == NodeEditMode.AddInPopup )
-                {
-                    ErrString = "Attempt to Add failed.";
-                }
-                else
-                {
-                    ErrString = Succeeded + " out of " + NodeIds.Count + " prop updates succeeded. Remaining prop updates failed";
-                }
-                ret = new JObject();
-                ret["result"] = ErrString;
-            }
-
+                        else
+                        {
+                            ErrString = Succeeded + " out of " + NodeIds.Count + " prop updates succeeded. Remaining prop updates failed";
+                        }
+                        ret = new JObject();
+                        ret["result"] = ErrString;
+                    } //else
+                } //if(null != NodeTypeTab)
+            } //if(null != NodeType)
             return ret;
         } // saveProps()
 
-        private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View )
+        private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab )
         {
             CswNbtNodeKey Ret = null;
             if( Node != null )
@@ -451,7 +461,7 @@ namespace ChemSW.Nbt.WebServices
                         where PropObj.HasValues
                         select PropObj )
                 {
-                    _applyPropJson( Node, PropObj );
+                    _applyPropJson( Node, PropObj, EditMode, Tab );
                 }
 
                 // BZ 8517 - this sets sequences that have setvalonadd = 0
@@ -559,12 +569,12 @@ namespace ChemSW.Nbt.WebServices
             return true;
         } // addPropertyToLayout()
 
-        private void _applyPropJson( CswNbtNode Node, JObject PropObj )
+        private void _applyPropJson( CswNbtNode Node, JObject PropObj, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab )
         {
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( CswConvert.ToString( PropObj["id"] ) );
 
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
-            Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
+            Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, _CswNbtResources, Node, EditMode, Tab );
 
             // Recurse on sub-props
             if( null != PropObj["subprops"] )
@@ -577,7 +587,7 @@ namespace ChemSW.Nbt.WebServices
                                 .Select( ChildProp => (JObject) ChildProp.Value )
                                 .Where( ChildPropObj => ChildPropObj.HasValues ) )
                     {
-                        _applyPropJson( Node, ChildPropObj );
+                        _applyPropJson( Node, ChildPropObj, EditMode, Tab );
                     }
                 }
             }

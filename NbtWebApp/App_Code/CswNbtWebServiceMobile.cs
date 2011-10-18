@@ -384,7 +384,7 @@ namespace ChemSW.Nbt.WebServices
 
                     JObject PropObj = (JObject) Prop.Value;
 
-                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
+                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, _CswNbtResources, Node );
 
                     if( false == NodesToPost.Contains( Node ) )
                     {

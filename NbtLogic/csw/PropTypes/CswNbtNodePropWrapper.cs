@@ -6,6 +6,8 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -147,8 +149,16 @@ namespace ChemSW.Nbt.PropTypes
             set { _HelpText = value; }
         }
 
+        public bool IsReadOnly( CswNbtResources CswNbtResources, CswNbtNode Node, NodeEditMode EditMode = NodeEditMode.Edit, CswNbtMetaDataNodeTypeTab Tab = null )
+        {
+            CswNbtNodePropWrapper PropWrapper = this;
 
-
+            return ( NodeTypeProp.ReadOnly  || // nodetype_props.readonly
+                     PropWrapper.ReadOnly || // jct_nodes_props.readonly
+                     ( Node.ReadOnly || Node.Locked ) || // nodes.readonly or nodes.locked
+                     EditMode == NodeEditMode.Preview ||
+                     false == CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, false, Tab, null, Node, NodeTypeProp ) );
+        }
 
         /// <summary>
         /// Returns defined Field Type attributes/subfields as XmlDocument class XmlNode
@@ -181,9 +191,10 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Parses defined Field Type attributes/subfields into a JToken class JObject
         /// </summary>
-        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap, CswNbtResources CswNbtResources, CswNbtNode Node, NodeEditMode EditMode = NodeEditMode.Edit, CswNbtMetaDataNodeTypeTab Tab = null )
         {
-            if( null != Object.Property( "values" ) )
+            bool ReadOnly = IsReadOnly( CswNbtResources, Node, EditMode, Tab );
+            if( null != Object.Property( "values" ) && false == ReadOnly )
             {
                 JObject Values = (JObject) Object["values"];
                 _CswNbtNodeProp.ReadJSON( Values, NodeMap, NodeTypeMap );
