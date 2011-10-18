@@ -2,8 +2,8 @@ using System;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.Actions
@@ -94,44 +94,44 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
 
-            if ( 0 == GeneratorNode.TargetType.SelectedNodeTypeIds.Count ||
+            if( 0 == GeneratorNode.TargetType.SelectedNodeTypeIds.Count ||
                 "0" == GeneratorNode.TargetType.SelectedNodeTypeIds[0] ||
                 null == _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds[0] ) ) )
             {
                 throw ( new CswDniException( "Generator node " + CswNbtNodeGenerator.NodeName + " (" + CswNbtNodeGenerator.NodeId.ToString() + ") does not have a valid nodetypeid" ) );
             }
 
-            if ( DueDate == DateTime.MinValue )
-				DueDate = GeneratorNode.NextDueDate.DateTimeValue.Date;
-            if ( DueDate == DateTime.MinValue )
+            if( DueDate == DateTime.MinValue )
+                DueDate = GeneratorNode.NextDueDate.DateTimeValue.Date;
+            if( DueDate == DateTime.MinValue )
                 DueDate = GeneratorNode.DueDateInterval.getStartDate();
 
             Collection<CswPrimaryKey> Parents = new Collection<CswPrimaryKey>();
-			if( GeneratorNode.ParentView.ViewId.isSet() )
-			{
-				CswNbtView ParentsView = _CswNbtResources.ViewSelect.restoreView( GeneratorNode.ParentView.ViewId );
-				// Case 20482
-				if( ParentsView.Root.ChildRelationships.Count > 0 )
-				{
-					( (CswNbtViewRelationship) ParentsView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( GeneratorNode.NodeId );
-					ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( ParentsView, false, true, false, true );
-					if( GeneratorNode.ParentType.SelectMode == PropertySelectMode.Single )
-					{
-						Int32 ParentNtId = CswConvert.ToInt32( GeneratorNode.ParentType.SelectedNodeTypeIds.ToString() );
-						Parents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
-					}
-				}
-			}
-			if( Parents.Count == 0 && string.Empty == GeneratorNode.ParentType.SelectedNodeTypeIds.ToString() )
-			{
-				Parents.Add( GeneratorNode.Owner.RelatedNodeId );
-			}			
+            if( GeneratorNode.ParentView.ViewId.isSet() )
+            {
+                CswNbtView ParentsView = _CswNbtResources.ViewSelect.restoreView( GeneratorNode.ParentView.ViewId );
+                // Case 20482
+                if( ParentsView.Root.ChildRelationships.Count > 0 )
+                {
+                    ( (CswNbtViewRelationship) ParentsView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( GeneratorNode.NodeId );
+                    ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( ParentsView, false, true, false, true );
+                    if( GeneratorNode.ParentType.SelectMode == PropertySelectMode.Single )
+                    {
+                        Int32 ParentNtId = CswConvert.ToInt32( GeneratorNode.ParentType.SelectedNodeTypeIds.ToString() );
+                        Parents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
+                    }
+                }
+            }
+            if( Parents.Count == 0 && string.Empty == GeneratorNode.ParentType.SelectedNodeTypeIds.ToString() )
+            {
+                Parents.Add( GeneratorNode.Owner.RelatedNodeId );
+            }
 
 
-            foreach ( CswPrimaryKey NewParentPK in Parents )
+            foreach( CswPrimaryKey NewParentPK in Parents )
             {
                 CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPK, DueDate );
-                if ( null == ExistingNode )
+                if( null == ExistingNode )
                 {
                     Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
                     SelectedNodeTypeIds = GeneratorNode.TargetType.SelectedNodeTypeIds.ToIntCollection();
@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.Actions
                         NewNode.copyPropertyValues( CswNbtNodeGenerator );
 
                         ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( NewNode );
-						NewNodeAsGeneratorTarget.GeneratedDate.DateTimeValue = DueDate;
+                        NewNodeAsGeneratorTarget.GeneratedDate.DateTimeValue = DueDate;
                         NewNodeAsGeneratorTarget.GeneratedDate.ReadOnly = true;  //bz # 5349
                         NewNodeAsGeneratorTarget.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
                         NewNodeAsGeneratorTarget.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
@@ -168,16 +168,16 @@ namespace ChemSW.Nbt.Actions
                 else
                 {
                     ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( ExistingNode );
-                    if ( !MarkFuture )
+                    if( !MarkFuture )
                     {
-                        if ( ExistingNodeAsGeneratorTarget.IsFuture.Checked == Tristate.True )
+                        if( ExistingNodeAsGeneratorTarget.IsFuture.Checked == Tristate.True )
                         {
                             ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
                         }
                     }
                     else
                     {
-						if( DateTime.Now.Date >= ExistingNodeAsGeneratorTarget.GeneratedDate.DateTimeValue.Date )
+                        if( DateTime.Now.Date >= ExistingNodeAsGeneratorTarget.GeneratedDate.DateTimeValue.Date )
                         {
                             ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
                         }
