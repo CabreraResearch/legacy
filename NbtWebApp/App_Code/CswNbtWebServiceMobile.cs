@@ -335,10 +335,11 @@ namespace ChemSW.Nbt.WebServices
                                                from Prop
                                                    in TabProps.Properties()
                                                where ( null != Prop.Value &&
-                                                        Prop.Name != "nexttab" )
+                                                        Prop.Name != "nexttab" &&
+                                                        Prop.Name != "currenttab" )
                                                let PropAtr = (JObject) Prop.Value
-                                               where null != PropAtr.Property( "wasmodified" ) &&
-                                                     CswConvert.ToBoolean( PropAtr.Property( "wasmodified" ).Value )
+                                               where null != PropAtr["wasmodified"] &&
+                                                     CswConvert.ToBoolean( PropAtr["wasmodified"] )
                                                select Prop )
                 {
                     Props.Add( Prop );
