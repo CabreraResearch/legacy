@@ -157,15 +157,26 @@ namespace ChemSW.Nbt.PropTypes
             set { _HelpText = value; }
         }
 
+        private bool _IsReadOnly { get { return ( false == CanEdit ); } }
+
+        public bool CanEdit
+        {
+            get
+            {
+                bool Ret = ( false == ReadOnly &&
+                             _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, false, _Tab, null, _Node, NodeTypeProp ) );
+                return Ret;
+            }
+        }
+
         public bool ReadOnly
         {
             get
             {
                 return ( _CswNbtNodePropData.ReadOnly || // jct_nodes_props.readonly
                          NodeTypeProp.ReadOnly || // nodetype_props.readonly
-                        ( _Node.ReadOnly || _Node.Locked ) || // nodes.readonly or nodes.locked
-                        _EditMode == NodeEditMode.Preview ||
-                        false == _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, false, _Tab, null, _Node, NodeTypeProp ) );
+                         _EditMode == NodeEditMode.Preview ||
+                        ( _Node.ReadOnly || _Node.Locked ) ); // nodes.readonly or nodes.locked
             }
             set
             {
@@ -194,26 +205,30 @@ namespace ChemSW.Nbt.PropTypes
         /// Returns defined Field Type attributes/subfields as JToken class JObject
         /// </summary>
         /// <param name="JObject">JToken class JObject</param>
-        public void ToJSON( JObject JObject, NodeEditMode EditMode )
+        public void ToJSON( JObject JObject, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab )
         {
             JObject Values = new JObject();
             _EditMode = EditMode;
+            _Tab = Tab;
             JObject["values"] = Values;
-            JObject["readonly"] = ReadOnly;
+            JObject["readonly"] = _IsReadOnly;
             _CswNbtNodeProp.ToJSON( Values );
         }
 
         /// <summary>
         /// Parses defined Field Type attributes/subfields into a JToken class JObject
         /// </summary>
-        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap, NodeEditMode EditMode )
+        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab )
         {
             if( null != Object )
             {
                 _EditMode = EditMode;
-                bool IsReadOnly = ReadOnly;
-                Object["readonly"] = IsReadOnly;
-                if( null != Object.Property( "values" ) && false == IsReadOnly )
+                _Tab = Tab;
+                Object["readonly"] = _IsReadOnly;
+                if( null != Object["values"] &&
+                    false == _IsReadOnly &&
+                    ( null == Object["wasmodified"] ||
+                     CswConvert.ToBoolean( Object["wasmodified"] ) ) )
                 {
                     JObject Values = (JObject) Object["values"];
                     _CswNbtNodeProp.ReadJSON( Values, NodeMap, NodeTypeMap );
