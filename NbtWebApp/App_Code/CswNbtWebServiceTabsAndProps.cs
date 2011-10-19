@@ -364,86 +364,87 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject saveProps( NodeEditMode EditMode, CswCommaDelimitedString NodeIds, CswCommaDelimitedString NodeKeys, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
         {
-            JObject ret = null;
+            JObject ret = new JObject();
             JObject PropsObj = JObject.Parse( NewPropsJson );
             CswNbtNodeKey RetNbtNodeKey = null;
             bool AllSucceeded = false;
             Int32 Succeeded = 0;
             CswNbtNode Node = null;
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-            if( null != NodeType )
+            CswNbtMetaDataNodeTypeTab NodeTypeTab = _CswNbtResources.MetaData.getNodeTypeTab( TabId );
+            if( null == NodeType && null != NodeTypeTab )
             {
-                CswNbtMetaDataNodeTypeTab NodeTypeTab = NodeType.getNodeTypeTab( TabId );
-                if( null != NodeTypeTab )
+                NodeType = NodeTypeTab.NodeType;
+            }
+            if( null != NodeType && null != NodeTypeTab )
+            {
+                switch( EditMode )
                 {
-                    switch( EditMode )
-                    {
-                        case NodeEditMode.AddInPopup:
-                            CswNbtWebServiceQuotas wsQ = new CswNbtWebServiceQuotas( _CswNbtResources );
-                            if( wsQ.CheckQuota( NodeTypeId ) )
-                            {
-                                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                                bool ReadOnly = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
-                                if( false == ReadOnly )
-                                {
-                                    RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
-                                    if( null != RetNbtNodeKey )
-                                    {
-                                        AllSucceeded = true;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                throw new CswDniException( ErrorType.Warning, "Quota Exceeded", "You have used all of your purchased quota, and must purchase additional quota space in order to add" );
-                            }
-                            break;
-                        default:
-                            for( Int32 i = 0; i < NodeIds.Count; i++ )
-                            {
-                                string NodeId = NodeIds[i];
-                                string NodeKey = NodeKeys[i];
-                                Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
-                                bool ReadOnly = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
-                                if( false == ReadOnly )
-                                {
-                                    RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
-                                    if( null != RetNbtNodeKey )
-                                    {
-                                        Succeeded++;
-                                    }
-                                }
-                            }
-                            AllSucceeded = NodeIds.Count == Succeeded;
-                            break;
-                    } //switch( EditMode )
-                    if( AllSucceeded && null != RetNbtNodeKey )
-                    {
-                        string RetNodeKey = wsTools.ToSafeJavaScriptParam( RetNbtNodeKey );
-                        //string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
-                        string RetNodeId = RetNbtNodeKey.NodeId.ToString();
-
-                        ret = new JObject();
-                        ret["result"] = "Succeeded";
-                        ret["nodeid"] = RetNodeId;
-                        ret["cswnbtnodekey"] = RetNodeKey;
-                    } //if( AllSucceeded && null != RetNbtNodeKey )
-                    else
-                    {
-                        string ErrString;
-                        if( EditMode == NodeEditMode.AddInPopup )
+                    case NodeEditMode.AddInPopup:
+                        CswNbtWebServiceQuotas wsQ = new CswNbtWebServiceQuotas( _CswNbtResources );
+                        if( wsQ.CheckQuota( NodeTypeId ) )
                         {
-                            ErrString = "Attempt to Add failed.";
+                            Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                            bool ReadOnly = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
+                            if( false == ReadOnly )
+                            {
+                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
+                                if( null != RetNbtNodeKey )
+                                {
+                                    AllSucceeded = true;
+                                }
+                            }
                         }
                         else
                         {
-                            ErrString = Succeeded + " out of " + NodeIds.Count + " prop updates succeeded. Remaining prop updates failed";
+                            throw new CswDniException( ErrorType.Warning, "Quota Exceeded", "You have used all of your purchased quota, and must purchase additional quota space in order to add" );
                         }
-                        ret = new JObject();
-                        ret["result"] = ErrString;
-                    } //else
-                } //if(null != NodeTypeTab)
-            } //if(null != NodeType)
+                        break;
+                    default:
+                        for( Int32 i = 0; i < NodeIds.Count; i++ )
+                        {
+                            string NodeId = NodeIds[i];
+                            string NodeKey = NodeKeys[i];
+                            Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+                            bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
+                            if( true == CanEdit )
+                            {
+                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
+                                if( null != RetNbtNodeKey )
+                                {
+                                    Succeeded++;
+                                }
+                            }
+                        }
+                        AllSucceeded = NodeIds.Count == Succeeded;
+                        break;
+                } //switch( EditMode )
+                if( AllSucceeded && null != RetNbtNodeKey )
+                {
+                    string RetNodeKey = wsTools.ToSafeJavaScriptParam( RetNbtNodeKey );
+                    //string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
+                    string RetNodeId = RetNbtNodeKey.NodeId.ToString();
+
+                    ret = new JObject();
+                    ret["result"] = "Succeeded";
+                    ret["nodeid"] = RetNodeId;
+                    ret["cswnbtnodekey"] = RetNodeKey;
+                } //if( AllSucceeded && null != RetNbtNodeKey )
+                else
+                {
+                    string ErrString;
+                    if( EditMode == NodeEditMode.AddInPopup )
+                    {
+                        ErrString = "Attempt to Add failed.";
+                    }
+                    else
+                    {
+                        ErrString = Succeeded + " out of " + NodeIds.Count + " prop updates succeeded. Remaining prop updates failed";
+                    }
+                    ret = new JObject();
+                    ret["result"] = ErrString;
+                } //else
+            } //if( null != NodeType && null != NodeTypeTab )
             return ret;
         } // saveProps()
 
