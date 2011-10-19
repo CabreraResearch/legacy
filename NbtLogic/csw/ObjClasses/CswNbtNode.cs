@@ -46,7 +46,7 @@ namespace ChemSW.Nbt
         /// </summary>
         Preview,
         /// <summary>
-        /// A preview of the node, displayed when hovering
+        /// Unknown
         /// </summary>
         Unknown
     }; // NodeEditMode
@@ -248,7 +248,6 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNodePropColl.CreatedFromNodeTypeId );
             }
         }//New
-
 
         private NodeSpecies _NodeSpecies = NodeSpecies.UnKnown;
         public NodeSpecies NodeSpecies { get { return ( _NodeSpecies ); } }
