@@ -134,13 +134,11 @@ function setCurrent(json) {
 
 //#region Ajax
 var _ajaxCount = 0;
-function ajaxInProgress()
-{
+function ajaxInProgress() {
     return (_ajaxCount > 0);
 }
 
-function CswAjaxJson(options)
-{ /// <param name="$" type="jQuery" />
+function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
     /// <summary>
     ///   Executes Async webservice request for JSON
     /// </summary>
@@ -437,13 +435,13 @@ function Logout(options)
 } // logout
 
 function _finishLogout() {
-	var logoutpath = $.CswCookie('get', CswCookieName.LogoutPath);
-	$.CswCookie('clearAll');
-	if (false === isNullOrEmpty(logoutpath)) {
-		window.location = logoutpath;
-	} else {
-		window.location = homeUrl;
-	}
+    var logoutpath = $.CswCookie('get', CswCookieName.LogoutPath);
+    $.CswCookie('clearAll');
+    if (false === isNullOrEmpty(logoutpath)) {
+        window.location = logoutpath;
+    } else {
+        window.location = homeUrl;
+    }
 }
 
 
@@ -723,7 +721,7 @@ function preparePropJsonForSaveRecursive(isMulti, propVals, attributes) {
                 var attr = attributes[key];
                 //don't bother sending this to server unless it's changed
                 if (isPlainObject(attr)) {
-                    wasModified = preparePropJsonForSaveRecursive(isMulti, propVals[key], attr);
+                    wasModified = preparePropJsonForSaveRecursive(isMulti, propVals[key], attr) || wasModified;
                 }
                 else if ((false === isMulti && propVals[key] !== attr) ||
                     (isMulti && false === isNullOrUndefined(attr) && attr !== CswMultiEditDefaultValue)) {
@@ -777,7 +775,7 @@ function HandleMenuItem(options)
         onMultiEdit: null, //function () { },
         onEditView: null, //function (viewid) { },
         onSaveView: null, //function (newviewid) { },
-		onQuotas: null, // function () { },
+        onQuotas: null, // function () { },
         Multi: false,
         NodeCheckTreeId: ''
     };
@@ -920,10 +918,10 @@ function HandleMenuItem(options)
                 });
                 break;
             case 'Quotas':
-               	$a.click(function () {
-               		o.onQuotas();
-               	});
-               	break;
+                $a.click(function () {
+                    o.onQuotas();
+                });
+                break;
         }
     }
     else
