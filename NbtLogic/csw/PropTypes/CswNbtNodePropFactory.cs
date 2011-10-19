@@ -22,9 +22,14 @@ namespace ChemSW.Nbt.PropTypes
         //    return _makeNodeProp( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node, Tab, EditMode );
         //}
 
-        public static CswNbtNodePropWrapper makeNodeProp( CswNbtResources CswNbtResources, DataRow PropRow, DataTable PropsTable, CswNbtNode Node, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtMetaDataNodeTypeTab Tab, NodeEditMode EditMode = NodeEditMode.Edit )
+        public static CswNbtNodePropWrapper makeNodeProp( CswNbtResources CswNbtResources, DataRow PropRow, DataTable PropsTable, CswNbtNode Node, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtMetaDataNodeTypeTab Tab = null, NodeEditMode EditMode = NodeEditMode.Edit )
         {
-            CswNbtNodePropData CswNbtNodePropData = new CswNbtNodePropData( CswNbtResources, PropRow, PropsTable, Node.NodeId, CswNbtMetaDataNodeTypeProp.PropId );
+            CswPrimaryKey NodeId = null;
+            if( null != Node )
+            {
+                NodeId = Node.NodeId;
+            }
+            CswNbtNodePropData CswNbtNodePropData = new CswNbtNodePropData( CswNbtResources, PropRow, PropsTable, NodeId, CswNbtMetaDataNodeTypeProp.PropId );
             return _makeNodeProp( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node, Tab, EditMode );
         }
 
