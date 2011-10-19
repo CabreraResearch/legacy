@@ -245,10 +245,10 @@ namespace ChemSW.Nbt.WebServices
                 //    CswNbtMetaDataNodeTypeTab PrevTab = Tabs[i - 1];
                 //    TabObj.Add( new JProperty( "prevtab", PrevTab.TabName ) );
                 //}
+                TabObj["currenttab"] = Tabs[i].TabName;
                 if( i < Tabs.Count - 1 )
                 {
-                    CswNbtMetaDataNodeTypeTab NextTab = Tabs[i + 1];
-                    TabObj["nexttab"] = NextTab.TabName;
+                    TabObj["nexttab"] = Tabs[i + 1].TabName;
                 }
 
                 foreach( CswNbtMetaDataNodeTypeProp Prop in CurrentTab.NodeTypePropsByDisplayOrder
@@ -266,7 +266,7 @@ namespace ChemSW.Nbt.WebServices
                     TabObj[PropId]["gestalt"] = CswTools.SafeJavascriptParam( PropWrapper.Gestalt );
                     TabObj[PropId]["ocpname"] = CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName );
 
-                    PropWrapper.ToJSON( (JObject) TabObj[PropId], NodeEditMode.Edit );
+                    PropWrapper.ToJSON( (JObject) TabObj[PropId], NodeEditMode.Edit, Tabs[i] );
                 }
 
             }
@@ -377,7 +377,8 @@ namespace ChemSW.Nbt.WebServices
 
                     JObject PropObj = (JObject) Prop.Value;
 
-                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, NodeEditMode.Edit );
+                    CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToString( PropObj["currenttab"] ) );
+                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, NodeEditMode.Edit, Tab );
 
                     if( false == NodesToPost.Contains( Node ) )
                     {

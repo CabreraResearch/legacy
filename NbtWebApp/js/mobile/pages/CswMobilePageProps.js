@@ -103,7 +103,7 @@ function CswMobilePageProps(propsDef, $parent, mobileStorage, $contentRole) {
         for (propId in tabJson) {
             if (contains(tabJson, propId)) {
                 propJson = tabJson[propId];
-                if (false === isNullOrEmpty(propJson) && propId !== 'nexttab') {
+                if (false === isNullOrEmpty(propJson) && propId !== 'nexttab' && propId !== 'currenttab') {
                     propName = propJson.prop_name;
                     ftDef = {
                         propId: propId,
