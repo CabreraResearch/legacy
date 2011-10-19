@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.WebServices
             PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
             PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
 
-            PropWrapper.ToJSON( PropObj, EditMode );
+            PropWrapper.ToJSON( PropObj, EditMode, Tab );
 
             return PropObj;
         } // _makePropJson()
@@ -374,7 +374,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 NodeType = NodeTypeTab.NodeType;
             }
-            if( null != NodeType && null != NodeTypeTab )
+            if( null != NodeType )
             {
                 switch( EditMode )
                 {
@@ -383,8 +383,8 @@ namespace ChemSW.Nbt.WebServices
                         if( wsQ.CheckQuota( NodeTypeId ) )
                         {
                             Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                            bool ReadOnly = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
-                            if( false == ReadOnly )
+                            bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
+                            if( CanEdit )
                             {
                                 RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
                                 if( null != RetNbtNodeKey )
@@ -405,7 +405,7 @@ namespace ChemSW.Nbt.WebServices
                             string NodeKey = NodeKeys[i];
                             Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
                             bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
-                            if( true == CanEdit )
+                            if( CanEdit )
                             {
                                 RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
                                 if( null != RetNbtNodeKey )
@@ -573,7 +573,7 @@ namespace ChemSW.Nbt.WebServices
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( CswConvert.ToString( PropObj["id"] ) );
 
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
-            Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, EditMode );
+            Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, EditMode, Tab );
 
             // Recurse on sub-props
             if( null != PropObj["subprops"] )
