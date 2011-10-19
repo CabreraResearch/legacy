@@ -265,15 +265,8 @@ namespace ChemSW.Nbt.WebServices
                     TabObj[PropId]["fieldtype"] = Prop.FieldType.FieldType.ToString();
                     TabObj[PropId]["gestalt"] = CswTools.SafeJavascriptParam( PropWrapper.Gestalt );
                     TabObj[PropId]["ocpname"] = CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName );
-                    
-                    bool IsReadOnly = ( Prop.ReadOnly || // nodetype_props.readonly
-                                PropWrapper.ReadOnly ||  // jct_nodes_props.readonly
-                                ( Node.ReadOnly || Node.Locked ) || // nodes.readonly or nodes.locked
-                                false == _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeType, false, CurrentTab, null, Node, Prop ) );
 
-                    TabObj[PropId]["isreadonly"] = IsReadOnly;
-
-                    PropWrapper.ToJSON( (JObject) TabObj[PropId] );
+                    PropWrapper.ToJSON( (JObject) TabObj[PropId], NodeEditMode.Edit );
                 }
 
             }
@@ -384,7 +377,7 @@ namespace ChemSW.Nbt.WebServices
 
                     JObject PropObj = (JObject) Prop.Value;
 
-                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, _CswNbtResources, Node );
+                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, NodeEditMode.Edit );
 
                     if( false == NodesToPost.Contains( Node ) )
                     {

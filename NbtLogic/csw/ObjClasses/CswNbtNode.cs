@@ -1,55 +1,55 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using System.Data;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using System.Text.RegularExpressions;
-using ChemSW.Core;
 
 
 namespace ChemSW.Nbt
 {
-	/// <summary>
-	/// Editing and Display mode for Nodes
-	/// </summary>
-	public enum NodeEditMode
-	{
-		/// <summary>
-		/// Regular editing
-		/// </summary>
-		Edit,
-		/// <summary>
-		/// Adding a new node in a popup
-		/// </summary>
-		AddInPopup,
-		/// <summary>
-		/// Editing a node in a popup
-		/// </summary>
-		EditInPopup,
-		/// <summary>
-		/// Editing fake property values (as in Design mode)
-		/// </summary>
-		Demo,
-		/// <summary>
-		/// Displaying values for a print report
-		/// </summary>
-		PrintReport,
-		/// <summary>
-		/// Editing the default value of a property (in Design)
-		/// </summary>
-		DefaultValue,
-		/// <summary>
-		/// Showing node audit history in a popup
-		/// </summary>
-		AuditHistoryInPopup,
-		/// <summary>
-		/// A preview of the node, displayed when hovering
-		/// </summary>
-		Preview
-	}; // NodeEditMode
+    /// <summary>
+    /// Editing and Display mode for Nodes
+    /// </summary>
+    public enum NodeEditMode
+    {
+        /// <summary>
+        /// Regular editing
+        /// </summary>
+        Edit,
+        /// <summary>
+        /// Adding a new node in a popup
+        /// </summary>
+        AddInPopup,
+        /// <summary>
+        /// Editing a node in a popup
+        /// </summary>
+        EditInPopup,
+        /// <summary>
+        /// Editing fake property values (as in Design mode)
+        /// </summary>
+        Demo,
+        /// <summary>
+        /// Displaying values for a print report
+        /// </summary>
+        PrintReport,
+        /// <summary>
+        /// Editing the default value of a property (in Design)
+        /// </summary>
+        DefaultValue,
+        /// <summary>
+        /// Showing node audit history in a popup
+        /// </summary>
+        AuditHistoryInPopup,
+        /// <summary>
+        /// A preview of the node, displayed when hovering
+        /// </summary>
+        Preview,
+        /// <summary>
+        /// A preview of the node, displayed when hovering
+        /// </summary>
+        Unknown
+    }; // NodeEditMode
 } // namespace ChemSW.Nbt
 
 
@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtNode //: System.IEquatable<CswNbtNode>
     {
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
-		public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation );
+        public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation );
         public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );
         public delegate void OnRequestFillHandler( CswNbtNode Node, DateTime Date );
         public delegate void OnRequestFillFromNodeTypeIdHandler( CswNbtNode Node, Int32 NodeTypeId );
@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.ObjClasses
             _UniqueId = UniqueId;
             _NodeId = NodeId;
             _NodeTypeId = NodeTypeId;
-            _CswNbtNodePropColl = new CswNbtNodePropColl( CswNbtResources, this ); //, ICswNbtObjClassFactory);
+            _CswNbtNodePropColl = new CswNbtNodePropColl( CswNbtResources, this, null ); //, ICswNbtObjClassFactory);
             //_CswNbtObjClassFactory = ICswNbtObjClassFactory; // new CswNbtObjClassFactory(CswNbtResources, this);
             _NodeSpecies = NodeSpecies;
 
@@ -197,19 +197,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//ModificationState
 
-		private bool _ReadOnly = false;
-		public bool ReadOnly
-		{
-			get { return _ReadOnly; }
-			set { _ReadOnly = value; }
-		}
+        private bool _ReadOnly = false;
+        public bool ReadOnly
+        {
+            get { return _ReadOnly; }
+            set { _ReadOnly = value; }
+        }
 
-		private bool _Locked = false;
-		public bool Locked
-		{
-			get { return _Locked; }
-			set { _Locked = value; }
-		}
+        private bool _Locked = false;
+        public bool Locked
+        {
+            get { return _Locked; }
+            set { _Locked = value; }
+        }
 
         //bz # 5943
         //private bool _Modified = false;
@@ -368,7 +368,7 @@ namespace ChemSW.Nbt.ObjClasses
             set
             {
                 // case 20781 - only mark modified if we're changing the name, not assigning it from DB
-                if( _NodeName != value && _NodeName != string.Empty)
+                if( _NodeName != value && _NodeName != string.Empty )
                 {
                     //bz # 5943
                     //_Modified = true;
@@ -466,7 +466,7 @@ namespace ChemSW.Nbt.ObjClasses
             postChanges( ForceUpdate, false, false );
         }
 
-		public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false )
+        public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false )
         {
             if( NodeModificationState.Modified == ModificationState || ForceUpdate )
             {
@@ -477,12 +477,12 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != _CswNbtObjClass )
                 {
                     if( IsNew )
-						_CswNbtObjClass.beforeCreateNode( OverrideUniqueValidation );
+                        _CswNbtObjClass.beforeCreateNode( OverrideUniqueValidation );
                     else
-						_CswNbtObjClass.beforeWriteNode( OverrideUniqueValidation );
+                        _CswNbtObjClass.beforeWriteNode( OverrideUniqueValidation );
                 }
 
-				OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation );
+                OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation );
 
                 if( null != _CswNbtObjClass )
                 {
@@ -521,15 +521,15 @@ namespace ChemSW.Nbt.ObjClasses
         //bz # 5943
         public void delete()
         {
-			if( null == OnRequestDeleteNode )
-			{
-				throw ( new CswDniException( "There is no delete handler" ) );
-			}
+            if( null == OnRequestDeleteNode )
+            {
+                throw ( new CswDniException( "There is no delete handler" ) );
+            }
 
-			if( !_CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, this.NodeType ) )
-			{
-				throw ( new CswDniException( ErrorType.Warning, "You do not have permission to delete this " + this.NodeType.NodeTypeName, "User attempted to delete a " + this.NodeType.NodeTypeName + " without Delete permissions" ) );
-			}
+            if( !_CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, this.NodeType ) )
+            {
+                throw ( new CswDniException( ErrorType.Warning, "You do not have permission to delete this " + this.NodeType.NodeTypeName, "User attempted to delete a " + this.NodeType.NodeTypeName + " without Delete permissions" ) );
+            }
 
             if( null != _CswNbtObjClass )
             {
@@ -583,7 +583,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         //bz # 5943
 
-        public void fill(DateTime Date)
+        public void fill( DateTime Date )
         {
             if( null == OnRequestFill )
                 throw ( new CswDniException( "There is no fill handler" ) );

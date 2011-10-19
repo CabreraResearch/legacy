@@ -281,13 +281,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 Tab = Prop.EditLayout.Tab;
             }
-            bool IsReadOnly = PropWrapper.IsReadOnly( _CswNbtResources, Node, EditMode, Tab );
-            PropObj["readonly"] = IsReadOnly.ToString().ToLower();
             PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
             PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
             PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
 
-            PropWrapper.ToJSON( PropObj );
+            PropWrapper.ToJSON( PropObj, EditMode );
 
             return PropObj;
         } // _makePropJson()
@@ -575,7 +573,7 @@ namespace ChemSW.Nbt.WebServices
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( CswConvert.ToString( PropObj["id"] ) );
 
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
-            Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, _CswNbtResources, Node, EditMode, Tab );
+            Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, EditMode );
 
             // Recurse on sub-props
             if( null != PropObj["subprops"] )

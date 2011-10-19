@@ -19,11 +19,19 @@ namespace ChemSW.Nbt.PropTypes
 
         private CswNbtNodeProp _CswNbtNodeProp = null;
         private CswNbtNodePropData _CswNbtNodePropData = null;
+        private CswNbtResources _CswNbtResources = null;
+        private CswNbtNode _Node = null;
+        private NodeEditMode _EditMode = NodeEditMode.Unknown;
+        private CswNbtMetaDataNodeTypeTab _Tab = null;
 
-        public CswNbtNodePropWrapper( CswNbtNodeProp CswNbtNodeProp, CswNbtNodePropData CswNbtNodePropData )
+        public CswNbtNodePropWrapper( CswNbtResources CswNbtResources, CswNbtNode Node, CswNbtNodeProp CswNbtNodeProp, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeTab Tab = null, NodeEditMode EditMode = NodeEditMode.Edit )
         {
             _CswNbtNodeProp = CswNbtNodeProp;
             _CswNbtNodePropData = CswNbtNodePropData;
+            _CswNbtResources = CswNbtResources;
+            _Node = Node;
+            _EditMode = EditMode;
+            _Tab = Tab;
         }//ctor
 
         //bz # 8287: rearranged a few things
@@ -100,7 +108,7 @@ namespace ChemSW.Nbt.PropTypes
         public Int32 ObjectClassPropId { get { return ( _CswNbtNodeProp.ObjectClassPropId ); } }
         public string ObjectClassPropName { get { return ( _CswNbtNodeProp.ObjectClassPropName ); } }
         public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } set { _CswNbtNodePropData.NodeId = value; } }
-        public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } set { _CswNbtNodePropData.ReadOnly = value; } }
+        //public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } set { _CswNbtNodePropData.ReadOnly = value; } }
         public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } set { _CswNbtNodePropData.Hidden = value; } }
         public string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } set { _CswNbtNodePropData.Field1 = value; } }
         public string Field2 { get { return ( _CswNbtNodePropData.Field2 ); } set { _CswNbtNodePropData.Field2 = value; } }
@@ -149,15 +157,20 @@ namespace ChemSW.Nbt.PropTypes
             set { _HelpText = value; }
         }
 
-        public bool IsReadOnly( CswNbtResources CswNbtResources, CswNbtNode Node, NodeEditMode EditMode = NodeEditMode.Edit, CswNbtMetaDataNodeTypeTab Tab = null )
+        public bool ReadOnly
         {
-            CswNbtNodePropWrapper PropWrapper = this;
-
-            return ( NodeTypeProp.ReadOnly  || // nodetype_props.readonly
-                     PropWrapper.ReadOnly || // jct_nodes_props.readonly
-                     ( Node.ReadOnly || Node.Locked ) || // nodes.readonly or nodes.locked
-                     EditMode == NodeEditMode.Preview ||
-                     false == CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, false, Tab, null, Node, NodeTypeProp ) );
+            get
+            {
+                return ( _CswNbtNodePropData.ReadOnly || // jct_nodes_props.readonly
+                         NodeTypeProp.ReadOnly || // nodetype_props.readonly
+                        ( _Node.ReadOnly || _Node.Locked ) || // nodes.readonly or nodes.locked
+                        _EditMode == NodeEditMode.Preview ||
+                        false == _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, false, _Tab, null, _Node, NodeTypeProp ) );
+            }
+            set
+            {
+                _CswNbtNodePropData.ReadOnly = value;
+            }
         }
 
         /// <summary>
@@ -181,23 +194,30 @@ namespace ChemSW.Nbt.PropTypes
         /// Returns defined Field Type attributes/subfields as JToken class JObject
         /// </summary>
         /// <param name="JObject">JToken class JObject</param>
-        public void ToJSON( JObject JObject )
+        public void ToJSON( JObject JObject, NodeEditMode EditMode )
         {
             JObject Values = new JObject();
+            _EditMode = EditMode;
             JObject["values"] = Values;
+            JObject["readonly"] = ReadOnly;
             _CswNbtNodeProp.ToJSON( Values );
         }
 
         /// <summary>
         /// Parses defined Field Type attributes/subfields into a JToken class JObject
         /// </summary>
-        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap, CswNbtResources CswNbtResources, CswNbtNode Node, NodeEditMode EditMode = NodeEditMode.Edit, CswNbtMetaDataNodeTypeTab Tab = null )
+        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap, NodeEditMode EditMode )
         {
-            bool ReadOnly = IsReadOnly( CswNbtResources, Node, EditMode, Tab );
-            if( null != Object.Property( "values" ) && false == ReadOnly )
+            if( null != Object )
             {
-                JObject Values = (JObject) Object["values"];
-                _CswNbtNodeProp.ReadJSON( Values, NodeMap, NodeTypeMap );
+                _EditMode = EditMode;
+                bool IsReadOnly = ReadOnly;
+                Object["readonly"] = IsReadOnly;
+                if( null != Object.Property( "values" ) && false == IsReadOnly )
+                {
+                    JObject Values = (JObject) Object["values"];
+                    _CswNbtNodeProp.ReadJSON( Values, NodeMap, NodeTypeMap );
+                }
             }
         }
 
