@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using System.Collections.Generic;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -20,7 +21,8 @@ namespace ChemSW.Nbt.Schema
 
             if( null != PiNt && null != IpNt )
             {
-                foreach( CswNbtView PiView in _CswNbtSchemaModTrnsctn.restoreViews( "Physical Inspections" ) )
+                List<CswNbtView> PiViews = _CswNbtSchemaModTrnsctn.restoreViews( "Physical Inspections" );
+                foreach( CswNbtView PiView in PiViews )
                 {
                     if( PiView.ViewMode == NbtViewRenderingMode.Grid && PiView.Visibility != NbtViewVisibility.Property )
                     {
@@ -40,7 +42,10 @@ namespace ChemSW.Nbt.Schema
 
                         CswNbtViewProperty Sp = PiView.AddViewProperty( PiRel, StatusNtp );
                         Sp.Order = 2;
-                        PiView.AddViewPropertyFilter( Sp, StatusNtp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, string.Empty, false );
+                        PiView.AddViewPropertyFilter( Sp, StatusNtp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled ), false );
+                        PiView.AddViewPropertyFilter( Sp, StatusNtp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed ), false );
+                        PiView.AddViewPropertyFilter( Sp, StatusNtp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late ), false );
+                        PiView.AddViewPropertyFilter( Sp, StatusNtp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Missed ), false );
 
                         CswNbtViewProperty Tp = PiView.AddViewProperty( PiRel, TargetNtp );
                         Tp.Order = 3;
