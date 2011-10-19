@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -61,6 +62,12 @@ namespace ChemSW.Nbt.Schema
 				}
 			}
 			_CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+
+
+			// case 23920 - New action: Sessions, for viewing and burning current sessions
+			// Permissions are granted in next script
+			_CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Sessions, false, "", "System" );
+
 
 		}//Update()
 

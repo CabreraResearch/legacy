@@ -97,11 +97,14 @@
 					$('#header_quota').CswQuotaImage();
 
                     $('#header_menu').CswMenuHeader({
-                        'onLogout': function () {
+							'onLogout': function () {
 								Logout();
                             },
 							'onQuotas': function () {
 								_handleAction({ 'actionname': 'Quotas' });
+							},
+							'onSessions': function () {
+								_handleAction({ 'actionname': 'Sessions' });
 							}
                     }); // CswMenuHeader
 
@@ -866,11 +869,18 @@
                    	_setupOOCInspections();
 
                    	break;
-
+					
                 case 'Quotas':
 
                 	clear({ 'all': true });
                 	$('#CenterTopDiv').CswQuotas();
+
+                   	break;
+
+                case 'Sessions':
+
+                	clear({ 'all': true });
+                	$('#CenterTopDiv').CswSessions();
 
                    	break;
 

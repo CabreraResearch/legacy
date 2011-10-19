@@ -183,6 +183,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="ExternalLogin.aspx" />
+    <Content Include="js\main\actions\CswSessions.js" />
     <Content Include="js\main\actions\CswQuotaImage.js" />
     <Content Include="js\main\actions\CswQuotas.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
@@ -1599,7 +1600,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
-    <Folder Include="js\actions\" />
     <Folder Include="temp\" />
   </ItemGroup>
   <ItemGroup>

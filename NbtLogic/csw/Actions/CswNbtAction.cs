@@ -18,7 +18,8 @@ namespace ChemSW.Nbt.Actions
         Receiving,
         Import_Fire_Extinguisher_Data,
         OOC_Inspections,
-		Quotas
+		Quotas,
+		Sessions
     }
 
     public class CswNbtAction
