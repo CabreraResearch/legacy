@@ -23,7 +23,7 @@ namespace ChemSW.Nbt
         private NodeEditMode _EditMode = NodeEditMode.Unknown;
         private CswNbtMetaDataNodeTypeTab _CswNbtMetaDataNodeTypeTab = null;
 
-        public CswNbtNodePropColl( CswNbtResources CswNbtResources, CswNbtNode CswNbtNode, CswNbtMetaDataNodeTypeTab CswNbtMetaDataNodeTypeTab, NodeEditMode EditMode = NodeEditMode.Edit )//, ICswNbtObjClassFactory ICswNbtObjClassFactory )
+        public CswNbtNodePropColl( CswNbtResources CswNbtResources, CswNbtNode CswNbtNode, CswNbtMetaDataNodeTypeTab CswNbtMetaDataNodeTypeTab = null, NodeEditMode EditMode = NodeEditMode.Edit )//, ICswNbtObjClassFactory ICswNbtObjClassFactory )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtNode = CswNbtNode;
