@@ -225,7 +225,7 @@ namespace ChemSW.Nbt.PropTypes
                 _Tab = Tab;
                 Object["readonly"] = ( false == _IsEditable );
                 if( null != Object["values"] &&
-                    false == _IsEditable &&
+                    _IsEditable &&
                     ( null == Object["wasmodified"] ||
                      CswConvert.ToBoolean( Object["wasmodified"] ) ) )
                 {
