@@ -2756,131 +2756,131 @@ namespace ChemSW.Nbt.WebServices
         } // RunView()
         #endregion test
 
-		#region Quotas
+        #region Quotas
 
-		[WebMethod( EnableSession = false )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string getQuotas()
-		{
-			JObject ReturnVal = new JObject();
-			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-			try
-			{
-				_initResources();
-				AuthenticationStatus = _attemptRefresh();
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getQuotas()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
 
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
-					ReturnVal = ws.GetQuotas();
-				}
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+                    ReturnVal = ws.GetQuotas();
+                }
 
-				_deInitResources();
-			}
+                _deInitResources();
+            }
 
-			catch( Exception ex )
-			{
-				ReturnVal = jError( ex );
-			}
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-			return ReturnVal.ToString();
-		} // getQuotas()
+            return ReturnVal.ToString();
+        } // getQuotas()
 
-		[WebMethod( EnableSession = false )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string saveQuotas( string Quotas )
-		{
-			JObject ReturnVal = new JObject();
-			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-			try
-			{
-				_initResources();
-				AuthenticationStatus = _attemptRefresh();
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string saveQuotas( string Quotas )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
 
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
-					ReturnVal["result"] = ws.SaveQuotas( Quotas ).ToString().ToLower();
-				}
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+                    ReturnVal["result"] = ws.SaveQuotas( Quotas ).ToString().ToLower();
+                }
 
-				_deInitResources();
-			}
+                _deInitResources();
+            }
 
-			catch( Exception ex )
-			{
-				ReturnVal = jError( ex );
-			}
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-			return ReturnVal.ToString();
-		} // saveQuotas()
-
-
-		[WebMethod( EnableSession = false )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string getQuotaPercent()
-		{
-			JObject ReturnVal = new JObject();
-			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-			try
-			{
-				_initResources();
-				AuthenticationStatus = _attemptRefresh();
-
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
-					ReturnVal["result"] = Math.Round( ws.GetQuotaPercent() ).ToString();
-				}
-
-				_deInitResources();
-			}
-
-			catch( Exception ex )
-			{
-				ReturnVal = jError( ex );
-			}
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-			return ReturnVal.ToString();
-		} // getQuotaPercent()
-
-		[WebMethod( EnableSession = false )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string checkQuota( string NodeTypeId )
-		{
-			JObject ReturnVal = new JObject();
-			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-			try
-			{
-				_initResources();
-				AuthenticationStatus = _attemptRefresh();
-
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
-					ReturnVal["result"] = ws.CheckQuota( CswConvert.ToInt32( NodeTypeId ) ).ToString().ToLower();
-				}
-
-				_deInitResources();
-			}
-
-			catch( Exception ex )
-			{
-				ReturnVal = jError( ex );
-			}
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-			return ReturnVal.ToString();
-		} // getQuotaPercent()
+            return ReturnVal.ToString();
+        } // saveQuotas()
 
 
-		#endregion Quotas
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getQuotaPercent()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
 
-		#endregion Web Methods
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+                    ReturnVal["result"] = Math.Round( ws.GetQuotaPercent() ).ToString();
+                }
 
-		private CswNbtView _getView( string ViewId )
+                _deInitResources();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getQuotaPercent()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string checkQuota( string NodeTypeId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+                    ReturnVal["result"] = ws.CheckQuota( CswConvert.ToInt32( NodeTypeId ) ).ToString().ToLower();
+                }
+
+                _deInitResources();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getQuotaPercent()
+
+
+        #endregion Quotas
+
+        #endregion Web Methods
+
+        private CswNbtView _getView( string ViewId )
         {
             CswNbtView View = null;
             if( CswNbtViewId.isViewIdString( ViewId ) )
