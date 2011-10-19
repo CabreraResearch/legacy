@@ -150,10 +150,10 @@
                 enabledText: 'Delete View',
                 disableOnClick: true,
                 onclick: function() {
-                    var viewid = _getSelectedViewId($viewgrid);
+                    var viewid = _getSelectedViewId();
                     if (!isNullOrEmpty(viewid))
                     {
-                        if (confirm("Are you sure you want to delete: " + _getSelectedViewName($viewgrid)))
+                        if (confirm("Are you sure you want to delete: " + _getSelectedViewName()))
                         {
                             var dataJson = {
                                 ViewId: viewid
@@ -281,7 +281,7 @@
                     $wizard.CswWizard('button', 'next', 'disable');
 
                     var jsonData = {
-                        ViewId: _getSelectedViewId($viewgrid)
+                        ViewId: _getSelectedViewId()
                     };
 
                     CswAjaxJson({
@@ -423,7 +423,7 @@
 
         function _handleFinish($wizard)
         {
-            var viewid = _getSelectedViewId($viewgrid);
+            var viewid = _getSelectedViewId();
             var processView = true;
 
             if (!isNullOrEmpty(currentViewJson)) {
@@ -448,7 +448,7 @@
                         url: o.SaveViewUrl,
                         data: jsonData,
                         success: function() {
-                            o.onFinish(viewid, _getSelectedViewMode($viewgrid));
+                            o.onFinish(viewid, _getSelectedViewMode());
                         } // success
                     });
             } // ajax
@@ -521,22 +521,22 @@
                 }); // ajax
         } // _getViewsGrid()
 
-        function _getSelectedViewId()
+        function _getSelectedViewId(rowid)
         {
             var ret = '';
             if (o.startingStep === 1) {
-                ret = cswViewGrid.getValueForColumn(o.ColumnFullViewId);
+            	ret = cswViewGrid.getValueForColumn(o.ColumnFullViewId, rowid);
             } else {
                 ret = o.viewid;
             }
             return ret;
         }
 
-        function _getSelectedViewMode()
+        function _getSelectedViewMode(rowid)
         {
             var ret = '';
             if (o.startingStep === 1) {
-                ret = cswViewGrid.getValueForColumn(o.ColumnViewMode);
+            	ret = cswViewGrid.getValueForColumn(o.ColumnViewMode, rowid);
             } else {
                 ret = o.viewmode;
             }
