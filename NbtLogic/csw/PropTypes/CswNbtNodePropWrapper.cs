@@ -157,14 +157,13 @@ namespace ChemSW.Nbt.PropTypes
             set { _HelpText = value; }
         }
 
-        private bool _IsReadOnly { get { return ( false == CanEdit ); } }
+        private bool _IsEditable { get { return ( CanEdit && false == ReadOnly ); } }
 
         public bool CanEdit
         {
             get
             {
-                bool Ret = ( false == ReadOnly &&
-                             _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, false, _Tab, null, _Node, NodeTypeProp ) );
+                bool Ret = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, false, _Tab, null, _Node, NodeTypeProp );
                 return Ret;
             }
         }
@@ -211,7 +210,7 @@ namespace ChemSW.Nbt.PropTypes
             _EditMode = EditMode;
             _Tab = Tab;
             JObject["values"] = Values;
-            JObject["readonly"] = _IsReadOnly;
+            JObject["readonly"] = ( false == _IsEditable );
             _CswNbtNodeProp.ToJSON( Values );
         }
 
@@ -224,9 +223,9 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _EditMode = EditMode;
                 _Tab = Tab;
-                Object["readonly"] = _IsReadOnly;
+                Object["readonly"] = ( false == _IsEditable );
                 if( null != Object["values"] &&
-                    false == _IsReadOnly &&
+                    false == _IsEditable &&
                     ( null == Object["wasmodified"] ||
                      CswConvert.ToBoolean( Object["wasmodified"] ) ) )
                 {
