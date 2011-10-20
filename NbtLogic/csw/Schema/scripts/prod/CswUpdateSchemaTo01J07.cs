@@ -19,10 +19,7 @@ namespace ChemSW.Nbt.Schema
                 if( RauView.ViewMode == NbtViewRenderingMode.Tree && RauView.Visibility != NbtViewVisibility.Property )
                 {
                     CswNbtView NewRauView = _CswNbtSchemaModTrnsctn.makeView();
-                    NewRauView.LoadXml( RauView.ToXml() );
-                    NewRauView.VisibilityRoleId = CswAdminNode.NodeId;
-                    NewRauView.VisibilityUserId = null;
-                    NewRauView.Visibility = NbtViewVisibility.Role;
+                    NewRauView.makeNew( "Roles and Users", NbtViewVisibility.Role, CswAdminNode.NodeId, null, RauView.ViewId.get() );
                     NewRauView.save();
                     break;
                 }
@@ -33,10 +30,7 @@ namespace ChemSW.Nbt.Schema
                 if( UlView.ViewMode == NbtViewRenderingMode.Grid && UlView.Visibility != NbtViewVisibility.Property )
                 {
                     CswNbtView NewUlView = _CswNbtSchemaModTrnsctn.makeView();
-                    NewUlView.LoadXml( UlView.ToXml() );
-                    NewUlView.VisibilityRoleId = CswAdminNode.NodeId;
-                    NewUlView.VisibilityUserId = null;
-                    NewUlView.Visibility = NbtViewVisibility.Role;
+                    NewUlView.makeNew( "User List", NbtViewVisibility.Role, CswAdminNode.NodeId, null, UlView.ViewId.get() );
                     NewUlView.save();
                     break;
                 }
