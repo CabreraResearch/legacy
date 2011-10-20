@@ -372,7 +372,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Creates a CswNbtViewPropertyFilter and returns its Json
         /// </summary>
-        public JObject makeViewPropFilter( CswNbtView View, JObject FilterProp )
+        public JObject makeViewPropFilter( CswNbtView View, JObject FilterProp, bool ClearFilters = false )
         {
             JObject Ret = new JObject();
 
@@ -401,17 +401,17 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     //Case 23779
-                    //if( null != ViewPropFilt && ViewProp.Filters.Count > 1 )
-                    //{
-                    //    while( ViewProp.Filters.Count != 1 )
-                    //    {
-                    //        CswNbtViewPropertyFilter FiltToRemove = (CswNbtViewPropertyFilter) ViewProp.Filters[0];
-                    //        if( ViewPropFilt.ArbitraryId != FiltToRemove.ArbitraryId )
-                    //        {
-                    //            ViewProp.removeFilter( (CswNbtViewPropertyFilter) ViewProp.Filters[0] );
-                    //        }
-                    //    }
-                    //}
+                    if( ClearFilters && null != ViewPropFilt && ViewProp.Filters.Count > 1 )
+                    {
+                        while( ViewProp.Filters.Count != 1 )
+                        {
+                            CswNbtViewPropertyFilter FiltToRemove = (CswNbtViewPropertyFilter) ViewProp.Filters[0];
+                            if( ViewPropFilt.ArbitraryId != FiltToRemove.ArbitraryId )
+                            {
+                                ViewProp.removeFilter( (CswNbtViewPropertyFilter) ViewProp.Filters[0] );
+                            }
+                        }
+                    }
                 }
             }
 
