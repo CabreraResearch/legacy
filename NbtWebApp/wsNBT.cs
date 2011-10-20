@@ -1691,7 +1691,7 @@ namespace ChemSW.Nbt.WebServices
 
                         // Save the binary data
                         CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                        string MolData = CswTools.ByteArrayToString( FileData );
+                        string MolData = CswTools.ByteArrayToString( FileData ).Replace("\r", "");
                         bool Success = ws.saveMolProp( MolData, PropId );
 
                         ReturnVal["success"] = Success;
@@ -1730,8 +1730,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-
-                    if( !string.IsNullOrEmpty( molData ) && !string.IsNullOrEmpty( PropId ) )
+                    if( false == string.IsNullOrEmpty( molData ) && false == string.IsNullOrEmpty( PropId ) )
                     {
                         CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
                         bool Succeeded = ws.saveMolProp( molData, PropId );
