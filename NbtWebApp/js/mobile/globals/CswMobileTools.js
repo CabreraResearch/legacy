@@ -398,13 +398,22 @@ function modifyPropJson(json,key,value) {
     /// <returns type="Object">The modified JSON</returns>
     var oldValue;
     if (false === isNullOrEmpty(key)) {
-        if (json.hasOwnProperty('values') && json['values'].hasOwnProperty(key)) {
-            oldValue = json['values'][key];
-            json['values'][key] = value;
-            if (oldValue !== value) {
-                json.wasmodified = true;
+        if (contains(json, 'values')) {
+            if (contains(json.values, key)) {
+                oldValue = json.values[key];
+                json.values[key] = value;
+                if (oldValue !== value) {
+                    json.wasmodified = true;
+                }
             }
-        } else if (json.hasOwnProperty(key)) {
+            else if (contains(json.values, 'value') && contains(json.values.value, key)) {
+                oldValue = json.values.value[key];
+                json.values.value[key] = value;
+                if (oldValue !== value) {
+                    json.wasmodified = true;
+                }
+            }
+        } else if (contains(json, key)) {
             oldValue = json[key];
             json[key] = value;
             if (oldValue !== value) {
