@@ -97,11 +97,14 @@
 					$('#header_quota').CswQuotaImage();
 
                     $('#header_menu').CswMenuHeader({
-                        'onLogout': function () {
+							'onLogout': function () {
 								Logout();
                             },
 							'onQuotas': function () {
 								_handleAction({ 'actionname': 'Quotas' });
+							},
+							'onSessions': function () {
+								_handleAction({ 'actionname': 'Sessions' });
 							}
                     }); // CswMenuHeader
 
@@ -680,40 +683,38 @@
                     o.viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
 
                 switch (o.viewmode) {
-                    case 'grid':
-                        {
-                            getViewGrid({
-                                'viewid': o.viewid,
-                                'nodeid': o.nodeid,
-                                'cswnbtnodekey': o.cswnbtnodekey,
-                                'showempty': o.showempty,
-                                'forsearch': o.forsearch
-                            });
-                            break;
-                        }
-                    case 'table':
-                        {
-                            getViewTable({
-                                'viewid': o.viewid,
-                                'nodeid': o.nodeid,
-                                'cswnbtnodekey': o.cswnbtnodekey
-                            });
-                            break;
-                        }
-                    default: //tree
-                        {
-                            refreshNodesTree({
-                                'nodeid': o.nodeid,
-                                'cswnbtnodekey': o.cswnbtnodekey,
-                                'nodename': o.nodename,
-                                'viewid': o.viewid,
-                                'viewmode': o.viewmode,
-                                'showempty': o.showempty,
-                                'forsearch': o.forsearch,
-                                'IncludeNodeRequired': o.IncludeNodeRequired
-                            });
-                            break;
-                        }
+					case 'grid':
+						getViewGrid({
+							'viewid': o.viewid,
+							'nodeid': o.nodeid,
+							'cswnbtnodekey': o.cswnbtnodekey,
+							'showempty': o.showempty,
+							'forsearch': o.forsearch
+						});
+						break;
+					case 'table':
+						getViewTable({
+							'viewid': o.viewid,
+							'nodeid': o.nodeid,
+							'cswnbtnodekey': o.cswnbtnodekey
+						});
+						break;
+					case 'tree':
+						//default: //tree
+						refreshNodesTree({
+							'nodeid': o.nodeid,
+							'cswnbtnodekey': o.cswnbtnodekey,
+							'nodename': o.nodename,
+							'viewid': o.viewid,
+							'viewmode': o.viewmode,
+							'showempty': o.showempty,
+							'forsearch': o.forsearch,
+							'IncludeNodeRequired': o.IncludeNodeRequired
+						});
+						break;
+					default: // reload the welcome page
+						refreshWelcome();
+						break;
                 } // switch
             } // if (manuallyCheckChanges())
         } // refreshSelected()
@@ -868,11 +869,18 @@
                    	_setupOOCInspections();
 
                    	break;
-
+					
                 case 'Quotas':
 
                 	clear({ 'all': true });
                 	$('#CenterTopDiv').CswQuotas();
+
+                   	break;
+
+                case 'Sessions':
+
+                	clear({ 'all': true });
+                	$('#CenterTopDiv').CswSessions();
 
                    	break;
 

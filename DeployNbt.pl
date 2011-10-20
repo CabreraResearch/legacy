@@ -139,15 +139,11 @@ foreach my $component (@components)
 						} else {
 							printf("ERROR: Could not open $file \n");
 						}
-					} else {
-						if($subdir eq "DailyBuildTools")   # special case
-						{
-							$file = $repopaths{$component} ."/$subdir/DailyBuildWeb/DailyBuildWeb/Properties/AssemblyInfo.cs";
-							&setversion($file, "$datestr.$increment");
-						} else {
-							$file = $repopaths{$component} ."/$subdir/Properties/AssemblyInfo.cs";
-							&setversion($file, "$datestr.$increment");
-						}
+					} 
+					else 
+					{
+						$file = $repopaths{$component} ."/$subdir/Properties/AssemblyInfo.cs";
+						&setversion($file, "$datestr.$increment");
 					}
 				}
 			}
@@ -159,6 +155,11 @@ foreach my $component (@components)
 			{
 				$file = $repopaths{$component} ."/CswLogService/Properties/AssemblyInfo.cs";
 			}
+			elsif($subdir eq "DailyBuildTools")   # special case
+			{
+				$file = $repopaths{$component} ."/DailyBuildWeb/DailyBuildWeb/Properties/AssemblyInfo.cs";
+				&setversion($file, "$datestr.$increment");
+			} 
 			else
 			{
 				$file = $repopaths{$component} ."/Properties/AssemblyInfo.cs";
@@ -178,6 +179,9 @@ foreach my $component (@components)
 
 &runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
             "devenv ". $repopaths{"Nbt"} ."/Nbt.sln /Rebuild \"Release\"");
+
+&runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
+            "devenv ". $repopaths{"DailyBuildTools"} ."/DailyBuildweb/DailyBuildWeb.sln /Rebuild \"Release\"");
 
 &runCommand( "net start \"ChemSW Log Service\"");
 

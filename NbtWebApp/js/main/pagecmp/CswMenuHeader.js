@@ -9,7 +9,8 @@
 			Url: '/NbtWebApp/wsNBT.asmx/getHeaderMenu',
 			onLogout: function() { },
 			onQuotas: function () { },
-			onSuccess: function() { }
+			onSessions: function () { },
+			onSuccess: function () { }
 		};
 
 		if (options) {
@@ -35,7 +36,8 @@
 			                                            itemKey: menuItem,
 			                                            itemJson: thisItem, 
 			                                            onLogout: o.onLogout,
-														onQuotas: o.onQuotas });
+														onQuotas: o.onQuotas,
+														onSessions: o.onSessions });
 
 			                if (isTrue(thisItem.haschildren)) {
 			                    delete thisItem.haschildren;
@@ -48,7 +50,8 @@
 			                                             itemKey: childItem,
 			                                             itemJson: thisChild, 
 			                                             onLogout: o.onLogout,
-														 onQuotas: o.onQuotas });
+														 onQuotas: o.onQuotas,
+														 onSessions: o.onSessions });
 			                        }
 			                    }
 			                }

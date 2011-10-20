@@ -17,6 +17,7 @@ using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
 using ChemSW.NbtWebControls;
 using ChemSW.Security;
+using ChemSW.Session;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -109,11 +110,89 @@ namespace ChemSW.Nbt.WebServices
             }
         } // _deInitResources()
 
-        #endregion Session and Resource Management
+		#region Sessions Action
 
-        #region Error Handling
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string getSessions()
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
 
-        private void _error( Exception ex, out ErrorType Type, out string Message, out string Detail, out bool Display )
+					SortedList<string, CswSessionsListEntry> SessionList = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
+					foreach( CswSessionsListEntry Entry in SessionList.Values )
+					{
+						// Filter to the administrator's access id only
+						if( Entry.AccessId == _CswNbtResources.AccessId || _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
+						{
+							JObject JSession = new JObject();
+							JSession["sessionid"] = Entry.SessionId;
+							JSession["username"] = Entry.UserName;
+							JSession["logindate"] = Entry.LoginDate.ToString();
+							JSession["timeoutdate"] = Entry.TimeoutDate.ToString();
+							JSession["accessid"] = Entry.AccessId;
+							ReturnVal[Entry.SessionId] = JSession;
+						} // if (Entry.AccessId == Master.AccessID)
+					} // foreach (CswAuthenticator.SessionListEntry Entry in SessionList.Values)
+				}
+				_deInitResources();
+			}
+			catch( Exception Ex )
+			{
+				ReturnVal = jError( Ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+
+		} // getSessions()
+
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string endSession(string SessionId)
+		{
+			JObject ReturnVal = new JObject();
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+					_CswSessionResources.CswSessionManager.clearSession(SessionId);
+					ReturnVal["result"] = "true";
+				}
+				_deInitResources();
+			}
+			catch( Exception Ex )
+			{
+				ReturnVal = jError( Ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+
+		} // endSession()
+
+
+
+		#endregion Sessions Action
+
+
+
+		#endregion Session and Resource Management
+
+		#region Error Handling
+
+		private void _error( Exception ex, out ErrorType Type, out string Message, out string Detail, out bool Display )
         {
             if( _CswNbtResources != null )
             {
