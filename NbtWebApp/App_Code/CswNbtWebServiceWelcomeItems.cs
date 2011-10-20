@@ -10,6 +10,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 using ChemSW.NbtWebControls;
 using Newtonsoft.Json.Linq;
 
@@ -89,7 +90,8 @@ namespace ChemSW.Nbt.WebServices
                 ResetWelcomeItems( strRoleId );
                 WelcomeTable = _getWelcomeTable( RoleId );
             }
-
+            Collection<CswNbtView> VisibleViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false, false, NbtViewRenderingMode.Any );
+            
             foreach( DataRow WelcomeRow in WelcomeTable.Rows )
             {
                 string WelcomeId = WelcomeRow["welcomeid"].ToString();
@@ -104,12 +106,16 @@ namespace ChemSW.Nbt.WebServices
                         if( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) != Int32.MinValue )
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) );
-                            if( WelcomeRow["displaytext"].ToString() != string.Empty )
-                                LinkText = WelcomeRow["displaytext"].ToString();
-                            else
-                                LinkText = "Add New " + NodeType.NodeTypeName;
-                            Ret[WelcomeId]["nodetypeid"] = WelcomeRow["nodetypeid"].ToString();
-                            Ret[WelcomeId]["type"] = "add_new_nodetype";
+                            bool CanAdd = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                            if( CanAdd )
+                            {
+                                if( WelcomeRow["displaytext"].ToString() != string.Empty )
+                                    LinkText = WelcomeRow["displaytext"].ToString();
+                                else
+                                    LinkText = "Add New " + NodeType.NodeTypeName;
+                                Ret[WelcomeId]["nodetypeid"] = WelcomeRow["nodetypeid"].ToString();
+                                Ret[WelcomeId]["type"] = "add_new_nodetype";
+                            }
                         }
                         break;
 
@@ -117,7 +123,7 @@ namespace ChemSW.Nbt.WebServices
                         if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
                         {
                             CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
-                            if( null != ThisView && ThisView.IsFullyEnabled() )
+                            if( null != ThisView && ThisView.IsFullyEnabled() && VisibleViews.Contains(ThisView) )
                             {
                                 // FogBugz case 9552, Keith Baldwin 7/27/2011
                                 LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
