@@ -1,30 +1,15 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt.Config;
-using ChemSW.Security;
 //using ChemSW.Nbt.TableEvents;
-using ChemSW.Nbt.TreeEvents;
-using ChemSW.Audit;
 using ChemSW.Core;
+using ChemSW.CswWebControls;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
+using ChemSW.NbtWebControls;
+using ChemSW.Security;
 using ChemSW.Session;
 using Telerik.Web.UI;
-using ChemSW.Nbt.Security;
-using ChemSW.Config;
-using ChemSW.CswWebControls;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -263,7 +248,7 @@ namespace ChemSW.Nbt.WebPages
         {
             if( NewView.Visibility != NbtViewVisibility.Property )
                 CswViewListTree.ClearCache( Session );
-			Master.CswNbtResources.ViewSelect.removeSessionView( NewView );
+            Master.CswNbtResources.ViewSelect.removeSessionView( NewView );
         }
 
         public void OnBeforeDeleteView( CswNbtView ViewToDelete )
@@ -321,14 +306,14 @@ namespace ChemSW.Nbt.WebPages
                 if( Request.QueryString["viewid"] != null && Request.QueryString["viewid"] != string.Empty )
                 {
                     ViewIdFromQueryParam = CswTools.QueryStringParamToUrl( Request.QueryString["viewid"].ToString() );
-					CswNbtViewId TargetViewId = new CswNbtViewId( CswConvert.ToInt32( ViewIdFromQueryParam ) );
+                    CswNbtViewId TargetViewId = new CswNbtViewId( CswConvert.ToInt32( ViewIdFromQueryParam ) );
                     if( Session["ViewId"] != null && Session["ViewId"].ToString() != TargetViewId.ToString() )  // BZ 10125
                     {
-						ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.restoreView( TargetViewId ) ) );
+                        ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.restoreView( TargetViewId ) ) );
                     }
                 }
 
-                if( !ViewLoaded )
+                if( false == ViewLoaded )
                 {
                     if( Session["ActionId"] != null )
                     {
@@ -345,15 +330,61 @@ namespace ChemSW.Nbt.WebPages
                     {
                         // View
                         _CswNbtView = new CswNbtView( CswNbtResources );
+                        if( Session["SessionViewId"] != null )
+                        {
+                            CswNbtSessionDataId SessionDataId = null;
+                            Int32 SessionViewId = CswConvert.ToInt32( Session["SessionViewId"] );
+                            if( Int32.MinValue != SessionViewId )
+                            {
+                                SessionDataId = new CswNbtSessionDataId( SessionViewId );
+                            }
+                            else
+                            {
+                                string SessionDataIdString = CswConvert.ToString( Session["SessionViewId"] );
+                                if( false == string.IsNullOrEmpty( SessionDataIdString ) )
+                                {
+                                    SessionDataId = new CswNbtSessionDataId( SessionDataIdString );
+                                }
+                            }
+                            if( null != SessionDataId && SessionDataId.isSet() )
+                            {
+                                _CswNbtView = CswNbtResources.ViewSelect.getSessionView( SessionDataId );
+                                ViewLoaded = ( null != _CswNbtView );
+                            }
+                        }
 
-						if( Session["SessionViewId"] != null )
-							ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( CswConvert.ToInt32( Session["SessionViewId"] ) ) ) ) );
+                        if( Session["ViewId"] != null )
+                        {
+                            CswNbtViewId NbtViewId = null;
+                            Int32 ViewId = CswConvert.ToInt32( Session["ViewId"] );
+                            if( Int32.MinValue != ViewId )
+                            {
+                                NbtViewId = new CswNbtViewId( ViewId );
+                            }
+                            else
+                            {
+                                string ViewIdStr = CswConvert.ToString( Session["ViewId"] );
+                                if( false == string.IsNullOrEmpty( ViewIdStr ) )
+                                {
+                                    NbtViewId = new CswNbtViewId( ViewIdStr );
+                                }
+                            }
+                            if( null != NbtViewId && NbtViewId.isSet() )
+                            {
+                                _CswNbtView = CswNbtResources.ViewSelect.restoreView( NbtViewId );
+                                ViewLoaded = ( null != _CswNbtView );
+                            }
+                        }
 
-						if( Session["ViewId"] != null )
-							ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( Session["ViewId"] ) ) ) ) );
-
-                        if( !ViewLoaded && Session["ViewXml"] != null )
-							ViewLoaded = ( null != ( _CswNbtView = CswNbtResources.ViewSelect.restoreView( Session["ViewXml"].ToString() ) ) );
+                        if( false == ViewLoaded && Session["ViewXml"] != null )
+                        {
+                            string SessionViewXml = CswConvert.ToString( Session["ViewXml"] );
+                            if( false == string.IsNullOrEmpty( SessionViewXml ) )
+                            {
+                                _CswNbtView = CswNbtResources.ViewSelect.restoreView( SessionViewXml );
+                            }
+                            ViewLoaded = ( null != _CswNbtView );
+                        }
 
                         // BZ 9934 - No need for 'default view' anymore
                         //if( !ViewLoaded && CswNbtResources.CurrentUser != null && CswNbtResources.CurrentNbtUser.DefaultViewId > 0 )
@@ -376,7 +407,7 @@ namespace ChemSW.Nbt.WebPages
         {
             setViewId( ViewId, false );
         }
-		public void setViewId( CswNbtViewId ViewId, bool ForceReload )
+        public void setViewId( CswNbtViewId ViewId, bool ForceReload )
         {
             if( Session["ViewId"] == null || ViewId.ToString() != Session["ViewId"].ToString() || ForceReload )
             {
@@ -386,12 +417,12 @@ namespace ChemSW.Nbt.WebPages
             }
         }
 
-		public void setSessionViewId( CswNbtSessionDataId SessionViewId )
+        public void setSessionViewId( CswNbtSessionDataId SessionViewId )
         {
             setSessionViewId( SessionViewId, false );
         }//setSessionViewId()
 
-		public void setSessionViewId( CswNbtSessionDataId SessionViewId, bool ForceReload )
+        public void setSessionViewId( CswNbtSessionDataId SessionViewId, bool ForceReload )
         {
             if( Session["SessionViewId"] == null || SessionViewId.ToString() != Session["SessionViewId"].ToString() || ForceReload )
             {

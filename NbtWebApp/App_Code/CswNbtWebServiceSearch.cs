@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.WebServices
                         .Cast<JObject>()
                         .Where( FilterProp => FilterProp.HasValues ) )
                     {
-                        _ViewBuilder.makeViewPropFilter( SearchPair.SearchView, FilterProp );
+                        _ViewBuilder.makeViewPropFilter( SearchPair.SearchView, FilterProp, true );
                     }
                     SearchPair.finalize();
                 }

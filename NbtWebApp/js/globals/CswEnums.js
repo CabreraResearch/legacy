@@ -49,20 +49,20 @@ var CswMultiEditDefaultValue = '[Unchanged]';
 var CswCookieName = {
     SessionId: 'CswSessionId',
     Username: 'csw_username',
-	LogoutPath: 'csw_logoutpath',
-	CurrentNodeId: 'csw_currentnodeid',
-	CurrentNodeKey: 'csw_currentnodekey',
-	CurrentTabId: 'csw_currenttabid',
+    LogoutPath: 'csw_logoutpath',
+    CurrentNodeId: 'csw_currentnodeid',
+    CurrentNodeKey: 'csw_currentnodekey',
+    CurrentTabId: 'csw_currenttabid',
     CurrentActionName: 'csw_currentactionname',
     CurrentActionUrl: 'csw_currentactionurl',
     CurrentViewId: 'csw_currentviewid',
     CurrentViewMode: 'csw_currentviewmode',
-	CurrentReportId: 'csw_currentreportid',
-	LastActionName: 'csw_lastactionname',
-	LastActionUrl: 'csw_lastactionurl',
-	LastViewId: 'csw_lastviewid',
-	LastViewMode: 'csw_lastviewmode',
-	LastReportId: 'csw_lastreportid'
+    CurrentReportId: 'csw_currentreportid',
+    LastActionName: 'csw_lastactionname',
+    LastActionUrl: 'csw_lastactionurl',
+    LastViewId: 'csw_lastviewid',
+    LastViewMode: 'csw_lastviewmode',
+    LastReportId: 'csw_lastreportid'
 };
 
 var CswAppMode = {
@@ -197,7 +197,7 @@ var CswSubFields_Map = {
          name: 'DateTime', 
          subfields: {
             Value: {
-                Date: { name: 'date '},
+                Date: { name: 'date' },
                 Time: { name: 'time' },
                 DateFormat: { name: 'dateformat' },
                 TimeFormat: { name: 'timeformat' }

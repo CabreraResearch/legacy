@@ -1,16 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Data;
-using System.Text;
-using ChemSW.Nbt.ObjClasses;
+using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.DB;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-
-using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -59,22 +55,22 @@ namespace ChemSW.Nbt
             get { return GetNode( NodeId, DateTime.MinValue ); }
         }
 
-		/// <summary>
-		/// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(int, int, NodeSpecies)"/>
-		/// </summary>
-		/// <param name="NodeId">Primary Key of Node</param>
-		public CswNbtNode GetNode( CswPrimaryKey NodeId )
-		{
-			return GetNode( NodeId, Int32.MinValue, NodeSpecies.Plain, DateTime.MinValue );
-		}
+        /// <summary>
+        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(int, int, NodeSpecies)"/>
+        /// </summary>
+        /// <param name="NodeId">Primary Key of Node</param>
+        public CswNbtNode GetNode( CswPrimaryKey NodeId )
+        {
+            return GetNode( NodeId, Int32.MinValue, NodeSpecies.Plain, DateTime.MinValue );
+        }
 
-		/// <summary>
-		/// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(int, int, NodeSpecies)"/>
-		/// </summary>
-		public CswNbtNode GetNode( CswPrimaryKey NodeId, DateTime Date )
-		{
-			return GetNode( NodeId, Int32.MinValue, NodeSpecies.Plain, Date );
-		}
+        /// <summary>
+        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(int, int, NodeSpecies)"/>
+        /// </summary>
+        public CswNbtNode GetNode( CswPrimaryKey NodeId, DateTime Date )
+        {
+            return GetNode( NodeId, Int32.MinValue, NodeSpecies.Plain, Date );
+        }
 
         /// <summary>
         /// Fetch a node from the collection.  NodeSpecies.Plain is assumed.  See <see cref="GetNode(int, int, NodeSpecies)"/>
@@ -96,9 +92,9 @@ namespace ChemSW.Nbt
             get
             {
                 if( NodeKey == null )
-					throw new CswDniException( ErrorType.Error, "Invalid Node", "CswNbtNodeCollection received a null NodeKey" );
+                    throw new CswDniException( ErrorType.Error, "Invalid Node", "CswNbtNodeCollection received a null NodeKey" );
                 if( NodeKey.NodeSpecies != NodeSpecies.Plain )
-					throw new CswDniException( ErrorType.Error, "Invalid Node", "CswNbtNodeCollection cannot fetch Node of species " + NodeKey.NodeSpecies.ToString() );
+                    throw new CswDniException( ErrorType.Error, "Invalid Node", "CswNbtNodeCollection cannot fetch Node of species " + NodeKey.NodeSpecies.ToString() );
                 return GetNode( NodeKey.NodeId, NodeKey.NodeTypeId, NodeKey.NodeSpecies, DateTime.MinValue );
             }
         }
@@ -117,18 +113,18 @@ namespace ChemSW.Nbt
             if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )  // BZ 8753
             {
                 NodeHashKey HashKey = new NodeHashKey( NodeId, Species );
-				if( Date == DateTime.MinValue && NodeHash.ContainsKey( HashKey ) )
-				{
-					Node = (CswNbtNode) NodeHash[HashKey];
-				}
-				else
-				{
-					Node = makeNode( HashKey, NodeTypeId, Date );
-					if( Date == DateTime.MinValue && null != Node )
-					{
-						Node = (CswNbtNode) NodeHash[HashKey];
-					}
-				}
+                if( Date == DateTime.MinValue && NodeHash.ContainsKey( HashKey ) )
+                {
+                    Node = (CswNbtNode) NodeHash[HashKey];
+                }
+                else
+                {
+                    Node = makeNode( HashKey, NodeTypeId, Date );
+                    if( Date == DateTime.MinValue && null != Node )
+                    {
+                        Node = (CswNbtNode) NodeHash[HashKey];
+                    }
+                }
                 //if( !NodeHash.ContainsKey( HashKey ) )
                 //    throw new CswDniException( "Invalid Node", "Failed to find node with nodeid=" + NodeId.ToString() + ", species=" + Species.ToString() );
             }
@@ -204,10 +200,10 @@ namespace ChemSW.Nbt
                 Species = TheSpecies;
             }
 
-			public override string ToString()
-			{
-				return Species.ToString() + ' ' + NodeId.ToString();
-			}
+            public override string ToString()
+            {
+                return Species.ToString() + ' ' + NodeId.ToString();
+            }
 
             #region IEquatable
 
@@ -286,14 +282,14 @@ namespace ChemSW.Nbt
             //bz # 5943
             //_CswNbtNodeReader.completeNodeData( Node );
             //bz # 7816 -- only add to the collection if the node got filled
-			Node.fill( Date );
+            Node.fill( Date );
             if( Node.Filled )
             {
-				if( !NodeHash.ContainsKey( HashKey ) )
-				{
-					NodeHash.Add( HashKey, Node );
-				}
-				_CswNbtResources.logTimerResult( "CswNbtNodeCollection.makeNode on NodeId (" + HashKey.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
+                if( !NodeHash.ContainsKey( HashKey ) )
+                {
+                    NodeHash.Add( HashKey, Node );
+                }
+                _CswNbtResources.logTimerResult( "CswNbtNodeCollection.makeNode on NodeId (" + HashKey.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
 
                 Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
                 Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
@@ -388,12 +384,12 @@ namespace ChemSW.Nbt
 
             if( Op == MakeNodeOperation.WriteNode )
             {
-				_CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
-				Node.postChanges( true, false, OverrideUniqueValidation );
+                _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
+                Node.postChanges( true, false, OverrideUniqueValidation );
             }
             else if( Op == MakeNodeOperation.JustSetPk )
             {
-				_CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, false, false, OverrideUniqueValidation );
+                _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, false, false, OverrideUniqueValidation );
                 //_CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
             }
             else if( Op == MakeNodeOperation.DoNothing ) //right now there are only three enum values; I'm just making this explicit
@@ -459,7 +455,7 @@ namespace ChemSW.Nbt
             //            }
             //        }
             //    }
-            
+
             return UserNode;
         }
 

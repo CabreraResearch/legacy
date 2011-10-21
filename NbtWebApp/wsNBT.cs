@@ -110,89 +110,89 @@ namespace ChemSW.Nbt.WebServices
             }
         } // _deInitResources()
 
-		#region Sessions Action
+        #region Sessions Action
 
-		[WebMethod( EnableSession = false )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string getSessions()
-		{
-			JObject ReturnVal = new JObject();
-			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-			try
-			{
-				_initResources();
-				AuthenticationStatus = _attemptRefresh();
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getSessions()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
 
-					SortedList<string, CswSessionsListEntry> SessionList = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
-					foreach( CswSessionsListEntry Entry in SessionList.Values )
-					{
-						// Filter to the administrator's access id only
-						if( Entry.AccessId == _CswNbtResources.AccessId || _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
-						{
-							JObject JSession = new JObject();
-							JSession["sessionid"] = Entry.SessionId;
-							JSession["username"] = Entry.UserName;
-							JSession["logindate"] = Entry.LoginDate.ToString();
-							JSession["timeoutdate"] = Entry.TimeoutDate.ToString();
-							JSession["accessid"] = Entry.AccessId;
-							ReturnVal[Entry.SessionId] = JSession;
-						} // if (Entry.AccessId == Master.AccessID)
-					} // foreach (CswAuthenticator.SessionListEntry Entry in SessionList.Values)
-				}
-				_deInitResources();
-			}
-			catch( Exception Ex )
-			{
-				ReturnVal = jError( Ex );
-			}
+                    SortedList<string, CswSessionsListEntry> SessionList = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
+                    foreach( CswSessionsListEntry Entry in SessionList.Values )
+                    {
+                        // Filter to the administrator's access id only
+                        if( Entry.AccessId == _CswNbtResources.AccessId || _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
+                        {
+                            JObject JSession = new JObject();
+                            JSession["sessionid"] = Entry.SessionId;
+                            JSession["username"] = Entry.UserName;
+                            JSession["logindate"] = Entry.LoginDate.ToString();
+                            JSession["timeoutdate"] = Entry.TimeoutDate.ToString();
+                            JSession["accessid"] = Entry.AccessId;
+                            ReturnVal[Entry.SessionId] = JSession;
+                        } // if (Entry.AccessId == Master.AccessID)
+                    } // foreach (CswAuthenticator.SessionListEntry Entry in SessionList.Values)
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
 
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-			return ReturnVal.ToString();
+            return ReturnVal.ToString();
 
-		} // getSessions()
+        } // getSessions()
 
-		[WebMethod( EnableSession = false )]
-		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string endSession(string SessionId)
-		{
-			JObject ReturnVal = new JObject();
-			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-			try
-			{
-				_initResources();
-				AuthenticationStatus = _attemptRefresh();
-				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-				{
-					_CswSessionResources.CswSessionManager.clearSession(SessionId);
-					ReturnVal["result"] = "true";
-				}
-				_deInitResources();
-			}
-			catch( Exception Ex )
-			{
-				ReturnVal = jError( Ex );
-			}
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string endSession( string SessionId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    _CswSessionResources.CswSessionManager.clearSession( SessionId );
+                    ReturnVal["result"] = "true";
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
 
-			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-			return ReturnVal.ToString();
+            return ReturnVal.ToString();
 
-		} // endSession()
-
-
-
-		#endregion Sessions Action
+        } // endSession()
 
 
 
-		#endregion Session and Resource Management
+        #endregion Sessions Action
 
-		#region Error Handling
 
-		private void _error( Exception ex, out ErrorType Type, out string Message, out string Detail, out bool Display )
+
+        #endregion Session and Resource Management
+
+        #region Error Handling
+
+        private void _error( Exception ex, out ErrorType Type, out string Message, out string Detail, out bool Display )
         {
             if( _CswNbtResources != null )
             {
@@ -1663,7 +1663,7 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string saveMolPropFile()
         {
-            JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1678,7 +1678,7 @@ namespace ChemSW.Nbt.WebServices
                     string FileName = Context.Request["qqfile"];
                     string PropId = Context.Request["propid"];
 
-                    if( !string.IsNullOrEmpty( FileName ) && !string.IsNullOrEmpty( PropId ) )
+                    if( false == string.IsNullOrEmpty( FileName ) && false == string.IsNullOrEmpty( PropId ) )
                     {
                         // Read the binary data
                         BinaryReader br = new BinaryReader( Context.Request.InputStream );
@@ -1691,9 +1691,14 @@ namespace ChemSW.Nbt.WebServices
 
                         // Save the binary data
                         CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                        bool ret = ws.saveMolProp( CswTools.ByteArrayToString( FileData ), PropId );
+                        string MolData = CswTools.ByteArrayToString( FileData ).Replace("\r", "");
+                        bool Success = ws.saveMolProp( MolData, PropId );
 
-                        ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
+                        ReturnVal["success"] = Success;
+                        if( Success )
+                        {
+                            ReturnVal["molData"] = MolData;
+                        }
 
                     } // if( FileName != string.Empty && PropId != string.Empty )
 
@@ -1703,6 +1708,7 @@ namespace ChemSW.Nbt.WebServices
             catch( Exception ex )
             {
                 ReturnVal = jError( ex );
+                ReturnVal["success"] = false;
             }
 
             _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
@@ -1715,7 +1721,7 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string saveMolProp( string molData, string PropId )
         {
-            JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -1724,13 +1730,15 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-
-                    if( !string.IsNullOrEmpty( molData ) && !string.IsNullOrEmpty( PropId ) )
+                    if( false == string.IsNullOrEmpty( molData ) && false == string.IsNullOrEmpty( PropId ) )
                     {
                         CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                        bool ret = ws.saveMolProp( molData, PropId );
-
-                        ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
+                        bool Succeeded = ws.saveMolProp( molData, PropId );
+                        ReturnVal["success"] = Succeeded;
+                        if( Succeeded )
+                        {
+                            ReturnVal["molData"] = molData;
+                        }
 
                     } // if( FileName != string.Empty && PropId != string.Empty )
 
@@ -1740,6 +1748,7 @@ namespace ChemSW.Nbt.WebServices
             catch( Exception ex )
             {
                 ReturnVal = jError( ex );
+                ReturnVal["success"] = false;
             }
 
             _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
