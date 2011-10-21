@@ -621,6 +621,7 @@ namespace ChemSW.Nbt
                     UserTree.goToNthChild( u );
                     CswNbtNode UserNode = UserTree.getNodeForCurrentPosition();
                     CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) CswNbtNodeCaster.AsUser( UserNode );
+                    // case 23924
                     if( UserNodeAsUser.Username != CswNbtObjClassUser.ChemSWAdminUsername )
                     {
                         // Remove this view from the Quick Launch views
