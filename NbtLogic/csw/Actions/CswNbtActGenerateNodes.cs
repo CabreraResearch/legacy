@@ -124,70 +124,76 @@ namespace ChemSW.Nbt.Actions
             }
             if( Parents.Count == 0 && string.Empty == GeneratorNode.ParentType.SelectedNodeTypeIds.ToString() )
             {
-                Parents.Add( GeneratorNode.Owner.RelatedNodeId );
+                if( null != GeneratorNode.Owner && null != GeneratorNode.Owner.RelatedNodeId )
+                {
+                    Parents.Add( GeneratorNode.Owner.RelatedNodeId );
+                }
             }
 
 
             foreach( CswPrimaryKey NewParentPK in Parents )
             {
-                CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPK, DueDate );
-                if( null == ExistingNode )
+                if( null != NewParentPK )
                 {
-                    Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
-                    SelectedNodeTypeIds = GeneratorNode.TargetType.SelectedNodeTypeIds.ToIntCollection();
-                    foreach( Int32 refNodeTypeId in SelectedNodeTypeIds )
+                    CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPK, DueDate );
+                    if( null == ExistingNode )
                     {
-                        CswNbtMetaDataNodeType LatestVersionNT = _CswNbtResources.MetaData.getNodeType( refNodeTypeId ).LatestVersionNodeType;
-
-                        CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                        NewNode.copyPropertyValues( CswNbtNodeGenerator );
-
-                        ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( NewNode );
-                        NewNodeAsGeneratorTarget.GeneratedDate.DateTimeValue = DueDate;
-                        NewNodeAsGeneratorTarget.GeneratedDate.ReadOnly = true;  //bz # 5349
-                        NewNodeAsGeneratorTarget.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
-                        NewNodeAsGeneratorTarget.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
-                        NewNodeAsGeneratorTarget.Parent.RelatedNodeId = NewParentPK;
-                        //NewTaskNodeAsTask.Completed.Checked = Tristate.False;
-
-                        if( MarkFuture )
-                            NewNodeAsGeneratorTarget.IsFuture.Checked = Tristate.True;
-                        else
-                            NewNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
-
-                        if( null != onBeforeInsertNode )
+                        Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
+                        SelectedNodeTypeIds = GeneratorNode.TargetType.SelectedNodeTypeIds.ToIntCollection();
+                        foreach( Int32 refNodeTypeId in SelectedNodeTypeIds )
                         {
-                            onBeforeInsertNode( NewNode );
-                        }
-                        ret = true;
-                        NewNode.PendingUpdate = true;
-                        NewNode.postChanges( true );
-                    }
-                }//if ( null == ExistingNode )
+                            CswNbtMetaDataNodeType LatestVersionNT = _CswNbtResources.MetaData.getNodeType( refNodeTypeId ).LatestVersionNodeType;
 
-                else
-                {
-                    ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( ExistingNode );
-                    if( !MarkFuture )
-                    {
-                        if( ExistingNodeAsGeneratorTarget.IsFuture.Checked == Tristate.True )
-                        {
-                            ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
+                            CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                            NewNode.copyPropertyValues( CswNbtNodeGenerator );
+
+                            ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( NewNode );
+                            NewNodeAsGeneratorTarget.GeneratedDate.DateTimeValue = DueDate;
+                            NewNodeAsGeneratorTarget.GeneratedDate.ReadOnly = true; //bz # 5349
+                            NewNodeAsGeneratorTarget.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
+                            NewNodeAsGeneratorTarget.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
+                            NewNodeAsGeneratorTarget.Parent.RelatedNodeId = NewParentPK;
+                            //NewTaskNodeAsTask.Completed.Checked = Tristate.False;
+
+                            if( MarkFuture )
+                                NewNodeAsGeneratorTarget.IsFuture.Checked = Tristate.True;
+                            else
+                                NewNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
+
+                            if( null != onBeforeInsertNode )
+                            {
+                                onBeforeInsertNode( NewNode );
+                            }
+                            ret = true;
+                            NewNode.PendingUpdate = true;
+                            NewNode.postChanges( true );
                         }
-                    }
+
+                    }//if ( null == ExistingNode )
+
                     else
                     {
-                        if( DateTime.Now.Date >= ExistingNodeAsGeneratorTarget.GeneratedDate.DateTimeValue.Date )
+                        ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( ExistingNode );
+                        if( !MarkFuture )
                         {
-                            ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
+                            if( ExistingNodeAsGeneratorTarget.IsFuture.Checked == Tristate.True )
+                            {
+                                ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
+                            }
                         }
-                    }
-                    ExistingNode.PendingUpdate = true;
-                    ExistingNode.postChanges( false ); //BZ # 6961
+                        else
+                        {
+                            if( DateTime.Now.Date >= ExistingNodeAsGeneratorTarget.GeneratedDate.DateTimeValue.Date )
+                            {
+                                ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
+                            }
+                        }
+                        ExistingNode.PendingUpdate = true;
+                        ExistingNode.postChanges( false ); //BZ # 6961
 
-                }//if-else ( null == ExistingNode )
-            }//foreach ( CswPrimaryKey NewParentPK in Parents )
-
+                    }//if-else ( null == ExistingNode )
+                }//foreach ( CswPrimaryKey NewParentPK in Parents )
+            }
             return ret;
 
         }//makeNode()
