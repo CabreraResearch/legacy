@@ -13,9 +13,14 @@
 <link rel="stylesheet" type="text/css" href="js/main/fieldtypes/_CswFieldTypes.css" />
 
 <script type="text/javascript">
+    
     var debug = false;
 
     if (debug) {
+        if (null === JSON || undefined === JSON || false === JSON.hasOwnProperty('parse') || false === JSON.hasOwnProperty('stringify')) {
+            document.write('<script type="text/javascript" src="Scripts/json2.js"><\/script>');
+        }
+        
         // JQuery
         document.write('<script type="text/javascript" src="Scripts/jquery-1.6.4.js"><\/script>');
         document.write('<script type="text/javascript" src="Scripts/jquery-ui-1.8.16.js"><\/script>');
@@ -141,6 +146,9 @@
         document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeViewPickList.js"><\/script>');
         document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeViewReference.js"><\/script>');
     } else {
+        if (null === JSON || undefined === JSON || false === JSON.hasOwnProperty('parse') || false === JSON.hasOwnProperty('stringify')) {
+            document.write('<script type="text/javascript" src="Scripts/json2.min.js"><\/script>');
+        }
         // JQuery
         document.write('<script type="text/javascript" src="Scripts/jquery-1.6.4.min.js"><\/script>');
         document.write('<script type="text/javascript" src="Scripts/jquery-ui-1.8.16.min.js"><\/script>');
