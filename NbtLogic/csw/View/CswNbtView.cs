@@ -621,14 +621,17 @@ namespace ChemSW.Nbt
                     UserTree.goToNthChild( u );
                     CswNbtNode UserNode = UserTree.getNodeForCurrentPosition();
                     CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) CswNbtNodeCaster.AsUser( UserNode );
-                    // Remove this view from the Quick Launch views
-                    if( UserNodeAsUser.QuickLaunchViews != null )
+                    if( UserNodeAsUser.Username != CswNbtObjClassUser.ChemSWAdminUsername )
                     {
-                        if( UserNodeAsUser.QuickLaunchViews.ContainsViewId( this.ViewId ) )
-                            UserNodeAsUser.QuickLaunchViews.RemoveViewId( this.ViewId );
+                        // Remove this view from the Quick Launch views
+                        if( UserNodeAsUser.QuickLaunchViews != null )
+                        {
+                            if( UserNodeAsUser.QuickLaunchViews.ContainsViewId( this.ViewId ) )
+                                UserNodeAsUser.QuickLaunchViews.RemoveViewId( this.ViewId );
+                        }
+                        UserNode.postChanges( false );
+                        UserTree.goToParentNode();
                     }
-                    UserNode.postChanges( false );
-                    UserTree.goToParentNode();
                 }
             }
 
