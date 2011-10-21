@@ -50,19 +50,19 @@ function CswMobileFieldTypeDate(ftDef) {
         switch (displayMode.toLowerCase()) {
             case subfields.DisplayMode.DateTime.name.toLowerCase():
                 value = date + ' ' + time;
-                $content.CswInput('init', { ID: elementId, value: date })
+                $content.CswInput('init', { type: CswInput_Types.date, ID: elementId, value: date })
                         .data('type', 'Date');
-                $content.CswInput('init', { ID: elementId, value: time })
+                $content.CswInput('init', { type: CswInput_Types.time, ID: elementId, value: time })
                         .data('type', 'Time'); 
                 break;
             case subfields.DisplayMode.Date.name.toLowerCase():
                 value = date;
-                $content.CswInput('init', { ID: elementId, value: value })
+                $content.CswInput('init', { type: CswInput_Types.date, ID: elementId, value: value })
                         .data('type', 'Date'); 
                 break;
             case subfields.DisplayMode.Time.name.toLowerCase():
                 value = time;
-                $content.CswInput('init', { ID: elementId, value: value })
+                $content.CswInput('init', { type: CswInput_Types.time, ID: elementId, value: value })
                         .data('type', 'Time');                 
                 break;
             default :
