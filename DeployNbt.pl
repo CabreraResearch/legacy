@@ -155,7 +155,7 @@ foreach my $component (@components)
 			{
 				$file = $repopaths{$component} ."/CswLogService/Properties/AssemblyInfo.cs";
 			}
-			elsif($subdir eq "DailyBuildTools")   # special case
+			elsif($component eq "DailyBuildTools")   # special case
 			{
 				$file = $repopaths{$component} ."/DailyBuildWeb/DailyBuildWeb/Properties/AssemblyInfo.cs";
 				&setversion($file, "$datestr.$increment");
