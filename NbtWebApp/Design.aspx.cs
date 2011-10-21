@@ -380,7 +380,9 @@ namespace ChemSW.Nbt.WebPages
                     ( Session["Design_SelectedType"] != null && Session["Design_SelectedType"].ToString() != string.Empty ) &&
                     ( Session["Design_SelectedValue"] != null && Session["Design_SelectedValue"].ToString() != string.Empty ) )
                 {
-                    setSelected( (CswNodeTypeTree.NodeTypeTreeSelectedType) Enum.Parse( typeof( CswNodeTypeTree.NodeTypeTreeSelectedType ), Session["Design_SelectedType"].ToString() ), Session["Design_SelectedValue"].ToString(), true );
+                    CswNodeTypeTree.NodeTypeTreeSelectedType SelectedType;
+                    Enum.TryParse( Session["Design_SelectedType"].ToString(), true, out SelectedType );
+                    setSelected( SelectedType, Session["Design_SelectedValue"].ToString(), true );
                     Session["Design_ForceReselect"] = string.Empty;
                 }
                 else
@@ -853,11 +855,15 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.SetFK( NewIsFk, NewFKType, NewFKValue,
                                       getPropAttributeValue( "EditProp_RelatedPropType" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ),
                                       CswConvert.ToInt32( getPropAttributeValue( "EditProp_RelatedPropValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) ) );
-                    PropToSave.Multi = (PropertySelectMode) Enum.Parse( typeof( PropertySelectMode ), MultiString );
+                    PropertySelectMode Multi;
+                    Enum.TryParse( MultiString, true, out Multi );
+                    PropToSave.Multi = Multi;
                     PropToSave.HelpText = getPropAttributeValue( "EditProp_HelpText" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.IsQuickSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsQuickSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.Extended = getPropAttributeValue( "EditProp_ExtendedValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-                    PropToSave.AuditLevel = (AuditLevel) Enum.Parse( typeof( AuditLevel ), getPropAttributeValue( "EditProp_AuditLevel" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ) );
+                    AuditLevel AuditLevel;
+                    Enum.TryParse( getPropAttributeValue( "EditProp_AuditLevel" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ), true, out AuditLevel );
+                    PropToSave.AuditLevel = AuditLevel;
 
 
                     // Default Value
@@ -1459,7 +1465,7 @@ namespace ChemSW.Nbt.WebPages
                             BarcodeRow.Cells[1].Controls.Add( BarcodeEditor );
                             break;
 
-						case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                        case CswNbtMetaDataFieldType.NbtFieldType.Button:
                             TableRow ButtonTextRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) ButtonTextRow.Cells[0].Controls[0] ).Text = "Button Text:";
                             TextBox ButtonTextValue = new TextBox();
@@ -1469,14 +1475,14 @@ namespace ChemSW.Nbt.WebPages
                                 ButtonTextValue.Text = SelectedNodeTypeProp.StaticText.ToString();
                             ButtonTextRow.Cells[1].Controls.Add( ButtonTextValue );
 
-							TableRow ButtonModeRow = makeEditPropTableRow( EditPropPlaceHolder );
-							( (Literal) ButtonModeRow.Cells[0].Controls[0] ).Text = "Mode:";
+                            TableRow ButtonModeRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) ButtonModeRow.Cells[0].Controls[0] ).Text = "Mode:";
                             DropDownList ButtonModeValue = new DropDownList();
-							ButtonModeValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
-							ButtonModeValue.Items.Add( new ListItem( "Button", CswNbtNodePropButton.ButtonMode.button.ToString() ) );
-							ButtonModeValue.Items.Add( new ListItem( "Link", CswNbtNodePropButton.ButtonMode.link.ToString() ) );
-							ButtonModeValue.SelectedValue = SelectedNodeTypeProp.Extended;
-							ButtonModeRow.Cells[1].Controls.Add( ButtonModeValue );
+                            ButtonModeValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
+                            ButtonModeValue.Items.Add( new ListItem( "Button", CswNbtNodePropButton.ButtonMode.button.ToString() ) );
+                            ButtonModeValue.Items.Add( new ListItem( "Link", CswNbtNodePropButton.ButtonMode.link.ToString() ) );
+                            ButtonModeValue.SelectedValue = SelectedNodeTypeProp.Extended;
+                            ButtonModeRow.Cells[1].Controls.Add( ButtonModeValue );
                             break;
 
 
@@ -2297,9 +2303,9 @@ namespace ChemSW.Nbt.WebPages
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ImageList &&    // temporary until ported into new UI
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.NFPA &&         // temporary until ported into new UI
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MOL &&          // temporary until ported into new UI
-						FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button &&       // temporary until ported into new UI
-					    FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MultiList )     // temporary until ported into new UI
-					{
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button &&       // temporary until ported into new UI
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MultiList )     // temporary until ported into new UI
+                    {
                         TableRow DefaultValueRow = makeEditPropTableRow( EditPropPlaceHolder );
                         ( (Literal) DefaultValueRow.Cells[0].Controls[0] ).Text = "Default Value:";
 
