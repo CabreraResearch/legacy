@@ -9,6 +9,8 @@ using ChemSW.Encryption;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Security;
+using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -47,6 +49,24 @@ namespace ChemSW.Nbt.ObjClasses
 			return ( CompanyID.Text != string.Empty && _CswNbtResources.CswDbCfgInfo.ConfigurationExists( CompanyID.Text ) );
 		}
 
+		private CswNbtResources makeOtherResources()
+		{
+			CswNbtResources OtherResources = CswNbtResourcesFactory.makeCswNbtResources( _CswNbtResources );
+			OtherResources.AccessId = CompanyID.Text;
+			OtherResources.InitCurrentUser = InitUser;
+			return OtherResources;
+		}
+		public ICswUser InitUser( ICswResources Resources )
+		{
+			return new CswNbtSystemUser( _CswNbtResources, "CswNbtObjClassCustomer_SystemUser" );
+		}
+
+		private void finalizeOtherResources(CswNbtResources OtherResources)
+		{
+			OtherResources.finalize();
+		}
+
+
         #region Inherited Events
 
         public override void beforeCreateNode( bool OverrideUniqueValidation )
@@ -74,6 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 			if( _CompanyIDDefined() )
 			{
+				
 				// Set ChemSW Admin Password and Modules Enabled
 				string NewEncryptedPassword = string.Empty;
 				if( ChemSWAdminPassword.WasModified )
@@ -90,14 +111,16 @@ namespace ChemSW.Nbt.ObjClasses
 				}
 
 				// switch to target schema
-				string OriginalAccessId = _CswNbtResources.AccessId;
-				_CswNbtResources.AccessId = CompanyID.Text;
+				//string OriginalAccessId = _CswNbtResources.AccessId;
+				//_CswNbtResources.AccessId = CompanyID.Text;
+				CswNbtResources OtherResources = makeOtherResources();
+				
 
-				CswNbtNode ChemSWAdminUserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+				CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
 				CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.EncryptedPassword = NewEncryptedPassword;
 				ChemSWAdminUserNode.postChanges( false );
 
-				CswTableUpdate ModulesUpdate = _CswNbtResources.makeCswTableUpdate("CswNbtObjClassCustomer_modules_update", "modules");
+				CswTableUpdate ModulesUpdate = OtherResources.makeCswTableUpdate( "CswNbtObjClassCustomer_modules_update", "modules" );
 				DataTable ModulesTable = ModulesUpdate.getTable();
 				foreach( DataRow ModulesRow in ModulesTable.Rows )
 				{
@@ -106,8 +129,9 @@ namespace ChemSW.Nbt.ObjClasses
 				ModulesUpdate.update(ModulesTable);
 				
 				// reconnect to original schema
-				_CswNbtResources.finalize();
-				_CswNbtResources.AccessId = OriginalAccessId;
+				//_CswNbtResources.AccessId = OriginalAccessId;
+				finalizeOtherResources( OtherResources );
+
 			} // if( _CompanyIDDefined() )
 
 			_CswNbtObjClassDefault.afterWriteNode();
@@ -173,22 +197,23 @@ namespace ChemSW.Nbt.ObjClasses
 				ModulesEnabled.XValues = new CswCommaDelimitedString() { ModulesEnabledXValue };
 
 				// get data from target schema
-				string OriginalAccessId = _CswNbtResources.AccessId;
-				_CswNbtResources.AccessId = CompanyID.Text;
+				//string OriginalAccessId = _CswNbtResources.AccessId;
+				//_CswNbtResources.AccessId = CompanyID.Text;
+				CswNbtResources OtherResources = makeOtherResources();
 
 				Collection<CswNbtResources.CswNbtModule> Modules = new Collection<CswNbtResources.CswNbtModule>();
-				foreach( CswNbtResources.CswNbtModule Module in _CswNbtResources.ModulesEnabled() )
+				foreach( CswNbtResources.CswNbtModule Module in OtherResources.ModulesEnabled() )
 				{
 					Modules.Add( Module );
 				}
 
-				CswNbtNode ChemSWAdminUserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+				CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
 				string EncryptedPassword = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.EncryptedPassword;
 				DateTime ChangedDate = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.ChangedDate;
 
 				// reconnect to original schema
-				_CswNbtResources.finalize();
-				_CswNbtResources.AccessId = OriginalAccessId;
+				//_CswNbtResources.AccessId = OriginalAccessId;
+				finalizeOtherResources( OtherResources );
 
 				foreach( CswNbtResources.CswNbtModule Module in Modules )
 				{

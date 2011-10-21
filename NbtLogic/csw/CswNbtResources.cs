@@ -123,6 +123,7 @@ namespace ChemSW.Nbt
         public CswNbtPermit Permit = null;
         private ICswNbtTreeFactory _CswNbtTreeFactory;
         private bool _ExcludeDisabledModules = true;
+		public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
 
         /// <summary>
         /// Provides a means to get lists of views
@@ -157,6 +158,9 @@ namespace ChemSW.Nbt
         /// For unique naming and tracking
         /// </summary>
         public string _DebugID;
+
+		public AppType AppType { get { return _CswResources.AppType; } }
+		public bool IsDeleteModeLogical { get { return _CswResources.IsDeleteModeLogical(); } }
 
         /// <summary>
         /// Constructor
