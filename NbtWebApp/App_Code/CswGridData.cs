@@ -217,7 +217,7 @@ namespace ChemSW.Nbt.WebServices
         {
             if( null != DirtyElement )
             {
-                string CleanPropName = CswTools.ReplaceCharacter( DirtyElement.Attribute( "name" ).Value.ToLower(), " ", "_" );
+                string CleanPropName = DirtyElement.Attribute( "name" ).Value.ToLower().Replace( " ", "_" );
                 string CleanValue;
                 string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
                 string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
@@ -391,8 +391,8 @@ namespace ChemSW.Nbt.WebServices
             }
 
             _LiteralColumnName = ViewProperty.PropName.ToLower();
-            _UniqueColumnName = CswTools.ReplaceCharacter( _LiteralColumnName + "_" + ViewProperty.MetaDataPropId, " ", "_" );
-            _FriendlyColumnName = CswTools.ReplaceCharacter( ViewProperty.PropName.ToLower(), " ", "_" );
+            _UniqueColumnName = ( _LiteralColumnName + "_" + ViewProperty.MetaDataPropId ).Replace( " ", "_" );
+            _FriendlyColumnName = ( ViewProperty.PropName.ToLower() ).Replace( " ", "_" );
             _ColumnWidth = ViewProperty.Width;
 
             _DoCssOverride = DoCssOverride;
