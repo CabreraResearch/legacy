@@ -92,9 +92,9 @@
                         g.optNavDelete = {
                             delfunc: function(rowid) {
                                 var delOpt = {
-                                    cswnbtnodekey: '',
-                                    nodepk: '',
-                                    nodename: ''
+                                    cswnbtnodekey: [],
+                                    nodepk: [],
+                                    nodename: []
                                 };
                                 var delFunc = function(opts) {
                                     opts.onDeleteNode = o.onDeleteNode;
