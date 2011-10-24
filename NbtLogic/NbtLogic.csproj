@@ -62,6 +62,8 @@
     <Compile Include="csw\CswNbtResourcesFactory.cs" />
     <Compile Include="csw\CswNbtNotificationKey.cs" />
     <Compile Include="csw\CswNbtResources.cs" />
+    <Compile Include="csw\ImportExport\CswNbtImportOptions.cs" />
+    <Compile Include="csw\ImportExport\CswNbtImportStatus.cs" />
     <Compile Include="csw\ImportExport\CswImportExportStatusReporter.cs" />
     <Compile Include="csw\ImportExport\CswImporterExperimental.cs" />
     <Compile Include="csw\ImportExport\CswImporterLegacy.cs" />

@@ -276,10 +276,13 @@ namespace ChemSW.Nbt.Schema
             _CswDdl.renameColumn( TableName, OriginalColumnName, NewColumnName );
         }
 
-
         public void dropColumn( string TableName, string ColumnName ) { _CswDdl.dropColumn( TableName, ColumnName ); }
         public void changeColumnDataType( string TableName, string ColumnName, DataDictionaryPortableDataType NewDataType, Int32 DataTypeSize ) { _CswNbtResources.CswResources.changeColumnDataType( TableName, ColumnName, NewDataType, DataTypeSize ); }
         public bool isLogicalDeleteTable( string TableName ) { return ( _CswNbtResources.isLogicalDeleteTable( TableName ) ); }
+
+
+        //Note: thi
+        public void indexColumn( string TableName, string ColumnName, string IndexNameIn = null ) { _CswNbtResources.CswResources.indexColumn( TableName, ColumnName, IndexNameIn ); }
 
         public DataTable getAllViews() { return _CswNbtResources.ViewSelect.getAllViews(); }
 
