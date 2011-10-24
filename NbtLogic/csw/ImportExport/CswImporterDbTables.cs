@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.ImportExport
     public enum AbsentImportNodeHandling { DeduceAndCreate, RejectImport }
     public enum ImportStartPoint { NukeAndStartOver, Resume }
 
-    public class CswImporterExperimental : ICswImporter
+    public class CswImporterDbTables : ICswImporter
     {
 
         CswNbtResources _CswNbtResources = null;
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ImportExport
         private CswNbtImportOptions _CswNbtImportOptions = null;
 
 
-        public CswImporterExperimental( CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, CswImportExportStatusReporter CswImportExportStatusReporter )
+        public CswImporterDbTables( CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, CswImportExportStatusReporter CswImportExportStatusReporter )
         {
 
             _CswNbtImportOptions = new CswNbtImportOptions(); //This will be passed in as a ctor arg

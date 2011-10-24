@@ -65,8 +65,8 @@
     <Compile Include="csw\ImportExport\CswNbtImportOptions.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportStatus.cs" />
     <Compile Include="csw\ImportExport\CswImportExportStatusReporter.cs" />
-    <Compile Include="csw\ImportExport\CswImporterExperimental.cs" />
-    <Compile Include="csw\ImportExport\CswImporterLegacy.cs" />
+    <Compile Include="csw\ImportExport\CswImporterDbTables.cs" />
+    <Compile Include="csw\ImportExport\CswImporterHashTables.cs" />
     <Compile Include="csw\ImportExport\CswImporterFactory.cs" />
     <Compile Include="csw\ImportExport\ICswImporter.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportExport.cs" />
