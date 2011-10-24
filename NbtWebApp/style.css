@@ -997,6 +997,13 @@ body a
 	height: 400px;
 	overflow: auto;
 }
+.treediv_noscroll
+{
+	padding: 5px 0px 5px 0px;
+	width: 270px;
+	height: 400px;
+	overflow: visible;
+}
 .jstree-default.jstree-focused {
 	background-color: transparent !important;
 }
