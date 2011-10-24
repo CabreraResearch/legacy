@@ -95,6 +95,11 @@ body a
 	height: 3px;
 }
 */
+.HeaderTable_RightMenu
+{
+	width: 300px;
+}
+
 .HeaderTable_BottomMenu
 {
 	background-color: #f8f9fb;
