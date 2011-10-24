@@ -175,7 +175,7 @@ namespace ChemSW.Nbt.PropTypes
                 return ( _CswNbtNodePropData.ReadOnly || // jct_nodes_props.readonly
                          NodeTypeProp.ReadOnly || // nodetype_props.readonly
                          _EditMode == NodeEditMode.Preview ||
-                        ( _Node.ReadOnly || _Node.Locked ) ); // nodes.readonly or nodes.locked
+                        ( null != _Node && ( _Node.ReadOnly || _Node.Locked ) ) ); // nodes.readonly or nodes.locked
             }
             set
             {

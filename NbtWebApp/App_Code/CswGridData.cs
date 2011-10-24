@@ -391,8 +391,8 @@ namespace ChemSW.Nbt.WebServices
             }
 
             _LiteralColumnName = ViewProperty.PropName.ToLower();
-            _UniqueColumnName = _LiteralColumnName + "_" + ViewProperty.MetaDataPropId;
-            _FriendlyColumnName = ViewProperty.PropName.ToLower().Replace( " ", "_" );
+            _UniqueColumnName = ( _LiteralColumnName + "_" + ViewProperty.MetaDataPropId ).Replace( " ", "_" );
+            _FriendlyColumnName = ( ViewProperty.PropName.ToLower() ).Replace( " ", "_" );
             _ColumnWidth = ViewProperty.Width;
 
             _DoCssOverride = DoCssOverride;
