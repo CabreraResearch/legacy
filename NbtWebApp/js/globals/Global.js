@@ -138,6 +138,10 @@ function ajaxInProgress() {
     return (_ajaxCount > 0);
 }
 
+// Events for all Ajax requests
+var onBeforeAjax = null;  // function () {}
+var onAfterAjax = null;   // function (succeeded) {}
+
 function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
     /// <summary>
     ///   Executes Async webservice request for JSON
@@ -158,10 +162,12 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
         formobile: false,
         async: true
     };
-
     if (options) $.extend(o, options);
+
     //var starttime = new Date();
     _ajaxCount++;
+    if(isFunction(onBeforeAjax)) onBeforeAjax();
+
     $.ajax({
         type: 'POST',
         async: o.async,
@@ -209,6 +215,7 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
                     ForMobile: o.formobile
                 });
             }
+            if (isFunction(onAfterAjax)) onAfterAjax(true);
         }, // success{}
         error: function (XMLHttpRequest, textStatus, errorThrown)
         {
@@ -218,6 +225,7 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
             if (isFunction(o.error)) {
                 o.error();
             }
+	        if (isFunction(onAfterAjax)) onAfterAjax(false);
         }
     });                 // $.ajax({
 } // CswAjaxJson()
