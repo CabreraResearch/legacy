@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.Schema
         }//_WorkerThread_OnImportPhaseChange
 
 
-        private ProcessPhase _LastProcessPhase = ProcessPhase.NothingDoneYet;
+        private ImportProcessPhase _LastProcessPhase = ImportProcessPhase.NothingDoneYet;
         private delegate void AddImportStatusHandler( CswNbtImportStatus CswNbtImportStatus );
 
 

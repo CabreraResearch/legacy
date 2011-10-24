@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.ImportExport
         private Int32 _ObjectsCompletedSofar = 0;
 
         public PhaseTypes PhaseType { get { return ( ( ( _ObjectsTotal > 0 ) && ( _ObjectsCompletedSofar > 0 ) ) ? PhaseTypes.Incremental : PhaseTypes.Monolithic ); } }
-        public CswNbtImportStatus( ProcessPhase TargetProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar, ProcessStates ProcessStateIn )
+        public CswNbtImportStatus( ImportProcessPhase TargetProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar, ProcessStates ProcessStateIn )
         {
             _TargetProcessPhase = TargetProcessPhase;
             _ObjectsTotal = TotalObjects;
@@ -30,8 +30,8 @@ namespace ChemSW.Nbt.ImportExport
         }//ctor
 
         public ProcessStates ProcessState = ProcessStates.InProcess;
-        private ProcessPhase _TargetProcessPhase = ProcessPhase.NothingDoneYet;
-        public ProcessPhase ProcessPhase { get { return ( _TargetProcessPhase ); } }
+        private ImportProcessPhase _TargetProcessPhase = ImportProcessPhase.NothingDoneYet;
+        public ImportProcessPhase ProcessPhase { get { return ( _TargetProcessPhase ); } }
 
         public string PhaseDescription
         {
@@ -56,35 +56,35 @@ namespace ChemSW.Nbt.ImportExport
                 {
 
 
-                    case ProcessPhase.LoadingInputFile:
+                    case ImportProcessPhase.LoadingInputFile:
                         ReturnVal = "Loading import file";
                         break;
 
-                    case ProcessPhase.PopulatingTempTableNodes:
+                    case ImportProcessPhase.PopulatingTempTableNodes:
                         ReturnVal = _count + " node records inserted in temporary table";
                         break;
 
-                    case ProcessPhase.PopulatingTempTableProps:
+                    case ImportProcessPhase.PopulatingTempTableProps:
                         ReturnVal = _count + " property records inserted in temporary table";
                         break;
 
-                    case ProcessPhase.PopulatingNbtNodes:
+                    case ImportProcessPhase.PopulatingNbtNodes:
                         ReturnVal = _count + " NBT nodes created";
                         break;
 
-                    case ProcessPhase.VerifyingNbtTargetNodes:
+                    case ImportProcessPhase.VerifyingNbtTargetNodes:
                         ReturnVal = _count + " target nodes verified";
                         break;
 
-                    case ProcessPhase.CreatingMissingNbtTargetNodes:
+                    case ImportProcessPhase.CreatingMissingNbtTargetNodes:
                         ReturnVal = _count + " target nodes created";
                         break;
 
-                    case ProcessPhase.PopulatingNbtProps:
+                    case ImportProcessPhase.PopulatingNbtProps:
                         ReturnVal = _count + " NBT properties nodes created";
                         break;
 
-                    case ProcessPhase.PostProcessingNbtNodes:
+                    case ImportProcessPhase.PostProcessingNbtNodes:
                         ReturnVal = _count + " nodes post-processed";
                         break;
 
