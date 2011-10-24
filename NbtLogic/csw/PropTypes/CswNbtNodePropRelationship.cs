@@ -305,16 +305,27 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["allowadd"] = "true";
             }
 
-            JObject OptionsNodeObj = new JObject();
-            ParentObject["options"] = OptionsNodeObj;
+			JArray JOptions = new JArray();
+			ParentObject["options"] = JOptions;
 
             Dictionary<CswPrimaryKey, string> Options = getOptions();
-            foreach( CswPrimaryKey NodePk in Options.Keys.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
+            foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
             {
-                // options: { id: value, id: value }
-                OptionsNodeObj[NodePk.PrimaryKey.ToString().ToLower()] = Options[NodePk];
-            }
-        }
+				JObject JOption = new JObject();
+				if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
+				{
+					JOption["id"] = NodePk.PrimaryKey.ToString().ToLower();
+					JOption["value"] = Options[NodePk];
+				}
+				else
+				{
+					JOption["id"] = "";
+					JOption["value"] = "";
+				}
+				JOptions.Add( JOption );
+			}
+			
+        } // ToJSON()
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
