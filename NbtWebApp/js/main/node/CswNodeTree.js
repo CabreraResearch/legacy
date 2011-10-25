@@ -22,6 +22,7 @@
                 cswnbtnodekey: '',
                 IncludeNodeRequired: false,
                 UsePaging: true,
+				UseScrollbars: true,
                 onSelectNode: null, // function(optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', cswnbtnodekey: '', viewid: '' }; return o; },
                 onInitialSelectNode: undefined,
                 onViewChange: null, // function(newviewid, newviewmode) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
@@ -36,8 +37,13 @@
             }
 
             var idPrefix = o.ID + '_';
-            var $treediv = $('<div id="' + idPrefix + '" class="treediv" />')
+            var $treediv = $('<div id="' + idPrefix + '" />')
                                 .appendTo($(this));
+            if (o.UseScrollbars) {
+            	$treediv.addClass('treediv');
+            } else {
+            	$treediv.addClass('treediv_noscroll');
+            }
 
             var url = o.ViewTreeUrl;
             var dataParam = {

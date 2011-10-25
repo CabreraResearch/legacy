@@ -14,6 +14,7 @@
 				Url: '/NbtWebApp/wsNBT.asmx/getAuditHistoryGrid',
 				ID: '',
 				nodeid: '',
+                EditMode: EditMode.Edit.name,
 				JustDateColumn: false,
 				onEditRow: null, //function(date) {},
 				onSelectRow: null, //function(date) {},
@@ -63,8 +64,17 @@
 						    del: false,
 						    refresh: false,
 						    search: false
-					    },
-						optNavEdit: {
+					    }
+					};
+
+					$.extend(g.gridOpts, gridJson);
+
+					if (o.EditMode === EditMode.PrintReport.name) {
+                        g.gridOpts.caption = '';
+                        g.hasPager = false;
+					}
+					else {
+						g.optNavEdit = {
 					        editfunc: function(rowid) {
 								if (false === isNullOrEmpty(rowid)) {
 								    var cellVal = grid.getValueForColumn('CHANGEDATE', rowid);
@@ -75,9 +85,8 @@
 									alert('Please select a row to edit');
 								}
 							}
-					    }
-					};
-					$.extend(g.gridOpts, gridJson);
+					    };
+					}
 				    
 				    var grid = new CswGrid(g, $auditGrid);
 				    grid.$gridPager.css({ width: '100%', height: '20px' });

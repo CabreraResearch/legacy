@@ -26,16 +26,13 @@
                 if (false === isNullOrEmpty(o.relatednodeid) && isNullOrEmpty(selectedNodeId) && false === o.Multi) {
                     selectedNodeId = o.relatednodeid;
                 }
-                
-                crawlObject(options, function (relatedObj, key) {
-                    relationships.push({ value: key, display: relatedObj });
-                }, false);
-                if (false === isTrue(o.required)) {
-                    relationships.push({ value: '', display: '' });
-                }
+
                 if (o.Multi) {
-                    relationships.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
+	                relationships.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
                 }
+		        crawlObject(options, function (relatedObj, key) {
+			        relationships.push({ value: relatedObj.id, display: relatedObj.value });
+                }, false);
 
                 if (o.ReadOnly) {
                     $Div.append(selectedName);

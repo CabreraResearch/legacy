@@ -28,6 +28,21 @@ namespace ChemSW.Nbt
     /// </summary>
     public class CswNbtResourcesFactory
     {
+		/// <summary>
+		/// Create a new CswNbtResources using same initialization parameters as an existing one
+		/// Does not copy data or access id
+		/// </summary>
+		public static CswNbtResources makeCswNbtResources( CswNbtResources OtherResources )
+		{
+			return makeCswNbtResources( OtherResources.AppType,
+										OtherResources.SetupVbls.SetupMode,
+										OtherResources.ExcludeDisabledModules,
+										OtherResources.IsDeleteModeLogical );
+		}
+
+		/// <summary>
+		/// Create a new CswNbtResources
+		/// </summary>
 		public static CswNbtResources makeCswNbtResources( AppType AppType, SetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical )
 		{
 			CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt(SetupMode);
@@ -46,7 +61,6 @@ namespace ChemSW.Nbt
 			ReturnVal.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( CswNbtMetaDataEvents.OnEditNodeTypePropName );
 			ReturnVal.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
 			ReturnVal.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( CswNbtMetaDataEvents.OnEditNodeTypeName );
-
 
 			return ( ReturnVal );
 		}
