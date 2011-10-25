@@ -206,13 +206,16 @@ namespace ChemSW.Nbt.WebServices
                         break;
                 }
 
+				CswNbtViewNode ThisNodeViewNode = View.FindViewNodeByUniqueId( ThisNodeKey.ViewNodeUniqueId );
+
                 string ThisNodeState = "closed";
-                if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
-                    View.ViewMode == NbtViewRenderingMode.List ||
-                    ( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) )
-                {
-                    ThisNodeState = "leaf";
-                }
+				if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
+					View.ViewMode == NbtViewRenderingMode.List ||
+					( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
+					( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
+				{
+					ThisNodeState = "leaf";
+				}
 
                 ThisNodeObj["data"] = ThisNodeName;
                 ThisNodeObj["icon"] = "Images/icons/" + ThisNodeIcon;
