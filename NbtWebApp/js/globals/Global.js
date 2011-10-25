@@ -225,7 +225,7 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
             if (isFunction(o.error)) {
                 o.error();
             }
-	        if (isFunction(onAfterAjax)) onAfterAjax(false);
+            if (isFunction(onAfterAjax)) onAfterAjax(false);
         }
     });                 // $.ajax({
 } // CswAjaxJson()
@@ -784,7 +784,7 @@ function HandleMenuItem(options)
         onEditView: null, //function (viewid) { },
         onSaveView: null, //function (newviewid) { },
         onQuotas: null, // function () { },
-		onSessions: null, // function () { },
+        onSessions: null, // function () { },
         Multi: false,
         NodeCheckTreeId: ''
     };
@@ -929,11 +929,11 @@ function HandleMenuItem(options)
             case 'Quotas':
                 $a.click(function () {
                     o.onQuotas();
-               	});
-               	break;
+                });
+                break;
             case 'Sessions':
-               	$a.click(function () {
-               		o.onSessions();
+                $a.click(function () {
+                    o.onSessions();
                 });
                 break;
         }
