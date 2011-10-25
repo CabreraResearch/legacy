@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnObj = new JObject( new JProperty( "default", "" ) );
 
-            string[] types = { "action", "category", "report", "viewtree", "viewgrid", "viewlist" };
+            string[] types = { "action", "category", "report", "viewtree", "viewgrid", "viewlist", "viewtable" };
             foreach( string type in types )
             {
                 bool Selectable = true;
