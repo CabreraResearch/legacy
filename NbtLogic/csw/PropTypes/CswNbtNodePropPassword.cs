@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.PropTypes
 			{
 				_saveProp( (string) JObject.Property( "newpassword" ).Value );
 			}
-			bool inIsExpired = (bool) JObject.Property( "isexpired" ).Value;
+			bool inIsExpired = CswConvert.ToBoolean( JObject.Property( "isexpired" ).Value );
 			if( inIsExpired && !IsExpired )
 			{
 				ChangedDate = DateTime.MinValue;
