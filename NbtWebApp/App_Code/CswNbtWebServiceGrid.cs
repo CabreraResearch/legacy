@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
                 }
-
+            }
             JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
             _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, PropsInGrid );   //_getGridColumnNamesJson( ColumnCollection );
             //_makeHiddenColumnNames( ref GridOrderedColumnDisplayNames );
@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.WebServices
 
             _CswGridData.GridSortName = "nodeid";
 
-            RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions );
+            RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
 
             return RetObj;
         } // getGridOuterJson()

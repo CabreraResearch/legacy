@@ -34,9 +34,10 @@
             
             var $parent = $(this);
             if (o.reinit) $parent.empty();
-            
-            var dataJson = {ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty };
-            var ret;
+
+            var dataJson = { ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty },
+                ret,
+                forReporting = (o.EditMode === EditMode.PrintReport.name);
             
             CswAjaxJson({
                 url: o.GridUrl,
@@ -51,19 +52,7 @@
                         canDelete: isTrue(jqGridOpt.CanDelete),
                         hasPager: true,
                         gridOpts: {
-                            url: '/NbtWebApp/wsNBT.asmx/getGridRows?viewid=' + o.viewid  + '&SafeNodeKey=' + o.cswnbtnodekey + '&ShowEmpty=' + o.showempty,
-                            toppager: (jqGridOpt.rowNum >= 50),
-                            jsonReader: {
-                                root: "rows",
-                                page: "page",
-                                total: "total",
-                                records: "records",
-                                repeatitems: false,
-                                id: "id",
-                                cell: "cell",
-                                userdata: "userdata",
-                                subgrid: {}
-                           }
+                            toppager: (jqGridOpt.rowNum >= 50)
                         },
                         optNav: { },
                         optSearch: { },
@@ -75,11 +64,25 @@
                     if (isNullOrEmpty(g.gridOpts.width)) {
                         g.gridOpts.width = '650px';
                     }
-                    g.gridOpts.datatype = 'json';
-                    if (o.EditMode === EditMode.PrintReport.name) {
+
+                    if (forReporting) {
                         g.gridOpts.caption = '';
                         g.hasPager = false;
                     } else {
+                        g.gridOpts.datatype = 'json';
+                        g.gridOpts.url = '/NbtWebApp/wsNBT.asmx/getGridRows?viewid=' + o.viewid + '&SafeNodeKey=' + o.cswnbtnodekey + '&ShowEmpty=' + o.showempty;
+                        g.gridOpts.jsonReader = {
+                            root: "rows",
+                            page: "page",
+                            total: "total",
+                            records: "records",
+                            repeatitems: false,
+                            id: "id",
+                            cell: "cell",
+                            userdata: "userdata",
+                            subgrid: {}
+                        };
+                        
                         g.optNavEdit = {
                             editfunc: function(rowid) {
                                 var editOpt = {
