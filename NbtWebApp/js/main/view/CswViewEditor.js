@@ -92,9 +92,11 @@
                     "editing an existing View.<br/><br/>";
         $div1.append(instructions);
         $div1.append('Select a View to Edit:&nbsp;');
-        var $selview_span = $('<span id="' + o.ID + '_selviewname" style="font-weight: bold"></span>')
-            .appendTo($div1);
-        var cswViewGrid;
+		var $selview_span = $('<span id="' + o.ID + '_selviewname" style="font-weight: bold"></span>')
+						    .appendTo($div1);
+		var $viewgriddiv = $('<div />')
+							.appendTo($div1);
+		var cswViewGrid;
         var rowid;
         var $viewgrid;
 
@@ -476,7 +478,7 @@
                     success: function(gridJson) {
 
                         if (isNullOrEmpty($viewgrid) || $viewgrid.length === 0) {
-                            $viewgrid = $('<div id="' + o.ID + '_csw_viewGrid_outer"></div>').appendTo($div1);
+                        	$viewgrid = $('<div id="' + o.ID + '_csw_viewGrid_outer"></div>').appendTo($viewgriddiv);
                         } else {
                             $viewgrid.empty();
                         }

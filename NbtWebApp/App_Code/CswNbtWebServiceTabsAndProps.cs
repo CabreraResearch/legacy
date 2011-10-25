@@ -386,7 +386,7 @@ namespace ChemSW.Nbt.WebServices
                             bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
                             if( CanEdit )
                             {
-                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
+                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab, true );
                                 if( null != RetNbtNodeKey )
                                 {
                                     AllSucceeded = true;
@@ -446,7 +446,7 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // saveProps()
 
-        private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab )
+		private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab, bool ForceUpdate = false )
         {
             CswNbtNodeKey Ret = null;
             if( Node != null )
@@ -466,7 +466,7 @@ namespace ChemSW.Nbt.WebServices
                 // BZ 8517 - this sets sequences that have setvalonadd = 0
                 _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( Node );
 
-                Node.postChanges( false );
+                Node.postChanges( ForceUpdate );
 
                 ICswNbtTree Tree;
                 if( View != null )

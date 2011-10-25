@@ -95,6 +95,11 @@ body a
 	height: 3px;
 }
 */
+.HeaderTable_RightMenu
+{
+	width: 300px;
+}
+
 .HeaderTable_BottomMenu
 {
 	background-color: #f8f9fb;
@@ -996,6 +1001,13 @@ body a
 	width: 270px;
 	height: 400px;
 	overflow: auto;
+}
+.treediv_noscroll
+{
+	padding: 5px 0px 5px 0px;
+	width: 270px;
+	height: 400px;
+	overflow: visible;
 }
 .jstree-default.jstree-focused {
 	background-color: transparent !important;

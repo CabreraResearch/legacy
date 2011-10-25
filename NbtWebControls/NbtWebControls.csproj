@@ -54,6 +54,7 @@
     <Compile Include="csw\CswMainMenu.cs" />
     <Compile Include="csw\CswNbtStatistics.cs" />
     <Compile Include="csw\CswNbtStatisticsStorageStateServer.cs" />
+    <Compile Include="csw\CswNbtWebCache.cs" />
     <Compile Include="csw\CswNodesGrid.cs" />
     <Compile Include="csw\CswNodesList.cs" />
     <Compile Include="csw\CswNodeTypeDropDown.cs" />
