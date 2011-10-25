@@ -81,9 +81,9 @@ namespace ChemSW.Nbt.WebServices
             _CswGridData = new CswGridData( _CswNbtResources );
         } //ctor
 
-        public JObject getGrid( bool ShowEmpty )
+        public JObject getGrid( bool ShowEmpty = false, bool ForReporting = false )
         {
-            return _getGridOuterJson( ShowEmpty );
+            return _getGridOuterJson( ShowEmpty, ForReporting );
         } // getGrid()
 
         private Collection<CswViewBuilderProp> _getGridProperties( Collection<CswNbtViewRelationship> ChildRelationships )
@@ -144,21 +144,26 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
         /// </summary>
-        private JObject _getGridOuterJson( bool ShowEmpty )
+        private JObject _getGridOuterJson( bool ShowEmpty = false, bool ForReporting = false )
         {
             JObject RetObj = new JObject();
             RetObj["nodetypeid"] = _View.ViewMetaDataTypeId;
 
-            IEnumerable<XElement> GridNodes = _getGridXElements();
+
             //IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( false );
 
             Collection<CswViewBuilderProp> PropsInGrid = _getGridProperties( _View.Root.ChildRelationships );
 
-            JArray GridRows = new JArray();
-            var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
-            if( HasResults )
+            JArray GridRows = null;
+            if( ForReporting )
             {
-                GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
+                GridRows = new JArray();
+                IEnumerable<XElement> GridNodes = _getGridXElements();
+                var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
+                if( HasResults )
+                {
+                    GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
+                }
             }
 
             JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
