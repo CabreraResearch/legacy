@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
@@ -80,37 +81,93 @@ namespace ChemSW.Nbt.WebServices
             _CswGridData = new CswGridData( _CswNbtResources );
         } //ctor
 
-        public JObject getGrid( bool ShowEmpty )
+        public JObject getGrid( bool ShowEmpty = false, bool ForReporting = false )
         {
-            return _getGridOuterJson( ShowEmpty );
+            return _getGridOuterJson( ShowEmpty, ForReporting );
         } // getGrid()
+
+        private void _getGridProperties( Collection<CswNbtViewRelationship> ChildRelationships, ref Collection<CswViewBuilderProp> Ret )
+        {
+            CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
+            Collection<CswNbtViewProperty> PropsAtThisLevel = new Collection<CswNbtViewProperty>();
+            Collection<CswNbtViewRelationship> NextChildRelationships = new Collection<CswNbtViewRelationship>();
+
+            //Iterate all Relationships at this level first. This ensures our properties are properly collected.
+            foreach( CswNbtViewRelationship Relationship in ChildRelationships )
+            {
+                foreach( CswNbtViewProperty Property in Relationship.Properties )
+                {
+                    PropsAtThisLevel.Add( Property );
+                }
+                //This will make recursion smoother: we're always iterating the collection of relationships at the same distance from root.
+                foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
+                {
+                    NextChildRelationships.Add( ChildRelationship );
+                }
+            }
+            //Now iterate props
+            foreach( CswNbtViewProperty Prop in PropsAtThisLevel )
+            {
+                CswViewBuilderProp VbProp = new CswViewBuilderProp( Prop );
+                string PropName = Prop.Name.Trim().Replace( " ", "_" ).ToLower();
+                if( false == ColumnNames.Contains( PropName ) )
+                {
+                    ColumnNames.Add( PropName );
+                    Ret.Add( VbProp );
+                }
+                else
+                {
+                    //The Tree XML won't give us anything to map a "duplicate" prop/column back to the column definition. Leave our own breadcrumbs.
+                    foreach( CswViewBuilderProp RetProp in Ret )
+                    {
+                        if( RetProp.PropNameUnique == PropName && false == RetProp.AssociatedPropIds.Contains( VbProp.MetaDataPropId.ToString() ) )
+                        {
+                            RetProp.AssociatedPropIds.Add( VbProp.MetaDataPropId.ToString() );
+                        }
+                    }
+                }
+            }
+
+            //Now recurse, damn you.
+            if( NextChildRelationships.Count > 0 )
+            {
+                _getGridProperties( NextChildRelationships, ref Ret );
+            }
+        }
 
         /// <summary>
         /// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
         /// </summary>
-        private JObject _getGridOuterJson( bool ShowEmpty )
+        private JObject _getGridOuterJson( bool ShowEmpty = false, bool ForReporting = false )
         {
             JObject RetObj = new JObject();
             RetObj["nodetypeid"] = _View.ViewMetaDataTypeId;
 
-            IEnumerable<XElement> GridNodes = _getGridXElements();
-            IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( false );
 
-            JArray GridRows = new JArray();
-            var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
-            if( HasResults )
+            //IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( false );
+
+            Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
+            _getGridProperties( _View.Root.ChildRelationships, ref PropsInGrid );
+
+            JArray GridRows = null;
+            if( ForReporting )
             {
-                GridRows = _CswGridData.getGridRowsJSON( GridNodes ); //_getGridRowsJson( GridNodes );
+                GridRows = new JArray();
+                IEnumerable<XElement> GridNodes = _getGridXElements();
+                var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
+                if( HasResults )
+                {
+                    GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
+                }
             }
-
             JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
 			_AddIconColumnName( ref GridOrderedColumnDisplayNames );
-            _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, ColumnCollection );   //_getGridColumnNamesJson( ColumnCollection );
+            _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, PropsInGrid );   //_getGridColumnNamesJson( ColumnCollection );
             //_makeHiddenColumnNames( ref GridOrderedColumnDisplayNames );
 
-            JArray GridColumnDefinitions = _CswGridData.getGridColumnDefinitionJson( ColumnCollection );
+            JArray GridColumnDefinitions = _CswGridData.getGridColumnDefinitionJson( PropsInGrid );
 			_AddIconColumnDefinition( ref GridColumnDefinitions );
-			_AddHiddenColumnDefiniton( ref GridColumnDefinitions );
+            _AddHiddenColumnDefiniton( GridColumnDefinitions );
 
             _CswGridData.GridWidth = ( _View.Width * 7 );
             if( _View.Visibility != NbtViewVisibility.Property )
@@ -124,6 +181,33 @@ namespace ChemSW.Nbt.WebServices
 
             RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
 
+            return RetObj;
+        } // getGridOuterJson()
+
+        /// <summary>
+        /// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
+        /// </summary>
+        public JObject getGridRows( bool ShowEmpty )
+        {
+            JObject RetObj = new JObject();
+
+            IEnumerable<XElement> GridNodes = _getGridXElements();
+
+            Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
+            _getGridProperties( _View.Root.ChildRelationships, ref PropsInGrid );
+
+            JArray GridRows = new JArray();
+            var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
+            if( HasResults )
+            {
+                GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
+            }
+
+
+            RetObj["total"] = "1";
+            RetObj["page"] = "1";
+            RetObj["records"] = GridNodes.Count().ToString();
+            RetObj["rows"] = GridRows;
             return RetObj;
         } // getGridOuterJson()
 
@@ -143,7 +227,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Generates a JSON property with the definitional data for a jqGrid Column Array
         /// </summary>
-        private void _AddHiddenColumnDefiniton( ref JArray ColumnDefArray )
+        private void _AddHiddenColumnDefiniton( JArray ColumnDefArray )
         {
             //we'll want NodeName for edit/delete
             ColumnDefArray.AddFirst( new JObject(
@@ -200,13 +284,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
                 ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, Int32.MinValue, true, false, null, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, 50, true, false, null, false );
             }
             else
             {
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false, 50 );
             }
-
             Int32 NodeCount = Tree.getChildNodeCount();
             if( NodeCount > 0 )
             {
