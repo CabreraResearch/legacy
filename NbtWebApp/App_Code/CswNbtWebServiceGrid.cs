@@ -86,9 +86,8 @@ namespace ChemSW.Nbt.WebServices
             return _getGridOuterJson( ShowEmpty, ForReporting );
         } // getGrid()
 
-        private Collection<CswViewBuilderProp> _getGridProperties( Collection<CswNbtViewRelationship> ChildRelationships )
+        private void _getGridProperties( Collection<CswNbtViewRelationship> ChildRelationships, ref Collection<CswViewBuilderProp> Ret )
         {
-            Collection<CswViewBuilderProp> Ret = new Collection<CswViewBuilderProp>();
             CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
             Collection<CswNbtViewProperty> PropsAtThisLevel = new Collection<CswNbtViewProperty>();
             Collection<CswNbtViewRelationship> NextChildRelationships = new Collection<CswNbtViewRelationship>();
@@ -132,13 +131,8 @@ namespace ChemSW.Nbt.WebServices
             //Now recurse, damn you.
             if( NextChildRelationships.Count > 0 )
             {
-                Collection<CswViewBuilderProp> RecRet = _getGridProperties( NextChildRelationships );
-                foreach( CswViewBuilderProp VbProp in RecRet )
-                {
-                    Ret.Add( VbProp );
-                }
+                _getGridProperties( NextChildRelationships, ref Ret );
             }
-            return Ret;
         }
 
         /// <summary>
@@ -152,7 +146,8 @@ namespace ChemSW.Nbt.WebServices
 
             //IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( false );
 
-            Collection<CswViewBuilderProp> PropsInGrid = _getGridProperties( _View.Root.ChildRelationships );
+            Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
+            _getGridProperties( _View.Root.ChildRelationships, ref PropsInGrid );
 
             JArray GridRows = null;
             if( ForReporting )
@@ -196,7 +191,8 @@ namespace ChemSW.Nbt.WebServices
 
             IEnumerable<XElement> GridNodes = _getGridXElements();
 
-            Collection<CswViewBuilderProp> PropsInGrid = _getGridProperties( _View.Root.ChildRelationships );
+            Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
+            _getGridProperties( _View.Root.ChildRelationships, ref PropsInGrid );
 
             JArray GridRows = new JArray();
             var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
@@ -272,13 +268,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
                 ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, Int32.MinValue, true, false, null, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, 50, true, false, null, false );
             }
             else
             {
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false, 50 );
             }
-
             Int32 NodeCount = Tree.getChildNodeCount();
             if( NodeCount > 0 )
             {
