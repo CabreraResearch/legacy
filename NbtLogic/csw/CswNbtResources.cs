@@ -809,6 +809,10 @@ namespace ChemSW.Nbt
         public DataTable execArbitraryPlatformNeutralSqlSelect( string UniqueName, string SqlText ) { return ( _CswResources.execArbitraryPlatformNeutralSqlSelect( UniqueName, SqlText ) ); }
 
 
+
+        public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswResources.execStoredProc( StoredProcName, Params ); }
+
+
         /// <summary>
         /// Allows you to get a value from one of the setup variables (located in CswSetupVbls.xml)
         /// </summary>
