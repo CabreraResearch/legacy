@@ -237,10 +237,10 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( VbProp.PropNameUnique == CleanPropName && VbProp.AssociatedPropIds.Contains( PropId ) )
                     {
-                        CleanPropName += "_" + VbProp.MetaDataPropId;        
+                        CleanPropName += "_" + VbProp.MetaDataPropId;
                     }
                 }
-                
+
                 ParentObj[CleanPropName] = CleanValue;
             }
         }
@@ -307,14 +307,17 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Combines required jqGrid options into jqGrid consumable JObject
         /// </summary>
-        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows )
+        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows = null )
         {
             JObject Ret = new JObject();
 
             Ret[JqGridJsonOptions.datatype.ToString()] = "local";
             Ret[JqGridJsonOptions.colNames.ToString()] = ColumnNames;
             Ret[JqGridJsonOptions.colModel.ToString()] = ColumnDefinition;
-            Ret[JqGridJsonOptions.data.ToString()] = Rows;
+            if( null != Rows )
+            {
+                Ret[JqGridJsonOptions.data.ToString()] = Rows;
+            }
             Ret[JqGridJsonOptions.rowNum.ToString()] = PageSize;
             Ret[JqGridJsonOptions.viewrecords.ToString()] = true;
             Ret[JqGridJsonOptions.emptyrecords.ToString()] = _NoResultsDisplayString;

@@ -187,6 +187,7 @@
     <Content Include="js\main\actions\CswQuotaImage.js" />
     <Content Include="js\main\actions\CswQuotas.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
+    <Content Include="Scripts\jquery.jqGrid.src.js" />
     <Content Include="Scripts\json2.js" />
     <Content Include="Scripts\json2.min.js" />
     <Content Include="Scripts\modernizr.2.0.6.min.js" />
