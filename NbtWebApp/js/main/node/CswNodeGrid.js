@@ -51,7 +51,19 @@
                         canDelete: isTrue(jqGridOpt.CanDelete),
                         hasPager: true,
                         gridOpts: {
-                            toppager: (jqGridOpt.rowNum >= 50)
+                            url: '/NbtWebApp/wsNBT.asmx/getGridRows?viewid=' + o.viewid  + '&SafeNodeKey=' + o.cswnbtnodekey + '&ShowEmpty=' + o.showempty,
+                            toppager: (jqGridOpt.rowNum >= 50),
+                            jsonReader: {
+                                root: "rows",
+                                page: "page",
+                                total: "total",
+                                records: "records",
+                                repeatitems: false,
+                                id: "id",
+                                cell: "cell",
+                                userdata: "userdata",
+                                subgrid: {}
+                           }
                         },
                         optNav: { },
                         optSearch: { },
@@ -63,7 +75,7 @@
                     if (isNullOrEmpty(g.gridOpts.width)) {
                         g.gridOpts.width = '650px';
                     }
-
+                    g.gridOpts.datatype = 'json';
                     if (o.EditMode === EditMode.PrintReport.name) {
                         g.gridOpts.caption = '';
                         g.hasPager = false;

@@ -149,17 +149,17 @@ namespace ChemSW.Nbt.WebServices
             JObject RetObj = new JObject();
             RetObj["nodetypeid"] = _View.ViewMetaDataTypeId;
 
-            IEnumerable<XElement> GridNodes = _getGridXElements();
+            //IEnumerable<XElement> GridNodes = _getGridXElements();
             //IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( false );
 
             Collection<CswViewBuilderProp> PropsInGrid = _getGridProperties( _View.Root.ChildRelationships );
 
-            JArray GridRows = new JArray();
-            var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
-            if( HasResults )
-            {
-                GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
-            }
+            //JArray GridRows = new JArray();
+            //var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
+            //if( HasResults )
+            //{
+            //    GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
+            //}
 
             JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
             _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, PropsInGrid );   //_getGridColumnNamesJson( ColumnCollection );
@@ -178,8 +178,34 @@ namespace ChemSW.Nbt.WebServices
 
             _CswGridData.GridSortName = "nodeid";
 
-            RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
+            RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions );
 
+            return RetObj;
+        } // getGridOuterJson()
+
+        /// <summary>
+        /// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
+        /// </summary>
+        public JObject getGridRows( bool ShowEmpty )
+        {
+            JObject RetObj = new JObject();
+
+            IEnumerable<XElement> GridNodes = _getGridXElements();
+
+            Collection<CswViewBuilderProp> PropsInGrid = _getGridProperties( _View.Root.ChildRelationships );
+
+            JArray GridRows = new JArray();
+            var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
+            if( HasResults )
+            {
+                GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
+            }
+
+
+            RetObj["total"] = "1";
+            RetObj["page"] = "1";
+            RetObj["records"] = GridNodes.Count().ToString();
+            RetObj["rows"] = GridRows;
             return RetObj;
         } // getGridOuterJson()
 

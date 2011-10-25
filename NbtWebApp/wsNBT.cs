@@ -643,6 +643,55 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public void getGridRows( string ViewId, string SafeNodeKey, string ShowEmpty )
+        {
+            JObject ReturnVal = new JObject();
+            string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
+
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    bool ShowEmptyGrid = CswConvert.ToBoolean( ShowEmpty );
+                    CswNbtView View = _getView( ViewId );
+                    if( null != View )
+                    {
+                        CswNbtNodeKey ParentNodeKey = null;
+                        if( !string.IsNullOrEmpty( ParsedNodeKey ) )
+                        {
+                            ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
+                        }
+                        var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
+                        ReturnVal = g.getGridRows( ShowEmptyGrid );
+
+                        View.SaveToCache( true );
+                    }
+                }
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            Context.Response.Clear();
+            Context.Response.ContentType = "application/json";
+            Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
+            Context.Response.AddHeader( "content-length", ( ReturnVal.ToString().Length + 2 ).ToString() );
+            Context.Response.Flush();
+            Context.Response.Write( ReturnVal.ToString() );
+            //return ReturnVal.ToString();
+
+        } // getGrid()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getTable( string ViewId, string NodeId, string NodeKey )
         {
             JObject ReturnVal = new JObject();
@@ -1691,7 +1740,7 @@ namespace ChemSW.Nbt.WebServices
 
                         // Save the binary data
                         CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                        string MolData = CswTools.ByteArrayToString( FileData ).Replace("\r", "");
+                        string MolData = CswTools.ByteArrayToString( FileData ).Replace( "\r", "" );
                         bool Success = ws.saveMolProp( MolData, PropId );
 
                         ReturnVal["success"] = Success;
