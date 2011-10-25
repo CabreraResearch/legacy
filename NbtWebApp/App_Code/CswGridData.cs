@@ -196,6 +196,18 @@ namespace ChemSW.Nbt.WebServices
                 Row["nodepk"] = new CswPrimaryKey( "nodes", CswConvert.ToInt32( GridNode.Attribute( "nodeid" ).Value ) ).ToString();
                 Row["cswnbtnodekey"] = wsTools.ToSafeJavaScriptParam( GridNode.Attribute( "key" ).Value );
                 Row["nodename"] = GridNode.Attribute( "nodename" ).Value;
+				string Icon = "<img src=\'";
+				if( CswConvert.ToBoolean( GridNode.Attribute( "locked" ).Value ) )
+				{
+					Icon += "Images/quota/lock.gif\' title=\'Quota exceeded";
+				}
+				else
+				{
+					Icon += "Images/icons/" + _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( GridNode.Attribute( "nodetypeid" ).Value ) ).IconFileName;
+				}
+				Icon += "\'/>";
+				Row["icon"] = Icon;
+
                 foreach( XElement Related in GridNode.DescendantNodes().OfType<XElement>() )
                 {
                     if( Related.Name == "NbtNodeProp" )
@@ -338,7 +350,6 @@ namespace ChemSW.Nbt.WebServices
             /// Also not a jqGrid option, but we need it to distinguish from datetime and date
             /// </summary>
             time
-
         };
         private readonly JqFieldType _JqFieldType = JqFieldType.Unknown;
 

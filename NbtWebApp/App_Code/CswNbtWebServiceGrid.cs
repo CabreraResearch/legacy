@@ -104,11 +104,13 @@ namespace ChemSW.Nbt.WebServices
             }
 
             JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
+			_AddIconColumnName( ref GridOrderedColumnDisplayNames );
             _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, ColumnCollection );   //_getGridColumnNamesJson( ColumnCollection );
             //_makeHiddenColumnNames( ref GridOrderedColumnDisplayNames );
 
             JArray GridColumnDefinitions = _CswGridData.getGridColumnDefinitionJson( ColumnCollection );
-            _AddHiddenColumnDefiniton( ref GridColumnDefinitions );
+			_AddIconColumnDefinition( ref GridColumnDefinitions );
+			_AddHiddenColumnDefiniton( ref GridColumnDefinitions );
 
             _CswGridData.GridWidth = ( _View.Width * 7 );
             if( _View.Visibility != NbtViewVisibility.Property )
@@ -172,6 +174,20 @@ namespace ChemSW.Nbt.WebServices
                                 ) );
 
         } // _AddHiddenColumnDefiniton()
+
+		private void _AddIconColumnDefinition( ref JArray ColumnDefArray )
+		{
+			ColumnDefArray.AddFirst( new JObject(
+								new JProperty( "name", "icon" ),
+								new JProperty( "index", "icon" ),
+								new JProperty( "formatter", "image" ),
+								new JProperty( CswGridData.JqGridJsonOptions.width.ToString(), "30" )
+								) );
+		}
+		private void _AddIconColumnName( ref JArray ColumnNameArray )
+		{
+			ColumnNameArray.Add( "icon" );
+		}
 
         /// <summary>
         /// Returns an XElement of the View's Tree
