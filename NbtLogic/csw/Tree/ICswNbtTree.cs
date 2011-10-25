@@ -271,11 +271,15 @@ namespace ChemSW.Nbt
         /// Returns the primary key of the currently indexed node
         /// </summary>
         CswPrimaryKey getNodeIdForCurrentPosition();
-        /// <summary>
-        /// Returns the Name of the currently indexed node
-        /// </summary>
-        String getNodeNameForCurrentPosition();
-        /// <summary>
+		/// <summary>
+		/// Returns the Name of the currently indexed node
+		/// </summary>
+		String getNodeNameForCurrentPosition();
+		/// <summary>
+		/// Returns whether the currently indexed node is locked
+		/// </summary>
+		bool getNodeLockedForCurrentPosition();
+		/// <summary>
         /// True if the currently indexed node is selectable, false otherwise
         /// </summary>
         bool getNodeSelectableForCurrentPosition();

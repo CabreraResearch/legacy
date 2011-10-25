@@ -39,6 +39,7 @@ namespace ChemSW.Nbt.WebServices
 						ret[NodeId.ToString()]["nodename"] = NodeElm.Attribute( "nodename" ).Value;
 						ret[NodeId.ToString()]["nodeid"] = NodeId.ToString();
 						ret[NodeId.ToString()]["nodekey"] = NodeElm.Attribute( "key" ).Value;
+						ret[NodeId.ToString()]["locked"] = NodeElm.Attribute( "locked" ).Value;
 						ret[NodeId.ToString()]["props"] = new JObject();
 						foreach( XElement PropElm in NodeElm.Elements() )         // NbtNodeProp
 						{

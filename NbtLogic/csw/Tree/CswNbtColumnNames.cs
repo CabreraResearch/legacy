@@ -25,6 +25,7 @@ namespace ChemSW.Nbt
         public string Selectable = "Selectable";
         public string ShowInGrid = "ShowInGrid";
         public string ShowInTree = "ShowInTree";
+		public string Locked = "Locked";
 
     }//class CswNbtColumnNames
 

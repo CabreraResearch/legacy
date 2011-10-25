@@ -478,8 +478,16 @@ namespace ChemSW.Nbt
         {
             return _CswNbtTreeNodes.getNameForCurrentNode();
         }//getNodeNameForCurrentPosition()
+    
+		/// <summary>
+		/// Returns whether the currently indexed node is locked
+		/// </summary>
+		public bool getNodeLockedForCurrentPosition()
+        {
+			return _CswNbtTreeNodes.getLockedForCurrentNode();
+        }//getNodeLockedForCurrentPosition()
 
-        /// <summary>
+		/// <summary>
         /// True if the currently indexed node is selectable, false otherwise
         /// </summary>
         public bool getNodeSelectableForCurrentPosition()
