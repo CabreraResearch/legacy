@@ -35,7 +35,7 @@
             var $parent = $(this);
             if (o.reinit) $parent.empty();
 
-            var dataJson = { ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty },
+            var dataJson = { ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty, IsReport: forReporting },
                 ret,
                 forReporting = (o.EditMode === EditMode.PrintReport.name);
             
