@@ -161,17 +161,12 @@ function CswMobileClientDbResources() {
         /// <returns type="Boolean">True if online. False otherwise.</returns>
         var mobileStorage = this;
         if (arguments.length > 0) {
-            mobileStorage.setItem('online', isTrue(isOnline));
-        }
+            mobileStorage.setItem('online', isTrue(isOnline) );
+        } 
         if (loginFailure) {
-            mobileStorage.setItem('loginFailure', loginFailure);
+            mobileStorage.setItem('loginFailure', loginFailure );
         }
-        var ret = (isTrue(mobileStorage.getItem('online')) && false === mobileStorage.stayOffline());
-        if (ret) {
-            $('.refresh').show().css('display', '');
-        } else {
-            $('.refresh').hide().css('display', 'none');
-        }
+        var ret = (isTrue(mobileStorage.getItem('online')) && !mobileStorage.stayOffline());
         return ret;
     };
 
