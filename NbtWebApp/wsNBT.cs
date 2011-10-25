@@ -680,14 +680,11 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = jError( Ex );
             }
 
-            //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
             Context.Response.Clear();
             Context.Response.ContentType = "application/json";
             Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
-            Context.Response.AddHeader( "content-length", ( ReturnVal.ToString().Length + 2 ).ToString() );
             Context.Response.Flush();
             Context.Response.Write( ReturnVal.ToString() );
-            //return ReturnVal.ToString();
 
         } // getGrid()
 
