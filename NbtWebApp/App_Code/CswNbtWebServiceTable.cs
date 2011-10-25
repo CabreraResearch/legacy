@@ -41,6 +41,13 @@ namespace ChemSW.Nbt.WebServices
 						ret[NodeId.ToString()]["nodekey"] = NodeElm.Attribute( "key" ).Value;
 						ret[NodeId.ToString()]["locked"] = NodeElm.Attribute( "locked" ).Value;
 						ret[NodeId.ToString()]["props"] = new JObject();
+						CswNbtMetaDataNodeType NodeType= _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32(NodeElm.Attribute("nodetypeid").Value));
+						if( NodeType != null )
+						{
+							// default image, overridden below
+							ret[NodeId.ToString()]["thumbnailurl"] = "Images/icons/" + NodeType.IconFileName;
+						}
+
 						foreach( XElement PropElm in NodeElm.Elements() )         // NbtNodeProp
 						{
 							Int32 NodeTypePropId = CswConvert.ToInt32( PropElm.Attribute( "nodetypepropid" ).Value );
