@@ -52,7 +52,7 @@
                         canDelete: isTrue(jqGridOpt.CanDelete),
                         hasPager: true,
                         gridOpts: {
-                            toppager: (jqGridOpt.rowNum >= 50)
+                            toppager: (jqGridOpt.rowNum >= 50 && contains(gridJson, 'rows') && gridJson.rows.length >= 49)
                         },
                         optNav: { },
                         optSearch: { },
