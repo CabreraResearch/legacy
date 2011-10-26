@@ -266,13 +266,7 @@ namespace ChemSW.Nbt.ImportExport
 
                                     if( CurrentNodeType.NodeTypeName.ToLower() == "user" )
                                     {
-                                        string UserName = CurrentNodeNameInTempTable;
-                                        if( false == String.IsNullOrEmpty( UserName ) )
-                                        {
-                                            UserName = _fabricateNodeNameFromNodeType( CurrentNodeType.NodeTypeName );
-                                        }
-
-                                        _rehabilitateUser( CswNbtNode, UserName, GeneralUserRole );
+                                        _rehabilitateUser( CswNbtNode, CurrentNodeNameInTempTable, GeneralUserRole );
                                     }
 
                                     CswNbtNode.postChanges( false );
@@ -398,95 +392,81 @@ namespace ChemSW.Nbt.ImportExport
                     if( AbsentImportNodeHandling.DeduceAndCreate == _CswNbtImportOptions.AbsentNodeHandling )
                     {
 
-
                         foreach( DataRow CurrentRow in DataTable.Rows )
                         {
+
                             string ImportNodeIdOfAbsentNode = CurrentRow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
-                            string[] SplitRelatedNodeID = ImportNodeIdOfAbsentNode.Split( new string[] { "--" }, StringSplitOptions.None );
+                            CswNbtImportNodeId CswNbtImportNodeId = new ImportExport.CswNbtImportNodeId( ImportNodeIdOfAbsentNode );
 
-                            if( SplitRelatedNodeID.Length >= 2 )
+
+                            if( false == CswNbtImportNodeId.IsNull )
                             {
-                                string AbsentNodeNodeIdType = SplitRelatedNodeID[0];
-                                string AbsentNodeNodeType = SplitRelatedNodeID[1];
-                                string AbsentNodeNodeName = SplitRelatedNodeID.Length >= 3 ? SplitRelatedNodeID[2] : string.Empty;
-                                if( "ND" == AbsentNodeNodeIdType )
+                                CswNbtMetaDataNodeType NodeTypeOfAbsentNode = _CswNbtResources.MetaData.getNodeType( CswNbtImportNodeId.NodeNodeType );
+
+
+                                if( null == NodeTypeOfAbsentNode )
                                 {
-                                    CswNbtMetaDataNodeType NodeTypeOfAbsentNode = _CswNbtResources.MetaData.getNodeType( AbsentNodeNodeType );
-
-
-                                    if( null == NodeTypeOfAbsentNode )
+                                    //if the nodetype is trivial -- i.e., the direct derivation (by name) of an object class,
+                                    //why not go ahead and create it, and expand the scope of reference target nodes that we 
+                                    //can create by inference? 
+                                    foreach( CswNbtMetaDataObjectClass CurrentObjectClass in _CswNbtResources.MetaData.ObjectClasses )
                                     {
-                                        //if the nodetype is trivial -- i.e., the direct derivation (by name) of an object class,
-                                        //why not go ahead and create it, and expand the scope of reference target nodes that we 
-                                        //can create by inference? 
-                                        foreach( CswNbtMetaDataObjectClass CurrentObjectClass in _CswNbtResources.MetaData.ObjectClasses )
+                                        string FullObjectClassName = CurrentObjectClass.ObjectClass.ToString();
+                                        string StrippedObjectClassName = FullObjectClassName.Remove( FullObjectClassName.Length - 5 );
+                                        if( StrippedObjectClassName.ToLower() == CswNbtImportNodeId.NodeNodeType.ToLower() )
                                         {
-                                            string FullObjectClassName = CurrentObjectClass.ObjectClass.ToString();
-                                            string StrippedObjectClassName = FullObjectClassName.Remove( FullObjectClassName.Length - 5 );
-                                            if( StrippedObjectClassName.ToLower() == AbsentNodeNodeType.ToLower() )
-                                            {
-                                                NodeTypeOfAbsentNode = _CswNbtResources.MetaData.makeNewNodeType( FullObjectClassName, AbsentNodeNodeType, string.Empty );
-                                                break;
-                                            }
-
-                                        }//iterate object classes
-
-                                    }//if we did not retrieve a related node type
-
-
-
-                                    if( NodeTypeOfAbsentNode != null )
-                                    {
-
-                                        if( string.Empty == AbsentNodeNodeName )
-                                        {
-
-                                            AbsentNodeNodeName = _fabricateNodeNameFromNodeType( AbsentNodeNodeType );
+                                            NodeTypeOfAbsentNode = _CswNbtResources.MetaData.makeNewNodeType( FullObjectClassName, CswNbtImportNodeId.NodeNodeType, string.Empty );
+                                            break;
                                         }
 
-                                        //****************************
-                                        //Create the node
-                                        CswNbtNode TargetNodeThatWasMissing = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeOfAbsentNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
-                                        //TargetNodeThatWasMissing.NodeName = AbsentNodeNodeName; // Kludge to make the node have a value even when no property values are supplied for it
+                                    }//iterate object classes
 
-                                        // Kludge specifically for 10340:
-                                        if( AbsentNodeNodeType.ToLower() == "user" )
-                                        {
-                                            _rehabilitateUser( TargetNodeThatWasMissing, AbsentNodeNodeName, GeneralUserRole );
-                                        }
-
-                                        TargetNodeThatWasMissing.postChanges( false, false, true );
-
-                                        //NodeIdMap.Add( CswTools.XmlRealAttributeName( ImportNodeIdOfAbsentNode ).ToLower(), TargetNodeThatWasMissing.NodeId.PrimaryKey );    // for property value references
-                                        //NodeRow["destnodeid"] = CswConvert.ToDbVal( TargetNodeThatWasMissing.NodeId.PrimaryKey );       // for posterity
+                                }//if we did not retrieve a related node type
 
 
-                                        //****************************
-                                        //Create the temp node tables so that the references will be there when we create target props
-                                        DataTable AddMissingNodeEntryTable = CswTableUpdateTempNodesTable.getEmptyTable();
-                                        DataRow NewNodeEntryRow = AddMissingNodeEntryTable.NewRow();
-                                        AddMissingNodeEntryTable.Rows.Add( NewNodeEntryRow );
-                                        NewNodeEntryRow[_ColName_ImportNodeId] = ImportNodeIdOfAbsentNode;
-                                        NewNodeEntryRow[_ColName_Nodes_NodeName] = TargetNodeThatWasMissing.NodeName;
-                                        NewNodeEntryRow[_ColName_ProcessStatus] = ImportSource.Deduced.ToString();
-                                        NewNodeEntryRow[Colname_NbtNodeId] = TargetNodeThatWasMissing.NodeId.PrimaryKey.ToString();
 
-                                        CswTableUpdateTempNodesTable.update( AddMissingNodeEntryTable );
+                                if( NodeTypeOfAbsentNode != null )
+                                {
 
-                                        _CswImportExportStatusReporter.reportProgress( "Added missing node " + TargetNodeThatWasMissing.NodeName );
-                                        AddedNodesCounter++;
+                                    //****************************
+                                    //Create the node
+                                    CswNbtNode TargetNodeThatWasMissing = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeOfAbsentNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+                                    //TargetNodeThatWasMissing.NodeName = AbsentNodeNodeName; // Kludge to make the node have a value even when no property values are supplied for it
+
+                                    // Kludge specifically for 10340:
+                                    if( CswNbtImportNodeId.NodeNodeType.ToLower() == "user" )
+                                    {
+                                        _rehabilitateUser( TargetNodeThatWasMissing, CswNbtImportNodeId.NodeNodeName, GeneralUserRole );
                                     }
-                                    else
-                                    {
-                                        _CswImportExportStatusReporter.reportError( "Unable to auto-create node for ID " + ImportNodeIdOfAbsentNode + ": there is no node type '" + AbsentNodeNodeType + "'" );
-                                    }//if there was a nodetype for the missing node
 
-                                }//if node _id_ type is ND
-                            }
-                            else
-                            {
-                                _CswImportExportStatusReporter.reportError( "Unable to auto-create node for ID " + ImportNodeIdOfAbsentNode + ": there are not enough segments" );
-                            }
+                                    TargetNodeThatWasMissing.postChanges( false, false, true );
+
+                                    //NodeIdMap.Add( CswTools.XmlRealAttributeName( ImportNodeIdOfAbsentNode ).ToLower(), TargetNodeThatWasMissing.NodeId.PrimaryKey );    // for property value references
+                                    //NodeRow["destnodeid"] = CswConvert.ToDbVal( TargetNodeThatWasMissing.NodeId.PrimaryKey );       // for posterity
+
+
+                                    //****************************
+                                    //Create the temp node tables so that the references will be there when we create target props
+                                    DataTable AddMissingNodeEntryTable = CswTableUpdateTempNodesTable.getEmptyTable();
+                                    DataRow NewNodeEntryRow = AddMissingNodeEntryTable.NewRow();
+                                    AddMissingNodeEntryTable.Rows.Add( NewNodeEntryRow );
+                                    NewNodeEntryRow[_ColName_ImportNodeId] = ImportNodeIdOfAbsentNode;
+                                    NewNodeEntryRow[_ColName_Nodes_NodeName] = TargetNodeThatWasMissing.NodeName;
+                                    NewNodeEntryRow[_ColName_ProcessStatus] = ImportSource.Deduced.ToString();
+                                    NewNodeEntryRow[Colname_NbtNodeId] = TargetNodeThatWasMissing.NodeId.PrimaryKey.ToString();
+
+                                    CswTableUpdateTempNodesTable.update( AddMissingNodeEntryTable );
+
+                                    _CswImportExportStatusReporter.reportProgress( "Added missing node " + TargetNodeThatWasMissing.NodeName );
+                                    AddedNodesCounter++;
+                                }
+                                else
+                                {
+                                    _CswImportExportStatusReporter.reportError( "Unable to auto-create node for ID " + ImportNodeIdOfAbsentNode + ": there is no node type '" + CswNbtImportNodeId.NodeNodeType + "'" );
+                                }//if there was a nodetype for the missing node
+
+
+                            }//if the import node ID is not null
 
                         }//iterate absent target nodes rows
 
@@ -605,20 +585,28 @@ namespace ChemSW.Nbt.ImportExport
                                                 if( false == CurrentImportProprow.IsNull( _ColName_Props_ImportTargetNodeIdUnique ) )
                                                 {
                                                     string CurrentImportTargetNodeId = CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
-                                                    string Query = "select " + Colname_NbtNodeId + " from " + TblName_TempNodes + " where " + _ColName_ImportNodeId + "='" + CurrentImportTargetNodeId + "'";
-                                                    CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "findtargetnodeid", Query );
-                                                    DataTable DataTable = CswArbitrarySelect.getTable();
-                                                    if( ( DataTable.Rows.Count > 0 ) && ( false == DataTable.Rows[0].IsNull( Colname_NbtNodeId ) ) )
+                                                    CswNbtImportNodeId CswNbtImportTargetNodeId = new ImportExport.CswNbtImportNodeId( CurrentImportTargetNodeId );
+                                                    if( false == CswNbtImportTargetNodeId.IsNull )
                                                     {
-                                                        ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ) );
-                                                        RelationshipPropAddCounter++;
-                                                    }
-                                                    else
-                                                    {
-                                                        CurrentRowError += "Unable to find target node with node id " + CurrentImportTargetNodeId + " for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ")";
-                                                    }
 
-                                                }
+                                                        string Query = "select " + Colname_NbtNodeId + " from " + TblName_TempNodes + " where " + _ColName_ImportNodeId + "='" + CurrentImportTargetNodeId + "'";
+                                                        CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "findtargetnodeid", Query );
+                                                        DataTable DataTable = CswArbitrarySelect.getTable();
+                                                        if( ( DataTable.Rows.Count > 0 ) && ( false == DataTable.Rows[0].IsNull( Colname_NbtNodeId ) ) )
+                                                        {
+                                                            ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ) );
+                                                            RelationshipPropAddCounter++;
+                                                        }
+                                                        else
+                                                        {
+                                                            //having eliminated null node IDs, this condition would be a true error
+                                                            //(as a opposed to a who-knew-from-null-nodeids error . . . 
+                                                            CurrentRowError += "Unable to find target node with node id " + CurrentImportTargetNodeId + " for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ")";
+                                                        }
+
+                                                    }//if the target node id is not null
+
+                                                }//if our property references a node (i.e., its a relation nodetype) 
 
 
                                                 //It appears to me that the third parameter of ReadDataRow() -- a map of source to destination nodetypeids -- 
@@ -886,7 +874,6 @@ namespace ChemSW.Nbt.ImportExport
 
         private void _rehabilitateUser( CswNbtNode UserNode, string UserName, CswNbtNode RoleNode )
         {
-            //UserNode.Properties["Username"].AsText.Text = SplitRelatedNodeID[2].ToLower();
             UserNode.Properties["Username"].AsText.Text = UserName;
             if( RoleNode != null )
             {
@@ -895,19 +882,6 @@ namespace ChemSW.Nbt.ImportExport
 
             UserNode.Properties["AccountLocked"].AsLogical.Checked = Tristate.True;
         }//rehabilitateUser() 
-
-        Dictionary<string, Int32> _FabricatedNodeNameCounters = new Dictionary<string, Int32>();
-        private string _fabricateNodeNameFromNodeType( string NodeTypeName )
-        {
-            if( false == _FabricatedNodeNameCounters.ContainsKey( NodeTypeName ) )
-            {
-                _FabricatedNodeNameCounters[NodeTypeName] = 0;
-            }
-
-            return ( NodeTypeName + "-" + ( _FabricatedNodeNameCounters[NodeTypeName]++ ).ToString() );
-
-        }//_fabricateNodeNameFromNodeType() 
-
 
         private void _makeTempTable( string TableName, string PkColumnName, DataColumnCollection Columns, Int32 ArbitraryStringColumnLength, Collection<string> AdditionalStringColumns, Collection<string> IndexColumns )
         {
