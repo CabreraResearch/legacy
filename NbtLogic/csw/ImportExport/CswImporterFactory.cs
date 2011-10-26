@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.ImportExport
     public class CswImporterFactory
     {
 
-        public static ICswImporter make( ImportAlgorithm ImportAlgorithm, CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, StatusUpdateHandler OnStatusUpdate )
+        public static ICswImporter make( ImportAlgorithm ImportAlgorithm, CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, StatusUpdateHandler OnStatusUpdate, ImportPhaseHandler OnImportPhaseChange )
         {
             ICswImporter ReturnVal = null;
 
@@ -30,11 +30,11 @@ namespace ChemSW.Nbt.ImportExport
             {
 
                 case ImportAlgorithm.Legacy:
-                    ReturnVal = new CswImporterLegacy( CswNbtResources, CswNbtImportExportFrame, OnStatusUpdate );
+                    ReturnVal = new CswImporterHashTables( CswNbtResources, CswNbtImportExportFrame, OnStatusUpdate );
                     break;
 
                 case ImportAlgorithm.Experimental:
-                    ReturnVal = new CswImporterExperimental( CswNbtResources, CswNbtImportExportFrame, new CswImportExportStatusReporter( OnStatusUpdate, CswNbtResources.CswLogger ) );
+                    ReturnVal = new CswImporterDbTables( CswNbtResources, CswNbtImportExportFrame, new CswImportExportStatusReporter( OnStatusUpdate, OnImportPhaseChange ,CswNbtResources.CswLogger ) );
                     break;
 
                 default:

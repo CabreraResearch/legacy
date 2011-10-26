@@ -15,10 +15,11 @@ namespace ChemSW.Nbt
 
     public interface ICswNbtNodeWriterImpl
     {
-         void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase );
-         void write( CswNbtNode Node, bool ForceSave, bool IsCopy );
-         void updateRelationsToThisNode( CswNbtNode Node );
-         void delete( CswNbtNode CswNbtNode );
+        void clear();
+        void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase );
+        void write( CswNbtNode Node, bool ForceSave, bool IsCopy );
+        void updateRelationsToThisNode( CswNbtNode Node );
+        void delete( CswNbtNode CswNbtNode );
 
     }//CswNbtNodeWriter
 
