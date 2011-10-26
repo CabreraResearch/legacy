@@ -281,7 +281,7 @@ namespace ChemSW.Nbt.WebServices
             }
             else if( _ParentNodeKey != null && _ParentNodeKey.NodeSpecies == NodeSpecies.More )
             {
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, ref ParentKey, null, _GridPageSize, false, false, _ParentNodeKey, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref ParentKey, null, _GridPageSize, false, false, _ParentNodeKey, false );
             }
             else
             {

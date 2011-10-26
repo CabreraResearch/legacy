@@ -92,9 +92,7 @@
                     currentIdx = cswIndexOf(pageContext, firstNodeKey);
                     if (currentIdx > 0) {
                         prevNodeKey = pageContext[currentIdx - 1];
-                    } else {
-                        prevNodeKey = $parent.data('firstNodeKey');
-                    }
+                    } 
                     if (false === isNullOrEmpty(prevNodeKey)) {
                         gridRowsUrl = getGridRowsUrl(prevNodeKey);
                         ret.changeGridOpts({ gridOpts: { url: gridRowsUrl } });
@@ -142,7 +140,7 @@
                                 ID: o.ID,
                                 canEdit: isTrue(jqGridOpt.CanEdit),
                                 canDelete: isTrue(jqGridOpt.CanDelete),
-                                pagermode: (forReporting) ? 'none' : 'custom',
+                                pagermode: (forReporting) ? 'none' : 'default', // 'custom', Use 'custom' to revert to Case 24004
                                 gridOpts: { }, //toppager: (jqGridOpt.rowNum >= 50 && contains(gridJson, 'rows') && gridJson.rows.length >= 49)
                                 optNav: { },
                                 optSearch: { },
