@@ -79,19 +79,18 @@ namespace ChemSW.Nbt.WebServices
                     {
                         _runTreeNodesRecursive( View, Tree, IdPrefix, RootArray );
                     }
-
-                    if( IsFirstLoad )
-                    {
-                        View.SaveToCache( IncludeInQuickLaunch );
-                        ReturnObj["viewid"] = View.SessionViewId.ToString();
-                    }
                 } // if( Tree.getChildNodeCount() > 0 )
                 else
                 {
                     ShowEmpty = ( IsFirstLoad ); // else return an empty <result/> for junior most node on tree
                 }
 
-            } // else if( !ShowEmpty )
+				if( IsFirstLoad )
+				{
+					View.SaveToCache( IncludeInQuickLaunch );
+					ReturnObj["viewid"] = View.SessionViewId.ToString();
+				}
+			} // else if( !ShowEmpty )
 
             string ViewName = string.Empty;
             string ViewId = string.Empty;
