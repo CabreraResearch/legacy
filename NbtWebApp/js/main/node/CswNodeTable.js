@@ -55,10 +55,15 @@
 													 });
 						var $textcell = cellset[2][1]
 												.css({ width: '33%' });
+						var name = '<b>' + nodeObj.nodename + '</b>';
+						var locked = isTrue(nodeObj.locked);
 
 						$thumbnailcell.append('<img src="'+ nodeObj.thumbnailurl +'" width="90%"><br/>');
-						$textcell.append('<b>' + nodeObj.nodename + '</b><br/>');
-
+						if(locked) {
+							name += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
+						}
+						$textcell.append(name + '<br/>');
+					    
 						crawlObject(nodeObj.props, function(propObj, propid) {
 							$textcell.append('' + propObj.propname + ': ' + propObj.gestalt + '<br/>');
 						});

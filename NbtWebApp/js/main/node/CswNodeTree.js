@@ -135,7 +135,7 @@
                                 selectid = id;
                             }
 
-								var locked = isTrue(json.attr.locked);
+							var locked = isTrue(json.attr.locked);
                             treestr += '<li id="' + id + '" rel="' + rel + '" species="' + species + '" class="jstree-' + state + '" ';
                             if (!isNullOrEmpty(nbtnodekey)) {
                                 treestr += '    cswnbtnodekey="' + nbtnodekey.replace(/"/g, '&quot;') + '"';
@@ -155,10 +155,10 @@
                                     treestr += '</ul>';
                                 }
                             }
-					            if(locked) {
-									treestr += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
-								}
-								treestr += '</li>';
+					        if(locked) {
+								treestr += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
+							}
+							treestr += '</li>';
                         } else {
                             treestr += '<li id="' + Int32MinVal + '" rel="leaf" class="jstree-leaf">No Results</li>';
                         }

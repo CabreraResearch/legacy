@@ -21,7 +21,6 @@ namespace ChemSW.Nbt
         //private CswNbtNodeReader _CswNbtNodeReader;
         //private CswNbtNodeWriter _CswNbtNodeWriter;
 
-        private CswNbtNodeFactory _CswNbtNodeFactory = null;
         public CswNbtNodeFactory CswNbtNodeFactory { get { return _CswNbtNodeFactory; } }
 
         /// <summary>
@@ -30,18 +29,33 @@ namespace ChemSW.Nbt
         public CswNbtNodeCollection( CswNbtResources CswNbtResources ) // , ICswNbtObjClassFactory ICswNbtObjClassFactory )
         {
 
-            _CswNbtNodeFactory = new CswNbtNodeFactory( CswNbtResources ); //, ICswNbtObjClassFactory );
-
             _CswNbtResources = CswNbtResources;
             //_ICswNbtObjClassFactory = ICswNbtObjClassFactory;
             //_CswNbtNodeReader = new CswNbtNodeReader( _CswNbtResources );
             //_CswNbtNodeWriter = new CswNbtNodeWriter( _CswNbtResources );
             NodeHash = new Hashtable();
         }
+        
+
+        //necessary to allow clearing of node factory in order to avoid memory leak
+        private CswNbtNodeFactory __CswNbtNodeFactory = null; 
+        private CswNbtNodeFactory _CswNbtNodeFactory
+        {
+            get
+            {
+                if( null == __CswNbtNodeFactory )
+                {
+                    __CswNbtNodeFactory = new CswNbtNodeFactory( _CswNbtResources ); //, ICswNbtObjClassFactory );
+                }
+
+                return(__CswNbtNodeFactory); 
+            }
+        }//_CswNbtNodeFactory
 
         public void Clear()
         {
             NodeHash.Clear();
+            _CswNbtNodeFactory.CswNbtNodeWriter.clear(); 
         }
 
         #region Getting Nodes
