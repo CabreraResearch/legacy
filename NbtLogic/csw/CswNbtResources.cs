@@ -278,6 +278,8 @@ namespace ChemSW.Nbt
 
         }//assignMetaDataEvents()
 
+        public bool isTableDefinedInDataBase( string TableName ) { return ( _CswResources.isTableDefinedInDataBase( TableName ) ); }
+
         /// <summary>
         /// Delegate, when a nodetype name changes
         /// </summary>
