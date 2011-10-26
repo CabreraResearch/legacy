@@ -269,16 +269,19 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns an XElement of the View's Tree
         /// </summary>
-        private XElement _getGridTree()
+        private XElement _getGridTree( CswNbtNodeKey ParentKey )
         {
             XElement RawXml = null;
             ICswNbtTree Tree;
-            if( _ParentNodeKey != null && 
-               ( _View.Visibility == NbtViewVisibility.Property || _ParentNodeKey.NodeSpecies == NodeSpecies.More ) ) // This is a Grid Property
+            if( _ParentNodeKey != null && _View.Visibility == NbtViewVisibility.Property ) // This is a Grid Property
             {
                 ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
                 ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
                 Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, _GridPageSize, true, false, null, false );
+            }
+            else if( _ParentNodeKey != null && _ParentNodeKey.NodeSpecies == NodeSpecies.More )
+            {
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, ref ParentKey, null, _GridPageSize, false, false, _ParentNodeKey, false );
             }
             else
             {
@@ -292,14 +295,14 @@ namespace ChemSW.Nbt.WebServices
             //else jqGrid effectively handles 'else' with emptyrecords property
 
             return RawXml;
-        } // getGridColumnsJson()
+        } // _getGridTree()
 
         /// <summary>
         /// Transforms the Tree XML into an XDocument
         /// </summary>
         private IEnumerable<XElement> _getGridXElements( ref string MoreNodeKey )
         {
-            var RawXml = _getGridTree();
+            var RawXml = _getGridTree( null );
             IEnumerable<XElement> NodesInGrid = null;
             // case 21535: tree is not null
             if( null != RawXml )
