@@ -34,9 +34,10 @@
             
             var $parent = $(this);
             if (o.reinit) $parent.empty();
-            
-            var dataJson = {ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty };
-            var ret;
+
+            var dataJson = { ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty, IsReport: forReporting },
+                ret,
+                forReporting = (o.EditMode === EditMode.PrintReport.name);
             
             CswAjaxJson({
                 url: o.GridUrl,
@@ -64,10 +65,24 @@
                         g.gridOpts.width = '650px';
                     }
 
-                    if (o.EditMode === EditMode.PrintReport.name) {
+                    if (forReporting) {
                         g.gridOpts.caption = '';
                         g.hasPager = false;
                     } else {
+                        g.gridOpts.datatype = 'json';
+                        g.gridOpts.url = '/NbtWebApp/wsNBT.asmx/getGridRows?viewid=' + o.viewid + '&SafeNodeKey=' + o.cswnbtnodekey + '&ShowEmpty=' + o.showempty;
+                        g.gridOpts.jsonReader = {
+                            root: "rows",
+                            page: "page",
+                            total: "total",
+                            records: "records",
+                            repeatitems: false,
+                            id: "id",
+                            cell: "cell",
+                            userdata: "userdata",
+                            subgrid: {}
+                        };
+                        
                         g.optNavEdit = {
                             editfunc: function(rowid) {
                                 var editOpt = {
@@ -92,9 +107,9 @@
                         g.optNavDelete = {
                             delfunc: function(rowid) {
                                 var delOpt = {
-                                    cswnbtnodekey: '',
-                                    nodepk: '',
-                                    nodename: ''
+                                    cswnbtnodekey: [],
+                                    nodepk: [],
+                                    nodename: []
                                 };
                                 var delFunc = function(opts) {
                                     opts.onDeleteNode = o.onDeleteNode;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
@@ -186,7 +187,7 @@ namespace ChemSW.Nbt.WebServices
         /// Returns a JSON Array representing grid rows (a row as a JObject of JProperty key/value pairs);
         /// This anticipates XElements as derived from a Tree from a View
         /// </summary>
-        public JArray getGridRowsJSON( IEnumerable<XElement> GridNodes )
+        public JArray getGridRowsJSON( IEnumerable<XElement> GridNodes, Collection<CswViewBuilderProp> PropsInGrid )
         {
             JArray GridRows = new JArray();
             foreach( XElement GridNode in GridNodes )
@@ -200,7 +201,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( Related.Name == "NbtNodeProp" )
                     {
-                        _addSafeCellContent( Related, Row );
+                        _addSafeCellContent( Related, Row, PropsInGrid );
                     }
                 }
                 GridRows.Add( Row );
@@ -213,11 +214,11 @@ namespace ChemSW.Nbt.WebServices
         /// Translates property value into human readable text.
         /// Currently only handles Logical fieldtype.
         /// </summary>
-        private static void _addSafeCellContent( XElement DirtyElement, JObject ParentObj )
+        private static void _addSafeCellContent( XElement DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
         {
             if( null != DirtyElement )
             {
-                string CleanPropName = DirtyElement.Attribute( "name" ).Value.ToLower().Replace( " ", "_" );
+                string CleanPropName = DirtyElement.Attribute( "name" ).Value.Trim().ToLower().Replace( " ", "_" );
                 string CleanValue;
                 string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
                 string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
@@ -232,7 +233,14 @@ namespace ChemSW.Nbt.WebServices
                         CleanValue = DirtyValue;
                         break;
                 }
-                CleanPropName += "_" + PropId;
+                foreach( CswViewBuilderProp VbProp in PropsInGrid )
+                {
+                    if( VbProp.PropNameUnique == CleanPropName && VbProp.AssociatedPropIds.Contains( PropId ) )
+                    {
+                        CleanPropName += "_" + VbProp.MetaDataPropId;
+                    }
+                }
+
                 ParentObj[CleanPropName] = CleanValue;
             }
         }
@@ -246,6 +254,18 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswViewBuilderProp Prop = new CswViewBuilderProp( ViewProp );
                 ColumnArrary.Add( Prop.PropName );
+            }
+            return ColumnArrary;
+        }
+
+        /// <summary>
+        /// Generates a JSON array of friendly Column Names
+        /// </summary>
+        public JArray getGridColumnNamesJson( JArray ColumnArrary, Collection<CswViewBuilderProp> PropCollection )
+        {
+            foreach( CswViewBuilderProp VbProp in PropCollection )
+            {
+                ColumnArrary.Add( VbProp.PropName );
             }
             return ColumnArrary;
         }
@@ -272,16 +292,32 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
+        /// Generates a JSON property with the definitional data for a jqGrid Column Array
+        /// </summary>
+        public JArray getGridColumnDefinitionJson( Collection<CswViewBuilderProp> PropCollection )
+        {
+            JArray ColumnDefArray = new JArray();
+            foreach( CswViewBuilderProp VbProp in PropCollection )
+            {
+                ColumnDefArray.Add( JqGridViewProperty.getJqGridAttributesForViewProp( VbProp ) );
+            }
+            return ColumnDefArray;
+        }
+
+        /// <summary>
         /// Combines required jqGrid options into jqGrid consumable JObject
         /// </summary>
-        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows )
+        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows = null )
         {
             JObject Ret = new JObject();
 
             Ret[JqGridJsonOptions.datatype.ToString()] = "local";
             Ret[JqGridJsonOptions.colNames.ToString()] = ColumnNames;
             Ret[JqGridJsonOptions.colModel.ToString()] = ColumnDefinition;
-            Ret[JqGridJsonOptions.data.ToString()] = Rows;
+            if( null != Rows )
+            {
+                Ret[JqGridJsonOptions.data.ToString()] = Rows;
+            }
             Ret[JqGridJsonOptions.rowNum.ToString()] = PageSize;
             Ret[JqGridJsonOptions.viewrecords.ToString()] = true;
             Ret[JqGridJsonOptions.emptyrecords.ToString()] = _NoResultsDisplayString;

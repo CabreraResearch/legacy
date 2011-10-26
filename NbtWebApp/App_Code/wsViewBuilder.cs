@@ -492,6 +492,11 @@ namespace ChemSW.Nbt.WebServices
         public readonly CswNbtViewProperty.PropertySortMethod SortMethod = CswNbtViewProperty.PropertySortMethod.Ascending;
         public readonly Int32 Width = Int32.MinValue;
         public readonly string PropName = string.Empty;
+        public CswCommaDelimitedString AssociatedPropIds = new CswCommaDelimitedString();
+        public string PropNameUnique
+        {
+            get { return PropName.Trim().Replace( " ", "_" ).ToLower(); }
+        }
 
         public CswViewBuilderProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
@@ -505,6 +510,7 @@ namespace ChemSW.Nbt.WebServices
             FieldTypeRule = NodeTypeProp.FieldTypeRule;
             Type = CswNbtViewProperty.CswNbtPropType.NodeTypePropId;
             PropName = MetaDataPropName;
+            AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Ntp
 
         public CswViewBuilderProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
@@ -519,6 +525,7 @@ namespace ChemSW.Nbt.WebServices
             FieldTypeRule = ObjectClassProp.FieldTypeRule;
             Type = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId;
             PropName = MetaDataPropName;
+            AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Ntp
 
         public CswViewBuilderProp( CswNbtViewProperty ViewProperty )
@@ -555,6 +562,7 @@ namespace ChemSW.Nbt.WebServices
             SortBy = ViewProperty.SortBy;
             SortMethod = ViewProperty.SortMethod;
             PropName = ViewProperty.Name ?? MetaDataPropName;
+            AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Vp
 
     }// CswViewBuilderProp

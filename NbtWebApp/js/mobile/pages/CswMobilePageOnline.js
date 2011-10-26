@@ -40,8 +40,11 @@ function CswMobilePageOnline(onlineDef, $parent, mobileStorage, mobileSync, mobi
             DivId: '',
             title: '',
             theme: CswMobileGlobal_Config.theme,
-            buttons: [CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back]
+            buttons: [CswMobileFooterButtons.fullsite, '', CswMobileFooterButtons.help, CswMobileHeaderButtons.back]
         };
+        if (mobileStorage.amOnline()) {
+            pageDef.buttons[1] = CswMobileFooterButtons.refresh;
+        }
         if (onlineDef) {
             $.extend(pageDef, onlineDef);
         }
@@ -52,7 +55,7 @@ function CswMobilePageOnline(onlineDef, $parent, mobileStorage, mobileSync, mobi
         $content = ensureContent($contentRole, contentDivId);
 
         getContent();
-    })();   //ctor
+    })();     //ctor
     
     function getContent() {
         var hideFailure = isNullOrEmpty(mobileStorage.lastSyncAttempt()) ? '' : 'none',

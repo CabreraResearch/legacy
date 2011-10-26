@@ -599,7 +599,52 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getGrid( string ViewId, string SafeNodeKey, string ShowEmpty )
+        public string getGrid( string ViewId, string SafeNodeKey, string ShowEmpty, string IsReport )
+        {
+            JObject ReturnVal = new JObject();
+            string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
+
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    bool ShowEmptyGrid = CswConvert.ToBoolean( ShowEmpty );
+                    bool ForReporting = CswConvert.ToBoolean( IsReport );
+                    CswNbtView View = _getView( ViewId );
+                    if( null != View )
+                    {
+                        CswNbtNodeKey ParentNodeKey = null;
+                        if( !string.IsNullOrEmpty( ParsedNodeKey ) )
+                        {
+                            ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
+                        }
+                        var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
+                        ReturnVal = g.getGrid( ShowEmptyGrid, ForReporting );
+                        //CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
+                        View.SaveToCache( true );
+                    }
+                }
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getGrid()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public void getGridRows( string ViewId, string SafeNodeKey, string ShowEmpty )
         {
             JObject ReturnVal = new JObject();
             string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
@@ -622,8 +667,8 @@ namespace ChemSW.Nbt.WebServices
                             ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
                         }
                         var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey );
-                        ReturnVal = g.getGrid( ShowEmptyGrid );
-                        //CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
+                        ReturnVal = g.getGridRows( ShowEmptyGrid );
+
                         View.SaveToCache( true );
                     }
                 }
@@ -635,9 +680,11 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = jError( Ex );
             }
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
+            Context.Response.Clear();
+            Context.Response.ContentType = "application/json";
+            Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
+            Context.Response.Flush();
+            Context.Response.Write( ReturnVal.ToString() );
 
         } // getGrid()
 
@@ -1691,7 +1738,7 @@ namespace ChemSW.Nbt.WebServices
 
                         // Save the binary data
                         CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                        string MolData = CswTools.ByteArrayToString( FileData ).Replace("\r", "");
+                        string MolData = CswTools.ByteArrayToString( FileData ).Replace( "\r", "" );
                         bool Success = ws.saveMolProp( MolData, PropId );
 
                         ReturnVal["success"] = Success;
