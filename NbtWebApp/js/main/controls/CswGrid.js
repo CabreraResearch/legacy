@@ -127,21 +127,32 @@ function CswGrid(options, $parent) {
         return ret;
     }
     
-    function makeGrid(o) {
-        var gridPagedId = makeId({ ID: o.gridPagerID, prefix: o.ID });
+    function makeCustomPager(gridPagerId, pagerDef) {
         var prevButton = {
             caption: insertWhiteSpace(2),
             buttonicon: 'ui-icon-seek-prev',
-            onClickButton: '',
             position: 'last',
             title: '',
             cursor: '',
-            id: gridPagedId + '_prevBtn'
+            id: gridPagerId + '_prevBtn'
         };
+        if (false === isNullOrEmpty(pagerDef) && isFunction(pagerDef.onPrevPageClick)) {
+            prevButton.onClickButton = function (eventObj) {
+                var nodes = $gridTable.jqGrid('getDataIDs'),
+                    firstNodeId = nodes[0],
+                    lastNodeId = nodes[nodes.length],
+                    firstRow = $gridTable.jqGrid('getRowData', firstNodeId),
+                    lastRow = $gridTable.jqGrid('getRowData', lastNodeId);
+
+                pagerDef.onPrevPageClick(eventObj, firstRow, lastRow);
+            };
+        }
+        
         var spacer = {
             sepclass: 'ui-separator',
             sepcontent: insertWhiteSpace(24)
         };
+        
         var nextButton = {
             caption: insertWhiteSpace(2),
             buttonicon: 'ui-icon-seek-next',
@@ -149,8 +160,26 @@ function CswGrid(options, $parent) {
             position: 'last',
             title: 'Next',
             cursor: '',
-            id: gridPagedId + '_nextBtn'
+            id: gridPagerId + '_nextBtn'
         };
+        if (false === isNullOrEmpty(pagerDef) && isFunction(pagerDef.onNextPageClick)) {
+            nextButton.onClickButton = function (eventObj) {
+                var nodes = $gridTable.jqGrid('getDataIDs'),
+                    firstNodeId = nodes[0],
+                    lastNodeId = nodes[nodes.length-1],
+                    firstRow = $gridTable.jqGrid('getRowData', firstNodeId),
+                    lastRow = $gridTable.jqGrid('getRowData', lastNodeId);
+                
+                pagerDef.onNextPageClick(eventObj, firstRow, lastRow);
+            };
+        }
+        $gridTable.jqGrid('navSeparatorAdd', '#' + gridPagerId, spacer)
+                          .jqGrid('navButtonAdd', '#' + gridPagerId, prevButton)
+                          .jqGrid('navButtonAdd', '#' + gridPagerId, nextButton);
+    }
+    
+    function makeGrid(o) {
+        var gridPagerId = makeId({ ID: o.gridPagerID, prefix: o.ID });
         
         multiEdit = o.gridOpts.multiselect;
         gridTableId = makeId({ ID: o.gridTableID, prefix: o.ID });
@@ -161,7 +190,7 @@ function CswGrid(options, $parent) {
         $gridTable = $parent.CswTable('init', { ID: gridTableId });
 
         
-        $gridPager = $parent.CswDiv('init', { ID: gridPagedId });
+        $gridPager = $parent.CswDiv('init', { ID: gridPagerId });
         o.gridOpts.pager = $gridPager;
         
         if (o.canEdit) {
@@ -173,18 +202,15 @@ function CswGrid(options, $parent) {
         
         if (o.pagermode === 'default' || o.pagermode === 'custom') {
             $gridTable.jqGrid(o.gridOpts)
-                .jqGrid('navGrid', '#' + gridPagedId, o.optNav, { }, { }, { }, o.optSearch, { });
+                .jqGrid('navGrid', '#' + gridPagerId, o.optNav, {}, {}, {}, o.optSearch, {});
             
             if (o.pagermode === 'custom') {
-                $gridTable.jqGrid('navSeparatorAdd', '#' + gridPagedId, spacer)
-                          .jqGrid('navButtonAdd', '#' + gridPagedId, prevButton)
-                          .jqGrid('navButtonAdd', '#' + gridPagedId, nextButton);
+                makeCustomPager(gridPagerId, o.customPager);
             }
         } else {
             $gridTable.jqGrid(o.gridOpts);    
         }
         $gridTable.data(gridTableId + '_data', o);
-        $topPager = $('#' + $gridTable[0].id + '_toppager')[0];
     }
     
     // Row scrolling adapted from 
