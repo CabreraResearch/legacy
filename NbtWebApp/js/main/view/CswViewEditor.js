@@ -92,11 +92,11 @@
                     "editing an existing View.<br/><br/>";
         $div1.append(instructions);
         $div1.append('Select a View to Edit:&nbsp;');
-		var $selview_span = $('<span id="' + o.ID + '_selviewname" style="font-weight: bold"></span>')
-						    .appendTo($div1);
-		var $viewgriddiv = $('<div />')
-							.appendTo($div1);
-		var cswViewGrid;
+        var $selview_span = $('<span id="' + o.ID + '_selviewname" style="font-weight: bold"></span>')
+                            .appendTo($div1);
+        var $viewgriddiv = $('<div />')
+                            .appendTo($div1);
+        var cswViewGrid;
         var rowid;
         var $viewgrid;
 
@@ -478,14 +478,14 @@
                     success: function(gridJson) {
 
                         if (isNullOrEmpty($viewgrid) || $viewgrid.length === 0) {
-                        	$viewgrid = $('<div id="' + o.ID + '_csw_viewGrid_outer"></div>').appendTo($viewgriddiv);
+                            $viewgrid = $('<div id="' + o.ID + '_csw_viewGrid_outer"></div>').appendTo($viewgriddiv);
                         } else {
                             $viewgrid.empty();
                         }
 
                         var g = {
                             ID: o.ID,
-                            hasPager: false,
+                            pagermode: 'none',
                             gridOpts: {
                                 autowidth: true,
                                 height: 180,
@@ -527,7 +527,7 @@
         {
             var ret = '';
             if (o.startingStep === 1) {
-            	ret = cswViewGrid.getValueForColumn(o.ColumnFullViewId, rowid);
+                ret = cswViewGrid.getValueForColumn(o.ColumnFullViewId, rowid);
             } else {
                 ret = o.viewid;
             }
@@ -538,7 +538,7 @@
         {
             var ret = '';
             if (o.startingStep === 1) {
-            	ret = cswViewGrid.getValueForColumn(o.ColumnViewMode, rowid);
+                ret = cswViewGrid.getValueForColumn(o.ColumnViewMode, rowid);
             } else {
                 ret = o.viewmode;
             }

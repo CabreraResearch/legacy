@@ -35,9 +35,9 @@
             var $parent = $(this);
             if (o.reinit) $parent.empty();
 
-            var dataJson = { ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty, IsReport: forReporting },
-                ret,
-                forReporting = (o.EditMode === EditMode.PrintReport.name);
+            var forReporting = (o.EditMode === EditMode.PrintReport.name),
+                dataJson = { ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty, IsReport: forReporting },
+                ret;
             
             CswAjaxJson({
                 url: o.GridUrl,
@@ -50,10 +50,8 @@
                         ID: o.ID,
                         canEdit: isTrue(jqGridOpt.CanEdit),
                         canDelete: isTrue(jqGridOpt.CanDelete),
-                        hasPager: true,
-                        gridOpts: {
-                            toppager: (jqGridOpt.rowNum >= 50 && contains(gridJson, 'rows') && gridJson.rows.length >= 49)
-                        },
+                        pagerMode: 'custom',
+                        gridOpts: { }, //toppager: (jqGridOpt.rowNum >= 50 && contains(gridJson, 'rows') && gridJson.rows.length >= 49)
                         optNav: { },
                         optSearch: { },
                         optNavEdit: { },

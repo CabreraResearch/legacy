@@ -118,6 +118,7 @@ var CswImportInspectionQuestions_WizardSteps = {
 
                 var g = {
                     Id: o.ID,
+                    pagermode: 'none',
                     gridOpts: {
                         autowidth: true,
                         rowNum: 20
