@@ -75,7 +75,7 @@ function CswGrid(options, $parent) {
                 edit: false,
 
                 //search
-                search: true,
+                search: false,
                 searchtext: "",
                 searchtitle: "Find records",
 
