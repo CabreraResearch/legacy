@@ -174,9 +174,13 @@ namespace ChemSW.Nbt.WebServices
                     _runProperties( ThisNode, TabsObj );
                 }
 
-                if( false == string.IsNullOrEmpty( ThisNode.NodeType.IconFileName ) )
+                if( ThisNode.Locked )
                 {
-                    NodeProps["iconfilename"] = CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName );
+                    NodeProps["iconfilename"] = "Images/quota/lock.gif";
+                }
+                else if( false == string.IsNullOrEmpty( ThisNode.NodeType.IconFileName ) )
+                {
+                    NodeProps["iconfilename"] = "Images/icons/" + CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName );
                 }
 
                 _addObjectClassProps( ThisNode, NodeProps );
