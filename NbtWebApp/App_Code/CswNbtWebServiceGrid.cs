@@ -6,7 +6,6 @@ using System.Linq;
 using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -149,24 +148,21 @@ namespace ChemSW.Nbt.WebServices
             JObject RetObj = new JObject();
             RetObj["nodetypeid"] = _View.ViewMetaDataTypeId;
 
-
-            //IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( false );
-
             Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
             _getGridProperties( _View.Root.ChildRelationships, ref PropsInGrid );
 
-            JArray GridRows = null;
-            if( ForReporting )
+            //JArray GridRows = null;
+            //if( ForReporting )
+            //{
+            JArray GridRows = new JArray();
+            string MoreNodeKey = string.Empty;
+            IEnumerable<XElement> GridNodes = _getGridXElements( ref MoreNodeKey );
+            var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
+            if( HasResults )
             {
-                GridRows = new JArray();
-                string MoreNodeKey = string.Empty;
-                IEnumerable<XElement> GridNodes = _getGridXElements( ref MoreNodeKey );
-                var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
-                if( HasResults )
-                {
-                    GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
-                }
+                GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
             }
+            //}
             JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
             _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, PropsInGrid );   //_getGridColumnNamesJson( ColumnCollection );
             //_makeHiddenColumnNames( ref GridOrderedColumnDisplayNames );
@@ -210,8 +206,9 @@ namespace ChemSW.Nbt.WebServices
                 GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
             }
 
-            RetObj["moreNodeKey"] = wsTools.ToSafeJavaScriptParam( MoreNodeKey );
-            RetObj["total"] = "1";
+            //RetObj["moreNodeKey"] = wsTools.ToSafeJavaScriptParam( MoreNodeKey );
+            Double Pages = RowCount / _GridPageSize;
+            RetObj["total"] = Math.Round( Pages, 0 ).ToString();
             RetObj["page"] = "1";
             RetObj["records"] = RowCount.ToString();
             RetObj["rows"] = GridRows;
@@ -277,15 +274,16 @@ namespace ChemSW.Nbt.WebServices
             {
                 ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
                 ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, _GridPageSize, true, false, null, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, Int32.MinValue, true, false, null, false );
             }
-            else if( _ParentNodeKey != null && _ParentNodeKey.NodeSpecies == NodeSpecies.More )
-            {
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref ParentKey, null, _GridPageSize, false, false, _ParentNodeKey, false );
-            }
+            // Case 24004
+            //else if( _ParentNodeKey != null && _ParentNodeKey.NodeSpecies == NodeSpecies.More )
+            //{
+            //    Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref ParentKey, null, _GridPageSize, false, false, _ParentNodeKey, false );
+            //}
             else
             {
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false, _GridPageSize );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );
             }
             Int32 NodeCount = Tree.getChildNodeCount();
             if( NodeCount > 0 )

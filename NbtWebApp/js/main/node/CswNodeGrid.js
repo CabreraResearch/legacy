@@ -157,27 +157,27 @@
                                 g.gridOpts.caption = '';
 
                             } else {
-                                g.gridOpts.datatype = 'json';
-                                g.gridOpts.url = gridRowsUrl;
-                                g.gridOpts.loadComplete = onLoadComplete;
-                                g.gridOpts.jsonReader = {
-                                    root: "rows",
-                                    page: "page",
-                                    total: "total",
-                                    records: "records",
-                                    repeatitems: false,
-                                    id: "id",
-                                    cell: "cell",
-                                    userdata: "userdata",
-                                    subgrid: { }
-                                };
+//                                g.gridOpts.datatype = 'json';
+//                                g.gridOpts.url = gridRowsUrl;
+//                                g.gridOpts.loadComplete = onLoadComplete;
+//                                g.gridOpts.jsonReader = {
+//                                    root: "rows",
+//                                    page: "page",
+//                                    total: "total",
+//                                    records: "records",
+//                                    repeatitems: false,
+//                                    id: "id",
+//                                    cell: "cell",
+//                                    userdata: "userdata",
+//                                    subgrid: { }
+//                                };
 
-                                g.customPager = {
-                                    prevDisabled: true,
-                                    nextDisabled: false,
-                                    onPrevPageClick: prevClick,
-                                    onNextPageClick: nextClick
-                                };
+//                                g.customPager = {
+//                                    prevDisabled: true,
+//                                    nextDisabled: false,
+//                                    onPrevPageClick: prevClick,
+//                                    onNextPageClick: nextClick
+//                                };
 
                                 g.optNavEdit = {
                                     editfunc: function(rowid) {
