@@ -282,6 +282,8 @@ namespace ChemSW.Nbt
 
         }//assignMetaDataEvents()
 
+        public bool isTableDefinedInDataBase( string TableName ) { return ( _CswResources.isTableDefinedInDataBase( TableName ) ); }
+
         /// <summary>
         /// Delegate, when a nodetype name changes
         /// </summary>
@@ -811,6 +813,10 @@ namespace ChemSW.Nbt
         /// <param name="SqlText"></param>
         /// <returns></returns>
         public DataTable execArbitraryPlatformNeutralSqlSelect( string UniqueName, string SqlText ) { return ( _CswResources.execArbitraryPlatformNeutralSqlSelect( UniqueName, SqlText ) ); }
+
+
+
+        public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswResources.execStoredProc( StoredProcName, Params ); }
 
 
         /// <summary>

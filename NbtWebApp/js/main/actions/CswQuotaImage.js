@@ -10,36 +10,36 @@
 
     var methods = {
         init: function(options) {
-			var o = {
-				Url: '/NbtWebApp/wsNBT.asmx/getQuotaPercent',
-				ID: 'action_quota_image'
-			};
-			if(options) $.extend(o, options);
+            var o = {
+                Url: '/NbtWebApp/wsNBT.asmx/getQuotaPercent',
+                ID: 'action_quota_image'
+            };
+            if(options) $.extend(o, options);
 
-			var $Div = $(this);
+            var $Div = $(this);
 
-			// Quota table
-			CswAjaxJson({
-				url: o.Url,
-				data: {},
-				success: function(data) {
-					var percentUsed = tryParseNumber( data.result, 0 );
-					var image;
-					if(percentUsed > 0)
-					{
-						if(percentUsed <= 33) {
-							image = "good.gif";
-						}
-						else if(percentUsed > 33 && percentUsed <= 66) {
-							image = "half.gif";
-						}
-						else if(percentUsed > 66 ) {
-							image = "bad.gif";
-						}
-						$Div.append('<img src="Images/quota/'+ image +'" title="Quota Usage: '+ percentUsed+'%" />');
-					}
-				} // success
-			}); // ajax()
+            // Quota table
+            CswAjaxJson({
+                url: o.Url,
+                data: {},
+                success: function(data) {
+                    var percentUsed = tryParseNumber( data.result, 0 );
+                    var image = '';
+                    if(percentUsed > 0)
+                    {
+                        if(percentUsed <= 33) {
+                            image = "good.gif";
+                        }
+                        else if(percentUsed > 33 && percentUsed <= 66) {
+                            image = "half.gif";
+                        }
+                        else if(percentUsed > 66 ) {
+                            image = "bad.gif";
+                        }
+                        $Div.append('<img src="Images/quota/'+ image +'" title="Quota Usage: '+ percentUsed+'%" />');
+                    }
+                } // success
+            }); // ajax()
 
         } // init
     }; // methods

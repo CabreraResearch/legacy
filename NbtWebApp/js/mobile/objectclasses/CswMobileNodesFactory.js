@@ -51,9 +51,7 @@ function CswMobileNodesFactory(ocDef) {
                     break;
                 default:
                     nodeSpecies = CswNodeSpecies.Plain;
-                    if (!isNullOrEmpty(p.iconfilename)) {
-                        icon = 'images/icons/' + p.iconfilename;
-                    }
+                    icon = tryParseString(p.iconfilename);
                     break;
             }
 

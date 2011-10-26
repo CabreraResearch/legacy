@@ -9,6 +9,44 @@
     
     var pluginName = 'CswNodeGrid';
     
+    function deleteRows(rowid, grid, func) {
+        var delOpt = {
+            cswnbtnodekey: [],
+            nodepk: [],
+            nodename: []
+        };
+        var delFunc = function(opts) {
+            opts.onDeleteNode = func;
+            renameProperty(opts, 'cswnbtnodekey', 'cswnbtnodekeys');
+            renameProperty(opts, 'nodepk', 'nodeids');
+            renameProperty(opts, 'nodename', 'nodenames');
+            $.CswDialog('DeleteNodeDialog', opts);
+        };
+        var emptyFunc = function(opts) {
+            alert('Please select a row to delete');
+        };
+        return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
+    }
+    
+    function editRows (rowid, grid, func) {
+        var editOpt = {
+            cswnbtnodekey: [],
+            nodepk: [],
+            nodename: []
+        };
+        var editFunc = function(opts) {
+            opts.onEditNode = func;
+            renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
+            renameProperty(opts, 'nodepk', 'nodeids');
+            renameProperty(opts, 'nodename', 'nodenames');
+            $.CswDialog('EditNodeDialog', opts);
+        };
+        var emptyFunc = function(opts) {
+            alert('Please select a row to edit');
+        };
+        return grid.opGridRows(editOpt, rowid, editFunc, emptyFunc);
+    }
+    
     var methods = {
     
         'init': function (optJqGrid) {
@@ -35,103 +73,132 @@
             var $parent = $(this);
             if (o.reinit) $parent.empty();
 
-            var dataJson = { ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty, IsReport: forReporting },
-                ret,
-                forReporting = (o.EditMode === EditMode.PrintReport.name);
+            function getGridRowsUrl(nodeKey) {
+                return '/NbtWebApp/wsNBT.asmx/getGridRows?viewid=' + o.viewid + '&SafeNodeKey=' + nodeKey + '&ShowEmpty=' + o.showempty;
+            }
             
-            CswAjaxJson({
-                url: o.GridUrl,
-                data: dataJson,
-                success: function (gridJson) {
-
-                    var jqGridOpt = gridJson.jqGridOpt;
-
-                    var g = {
-                        ID: o.ID,
-                        canEdit: isTrue(jqGridOpt.CanEdit),
-                        canDelete: isTrue(jqGridOpt.CanDelete),
-                        hasPager: true,
-                        gridOpts: {
-                            toppager: (jqGridOpt.rowNum >= 50)
-                        },
-                        optNav: { },
-                        optSearch: { },
-                        optNavEdit: { },
-                        optNavDelete: { }
-                    };
-                    $.extend(g.gridOpts, jqGridOpt);
-
-                    if (isNullOrEmpty(g.gridOpts.width)) {
-                        g.gridOpts.width = '650px';
+            var forReporting = (o.EditMode === EditMode.PrintReport.name),
+                dataJson = { ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty, IsReport: forReporting },
+                gridRowsUrl = getGridRowsUrl(o.cswnbtnodekey),
+                ret;
+            
+            $parent.data('firstNodeKey', o.cswnbtnodekey);
+            
+            function prevClick(eventObj, firstRow) {
+                var firstNodeKey = firstRow.cswnbtnodekey,
+                    prevNodeKey, currentIdx,
+                    pageContext = $parent.data('pageContext');
+                if(false === isNullOrEmpty(pageContext)) {
+                    currentIdx = cswIndexOf(pageContext, firstNodeKey);
+                    if (currentIdx > 0) {
+                        prevNodeKey = pageContext[currentIdx - 1];
+                    } 
+                    if (false === isNullOrEmpty(prevNodeKey)) {
+                        gridRowsUrl = getGridRowsUrl(prevNodeKey);
+                        ret.changeGridOpts({ gridOpts: { url: gridRowsUrl } });
+                    }
+                }
+            }
+    
+            function nextClick(eventObj, firstRow) {
+                var firstNodeKey = firstRow.cswnbtnodekey,
+                    pageContext = $parent.data('pageContext'),
+                    moreNodeKey = $parent.data('moreNodeKey');
+                
+                if (false === isNullOrEmpty(firstNodeKey) &&
+                    false === isNullOrEmpty(moreNodeKey)) {
+                    if (isNullOrEmpty(pageContext)) {
+                        pageContext = [];
                     }
 
-                    if (forReporting) {
-                        g.gridOpts.caption = '';
-                        g.hasPager = false;
-                    } else {
-                        g.gridOpts.datatype = 'json';
-                        g.gridOpts.url = '/NbtWebApp/wsNBT.asmx/getGridRows?viewid=' + o.viewid + '&SafeNodeKey=' + o.cswnbtnodekey + '&ShowEmpty=' + o.showempty;
-                        g.gridOpts.jsonReader = {
-                            root: "rows",
-                            page: "page",
-                            total: "total",
-                            records: "records",
-                            repeatitems: false,
-                            id: "id",
-                            cell: "cell",
-                            userdata: "userdata",
-                            subgrid: {}
-                        };
-                        
-                        g.optNavEdit = {
-                            editfunc: function(rowid) {
-                                var editOpt = {
-                                    cswnbtnodekey: [],
-                                    nodepk: [],
-                                    nodename: []
-                                };
-                                var editFunc = function(opts) {
-                                    opts.onEditNode = o.onEditNode;
-                                    renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
-                                    renameProperty(opts, 'nodepk', 'nodeids');
-                                    renameProperty(opts, 'nodename', 'nodenames');
-                                    $.CswDialog('EditNodeDialog', opts);
-                                };
-                                var emptyFunc = function(opts) {
-                                    alert('Please select a row to edit');
-                                };
-                                return ret.opGridRows(editOpt, rowid, editFunc, emptyFunc);
-                            }
-                        };
-                        
-                        g.optNavDelete = {
-                            delfunc: function(rowid) {
-                                var delOpt = {
-                                    cswnbtnodekey: [],
-                                    nodepk: [],
-                                    nodename: []
-                                };
-                                var delFunc = function(opts) {
-                                    opts.onDeleteNode = o.onDeleteNode;
-                                    renameProperty(opts, 'cswnbtnodekey', 'cswnbtnodekeys');
-                                    renameProperty(opts, 'nodepk', 'nodeids');
-                                    renameProperty(opts, 'nodename', 'nodenames');
-                                    $.CswDialog('DeleteNodeDialog', opts);
-                                };
-                                var emptyFunc = function(opts) {
-                                    alert('Please select a row to delete');
-                                };
-                                return ret.opGridRows(delOpt, rowid, delFunc, emptyFunc);
-                            }
-                        };
-
-                    } // else
-                    ret = new CswGrid(g, $parent);
-                    if (isFunction(o.onSuccess)) {
-                        o.onSuccess(ret);
+                    if (false === contains(pageContext, firstNodeKey)) {
+                        pageContext.push(firstNodeKey);
                     }
-                } // success{} 
-            }); // ajax
+
+                    $parent.data('pageContext', pageContext);
+                    gridRowsUrl = getGridRowsUrl(moreNodeKey);
+                    ret.changeGridOpts({ gridOpts: { url: gridRowsUrl } });
+                }
+            }
+            
+            function onLoadComplete(data) {
+                if (false === isNullOrEmpty(data) && contains(data,'moreNodeKey')) {
+                    $parent.data('moreNodeKey', data.moreNodeKey);
+                }
+            }
+            
+            var fetchGridSkeleton = (function () {
+
+                CswAjaxJson({
+                        url: o.GridUrl,
+                        data: dataJson,
+                        success: function(gridJson) {
+
+                            var jqGridOpt = gridJson.jqGridOpt;
+
+                            var g = {
+                                ID: o.ID,
+                                canEdit: isTrue(jqGridOpt.CanEdit),
+                                canDelete: isTrue(jqGridOpt.CanDelete),
+                                pagermode: (forReporting) ? 'none' : 'default', // 'custom', Use 'custom' to revert to Case 24004
+                                gridOpts: { }, //toppager: (jqGridOpt.rowNum >= 50 && contains(gridJson, 'rows') && gridJson.rows.length >= 49)
+                                optNav: { },
+                                optSearch: { },
+                                optNavEdit: { },
+                                optNavDelete: { }
+                            };
+                            $.extend(g.gridOpts, jqGridOpt);
+
+                            if (isNullOrEmpty(g.gridOpts.width)) {
+                                g.gridOpts.width = '650px';
+                            }
+
+                            if (forReporting) {
+                                g.gridOpts.caption = '';
+
+                            } else {
+//                                g.gridOpts.datatype = 'json';
+//                                g.gridOpts.url = gridRowsUrl;
+//                                g.gridOpts.loadComplete = onLoadComplete;
+//                                g.gridOpts.jsonReader = {
+//                                    root: "rows",
+//                                    page: "page",
+//                                    total: "total",
+//                                    records: "records",
+//                                    repeatitems: false,
+//                                    id: "id",
+//                                    cell: "cell",
+//                                    userdata: "userdata",
+//                                    subgrid: { }
+//                                };
+
+//                                g.customPager = {
+//                                    prevDisabled: true,
+//                                    nextDisabled: false,
+//                                    onPrevPageClick: prevClick,
+//                                    onNextPageClick: nextClick
+//                                };
+
+                                g.optNavEdit = {
+                                    editfunc: function(rowid) {
+                                        return editRows(rowid, ret, o.onEditNode);
+                                    }
+                                };
+
+                                g.optNavDelete = {
+                                    delfunc: function(rowid) {
+                                        return deleteRows(rowid, ret, o.onDeleteNode);
+                                    }
+                                };
+
+                            } // else
+                            ret = new CswGrid(g, $parent);
+                            if (isFunction(o.onSuccess)) {
+                                o.onSuccess(ret);
+                            }
+                        } // success{} 
+                    }); // ajax
+            })();
             return ret;
         } // 'init'
     }; // methods

@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.WebServices
         private CswGridData _CswGridData;
         private bool _CanEdit = true;
         private bool _CanDelete = true;
+        private readonly Int32 _GridPageSize = 50;
 
         public enum GridReturnType
         {
@@ -43,7 +44,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 FirstLevelRelationships = _View.Root.ChildRelationships;
             }
-
+            Int32 PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
+            if( Int32.MinValue != PageSize )
+            {
+                _GridPageSize = PageSize;
+            }
             // Case 21778
             // Maybe do this in Permit someday; however, the meaning of Edit and Delete is very specific in this context:
             // only evaluating visibility of the option to edit or delete root nodetypes of a view
@@ -143,30 +148,28 @@ namespace ChemSW.Nbt.WebServices
             JObject RetObj = new JObject();
             RetObj["nodetypeid"] = _View.ViewMetaDataTypeId;
 
-
-            //IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( false );
-
             Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
             _getGridProperties( _View.Root.ChildRelationships, ref PropsInGrid );
 
-            JArray GridRows = null;
-            if( ForReporting )
+            //JArray GridRows = null;
+            //if( ForReporting )
+            //{
+            JArray GridRows = new JArray();
+            string MoreNodeKey = string.Empty;
+            IEnumerable<XElement> GridNodes = _getGridXElements( ref MoreNodeKey );
+            var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
+            if( HasResults )
             {
-                GridRows = new JArray();
-                IEnumerable<XElement> GridNodes = _getGridXElements();
-                var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
-                if( HasResults )
-                {
-                    GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
-                }
+                GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
             }
+            //}
             JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
-			_AddIconColumnName( ref GridOrderedColumnDisplayNames );
+            _AddIconColumnName( ref GridOrderedColumnDisplayNames );
             _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, PropsInGrid );   //_getGridColumnNamesJson( ColumnCollection );
             //_makeHiddenColumnNames( ref GridOrderedColumnDisplayNames );
 
             JArray GridColumnDefinitions = _CswGridData.getGridColumnDefinitionJson( PropsInGrid );
-			_AddIconColumnDefinition( ref GridColumnDefinitions );
+            _AddIconColumnDefinition( ref GridColumnDefinitions );
             _AddHiddenColumnDefiniton( GridColumnDefinitions );
 
             _CswGridData.GridWidth = ( _View.Width * 7 );
@@ -191,22 +194,25 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject RetObj = new JObject();
 
-            IEnumerable<XElement> GridNodes = _getGridXElements();
+            string MoreNodeKey = string.Empty;
+            IEnumerable<XElement> GridNodes = _getGridXElements( ref MoreNodeKey );
 
             Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
             _getGridProperties( _View.Root.ChildRelationships, ref PropsInGrid );
 
             JArray GridRows = new JArray();
-            var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
+            Int32 RowCount = GridNodes.Count();
+            var HasResults = ( false == ShowEmpty && null != GridNodes && RowCount > 0 );
             if( HasResults )
             {
                 GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
             }
 
-
-            RetObj["total"] = "1";
+            //RetObj["moreNodeKey"] = wsTools.ToSafeJavaScriptParam( MoreNodeKey );
+            Double Pages = RowCount / _GridPageSize;
+            RetObj["total"] = Math.Round( Pages, 0 ).ToString();
             RetObj["page"] = "1";
-            RetObj["records"] = GridNodes.Count().ToString();
+            RetObj["records"] = RowCount.ToString();
             RetObj["rows"] = GridRows;
             return RetObj;
         } // getGridOuterJson()
@@ -259,24 +265,24 @@ namespace ChemSW.Nbt.WebServices
 
         } // _AddHiddenColumnDefiniton()
 
-		private void _AddIconColumnDefinition( ref JArray ColumnDefArray )
-		{
-			ColumnDefArray.AddFirst( new JObject(
-								new JProperty( "name", "icon" ),
-								new JProperty( "index", "icon" ),
-								new JProperty( "formatter", "image" ),
-								new JProperty( CswGridData.JqGridJsonOptions.width.ToString(), "30" )
-								) );
-		}
-		private void _AddIconColumnName( ref JArray ColumnNameArray )
-		{
-			ColumnNameArray.Add( "icon" );
-		}
+        private void _AddIconColumnDefinition( ref JArray ColumnDefArray )
+        {
+            ColumnDefArray.AddFirst( new JObject(
+                                new JProperty( "name", "icon" ),
+                                new JProperty( "index", "icon" ),
+                                new JProperty( "formatter", "image" ),
+                                new JProperty( CswGridData.JqGridJsonOptions.width.ToString(), "30" )
+                                ) );
+        }
+        private void _AddIconColumnName( ref JArray ColumnNameArray )
+        {
+            ColumnNameArray.Add( "icon" );
+        }
 
         /// <summary>
         /// Returns an XElement of the View's Tree
         /// </summary>
-        private XElement _getGridTree()
+        private XElement _getGridTree( CswNbtNodeKey ParentKey )
         {
             XElement RawXml = null;
             ICswNbtTree Tree;
@@ -284,11 +290,16 @@ namespace ChemSW.Nbt.WebServices
             {
                 ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
                 ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, 50, true, false, null, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, Int32.MinValue, true, false, null, false );
             }
+            // Case 24004
+            //else if( _ParentNodeKey != null && _ParentNodeKey.NodeSpecies == NodeSpecies.More )
+            //{
+            //    Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref ParentKey, null, _GridPageSize, false, false, _ParentNodeKey, false );
+            //}
             else
             {
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false, 50 );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );
             }
             Int32 NodeCount = Tree.getChildNodeCount();
             if( NodeCount > 0 )
@@ -298,14 +309,14 @@ namespace ChemSW.Nbt.WebServices
             //else jqGrid effectively handles 'else' with emptyrecords property
 
             return RawXml;
-        } // getGridColumnsJson()
+        } // _getGridTree()
 
         /// <summary>
         /// Transforms the Tree XML into an XDocument
         /// </summary>
-        private IEnumerable<XElement> _getGridXElements()
+        private IEnumerable<XElement> _getGridXElements( ref string MoreNodeKey )
         {
-            var RawXml = _getGridTree();
+            var RawXml = _getGridTree( null );
             IEnumerable<XElement> NodesInGrid = null;
             // case 21535: tree is not null
             if( null != RawXml )
@@ -326,6 +337,15 @@ namespace ChemSW.Nbt.WebServices
                                 where Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
                                       Element.DescendantNodesAndSelf().OfType<XElement>().Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
                                 select Element );
+
+                foreach( XElement XNode in GridRows.Where( XNode => XNode.HasAttributes &&
+                                                                    null != XNode.Attribute( "nodename" ) &&
+                    //Remember to use NodeSpecies here
+                                                                    XNode.Attribute( "nodename" ).Value == "More..." &&
+                                                                    null != XNode.Attribute( "key" ) ) )
+                {
+                    MoreNodeKey = XNode.Attribute( "key" ).Value;
+                }
             }
             return NodesInGrid;
         } // getGridXElements()

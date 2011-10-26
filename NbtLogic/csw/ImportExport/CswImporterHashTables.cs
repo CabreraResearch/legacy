@@ -94,12 +94,12 @@ namespace ChemSW.Nbt.ImportExport
 {
 
 
-    public class CswImporterLegacy : ICswImporter
+    public class CswImporterHashTables : ICswImporter
     {
 
         CswNbtResources _CswNbtResources = null;
         CswNbtImportExportFrame _CswNbtImportExportFrame = null;
-        public CswImporterLegacy( CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, StatusUpdateHandler OnStatusUpdateIn )
+        public CswImporterHashTables( CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, StatusUpdateHandler OnStatusUpdateIn )
         {
             _CswNbtResources = CswNbtResources;
             OnStatusUpdate = OnStatusUpdateIn;

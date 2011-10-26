@@ -32,10 +32,10 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject Ret = new JObject();
 
-			CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, Date );
-			if( filterToPropId != string.Empty )
+            CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, Date );
+            if( filterToPropId != string.Empty )
             {
-				CswPropIdAttr PropId = new CswPropIdAttr( filterToPropId );
+                CswPropIdAttr PropId = new CswPropIdAttr( filterToPropId );
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
                 if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, false, Prop.EditLayout.Tab, _CswNbtResources.CurrentNbtUser, Node, Prop ) )
                 {
@@ -446,7 +446,7 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // saveProps()
 
-		private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab, bool ForceUpdate = false )
+        private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab, bool ForceUpdate = false )
         {
             CswNbtNodeKey Ret = null;
             if( Node != null )
