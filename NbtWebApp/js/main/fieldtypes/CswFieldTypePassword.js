@@ -71,7 +71,7 @@
         },
         save: function(o) { //$propdiv, $xml
             var attributes = {
-                isexpired: false,
+                isexpired: null,
                 newpassword: null
             };
             var $newpw = o.$propdiv.find('input#' + o.ID + '_pwd1');

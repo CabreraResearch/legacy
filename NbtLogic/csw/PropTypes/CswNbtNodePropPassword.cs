@@ -178,12 +178,15 @@ namespace ChemSW.Nbt.PropTypes
 			}
 			if( null != JObject.Property( "newpassword" ) )
 			{
-				_saveProp( (string) JObject.Property( "newpassword" ).Value );
+				_saveProp( (string) JObject.Property( "newpassword" ) );
 			}
-			bool inIsExpired = CswConvert.ToBoolean( JObject.Property( "isexpired" ).Value );
-			if( inIsExpired && !IsExpired )
+			if( null != JObject.Property( "isexpired" ) )
 			{
-				ChangedDate = DateTime.MinValue;
+				bool inIsExpired = CswConvert.ToBoolean( JObject.Property( "isexpired" ) );
+				if( inIsExpired && !IsExpired )
+				{
+					ChangedDate = DateTime.MinValue;
+				}
 			}
 		}
 
