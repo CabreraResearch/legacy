@@ -94,44 +94,54 @@ namespace ChemSW.Nbt.ObjClasses
 
 			if( _CompanyIDDefined() )
 			{
-				
-				// Set ChemSW Admin Password and Modules Enabled
-				string NewEncryptedPassword = string.Empty;
-				if( ChemSWAdminPassword.WasModified )
+
+				if( ChemSWAdminPassword.WasModified || ModulesEnabled.WasModified )
 				{
-					NewEncryptedPassword = ChemSWAdminPassword.EncryptedPassword;
-				}
-				CswCommaDelimitedString NewModulesEnabled = new CswCommaDelimitedString();
-				foreach( string ModuleName in ModulesEnabled.YValues )
-				{
-					if( ModulesEnabled.CheckValue( ModulesEnabledXValue, ModuleName ) )
+
+					// Set ChemSW Admin Password and Modules Enabled
+					string NewEncryptedPassword = string.Empty;
+					if( ChemSWAdminPassword.WasModified )
 					{
-						NewModulesEnabled.Add( ModuleName );
+						NewEncryptedPassword = ChemSWAdminPassword.EncryptedPassword;
 					}
-				}
+					CswCommaDelimitedString NewModulesEnabled = new CswCommaDelimitedString();
+					if( ModulesEnabled.WasModified )
+					{
+						foreach( string ModuleName in ModulesEnabled.YValues )
+						{
+							if( ModulesEnabled.CheckValue( ModulesEnabledXValue, ModuleName ) )
+							{
+								NewModulesEnabled.Add( ModuleName );
+							}
+						}
+					}
+						
+					// switch to target schema
+					//string OriginalAccessId = _CswNbtResources.AccessId;
+					//_CswNbtResources.AccessId = CompanyID.Text;
+					CswNbtResources OtherResources = makeOtherResources();
 
-				// switch to target schema
-				//string OriginalAccessId = _CswNbtResources.AccessId;
-				//_CswNbtResources.AccessId = CompanyID.Text;
-				CswNbtResources OtherResources = makeOtherResources();
-				
+					if( NewEncryptedPassword != string.Empty )
+					{
+						CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+						CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.EncryptedPassword = NewEncryptedPassword;
+						ChemSWAdminUserNode.postChanges( false );
+					}
+					if( NewModulesEnabled.Count > 0 )
+					{
+						CswTableUpdate ModulesUpdate = OtherResources.makeCswTableUpdate( "CswNbtObjClassCustomer_modules_update", "modules" );
+						DataTable ModulesTable = ModulesUpdate.getTable();
+						foreach( DataRow ModulesRow in ModulesTable.Rows )
+						{
+							ModulesRow["enabled"] = CswConvert.ToDbVal( NewModulesEnabled.Contains( ModulesRow["name"].ToString() ) );
+						}
+						ModulesUpdate.update( ModulesTable );
+					}
 
-				CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-				CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.EncryptedPassword = NewEncryptedPassword;
-				ChemSWAdminUserNode.postChanges( false );
-
-				CswTableUpdate ModulesUpdate = OtherResources.makeCswTableUpdate( "CswNbtObjClassCustomer_modules_update", "modules" );
-				DataTable ModulesTable = ModulesUpdate.getTable();
-				foreach( DataRow ModulesRow in ModulesTable.Rows )
-				{
-					ModulesRow["enabled"] = CswConvert.ToDbVal( NewModulesEnabled.Contains( ModulesRow["name"].ToString() ) );
-				}
-				ModulesUpdate.update(ModulesTable);
-				
-				// reconnect to original schema
-				//_CswNbtResources.AccessId = OriginalAccessId;
-				finalizeOtherResources( OtherResources );
-
+					// reconnect to original schema
+					//_CswNbtResources.AccessId = OriginalAccessId;
+					finalizeOtherResources( OtherResources );
+				} // if( ChemSWAdminPassword.WasModified || ModulesEnabled.WasModified )
 			} // if( _CompanyIDDefined() )
 
 			_CswNbtObjClassDefault.afterWriteNode();
