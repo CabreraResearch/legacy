@@ -11,7 +11,7 @@
         var $elements = this;
         return $elements.each(function ()
         {
-	        var $element = $(this);
+            var $element = $(this);
             $element.focus(function ()
             {
                 $element.data('safeEnter_InAutocomplete', false);
@@ -54,57 +54,57 @@
         var $parents = this;
         return $parents.each(function ()
         {
-			var $parent = $(this);
+            var $parent = $(this);
             $parent.listenForEnter()
-				    .bind('pressedEnter', function ()
-				    {
-				        $target.click();
-				    });
+                    .bind('pressedEnter', function ()
+                    {
+                        $target.click();
+                    });
         });
     };
     
-    $.fn.replaceText = function( search, replace ) { /// <param name="$" type="jQuery" />
-        /// <summary>
-        ///   Replaces text or HTML in a jQuery object
-        /// </summary>
-        /// <param name="search" type="RegExp|String">A RegExp object or substring to be replaced</param>
-        /// <param name="replace" type="String|Function">The String that replaces the substring received from the search argument, or a function to be invoked to create the new substring. </param>
-        /// <returns type="jQuery>The initial jQuery collection of elementss</returns>
-    
-        var $ret = this;
-        if ($ret instanceof jQuery)
-        {
-            $ret.each(function(){
-                
-                var $node = this;
-                var oldVal;
-                var newVal = '';
+//    $.fn.replaceText = function( search, replace ) { /// <param name="$" type="jQuery" />
+//        /// <summary>
+//        ///   Replaces text or HTML in a jQuery object
+//        /// </summary>
+//        /// <param name="search" type="RegExp|String">A RegExp object or substring to be replaced</param>
+//        /// <param name="replace" type="String|Function">The String that replaces the substring received from the search argument, or a function to be invoked to create the new substring. </param>
+//        /// <returns type="jQuery>The initial jQuery collection of elementss</returns>
+//    
+//        var $ret = this;
+//        if ($ret instanceof jQuery)
+//        {
+//            $ret.each(function(){
+//                
+//                var $node = this;
+//                var oldVal;
+//                var newVal = '';
 
-                if( !isNullOrEmpty($node) )
-                {
-                    // 3 === Node.TEXT_NODE
-                    if (!isNullOrEmpty( $node ) && $node.nodeType === 3 ) 
-                    {
-                        oldVal = tryParseString( $node.val(), '');
-                        if( !isNullOrEmpty(oldVal) )
-                        {
-                            log(oldVal,true);
-                            newVal = oldVal.replace( search, replace );
-                            if ( newVal !== oldVal ) 
-                            {
-                                $node.replaceWith(newVal);
-                            }
-                        }
-                    }
-                }
-                //recurse each $node
-                $node.replaceText( search, replace );
-            });
+//                if( !isNullOrEmpty($node) )
+//                {
+//                    // 3 === Node.TEXT_NODE
+//                    if (!isNullOrEmpty( $node ) && $node.nodeType === 3 ) 
+//                    {
+//                        oldVal = tryParseString( $node.val(), '');
+//                        if( !isNullOrEmpty(oldVal) )
+//                        {
+//                            log(oldVal,true);
+//                            newVal = oldVal.replace( search, replace );
+//                            if ( newVal !== oldVal ) 
+//                            {
+//                                $node.replaceWith(newVal);
+//                            }
+//                        }
+//                    }
+//                }
+//                //recurse each $node
+//                $node.replaceText( search, replace );
+//            });
 
-        }
-        return $ret;
-    
-  };  
+//        }
+//        return $ret;
+//    
+//  };  
 
 })(jQuery);
 

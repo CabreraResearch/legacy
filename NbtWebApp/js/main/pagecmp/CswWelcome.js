@@ -149,19 +149,20 @@
                                         .hide();
 
             var $ntselect_label = $('<span>Add New:</span>')
-                                        .appendTo($table.CswTable('cell', 3, 1))
-            var $ntselect = $table.CswTable('cell', 3, 2).CswNodeTypeSelect({
-                'ID': 'welcome_ntsel'
-            });
+                                        .appendTo($table.CswTable('cell', 3, 1));
+            var $ntselect = $table.CswTable('cell', 3, 2)
+                                  .CswNodeTypeSelect({
+                                      'ID': 'welcome_ntsel'
+                                  });
 
             var $welcometext_label = $('<span>Text:</span>')
-                                        .appendTo($table.CswTable('cell', 4, 1))
+                                        .appendTo($table.CswTable('cell', 4, 1));
             var $welcometextcell = $table.CswTable('cell', 4, 2);
             var $welcometext = $welcometextcell.CswInput('init', { ID: 'welcome_text',
                 type: CswInput_Types.text
             });
             var $buttonsel_label = $('<span>Use Button:</span>')
-                                        .appendTo($table.CswTable('cell', 5, 1))
+                                        .appendTo($table.CswTable('cell', 5, 1));
             var $buttonsel = $('<select id="welcome_button" />')
                                         .appendTo($table.CswTable('cell', 5, 2));
             $buttonsel.append('<option value="blank.gif"></option>');
