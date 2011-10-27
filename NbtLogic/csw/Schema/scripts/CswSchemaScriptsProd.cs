@@ -21,9 +21,14 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaScriptsProd() //CswNbtResources CswNbtResources )
         {
             //_CswNbtResources = CswNbtResources;
-
             // This is where you manually set to the last version of the previous release
+
+
+
+
+
             _MinimumVersion = new CswSchemaVersion( 1, 'I', 14 );
+
 
             // This is where you add new versions.
             CswSchemaUpdateDriver Schema01J01Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J01() );
@@ -56,6 +61,7 @@ namespace ChemSW.Nbt.Schema
             }
 
         }//ctor
+
 
         #region ICswSchemaScripts
 
