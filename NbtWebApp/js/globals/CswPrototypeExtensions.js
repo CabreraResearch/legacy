@@ -61,7 +61,7 @@ if (!Array.prototype.forEach) {
 }
 
 if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function (searchElement /*, fromIndex */) {
+    Array.prototype.indexOf = function(searchElement /*, fromIndex */) {
         "use strict";
         if (this === void 0 || this === null) {
             throw new TypeError();
@@ -90,7 +90,7 @@ if (!Array.prototype.indexOf) {
             }
         }
         return -1;
-    }
+    };
 }
 
 //#endregion Array
