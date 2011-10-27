@@ -165,7 +165,8 @@
                                         .appendTo($table.CswTable('cell', 5, 1));
             var $buttonsel = $('<select id="welcome_button" />')
                                         .appendTo($table.CswTable('cell', 5, 2));
-            $buttonsel.append('<option value="blank.gif"></option>');
+            $buttonsel.append('<option value="blank.gif"></option>')
+                                        .css('width', '100px');
 
             var $buttonimg = $('<img id="welcome_btnimg" />')
                                         .appendTo($table.CswTable('cell', 6, 2));
@@ -229,12 +230,12 @@
             CswAjaxJson({
                 'url': '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
                 'success': function (data) {
-
                     for (var icon in data) {
                         var filename = icon;
                         if (filename !== 'blank.gif') {
                             $buttonsel.append('<option value="' + filename + '">' + filename + '</option>');
                         }
+                        $buttonsel.css('width', '');
                     } // each
                 } // success
             }); // CswAjaxJson
