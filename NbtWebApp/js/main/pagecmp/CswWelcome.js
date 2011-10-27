@@ -149,22 +149,24 @@
                                         .hide();
 
             var $ntselect_label = $('<span>Add New:</span>')
-                                        .appendTo($table.CswTable('cell', 3, 1))
-            var $ntselect = $table.CswTable('cell', 3, 2).CswNodeTypeSelect({
-                'ID': 'welcome_ntsel'
-            });
+                                        .appendTo($table.CswTable('cell', 3, 1));
+            var $ntselect = $table.CswTable('cell', 3, 2)
+                                  .CswNodeTypeSelect({
+                                      'ID': 'welcome_ntsel'
+                                  });
 
             var $welcometext_label = $('<span>Text:</span>')
-                                        .appendTo($table.CswTable('cell', 4, 1))
+                                        .appendTo($table.CswTable('cell', 4, 1));
             var $welcometextcell = $table.CswTable('cell', 4, 2);
             var $welcometext = $welcometextcell.CswInput('init', { ID: 'welcome_text',
                 type: CswInput_Types.text
             });
             var $buttonsel_label = $('<span>Use Button:</span>')
-                                        .appendTo($table.CswTable('cell', 5, 1))
+                                        .appendTo($table.CswTable('cell', 5, 1));
             var $buttonsel = $('<select id="welcome_button" />')
                                         .appendTo($table.CswTable('cell', 5, 2));
-            $buttonsel.append('<option value="blank.gif"></option>');
+            $buttonsel.append('<option value="blank.gif"></option>')
+                                        .css('width', '100px');
 
             var $buttonimg = $('<img id="welcome_btnimg" />')
                                         .appendTo($table.CswTable('cell', 6, 2));
@@ -228,12 +230,12 @@
             CswAjaxJson({
                 'url': '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
                 'success': function (data) {
-
                     for (var icon in data) {
                         var filename = icon;
                         if (filename !== 'blank.gif') {
                             $buttonsel.append('<option value="' + filename + '">' + filename + '</option>');
                         }
+                        $buttonsel.css('width', '');
                     } // each
                 } // success
             }); // CswAjaxJson
