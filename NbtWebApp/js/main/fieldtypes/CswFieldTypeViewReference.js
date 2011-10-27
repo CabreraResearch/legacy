@@ -46,7 +46,7 @@
 							AlternateText: 'Edit',
 							Required: o.Required,
 							onClick: function ($ImageDiv) {
-								window.location = "EditView.aspx?step=2&return=Main.html&viewid=" + viewId;
+								o.onEditView(viewId);
 								return CswImageButton_ButtonType.None; 
 							}
 						});
