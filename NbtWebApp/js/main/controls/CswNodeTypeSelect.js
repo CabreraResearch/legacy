@@ -8,50 +8,48 @@
     var PluginName = "CswNodeTypeSelect";
 
     var methods = {
-        'init': function(options) 
-            {
-                var o = {
-                    ID: '',
-                    NodeTypesUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
-                    nodetypeid: '',
-                    onSelect: null, //function (nodetypeid) {},
-                    onSuccess: null //function () {}
-                };
+        'init': function(options) {
+            var o = {
+                ID: '',
+                NodeTypesUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
+                nodetypeid: '',
+                onSelect: null, //function (nodetypeid) {},
+                onSuccess: null //function () {}
+            };
 
-                if (options) {
-                    $.extend(o, options);
-                }
-                var $parent = $(this);
-                var $select = $('<select id="'+ o.ID +'_sel" />');
-                $select.change(function() { if (isFunction(o.onSelect)) o.onSelect( $select.val() ); });
-
-                CswAjaxJson({
-                        url: o.NodeTypesUrl,
-                        data: {},
-                        success: function (data)
-                        {
-                            for (var nodeType in data) {
-                                if (contains(data, nodeType)) {
-                                    var thisNodeType = data[nodeType];
-                                    $select.append('<option value="' + thisNodeType.id + '">' + thisNodeType.name + '</option>');
-                                }
-                            }
-                            if (isFunction(o.onSuccess)) {
-                                o.onSuccess();
-                            }
-                            //Case 23986: Wait until options collection is built before appending
-                            $parent.contents().remove();
-                            $parent.append($select);
-                        }
-                });
-            
-                return $select;
-            },
-        'value': function()
-            {
-                var $select = $(this);
-                return $select.val();
+            if (options) {
+                $.extend(o, options);
             }
+            var $parent = $(this);
+            var $select = $('<select id="'+ o.ID +'_sel" />').css('width', '200px');
+            $select.change(function() { if (isFunction(o.onSelect)) o.onSelect( $select.val() ); });
+
+            CswAjaxJson({
+                    url: o.NodeTypesUrl,
+                    data: {},
+                    success: function (data)
+                    {
+                        for (var nodeType in data) {
+                            if (contains(data, nodeType)) {
+                                var thisNodeType = data[nodeType];
+                                $select.append('<option value="' + thisNodeType.id + '">' + thisNodeType.name + '</option>');
+                            }
+                        }
+                        if (isFunction(o.onSuccess)) {
+                            o.onSuccess();
+                        }
+                        $select.css('width', '');    
+                    }
+            });
+            //Case 23986: Wait until options collection is built before appending
+            $parent.contents().remove();
+            $parent.append($select);
+            return $select;
+        },
+        'value': function() {
+            var $select = $(this);
+            return $select.val();
+        }
     };
         // Method calling logic
     $.fn.CswNodeTypeSelect = function (method) {
