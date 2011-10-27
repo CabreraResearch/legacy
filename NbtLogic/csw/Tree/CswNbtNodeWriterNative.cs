@@ -22,6 +22,11 @@ namespace ChemSW.Nbt
             }
         }
 
+        public void clear()
+        {
+            _CswTableUpdateNodes.clear(); 
+        }//clear()
+
         public CswNbtNodeWriterNative( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;

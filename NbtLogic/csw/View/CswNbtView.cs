@@ -1370,7 +1370,8 @@ namespace ChemSW.Nbt
         public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
         {
             // don't cache twice
-            if( SessionViewId == null || ForceCache )
+            if( SessionViewId == null || ForceCache 
+				|| IncludeInQuickLaunch )  // case 23999
             {
                 bool ForQuickLaunch = ( IncludeInQuickLaunch && IsQuickLaunch );
                 _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch, KeepInQuickLaunch );

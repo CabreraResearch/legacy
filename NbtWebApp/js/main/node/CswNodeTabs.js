@@ -560,7 +560,8 @@
                     url: o.SinglePropUrl,
                     data: jsonData,
                     success: function(data) {
-                        _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn);
+                        data.wasmodified = true;  // keep the fact that the parent property was modified
+						_makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn);
                     }
                 });
             }

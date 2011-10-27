@@ -20,6 +20,20 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }
 
+        public void clear()
+        {
+            if( null != _CswNbtNodeWriterNative )
+            {
+                _CswNbtNodeWriterNative.clear();
+            }
+
+
+            if( null != _CswNbtNodeWriterRelationalDb )
+            {
+                _CswNbtNodeWriterRelationalDb.clear();
+            }
+        }//clear() 
+
         private ICswNbtNodeWriterImpl getWriterImpl( CswPrimaryKey NodePk )
         {
             return getWriterImpl( NodePk.TableName );

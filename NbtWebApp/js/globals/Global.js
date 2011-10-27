@@ -712,7 +712,7 @@ function preparePropJsonForSave(isMulti, propData, attributes) {
             var propVals = propData.values;
             wasModified = preparePropJsonForSaveRecursive(isMulti, propVals, attributes);
         }
-        propData.wasmodified = wasModified;
+        propData.wasmodified = propData.wasmodified || wasModified;
     }
 }
 
