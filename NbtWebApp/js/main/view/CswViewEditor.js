@@ -999,7 +999,7 @@
                 if (!isNullOrEmpty(itemJson)) {
                     var filtArbitraryId = tryParseString(itemJson.arbitraryid);
                     if (stepno === CswViewEditor_WizardSteps.tuning.step) {
-                        var selectedSubfield = tryParseString(itemJson.subfield);
+                        var selectedSubfield = tryParseString(itemJson.subfield, itemJson.subfieldname);
                         var selectedFilterMode = tryParseString(itemJson.filtermode);
                         var filterValue = tryParseString(itemJson.value);
                         var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
