@@ -250,6 +250,7 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
     <Compile Include="csw\Schema\scripts\infr\CswUpdateSchema_Infr_TakeDump.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J10.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J09.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J08.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J07.cs" />
