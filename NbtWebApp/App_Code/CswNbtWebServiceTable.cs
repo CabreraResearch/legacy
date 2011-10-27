@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.WebServices
 							ret[NodeId.ToString()]["thumbnailurl"] = "Images/icons/" + NodeType.IconFileName;
 						}
 
-						foreach( XElement PropElm in NodeElm.Elements() )         // NbtNodeProp
+						foreach( XElement PropElm in NodeElm.Descendants( "NbtNodeProp" ) )
 						{
 							Int32 NodeTypePropId = CswConvert.ToInt32( PropElm.Attribute( "nodetypepropid" ).Value );
 							Int32 JctNodePropId = CswConvert.ToInt32( PropElm.Attribute( "jctnodepropid" ).Value );
