@@ -407,6 +407,11 @@ namespace ChemSW.Nbt.WebServices
                             bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
                             if( CanEdit )
                             {
+								if( Node.PendingUpdate )
+								{
+									CswNbtActUpdatePropertyValue Act = new CswNbtActUpdatePropertyValue( _CswNbtResources );
+									Act.UpdateNode( Node, false );
+								}
                                 RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
                                 if( null != RetNbtNodeKey )
                                 {

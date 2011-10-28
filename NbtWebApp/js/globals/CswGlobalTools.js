@@ -414,7 +414,7 @@ function each(thisObj, onSuccess) {
     /// <returns type="Object">Returns the return of onSuccess</returns>
     var ret = false;
     if (isFunction(onSuccess)) {
-        if (isArray(thisObj) || (isPlainObject(thisObj) && false === thisObj.hasOwnProperty('length'))) {
+        if (isArray(thisObj) || (isPlainObject(thisObj) && false === contains(thisObj, 'length'))) {
             $.each(thisObj, function (childKey, value) {
                 var childObj = thisObj[childKey];
                 ret = onSuccess(childObj, childKey, thisObj, value);

@@ -282,7 +282,7 @@
                     $propSelectCell.CswSpan('init', { ID: propCellId, value: propertyName });
                 }
 
-                var selectedSubfield = tryParseString(propsData.subfieldname);
+                var selectedSubfield = tryParseString(propsData.subfieldname, propsData.subfield);
                 var selectedFilterMode = tryParseString(propsData.filtermode);
                 var filterValue = tryParseString(propsData.value);
 

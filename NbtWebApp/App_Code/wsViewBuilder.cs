@@ -400,17 +400,11 @@ namespace ChemSW.Nbt.WebServices
                         ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
                     }
 
-                    //Case 23779
-                    if( ClearFilters && null != ViewPropFilt && ViewProp.Filters.Count > 1 )
+                    //Case 23779, 23937, 24064
+                    if( ClearFilters && null != ViewPropFilt )
                     {
-                        while( ViewProp.Filters.Count != 1 )
-                        {
-                            CswNbtViewPropertyFilter FiltToRemove = (CswNbtViewPropertyFilter) ViewProp.Filters[0];
-                            if( ViewPropFilt.ArbitraryId != FiltToRemove.ArbitraryId )
-                            {
-                                ViewProp.removeFilter( (CswNbtViewPropertyFilter) ViewProp.Filters[0] );
-                            }
-                        }
+                        ViewProp.Filters.Clear();
+                        ViewProp.Filters.Add( ViewPropFilt );
                     }
                 }
             }

@@ -58,7 +58,7 @@
 						var name = '<b>' + nodeObj.nodename + '</b>';
 						var locked = isTrue(nodeObj.locked);
 
-						$thumbnailcell.append('<img src="'+ nodeObj.thumbnailurl +'" width="90%"><br/>');
+						$thumbnailcell.append('<img src="'+ nodeObj.thumbnailurl +'" style="max-width: 90%;"><br/>');
 						if(locked) {
 							name += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
 						}
