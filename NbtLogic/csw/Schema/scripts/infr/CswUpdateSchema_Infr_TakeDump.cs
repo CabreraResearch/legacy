@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_Infr_TakeDump : CswUpdateSchemaTo
     {
-        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 0 ); } }
+        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 00,'A',00 ); } }
         public override string Description
         {
             get
