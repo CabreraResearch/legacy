@@ -225,9 +225,9 @@ namespace ChemSW.Nbt.ObjClasses
 				//_CswNbtResources.AccessId = OriginalAccessId;
 				finalizeOtherResources( OtherResources );
 
-				foreach( CswNbtResources.CswNbtModule Module in Modules )
+				foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
 				{
-					ModulesEnabled.SetValue( ModulesEnabledXValue, Module.ToString(), true );
+					ModulesEnabled.SetValue( ModulesEnabledXValue, Module.ToString(), Modules.Contains( Module ) );
 				}
 
 				ChemSWAdminPassword.EncryptedPassword = EncryptedPassword;
