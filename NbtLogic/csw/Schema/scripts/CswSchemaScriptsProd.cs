@@ -23,31 +23,12 @@ namespace ChemSW.Nbt.Schema
             //_CswNbtResources = CswNbtResources;
 
             // This is where you manually set to the last version of the previous release
-            _MinimumVersion = new CswSchemaVersion( 1, 'I', 14 );
+            _MinimumVersion = new CswSchemaVersion( 1, 'J', 11 );
 
             // This is where you add new versions.
-            CswSchemaUpdateDriver Schema01J01Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J01() );
-            _UpdateDrivers.Add( Schema01J01Driver.SchemaVersion, Schema01J01Driver );
-            CswSchemaUpdateDriver Schema01J02Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J02() );
-            _UpdateDrivers.Add( Schema01J02Driver.SchemaVersion, Schema01J02Driver );
-            CswSchemaUpdateDriver Schema01J03Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J03() );
-            _UpdateDrivers.Add( Schema01J03Driver.SchemaVersion, Schema01J03Driver );
-            CswSchemaUpdateDriver Schema01J04Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J04() );
-            _UpdateDrivers.Add( Schema01J04Driver.SchemaVersion, Schema01J04Driver );
-            CswSchemaUpdateDriver Schema01J05Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J05() );
-            _UpdateDrivers.Add( Schema01J05Driver.SchemaVersion, Schema01J05Driver );
-            CswSchemaUpdateDriver Schema01J06Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J06() );
-            _UpdateDrivers.Add( Schema01J06Driver.SchemaVersion, Schema01J06Driver );
-            CswSchemaUpdateDriver Schema01J07Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J07() );
-            _UpdateDrivers.Add( Schema01J07Driver.SchemaVersion, Schema01J07Driver );
-            CswSchemaUpdateDriver Schema01J08Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J08() );
-            _UpdateDrivers.Add( Schema01J08Driver.SchemaVersion, Schema01J08Driver );
-            CswSchemaUpdateDriver Schema01J09Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J09() );
-            _UpdateDrivers.Add( Schema01J09Driver.SchemaVersion, Schema01J09Driver );
-			CswSchemaUpdateDriver Schema01J10Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J10() );
-			_UpdateDrivers.Add( Schema01J10Driver.SchemaVersion, Schema01J10Driver );
-			CswSchemaUpdateDriver Schema01J11Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J11() );
-			_UpdateDrivers.Add( Schema01J11Driver.SchemaVersion, Schema01J11Driver );
+            CswSchemaUpdateDriver Schema01K01Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K01() );
+            _UpdateDrivers.Add( Schema01K01Driver.SchemaVersion, Schema01K01Driver );
+
 			// This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
