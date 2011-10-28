@@ -44,9 +44,11 @@ namespace ChemSW.Nbt.Schema
             _UpdateDrivers.Add( Schema01J08Driver.SchemaVersion, Schema01J08Driver );
             CswSchemaUpdateDriver Schema01J09Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J09() );
             _UpdateDrivers.Add( Schema01J09Driver.SchemaVersion, Schema01J09Driver );
-            CswSchemaUpdateDriver Schema01J10Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J10() );
-            _UpdateDrivers.Add( Schema01J10Driver.SchemaVersion, Schema01J10Driver );
-            // This automatically detects the latest version
+			CswSchemaUpdateDriver Schema01J10Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J10() );
+			_UpdateDrivers.Add( Schema01J10Driver.SchemaVersion, Schema01J10Driver );
+			CswSchemaUpdateDriver Schema01J11Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J11() );
+			_UpdateDrivers.Add( Schema01J11Driver.SchemaVersion, Schema01J11Driver );
+			// This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
                                                                                         ( _LatestVersion.CycleIteration == Version.CycleIteration &&
