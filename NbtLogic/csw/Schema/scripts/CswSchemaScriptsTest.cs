@@ -18,8 +18,8 @@ namespace ChemSW.Nbt.Schema
     public class CswSchemaScriptsTest : ICswSchemaScripts
     {
         private List<CswSchemaUpdateDriver> _UpdateDriverList = new List<CswSchemaUpdateDriver>();
-		private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
-		public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
+        private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
+        public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
 
 
         private string _getCaseNumberFromTestCaseTypeName( string TypeName ) { return ( TypeName.Substring( 12, 3 ) ); }
@@ -29,8 +29,8 @@ namespace ChemSW.Nbt.Schema
         {
             List<string> TestCaseTypeNames = new List<string>();
             Dictionary<string, Type> TestCaseTypesByName = new Dictionary<string, Type>();
-			Dictionary<string, Type> TestResourceTypesByName = new Dictionary<string, Type>();
-			Dictionary<string, Object> TestResourceInstancesByName = new Dictionary<string, Object>();
+            Dictionary<string, Type> TestResourceTypesByName = new Dictionary<string, Type>();
+            Dictionary<string, Object> TestResourceInstancesByName = new Dictionary<string, Object>();
             Type[] Types = Assembly.GetExecutingAssembly().GetTypes();
             foreach( Type CurrentType in Types )
             {
@@ -46,15 +46,15 @@ namespace ChemSW.Nbt.Schema
                         }
                     }//if it's a test case
 
-					if( CurrentType.Name.Contains( "CswTstCaseRsrc_" ) )
-					{
-						string TestCaseGroupId = CurrentType.Name.Substring( 15, 3 );
-						if( false == TestResourceTypesByName.ContainsKey( CurrentType.Name ) )
-						{
-							TestResourceTypesByName.Add( TestCaseGroupId, CurrentType );
-							TestResourceInstancesByName.Add( TestCaseGroupId, null );
-						}
-					}//if its a test case resource
+                    if( CurrentType.Name.Contains( "CswTstCaseRsrc_" ) )
+                    {
+                        string TestCaseGroupId = CurrentType.Name.Substring( 15, 3 );
+                        if( false == TestResourceTypesByName.ContainsKey( CurrentType.Name ) )
+                        {
+                            TestResourceTypesByName.Add( TestCaseGroupId, CurrentType );
+                            TestResourceInstancesByName.Add( TestCaseGroupId, null );
+                        }
+                    }//if its a test case resource
 
                 }//if it's in our schema and it's a class
 
@@ -86,14 +86,14 @@ namespace ChemSW.Nbt.Schema
 
 
 
-				Object[] ResourceCtorArgs = new Object[0];
-				//ResourceCtorArgs[0] = _CswNbtSchemaModTrnsctn;
+                Object[] ResourceCtorArgs = new Object[0];
+                //ResourceCtorArgs[0] = _CswNbtSchemaModTrnsctn;
 
-				string TestCaseGroupId = _getCaseNumberFromTestCaseTypeName( CurrentTestCaseType.Name );
-				if( null == TestResourceInstancesByName[TestCaseGroupId] )
-				{
-					TestResourceInstancesByName[TestCaseGroupId] = Activator.CreateInstance( TestResourceTypesByName[TestCaseGroupId], ResourceCtorArgs );
-				}
+                string TestCaseGroupId = _getCaseNumberFromTestCaseTypeName( CurrentTestCaseType.Name );
+                if( null == TestResourceInstancesByName[TestCaseGroupId] )
+                {
+                    TestResourceInstancesByName[TestCaseGroupId] = Activator.CreateInstance( TestResourceTypesByName[TestCaseGroupId], ResourceCtorArgs );
+                }
 
 
                 CswSchemaVersion CurrentVersion = new CswSchemaVersion( 1, 'T', idx + 1 );
@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.Schema
             //get { return ( _UpdateDriverList[0].SchemaVersion ); }
         }
 
-        public CswSchemaVersion CurrentVersion(CswNbtResources CswNbtResources)
+        public CswSchemaVersion CurrentVersion( CswNbtResources CswNbtResources )
         {
             CswSchemaVersion ReturnVal = MinimumVersion;
             if( _CurrentIdx >= 0 )
@@ -139,40 +139,40 @@ namespace ChemSW.Nbt.Schema
 
         }//CurrentVersion
 
-        public CswSchemaVersion TargetVersion(CswNbtResources CswNbtResources)
+        public CswSchemaVersion TargetVersion( CswNbtResources CswNbtResources )
         {
             CswSchemaVersion ret = null;
-			CswSchemaVersion myCurrentVersion = CurrentVersion( CswNbtResources );
-			if( myCurrentVersion == MinimumVersion )
+            CswSchemaVersion myCurrentVersion = CurrentVersion( CswNbtResources );
+            if( myCurrentVersion == MinimumVersion )
                 ret = new CswSchemaVersion( LatestVersion.CycleIteration, LatestVersion.ReleaseIdentifier, 1 );
             else
-				ret = new CswSchemaVersion( myCurrentVersion.CycleIteration, myCurrentVersion.ReleaseIdentifier, myCurrentVersion.ReleaseIteration );
+                ret = new CswSchemaVersion( myCurrentVersion.CycleIteration, myCurrentVersion.ReleaseIdentifier, myCurrentVersion.ReleaseIteration );
             return ret;
         }//TargetVersion
 
         private Int32 _CurrentIdx = Int32.MinValue;
-		public CswSchemaUpdateDriver Next( CswNbtResources CswNbtResources )
-		{
-			CswSchemaUpdateDriver ReturnVal = null;
+        public CswSchemaUpdateDriver Next( CswNbtResources CswNbtResources )
+        {
+            CswSchemaUpdateDriver ReturnVal = null;
 
 
-			if( _UpdateDriverList.Count > ( _CurrentIdx + 1 ) )
-			{
-				if( Int32.MinValue == _CurrentIdx )
-				{
-					_CurrentIdx = 0;
-				}
-				else
-				{
-					_CurrentIdx++;
-				}
+            if( _UpdateDriverList.Count > ( _CurrentIdx + 1 ) )
+            {
+                if( Int32.MinValue == _CurrentIdx )
+                {
+                    _CurrentIdx = 0;
+                }
+                else
+                {
+                    _CurrentIdx++;
+                }
 
-				ReturnVal = _UpdateDriverList[_CurrentIdx];
-			}
+                ReturnVal = _UpdateDriverList[_CurrentIdx];
+            }
 
-			return ( ReturnVal );
+            return ( ReturnVal );
 
-		}//Next
+        }//Next
 
         public CswSchemaUpdateDriver this[CswSchemaVersion CswSchemaVersion]
         {
@@ -191,57 +191,17 @@ namespace ChemSW.Nbt.Schema
 
         }//indexer
 
-		public void stampSchemaVersion( CswNbtResources CswNbtResources, CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        public void stampSchemaVersion( CswNbtResources CswNbtResources, CswSchemaUpdateDriver CswSchemaUpdateDriver )
         {
             CswNbtResources.CswLogger.reportAppState( "Succesfully ran schema updater test " + CswSchemaUpdateDriver.Description );
         }//stampSchemaVersion()
 
 
-        //#region IEnumerable
-        //public IEnumerator<CswSchemaUpdateDriver> GetEnumerator()
-        //{
-        //    return ( new CswSchemaScriptsTestEnumerator( this ) );
-        //}
+        public void addUniversalPreProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
+        public void addReleaseDmlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
+        public void addReleaseDdlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
+        public void addUniversalPostProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
 
-        //IEnumerator IEnumerable.GetEnumerator()
-        //{
-        //    return ( new CswSchemaScriptsTestEnumerator( this ) );
-        //}
-
-
-        //private class CswSchemaScriptsTestEnumerator : IEnumerator<CswSchemaUpdateDriver>
-        //{
-        //    private CswSchemaScriptsTest _CswSchemaScriptsTest = null;
-        //    public CswSchemaScriptsTestEnumerator( CswSchemaScriptsTest CswSchemaScriptsTest )
-        //    {
-        //        _CswSchemaScriptsTest = CswSchemaScriptsTest;
-        //    }
-
-        //    public CswSchemaUpdateDriver Current
-        //    {
-        //        get { throw new NotImplementedException(); }
-        //    }
-
-        //    public void Dispose()
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-
-        //    object IEnumerator.Current
-        //    {
-        //        get { throw new NotImplementedException(); }
-        //    }
-
-        //    public bool MoveNext()
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-
-        //    public void Reset()
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-        //}//CswSchemaScriptsTestEnumerator
 
         //#endregion
     }//CswScriptCollections
