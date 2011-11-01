@@ -13,7 +13,6 @@
     var methods = {
 
         // Specialized
-
         ExpireDialog: function(options) {
             var o = {
                 onYes: function() { }
@@ -162,6 +161,39 @@
             });
 
         }, // AddNodeDialog
+        AddNodeTypeDialog: function (options) {
+            var o = {
+                objectClassId: '', 
+                $select: '',
+                nodeTypeDescriptor: ''
+            };
+
+            if (options) {
+                $.extend(o, options);
+            }
+
+            var $div = $('<div></div>'),
+                $nodeType, $category;
+            
+            $div.append('New ' + o.nodeTypeDescriptor + ': ');
+            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text });
+            $div.append('<br />');
+            $div.append('Category Name: ');
+            $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: CswInput_Types.text });
+            $div.append('<br />');
+            $div.CswButton({
+                    ID: o.objectClassId + '_add',
+                    enabledText: 'Add',
+                    onclick: function () {
+                        o.$select.append('<option value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>')
+                                 .data('objectClassId', o.objectClassId)
+                                 .data('category', $category.val());
+                        o.$select.val($nodeType.val());
+                        $div.dialog('close');
+                    }
+                });
+            openDialog($div, 300, 200, null, 'Create New Target Type, Group and Route for this Inspection.');
+        }, // AddNodeTypeDialog
         EditLayoutDialog: function (cswNodeTabOptions) {
             cswNodeTabOptions.ID = cswNodeTabOptions.ID + '_editlayout';
             cswNodeTabOptions.Config = true;
@@ -697,8 +729,16 @@
 
             openDialog($div, 400, 300);
         }, // PrintLabelDialog
-
-
+        ErrorDialog: function (error) {
+            var $div = $('<div />');
+            openDialog($div, 400, 300, null, 'Error');
+            $div.CswErrorMessage(error);
+        },
+        AlertDialog: function (message, title) {
+            var $div = $('<div>' + message + '</div>');
+            openDialog($div, 200, 200, null, title);
+        },
+        
         // Generic
 
 //		'OpenPopup': function(url) { 

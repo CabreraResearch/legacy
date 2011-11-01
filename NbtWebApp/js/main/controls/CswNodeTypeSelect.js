@@ -13,26 +13,29 @@
                 ID: '',
                 NodeTypesUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
                 nodetypeid: '',
+                objectClassName: '',
                 onSelect: null, //function (nodetypeid) {},
                 onSuccess: null //function () {}
             };
-
             if (options) {
                 $.extend(o, options);
             }
-            var $parent = $(this);
-            var $select = $('<select id="'+ o.ID +'_sel" />').css('width', '200px');
+            
+            var $parent = $(this),
+                $select = $('<select id="'+ o.ID +'_sel" />').css('width', '200px');
+            
             $select.change(function() { if (isFunction(o.onSelect)) o.onSelect( $select.val() ); });
 
             CswAjaxJson({
                     url: o.NodeTypesUrl,
-                    data: {},
-                    success: function (data)
-                    {
-                        for (var nodeType in data) {
+                    data: { ObjectClassName: tryParseString(o.objectClassName) },
+                    success: function (data) {
+                        var nodeType, thisNodeType;
+                        for (nodeType in data) {
                             if (contains(data, nodeType)) {
-                                var thisNodeType = data[nodeType];
-                                $select.append('<option value="' + thisNodeType.id + '">' + thisNodeType.name + '</option>');
+                                thisNodeType = data[nodeType];
+                                $select.append('<option value="' + thisNodeType.id + '">' + thisNodeType.name + '</option>')
+                                        .data('objectClassId', thisNodeType.objectclassid);
                             }
                         }
                         if (isFunction(o.onSuccess)) {
