@@ -16,44 +16,44 @@ namespace ChemSW.Nbt.Schema
     public class CswSchemaUpdater
     {
         private ICswSchemaScripts _CswSchemaScripts = null;
-		private string _AccessId = string.Empty;
+        private string _AccessId = string.Empty;
 
         /// <summary>
         /// Constructor
         /// </summary>
-		public CswSchemaUpdater( string AccessId, ResourcesInitHandler ResourcesInitHandler, ICswSchemaScripts CswSchemaScripts )
+        public CswSchemaUpdater( string AccessId, ResourcesInitHandler ResourcesInitHandler, ICswSchemaScripts CswSchemaScripts )
         {
             _CswSchemaScripts = CswSchemaScripts;
-			_ResourcesInitHandler = ResourcesInitHandler;
-			_AccessId = AccessId;
-			//_ReinitCswNbtResources( AccessId );
+            _ResourcesInitHandler = ResourcesInitHandler;
+            _AccessId = AccessId;
+            //_ReinitCswNbtResources( AccessId );
         }
 
-		#region Resources Handling
+        #region Resources Handling
 
-		// This allows us to use a new Resources per update script
-		public delegate CswNbtResources ResourcesInitHandler( string AccessId );
-		private ResourcesInitHandler _ResourcesInitHandler = null;
+        // This allows us to use a new Resources per update script
+        public delegate CswNbtResources ResourcesInitHandler( string AccessId );
+        private ResourcesInitHandler _ResourcesInitHandler = null;
 
-		//private CswNbtSchemaModTrnsctn _ReinitCswNbtResources( string AccessId )
-		//{
-		//}
+        //private CswNbtSchemaModTrnsctn _ReinitCswNbtResources( string AccessId )
+        //{
+        //}
 
-		//private CswNbtSchemaModTrnsctn __CswNbtSchemaModTrnsctn = null;
-		//public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
-		//{
-		//    get { return __CswNbtSchemaModTrnsctn; }
-		//}
+        //private CswNbtSchemaModTrnsctn __CswNbtSchemaModTrnsctn = null;
+        //public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+        //{
+        //    get { return __CswNbtSchemaModTrnsctn; }
+        //}
 
-		//private CswNbtResources __CswNbtResources;
-		//public CswNbtResources CswNbtResources
-		//{
-		//    get { return __CswNbtResources; }
-		//}
+        //private CswNbtResources __CswNbtResources;
+        //public CswNbtResources CswNbtResources
+        //{
+        //    get { return __CswNbtResources; }
+        //}
 
-		#endregion Resources Handling
+        #endregion Resources Handling
 
-		/// <summary>
+        /// <summary>
         /// The highest schema version number defined in the updater
         /// </summary>
         public CswSchemaVersion LatestVersion { get { return ( _CswSchemaScripts.LatestVersion ); } }
@@ -63,18 +63,18 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaVersion MinimumVersion { get { return ( _CswSchemaScripts.MinimumVersion ); } }
 
 
-		public CswSchemaVersion CurrentVersion( CswNbtResources CswNbtResources )
-		{
-			return ( _CswSchemaScripts.CurrentVersion( CswNbtResources ) );
-		}
+        public CswSchemaVersion CurrentVersion( CswNbtResources CswNbtResources )
+        {
+            return ( _CswSchemaScripts.CurrentVersion( CswNbtResources ) );
+        }
 
         /// <summary>
         /// Schema version of the currently targeted schema
         /// </summary>
-		public CswSchemaVersion TargetVersion( CswNbtResources CswNbtResources )
-		{
-			return ( _CswSchemaScripts.TargetVersion( CswNbtResources ) );
-		}
+        public CswSchemaVersion TargetVersion( CswNbtResources CswNbtResources )
+        {
+            return ( _CswSchemaScripts.TargetVersion( CswNbtResources ) );
+        }
 
         private string _ErrorMessage = string.Empty;
         public string ErrorMessage { get { return ( _ErrorMessage ); } }
@@ -87,19 +87,26 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Update the schema to the next version
         /// </summary>
-        public bool Update()
+        public bool Update( bool TakeADump = true )
         {
-			CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
-			CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( CswNbtResources );
-			
-			CswTableUpdate _UpdateHistoryTableUpdate = CswNbtResources.makeCswTableUpdate( "schemaupdater_updatehistory_update", "update_history" );
+
+
+            //if( TakeADump )
+            //{
+            //    _CswSchemaScripts.addUniversalPreProcessDriver( new CswSchemaUpdateDriver( new CswUpdateSchema_Infr_TakeDump() ) );
+            //}
+
+            CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
+            CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( CswNbtResources );
+
+            CswTableUpdate _UpdateHistoryTableUpdate = CswNbtResources.makeCswTableUpdate( "schemaupdater_updatehistory_update", "update_history" );
             DataTable _UpdateHistoryTable = _UpdateHistoryTableUpdate.getTable();
 
             CswSchemaUpdateDriver CurrentUpdateDriver = null;
             bool UpdateSuccessful = true;
             if( null != ( CurrentUpdateDriver = _CswSchemaScripts.Next( CswNbtResources ) ) )
             {
-				CurrentUpdateDriver.CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+                CurrentUpdateDriver.CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
                 CurrentUpdateDriver.update();
                 UpdateSuccessful = CurrentUpdateDriver.UpdateSucceeded;
 
@@ -135,7 +142,7 @@ namespace ChemSW.Nbt.Schema
                 _UpdateHistoryTableUpdate.update( _UpdateHistoryTable );
 
                 CswNbtResources.finalize();
-                CswNbtResources.release(); 
+                CswNbtResources.release();
 
             } // if update is valid
 
@@ -143,13 +150,13 @@ namespace ChemSW.Nbt.Schema
 
         }//Update()
 
-		public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers
-		{
-			get
-			{
-				return _CswSchemaScripts.UpdateDrivers;
-			}
-		}
+        public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers
+        {
+            get
+            {
+                return _CswSchemaScripts.UpdateDrivers;
+            }
+        }
 
 
 

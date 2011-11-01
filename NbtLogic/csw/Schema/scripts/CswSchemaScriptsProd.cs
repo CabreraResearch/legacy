@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ChemSW.Exceptions;
 
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
@@ -24,6 +25,20 @@ namespace ChemSW.Nbt.Schema
 
             // This is where you manually set to the last version of the previous release
             _MinimumVersion = new CswSchemaVersion( 1, 'J', 11 );
+
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J01() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J02() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J03() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J04() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J05() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J06() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J07() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J08() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J09() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J10() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J11() ) );
+
+
 
             // This is where you add new versions.
             CswSchemaUpdateDriver Schema01K01Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K01() );
@@ -121,6 +136,73 @@ namespace ChemSW.Nbt.Schema
 
 
         #endregion
+
+
+
+        #region #script order control
+        //These methods enable us to implemetn the Schema Updater Reform Act of 2011 (case 23787) 
+        //whilst allowing all the script iteration mechanisms to work business as usual
+        public void addUniversalPreProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        {
+            if( ( 0 != CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
+                ( "A" != CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) )
+            {
+                throw ( new CswDniException( "Schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString() + " cannot be a universal preprocess script; it's version must be in format 00-A-xx" ) );
+            }
+
+            _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
+
+        }//addPreProcessDriver
+
+
+        public void addReleaseDdlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        {
+            if( ( 99 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
+                  ( 0 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
+                  ( "A" == CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) ||
+                  ( "Z" == CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) ||
+                  ( 0 != CswSchemaUpdateDriver.SchemaVersion.ReleaseIteration )
+                )
+            {
+                throw ( new CswDniException( "Schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString() + " cannot be a release-specific ddl script; it's version must be: CycleIteration > 0 and < 99; ReleaseIdentifier > A and < Z; ReleaseIteration == 0" ) );
+            }
+
+            _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
+
+
+        }//addReleaseDdlDriver() 
+
+        public void addReleaseDmlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        {
+            if( ( 99 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
+                  ( 0 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
+                  ( "A" == CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) ||
+                  ( "Z" == CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) ||
+                  ( 0 == CswSchemaUpdateDriver.SchemaVersion.ReleaseIteration )
+                )
+            {
+                throw ( new CswDniException( "Schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString() + " cannot be a release-specific dml script; it's version must be: CycleIteration > 0 and < 99; ReleaseIdentifier > A and < Z; ReleaseIteration > 0" ) );
+            }
+
+            _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
+
+        }//addReleaseDmlDriver() 
+
+
+        public void addUniversalPostProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        {
+            if( ( 99 != CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
+                ( "Z" != CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) )
+            {
+                throw ( new CswDniException( "Schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString() + " cannot be a universal post-process script; it's version must be in format 99-Z-xx" ) );
+            }
+
+            _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
+
+        }//addPreProcessDriver        
+        #endregion
+
+
 
         //#region IEnumerable
         //public IEnumerator<CswSchemaUpdateDriver> GetEnumerator()
