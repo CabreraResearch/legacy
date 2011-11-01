@@ -26,19 +26,8 @@ namespace ChemSW.Nbt.Schema
             // This is where you manually set to the last version of the previous release
             _MinimumVersion = new CswSchemaVersion( 1, 'J', 11 );
 
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J01() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J02() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J03() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J04() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J05() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J06() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J07() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J08() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J09() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J10() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01J11() ) );
-
-
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K01() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K02() ) );
 
             // This is where you add new versions.
             CswSchemaUpdateDriver Schema01K01Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K01() );
