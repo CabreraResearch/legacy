@@ -125,28 +125,28 @@
 
                         tabcnt = tabno;
 
-                        for(var t in tabdivs) {
-                            var $tabdiv = tabdivs[t];
+                        each(tabdivs, function($tabdiv) {
+                            //var $tabdiv = tabdivs[t];
                             $tabdiv.tabs({
-                            selected: selectedtabno,
-                            select: function (event, ui) {
-                                var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
-                                var tabid = $tabcontentdiv.CswAttrDom('id');
-                                if (isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(tabid)) {
-                                        getProps($tabcontentdiv, tabid);
-                                    if (isFunction(o.onTabSelect)) {
-                                            o.onTabSelect(tabid);
+                                    selected: selectedtabno,
+                                    select: function(event, ui) {
+                                        var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
+                                        var tabid = $tabcontentdiv.CswAttrDom('id');
+                                        if (isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(tabid)) {
+                                            getProps($tabcontentdiv, tabid);
+                                            if (isFunction(o.onTabSelect)) {
+                                                o.onTabSelect(tabid);
+                                            }
+                                        } else {
+                                            return false;
                                         }
-                                    } else {
-                                        return false;
                                     }
-                                }
-                            });
+                                });
                             var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
                             var selectedtabid = $tabcontentdiv.CswAttrDom('id');
                             getProps($tabcontentdiv, selectedtabid);
                             if (isFunction(o.onTabSelect)) o.onTabSelect(selectedtabid);
-                        } // for(var t in tabdivs)
+                        }); // for(var t in tabdivs)
                     } // success
                 }); // ajax
             } // if-else editmode is add or preview
@@ -561,7 +561,7 @@
                     data: jsonData,
                     success: function(data) {
                         data.wasmodified = true;  // keep the fact that the parent property was modified
-						_makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn);
+                        _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn);
                     }
                 });
             }
