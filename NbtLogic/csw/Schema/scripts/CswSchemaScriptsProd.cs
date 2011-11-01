@@ -28,8 +28,10 @@ namespace ChemSW.Nbt.Schema
             // This is where you add new versions.
             CswSchemaUpdateDriver Schema01K01Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K01() );
             _UpdateDrivers.Add( Schema01K01Driver.SchemaVersion, Schema01K01Driver );
+            CswSchemaUpdateDriver Schema01K02Driver = new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K02() );
+            _UpdateDrivers.Add( Schema01K02Driver.SchemaVersion, Schema01K02Driver );
 
-			// This automatically detects the latest version
+            // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
                                                                                         ( _LatestVersion.CycleIteration == Version.CycleIteration &&
