@@ -66,7 +66,12 @@
     function setButton(newButtonType, $ImageDiv) {
         var multiplier = -18;
         //Case 24112: IE7 processes url() using https but randles the response as http--prompting the security dialog.
-        var prefix = document.location.protocol + "//" + document.location.hostname + '/NbtWebApp';
+        var port = document.location.port;
+        var prefix = document.location.protocol + "//" + document.location.hostname;
+        if (false === isNullOrEmpty(port) && port !== 80) {
+            prefix += ':' + port;
+        }
+        prefix += '/NbtWebApp';
         if (newButtonType !== undefined && newButtonType !== CswImageButton_ButtonType.None) {
             $ImageDiv.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') 0px ' + newButtonType * multiplier + 'px no-repeat';
             $ImageDiv.unbind('mouseover');
