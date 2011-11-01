@@ -263,7 +263,7 @@
                             break;
                     }
                     var viewMode = tryParseString(o.viewmode).toLowerCase();
-                    switch (viewMode) {
+                    switch (viewMode.toLowerCase()) {
                         case 'grid':
                             getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
                             break;
@@ -692,7 +692,7 @@
                 if (isNullOrEmpty(o.viewmode))
                     o.viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
 
-                switch (o.viewmode) {
+                switch (o.viewmode.toLowerCase()) {
 					case 'grid':
 						getViewGrid({
 							'viewid': o.viewid,
