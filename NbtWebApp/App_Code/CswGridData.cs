@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.WebServices
 
         private const string _NoResultsDisplayString = "No Results";
 
-        public JObject DataTableToJSON( DataTable Data )
+        public JObject DataTableToJSON( DataTable Data, bool EnableGridEdit = false )
         {
             // Columns
             JArray JColumnNames = new JArray();
@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.WebServices
             foreach( DataColumn Column in Data.Columns )
             {
                 bool IsKey = ( Column.ColumnName.ToLower() == PkColumn.ToLower() );
-                dataColumnToJson( Column, JColumnNames, JColumnDefs, IsKey );
+                dataColumnToJson( Column, JColumnNames, JColumnDefs, IsKey, false, EnableGridEdit );
             } // foreach( DataColumn Column in Data.Columns )
 
             // Rows
@@ -144,18 +144,19 @@ namespace ChemSW.Nbt.WebServices
 
         } // _mapDataTable()
 
-        public void dataColumnToJson( DataColumn Column, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false )
+        public void dataColumnToJson( DataColumn Column, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false, bool EnableGridEdit = false )
         {
             string ColumnName = Column.ColumnName.ToUpperInvariant();
-            makeJqColumn( ColumnName, JColumnNames, JColumnDefs, IsKey, IsHidden );
+            makeJqColumn( ColumnName, JColumnNames, JColumnDefs, IsKey, IsHidden, EnableGridEdit );
         }
 
-        public void makeJqColumn( String ColumnName, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false )
+        public void makeJqColumn( String ColumnName, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false, bool EnableGridEdit = false )
         {
             JColumnNames.Add( ColumnName.ToUpperInvariant() );
             JObject ThisColumnDef = new JObject();
-            ThisColumnDef["name"] = ColumnName.ToUpperInvariant();
-            ThisColumnDef["index"] = ColumnName.ToUpperInvariant();
+            ThisColumnDef["name"] = ColumnName.ToUpperInvariant().Replace( " ", "_" );
+            ThisColumnDef["index"] = ColumnName.ToUpperInvariant().Replace( " ", "_" );
+            ThisColumnDef["label"] = ColumnName.ToUpperInvariant();
             if( IsKey )
             {
                 ThisColumnDef["key"] = true;
@@ -163,6 +164,11 @@ namespace ChemSW.Nbt.WebServices
             if( ( IsKey && HidePkColumn ) || IsHidden )
             {
                 ThisColumnDef["hidden"] = true;
+            }
+            if( false == IsHidden && false == IsKey && EnableGridEdit )
+            {
+                ThisColumnDef["editable"] = true;
+                ThisColumnDef["edittype"] = "text";
             }
             _ColumnsWidth += ColumnName.Length;
             JColumnDefs.Add( ThisColumnDef );
@@ -173,7 +179,7 @@ namespace ChemSW.Nbt.WebServices
             JObject RowObj = new JObject();
             foreach( DataColumn Column in Row.Table.Columns )
             {
-                makeJqCell( RowObj, Column.ColumnName.ToUpperInvariant(), Row[Column].ToString() );
+                makeJqCell( RowObj, Column.ColumnName.ToUpperInvariant().Replace( " ", "_" ), Row[Column].ToString() );
             }
             JRows.Add( RowObj );
         } // _mapDataTable()
@@ -197,17 +203,17 @@ namespace ChemSW.Nbt.WebServices
                 Row["nodepk"] = new CswPrimaryKey( "nodes", CswConvert.ToInt32( GridNode.Attribute( "nodeid" ).Value ) ).ToString();
                 Row["cswnbtnodekey"] = wsTools.ToSafeJavaScriptParam( GridNode.Attribute( "key" ).Value );
                 Row["nodename"] = GridNode.Attribute( "nodename" ).Value;
-				string Icon = "<img src=\'";
-				if( CswConvert.ToBoolean( GridNode.Attribute( "locked" ).Value ) )
-				{
-					Icon += "Images/quota/lock.gif\' title=\'Quota exceeded";
-				}
-				else
-				{
-					Icon += "Images/icons/" + _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( GridNode.Attribute( "nodetypeid" ).Value ) ).IconFileName;
-				}
-				Icon += "\'/>";
-				Row["icon"] = Icon;
+                string Icon = "<img src=\'";
+                if( CswConvert.ToBoolean( GridNode.Attribute( "locked" ).Value ) )
+                {
+                    Icon += "Images/quota/lock.gif\' title=\'Quota exceeded";
+                }
+                else
+                {
+                    Icon += "Images/icons/" + _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( GridNode.Attribute( "nodetypeid" ).Value ) ).IconFileName;
+                }
+                Icon += "\'/>";
+                Row["icon"] = Icon;
 
                 foreach( XElement Related in GridNode.DescendantNodes().OfType<XElement>() )
                 {
