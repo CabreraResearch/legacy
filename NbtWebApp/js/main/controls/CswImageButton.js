@@ -8,7 +8,7 @@
 
     var methods = {
 
-        init: function(options) {
+        init: function (options) {
             var o = {
                 ButtonType: CswImageButton_ButtonType.None,
                 Active: false,
@@ -16,7 +16,7 @@
                 ID: '',
                 cssclass: '',
                 Required: false,
-                onClick: function() { return CswImageButton_ButtonType.None; }
+                onClick: function () { return CswImageButton_ButtonType.None; }
             };
 
             if (options) {
@@ -32,21 +32,21 @@
                     .css('display', 'inline-block');
 
             setButton(o.ButtonType, $ImageDiv);
-            $ImageDiv.bind('click', function() {
+            $ImageDiv.bind('click', function () {
                 var newButtonType = o.onClick($ImageDiv);
                 return setButton(newButtonType, $ImageDiv);
             });
-            
+
             $Div.append($ImageDiv);
             return $ImageDiv;
         },
         reBindClick: function (newButtonType, id, onClickEvent) {
-            var $this = $(this);   
+            var $this = $(this);
             if (isNullOrEmpty($this, true)) {
-                $this = $('#' + id); 
+                $this = $('#' + id);
             }
             if (false === isNullOrEmpty($this, true)) {
-                $this.bind('click', function() {
+                $this.bind('click', function () {
                     if (isFunction(onClickEvent)) {
                         onClickEvent();
                     }
@@ -55,9 +55,9 @@
             }
         },
         doClick: function (newButtonType, id) {
-            var $this = $(this);   
+            var $this = $(this);
             if (isNullOrEmpty($this, true)) {
-                $this = $('#' + id); 
+                $this = $('#' + id);
             }
             return setButton(newButtonType, $this);
         }
@@ -65,37 +65,39 @@
 
     function setButton(newButtonType, $ImageDiv) {
         var multiplier = -18;
+        //Case 24112: IE7 processes url() using https but randles the response as http--prompting the security dialog.
+        var prefix = document.location.protocol + "//" + document.location.hostname + '/NbtWebApp';
         if (newButtonType !== undefined && newButtonType !== CswImageButton_ButtonType.None) {
-            $ImageDiv.get(0).style.background = 'url(\'Images/buttons/buttons18.gif\') 0px ' + newButtonType * multiplier + 'px no-repeat';
+            $ImageDiv.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') 0px ' + newButtonType * multiplier + 'px no-repeat';
             $ImageDiv.unbind('mouseover');
             $ImageDiv.unbind('mouseout');
             $ImageDiv.unbind('mousedown');
             $ImageDiv.unbind('mouseup');
-            $ImageDiv.bind('mouseover', function() {
+            $ImageDiv.bind('mouseover', function () {
                 this.style.backgroundPosition = '-18px ' + newButtonType * multiplier + 'px';
             });
-            $ImageDiv.bind('mouseout', function() {
+            $ImageDiv.bind('mouseout', function () {
                 this.style.backgroundPosition = '0px ' + newButtonType * multiplier + 'px';
             });
-            $ImageDiv.bind('mousedown', function() {
+            $ImageDiv.bind('mousedown', function () {
                 this.style.backgroundPosition = '-36px ' + newButtonType * multiplier + 'px';
             });
-            $ImageDiv.bind('mouseup', function() {
+            $ImageDiv.bind('mouseup', function () {
                 this.style.backgroundPosition = '-18px ' + newButtonType * multiplier + 'px';
             });
         }
         return false;
     } // setOffset()
-    
-    $.fn.CswImageButton = function (method)  {
+
+    $.fn.CswImageButton = function (method) {
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } 
+        }
         else if (typeof method === 'object' || false === method) {
             return methods.init.apply(this, arguments);
         } else {
             $.error('Method ' + method + ' does not exist on ' + pluginName);
         }
     };
-    
+
 })(jQuery);
