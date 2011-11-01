@@ -62,189 +62,210 @@
         // step 3 - Upload file
             $divStep3, instructions3, $fileUploadDiv,
         // step 4 - Preview results
-            $divStep4, $textBoxTempFileName,
+            $divStep4, $textBoxTempFileName, grid,
         // step 5
             $divStep5;
 
-        function makeStepTwo() {
-            $wizard.CswWizard('button', 'previous', 'enable');
-            $wizard.CswWizard('button', 'next', 'disable');
-            $wizard.CswWizard('button', 'finish', 'disable');
+        var makeStepTwo = (function () {
+            var stepTwoComplete = false;
+            return function () {
+                $wizard.CswWizard('button', 'previous', 'enable');
+                $wizard.CswWizard('button', 'next', 'disable');
+                $wizard.CswWizard('button', 'finish', 'disable');
+                if (false === stepTwoComplete) {
+                    $divStep2 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step2.step);
 
-            $divStep2 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step2.step);
-            $inspectionLabel = $("<br/><br/>Please enter the name of the new inspection:<br />").appendTo($divStep2);
-            $inspectionName = $divStep2.CswInput('init', {
-                ID: o.ID + '_inspectionName',
-                type: CswInput_Types.text
-            });
-            $inspectionName.keypress(function () {
-                var $this = $(this);
-                if (false === isNullOrEmpty(tryParseString($this.val()).trim())) {
-                    $wizard.CswWizard('button', 'next', 'enable');
-                } else {
-                    $wizard.CswWizard('button', 'next', 'disable');
-                }
-            });
-            $errorLabel = $('<div ID="inspectionNameErrorLabel" style="visibility:hidden">ERROR: inspection name is NOT unique.</div>').appendTo($divStep2);
-            targetName = $("<br/><br/>Please enter the target of the new inspection:<br />").appendTo($divStep2);
-            $table = $divStep2.CswTable();
-            $addNodeType = $table.CswTable('cell', 1, 2).CswDiv('init');
-            $inspectionTarget = $table.CswTable('cell', 1, 1).CswDiv('init').CswNodeTypeSelect('init', { ID: 'step2_nodeTypeSelect', objectClassName: 'InspectionTargetClass' });
-
-            $addNodeType.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
-                AlternateText: "Create New Inspection Target",
-                onClick: function ($ImageDiv) {
-                    $.CswDialog('AddNodeTypeDialog', {
-                        objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
-                        $select: $inspectionTarget,
-                        nodeTypeDescriptor: 'Inspection Target Type'
+                    $inspectionLabel = $("<br/><br/>Please enter the name of the new inspection:<br />").appendTo($divStep2);
+                    $inspectionName = $divStep2.CswInput('init', {
+                        ID: o.ID + '_inspectionName',
+                        type: CswInput_Types.text
                     });
-                    return CswImageButton_ButtonType.None;
-                }
-            });
-        }
+                    $inspectionName.keypress(function () {
+                        setTimeout(function () {
+                            if (false === isNullOrEmpty(tryParseString($inspectionName.val()).trim())) {
+                                $wizard.CswWizard('button', 'next', 'enable');
+                            } else {
+                                $wizard.CswWizard('button', 'next', 'disable');
+                            }
+                        }, 100);
+                    });
+                    $errorLabel = $('<div ID="inspectionNameErrorLabel" style="visibility:hidden">ERROR: inspection name is NOT unique.</div>').appendTo($divStep2);
+                    targetName = $("<br/><br/>Please enter the target of the new inspection:<br />").appendTo($divStep2);
+                    $table = $divStep2.CswTable();
+                    $addNodeType = $table.CswTable('cell', 1, 2).CswDiv('init');
+                    $inspectionTarget = $table.CswTable('cell', 1, 1).CswDiv('init').CswNodeTypeSelect('init', { ID: 'step2_nodeTypeSelect', objectClassName: 'InspectionTargetClass' });
 
-        function makeStepThree() {
-            $wizard.CswWizard('button', 'previous', 'enable');
-            $wizard.CswWizard('button', 'next', 'disable');
-            $wizard.CswWizard('button', 'finish', 'disable');
-
-            $divStep3 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step3.step);
-            instructions3 = $("<br/><br/>Please select your Excel file containing your inspection questions.<br/><br/>").appendTo($divStep3);
-            $fileUploadDiv = $('<div></div>');
-
-            var fileUpOpts = {
-                url: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
-                params: {
-                    InspectionName: $inspectionName.val()
-                },
-                onSuccess: function (id, fileName, data) {
-                    var onStepThreeComplete = function () {
-                        $textBoxTempFileName = $divStep4.CswInput('init', {
-                            ID: 'step4_tempFileName',
-                            type: CswInput_Types.hidden,
-                            value: data.tempFileName
-                        });
-                        var $newInspectionName = $inspectionName.val(),
-                            $targetName = $inspectionTarget.find(':selected').text(),
-                            step4PreviewGridId = o.ID + '_step4_previewGrid_outer',
-                            $previewGrid = $div.find('#' + step4PreviewGridId),
-                            lastSelRow, g, grid;
-
-                        $divStep4.append("Inspection Name: ");
-                        $divStep4.append($newInspectionName);
-                        $divStep4.append("<br/><br/>Target: ");
-                        $divStep4.append($targetName);
-                        $divStep4.append("<br/><br/>Your data from the Excel spreadsheet is shown below.  If this all looks correct then click the 'Save and Finish' button to create the new inspection.<br/><br/>");
-
-                        if (isNullOrEmpty($previewGrid) || $previewGrid.length === 0) {
-                            $previewGrid = $('<div id="' + o.ID + '"></div>').appendTo($divStep4);
+                    $addNodeType.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
+                        AlternateText: "Create New Inspection Target",
+                        onClick: function ($ImageDiv) {
+                            $.CswDialog('AddNodeTypeDialog', {
+                                objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
+                                $select: $inspectionTarget,
+                                nodeTypeDescriptor: 'Inspection Target Type'
+                            });
+                            return CswImageButton_ButtonType.None;
                         }
-                        else {
-                            $previewGrid.empty();
-                        }
-
-                        g = {
-                            Id: o.ID,
-                            pagermode: 'default',
-                            gridOpts: {
-                                autowidth: true,
-                                rowNum: 20,
-                                onSelectRow: function (rowId) {
-                                    if (rowId && rowId !== lastSelRow) {
-                                        grid.$gridTable.jqGrid('saveRow',lastSelRow, false, 'clientArray');
-                                        lastSelRow = rowId;
-                                    }
-                                    grid.$gridTable.jqGrid('editRow', rowId, true, '', '', 'clientArray');
-                                }
-                            },
-                            optNav: {
-                                add: true,
-                                del: true,
-                                edit: false,
-                                view: false
-                            },
-                            canDelete: true
-
-                        };
-
-                        $.extend(g.gridOpts, data.jqGridOpt);
-
-                        grid = new CswGrid(g, $previewGrid);
-                    };
-
-                    $wizard.CswWizard('button', 'next', 'enable');
-                    $wizard.CswWizard('button', 'next', 'click');
-                    onStepThreeComplete();
+                    });
+                    stepTwoComplete = true;
                 }
             };
+        } ());
 
-            var uploader = new qq.FileUploader({
-                element: $fileUploadDiv.get(0),
-                action: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
-                params: fileUpOpts.params,
-                onSubmit: function () {
-                    fileUpOpts.params['InspectionName'] = $inspectionName.val();
-                },
-                onComplete: function (id, fileName, data) {
-                    fileUpOpts.onSuccess(id, fileName, data);
-                },
-                showMessage: function (error) {
-                    $.CswDialog('ErrorDialog', error);
+        var makeStepThree = (function () {
+            var stepThreeComplete = false;
+            return function () {
+                $wizard.CswWizard('button', 'previous', 'enable');
+                $wizard.CswWizard('button', 'next', 'disable');
+                $wizard.CswWizard('button', 'finish', 'disable');
+
+                if (false === stepThreeComplete) {
+                    $divStep3 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step3.step);
+
+                    instructions3 = $("<br/><br/>Please select your Excel file containing your inspection questions.<br/><br/>").appendTo($divStep3);
+                    $fileUploadDiv = $('<div></div>');
+
+                    var fileUpOpts = {
+                        url: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
+                        params: {
+                            InspectionName: $inspectionName.val()
+                        },
+                        onSuccess: function (id, fileName, data) {
+                            var onStepThreeComplete = function () {
+                                $divStep4.empty();
+                                $textBoxTempFileName = $divStep4.CswInput('init', {
+                                    ID: 'step4_tempFileName',
+                                    type: CswInput_Types.hidden,
+                                    value: data.tempFileName
+                                });
+                                var $newInspectionName = $inspectionName.val(),
+                                    $targetName = $inspectionTarget.find(':selected').text(),
+                                    step4PreviewGridId = o.ID + '_step4_previewGrid_outer',
+                                    $previewGrid = $div.find('#' + step4PreviewGridId),
+                                    lastSelRow, g;
+
+                                $divStep4.append("Inspection Name: ");
+                                $divStep4.append($newInspectionName);
+                                $divStep4.append("<br/><br/>Target: ");
+                                $divStep4.append($targetName);
+                                $divStep4.append("<br/><br/>Your data from the Excel spreadsheet is shown below.  If this all looks correct then click the 'Save and Finish' button to create the new inspection.<br/><br/>");
+
+                                if (isNullOrEmpty($previewGrid) || $previewGrid.length === 0) {
+                                    $previewGrid = $('<div id="' + o.ID + '"></div>').appendTo($divStep4);
+                                }
+                                else {
+                                    $previewGrid.empty();
+                                }
+
+                                g = {
+                                    Id: o.ID,
+                                    pagermode: 'default',
+                                    gridOpts: {
+                                        autowidth: true,
+                                        rowNum: 20,
+                                        onSelectRow: function (rowId) {
+                                            if (rowId && rowId !== lastSelRow) {
+                                                grid.$gridTable.jqGrid('saveRow', lastSelRow, false, 'clientArray');
+                                                lastSelRow = rowId;
+                                            }
+                                            grid.$gridTable.jqGrid('editRow', rowId, true, '', '', 'clientArray');
+                                        }
+                                    },
+                                    optNav: {
+                                        add: true,
+                                        del: true,
+                                        edit: false,
+                                        view: false
+                                    },
+                                    canDelete: true
+
+                                };
+
+                                $.extend(g.gridOpts, data.jqGridOpt);
+
+                                grid = new CswGrid(g, $previewGrid);
+                            };
+
+                            $wizard.CswWizard('button', 'next', 'enable');
+                            $wizard.CswWizard('button', 'next', 'click');
+                            onStepThreeComplete();
+                        }
+                    };
+
+                    var uploader = new qq.FileUploader({
+                        element: $fileUploadDiv.get(0),
+                        action: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
+                        params: fileUpOpts.params,
+                        onSubmit: function () {
+                            fileUpOpts.params['InspectionName'] = $inspectionName.val();
+                        },
+                        onComplete: function (id, fileName, data) {
+                            fileUpOpts.onSuccess(id, fileName, data);
+                        },
+                        showMessage: function (error) {
+                            $.CswDialog('ErrorDialog', error);
+                        }
+                    });
+                    $divStep3.append($fileUploadDiv);
+                    stepThreeComplete = true;
                 }
-            });
-            $divStep3.append($fileUploadDiv);
-
-            CswAjaxJson({
-                url: '/NbtWebApp/wsNBT.asmx/IsNewInspectionNameUnique',
-                data: { 'NewInspectionName': $inspectionName.val() },
-                success: function (response) {
-                    if (isTrue(response.succeeded)) {
-                        $errorLabel.css('display', 'none');
-                    }
-                    else {
-                        $errorLabel.css('display', '');
+                CswAjaxJson({
+                    url: '/NbtWebApp/wsNBT.asmx/IsNewInspectionNameUnique',
+                    data: { 'NewInspectionName': $inspectionName.val() },
+                    success: function (data) {
+                        
+                    },
+                    error: function (data) {
                         $wizard.CswWizard('button', 'previous', 'click');
+                        $.CswDialog('ErrorDialog', data); 
                     }
-                }
-            });
-        }
+                });
+            };
+        } ());
 
         function makeStepFour() {
             $wizard.CswWizard('button', 'previous', 'enable');
             $wizard.CswWizard('button', 'next', 'enable');
             $wizard.CswWizard('button', 'finish', 'disable');
-
             $divStep4 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step4.step);
         }
 
-        function makeStepFive() {
-            $wizard.CswWizard('button', 'previous', 'enable');
-            $wizard.CswWizard('button', 'next', 'disable');
-            $wizard.CswWizard('button', 'finish', 'enable');
-            var newInspectionName = $inspectionName.val(),
-                targetInspection = $inspectionTarget.find(':selected').text(),
-                tempFileName = $textBoxTempFileName.val();
+        var makeStepFive = (function () {
+            var stepFiveComplete = false;
+            return function () {
+                log(grid.$gridTable.jqGrid('jqGridExport', 'jsonstring'));
 
-            CswAjaxJson({
-                url: '/NbtWebApp/wsNBT.asmx/uploadInspectionFile',
-                data: {
-                    NewInspectionName: newInspectionName,
-                    TargetName: targetInspection,
-                    TempFileName: tempFileName
-                },
-                success: function (response) {
-                    if (response.success == 'true') {
-                        $wizard.CswWizard('button', 'previous', 'disable');
-                        $wizard.CswWizard('button', 'cancel', 'disable');
-                        $divStep5.append("Your design was created successfully");
-                    }
-                    else {
-                        $divStep5.append("Error: " + response.error.message);
-                    }
+                $wizard.CswWizard('button', 'previous', 'enable');
+                $wizard.CswWizard('button', 'next', 'disable');
+                $wizard.CswWizard('button', 'finish', 'enable');
+                $divStep5 = $wizard.CswWizard('div', CswImportInspectionQuestions_WizardSteps.step5.step);
+
+                if (false === stepFiveComplete) {
+                    var newInspectionName = $inspectionName.val(),
+                        targetInspection = $inspectionTarget.find(':selected').text(),
+                        tempFileName = $textBoxTempFileName.val();
+
+                    CswAjaxJson({
+                        url: '/NbtWebApp/wsNBT.asmx/uploadInspectionFile',
+                        data: {
+                            NewInspectionName: newInspectionName,
+                            TargetName: targetInspection,
+                            TempFileName: tempFileName
+                        },
+                        success: function (response) {
+                            if (response.success == 'true') {
+                                $wizard.CswWizard('button', 'previous', 'disable');
+                                $wizard.CswWizard('button', 'cancel', 'disable');
+                                $divStep5.append("Your design was created successfully");
+                            }
+                            else {
+                                $divStep5.append("Error: " + response.error.message);
+                            }
+                        }
+                    });
+                    stepFiveComplete = true;
                 }
-            });
-        }
+            };
+        } ());
 
         function handleNext($wizardTable, newStepNo) {
             //currentStep = newStepNo;

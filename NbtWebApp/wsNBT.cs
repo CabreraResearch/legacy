@@ -3189,14 +3189,6 @@ namespace ChemSW.Nbt.WebServices
             {
                 ReturnVal = jError( ex );
             }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            //Context.Response.Clear();
-            //Context.Response.ContentType = "application/json";
-            //Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
-            //Context.Response.Flush();
-            //Context.Response.Write( ReturnVal.ToString() );
             return ReturnVal.ToString();
         } // uploadInspectionFile()
 
@@ -3274,9 +3266,14 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions( _CswNbtResources );
                     if( ws.IsNodeTypeNameUnique( NewInspectionName ) )
-                        ReturnVal = new JObject( new JProperty( "succeeded", "true" ) );
+                    {
+                        ReturnVal["succeeded"] = "true";
+                    }
                     else
-                        ReturnVal = new JObject( new JProperty( "succeeded", "false" ) );
+                    {
+                        throw new CswDniException( ErrorType.Warning, "The provided inspection name is not unique.", "A NodeType with the name " + NewInspectionName + " already exists." );
+                    }
+
                 }
                 _deInitResources();
             }
