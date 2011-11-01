@@ -1,24 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.NbtWebControls;
+using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-
-using Telerik.Web.UI;
-using ChemSW.CswWebControls;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.NbtWebControls;
 using ChemSW.NbtWebControls.FieldTypes;
+using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -168,7 +159,7 @@ namespace ChemSW.Nbt.WebPages
             DueDateIntervalLiteral.Text = "Due Date Interval:";
             SubTable.addControl( 2, 0, DueDateIntervalLiteral );
 
-            DueDateInterval = new CswTimeIntervalSelector(Master.CswNbtResources, false );
+            DueDateInterval = new CswTimeIntervalSelector( Master.CswNbtResources, false );
             DueDateInterval.ID = "DueDateInterval";
             SubTable.addControl( 2, 1, DueDateInterval );
         }
@@ -211,7 +202,7 @@ namespace ChemSW.Nbt.WebPages
                         }
                         break;
                     case 3:
-						CswNbtView ViewToLoad = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( TargetViewDropDown.SelectedValue ) ) );
+                        CswNbtView ViewToLoad = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( TargetViewDropDown.SelectedValue ) ) );
                         ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( ViewToLoad, true, true, false, false );
                         string Xml = Tree.getTreeAsXml();
                         TargetTreeView.LoadXml( Xml );

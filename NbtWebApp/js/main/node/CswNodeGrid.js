@@ -23,7 +23,7 @@
             $.CswDialog('DeleteNodeDialog', opts);
         };
         var emptyFunc = function(opts) {
-            alert('Please select a row to delete');
+            $.CswDialog('AlertDialog', 'Please select a row to delete');
         };
         return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
     }
@@ -42,7 +42,7 @@
             $.CswDialog('EditNodeDialog', opts);
         };
         var emptyFunc = function(opts) {
-            alert('Please select a row to edit');
+            $.CswDialog('AlertDialog', 'Please select a row to edit');
         };
         return grid.opGridRows(editOpt, rowid, editFunc, emptyFunc);
     }
