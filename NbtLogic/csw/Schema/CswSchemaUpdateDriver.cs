@@ -9,13 +9,13 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswSchemaUpdateDriver
     {
-		protected CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
-		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
-		{
-			set { _CswNbtSchemaModTrnsctn = value; }
-		}
-		
-		CswUpdateSchemaTo _CswUpdateSchemaTo = null;
+        protected CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
+        public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+        {
+            set { _CswNbtSchemaModTrnsctn = value; }
+        }
+
+        CswUpdateSchemaTo _CswUpdateSchemaTo = null;
         private string _Message = "Update Succeeded";
         public string Message { get { return ( _Message ); } }
         private bool _UpdateSucceeded = true;
@@ -53,10 +53,10 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.refreshDataDictionary();
                 _CswNbtSchemaModTrnsctn.beginTransaction();
 
-				_CswUpdateSchemaTo.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-				_CswUpdateSchemaTo.update();
-    
-				_CswNbtSchemaModTrnsctn.commitTransaction();
+                _CswUpdateSchemaTo.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+                _CswUpdateSchemaTo.update();
+
+                _CswNbtSchemaModTrnsctn.commitTransaction();
             }
 
             catch( CswDniExceptionIgnoreDeliberately CswDniExceptionIgnoreDeliberately )

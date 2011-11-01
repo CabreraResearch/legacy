@@ -109,13 +109,13 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtObjClassEquipmentType TypeNodeAsType = CswNbtNodeCaster.AsEquipmentType( TypeNode );
                     CswDelimitedString PartsString = new CswDelimitedString( '\n' );
-					PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
+                    PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
                     this.Parts.YValues = PartsString;
                 }
             }
 
-			// case 21809
-			SynchEquipmentToAssembly();
+            // case 21809
+            SynchEquipmentToAssembly();
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
@@ -193,8 +193,8 @@ namespace ChemSW.Nbt.ObjClasses
                                 EquipProp.copy( AssemblyProp );
                                 EquipProp.ReadOnly = true;
                                 FoundMatch = true;
-								// case 21809
-								EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
+                                // case 21809
+                                EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
                             }
                         }
                         if( !FoundMatch )

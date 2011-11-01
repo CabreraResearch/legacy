@@ -66,14 +66,14 @@
         var MainSearchId = 'CswSearchForm';
 
         onBeforeAjax = function () {
-        	$('#ajaxSpacer').hide();
-        	$('#ajaxImage').show();
+            $('#ajaxSpacer').hide();
+            $('#ajaxImage').show();
         }
         onAfterAjax = function (succeeded) {
-        	if (!ajaxInProgress()) {
-        		$('#ajaxImage').hide();
-        		$('#ajaxSpacer').show();
-        	}
+            if (!ajaxInProgress()) {
+                $('#ajaxImage').hide();
+                $('#ajaxSpacer').show();
+            }
         }
 
         // handle querystring arguments
@@ -98,24 +98,24 @@
         function initAll() {
             //if (debugOn()) log('Main.initAll()');
 
-        	$('#CenterBottomDiv').CswLogin('init', {
+            $('#CenterBottomDiv').CswLogin('init', {
                 'onAuthenticate': function (u) {
                     $('#header_username').text(u)
                         .hover(function () { $(this).CswAttrDom('title', getExpireTime()); });
                     $('#header_dashboard').CswDashboard();
 
-					$('#header_quota').CswQuotaImage();
+                    $('#header_quota').CswQuotaImage();
 
                     $('#header_menu').CswMenuHeader({
-							'onLogout': function () {
-								Logout();
+                            'onLogout': function () {
+                                Logout();
                             },
-							'onQuotas': function () {
-								_handleAction({ 'actionname': 'Quotas' });
-							},
-							'onSessions': function () {
-								_handleAction({ 'actionname': 'Sessions' });
-							}
+                            'onQuotas': function () {
+                                _handleAction({ 'actionname': 'Quotas' });
+                            },
+                            'onSessions': function () {
+                                _handleAction({ 'actionname': 'Sessions' });
+                            }
                     }); // CswMenuHeader
 
                     $('#ViewSelectDiv').CswViewSelect({
@@ -263,7 +263,7 @@
                             break;
                     }
                     var viewMode = tryParseString(o.viewmode).toLowerCase();
-                    switch (viewMode) {
+                    switch (viewMode.toLowerCase()) {
                         case 'grid':
                             getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
                             break;
@@ -692,39 +692,39 @@
                 if (isNullOrEmpty(o.viewmode))
                     o.viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
 
-                switch (o.viewmode) {
-					case 'grid':
-						getViewGrid({
-							'viewid': o.viewid,
-							'nodeid': o.nodeid,
-							'cswnbtnodekey': o.cswnbtnodekey,
-							'showempty': o.showempty,
-							'forsearch': o.forsearch
-						});
-						break;
-					case 'table':
-						getViewTable({
-							'viewid': o.viewid,
-							'nodeid': o.nodeid,
-							'cswnbtnodekey': o.cswnbtnodekey
-						});
-						break;
-					case 'tree':
-						//default: //tree
-						refreshNodesTree({
-							'nodeid': o.nodeid,
-							'cswnbtnodekey': o.cswnbtnodekey,
-							'nodename': o.nodename,
-							'viewid': o.viewid,
-							'viewmode': o.viewmode,
-							'showempty': o.showempty,
-							'forsearch': o.forsearch,
-							'IncludeNodeRequired': o.IncludeNodeRequired
-						});
-						break;
-					default: // reload the welcome page
-						refreshWelcome();
-						break;
+                switch (o.viewmode.toLowerCase()) {
+                    case 'grid':
+                        getViewGrid({
+                            'viewid': o.viewid,
+                            'nodeid': o.nodeid,
+                            'cswnbtnodekey': o.cswnbtnodekey,
+                            'showempty': o.showempty,
+                            'forsearch': o.forsearch
+                        });
+                        break;
+                    case 'table':
+                        getViewTable({
+                            'viewid': o.viewid,
+                            'nodeid': o.nodeid,
+                            'cswnbtnodekey': o.cswnbtnodekey
+                        });
+                        break;
+                    case 'tree':
+                        //default: //tree
+                        refreshNodesTree({
+                            'nodeid': o.nodeid,
+                            'cswnbtnodekey': o.cswnbtnodekey,
+                            'nodename': o.nodename,
+                            'viewid': o.viewid,
+                            'viewmode': o.viewmode,
+                            'showempty': o.showempty,
+                            'forsearch': o.forsearch,
+                            'IncludeNodeRequired': o.IncludeNodeRequired
+                        });
+                        break;
+                    default: // reload the welcome page
+                        refreshWelcome();
+                        break;
                 } // switch
             } // if (manuallyCheckChanges())
         } // refreshSelected()
@@ -816,24 +816,25 @@
                 case 'Create_Inspection':
                     clear({ 'all': true });
 
-                    var ImportInspectionQuestionsOptions = {
-                        'viewid': o.ActionOptions.viewid,
-                        'viewmode': o.ActionOptions.viewmode,
-                        'onCancel': function () {
+                    var importInspectionQuestionsOptions = {
+                        ID: 'cswInspectionDesignWizard',
+                        viewid: o.ActionOptions.viewid,
+                        viewmode: o.ActionOptions.viewmode,
+                        onCancel: function () {
                             clear({ 'all': true });
                             setCurrent(getLast());
                             refreshSelected();
                         },
-                        'onFinish': function (viewid, viewmode) {
+                        onFinish: function (viewid, viewmode) {
                             clear({ 'all': true });
                             refreshSelected();
                             // After the new inspection is imported, Phil and Steve want to send the system to Design Mode
                             window.location = "Design.aspx";
                         },
-                        'startingStep': o.ActionOptions.startingStep
+                        startingStep: o.ActionOptions.startingStep
                     };
 
-                    $('#CenterTopDiv').CswImportInspectionQuestions(ImportInspectionQuestionsOptions);
+                    $('#CenterTopDiv').CswInspectionDesign(importInspectionQuestionsOptions);
 
                     break;
 
@@ -876,23 +877,23 @@
                 //				break;     
                 case 'OOC_Inspections':
 
-                   	_setupOOCInspections();
+                    _setupOOCInspections();
 
-                   	break;
-					
+                    break;
+                    
                 case 'Quotas':
 
-                	clear({ 'all': true });
-                	$('#CenterTopDiv').CswQuotas();
+                    clear({ 'all': true });
+                    $('#CenterTopDiv').CswQuotas();
 
-                   	break;
+                    break;
 
                 case 'Sessions':
 
-                	clear({ 'all': true });
-                	$('#CenterTopDiv').CswSessions();
+                    clear({ 'all': true });
+                    $('#CenterTopDiv').CswSessions();
 
-                   	break;
+                    break;
 
 
                 //			case 'Load_Mobile_Data':     

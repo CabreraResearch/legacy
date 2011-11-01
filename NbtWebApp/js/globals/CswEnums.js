@@ -296,3 +296,10 @@ var CswSubFields_Map = {
     ViewReference: { name: 'ViewReference', subfields: { } }
 };
 
+var CswImportInspectionQuestions_WizardSteps = {
+    'step1': { step: 1, description: 'Download template' },
+    'step2': { step: 2, description: 'Select name and target' },
+    'step3': { step: 3, description: 'Select File For Upload' },
+    'step4': { step: 4, description: 'Preview' },
+    'step5': { step: 5, description: 'Results' }
+};
