@@ -1,7 +1,7 @@
-///// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-///// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-///// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-///// <reference path="_Global.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswPrototypeExtensions.js" />
 
 //#region CswClientDb
 function CswClientDb() {
@@ -17,12 +17,18 @@ function CswClientDb() {
     var serializer = JSON;
     var serialize = serializer.stringify;
     var deserialize = $.parseJSON;
-
+    var hasLocalStorage = (Modernizr.localstorage && false === isNullOrEmpty(window.localStorage));
+    var hasSessionStorage = (Modernizr.sessionstorage && false === isNullOrEmpty(window.sessionStorage));
+    
     //priveleged, public
-    this.clear = function() {
+    this.clear = function () {
         //nuke the entire storage collection
-        localStorage.clear();
-        sessionStorage.clear();
+        if (hasLocalStorage) {
+            localStorage.clear();
+        }
+        if (hasSessionStorage) {
+            sessionStorage.clear();
+        }
         storedInMemory = {};
         return this;
     };
@@ -102,23 +108,23 @@ function CswClientDb() {
             }
             catch (locErr) {
                 try {
-                    if (debugOn()) {
-                        log('localStorage failed:' + locErr);
-                    }
+//                    if (debugOn()) {
+//                        log('localStorage failed:' + locErr);
+//                    }
                     localStorage.removeItem(key);
                     sessionStorage.setItem(key, val);
                 } catch (ssnErr) {
-                    if (debugOn()) {
-                        log('sessionStorage failed:' + ssnErr);
-                    }
+//                    if (debugOn()) {
+//                        log('sessionStorage failed:' + ssnErr);
+//                    }
                     try {
                         sessionStorage.removeItem(key);
                         storedInMemory[key] = value;
                     }
                     catch (memErr) {
-                        if (debugOn()) {
-                            log('memory storage failed:' + memErr);
-                        }
+//                        if (debugOn()) {
+//                            log('memory storage failed:' + memErr);
+//                        }
                         ret = false;
                     }
                 }

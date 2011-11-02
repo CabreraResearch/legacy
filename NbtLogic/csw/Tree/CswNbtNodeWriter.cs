@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt
 {
@@ -18,6 +19,20 @@ namespace ChemSW.Nbt
         {
             _CswNbtResources = CswNbtResources;
         }
+
+        public void clear()
+        {
+            if( null != _CswNbtNodeWriterNative )
+            {
+                _CswNbtNodeWriterNative.clear();
+            }
+
+
+            if( null != _CswNbtNodeWriterRelationalDb )
+            {
+                _CswNbtNodeWriterRelationalDb.clear();
+            }
+        }//clear() 
 
         private ICswNbtNodeWriterImpl getWriterImpl( CswPrimaryKey NodePk )
         {
@@ -47,7 +62,14 @@ namespace ChemSW.Nbt
 
 		public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase, bool IsCopy, bool OverrideUniqueValidation )
         {
-            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, PostToDatabase );
+            // case 20970
+			CswNbtActQuotas Quotas = new CswNbtActQuotas(_CswNbtResources);
+			if( !Quotas.CheckQuotaNT( Node.NodeTypeId ) )
+			{
+				Node.Locked = true;
+			}
+
+			getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, PostToDatabase );
             //setDefaultPropertyValues( Node );
 
 			// case 22591 - make empty rows for every property

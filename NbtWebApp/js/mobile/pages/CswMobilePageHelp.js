@@ -1,22 +1,21 @@
-/// <reference path="../../_Global.js" />
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
 /// <reference path="../controls/CswMobileMenuButton.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
-/// <reference path="../../jquery/common/CswCookie.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../../main/tools/CswCookie.js" />
 /// <reference path="CswMobilePageFactory.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
 /// <reference path="../sync/CswMobileSync.js" />
-/// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../sync/CswMobileBackgroundTask.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
 
 //#region CswMobilePageHelp
 
-function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
+function CswMobilePageHelp(helpDef, $parent, mobileStorage, $contentRole) {
     /// <summary>
     ///   Help Page class. Responsible for generating a Mobile help page.
     /// </summary>
@@ -27,63 +26,40 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
 
     //#region private
 
-    var $content = '';
     var pageDef = { };
-    var id = CswMobilePage_Type.help.id;
-    var title = CswMobilePage_Type.help.title;
-    var divSuffix = '_help';
-    var contentDivId;
+    var id, title, contentDivId, $content,
+        divSuffix = '_help';
     
     //ctor
-    (function() {
-        if(isNullOrEmpty(mobileStorage)) {
-            mobileStorage = new CswMobileClientDbResources();
-        }
-    
-        var p = {
+    (function () {
+        pageDef = {
             level: -1,
             DivId: '',
+            buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back ],
             title: '',
-            theme: CswMobileGlobal_Config.theme,
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
-            onOnlineClick: function () {},
-            onRefreshClick: function () {}
+            theme: CswMobileGlobal_Config.theme
         };
-        if (helpDef) $.extend(p, helpDef);
-        
-        if(!isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
+        if (helpDef) {
+            $.extend(pageDef, helpDef);
         }
 
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.help.id);
         contentDivId = id + divSuffix;
-        
-        if( !isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
-        
-        var buttons = { };
-        buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
-        buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileHeaderButtons.back.name] = '';
-
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.help.title);
+        $content = ensureContent($contentRole, contentDivId);
 
         getContent();
     })();
-    
-    function getContent() {
-        $content = ensureContent($content, contentDivId);
+
+    function getContent(onSuccess) {
+        ///<summary></summary>
+        ///<param name="refreshPageContent" type="Function"></param>
+        ///<param name="onSuccess" type="Function"></param>
+        $content = ensureContent($contentRole, contentDivId);
         
         var $help = $('<p>Help</p>').appendTo($content);
 
-        if (debugOn()) //this is set onLoad based on the includes variable 'debug'
-        {
+        if (debugOn()) { //this is set onLoad based on the includes variable 'debug'
             $help.append('</br></br></br>');
             var $logLevelDiv = $help.CswDiv('init')
                                     .CswAttrXml({ 'data-role': 'fieldcontain' });
@@ -106,20 +82,27 @@ function CswMobilePageHelp(helpDef,$parent,mobileStorage) {
                                 }
                             })
                             .CswAttrXml({ 'data-role': 'slider' });
-
+            doSuccess(onSuccess, $contentRole);
         }
+        $contentRole.append($content);
     }
     
     //#endregion private
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
+    return {
+        $pageDiv: $parent,  
+        $contentRole: $contentRole,
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent
+    };
+    
+    
     
     //#endregion public, priveleged
 }

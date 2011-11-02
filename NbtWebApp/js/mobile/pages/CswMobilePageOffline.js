@@ -1,22 +1,21 @@
-/// <reference path="../../_Global.js" />
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
 /// <reference path="../controls/CswMobileMenuButton.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
-/// <reference path="../../jquery/common/CswCookie.js" />
+/// <reference path="../globals/CswMobileTools.js" />
+/// <reference path="../../main/tools/CswCookie.js" />
 /// <reference path="CswMobilePageFactory.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
 /// <reference path="../sync/CswMobileSync.js" />
-/// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../sync/CswMobileBackgroundTask.js" />
+/// <reference path="../globals/CswMobileEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
 
 //#region CswMobilePageOffline
 
-function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
+function CswMobilePageOffline(offlineDef, $parent, mobileStorage, $contentRole) {
     /// <summary>
     ///   Offline Page class. Responsible for generating a Mobile offline page.
     /// </summary>
@@ -27,58 +26,33 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
 
     //#region private
 
-    var $content = '';
     var pageDef = { };
-    var id = CswMobilePage_Type.offline.id;
-    var title = CswMobilePage_Type.offline.title;
-    var divSuffix = '_offline';
-    var contentDivId;
+    var id, title, contentDivId, $content,
+        divSuffix = '_offline';
     
     //ctor
-    (function(){
-    
-        if(isNullOrEmpty(mobileStorage)) {
-            mobileStorage = new CswMobileClientDbResources();
-        }
-        
-        var p = {
+    (function () {
+        pageDef = {
             level: -1,
-            DivId: '', 
+            DivId: '',
             title: '',
             theme: CswMobileGlobal_Config.theme,
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
-            onHelpClick: function () {},
-            onOnlineClick: function () {}
+            buttons: [CswMobileFooterButtons.fullsite, CswMobileFooterButtons.help]
         };
-        if(offlineDef) $.extend(p, offlineDef);
-
-        if(!isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
+        if (offlineDef) {
+            $.extend(pageDef, offlineDef);
         }
 
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.offline.id);
         contentDivId = id + divSuffix;
-        
-        if( !isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
-
-        var buttons = { };
-        buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.offline.title);
+        $content = ensureContent($contentRole, contentDivId);
 
         getContent();
     })();
     
     function getContent() {
-        $content = ensureContent($content, contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
         $content.append($('<p>You must have internet connectivity to login.</p>'));
     }
     
@@ -86,13 +60,16 @@ function CswMobilePageOffline(offlineDef,$parent,mobileStorage) {
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
-    
+    return {
+        $pageDiv: $parent,
+        $contentRole: $contentRole,
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent
+    };
     //#endregion public, priveleged
 }
 

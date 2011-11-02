@@ -2,13 +2,13 @@ using System;
 using System.Collections;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Telerik.Web.UI;
-using ChemSW.NbtWebControls.FieldTypes;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
+using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
-using ChemSW.CswWebControls;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.NbtWebControls.FieldTypes;
+using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.WebPages
 
             _EndDatePicker = new CswDatePicker( CswDatePicker.DateTimeMode.DateOnly, false );
             _EndDatePicker.ID = "EndDatePicker";
-            _EndDatePicker.ValidationGroup = CswFieldTypeWebControl.FieldTypeValidationGroup; 
+            _EndDatePicker.ValidationGroup = CswFieldTypeWebControl.FieldTypeValidationGroup;
             _StepOneCswAutoTable.addControl( 3, 1, _EndDatePicker );
 
             Label SelectNodesLabel = new Label();
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.WebPages
 
             _CheckAllLink = new LinkButton();
             _CheckAllLink.Text = "Select All";
-            
+
             _StepOneCswAutoTable.addControl( 4, 2, _CheckAllLink );
 
             _StepOneCswAutoTable.addControl( 4, 2, new CswLiteralNbsp() );
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.WebPages
 
 
             ////Step Two ******************************************
-            
+
             StepTwoPlaceHolder.Controls.Add( _StepTwoCswAutoTable );
 
             _ViewFutureNodesLabel = new Label();
@@ -180,8 +180,9 @@ namespace ChemSW.Nbt.WebPages
 
                         //bz # 6141. See notes in bz # 6521 
                         //string ViewXml = NodesView.ToString();
-						NodesView.SaveToCache( true );
-						Master.setSessionViewId( NodesView.SessionViewId, true );
+                        NodesView.SaveToCache( true );
+                        CswNbtSessionDataId SessionViewId = NodesView.SessionViewId;
+                        Master.setSessionViewId( SessionViewId, true );
                     }
                     else
                     {
@@ -214,7 +215,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 _CheckAllLink.OnClientClick = "return setCheckAll('" + _NodesTreeOfGeneratorNodes.ClientID + "', true );";
                 _UnCheckAllLink.OnClientClick = "return setCheckAll('" + _NodesTreeOfGeneratorNodes.ClientID + "', false );";
-            
+
                 if( FutureSchedulingWizard.CurrentStep == 2 )
                 {
                     // Too late to cancel
@@ -236,9 +237,9 @@ namespace ChemSW.Nbt.WebPages
         {
             if( _NodesTreeOfGeneratorNodes.Nodes.Count <= 0 )
             {
-				CswNbtMetaDataObjectClass GeneratorOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-				//CswNbtView GeneratorView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-				CswNbtView GeneratorView = GeneratorOC.CreateDefaultView();
+                CswNbtMetaDataObjectClass GeneratorOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+                //CswNbtView GeneratorView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+                CswNbtView GeneratorView = GeneratorOC.CreateDefaultView();
                 string temp = GeneratorView.ToString();
                 GeneratorView.ViewName = "Generators";
                 ICswNbtTree GeneratorTree = Master.CswNbtResources.Trees.getTreeFromView( GeneratorView, true, true, false, false );

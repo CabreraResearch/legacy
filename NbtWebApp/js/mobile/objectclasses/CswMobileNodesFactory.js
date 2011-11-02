@@ -1,13 +1,12 @@
-/// <reference path="../../_Global.js" />
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../jquery/common/CswAttr.js" />
-/// <reference path="../CswMobileTools.js" />
-/// <reference path="../../CswEnums.js" />
+/// <reference path="../../globals/Global.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../globals/CswMobileTools.js" />
 /// <reference path="../clientdb/CswMobileClientDbResources.js" />
-/// <reference path="../../CswProfileMethod.js" />
 /// <reference path="../controls/CswMobileListView.js" />
 /// <reference path="CswMobileInspectionDesignClass.js" />
 /// <reference path="CswMobileGenericClass.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 //#region CswMobileNodesFactory
 
@@ -39,7 +38,7 @@ function CswMobileNodesFactory(ocDef) {
         icon = '';
         
         var nodePk = nodeKey.split('_');
-        if(nodePk.hasOwnProperty(1)) {
+        if(contains(nodePk, 1)) {
             nodeId = nodeKey[1];
         }
         if(Int32MinVal !== nodeId && 'No Results' !== p) {
@@ -52,9 +51,7 @@ function CswMobileNodesFactory(ocDef) {
                     break;
                 default:
                     nodeSpecies = CswNodeSpecies.Plain;
-                    if (!isNullOrEmpty(p.iconfilename)) {
-                        icon = 'images/icons/' + p.iconfilename;
-                    }
+                    icon = tryParseString(p.iconfilename);
                     break;
             }
 

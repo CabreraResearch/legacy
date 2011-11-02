@@ -45,7 +45,8 @@ namespace ChemSW.Nbt.Schema
             }
 
             _WorkerThread = new WorkerThread( _ConfigurationPath );
-            _WorkerThread.OnStatusChange += new WorkerThread.StatusHandler( _WorkerThread_OnStatusChange );
+            _WorkerThread.OnStatusChange += new WorkerThread.StatusMessageHandler( _WorkerThread_OnStatusChange );
+            _WorkerThread.OnImportPhaseChange += new WorkerThread.ImportPhaseMessageHandler( _WorkerThread_OnImportPhaseChange );
 
             _DbInstances = _WorkerThread.getDbInstances();
             _WorkerThread.AccessId = _DbInstances.Rows[0][WorkerThread.ColName_AccessId].ToString();
@@ -73,17 +74,78 @@ namespace ChemSW.Nbt.Schema
             _initModeComboBox();
         }
 
+
+        void _WorkerThread_OnImportPhaseChange( CswNbtImportStatus CswNbtImportStatus )
+        {
+            if( null != CswNbtImportStatus )
+            {
+                PhaseTextBox.BeginInvoke( new AddImportStatusHandler( _AddImportStatus ), new object[] { CswNbtImportStatus } );
+            }
+        }//_WorkerThread_OnImportPhaseChange
+
+
+        private ImportProcessPhase _LastProcessPhase = ImportProcessPhase.NothingDoneYet;
+        private delegate void AddImportStatusHandler( CswNbtImportStatus CswNbtImportStatus );
+
+
+        System.Threading.Timer _ProgressTimer = null;
+        private void _addTicTimerCallBack( object state )
+        {
+            PhaseTextBox.BeginInvoke( new AddTimerTicHandler( _addTimerTicToPhaseStatus ) );
+        }//_addTicTimerCallBack()
+
+
+        private delegate void AddTimerTicHandler();
+        private void _addTimerTicToPhaseStatus()
+        {
+            //PhaseTextBox.Text += " .";
+
+            PhaseTextBox.Lines[1] += " ."; ;
+        }//_addTimerTicToPhaseStatus() 
+
+        private void _AddImportStatus( CswNbtImportStatus CswNbtImportStatus )
+        {
+            if( _LastProcessPhase != CswNbtImportStatus.ProcessPhase )
+            {
+                _WorkerThread_OnStatusChange( PhaseTextBox.Text );
+                _LastProcessPhase = CswNbtImportStatus.ProcessPhase;
+            }
+
+
+            if( CswNbtImportStatus.PhaseTypes.Monolithic == CswNbtImportStatus.PhaseType )
+            {
+                if( null == _ProgressTimer )
+                {
+                    _ProgressTimer = new System.Threading.Timer( _addTicTimerCallBack, null, 1000, 1000 );
+                }
+            }
+            else
+            {
+                if( null != _ProgressTimer )
+                {
+                    _ProgressTimer = null;
+                }
+            }
+
+            PhaseTextBox.Clear();
+            PhaseTextBox.AppendText( "Current Phase " + ": " + CswNbtImportStatus.PhaseDescription + "\r\n" );
+            PhaseTextBox.AppendText( "Status " + ": " + CswNbtImportStatus.PhaseStatus + "\r\n" );
+        }
+
+
+
         void _WorkerThread_OnStatusChange( string Msg )
         {
-            ResultsTextBox.BeginInvoke( new AddStatusMsgHandler( _AddStatusMsg ), new object[] { Msg } );
+            if( string.Empty != Msg )
+            {
+                ResultsTextBox.BeginInvoke( new AddStatusMsgHandler( _AddStatusMsg ), new object[] { Msg } );
+            }
         }
+
         private delegate void AddStatusMsgHandler( string Msg );
         private void _AddStatusMsg( string Msg )
         {
-            //ResultsTextBox.Text = DateTime.Now.ToString() + ": " + Msg + "\r\n" + ResultsTextBox.Text;
-            ResultsTextBox.AppendText( DateTime.Now.ToString() + ": " + Msg + "\r\n" ); 
-
-            
+            ResultsTextBox.AppendText( DateTime.Now.ToString() + ": " + Msg + "\r\n" );
         }
 
         void SchemaSelectBox_SelectedIndexChanged( object sender, EventArgs e )
@@ -218,7 +280,7 @@ namespace ChemSW.Nbt.Schema
         private void FileTypeSelectBox_OnChange( object sender, EventArgs e )
         {
             _initModeComboBox();
-        } 
+        }
 
         private void _initModeComboBox()
         {

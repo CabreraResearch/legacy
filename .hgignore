@@ -13,7 +13,6 @@ relre:ReSharper*
 relre:log.txt
 relre:Log.txt
 relre:{*}
-relre:.orig
 relre:.gitignore
 glob:PrecompiledWeb
 glob:Nbt.sln.docstates

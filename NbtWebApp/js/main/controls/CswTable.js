@@ -1,4 +1,4 @@
-/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -34,7 +34,8 @@
 							cellvalign: 'top',
 							onCreateCell: function (e, $table, $cell, row, column) { },
 							FirstCellRightAlign: false,
-							OddCellRightAlign: false
+							OddCellRightAlign: false,
+							border: 0
 						};
 						if (options) {
 							$.extend(o, options);
@@ -46,7 +47,7 @@
 						$table.CswAttrDom('align', o.align);
 						$table.CswAttrDom('cellpadding', o.cellpadding);
 						$table.CswAttrDom('cellspacing', o.cellspacing);
-						$table.CswAttrDom('border', '0');
+						$table.CswAttrDom('border', o.border);
 						$table.CswAttrDom('cellalign', o.cellalign);
 						$table.CswAttrDom('cellvalign', o.cellvalign);
 						$table.CswAttrDom('cellcssclass', o.CellCssClass);

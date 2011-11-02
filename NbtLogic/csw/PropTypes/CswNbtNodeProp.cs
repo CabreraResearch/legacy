@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.PropTypes
         virtual public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
             //bz # 6686
-			if( IsUnique && WasModified && !OverrideUniqueValidation )
+            if( IsUnique && WasModified && !OverrideUniqueValidation )
             {
                 CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
                 CswNbtView.ViewName = "Other Nodes, for Property Uniqueness";

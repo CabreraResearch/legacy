@@ -45,18 +45,23 @@
 		$cell21.append(o.detail);
 		$cell21.hide();
 
-		$cell12.CswImageButton({
-			ButtonType: CswImageButton_ButtonType.Delete,
-			AlternateText: 'Hide',
-			ID: makeId({ 'prefix': id, 'id': 'hidebtn' }),
-			onClick: function ($ImageDiv) { 
-				$errordiv.remove();
-				if($parentdiv.children().length === 0)
-					$parentdiv.hide();
-				return CswImageButton_ButtonType.None; 
-			}
-		})
+	    $cell12.CswImageButton({
+	            ButtonType: CswImageButton_ButtonType.Delete,
+	            AlternateText: 'Hide',
+	            ID: makeId({ 'prefix': id, 'id': 'hidebtn' }),
+	            onClick: function($ImageDiv) {
+	                $errordiv.remove();
+	                if ($parentdiv.children().length === 0)
+	                    $parentdiv.hide();
+	                return CswImageButton_ButtonType.None;
+	            }
+	        });
 	    $('html, body').animate({ scrollTop: 0 }, 0);
+	    //case 23675
+	    var $dialog = $(this).parent();
+	    if ($dialog.hasClass('ui-dialog-content')) {
+	        $dialog.animate({ scrollTop: 0 }, 0);
+	    }
 		return $errordiv;
 
 	}; // function(options) {

@@ -2,7 +2,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
         
@@ -17,6 +17,7 @@
                 ret = $Div.CswAuditHistoryGrid({
                         ID: o.ID,
                         nodeid: o.nodeid,
+						EditMode: o.EditMode,
                         onEditRow: function(date) {
                             $.CswDialog('EditNodeDialog', {
                                 nodeids: [ o.nodeid ],

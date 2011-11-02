@@ -1,4 +1,4 @@
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
@@ -15,7 +15,7 @@
 
 //#region CswMobilePageSearch
 
-function CswMobilePageSearch(searchDef,$page,mobileStorage) {
+function CswMobilePageSearch(searchDef, $parent, mobileStorage, $contentRole) {
     /// <summary>
     ///   Search Page class. Responsible for generating a Mobile search page.
     /// </summary>
@@ -27,62 +27,36 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
     //#region private
 
     var pageDef = { };
-    var id = CswMobilePage_Type.search.id,
-        title = CswMobilePage_Type.search.title,
+    var id, title, contentDivId, $content, viewId,
         divSuffix = '_search',
-        ulSuffix = '_ul',
-        contentDivId, $contentPage, $content, viewId;
-    
+        ulSuffix = '_ul';
     
     //ctor
-    (function() {
-
-        if (isNullOrEmpty(mobileStorage)) {
-            mobileStorage = new CswMobileClientDbResources();
-        }
-
+    (function () {
         viewId = mobileStorage.currentViewId();
-        
-        var p = {
+
+        pageDef = {
             level: -1,
             ParentId: '',
             DivId: CswMobilePage_Type.search.id + viewId,
+            buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help, CswMobileHeaderButtons.back],
             title: '',
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
-            theme: CswMobileGlobal_Config.theme,
-            onHelpClick: function() {}
+            theme: CswMobileGlobal_Config.theme
         };
-        if (searchDef) $.extend(p, searchDef);
-        
-        if (false === isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
+        if (searchDef) {
+            $.extend(pageDef, searchDef);
         }
 
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.search.id);
         contentDivId = id + divSuffix;
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
-        
-        if (false === isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
-       
-        var buttons = { };
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-        buttons[CswMobileHeaderButtons.back.name] = '';
-
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.search.title);
+        $content = ensureContent($contentRole, contentDivId);
 
         getContent();
-    })(); //ctor
+    })();   //ctor
         
     function getContent() {
-        $content = ensureContent($content, contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
         
         var searchJson = mobileStorage.fetchCachedViewJson(viewId, 'search'),
             $fieldCtn = $('<div data-role="fieldcontain"></div>')
@@ -92,7 +66,9 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
 
         if (false === isNullOrEmpty(searchJson)) {
             for (key in searchJson) {
-                if (false === selected) selected = key;
+                if (false === selected) {
+                    selected = key;
+                }
                 values.push({ 'value': key, 'display': searchJson[key] });
             }
 
@@ -118,6 +94,7 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
                     return startLoadingMsg(function() { onSearchSubmit(viewId); });
                 });
             $content.CswDiv('init', { ID: id + '_searchresults' });
+            $contentRole.append($content);
         }
 
         function onSearchSubmit() {
@@ -175,7 +152,7 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
                                 } else {
                                     listView.addListItem(nodeKey, node.nodeName, null, { icon: node.icon });
                                 }
-                                nodeCount++;
+                                nodeCount += 1;
                             }
                         }
                     }
@@ -196,13 +173,16 @@ function CswMobilePageSearch(searchDef,$page,mobileStorage) {
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
-    
+    return {
+        $pageDiv: $parent,
+        $contentRole: $contentRole,
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent
+    };
     //#endregion public, priveleged
 }
 

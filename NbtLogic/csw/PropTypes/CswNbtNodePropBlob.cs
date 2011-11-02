@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
             ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
-            ParentObject[CswNbtSubField.SubFieldName.Href.ToString()] = Href;
+            ParentObject[CswNbtSubField.SubFieldName.Href.ToString().ToLower()] = Href;
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Date of last Inspection
         /// </summary>
-		public CswNbtNodePropDateTime LastInspectionDate
+        public CswNbtNodePropDateTime LastInspectionDate
         {
             get
             {

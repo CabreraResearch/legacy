@@ -1,4 +1,4 @@
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
@@ -14,7 +14,7 @@
 
 //#region CswMobilePageViews
 
-function CswMobilePageViews(viewsDef,$page,mobileStorage) {
+function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
     /// <summary>
     ///   Views Page class. Responsible for generating a Mobile views page.
     /// </summary>
@@ -25,68 +25,44 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
     
     //#region private
     var pageDef = { };
-    var id = CswMobilePage_Type.views.id,
-        title = CswMobilePage_Type.views.title,
+    var id, title, contentDivId, $content, forceRefresh,
         divSuffix = '_views',
-        ulSuffix = '_list',
-        $contentPage, $content, contentDivId, forceRefresh;
+        ulSuffix = '_list';
     
     //ctor
-    (function() {
-        var p = {
+    (function () {
+        pageDef = {
             parentlevel: -1,
             level: -1,
             ParentId: '',
-            DivId: '', 
+            buttons: [CswMobileFooterButtons.online, CswMobileFooterButtons.fullsite, CswMobileFooterButtons.refresh, CswMobileFooterButtons.help],
+            DivId: '',
             title: '',
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
             theme: 'b',
-            onHelpClick: null, // function () {}
-            onOnlineClick: null, // function () {}
-            onRefreshClick: null, // function () {}
-            onListItemSelect: null, // function (opts) {}
             PageType: CswMobilePage_Type.views
         };
-        if (viewsDef) $.extend(p, viewsDef);
+        if (viewsDef) {
+            $.extend(pageDef, viewsDef);
+        }
         forceRefresh = mobileStorage.forceContentRefresh();
         mobileStorage.forceContentRefresh(false);
-        
-        if(!isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
-        }
+
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.views.id);
         contentDivId = id + divSuffix;
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
-        
-        if( !isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
-
-        var buttons = { };
-        buttons[CswMobileFooterButtons.online.name] = p.onOnlineClick;
-        buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
-        
-        $content = ensureContent($content, contentDivId);
-    })(); //ctor
+        title = tryParseString(pageDef.title, CswMobilePage_Type.views.title);
+        $content = ensureContent($contentRole, contentDivId);
+    })();   //ctor
     
-    function getContent(onSuccess,postSuccess) {
+    function getContent(onSuccess) {
+        $content = ensureContent($contentRole, contentDivId);
         if (isTimeToRefresh(mobileStorage) || forceRefresh) { 
-            refreshViewJson(onSuccess,postSuccess);
+            refreshViewJson(onSuccess);
         } else { //it's been less than 5 minutes since the last sync or we're offline
-            refreshViewContent('', onSuccess,postSuccess); 
+            refreshViewContent('', onSuccess); 
         } 
     }
     
-    function refreshViewJson(onSuccess,postSuccess) {
+    function refreshViewJson(onSuccess) {
         ///<summary>Fetches the current views list from the web server and rebuilds the list.</summary>
         var getViewsUrl = '/NbtWebApp/wsNBT.asmx/GetViewsList',
             ret = {};
@@ -102,13 +78,15 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
                 formobile: true,
                 url: getViewsUrl,
                 data: jsonData,
-                onloginfail: function(text) { onLoginFail(text, mobileStorage); },
+                onloginfail: function(text) {
+                    onLoginFail(text, mobileStorage);
+                },
                 success: function(data) {
                     setOnline(mobileStorage);
 
                     mobileStorage.storeViewJson(id, title, data, 0);
 
-                    refreshViewContent(data,onSuccess,postSuccess);
+                    refreshViewContent(data,onSuccess);
                 },
                 error: function() {
                     onError();
@@ -116,28 +94,27 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
             });
     }
     
-    function refreshViewContent(viewJson,onSuccess,postSuccess) {
+    function refreshViewContent(viewJson,onSuccess) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
+        var ulDef, listView, viewId, viewName, opts, onClick,
+            viewCount = 0;
         if (isNullOrEmpty(viewJson)) {
             viewJson = mobileStorage.fetchStoredViews();
         }
         if (isNullOrEmpty(viewJson)) {
-            refreshViewJson(onSuccess, postSuccess);
+            refreshViewJson(onSuccess);
         } else {
-            $content = ensureContent($content, contentDivId);
-
-            var ulDef = {
+            ulDef = {
                 ID: id + ulSuffix,
                 cssclass: CswMobileCssClasses.listview.name
             };
-            var listView = new CswMobileListView(ulDef, $content);
+            listView = new CswMobileListView(ulDef, $content);
 
-            var viewCount = 0;
-            for (var viewId in viewJson) {
-                if (viewJson.hasOwnProperty(viewId)) {
-                    var viewName = viewJson[viewId];
-                    var opts = {
+            for (viewId in viewJson) {
+                if (contains(viewJson, viewId)) {
+                    viewName = viewJson[viewId];
+                    opts = {
                         ParentId: id,
                         DivId: viewId,
                         viewId: viewId,
@@ -149,36 +126,35 @@ function CswMobilePageViews(viewsDef,$page,mobileStorage) {
                         mobileStorage: mobileStorage
                     };
 
-                    var onClick = makeDelegate(pageDef.onListItemSelect, opts);
+                    onClick = makeDelegate(pageDef.onListItemSelect, opts);
                     listView.addListItemLink(viewId, viewName, onClick);
-                    viewCount++;
+                    viewCount += 1;
                 }
             }
             if (viewCount === 0) {
                 listView.addListItemHtml('no_results', 'No Mobile Views to Display');
             }
 
-            if (!mobileStorage.stayOffline()) {
+            if (false === mobileStorage.stayOffline()) {
                 toggleOnline(mobileStorage);
             }
-            if (isFunction(onSuccess)) {
-                onSuccess($content);
-            }
-            if (isFunction(postSuccess)) {
-                postSuccess();
-            }
+            $contentRole.append($content);
+            doSuccess(onSuccess, $contentRole, { 1: 1 }, 1, $content);
         }
     }
     
     //#endregion private
     
     //#region public, priveleged
-
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.title = title;
-    this.getContent = getContent;
+    return {
+        $pageDiv: $parent,
+        $contentRole: $contentRole,
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        title: title,
+        getContent: getContent
+    };
     //#endregion public, priveleged
 }
 

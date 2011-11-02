@@ -621,14 +621,18 @@ namespace ChemSW.Nbt
                     UserTree.goToNthChild( u );
                     CswNbtNode UserNode = UserTree.getNodeForCurrentPosition();
                     CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) CswNbtNodeCaster.AsUser( UserNode );
-                    // Remove this view from the Quick Launch views
-                    if( UserNodeAsUser.QuickLaunchViews != null )
+                    // case 23924
+                    if( UserNodeAsUser.Username != CswNbtObjClassUser.ChemSWAdminUsername )
                     {
-                        if( UserNodeAsUser.QuickLaunchViews.ContainsViewId( this.ViewId ) )
-                            UserNodeAsUser.QuickLaunchViews.RemoveViewId( this.ViewId );
+                        // Remove this view from the Quick Launch views
+                        if( UserNodeAsUser.QuickLaunchViews != null )
+                        {
+                            if( UserNodeAsUser.QuickLaunchViews.ContainsViewId( this.ViewId ) )
+                                UserNodeAsUser.QuickLaunchViews.RemoveViewId( this.ViewId );
+                        }
+                        UserNode.postChanges( false );
+                        UserTree.goToParentNode();
                     }
-                    UserNode.postChanges( false );
-                    UserTree.goToParentNode();
                 }
             }
 
@@ -1366,7 +1370,8 @@ namespace ChemSW.Nbt
         public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
         {
             // don't cache twice
-            if( SessionViewId == null || ForceCache )
+            if( SessionViewId == null || ForceCache 
+				|| IncludeInQuickLaunch )  // case 23999
             {
                 bool ForQuickLaunch = ( IncludeInQuickLaunch && IsQuickLaunch );
                 _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch, KeepInQuickLaunch );

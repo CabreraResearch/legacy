@@ -1,4 +1,4 @@
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
@@ -15,7 +15,7 @@
 
 //#region CswMobilePageLogin
 
-function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
+function CswMobilePageLogin(loginDef, $parent, mobileStorage, loginSuccess, $contentRole) {
     /// <summary>
     ///   Login Page class. Responsible for generating a Mobile login page.
     /// </summary>
@@ -28,53 +28,32 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
     //#region private
 
     var pageDef = { };
-    var id = CswMobilePage_Type.login.id;
-    var title = CswMobilePage_Type.login.title;
-    var loginSuffix = '_login';
-    var $contentPage = $page.find('#' + id).find('div:jqmData(role="content")');
-    var contentDivId = id + loginSuffix;
-    var $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
-    
+    var id, title, contentDivId, $content,
+        divSuffix = '_login';
     
     //ctor
-    (function() {
-        
-        var p = {
+    (function () {
+        pageDef = {
             level: -1,
             DivId: '',
+            buttons: [CswMobileFooterButtons.fullsite, CswMobileFooterButtons.help],
             title: '',
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
-            theme: CswMobileGlobal_Config.theme,
-            onHelpClick: null // function () {}
+            theme: CswMobileGlobal_Config.theme
         };
-        if (loginDef) $.extend(p, loginDef);
-        
-        if(!isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
+        if (loginDef) {
+            $.extend(pageDef, loginDef);
         }
-        
-        contentDivId = id + loginSuffix;
-        
-        if( !isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
-        
-        var buttons = { };
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-        
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
+
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.login.id);
+        contentDivId = id + divSuffix;
+        title = tryParseString(pageDef.title, CswMobilePage_Type.login.title);
+        $content = ensureContent($contentRole, contentDivId);
 
         getContent();
-    })(); //ctor
+    })();  //ctor
     
     function getContent() {
-        $content = ensureContent($content, contentDivId);
+        $content = ensureContent($contentRole, contentDivId);
         
         $content.append('<p style="text-align: center;">Login to Mobile Inspection Manager</p><br/>');
         var loginFailure = mobileStorage.getItem('loginFailure');
@@ -98,8 +77,8 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
                                 return startLoadingMsg(function() { onLoginSubmit(); });
                             });
         
-        if( !isNullOrEmpty($contentPage) && $contentPage.length > 0 ) {
-            $contentPage.append($content);
+        if (false === isNullOrEmpty($contentRole) && $contentRole.length > 0 ) {
+            $contentRole.append($content);
         }
         
         $customerId.clickOnEnter($loginBtn);
@@ -128,9 +107,7 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
                             onLoginFail(text, mobileStorage);
                         },
                         success: function(data) {
-                            if (!isNullOrEmpty(loginSuccess)) {
-                                loginSuccess(data, userName, accessId);
-                            }
+                            doSuccess(loginSuccess, data, userName, accessId);
                         },
                         error: function() {
                             onError();
@@ -138,7 +115,8 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
                     });
             }
 
-        } //onLoginSubmit() 
+            } //onLoginSubmit()
+        $contentRole.append($content);
         return $content;
     }
     
@@ -146,13 +124,17 @@ function CswMobilePageLogin(loginDef,$page,mobileStorage,loginSuccess) {
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
-
+    return {
+        $pageDiv: $parent,
+        $contentRole: $contentRole,
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent
+    };
+    
     //#endregion public, priveleged
 }
 

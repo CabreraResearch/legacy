@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             DateTime FilterValue = DateTime.MinValue;
 			string Value = CswNbtViewPropertyFilterIn.Value.ToLower().Trim();
-			if( Value.Substring( 0, "today".Length ) == "today" )
+			if( Value.StartsWith( "today" ) )
 			{
 				Int32 PlusDays = 0;
 				if( Value.Length > "today".Length )

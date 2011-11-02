@@ -66,7 +66,7 @@ namespace ChemSW.Nbt
         private static string _AttrName_ShowInTree = "showintree";
         private static string _AttrName_AddChildren = "addchildren";
         private static string _AttrName_ExpandMode = "expandmode";
-
+		private static string _AttrName_Locked = "locked";
 
         //******************** NbtNodeProp element
         public static string _ElemName_NodeProp = "NbtNodeProp";
@@ -184,8 +184,9 @@ namespace ChemSW.Nbt
             //MoreNode.Attributes.Append( _makeAttribute( _AttrName_ShowInGrid, "false" ) );
             MoreNode.Attributes.Append( _makeAttribute( _AttrName_ShowInTree, "true" ) );
             MoreNode.Attributes.Append( _makeAttribute( _AttrName_AddChildren, "None" ) );
-            MoreNode.Attributes.Append( _makeAttribute( _AttrName_ExpandMode, "ClientSide" ) );
-        }
+			MoreNode.Attributes.Append( _makeAttribute( _AttrName_ExpandMode, "ClientSide" ) );
+			MoreNode.Attributes.Append( _makeAttribute( _AttrName_Locked, "false" ) );
+		}
 
         public void makeRootNode( string ViewName, string IconFileName, bool Selectable )//, NbtViewAddChildrenSetting AddChildren)
         {
@@ -216,7 +217,8 @@ namespace ChemSW.Nbt
                 //_RootNode.Attributes.Append( _makeAttribute( _AttrName_ShowInGrid, "false" ) );
                 _RootNode.Attributes.Append( _makeAttribute( _AttrName_ShowInTree, "true" ) );
                 //_RootNode.Attributes.Append( _makeAttribute( _AttrName_AddChildren, AddChildren.ToString() ) );
-                _RootNode.Attributes.Append( _makeAttribute( _AttrName_ExpandMode, "ClientSide" ) );  // false is on purpose - prevents load on demand
+				_RootNode.Attributes.Append( _makeAttribute( _AttrName_ExpandMode, "ClientSide" ) );  // false is on purpose - prevents load on demand
+				_RootNode.Attributes.Append( _makeAttribute( _AttrName_Locked, "false" ) );
 
                 //if (ViewRoot != null)
                 //{
@@ -658,14 +660,15 @@ namespace ChemSW.Nbt
                                      CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ),
                                      DataRowToAdd[_CswNbtColumnNames.NodeTypeName.ToLower()].ToString(),
                                      CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.ObjectClassId.ToLower()].ToString() ),
-                                     DataRowToAdd[_CswNbtColumnNames.ObjectClassName.ToLower()].ToString()
+                                     DataRowToAdd[_CswNbtColumnNames.ObjectClassName.ToLower()].ToString(),
+									 CswConvert.ToBoolean(DataRowToAdd[_CswNbtColumnNames.Locked.ToLower()])
                                    );
         }
 
         private Collection<CswNbtNodeKey> _loadNodeAsChild( CswNbtNodeKey ParentNodeKey, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship,
                                                bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
                                                string IconFileName, string NameTemplate, CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
-                                               string NodeTypeName, Int32 ObjectClassId, string ObjectClassName )
+                                               string NodeTypeName, Int32 ObjectClassId, string ObjectClassName, bool Locked )
         {
             Collection<CswNbtNodeKey> ReturnKeyColl = new Collection<CswNbtNodeKey>();
 
@@ -720,7 +723,8 @@ namespace ChemSW.Nbt
                         GroupSelectableAttribute.Value = false.ToString().ToLower();
                         NewGroupNode.Attributes.Append( GroupSelectableAttribute );
 
-                        NewGroupNode.Attributes.Append( _makeAttribute( _AttrName_ExpandMode, "ClientSide" ) );
+						NewGroupNode.Attributes.Append( _makeAttribute( _AttrName_ExpandMode, "ClientSide" ) );
+						NewGroupNode.Attributes.Append( _makeAttribute( _AttrName_Locked, "false" ) );
 
                         ParentXmlNode.AppendChild( NewGroupNode );
                         ParentNodes.Add( NewGroupNode );
@@ -762,7 +766,8 @@ namespace ChemSW.Nbt
                 //NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_ShowInGrid, ShowInGrid.ToString().ToLower() ) );
                 NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_ShowInTree, ShowInTree.ToString().ToLower() ) );
                 NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_AddChildren, AddChildren.ToString() ) );
-                NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_ExpandMode, "ClientSide" ) );
+				NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_ExpandMode, "ClientSide" ) );
+				NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_Locked, Locked.ToString().ToLower() ) );
 
                 ThisParentNode.AppendChild( NewXmlNode );
                 CswNbtNodeKey ThisParentKey = new CswNbtNodeKey( _CswNbtResources, ThisParentNode.Attributes[_AttrName_Key].Value.ToString() );
@@ -918,6 +923,17 @@ namespace ChemSW.Nbt
 			else
 				return _CurrentNode.Attributes[_AttrName_NodeName].Value;
 		}//getNameForCurrentNode()
+
+		public bool getLockedForCurrentNode()
+		{
+			if( null == _CurrentNode )
+				throw ( new CswDniException( "There is no current node" ) );
+
+			//if( _CurrentNode.Name != _ElemName_Node )
+			//    throw ( new CswDniException( "The current node (" + _CurrentNode.Name + ") is not a CswNbtNode" ) );
+
+			return CswConvert.ToBoolean( _CurrentNode.Attributes[_AttrName_Locked].Value );
+		}//getLockedForCurrentNode()
 
         public bool getSelectableForCurrentNode()
         {

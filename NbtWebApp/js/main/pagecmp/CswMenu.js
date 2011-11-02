@@ -1,9 +1,9 @@
-/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../globals/Global.js" />
 
 /* Adapted from http://www.noupe.com/tutorial/drop-down-menu-jquery-css.html */
 
-; (function ($) { /// <param name="$" type="jQuery" />
+(function ($) { /// <param name="$" type="jQuery" />
 	$.fn.CswMenu = function (options) {
 
 		var o = {

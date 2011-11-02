@@ -6,6 +6,8 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -17,11 +19,19 @@ namespace ChemSW.Nbt.PropTypes
 
         private CswNbtNodeProp _CswNbtNodeProp = null;
         private CswNbtNodePropData _CswNbtNodePropData = null;
+        private CswNbtResources _CswNbtResources = null;
+        private CswNbtNode _Node = null;
+        private NodeEditMode _EditMode = NodeEditMode.Unknown;
+        private CswNbtMetaDataNodeTypeTab _Tab = null;
 
-        public CswNbtNodePropWrapper( CswNbtNodeProp CswNbtNodeProp, CswNbtNodePropData CswNbtNodePropData )
+        public CswNbtNodePropWrapper( CswNbtResources CswNbtResources, CswNbtNode Node, CswNbtNodeProp CswNbtNodeProp, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeTab Tab = null, NodeEditMode EditMode = NodeEditMode.Edit )
         {
             _CswNbtNodeProp = CswNbtNodeProp;
             _CswNbtNodePropData = CswNbtNodePropData;
+            _CswNbtResources = CswNbtResources;
+            _Node = Node;
+            _EditMode = EditMode;
+            _Tab = Tab;
         }//ctor
 
         //bz # 8287: rearranged a few things
@@ -98,7 +108,7 @@ namespace ChemSW.Nbt.PropTypes
         public Int32 ObjectClassPropId { get { return ( _CswNbtNodeProp.ObjectClassPropId ); } }
         public string ObjectClassPropName { get { return ( _CswNbtNodeProp.ObjectClassPropName ); } }
         public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } set { _CswNbtNodePropData.NodeId = value; } }
-        public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } set { _CswNbtNodePropData.ReadOnly = value; } }
+        //public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } set { _CswNbtNodePropData.ReadOnly = value; } }
         public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } set { _CswNbtNodePropData.Hidden = value; } }
         public string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } set { _CswNbtNodePropData.Field1 = value; } }
         public string Field2 { get { return ( _CswNbtNodePropData.Field2 ); } set { _CswNbtNodePropData.Field2 = value; } }
@@ -119,7 +129,7 @@ namespace ChemSW.Nbt.PropTypes
         public void ClearValue() { _CswNbtNodePropData.ClearValue(); }
         public void ClearBlob() { _CswNbtNodePropData.ClearBlob(); }
 
-		public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation ) { _CswNbtNodeProp.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation ); }
+        public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation ) { _CswNbtNodeProp.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation ); }
         public void onNodePropRowFilled() { _CswNbtNodeProp.onNodePropRowFilled(); }
 
         //public bool IsNodeReference( XmlNode PropertyValueNode ) { return _CswNbtNodeProp.IsNodeReference( PropertyValueNode ); }
@@ -147,8 +157,31 @@ namespace ChemSW.Nbt.PropTypes
             set { _HelpText = value; }
         }
 
+        private bool _IsEditable { get { return ( CanEdit && false == ReadOnly ); } }
 
+        public bool CanEdit
+        {
+            get
+            {
+                bool Ret = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, false, _Tab, null, _Node, NodeTypeProp );
+                return Ret;
+            }
+        }
 
+        public bool ReadOnly
+        {
+            get
+            {
+                return ( _CswNbtNodePropData.ReadOnly || // jct_nodes_props.readonly
+                         NodeTypeProp.ReadOnly || // nodetype_props.readonly
+                         _EditMode == NodeEditMode.Preview ||
+                        ( null != _Node && ( _Node.ReadOnly || _Node.Locked ) ) ); // nodes.readonly or nodes.locked
+            }
+            set
+            {
+                _CswNbtNodePropData.ReadOnly = value;
+            }
+        }
 
         /// <summary>
         /// Returns defined Field Type attributes/subfields as XmlDocument class XmlNode
@@ -171,22 +204,34 @@ namespace ChemSW.Nbt.PropTypes
         /// Returns defined Field Type attributes/subfields as JToken class JObject
         /// </summary>
         /// <param name="JObject">JToken class JObject</param>
-        public void ToJSON( JObject JObject )
+        public void ToJSON( JObject JObject, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab )
         {
             JObject Values = new JObject();
+            _EditMode = EditMode;
+            _Tab = Tab;
             JObject["values"] = Values;
+            JObject["readonly"] = ( false == _IsEditable );
             _CswNbtNodeProp.ToJSON( Values );
         }
 
         /// <summary>
         /// Parses defined Field Type attributes/subfields into a JToken class JObject
         /// </summary>
-        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab )
         {
-            if( null != Object.Property( "values" ) )
+            if( null != Object )
             {
-                JObject Values = (JObject) Object["values"];
-                _CswNbtNodeProp.ReadJSON( Values, NodeMap, NodeTypeMap );
+                _EditMode = EditMode;
+                _Tab = Tab;
+                Object["readonly"] = ( false == _IsEditable );
+                if( null != Object["values"] &&
+                    _IsEditable &&
+                    ( null == Object["wasmodified"] ||
+                     CswConvert.ToBoolean( Object["wasmodified"] ) ) )
+                {
+                    JObject Values = (JObject) Object["values"];
+                    _CswNbtNodeProp.ReadJSON( Values, NodeMap, NodeTypeMap );
+                }
             }
         }
 

@@ -1,16 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Data;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
-using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ObjClasses;
 
 
 namespace ChemSW.Nbt.Sched
@@ -18,7 +13,7 @@ namespace ChemSW.Nbt.Sched
 
     public class CswScheduleLogicNbtGenNode : ICswScheduleLogic
     {
-		private Int32 _GeneratorLimit = 1;
+        private Int32 _GeneratorLimit = 1;
 
         public string RuleName
         {
@@ -60,7 +55,7 @@ namespace ChemSW.Nbt.Sched
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
             _CswScheduleNodeUpdater = new CswScheduleNodeUpdater( _CswNbtResources );
-			_CswNbtResources.AuditContext = "Scheduler Task: Generate Nodes";
+            _CswNbtResources.AuditContext = "Scheduler Task: Generate Nodes";
 
         }//init()
 
@@ -82,16 +77,16 @@ namespace ChemSW.Nbt.Sched
                         CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
                         if( CurrentGenerator.Enabled.Checked == Tristate.True )
                         {
-							DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateTimeValue.Date;
+                            DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateTimeValue.Date;
                             DateTime InitialDueDateValue = CurrentGenerator.DueDateInterval.getStartDate().Date;
-							DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateTimeValue.Date;
+                            DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateTimeValue.Date;
 
                             // BZ 7866
                             if( ThisDueDateValue != DateTime.MinValue )
                             {
                                 // BZ 7124 - set runtime
-								if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue )
-									ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
+                                if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue )
+                                    ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
 
                                 Int32 WarnDays = (Int32) CurrentGenerator.WarningDays.Value;
                                 if( WarnDays > 0 )
@@ -107,11 +102,11 @@ namespace ChemSW.Nbt.Sched
                                     ( DateTime.Now >= ThisDueDateValue ) )
                                 {
                                     CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
-									bool NodesCreated = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
-									string Message = "No node created for generator " + CurrentGenerator.Node.NodeName;
-									if( NodesCreated )
-										Message = "Created node from generator " + CurrentGenerator.Node.NodeName;
-									_CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
+                                    bool NodesCreated = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
+                                    string Message = "No node created for generator " + CurrentGenerator.Node.NodeName;
+                                    if( NodesCreated )
+                                        Message = "Created node from generator " + CurrentGenerator.Node.NodeName;
+                                    _CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
                                 }
                             } // if( ThisDueDateValue != DateTime.MinValue )
 

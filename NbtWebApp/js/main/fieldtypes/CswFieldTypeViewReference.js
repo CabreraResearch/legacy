@@ -2,7 +2,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 
 ; (function ($) {
         
@@ -46,7 +46,7 @@
 							AlternateText: 'Edit',
 							Required: o.Required,
 							onClick: function ($ImageDiv) {
-								window.location = "EditView.aspx?step=2&return=Main.html&viewid=" + viewId;
+								o.onEditView(viewId);
 								return CswImageButton_ButtonType.None; 
 							}
 						});
