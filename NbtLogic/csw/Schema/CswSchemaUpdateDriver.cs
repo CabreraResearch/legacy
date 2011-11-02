@@ -61,6 +61,7 @@ namespace ChemSW.Nbt.Schema
 
             catch( CswDniExceptionIgnoreDeliberately CswDniExceptionIgnoreDeliberately )
             {
+                CswDniExceptionIgnoreDeliberately.ToString(); //makes "declared but never used" exception go away
                 _UpdateSucceeded = true;
                 try
                 {

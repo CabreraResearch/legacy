@@ -234,7 +234,6 @@ namespace ChemSW.Nbt.ImportExport
                 CswArbitrarySelect CswArbitrarySelectUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", RawNodesQuery );
                 CswTableUpdate CswTableUpdateTempPropsTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatepropsfornodeid", TblName_TempProps );
                 DataTable RawNodesTable = null;
-                DataTable TempPropsUpdateTable = null;
                 do
                 {
                     if( null != RawNodesTable )

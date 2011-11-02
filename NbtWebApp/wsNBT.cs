@@ -2687,6 +2687,7 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception ex )
             {
+                ex.ToString(); ////makes "declared but never used" exception go away
                 //nada
             }
 

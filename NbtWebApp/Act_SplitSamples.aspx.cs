@@ -146,6 +146,7 @@ namespace ChemSW.Nbt.WebPages
             }
             catch( Exception ex )
             {
+                ex.ToString(); //makes "declared but never used" exception go away; 
                 Literal ErrorMsg = new Literal();
                 ErrorMsg.Text = "<br>Invalid number.  Please enter a valid integer for 'Number of Children' and a valid number for 'Quantity Per Child'.";
                 Step2PH.Controls.Add( ErrorMsg );
