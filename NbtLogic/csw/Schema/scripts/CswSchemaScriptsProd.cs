@@ -24,14 +24,11 @@ namespace ChemSW.Nbt.Schema
             //_CswNbtResources = CswNbtResources;
 
             // This is where you manually set to the last version of the previous release
-           _MinimumVersion = new CswSchemaVersion( 1, 'J', 11 );
+            _MinimumVersion = new CswSchemaVersion( 1, 'J', 11 );
 
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K01() ) );
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K02() ) );
-
-
-            // This is where you add new versions.
-            // This automatically detects the latest version
+                    // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
                                                                                         ( _LatestVersion.CycleIteration == Version.CycleIteration &&
