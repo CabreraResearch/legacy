@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using ChemSW.Core;
 
@@ -43,7 +44,8 @@ namespace ChemSW.Nbt.MetaData
                 foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in NodeType.ObjectClass.ObjectClassProps )
                 {
                     // Find exact matches
-                    bool DoSynch = false;
+                    string PropName = ObjectClassProp.PropName;
+                    bool DoSync = false;
                     CswNbtMetaDataNodeTypeProp MatchingNodeTypeProp = null;
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps )
                     {
@@ -56,26 +58,37 @@ namespace ChemSW.Nbt.MetaData
                     // Find name & fieldtype matches
                     if( MatchingNodeTypeProp == null )
                     {
+                        Collection<string> NodeTypePropNames = new Collection<string>();
                         foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps )
                         {
-                            if( NodeTypeProp.PropName.ToLower() == ObjectClassProp.PropName.ToLower() &&
+                            NodeTypePropNames.Add(NodeTypeProp.PropName.ToLower());
+                            if( false == DoSync && 
+                                NodeTypeProp.PropName.ToLower() == PropName.ToLower() &&
                                 NodeTypeProp.FieldType.FieldType == ObjectClassProp.FieldType.FieldType )
+                                {
+                                    MatchingNodeTypeProp = NodeTypeProp;
+                                    DoSync = true;
+                                }
+                            else if( NodeTypeProp.PropName.ToLower() == PropName.ToLower() )
                             {
-                                MatchingNodeTypeProp = NodeTypeProp;
-                                DoSynch = true;
-                                break;
+                                PropName += "_" + NodeTypeProp.FieldType.FieldType.ToString();
                             }
                         }
+                        if( NodeTypePropNames.Contains( PropName ) )
+                        {
+                            PropName += "_" + ObjectClassProp.ObjectClassPropId;
+                        }
+
                     }
                     // Make missing ones
                     if( MatchingNodeTypeProp == null )
                     {
                         //CswNbtMetaDataNodeTypeTab Tab = NodeType.getFirstNodeTypeTab();
-                        MatchingNodeTypeProp = makeNewProp(NodeType, null, ObjectClassProp.FieldType.FieldTypeId, ObjectClassProp.PropName, Int32.MinValue, true, ObjectClassProp);
-                        DoSynch = false;   // because makeNewProp does it for us
+                        MatchingNodeTypeProp = makeNewProp(NodeType, null, ObjectClassProp.FieldType.FieldTypeId, PropName, Int32.MinValue, true, ObjectClassProp);
+                        DoSync = false;   // because makeNewProp does it for us
                     }
 
-                    if (DoSynch)
+                    if (DoSync)
                     {
                         CopyNodeTypePropFromObjectClassProp(ObjectClassProp, MatchingNodeTypeProp._DataRow);
                         CopyNodeTypePropDefaultValueFromObjectClassProp(ObjectClassProp, MatchingNodeTypeProp);
