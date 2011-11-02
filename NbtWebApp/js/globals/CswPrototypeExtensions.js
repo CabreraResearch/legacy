@@ -1,5 +1,7 @@
 /// <reference path="CswEnums.js" />
 /// <reference path="CswGlobalTools.js" />
+/// <reference path="../../Scripts/modernizr-2.0.6-development-only.js" />
+
 
 //#region String
 
@@ -117,3 +119,60 @@ Function.prototype.inheritsFrom = function(parentClassOrObject) {
 //#region Object
 
 //#endregion Object
+
+//#region Window
+
+//Case 24114: IE7 doesn't support web storage
+//https://developer.mozilla.org/en/DOM/Storage
+if (false === Modernizr.localstorage) {
+    window.localStorage = {
+        getItem: function (sKey) {
+            if (isNullOrEmpty(sKey) || false === contains(this, sKey)) { return null; }
+            return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+        },
+        key: function (nKeyId) { return unescape(document.cookie.replace(/\s*\=(?:.(?!;))*$/, "").split(/\s*\=(?:[^;](?!;))*[^;]?;\s*/)[nKeyId]); },
+        setItem: function (sKey, sValue) {
+            if (isNullOrEmpty(sKey)) { return; }
+            document.cookie = escape(sKey) + "=" + escape(sValue) + "; path=/";
+            this.length = document.cookie.match(/\=/g).length;
+        },
+        length: 0,
+        removeItem: function (sKey) {
+            if (isNullOrEmpty(sKey) || false === contains(this, sKey)) { return; }
+            var sExpDate = new Date();
+            sExpDate.setDate(sExpDate.getDate() - 1);
+            document.cookie = escape(sKey) + "=; expires=" + sExpDate.toGMTString() + "; path=/";
+            this.length--;
+        },
+        clear: function () { },
+        hasOwnProperty: function (sKey) { return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie); }
+    };
+    window.localStorage.length = (document.cookie.match(/\=/g) || window.localStorage).length;
+}
+if (false === Modernizr.sessionstorage) {
+    window.sessionStorage = {
+        getItem: function (sKey) {
+            if (isNullOrEmpty(sKey) || false === contains(this, sKey)) { return null; }
+            return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+        },
+        key: function (nKeyId) { return unescape(document.cookie.replace(/\s*\=(?:.(?!;))*$/, "").split(/\s*\=(?:[^;](?!;))*[^;]?;\s*/)[nKeyId]); },
+        setItem: function (sKey, sValue) {
+            if (isNullOrEmpty(sKey)) { return; }
+            document.cookie = escape(sKey) + "=" + escape(sValue) + "; path=/";
+            this.length = document.cookie.match(/\=/g).length;
+        },
+        length: 0,
+        removeItem: function (sKey) {
+            if (isNullOrEmpty(sKey) || false === contains(this, sKey)) { return; }
+            var sExpDate = new Date();
+            sExpDate.setDate(sExpDate.getDate() - 1);
+            document.cookie = escape(sKey) + "=; expires=" + sExpDate.toGMTString() + "; path=/";
+            this.length--;
+        },
+        clear: function () { },
+        hasOwnProperty: function (sKey) { return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie); }
+    };
+    window.sessionStorage.length = (document.cookie.match(/\=/g) || window.sessionStorage).length;
+}
+
+//#endregion Window
