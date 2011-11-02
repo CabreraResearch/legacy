@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "ChemSW, Inc." )]
 [assembly: AssemblyProduct( "NbtLogic" )]
-[assembly: AssemblyCopyright( "Copyright © ChemSW, Inc. 2005-2009" )]
+[assembly: AssemblyCopyright( "Copyright © ChemSW, Inc. 2005-2011" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -30,5 +30,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion( "2011.10.7.1" )]
-[assembly: AssemblyFileVersion( "2011.10.7.1" )]
+[assembly: AssemblyVersion( "2011.11.2.1" )]
+[assembly: AssemblyFileVersion( "2011.11.2.1" )]
