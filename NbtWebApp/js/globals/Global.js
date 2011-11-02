@@ -876,12 +876,12 @@ function HandleMenuItem(options)
                 });
                 break;
 
-            case 'Home':
-                $a.click(function () { GoHome(); return false; });
-                break;
-
             case 'Logout':
                 $a.click(function () { o.onLogout(); return false; });
+                break;
+                
+            case 'Home':
+                $a.click(function () { GoHome(); return false; });
                 break;
 
             case 'Profile':
