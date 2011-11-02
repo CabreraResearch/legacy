@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
@@ -18,6 +19,7 @@ namespace ChemSW.Nbt.WebServices
         private CswGridData _CswGridData;
         private bool _CanEdit = true;
         private bool _CanDelete = true;
+        private readonly Int32 _GridPageSize = 50;
 
         public enum GridReturnType
         {
@@ -42,7 +44,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 FirstLevelRelationships = _View.Root.ChildRelationships;
             }
-
+            Int32 PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
+            if( Int32.MinValue != PageSize )
+            {
+                _GridPageSize = PageSize;
+            }
             // Case 21778
             // Maybe do this in Permit someday; however, the meaning of Edit and Delete is very specific in this context:
             // only evaluating visibility of the option to edit or delete root nodetypes of a view
@@ -80,32 +86,91 @@ namespace ChemSW.Nbt.WebServices
             _CswGridData = new CswGridData( _CswNbtResources );
         } //ctor
 
-        public JObject getGrid( bool ShowEmpty )
+        public JObject getGrid( bool ShowEmpty = false, bool ForReporting = false )
         {
-            return _getGridOuterJson( ShowEmpty );
+            return _getGridOuterJson( ShowEmpty, ForReporting );
         } // getGrid()
+
+        private void _getGridProperties( Collection<CswNbtViewRelationship> ChildRelationships, ref Collection<CswViewBuilderProp> Ret )
+        {
+            CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
+            Collection<CswNbtViewProperty> PropsAtThisLevel = new Collection<CswNbtViewProperty>();
+            Collection<CswNbtViewRelationship> NextChildRelationships = new Collection<CswNbtViewRelationship>();
+
+            //Iterate all Relationships at this level first. This ensures our properties are properly collected.
+            foreach( CswNbtViewRelationship Relationship in ChildRelationships )
+            {
+                foreach( CswNbtViewProperty Property in Relationship.Properties )
+                {
+                    PropsAtThisLevel.Add( Property );
+                }
+                //This will make recursion smoother: we're always iterating the collection of relationships at the same distance from root.
+                foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
+                {
+                    NextChildRelationships.Add( ChildRelationship );
+                }
+            }
+            //Now iterate props
+            foreach( CswNbtViewProperty Prop in PropsAtThisLevel )
+            {
+                CswViewBuilderProp VbProp = new CswViewBuilderProp( Prop );
+                string PropName = Prop.Name.Trim().Replace( " ", "_" ).ToLower();
+                if( false == ColumnNames.Contains( PropName ) )
+                {
+                    ColumnNames.Add( PropName );
+                    Ret.Add( VbProp );
+                }
+                else
+                {
+                    //The Tree XML won't give us anything to map a "duplicate" prop/column back to the column definition. Leave our own breadcrumbs.
+                    foreach( CswViewBuilderProp RetProp in Ret )
+                    {
+                        if( RetProp.PropNameUnique == PropName && false == RetProp.AssociatedPropIds.Contains( VbProp.MetaDataPropId.ToString() ) )
+                        {
+                            RetProp.AssociatedPropIds.Add( VbProp.MetaDataPropId.ToString() );
+                        }
+                    }
+                }
+            }
+
+            //Now recurse, damn you.
+            if( NextChildRelationships.Count > 0 )
+            {
+                _getGridProperties( NextChildRelationships, ref Ret );
+            }
+        }
 
         /// <summary>
         /// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
         /// </summary>
-        private JObject _getGridOuterJson( bool ShowEmpty )
+        private JObject _getGridOuterJson( bool ShowEmpty = false, bool ForReporting = false )
         {
-            JObject GridShellJObj = null;
-            IEnumerable<XElement> GridNodes = _getGridXElements();
-            IEnumerable<CswNbtViewProperty> ColumnCollection = _View.getOrderedViewProps( true );
+            JObject RetObj = new JObject();
+            RetObj["nodetypeid"] = _View.ViewMetaDataTypeId;
 
+            Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
+            _getGridProperties( _View.Root.ChildRelationships, ref PropsInGrid );
+
+            //JArray GridRows = null;
+            //if( ForReporting )
+            //{
             JArray GridRows = new JArray();
-            var HasResults = ( !ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
+            string MoreNodeKey = string.Empty;
+            IEnumerable<XElement> GridNodes = _getGridXElements( ref MoreNodeKey );
+            var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
             if( HasResults )
             {
-                GridRows = _CswGridData.getGridRowsJSON( GridNodes ); //_getGridRowsJson( GridNodes );
+                GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
             }
+            //}
+            JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
+            _AddIconColumnName( ref GridOrderedColumnDisplayNames );
+            _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, PropsInGrid );   //_getGridColumnNamesJson( ColumnCollection );
+            //_makeHiddenColumnNames( ref GridOrderedColumnDisplayNames );
 
-            JArray GridOrderedColumnDisplayNames = _CswGridData.getGridColumnNamesJson( ColumnCollection );   //_getGridColumnNamesJson( ColumnCollection );
-            _AddHiddenColumnNames( ref GridOrderedColumnDisplayNames );
-
-            JArray GridColumnDefinitions = _CswGridData.getGridColumnDefinitionJson( ColumnCollection );
-            _AddHiddenColumnDefiniton( ref GridColumnDefinitions );
+            JArray GridColumnDefinitions = _CswGridData.getGridColumnDefinitionJson( PropsInGrid );
+            _AddIconColumnDefinition( ref GridColumnDefinitions );
+            _AddHiddenColumnDefiniton( GridColumnDefinitions );
 
             _CswGridData.GridWidth = ( _View.Width * 7 );
             if( _View.Visibility != NbtViewVisibility.Property )
@@ -117,32 +182,58 @@ namespace ChemSW.Nbt.WebServices
 
             _CswGridData.GridSortName = "nodeid";
 
-            JObject JqGridOpt = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
+            RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
 
-            GridShellJObj = new JObject(
-                new JProperty( "nodetypeid", _View.ViewMetaDataTypeId ),
-                new JProperty( "jqGridOpt", JqGridOpt )
-                );
+            return RetObj;
+        } // getGridOuterJson()
 
-            return GridShellJObj;
+        /// <summary>
+        /// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
+        /// </summary>
+        public JObject getGridRows( bool ShowEmpty )
+        {
+            JObject RetObj = new JObject();
+
+            string MoreNodeKey = string.Empty;
+            IEnumerable<XElement> GridNodes = _getGridXElements( ref MoreNodeKey );
+
+            Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
+            _getGridProperties( _View.Root.ChildRelationships, ref PropsInGrid );
+
+            JArray GridRows = new JArray();
+            Int32 RowCount = GridNodes.Count();
+            var HasResults = ( false == ShowEmpty && null != GridNodes && RowCount > 0 );
+            if( HasResults )
+            {
+                GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
+            }
+
+            //RetObj["moreNodeKey"] = wsTools.ToSafeJavaScriptParam( MoreNodeKey );
+            Double Pages = RowCount / _GridPageSize;
+            RetObj["total"] = Math.Round( Pages, 0 ).ToString();
+            RetObj["page"] = "1";
+            RetObj["records"] = RowCount.ToString();
+            RetObj["rows"] = GridRows;
+            return RetObj;
         } // getGridOuterJson()
 
         /// <summary>
         /// Adds required columns for edit/add/delete functions
         /// </summary>
-        private void _AddHiddenColumnNames( ref JArray ColumnNameArray )
+        private JArray _makeHiddenColumnNames()
         {
-            ColumnNameArray.AddFirst( new JValue( "nodename" ) ); //better to use int for jqGrid key
-            ColumnNameArray.AddFirst( new JValue( "cswnbtnodekey" ) ); //we'll want CswNbtNodeKey for add/edit/delete
-            ColumnNameArray.AddFirst( new JValue( "nodeid" ) ); //better to use int for jqGrid key
-            ColumnNameArray.AddFirst( new JValue( "nodepk" ) );
-
-        } // _AddHiddenColumnNames()
+            JArray Ret = new JArray();
+            Ret.Add( "nodepk" );
+            Ret.Add( "nodeid" ); //better to use int for jqGrid key
+            Ret.Add( "cswnbtnodekey" ); //we'll want CswNbtNodeKey for add/edit/delete
+            Ret.Add( "nodename" );
+            return Ret;
+        } // _makeHiddenColumnNames()
 
         /// <summary>
         /// Generates a JSON property with the definitional data for a jqGrid Column Array
         /// </summary>
-        private void _AddHiddenColumnDefiniton( ref JArray ColumnDefArray )
+        private void _AddHiddenColumnDefiniton( JArray ColumnDefArray )
         {
             //we'll want NodeName for edit/delete
             ColumnDefArray.AddFirst( new JObject(
@@ -174,10 +265,24 @@ namespace ChemSW.Nbt.WebServices
 
         } // _AddHiddenColumnDefiniton()
 
+        private void _AddIconColumnDefinition( ref JArray ColumnDefArray )
+        {
+            ColumnDefArray.AddFirst( new JObject(
+                                new JProperty( "name", "icon" ),
+                                new JProperty( "index", "icon" ),
+                                new JProperty( "formatter", "image" ),
+                                new JProperty( CswGridData.JqGridJsonOptions.width.ToString(), "30" )
+                                ) );
+        }
+        private void _AddIconColumnName( ref JArray ColumnNameArray )
+        {
+            ColumnNameArray.Add( "icon" );
+        }
+
         /// <summary>
         /// Returns an XElement of the View's Tree
         /// </summary>
-        private XElement _getGridTree()
+        private XElement _getGridTree( CswNbtNodeKey ParentKey )
         {
             XElement RawXml = null;
             ICswNbtTree Tree;
@@ -187,11 +292,15 @@ namespace ChemSW.Nbt.WebServices
                 ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
                 Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, Int32.MinValue, true, false, null, false );
             }
+            // Case 24004
+            //else if( _ParentNodeKey != null && _ParentNodeKey.NodeSpecies == NodeSpecies.More )
+            //{
+            //    Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref ParentKey, null, _GridPageSize, false, false, _ParentNodeKey, false );
+            //}
             else
             {
                 Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );
             }
-
             Int32 NodeCount = Tree.getChildNodeCount();
             if( NodeCount > 0 )
             {
@@ -200,14 +309,14 @@ namespace ChemSW.Nbt.WebServices
             //else jqGrid effectively handles 'else' with emptyrecords property
 
             return RawXml;
-        } // getGridColumnsJson()
+        } // _getGridTree()
 
         /// <summary>
         /// Transforms the Tree XML into an XDocument
         /// </summary>
-        private IEnumerable<XElement> _getGridXElements()
+        private IEnumerable<XElement> _getGridXElements( ref string MoreNodeKey )
         {
-            var RawXml = _getGridTree();
+            var RawXml = _getGridTree( null );
             IEnumerable<XElement> NodesInGrid = null;
             // case 21535: tree is not null
             if( null != RawXml )
@@ -228,6 +337,15 @@ namespace ChemSW.Nbt.WebServices
                                 where Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
                                       Element.DescendantNodesAndSelf().OfType<XElement>().Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
                                 select Element );
+
+                foreach( XElement XNode in GridRows.Where( XNode => XNode.HasAttributes &&
+                                                                    null != XNode.Attribute( "nodename" ) &&
+                    //Remember to use NodeSpecies here
+                                                                    XNode.Attribute( "nodename" ).Value == "More..." &&
+                                                                    null != XNode.Attribute( "key" ) ) )
+                {
+                    MoreNodeKey = XNode.Attribute( "key" ).Value;
+                }
             }
             return NodesInGrid;
         } // getGridXElements()

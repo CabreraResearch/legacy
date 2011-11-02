@@ -1,4 +1,4 @@
-/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/Global.js" />
@@ -13,7 +13,6 @@
     var methods = {
 
         // Specialized
-
         ExpireDialog: function(options) {
             var o = {
                 onYes: function() { }
@@ -162,6 +161,39 @@
             });
 
         }, // AddNodeDialog
+        AddNodeTypeDialog: function (options) {
+            var o = {
+                objectClassId: '', 
+                $select: '',
+                nodeTypeDescriptor: ''
+            };
+
+            if (options) {
+                $.extend(o, options);
+            }
+
+            var $div = $('<div></div>'),
+                $nodeType, $category;
+            
+            $div.append('New ' + o.nodeTypeDescriptor + ': ');
+            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text });
+            $div.append('<br />');
+            $div.append('Category Name: ');
+            $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: CswInput_Types.text });
+            $div.append('<br />');
+            $div.CswButton({
+                    ID: o.objectClassId + '_add',
+                    enabledText: 'Add',
+                    onclick: function () {
+                        o.$select.append('<option value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>')
+                                 .data('objectClassId', o.objectClassId)
+                                 .data('category', $category.val());
+                        o.$select.val($nodeType.val());
+                        $div.dialog('close');
+                    }
+                });
+            openDialog($div, 300, 200, null, 'Create New Target Type, Group and Route for this Inspection.');
+        }, // AddNodeTypeDialog
         EditLayoutDialog: function (cswNodeTabOptions) {
             cswNodeTabOptions.ID = cswNodeTabOptions.ID + '_editlayout';
             cswNodeTabOptions.Config = true;
@@ -507,65 +539,69 @@
                         },
 
         'EditMolDialog': function (options) {
-                            var o = {
-                                TextUrl: '',
-                                FileUrl: '',
-                                PropId: '',
-                                molData: '',
-                                onSuccess: function() { }
-                            };
-                            if(options) {
-                                $.extend(o, options);
-                            }
+            var o = {
+                TextUrl: '',
+                FileUrl: '',
+                PropId: '',
+                molData: '',
+                onSuccess: function() { }
+            };
+            if(options) {
+                $.extend(o, options);
+            }
 
-                            var $div = $('<div></div>');
-                                
-                            var uploader = new qq.FileUploader({
-                                element: $div.get(0),
-                                action: o.FileUrl,
-                                params: {PropId: o.PropId},
-                                debug: false,
-                                onComplete: function() 
-                                    { 
-                                        $div.dialog('close'); 
-                                        o.onSuccess(); 
-                                    }
-                            });
+            function makeUploader() {
+                return new qq.FileUploader({
+                        element: $div.get(0),
+                        action: o.FileUrl,
+                        params: { PropId: o.PropId },
+                        debug: false,
+                        onComplete: function(code, fileName, data) {
+                            $moltxtarea.text(data.molData);
+                            o.onSuccess();
+                        }
+                    });
+            }
 
-                            var $fileuploadcancel = $div.CswButton({ID: 'fileupload_cancel', 
-                                                                    enabledText: 'Cancel', 
-                                                                    disabledText: 'Canceling', 
-                                                                    onclick: function() {
-                                                                                $div.dialog('close');
-                                                                    }
-                                                                    });
+            var $div = $('<div></div>'),
+                $moltxtarea, $txtsave,
+                uploader = makeUploader();
+            
+            $div.CswButton({
+                    ID: 'fileupload_cancel', 
+                    enabledText: 'Cancel', 
+                    disabledText: 'Canceling', 
+                    onclick: function() {
+                        $div.dialog('close');
+                    }
+                });
                             
-                            $div.append('<br/>MOL Text (Paste from Clipboard):<br/>');
-                            var $moltxtarea = $('<textarea id="moltxt" rows="4" cols="40">' + o.molData + '</textarea>')
-                                                    .appendTo($div);
-                            $div.append('<br/>');
-                            var $txtsave = $div.CswButton({ID: 'txt_save', 
-                                                            enabledText: 'Save MOL Text', 
-                                                            disabledText: 'Saving MOL...', 
-                                                            onclick: function() {
-                                                                    CswAjaxJson({
-                                                                        url: o.TextUrl,
-                                                                        data: {
-                                                                                molData: $moltxtarea.val(),
-                                                                                PropId: o.PropId
-                                                                               },
-                                                                        success: function(data) 
-                                                                            {
-                                                                                $div.dialog('close');
-                                                                                o.onSuccess();
-                                                                            },
-                                                                        error: function() 
-                                                                            {
-                                                                                $txtsave.CswButton('enable');	
-                                                                            }
-                                                                    }); // ajax
-                                                                } // onclick
-                                                            }); // CswButton
+            $div.append('<br/>MOL Text (Paste from Clipboard):<br/>');
+            $moltxtarea = $('<textarea id="moltxt" rows="4" cols="40">' + o.molData + '</textarea>')
+                                    .appendTo($div);
+            $div.append('<br/>');
+            $txtsave = $div.CswButton({ID: 'txt_save', 
+                                            enabledText: 'Save MOL Text', 
+                                            disabledText: 'Saving MOL...', 
+                                            onclick: function() {
+                                                    CswAjaxJson({
+                                                        url: o.TextUrl,
+                                                        data: {
+                                                                molData: $moltxtarea.val(),
+                                                                PropId: o.PropId
+                                                                },
+                                                        success: function(data) 
+                                                            {
+                                                                $div.dialog('close');
+                                                                o.onSuccess();
+                                                            },
+                                                        error: function() 
+                                                            {
+                                                                $txtsave.CswButton('enable');	
+                                                            }
+                                                    }); // ajax
+                                                } // onclick
+                                            }); // CswButton
                             
 
             openDialog($div, 400, 300);
@@ -693,8 +729,16 @@
 
             openDialog($div, 400, 300);
         }, // PrintLabelDialog
-
-
+        ErrorDialog: function (error) {
+            var $div = $('<div />');
+            openDialog($div, 400, 300, null, 'Error');
+            $div.CswErrorMessage(error);
+        },
+        AlertDialog: function (message, title) {
+            var $div = $('<div>' + message + '</div>');
+            openDialog($div, 200, 200, null, title);
+        },
+        
         // Generic
 
 //		'OpenPopup': function(url) { 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
@@ -119,7 +120,7 @@ namespace ChemSW.Nbt.WebServices
 
         private const string _NoResultsDisplayString = "No Results";
 
-        public JObject DataTableToJSON( DataTable Data )
+        public JObject DataTableToJSON( DataTable Data, bool EnableGridEdit = false )
         {
             // Columns
             JArray JColumnNames = new JArray();
@@ -127,7 +128,7 @@ namespace ChemSW.Nbt.WebServices
             foreach( DataColumn Column in Data.Columns )
             {
                 bool IsKey = ( Column.ColumnName.ToLower() == PkColumn.ToLower() );
-                dataColumnToJson( Column, JColumnNames, JColumnDefs, IsKey );
+                dataColumnToJson( Column, JColumnNames, JColumnDefs, IsKey, false, EnableGridEdit );
             } // foreach( DataColumn Column in Data.Columns )
 
             // Rows
@@ -143,18 +144,19 @@ namespace ChemSW.Nbt.WebServices
 
         } // _mapDataTable()
 
-        public void dataColumnToJson( DataColumn Column, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false )
+        public void dataColumnToJson( DataColumn Column, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false, bool EnableGridEdit = false )
         {
             string ColumnName = Column.ColumnName.ToUpperInvariant();
-            makeJqColumn( ColumnName, JColumnNames, JColumnDefs, IsKey, IsHidden );
+            makeJqColumn( ColumnName, JColumnNames, JColumnDefs, IsKey, IsHidden, EnableGridEdit );
         }
 
-        public void makeJqColumn( String ColumnName, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false )
+        public void makeJqColumn( String ColumnName, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false, bool EnableGridEdit = false )
         {
             JColumnNames.Add( ColumnName.ToUpperInvariant() );
             JObject ThisColumnDef = new JObject();
-            ThisColumnDef["name"] = ColumnName.ToUpperInvariant();
-            ThisColumnDef["index"] = ColumnName.ToUpperInvariant();
+            ThisColumnDef["name"] = ColumnName.ToUpperInvariant().Replace( " ", "_" );
+            ThisColumnDef["index"] = ColumnName.ToUpperInvariant().Replace( " ", "_" );
+            ThisColumnDef["label"] = ColumnName.ToUpperInvariant();
             if( IsKey )
             {
                 ThisColumnDef["key"] = true;
@@ -163,17 +165,21 @@ namespace ChemSW.Nbt.WebServices
             {
                 ThisColumnDef["hidden"] = true;
             }
+            if( false == IsHidden && false == IsKey && EnableGridEdit )
+            {
+                ThisColumnDef["editable"] = true;
+                ThisColumnDef["edittype"] = "text";
+            }
             _ColumnsWidth += ColumnName.Length;
             JColumnDefs.Add( ThisColumnDef );
         }
 
         public void dataRowToJson( DataRow Row, JArray JRows )
         {
-
             JObject RowObj = new JObject();
             foreach( DataColumn Column in Row.Table.Columns )
             {
-                makeJqCell( RowObj, Column.ColumnName.ToUpperInvariant(), Row[Column].ToString() );
+                makeJqCell( RowObj, Column.ColumnName.ToUpperInvariant().Replace( " ", "_" ), Row[Column].ToString() );
             }
             JRows.Add( RowObj );
         } // _mapDataTable()
@@ -187,46 +193,99 @@ namespace ChemSW.Nbt.WebServices
         /// Returns a JSON Array representing grid rows (a row as a JObject of JProperty key/value pairs);
         /// This anticipates XElements as derived from a Tree from a View
         /// </summary>
-        public JArray getGridRowsJSON( IEnumerable<XElement> GridNodes )
+        public JArray getGridRowsJSON( IEnumerable<XElement> GridNodes, Collection<CswViewBuilderProp> PropsInGrid )
         {
-            JArray RowsArray = new JArray(
-                                from Element in GridNodes //not recursive
-                                select new JObject(
-                                    new JProperty( "nodeid", Element.Attribute( "nodeid" ).Value ),
-                                    new JProperty( "nodepk", new CswPrimaryKey( "nodes", CswConvert.ToInt32( Element.Attribute( "nodeid" ).Value ) ).ToString() ),
-                                    new JProperty( "cswnbtnodekey", wsTools.ToSafeJavaScriptParam( Element.Attribute( "key" ).Value ) ),
-                                    new JProperty( "nodename", Element.Attribute( "nodename" ).Value ),
-                                        from DirtyElement in Element.DescendantNodes().OfType<XElement>() // recursive
-                                        where DirtyElement.Name == ( "NbtNodeProp" )
-                                        select _massageGridCell( DirtyElement )
-                                    )
-                                );
+            JArray GridRows = new JArray();
+            foreach( XElement GridNode in GridNodes )
+            {
+                JObject Row = new JObject();
+                Row["nodeid"] = GridNode.Attribute( "nodeid" ).Value;
+                Row["nodepk"] = new CswPrimaryKey( "nodes", CswConvert.ToInt32( GridNode.Attribute( "nodeid" ).Value ) ).ToString();
+                Row["cswnbtnodekey"] = wsTools.ToSafeJavaScriptParam( GridNode.Attribute( "key" ).Value );
+                Row["nodename"] = GridNode.Attribute( "nodename" ).Value;
+                string Icon = "<img src=\'";
+                if( CswConvert.ToBoolean( GridNode.Attribute( "locked" ).Value ) )
+                {
+                    Icon += "Images/quota/lock.gif\' title=\'Quota exceeded";
+                }
+                else
+                {
+                    Icon += "Images/icons/" + _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( GridNode.Attribute( "nodetypeid" ).Value ) ).IconFileName;
+                }
+                Icon += "\'/>";
+                Row["icon"] = Icon;
 
-            return RowsArray;
+                foreach( XElement Related in GridNode.DescendantNodes().OfType<XElement>() )
+                {
+                    if( Related.Name == "NbtNodeProp" )
+                    {
+                        _addSafeCellContent( Related, Row, PropsInGrid );
+                    }
+                }
+                GridRows.Add( Row );
+            }
+
+            return GridRows;
         } // getGridRowsJSON()
 
         /// <summary>
         /// Translates property value into human readable text.
         /// Currently only handles Logical fieldtype.
         /// </summary>
-        private static JProperty _massageGridCell( XElement DirtyElement )
+        private static void _addSafeCellContent( XElement DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
         {
-            string CleanPropName = DirtyElement.Attribute( "name" ).Value.ToLower().Replace( " ", "_" );
-            string CleanValue = string.Empty;
-            string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
-            string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
-            var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
-            switch( PropFieldType )
+            if( null != DirtyElement )
             {
-                case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-                    CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
-                    break;
-                default:
-                    CleanValue = DirtyValue;
-                    break;
+                string CleanPropName = DirtyElement.Attribute( "name" ).Value.Trim().ToLower().Replace( " ", "_" );
+                string CleanValue;
+                string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
+                string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
+                string PropId = DirtyElement.Attribute( "nodetypepropid" ).Value;
+                var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
+                switch( PropFieldType )
+                {
+                    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                        CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
+                        break;
+                    default:
+                        CleanValue = DirtyValue;
+                        break;
+                }
+                foreach( CswViewBuilderProp VbProp in PropsInGrid )
+                {
+                    if( VbProp.PropNameUnique == CleanPropName && VbProp.AssociatedPropIds.Contains( PropId ) )
+                    {
+                        CleanPropName += "_" + VbProp.MetaDataPropId;
+                    }
+                }
+
+                ParentObj[CleanPropName] = CleanValue;
             }
-            JProperty CleanProp = new JProperty( CleanPropName, CleanValue );
-            return CleanProp;
+        }
+
+        /// <summary>
+        /// Generates a JSON array of friendly Column Names
+        /// </summary>
+        public JArray getGridColumnNamesJson( JArray ColumnArrary, IEnumerable<CswNbtViewProperty> PropCollection )
+        {
+            foreach( CswNbtViewProperty ViewProp in PropCollection )
+            {
+                CswViewBuilderProp Prop = new CswViewBuilderProp( ViewProp );
+                ColumnArrary.Add( Prop.PropName );
+            }
+            return ColumnArrary;
+        }
+
+        /// <summary>
+        /// Generates a JSON array of friendly Column Names
+        /// </summary>
+        public JArray getGridColumnNamesJson( JArray ColumnArrary, Collection<CswViewBuilderProp> PropCollection )
+        {
+            foreach( CswViewBuilderProp VbProp in PropCollection )
+            {
+                ColumnArrary.Add( VbProp.PropName );
+            }
+            return ColumnArrary;
         }
 
         /// <summary>
@@ -234,11 +293,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JArray getGridColumnNamesJson( IEnumerable<CswNbtViewProperty> PropCollection )
         {
-            JArray ColumnArray = new JArray(
-                from ViewProp in PropCollection.Select( Prop => new CswViewBuilderProp( Prop ) )
-                select new JValue( ViewProp.PropName )
-                );
-            return ColumnArray;
+            return getGridColumnNamesJson( new JArray(), PropCollection );
         }
 
         /// <summary>
@@ -255,24 +310,40 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
+        /// Generates a JSON property with the definitional data for a jqGrid Column Array
+        /// </summary>
+        public JArray getGridColumnDefinitionJson( Collection<CswViewBuilderProp> PropCollection )
+        {
+            JArray ColumnDefArray = new JArray();
+            foreach( CswViewBuilderProp VbProp in PropCollection )
+            {
+                ColumnDefArray.Add( JqGridViewProperty.getJqGridAttributesForViewProp( VbProp ) );
+            }
+            return ColumnDefArray;
+        }
+
+        /// <summary>
         /// Combines required jqGrid options into jqGrid consumable JObject
         /// </summary>
-        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows )
+        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows = null )
         {
             JObject Ret = new JObject();
 
             Ret[JqGridJsonOptions.datatype.ToString()] = "local";
             Ret[JqGridJsonOptions.colNames.ToString()] = ColumnNames;
             Ret[JqGridJsonOptions.colModel.ToString()] = ColumnDefinition;
-            Ret[JqGridJsonOptions.data.ToString()] = Rows;
+            if( null != Rows )
+            {
+                Ret[JqGridJsonOptions.data.ToString()] = Rows;
+            }
             Ret[JqGridJsonOptions.rowNum.ToString()] = PageSize;
             Ret[JqGridJsonOptions.viewrecords.ToString()] = true;
             Ret[JqGridJsonOptions.emptyrecords.ToString()] = _NoResultsDisplayString;
-			if( GridWidth == Int32.MinValue )
-			{
-				Int32 ColWidth = _ColumnsWidth * 14;
-				GridWidth = ColWidth < 800 ? ColWidth : 450;
-			}
+            if( GridWidth == Int32.MinValue )
+            {
+                Int32 ColWidth = _ColumnsWidth * 14;
+                GridWidth = ColWidth < 800 ? ColWidth : 450;
+            }
             Ret[JqGridJsonOptions.width.ToString()] = GridWidth;
             //Ret[JqGridJsonOptions.autowidth.ToString()] = true;
             Ret[JqGridJsonOptions.sortname.ToString()] = GridSortName;
@@ -293,6 +364,7 @@ namespace ChemSW.Nbt.WebServices
     public class JqGridViewProperty
     {
         private readonly bool _DoCssOverride = false;
+        private readonly string _UniqueColumnName = string.Empty;
         private readonly string _LiteralColumnName = string.Empty;
         private readonly string _FriendlyColumnName = string.Empty;
         private readonly Int32 _ColumnWidth = Int32.MinValue;
@@ -320,7 +392,6 @@ namespace ChemSW.Nbt.WebServices
             /// Also not a jqGrid option, but we need it to distinguish from datetime and date
             /// </summary>
             time
-
         };
         private readonly JqFieldType _JqFieldType = JqFieldType.Unknown;
 
@@ -373,7 +444,8 @@ namespace ChemSW.Nbt.WebServices
             }
 
             _LiteralColumnName = ViewProperty.PropName.ToLower();
-            _FriendlyColumnName = ViewProperty.PropName.ToLower().Replace( " ", "_" );
+            _UniqueColumnName = ( _LiteralColumnName + "_" + ViewProperty.MetaDataPropId ).Replace( " ", "_" );
+            _FriendlyColumnName = ( ViewProperty.PropName.ToLower() ).Replace( " ", "_" );
             _ColumnWidth = ViewProperty.Width;
 
             _DoCssOverride = DoCssOverride;
@@ -719,7 +791,7 @@ namespace ChemSW.Nbt.WebServices
         {
             get
             {
-                JProperty ReturnProp = new JProperty( "index", _ColumnName );
+                JProperty ReturnProp = new JProperty( "index", _UniqueColumnName );
                 return ReturnProp;
             }
         }
@@ -746,7 +818,7 @@ namespace ChemSW.Nbt.WebServices
         {
             get
             {
-                JProperty ReturnProp = new JProperty( "name", _ColumnName );
+                JProperty ReturnProp = new JProperty( "name", _UniqueColumnName );
                 return ReturnProp;
             }
         }

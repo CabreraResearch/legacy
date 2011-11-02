@@ -2,7 +2,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 
 ; (function ($) {
         
@@ -32,23 +32,23 @@
                             AlternateText: 'Edit',
                             'ID': o.ID,
                             onClick: function ($ImageDiv) { 
-								$edittable.show();
-							}
+                                $edittable.show();
+                            }
                         });
-				
-				var $edittable = $table.CswTable('cell', 2, 2).CswTable('init', { 'ID': o.ID + '_edittbl' });
-				$edittable.CswTable('cell', 1, 1).append('Start Date');
+                
+                var $edittable = $table.CswTable('cell', 2, 2).CswTable('init', { 'ID': o.ID + '_edittbl' });
+                $edittable.CswTable('cell', 1, 1).append('Start Date');
                 var $StartDateBoxCell = $edittable.CswTable('cell', 1, 2);
-				
-				$StartDateBoxCell.CswDateTimePicker('init', { 
-				                    ID: o.ID + '_sd',
-									Date: startDate,
-									DateFormat: dateFormat,
-									DisplayMode: 'Date',
-									ReadOnly: o.ReadOnly,
-									Required: o.Required,
-									OnChange: o.onchange
-								});
+                
+                $StartDateBoxCell.CswDateTimePicker('init', { 
+                                    ID: o.ID + '_sd',
+                                    Date: startDate,
+                                    DateFormat: dateFormat,
+                                    DisplayMode: 'Date',
+                                    ReadOnly: o.ReadOnly,
+                                    Required: o.Required,
+                                    OnChange: o.onchange
+                                });
 
 //                var $StartDateBox = $StartDateBoxCell.CswInput('init',{ID: o.ID + '_sd',
 //                                                                  type: CswInput_Types.text,
@@ -62,8 +62,8 @@
 //                var $EndDateBox = $('<input type="text" class="textinput date" id="'+ o.ID +'_ed" name="' + o.ID + '_ed" value="" />"' )
 //									.appendTo($edittable.CswTable('cell', 2, 2))
 //                                    .datepicker();
-				
-				$edittable.CswTable('cell', 3, 1).append('Units');
+                
+                $edittable.CswTable('cell', 3, 1).append('Units');
                 var unitVals = ['hours', 'days'];
                 if (o.Multi) {
                     unitVals.push(CswMultiEditDefaultValue);
@@ -79,20 +79,23 @@
 //				var $refreshbtn = $('<input type="button" id="'+ o.ID + '_refresh" value="Refresh">')
 //									.appendTo($edittable.CswTable('cell', 4, 2));
 
-				$edittable.hide();
+                $edittable.hide();
             }
         },
         save: function(o) { //$propdiv, $xml
 
             var attributes = {
-                startdate: {
-                    date: null
+                startdatetime: {
+                    date: null,
+                    time: null
                 }, 
                 units: null
             };
             var $StartDate = o.$propdiv.find('#' + o.ID + '_sd');
             if (false === isNullOrEmpty($StartDate)) {
-                attributes.startdate = $StartDate.CswDateTimePicker('value').Date;
+                dateVal = $StartDate.CswDateTimePicker('value', o.propData.readonly);
+                attributes.startdatetime.date = dateVal.Date;
+                attributes.startdatetime.time = dateVal.Time;
             }
 
             var $Units = o.$propdiv.find('#' + o.ID + '_units');

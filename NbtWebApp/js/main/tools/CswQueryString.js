@@ -1,5 +1,5 @@
-/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../globals/Global.js" />
 
 // adapted from 
 // http://stackoverflow.com/questions/901115/get-querystring-values-in-javascript/2880929#2880929

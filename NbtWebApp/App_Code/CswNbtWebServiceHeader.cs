@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.WebServices
                 Ret["Admin"] = new JObject(
                                 new JProperty( "haschildren", true ),
                                 new JProperty( "Current User List", new JObject(
-                                    new JProperty( "href", "UserList.aspx" )
+                                    new JProperty( "action", "Sessions" )
                                 ) ),
                                 new JProperty( "View Log", new JObject(
                                     new JProperty( "href", "DisplayLog.aspx" )
@@ -106,6 +106,9 @@ namespace ChemSW.Nbt.WebServices
                                 ) ),
                                 new JProperty( "Statistics", new JObject(
                                     new JProperty( "href", "Statistics.aspx" )
+                                ) ),
+                                new JProperty( "Quotas", new JObject(
+                                    new JProperty( "action", "Quotas" )
                                 ) )
                         );
             }

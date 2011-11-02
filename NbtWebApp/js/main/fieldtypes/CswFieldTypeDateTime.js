@@ -2,9 +2,9 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 
-; (function ($) {
+(function ($) {
         
     var pluginName = 'CswFieldTypeDateTime';
 
@@ -17,16 +17,16 @@
             var time = (false === o.Multi) ? tryParseString(propVals.value.time).trim() : CswMultiEditDefaultValue;
             
             var $DTPickerDiv = $Div.CswDateTimePicker('init', {
-													ID: o.ID,
-													Date: date,
-													Time: time,
-													DateFormat: ServerDateFormatToJQuery(propVals.value.dateformat),
-													TimeFormat: ServerTimeFormatToJQuery(propVals.value.timeformat),
-													DisplayMode: propVals.displaymode,
-													ReadOnly: o.ReadOnly,
-													Required: o.Required,
-													OnChange: o.onchange
-												});
+                                                    ID: o.ID,
+                                                    Date: date,
+                                                    Time: time,
+                                                    DateFormat: ServerDateFormatToJQuery(propVals.value.dateformat),
+                                                    TimeFormat: ServerTimeFormatToJQuery(propVals.value.timeformat),
+                                                    DisplayMode: propVals.displaymode,
+                                                    ReadOnly: o.ReadOnly,
+                                                    Required: o.Required,
+                                                    OnChange: o.onchange
+                                                });
 
             $DTPickerDiv.find('input').clickOnEnter(o.$savebtn);
         },
@@ -39,11 +39,11 @@
                 } 
             };
             $DTPickerDiv = o.$propdiv.find('#' + o.ID);
-			if (false === isNullOrEmpty($DTPickerDiv)) {
-			    dateVal = $DTPickerDiv.CswDateTimePicker('value');
-			    attributes.value.date = dateVal.Date;
-			    attributes.value.time = dateVal.Time;
-			}
+            if (false === isNullOrEmpty($DTPickerDiv)) {
+                dateVal = $DTPickerDiv.CswDateTimePicker('value', o.propData.readonly);
+                attributes.value.date = dateVal.Date;
+                attributes.value.time = dateVal.Time;
+            }
             preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };

@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _InitSessionResources()
         {
-			_CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, SetupMode.NbtExe, false, false );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, SetupMode.NbtExe, false, false );
             _CswLogger = _CswNbtResources.CswLogger;
             _CswNbtResources.InitCurrentUser = InitUser;
         }//constructor
@@ -87,15 +87,15 @@ namespace ChemSW.Nbt.Schema
             DbInstances.Rows.Clear();
             foreach( string CurrentAccessId in _CswNbtResources.CswDbCfgInfo.AccessIds )
             {
-				_CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CurrentAccessId );
+                _CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CurrentAccessId );
                 DataRow CurrentRow = DbInstances.NewRow();
                 CurrentRow[ColName_AccessId] = CurrentAccessId.ToString();
-				CurrentRow[ColName_ServerType] = _CswNbtResources.CswDbCfgInfo.CurrentServerType;
-				CurrentRow[ColName_ServerName] = _CswNbtResources.CswDbCfgInfo.CurrentServerName;
-				CurrentRow[ColName_UserName] = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
-				CurrentRow[ColName_UserCount] = _CswNbtResources.CswDbCfgInfo.CurrentUserCount;
-				CurrentRow[ColName_Deactivated] = _CswNbtResources.CswDbCfgInfo.CurrentDeactivated;
-				CurrentRow[ColName_Display] = CurrentAccessId + " (" + _CswNbtResources.CswDbCfgInfo.CurrentUserName + "@" + _CswNbtResources.CswDbCfgInfo.CurrentServerName + ")";
+                CurrentRow[ColName_ServerType] = _CswNbtResources.CswDbCfgInfo.CurrentServerType;
+                CurrentRow[ColName_ServerName] = _CswNbtResources.CswDbCfgInfo.CurrentServerName;
+                CurrentRow[ColName_UserName] = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
+                CurrentRow[ColName_UserCount] = _CswNbtResources.CswDbCfgInfo.CurrentUserCount;
+                CurrentRow[ColName_Deactivated] = _CswNbtResources.CswDbCfgInfo.CurrentDeactivated;
+                CurrentRow[ColName_Display] = CurrentAccessId + " (" + _CswNbtResources.CswDbCfgInfo.CurrentUserName + "@" + _CswNbtResources.CswDbCfgInfo.CurrentServerName + ")";
                 DbInstances.Rows.Add( CurrentRow );
             }
             return DbInstances;
@@ -127,13 +127,27 @@ namespace ChemSW.Nbt.Schema
             return _CswNbtResources.MetaData.NodeTypes;
         }
 
-        public delegate void StatusHandler( string Msg );
-        public event StatusHandler OnStatusChange;
-        public void SetStatus( string Msg )
+        public delegate void StatusMessageHandler( string Msg );
+        public event StatusMessageHandler OnStatusChange;
+        public void SetStatusMessage( string Msg )
         {
             if( OnStatusChange != null )
                 OnStatusChange( Msg );
         }
+
+
+
+        public delegate void ImportPhaseMessageHandler( CswNbtImportStatus CswNbtImportStatus );
+        public event ImportPhaseMessageHandler OnImportPhaseChange;
+        public void setImportPhase( CswNbtImportStatus CswNbtImportStatus )
+        {
+            if( null != OnImportPhaseChange )
+            {
+                OnImportPhaseChange( CswNbtImportStatus );
+            }
+        }//setImportPhase() 
+
+
 
 
         public delegate void ImportHandler( string FileName, ImportMode Mode ); //, bool ClearExisting );
@@ -158,7 +172,9 @@ namespace ChemSW.Nbt.Schema
 
                         // Restore selected data
                         CswNbtImportExport Importer = new CswNbtImportExport( _CswNbtResources );
-                        Importer.OnStatusUpdate += new StatusUpdateHandler( SetStatus );
+                                                       
+                        Importer.OnStatusUpdate += new StatusUpdateHandler( SetStatusMessage );
+                        Importer.OnImportPhaseChange += new ImportPhaseHandler( setImportPhase );
 
                         string ViewXml = string.Empty;
                         string ResultXml = string.Empty;
@@ -169,13 +185,13 @@ namespace ChemSW.Nbt.Schema
                         if( ErrorLog != string.Empty )
                         {
                             _CswNbtResources.logMessage( ErrorLog );
-                            SetStatus( "Errors Occurred.  Check Log." );
+                            SetStatusMessage( "Errors Occurred.  Check Log." );
                         }
                     }
                     else
                     {
                         //ErrorLabel.Text = "File does not exist: " + DataFileName; // openFileDialog1.FileName;
-                        SetStatus( "File does not exist: " + FilePath );
+                        SetStatusMessage( "File does not exist: " + FilePath );
                     }
 
                     _CswNbtResources.finalize();
@@ -184,7 +200,7 @@ namespace ChemSW.Nbt.Schema
             }
             catch( Exception ex )
             {
-                SetStatus( "Error: " + ex.Message + "\r\n" + ex.StackTrace );
+                SetStatusMessage( "Error: " + ex.Message + "\r\n" + ex.StackTrace );
             }
         } // DoImport()
 
@@ -195,7 +211,7 @@ namespace ChemSW.Nbt.Schema
             try
             {
                 CswNbtImportExport Exporter = new CswNbtImportExport( _CswNbtResources );
-                Exporter.OnStatusUpdate += new StatusUpdateHandler( SetStatus );
+                Exporter.OnStatusUpdate += new StatusUpdateHandler( SetStatusMessage );
 
                 XmlDocument ExportXml = Exporter.ExportAll( SelectedNodeTypes, ExportViews, ExportNodes );
 
@@ -206,7 +222,7 @@ namespace ChemSW.Nbt.Schema
             }
             catch( Exception ex )
             {
-                SetStatus( "Error: " + ex.Message + "\r\n" + ex.StackTrace );
+                SetStatusMessage( "Error: " + ex.Message + "\r\n" + ex.StackTrace );
             }
         }
 

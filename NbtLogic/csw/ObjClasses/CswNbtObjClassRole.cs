@@ -5,12 +5,15 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassRole : CswNbtObjClass
     {
-        public static string AdministratorPropertyName { get { return "Administrator"; } }
+		public static string ChemSWAdminRoleName { get { return CswAuthenticator.ChemSWAdminRoleName; } }
+		
+		public static string AdministratorPropertyName { get { return "Administrator"; } }
         public static string DescriptionPropertyName { get { return "Description"; } }
         public static string NodeTypePermissionsPropertyName { get { return "NodeType Permissions"; } }
         public static string ActionPermissionsPropertyName { get { return "Action Permissions"; } }
@@ -65,18 +68,18 @@ namespace ChemSW.Nbt.ObjClasses
 			// case 22512
 			// also case 22557 - use the original name, not the new one
 			CswNbtNodePropWrapper NamePropWrapper = Node.Properties[NamePropertyName];
-			if( NamePropWrapper.GetOriginalPropRowValue( NamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == "chemsw_admin_role" &&
-				_CswNbtResources.CurrentNbtUser.Username != "chemsw_admin" &&
+			if( NamePropWrapper.GetOriginalPropRowValue( NamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == ChemSWAdminRoleName &&
+				_CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername &&
 				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
 			{
-				throw new CswDniException( ErrorType.Warning, "The 'chemsw_admin_role' role cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the 'chemsw_admin_role' role." );
+				throw new CswDniException( ErrorType.Warning, "The " + ChemSWAdminRoleName + " role cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the '" + ChemSWAdminRoleName + "' role." );
 			}
 
 			// case 22437
 			if( ActionPermissions.WasModified )
 			{
 				// You can never grant your own action permissions
-				if( _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
+				if( _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId && this.Name.Text != ChemSWAdminRoleName )
 				{
 					throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
 						"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit their own action permissions on role: " + _CswNbtNode.NodeName );
@@ -84,12 +87,20 @@ namespace ChemSW.Nbt.ObjClasses
 				// You can only grant action permissions on other roles to which you have access
 				foreach( CswNbtAction Action in _CswNbtResources.Actions )
 				{
-					if( true == _CswNbtResources.Permit.can( Action, this ) &&
-						false == _CswNbtResources.Permit.can( Action, _CswNbtResources.CurrentNbtUser ) )
+					if( true == _CswNbtResources.Permit.can( Action, this ) ) // permission is being granted
 					{
-						throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
-							"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
-					}
+						if( Action.Name == CswNbtActionName.Design && this.Name.Text != ChemSWAdminRoleName )
+						{
+							// case 23677
+							throw new CswDniException( ErrorType.Warning, "You may not grant access to Design to this role",
+								"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
+						}
+						if( false == _CswNbtResources.Permit.can( Action, _CswNbtResources.CurrentNbtUser ) )
+						{
+							throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
+								"User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
+						}
+					} // if( true == _CswNbtResources.Permit.can( Action, this ) )
 				} // foreach( string ActionNameString in ActionPermissions.YValues )
 			} // if( ActionPermissions.WasModified )
 
@@ -115,12 +126,12 @@ namespace ChemSW.Nbt.ObjClasses
 				throw ( new CswDniException( ErrorType.Warning, "You can not delete your own role account.", "Current user (" + _CswNbtResources.CurrentUser.Username + ") can not delete own RoleClass node." ) );
             }
 			
-			// case 22635 - prevent deleting chemsw_admin_role
+			// case 22635 - prevent deleting the chemsw admin role
 			CswNbtNodePropWrapper NamePropWrapper = Node.Properties[NamePropertyName];
-			if( NamePropWrapper.GetOriginalPropRowValue( NamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == "chemsw_admin_role" &&
+			if( NamePropWrapper.GetOriginalPropRowValue( NamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == ChemSWAdminRoleName &&
 				false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
 			{
-				throw new CswDniException( ErrorType.Warning, "The 'chemsw_admin_role' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the 'chemsw_admin_role' role." );
+				throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminRoleName + "' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminRoleName + "' role." );
 			}
 
 			// case 22424

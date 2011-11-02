@@ -1,7 +1,7 @@
-/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../_Global.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../globals/Global.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
+(function ($) { /// <param name="$" type="jQuery" />
 	$.fn.CswAttrDom = function (name, value)
 	{
 		/// <summary>

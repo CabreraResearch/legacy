@@ -1,4 +1,4 @@
-/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 
@@ -8,7 +8,9 @@
 		var o = {
 			Url: '/NbtWebApp/wsNBT.asmx/getHeaderMenu',
 			onLogout: function() { },
-			onSuccess: function() { }
+			onQuotas: function () { },
+			onSessions: function () { },
+			onSuccess: function () { }
 		};
 
 		if (options) {
@@ -33,7 +35,9 @@
 			                var $li = HandleMenuItem({ $ul: $ul, 
 			                                            itemKey: menuItem,
 			                                            itemJson: thisItem, 
-			                                            onLogout: o.onLogout });
+			                                            onLogout: o.onLogout,
+														onQuotas: o.onQuotas,
+														onSessions: o.onSessions });
 
 			                if (isTrue(thisItem.haschildren)) {
 			                    delete thisItem.haschildren;
@@ -45,7 +49,9 @@
 			                            HandleMenuItem({ $ul: $subul, 
 			                                             itemKey: childItem,
 			                                             itemJson: thisChild, 
-			                                             onLogout: o.onLogout });
+			                                             onLogout: o.onLogout,
+														 onQuotas: o.onQuotas,
+														 onSessions: o.onSessions });
 			                        }
 			                    }
 			                }

@@ -1,16 +1,14 @@
-/// <reference path="../js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/linq-vsdoc.js" />
-/// <reference path="../js/thirdparty/js/linq.js_ver2.2.0.2/jquery.linq-vsdoc.js" />
-/// <reference path="../_Global.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../globals/Global.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-	
+(function ($) { /// <param name="$" type="jQuery" />
+    
     var PluginName = "CswSpan";
     
     var methods = {
-	
-		'init': function(options) 
-		{
+    
+        'init': function(options) 
+        {
             var o = {
                 'ID': '',
                 'value': '',
@@ -32,18 +30,18 @@
             return $span;
         }
     };
-    	// Method calling logic
-	$.fn.CswSpan = function (method) {
-		
-		if ( methods[method] ) {
-		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-		} else if ( typeof method === 'object' || ! method ) {
-		  return methods.init.apply( this, arguments );
-		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
-		}    
+        // Method calling logic
+    $.fn.CswSpan = function (method) {
+        
+        if ( methods[method] ) {
+          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+        } else if ( typeof method === 'object' || ! method ) {
+          return methods.init.apply( this, arguments );
+        } else {
+          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+        }    
   
-	};
+    };
 
 
 })(jQuery);

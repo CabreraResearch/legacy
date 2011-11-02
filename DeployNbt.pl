@@ -38,6 +38,7 @@ $schemata{"nbt_master"} = "nbt";   # master
 $schemata{"nbt_schema1"} = "nbt";  # 1
 $schemata{"nbt_schema2"} = "nbt";  # 2
 $schemata{"sales"} = "nbt";  # sales
+$schemata{"nbt_manager"} = "nbt";  # nbt_manager
 
 # this one will always be reset to the master
 my $masterschema = "nbt_master";
@@ -116,7 +117,9 @@ foreach my $component (@components)
 					   $subdir eq ".hg" ||
 					   $subdir eq "NbtSetup" ||
 					   $subdir eq "Schema" ||
-					   $subdir eq "TestApps"))
+					   $subdir eq "TestApps" ||
+					   $subdir eq "packages"
+					   ))
 				{
 					if($subdir eq "NbtWebApp")   # special case
 					{
@@ -136,7 +139,9 @@ foreach my $component (@components)
 						} else {
 							printf("ERROR: Could not open $file \n");
 						}
-					} else {
+					} 
+					else 
+					{
 						$file = $repopaths{$component} ."/$subdir/Properties/AssemblyInfo.cs";
 						&setversion($file, "$datestr.$increment");
 					}
@@ -150,6 +155,11 @@ foreach my $component (@components)
 			{
 				$file = $repopaths{$component} ."/CswLogService/Properties/AssemblyInfo.cs";
 			}
+			elsif($component eq "DailyBuildTools")   # special case
+			{
+				$file = $repopaths{$component} ."/DailyBuildWeb/DailyBuildWeb/Properties/AssemblyInfo.cs";
+				&setversion($file, "$datestr.$increment");
+			} 
 			else
 			{
 				$file = $repopaths{$component} ."/Properties/AssemblyInfo.cs";
@@ -169,6 +179,9 @@ foreach my $component (@components)
 
 &runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
             "devenv ". $repopaths{"Nbt"} ."/Nbt.sln /Rebuild \"Release\"");
+
+&runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
+            "devenv ". $repopaths{"DailyBuildTools"} ."/DailyBuildweb/DailyBuildWeb.sln /Rebuild \"Release\"");
 
 &runCommand( "net start \"ChemSW Log Service\"");
 

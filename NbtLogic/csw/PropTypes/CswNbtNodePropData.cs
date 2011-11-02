@@ -1,12 +1,9 @@
 using System;
 using System.Data;
-using System.Collections.Generic;
-using System.Text;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -18,26 +15,26 @@ namespace ChemSW.Nbt.PropTypes
         private Int32 _ObjectClassPropId = Int32.MinValue;
         private DataRow _PropRow = null;
 
-		/// <summary>
-		/// Creates a row in the database for this property
-		/// </summary>
-		public void makePropRow()
-		{
-			if( _PropRow == null ) //&& dbval != DBNull.Value )  case 22591
-			{
-				_PropRow = _PropsTable.NewRow();
-				if( _NodeId != null )
-				{
-					_PropRow["nodeid"] = CswConvert.ToDbVal( _NodeId.PrimaryKey );
-					_PropRow["nodeidtablename"] = _NodeId.TableName;
-				}
-				_PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
-				_PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
-				_PropRow["pendingupdate"] = CswConvert.ToDbVal( false );
-				_PropRow["readonly"] = CswConvert.ToDbVal( false );
-				_PropsTable.Rows.Add( _PropRow );
-			}
-		}
+        /// <summary>
+        /// Creates a row in the database for this property
+        /// </summary>
+        public void makePropRow()
+        {
+            if( _PropRow == null ) //&& dbval != DBNull.Value )  case 22591
+            {
+                _PropRow = _PropsTable.NewRow();
+                if( _NodeId != null )
+                {
+                    _PropRow["nodeid"] = CswConvert.ToDbVal( _NodeId.PrimaryKey );
+                    _PropRow["nodeidtablename"] = _NodeId.TableName;
+                }
+                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
+                _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
+                _PropRow["pendingupdate"] = CswConvert.ToDbVal( false );
+                _PropRow["readonly"] = CswConvert.ToDbVal( false );
+                _PropsTable.Rows.Add( _PropRow );
+            }
+        }
 
         /// <summary>
         /// Sets the value of a column for a property
@@ -53,8 +50,8 @@ namespace ChemSW.Nbt.PropTypes
 
             if( _PropRow == null ) //&& dbval != DBNull.Value )  case 22591
             {
-				makePropRow();
-				ret = true;
+                makePropRow();
+                ret = true;
             }
 
             if( _PropRow != null )
@@ -67,12 +64,12 @@ namespace ChemSW.Nbt.PropTypes
                 _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
                 _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
 
-				if( false == ( CswConvert.ToDbVal( _PropRow[column.ToString()] ).Equals( dbval ) ) )
-				{
-					WasModified = true;
-					_PropRow[column.ToString()] = CswConvert.ToDbVal( value );
-					ret = true;
-				}
+                if( false == ( CswConvert.ToDbVal( _PropRow[column.ToString()] ).Equals( dbval ) ) )
+                {
+                    WasModified = true;
+                    _PropRow[column.ToString()] = CswConvert.ToDbVal( value );
+                    ret = true;
+                }
             }
             // Don't just return WasModified, or else changes to one subfield 
             // will look like changes to another subfield
@@ -290,21 +287,21 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool TemporarilyRequired = false;
 
-		/// <summary>
-		/// If the property value comes from an audit record (rather than new)
-		/// </summary>
-		public bool AuditChanged
-		{
-			get
-			{
-				bool ret = false;
-				if( _PropRow != null && _PropRow.Table.Columns.Contains( "auditchanged" ) )
-				{
-					ret = CswConvert.ToBoolean( _PropRow["auditchanged"] );
-				}
-				return ret;
-			}
-		}
+        /// <summary>
+        /// If the property value comes from an audit record (rather than new)
+        /// </summary>
+        public bool AuditChanged
+        {
+            get
+            {
+                bool ret = false;
+                if( _PropRow != null && _PropRow.Table.Columns.Contains( "auditchanged" ) )
+                {
+                    ret = CswConvert.ToBoolean( _PropRow["auditchanged"] );
+                }
+                return ret;
+            }
+        }
 
         public string GetPropRowValue( CswNbtSubField.PropColumn Column )
         {
@@ -329,10 +326,10 @@ namespace ChemSW.Nbt.PropTypes
                 case CswNbtSubField.PropColumn.Field2_Date:
                     ret = CswConvert.ToString( Field2_Date );
                     break;
-				case CswNbtSubField.PropColumn.Field2_Numeric:
-					ret = CswConvert.ToString( Field2_Numeric );
-					break;
-				case CswNbtSubField.PropColumn.Field3:
+                case CswNbtSubField.PropColumn.Field2_Numeric:
+                    ret = CswConvert.ToString( Field2_Numeric );
+                    break;
+                case CswNbtSubField.PropColumn.Field3:
                     ret = Field3;
                     break;
                 case CswNbtSubField.PropColumn.Field4:
@@ -348,42 +345,42 @@ namespace ChemSW.Nbt.PropTypes
                     ret = ClobData;
                     break;
                 default:
-					throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
+                    throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
             }
             return ret;
         } // GetPropRowValue()
 
-		public DateTime GetPropRowValueDate( CswNbtSubField.PropColumn Column )
-		{
-			DateTime ret = DateTime.MinValue;
-			switch( Column )
-			{
-				case CswNbtSubField.PropColumn.Field1_Date:
-					ret = Field1_Date;
-					break;
-				case CswNbtSubField.PropColumn.Field2_Date:
-					ret = Field2_Date;
-					break;
-				default:
-					throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValueDate() found an unhandled PropColumn: " + Column.ToString() );
-			}
-			return ret;
-		} // GetPropRowValueDate()
+        public DateTime GetPropRowValueDate( CswNbtSubField.PropColumn Column )
+        {
+            DateTime ret = DateTime.MinValue;
+            switch( Column )
+            {
+                case CswNbtSubField.PropColumn.Field1_Date:
+                    ret = Field1_Date;
+                    break;
+                case CswNbtSubField.PropColumn.Field2_Date:
+                    ret = Field2_Date;
+                    break;
+                default:
+                    throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValueDate() found an unhandled PropColumn: " + Column.ToString() );
+            }
+            return ret;
+        } // GetPropRowValueDate()
 
-		public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
-		{
-			// see case 22613
-			string ret = string.Empty;
-			try
-			{
-				ret = _PropRow[Column.ToString(), DataRowVersion.Original].ToString();
-			}
-			catch( System.Data.VersionNotFoundException ex )
-			{
-				ret = _PropRow[Column.ToString()].ToString();
-			}
-			return ret;
-		}
+        public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
+        {
+            // see case 22613
+            string ret = string.Empty;
+            try
+            {
+                ret = _PropRow[Column.ToString(), DataRowVersion.Original].ToString();
+            }
+            catch( System.Data.VersionNotFoundException ex )
+            {
+                ret = _PropRow[Column.ToString()].ToString();
+            }
+            return ret;
+        }
 
         public string Field1
         {
@@ -421,11 +418,11 @@ namespace ChemSW.Nbt.PropTypes
             set { SetPropRowValue( CswNbtSubField.PropColumn.Field2_Date, value ); }
         }
 
-		public Double Field2_Numeric
-		{
-			get { return _getRowDoubleVal( CswNbtSubField.PropColumn.Field2_Numeric ); }
-			set { SetPropRowValue( CswNbtSubField.PropColumn.Field2_Numeric, value ); }
-		}
+        public Double Field2_Numeric
+        {
+            get { return _getRowDoubleVal( CswNbtSubField.PropColumn.Field2_Numeric ); }
+            set { SetPropRowValue( CswNbtSubField.PropColumn.Field2_Numeric, value ); }
+        }
 
         public string Field3
         {
@@ -484,7 +481,7 @@ namespace ChemSW.Nbt.PropTypes
             //Implementing FieldType specific behavior here. Blame Steve.
             if( null != Source.NodeTypeProp && Source.NodeTypeProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.ViewReference )
             {
-				CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
+                CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
                 CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
                 ViewCopy.makeNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
                 ViewCopy.save();
@@ -492,20 +489,20 @@ namespace ChemSW.Nbt.PropTypes
             }
             else
             {
-				SetPropRowValue( CswNbtSubField.PropColumn.Field1_FK, Source.Field1_Fk );
+                SetPropRowValue( CswNbtSubField.PropColumn.Field1_FK, Source.Field1_Fk );
             }
 
-			SetPropRowValue( CswNbtSubField.PropColumn.Field1, Source.Field1 );
-			SetPropRowValue( CswNbtSubField.PropColumn.Field2, Source.Field2 );
-			SetPropRowValue( CswNbtSubField.PropColumn.Field3, Source.Field3 );
-			SetPropRowValue( CswNbtSubField.PropColumn.Field4, Source.Field4 );
-			SetPropRowValue( CswNbtSubField.PropColumn.Field5, Source.Field5 );
-			SetPropRowValue( CswNbtSubField.PropColumn.Field1_Date, Source.Field1_Date );
-			SetPropRowValue( CswNbtSubField.PropColumn.Field2_Date, Source.Field2_Date );
-			SetPropRowValue( CswNbtSubField.PropColumn.Field1_Numeric, Source.Field1_Numeric );
-			SetPropRowValue( CswNbtSubField.PropColumn.Field2_Numeric, Source.Field2_Numeric );
-			SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Source.Gestalt );
-			SetPropRowValue( CswNbtSubField.PropColumn.ClobData, Source.ClobData );
+            SetPropRowValue( CswNbtSubField.PropColumn.Field1, Source.Field1 );
+            SetPropRowValue( CswNbtSubField.PropColumn.Field2, Source.Field2 );
+            SetPropRowValue( CswNbtSubField.PropColumn.Field3, Source.Field3 );
+            SetPropRowValue( CswNbtSubField.PropColumn.Field4, Source.Field4 );
+            SetPropRowValue( CswNbtSubField.PropColumn.Field5, Source.Field5 );
+            SetPropRowValue( CswNbtSubField.PropColumn.Field1_Date, Source.Field1_Date );
+            SetPropRowValue( CswNbtSubField.PropColumn.Field2_Date, Source.Field2_Date );
+            SetPropRowValue( CswNbtSubField.PropColumn.Field1_Numeric, Source.Field1_Numeric );
+            SetPropRowValue( CswNbtSubField.PropColumn.Field2_Numeric, Source.Field2_Numeric );
+            SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Source.Gestalt );
+            SetPropRowValue( CswNbtSubField.PropColumn.ClobData, Source.ClobData );
         }
 
         public void ClearValue()
@@ -518,9 +515,9 @@ namespace ChemSW.Nbt.PropTypes
             this.Field1_Fk = Int32.MinValue;
             this.Field1_Date = DateTime.MinValue;
             this.Field2_Date = DateTime.MinValue;
-			this.Field1_Numeric = Double.NaN;
-			this.Field2_Numeric = Double.NaN;
-			this.Gestalt = string.Empty;
+            this.Field1_Numeric = Double.NaN;
+            this.Field2_Numeric = Double.NaN;
+            this.Gestalt = string.Empty;
             this.ClobData = string.Empty;
 
             WasModified = true;

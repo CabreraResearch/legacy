@@ -519,7 +519,8 @@ namespace ChemSW.Nbt
 
 
             string Select = @"select n." + TargetPkColumnName + @",
-                                     n.nodename,
+                                     n.nodename, 
+									 n.locked,
                                      t.iconfilename,
                                      t.nodetypename,
                                      t.nametemplate,

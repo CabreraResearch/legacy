@@ -2,8 +2,8 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../../thirdparty/js/jmol-12.0.49/Jmol.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../thirdparty/js/jmol/Jmol.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
 
@@ -24,19 +24,17 @@
             var $cell22 = $table.CswTable('cell', 2, 2).css('textAlign', 'right');
             var $cell23 = $table.CswTable('cell', 2, 3).css('textAlign', 'right');
 
-            if (mol !== '') {
-
-				var JmolFolder = "./js/thirdparty/js/jmol-12.0.49/";
-				jmolInitialize(JmolFolder);
-				jmolSetDocument(false);
-				var myApplet = jmolAppletInline('300px', mol);
-				$cell11.append(myApplet); 
+            if (false === isNullOrEmpty(mol)) {
+                jmolInitialize('./js/thirdparty/js/jmol/', 'JmolApplet.jar');
+                jmolSetDocument(false);
+                var myApplet = jmolAppletInline('300px', mol);
+                $cell11.append(myApplet); 
                 var myCheck = jmolCheckbox("spin on", "spin off", "Rotate");
                 $cell21.append(myCheck);
                 //$Div.css('z-index', '0'); //this doesn't prevent jmol overlapping dialog
             }
 
-            if (!o.ReadOnly && o.EditMode != EditMode.AddInPopup.name) {
+            if (false === isTrue(o.ReadOnly) && o.EditMode !== EditMode.AddInPopup.name) {
                 var $editButton = $('<div/>')
                     .appendTo($cell22)
                     .CswImageButton({

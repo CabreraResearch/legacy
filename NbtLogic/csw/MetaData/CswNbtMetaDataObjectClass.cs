@@ -11,6 +11,7 @@ namespace ChemSW.Nbt.MetaData
     {
         public enum NbtObjectClass
         {
+            Unknown,
             AliquotClass,
             BiologicalClass,
             ContainerClass,
@@ -45,7 +46,6 @@ namespace ChemSW.Nbt.MetaData
             //TestGroupClass,
             UnitOfMeasureClass,
             UserClass,
-            Unknown,
             VendorClass,
             UnitTypeClass
         };
@@ -109,24 +109,29 @@ namespace ChemSW.Nbt.MetaData
             get { return _ObjectClassRow["iconfilename"].ToString(); }
         }
 
-		public ICollection NodeTypes
-		{
-			get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes( ObjectClassId ); }
-		}
+        public Int32 Quota
+        {
+            get { return CswConvert.ToInt32( _ObjectClassRow["quota"] ); }
+        }
 
-		public CswNbtMetaDataNodeType FirstNodeType
-		{
-			get
-			{
-				CswNbtMetaDataNodeType ret = null;
-				foreach( CswNbtMetaDataNodeType NT in NodeTypes )
-				{
-					ret = NT;
-					break;
-				}
-				return ret;
-			}
-		} // FirstNodeType
+        public ICollection NodeTypes
+        {
+            get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes( ObjectClassId ); }
+        }
+
+        public CswNbtMetaDataNodeType FirstNodeType
+        {
+            get
+            {
+                CswNbtMetaDataNodeType ret = null;
+                foreach( CswNbtMetaDataNodeType NT in NodeTypes )
+                {
+                    ret = NT;
+                    break;
+                }
+                return ret;
+            }
+        } // FirstNodeType
 
         //private Hashtable _ObjectClassPropsByPropId;
         //private SortedList _ObjectClassPropsByPropName;

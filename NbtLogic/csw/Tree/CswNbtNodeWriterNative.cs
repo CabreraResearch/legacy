@@ -22,6 +22,11 @@ namespace ChemSW.Nbt
             }
         }
 
+        public void clear()
+        {
+            _CswTableUpdateNodes.clear(); 
+        }//clear()
+
         public CswNbtNodeWriterNative( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
@@ -65,8 +70,9 @@ namespace ChemSW.Nbt
 
             NodesTable.Rows[0]["nodename"] = Node.NodeName;
             NodesTable.Rows[0]["pendingupdate"] = CswConvert.ToDbVal( Node.PendingUpdate );
-            NodesTable.Rows[0]["readonly"] = CswConvert.ToDbVal( Node.ReadOnly );
-            CswTableUpdateNodes.update( NodesTable );
+			NodesTable.Rows[0]["readonly"] = CswConvert.ToDbVal( Node.ReadOnly );
+			NodesTable.Rows[0]["locked"] = CswConvert.ToDbVal( Node.Locked );
+			CswTableUpdateNodes.update( NodesTable );
 
         }//write()
 

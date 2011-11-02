@@ -1,4 +1,4 @@
-/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="CswMobileEnums.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
@@ -8,10 +8,8 @@
 
 //#region plugins
 
-; (function ($)
-{ /// <param name="$" type="jQuery" />
-    
-    $.fn.CswChangePage = function(options) {
+(function ($) { /// <param name="$" type="jQuery" />
+    $.fn.CswChangePage = function (options) {
         /// <summary>
         ///   Initiates page transition between CswMobilePages
         /// </summary>
@@ -20,43 +18,45 @@
         var ret = false,
             $div = $(this),
             $currentPage = $.mobile.activePage;
-        
+
         var o = {
             transition: 'fade',
             removeActivePage: false
         };
-        if (options) $.extend(o, options);
-        
+        if (options) {
+            $.extend(o, options);
+        }
+
         if (false === isNullOrEmpty($div)) {
             try {
                 ret = $.mobile.changePage($div, o);
                 if (o.removeActivePage) {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         $currentPage.remove();
                     }, 1000);
                 }
             } catch (e) {
                 if (debugOn()) {
-                    log('changePage() failed.',true);
+                    log('changePage() failed.', true);
                 }
             }
         }
         return ret;
     };
-    
-    $.fn.CswSetPath = function() {
+
+    $.fn.CswSetPath = function () {
         /// <summary>
         ///   Updates the JQM path
         /// </summary>
         /// <returns type="jQuery">Returns self for chaining</returns>
-        var $ret = $(this); 
+        var $ret = $(this);
         var id = $ret.CswAttrDom('id');
-        if (!isNullOrEmpty(id)) {
+        if (false === isNullOrEmpty(id)) {
             $.mobile.path.set('#' + id);
         }
         return $ret;
     };
-    
+
 })(jQuery);
 
 //#endregion plugins
@@ -308,6 +308,7 @@ function makeMenuButtonDef(pageDef,id,buttonNames,mobileStorage) {
         headerDef: { buttons: { } },
         footerDef: { buttons: { } }
     };
+    var onClick, name;
     if (pageDef) {
         $.extend(newPageDef, pageDef);
     }
@@ -323,9 +324,8 @@ function makeMenuButtonDef(pageDef,id,buttonNames,mobileStorage) {
     if (isNullOrEmpty(newPageDef.footerDef.ID)) {
         newPageDef.footerDef.ID = id;
     }
-    var onClick;
-    for (var name in buttonNames ) {
-        if (buttonNames.hasOwnProperty(name)) {
+    for (name in buttonNames ) {
+        if (contains(buttonNames, name)) {
             onClick = buttonNames[name];
             switch (name) {
                 case CswMobileHeaderButtons.back.name:
@@ -374,23 +374,18 @@ function makeEmptyListView(listView, $parent, noResultsText) {
     }
 }
 
-function ensureContent($content, contentDivId) {
+function ensureContent($contentRole, contentDivId) {
     /// <summary>
     ///    Ensures every page has a valid content Div to insert new HTML.
     ///    if content is populated, empty it.
-    ///    This is a child element of the JQM 'content' page.
+    ///    This will become a child element of the JQM 'content' page.
     /// </summary>
-    /// <param name="$content" type="jQuery">Some content element.</param>
+    /// <param name="$contentRole" type="jQuery">Some contentRole element.</param>
     /// <param name="contentDivId" type="String">DivId</param>
     /// <returns type="jQuery">An empty content div.</returns>
-    var $contentById = $(contentDivId);
-    if (false === isNullOrEmpty($contentById)) {
-        $contentById.remove();
-    }
-    if (isNullOrEmpty($content) || false === isJQuery($content)) {
-        $content = $('<div id="' + tryParseString(contentDivId) + '"></div>');
-    } else {
-        $content.empty();   
+    var $content = $('<div id="' + tryParseString(contentDivId) + '"></div>'); ;
+    if (false === isNullOrEmpty($contentRole)) {
+        $contentRole.empty();
     }
     return $content;
 }    
@@ -403,13 +398,22 @@ function modifyPropJson(json,key,value) {
     /// <returns type="Object">The modified JSON</returns>
     var oldValue;
     if (false === isNullOrEmpty(key)) {
-        if (json.hasOwnProperty('values') && json['values'].hasOwnProperty(key)) {
-            oldValue = json['values'][key];
-            json['values'][key] = value;
-            if (oldValue !== value) {
-                json.wasmodified = true;
+        if (contains(json, 'values')) {
+            if (contains(json.values, key)) {
+                oldValue = json.values[key];
+                json.values[key] = value;
+                if (oldValue !== value) {
+                    json.wasmodified = true;
+                }
             }
-        } else if (json.hasOwnProperty(key)) {
+            else if (contains(json.values, 'value') && contains(json.values.value, key)) {
+                oldValue = json.values.value[key];
+                json.values.value[key] = value;
+                if (oldValue !== value) {
+                    json.wasmodified = true;
+                }
+            }
+        } else if (contains(json, key)) {
             oldValue = json[key];
             json[key] = value;
             if (oldValue !== value) {
@@ -459,4 +463,23 @@ function recalculateFooter($page, startingHeight) {
 //    }
 }
 
+function doSuccess(onSuccess) {
+
+    var args = Array.prototype.slice.call(arguments);
+    if (args.length > 0) {
+        args.shift();
+    } else {
+        args = [];
+    }
+    if (isFunction(onSuccess)) {
+        onSuccess(args);
+    } else {
+    onSuccess.forEach(function (func) {
+        if (isFunction(func)) {
+            func.apply(null, args);
+        }
+    });
+
+    }
+}
 //#endregion functions

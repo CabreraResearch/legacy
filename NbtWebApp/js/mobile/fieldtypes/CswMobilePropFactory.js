@@ -1,4 +1,4 @@
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -39,7 +39,7 @@ function CswMobilePropsFactory(propDef) {
             nodeId: '',
             tabId: '',
             viewId: '',
-            isreadonly: false,
+            'readonly': false,
             propId: '',
             propName: '',
             fieldtype: CswSubFields_Map.Static.name
@@ -48,7 +48,7 @@ function CswMobilePropsFactory(propDef) {
         if (propDef) $.extend(p, propDef);
         var field = tryParseString(p.fieldtype, '');
         
-        if (p.isreadonly) {
+        if (isTrue(p['readonly'])) {
             field = CswSubFields_Map.Static.name;
         }
         

@@ -35,6 +35,7 @@ namespace ChemSW.Nbt.WebPages
             CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
             SelectColumns.Add("blobdata");
             SelectColumns.Add("field2");
+            SelectColumns.Add( "field1" );
             DataTable JctTable = JctSelect.getTable( SelectColumns, "jctnodepropid", JctNodePropId, "", true );
 
             if( JctTable.Rows.Count > 0 )
@@ -42,16 +43,18 @@ namespace ChemSW.Nbt.WebPages
 
                 if( !JctTable.Rows[ 0 ].IsNull( "blobdata" ) )
                 {
+                    string FileName = JctTable.Rows[0]["field1"].ToString();
                     string ContentType = JctTable.Rows[ 0 ][ "field2" ].ToString();
                     byte[] BlobData = JctTable.Rows[ 0 ][ "blobdata" ] as byte[];
 
                     MemoryStream mem = new MemoryStream();
                     BinaryWriter BWriter = new BinaryWriter( mem, System.Text.Encoding.Default );
                     BWriter.Write( BlobData );
-
+                    
                     Response.ClearContent();
                     Response.ContentType = ContentType;
                     Response.BinaryWrite( mem.ToArray() );
+                    Response.AddHeader( "Content-Disposition", "attachment;filename=" + FileName + ";" );
                     Response.End();
 
                 }//if we actually have blob data

@@ -32,8 +32,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\ThirdParty\JsonDn\Json40r2\Bin\Net\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=4.0.3.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.4.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -50,6 +51,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Actions\CswNbtActQuotas.cs" />
     <Compile Include="csw\Actions\CswNbtActAssignTests.cs" />
     <Compile Include="csw\Actions\CswNbtActCopyNode.cs" />
     <Compile Include="csw\Actions\CswNbtActGenerateFutureNodes.cs" />
@@ -60,9 +62,12 @@
     <Compile Include="csw\CswNbtResourcesFactory.cs" />
     <Compile Include="csw\CswNbtNotificationKey.cs" />
     <Compile Include="csw\CswNbtResources.cs" />
+    <Compile Include="csw\ImportExport\CswNbtImportNodeId.cs" />
+    <Compile Include="csw\ImportExport\CswNbtImportOptions.cs" />
+    <Compile Include="csw\ImportExport\CswNbtImportStatus.cs" />
     <Compile Include="csw\ImportExport\CswImportExportStatusReporter.cs" />
-    <Compile Include="csw\ImportExport\CswImporterExperimental.cs" />
-    <Compile Include="csw\ImportExport\CswImporterLegacy.cs" />
+    <Compile Include="csw\ImportExport\CswImporterDbTables.cs" />
+    <Compile Include="csw\ImportExport\CswImporterHashTables.cs" />
     <Compile Include="csw\ImportExport\CswImporterFactory.cs" />
     <Compile Include="csw\ImportExport\ICswImporter.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportExport.cs" />
@@ -244,20 +249,8 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I01.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I02.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I03.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I04.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I05.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I06.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I07.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I08.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I09.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I10.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I11.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I12.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I13.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01I14.cs" />
+    <Compile Include="csw\Schema\scripts\infr\CswUpdateSchema_Infr_TakeDump.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01K01.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswProdUpdtRsrc.cs" />
     <Compile Include="csw\Sched\runner\CswNbtSchdItemRunner.cs" />
     <Compile Include="csw\Sched\logic_legacy\CswNbtSchdItemUpdateInspectionStatus.cs" />

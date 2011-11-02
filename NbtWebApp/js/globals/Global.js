@@ -9,13 +9,10 @@
 /// <reference path="../main/tools/CswProfileMethod.js" />
 /// <reference path="../main/tools/CswQueryString.js" />
 /// <reference path="../main/tools/CswString.js" />
-/// <reference path="../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
-/// <reference path="../thirdparty/jquery/core/jquery.cookie.js" />
-/// <reference path="../thirdparty/js/modernizr-2.0.3.js" />
+/// <reference path="../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../Scripts/jquery.cookie.js" />
 
 //#region Globals (yuck)
-"use strict";
-
 var homeUrl = 'Main.html';
 //#endregion Globals (yuck)
 
@@ -72,8 +69,10 @@ function checkExpireTime()
 function setCurrentView(viewid, viewmode)
 {
     clearCurrent();
-    $.CswCookie('set', CswCookieName.CurrentViewId, viewid);
-    $.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
+    if (false === isNullOrEmpty(viewid) && false === isNullOrEmpty(viewmode)) {
+        $.CswCookie('set', CswCookieName.CurrentViewId, viewid);
+        $.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
+    }
 }
 
 function setCurrentAction(actionname, actionurl)
@@ -91,13 +90,13 @@ function setCurrentReport(reportid)
 
 function clearCurrent()
 {
-	$.CswCookie('set', CswCookieName.LastViewId, $.CswCookie('get', CswCookieName.CurrentViewId));
-	$.CswCookie('set', CswCookieName.LastViewMode, $.CswCookie('get', CswCookieName.CurrentViewMode));
-	$.CswCookie('set', CswCookieName.LastActionName, $.CswCookie('get', CswCookieName.CurrentActionName));
-	$.CswCookie('set', CswCookieName.LastActionUrl, $.CswCookie('get', CswCookieName.CurrentActionUrl));
-	$.CswCookie('set', CswCookieName.LastReportId, $.CswCookie('get', CswCookieName.CurrentReportId));
+    $.CswCookie('set', CswCookieName.LastViewId, $.CswCookie('get', CswCookieName.CurrentViewId));
+    $.CswCookie('set', CswCookieName.LastViewMode, $.CswCookie('get', CswCookieName.CurrentViewMode));
+    $.CswCookie('set', CswCookieName.LastActionName, $.CswCookie('get', CswCookieName.CurrentActionName));
+    $.CswCookie('set', CswCookieName.LastActionUrl, $.CswCookie('get', CswCookieName.CurrentActionUrl));
+    $.CswCookie('set', CswCookieName.LastReportId, $.CswCookie('get', CswCookieName.CurrentReportId));
 
-	$.CswCookie('clear', CswCookieName.CurrentViewId);
+    $.CswCookie('clear', CswCookieName.CurrentViewId);
     $.CswCookie('clear', CswCookieName.CurrentViewMode);
     $.CswCookie('clear', CswCookieName.CurrentActionName);
     $.CswCookie('clear', CswCookieName.CurrentActionUrl);
@@ -105,43 +104,45 @@ function clearCurrent()
 }
 
 function getCurrent() {
-	return {
-		'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
-		'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
-		'actionname': $.CswCookie('get', CswCookieName.CurrentActionName),
-		'actionurl': $.CswCookie('get', CswCookieName.CurrentActionUrl),
-		'reportid': $.CswCookie('get', CswCookieName.CurrentReportId)
-	};
+    return {
+        'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
+        'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
+        'actionname': $.CswCookie('get', CswCookieName.CurrentActionName),
+        'actionurl': $.CswCookie('get', CswCookieName.CurrentActionUrl),
+        'reportid': $.CswCookie('get', CswCookieName.CurrentReportId)
+    };
 }
 function getLast() {
-	return {
-		'viewid': $.CswCookie('get', CswCookieName.LastViewId),
-		'viewmode': $.CswCookie('get', CswCookieName.LastViewMode),
-		'actionname': $.CswCookie('get', CswCookieName.LastActionName),
-		'actionurl': $.CswCookie('get', CswCookieName.LastActionUrl),
-		'reportid': $.CswCookie('get', CswCookieName.LastReportId)
-	};
+    return {
+        'viewid': $.CswCookie('get', CswCookieName.LastViewId),
+        'viewmode': $.CswCookie('get', CswCookieName.LastViewMode),
+        'actionname': $.CswCookie('get', CswCookieName.LastActionName),
+        'actionurl': $.CswCookie('get', CswCookieName.LastActionUrl),
+        'reportid': $.CswCookie('get', CswCookieName.LastReportId)
+    };
 }
 function setCurrent(json) {
-	clearCurrent();
-	$.CswCookie('set', CswCookieName.CurrentViewId, json.viewid);
-	$.CswCookie('set', CswCookieName.CurrentViewMode, json.viewmode);
-	$.CswCookie('set', CswCookieName.CurrentActionName, json.actionname);
-	$.CswCookie('set', CswCookieName.CurrentActionUrl, json.actionurl);
-	$.CswCookie('set', CswCookieName.CurrentReportId, json.reportid);
+    clearCurrent();
+    $.CswCookie('set', CswCookieName.CurrentViewId, json.viewid);
+    $.CswCookie('set', CswCookieName.CurrentViewMode, json.viewmode);
+    $.CswCookie('set', CswCookieName.CurrentActionName, json.actionname);
+    $.CswCookie('set', CswCookieName.CurrentActionUrl, json.actionurl);
+    $.CswCookie('set', CswCookieName.CurrentReportId, json.reportid);
 }
 
 //#endregion Current State
 
 //#region Ajax
 var _ajaxCount = 0;
-function ajaxInProgress()
-{
+function ajaxInProgress() {
     return (_ajaxCount > 0);
 }
 
-function CswAjaxJson(options)
-{ /// <param name="$" type="jQuery" />
+// Events for all Ajax requests
+var onBeforeAjax = null;  // function () {}
+var onAfterAjax = null;   // function (succeeded) {}
+
+function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
     /// <summary>
     ///   Executes Async webservice request for JSON
     /// </summary>
@@ -161,10 +162,12 @@ function CswAjaxJson(options)
         formobile: false,
         async: true
     };
-
     if (options) $.extend(o, options);
+
     //var starttime = new Date();
     _ajaxCount++;
+    if(isFunction(onBeforeAjax)) onBeforeAjax();
+
     $.ajax({
         type: 'POST',
         async: o.async,
@@ -212,6 +215,7 @@ function CswAjaxJson(options)
                     ForMobile: o.formobile
                 });
             }
+            if (isFunction(onAfterAjax)) onAfterAjax(true);
         }, // success{}
         error: function (XMLHttpRequest, textStatus, errorThrown)
         {
@@ -221,6 +225,7 @@ function CswAjaxJson(options)
             if (isFunction(o.error)) {
                 o.error();
             }
+            if (isFunction(onAfterAjax)) onAfterAjax(false);
         }
     });                 // $.ajax({
 } // CswAjaxJson()
@@ -437,99 +442,22 @@ function Logout(options)
     });
 } // logout
 
-function _finishLogout()
-{
+function _finishLogout() {
+    var logoutpath = $.CswCookie('get', CswCookieName.LogoutPath);
     $.CswCookie('clearAll');
-    window.location = homeUrl;
+    if (false === isNullOrEmpty(logoutpath)) {
+        window.location = logoutpath;
+    } else {
+        window.location = homeUrl;
+    }
 }
 
-
-//function extractCDataValue($node) {
-//    // default
-//    ret = $node.text();
-
-//    // for some reason, CDATA fields come through from the webservice like this:
-//    // <node><!--[CDATA[some text]]--></node>
-//    var cdataval = $node.html();
-//    if (cdataval != undefined && cdataval != '') {
-//        var prefix = '<!--[CDATA[';
-//        var suffix = ']]-->';
-
-//        if (cdataval.substr(0, prefix.length) == prefix) {
-//            ret = cdataval.substr(prefix.length, cdataval.length - prefix.length - suffix.length);
-//        }
-//    }
-//    return ret;
-//}
-
-function xmlToString($xmlnode)
-{ /// <param name="$" type="jQuery" />
-    var xmlstring = '';
-    if (!($xmlnode instanceof jQuery))
-    {
-        $xmlnode = $($xmlnode);
-    }
-    if (!isNullOrEmpty($xmlnode))
-    {
-        xmlstring = $xmlnode.get(0).xml; // IE
-        if (!xmlstring)
-        {            // FF, Chrome, Safari
-            var s = new XMLSerializer();
-            xmlstring = s.serializeToString($xmlnode.get(0));
-        }
-        if (!xmlstring)
-        {
-            $.error("Browser does not support XML operations necessary to convert to string");
-        }
-    }
-    return xmlstring;
-}
 
 function jsonToString(j)
 {
-    /// <summary>
-    ///   Thin wrapper around JSON.stringify()
-    /// </summary>
-    /// <param name="j" type="Object">A JSON Object</param>
-    /// <returns type="String" />
-    //    if(typeof j === "object")
-    //	{
-    //		var ret = "{";
-    //	 	var first = true;
-    //		for (var property in j)
-    //		{
-    //			if (j.hasOwnProperty(property))
-    //			{
-    //				if (!first)
-    //					ret += ",";
-    //				ret += " '" + property + "': ";
-    //				ret += jsonToString(j[property]);
-    //				first = false;
-    //			}
-    //		}
-    //		ret += "}";
-    //	} 
-    //	else
-    //	{
-    //		ret = "'" + safeJsonParam(j) + "'";
-    //	}
     return JSON.stringify(j);
 } // jsonToString
 
-//function safeJsonParam(obj) {
-//    /// <summary>
-//    ///   Converts an object toString and returns a regex parsed, safe-for-JSON string
-//    /// </summary>
-//    /// <param name="options" type="Object">A JavaScript Object representing a string to parse</param>
-//    /// <returns type="String" />
-//    var ret = '';
-//    if (obj !== undefined)
-//    {
-//        var str = obj.toString();
-//        ret = str.replace(/'/g, "\\'");
-//    }
-//	return ret;
-//}
 //#endregion Ajax
 
 //#region Check Changes
@@ -784,7 +712,7 @@ function preparePropJsonForSave(isMulti, propData, attributes) {
             var propVals = propData.values;
             wasModified = preparePropJsonForSaveRecursive(isMulti, propVals, attributes);
         }
-        propData.wasmodified = wasModified;
+        propData.wasmodified = propData.wasmodified || wasModified;
     }
 }
 
@@ -801,7 +729,7 @@ function preparePropJsonForSaveRecursive(isMulti, propVals, attributes) {
                 var attr = attributes[key];
                 //don't bother sending this to server unless it's changed
                 if (isPlainObject(attr)) {
-                    wasModified = preparePropJsonForSaveRecursive(isMulti, propVals[key], attr);
+                    wasModified = preparePropJsonForSaveRecursive(isMulti, propVals[key], attr) || wasModified;
                 }
                 else if ((false === isMulti && propVals[key] !== attr) ||
                     (isMulti && false === isNullOrUndefined(attr) && attr !== CswMultiEditDefaultValue)) {
@@ -855,6 +783,8 @@ function HandleMenuItem(options)
         onMultiEdit: null, //function () { },
         onEditView: null, //function (viewid) { },
         onSaveView: null, //function (newviewid) { },
+        onQuotas: null, // function () { },
+        onSessions: null, // function () { },
         Multi: false,
         NodeCheckTreeId: ''
     };
@@ -946,12 +876,12 @@ function HandleMenuItem(options)
                 });
                 break;
 
-            case 'Home':
-                $a.click(function () { GoHome(); return false; });
-                break;
-
             case 'Logout':
                 $a.click(function () { o.onLogout(); return false; });
+                break;
+                
+            case 'Home':
+                $a.click(function () { GoHome(); return false; });
                 break;
 
             case 'Profile':
@@ -996,7 +926,16 @@ function HandleMenuItem(options)
                     return false;
                 });
                 break;
-
+            case 'Quotas':
+                $a.click(function () {
+                    o.onQuotas();
+                });
+                break;
+            case 'Sessions':
+                $a.click(function () {
+                    o.onSessions();
+                });
+                break;
         }
     }
     else
@@ -1241,7 +1180,8 @@ function errorHandler(error, includeCallStack, includeLocalStorage, doAlert)
 {
     if (hasWebStorage() && includeLocalStorage) log(localStorage);
     if( doAlert ) {
-        alert('Error: ' + error.message + ' (Code ' + error.code + ')');
+        $.CswDialog('ErrorDialog', error);
+        //alert('Error: ' + error.message + ' (Code ' + error.code + ')');
     }
     else {
         log('Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack);

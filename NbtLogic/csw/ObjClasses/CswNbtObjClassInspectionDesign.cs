@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -65,10 +65,10 @@ namespace ChemSW.Nbt.ObjClasses
         /// Location of Inspection's Target
         /// </summary>
         public static string LocationPropertyName { get { return "Location"; } }
-		/// <summary>
-		/// Nodetype Version
-		/// </summary>
-		public static string VersionPropertyName { get { return "Version"; } }
+        /// <summary>
+        /// Nodetype Version
+        /// </summary>
+        public static string VersionPropertyName { get { return "Version"; } }
 
         /// <summary>
         /// Possible status values for Inspection. Should match List values on ID Status attribute.
@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ret = Status.ToString().Replace( '_', ' ' );
             return ret;
         }
-        
+
         /// <summary>
         /// Replaces space with underscore in enum
         /// </summary>
@@ -252,9 +252,9 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-			// case 8179 - set value of Version property
-			CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
-			Version.Text = ThisNodeType.NodeTypeName + " v" + ThisNodeType.VersionNo.ToString();
+            // case 8179 - set value of Version property
+            CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
+            Version.Text = ThisNodeType.NodeTypeName + " v" + ThisNodeType.VersionNo.ToString();
 
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
-			CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
+            CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
             _Finished = ( Tristate.True == this.Finished.Checked );
             _Cancelled = ( Tristate.True == this.Cancelled.Checked );
             bool FinishedCheck = false;
@@ -308,13 +308,13 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else if( _Finished )
             {
-				QuestionsFlt.Reset();
-				foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+                QuestionsFlt.Reset();
+                foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                 {
                     CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
                     _OOC = ( _OOC || !QuestionProp.IsCompliant );
                     _allAnswered = ( _allAnswered && QuestionProp.Answer != string.Empty );
-					_allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
+                    _allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
                 }
 
                 if( _allAnswered )
@@ -333,25 +333,25 @@ namespace ChemSW.Nbt.ObjClasses
 
             this.Finished.Checked = CswConvert.ToTristate( FinishedCheck );
 
-			if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
-				this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
-				this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
-				this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
-			{
-				//QuestionsFlt.Reset();
-				//foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
-				//{
-				//    Prop.ReadOnly = true;
-				//}
-				//CswNbtNodePropWrapper FinishedProp = this.Node.Properties[FinishedPropertyName];
-				//FinishedProp.AsLogical.ReadOnly = true;
-				//CswNbtNodePropWrapper CancelledProp = this.Node.Properties[CancelledPropertyName];
-				//CancelledProp.AsLogical.ReadOnly = true;
-				_CswNbtNode.ReadOnly = true;
-			}
-		
-			_CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
-		}//beforeWriteNode()
+            if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
+                this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
+                this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
+                this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
+            {
+                //QuestionsFlt.Reset();
+                //foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+                //{
+                //    Prop.ReadOnly = true;
+                //}
+                //CswNbtNodePropWrapper FinishedProp = this.Node.Properties[FinishedPropertyName];
+                //FinishedProp.AsLogical.ReadOnly = true;
+                //CswNbtNodePropWrapper CancelledProp = this.Node.Properties[CancelledPropertyName];
+                //CancelledProp.AsLogical.ReadOnly = true;
+                _CswNbtNode.ReadOnly = true;
+            }
+
+            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+        }//beforeWriteNode()
 
         /// <summary>
         /// Update Parent Status (OK,OOC) if Inspection is submitted
@@ -365,7 +365,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( _allAnswered && _Finished )
                 {
                     Parent.Status.Value = _OOC ? "OOC" : "OK";
-					Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
+                    Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
                     ParentNode.postChanges( false );
                 }
             }
@@ -445,7 +445,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Due Date of inspection
         /// </summary>
-		public CswNbtNodePropDateTime Date
+        public CswNbtNodePropDateTime Date
         {
             get
             {
@@ -456,7 +456,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Date the inspection was generated
         /// </summary>
-		public CswNbtNodePropDateTime GeneratedDate
+        public CswNbtNodePropDateTime GeneratedDate
         {
             get
             {
@@ -550,29 +550,29 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-		/// <summary>
-		/// Location of Inspection's Target
-		/// </summary>
-		public CswNbtNodePropPropertyReference Location
-		{
-			get
-			{
-				return ( _CswNbtNode.Properties[LocationPropertyName].AsPropertyReference );
-			}
-		}
+        /// <summary>
+        /// Location of Inspection's Target
+        /// </summary>
+        public CswNbtNodePropPropertyReference Location
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[LocationPropertyName].AsPropertyReference );
+            }
+        }
 
-		/// <summary>
-		/// Nodetype Version of the Inspection
-		/// </summary>
-		public CswNbtNodePropText Version
-		{
-			get
-			{
-				return ( _CswNbtNode.Properties[VersionPropertyName].AsText );
-			}
-		}
+        /// <summary>
+        /// Nodetype Version of the Inspection
+        /// </summary>
+        public CswNbtNodePropText Version
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[VersionPropertyName].AsText );
+            }
+        }
 
-		#endregion
+        #endregion
 
 
 

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Audit;
 using ChemSW.Core;
+using ChemSW.RscAdo;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Log;
@@ -276,10 +277,13 @@ namespace ChemSW.Nbt.Schema
             _CswDdl.renameColumn( TableName, OriginalColumnName, NewColumnName );
         }
 
-
         public void dropColumn( string TableName, string ColumnName ) { _CswDdl.dropColumn( TableName, ColumnName ); }
         public void changeColumnDataType( string TableName, string ColumnName, DataDictionaryPortableDataType NewDataType, Int32 DataTypeSize ) { _CswNbtResources.CswResources.changeColumnDataType( TableName, ColumnName, NewDataType, DataTypeSize ); }
         public bool isLogicalDeleteTable( string TableName ) { return ( _CswNbtResources.isLogicalDeleteTable( TableName ) ); }
+
+
+        //Note: thi
+        public void indexColumn( string TableName, string ColumnName, string IndexNameIn = null ) { _CswNbtResources.CswResources.indexColumn( TableName, ColumnName, IndexNameIn ); }
 
         public DataTable getAllViews() { return _CswNbtResources.ViewSelect.getAllViews(); }
 
@@ -537,7 +541,7 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode ), true );
             }
-            CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" );
+            CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
             if( RoleNode2 != null )
             {
                 _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
@@ -1002,6 +1006,50 @@ namespace ChemSW.Nbt.Schema
 
 
         public CswNbtActUpdatePropertyValue getCswNbtActUpdatePropertyValue() { return ( new CswNbtActUpdatePropertyValue( _CswNbtResources ) ); }
+
+
+
+        public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswNbtResources.execStoredProc( StoredProcName, Params ); }
+
+
+        private string _DumpDirectorySetupVblName = "DumpFileDirectoryId";
+        public void getNextSchemaDumpFileInfo( ref string PhysicalDirectoryPath, ref string NameOfCurrentDump )
+        {
+
+            if( _CswNbtResources.SetupVbls.doesSettingExist( _DumpDirectorySetupVblName ) )
+            {
+                string StatusMsg = string.Empty;
+                if( false == _CswNbtResources.getNextSchemaDumpFileInfo( _CswNbtResources.SetupVbls[_DumpDirectorySetupVblName], ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) )
+                {
+                    throw ( new CswDniException( "Unable to take retrieve dump file information: " + StatusMsg ) );
+                }
+            }
+            else
+            {
+                throw ( new CswDniException( "Unable to get dump file information: there is no " + _DumpDirectorySetupVblName + " setup variable" ) );
+
+            }//if-else the dump setup setting exists
+
+        }//TakeADump() 
+
+        public void takeADump( ref string DumpFileName, ref string StatusMessage )
+        {
+
+            if( _CswNbtResources.SetupVbls.doesSettingExist( _DumpDirectorySetupVblName ) )
+            {
+                if( false == _CswNbtResources.takeADump( _CswNbtResources.SetupVbls[_DumpDirectorySetupVblName], ref DumpFileName, ref StatusMessage ) )
+                {
+                    throw ( new CswDniException( "Unable to take a dump: " + StatusMessage ) );
+                }
+            }
+            else
+            {
+                throw ( new CswDniException( "Unable to take a dump: there is no " + _DumpDirectorySetupVblName + " setup variable" ) );
+
+            }//if-else the dump setup setting exists
+
+        }//takeADump() 
+
     }//class CswNbtSchemaModTrnsctn
 
 }//ChemSW.Nbt.Schema

@@ -1,4 +1,4 @@
-/// <reference path="../../thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
@@ -16,7 +16,7 @@
 
 //#region CswMobilePageOnline
 
-function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTask) {
+function CswMobilePageOnline(onlineDef, $parent, mobileStorage, mobileSync, mobileBgTask, $contentRole) {
     /// <summary>
     ///   Online Page class. Responsible for generating a Mobile login page.
     /// </summary>
@@ -30,52 +30,32 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     //#region private
 
     var pageDef = { };
-    var id = CswMobilePage_Type.online.id,
-        title = CswMobilePage_Type.online.title,
-        divSuffix = '_contpage',
-        $contentPage, $content, $onlineBtn, $syncBtn, $logoutBtn, $logBtn, contentDivId;
+    var id, title, contentDivId, $content, $onlineBtn, $syncBtn, $logoutBtn, $logBtn,
+        divSuffix = '_contpage';
     
     //ctor
-    (function() {
-        var p = {
+    (function () {
+        pageDef = {
             level: -1,
             DivId: '',
             title: '',
-            headerDef: { buttons: {} },
-            footerDef: { buttons: {} },
             theme: CswMobileGlobal_Config.theme,
-            onRefreshClick: function() {},
-            onHelpClick: function() {}
+            buttons: [CswMobileFooterButtons.fullsite, '', CswMobileFooterButtons.help, CswMobileHeaderButtons.back]
         };
-        if (onlineDef) $.extend(p, onlineDef);
-
-        if (false === isNullOrEmpty(p.DivId)) {
-            id = p.DivId;
-        } else {
-            p.DivId = id;
+        if (mobileStorage.amOnline()) {
+            pageDef.buttons[1] = CswMobileFooterButtons.refresh;
+        }
+        if (onlineDef) {
+            $.extend(pageDef, onlineDef);
         }
 
+        id = tryParseString(pageDef.DivId, CswMobilePage_Type.login.id);
         contentDivId = id + divSuffix;
-        $contentPage = $page.find('div:jqmData(role="content")');
-        $content = (isNullOrEmpty($contentPage) || $contentPage.length === 0) ? null : $contentPage.find('#' + contentDivId);
-        
-        if (false === isNullOrEmpty(p.title)) {
-            title = p.title;
-        } else {
-            p.title = title;
-        }
-        
-        var buttons = { };
-        //buttons[CswMobileFooterButtons.online.name] = '';
-        buttons[CswMobileFooterButtons.refresh.name] = p.onRefreshClick;
-        buttons[CswMobileFooterButtons.fullsite.name] = '';
-        buttons[CswMobileFooterButtons.help.name] = p.onHelpClick;
-        buttons[CswMobileHeaderButtons.back.name] = '';
-
-        pageDef = makeMenuButtonDef(p, id, buttons, mobileStorage);
+        title = tryParseString(pageDef.title, CswMobilePage_Type.login.title);
+        $content = ensureContent($contentRole, contentDivId);
 
         getContent();
-    })(); //ctor
+    })();     //ctor
     
     function getContent() {
         var hideFailure = isNullOrEmpty(mobileStorage.lastSyncAttempt()) ? '' : 'none',
@@ -90,9 +70,13 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
                         .appendTo($content)
                         .bind('click', function () {
                             return startLoadingMsg(function () {
-                                mobileSync.initSync(function () {
-                                    stopLoadingMsg(); 
+                                mobileSync.queueOnSuccess(function() {
+                                    stopLoadingMsg();
                                 });
+                                mobileSync.queueOnError(function () {
+                                    stopLoadingMsg();
+                                });
+                                mobileSync.initSync();
                             });
                         });
         $onlineBtn = $('<a id="ss_gooffline" class="' + onlineClass + '" data-identity="ss_gooffline" data-url="ss_gooffline" href="javascript:void(0)" data-role="button">' + onlineBtnText + '</a>')
@@ -117,6 +101,7 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
                             return false;
                         });
         }
+        $contentRole.append($content);
     }
     
     function toggleOffline(doWaitForData) {
@@ -224,14 +209,17 @@ function CswMobilePageOnline(onlineDef,$page,mobileStorage,mobileSync,mobileBgTa
     
     //#region public, priveleged
 
-    this.$content = $content;
-    this.contentDivId = contentDivId;
-    this.pageDef = pageDef;
-    this.id = id;
-    this.title = title;
-    this.getContent = getContent;
-    this.setLastSync = setLastSync;
-    
+    return {
+        $pageDiv: $parent,
+        $contentRole: $contentRole,
+        $content: $content,
+        contentDivId: contentDivId,
+        pageDef: pageDef,
+        id: id,
+        title: title,
+        getContent: getContent,
+        setLastSync: setLastSync
+    };
     //#endregion public, priveleged
 }
 

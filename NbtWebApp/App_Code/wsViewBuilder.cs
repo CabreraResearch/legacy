@@ -181,7 +181,13 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ParentObj["proparbitraryid"] = ViewBuilderProp.ViewProp.ArbitraryId;
                 }
-                ParentObj["filtarbitraryid"] = string.Empty;
+                string FiltArbitraryId = string.Empty;
+                if( ViewBuilderProp.Filters.Count > 0 )
+                {
+                    CswNbtViewPropertyFilter Filt = (CswNbtViewPropertyFilter) ViewBuilderProp.Filters[0];
+                    FiltArbitraryId = Filt.ArbitraryId;
+                }
+                ParentObj["filtarbitraryid"] = FiltArbitraryId;
                 ParentObj["defaultsubfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
                 ParentObj["defaultfiltermode"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.DefaultFilterMode.ToString();
 
@@ -366,7 +372,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Creates a CswNbtViewPropertyFilter and returns its Json
         /// </summary>
-        public JObject makeViewPropFilter( CswNbtView View, JObject FilterProp )
+        public JObject makeViewPropFilter( CswNbtView View, JObject FilterProp, bool ClearFilters = false )
         {
             JObject Ret = new JObject();
 
@@ -381,14 +387,25 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewPropertyFilter ViewPropFilt = null;
             if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown )
             {
-                if( false == string.IsNullOrEmpty( FiltArbitraryId ) )
-                {
-                    ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
-                }
-                else if( false == string.IsNullOrEmpty( PropArbitraryId ) )
+                if( false == string.IsNullOrEmpty( PropArbitraryId ) )
                 {
                     CswNbtViewProperty ViewProp = (CswNbtViewProperty) View.FindViewNodeByArbitraryId( PropArbitraryId );
-                    ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+
+                    if( false == string.IsNullOrEmpty( FiltArbitraryId ) )
+                    {
+                        ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
+                    }
+                    else
+                    {
+                        ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+                    }
+
+                    //Case 23779, 23937, 24064
+                    if( ClearFilters && null != ViewPropFilt )
+                    {
+                        ViewProp.Filters.Clear();
+                        ViewProp.Filters.Add( ViewPropFilt );
+                    }
                 }
             }
 
@@ -469,6 +486,11 @@ namespace ChemSW.Nbt.WebServices
         public readonly CswNbtViewProperty.PropertySortMethod SortMethod = CswNbtViewProperty.PropertySortMethod.Ascending;
         public readonly Int32 Width = Int32.MinValue;
         public readonly string PropName = string.Empty;
+        public CswCommaDelimitedString AssociatedPropIds = new CswCommaDelimitedString();
+        public string PropNameUnique
+        {
+            get { return PropName.Trim().Replace( " ", "_" ).ToLower(); }
+        }
 
         public CswViewBuilderProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
@@ -482,6 +504,7 @@ namespace ChemSW.Nbt.WebServices
             FieldTypeRule = NodeTypeProp.FieldTypeRule;
             Type = CswNbtViewProperty.CswNbtPropType.NodeTypePropId;
             PropName = MetaDataPropName;
+            AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Ntp
 
         public CswViewBuilderProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
@@ -496,6 +519,7 @@ namespace ChemSW.Nbt.WebServices
             FieldTypeRule = ObjectClassProp.FieldTypeRule;
             Type = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId;
             PropName = MetaDataPropName;
+            AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Ntp
 
         public CswViewBuilderProp( CswNbtViewProperty ViewProperty )
@@ -532,6 +556,7 @@ namespace ChemSW.Nbt.WebServices
             SortBy = ViewProperty.SortBy;
             SortMethod = ViewProperty.SortMethod;
             PropName = ViewProperty.Name ?? MetaDataPropName;
+            AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Vp
 
     }// CswViewBuilderProp

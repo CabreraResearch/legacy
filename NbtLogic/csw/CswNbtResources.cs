@@ -123,6 +123,7 @@ namespace ChemSW.Nbt
         public CswNbtPermit Permit = null;
         private ICswNbtTreeFactory _CswNbtTreeFactory;
         private bool _ExcludeDisabledModules = true;
+        public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
 
         /// <summary>
         /// Provides a means to get lists of views
@@ -157,6 +158,9 @@ namespace ChemSW.Nbt
         /// For unique naming and tracking
         /// </summary>
         public string _DebugID;
+
+        public AppType AppType { get { return _CswResources.AppType; } }
+        public bool IsDeleteModeLogical { get { return _CswResources.IsDeleteModeLogical(); } }
 
         /// <summary>
         /// Constructor
@@ -277,6 +281,8 @@ namespace ChemSW.Nbt
             CswNbtMetaData.OnEditNodeTypeName += new CswNbtMetaData.EditNodeTypeNameEventHandler( _CswNbtMetaData_OnEditNodeTypeName );
 
         }//assignMetaDataEvents()
+
+        public bool isTableDefinedInDataBase( string TableName ) { return ( _CswResources.isTableDefinedInDataBase( TableName ) ); }
 
         /// <summary>
         /// Delegate, when a nodetype name changes
@@ -807,6 +813,20 @@ namespace ChemSW.Nbt
         /// <param name="SqlText"></param>
         /// <returns></returns>
         public DataTable execArbitraryPlatformNeutralSqlSelect( string UniqueName, string SqlText ) { return ( _CswResources.execArbitraryPlatformNeutralSqlSelect( UniqueName, SqlText ) ); }
+
+
+
+        public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswResources.execStoredProc( StoredProcName, Params ); }
+
+        public bool getNextSchemaDumpFileInfo( string DirectoryId, ref string PhysicalDirectoryPath, ref string NameOfCurrentDump, ref string StatusMsg )
+        {
+            return ( _CswResources.getNextSchemaDumpFileInfo( DirectoryId, ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) );
+        }
+
+        public bool takeADump( string DirectoryId, ref string DumpFileName, ref string StatusMessage )
+        {
+            return ( _CswResources.takeADump( DirectoryId, ref DumpFileName, ref StatusMessage ) );
+        }
 
 
         /// <summary>

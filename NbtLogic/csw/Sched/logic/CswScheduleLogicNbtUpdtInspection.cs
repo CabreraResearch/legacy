@@ -1,15 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Data;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
-using ChemSW.DB;
-using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -58,8 +53,8 @@ namespace ChemSW.Nbt.Sched
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-			_CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
-		}
+            _CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
+        }
 
         //private CswNbtNode _CswNbtNodeGenerator;
         private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending );
@@ -80,7 +75,7 @@ namespace ChemSW.Nbt.Sched
                     {
                         CswNbtObjClassInspectionDesign CurrentInspectionDesign = InspectionDesigns[idx];
 
-						DateTime DueDate = CurrentInspectionDesign.Date.DateTimeValue;
+                        DateTime DueDate = CurrentInspectionDesign.Date.DateTimeValue;
                         CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( CurrentInspectionDesign.Generator.RelatedNodeId );
                         if( null != GeneratorNode &&
                             _Pending == CurrentInspectionDesign.Status.Value &&

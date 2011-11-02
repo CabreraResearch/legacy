@@ -233,20 +233,20 @@ namespace ChemSW.Nbt.WebServices
             {
                 JObject ViewSearch = JObject.FromObject( SearchJson );
 
-                string ParentViewId = (string) ViewSearch.Property( "parentviewid" ).Value;
-                string SearchViewId = (string) ViewSearch.Property( "searchviewid" ).Value;
+                string ParentViewId = (string) ViewSearch["parentviewid"];
+                string SearchViewId = (string) ViewSearch["searchviewid"];
                 SearchPair = new CswNbtViewSearchPair( _CswNbtResources, ParentViewId, SearchViewId );
-                if( null != ViewSearch.Property( "viewprops" ) &&
+                if( null != ViewSearch["viewprops"] &&
                     null != SearchPair.SearchView &&
-                    JTokenType.Array == ViewSearch.Property( "viewprops" ).Value.Type )
+                    JTokenType.Array == ViewSearch["viewprops"].Type )
                 {
-                    JArray Props = (JArray) ViewSearch.Property( "viewprops" ).Value;
+                    JArray Props = (JArray) ViewSearch["viewprops"];
 
                     foreach( JObject FilterProp in Props.Children()
                         .Cast<JObject>()
                         .Where( FilterProp => FilterProp.HasValues ) )
                     {
-                        _ViewBuilder.makeViewPropFilter( SearchPair.SearchView, FilterProp );
+                        _ViewBuilder.makeViewPropFilter( SearchPair.SearchView, FilterProp, true );
                     }
                     SearchPair.finalize();
                 }
@@ -280,12 +280,12 @@ namespace ChemSW.Nbt.WebServices
                 var ViewNtRelationships = new Dictionary<CswNbtMetaDataNodeType, CswNbtViewRelationship>();
                 var ViewOcRelationships = new Dictionary<CswNbtMetaDataObjectClass, CswNbtViewRelationship>();
 
-                string ParentViewId = (string) NodesSearch.Property( "parentviewid" ).Value;
+                string ParentViewId = (string) NodesSearch["parentviewid"];
 
-                if( null != NodesSearch.Property( "viewbuilderprops" ) &&
-                    JTokenType.Array == NodesSearch.Property( "viewbuilderprops" ).Value.Type )
+                if( null != NodesSearch["viewbuilderprops"] &&
+                    JTokenType.Array == NodesSearch["viewbuilderprops"].Type )
                 {
-                    JArray Props = (JArray) NodesSearch.Property( "viewbuilderprops" ).Value;
+                    JArray Props = (JArray) NodesSearch["viewbuilderprops"];
 
                     foreach( JObject FilterProp in Props.Children()
                                                         .Cast<JObject>()

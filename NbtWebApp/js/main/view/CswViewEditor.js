@@ -1,4 +1,4 @@
-/// <reference path="/js/thirdparty/jquery/core/jquery-1.6.1-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -93,7 +93,9 @@
         $div1.append(instructions);
         $div1.append('Select a View to Edit:&nbsp;');
         var $selview_span = $('<span id="' + o.ID + '_selviewname" style="font-weight: bold"></span>')
-            .appendTo($div1);
+                            .appendTo($div1);
+        var $viewgriddiv = $('<div />')
+                            .appendTo($div1);
         var cswViewGrid;
         var rowid;
         var $viewgrid;
@@ -150,10 +152,10 @@
                 enabledText: 'Delete View',
                 disableOnClick: true,
                 onclick: function() {
-                    var viewid = _getSelectedViewId($viewgrid);
+                    var viewid = _getSelectedViewId();
                     if (!isNullOrEmpty(viewid))
                     {
-                        if (confirm("Are you sure you want to delete: " + _getSelectedViewName($viewgrid)))
+                        if (confirm("Are you sure you want to delete: " + _getSelectedViewName()))
                         {
                             var dataJson = {
                                 ViewId: viewid
@@ -281,7 +283,7 @@
                     $wizard.CswWizard('button', 'next', 'disable');
 
                     var jsonData = {
-                        ViewId: _getSelectedViewId($viewgrid)
+                        ViewId: _getSelectedViewId()
                     };
 
                     CswAjaxJson({
@@ -423,7 +425,7 @@
 
         function _handleFinish($wizard)
         {
-            var viewid = _getSelectedViewId($viewgrid);
+            var viewid = _getSelectedViewId();
             var processView = true;
 
             if (!isNullOrEmpty(currentViewJson)) {
@@ -448,7 +450,7 @@
                         url: o.SaveViewUrl,
                         data: jsonData,
                         success: function() {
-                            o.onFinish(viewid, _getSelectedViewMode($viewgrid));
+                            o.onFinish(viewid, _getSelectedViewMode());
                         } // success
                     });
             } // ajax
@@ -476,14 +478,14 @@
                     success: function(gridJson) {
 
                         if (isNullOrEmpty($viewgrid) || $viewgrid.length === 0) {
-                            $viewgrid = $('<div id="' + o.ID + '_csw_viewGrid_outer"></div>').appendTo($div1);
+                            $viewgrid = $('<div id="' + o.ID + '_csw_viewGrid_outer"></div>').appendTo($viewgriddiv);
                         } else {
                             $viewgrid.empty();
                         }
 
                         var g = {
                             ID: o.ID,
-                            hasPager: false,
+                            pagermode: 'none',
                             gridOpts: {
                                 autowidth: true,
                                 height: 180,
@@ -521,22 +523,22 @@
                 }); // ajax
         } // _getViewsGrid()
 
-        function _getSelectedViewId()
+        function _getSelectedViewId(rowid)
         {
             var ret = '';
             if (o.startingStep === 1) {
-                ret = cswViewGrid.getValueForColumn(o.ColumnFullViewId);
+                ret = cswViewGrid.getValueForColumn(o.ColumnFullViewId, rowid);
             } else {
                 ret = o.viewid;
             }
             return ret;
         }
 
-        function _getSelectedViewMode()
+        function _getSelectedViewMode(rowid)
         {
             var ret = '';
             if (o.startingStep === 1) {
-                ret = cswViewGrid.getValueForColumn(o.ColumnViewMode);
+                ret = cswViewGrid.getValueForColumn(o.ColumnViewMode, rowid);
             } else {
                 ret = o.viewmode;
             }
@@ -841,7 +843,7 @@
             var $root = makeViewRootHtml(stepno, viewJson, types)
                             .appendTo($ret);
 
-            return { html: xmlToString($ret), types: types };
+            return { html: $ret.html(), types: types };
         }
         
         function makeViewRootHtml(stepno, itemJson, types) {
@@ -997,7 +999,7 @@
                 if (!isNullOrEmpty(itemJson)) {
                     var filtArbitraryId = tryParseString(itemJson.arbitraryid);
                     if (stepno === CswViewEditor_WizardSteps.tuning.step) {
-                        var selectedSubfield = tryParseString(itemJson.subfield);
+                        var selectedSubfield = tryParseString(itemJson.subfield, itemJson.subfieldname);
                         var selectedFilterMode = tryParseString(itemJson.filtermode);
                         var filterValue = tryParseString(itemJson.value);
                         var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
