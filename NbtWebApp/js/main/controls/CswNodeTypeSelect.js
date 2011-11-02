@@ -5,7 +5,7 @@
 
 ; (function ($)
 {
-    var PluginName = "CswNodeTypeSelect";
+    var pluginName = "CswNodeTypeSelect";
 
     var methods = {
         'init': function(options) {
@@ -27,14 +27,11 @@
             CswAjaxJson({
                     url: o.NodeTypesUrl,
                     data: {},
-                    success: function (data)
-                    {
-                        for (var nodeType in data) {
-                            if (contains(data, nodeType)) {
-                                var thisNodeType = data[nodeType];
-                                $select.append('<option value="' + thisNodeType.id + '">' + thisNodeType.name + '</option>');
-                            }
-                        }
+                    success: function (data) {
+                        //Case 24155
+                        each(data, function(thisNodeType) {
+                            $select.append('<option value="' + thisNodeType.id + '">' + thisNodeType.name + '</option>');
+                        });
                         if (isFunction(o.onSuccess)) {
                             o.onSuccess();
                         }
@@ -59,7 +56,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };
