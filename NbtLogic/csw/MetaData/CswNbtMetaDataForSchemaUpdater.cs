@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -61,22 +59,22 @@ namespace ChemSW.Nbt.MetaData
                         Collection<string> NodeTypePropNames = new Collection<string>();
                         foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps )
                         {
-                            NodeTypePropNames.Add(NodeTypeProp.PropName.ToLower());
-                            if( false == DoSync && 
+                            NodeTypePropNames.Add( NodeTypeProp.PropName.ToLower() );
+                            if( false == DoSync &&
                                 NodeTypeProp.PropName.ToLower() == PropName.ToLower() &&
                                 NodeTypeProp.FieldType.FieldType == ObjectClassProp.FieldType.FieldType )
-                                {
-                                    MatchingNodeTypeProp = NodeTypeProp;
-                                    DoSync = true;
-                                }
+                            {
+                                MatchingNodeTypeProp = NodeTypeProp;
+                                DoSync = true;
+                            }
                             else if( NodeTypeProp.PropName.ToLower() == PropName.ToLower() )
                             {
-                                PropName += "_" + NodeTypeProp.FieldType.FieldType.ToString();
+                                PropName += " " + NodeTypeProp.FieldType.FieldType.ToString();
                             }
                         }
                         if( NodeTypePropNames.Contains( PropName ) )
                         {
-                            PropName += "_" + ObjectClassProp.ObjectClassPropId;
+                            PropName += " " + ObjectClassProp.ObjectClassPropId;
                         }
 
                     }
@@ -84,14 +82,14 @@ namespace ChemSW.Nbt.MetaData
                     if( MatchingNodeTypeProp == null )
                     {
                         //CswNbtMetaDataNodeTypeTab Tab = NodeType.getFirstNodeTypeTab();
-                        MatchingNodeTypeProp = makeNewProp(NodeType, null, ObjectClassProp.FieldType.FieldTypeId, PropName, Int32.MinValue, true, ObjectClassProp);
-                        DoSync = false;   // because makeNewProp does it for us
+                        makeNewProp( NodeType, null, ObjectClassProp.FieldType.FieldTypeId, PropName, Int32.MinValue, true, ObjectClassProp );
+                        DoSync = false;
                     }
 
-                    if (DoSync)
+                    if( DoSync )
                     {
-                        CopyNodeTypePropFromObjectClassProp(ObjectClassProp, MatchingNodeTypeProp._DataRow);
-                        CopyNodeTypePropDefaultValueFromObjectClassProp(ObjectClassProp, MatchingNodeTypeProp);
+                        CopyNodeTypePropFromObjectClassProp( ObjectClassProp, MatchingNodeTypeProp._DataRow );
+                        CopyNodeTypePropDefaultValueFromObjectClassProp( ObjectClassProp, MatchingNodeTypeProp );
                     }
 
                 } // foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in NodeType.ObjectClass.ObjectClassProps )
@@ -103,7 +101,7 @@ namespace ChemSW.Nbt.MetaData
 
         } // makeMissingNodeTypeProps()
 
-        
+
         /// <summary>
         /// Deletes an object class prop and all nodetype props from the database and metadata collection
         /// </summary>
