@@ -281,10 +281,11 @@ function CswGrid(options, $parent) {
         ///<returns type="String">jqGrid row id.</returns>
         var pks = getColumn(column, true);
         var rowid = 0;
-        for (var pk in pks) {
-            if (pks[pk].value.toString() === value.toString())
-                rowid = pks[pk].id;
-        }
+        each(pks, function (obj) {
+            if (contains(obj, 'value') && tryParseString(obj.value) === tryParseString(value)) {
+                rowid = obj.id;
+            }
+        });
         return rowid;
     }
     
