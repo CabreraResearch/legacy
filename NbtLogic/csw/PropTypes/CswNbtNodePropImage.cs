@@ -105,14 +105,22 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-				return makeImageUrl( JctNodePropId, NodeId, NodeTypePropId );
+                return makeImageUrl( JctNodePropId, NodeId, NodeTypePropId );
             }
         }
 
-		public static string makeImageUrl(Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId)
-		{
-			return "GetBlob.aspx?mode=image&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.PrimaryKey.ToString() + "&propid=" + NodeTypePropId.ToString();
-		}
+        public static string makeImageUrl( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId )
+        {
+            string NodeIdStr = string.Empty;
+            if( null != NodeId )
+            {
+                NodeIdStr = CswConvert.ToString( NodeId.PrimaryKey );
+            }
+            string PropIdStr = CswConvert.ToString( NodeTypePropId );
+            string JctNpId = CswConvert.ToString( JctNodePropId );
+
+            return "GetBlob.aspx?mode=image&jctnodepropid=" + JctNpId + "&nodeid=" + NodeIdStr + "&propid=" + PropIdStr;
+        }
 
 
         public override void ToXml( XmlNode ParentNode )
