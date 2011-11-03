@@ -375,9 +375,8 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ret = _PropRow[Column.ToString(), DataRowVersion.Original].ToString();
             }
-            catch( System.Data.VersionNotFoundException ex )
+            catch( System.Data.VersionNotFoundException )
             {
-                ex.ToString(); //makes "declared but never used" exception go away
                 ret = _PropRow[Column.ToString()].ToString();
             }
             return ret;
