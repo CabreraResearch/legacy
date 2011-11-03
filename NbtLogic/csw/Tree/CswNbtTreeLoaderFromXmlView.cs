@@ -34,7 +34,7 @@ namespace ChemSW.Nbt
             _RunAsUser = RunAsUser;
             _View = View;
             _IncludeSystemNodes = IncludeSystemNodes;
-            string ResultLimitString = CswNbtResources.getConfigVariableValue( "treeview_resultlimit" );
+            string ResultLimitString = CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" );
             if( CswTools.IsInteger( ResultLimitString ) )
                 ResultLimit = CswConvert.ToInt32( ResultLimitString );
         }

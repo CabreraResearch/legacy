@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.WebPages
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string BrandPageTitle = Master.CswNbtResources.getConfigVariableValue( "brand_pagetitle" );
+            string BrandPageTitle = Master.CswNbtResources.ConfigVbls.getConfigVariableValue( "brand_pagetitle" );
             if (BrandPageTitle != string.Empty)
             {
                 TitleContentLiteral.Text = "About " + BrandPageTitle;
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.WebPages
             //ConfigVarsTableCaddy.WhereClause = "where variablename = 'schemaversion'";
             //DataTable ConfigVarsTable = ConfigVarsTableCaddy.Table;
 
-            ret += "<tr><td>Schema</td><td>" + Master.CswNbtResources.getConfigVariableValue("schemaversion") + "</td><td></td></tr>";
+            ret += "<tr><td>Schema</td><td>" + Master.CswNbtResources.ConfigVbls.getConfigVariableValue("schemaversion") + "</td><td></td></tr>";
 
             ret += "</table>";
             return ret;

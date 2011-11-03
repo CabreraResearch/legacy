@@ -844,15 +844,19 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Reading of values located in the configuration_variables table
         /// </summary>
-        public string getConfigVariableValue( string VariableName ) { return _CswResources.getConfigVariableValue( VariableName ); }
-        /// <summary>
-        /// Setting of values located in the configuration_variables table
-        /// </summary>
-        public void setConfigVariableValue( string VariableName, string VariableValue ) { _CswResources.setConfigVariableValue( VariableName, VariableValue ); }
-        /// <summary>
-        /// The collection of variables and values in the configuration_variables table
-        /// </summary>
-        public ICollection ConfigVariables { get { return _CswResources.ConfigVariables; } }
+        /// 
+        public CswConfigurationVariables ConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
+        //public string getConfigVariableValue( string VariableName ) { return _CswResources.getConfigVariableValue( VariableName ); }
+        ///// <summary>
+        ///// Setting of values located in the configuration_variables table
+        ///// </summary>
+        //public void setConfigVariableValue( string VariableName, string VariableValue ) { _CswResources.setConfigVariableValue( VariableName, VariableValue ); }
+        ///// <summary>
+        ///// The collection of variables and values in the configuration_variables table
+        ///// </summary>
+        ////public ICollection ConfigVariables { get { return _CswResources.ConfigVariables; } }
+        //public CswConfigurationVariables CswConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
+
         /// <summary>
         /// Information associated with the currently logged in user, Nbt-specific.
         /// </summary>

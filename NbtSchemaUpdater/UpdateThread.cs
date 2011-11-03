@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.Schema
                 e.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
                 e.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
 
-				CswSchemaVersion CurrentVersion = new CswSchemaVersion( CswNbtResources.getConfigVariableValue( "schemaversion" ).ToString() );
+				CswSchemaVersion CurrentVersion = new CswSchemaVersion( CswNbtResources.ConfigVbls.getConfigVariableValue( "schemaversion" ).ToString() );
                 e.CurrentSchemaVersion = CurrentVersion;
 
 				CswTableSelect UpdateHistorySelect = CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
