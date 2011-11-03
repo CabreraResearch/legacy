@@ -82,7 +82,7 @@
                                         o.onEditRow(cellVal);
                                     }
                                 } else {
-                                    alert('Please select a row to edit');
+                                    $.CswDialog('AlertDialog', 'Please select a row to edit');
                                 }
                             }
                         };

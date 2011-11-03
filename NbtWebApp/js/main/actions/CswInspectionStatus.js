@@ -57,7 +57,7 @@
                                 editOpt.nodeids.push(grid.getValueForColumn('NODEPK', rowid));
                                 $.CswDialog('EditNodeDialog', editOpt);
                             } else {
-                                alert('Please select a row to edit');
+                                $.CswDialog('AlertDialog', 'Please select a row to edit');
                             }
                         }
                     }

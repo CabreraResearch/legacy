@@ -40,9 +40,10 @@
                     url: o.NodesUrl,
                     data: jsonData,
                     success: function (data) {
-                        for (var nodeId in data) {
+                        var nodeId, nodeName;
+                        for (nodeId in data) {
                             if (contains(data, nodeId)) {
-                                var nodeName = data[nodeId];
+                                nodeName = data[nodeId];
                                 $select.append('<option value="' + nodeId + '">' + nodeName + '</option>');
                             }
                         }
