@@ -6,7 +6,6 @@ using System.Threading;
 using System.Reflection;
 using System.Text;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using ChemSW.Exceptions;
 using ChemSW.Config;
@@ -25,7 +24,6 @@ namespace ChemSW.Nbt.Schema.CmdLn
     /// </summary>
     public class CswSchemaUpdaterConsole
     {
-		private CswSchemaUpdateThread _CswSchemaUpdateThread = null;
 
 		private const string _Separator_OrArgs = " | ";
 		private const string _Separator_NuLine = "\r\n";

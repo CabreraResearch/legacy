@@ -232,7 +232,7 @@ namespace ChemSW.NbtWebControls
                         foreach( CswNbtAction Action in _CswNbtResources.Actions )
                         {
 							if( Action.ShowInList &&
-								( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
+								( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
 								  _CswNbtResources.Permit.can( Action.Name ) )
 							{
 								XmlNode CategoryNode = _getCategoryNode( DocRoot, Action.Category );

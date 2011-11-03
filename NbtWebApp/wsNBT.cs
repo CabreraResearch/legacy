@@ -215,11 +215,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( newEx.Type == ErrorType.Warning )
                 {
-                    Display = ( _CswNbtResources.getConfigVariableValue( "displaywarningsinui" ) != "0" );
+                    Display = ( _CswNbtResources.ConfigVbls.getConfigVariableValue( "displaywarningsinui" ) != "0" );
                 }
                 else
                 {
-                    Display = ( _CswNbtResources.getConfigVariableValue( "displayerrorsinui" ) != "0" );
+                    Display = ( _CswNbtResources.ConfigVbls.getConfigVariableValue( "displayerrorsinui" ) != "0" );
                 }
             }
 
@@ -313,7 +313,7 @@ namespace ChemSW.Nbt.WebServices
                     _CswSessionResources.CswSessionManager.clearSession();
                 }
                 CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
-                //Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "passwordexpiry_days" ) );
+                //Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
 
                 if( _CswNbtResources.CurrentNbtUser.PasswordProperty.IsExpired )
                 {
@@ -2685,7 +2685,7 @@ namespace ChemSW.Nbt.WebServices
                 _deInitResources();
             }
 
-            catch( Exception ex )
+            catch
             {
                 //nada
             }

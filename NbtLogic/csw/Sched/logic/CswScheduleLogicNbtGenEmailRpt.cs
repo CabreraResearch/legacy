@@ -274,8 +274,8 @@ namespace ChemSW.Nbt.Sched
                 {
 
                     _CompletionMessage = "CswScheduleLogicNbtGenEmailRpt::GetUpdatedItems() exception: " + Exception.Message;
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
                     _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
+                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch
 

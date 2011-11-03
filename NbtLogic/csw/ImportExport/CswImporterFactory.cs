@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ImportExport
                     break;
 
                 case ImportAlgorithm.Experimental:
-                    ReturnVal = new CswImporterDbTables( CswNbtResources, CswNbtImportExportFrame, new CswImportExportStatusReporter( OnStatusUpdate, OnImportPhaseChange ,CswNbtResources.CswLogger ) );
+                    ReturnVal = new CswImporterDbTables( CswNbtResources, CswNbtImportExportFrame, new CswImportExportStatusReporter( OnStatusUpdate, OnImportPhaseChange, CswNbtResources ) );
                     break;
 
                 default:
