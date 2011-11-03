@@ -30,7 +30,16 @@
                 });
 
                 $table.CswTable('cell', 1, 2).append('<span>&nbsp;Weekly</span>');
-                $weeklyradio.click(function () { $('#' + o.ID + '_textvalue').text('Weekly'); $WeeklyDiv.show(); $MonthlyDiv.hide(); $YearlyDiv.hide(); o.onchange(); });
+                $weeklyradio.click(function () {
+                    $('#' + o.ID + '_textvalue').text('Weekly');
+                    $WeeklyDiv.show();
+                    $MonthlyDiv.hide();
+                    $YearlyDiv.hide();
+                    o.onchange();
+                    $weeklyradio.attr('checked', true);
+                    $monthlyradio.attr('checked', false);
+                    $yearlyradio.attr('checked', false);
+                });
 
                 var $monthlyradiocell = $table.CswTable('cell', 2, 1);
                 var $monthlyradio = $monthlyradiocell.CswInput('init', { ID: o.ID + '_type_monthly',
@@ -39,7 +48,16 @@
                     value: 'monthly'
                 });
                 $table.CswTable('cell', 2, 2).append('<span>&nbsp;Monthly</span>');
-                $monthlyradio.click(function () { $('#' + o.ID + '_textvalue').text('Monthly'); $WeeklyDiv.hide(); $MonthlyDiv.show(); $YearlyDiv.hide(); o.onchange(); });
+                $monthlyradio.click(function () {
+                    $('#' + o.ID + '_textvalue').text('Monthly');
+                    $WeeklyDiv.hide();
+                    $MonthlyDiv.show();
+                    $YearlyDiv.hide();
+                    o.onchange();
+                    $weeklyradio.attr('checked', false);
+                    $monthlyradio.attr('checked', true);
+                    $yearlyradio.attr('checked', false);
+                });
 
                 var $yearlyradiocell = $table.CswTable('cell', 3, 1);
                 var $yearlyradio = $yearlyradiocell.CswInput('init', { ID: o.ID + '_type_yearly',
@@ -48,7 +66,16 @@
                     value: 'yearly'
                 });
                 $table.CswTable('cell', 3, 2).append('<span>&nbsp;Yearly</span>');
-                $yearlyradio.click(function () { $('#' + o.ID + '_textvalue').text('Yearly'); $WeeklyDiv.hide(); $MonthlyDiv.hide(); $YearlyDiv.show(); o.onchange(); });
+                $yearlyradio.click(function () {
+                    $('#' + o.ID + '_textvalue').text('Yearly');
+                    $WeeklyDiv.hide();
+                    $MonthlyDiv.hide();
+                    $YearlyDiv.show();
+                    o.onchange();
+                    $weeklyradio.attr('checked', false);
+                    $monthlyradio.attr('checked', false);
+                    $yearlyradio.attr('checked', true);
+                });
 
                 var $topcell = $table.CswTable('cell', 1, 3);
                 $topcell.CswAttrDom('rowspan', '3');

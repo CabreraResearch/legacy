@@ -1180,7 +1180,8 @@ function errorHandler(error, includeCallStack, includeLocalStorage, doAlert)
 {
     if (hasWebStorage() && includeLocalStorage) log(localStorage);
     if( doAlert ) {
-        alert('Error: ' + error.message + ' (Code ' + error.code + ')');
+        $.CswDialog('ErrorDialog', error);
+        //alert('Error: ' + error.message + ' (Code ' + error.code + ')');
     }
     else {
         log('Error: ' + error.message + ' (Code ' + error.code + ')', includeCallStack);
