@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Xml;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -8,7 +9,6 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using ChemSW.Audit;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -461,7 +461,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="inFKValue">FK Value</param>
         /// <param name="inValuePropType">Optional (for Property Reference)</param>
         /// <param name="inValuePropId">Optional  (for Property Reference)</param>
-        public void SetFK( string inFKType, Int32 inFKValue, string inValuePropType, Int32 inValuePropId )
+        public void SetFK( string inFKType, Int32 inFKValue, string inValuePropType = null, Int32 inValuePropId = Int32.MinValue )
         {
             SetFK( true, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
@@ -474,12 +474,12 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="inFKValue">FK Value</param>
         /// <param name="inValuePropType">Optional (for Property Reference)</param>
         /// <param name="inValuePropId">Optional  (for Property Reference)</param>
-        public void SetFK( bool inIsFk, string inFKType, Int32 inFKValue, string inValuePropType, Int32 inValuePropId )
+        public void SetFK( bool inIsFk, string inFKType, Int32 inFKValue, string inValuePropType = null, Int32 inValuePropId = Int32.MinValue )
         {
             IsFK = inIsFk;
             if( FKType != inFKType || FKValue != inFKValue )
             {
-                if( FKType != string.Empty && FKValue != Int32.MinValue )
+                if( false == string.IsNullOrEmpty( FKType ) && FKValue != Int32.MinValue )
                 {
                     // For PropertyReference - Clear these and ignore submitted values if the relationship changes
                     // TODO: This is bad for schema update scripts!

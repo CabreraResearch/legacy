@@ -12,26 +12,34 @@ using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt.ImportExport
 {
 
+    public enum ImportProcessPhase { NothingDoneYet, LoadingInputFile, PopulatingTempTableNodes, PopulatingTempTableProps, PopulatingNbtNodes, VerifyingNbtTargetNodes, CreatingMissingNbtTargetNodes, PopulatingNbtProps, PostProcessingNbtNodes };
+    public enum ImportProcessStati { Unprocessed, Imported, PropsAdded, RedundancyChecked, Error };
+    public enum ImportSource { ImportData, Deduced }
+    public enum PhaseTypes { Incremental, Monolithic }
+    public enum ProcessStates { InProcess, Complete }
     public class CswNbtImportStatus
     {
-        public enum PhaseTypes { Incremental, Monolithic }
-        public enum ProcessStates { InProcess, Complete }
+
         private Int32 _ObjectsTotal = 0;
         private Int32 _ObjectsCompletedSofar = 0;
+        CswNbtResources _CswNbtResources = null;
 
         public PhaseTypes PhaseType { get { return ( ( ( _ObjectsTotal > 0 ) && ( _ObjectsCompletedSofar > 0 ) ) ? PhaseTypes.Incremental : PhaseTypes.Monolithic ); } }
-        public CswNbtImportStatus( ImportProcessPhase TargetProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar, ProcessStates ProcessStateIn )
+        public CswNbtImportStatus( CswNbtResources CswNbtResources, ImportProcessPhase TargetProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar, ProcessStates ProcessStateIn )
         {
             _TargetProcessPhase = TargetProcessPhase;
             _ObjectsTotal = TotalObjects;
             _ObjectsCompletedSofar = ObjectsSofar;
             ProcessState = ProcessStateIn;
+            _CswNbtResources = CswNbtResources;
 
         }//ctor
 
+
+
         public ProcessStates ProcessState = ProcessStates.InProcess;
         private ImportProcessPhase _TargetProcessPhase = ImportProcessPhase.NothingDoneYet;
-        public ImportProcessPhase ProcessPhase { get { return ( _TargetProcessPhase ); } }
+        public ImportProcessPhase TargetProcessPhase { get { return ( _TargetProcessPhase ); } }
 
         public string PhaseDescription
         {
@@ -44,7 +52,20 @@ namespace ChemSW.Nbt.ImportExport
 
         }//ProcessPhase
 
+        public ImportProcessPhase PreviousProcessPhase
+        {
+            
+            set
+            {
+                // fsif( false == _CswNbtResources.ConfigVariables
+            }//
 
+            /*
+            get
+            {
+            }
+             */
+        }//
 
         public string PhaseStatus
         {
@@ -88,7 +109,7 @@ namespace ChemSW.Nbt.ImportExport
                         ReturnVal = _count + " nodes post-processed";
                         break;
 
-                   default:
+                    default:
                         ReturnVal = "Unknown process phase";
                         break;
                 }//switch

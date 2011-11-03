@@ -995,13 +995,13 @@ namespace ChemSW.Nbt.Schema
         {
             if( !String.IsNullOrEmpty( VariableValue ) && !String.IsNullOrEmpty( VariableName ) )
             {
-                _CswNbtResources.setConfigVariableValue( VariableName, VariableValue );
+                _CswNbtResources.ConfigVbls.setConfigVariableValue( VariableName, VariableValue );
             }
         }
 
         public string getConfigVariableValue( String VariableName )
         {
-            return ( _CswNbtResources.getConfigVariableValue( VariableName ) );
+            return ( _CswNbtResources.ConfigVbls.getConfigVariableValue( VariableName ) );
         }
 
 

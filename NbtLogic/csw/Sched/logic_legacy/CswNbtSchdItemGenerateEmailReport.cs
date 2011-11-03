@@ -215,7 +215,7 @@ namespace ChemSW.Nbt.Sched
             catch( Exception Exception )
             {
 				_Succeeded = false;
-                //_StatusMessage = "Error running Schedule " + ( _NodeTypeId != Int32.MinValue ? Name : " of unknown nodetypeid" ) + ": " + Exception.Message;
+                _StatusMessage = "Error running Schedule: " + Exception.Message;
             }//
 
         }//run()

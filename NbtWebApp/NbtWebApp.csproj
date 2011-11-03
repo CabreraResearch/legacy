@@ -73,7 +73,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ThirdParty\SMTP\SMTP.Net.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -810,7 +809,7 @@
     <Content Include="Scripts\modernizr-2.0.6-development-only.js" />
     <Content Include="wsTests1.html" />
     <Content Include="ConnectTest.html" />
-    <Content Include="js\main\actions\CswImportInspectionQuestions.js" />
+    <Content Include="js\main\actions\CswInspectionDesign.js" />
     <Content Include="js\main\controls\CswGrid.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeButton.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeMol.js" />

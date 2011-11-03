@@ -250,6 +250,7 @@
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
     <Compile Include="csw\Schema\scripts\infr\CswUpdateSchema_Infr_TakeDump.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01K01.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswProdUpdtRsrc.cs" />
     <Compile Include="csw\Sched\runner\CswNbtSchdItemRunner.cs" />
     <Compile Include="csw\Sched\logic_legacy\CswNbtSchdItemUpdateInspectionStatus.cs" />
@@ -267,17 +268,6 @@
     <Compile Include="csw\Schema\CswSequenceDdlOp.cs" />
     <Compile Include="csw\Schema\CswTableDdlOp.cs" />
     <Compile Include="csw\Schema\scripts\CswUpdateSchemaTo.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J01.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J02.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J03.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J04.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J05.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J06.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J07.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J08.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J09.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J10.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01J11.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03.cs" />
