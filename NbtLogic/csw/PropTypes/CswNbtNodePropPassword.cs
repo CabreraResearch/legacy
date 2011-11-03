@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "passwordexpiry_days" ) );
+                Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
                 return ( ChangedDate == DateTime.MinValue ||
                          ChangedDate.AddDays( PasswordExpiryDays ).Date <= DateTime.Now.Date );
             }

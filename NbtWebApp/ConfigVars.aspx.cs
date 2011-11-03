@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebPages
             CswAutoTable AutoTable = new CswAutoTable();
             ph.Controls.Add(AutoTable);
             Int32 Row = 0;
-            foreach( CswConfigVariable ConfigVar in Master.CswNbtResources.ConfigVariables )
+            foreach( CswConfigVariable ConfigVar in Master.CswNbtResources.ConfigVbls.ConfigVariables )
             {
                 if( !ConfigVar.IsSystem )
                 {
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 if (Control is TextBox)
                 {
-                    Master.CswNbtResources.setConfigVariableValue(((TextBox)Control).ID, ((TextBox)Control).Text);
+                    Master.CswNbtResources.ConfigVbls.setConfigVariableValue(((TextBox)Control).ID, ((TextBox)Control).Text);
                 }
                 if (Control.Controls.Count > 0)
                     GetConfigVarValues(Control.Controls);

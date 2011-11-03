@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterCreateNode()
         {
             // BZ 9170
-            _CswNbtResources.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
+            _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
 
             // BZ 9170
-            _CswNbtResources.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
+            _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
         }//afterWriteNode()
 

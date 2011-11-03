@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterCreateNode()
         {
             // BZ 9170
-            _CswNbtResources.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
+            _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             // BZ 9170
-            _CswNbtResources.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
+            _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
@@ -311,7 +311,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             this.FailedLoginCount.Value = Convert.ToDouble( failures );
 
-            if( failures >= CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "failedloginlimit" ) ) )
+            if( failures >= CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "failedloginlimit" ) ) )
             {
                 this.AccountLocked.Checked = Tristate.True;
             }

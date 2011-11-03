@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterCreateNode()
         {
             // BZ 10094 - Reset cache
-            _CswNbtResources.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
+            _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterWriteNode()
         {
             // BZ 10094 - Reset cache
-            _CswNbtResources.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
+            _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterDeleteNode()
         {
             // BZ 10094 - Reset cache
-            _CswNbtResources.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
+            _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
