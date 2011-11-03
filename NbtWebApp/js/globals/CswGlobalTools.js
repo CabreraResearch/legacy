@@ -476,3 +476,5 @@ function log(s, includeCallStack) {
         if (!isNullOrEmpty(extendedLog)) alert(extendedLog);
     }
 }
+
+window.abandonHope = false;
