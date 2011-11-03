@@ -622,7 +622,7 @@
                             } // if($nodechecks.length > 0 && $propchecks.length > 0)
                             else {
                                 doSave = false;
-                                alert('You have not selected any properties to save.');
+                                $.CswDialog('AlertDialog', 'You have not selected any properties to save.');
                             }
                         } // if(o.ShowCheckboxes)
                         else if(o.Multi) {

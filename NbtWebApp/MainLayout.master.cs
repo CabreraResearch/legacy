@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.WebPages
                     quicklaunchplaceholder.Controls.Add( _QuickLaunch );
                 }
 
-                if( Master.CswNbtResources.getConfigVariableValue( "showloadbox" ) != "1" )
+                if( Master.CswNbtResources.ConfigVbls.getConfigVariableValue( "showloadbox" ) != "1" )
                 {
                     ProgressDiv.Visible = false;
                 }
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.WebPages
                     //TitleSpacer.Visible = false;
                     //TitleSpacer2.Visible = false;
 
-                    //string BrandPageTitle = Master.CswNbtResources.getConfigVariableValue( "brand_pagetitle" );
+                    //string BrandPageTitle = Master.CswNbtResources.ConfigVbls.getConfigVariableValue( "brand_pagetitle" );
                     //if( BrandPageTitle != string.Empty )
                     //{
                     //    BrandTitle.Text = BrandPageTitle;
@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.WebPages
                     //    TitleSpacer.Visible = true;
                     //    TitleSpacer2.Visible = true;
                     //}
-                    //string BrandPageIcon = Master.CswNbtResources.getConfigVariableValue( "brand_pageicon" );
+                    //string BrandPageIcon = Master.CswNbtResources.ConfigVbls.getConfigVariableValue( "brand_pageicon" );
                     //if( BrandPageIcon != string.Empty )
                     //{
                     //    BrandIcon.ImageUrl = BrandPageIcon;
@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.WebPages
                     RemoveDemoDataItem.CssClass = "SubMenuGroup";
 
                     RemoveDemoDataItem.Visible = false;
-                    if( "1" == Master.CswNbtResources.getConfigVariableValue( "is_demo".ToLower() ) )
+                    if( "1" == Master.CswNbtResources.ConfigVbls.getConfigVariableValue( "is_demo".ToLower() ) )
                     {
                         RemoveDemoDataItem.Visible = true;
                     }
@@ -485,7 +485,7 @@ namespace ChemSW.Nbt.WebPages
                     CswNbtResources.logError( ex );
 
                     // Display the error in the ErrorBox
-                    if( CswNbtResources.getConfigVariableValue( "displayerrorsinui" ) != "0" )
+                    if( CswNbtResources.ConfigVbls.getConfigVariableValue( "displayerrorsinui" ) != "0" )
                     {
                         string Title;
                         string Message;

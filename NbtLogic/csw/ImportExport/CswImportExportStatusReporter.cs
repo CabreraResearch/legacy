@@ -25,25 +25,26 @@ namespace ChemSW.Nbt.ImportExport
         public List<ImportExportMessageType> MessageTypesToBeLogged = new List<ImportExportMessageType>();
         private StatusUpdateHandler _WriteToGui = null;
         private ImportPhaseHandler _ReportPhaseChange = null;
-        private ICswLogger _CswLogger = null;
+        private CswNbtResources _CswNbtResources = null; 
 
         private string _ImportExportLogFilter = "importexport";
 
-        public CswImportExportStatusReporter( StatusUpdateHandler StatusUpdateHandler, ImportPhaseHandler ImportPhaseHandler, ICswLogger CswLogger )
+        public CswImportExportStatusReporter( StatusUpdateHandler StatusUpdateHandler, ImportPhaseHandler ImportPhaseHandler, CswNbtResources CswNbtResources )
         {
             MessageTypesToBeLogged.Add( ImportExportMessageType.Progress );
             _WriteToGui = StatusUpdateHandler;
             _ReportPhaseChange = ImportPhaseHandler;
-            _CswLogger = CswLogger;
-            _CswLogger.addFilter( _ImportExportLogFilter );
-            _CswLogger.RestrictByFilter = true;
+            _CswNbtResources = CswNbtResources;
+            
+            _CswNbtResources.CswLogger.addFilter( _ImportExportLogFilter );
+            _CswNbtResources.CswLogger.RestrictByFilter = true;
         }//ctor
 
         public void reportException( Exception Exception )
         {
             if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Error ) )
             {
-                _CswLogger.reportError( Exception );
+                _CswNbtResources.CswLogger.reportError( Exception );
             }
 
             _WriteToGui( Exception.ToString() );
@@ -53,7 +54,7 @@ namespace ChemSW.Nbt.ImportExport
         {
             if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Error ) )
             {
-                _CswLogger.reportError( new CswDniException( ErrorType.Error, ErrorMessage, null ) );
+                _CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, ErrorMessage, null ) );
             }
 
             _WriteToGui( ErrorMessage );
@@ -63,22 +64,22 @@ namespace ChemSW.Nbt.ImportExport
         {
             if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Timing ) )
             {
-                _CswLogger.reportAppState( StatusMessage, _ImportExportLogFilter );
+                _CswNbtResources.CswLogger.reportAppState( StatusMessage, _ImportExportLogFilter );
                 _WriteToGui( StatusMessage );
             }
         }//reportProgress()
 
 
-        public void updateProcessPhase( ImportProcessPhase ProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar, CswNbtImportStatus.ProcessStates ProcessState = CswNbtImportStatus.ProcessStates.InProcess )
+        public void updateProcessPhase( ImportProcessPhase ProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar, ProcessStates ProcessState = ProcessStates.InProcess )
         {
-            _ReportPhaseChange( new CswNbtImportStatus( ProcessPhase, TotalObjects, ObjectsSofar, ProcessState ) );
+            _ReportPhaseChange( new CswNbtImportStatus(_CswNbtResources, ProcessPhase, TotalObjects, ObjectsSofar, ProcessState ) );
         }
 
         public void reportTiming( CswTimer CswTimer, string Action )
         {
             if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Timing ) )
             {
-                _CswLogger.reportAppState( "Total time to " + Action + ": " + CswTimer.ElapsedDurationInMilliseconds.ToString() + " ms", _ImportExportLogFilter );
+                _CswNbtResources.CswLogger.reportAppState( "Total time to " + Action + ": " + CswTimer.ElapsedDurationInMilliseconds.ToString() + " ms", _ImportExportLogFilter );
             }
         }//
 
