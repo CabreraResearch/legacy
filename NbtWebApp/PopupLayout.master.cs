@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                if( Master.CswNbtResources.getConfigVariableValue( "showloadbox" ) != "1" )
+                if( Master.CswNbtResources.ConfigVbls.getConfigVariableValue( "showloadbox" ) != "1" )
                     ProgressDiv.Visible = false;
                 else
                     ProgressDiv.Visible = true;
@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.WebPages
                     //{
                     //    if (Row["variablename"].ToString() == "brand_pagetitle" && Row["variablevalue"].ToString() != string.Empty)
                     //    {
-                    //string BrandPageTitle = Master.CswNbtResources.getConfigVariableValue("brand_pagetitle");
+                    //string BrandPageTitle = Master.CswNbtResources.ConfigVbls.getConfigVariableValue("brand_pagetitle");
                     //if (BrandPageTitle != string.Empty)
                     //{
                     //    BrandTitle.Text = BrandPageTitle;
@@ -181,7 +181,7 @@ namespace ChemSW.Nbt.WebPages
                     //}
                     //if (Row["variablename"].ToString() == "brand_pageicon" && Row["variablevalue"].ToString() != string.Empty)
                     //{
-                    //string BrandPageIcon = Master.CswNbtResources.getConfigVariableValue("brand_pageicon");
+                    //string BrandPageIcon = Master.CswNbtResources.ConfigVbls.getConfigVariableValue("brand_pageicon");
                     //if (BrandPageIcon != string.Empty)
                     //{
                     //    BrandIcon.ImageUrl = BrandPageIcon;
@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.WebPages
                     CswNbtResources.logError( ex );
 
                     // Display the error in the ErrorBox
-                    if( CswNbtResources.getConfigVariableValue( "displayerrorsinui" ) != "0" )
+                    if( CswNbtResources.ConfigVbls.getConfigVariableValue( "displayerrorsinui" ) != "0" )
                     {
                         string Title;
                         string Message;

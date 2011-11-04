@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.WebServices
             ComponentObj.Add( new JProperty( "Schema",
                                     new JObject(
                                         new JProperty( "name", "Schema" ),
-                                        new JProperty( "version", _CswNbtResources.getConfigVariableValue( "schemaversion" ) ),
+                                        new JProperty( "version", _CswNbtResources.ConfigVbls.getConfigVariableValue( "schemaversion" ) ),
                                         new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-2011" )
                                         )
 

@@ -105,14 +105,14 @@ namespace ChemSW.Nbt.Schema
 
         private void _AddImportStatus( CswNbtImportStatus CswNbtImportStatus )
         {
-            if( _LastProcessPhase != CswNbtImportStatus.ProcessPhase )
+            if( _LastProcessPhase != CswNbtImportStatus.TargetProcessPhase )
             {
                 _WorkerThread_OnStatusChange( PhaseTextBox.Text );
-                _LastProcessPhase = CswNbtImportStatus.ProcessPhase;
+                _LastProcessPhase = CswNbtImportStatus.TargetProcessPhase;
             }
 
 
-            if( CswNbtImportStatus.PhaseTypes.Monolithic == CswNbtImportStatus.PhaseType )
+            if( PhaseTypes.Monolithic == CswNbtImportStatus.PhaseType )
             {
                 if( null == _ProgressTimer )
                 {

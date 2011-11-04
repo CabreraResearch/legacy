@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.WebServices
                         break;
                     default:
                         throw new CswDniException( ErrorType.Warning, "This operation is only permitted for Inspection Targets", "Only the InspectionTargetClass implements this feature" );
-                        break;
+
                 }
             }
             else

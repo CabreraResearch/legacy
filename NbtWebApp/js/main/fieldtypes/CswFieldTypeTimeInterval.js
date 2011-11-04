@@ -15,10 +15,11 @@
             $Div.contents().remove();
             var propVals = o.propData.values;
             var textValue = (false === o.Multi) ? tryParseString(propVals.Interval.text).trim() : CswMultiEditDefaultValue;
+            var now = new Date();
 
             $Div.append('<span id="' + o.ID + '_textvalue">' + textValue + '</span>');
 
-            if (!o.ReadOnly) {
+            if (false === isTrue(o.ReadOnly)) {
                 // Rate Type Selector
                 var $table = $Div.CswTable('init', { 'ID': o.ID + '_tbl', cellspacing: 5 });
 
@@ -36,9 +37,11 @@
                     $MonthlyDiv.hide();
                     $YearlyDiv.hide();
                     o.onchange();
-                    $weeklyradio.attr('checked', true);
-                    $monthlyradio.attr('checked', false);
-                    $yearlyradio.attr('checked', false);
+                    if (abandonHope) {
+                        $weeklyradio.attr('checked', true);
+                        $monthlyradio.attr('checked', false);
+                        $yearlyradio.attr('checked', false);
+                    }
                 });
 
                 var $monthlyradiocell = $table.CswTable('cell', 2, 1);
@@ -54,9 +57,11 @@
                     $MonthlyDiv.show();
                     $YearlyDiv.hide();
                     o.onchange();
-                    $weeklyradio.attr('checked', false);
-                    $monthlyradio.attr('checked', true);
-                    $yearlyradio.attr('checked', false);
+                    if (abandonHope) {
+                        $weeklyradio.attr('checked', false);
+                        $monthlyradio.attr('checked', true);
+                        $yearlyradio.attr('checked', false);
+                    }
                 });
 
                 var $yearlyradiocell = $table.CswTable('cell', 3, 1);
@@ -72,9 +77,11 @@
                     $MonthlyDiv.hide();
                     $YearlyDiv.show();
                     o.onchange();
-                    $weeklyradio.attr('checked', false);
-                    $monthlyradio.attr('checked', false);
-                    $yearlyradio.attr('checked', true);
+                    if (abandonHope) {
+                        $weeklyradio.attr('checked', false);
+                        $monthlyradio.attr('checked', false);
+                        $yearlyradio.attr('checked', true);
+                    }
                 });
 
                 var $topcell = $table.CswTable('cell', 1, 3);
@@ -122,7 +129,6 @@
                 var daysInMonth = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
                 if (o.Multi) {
                     daysInMonth.push(CswMultiEditDefaultValue);
-                    ;
                 }
                 var $MonthlyDateSelect = $MonthlyDiv.CswSelect('init', {
                     ID: o.ID + '_monthly_date',
@@ -165,20 +171,21 @@
                 if (o.Multi) {
                     monthsInYear.push(CswMultiEditDefaultValue);
                 }
+                var selectedMonth = tryParseString(propVals.Interval.rateintervalvalue.startingmonth, now.getMonth());
                 var $MonthlyStartMonthSelect = $MonthlyDiv.CswSelect('init', {
                     ID: o.ID + '_monthly_startMonth',
                     values: monthsInYear,
-                    selected: (false === o.Multi) ? '' : CswMultiEditDefaultValue,
+                    selected: (false === o.Multi) ? selectedMonth : CswMultiEditDefaultValue,
                     onChange: o.onchange
                 });
                 $MonthlyDiv.append('/');
 
-                var year = new Date().getFullYear();
+                var year = now.getFullYear();
                 var yearsToAllow = [];
                 for (var y = year - 10; y <= year + 10; y++) {
                     yearsToAllow.push(y);
                 }
-                var selectedYear = year;
+                var selectedYear = tryParseString(propVals.Interval.rateintervalvalue.startingyear, year);
                 if (o.Multi) {
                     yearsToAllow.push(CswMultiEditDefaultValue);
                     selectedYear = CswMultiEditDefaultValue;
@@ -270,6 +277,7 @@
         },
         save: function (o) {
             try {
+                var rateInterval = o.propData.values.Interval.rateintervalvalue;
                 var attributes = {
                     Interval: {
                         rateintervalvalue: {
@@ -292,35 +300,75 @@
                     }
                 };
                 var rateType = $('[name="' + o.ID + '_type"]:checked').val();
-                var dateFormat = o.propData.values.Interval.rateintervalvalue;
+                if (isNullOrEmpty(rateType)) {
+                    rateType = $('input[name="' + o.ID + '_type"]').parent().find('[checked="checked"]').val();
+                }
+                var newInterval = attributes.Interval.rateintervalvalue;
                 if (false === o.Multi || $('#' + o.ID + '_textvalue').text() !== CswMultiEditDefaultValue) {
                     switch (rateType) {
                         case 'weekly':
-                            attributes.Interval.rateintervalvalue.ratetype = 'WeeklyByDay';
-                            attributes.Interval.rateintervalvalue.weeklyday = getWeekDayChecked(o.ID + '_weeklyday');
-                            attributes.Interval.rateintervalvalue.startingdate = {};
-                            attributes.Interval.rateintervalvalue.startingdate.date = $('#' + o.ID + '_weekly_sd').CswDateTimePicker('value', o.propData.readonly).Date;
-                            attributes.Interval.rateintervalvalue.startingdate.dateformat = dateFormat;
+                            if (false === contains(rateInterval, 'weeklyday')) {
+                                rateInterval.weeklyday = null;
+                            }
+                            if (false === contains(rateInterval, 'startingdate')) {
+                                rateInterval.startingdate = {
+                                    date: null,
+                                    dateformat: null
+                                };
+                            }
+                            newInterval.ratetype = 'WeeklyByDay';
+                            newInterval.weeklyday = getWeekDayChecked(o.ID + '_weeklyday');
+                            newInterval.startingdate = {
+                                date: $('#' + o.ID + '_weekly_sd').CswDateTimePicker('value', o.propData.readonly).Date,
+                                dateformat: rateInterval.dateformat
+                            };
                             break;
                         case 'monthly':
+                            if (false === contains(rateInterval, 'monthlyfrequency')) {
+                                rateInterval.monthlyfrequency = null;
+                            }
+                            if (false === contains(rateInterval, 'monthlydate')) {
+                                rateInterval.monthlydate = null;
+                            }
+                            if (false === contains(rateInterval, 'monthlyweek')) {
+                                rateInterval.monthlyweek = null;
+                            }
+                            if (false === contains(rateInterval, 'monthlyday')) {
+                                rateInterval.monthlyday = null;
+                            }
+                            if (false === contains(rateInterval, 'startingmonth')) {
+                                rateInterval.startingmonth = null;
+                            }
+                            if (false === contains(rateInterval, 'startingyear')) {
+                                rateInterval.startingyear = null;
+                            }
                             var monthlyType = $('[name="' + o.ID + '_monthly"]:checked').val();
-                            attributes.Interval.rateintervalvalue.ratetype = monthlyType;
-                            attributes.Interval.rateintervalvalue.monthlyfrequency = $('#' + o.ID + '_monthly_rate').val();
+                            newInterval.ratetype = monthlyType;
+                            newInterval.monthlyfrequency = $('#' + o.ID + '_monthly_rate').val();
                             if (monthlyType === "MonthlyByDate") {
-                                attributes.Interval.rateintervalvalue.monthlydate = $('#' + o.ID + '_monthly_date').val();
+                                newInterval.monthlydate = $('#' + o.ID + '_monthly_date').val();
                             } else // MonthlyByWeekAndDay
                             {
-                                attributes.Interval.rateintervalvalue.monthlyweek = $('#' + o.ID + '_monthly_week').val();
-                                attributes.Interval.rateintervalvalue.monthlyday = getWeekDayChecked(o.ID + '_monthly_day');
+                                newInterval.monthlyweek = $('#' + o.ID + '_monthly_week').val();
+                                newInterval.monthlyday = getWeekDayChecked(o.ID + '_monthly_day');
                             }
-                            attributes.Interval.rateintervalvalue.startingmonth = $('#' + o.ID + '_monthly_startMonth').val();
-                            attributes.Interval.rateintervalvalue.startingyear = $('#' + o.ID + '_monthly_startYear').val();
+                            newInterval.startingmonth = $('#' + o.ID + '_monthly_startMonth').val();
+                            newInterval.startingyear = $('#' + o.ID + '_monthly_startYear').val();
                             break;
                         case 'yearly':
-                            attributes.Interval.rateintervalvalue.ratetype = 'YearlyByDate';
-                            attributes.Interval.rateintervalvalue.yearlydate = {};
-                            attributes.Interval.rateintervalvalue.yearlydate.date = $('#' + o.ID + '_yearly_sd').CswDateTimePicker('value', o.propData.readonly).Date;
-                            attributes.Interval.rateintervalvalue.yearlydate.dateformat = dateFormat;
+                            if (false === contains(rateInterval, 'yearlydate')) {
+                                rateInterval.yearlydate = {
+                                    date: null,
+                                    dateformat: null
+                                };
+                            }
+                            var yearDate = $('#' + o.ID + '_yearly_sd').CswDateTimePicker('value', o.propData.readonly).Date;
+                            newInterval.ratetype = 'YearlyByDate';
+                            newInterval.yearlydate = {
+                                date: yearDate,
+                                dateformat: rateInterval.dateformat
+                            };
+                            //attributes.Interval.rateintervalvalue.yearlydate.dateformat = dateFormat;
                             break;
                     } // switch(RateType)
                 }

@@ -22,12 +22,21 @@
                 var propVals = o.propData.values;
                 var href = tryParseString(propVals.href).trim();
                 var width = tryParseString(propVals.width);
+                if (width < 0) {
+                    width = 100;
+                } else {
+                    width = tryParseNumber(width, 0);
+                    if (width > 100) {
+                        width -= 36;
+                    }
+                }
+                
                 var height = tryParseString(propVals.height);
                 var fileName = tryParseString(propVals.name).trim();
 
                 var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
                 var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
-                var $cell21 = $table.CswTable('cell', 2, 1).CswAttrDom('width', width - 36);
+                var $cell21 = $table.CswTable('cell', 2, 1).CswAttrDom('width', width);
                 var $cell22 = $table.CswTable('cell', 2, 2).CswAttrDom('align', 'right');
                 var $cell23 = $table.CswTable('cell', 2, 3).CswAttrDom('align', 'right');
 

@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.WebServices
                     // History tab
                     if( false == CswConvert.ToBoolean( _IsMultiEdit ) &&
                         Date.IsNull &&
-                                CswConvert.ToBoolean( _CswNbtResources.getConfigVariableValue( "auditing" ) ) )
+                                CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( "auditing" ) ) )
                     {
                         if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType ) )
                         {

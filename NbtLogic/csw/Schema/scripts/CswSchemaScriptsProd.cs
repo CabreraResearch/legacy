@@ -26,9 +26,8 @@ namespace ChemSW.Nbt.Schema
             // This is where you manually set to the last version of the previous release
            _MinimumVersion = new CswSchemaVersion( 1, 'J', 11 );
 
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K01() ) );
-
             // This is where you add new versions.
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K01() ) );
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
@@ -60,7 +59,7 @@ namespace ChemSW.Nbt.Schema
 
         public CswSchemaVersion CurrentVersion( CswNbtResources CswNbtResources )
         {
-            return ( new CswSchemaVersion( CswNbtResources.getConfigVariableValue( "schemaversion" ) ) );
+            return ( new CswSchemaVersion( CswNbtResources.ConfigVbls.getConfigVariableValue( "schemaversion" ) ) );
         }
 
 
@@ -114,7 +113,7 @@ namespace ChemSW.Nbt.Schema
 
         public void stampSchemaVersion( CswNbtResources CswNbtResources, CswSchemaUpdateDriver CswSchemaUpdateDriver )
         {
-            CswNbtResources.setConfigVariableValue( "schemaversion", CswSchemaUpdateDriver.SchemaVersion.ToString() ); ;
+            CswNbtResources.ConfigVbls.setConfigVariableValue( "schemaversion", CswSchemaUpdateDriver.SchemaVersion.ToString() ); ;
         }//stampSchemaVersion()
 
 

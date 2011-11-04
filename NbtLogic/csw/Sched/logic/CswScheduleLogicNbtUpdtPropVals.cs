@@ -101,6 +101,8 @@ namespace ChemSW.Nbt.Sched
 
                 catch( Exception Exception )
                 {
+                    _CompletionMessage = "CswScheduleLogicNbtUpdtPropVals exception: " + Exception.Message;
+                    _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;//last line
                 }
 

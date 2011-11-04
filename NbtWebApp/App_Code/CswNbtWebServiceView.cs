@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.WebServices
                 foreach( CswNbtAction Action in _CswNbtResources.Actions )
                 {
                     if( Action.ShowInList &&
-                        ( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
+                        ( Action.Name != CswNbtActionName.View_By_Location || _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
                         _CswNbtResources.Permit.can( Action.Name ) )
                     {
                         JObject ActionNode = _makeViewTreeObject( ref TreeData, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );

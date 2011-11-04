@@ -62,12 +62,12 @@ namespace ChemSW.Nbt.WebPages
             SampleBarcodeValueLiteral.Text = "Sample Barcode:";
 
             SampleBarcodeValue = new Literal();
-            
+
             SampleTotalQuantityLiteral = new Literal();
             SampleTotalQuantityLiteral.Text = "Sample Total Quantity:";
 
             SampleTotalQuantityValue = new Literal();
-            
+
             NumberOfChildSamplesLiteral = new Literal();
             NumberOfChildSamplesLiteral.Text = "Number of Child Samples:";
 
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.WebPages
             QuantityPerChildSampleLiteral.Text = "Quantity per Child Sample:";
 
             QuantityPerChildSampleUnitLiteral = new Literal();
-            
+
             QuantityPerChildSampleTextBox = new TextBox();
             QuantityPerChildSampleTextBox.ID = "QuantityPerChildSampleTextBox";
             QuantityPerChildSampleTextBox.CssClass = "textinput";
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.WebPages
 
             _Table.addControl( 0, 0, SampleBarcodeValueLiteral );
             _Table.addControl( 0, 1, SampleBarcodeValue );
-            _Table.addControl( 1, 0, SampleTotalQuantityLiteral);
+            _Table.addControl( 1, 0, SampleTotalQuantityLiteral );
             _Table.addControl( 1, 1, SampleTotalQuantityValue );
             _Table.addControl( 2, 0, NumberOfChildSamplesLiteral );
             _Table.addControl( 2, 1, NumberOfChildSamplesTextBox );
@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.WebPages
                 NumberOfChildren = CswConvert.ToInt32( NumberOfChildSamplesTextBox.Text );
                 QuantityPerChild = Convert.ToDouble( QuantityPerChildSampleTextBox.Text );
             }
-            catch( Exception ex )
+            catch( Exception )
             {
                 Literal ErrorMsg = new Literal();
                 ErrorMsg.Text = "<br>Invalid number.  Please enter a valid integer for 'Number of Children' and a valid number for 'Quantity Per Child'.";
@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.WebPages
 
             CswNbtMetaDataObjectClass SampleObjectClass = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SampleClass );
             CswNbtMetaDataObjectClassProp SampleBarcodeProp = SampleObjectClass.getObjectClassProp( CswNbtObjClassSample.BarcodePropertyName );
-            
+
             CswNbtView SampleView = new CswNbtView( Master.CswNbtResources );
             CswNbtViewRelationship SampleRelationship = SampleView.AddViewRelationship( SampleObjectClass, false );
             CswNbtViewProperty SampleBarcodeViewProperty = SampleView.AddViewProperty( SampleRelationship, SampleBarcodeProp );

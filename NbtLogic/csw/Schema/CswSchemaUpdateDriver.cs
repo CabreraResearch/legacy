@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.commitTransaction();
             }
 
-            catch( CswDniExceptionIgnoreDeliberately CswDniExceptionIgnoreDeliberately )
+            catch( CswDniExceptionIgnoreDeliberately  )
             {
                 _UpdateSucceeded = true;
                 try
