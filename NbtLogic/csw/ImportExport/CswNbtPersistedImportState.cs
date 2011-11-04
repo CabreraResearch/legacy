@@ -20,6 +20,7 @@ namespace ChemSW.Nbt.ImportExport
         private string _ConfigVarStem = "ImportStatus";
         public CswNbtPersistedImportState( CswNbtResources CswNbtResources )
         {
+            _CswNbtResources = CswNbtResources;
         }//ctor
 
         private string _prefixConfigVarName( string VariableName )
