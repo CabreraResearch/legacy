@@ -21,15 +21,7 @@
 
                 var propVals = o.propData.values;
                 var href = tryParseString(propVals.href).trim();
-                var width = tryParseString(propVals.width);
-                if (width < 0) {
-                    width = 100;
-                } else {
-                    width = tryParseNumber(width, 0);
-                    if (width > 100) {
-                        width -= 36;
-                    }
-                }
+                var width = Math.abs(tryParseNumber(propVals.width, 100) - 36);
                 
                 var height = tryParseString(propVals.height);
                 var fileName = tryParseString(propVals.name).trim();

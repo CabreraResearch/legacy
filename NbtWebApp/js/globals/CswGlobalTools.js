@@ -222,7 +222,7 @@ function tryParseString(inputStr, defaultStr) {
     }
     return ret;
 }
-var Int32MinVal = new Number(-2147483648);
+var Int32MinVal = -2147483648;
 function tryParseNumber(inputNum, defaultNum) {
     /// <summary>
     ///   Returns the inputNum if !NaN, else returns the defaultNum
@@ -230,10 +230,16 @@ function tryParseNumber(inputNum, defaultNum) {
     /// <param name="inputNum" type="Number"> String to parse to number </param>
     /// <param name="defaultNum" type="Number"> Default value if not a number </param>
     /// <returns type="Number" />
-    var ret = new Number(defaultNum);
-    var tryRet = new Number(inputNum);
+    var ret = 0;
+    var tryRet = +inputNum;
+
     if (false === isNaN(tryRet) && tryRet !== Int32MinVal) {
         ret = tryRet;
+    } else {
+        tryRet = +defaultNum;
+        if (false === isNaN(tryRet) && tryRet !== Int32MinVal) {
+            ret = tryRet;
+        }
     }
     return ret;
 }
