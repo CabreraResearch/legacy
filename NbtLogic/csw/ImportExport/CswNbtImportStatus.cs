@@ -24,14 +24,22 @@ namespace ChemSW.Nbt.ImportExport
         private Int32 _ObjectsCompletedSofar = 0;
         CswNbtResources _CswNbtResources = null;
 
+
+        CswNbtPersistedImportState _CswNbtPersistedImportState = null;
         public PhaseTypes PhaseType { get { return ( ( ( _ObjectsTotal > 0 ) && ( _ObjectsCompletedSofar > 0 ) ) ? PhaseTypes.Incremental : PhaseTypes.Monolithic ); } }
         public CswNbtImportStatus( CswNbtResources CswNbtResources, ImportProcessPhase TargetProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar, ProcessStates ProcessStateIn )
         {
+            _CswNbtPersistedImportState = new CswNbtPersistedImportState( CswNbtResources );
             _TargetProcessPhase = TargetProcessPhase;
             _ObjectsTotal = TotalObjects;
             _ObjectsCompletedSofar = ObjectsSofar;
             ProcessState = ProcessStateIn;
             _CswNbtResources = CswNbtResources;
+
+            if( ProcessStates.Complete == ProcessStateIn )
+            {
+                _CswNbtPersistedImportState.CompletedProcessPhase = _TargetProcessPhase; 
+            }
 
         }//ctor
 
@@ -54,17 +62,16 @@ namespace ChemSW.Nbt.ImportExport
 
         public ImportProcessPhase PreviousProcessPhase
         {
-            
+
             set
             {
-                // fsif( false == _CswNbtResources.ConfigVariables
+                _CswNbtPersistedImportState.CompletedProcessPhase = value;
             }//
 
-            /*
             get
             {
+                return ( _CswNbtPersistedImportState.CompletedProcessPhase );
             }
-             */
         }//
 
         public string PhaseStatus
