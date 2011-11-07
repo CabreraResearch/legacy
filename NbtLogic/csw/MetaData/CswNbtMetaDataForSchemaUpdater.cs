@@ -56,10 +56,8 @@ namespace ChemSW.Nbt.MetaData
                     // Find name & fieldtype matches
                     if( MatchingNodeTypeProp == null )
                     {
-                        Collection<string> NodeTypePropNames = new Collection<string>();
                         foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps )
                         {
-                            NodeTypePropNames.Add( NodeTypeProp.PropName.ToLower() );
                             if( false == DoSync &&
                                 NodeTypeProp.PropName.ToLower() == PropName.ToLower() &&
                                 NodeTypeProp.FieldType.FieldType == ObjectClassProp.FieldType.FieldType )
@@ -72,7 +70,7 @@ namespace ChemSW.Nbt.MetaData
                                 PropName += " " + NodeTypeProp.FieldType.FieldType.ToString();
                             }
                         }
-                        if( NodeTypePropNames.Contains( PropName ) )
+                        while( null != NodeType.getNodeTypeProp( PropName ) )
                         {
                             PropName += " " + ObjectClassProp.ObjectClassPropId;
                         }
