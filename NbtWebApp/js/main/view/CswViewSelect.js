@@ -112,12 +112,10 @@
 				actionname: '',
 				actionurl: '',
 				reportid: '',
-				onSelect: function() { },
+				onSelect: null,
 				$selectdiv: ''
 				};
-		if(optSelect){
-			$.extend(x, optSelect);
-		}
+		if(optSelect) $.extend(x, optSelect);
 
 		var $newTopContent = $('<div></div>');
 		var $table = $newTopContent.CswTable('init', { ID: x.ID + 'selectedtbl' });
@@ -146,17 +144,19 @@
 		}
 
 		setTimeout(function() { x.$selectdiv.CswComboBox( 'toggle'); }, x.ClickDelay);
-		x.onSelect({
-					iconurl: x.iconurl,
-					type: x.type,
-					viewid: x.viewid,
-					viewname: x.viewname,
-					viewmode: x.viewmode,
-					actionid: x.actionid,
-					actionname: x.actionname,
-					actionurl: x.actionurl,
-					reportid: x.reportid
-					});
+		if(isFunction(x.onSelect)) {
+			x.onSelect({
+						iconurl: x.iconurl,
+						type: x.type,
+						viewid: x.viewid,
+						viewname: x.viewname,
+						viewmode: x.viewmode,
+						actionid: x.actionid,
+						actionname: x.actionname,
+						actionurl: x.actionurl,
+						reportid: x.reportid
+						});
+		}
 	} // _onTreeSelect()
 		
 
