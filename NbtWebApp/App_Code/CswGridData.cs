@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( Related.Name == "NbtNodeProp" )
                     {
-                        _addSafeCellContent( Related, Row, PropsInGrid );
+                        _addSafeCellContent( _CswNbtResources, Related, Row, PropsInGrid );
                     }
                 }
                 GridRows.Add( Row );
@@ -226,36 +226,38 @@ namespace ChemSW.Nbt.WebServices
         /// Translates property value into human readable text.
         /// Currently only handles Logical fieldtype.
         /// </summary>
-        private static void _addSafeCellContent( XElement DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
-        {
-            if( null != DirtyElement )
-            {
-                string CleanPropName = DirtyElement.Attribute( "name" ).Value.Trim().ToLower().Replace( " ", "_" );
-                string CleanValue;
-                string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
-                string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
-                string PropId = DirtyElement.Attribute( "nodetypepropid" ).Value;
-                var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
-                switch( PropFieldType )
-                {
-                    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-                        CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
-                        break;
-                    default:
-                        CleanValue = DirtyValue;
-                        break;
-                }
-                foreach( CswViewBuilderProp VbProp in PropsInGrid )
-                {
-                    if( VbProp.PropNameUnique == CleanPropName && VbProp.AssociatedPropIds.Contains( PropId ) )
-                    {
-                        CleanPropName += "_" + VbProp.MetaDataPropId;
-                    }
-                }
+		private static void _addSafeCellContent( CswNbtResources CswNbtResources, XElement DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
+		{
+			if( null != DirtyElement )
+			{
+				string CleanPropName = DirtyElement.Attribute( "name" ).Value.Trim().ToLower().Replace( " ", "_" );
+				string CleanValue;
+				string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
+				string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
+				string PropId = DirtyElement.Attribute( "nodetypepropid" ).Value;
+				CswNbtMetaDataNodeTypeProp Prop = CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
 
-                ParentObj[CleanPropName] = CleanValue;
-            }
-        }
+				var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
+				switch( PropFieldType )
+				{
+					case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+						CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
+						break;
+					default:
+						CleanValue = DirtyValue;
+						break;
+				}
+				foreach( CswViewBuilderProp VbProp in PropsInGrid )
+				{
+					if( Prop != null && VbProp.PropNameUnique == CleanPropName && VbProp.AssociatedPropIds.Contains( Prop.FirstPropVersionId ) )
+					{
+						CleanPropName += "_" + VbProp.MetaDataPropId;
+					}
+				}
+
+				ParentObj[CleanPropName] = CleanValue;
+			}
+		}
 
         /// <summary>
         /// Generates a JSON array of friendly Column Names
