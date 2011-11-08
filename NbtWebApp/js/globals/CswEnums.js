@@ -297,9 +297,10 @@ var CswSubFields_Map = {
 };
 
 var CswImportInspectionQuestions_WizardSteps = {
-    'step1': { step: 1, description: 'Download template' },
-    'step2': { step: 2, description: 'Select name and target' },
-    'step3': { step: 3, description: 'Select File For Upload' },
-    'step4': { step: 4, description: 'Preview' },
-    'step5': { step: 5, description: 'Results' }
+    step1: { step: 1, description: 'Select or Create Inspection' },
+    step2: { step: 2, description: 'Upload Inspection Design' },
+    step3: { step: 3, description: 'Preview and Edit Design' },
+    step4: { step: 4, description: 'Import Inspection Points' },
+    step5: { step: 5, description: 'Preview and Edit Import' },
+    step6: { step: 6, description: 'Create Inspection Schedules' }
 };

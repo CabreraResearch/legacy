@@ -22,7 +22,8 @@
                     onBeforeNext: function($wizard, stepno) { return true; },
                     onBeforePrevious: function($wizard, stepno) { return true; },
                     onFinish: function($wizard) { },
-                    onCancel: function($wizard) {}
+                    onCancel: function($wizard) {},
+                    doNextOnInit: true
                 };
                 if(options) $.extend(o, options);
                 if(o.StartingStep > o.SelectedStep) o.SelectedStep = o.StartingStep;
@@ -105,9 +106,11 @@
                                                             });
 
                 _selectStep($table, o.SelectedStep);
-                o.onNext($table, o.SelectedStep);
+                if(o.doNextOnInit && isFunction(o.onNext)) {
+                    o.onNext($table, o.SelectedStep);
+                }
 
-                return $table;
+            return $table;
             }, // init()
 
         'div': function (stepno)
