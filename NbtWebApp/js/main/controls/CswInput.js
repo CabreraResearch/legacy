@@ -4,16 +4,16 @@
 /// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
-	
+    
     var pluginName = "CswInput";
     
     var methods = {
-	
+    
         'init': function(options) 
-		{
+        {
             var o = {
                 'ID': '',
-				'name': '',
+                'name': '',
                 'type': CswInput_Types.text,
                 'placeholder': '',
                 'cssclass': '',
@@ -25,7 +25,7 @@
             };
             if (options) $.extend(o, options);
 
-			o.name = tryParseString(o.name,o.ID);
+            o.name = tryParseString(o.name,o.ID);
             o.ID = tryParseString(o.ID,o.name);
 
             var $parent = $(this);
@@ -66,16 +66,16 @@
         }
 
     };
-    	// Method calling logic
-	$.fn.CswInput = function (method) { /// <param name="$" type="jQuery" />
-		
-		if ( methods[method] ) {
-		  return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-		} else if ( typeof method === 'object' || ! method ) {
-		  return methods.init.apply( this, arguments );
-		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
-		}    
+        // Method calling logic
+    $.fn.CswInput = function (method) { /// <param name="$" type="jQuery" />
+        
+        if ( methods[method] ) {
+          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+        } else if ( typeof method === 'object' || ! method ) {
+          return methods.init.apply( this, arguments );
+        } else {
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+        }    
     };
 
 
