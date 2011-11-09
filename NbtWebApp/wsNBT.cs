@@ -3257,9 +3257,14 @@ namespace ChemSW.Nbt.WebServices
         public string IsNewInspectionNameUnique( string NewInspectionName )
         {
             JObject ReturnVal = new JObject();
+            
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
+                if( string.IsNullOrEmpty( NewInspectionName ) )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Inspection name is required.", "Cannot create an Inspection without a name." );
+                }
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
