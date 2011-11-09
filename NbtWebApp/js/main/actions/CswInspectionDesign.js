@@ -219,6 +219,7 @@
                     template: uploadTemplate,
                     params: f.params,
                     onSubmit: function () {
+                        $('.qq-upload-list').empty();
                         selectedInspectionName = $inspectionName.val().trim();
                         return checkInspectionNameUnique(selectedInspectionName);
                     },
