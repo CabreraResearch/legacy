@@ -3211,7 +3211,7 @@ namespace ChemSW.Nbt.WebServices
                         ReturnVal["error"] = WarningMessage;
                     }
 
-                    PurgeTempFiles( "xls" );
+                    _purgeTempFiles( "xls" );
 
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 _deInitResources();
@@ -3223,29 +3223,34 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // uploadInspectionFile()
 
-        /// <summary>  Purge files in the temporary directory  </summary>
-        /// <param name="FileExtension">  Optional extension type of files to purge.  Default is to purge all files  </param>
-        /// <param name="HoursToKeepFiles">  Optional number of hours to keep temporary files around.  Default is 12 hours  </param>
-        public void PurgeTempFiles( string FileExtension = ".*", int HoursToKeepFiles = 12 )
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getInspectionPointGroups( string InspectionTargetName )
         {
-            DirectoryInfo myDirectoryInfo = new DirectoryInfo( _TempPath );
-            FileInfo[] myFileInfoArray = myDirectoryInfo.GetFiles();
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
 
-            FileExtension = FileExtension.ToLower().Trim();
-            if( !FileExtension.StartsWith( "." ) )
-            {
-                FileExtension = "." + FileExtension;
-            }
-            foreach( FileInfo myFileInfo in myFileInfoArray )
-            {
-                if( ( FileExtension == "*" ) || ( myFileInfo.Extension.ToString().ToLower() == FileExtension ) )
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    if( DateTime.Now.Subtract( myFileInfo.CreationTime ).TotalHours > HoursToKeepFiles )
-                    {
-                        myFileInfo.Delete();
-                    }
+
+
                 }
+
+                _deInitResources();
             }
+
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
         }
 
         #endregion Inspection Design
@@ -3269,6 +3274,31 @@ namespace ChemSW.Nbt.WebServices
             }
             return View;
         } // _getView()
+
+        /// <summary>  Purge files in the temporary directory  </summary>
+        /// <param name="FileExtension">  Optional extension type of files to purge.  Default is to purge all files  </param>
+        /// <param name="HoursToKeepFiles">  Optional number of hours to keep temporary files around.  Default is 12 hours  </param>
+        private void _purgeTempFiles( string FileExtension = ".*", int HoursToKeepFiles = 12 )
+        {
+            DirectoryInfo myDirectoryInfo = new DirectoryInfo( _TempPath );
+            FileInfo[] myFileInfoArray = myDirectoryInfo.GetFiles();
+
+            FileExtension = FileExtension.ToLower().Trim();
+            if( !FileExtension.StartsWith( "." ) )
+            {
+                FileExtension = "." + FileExtension;
+            }
+            foreach( FileInfo myFileInfo in myFileInfoArray )
+            {
+                if( ( FileExtension == "*" ) || ( myFileInfo.Extension.ToString().ToLower() == FileExtension ) )
+                {
+                    if( DateTime.Now.Subtract( myFileInfo.CreationTime ).TotalHours > HoursToKeepFiles )
+                    {
+                        myFileInfo.Delete();
+                    }
+                }
+            }
+        }
 
         #endregion Private
     }//wsNBT

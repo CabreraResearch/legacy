@@ -6,6 +6,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -20,6 +21,7 @@ namespace ChemSW.Nbt.WebServices
 
         private enum ImportColumns
         {
+            Unknown,
             Section,
             Question,
             Allowed_Answers,
@@ -30,27 +32,17 @@ namespace ChemSW.Nbt.WebServices
         public string GetExcelTemplate()
         {
             CswDelimitedString CSVTemplate = new CswDelimitedString( '\t' );
-            foreach( ImportColumns Col in Enum.GetValues( typeof( ImportColumns ) ) )
+            foreach( ImportColumns Col in Enum.GetValues( typeof( ImportColumns ) ).Cast<ImportColumns>().Where( Col => Col != ImportColumns.Unknown ) )
             {
-                CSVTemplate.Add( ImportColumnsToDisplayString( Col ) );
+                CSVTemplate.Add( _stripUnderscores( Col ) );
             }
 
             return CSVTemplate.ToString();
         }
 
-        private static string ImportColumnsToDisplayString( ImportColumns Column )
+        private static string _stripUnderscores( Object Name )
         {
-            return Column.ToString().Replace( '_', ' ' );
-        }
-
-        private static string ImportColumnsToDisplayString( string ColumnName )
-        {
-            return ColumnName.Replace( '_', ' ' );
-        }
-
-        private static ImportColumns ImportColumnsFromDisplayString( string Column )
-        {
-            return (ImportColumns) Enum.Parse( typeof( ImportColumns ), Column.Replace( ' ', '_' ), true );
+            return CswConvert.ToString( Name ).Replace( '_', ' ' );
         }
 
         /// <summary>
@@ -85,7 +77,7 @@ namespace ChemSW.Nbt.WebServices
                 string[] ExpectedColumnNames = Enum.GetNames( typeof( ImportColumns ) );
                 for( int ColumnNameIndex = 0; ColumnNameIndex < ExpectedColumnNames.Length; ColumnNameIndex++ )
                 {
-                    ExpectedColumnNames[ColumnNameIndex] = ImportColumnsToDisplayString( ExpectedColumnNames[ColumnNameIndex] );
+                    ExpectedColumnNames[ColumnNameIndex] = _stripUnderscores( ExpectedColumnNames[ColumnNameIndex] );
                 }
                 foreach( string myColumnName in ExpectedColumnNames )
                 {
@@ -101,7 +93,7 @@ namespace ChemSW.Nbt.WebServices
                         WarningMessage += "Column named '" + ExcelDataTable.Columns[ColumnIndex].ColumnName + "' was not used.  ";
                     }
                 }
-                if( string.IsNullOrEmpty( ExcelDataTable.Rows[0][ImportColumnsToDisplayString( ImportColumns.Section )].ToString() ) )
+                if( string.IsNullOrEmpty( ExcelDataTable.Rows[0][_stripUnderscores( ImportColumns.Section )].ToString() ) )
                 {
                     ErrorMessage += "User must supply a Section Name in the first row.  ";
                 }
@@ -140,108 +132,97 @@ namespace ChemSW.Nbt.WebServices
 
             try
             {
-                if( ExcelDataTable != null )
+                if( ExcelDataTable == null )
                 {
-                    if( ExcelDataTable.Rows.Count > 0 )
+                    throw new CswDniException( ErrorType.Warning, "Excel data table empty.", "Excel Table was null" );
+                }
+                if( ExcelDataTable.Rows.Count == 0 )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Excel data table did not have any rows in it.", "Excel table row count was 0." );
+                }
+                if( string.IsNullOrEmpty( NewInspectionName ) )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Inspection must have a name", "New Inspection Name was null or empty." );
+                }
+                NewInspectionName = NewInspectionName.Trim();
+                // Save the new Inspection
+                CswNbtMetaDataObjectClass InspectionObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                CswNbtMetaDataNodeType NewInspectionNodeType = _CswNbtResources.MetaData.makeNewNodeType( InspectionObjectClass.ObjectClassId, NewInspectionName, "Fire Extinguisher" );
+
+                // Get rid of the automatically created Section in this case
+                _CswNbtResources.MetaData.DeleteNodeTypeTab( NewInspectionNodeType.getNodeTypeTab( "Section 1" ) );
+
+                // Set the target nodeType of the Target relationship property
+                // For now - we are setting the target relationship type to FE Inspection Point
+                CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetName );
+                string NewFKType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
+                Int32 NewFKValue = TargetNodeType.NodeTypeId;
+                CswNbtMetaDataNodeTypeProp TargetProperty = NewInspectionNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+                TargetProperty.SetFK( NewFKType, NewFKValue, string.Empty, Int32.MinValue );
+
+                // Setup Sections
+                if( string.IsNullOrEmpty( ExcelDataTable.Rows[0][_stripUnderscores( ImportColumns.Section )].ToString() ) )
+                {
+                    throw new CswDniException( ErrorType.Warning, "User must supply a Section Name in the first row.", "" );
+                }
+                // The TabOrder also effects the question number.  Question number = TabIndex + Question Number
+                Int32 CurrentTabOrder = 1;
+
+                string Section = ExcelDataTable.Rows[0][_stripUnderscores( ImportColumns.Section )].ToString();
+                string Question = string.Empty;
+                string HelpText = string.Empty;
+                CswNbtMetaDataNodeTypeTab CurrentTab = null;
+                for( int RowIndex = 0; RowIndex < ExcelDataTable.Rows.Count; RowIndex++ )
+                {
+                    // IF the row has a new section THEN update to a new section
+                    if( !string.IsNullOrEmpty( ExcelDataTable.Rows[RowIndex][_stripUnderscores( ImportColumns.Section )].ToString() ) )
                     {
-                        if( !string.IsNullOrEmpty( NewInspectionName ) )
+                        Section = ExcelDataTable.Rows[RowIndex][_stripUnderscores( ImportColumns.Section )].ToString();
+                        CurrentTab = NewInspectionNodeType.getNodeTypeTab( Section );
+                        if( CurrentTab == null )
                         {
-                            NewInspectionName = NewInspectionName.Trim();
-                            // Save the new Inspection
-                            CswNbtMetaDataObjectClass InspectionObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-                            CswNbtMetaDataNodeType NewInspectionNodeType = _CswNbtResources.MetaData.makeNewNodeType( InspectionObjectClass.ObjectClassId, NewInspectionName, "Fire Extinguisher" );
+                            CurrentTab = _CswNbtResources.MetaData.makeNewTab( NewInspectionNodeType, Section, CurrentTabOrder );
+                            CurrentTabOrder++;
+                        }
+                    }
+                    Question = ExcelDataTable.Rows[RowIndex][_stripUnderscores( ImportColumns.Question )].ToString();
+                    HelpText = ExcelDataTable.Rows[RowIndex][_stripUnderscores( ImportColumns.Help_Text )].ToString();
 
-                            // Get rid of the automatically created Section in this case
-                            _CswNbtResources.MetaData.DeleteNodeTypeTab( NewInspectionNodeType.getNodeTypeTab( "Section 1" ) );
+                    CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                    PossibleAnswers.FromString( ExcelDataTable.Rows[RowIndex][_stripUnderscores( ImportColumns.Allowed_Answers )].ToString() );
 
-                            // Set the target nodeType of the Target relationship property
-                            // For now - we are setting the target relationship type to FE Inspection Point
-                            CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetName );
-                            string NewFKType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
-                            Int32 NewFKValue = TargetNodeType.NodeTypeId;
-                            CswNbtMetaDataNodeTypeProp TargetProperty = NewInspectionNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
-                            TargetProperty.SetFK( NewFKType, NewFKValue, string.Empty, Int32.MinValue );
+                    CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
+                    CompliantAnswers.FromString( ExcelDataTable.Rows[RowIndex][_stripUnderscores( ImportColumns.Compliant_Answers )].ToString() );
 
-                            // Setup Sections
-                            if( !string.IsNullOrEmpty( ExcelDataTable.Rows[0][ImportColumnsToDisplayString( ImportColumns.Section )].ToString() ) )
+                    // Make sure the row is not empty
+                    if( ( !string.IsNullOrEmpty( Question ) ) || ( !string.IsNullOrEmpty( PossibleAnswers.ToString() ) ) || ( !string.IsNullOrEmpty( CompliantAnswers.ToString() ) ) || ( !string.IsNullOrEmpty( HelpText ) ) )
+                    {
+                        // There is something in the row - make sure all the fields we require are present
+                        if( ( !string.IsNullOrEmpty( Question ) ) && ( !string.IsNullOrEmpty( PossibleAnswers.ToString() ) ) && ( !string.IsNullOrEmpty( CompliantAnswers.ToString() ) ) )
+                        {
+                            CswNbtMetaDataNodeTypeProp QuestionProperty = _CswNbtResources.MetaData.makeNewProp( NewInspectionNodeType, CswNbtMetaDataFieldType.NbtFieldType.Question, Question, CurrentTab.TabId );
+
+                            if( QuestionProperty != null )
                             {
-                                // The TabOrder also effects the question number.  Question number = TabIndex + Question Number
-                                Int32 CurrentTabOrder = 1;
-
-                                string Section = ExcelDataTable.Rows[0][ImportColumnsToDisplayString( ImportColumns.Section )].ToString();
-                                string Question = string.Empty;
-                                string HelpText = string.Empty;
-                                CswNbtMetaDataNodeTypeTab CurrentTab = null;
-                                for( int RowIndex = 0; RowIndex < ExcelDataTable.Rows.Count; RowIndex++ )
-                                {
-                                    // IF the row has a new section THEN update to a new section
-                                    if( !string.IsNullOrEmpty( ExcelDataTable.Rows[RowIndex][ImportColumnsToDisplayString( ImportColumns.Section )].ToString() ) )
-                                    {
-                                        Section = ExcelDataTable.Rows[RowIndex][ImportColumnsToDisplayString( ImportColumns.Section )].ToString();
-                                        CurrentTab = NewInspectionNodeType.getNodeTypeTab( Section );
-                                        if( CurrentTab == null )
-                                        {
-                                            CurrentTab = _CswNbtResources.MetaData.makeNewTab( NewInspectionNodeType, Section, CurrentTabOrder );
-                                            CurrentTabOrder++;
-                                        }
-                                    }
-                                    Question = ExcelDataTable.Rows[RowIndex][ImportColumnsToDisplayString( ImportColumns.Question )].ToString();
-                                    HelpText = ExcelDataTable.Rows[RowIndex][ImportColumnsToDisplayString( ImportColumns.Help_Text )].ToString();
-
-                                    CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
-                                    PossibleAnswers.FromString( ExcelDataTable.Rows[RowIndex][ImportColumnsToDisplayString( ImportColumns.Allowed_Answers )].ToString() );
-
-                                    CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
-                                    CompliantAnswers.FromString( ExcelDataTable.Rows[RowIndex][ImportColumnsToDisplayString( ImportColumns.Compliant_Answers )].ToString() );
-
-                                    // Make sure the row is not empty
-                                    if( ( !string.IsNullOrEmpty( Question ) ) || ( !string.IsNullOrEmpty( PossibleAnswers.ToString() ) ) || ( !string.IsNullOrEmpty( CompliantAnswers.ToString() ) ) || ( !string.IsNullOrEmpty( HelpText ) ) )
-                                    {
-                                        // There is something in the row - make sure all the fields we require are present
-                                        if( ( !string.IsNullOrEmpty( Question ) ) && ( !string.IsNullOrEmpty( PossibleAnswers.ToString() ) ) && ( !string.IsNullOrEmpty( CompliantAnswers.ToString() ) ) )
-                                        {
-                                            CswNbtMetaDataNodeTypeProp QuestionProperty = _CswNbtResources.MetaData.makeNewProp( NewInspectionNodeType, CswNbtMetaDataFieldType.NbtFieldType.Question, Question, CurrentTab.TabId );
-
-                                            if( QuestionProperty != null )
-                                            {
-                                                // For mapping of question subfields to question node type properties
-                                                // See lines 800 - 850 and lines 1908 - 1954 in design.aspx.cs
-                                                QuestionProperty.ListOptions = PossibleAnswers.ToString();
-                                                QuestionProperty.ValueOptions = CompliantAnswers.ToString();
-                                                QuestionProperty.HelpText = HelpText;
-                                                NumRowsImported++;
-                                            }
-                                            else
-                                            {
-                                                ErrorMessage += "Did not create Question Node Type Property.";
-                                            }
-                                        }
-                                        else
-                                        {
-                                            WarningMessage += "Some rows may not have been imported because they were missing data.";
-                                        }
-                                    }
-                                }
+                                // For mapping of question subfields to question node type properties
+                                // See lines 800 - 850 and lines 1908 - 1954 in design.aspx.cs
+                                QuestionProperty.ListOptions = PossibleAnswers.ToString();
+                                QuestionProperty.ValueOptions = CompliantAnswers.ToString();
+                                QuestionProperty.HelpText = HelpText;
+                                NumRowsImported++;
                             }
                             else
                             {
-                                ErrorMessage += "User must supply a Section Name in the first row.  ";
+                                ErrorMessage += "Did not create Question Node Type Property.";
                             }
                         }
                         else
                         {
-                            ErrorMessage += "New Inspection Name was null or empty.  ";
+                            WarningMessage += "Some rows may not have been imported because they were missing data.";
                         }
                     }
-                    else
-                    {
-                        ErrorMessage += "Excel data table did not have any rows in it.  ";
-                    }
                 }
-                else
-                {
-                    ErrorMessage += "Excel data table was null.  ";
-                }
+
             }
             catch( Exception ex )
             {
@@ -249,5 +230,59 @@ namespace ChemSW.Nbt.WebServices
             }
             return NumRowsImported;
         }
+
+        public JObject getInspectionPointGroup( string InspectionPointName )
+        {
+            JObject RetObj = new JObject();
+            CswNbtView InspectionScheduleView = null;
+
+            RetObj["succeeded"] = "false";
+            CswNbtMetaDataNodeType InspectionPointNodeType = _CswNbtResources.MetaData.getNodeType( InspectionPointName );
+            if( null == InspectionPointNodeType )
+            {
+                //we'll create it on Finish, we'll build the schedules manually client-side
+                RetObj["succeeded"] = "true";
+            }
+            else
+            {
+                if( InspectionPointNodeType.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass )
+                {
+                    throw new CswDniException( ErrorType.Error, "Cannot create an inspection on a " + InspectionPointName, "Attempted to create an inspection on a nodetype of class " + InspectionPointNodeType.ObjectClass.ObjectClass.ToString() );
+                }
+                CswNbtMetaDataNodeTypeProp IpGroupNtp = InspectionPointNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+                if( IpGroupNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                {
+                    CswNbtMetaDataNodeType IpGroupNodeType = _CswNbtResources.MetaData.getNodeType( IpGroupNtp.FKValue );
+                    if( null != IpGroupNodeType && IpGroupNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass )
+                    {
+                        CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+                        foreach( CswNbtMetaDataNodeType GeneratorNt in GeneratorOC.NodeTypes )
+                        {
+                            CswNbtMetaDataNodeTypeProp OwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
+                            if( OwnerNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
+                                OwnerNtp.FKValue == IpGroupNtp.PropId )
+                            {
+                                InspectionScheduleView = new CswNbtView( _CswNbtResources );
+                                InspectionScheduleView.makeNew( InspectionPointName + " Schedule View", NbtViewVisibility.User, null, _CswNbtResources.CurrentNbtUser.UserId, Int32.MinValue );
+
+                                CswNbtViewRelationship IpGroupRelationship = InspectionScheduleView.AddViewRelationship( IpGroupNodeType, false );
+                                InspectionScheduleView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, OwnerNtp, false );
+
+                                InspectionScheduleView.SaveToCache( false );
+
+                                RetObj["succeeded"] = "true";
+                                RetObj["viewid"] = InspectionScheduleView.SessionViewId.get().ToString();
+                            }
+                        }
+                    }
+                }
+                else if( IpGroupNtp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+                {
+                    //tough cookies for now
+                }
+            }
+            return RetObj;
+        }
+
     }
 }
