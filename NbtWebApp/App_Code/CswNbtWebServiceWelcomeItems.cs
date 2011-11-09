@@ -125,14 +125,18 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
                             if( null != ThisView && ThisView.IsFullyEnabled() && VisibleViews.Contains( ThisView ) )
                             {
-                                // FogBugz case 9552, Keith Baldwin 7/27/2011
                                 LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
-                                ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( ThisView, false, true, false, false );
-                                if( null != CswNbtTree )
-                                {
-                                    LinkText += " (" + CswNbtTree.getChildNodeCount().ToString() + ")";
-                                }
-                                Ret[WelcomeId]["viewid"] = new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString();
+
+								// FogBugz case 9552, Keith Baldwin 7/27/2011
+								// This performs poorly for large views.  
+								// It needs to be cached and refreshed by the user, rather than run every time the welcome page is loaded.
+								//ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( ThisView, false, true, false, false );
+								//if( null != CswNbtTree )
+								//{
+								//    LinkText += " (" + CswNbtTree.getChildNodeCount().ToString() + ")";
+								//}
+        
+								Ret[WelcomeId]["viewid"] = new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString();
                                 Ret[WelcomeId]["viewmode"] = ThisView.ViewMode.ToString().ToLower();
                                 Ret[WelcomeId]["type"] = "view";
 

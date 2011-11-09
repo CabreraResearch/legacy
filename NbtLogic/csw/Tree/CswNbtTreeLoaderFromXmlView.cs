@@ -328,25 +328,18 @@ namespace ChemSW.Nbt
             //}
 
             // NodeTypeProps
-            string PropNames = String.Empty;
-            foreach( CswNbtViewProperty Prop in PropertyList )
+			CswCommaDelimitedString PropsInClause = new CswCommaDelimitedString( 0, true ); 
+			foreach( CswNbtViewProperty Prop in PropertyList )
             {
                 if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
                 {
-                    // We use the ID from the CswNbtViewProperty to get the name from the CswNbtMetaDataNodeTypeProp, 
-                    // and use that name to find a matching property on the node's NodeType later.
-                    CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
-                    if( MetaDataProp != null )
-                    {
-                        if( PropNames != String.Empty ) PropNames += ", ";
-                        PropNames += "'" + CswTools.SafeSqlParam( MetaDataProp.PropName.ToLower() ) + "'";
-                    }
-                }
+					PropsInClause.Add( Prop.NodeTypePropId.ToString() );
+				}
             }
-            if( PropNames != String.Empty )
+			if(PropsInClause.Count > 0)
             {
                 DataTable ResultTable = new CswDataTable( "getNodeTypeProperties_ResultTable", "" );
-                _getNodeTypeProperties( Key, PropNames, ref ResultTable );
+				_getNodeTypeProperties( Key, PropsInClause, ref ResultTable );
 
                 foreach( DataRow CurrentRow in ResultTable.Rows )
                 {
@@ -361,14 +354,16 @@ namespace ChemSW.Nbt
 
         #region Query operations
 
-        private void _getNodeTypeProperties( CswNbtNodeKey Key, string PropNames, ref DataTable ResultTable )
+		private void _getNodeTypeProperties( CswNbtNodeKey Key, CswCommaDelimitedString PropsInClause, ref DataTable ResultTable )
         {
-            string Sql = @"select p.nodetypepropid, d.tablename, d.columnname
+			string Sql = @"select p.nodetypepropid, d.tablename, d.columnname
                              from nodetype_props p
                              left outer join jct_dd_ntp j on (p.nodetypepropid = j.nodetypepropid)
                              left outer join data_dictionary d on (j.datadictionaryid = d.tablecolid)
                             where nodetypeid = " + Key.NodeTypeId.ToString() + @" 
-                              and lower(p.propname) in (" + PropNames + @") ";
+							  and p.firstpropversionid in (select firstpropversionid 
+														     from nodetype_props 
+														    where nodetypepropid in (" + PropsInClause.ToString() + @"))";
             CswArbitrarySelect PropSelect = _CswNbtResources.makeCswArbitrarySelect( "_getNodeTypeProperties_select1", Sql );
             DataTable PropTable = null;
             try
