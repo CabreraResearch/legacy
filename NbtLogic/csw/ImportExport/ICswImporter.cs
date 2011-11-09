@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.ImportExport
 
     public enum ImportMode
     {
+        Unknown,
         /// <summary>
         /// Make changes to existing data.  Unmatched data is ignored.
         /// </summary>

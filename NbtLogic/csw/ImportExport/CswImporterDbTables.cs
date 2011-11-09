@@ -23,17 +23,18 @@ namespace ChemSW.Nbt.ImportExport
     public class CswImporterDbTables : ICswImporter
     {
 
-        CswNbtResources _CswNbtResources = null;
-        CswNbtImportExportFrame _CswNbtImportExportFrame = null;
+        private CswNbtResources _CswNbtResources = null;
+        private CswNbtImportExportFrame _CswNbtImportExportFrame = null;
         public CswImportExportStatusReporter _CswImportExportStatusReporter = null;
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
 
         private CswNbtImportOptions _CswNbtImportOptions = null;
 
+        private CswNbtImportStatus _CswNbtImportStatus = null;
 
-        public CswImporterDbTables( CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, CswImportExportStatusReporter CswImportExportStatusReporter )
+        public CswImporterDbTables( CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, CswImportExportStatusReporter CswImportExportStatusReporter, CswNbtImportStatus CswNbtImportStatus )
         {
-
+            _CswNbtImportStatus = CswNbtImportStatus;
             _CswNbtImportOptions = new CswNbtImportOptions(); //This will be passed in as a ctor arg
 
             _CswNbtResources = CswNbtResources;
@@ -55,7 +56,7 @@ namespace ChemSW.Nbt.ImportExport
         private string _ColName_Nodes_NodeName = "nodename";
         private string _StatusMessageDivider = "==================================";
 
-        ImportProcessPhase _CurrentProcessPhase = ImportProcessPhase.NothingDoneYet;
+        ImportProcessPhase _LastCompletedProcessPhase = ImportProcessPhase.NothingDoneYet;
 
         /// <summary>
         /// Imports data from an Xml String
@@ -71,36 +72,11 @@ namespace ChemSW.Nbt.ImportExport
 
             ErrorLog = string.Empty;
 
-            //********** THIS TAKES ABOUT 5-10 MINUTES ON THE CABOT DATA :-( 
-            //Dictionary<string, string> NodeTypePropNamesByNodeTypeNames = _CswNbtImportExportFrame.NodeTypes;
-
-
-            //********** Step one: create nodes (not properties) and update XML doc with nodeids
-            //foreach( XmlNode CurrentNode in _CswNbtImportExportFrame.Nodes )
-            //{
-
-            //    string CurrentNodeTypeNameInXml = CurrentNode.Attributes[CswNbtImportExportFrame._Attribute_NodeTypeName].InnerText;
-            //    string CurrentNodeNameInXml = CurrentNode.Attributes[CswNbtImportExportFrame._Attribute_NodeName].InnerText;
-            //    string CurrentNodeIdInXml = CurrentNode.Attributes[CswNbtImportExportFrame._Attribute_NodeId].InnerText;
-
-
-            //}//iterate xml nodes
-
-
-
-            //CswNbtMetaDataNodeType CurrentNodeType = _CswNbtResources.MetaData.getNodeType( CurrentNodeTypeNameInXml );
-            //if( null != CurrentNodeType )
-            //{
-            //    CswNbtNode CswNbtNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
-            //    _CswNbtImportExportFrame.replaceNodeIdReferenceValues( CurrentNodeIdInXml, CswNbtNode.NodeId.ToString() );
-            //}
-            //else
-            //{
-            //    _CswImportExportStatusReporter.reportError( "Unable to import node  " + CurrentNodeNameInXml + " because its nodetype (" + CurrentNodeTypeNameInXml + ") does not exist in the target schema" );
-            //}//if-else current node's nodetype exists
 
             //*********************************************************************************************************
             //*********************** Load to dataset
+            _LastCompletedProcessPhase = _CswNbtImportStatus.CompletedProcessPhase; 
+
             _CswImportExportStatusReporter.reportProgress( "Loading XML document to in memory tables" );
 
 
@@ -128,21 +104,17 @@ namespace ChemSW.Nbt.ImportExport
             _IndexColumns.Add( _ColName_ImportNodeId );
 
 
-            _CurrentProcessPhase = _CswNbtSchemaModTrnsctn.isTableDefined( TblName_TempNodes ) ? ImportProcessPhase.PopulatingTempTableNodes : ImportProcessPhase.NothingDoneYet;
-            //ProcessPhase CurrentProcessPhase = ProcessPhase.NbtNodesPopulated;
-
-            //_CswImportExportStatusReporter.MessageTypesToBeLogged.Remove( ImportExportMessageType.Progress );
             _CswImportExportStatusReporter.MessageTypesToBeLogged.Remove( ImportExportMessageType.Error );
 
             _CswImportExportStatusReporter.MessageTypesToBeLogged.Add( ImportExportMessageType.Timing );
             //*********************************************************************************************************
             //*********************** Create Temporary Tables
-            if( ImportProcessPhase.NothingDoneYet == _CurrentProcessPhase )
+            if( ImportProcessPhase.NothingDoneYet == _LastCompletedProcessPhase )
             {
 
-                _CurrentProcessPhase = ImportProcessPhase.LoadingInputFile;
+                _LastCompletedProcessPhase = ImportProcessPhase.LoadingInputFile;
 
-                _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, 0, 0, ProcessStates.InProcess );
+                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.InProcess );
 
                 DataSet DataSet = _CswNbtImportExportFrame.AsDataSet();
                 DataTable TableOfNodesFromXml = DataSet.Tables["Node"];
@@ -187,19 +159,19 @@ namespace ChemSW.Nbt.ImportExport
 
                 _CswNbtSchemaModTrnsctn.commitTransaction();
 
-                _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, 0, 0, ProcessStates.Complete );
+                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
 
 
                 //*********************************************************************************************************
                 //*********************** Fill Temporary tables
                 //_CswImportExportStatusReporter.reportProgress( "Filling temporary tables (this may take a while)" );
-                _CurrentProcessPhase = ImportProcessPhase.PopulatingTempTableNodes;
+                _LastCompletedProcessPhase = ImportProcessPhase.PopulatingTempTableNodes;
                 _createTempRecords( TableOfNodesFromXml, TblName_TempNodes, _CswNbtImportOptions.MaxInsertRecordsPerTransaction, _CswNbtImportOptions.MaxInsertRecordsPerDisplayUpdate );
-                _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, 0, 0, ProcessStates.Complete );
+                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
 
-                _CurrentProcessPhase = ImportProcessPhase.PopulatingTempTableProps;
+                _LastCompletedProcessPhase = ImportProcessPhase.PopulatingTempTableProps;
                 _createTempRecords( TableOfPropsFromXml, TblName_TempProps, _CswNbtImportOptions.MaxInsertRecordsPerTransaction, _CswNbtImportOptions.MaxInsertRecordsPerDisplayUpdate );
-                _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, 0, 0, ProcessStates.Complete );
+                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
 
 
                 _CswNbtImportExportFrame.clear();
@@ -209,10 +181,10 @@ namespace ChemSW.Nbt.ImportExport
 
             CswNbtNode GeneralUserRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( _CswNbtImportOptions.NameOfDefaultRoleForUserNodes );
             CswTableUpdate CswTableUpdateTempNodesTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatenodesfornodeid", TblName_TempNodes );
-            if( ImportProcessPhase.PopulatingTempTableProps == _CurrentProcessPhase )
+            if( ImportProcessPhase.PopulatingTempTableProps == _LastCompletedProcessPhase )
             {
 
-                _CurrentProcessPhase = ImportProcessPhase.PopulatingNbtNodes;
+                _LastCompletedProcessPhase = ImportProcessPhase.PopulatingNbtNodes;
                 //_CswImportExportStatusReporter.reportProgress( _StatusMessageDivider + "Creating NBT Nodes" );
 
                 //string WhereClauseForUnprocessedRecords = " where " + _ProcessStatusColumnName + "='" + ProcessStati.Unprocessed.ToString() + "' and nodetypename <> 'User'";
@@ -337,13 +309,13 @@ namespace ChemSW.Nbt.ImportExport
                     _CswNbtSchemaModTrnsctn.beginTransaction();
                     RawNodesTable = CswArbitrarySelectUnprocessedNodes.getTable( 0, _CswNbtImportOptions.NodeCreatePageSize, false, false );
 
-                    _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.InProcess );
+                    _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.InProcess );
 
 
                 } while( RawNodesTable.Rows.Count > 0 );
 
 
-                _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.Complete );
+                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.Complete );
 
 
             }//if temptables have been populated
@@ -351,12 +323,12 @@ namespace ChemSW.Nbt.ImportExport
 
 
 
-            if( ImportProcessPhase.PopulatingNbtNodes == _CurrentProcessPhase )
+            if( ImportProcessPhase.PopulatingNbtNodes == _LastCompletedProcessPhase )
             {
 
-                _CurrentProcessPhase = ImportProcessPhase.VerifyingNbtTargetNodes;
+                _LastCompletedProcessPhase = ImportProcessPhase.VerifyingNbtTargetNodes;
 
-                _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, 0, 0, ProcessStates.InProcess );
+                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.InProcess );
 
                 /*
                 string QueryForMissingTargetNodes = @"select distinct p.importtargetnodeid
@@ -490,15 +462,15 @@ namespace ChemSW.Nbt.ImportExport
                     }
                 }
 
-                _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, 0, 0, ProcessStates.InProcess );
+                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.InProcess );
 
 
             }//if nodes were processed
 
-            if( ImportProcessPhase.VerifyingNbtTargetNodes == _CurrentProcessPhase )
+            if( ImportProcessPhase.VerifyingNbtTargetNodes == _LastCompletedProcessPhase )
             {
 
-                _CurrentProcessPhase = ImportProcessPhase.PopulatingNbtProps;
+                _LastCompletedProcessPhase = ImportProcessPhase.PopulatingNbtProps;
 
 
 
@@ -683,7 +655,7 @@ namespace ChemSW.Nbt.ImportExport
 
 
 
-                        _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.InProcess );
+                        _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.InProcess );
 
 
                     }//if we are not on the first iteration
@@ -694,16 +666,16 @@ namespace ChemSW.Nbt.ImportExport
 
                 } while( NodeRecordsToProcess.Rows.Count > 0 );
 
-                _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.Complete );
+                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.Complete );
 
 
             }//if nodes have been populated
 
-            if( ImportProcessPhase.PopulatingNbtProps == _CurrentProcessPhase )
+            if( ImportProcessPhase.PopulatingNbtProps == _LastCompletedProcessPhase )
             {
                 //Unforunately, we have to wait until _everything_ else is populated in order to see all the nodes and their various relationships 
 
-                _CurrentProcessPhase = ImportProcessPhase.PostProcessingNbtNodes;
+                _LastCompletedProcessPhase = ImportProcessPhase.PostProcessingNbtNodes;
 
                 string WhereClauseForImportedNodeRecords = " where " + _ColName_ProcessStatus + "='" + ImportProcessStati.PropsAdded.ToString() + "'";
                 CswArbitrarySelect CswArbitrarySelectCountOfUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select count(*) from " + TblName_TempNodes + WhereClauseForImportedNodeRecords );
@@ -854,13 +826,13 @@ namespace ChemSW.Nbt.ImportExport
                     NodeRecordsToProcess = CswArbitrarySelectUnprocessedNodes.getTable( 0, _CswNbtImportOptions.NodeAddPropsPageSize, false, false );
                     PostProcessNodesAndPropsTimer.Start();
 
-                    _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.InProcess );
+                    _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.InProcess );
 
 
                 } while( NodeRecordsToProcess.Rows.Count > 0 );
 
 
-                _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, 0, 0, ProcessStates.Complete );
+                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
 
 
             }
@@ -939,7 +911,7 @@ namespace ChemSW.Nbt.ImportExport
 
                 if( 0 == ( TotalInsertsThisTransaction % _CswNbtImportOptions.MaxInsertRecordsPerDisplayUpdate ) )
                 {
-                    _CswImportExportStatusReporter.updateProcessPhase( _CurrentProcessPhase, TotalRecordsToInsert, TotalRecordsInsertedSoFar );
+                    _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalRecordsToInsert, TotalRecordsInsertedSoFar );
                 }
 
             }//iterate source table rows

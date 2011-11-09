@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.WebPages
                 Master.HandleError( ex );
             }
         }
-    
+
         private CswAutoTable Table;
         private Literal HHFileUploadLiteral;
         private FileUpload _HHFileUpload;
@@ -72,8 +72,8 @@ namespace ChemSW.Nbt.WebPages
 
             Literal NodeTypesCBALiteral = new Literal();
             NodeTypesCBALiteral.Text = "Select nodetypes to include in template";
-            
-            NodeTypesCBA = new CswCheckBoxArray(Master.CswNbtResources);
+
+            NodeTypesCBA = new CswCheckBoxArray( Master.CswNbtResources );
             NodeTypesCBA.ID = "NodeTypesCBA";
 
             Button DownloadButton = new Button();
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.WebPages
             DownloadButton.Click += new EventHandler( DownloadButton_Click );
             DownloadButton.CssClass = "Button";
             DownloadButton.Text = "Download Excel Template";
-            
+
             Literal ImportLiteral = new Literal();
             ImportLiteral.Text = "Import:";
 
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.WebPages
 
             ExcelFileUploadLiteral = new Literal();
             ExcelFileUploadLiteral.Text = "Excel File:";
-            
+
             _ExcelFileUpload = new FileUpload();
             _ExcelFileUpload.EnableViewState = true;
 
@@ -180,23 +180,23 @@ namespace ChemSW.Nbt.WebPages
             base.CreateChildControls();
         }
 
-        
+
         private void initNodeTypesCBA()
         {
-            DataTable Data = new CswDataTable("nodetypescbadatatable","");
-            Data.Columns.Add("NodeType Name", typeof(string));
-            Data.Columns.Add("nodetypeid", typeof(int));
-            Data.Columns.Add("Include", typeof(bool));
+            DataTable Data = new CswDataTable( "nodetypescbadatatable", "" );
+            Data.Columns.Add( "NodeType Name", typeof( string ) );
+            Data.Columns.Add( "nodetypeid", typeof( int ) );
+            Data.Columns.Add( "Include", typeof( bool ) );
 
-            foreach (CswNbtMetaDataNodeType NodeType in Master.CswNbtResources.MetaData.LatestVersionNodeTypes)
+            foreach( CswNbtMetaDataNodeType NodeType in Master.CswNbtResources.MetaData.LatestVersionNodeTypes )
             {
                 DataRow NTRow = Data.NewRow();
                 NTRow["NodeType Name"] = NodeType.NodeTypeName;          // Latest name
                 NTRow["nodetypeid"] = NodeType.FirstVersionNodeTypeId;   // First ID
                 NTRow["Include"] = false;
-                Data.Rows.Add(NTRow);
+                Data.Rows.Add( NTRow );
             }
-            NodeTypesCBA.CreateCheckBoxes(Data, "NodeType Name", "nodetypeid");
+            NodeTypesCBA.CreateCheckBoxes( Data, "NodeType Name", "nodetypeid" );
         }
 
         protected override void OnPreRender( EventArgs e )
@@ -254,14 +254,14 @@ namespace ChemSW.Nbt.WebPages
                 //    Worksheet.Cells[row, col] = Prop.PropName;
                 //}
                 //ExcelApp.Save( TempFileFullName );
-                
+
                 string CSVTemplate = string.Empty;
                 Int32 DemoNodeTypeId = 8;
                 CswNbtMetaDataNodeType DemoNodeType = Master.CswNbtResources.MetaData.getNodeType( DemoNodeTypeId );
-                CSVTemplate += DemoNodeType.NodeTypeName + "\r\n"; 
+                CSVTemplate += DemoNodeType.NodeTypeName + "\r\n";
                 foreach( CswNbtMetaDataNodeTypeProp Prop in DemoNodeType.NodeTypeProps )
                 {
-                    if(Prop.FieldType.IsSimpleType())
+                    if( Prop.FieldType.IsSimpleType() )
                         CSVTemplate += Prop.PropName + ",";
                 }
                 CSVTemplate += "\r\n";
@@ -269,7 +269,7 @@ namespace ChemSW.Nbt.WebPages
                 Response.ClearContent();
                 Response.AddHeader( "content-disposition", "attachment;filename=template.csv" );
                 Response.ContentType = "application/vnd.ms-excel";
-                Response.Write( CSVTemplate);
+                Response.Write( CSVTemplate );
                 Response.End();
 
             }
@@ -306,15 +306,15 @@ namespace ChemSW.Nbt.WebPages
                 }
                 else if( _ExcelFileUpload.HasFile )
                 {
-                    if( _ExcelFileUpload.PostedFile.FileName.EndsWith(".csv"))
+                    if( _ExcelFileUpload.PostedFile.FileName.EndsWith( ".csv" ) )
                     {
                         Byte[] CSVBuffer = new Byte[_ExcelFileUpload.FileContent.Length];
                         _ExcelFileUpload.FileContent.Read( CSVBuffer, 0, (int) _ExcelFileUpload.FileContent.Length );
 
-                        string CSVContents = CswTools.ByteArrayToString(CSVBuffer);
+                        string CSVContents = CswTools.ByteArrayToString( CSVBuffer );
                         CSVContents = CSVContents.Replace( "\r", string.Empty );
                         string[] lines = CSVContents.Split( '\n' );
-                        string NodeTypeName = lines[0].Substring(0, lines[0].IndexOf(','));
+                        string NodeTypeName = lines[0].Substring( 0, lines[0].IndexOf( ',' ) );
 
                         CswNbtMetaDataNodeType NodeType = Master.CswNbtResources.MetaData.getNodeType( NodeTypeName );
 
@@ -359,7 +359,7 @@ namespace ChemSW.Nbt.WebPages
                         _DoImport( ImportMode.Duplicate, XmlString );
                     }
                     else  //xls
-                    {  
+                    {
                         string TempFileName = "temp/excelupload_" + Master.CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.Ticks.ToString();
                         string TempFileFullName = Server.MapPath( "" ) + "/" + TempFileName;
                         _ExcelFileUpload.SaveAs( TempFileFullName );
@@ -404,7 +404,7 @@ namespace ChemSW.Nbt.WebPages
                 } // else if( _ExcelFileUpload.HasFile )
                 else
                 {
-					throw new CswDniException( ErrorType.Warning, "Select a file to import", "The FileUpload control could not detect a file to upload" );
+                    throw new CswDniException( ErrorType.Warning, "Select a file to import", "The FileUpload control could not detect a file to upload" );
                 }
             }
             catch( Exception ex )
@@ -413,15 +413,17 @@ namespace ChemSW.Nbt.WebPages
             }
         }
 
-        private void _DoImport(ImportMode ImportMode, string ImportXml )
+        private void _DoImport( ImportMode ImportMode, string ImportXml )
         {
-            CswNbtImportExport Importer = new CswNbtImportExport( Master.CswNbtResources ); 
-            
+            CswNbtImportExport Importer = new CswNbtImportExport( Master.CswNbtResources );
+            CswNbtImportStatus CswNbtImportStatus = new ImportExport.CswNbtImportStatus( Master.CswNbtResources );
+
+
             string ResultXml = string.Empty;
             string ErrorLog = string.Empty;
             string ViewXml = string.Empty;
 
-            Importer.ImportXml( ImportMode, ImportXml, ref ViewXml, ref ResultXml, ref ErrorLog );
+            Importer.ImportXml( ImportMode, ImportXml, ref ViewXml, ref ResultXml, ref ErrorLog, CswNbtImportStatus );
 
             if( ErrorLog != string.Empty )
             {
@@ -493,7 +495,7 @@ namespace ChemSW.Nbt.WebPages
                 Master.HandleError( ex );
             }
         }
-        
+
 
         #endregion Events
 

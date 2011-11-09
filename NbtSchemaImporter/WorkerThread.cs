@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.Schema
     {
         private ICswLogger _CswLogger = null;
         private CswNbtResources _CswNbtResources = null;
+        private CswNbtImportStatus _CswNbtImportStatus = null;
 
         public static string ColName_AccessId = "AccessId";
         public static string ColName_ServerType = "Server Type";
@@ -49,9 +50,15 @@ namespace ChemSW.Nbt.Schema
             set
             {
                 _AccessId = value;
-                _InitSessionResources();
+
+                if( false == _ResourcesAreInitted )
+                {
+                    _InitSessionResources();
+                }
+
                 _CswNbtResources.AccessId = value;
                 _CswNbtResources.refresh();
+
             }
         }
 
@@ -60,14 +67,42 @@ namespace ChemSW.Nbt.Schema
             _ConfigurationPath = ConfigurationPath;
 
             _InitSessionResources();
+
         }
+
+
+
+        /// <summary>
+        /// Sigh. 
+        /// What makes this import thread status object threadsafe is that the worker thread does _not_ hold on to a reference to it; 
+        /// The reason we need this is because the worker thread object can't touch window controls until it has been invoked by one of those
+        /// frickin' asynch invoker thingies. And we want nbt resources creation to be encapsulated in the worker thread. 
+        /// So here we are then: the frickin' form will get its own copy of import status and presumably will not touch it once it 
+        /// has called the asych invoker thingy anyway. 
+        /// </summary>
+        /// <returns></returns>
+        public CswNbtImportStatus getThreadSafeImportStatus()
+        {
+            return ( new CswNbtImportStatus( _CswNbtResources ) );
+        }
+
+
 
         private void _InitSessionResources()
         {
             _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, SetupMode.NbtExe, false, false );
             _CswLogger = _CswNbtResources.CswLogger;
             _CswNbtResources.InitCurrentUser = InitUser;
+            _CswNbtImportStatus = new CswNbtImportStatus( _CswNbtResources );
         }//constructor
+
+        private bool _ResourcesAreInitted
+        {
+            get
+            {
+                return ( ( null != _CswNbtResources ) && ( null != _CswLogger ) && ( null != _CswNbtResources.InitCurrentUser ) );
+            }//get
+        }//_ResourcesAreInitted
 
         public ICswUser InitUser( ICswResources Resources )
         {
@@ -150,18 +185,22 @@ namespace ChemSW.Nbt.Schema
 
 
 
-        public delegate void ImportHandler( string FileName, ImportMode Mode ); //, bool ClearExisting );
-        public void DoImport( string FilePath, ImportMode Mode ) //, bool ClearExisting )
+        public delegate void ImportHandler( string FilePath, ImportMode ImportMode ); //, bool ClearExisting );
+        public void DoImport( string FilePath, ImportMode ImportMode ) //, bool ClearExisting )
         {
+
+            _CswNbtImportStatus.FilePath = FilePath;
+            _CswNbtImportStatus.Mode = ImportMode;
+
             try
             {
-                if( FilePath != string.Empty )
+                if( _CswNbtImportStatus.FilePath != string.Empty )
                 {
-                    //string FilePath = Application.StartupPath + "\\..\\etc\\datafiles\\" + FileName;
+                    //string _CswNbtImportStatus.FilePath = Application.StartupPath + "\\..\\etc\\datafiles\\" + FileName;
                     // verify the file exists
-                    if( File.Exists( FilePath ) )
+                    if( File.Exists( _CswNbtImportStatus.FilePath ) )
                     {
-                        Stream FileStream = File.OpenRead( FilePath );
+                        Stream FileStream = File.OpenRead( _CswNbtImportStatus.FilePath );
                         StreamReader FileSR = new StreamReader( FileStream );
                         string FileContents = FileSR.ReadToEnd();
                         FileStream.Close();
@@ -172,7 +211,7 @@ namespace ChemSW.Nbt.Schema
 
                         // Restore selected data
                         CswNbtImportExport Importer = new CswNbtImportExport( _CswNbtResources );
-                                                       
+
                         Importer.OnStatusUpdate += new StatusUpdateHandler( SetStatusMessage );
                         Importer.OnImportPhaseChange += new ImportPhaseHandler( setImportPhase );
 
@@ -180,7 +219,7 @@ namespace ChemSW.Nbt.Schema
                         string ResultXml = string.Empty;
                         string ErrorLog = string.Empty;
 
-                        Importer.ImportXml( Mode, FileContents, ref ViewXml, ref ResultXml, ref ErrorLog );
+                        Importer.ImportXml( _CswNbtImportStatus.Mode, FileContents, ref ViewXml, ref ResultXml, ref ErrorLog, _CswNbtImportStatus );
 
                         if( ErrorLog != string.Empty )
                         {
@@ -191,7 +230,7 @@ namespace ChemSW.Nbt.Schema
                     else
                     {
                         //ErrorLabel.Text = "File does not exist: " + DataFileName; // openFileDialog1.FileName;
-                        SetStatusMessage( "File does not exist: " + FilePath );
+                        SetStatusMessage( "File does not exist: " + _CswNbtImportStatus.FilePath );
                     }
 
                     _CswNbtResources.finalize();

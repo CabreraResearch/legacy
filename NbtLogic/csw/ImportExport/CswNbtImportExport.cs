@@ -54,10 +54,10 @@ namespace ChemSW.Nbt.ImportExport
         /// <param name="ViewXml">Will be filled with the exported view's XML as String </param>
         /// <param name="ResultXml">Will be filled with an XML Document record of new primary keys and references</param>
         /// <param name="ErrorLog">Will be filled with a summary of recoverable errors</param>
-        public void ImportXml( ImportMode IMode, XmlDocument XmlDoc, ref string ViewXml, ref XmlDocument ResultXml, ref string ErrorLog )
+        public void ImportXml( ImportMode IMode, XmlDocument XmlDoc, ref string ViewXml, ref XmlDocument ResultXml, ref string ErrorLog, CswNbtImportStatus CswNbtImportStatus )
         {
             string XmlResultString = string.Empty;
-            ImportXml( IMode, XmlDoc.InnerXml, ref ViewXml, ref XmlResultString, ref ErrorLog );
+            ImportXml( IMode, XmlDoc.InnerXml, ref ViewXml, ref XmlResultString, ref ErrorLog, CswNbtImportStatus );
             ResultXml = new XmlDocument();
             ResultXml.LoadXml( XmlResultString );
         }
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.ImportExport
         /// <param name="ViewXml">Will be filled with the exported view's XML as String </param>
         /// <param name="ResultXml">Will be filled with an XML String record of new primary keys and references</param>
         /// <param name="ErrorLog">Will be filled with a summary of recoverable errors</param>
-        public void ImportXml( ImportMode IMode, string XmlStr, ref string ViewXml, ref string ResultXml, ref string ErrorLog )
+        public void ImportXml( ImportMode IMode, string XmlStr, ref string ViewXml, ref string ResultXml, ref string ErrorLog, CswNbtImportStatus CswNbtImportStatus )
         {
             _StatusUpdate( "Starting Import" );
 
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.ImportExport
 
             CswNbtImportExportFrame Frame = new CswNbtImportExportFrame( _CswNbtResources, XmlStr );
 
-            ICswImporter CswImporter = CswImporterFactory.make( ImportAlgorithm.Experimental, _CswNbtResources, Frame, OnStatusUpdate, OnImportPhaseChange );
+            ICswImporter CswImporter = CswImporterFactory.make( ImportAlgorithm.Experimental, _CswNbtResources, Frame, OnStatusUpdate, OnImportPhaseChange, CswNbtImportStatus );
 
             CswImporter.ImportXml( IMode, XmlStr, ref ViewXml, ref ResultXml, ref ErrorLog );
 

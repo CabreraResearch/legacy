@@ -25,20 +25,25 @@ namespace ChemSW.Nbt.ImportExport
         public List<ImportExportMessageType> MessageTypesToBeLogged = new List<ImportExportMessageType>();
         private StatusUpdateHandler _WriteToGui = null;
         private ImportPhaseHandler _ReportPhaseChange = null;
-        private CswNbtResources _CswNbtResources = null; 
+        private CswNbtResources _CswNbtResources = null;
+        private CswNbtImportStatus _CswNbtImportStatus = null;
 
         private string _ImportExportLogFilter = "importexport";
 
-        public CswImportExportStatusReporter( StatusUpdateHandler StatusUpdateHandler, ImportPhaseHandler ImportPhaseHandler, CswNbtResources CswNbtResources )
+        public CswImportExportStatusReporter( StatusUpdateHandler StatusUpdateHandler, ImportPhaseHandler ImportPhaseHandler, CswNbtResources CswNbtResources, CswNbtImportStatus CswNbtImportStatus )
         {
+
+            _CswNbtImportStatus = CswNbtImportStatus;
+
             MessageTypesToBeLogged.Add( ImportExportMessageType.Progress );
             _WriteToGui = StatusUpdateHandler;
             _ReportPhaseChange = ImportPhaseHandler;
             _CswNbtResources = CswNbtResources;
-            
+
             _CswNbtResources.CswLogger.addFilter( _ImportExportLogFilter );
             _CswNbtResources.CswLogger.RestrictByFilter = true;
         }//ctor
+
 
         public void reportException( Exception Exception )
         {
@@ -72,7 +77,8 @@ namespace ChemSW.Nbt.ImportExport
 
         public void updateProcessPhase( ImportProcessPhase ProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar, ProcessStates ProcessState = ProcessStates.InProcess )
         {
-            _ReportPhaseChange( new CswNbtImportStatus(_CswNbtResources, ProcessPhase, TotalObjects, ObjectsSofar, ProcessState ) );
+            _CswNbtImportStatus.setStatus( ProcessPhase, TotalObjects, ObjectsSofar, ProcessState );
+            _ReportPhaseChange( _CswNbtImportStatus );
         }
 
         public void reportTiming( CswTimer CswTimer, string Action )
