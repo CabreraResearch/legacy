@@ -34,6 +34,9 @@ namespace ChemSW.Nbt.Schema
         private string _DataFilePath = string.Empty;
         private WorkerThread _WorkerThread;
 
+        private CswNbtImportStatus _CswNbtImportStatus = null;
+
+
         public ImporterForm()
         {
             InitializeComponent();
@@ -45,6 +48,8 @@ namespace ChemSW.Nbt.Schema
             }
 
             _WorkerThread = new WorkerThread( _ConfigurationPath );
+
+
             _WorkerThread.OnStatusChange += new WorkerThread.StatusMessageHandler( _WorkerThread_OnStatusChange );
             _WorkerThread.OnImportPhaseChange += new WorkerThread.ImportPhaseMessageHandler( _WorkerThread_OnImportPhaseChange );
 
@@ -72,7 +77,27 @@ namespace ChemSW.Nbt.Schema
             ConfirmCheckbox.CheckedChanged += new EventHandler( ConfirmCheckbox_CheckedChanged );
 
             _initModeComboBox();
-        }
+
+
+            _CswNbtImportStatus = _WorkerThread.getThreadSafeImportStatus();
+
+            _refreshStatus();
+
+        }//ctor
+
+
+        private void _refreshStatus()
+        {
+            if( _CswNbtImportStatus.CompletedProcessPhase == ImportProcessPhase.NothingDoneYet )
+            {
+            }
+            else
+            {
+                PhaseTextBox.Text = string.Empty;
+                PhaseTextBox.AppendText( "Last Status: " + _CswNbtImportStatus.CompletedPhaseDescription );
+            }
+
+        }//_refreshStatus() 
 
 
         void _WorkerThread_OnImportPhaseChange( CswNbtImportStatus CswNbtImportStatus )
@@ -128,7 +153,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             PhaseTextBox.Clear();
-            PhaseTextBox.AppendText( "Current Phase " + ": " + CswNbtImportStatus.PhaseDescription + "\r\n" );
+            PhaseTextBox.AppendText( "Current Phase " + ": " + CswNbtImportStatus.TargetPhaseDescription + "\r\n" );
             PhaseTextBox.AppendText( "Status " + ": " + CswNbtImportStatus.PhaseStatus + "\r\n" );
         }
 
@@ -157,6 +182,8 @@ namespace ChemSW.Nbt.Schema
 
             InitSchemaSelectBox.SelectedValue = AccessId;
             ExportSchemaSelectBox.SelectedValue = AccessId;
+
+            _refreshStatus();
         } // InitializerForm()
 
 
