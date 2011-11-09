@@ -15,7 +15,8 @@
                 nodetypeid: '',
                 objectClassName: '',
                 onSelect: null, //function (nodetypeid) {},
-                onSuccess: null //function () {}
+                onSuccess: null, //function () {}
+                width: ''
             };
             if (options) {
                 $.extend(o, options);
@@ -37,7 +38,7 @@
                         if (isFunction(o.onSuccess)) {
                             o.onSuccess();
                         }
-                        $select.css('width', '');    
+                        $select.css('width', tryParseString(o.width));    
                     }
             });
             //Case 23986: Wait until options collection is built before appending

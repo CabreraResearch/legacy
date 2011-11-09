@@ -159,6 +159,7 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
         onloginfail: function () { _finishLogout(); },
         success: null, //function () { },
         error: null, //function () { },
+        overrideError: false,
         formobile: false,
         async: true
     };
@@ -175,33 +176,32 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(o.data),
-        success: function (data, textStatus, XMLHttpRequest)
-        {
+        success: function (data, textStatus, XMLHttpRequest) {
             _ajaxCount--;
             //var endtime = new Date();
             //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
             var result = $.parseJSON(data.d);
 
-            if (result.error !== undefined)
-            {
-                _handleAjaxError(XMLHttpRequest, {
-                    'display': result.error.display,
-                    'type': result.error.type,
-                    'message': result.error.message,
-                    'detail': result.error.detail
-                }, '');
+            if (result.error !== undefined) {
+                if (false === o.overrideError) {
+                    _handleAjaxError(XMLHttpRequest, {
+                        'display': result.error.display,
+                        'type': result.error.type,
+                        'message': result.error.message,
+                        'detail': result.error.detail
+                    }, '');
+                }
                 if (isFunction(o.error)) {
-                    o.error();
+                    o.error(result.error);
                 }
             }
-            else
-            {
+            else {
 
                 var auth = tryParseString(result['AuthenticationStatus'], 'Unknown');
                 if (!o.formobile) {
                     setExpireTime(tryParseString(result.timeout, ''));
                 }
-                
+
                 delete result['AuthenticationStatus'];
                 delete result['timeout'];
 
@@ -217,8 +217,7 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
             }
             if (isFunction(onAfterAjax)) onAfterAjax(true);
         }, // success{}
-        error: function (XMLHttpRequest, textStatus, errorThrown)
-        {
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
             _ajaxCount--;
             //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
             log("Webservice Request (" + o.url + ") Failed: " + textStatus);
@@ -227,7 +226,7 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
             }
             if (isFunction(onAfterAjax)) onAfterAjax(false);
         }
-    });                 // $.ajax({
+    });                  // $.ajax({
 } // CswAjaxJson()
 
 function CswAjaxXml(options)

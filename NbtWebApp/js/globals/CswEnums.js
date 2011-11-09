@@ -296,11 +296,9 @@ var CswSubFields_Map = {
     ViewReference: { name: 'ViewReference', subfields: { } }
 };
 
-var CswImportInspectionQuestions_WizardSteps = {
-    step1: { step: 1, description: 'Select or Create Inspection' },
-    step2: { step: 2, description: 'Upload Inspection Design' },
-    step3: { step: 3, description: 'Preview and Edit Design' },
-    step4: { step: 4, description: 'Import Inspection Points' },
-    step5: { step: 5, description: 'Preview and Edit Import' },
-    step6: { step: 6, description: 'Create Inspection Schedules' }
+var CswInspectionDesign_WizardSteps = {
+    step1: { step: 1, description: 'Upload Inspection Design' },
+    step2: { step: 2, description: 'Preview and Edit Design' },
+    step3: { step: 3, description: 'Create Inspection Schedules' },
+    stepcount: 3
 };
