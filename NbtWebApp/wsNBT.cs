@@ -1546,7 +1546,31 @@ namespace ChemSW.Nbt.WebServices
 
         } // getNodeTypes()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string IsNodeTypeNameUnique( string NewInspectionName )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    ReturnVal["succeeded"] = wsTools.IsNodeTypeNameUnique( NewInspectionName, _CswNbtResources );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
 
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // IsNodeTypeNameUnique()s
 
         #endregion MetaData
 
@@ -3130,8 +3154,6 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    PurgeTempFiles( "xls" );
-
                     // putting these in the param list causes the webservice to fail with
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
                     // These variables seem to work in Google chrome but NOT in IE
@@ -3189,6 +3211,8 @@ namespace ChemSW.Nbt.WebServices
                         ReturnVal["error"] = WarningMessage;
                     }
 
+                    PurgeTempFiles( "xls" );
+
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 _deInitResources();
             } // try
@@ -3199,15 +3223,9 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // uploadInspectionFile()
 
-        /// <summary>
-        /// Purge files in the temporary directory
-        /// </summary>
-        /// <param name="FileExtension">
-        /// Optional extension type of files to purge.  Default is to purge all files
-        /// </param>
-        /// <param name="HoursToKeepFiles">
-        /// Optional number of hours to keep temporary files around.  Default is 12 hours
-        /// </param>
+        /// <summary>  Purge files in the temporary directory  </summary>
+        /// <param name="FileExtension">  Optional extension type of files to purge.  Default is to purge all files  </param>
+        /// <param name="HoursToKeepFiles">  Optional number of hours to keep temporary files around.  Default is 12 hours  </param>
         public void PurgeTempFiles( string FileExtension = ".*", int HoursToKeepFiles = 12 )
         {
             DirectoryInfo myDirectoryInfo = new DirectoryInfo( _TempPath );
@@ -3229,75 +3247,6 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
         }
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getInspectionTargets()
-        {
-            JObject ReturnVal = null;
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
-                    ReturnVal = new JObject( new JProperty( "success", true.ToString().ToLower() ), new JProperty( "inspectiontargetsselect", ws.getInspectionTargets() ) );
-                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
-                _deInitResources();
-            } // try
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        }
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string IsNewInspectionNameUnique( string NewInspectionName )
-        {
-            JObject ReturnVal = new JObject();
-
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                if( string.IsNullOrEmpty( NewInspectionName ) )
-                {
-                    throw new CswDniException( ErrorType.Warning, "Inspection name is required.", "Cannot create an Inspection without a name." );
-                }
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
-                    if( ws.IsNodeTypeNameUnique( NewInspectionName ) )
-                    {
-                        ReturnVal["succeeded"] = "true";
-                    }
-                    else
-                    {
-                        throw new CswDniException( ErrorType.Warning, "The provided inspection name is not unique.", "A NodeType with the name " + NewInspectionName + " already exists." );
-                    }
-
-                }
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = jError( Ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // IsNewInspectionNameUnique()
 
         #endregion Inspection Design
 

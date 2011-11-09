@@ -126,7 +126,7 @@
             checkInspectionNameUnique = function (inspectionName) {
                 var isUnique = true;
                 CswAjaxJson({
-                    url: '/NbtWebApp/wsNBT.asmx/IsNewInspectionNameUnique',
+                    url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
                     async: false,
                     data: { 'NewInspectionName': inspectionName },
                     error: function (error) {

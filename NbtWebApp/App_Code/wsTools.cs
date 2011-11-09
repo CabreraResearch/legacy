@@ -1,5 +1,6 @@
 ﻿using System.Web.Script.Serialization;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebServices
@@ -18,31 +19,46 @@ namespace ChemSW.Nbt.WebServices
 
         } //ctor
 
-		public static CswNbtNode getNode( CswNbtResources CswNbtResources, string NodeId, string NodeKey, CswDateTime Date )
-		{
-			CswNbtNode Node = null;
-			if( !string.IsNullOrEmpty( NodeKey ) )
-			{
-				//CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, FromSafeJavaScriptParam( NodeKey ) );
-				CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, NodeKey );
-				Node = CswNbtResources.getNode( RealNodeKey, Date.ToDateTime() );
-			}
-			else if( !string.IsNullOrEmpty( NodeId ) )
-			{
-				CswPrimaryKey RealNodeId = new CswPrimaryKey();
-				if( CswTools.IsInteger( NodeId ) )
-				{
-					RealNodeId.TableName = "nodes";
-					RealNodeId.PrimaryKey = CswConvert.ToInt32( NodeId );
-				}
-				else
-				{
-					RealNodeId.FromString( NodeId );
-				}
-				Node = CswNbtResources.getNode( RealNodeId, Date.ToDateTime() );
-			}
-			return Node;
-		} // getNode()
+        public static CswNbtNode getNode( CswNbtResources CswNbtResources, string NodeId, string NodeKey, CswDateTime Date )
+        {
+            CswNbtNode Node = null;
+            if( !string.IsNullOrEmpty( NodeKey ) )
+            {
+                //CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, FromSafeJavaScriptParam( NodeKey ) );
+                CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, NodeKey );
+                Node = CswNbtResources.getNode( RealNodeKey, Date.ToDateTime() );
+            }
+            else if( !string.IsNullOrEmpty( NodeId ) )
+            {
+                CswPrimaryKey RealNodeId = new CswPrimaryKey();
+                if( CswTools.IsInteger( NodeId ) )
+                {
+                    RealNodeId.TableName = "nodes";
+                    RealNodeId.PrimaryKey = CswConvert.ToInt32( NodeId );
+                }
+                else
+                {
+                    RealNodeId.FromString( NodeId );
+                }
+                Node = CswNbtResources.getNode( RealNodeId, Date.ToDateTime() );
+            }
+            return Node;
+        } // getNode()
+
+        public static bool IsNodeTypeNameUnique( string NodeTypeName, CswNbtResources CswNbtResources )
+        {
+            if( string.IsNullOrEmpty( NodeTypeName ) )
+            {
+                throw new CswDniException( ErrorType.Warning, "Name is required.", "Node Type name cannot be null" );
+            }
+            bool Ret = ( null == CswNbtResources.MetaData.getNodeType( NodeTypeName ) );
+            if( false == Ret )
+            {
+                throw new CswDniException( ErrorType.Warning, "The provided name is not unique.", "A NodeType with the name " + NodeTypeName + " already exists." );
+            }
+            return Ret;
+        }
+
 
         #region Conversion
 
