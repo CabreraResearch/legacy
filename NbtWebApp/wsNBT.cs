@@ -2659,6 +2659,13 @@ namespace ChemSW.Nbt.WebServices
                 return ( Connected.ToString() );
             }
         }
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string ReturnTrue()
+        {
+            return "true";
+        }
         #endregion Connectivity
 
         #region Logging
@@ -3257,7 +3264,7 @@ namespace ChemSW.Nbt.WebServices
         public string IsNewInspectionNameUnique( string NewInspectionName )
         {
             JObject ReturnVal = new JObject();
-            
+
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {

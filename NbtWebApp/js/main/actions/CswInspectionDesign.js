@@ -47,8 +47,9 @@
                 var stepOneComplete = false;
 
                 return function () {
+                    var gridIsPopulated = (false === isNullOrEmpty(inspectionGrid));
                     $wizard.CswWizard('button', 'previous', 'disable');
-                    $wizard.CswWizard('button', 'next', 'disable');
+                    $wizard.CswWizard('button', 'next', (gridIsPopulated) ? 'enable' : 'disable');
                     $wizard.CswWizard('button', 'finish', 'disable');
                     var $uploadCell, $inspectionTarget, $inspectionTable;
 
@@ -130,6 +131,7 @@
                     data: { 'NewInspectionName': inspectionName },
                     error: function (error) {
                         isUnique = false;
+                        $wizard.CswWizard('button', 'next', 'disable');
                         $.CswDialog('ErrorDialog', error);
                     },
                     overrideError: true
@@ -161,7 +163,7 @@
                     $divStep2.empty();
                     var previewGridId = makeId({ prefix: o.ID, ID: +'step' + parseInt(f.stepNo), suffix: 'previewGrid_outer' }),
                         $previewGrid = $divStep2.find('#' + previewGridId),
-                        lastSelRow, g, emptyRow = [], colNames = {};
+                        g;
 
                     $divStep2.append('<p>Inspection Name: ' + selectedInspectionName + '</p>');
                     $divStep2.append('<p>Inspection Target: ' + selectedInspectionTarget + '</p>');
@@ -173,33 +175,31 @@
                         $previewGrid.empty();
                     }
 
-                    each(data.jqGridOpt.colNames, function (name) {
-                        colNames[name] = '';
-                    });
-                    emptyRow.push(colNames);
-
                     g = {
                         Id: o.ID,
                         pagermode: 'default',
                         gridOpts: {
                             autowidth: true,
                             rowNum: 20,
-                            onSelectRow: function (rowId) {
-                                if (rowId && rowId !== lastSelRow) {
-                                    inspectionGrid.$gridTable.jqGrid('saveRow', lastSelRow, false, 'clientArray');
-                                    lastSelRow = rowId;
-                                }
-                                inspectionGrid.$gridTable.jqGrid('editRow', rowId, true, '', '', 'clientArray');
-                            },
+                            //                            onSelectRow: function (rowId) {
+                            //                                if (rowId && rowId !== lastSelRow) {
+                            //                                    inspectionGrid.$gridTable.jqGrid('saveRow', lastSelRow, false, 'clientArray');
+                            //                                    lastSelRow = rowId;
+                            //                                }
+                            //                                inspectionGrid.$gridTable.jqGrid('editRow', rowId, true, '', '', 'clientArray');
+                            //                            },
                             height: 'auto'
                         },
                         optNav: {
                             add: true,
                             del: true,
-                            edit: false,
+                            edit: true,
                             view: false,
+                            editfunc: function (rowid) {
+                                return inspectionGrid.$gridTable.jqGrid('editGridRow', rowid, { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterEdit: true });
+                            },
                             addfunc: function (rowid) {
-                                return inspectionGrid.$gridTable.jqGrid('addRowData', 'new', colNames, 'first');
+                                return inspectionGrid.$gridTable.jqGrid('editGridRow', 'new', { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterAdd: true });
                             },
                             delfunc: function (rowid) {
                                 return inspectionGrid.$gridTable.jqGrid('delRowData', rowid);
@@ -251,8 +251,28 @@
                     $wizard.CswWizard('button', 'previous', 'enable');
                     $wizard.CswWizard('button', 'next', 'disable');
                     $wizard.CswWizard('button', 'finish', 'disable');
+                    var jsonData;
+
                     if (false === stepThreeComplete) {
                         $divStep3 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step3.step);
+
+                        jsonData = {
+
+                        };
+
+                        CswAjaxJson({
+                            url: 'get me some inspection point groups',
+                            data: jsonData,
+                            success: function (data) {
+                                //render the ipg's and let me create some schedules
+                            },
+                            error: function (error) {
+                                //$.CswDialog('ErrorDialog', error);
+                            }
+                        });
+
+
+
                         stepThreeComplete = true;
                     }
                 };
@@ -281,6 +301,22 @@
             },
 
             handleFinish = function (ignore) {
+                var jsonData = {
+                    questions: inspectionGrid.$gridTable.jqGrid('getRowData'),
+                    inspectionName: selectedInspectionName,
+                    inspectionTarget: selectedInspectionTarget
+                };
+                CswAjaxJson({
+                    url: '',
+                    data: jsonData,
+                    success: function (data) {
+                        //load the relevant Inspection Points by Location view
+                    },
+                    error: function (error) {
+                        //$.CswDialog('ErrorDialog', error);
+                    }
+                });
+
             }; //_handleFinish
 
         //#endregion Variable Declaration
@@ -296,7 +332,7 @@
             onNext: handleNext,
             onPrevious: handlePrevious,
             onCancel: o.onCancel,
-            onFinish: o.onFinish,
+            onFinish: handleFinish,
             doNextOnInit: false
         });
 
