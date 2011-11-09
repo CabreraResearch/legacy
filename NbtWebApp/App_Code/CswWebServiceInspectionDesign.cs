@@ -27,11 +27,11 @@ using System.Data.OleDb;
 
 namespace ChemSW.Nbt.WebServices
 {
-    public class CswNbtWebServiceImportInspectionQuestions
+    public class CswWebServiceInspectionDesign
     {
         private CswNbtResources _CswNbtResources;
 
-        public CswNbtWebServiceImportInspectionQuestions(CswNbtResources CswNbtResources)
+        public CswWebServiceInspectionDesign(CswNbtResources CswNbtResources)
         {
             _CswNbtResources = CswNbtResources;
         }

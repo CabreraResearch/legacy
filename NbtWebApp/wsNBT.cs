@@ -3059,7 +3059,7 @@ namespace ChemSW.Nbt.WebServices
                                 string FullPathAndFileName = _TempPath + "\\" + TempFileName;
 
                                 // Load the excel file into a data table
-                                CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions( _CswNbtResources );
+                                CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
                                 ExcelDataTable = ws.ConvertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
                                 if( ( ExcelDataTable != null ) && ( string.IsNullOrEmpty( ErrorMessage ) ) )
                                 {
@@ -3155,7 +3155,7 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     // Load the excel file into a data table
-                    CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions( _CswNbtResources );
+                    CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
                     ExcelDataTable = ws.ConvertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
 
                     // determine if we were successful or failure
@@ -3236,7 +3236,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions( _CswNbtResources );
+                    CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
                     ReturnVal = new JObject( new JProperty( "success", true.ToString().ToLower() ), new JProperty( "inspectiontargetsselect", ws.getInspectionTargets() ) );
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 _deInitResources();
@@ -3269,7 +3269,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh();
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceImportInspectionQuestions ws = new CswNbtWebServiceImportInspectionQuestions( _CswNbtResources );
+                    CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
                     if( ws.IsNodeTypeNameUnique( NewInspectionName ) )
                     {
                         ReturnVal["succeeded"] = "true";
