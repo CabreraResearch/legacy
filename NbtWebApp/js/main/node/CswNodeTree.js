@@ -22,7 +22,7 @@
                 cswnbtnodekey: '',
                 IncludeNodeRequired: false,
                 UsePaging: true,
-				UseScrollbars: true,
+                UseScrollbars: true,
                 onSelectNode: null, // function(optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', cswnbtnodekey: '', viewid: '' }; return o; },
                 onInitialSelectNode: undefined,
                 onViewChange: null, // function(newviewid, newviewmode) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
@@ -40,9 +40,9 @@
             var $treediv = $('<div id="' + idPrefix + '" />')
                                 .appendTo($(this));
             if (o.UseScrollbars) {
-            	$treediv.addClass('treediv');
+                $treediv.addClass('treediv');
             } else {
-            	$treediv.addClass('treediv_noscroll');
+                $treediv.addClass('treediv_noscroll');
             }
 
             var url = o.ViewTreeUrl;
@@ -135,7 +135,7 @@
                                 selectid = id;
                             }
 
-							var locked = isTrue(json.attr.locked);
+                            var locked = isTrue(json.attr.locked);
                             treestr += '<li id="' + id + '" rel="' + rel + '" species="' + species + '" class="jstree-' + state + '" ';
                             if (!isNullOrEmpty(nbtnodekey)) {
                                 treestr += '    cswnbtnodekey="' + nbtnodekey.replace(/"/g, '&quot;') + '"';
@@ -155,10 +155,10 @@
                                     treestr += '</ul>';
                                 }
                             }
-					        if(locked) {
-								treestr += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
-							}
-							treestr += '</li>';
+                            if (locked) {
+                                treestr += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
+                            }
+                            treestr += '</li>';
                         } else {
                             treestr += '<li id="' + Int32MinVal + '" rel="leaf" class="jstree-leaf">No Results</li>';
                         }
@@ -425,7 +425,9 @@
         }
         else {
             clearChecks(m.IdPrefix);
-            m.onSelectNode(optSelect);
+            if (isFunction(m.onSelectNode)) {
+                m.onSelectNode(optSelect);
+            }
         }
     }
 

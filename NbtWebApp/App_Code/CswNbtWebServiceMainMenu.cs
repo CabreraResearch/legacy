@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -24,11 +25,44 @@ namespace ChemSW.Nbt.WebServices
             ReportXML
         }
 
+        private readonly CswCommaDelimitedString _MenuItems = new CswCommaDelimitedString()
+                                                        {
+                                                            "Search",
+                                                            "Add",
+                                                            "Copy",
+                                                            "Delete",
+                                                            "Save View As",
+                                                            "Print Label",
+                                                            "Print",
+                                                            "Export",
+                                                            "Edit View",
+                                                            "Multi-Edit"
+                                                        };
+
         private CswNbtResources _CswNbtResources;
 
-        public CswNbtWebServiceMainMenu( CswNbtResources CswNbtResources )
+        public CswNbtWebServiceMainMenu( CswNbtResources CswNbtResources, string LimitMenuTo = null )
         {
             _CswNbtResources = CswNbtResources;
+            if( false == string.IsNullOrEmpty( LimitMenuTo ) )
+            {
+                CswCommaDelimitedString MenuItemsToKeep = new CswCommaDelimitedString();
+
+                CswCommaDelimitedString MenuItemsToFind = new CswCommaDelimitedString();
+                MenuItemsToFind.FromString( LimitMenuTo );
+                if( MenuItemsToFind.Count > 0 )
+                {
+                    foreach( string Item in MenuItemsToFind )
+                    {
+                        if( _MenuItems.Contains( Item ) )
+                        {
+                            MenuItemsToKeep.Add( Item );
+                        }
+                    }
+                    _MenuItems = MenuItemsToKeep;
+                }
+            }
+
         }
 
         public JObject getMenu( CswNbtView View, string SafeNodeKey, string PropIdAttr )
@@ -54,73 +88,79 @@ namespace ChemSW.Nbt.WebServices
             }
 
             // SEARCH
-
-            Ret["Search"] = new JObject();
-            Ret["Search"]["haschildren"] = true;
-            // Generic search
-            if( View != null )
+            if( _MenuItems.Contains( "Search" ) )
             {
-                if( View.IsSearchable() )
+                Ret["Search"] = new JObject();
+                Ret["Search"]["haschildren"] = true;
+                // Generic search
+                if( View != null )
                 {
-                    View.SaveToCache( false );
-                    Ret["Search"]["This View"] = new JObject();
-                    Ret["Search"]["This View"]["text"] = "This View";
-                    Ret["Search"]["This View"]["nodeid"] = NodeId;
-                    Ret["Search"]["This View"]["nodetypeid"] = NodeTypeId;
-                    Ret["Search"]["This View"]["sessionviewid"] = View.SessionViewId.ToString();
-                    Ret["Search"]["This View"]["action"] = "ViewSearch";
-                }
-                if( View.Visibility != NbtViewVisibility.Property )
-                {
-                    Ret["Search"]["Generic Search"] = new JObject();
-                    Ret["Search"]["Generic Search"]["nodeid"] = NodeId;
-                    Ret["Search"]["Generic Search"]["nodetypeid"] = NodeTypeId;
-                    Ret["Search"]["Generic Search"]["action"] = "GenericSearch";
+                    if( View.IsSearchable() )
+                    {
+                        View.SaveToCache( false );
+                        Ret["Search"]["This View"] = new JObject();
+                        Ret["Search"]["This View"]["text"] = "This View";
+                        Ret["Search"]["This View"]["nodeid"] = NodeId;
+                        Ret["Search"]["This View"]["nodetypeid"] = NodeTypeId;
+                        Ret["Search"]["This View"]["sessionviewid"] = View.SessionViewId.ToString();
+                        Ret["Search"]["This View"]["action"] = "ViewSearch";
+                    }
+                    if( View.Visibility != NbtViewVisibility.Property )
+                    {
+                        Ret["Search"]["Generic Search"] = new JObject();
+                        Ret["Search"]["Generic Search"]["nodeid"] = NodeId;
+                        Ret["Search"]["Generic Search"]["nodetypeid"] = NodeTypeId;
+                        Ret["Search"]["Generic Search"]["action"] = "GenericSearch";
+                    }
+                    else
+                    {
+                        Ret["Search"]["Generic Search"] = new JObject();
+                        Ret["Search"]["Generic Search"]["action"] = "GenericSearch";
+                    }
+
                 }
                 else
                 {
                     Ret["Search"]["Generic Search"] = new JObject();
                     Ret["Search"]["Generic Search"]["action"] = "GenericSearch";
                 }
-
-            }
-            else
-            {
-                Ret["Search"]["Generic Search"] = new JObject();
-                Ret["Search"]["Generic Search"]["action"] = "GenericSearch";
             }
 
             if( View != null )
             {
                 // ADD
-                JObject AddObj = new JObject();
+                if( _MenuItems.Contains( "Add" ) )
+                {
+                    JObject AddObj = new JObject();
 
-                // case 21672
-                CswNbtViewNode ParentNode = View.Root;
-                bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
-                if( LimitToFirstGeneration && View.Visibility == NbtViewVisibility.Property )
-                {
-                    ParentNode = View.Root.ChildRelationships[0];
-                }
-                foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstGeneration )
-                    .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
-                                                     new JObject(
-                                                         new JProperty( "text", Entry.NodeType.NodeTypeName ),
-                                                         new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
-                                                         new JProperty( "relatednodeid", NodeIdNum ), //for Grid Props
-                                                         new JProperty( "action", "AddNode" ) ) ) ) )
-                {
-                    AddObj.Add( AddNodeType );
-                }
+                    // case 21672
+                    CswNbtViewNode ParentNode = View.Root;
+                    bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
+                    if( LimitToFirstGeneration && View.Visibility == NbtViewVisibility.Property )
+                    {
+                        ParentNode = View.Root.ChildRelationships[0];
+                    }
+                    foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstGeneration )
+                        .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
+                                                         new JObject(
+                                                             new JProperty( "text", Entry.NodeType.NodeTypeName ),
+                                                             new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
+                                                             new JProperty( "relatednodeid", NodeIdNum ), //for Grid Props
+                                                             new JProperty( "action", "AddNode" ) ) ) ) )
+                    {
+                        AddObj.Add( AddNodeType );
+                    }
 
-                if( AddObj.HasValues )
-                {
-                    AddObj["haschildren"] = true;
-                    Ret["Add"] = AddObj;
+                    if( AddObj.HasValues )
+                    {
+                        AddObj["haschildren"] = true;
+                        Ret["Add"] = AddObj;
+                    }
                 }
 
                 // COPY
-                if( null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
+                if( _MenuItems.Contains( "Copy" ) &&
+                    null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
                     _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) )
                 {
@@ -135,7 +175,8 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 // DELETE
-                if( false == string.IsNullOrEmpty( NodeKey ) &&
+                if( _MenuItems.Contains( "Delete" ) &&
+                    false == string.IsNullOrEmpty( NodeKey ) &&
                     null != Node &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
                     Node.NodeSpecies == NodeSpecies.Plain &&
@@ -148,7 +189,9 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 // SAVE VIEW AS
-                if( false == View.ViewId.isSet() && _CswNbtResources.Permit.can( _CswNbtResources.Actions[CswNbtActionName.Edit_View] ) )
+                if( _MenuItems.Contains( "Save View As" ) &&
+                    false == View.ViewId.isSet() &&
+                    _CswNbtResources.Permit.can( _CswNbtResources.Actions[CswNbtActionName.Edit_View] ) )
                 {
                     View.SaveToCache( false );
                     Ret["Save View As"] = new JObject();
@@ -158,7 +201,10 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 // PRINT LABEL
-                if( false == string.IsNullOrEmpty( NodeKey ) && null != Node && null != Node.NodeType )
+                if( _MenuItems.Contains( "Print Label" ) &&
+                    false == string.IsNullOrEmpty( NodeKey ) &&
+                    null != Node &&
+                    null != Node.NodeType )
                 {
                     CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.NodeType.BarcodeProperty;
                     if( null != BarcodeProperty )
@@ -170,7 +216,8 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
                 // PRINT
-                if( View.ViewMode == NbtViewRenderingMode.Grid )
+                if( _MenuItems.Contains( "Print" ) &&
+                    View.ViewMode == NbtViewRenderingMode.Grid )
                 {
                     View.SaveToCache( false );
                     Ret["Print"] = new JObject();
@@ -178,60 +225,65 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 // EXPORT
-                JObject ExportObj = new JObject();
-                Ret["Export"] = ExportObj;
-
-                if( NbtViewRenderingMode.Grid == View.ViewMode )
+                if( _MenuItems.Contains( "Export" ) )
                 {
-					View.SaveToCache( false );
-                    string Url = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString();
-                    if( View.Visibility == NbtViewVisibility.Property &&
-                        null != Node &&
-                        false == string.IsNullOrEmpty( PropIdAttr ) )
-                    {
-                        // Grid Property is a special case
-                        CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
-                        Url = "Popup_Export.aspx?nodeid=" + Node.NodeId.ToString() + "&propid=" + PropId.NodeTypePropId;
-                    }
+                    JObject ExportObj = new JObject();
+                    Ret["Export"] = ExportObj;
 
-                    foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) )
-                                                                  .Cast<ExportOutputFormat>()
-                                                                  .Where( FormatType => ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) ) )
+                    if( NbtViewRenderingMode.Grid == View.ViewMode )
                     {
-                        ExportObj[FormatType.ToString()] = new JObject();
-                        ExportObj[FormatType.ToString()]["popup"] = Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+                        View.SaveToCache( false );
+                        string Url = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString();
+                        if( View.Visibility == NbtViewVisibility.Property &&
+                            null != Node &&
+                            false == string.IsNullOrEmpty( PropIdAttr ) )
+                        {
+                            // Grid Property is a special case
+                            CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+                            Url = "Popup_Export.aspx?nodeid=" + Node.NodeId.ToString() + "&propid=" + PropId.NodeTypePropId;
+                        }
+
+                        foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) )
+                            .Cast<ExportOutputFormat>()
+                            .Where( FormatType => ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) ) )
+                        {
+                            ExportObj[FormatType.ToString()] = new JObject();
+                            ExportObj[FormatType.ToString()]["popup"] = Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+                        }
+                        if( ExportObj.HasValues )
+                        {
+                            ExportObj["haschildren"] = true;
+                        }
                     }
-                    if( ExportObj.HasValues )
+                    else // tree or list
                     {
                         ExportObj["haschildren"] = true;
-                    }
-                }
-                else // tree or list
-                {
-                    ExportObj["haschildren"] = true;
-                    ExportObj["Report XML"] = "";
-                    if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
-                    {
-                        if( null == View.SessionViewId )
+                        ExportObj["Report XML"] = "";
+                        if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
                         {
-                            View.SaveToCache( false, false );
+                            if( null == View.SessionViewId )
+                            {
+                                View.SaveToCache( false, false );
+                            }
+                            string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
+                                           ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+                            ExportObj["Mobile XML"] = new JObject();
+                            ExportObj["Mobile XML"]["popup"] = PopUp;
                         }
-                        string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
-                                       ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
-                        ExportObj["Mobile XML"] = new JObject();
-                        ExportObj["Mobile XML"]["popup"] = PopUp;
                     }
                 }
             } // if( null != View )
 
             // EDIT VIEW
-            if( _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) )
+            if( _MenuItems.Contains( "Edit View" ) &&
+                _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) )
             {
                 Ret["Edit View"] = new JObject();
                 Ret["Edit View"]["action"] = "editview";
             }
 
-            if( null != View )
+            if( _MenuItems.Contains( "Multi-Edit" ) &&
+                null != View )
             {
                 Ret["Multi-Edit"] = new JObject();
                 Ret["Multi-Edit"]["action"] = "multiedit";

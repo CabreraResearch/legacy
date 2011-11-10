@@ -34,7 +34,8 @@
             onEditView: null, // function(viewid) { },
             onSaveView: null, // function(newviewid) { },
             Multi: false,
-            NodeCheckTreeId: ''
+            NodeCheckTreeId: '',
+            limitMenuTo: ''
         };
         if (options) $.extend(o, options);
 
@@ -43,7 +44,8 @@
         var jsonData = {
             ViewId: o.viewid,
             SafeNodeKey: o.cswnbtnodekey,
-            PropIdAttr: o.propid
+            PropIdAttr: o.propid,
+            LimitMenuTo: o.limitMenuTo
         };
 
         CswAjaxJson({

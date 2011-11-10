@@ -250,28 +250,53 @@
                 return function () {
                     $wizard.CswWizard('button', 'previous', 'enable');
                     $wizard.CswWizard('button', 'next', 'disable');
-                    $wizard.CswWizard('button', 'finish', 'disable');
+                    $wizard.CswWizard('button', 'finish', 'enable');
                     var jsonData;
 
                     if (false === stepThreeComplete) {
                         $divStep3 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step3.step);
 
                         jsonData = {
-
+                            InspectionTargetName: selectedInspectionTarget
                         };
 
                         CswAjaxJson({
-                            url: 'get me some inspection point groups',
+                            url: '/NbtWebApp/wsNBT.asmx/getInspectionTargetGroupView',
                             data: jsonData,
                             success: function (data) {
-                                //render the ipg's and let me create some schedules
+                                var viewId, $menuDiv, $treeDiv;
+                                if (isTrue(data.noview)) {
+
+                                }
+                                else if (false === isNullOrEmpty(data.viewid)) {
+                                    viewId = data.viewid;
+
+                                    $menuDiv = $divStep3.CswDiv('init', { ID: o.ID + '_menuDiv' });
+                                    $divStep3.append('<br />');
+                                    $treeDiv = $divStep3.CswDiv('init', { ID: o.ID + '_treeDiv' });
+
+                                    $menuDiv.CswMenuMain({
+                                        ID: o.ID + '_menuDiv',
+                                        viewid: viewId,
+                                        onAddNode: function (nodeid, cswnbtnodekey) {
+                                            if (isFunction(o.menuRefresh)) {
+                                                o.menuRefresh({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+                                            }
+                                        },
+                                        limitMenuTo: 'Add, Copy, Delete'
+                                    });
+
+                                    $treeDiv.CswNodeTree('init', {
+                                        ID: o.ID + '_treeDiv',
+                                        viewid: viewId,
+                                        viewmode: 'tree'
+                                    });
+                                }
                             },
                             error: function (error) {
                                 //$.CswDialog('ErrorDialog', error);
                             }
                         });
-
-
 
                         stepThreeComplete = true;
                     }

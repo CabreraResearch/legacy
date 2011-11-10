@@ -851,7 +851,8 @@ window.abandonHope = true;
                             // After the new inspection is imported, Phil and Steve want to send the system to Design Mode
                             window.location = "Design.aspx";
                         },
-                        startingStep: o.ActionOptions.startingStep
+                        startingStep: o.ActionOptions.startingStep,
+                        menuRefresh: refreshSelected
                     };
 
                     $('#CenterTopDiv').CswInspectionDesign(importInspectionQuestionsOptions);

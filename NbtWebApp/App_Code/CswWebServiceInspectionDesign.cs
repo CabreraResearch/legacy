@@ -21,7 +21,6 @@ namespace ChemSW.Nbt.WebServices
 
         private enum ImportColumns
         {
-            Unknown,
             Section,
             Question,
             Allowed_Answers,
@@ -32,7 +31,7 @@ namespace ChemSW.Nbt.WebServices
         public string GetExcelTemplate()
         {
             CswDelimitedString CSVTemplate = new CswDelimitedString( '\t' );
-            foreach( ImportColumns Col in Enum.GetValues( typeof( ImportColumns ) ).Cast<ImportColumns>().Where( Col => Col != ImportColumns.Unknown ) )
+            foreach( ImportColumns Col in Enum.GetValues( typeof( ImportColumns ) ) )
             {
                 CSVTemplate.Add( _stripUnderscores( Col ) );
             }
@@ -231,52 +230,61 @@ namespace ChemSW.Nbt.WebServices
             return NumRowsImported;
         }
 
-        public JObject getInspectionPointGroup( string InspectionPointName )
+        public JObject getInspectionTargetGroupView( string InspectionTargetName )
         {
             JObject RetObj = new JObject();
+            if( string.IsNullOrEmpty( InspectionTargetName ) )
+            {
+                throw new CswDniException( ErrorType.Warning, "Inspection Target's name was not specified", "InspectionTargetName was null or empty" );
+            }
+
             CswNbtView InspectionScheduleView = null;
 
             RetObj["succeeded"] = "false";
-            CswNbtMetaDataNodeType InspectionPointNodeType = _CswNbtResources.MetaData.getNodeType( InspectionPointName );
-            if( null == InspectionPointNodeType )
+            CswNbtMetaDataNodeType InspectionTargetNT = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
+            if( null == InspectionTargetNT )
             {
                 //we'll create it on Finish, we'll build the schedules manually client-side
                 RetObj["succeeded"] = "true";
+                RetObj["noview"] = "true";
             }
             else
             {
-                if( InspectionPointNodeType.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass )
+                if( InspectionTargetNT.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass )
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot create an inspection on a " + InspectionPointName, "Attempted to create an inspection on a nodetype of class " + InspectionPointNodeType.ObjectClass.ObjectClass.ToString() );
+                    throw new CswDniException( ErrorType.Error, "Cannot create an inspection on a " + InspectionTargetName, "Attempted to create an inspection on a nodetype of class " + InspectionTargetNT.ObjectClass.ObjectClass.ToString() );
                 }
-                CswNbtMetaDataNodeTypeProp IpGroupNtp = InspectionPointNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
-                if( IpGroupNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                CswNbtMetaDataNodeTypeProp InTargetGroupNTP = InspectionTargetNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+                if( InTargetGroupNTP.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
                 {
-                    CswNbtMetaDataNodeType IpGroupNodeType = _CswNbtResources.MetaData.getNodeType( IpGroupNtp.FKValue );
-                    if( null != IpGroupNodeType && IpGroupNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass )
+                    CswNbtMetaDataNodeType InTargetGroupNT = _CswNbtResources.MetaData.getNodeType( InTargetGroupNTP.FKValue );
+                    if( null != InTargetGroupNT && InTargetGroupNT.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass )
                     {
                         CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
                         foreach( CswNbtMetaDataNodeType GeneratorNt in GeneratorOC.NodeTypes )
                         {
                             CswNbtMetaDataNodeTypeProp OwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
                             if( OwnerNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
-                                OwnerNtp.FKValue == IpGroupNtp.PropId )
+                                OwnerNtp.FKValue == InTargetGroupNT.NodeTypeId )
                             {
                                 InspectionScheduleView = new CswNbtView( _CswNbtResources );
-                                InspectionScheduleView.makeNew( InspectionPointName + " Schedule View", NbtViewVisibility.User, null, _CswNbtResources.CurrentNbtUser.UserId, Int32.MinValue );
+                                InspectionScheduleView.Visibility = NbtViewVisibility.User;
+                                InspectionScheduleView.VisibilityUserId = _CswNbtResources.CurrentNbtUser.UserId;
+                                InspectionScheduleView.ViewName = InspectionTargetName + " Schedule View";
+                                InspectionScheduleView.ViewMode = NbtViewRenderingMode.Tree;
 
-                                CswNbtViewRelationship IpGroupRelationship = InspectionScheduleView.AddViewRelationship( IpGroupNodeType, false );
+                                CswNbtViewRelationship IpGroupRelationship = InspectionScheduleView.AddViewRelationship( InTargetGroupNT, false );
                                 InspectionScheduleView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, OwnerNtp, false );
 
                                 InspectionScheduleView.SaveToCache( false );
 
                                 RetObj["succeeded"] = "true";
-                                RetObj["viewid"] = InspectionScheduleView.SessionViewId.get().ToString();
+                                RetObj["viewid"] = InspectionScheduleView.SessionViewId.ToString();
                             }
                         }
                     }
                 }
-                else if( IpGroupNtp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+                else if( InTargetGroupNTP.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
                 {
                     //tough cookies for now
                 }

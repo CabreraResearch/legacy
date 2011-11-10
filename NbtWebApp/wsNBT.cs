@@ -568,7 +568,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getMainMenu( string ViewId, string SafeNodeKey, string PropIdAttr )
+        public string getMainMenu( string ViewId, string SafeNodeKey, string PropIdAttr, string LimitMenuTo )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -580,7 +580,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    var ws = new CswNbtWebServiceMainMenu( _CswNbtResources );
+                    var ws = new CswNbtWebServiceMainMenu( _CswNbtResources, LimitMenuTo );
                     CswNbtView View = _getView( ViewId );
                     ReturnVal = ws.getMenu( View, SafeNodeKey, PropIdAttr );
                 }
@@ -3154,6 +3154,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
+                    _purgeTempFiles( "xls" );
                     // putting these in the param list causes the webservice to fail with
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
                     // These variables seem to work in Google chrome but NOT in IE
@@ -3211,8 +3212,6 @@ namespace ChemSW.Nbt.WebServices
                         ReturnVal["error"] = WarningMessage;
                     }
 
-                    _purgeTempFiles( "xls" );
-
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 _deInitResources();
             } // try
@@ -3225,7 +3224,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getInspectionPointGroups( string InspectionTargetName )
+        public string getInspectionTargetGroupView( string InspectionTargetName )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3236,8 +3235,8 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-
-
+                    var ws = new CswWebServiceInspectionDesign( _CswNbtResources );
+                    ReturnVal = ws.getInspectionTargetGroupView( InspectionTargetName );
                 }
 
                 _deInitResources();
