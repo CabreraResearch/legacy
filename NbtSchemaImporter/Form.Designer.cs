@@ -101,7 +101,7 @@
             this.ImportButton.Name = "ImportButton";
             this.ImportButton.Size = new System.Drawing.Size( 138, 23 );
             this.ImportButton.TabIndex = 7;
-            this.ImportButton.Text = "Import!";
+            this.ImportButton.Text = "Start";
             this.ImportButton.UseVisualStyleBackColor = true;
             this.ImportButton.Click += new System.EventHandler( this.ImportButton_Click );
             // 

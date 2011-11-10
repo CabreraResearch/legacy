@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.ImportExport
     {
 
         void ImportXml( ImportMode IMode, string XmlStr, ref string ViewXml, ref string ResultXml, ref string ErrorLog );
+        void stop(); 
 
     } // ICswImporter
 } // namespace ChemSW.Nbt

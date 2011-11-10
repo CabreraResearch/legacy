@@ -83,6 +83,14 @@ namespace ChemSW.Nbt.ImportExport
                 OnStatusUpdate( Msg );
         }
 
+        ICswImporter _CswImporter = null; 
+        public void stopImport()
+        {
+            if( null == _CswImporter )
+            {
+                _CswImporter.stop(); 
+            }
+        }//stopImport()
 
 
         /// <summary>
@@ -106,9 +114,9 @@ namespace ChemSW.Nbt.ImportExport
 
             CswNbtImportExportFrame Frame = new CswNbtImportExportFrame( _CswNbtResources, XmlStr );
 
-            ICswImporter CswImporter = CswImporterFactory.make( ImportAlgorithm.Experimental, _CswNbtResources, Frame, OnStatusUpdate, OnImportPhaseChange, CswNbtImportStatus );
+            _CswImporter = CswImporterFactory.make( ImportAlgorithm.Experimental, _CswNbtResources, Frame, OnStatusUpdate, OnImportPhaseChange, CswNbtImportStatus );
 
-            CswImporter.ImportXml( IMode, XmlStr, ref ViewXml, ref ResultXml, ref ErrorLog );
+            _CswImporter.ImportXml( IMode, XmlStr, ref ViewXml, ref ResultXml, ref ErrorLog );
 
 
 

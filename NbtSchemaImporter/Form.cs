@@ -83,21 +83,41 @@ namespace ChemSW.Nbt.Schema
 
             _refreshStatus();
 
+
         }//ctor
 
 
         private void _refreshStatus()
         {
+
+            PhaseTextBox.Text = string.Empty;
+            PhaseTextBox.AppendText( "Last Status: " + _CswNbtImportStatus.CompletedPhaseDescription );
+
+
             if( _CswNbtImportStatus.CompletedProcessPhase == ImportProcessPhase.NothingDoneYet )
             {
+                ImportButton.Text = ImportButtonState.Start.ToString();
+
             }
             else
             {
                 PhaseTextBox.Text = string.Empty;
                 PhaseTextBox.AppendText( "Last Status: " + _CswNbtImportStatus.CompletedPhaseDescription );
+
+                if( _CswNbtImportStatus.CompletedProcessPhase != ImportProcessPhase.Completed )
+                {
+                    ImportButton.Text = ImportButtonState.Resume.ToString();
+                }
+                else
+                {
+                    ImportButton.Text = ImportButtonState.Start.ToString();
+                    ImportButton.Enabled = false;
+                }
             }
 
         }//_refreshStatus() 
+
+
 
 
         void _WorkerThread_OnImportPhaseChange( CswNbtImportStatus CswNbtImportStatus )
@@ -203,25 +223,52 @@ namespace ChemSW.Nbt.Schema
             ImportButton.Enabled = ConfirmCheckbox.Checked;
         } // ConfirmCheckbox_CheckedChanged()
 
+
+
+        //TODO: Add "nuke current state" button to start over from scratch
+        //      Take away checkbox and add confirm diaglogue button.
+
+        private enum ImportButtonState { Start, Stop, Resume }
         private void ImportButton_Click( object sender, EventArgs e )
         {
-            if( _DataFilePath != string.Empty )
-            {
-                ImportButton.Enabled = false;
-                ImportInProgressLabel.Visible = true;
-                ImportInProgressLabel.Refresh();
 
-                //string DataFileName = DataFileSelectBox.SelectedText;
-                //bool ClearExisting = ClearExistingCheckBox.Checked;
+            if( ImportButtonState.Start.ToString() == ImportButton.Text )
+            {
+                if( _DataFilePath != string.Empty )
+                {
+                    //ImportButton.Enabled = false;
+                    ImportButton.Text = ImportButtonState.Stop.ToString();
+
+
+                    ImportInProgressLabel.Visible = true;
+                    ImportInProgressLabel.Refresh();
+
+                    //string DataFileName = DataFileSelectBox.SelectedText;
+                    //bool ClearExisting = ClearExistingCheckBox.Checked;
+                    ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
+
+                    WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
+                    ImportHandler.BeginInvoke( _DataFilePath, Mode, new AsyncCallback( ImportButton_Callback ), null );
+                }
+                else
+                {
+                    _AddStatusMsg( "Error: You must choose a file to import" );
+                }
+            }
+            else if( ImportButtonState.Resume.ToString() == ImportButton.Text )
+            {
+                ImportButton.Text = ImportButtonState.Stop.ToString();
                 ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
 
                 WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
                 ImportHandler.BeginInvoke( _DataFilePath, Mode, new AsyncCallback( ImportButton_Callback ), null );
             }
-            else
+            else if( ImportButtonState.Stop.ToString() == ImportButton.Text )
             {
-                _AddStatusMsg( "Error: You must choose a file to import" );
-            }
+                _WorkerThread.stopImport(); 
+            }//if-else-if on importbutton state
+              
+
         } // ImportButton_Click()
 
         private void ImportButton_Callback( IAsyncResult Result )

@@ -45,7 +45,26 @@ namespace ChemSW.Nbt.ImportExport
             _CswNbtSchemaModTrnsctn = new Schema.CswNbtSchemaModTrnsctn( _CswNbtResources );
         }//ctor
 
+        private bool _Stop = false;
+        public void stop()
+        {
 
+            if(
+                ( _CswNbtImportStatus.TargetProcessPhase == ImportProcessPhase.PopulatingTempTableNodes ) ||
+                 ( _CswNbtImportStatus.TargetProcessPhase == ImportProcessPhase.PopulatingTempTableNodes )
+                )
+            {
+                //It's actually kind of messy code-wise to stop in the populate-temp-table phase, so for now we'll just say "no"
+                _CswImportExportStatusReporter.reportProgress( "Stop message received: cannot stop process while in " + _CswNbtImportStatus.TargetProcessPhase.ToString() + " phase" );
+
+            }
+            else
+            {
+                _CswImportExportStatusReporter.reportProgress( "Stop message received, shutting down . . . " );
+                _Stop = true;
+
+            }
+        }//stop() 
 
         private string _ColName_ProcessStatus = "processstatus";
         private string _ColName_StatusMessage = "statusmessage";
@@ -72,10 +91,12 @@ namespace ChemSW.Nbt.ImportExport
 
             ErrorLog = string.Empty;
 
+            _Stop = false;
+
 
             //*********************************************************************************************************
             //*********************** Load to dataset
-            _LastCompletedProcessPhase = _CswNbtImportStatus.CompletedProcessPhase; 
+            _LastCompletedProcessPhase = _CswNbtImportStatus.CompletedProcessPhase;
 
             _CswImportExportStatusReporter.reportProgress( "Loading XML document to in memory tables" );
 
@@ -109,7 +130,7 @@ namespace ChemSW.Nbt.ImportExport
             _CswImportExportStatusReporter.MessageTypesToBeLogged.Add( ImportExportMessageType.Timing );
             //*********************************************************************************************************
             //*********************** Create Temporary Tables
-            if( ImportProcessPhase.NothingDoneYet == _LastCompletedProcessPhase )
+            if( ( false == _Stop ) && ( ImportProcessPhase.NothingDoneYet == _LastCompletedProcessPhase ) )
             {
 
                 _LastCompletedProcessPhase = ImportProcessPhase.LoadingInputFile;
@@ -128,6 +149,7 @@ namespace ChemSW.Nbt.ImportExport
 
 
                 _CswNbtSchemaModTrnsctn.beginTransaction();
+
                 if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TblName_TempNodes ) || _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TblName_TempNodes ) ) //belt and suspenders
                 {
                     _CswNbtSchemaModTrnsctn.dropTable( TblName_TempNodes );
@@ -181,7 +203,7 @@ namespace ChemSW.Nbt.ImportExport
 
             CswNbtNode GeneralUserRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( _CswNbtImportOptions.NameOfDefaultRoleForUserNodes );
             CswTableUpdate CswTableUpdateTempNodesTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatenodesfornodeid", TblName_TempNodes );
-            if( ImportProcessPhase.PopulatingTempTableProps == _LastCompletedProcessPhase )
+            if( ( false == _Stop ) && ( ImportProcessPhase.PopulatingTempTableProps == _LastCompletedProcessPhase ) )
             {
 
                 _LastCompletedProcessPhase = ImportProcessPhase.PopulatingNbtNodes;
@@ -312,18 +334,23 @@ namespace ChemSW.Nbt.ImportExport
                     _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.InProcess );
 
 
-                } while( RawNodesTable.Rows.Count > 0 );
+                } while( ( false == _Stop ) && ( RawNodesTable.Rows.Count > 0 ) );
 
 
-                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.Complete );
-
+                //if by coincidence we hit "stop" just as this phase completed, it's not the end of the world: 
+                //when we resume, we'll resume at this phase, but the query won't reutrn results, and we'll just 
+                //fall through to the next phase
+                if( false == _Stop )
+                {
+                    _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.Complete );
+                }
 
             }//if temptables have been populated
 
 
 
 
-            if( ImportProcessPhase.PopulatingNbtNodes == _LastCompletedProcessPhase )
+            if( ( false == _Stop ) && ( ImportProcessPhase.PopulatingNbtNodes == _LastCompletedProcessPhase ) )
             {
 
                 _LastCompletedProcessPhase = ImportProcessPhase.VerifyingNbtTargetNodes;
@@ -360,8 +387,11 @@ namespace ChemSW.Nbt.ImportExport
                     if( AbsentImportNodeHandling.DeduceAndCreate == _CswNbtImportOptions.AbsentNodeHandling )
                     {
 
-                        foreach( DataRow CurrentRow in DataTable.Rows )
+                        //foreach( DataRow CurrentRow in DataTable.Rows )
+                        for( Int32 idx = 0; ( false == _Stop ) && ( idx < DataTable.Rows.Count ); idx++ )
                         {
+                            DataRow CurrentRow = DataTable.Rows[idx];
+
 
                             string ImportNodeIdOfAbsentNode = CurrentRow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
                             CswNbtImportNodeId CswNbtImportNodeId = new ImportExport.CswNbtImportNodeId( ImportNodeIdOfAbsentNode );
@@ -462,12 +492,19 @@ namespace ChemSW.Nbt.ImportExport
                     }
                 }
 
-                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.InProcess );
+
+                //if by coincidence we hit "stop" just as this phase completed, it's not the end of the world: 
+                //when we resume, we'll resume at this phase, but the query won't reutrn results, and we'll just 
+                //fall through to the next phase
+                if( false == _Stop )
+                {
+                    _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.InProcess );
+                }
 
 
             }//if nodes were processed
 
-            if( ImportProcessPhase.VerifyingNbtTargetNodes == _LastCompletedProcessPhase )
+            if( ( false == _Stop ) && ( ImportProcessPhase.VerifyingNbtTargetNodes == _LastCompletedProcessPhase ) )
             {
 
                 _LastCompletedProcessPhase = ImportProcessPhase.PopulatingNbtProps;
@@ -664,14 +701,21 @@ namespace ChemSW.Nbt.ImportExport
                     NodeRecordsToProcess = CswArbitrarySelectUnprocessedNodes.getTable( 0, _CswNbtImportOptions.NodeAddPropsPageSize, false, false );
                     CommitNNodesTimer.Start();
 
-                } while( NodeRecordsToProcess.Rows.Count > 0 );
+                } while( ( false == _Stop ) && ( NodeRecordsToProcess.Rows.Count > 0 ) );
 
-                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.Complete );
+
+                //if by coincidence we hit "stop" just as this phase completed, it's not the end of the world: 
+                //when we resume, we'll resume at this phase, but the query won't reutrn results, and we'll just 
+                //fall through to the next phase
+                if( false == _Stop )
+                {
+                    _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.Complete );
+                }
 
 
             }//if nodes have been populated
 
-            if( ImportProcessPhase.PopulatingNbtProps == _LastCompletedProcessPhase )
+            if( ( false == _Stop ) && ( ImportProcessPhase.PopulatingNbtProps == _LastCompletedProcessPhase ) )
             {
                 //Unforunately, we have to wait until _everything_ else is populated in order to see all the nodes and their various relationships 
 
@@ -829,10 +873,13 @@ namespace ChemSW.Nbt.ImportExport
                     _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, TotalNodesToProcess, TotalNodesProcesssedSoFar, ProcessStates.InProcess );
 
 
-                } while( NodeRecordsToProcess.Rows.Count > 0 );
+                } while( ( false == _Stop ) && ( NodeRecordsToProcess.Rows.Count > 0 ) );
 
 
-                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
+                if( false == _Stop )
+                {
+                    _CswImportExportStatusReporter.updateProcessPhase( ImportProcessPhase.Completed, 0, 0, ProcessStates.Complete );
+                }
 
 
             }

@@ -12,7 +12,7 @@ using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt.ImportExport
 {
 
-    public enum ImportProcessPhase { NothingDoneYet, LoadingInputFile, PopulatingTempTableNodes, PopulatingTempTableProps, PopulatingNbtNodes, VerifyingNbtTargetNodes, CreatingMissingNbtTargetNodes, PopulatingNbtProps, PostProcessingNbtNodes };
+    public enum ImportProcessPhase { NothingDoneYet, LoadingInputFile, PopulatingTempTableNodes, PopulatingTempTableProps, PopulatingNbtNodes, VerifyingNbtTargetNodes, CreatingMissingNbtTargetNodes, PopulatingNbtProps, PostProcessingNbtNodes, Completed };
     public enum ImportProcessStati { Unprocessed, Imported, PropsAdded, RedundancyChecked, Error };
     public enum ImportSource { ImportData, Deduced }
     public enum PhaseTypes { Incremental, Monolithic }

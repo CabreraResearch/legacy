@@ -182,8 +182,17 @@ namespace ChemSW.Nbt.Schema
             }
         }//setImportPhase() 
 
+        public void stopImport()
+        {
+            if( null != _CswNbtImportExport )
+            {
+                _CswNbtImportExport.stopImport(); 
+            }
+
+        }//stopImport()
 
 
+        CswNbtImportExport _CswNbtImportExport = null; 
 
         public delegate void ImportHandler( string FilePath, ImportMode ImportMode ); //, bool ClearExisting );
         public void DoImport( string FilePath, ImportMode ImportMode ) //, bool ClearExisting )
@@ -210,16 +219,16 @@ namespace ChemSW.Nbt.Schema
                         //    ClearSchema();
 
                         // Restore selected data
-                        CswNbtImportExport Importer = new CswNbtImportExport( _CswNbtResources );
+                         _CswNbtImportExport = new CswNbtImportExport( _CswNbtResources );
 
-                        Importer.OnStatusUpdate += new StatusUpdateHandler( SetStatusMessage );
-                        Importer.OnImportPhaseChange += new ImportPhaseHandler( setImportPhase );
+                        _CswNbtImportExport.OnStatusUpdate += new StatusUpdateHandler( SetStatusMessage );
+                        _CswNbtImportExport.OnImportPhaseChange += new ImportPhaseHandler( setImportPhase );
 
                         string ViewXml = string.Empty;
                         string ResultXml = string.Empty;
                         string ErrorLog = string.Empty;
 
-                        Importer.ImportXml( _CswNbtImportStatus.Mode, FileContents, ref ViewXml, ref ResultXml, ref ErrorLog, _CswNbtImportStatus );
+                        _CswNbtImportExport.ImportXml( _CswNbtImportStatus.Mode, FileContents, ref ViewXml, ref ResultXml, ref ErrorLog, _CswNbtImportStatus );
 
                         if( ErrorLog != string.Empty )
                         {
