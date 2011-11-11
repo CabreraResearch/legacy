@@ -40,7 +40,7 @@
         // Step 2 - Preview Inspection Design Grid
             $divStep2,
         // Step 3 - 
-            $divStep3,
+            $divStep3, newScheduleNodeIds = [],
 
 
             makeStepOne = (function () {
@@ -279,6 +279,7 @@
                                         ID: o.ID + '_menuDiv',
                                         viewid: viewId,
                                         onAddNode: function (nodeid, cswnbtnodekey) {
+                                            newScheduleNodeIds.push(nodeid);
                                             if (isFunction(o.menuRefresh)) {
                                                 o.menuRefresh({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
                                             }
@@ -327,14 +328,16 @@
 
             handleFinish = function (ignore) {
                 var jsonData = {
-                    questions: inspectionGrid.$gridTable.jqGrid('getRowData'),
-                    inspectionName: selectedInspectionName,
-                    inspectionTarget: selectedInspectionTarget
+                    DesignGrid: inspectionGrid.$gridTable.jqGrid('getRowData'),
+                    InspectionName: selectedInspectionName,
+                    InspectionTarget: selectedInspectionTarget,
+                    NewScheduleNodeIds: newScheduleNodeIds
                 };
                 CswAjaxJson({
-                    url: '',
+                    url: '/NbtWebApp/wsNBT.aspx/finalizeInspectionDesign',
                     data: jsonData,
                     success: function (data) {
+                        //show success dialog
                         //load the relevant Inspection Points by Location view
                     },
                     error: function (error) {

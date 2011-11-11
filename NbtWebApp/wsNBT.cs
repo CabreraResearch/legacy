@@ -3065,14 +3065,12 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string uploadInspectionFile( string NewInspectionName, string TargetName, string TempFileName )
+        public string finalizeInspectionDesign( string DesignGrid, string InspectionName, string InspectionTarget, string NewScheduleNodeIds )
         {
-            JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
+            JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            DataTable ExcelDataTable = null;
-            string ErrorMessage = string.Empty;
-            string WarningMessage = string.Empty;
-            int NumRowsImported = 0;
+
+            Int32 NumRowsImported = 0;
 
             try
             {
@@ -3081,48 +3079,22 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    if( !string.IsNullOrEmpty( TempFileName ) )
+                    if( string.IsNullOrEmpty( InspectionName ) )
                     {
-                        if( !string.IsNullOrEmpty( NewInspectionName ) )
-                        {
-                            if( !string.IsNullOrEmpty( TargetName ) )
-                            {
-                                string FullPathAndFileName = _TempPath + "\\" + TempFileName;
-
-                                // Load the excel file into a data table
-                                CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
-                                ExcelDataTable = ws.ConvertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
-                                if( ( ExcelDataTable != null ) && ( string.IsNullOrEmpty( ErrorMessage ) ) )
-                                {
-                                    NumRowsImported = ws.CreateNodes( ExcelDataTable, NewInspectionName, TargetName, ref ErrorMessage, ref WarningMessage );
-
-                                    ReturnVal = new JObject( new JProperty( "success", true.ToString().ToLower() ) );
-
-                                    if( !string.IsNullOrEmpty( WarningMessage ) )
-                                        ReturnVal.Add( new JProperty( "error", WarningMessage ) );
-
-                                }
-                                else
-                                {
-                                    if( string.IsNullOrEmpty( ErrorMessage ) )
-                                        ErrorMessage = "Could not read Excel file.";
-                                    ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ), new JProperty( "error", ErrorMessage ) );
-                                }
-                            } // if( Context.Request.InputStream != null )
-                            else
-                            {
-                                ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ), new JProperty( "error", "Did not receive target name." ) );
-                            }
-                        } // if (!string.IsNullOrEmpty(FileName))
-                        else
-                        {
-                            ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ), new JProperty( "error", "Did not receive new inspection name." ) );
-                        }
-                    } // if (!string.IsNullOrEmpty(FileName))
-                    else
-                    {
-                        ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ), new JProperty( "error", "Did not receive temp file name." ) );
+                        throw new CswDniException(ErrorType.Warning, "Inspection Name cannot be blank.", "InspectionName was null or empty.");
                     }
+                    if( string.IsNullOrEmpty( InspectionTarget ) )
+
+                    {
+                        throw new CswDniException( ErrorType.Warning, "New Inspection must have a target.", "InspectionTarget was null or empty." );
+                    }
+
+                    CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
+                                
+                    ReturnVal = ws.createInspectionDesignTabsAndProps( DesignGrid, InspectionName, InspectionTarget );
+
+                    ReturnVal["success"] = "true";
+
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 _deInitResources();
             } // try
@@ -3135,7 +3107,7 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // uploadInspectionFile()
+        } // finalizeInspectionDesign()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -3220,7 +3192,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = jError( ex );
             }
             return ReturnVal.ToString();
-        } // uploadInspectionFile()
+        } // finalizeInspectionDesign()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
