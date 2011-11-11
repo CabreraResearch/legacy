@@ -248,7 +248,7 @@ namespace ChemSW.Nbt.Schema
                     ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
 
                     WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
-                    ImportHandler.BeginInvoke( _DataFilePath, Mode, new AsyncCallback( ImportButton_Callback ), null );
+                    ImportHandler.BeginInvoke( _DataFilePath, Mode, false, new AsyncCallback( ImportButton_Callback ), null );
                 }
                 else
                 {
@@ -261,13 +261,13 @@ namespace ChemSW.Nbt.Schema
                 ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
 
                 WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
-                ImportHandler.BeginInvoke( _DataFilePath, Mode, new AsyncCallback( ImportButton_Callback ), null );
+                ImportHandler.BeginInvoke( _DataFilePath, Mode, true, new AsyncCallback( ImportButton_Callback ), null );
             }
             else if( ImportButtonState.Stop.ToString() == ImportButton.Text )
             {
-                _WorkerThread.stopImport(); 
+                _WorkerThread.stopImport();
             }//if-else-if on importbutton state
-              
+
 
         } // ImportButton_Click()
 

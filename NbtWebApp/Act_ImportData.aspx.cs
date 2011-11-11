@@ -423,7 +423,8 @@ namespace ChemSW.Nbt.WebPages
             string ErrorLog = string.Empty;
             string ViewXml = string.Empty;
 
-            Importer.ImportXml( ImportMode, ImportXml, ref ViewXml, ref ResultXml, ref ErrorLog, CswNbtImportStatus );
+
+            Importer.ImportXml( ImportMode, new CswNbtImportExportFrame( Master.CswNbtResources, ImportXml ), ref ViewXml, ref ResultXml, ref ErrorLog, CswNbtImportStatus );
 
             if( ErrorLog != string.Empty )
             {

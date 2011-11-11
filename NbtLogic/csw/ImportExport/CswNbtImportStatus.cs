@@ -107,19 +107,19 @@ namespace ChemSW.Nbt.ImportExport
 
         }//Mode
 
-        public string FilePath
-        {
-            set
-            {
-                _CswNbtPersistedImportState.FilePath = value;
-            }
+        //public string FilePath
+        //{
+        //    set
+        //    {
+        //        _CswNbtPersistedImportState.FilePath = value;
+        //    }
 
-            get
-            {
-                return ( _CswNbtPersistedImportState.FilePath );
-            }
+        //    get
+        //    {
+        //        return ( _CswNbtPersistedImportState.FilePath );
+        //    }
 
-        }
+        //}
 
         public string PhaseStatus
         {

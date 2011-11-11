@@ -186,65 +186,90 @@ namespace ChemSW.Nbt.Schema
         {
             if( null != _CswNbtImportExport )
             {
-                _CswNbtImportExport.stopImport(); 
+                _CswNbtImportExport.stopImport();
             }
 
         }//stopImport()
 
 
-        CswNbtImportExport _CswNbtImportExport = null; 
-
-        public delegate void ImportHandler( string FilePath, ImportMode ImportMode ); //, bool ClearExisting );
-        public void DoImport( string FilePath, ImportMode ImportMode ) //, bool ClearExisting )
+        CswNbtImportExport _CswNbtImportExport = null;
+        private string _FilePath = string.Empty;
+        public delegate void ImportHandler( string FilePath, ImportMode ImportMode, bool ResumeMode ); //, bool ClearExisting );
+        public void DoImport( string FilePath, ImportMode ImportMode, bool ResumeMode ) //, bool ClearExisting )
         {
 
-            _CswNbtImportStatus.FilePath = FilePath;
+            //            _FilePath = FilePath;
             _CswNbtImportStatus.Mode = ImportMode;
 
             try
             {
-                if( _CswNbtImportStatus.FilePath != string.Empty )
+                _CswNbtImportExport = new CswNbtImportExport( _CswNbtResources );
+
+                _CswNbtImportExport.OnStatusUpdate += new StatusUpdateHandler( SetStatusMessage );
+                _CswNbtImportExport.OnImportPhaseChange += new ImportPhaseHandler( setImportPhase );
+
+                string ViewXml = string.Empty;
+                string ResultXml = string.Empty;
+                string ErrorLog = string.Empty;
+                string FileContents = string.Empty;
+                CswNbtImportExportFrame CswNbtImportExportFrame = null;
+
+
+                if( false == ResumeMode )
                 {
-                    //string _CswNbtImportStatus.FilePath = Application.StartupPath + "\\..\\etc\\datafiles\\" + FileName;
-                    // verify the file exists
-                    if( File.Exists( _CswNbtImportStatus.FilePath ) )
+                    if( _FilePath != string.Empty )
                     {
-                        Stream FileStream = File.OpenRead( _CswNbtImportStatus.FilePath );
-                        StreamReader FileSR = new StreamReader( FileStream );
-                        string FileContents = FileSR.ReadToEnd();
-                        FileStream.Close();
 
-                        //// Clear data?
-                        //if( ClearExisting )
-                        //    ClearSchema();
-
-                        // Restore selected data
-                         _CswNbtImportExport = new CswNbtImportExport( _CswNbtResources );
-
-                        _CswNbtImportExport.OnStatusUpdate += new StatusUpdateHandler( SetStatusMessage );
-                        _CswNbtImportExport.OnImportPhaseChange += new ImportPhaseHandler( setImportPhase );
-
-                        string ViewXml = string.Empty;
-                        string ResultXml = string.Empty;
-                        string ErrorLog = string.Empty;
-
-                        _CswNbtImportExport.ImportXml( _CswNbtImportStatus.Mode, FileContents, ref ViewXml, ref ResultXml, ref ErrorLog, _CswNbtImportStatus );
-
-                        if( ErrorLog != string.Empty )
+                        if( File.Exists( _FilePath ) )
                         {
-                            _CswNbtResources.logMessage( ErrorLog );
-                            SetStatusMessage( "Errors Occurred.  Check Log." );
+                            Stream FileStream = File.OpenRead( _FilePath );
+                            StreamReader FileSR = new StreamReader( FileStream );
+                            FileContents = FileSR.ReadToEnd();
+                            FileStream.Close();
+
+                             CswNbtImportExportFrame = new CswNbtImportExportFrame( _CswNbtResources, FileContents );
+
+                            _CswNbtImportExport.ImportXml( _CswNbtImportStatus.Mode, CswNbtImportExportFrame, ref ViewXml, ref ResultXml, ref ErrorLog, _CswNbtImportStatus );
+
+                            if( ErrorLog != string.Empty )
+                            {
+                                _CswNbtResources.logMessage( ErrorLog );
+                                SetStatusMessage( "Errors Occurred.  Check Log." );
+                            }
+
+
+                            _CswNbtResources.finalize();
+
                         }
+                        else
+                        {
+                            //ErrorLabel.Text = "File does not exist: " + DataFileName; // openFileDialog1.FileName;
+                            SetStatusMessage( "File does not exist: " + _FilePath );
+                        }
+
+
                     }
                     else
                     {
-                        //ErrorLabel.Text = "File does not exist: " + DataFileName; // openFileDialog1.FileName;
-                        SetStatusMessage( "File does not exist: " + _CswNbtImportStatus.FilePath );
+                        SetStatusMessage( "No file name provided" );
+                    }// if(FileName != string.Empty)
+                }
+                else
+                {
+
+
+                    _CswNbtImportExport.ImportXml( _CswNbtImportStatus.Mode, null, ref ViewXml, ref ResultXml, ref ErrorLog, _CswNbtImportStatus );
+
+                    if( ErrorLog != string.Empty )
+                    {
+                        _CswNbtResources.logMessage( ErrorLog );
+                        SetStatusMessage( "Errors Occurred.  Check Log." );
                     }
 
                     _CswNbtResources.finalize();
 
-                } // if(FileName != string.Empty)
+                }//if-else we are in resume mode
+
             }
             catch( Exception ex )
             {

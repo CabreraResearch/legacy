@@ -54,13 +54,13 @@ namespace ChemSW.Nbt.ImportExport
         /// <param name="ViewXml">Will be filled with the exported view's XML as String </param>
         /// <param name="ResultXml">Will be filled with an XML Document record of new primary keys and references</param>
         /// <param name="ErrorLog">Will be filled with a summary of recoverable errors</param>
-        public void ImportXml( ImportMode IMode, XmlDocument XmlDoc, ref string ViewXml, ref XmlDocument ResultXml, ref string ErrorLog, CswNbtImportStatus CswNbtImportStatus )
-        {
-            string XmlResultString = string.Empty;
-            ImportXml( IMode, XmlDoc.InnerXml, ref ViewXml, ref XmlResultString, ref ErrorLog, CswNbtImportStatus );
-            ResultXml = new XmlDocument();
-            ResultXml.LoadXml( XmlResultString );
-        }
+        //public void ImportXml( ImportMode IMode, XmlDocument XmlDoc, ref string ViewXml, ref XmlDocument ResultXml, ref string ErrorLog, CswNbtImportStatus CswNbtImportStatus )
+        //{
+        //    string XmlResultString = string.Empty;
+        //    ImportXml( IMode, ref ViewXml, ref XmlResultString, ref ErrorLog, CswNbtImportStatus );
+        //    ResultXml = new XmlDocument();
+        //    ResultXml.LoadXml( XmlResultString );
+        //}
 
 
 
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.ImportExport
         {
             if( null != OnImportPhaseChange )
             {
-                OnImportPhaseChange( CswNbtImportStatus ); 
+                OnImportPhaseChange( CswNbtImportStatus );
             }
         }//_importPhaseChange
 
@@ -83,12 +83,12 @@ namespace ChemSW.Nbt.ImportExport
                 OnStatusUpdate( Msg );
         }
 
-        ICswImporter _CswImporter = null; 
+        ICswImporter _CswImporter = null;
         public void stopImport()
         {
-            if( null == _CswImporter )
+            if( null != _CswImporter )
             {
-                _CswImporter.stop(); 
+                _CswImporter.stop();
             }
         }//stopImport()
 
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.ImportExport
         /// <param name="ViewXml">Will be filled with the exported view's XML as String </param>
         /// <param name="ResultXml">Will be filled with an XML String record of new primary keys and references</param>
         /// <param name="ErrorLog">Will be filled with a summary of recoverable errors</param>
-        public void ImportXml( ImportMode IMode, string XmlStr, ref string ViewXml, ref string ResultXml, ref string ErrorLog, CswNbtImportStatus CswNbtImportStatus )
+        public void ImportXml( ImportMode IMode, CswNbtImportExportFrame CswNbtImportExportFrame, ref string ViewXml, ref string ResultXml, ref string ErrorLog, CswNbtImportStatus CswNbtImportStatus )
         {
             _StatusUpdate( "Starting Import" );
 
@@ -112,11 +112,10 @@ namespace ChemSW.Nbt.ImportExport
 
             _StatusUpdate( "Initializing Import Data" );
 
-            CswNbtImportExportFrame Frame = new CswNbtImportExportFrame( _CswNbtResources, XmlStr );
 
-            _CswImporter = CswImporterFactory.make( ImportAlgorithm.Experimental, _CswNbtResources, Frame, OnStatusUpdate, OnImportPhaseChange, CswNbtImportStatus );
+            _CswImporter = CswImporterFactory.make( ImportAlgorithm.Experimental, _CswNbtResources, CswNbtImportExportFrame, OnStatusUpdate, OnImportPhaseChange, CswNbtImportStatus );
 
-            _CswImporter.ImportXml( IMode, XmlStr, ref ViewXml, ref ResultXml, ref ErrorLog );
+            _CswImporter.ImportXml( IMode, ref ViewXml, ref ResultXml, ref ErrorLog );
 
 
 
@@ -742,7 +741,7 @@ namespace ChemSW.Nbt.ImportExport
             }
             else
             {
-				throw new CswDniException( ErrorType.Error, "Invalid Node import row", "ImportXml encountered a Node row with no nodetypeid or nodetypename" );
+                throw new CswDniException( ErrorType.Error, "Invalid Node import row", "ImportXml encountered a Node row with no nodetypeid or nodetypename" );
             }
             return NodeType;
         } // _decodeNodeType()
@@ -823,7 +822,7 @@ namespace ChemSW.Nbt.ImportExport
                     if( v % 10 == 1 )
                         _StatusUpdate( "Processing View: " + v.ToString() + " of " + ViewsTable.Rows.Count.ToString() );
 
-					CswNbtView View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( ViewRow["nodeviewid"] ) ) );
+                    CswNbtView View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( ViewRow["nodeviewid"] ) ) );
                     bool IncludeView = false;
                     foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
                         IncludeView = IncludeView || View.ContainsNodeType( NodeType );
@@ -912,9 +911,9 @@ namespace ChemSW.Nbt.ImportExport
         /// <param name="ForMobile">True if this export is for the mobile device</param>
         /// <param name="PropsInViewOnly">Include properties included in the view only</param>
         /// <returns>XmlDocument of all metadata, node, and property data from this view</returns>
-		public XmlDocument ExportView( CswNbtViewId ViewId, bool ForMobile, bool PropsInViewOnly )
+        public XmlDocument ExportView( CswNbtViewId ViewId, bool ForMobile, bool PropsInViewOnly )
         {
-			CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
+            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
             return ExportView( View, ForMobile, PropsInViewOnly );
         } // ExportView()
 

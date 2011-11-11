@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.ImportExport
         /// <param name="ViewXml">Will be filled with the exported view's XML as String </param>
         /// <param name="ResultXml">Will be filled with an XML String record of new primary keys and references</param>
         /// <param name="ErrorLog">Will be filled with a summary of recoverable errors</param>
-        public void ImportXml( ImportMode IMode, string XmlStr, ref string ViewXml, ref string ResultXml, ref string ErrorLog )
+        public void ImportXml( ImportMode IMode, ref string ViewXml, ref string ResultXml, ref string ErrorLog )
         {
             _CswImportExportStatusReporter.reportProgress( _StatusMessageDivider + "Starting Import -- Experimental" );
 
