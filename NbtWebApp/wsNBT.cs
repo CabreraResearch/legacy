@@ -1548,7 +1548,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string IsNodeTypeNameUnique( string NewInspectionName )
+        public string IsNodeTypeNameUnique( string NodeTypeName )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1558,7 +1558,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh();
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    ReturnVal["succeeded"] = wsTools.IsNodeTypeNameUnique( NewInspectionName, _CswNbtResources );
+                    ReturnVal["succeeded"] = wsTools.IsNodeTypeNameUnique( NodeTypeName, _CswNbtResources );
                 }
                 _deInitResources();
             }

@@ -185,11 +185,19 @@
                     ID: o.objectClassId + '_add',
                     enabledText: 'Add',
                     onclick: function () {
-                        o.$select.append('<option value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>')
-                                 .data('objectClassId', o.objectClassId)
-                                 .data('category', $category.val());
-                        o.$select.val($nodeType.val());
-                        $div.dialog('close');
+                        var newNodeTypeName = $nodeType.val();
+                        CswAjaxJson({
+                            url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
+                            async: false,
+                            data: { 'NodeTypeName': newNodeTypeName },
+                            success: function () {
+                                o.$select.append('<option value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>')
+                                         .data('objectClassId', o.objectClassId)
+                                         .data('category', $category.val());
+                                o.$select.val($nodeType.val());
+                                $div.dialog('close');
+                            }
+                        });
                     }
                 });
             openDialog($div, 300, 200, null, 'Create New Target Type, Group and Route for this Inspection.');

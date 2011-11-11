@@ -128,7 +128,7 @@
                 CswAjaxJson({
                     url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
                     async: false,
-                    data: { 'NewInspectionName': inspectionName },
+                    data: { 'NodeTypeName': inspectionName },
                     error: function (error) {
                         isUnique = false;
                         $wizard.CswWizard('button', 'next', 'disable');
