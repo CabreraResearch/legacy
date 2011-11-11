@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ImportExport
     public enum ImportProcessStati { Unprocessed, Imported, PropsAdded, RedundancyChecked, Error };
     public enum ImportSource { ImportData, Deduced }
     public enum PhaseTypes { Incremental, Monolithic }
-    public enum ProcessStates { InProcess, Complete }
+    public enum ProcessStates { Unknown, InProcess, Complete }
     public class CswNbtImportStatus
     {
 
@@ -32,6 +32,18 @@ namespace ChemSW.Nbt.ImportExport
             _CswNbtResources = CswNbtResources;
             _CswNbtPersistedImportState = new CswNbtPersistedImportState( CswNbtResources );
         }//ctor
+
+
+        public void reset()
+        {
+            _ObjectsTotal = 0;
+            _ObjectsCompletedSofar = 0;
+
+            ProcessState = ProcessStates.Unknown;
+            _TargetProcessPhase = ImportProcessPhase.NothingDoneYet;
+
+            _CswNbtPersistedImportState.reset(); 
+        }
 
         public void setStatus( ImportProcessPhase TargetProcessPhase, Int32 TotalObjects, Int32 ObjectsSofar, ProcessStates ProcessStateIn )
         {
@@ -161,6 +173,10 @@ namespace ChemSW.Nbt.ImportExport
 
                     case ImportProcessPhase.PostProcessingNbtNodes:
                         ReturnVal = _count + " nodes post-processed";
+                        break;
+
+                    case ImportProcessPhase.Completed:
+                        ReturnVal = "Import is complete. congratulations!";
                         break;
 
                     default:

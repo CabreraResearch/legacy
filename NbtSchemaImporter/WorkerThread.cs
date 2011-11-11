@@ -91,9 +91,11 @@ namespace ChemSW.Nbt.Schema
         private void _InitSessionResources()
         {
             _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, SetupMode.NbtExe, false, false );
+            _CswNbtImportStatus = new CswNbtImportStatus( _CswNbtResources );
+            _CswNbtImportExport = new CswNbtImportExport( _CswNbtResources, _CswNbtImportStatus );
             _CswLogger = _CswNbtResources.CswLogger;
             _CswNbtResources.InitCurrentUser = InitUser;
-            _CswNbtImportStatus = new CswNbtImportStatus( _CswNbtResources );
+
         }//constructor
 
         private bool _ResourcesAreInitted
@@ -192,18 +194,24 @@ namespace ChemSW.Nbt.Schema
         }//stopImport()
 
 
+        public void reset()
+        {
+            _CswNbtImportExport.reset();
+        }
+
+
+
         CswNbtImportExport _CswNbtImportExport = null;
         private string _FilePath = string.Empty;
         public delegate void ImportHandler( string FilePath, ImportMode ImportMode, bool ResumeMode ); //, bool ClearExisting );
         public void DoImport( string FilePath, ImportMode ImportMode, bool ResumeMode ) //, bool ClearExisting )
         {
 
-            //            _FilePath = FilePath;
+            _FilePath = FilePath;
             _CswNbtImportStatus.Mode = ImportMode;
 
             try
             {
-                _CswNbtImportExport = new CswNbtImportExport( _CswNbtResources );
 
                 _CswNbtImportExport.OnStatusUpdate += new StatusUpdateHandler( SetStatusMessage );
                 _CswNbtImportExport.OnImportPhaseChange += new ImportPhaseHandler( setImportPhase );
@@ -213,6 +221,7 @@ namespace ChemSW.Nbt.Schema
                 string ErrorLog = string.Empty;
                 string FileContents = string.Empty;
                 CswNbtImportExportFrame CswNbtImportExportFrame = null;
+
 
 
                 if( false == ResumeMode )
@@ -227,9 +236,9 @@ namespace ChemSW.Nbt.Schema
                             FileContents = FileSR.ReadToEnd();
                             FileStream.Close();
 
-                             CswNbtImportExportFrame = new CswNbtImportExportFrame( _CswNbtResources, FileContents );
+                            CswNbtImportExportFrame = new CswNbtImportExportFrame( _CswNbtResources, FileContents );
 
-                            _CswNbtImportExport.ImportXml( _CswNbtImportStatus.Mode, CswNbtImportExportFrame, ref ViewXml, ref ResultXml, ref ErrorLog, _CswNbtImportStatus );
+                            _CswNbtImportExport.ImportXml( _CswNbtImportStatus.Mode, CswNbtImportExportFrame, ref ViewXml, ref ResultXml, ref ErrorLog );
 
                             if( ErrorLog != string.Empty )
                             {
@@ -258,7 +267,7 @@ namespace ChemSW.Nbt.Schema
                 {
 
 
-                    _CswNbtImportExport.ImportXml( _CswNbtImportStatus.Mode, null, ref ViewXml, ref ResultXml, ref ErrorLog, _CswNbtImportStatus );
+                    _CswNbtImportExport.ImportXml( _CswNbtImportStatus.Mode, null, ref ViewXml, ref ResultXml, ref ErrorLog );
 
                     if( ErrorLog != string.Empty )
                     {
@@ -283,7 +292,7 @@ namespace ChemSW.Nbt.Schema
         {
             try
             {
-                CswNbtImportExport Exporter = new CswNbtImportExport( _CswNbtResources );
+                CswNbtImportExport Exporter = new CswNbtImportExport( _CswNbtResources, new CswNbtImportStatus( _CswNbtResources ) );
                 Exporter.OnStatusUpdate += new StatusUpdateHandler( SetStatusMessage );
 
                 XmlDocument ExportXml = Exporter.ExportAll( SelectedNodeTypes, ExportViews, ExportNodes );

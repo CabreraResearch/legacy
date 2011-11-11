@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Schema
             //DataFileSelectBox.ValueMember = WorkerThread.ColName_DataFileFullName;
             //DataFileSelectBox.DisplayMember = WorkerThread.ColName_DataFileName;
 
-            ConfirmCheckbox.CheckedChanged += new EventHandler( ConfirmCheckbox_CheckedChanged );
+            //ConfirmCheckbox.CheckedChanged += new EventHandler( ConfirmCheckbox_CheckedChanged );
 
             _initModeComboBox();
 
@@ -97,6 +97,7 @@ namespace ChemSW.Nbt.Schema
             if( _CswNbtImportStatus.CompletedProcessPhase == ImportProcessPhase.NothingDoneYet )
             {
                 ImportButton.Text = ImportButtonState.Start.ToString();
+                ImportButton.Enabled = true;
 
             }
             else
@@ -107,6 +108,8 @@ namespace ChemSW.Nbt.Schema
                 if( _CswNbtImportStatus.CompletedProcessPhase != ImportProcessPhase.Completed )
                 {
                     ImportButton.Text = ImportButtonState.Resume.ToString();
+                    ImportButton.Enabled = true;
+
                 }
                 else
                 {
@@ -220,7 +223,7 @@ namespace ChemSW.Nbt.Schema
 
         void ConfirmCheckbox_CheckedChanged( object sender, EventArgs e )
         {
-            ImportButton.Enabled = ConfirmCheckbox.Checked;
+            //ImportButton.Enabled = ConfirmCheckbox.Checked;
         } // ConfirmCheckbox_CheckedChanged()
 
 
@@ -234,38 +237,57 @@ namespace ChemSW.Nbt.Schema
 
             if( ImportButtonState.Start.ToString() == ImportButton.Text )
             {
-                if( _DataFilePath != string.Empty )
+
+                if( MessageBox.Show( "You are about to begin importing data into schema " + ExportSchemaSelectBox.Text + "; this action is irreversable. Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
                 {
-                    //ImportButton.Enabled = false;
-                    ImportButton.Text = ImportButtonState.Stop.ToString();
+
+                    if( _DataFilePath != string.Empty )
+                    {
+                        //ImportButton.Enabled = false;
+                        ImportButton.Text = ImportButtonState.Stop.ToString();
 
 
-                    ImportInProgressLabel.Visible = true;
-                    ImportInProgressLabel.Refresh();
+                        //ImportInProgressLabel.Visible = true;
+                        //ImportInProgressLabel.Refresh();
 
-                    //string DataFileName = DataFileSelectBox.SelectedText;
-                    //bool ClearExisting = ClearExistingCheckBox.Checked;
-                    ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
+                        //string DataFileName = DataFileSelectBox.SelectedText;
+                        //bool ClearExisting = ClearExistingCheckBox.Checked;
+                        ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
 
-                    WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
-                    ImportHandler.BeginInvoke( _DataFilePath, Mode, false, new AsyncCallback( ImportButton_Callback ), null );
-                }
-                else
-                {
-                    _AddStatusMsg( "Error: You must choose a file to import" );
-                }
+                        WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
+                        ImportHandler.BeginInvoke( _DataFilePath, Mode, false, new AsyncCallback( ImportButton_Callback ), null );
+                    }
+                    else
+                    {
+                        _AddStatusMsg( "Error: You must choose a file to import" );
+                    }
+                }//if the user took responsibility for his actions
             }
             else if( ImportButtonState.Resume.ToString() == ImportButton.Text )
             {
-                ImportButton.Text = ImportButtonState.Stop.ToString();
-                ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
+                if( MessageBox.Show( "You are about resume importing data into schema " + ExportSchemaSelectBox.Text + "; this action is irreversable. Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+                {
+                    ImportButton.Text = ImportButtonState.Stop.ToString();
+                    ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
 
-                WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
-                ImportHandler.BeginInvoke( _DataFilePath, Mode, true, new AsyncCallback( ImportButton_Callback ), null );
+                    WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
+                    ImportHandler.BeginInvoke( _DataFilePath, Mode, true, new AsyncCallback( ImportButton_Callback ), null );
+                }
             }
             else if( ImportButtonState.Stop.ToString() == ImportButton.Text )
             {
-                _WorkerThread.stopImport();
+                if( _CswNbtImportStatus.CompletedProcessPhase != ImportProcessPhase.PopulatingTempTableProps )
+                {
+
+                    if( MessageBox.Show( "You are about to halt the import process. You will be able to resume the process later. Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+                    {
+                        _WorkerThread.stopImport();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show( "You cannot halt the import process until after temporary tables are created", "Do Import", MessageBoxButtons.OK );
+                }
             }//if-else-if on importbutton state
 
 
@@ -273,15 +295,15 @@ namespace ChemSW.Nbt.Schema
 
         private void ImportButton_Callback( IAsyncResult Result )
         {
-            ImportInProgressLabel.BeginInvoke( new MethodInvoker( _EndImport ), null );
+            //ImportInProgressLabel.BeginInvoke( new MethodInvoker( _EndImport ), null );
         }
         private void _EndImport()
         {
-            ImportInProgressLabel.Visible = false;
-            ImportInProgressLabel.Refresh();
-            ImportCompleteLabel.Visible = true;
-            ImportCompleteLabel.Refresh();
-            ConfirmCheckbox.Checked = false;
+            //ImportInProgressLabel.Visible = false;
+            //ImportInProgressLabel.Refresh();
+            //ImportCompleteLabel.Visible = true;
+            //ImportCompleteLabel.Refresh();
+            //ConfirmCheckbox.Checked = false;
         } // ImportButton_Callback
 
         private void ExportButton_Click( object sender, EventArgs e )
@@ -374,6 +396,16 @@ namespace ChemSW.Nbt.Schema
                     ModeComboBox.SelectedItem = ImportMode.Duplicate.ToString();
                     break;
             }
+        }
+
+        private void btn_ResetSchema_Click( object sender, EventArgs e )
+        {
+            if( MessageBox.Show( "Remove temporary import tables and reset the import status on schema " + ExportSchemaSelectBox.Text  + "; Proceed? ", "Reset", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+            {
+                _WorkerThread.reset();
+                _refreshStatus(); 
+            }
+
         } // FileTypeSelectBox_OnChange
 
 

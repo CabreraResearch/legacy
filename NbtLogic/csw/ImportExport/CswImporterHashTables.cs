@@ -107,6 +107,7 @@ namespace ChemSW.Nbt.ImportExport
         }
 
 
+        public void reset() { throw ( new NotImplementedException() ); }
         public void stop() { throw ( new NotImplementedException() ); }
 
         public event StatusUpdateHandler OnStatusUpdate = null;

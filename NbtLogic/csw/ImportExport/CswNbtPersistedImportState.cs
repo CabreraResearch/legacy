@@ -25,6 +25,22 @@ namespace ChemSW.Nbt.ImportExport
             _CswNbtResources = CswNbtResources;
         }//ctor
 
+
+        public void reset()
+        {
+            foreach( _ConfigVarNames CurrentConfigVarEnum in Enum.GetValues( typeof( _ConfigVarNames ) ) )
+            {
+                string CurrentConfigVarName = _prefixConfigVarName( CurrentConfigVarEnum.ToString() ); 
+                if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CurrentConfigVarName ) ) 
+                {
+                    _CswNbtResources.ConfigVbls.setConfigVariableValue( CurrentConfigVarName, string.Empty );
+                }//if the config var is defined
+
+            }//iterate config vars
+
+        }//reset() 
+
+
         private string _prefixConfigVarName( string VariableName )
         {
 

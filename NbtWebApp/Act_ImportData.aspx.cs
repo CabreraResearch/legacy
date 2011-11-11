@@ -415,8 +415,8 @@ namespace ChemSW.Nbt.WebPages
 
         private void _DoImport( ImportMode ImportMode, string ImportXml )
         {
-            CswNbtImportExport Importer = new CswNbtImportExport( Master.CswNbtResources );
             CswNbtImportStatus CswNbtImportStatus = new ImportExport.CswNbtImportStatus( Master.CswNbtResources );
+            CswNbtImportExport Importer = new CswNbtImportExport( Master.CswNbtResources, CswNbtImportStatus );
 
 
             string ResultXml = string.Empty;
@@ -424,7 +424,7 @@ namespace ChemSW.Nbt.WebPages
             string ViewXml = string.Empty;
 
 
-            Importer.ImportXml( ImportMode, new CswNbtImportExportFrame( Master.CswNbtResources, ImportXml ), ref ViewXml, ref ResultXml, ref ErrorLog, CswNbtImportStatus );
+            Importer.ImportXml( ImportMode, new CswNbtImportExportFrame( Master.CswNbtResources, ImportXml ), ref ViewXml, ref ResultXml, ref ErrorLog );
 
             if( ErrorLog != string.Empty )
             {
