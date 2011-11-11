@@ -297,8 +297,12 @@ var CswSubFields_Map = {
 };
 
 var CswInspectionDesign_WizardSteps = {
-    step1: { step: 1, description: 'Upload Inspection Design' },
-    step2: { step: 2, description: 'Preview and Edit Design' },
-    step3: { step: 3, description: 'Create Inspection Schedules' },
-    stepcount: 3
+    step1: { step: 1, description: 'Select or Create an Inspection Design' },
+    step2: { step: 2, description: 'Upload Inspection Design Template' },
+    step3: { step: 3, description: 'Review and Revise Inspection Design' },
+    step4: { step: 4, description: 'Select or Add an Inspection Target' },
+    step5: { step: 5, description: 'Review and Add Inspection Target Groups' },
+    step6: { step: 6, description: 'Create Inspection Schedules' },
+    step7: { step: 7, description: 'Review Inspection Design Results' },
+    stepcount: 7
 };

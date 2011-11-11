@@ -26,7 +26,11 @@
         var wizardSteps = {
             1: CswInspectionDesign_WizardSteps.step1.description,
             2: CswInspectionDesign_WizardSteps.step2.description,
-            3: CswInspectionDesign_WizardSteps.step3.description
+            3: CswInspectionDesign_WizardSteps.step3.description,
+            4: CswInspectionDesign_WizardSteps.step4.description,
+            5: CswInspectionDesign_WizardSteps.step5.description,
+            6: CswInspectionDesign_WizardSteps.step6.description,
+            7: CswInspectionDesign_WizardSteps.step7.description
         };
 
         //var currentStep = o.startingStep;
