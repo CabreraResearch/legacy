@@ -165,7 +165,8 @@
             var o = {
                 objectClassId: '', 
                 $select: '',
-                nodeTypeDescriptor: ''
+                nodeTypeDescriptor: '',
+                onSuccess: null
             };
 
             if (options) {
@@ -191,11 +192,14 @@
                             async: false,
                             data: { 'NodeTypeName': newNodeTypeName },
                             success: function () {
-                                o.$select.append('<option value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>')
+                                o.$select.append('<option data-newNodeType="true" value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>')
                                          .data('objectClassId', o.objectClassId)
                                          .data('category', $category.val());
                                 o.$select.val($nodeType.val());
                                 $div.dialog('close');
+                                if(isFunction(o.onSuccess)) {
+                                    o.onSuccess();
+                                }
                             }
                         });
                     }
