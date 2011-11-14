@@ -169,7 +169,7 @@ namespace ChemSW.Nbt
             }
             set
             {
-                if( value != null )
+				if( value != null && value.PrimaryKey != Int32.MinValue )
                     _RootString[11] = value.ToString();
                 else
                     _RootString[11] = string.Empty;
@@ -191,10 +191,10 @@ namespace ChemSW.Nbt
             }
             set
             {
-                if( value != null )
-                    _RootString[12] = value.ToString();
-                else
-                    _RootString[12] = string.Empty;
+				if( value != null && value.PrimaryKey != Int32.MinValue )
+					_RootString[12] = value.ToString();
+				else
+					_RootString[12] = string.Empty;
             }
         } // VisibilityUserId
 
