@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
+        private readonly string _InspectionGroupViewName = "IDW Inspection Target Group View";
         private readonly CswCommaDelimitedString _ColumnNames = new CswCommaDelimitedString()
                                                            {
                                                                "Section",
@@ -27,7 +28,7 @@ namespace ChemSW.Nbt.WebServices
                                                                "Compliant Answers",
                                                                "Help Text"
                                                            };
-        
+
         public void AddPrimaryKeys( ref DataTable myDataTable )
         {
             if( myDataTable.Columns["RowNumber"] == null )
@@ -205,67 +206,84 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
-        public JObject getInspectionTargetGroupView( string InspectionTargetName )
+        public JObject getInspectionTargetGroupNodes( string InspectionTargetName )
         {
             JObject RetObj = new JObject();
-            if( string.IsNullOrEmpty( InspectionTargetName ) )
-            {
-                throw new CswDniException( ErrorType.Warning, "Inspection Target's name was not specified", "InspectionTargetName was null or empty" );
-            }
-
-            CswNbtView InspectionScheduleView = null;
-
-            RetObj["succeeded"] = "false";
             CswNbtMetaDataNodeType InspectionTargetNT = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
             if( null == InspectionTargetNT )
             {
-                //we'll create it on Finish, we'll build the schedules manually client-side
+                //This is a new InspectionTarget
+                RetObj["groupcount"] = "0";
                 RetObj["succeeded"] = "true";
-                RetObj["noview"] = "true";
             }
             else
             {
+                RetObj["succeeded"] = "false";
                 if( InspectionTargetNT.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass )
                 {
                     throw new CswDniException( ErrorType.Error, "Cannot create an inspection on a " + InspectionTargetName, "Attempted to create an inspection on a nodetype of class " + InspectionTargetNT.ObjectClass.ObjectClass.ToString() );
                 }
-                CswNbtMetaDataNodeTypeProp InTargetGroupNTP = InspectionTargetNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
-                if( InTargetGroupNTP.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                CswNbtView InspectionScheduleView = _getInspectionTargetGroupView( InspectionTargetNT, true );
+                if( null != InspectionScheduleView )
                 {
-                    CswNbtMetaDataNodeType InTargetGroupNT = _CswNbtResources.MetaData.getNodeType( InTargetGroupNTP.FKValue );
-                    if( null != InTargetGroupNT && InTargetGroupNT.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass )
+                    RetObj["succeeded"] = "true";
+                    ICswNbtTree GroupTree = _CswNbtResources.Trees.getTreeFromView( InspectionScheduleView, true, true, true, false );
+                    RetObj["groupcount"] = GroupTree.getChildNodeCount().ToString();
+
+                    JArray GroupNodeNames = new JArray();
+                    RetObj["groupnodenames"] = GroupNodeNames;
+                    if( GroupTree.getChildNodeCount() > 0 )
                     {
-                        CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-                        foreach( CswNbtMetaDataNodeType GeneratorNt in GeneratorOC.NodeTypes )
+                        for( Int32 Child = 0; Child < GroupTree.getChildNodeCount(); Child += 1 )
                         {
-                            CswNbtMetaDataNodeTypeProp OwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
-                            if( OwnerNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
-                                OwnerNtp.FKValue == InTargetGroupNT.NodeTypeId )
+                            GroupTree.goToNthChild( Child );
+                            CswNbtNode GroupNode = GroupTree.getNodeForCurrentPosition();
+                            if( null != GroupNode )
                             {
-                                InspectionScheduleView = new CswNbtView( _CswNbtResources );
-                                InspectionScheduleView.Visibility = NbtViewVisibility.User;
-                                InspectionScheduleView.VisibilityUserId = _CswNbtResources.CurrentNbtUser.UserId;
-                                InspectionScheduleView.ViewName = InspectionTargetName + " Schedule View";
-                                InspectionScheduleView.ViewMode = NbtViewRenderingMode.Tree;
-
-                                CswNbtViewRelationship IpGroupRelationship = InspectionScheduleView.AddViewRelationship( InTargetGroupNT, false );
-                                InspectionScheduleView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, OwnerNtp, false );
-
-                                InspectionScheduleView.SaveToCache( false );
-
-                                RetObj["succeeded"] = "true";
-                                RetObj["viewid"] = InspectionScheduleView.SessionViewId.ToString();
+                                GroupNodeNames.Add( GroupNode.NodeName );
                             }
                         }
                     }
                 }
-                else if( InTargetGroupNTP.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
-                {
-                    //tough cookies for now
-                }
             }
+
             return RetObj;
         }
 
+        private CswNbtView _getInspectionTargetGroupView( CswNbtMetaDataNodeType InspectionTargetNT, bool CacheView )
+        {
+            CswNbtView RetView = null;
+            CswNbtMetaDataNodeTypeProp InTargetGroupNTP = InspectionTargetNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+            if( InTargetGroupNTP.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+            {
+                CswNbtMetaDataNodeType InTargetGroupNT = _CswNbtResources.MetaData.getNodeType( InTargetGroupNTP.FKValue );
+                if( null != InTargetGroupNT && InTargetGroupNT.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass )
+                {
+                    RetView = new CswNbtView( _CswNbtResources );
+                    CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InTargetGroupNT, false );
+
+                    CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+                    foreach( CswNbtMetaDataNodeType GeneratorNt in GeneratorOC.NodeTypes )
+                    {
+                        CswNbtMetaDataNodeTypeProp OwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
+                        if( OwnerNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
+                            OwnerNtp.FKValue == InTargetGroupNT.NodeTypeId )
+                        {
+                            RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, OwnerNtp, false );
+                        }
+                    }
+                    if( CacheView )
+                    {
+                        RetView.ViewName = _InspectionGroupViewName;
+                        RetView.SaveToCache( false );
+                    }
+                }
+            }
+            else if( InTargetGroupNTP.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+            {
+                //tough cookies for now
+            }
+            return RetView;
+        }
     }
 }

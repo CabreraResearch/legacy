@@ -122,21 +122,20 @@
             var ret;
             switch (button) {
                 case 'previous':
-                    ret = $('#' + $table.CswAttrDom('id') + '_prev')
-                                        .CswButton(action);
+                    ret = $('#' + $table.CswAttrDom('id') + '_prev');
                     break;
                 case 'next':
-                    ret = $('#' + $table.CswAttrDom('id') + '_next')
-                                        .CswButton(action);
+                    ret = $('#' + $table.CswAttrDom('id') + '_next');
                     break;
                 case 'finish':
-                    ret = $('#' + $table.CswAttrDom('id') + '_finish')
-                                        .CswButton(action);
+                    ret = $('#' + $table.CswAttrDom('id') + '_finish');
                     break;
                 case 'cancel':
-                    ret = $('#' + $table.CswAttrDom('id') + '_cancel')
-                                        .CswButton(action);
+                    ret = $('#' + $table.CswAttrDom('id') + '_cancel');
                     break;
+            }
+            if (false === isNullOrEmpty(ret, true)) {
+                ret.CswButton(action);
             }
             return ret;
         }

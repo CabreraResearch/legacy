@@ -753,6 +753,7 @@
     <Content Include="js\main\actions\CswSessions.js" />
     <Content Include="js\main\actions\CswQuotaImage.js" />
     <Content Include="js\main\actions\CswQuotas.js" />
+    <Content Include="js\main\controls\CswList.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
     <Content Include="Scripts\jquery.jqGrid.src.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />

@@ -3070,8 +3070,6 @@ namespace ChemSW.Nbt.WebServices
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
 
-            Int32 NumRowsImported = 0;
-
             try
             {
                 _initResources();
@@ -3195,7 +3193,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getInspectionTargetGroupView( string InspectionTargetName )
+        public string getInspectionTargetGroupNodes( string InspectionTargetName )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3207,7 +3205,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswWebServiceInspectionDesign( _CswNbtResources );
-                    ReturnVal = ws.getInspectionTargetGroupView( InspectionTargetName );
+                    ReturnVal = ws.getInspectionTargetGroupNodes( InspectionTargetName );
                 }
 
                 _deInitResources();

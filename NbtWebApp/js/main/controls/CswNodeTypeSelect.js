@@ -34,7 +34,17 @@
                     success: function (data) {
                         //Case 24155
                         each(data, function(thisNodeType) {
-                            $select.append('<option value="' + thisNodeType.id + '">' + thisNodeType.name + '</option>');
+                            var id = thisNodeType.id,
+                                name = thisNodeType.name,
+                                $thisOpt;
+                            delete thisNodeType.id;
+                            delete thisNodeType.name;
+
+                            $thisOpt = $('<option value="' + id + '">' + name + '</option>');
+                            each(thisNodeType, function(value, key) {
+                                $thisOpt.CswAttrXml(key, value);
+                            });
+                            $select.append($thisOpt);
                         });
                         if (isFunction(o.onSuccess)) {
                             o.onSuccess();

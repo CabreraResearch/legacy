@@ -49,7 +49,7 @@
         // Step 4 - Select or Create Inspection Target
             $divStep4, selectedInspectionTarget, $inspectionTarget,
         // Step 5 - Add new Inspection Target Groups
-            $divStep5,
+            $divStep5, inspectionTargetGroups = {}, newInspectionTargetGroups = {},
         // Step 6 - Add new Inspection Schedules
             $divStep6,
         // Step 7 - Preview Results
@@ -62,18 +62,10 @@
                     $wizard.CswWizard('button', 'previous', 'disable').hide();
                     $wizard.CswWizard('button', 'finish', 'disable').hide();
 
-                    var $inspectionTable,
+                    var $inspectionTable, $selected,
                         $nextBtn = $wizard.CswWizard('button', 'next', 'enable');
 
                     if (false === stepOneComplete) {
-                        $nextBtn.bind('click', function () {
-                            if (currentStepNo = CswInspectionDesign_WizardSteps.step1.step) {
-                                selectedInspectionName = $inspectionDesign.val();
-                                isNewInspectionDesign = isTrue($inspectionDesign.CswAttrXml('data-newNodeType'));
-                                excludeInspectionTargetId = +($inspectionDesign.CswAttrXml('targetnodetypeid'));
-                            }
-                        });
-
                         $divStep1 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step1.step);
                         $divStep1.append('<br />');
 
@@ -86,8 +78,13 @@
                         $inspectionDesign = $inspectionTable.CswTable('cell', 1, 2)
                                                 .CswDiv('init')
                                                 .CswNodeTypeSelect('init', {
-                                                    ID: 'step2_nodeTypeSelect',
-                                                    objectClassName: 'InspectionDesignClass'
+                                                    ID: o.ID + '_step2_nodeTypeSelect',
+                                                    objectClassName: 'InspectionDesignClass',
+                                                    onChange: function () {
+                                                        var $this = $(this);
+                                                        $selected = $this.find(':selected');
+                                                        isNewInspectionDesign = isTrue($selected.CswAttrXml('data-newNodeType'));
+                                                    }
                                                 });
 
                         $inspectionTable.CswTable('cell', 1, 3)
@@ -95,12 +92,13 @@
                             .CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
                                 AlternateText: "Create New Inspection Design",
                                 onClick: function () {
+                                    $selected = $inspectionDesign.find(':selected');
                                     $.CswDialog('AddNodeTypeDialog', {
-                                        objectclassid: $inspectionDesign.find(':selected').data('objectClassId'),
+                                        objectclassid: +($selected.CswAttrXml('objectclassid')),
                                         $select: $inspectionDesign,
                                         nodeTypeDescriptor: 'Inspection Design Type',
                                         onSucess: function () {
-
+                                            isNewInspectionDesign = true;
                                         },
                                         title: 'Create a New Inspection Design.'
                                     });
@@ -118,9 +116,14 @@
 
                 return function (forward) {
 
-                    var $prevBtn = $wizard.CswWizard('button', 'previous', 'enable').show();
                     $wizard.CswWizard('button', 'next', (gridIsPopulated) ? 'enable' : 'disable');
-                    var $fileUploadBtn;
+                    var $prevBtn = $wizard.CswWizard('button', 'previous', 'enable').show();
+                    var $fileUploadBtn,
+                        $selected = $inspectionDesign.find(':selected');
+
+                    selectedInspectionName = $selected.val();
+                    isNewInspectionDesign = isTrue($selected.CswAttrXml('data-newNodeType'));
+                    excludeInspectionTargetId = +($selected.CswAttrXml('targetnodetypeid'));
 
                     if (false === isNewInspectionDesign) {
                         if (forward) {
@@ -261,8 +264,8 @@
                 return function () {
                     $wizard.CswWizard('button', 'previous', 'enable').show();
 
-                    var $inspectionTable,
-                        $nextBtn = $wizard.CswWizard('button', 'next', 'enable').show();
+                    var $inspectionTable, $addNewTarget,
+                        $nextBtn = $wizard.CswWizard('button', 'next', 'disable').show();
 
 
                     if (false === stepFourComplete) {
@@ -288,8 +291,15 @@
                                                                 objectClassName: 'InspectionTargetClass',
                                                                 excludeNodeTypeIds: excludeInspectionTargetId
                                                             });
-
-                        $inspectionTable.CswTable('cell', 1, 3)
+                        if ($inspectionTarget.children().length === 0) {
+                            $inspectionTarget.hide();
+                            $addNewTarget = $inspectionTable.CswTable('cell', 1, 3)
+                                                            .CswDiv('init', { value: '[Add a new Inspection Target]' })
+                                                            .css({ 'padding': '5px', 'vertical-align': 'middle' });
+                        } else {
+                            $nextBtn.CswButton('enable');
+                        }
+                        $inspectionTable.CswTable('cell', 1, 4)
                             .CswDiv('init')
                             .CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
                                 AlternateText: "Create New Inspection Target",
@@ -298,8 +308,12 @@
                                         objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
                                         $select: $inspectionTarget,
                                         nodeTypeDescriptor: 'Inspection Target Type',
-                                        onSucess: function () {
-
+                                        onSuccess: function () {
+                                            $inspectionTarget.show();
+                                            if (false === isNullOrEmpty($addNewTarget)) {
+                                                $addNewTarget.remove();
+                                            }
+                                            $nextBtn.CswButton('enable');
                                         },
                                         title: 'Create a New Inspection Target Type.'
                                     });
@@ -316,10 +330,72 @@
 
                 return function () {
                     $wizard.CswWizard('button', 'previous', 'enable');
-                    $wizard.CswWizard('button', 'next', 'enable').text('Next'); //In case we come back from step 6
+                    var $nextBtn = $wizard.CswWizard('button', 'next', 'disable').text('Next'); //In case we come back from step 6
+
+                    selectedInspectionTarget = $inspectionTarget.find(':selected').val();
 
                     if (false === stepFiveComplete) {
                         $divStep5 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step5.step);
+
+                        CswAjaxJson({
+                            url: '/NbtWebApp/wsNBT.asmx/getInspectionTargetGroupNodes',
+                            data: { InspectionTargetName: selectedInspectionTarget },
+                            success: function (data) {
+                                var groupCount = +(data.groupcount),
+                                    groupNodes = data.groupnodenames,
+                                    $addTable, $list, $addName, $addBtn;
+
+                                if (groupCount > 0) {
+                                    $nextBtn.CswButton('enable');
+                                }
+
+                                $divStep5.append('<p>Inspection Target Groups: </p>');
+                                $list = $divStep5.CswList('init', {
+                                    ID: o.ID + '_targetGroupList'
+                                });
+
+                                each(groupNodes, function (name) {
+                                    inspectionTargetGroups[name] = { name: name };
+                                    $list.CswList('addItem', { value: name });
+                                });
+
+                                $divStep5.append('<br />');
+                                $addTable = $divStep5.CswTable();
+                                $addTable.CswTable('cell', 1, 1)
+                                        .CswDiv('init', { value: 'Add a new Inspection Target Group:' })
+                                        .css({ 'padding': '5px', 'vertical-align': 'middle' });
+                                $addName = $addTable.CswTable('cell', 1, 2)
+                                                    .CswInput('init', {
+                                                        ID: o.ID + '_newInspectionGroupName',
+                                                        type: CswInput_Types.text
+                                                    })
+                                                    .css({ 'padding': '5px', 'vertical-align': 'middle' });
+                                $addTable.CswTable('cell', 1, 3)
+                                        .CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
+                                            AlternateText: 'Add New Inspection Target Group',
+                                            onClick: function () {
+                                                var newGroup = $addName.val();
+                                                if (false === isNullOrEmpty(newGroup) &&
+                                                    false === contains(inspectionTargetGroups, newGroup) &&
+                                                    false === contains(newInspectionTargetGroups, newGroup)) {
+
+                                                    newInspectionTargetGroups[newGroup] = { name: newGroup };
+                                                    $list.CswList('addItem', {
+                                                        value: newGroup + ' (NEW)'
+                                                    });
+                                                    $addName.val('');
+                                                    $nextBtn.CswButton('enable');
+                                                }
+                                                return CswImageButton_ButtonType.None;
+                                            }
+                                        })
+                                        .css({ 'padding': '5px', 'vertical-align': 'middle' });
+                            },
+                            error: function (error) {
+                                //$.CswDialog('ErrorDialog', error);
+                            }
+                        });
+                        stepFiveComplete = true;
                     }
                 };
             } ()),
@@ -333,6 +409,11 @@
 
                     if (false === stepSixComplete) {
                         $divStep6 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step6.step);
+
+
+                        
+                        
+                        stepSixComplete = true;
                     }
                 };
             } ()),

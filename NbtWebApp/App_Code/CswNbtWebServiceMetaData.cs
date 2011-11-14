@@ -60,6 +60,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
                     CswNbtMetaDataNodeTypeProp InspectionTargetNTP = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+                    ReturnVal[NtName]["targetnodetypeid"] = InspectionTargetNTP.FKValue.ToString();
                     if( InspectionTargetNTP.FKType == CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString() )
                     {
                         ReturnVal[NtName]["targetnodetypeid"] = InspectionTargetNTP.FKValue.ToString();
