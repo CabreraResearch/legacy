@@ -41,13 +41,19 @@
             currentStepNo = 0,
 
         // Step 1 - Select or Create Inspection Design
-            $divStep1, selectedInspectionName, $inspectionDesign,
+            $divStep1, selectedInspectionName, $inspectionDesign, excludeInspectionTargetId,
         // Step 2 - Upload Inspection Design
             $divStep2, gridIsPopulated = false,
         // Step 3 - Review and Revise Inspection Design
             $divStep3, inspectionGrid,
         // Step 4 - Select or Create Inspection Target
-            $divStep4, selectedInspectionTarget, $inspectionName,
+            $divStep4, selectedInspectionTarget, $inspectionTarget,
+        // Step 5 - Add new Inspection Target Groups
+            $divStep5,
+        // Step 6 - Add new Inspection Schedules
+            $divStep6,
+        // Step 7 - Preview Results
+            $divStep7,
 
             makeStepOne = (function () {
                 var stepOneComplete = false;
@@ -64,6 +70,7 @@
                             if (currentStepNo = CswInspectionDesign_WizardSteps.step1.step) {
                                 selectedInspectionName = $inspectionDesign.val();
                                 isNewInspectionDesign = isTrue($inspectionDesign.CswAttrXml('data-newNodeType'));
+                                excludeInspectionTargetId = +($inspectionDesign.CswAttrXml('targetnodetypeid'));
                             }
                         });
 
@@ -81,7 +88,7 @@
                                                 .CswNodeTypeSelect('init', {
                                                     ID: 'step2_nodeTypeSelect',
                                                     objectClassName: 'InspectionDesignClass',
-                                                    width: $inspectionName.css('width')
+                                                    width: $inspectionTarget.css('width')
                                                 });
 
                         $inspectionTable.CswTable('cell', 1, 3)
@@ -109,14 +116,20 @@
             makeStepTwo = (function () {
                 var stepTwoComplete = false;
 
-                return function () {
+                return function (forward) {
 
                     $wizard.CswWizard('button', 'previous', 'disable');
                     $wizard.CswWizard('button', 'next', (gridIsPopulated) ? 'enable' : 'disable');
-
                     var $fileUploadBtn;
 
-                    if (false === stepTwoComplete && isNewInspectionDesign) {
+                    if (false === isNewInspectionDesign) {
+                        if (forward) {
+                            $wizard.CswWizard('button', 'next', 'enable').click();
+                        } else {
+                            $wizard.CswWizard('button', 'previous', 'enable').click();
+                        }
+                    }
+                    else if (false === stepTwoComplete) {
                         $divStep2 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step2.step);
                         $divStep2.append('<br />');
                         $divStep2.append($('<p><a href=\"/NbtWebApp/etc/InspectionDesign.xls\">Download the Inspection Design template for ' + selectedInspectionName + ' Inspection.</a></p>'));
@@ -161,16 +174,16 @@
                         f.onSuccess();
                     }
 
-                    $divStep2.empty();
+                    $divStep3.empty();
                     var previewGridId = makeId({ prefix: o.ID, ID: +'step' + parseInt(f.stepNo), suffix: 'previewGrid_outer' }),
                         $previewGrid = $divStep2.find('#' + previewGridId),
                         g;
 
-                    $divStep2.append('<p>Inspection Name: ' + selectedInspectionName + '</p>');
-                    $divStep2.append("<p>Verify the results of the Inspection Design processing. Make any necessary edits.</p>");
+                    $divStep3.append('<p>Inspection Name: ' + selectedInspectionName + '</p>');
+                    $divStep3.append("<p>Verify the results of the Inspection Design processing. Make any necessary edits.</p>");
 
                     if (isNullOrEmpty($previewGrid) || $previewGrid.length === 0) {
-                        $previewGrid = $('<div id="' + o.ID + '"></div>').appendTo($divStep2);
+                        $previewGrid = $('<div id="' + o.ID + '"></div>').appendTo($divStep3);
                     } else {
                         $previewGrid.empty();
                     }
@@ -181,13 +194,6 @@
                         gridOpts: {
                             autowidth: true,
                             rowNum: 20,
-                            //                            onSelectRow: function (rowId) {
-                            //                                if (rowId && rowId !== lastSelRow) {
-                            //                                    inspectionGrid.$gridTable.jqGrid('saveRow', lastSelRow, false, 'clientArray');
-                            //                                    lastSelRow = rowId;
-                            //                                }
-                            //                                inspectionGrid.$gridTable.jqGrid('editRow', rowId, true, '', '', 'clientArray');
-                            //                            },
                             height: 'auto'
                         },
                         optNav: {
@@ -198,7 +204,7 @@
                             editfunc: function (rowid) {
                                 return inspectionGrid.$gridTable.jqGrid('editGridRow', rowid, { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterEdit: true });
                             },
-                            addfunc: function (rowid) {
+                            addfunc: function () {
                                 return inspectionGrid.$gridTable.jqGrid('editGridRow', 'new', { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterAdd: true });
                             },
                             delfunc: function (rowid) {
@@ -231,68 +237,140 @@
             },
 
             makeStepThree = (function () {
-                var stepTwoComplete = false;
-                return function () {
-                    $wizard.CswWizard('button', 'previous', 'enable');
-                    $wizard.CswWizard('button', 'next', 'enable');
-                    if (false === stepTwoComplete) {
-                        $divStep2 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step2.step);
-                        stepTwoComplete = true;
-                    }
-                };
-            } ()),
-
-            makeStepFour = (function () {
                 var stepThreeComplete = false;
-                return function () {
-                    $wizard.CswWizard('button', 'previous', 'enable');
-                    $wizard.CswWizard('button', 'next', 'disable');
-                    var jsonData;
+                return function (forward) {
+                    var $prevBtn = $wizard.CswWizard('button', 'previous', 'enable'),
+                        $nextBtn = $wizard.CswWizard('button', 'next', 'enable');
 
-                    if (false === stepThreeComplete) {
+                    if (false === isNewInspectionDesign) {
+                        if (forward) {
+                            $nextBtn.click();
+                        } else {
+                            $prevBtn.click();
+                        }
+                    }
+                    else if (false === stepThreeComplete) {
                         $divStep3 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step3.step);
-
-                        jsonData = {
-                            InspectionTargetName: selectedInspectionTarget
-                        };
-
-                        CswAjaxJson({
-                            url: '/NbtWebApp/wsNBT.asmx/getInspectionTargetGroupView',
-                            data: jsonData,
-                            success: function (data) {
-                                var viewId, $menuDiv, $treeDiv;
-
-                            },
-                            error: function (error) {
-                                //$.CswDialog('ErrorDialog', error);
-                            }
-                        });
-
                         stepThreeComplete = true;
                     }
                 };
             } ()),
 
+            makeStepFour = (function () {
+                var stepFourComplete = false;
+                return function () {
+
+                    var $inspectionTable,
+                        $nextBtn = $wizard.CswWizard('button', 'next', 'enable'),
+                        $prevBtn = $wizard.CswWizard('button', 'previous', 'enable');
+
+                    if (false === stepFourComplete) {
+                        $nextBtn.bind('click', function () {
+                            if (currentStepNo = CswInspectionDesign_WizardSteps.step4.step) {
+                                selectedInspectionTarget = $inspectionDesign.val();
+                            }
+                        });
+
+                        $prevBtn.bind('click', function () {
+                            if (currentStepNo = CswInspectionDesign_WizardSteps.step4.step) {
+                                selectedInspectionTarget = $inspectionDesign.val();
+                            }
+                        });
+
+                        $divStep4 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step4.step);
+                        $divStep4.append('<br />');
+
+                        $inspectionTable = $divStep4.CswTable('init');
+
+                        $inspectionTable.CswTable('cell', 1, 1)
+                                        .css({ 'padding': '5px', 'vertical-align': 'middle' })
+                                        .append('Select Inspection Target:');
+
+                        $inspectionTarget = $inspectionTable.CswTable('cell', 1, 2)
+                                                            .CswDiv('init')
+                                                            .CswNodeTypeSelect('init', {
+                                                                ID: 'step4_nodeTypeSelect',
+                                                                objectClassName: 'InspectionTargetClass',
+                                                                excludeNodeTypeIds: excludeInspectionTargetId
+                                                            });
+
+                        $inspectionTable.CswTable('cell', 1, 3)
+                            .CswDiv('init')
+                            .CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
+                                AlternateText: "Create New Inspection Target",
+                                onClick: function () {
+                                    $.CswDialog('AddNodeTypeDialog', {
+                                        objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
+                                        $select: $inspectionTarget,
+                                        nodeTypeDescriptor: 'Inspection Target Type',
+                                        onSucess: function () {
+
+                                        }
+                                    });
+                                    return CswImageButton_ButtonType.None;
+                                }
+                            });
+                        stepFourComplete = true;
+                    }
+                };
+            } ()),
+
+            makeStepFive = (function () {
+                var stepFiveComplete = false;
+
+                return function() {
+                    $wizard.CswWizard('button', 'previous', 'enable');
+                    $wizard.CswWizard('button', 'next', 'enable').text('Next'); //In case we come back from step 6
+
+                    if (false === stepFiveComplete) {
+                        $divStep5 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step5.step);
+                    }
+                };
+            } ()),
+
+            makeStepSix = (function () {
+                var stepSixComplete = false;
+
+                return function () {
+                    $wizard.CswWizard('button', 'previous', 'enable');
+                    $wizard.CswWizard('button', 'next', 'enable').text('Create Inspection Design');
+
+                    if (false === stepSixComplete) {
+                        $divStep6 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step6.step);
+                    }
+                };
+            } ()),
+
+            makeStepSeven = function () {
+
+                $wizard.CswWizard('button', 'previous', 'disable').hide();
+                $wizard.CswWizard('button', 'next', 'disable').hide();
+                $wizard.CswWizard('button', 'cancel', 'disable').hide();
+                $wizard.CswWizard('button', 'finish', 'enable').show();
+                
+                $divStep7 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step7.step);
+            },
+
             handleNext = function ($wizardTable, newStepNo) {
                 currentStepNo = newStepNo;
                 switch (newStepNo) {
                     case CswInspectionDesign_WizardSteps.step2.step:
-                        makeStepTwo();
+                        makeStepTwo(true);
                         break;
                     case CswInspectionDesign_WizardSteps.step3.step:
-                        makeStepThree();
+                        makeStepThree(true);
                         break;
                     case CswInspectionDesign_WizardSteps.step4.step:
-                        //makeStepThree();
+                        makeStepFour();
                         break;
                     case CswInspectionDesign_WizardSteps.step5.step:
-                        //makeStepThree();
+                        makeStepFive();
                         break;
                     case CswInspectionDesign_WizardSteps.step6.step:
-                        //makeStepThree();
+                        makeStepSix();
                         break;
                     case CswInspectionDesign_WizardSteps.step7.step:
-                        //makeStepThree();
+                        makeStepSeven();
                         break;
                 } // switch(newstepno)
             }, // handleNext()
@@ -304,16 +382,16 @@
                         makeStepOne();
                         break;
                     case CswInspectionDesign_WizardSteps.step2.step:
-                        makeStepTwo();
+                        makeStepTwo(false);
                         break;
                     case CswInspectionDesign_WizardSteps.step3.step:
-                        //makeStepTwo();
+                        makeStepThree(false);
                         break;
                     case CswInspectionDesign_WizardSteps.step4.step:
-                        //makeStepTwo();
+                        makeStepFour();
                         break;
                     case CswInspectionDesign_WizardSteps.step5.step:
-                        //makeStepTwo();
+                        makeStepFive();
                         break;
                 }
             },

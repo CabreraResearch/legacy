@@ -1507,7 +1507,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypes( string ObjectClassName )
+        public string getNodeTypes( string ObjectClassName, string ExcludeNodeTypeIds )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1530,7 +1530,7 @@ namespace ChemSW.Nbt.WebServices
 
                     }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    ReturnVal = ws.getNodeTypes( ObjectClass );
+                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds );
                 }
 
                 _deInitResources();
@@ -3081,16 +3081,15 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( string.IsNullOrEmpty( InspectionName ) )
                     {
-                        throw new CswDniException(ErrorType.Warning, "Inspection Name cannot be blank.", "InspectionName was null or empty.");
+                        throw new CswDniException( ErrorType.Warning, "Inspection Name cannot be blank.", "InspectionName was null or empty." );
                     }
                     if( string.IsNullOrEmpty( InspectionTarget ) )
-
                     {
                         throw new CswDniException( ErrorType.Warning, "New Inspection must have a target.", "InspectionTarget was null or empty." );
                     }
 
                     CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
-                                
+
                     ReturnVal = ws.createInspectionDesignTabsAndProps( DesignGrid, InspectionName, InspectionTarget );
 
                     ReturnVal["success"] = "true";

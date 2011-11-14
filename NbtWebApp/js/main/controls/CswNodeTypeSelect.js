@@ -16,7 +16,8 @@
                 objectClassName: '',
                 onSelect: null, //function (nodetypeid) {},
                 onSuccess: null, //function () {}
-                width: ''
+                width: '',
+                excludeNodeTypeIds: ''
             };
             if (options) {
                 $.extend(o, options);
@@ -29,7 +30,7 @@
 
             CswAjaxJson({
                     url: o.NodeTypesUrl,
-                    data: { ObjectClassName: tryParseString(o.objectClassName) },
+                    data: { ObjectClassName: tryParseString(o.objectClassName), ExcludeNodeTypeIds: o.excludeNodeTypeIds },
                     success: function (data) {
                         //Case 24155
                         each(data, function(thisNodeType) {
