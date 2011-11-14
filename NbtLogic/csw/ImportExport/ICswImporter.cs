@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.ImportExport
 
     public enum ImportMode
     {
+        Unknown,
         /// <summary>
         /// Make changes to existing data.  Unmatched data is ignored.
         /// </summary>
@@ -39,7 +40,9 @@ namespace ChemSW.Nbt.ImportExport
     public interface ICswImporter
     {
 
-        void ImportXml( ImportMode IMode, string XmlStr, ref string ViewXml, ref string ResultXml, ref string ErrorLog );
+        void ImportXml( ImportMode IMode, ref string ViewXml, ref string ResultXml, ref string ErrorLog );
+        void reset(); 
+        void stop(); 
 
     } // ICswImporter
 } // namespace ChemSW.Nbt
