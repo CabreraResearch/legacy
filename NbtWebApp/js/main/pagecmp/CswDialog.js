@@ -166,7 +166,8 @@
                 objectClassId: '', 
                 $select: '',
                 nodeTypeDescriptor: '',
-                onSuccess: null
+                onSuccess: null,
+                title: ''
             };
 
             if (options) {
@@ -204,7 +205,7 @@
                         });
                     }
                 });
-            openDialog($div, 300, 200, null, 'Create New Target Type, Group and Route for this Inspection.');
+            openDialog($div, 300, 200, null, o.title);
         }, // AddNodeTypeDialog
         EditLayoutDialog: function (cswNodeTabOptions) {
             cswNodeTabOptions.ID = cswNodeTabOptions.ID + '_editlayout';

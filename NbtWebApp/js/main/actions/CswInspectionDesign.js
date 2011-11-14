@@ -87,8 +87,7 @@
                                                 .CswDiv('init')
                                                 .CswNodeTypeSelect('init', {
                                                     ID: 'step2_nodeTypeSelect',
-                                                    objectClassName: 'InspectionDesignClass',
-                                                    width: $inspectionTarget.css('width')
+                                                    objectClassName: 'InspectionDesignClass'
                                                 });
 
                         $inspectionTable.CswTable('cell', 1, 3)
@@ -102,7 +101,8 @@
                                         nodeTypeDescriptor: 'Inspection Design Type',
                                         onSucess: function () {
 
-                                        }
+                                        },
+                                        title: 'Create a New Inspection Design.'
                                     });
                                     return CswImageButton_ButtonType.None;
                                 }
@@ -118,7 +118,7 @@
 
                 return function (forward) {
 
-                    $wizard.CswWizard('button', 'previous', 'disable');
+                    var $prevBtn = $wizard.CswWizard('button', 'previous', 'enable').show();
                     $wizard.CswWizard('button', 'next', (gridIsPopulated) ? 'enable' : 'disable');
                     var $fileUploadBtn;
 
@@ -126,7 +126,7 @@
                         if (forward) {
                             $wizard.CswWizard('button', 'next', 'enable').click();
                         } else {
-                            $wizard.CswWizard('button', 'previous', 'enable').click();
+                            $prevBtn.click();
                         }
                     }
                     else if (false === stepTwoComplete) {
@@ -259,21 +259,16 @@
             makeStepFour = (function () {
                 var stepFourComplete = false;
                 return function () {
+                    $wizard.CswWizard('button', 'previous', 'enable').show();
 
                     var $inspectionTable,
-                        $nextBtn = $wizard.CswWizard('button', 'next', 'enable'),
-                        $prevBtn = $wizard.CswWizard('button', 'previous', 'enable');
+                        $nextBtn = $wizard.CswWizard('button', 'next', 'enable').show();
+
 
                     if (false === stepFourComplete) {
                         $nextBtn.bind('click', function () {
                             if (currentStepNo = CswInspectionDesign_WizardSteps.step4.step) {
-                                selectedInspectionTarget = $inspectionDesign.val();
-                            }
-                        });
-
-                        $prevBtn.bind('click', function () {
-                            if (currentStepNo = CswInspectionDesign_WizardSteps.step4.step) {
-                                selectedInspectionTarget = $inspectionDesign.val();
+                                selectedInspectionTarget = $inspectionTarget.val();
                             }
                         });
 
@@ -305,7 +300,8 @@
                                         nodeTypeDescriptor: 'Inspection Target Type',
                                         onSucess: function () {
 
-                                        }
+                                        },
+                                        title: 'Create a New Inspection Target Type.'
                                     });
                                     return CswImageButton_ButtonType.None;
                                 }
@@ -318,7 +314,7 @@
             makeStepFive = (function () {
                 var stepFiveComplete = false;
 
-                return function() {
+                return function () {
                     $wizard.CswWizard('button', 'previous', 'enable');
                     $wizard.CswWizard('button', 'next', 'enable').text('Next'); //In case we come back from step 6
 
@@ -347,7 +343,7 @@
                 $wizard.CswWizard('button', 'next', 'disable').hide();
                 $wizard.CswWizard('button', 'cancel', 'disable').hide();
                 $wizard.CswWizard('button', 'finish', 'enable').show();
-                
+
                 $divStep7 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step7.step);
             },
 
