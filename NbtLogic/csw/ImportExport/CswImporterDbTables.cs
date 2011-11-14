@@ -213,6 +213,7 @@ namespace ChemSW.Nbt.ImportExport
                 _createTempRecords( TableOfPropsFromXml, _TblName_TempProps, _CswNbtImportOptions.MaxInsertRecordsPerTransaction, _CswNbtImportOptions.MaxInsertRecordsPerDisplayUpdate );
                 _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
 
+                _CswNbtSchemaModTrnsctn.commitTransaction();
 
                 _CswNbtImportExportFrame.clear();
 

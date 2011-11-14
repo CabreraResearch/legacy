@@ -46,19 +46,18 @@
             this.ExportSchemaSelectBox = new System.Windows.Forms.ComboBox();
             this.ExportSchemaLabel = new System.Windows.Forms.Label();
             this.ImportPage = new System.Windows.Forms.TabPage();
+            this.PhaseTextBox = new System.Windows.Forms.TextBox();
             this.FileTypeSelectBox = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.DataFileLink = new System.Windows.Forms.LinkLabel();
             this.label1 = new System.Windows.Forms.Label();
+            this.gbx_PhaseStatus = new System.Windows.Forms.GroupBox();
             this.ModeComboBox = new System.Windows.Forms.ComboBox();
             this.DataFileLabel = new System.Windows.Forms.Label();
             this.ResultsTextBox = new System.Windows.Forms.TextBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.ErrorLabel = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.PhaseTextBox = new System.Windows.Forms.TextBox();
-            this.gbx_PhaseStatus = new System.Windows.Forms.GroupBox();
-            this.btn_ResetSchema = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.ExportTab.SuspendLayout();
             this.ImportPage.SuspendLayout();
@@ -120,7 +119,7 @@
             this.ExportTab.Location = new System.Drawing.Point( 4, 22 );
             this.ExportTab.Name = "ExportTab";
             this.ExportTab.Padding = new System.Windows.Forms.Padding( 3 );
-            this.ExportTab.Size = new System.Drawing.Size( 350, 348 );
+            this.ExportTab.Size = new System.Drawing.Size( 419, 348 );
             this.ExportTab.TabIndex = 1;
             this.ExportTab.Text = "Export";
             this.ExportTab.UseVisualStyleBackColor = true;
@@ -249,7 +248,6 @@
             // 
             // ImportPage
             // 
-            this.ImportPage.Controls.Add( this.btn_ResetSchema );
             this.ImportPage.Controls.Add( this.PhaseTextBox );
             this.ImportPage.Controls.Add( this.FileTypeSelectBox );
             this.ImportPage.Controls.Add( this.label2 );
@@ -268,6 +266,17 @@
             this.ImportPage.TabIndex = 0;
             this.ImportPage.Text = "Import";
             this.ImportPage.UseVisualStyleBackColor = true;
+            // 
+            // PhaseTextBox
+            // 
+            this.PhaseTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.PhaseTextBox.Enabled = false;
+            this.PhaseTextBox.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( (byte) ( 0 ) ) );
+            this.PhaseTextBox.Location = new System.Drawing.Point( 14, 148 );
+            this.PhaseTextBox.Multiline = true;
+            this.PhaseTextBox.Name = "PhaseTextBox";
+            this.PhaseTextBox.Size = new System.Drawing.Size( 397, 180 );
+            this.PhaseTextBox.TabIndex = 19;
             // 
             // FileTypeSelectBox
             // 
@@ -310,6 +319,15 @@
             this.label1.Size = new System.Drawing.Size( 37, 13 );
             this.label1.TabIndex = 17;
             this.label1.Text = "Mode:";
+            // 
+            // gbx_PhaseStatus
+            // 
+            this.gbx_PhaseStatus.Location = new System.Drawing.Point( 6, 129 );
+            this.gbx_PhaseStatus.Name = "gbx_PhaseStatus";
+            this.gbx_PhaseStatus.Size = new System.Drawing.Size( 413, 213 );
+            this.gbx_PhaseStatus.TabIndex = 20;
+            this.gbx_PhaseStatus.TabStop = false;
+            this.gbx_PhaseStatus.Text = "Process Status";
             // 
             // ModeComboBox
             // 
@@ -357,36 +375,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // PhaseTextBox
-            // 
-            this.PhaseTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.PhaseTextBox.Enabled = false;
-            this.PhaseTextBox.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( (byte) ( 0 ) ) );
-            this.PhaseTextBox.Location = new System.Drawing.Point( 14, 148 );
-            this.PhaseTextBox.Multiline = true;
-            this.PhaseTextBox.Name = "PhaseTextBox";
-            this.PhaseTextBox.Size = new System.Drawing.Size( 397, 180 );
-            this.PhaseTextBox.TabIndex = 19;
-            // 
-            // gbx_PhaseStatus
-            // 
-            this.gbx_PhaseStatus.Location = new System.Drawing.Point( 6, 129 );
-            this.gbx_PhaseStatus.Name = "gbx_PhaseStatus";
-            this.gbx_PhaseStatus.Size = new System.Drawing.Size( 413, 213 );
-            this.gbx_PhaseStatus.TabIndex = 20;
-            this.gbx_PhaseStatus.TabStop = false;
-            this.gbx_PhaseStatus.Text = "Process Status";
-            // 
-            // btn_ResetSchema
-            // 
-            this.btn_ResetSchema.Location = new System.Drawing.Point( 281, 32 );
-            this.btn_ResetSchema.Name = "btn_ResetSchema";
-            this.btn_ResetSchema.Size = new System.Drawing.Size( 48, 23 );
-            this.btn_ResetSchema.TabIndex = 22;
-            this.btn_ResetSchema.Text = "Reset";
-            this.btn_ResetSchema.UseVisualStyleBackColor = true;
-            this.btn_ResetSchema.Click += new System.EventHandler( this.btn_ResetSchema_Click );
             // 
             // ImporterForm
             // 
@@ -441,7 +429,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox PhaseTextBox;
         private System.Windows.Forms.GroupBox gbx_PhaseStatus;
-        private System.Windows.Forms.Button btn_ResetSchema;
     }
 }
 

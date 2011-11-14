@@ -238,7 +238,7 @@ namespace ChemSW.Nbt.Schema
             if( ImportButtonState.Start.ToString() == ImportButton.Text )
             {
 
-                if( MessageBox.Show( "You are about to begin importing data into schema " + ExportSchemaSelectBox.Text + "; this action is irreversable. Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+                if( MessageBox.Show( "Do not proceed unless you have made a viable backup of schema  " + ExportSchemaSelectBox.Text + "; this action is irreversable. Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
                 {
 
                     if( _DataFilePath != string.Empty )
@@ -265,7 +265,7 @@ namespace ChemSW.Nbt.Schema
             }
             else if( ImportButtonState.Resume.ToString() == ImportButton.Text )
             {
-                if( MessageBox.Show( "You are about resume importing data into schema " + ExportSchemaSelectBox.Text + "; this action is irreversable. Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+                if( MessageBox.Show( "You are about resume importing data into schema " + ExportSchemaSelectBox.Text + "; it would not hurt to make another schema backup, separate from the original backup. What you are about to do is irreversable!!! Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
                 {
                     ImportButton.Text = ImportButtonState.Stop.ToString();
                     ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
@@ -276,10 +276,10 @@ namespace ChemSW.Nbt.Schema
             }
             else if( ImportButtonState.Stop.ToString() == ImportButton.Text )
             {
-                if( _CswNbtImportStatus.CompletedProcessPhase != ImportProcessPhase.PopulatingTempTableProps )
+                if( _CswNbtImportStatus.CompletedProcessPhase >= ImportProcessPhase.PopulatingTempTableProps )
                 {
 
-                    if( MessageBox.Show( "You are about to halt the import process. You will be able to resume the process later. Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+                    if( MessageBox.Show( "You are about to halt the import process. If you remove or alter the temporary import tables, you will be unable to resume later", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
                     {
                         _WorkerThread.stopImport();
                     }
@@ -400,10 +400,10 @@ namespace ChemSW.Nbt.Schema
 
         private void btn_ResetSchema_Click( object sender, EventArgs e )
         {
-            if( MessageBox.Show( "Remove temporary import tables and reset the import status on schema " + ExportSchemaSelectBox.Text  + "; Proceed? ", "Reset", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+            if( MessageBox.Show( "Remove temporary import tables and reset the import status on schema " + ExportSchemaSelectBox.Text + "; Proceed? ", "Reset", MessageBoxButtons.YesNo ) == DialogResult.Yes )
             {
                 _WorkerThread.reset();
-                _refreshStatus(); 
+                _refreshStatus();
             }
 
         } // FileTypeSelectBox_OnChange
