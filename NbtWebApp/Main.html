@@ -283,7 +283,7 @@ window.abandonHope = true;
                             break;
                     }
                     var viewMode = tryParseString(o.viewmode).toLowerCase();
-                    switch (viewMode.toLowerCase()) {
+                    switch (viewMode) {
                         case 'grid':
                             getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
                             break;
@@ -712,7 +712,8 @@ window.abandonHope = true;
                 if (isNullOrEmpty(o.viewmode))
                     o.viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
 
-                switch (o.viewmode.toLowerCase()) {
+                var viewMode = tryParseString(o.viewmode).toLowerCase();
+				switch (viewMode) {
                     case 'grid':
                         getViewGrid({
                             'viewid': o.viewid,
