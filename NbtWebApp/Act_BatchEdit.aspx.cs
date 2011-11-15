@@ -37,8 +37,8 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                _ImportExport = new CswNbtImportExport( Master.CswNbtResources );
-				_View = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( 696 ) );
+                _ImportExport = new CswNbtImportExport( Master.CswNbtResources, new CswNbtImportStatus( Master.CswNbtResources ) );
+                _View = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( 696 ) );
                 _Tree = Master.CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );
                 //_Factory = new CswFieldTypeWebControlFactory( Master.CswNbtResources );
 
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.WebPages
 
         private void _SetupHeaderColumns( CswNbtViewNode ViewNode, Int32 CurrentRow, ref Int32 CurrentCol )
         {
-            foreach( CswNbtViewRelationship ViewRelationship in ViewNode.GetChildrenOfType(NbtViewNodeType.CswNbtViewRelationship ))
+            foreach( CswNbtViewRelationship ViewRelationship in ViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
             {
                 foreach( CswNbtViewProperty ViewProp in ViewRelationship.Properties )
                 {
@@ -98,11 +98,11 @@ namespace ChemSW.Nbt.WebPages
                     CurrentCol++;
                 }
 
-                _SetupHeaderColumns( ViewRelationship, CurrentRow, ref CurrentCol ); 
+                _SetupHeaderColumns( ViewRelationship, CurrentRow, ref CurrentCol );
             }
         }
 
-        private void _SetupData(ref Int32 CurrentRow)
+        private void _SetupData( ref Int32 CurrentRow )
         {
             for( int i = 0; i < _Tree.getChildNodeCount(); i++ )
             {
@@ -116,9 +116,9 @@ namespace ChemSW.Nbt.WebPages
                 NodeNameLiteral.Text = Node.NodeName;
                 _Table.addControl( CurrentRow, Convert.ToInt32( _ColumnMap["NodeName"].ToString() ), NodeNameLiteral );
 
-                foreach(CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps)
+                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps )
                 {
-                    if(_ColumnMap.ContainsKey(NodeTypeProp))
+                    if( _ColumnMap.ContainsKey( NodeTypeProp ) )
                     {
                         TableCell ThisCell = _Table.getCell( CurrentRow, Convert.ToInt32( _ColumnMap[NodeTypeProp].ToString() ) );
                         CswFieldTypeWebControl Control = CswFieldTypeWebControlFactory.makeControl( Master.CswNbtResources, ThisCell.Controls, string.Empty, NodeTypeProp, Node, NodeEditMode.Edit, new CswErrorHandler( Master.HandleError ) );
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 CswPropertyTable.SaveFieldTypeWebControls( ph.Controls );
 
-                _Tree.goToRoot(); 
+                _Tree.goToRoot();
                 _postNodes();
 
                 // Commit any transactions
@@ -159,13 +159,13 @@ namespace ChemSW.Nbt.WebPages
             for( int i = 0; i < _Tree.getChildNodeCount(); i++ )
             {
                 _Tree.goToNthChild( i );
-                
+
                 CswNbtNode Node = _Tree.getNodeForCurrentPosition();
                 Node.postChanges( false );
 
                 if( _Tree.getChildNodeCount() > 0 )
                     _postNodes();
-                
+
                 _Tree.goToParentNode();
             }
         }
@@ -309,10 +309,10 @@ namespace ChemSW.Nbt.WebPages
         //            Control.ReadOnly = _ReadOnly;
         //        }
         //    }
-    
+
         //    #endregion
-            
+
         //} // GridFieldTypeTemplate
-    
+
     }
 }
