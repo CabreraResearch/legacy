@@ -30,9 +30,7 @@
         {
             this.InitSchemaLabel = new System.Windows.Forms.Label();
             this.InitSchemaSelectBox = new System.Windows.Forms.ComboBox();
-            this.ConfirmCheckbox = new System.Windows.Forms.CheckBox();
             this.ImportButton = new System.Windows.Forms.Button();
-            this.ConfirmLabel = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.ExportTab = new System.Windows.Forms.TabPage();
             this.UnCheckAllButton = new System.Windows.Forms.Button();
@@ -48,20 +46,18 @@
             this.ExportSchemaSelectBox = new System.Windows.Forms.ComboBox();
             this.ExportSchemaLabel = new System.Windows.Forms.Label();
             this.ImportPage = new System.Windows.Forms.TabPage();
+            this.PhaseTextBox = new System.Windows.Forms.TextBox();
             this.FileTypeSelectBox = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.DataFileLink = new System.Windows.Forms.LinkLabel();
             this.label1 = new System.Windows.Forms.Label();
+            this.gbx_PhaseStatus = new System.Windows.Forms.GroupBox();
             this.ModeComboBox = new System.Windows.Forms.ComboBox();
             this.DataFileLabel = new System.Windows.Forms.Label();
-            this.ImportCompleteLabel = new System.Windows.Forms.Label();
-            this.ImportInProgressLabel = new System.Windows.Forms.Label();
             this.ResultsTextBox = new System.Windows.Forms.TextBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.ErrorLabel = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.PhaseTextBox = new System.Windows.Forms.TextBox();
-            this.gbx_PhaseStatus = new System.Windows.Forms.GroupBox();
             this.tabControl1.SuspendLayout();
             this.ExportTab.SuspendLayout();
             this.ImportPage.SuspendLayout();
@@ -84,35 +80,15 @@
             this.InitSchemaSelectBox.Size = new System.Drawing.Size( 183, 21 );
             this.InitSchemaSelectBox.TabIndex = 3;
             // 
-            // ConfirmCheckbox
-            // 
-            this.ConfirmCheckbox.AutoSize = true;
-            this.ConfirmCheckbox.Location = new System.Drawing.Point( 92, 185 );
-            this.ConfirmCheckbox.Name = "ConfirmCheckbox";
-            this.ConfirmCheckbox.Size = new System.Drawing.Size( 89, 17 );
-            this.ConfirmCheckbox.TabIndex = 6;
-            this.ConfirmCheckbox.Text = "Yes, I\'m sure.";
-            this.ConfirmCheckbox.UseVisualStyleBackColor = true;
-            // 
             // ImportButton
             // 
-            this.ImportButton.Enabled = false;
-            this.ImportButton.Location = new System.Drawing.Point( 71, 208 );
+            this.ImportButton.Location = new System.Drawing.Point( 333, 86 );
             this.ImportButton.Name = "ImportButton";
-            this.ImportButton.Size = new System.Drawing.Size( 138, 23 );
+            this.ImportButton.Size = new System.Drawing.Size( 80, 23 );
             this.ImportButton.TabIndex = 7;
-            this.ImportButton.Text = "Import!";
+            this.ImportButton.Text = "Start";
             this.ImportButton.UseVisualStyleBackColor = true;
             this.ImportButton.Click += new System.EventHandler( this.ImportButton_Click );
-            // 
-            // ConfirmLabel
-            // 
-            this.ConfirmLabel.Location = new System.Drawing.Point( 49, 130 );
-            this.ConfirmLabel.Name = "ConfirmLabel";
-            this.ConfirmLabel.Size = new System.Drawing.Size( 205, 52 );
-            this.ConfirmLabel.TabIndex = 8;
-            this.ConfirmLabel.Text = "Are you sure you want to import the data file into the target schema selected abo" +
-                "ve?  This action cannot be undone.";
             // 
             // tabControl1
             // 
@@ -123,7 +99,7 @@
             this.tabControl1.Location = new System.Drawing.Point( 3, 5 );
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size( 358, 374 );
+            this.tabControl1.Size = new System.Drawing.Size( 427, 374 );
             this.tabControl1.TabIndex = 10;
             // 
             // ExportTab
@@ -143,7 +119,7 @@
             this.ExportTab.Location = new System.Drawing.Point( 4, 22 );
             this.ExportTab.Name = "ExportTab";
             this.ExportTab.Padding = new System.Windows.Forms.Padding( 3 );
-            this.ExportTab.Size = new System.Drawing.Size( 350, 348 );
+            this.ExportTab.Size = new System.Drawing.Size( 419, 348 );
             this.ExportTab.TabIndex = 1;
             this.ExportTab.Text = "Export";
             this.ExportTab.UseVisualStyleBackColor = true;
@@ -272,26 +248,35 @@
             // 
             // ImportPage
             // 
+            this.ImportPage.Controls.Add( this.PhaseTextBox );
             this.ImportPage.Controls.Add( this.FileTypeSelectBox );
             this.ImportPage.Controls.Add( this.label2 );
             this.ImportPage.Controls.Add( this.DataFileLink );
             this.ImportPage.Controls.Add( this.label1 );
+            this.ImportPage.Controls.Add( this.gbx_PhaseStatus );
             this.ImportPage.Controls.Add( this.ModeComboBox );
             this.ImportPage.Controls.Add( this.DataFileLabel );
-            this.ImportPage.Controls.Add( this.ImportCompleteLabel );
-            this.ImportPage.Controls.Add( this.ImportInProgressLabel );
             this.ImportPage.Controls.Add( this.ImportButton );
-            this.ImportPage.Controls.Add( this.ConfirmLabel );
-            this.ImportPage.Controls.Add( this.ConfirmCheckbox );
             this.ImportPage.Controls.Add( this.InitSchemaSelectBox );
             this.ImportPage.Controls.Add( this.InitSchemaLabel );
             this.ImportPage.Location = new System.Drawing.Point( 4, 22 );
             this.ImportPage.Name = "ImportPage";
             this.ImportPage.Padding = new System.Windows.Forms.Padding( 3 );
-            this.ImportPage.Size = new System.Drawing.Size( 350, 348 );
+            this.ImportPage.Size = new System.Drawing.Size( 419, 348 );
             this.ImportPage.TabIndex = 0;
             this.ImportPage.Text = "Import";
             this.ImportPage.UseVisualStyleBackColor = true;
+            // 
+            // PhaseTextBox
+            // 
+            this.PhaseTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.PhaseTextBox.Enabled = false;
+            this.PhaseTextBox.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( (byte) ( 0 ) ) );
+            this.PhaseTextBox.Location = new System.Drawing.Point( 14, 148 );
+            this.PhaseTextBox.Multiline = true;
+            this.PhaseTextBox.Name = "PhaseTextBox";
+            this.PhaseTextBox.Size = new System.Drawing.Size( 397, 180 );
+            this.PhaseTextBox.TabIndex = 19;
             // 
             // FileTypeSelectBox
             // 
@@ -335,6 +320,15 @@
             this.label1.TabIndex = 17;
             this.label1.Text = "Mode:";
             // 
+            // gbx_PhaseStatus
+            // 
+            this.gbx_PhaseStatus.Location = new System.Drawing.Point( 6, 129 );
+            this.gbx_PhaseStatus.Name = "gbx_PhaseStatus";
+            this.gbx_PhaseStatus.Size = new System.Drawing.Size( 413, 213 );
+            this.gbx_PhaseStatus.TabIndex = 20;
+            this.gbx_PhaseStatus.TabStop = false;
+            this.gbx_PhaseStatus.Text = "Process Status";
+            // 
             // ModeComboBox
             // 
             this.ModeComboBox.FormattingEnabled = true;
@@ -357,37 +351,16 @@
             this.DataFileLabel.TabIndex = 13;
             this.DataFileLabel.Text = "Data File:";
             // 
-            // ImportCompleteLabel
-            // 
-            this.ImportCompleteLabel.AutoSize = true;
-            this.ImportCompleteLabel.Location = new System.Drawing.Point( 98, 244 );
-            this.ImportCompleteLabel.Name = "ImportCompleteLabel";
-            this.ImportCompleteLabel.Size = new System.Drawing.Size( 83, 13 );
-            this.ImportCompleteLabel.TabIndex = 11;
-            this.ImportCompleteLabel.Text = "Import Complete";
-            this.ImportCompleteLabel.Visible = false;
-            // 
-            // ImportInProgressLabel
-            // 
-            this.ImportInProgressLabel.AutoSize = true;
-            this.ImportInProgressLabel.ForeColor = System.Drawing.Color.Red;
-            this.ImportInProgressLabel.Location = new System.Drawing.Point( 89, 244 );
-            this.ImportInProgressLabel.Name = "ImportInProgressLabel";
-            this.ImportInProgressLabel.Size = new System.Drawing.Size( 101, 13 );
-            this.ImportInProgressLabel.TabIndex = 10;
-            this.ImportInProgressLabel.Text = "Import In Progress...";
-            this.ImportInProgressLabel.Visible = false;
-            // 
             // ResultsTextBox
             // 
             this.ResultsTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles) ( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
                         | System.Windows.Forms.AnchorStyles.Left )
                         | System.Windows.Forms.AnchorStyles.Right ) ) );
-            this.ResultsTextBox.Location = new System.Drawing.Point( 367, 142 );
+            this.ResultsTextBox.Location = new System.Drawing.Point( 436, 27 );
             this.ResultsTextBox.Multiline = true;
             this.ResultsTextBox.Name = "ResultsTextBox";
             this.ResultsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ResultsTextBox.Size = new System.Drawing.Size( 418, 237 );
+            this.ResultsTextBox.Size = new System.Drawing.Size( 349, 352 );
             this.ResultsTextBox.TabIndex = 18;
             // 
             // ErrorLabel
@@ -403,36 +376,14 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // PhaseTextBox
-            // 
-            this.PhaseTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.PhaseTextBox.Enabled = false;
-            this.PhaseTextBox.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ( (byte) ( 0 ) ) );
-            this.PhaseTextBox.Location = new System.Drawing.Point( 376, 59 );
-            this.PhaseTextBox.Multiline = true;
-            this.PhaseTextBox.Name = "PhaseTextBox";
-            this.PhaseTextBox.Size = new System.Drawing.Size( 397, 67 );
-            this.PhaseTextBox.TabIndex = 19;
-            // 
-            // gbx_PhaseStatus
-            // 
-            this.gbx_PhaseStatus.Location = new System.Drawing.Point( 368, 36 );
-            this.gbx_PhaseStatus.Name = "gbx_PhaseStatus";
-            this.gbx_PhaseStatus.Size = new System.Drawing.Size( 417, 100 );
-            this.gbx_PhaseStatus.TabIndex = 20;
-            this.gbx_PhaseStatus.TabStop = false;
-            this.gbx_PhaseStatus.Text = "Process Status";
-            // 
             // ImporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size( 791, 405 );
-            this.Controls.Add( this.PhaseTextBox );
             this.Controls.Add( this.ErrorLabel );
             this.Controls.Add( this.tabControl1 );
             this.Controls.Add( this.ResultsTextBox );
-            this.Controls.Add( this.gbx_PhaseStatus );
             this.Name = "ImporterForm";
             this.Text = "NBT Schema Importer";
             this.tabControl1.ResumeLayout( false );
@@ -449,9 +400,7 @@
 
         private System.Windows.Forms.Label InitSchemaLabel;
         private System.Windows.Forms.ComboBox InitSchemaSelectBox;
-        private System.Windows.Forms.CheckBox ConfirmCheckbox;
         private System.Windows.Forms.Button ImportButton;
-        private System.Windows.Forms.Label ConfirmLabel;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage ImportPage;
         private System.Windows.Forms.TabPage ExportTab;
@@ -466,8 +415,6 @@
         private System.Windows.Forms.Label InProgressLabel;
         private System.Windows.Forms.Label ErrorLabel;
         private System.Windows.Forms.Label ExportCompletedLabel;
-        private System.Windows.Forms.Label ImportCompleteLabel;
-        private System.Windows.Forms.Label ImportInProgressLabel;
         private System.Windows.Forms.Label DataFileLabel;
         private System.Windows.Forms.CheckedListBox NodeTypeCheckedListBox;
         private System.Windows.Forms.Button CheckAllButton;
