@@ -51,7 +51,7 @@
         // Step 5 - Add new Inspection Target Groups
             $divStep5, inspectionTargetGroups = {}, newInspectionTargetGroups = {},
         // Step 6 - Add new Inspection Schedules
-            $divStep6,
+            $divStep6, inspectionSchedules = {}, newInspectionSchedules = {},
         // Step 7 - Preview Results
             $divStep7,
 
@@ -72,20 +72,20 @@
                         $inspectionTable = $divStep1.CswTable('init');
 
                         $inspectionTable.CswTable('cell', 1, 1)
-                                        .css({ 'padding': '5px', 'vertical-align': 'middle' })
-                                        .append('Select Inspection Design:');
+                            .css({ 'padding': '5px', 'vertical-align': 'middle' })
+                            .append('Select Inspection Design:');
 
                         $inspectionDesign = $inspectionTable.CswTable('cell', 1, 2)
-                                                .CswDiv('init')
-                                                .CswNodeTypeSelect('init', {
-                                                    ID: o.ID + '_step2_nodeTypeSelect',
-                                                    objectClassName: 'InspectionDesignClass',
-                                                    onChange: function () {
-                                                        var $this = $(this);
-                                                        $selected = $this.find(':selected');
-                                                        isNewInspectionDesign = isTrue($selected.CswAttrXml('data-newNodeType'));
-                                                    }
-                                                });
+                            .CswDiv('init')
+                            .CswNodeTypeSelect('init', {
+                                ID: makeSafeId('nodeTypeSelect'),
+                                objectClassName: 'InspectionDesignClass',
+                                onChange: function () {
+                                    var $this = $(this);
+                                    $selected = $this.find(':selected');
+                                    isNewInspectionDesign = isTrue($selected.CswAttrXml('data-newNodeType'));
+                                }
+                            });
 
                         $inspectionTable.CswTable('cell', 1, 3)
                             .CswDiv('init')
@@ -178,7 +178,7 @@
                     }
 
                     $divStep3.empty();
-                    var previewGridId = makeId({ prefix: o.ID, ID: +'step' + parseInt(f.stepNo), suffix: 'previewGrid_outer' }),
+                    var previewGridId = makeStepId('previewGrid_outer', 3),
                         $previewGrid = $divStep2.find('#' + previewGridId),
                         g;
 
@@ -186,13 +186,13 @@
                     $divStep3.append("<p>Verify the results of the Inspection Design processing. Make any necessary edits.</p>");
 
                     if (isNullOrEmpty($previewGrid) || $previewGrid.length === 0) {
-                        $previewGrid = $('<div id="' + o.ID + '"></div>').appendTo($divStep3);
+                        $previewGrid = $('<div id="' + previewGridId + '"></div>').appendTo($divStep3);
                     } else {
                         $previewGrid.empty();
                     }
 
                     g = {
-                        Id: o.ID,
+                        Id: makeStepId(),
                         pagermode: 'default',
                         gridOpts: {
                             autowidth: true,
@@ -281,21 +281,21 @@
                         $inspectionTable = $divStep4.CswTable('init');
 
                         $inspectionTable.CswTable('cell', 1, 1)
-                                        .css({ 'padding': '5px', 'vertical-align': 'middle' })
-                                        .append('Select Inspection Target:');
+                            .css({ 'padding': '5px', 'vertical-align': 'middle' })
+                            .append('Select Inspection Target:');
 
                         $inspectionTarget = $inspectionTable.CswTable('cell', 1, 2)
-                                                            .CswDiv('init')
-                                                            .CswNodeTypeSelect('init', {
-                                                                ID: 'step4_nodeTypeSelect',
-                                                                objectClassName: 'InspectionTargetClass',
-                                                                excludeNodeTypeIds: excludeInspectionTargetId
-                                                            });
+                            .CswDiv('init')
+                            .CswNodeTypeSelect('init', {
+                                ID: makeStepId('nodeTypeSelect'),
+                                objectClassName: 'InspectionTargetClass',
+                                excludeNodeTypeIds: excludeInspectionTargetId
+                            });
                         if ($inspectionTarget.children().length === 0) {
                             $inspectionTarget.hide();
                             $addNewTarget = $inspectionTable.CswTable('cell', 1, 3)
-                                                            .CswDiv('init', { value: '[Add a new Inspection Target]' })
-                                                            .css({ 'padding': '5px', 'vertical-align': 'middle' });
+                                .CswDiv('init', { value: '[Add a new Inspection Target]' })
+                                .css({ 'padding': '5px', 'vertical-align': 'middle' });
                         } else {
                             $nextBtn.CswButton('enable');
                         }
@@ -338,12 +338,12 @@
                         $divStep5 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step5.step);
 
                         CswAjaxJson({
-                            url: '/NbtWebApp/wsNBT.asmx/getInspectionTargetGroupNodes',
-                            data: { InspectionTargetName: selectedInspectionTarget },
+                            url: '/NbtWebApp/wsNBT.asmx/getNodesForInspectionTarget',
+                            data: { InspectionTargetName: selectedInspectionTarget, IncludeSchedules: true },
                             success: function (data) {
                                 var groupCount = +(data.groupcount),
-                                    groupNodes = data.groupnodenames,
-                                    $addTable, $list, $addName, $addBtn;
+                                        groupNodes = data.groupnodenames,
+                                        $addTable, $list, $addName;
 
                                 if (groupCount > 0) {
                                     $nextBtn.CswButton('enable');
@@ -351,12 +351,19 @@
 
                                 $divStep5.append('<p>Inspection Target Groups: </p>');
                                 $list = $divStep5.CswList('init', {
-                                    ID: o.ID + '_targetGroupList'
+                                    ID: makeStepId('targetGroupList')
                                 });
 
                                 each(groupNodes, function (name) {
                                     inspectionTargetGroups[name] = { name: name };
                                     $list.CswList('addItem', { value: name });
+                                    inspectionTargetGroups[name].sched = {};
+                                    if (contains(data, name) && false === isNullOrEmpty(data[name])) {
+                                        each(data[name], function (sched) {
+                                            inspectionTargetGroups[name].sched[sched] = sched;
+                                            inspectionSchedules[sched] = sched;
+                                        });
+                                    }
                                 });
 
                                 $divStep5.append('<br />');
@@ -365,21 +372,22 @@
                                         .CswDiv('init', { value: 'Add a new Inspection Target Group:' })
                                         .css({ 'padding': '5px', 'vertical-align': 'middle' });
                                 $addName = $addTable.CswTable('cell', 1, 2)
-                                                    .CswInput('init', {
-                                                        ID: o.ID + '_newInspectionGroupName',
-                                                        type: CswInput_Types.text
-                                                    })
-                                                    .css({ 'padding': '5px', 'vertical-align': 'middle' });
+                                        .CswInput('init', {
+                                            ID: makeStepId('newInspectionGroupName'),
+                                            type: CswInput_Types.text
+                                        })
+                                        .css({ 'padding': '5px', 'vertical-align': 'middle' });
                                 $addTable.CswTable('cell', 1, 3)
                                         .CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
                                             AlternateText: 'Add New Inspection Target Group',
                                             onClick: function () {
                                                 var newGroup = $addName.val();
                                                 if (false === isNullOrEmpty(newGroup) &&
-                                                    false === contains(inspectionTargetGroups, newGroup) &&
-                                                    false === contains(newInspectionTargetGroups, newGroup)) {
+                                                        false === contains(inspectionTargetGroups, newGroup) &&
+                                                            false === contains(newInspectionTargetGroups, newGroup)) {
 
                                                     newInspectionTargetGroups[newGroup] = { name: newGroup };
+                                                    inspectionTargetGroups[newGroup] = { name: newGroup };
                                                     $list.CswList('addItem', {
                                                         value: newGroup + ' (NEW)'
                                                     });
@@ -407,12 +415,76 @@
                     $wizard.CswWizard('button', 'previous', 'enable');
                     $wizard.CswWizard('button', 'next', 'enable').text('Create Inspection Design');
 
+                    var groupNodes = data.groupnodenames,
+                        $addTable, $list, $addName, $groupSelect, $interval, groupValues = [];
+
                     if (false === stepSixComplete) {
                         $divStep6 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step6.step);
 
+                        $divStep6.append('<p>Inspection Schedules: </p>');
+                        $list = $divStep6.CswList('init', {
+                            ID: makeStepId('targetGroupList')
+                        });
 
-                        
-                        
+                        each(inspectionSchedules, function (name) {
+                            $list.CswList('addItem', { value: name });
+                        });
+
+                        $divStep6.append('<br />');
+                        $addTable = $divStep6.CswTable();
+                        $addTable.CswTable('cell', 1, 1)
+                                .CswDiv('init', { value: 'Add a new Inspection Schedule:' })
+                                .css({ 'padding': '5px', 'vertical-align': 'middle' });
+
+                        each(inspectionTargetGroups, function (prop, key) {
+                            groupValues.push(key);
+                        });
+                        $groupSelect = $addTable.CswTable('cell', 1, 2)
+                                                .CswSelect('init', {
+                                                    ID: makeStepId('inspectionGroupSelect'),
+                                                    values: groupValues
+                                                })
+                                                .css({ 'padding': '5px', 'vertical-align': 'middle' });
+
+                        $addName = $addTable.CswTable('cell', 1, 3)
+                                            .CswInput('init', {
+                                                ID: makeStepId('newInspectionScheduleName'),
+                                                type: CswInput_Types.text
+                                            })
+                                            .css({ 'padding': '5px', 'vertical-align': 'middle' });
+
+                        //abstracted interval control goes here
+                        $interval = $addTable.CswTable('cell', 1, 4);
+
+                        $addTable.CswTable('cell', 1, 5)
+                                .CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
+                                    AlternateText: 'Add New Inspection Schedule',
+                                    onClick: function () {
+                                        var newSched = $addName.val(),
+                                            group = $groupSelect.find(':selected').val(),
+                                            interval = $interval.val();
+
+                                        if (false === isNullOrEmpty(newSched) &&
+                                                false === isNullOrEmpty(group) &&
+                                                    false === isNullOrEmpty(interval) &&
+                                                        false === contains(inspectionSchedules, newSched) &&
+                                                            false === contains(newInspectionSchedules, newSched)) {
+
+                                            newInspectionSchedules[newSched] = {
+                                                name: newSched,
+                                                interval: interval,
+                                                group: group
+                                            };
+                                            $list.CswList('addItem', {
+                                                value: newSched + ' (NEW)'
+                                            });
+                                            $addName.val('');
+                                        }
+                                        return CswImageButton_ButtonType.None;
+                                    }
+                                })
+                                .css({ 'padding': '5px', 'vertical-align': 'middle' });
+
                         stepSixComplete = true;
                     }
                 };
@@ -420,9 +492,9 @@
 
             makeStepSeven = function () {
 
-                $wizard.CswWizard('button', 'previous', 'disable').hide();
-                $wizard.CswWizard('button', 'next', 'disable').hide();
-                $wizard.CswWizard('button', 'cancel', 'disable').hide();
+                $wizard.CswWizard('button', 'previous', 'disable').hide().remove();
+                $wizard.CswWizard('button', 'next', 'disable').hide().remove();
+                $wizard.CswWizard('button', 'cancel', 'disable').hide().remove();
                 $wizard.CswWizard('button', 'finish', 'enable').show();
 
                 $divStep7 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step7.step);
@@ -447,6 +519,7 @@
                         makeStepSix();
                         break;
                     case CswInspectionDesign_WizardSteps.step7.step:
+                        finalize();
                         makeStepSeven();
                         break;
                 } // switch(newstepno)
@@ -473,7 +546,7 @@
                 }
             },
 
-            handleFinish = function (ignore) {
+            finalize = function (ignore) {
                 var jsonData = {
                     DesignGrid: inspectionGrid.$gridTable.jqGrid('getRowData'),
                     InspectionName: selectedInspectionName,
@@ -491,13 +564,23 @@
                     }
                 });
 
-            }; //_handleFinish
+            }, //finalize
+
+            onFinish = function () {
+                //load some view
+            },
+            
+            makeStepId = function (suffix, stepNo) {
+                var step = stepNo || currentStepNo;
+                return makeId({ prefix: 'step' + currentStepNo, ID: o.ID, suffix: suffix });
+            };
+
 
         //#endregion Variable Declaration
 
         //#region Execution
         $wizard = $div.CswWizard('init', {
-            ID: o.ID + '_wizard',
+            ID: makeId({ ID: o.ID, suffix: 'wizard' }),
             Title: 'Create New Inspection',
             StepCount: CswInspectionDesign_WizardSteps.stepcount,
             Steps: wizardSteps,
@@ -506,7 +589,7 @@
             onNext: handleNext,
             onPrevious: handlePrevious,
             onCancel: o.onCancel,
-            onFinish: handleFinish,
+            onFinish: onFinish,
             doNextOnInit: false
         });
 

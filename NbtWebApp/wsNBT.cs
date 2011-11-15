@@ -3193,7 +3193,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getInspectionTargetGroupNodes( string InspectionTargetName )
+        public string getNodesForInspectionTarget( string InspectionTargetName, string IncludeSchedules )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3205,7 +3205,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswWebServiceInspectionDesign( _CswNbtResources );
-                    ReturnVal = ws.getInspectionTargetGroupNodes( InspectionTargetName );
+                    ReturnVal = ws.getNodesForInspectionTarget( InspectionTargetName, CswConvert.ToBoolean( IncludeSchedules ) );
                 }
 
                 _deInitResources();
