@@ -36,63 +36,98 @@ var CswTimeInterval = function (options) {
                 name: o.ID + '_type',
                 type: CswInput_Types.radio,
                 value: 'weekly'
-            }),
+            }).CswAttrDom('checked', (rateType === intervalTypes.WeeklyByDay)),
             $monthlyradiocell = $table.CswTable('cell', 2, 1),
             $monthlyradio = $monthlyradiocell.CswInput('init', {
                 ID: o.ID + '_type_monthly',
                 name: o.ID + '_type',
                 type: CswInput_Types.radio,
                 value: 'monthly'
-            }),
+            }).CswAttrDom('checked', (rateType === intervalTypes.MonthlyByDate || rateType === intervalTypes.MonthlyByWeekAndDay)),
             $yearlyradiocell = $table.CswTable('cell', 3, 1),
             $yearlyradio = $yearlyradiocell.CswInput('init', {
                 ID: o.ID + '_type_yearly',
                 name: o.ID + '_type',
                 type: CswInput_Types.radio,
                 value: 'yearly'
-            });
+            }).CswAttrDom('checked', (rateType === intervalTypes.YearlyByDate));
+
+        function onChange() {
+            o.onchange();
+            toggleIntervalDiv(rateType, $weeklyradio, $monthlyradio, $yearlyradio);
+        }
 
         //Weekly
         $table.CswTable('cell', 1, 2).append('<span>&nbsp;Weekly</span>');
         $weeklyradio.click(function () {
-            rateType = 'Weekly';
+            rateType = intervalTypes.WeeklyByDay;
             $('#' + o.ID + '_textvalue').text('Weekly');
             $WeeklyDiv = makeWeekDayPicker($pickerCell, o.onchange, false);
-            o.onchange();
-            if (abandonHope) {
-                $weeklyradio.attr('checked', true);
-                $monthlyradio.attr('checked', false);
-                $yearlyradio.attr('checked', false);
-            }
+
+
         });
 
         //Monthly
         $table.CswTable('cell', 2, 2).append('<span>&nbsp;Monthly</span>');
         $monthlyradio.click(function () {
-            rateType = 'Monthly';
+            rateType = intervalTypes.MonthlyByDate;
             $('#' + o.ID + '_textvalue').text('Monthly');
             $MonthlyDiv = makeMonthlyPicker($pickerCell);
-            o.onchange();
-            if (abandonHope) {
-                $weeklyradio.attr('checked', false);
-                $monthlyradio.attr('checked', true);
-                $yearlyradio.attr('checked', false);
-            }
+            onChange();
         });
 
         //Yearly
         $table.CswTable('cell', 3, 2).append('<span>&nbsp;Yearly</span>');
         $yearlyradio.click(function () {
-            rateType = 'Yearly';
+            rateType = intervalTypes.YearlyByDate;
             $('#' + o.ID + '_textvalue').text('Yearly');
             $YearlyDiv = makeYearlyDatePicker($pickerCell);
-            o.onchange();
-            if (abandonHope) {
-                $weeklyradio.attr('checked', false);
-                $monthlyradio.attr('checked', false);
-                $yearlyradio.attr('checked', true);
-            }
+            onChange();
         });
+    };
+
+    var toggleIntervalDiv = function (interval, $weeklyradio, $monthlyradio, $yearlyradio) {
+
+        if (abandonHope) {
+            $weeklyradio.attr('checked', false);
+            $monthlyradio.attr('checked', false);
+            $yearlyradio.attr('checked', false);
+        }
+        if (false === isNullOrEmpty($WeeklyDiv, true)) {
+            $WeeklyDiv.hide();
+        }
+        if (false === isNullOrEmpty($MonthlyDiv, true)) {
+            $MonthlyDiv.hide();
+        }
+        if (false === isNullOrEmpty($YearlyDiv, true)) {
+            $YearlyDiv.hide();
+        }
+        switch (interval) {
+            case intervalTypes.WeeklyByDay:
+                $WeeklyDiv.show();
+                if (abandonHope) {
+                    $weeklyradio.attr('checked', true);
+                }
+                break;
+            case intervalTypes.MonthlyByDate:
+                $MonthlyDiv.show();
+                if (abandonHope) {
+                    $monthlyradio.attr('checked', true);
+                }
+                break;
+            case intervalTypes.MonthlyByWeekAndDay:
+                $MonthlyDiv.show();
+                if (abandonHope) {
+                    $monthlyradio.attr('checked', true);
+                }
+                break;
+            case intervalTypes.YearlyByDate:
+                $YearlyDiv.show();
+                if (abandonHope) {
+                    $yearlyradio.attr('checked', true);
+                }
+                break;
+        }
     };
 
     function getWeekDayChecked(id) {
@@ -140,7 +175,7 @@ var CswTimeInterval = function (options) {
 
         return function ($parent, onchange, useRadio, elemId) {
             if (false === weeklyDayPickerComplete) {
-                $ret = $('<div />');
+                $ret = $('<div />').appendTo($parent);
                 var id = elemId || o.ID + '_weeklyday',
                     $picker, $table, i, type, $pickercell, $WeeklyStartDateCell,
                     weeklyStartDate = (false === o.Multi) ? rateInterval.startingdate.date : '',
@@ -206,18 +241,8 @@ var CswTimeInterval = function (options) {
                 }
 
                 weeklyDayPickerComplete = true;
-                $ret.appendTo($parent).addClass('CswFieldTypeTimeInterval_Div');
+                $ret.addClass('CswFieldTypeTimeInterval_Div');
             } // if (false === weeklyDayComplete)
-
-            if (false === isNullOrEmpty($WeeklyDiv, true)) {
-                $WeeklyDiv.show();
-            }
-            if (false === isNullOrEmpty($MonthlyDiv, true)) {
-                $MonthlyDiv.hide();
-            }
-            if (false === isNullOrEmpty($YearlyDiv, true)) {
-                $YearlyDiv.hide();
-            }
 
             rateInterval.ratetype = intervalTypes.WeeklyByDay;
             rateInterval.weeklyday = getWeekDayChecked(o.ID + '_weeklyday');
@@ -240,7 +265,7 @@ var CswTimeInterval = function (options) {
                 monthlyDayPickerId = makeId({ prefix: o.ID, ID: 'monthly', suffix: 'day' });
 
             if (false === monthlyPickerComplete) {
-                $ret = $('<div />');
+                $ret = $('<div />').appendTo($parent);
 
                 function makeEveryMonthSelect() {
                     var $every = $('<div>Every </div>');
@@ -392,18 +417,9 @@ var CswTimeInterval = function (options) {
                 $ret.append(makeStartOnYear());
 
 
-                $ret.appendTo($parent).addClass('CswFieldTypeTimeInterval_Div');
+                $ret.addClass('CswFieldTypeTimeInterval_Div');
             } // if (false === monthlyPickerComplete)
 
-            if (false === isNullOrEmpty($MonthlyDiv, true)) {
-                $MonthlyDiv.show();
-            }
-            if (false === isNullOrEmpty($WeeklyDiv, true)) {
-                $WeeklyDiv.hide();
-            }
-            if (false === isNullOrEmpty($YearlyDiv, true)) {
-                $YearlyDiv.hide();
-            }
             rateInterval.ratetype = $ret.find('[name="' + monthlyRadioId + '"]:checked').val();
             rateInterval.monthlyfrequency = $MonthlyRateSelect.find(':selected').val();
             rateInterval.startingmonth = $startOnMonth.find(':selected').val();
@@ -429,7 +445,7 @@ var CswTimeInterval = function (options) {
             $ret, $yearlyDate;
         return function ($parent) {
             if (false === yearlyDatePickerComplete) {
-                $ret = $('<div />').addClass('CswFieldTypeTimeInterval_Div');
+                $ret = $('<div />').appendTo($parent);
 
                 var yearlyStartDate = rateInterval.yearlydate.date;
                 $ret.append('Every Year, Starting On:<br/>');
@@ -447,22 +463,12 @@ var CswTimeInterval = function (options) {
                 $ret.appendTo($parent);
             } // if (false === yearlyDatePickerComplete)
 
-            if (false === isNullOrEmpty($YearlyDiv, true)) {
-                $YearlyDiv.show();
-            }
-            if (false === isNullOrEmpty($WeeklyDiv, true)) {
-                $WeeklyDiv.hide();
-            }
-            if (false === isNullOrEmpty($MonthlyDiv, true)) {
-                $MonthlyDiv.hide();
-            }
-
             var yearDate = $('#' + o.ID + '_yearly_sd').CswDateTimePicker('value', o.propData.readonly).Date;
             rateInterval.ratetype = intervalTypes.YearlyByDate;
             rateInterval.yearlydate = {
                 date: yearDate
             };
-            return $ret;
+            return $ret.addClass('CswFieldTypeTimeInterval_Div');
         };
     })();
 
@@ -482,7 +488,7 @@ var CswTimeInterval = function (options) {
             }
             rateType = (false === o.Multi) ? rateInterval.ratetype : 'WeeklyByDay';
             dateFormat = ServerDateFormatToJQuery(rateInterval.dateformat);
-            $interval = $('<div id="' + makeId({ ID: o.ID, suffix: '_cswTimeInterval' }) + '"></div>');
+            $interval = $('<div id="' + makeId({ ID: o.ID, suffix: '_cswTimeInterval' }) + '"></div>').appendTo($Div);
 
             //Page Components
             $interval.append('<span id="' + o.ID + '_textvalue">' + textValue + '</span>');
@@ -506,7 +512,7 @@ var CswTimeInterval = function (options) {
                     break;
             } // switch(RateType)
 
-            return $interval.appendTo($Div);
+            return $interval;
         })();
     }
 
