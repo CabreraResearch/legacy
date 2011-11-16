@@ -370,13 +370,13 @@
                                 $addTable = $divStep5.CswTable();
                                 $addTable.CswTable('cell', 1, 1)
                                         .CswDiv('init', { value: 'Add a new Inspection Target Group:' })
-                                        .css({ 'padding': '5px', 'vertical-align': 'middle' });
+                                        .css({ 'padding': '1px', 'vertical-align': 'middle' });
                                 $addName = $addTable.CswTable('cell', 1, 2)
                                         .CswInput('init', {
                                             ID: makeStepId('newInspectionGroupName'),
                                             type: CswInput_Types.text
                                         })
-                                        .css({ 'padding': '5px', 'vertical-align': 'middle' });
+                                        .css({ 'padding': '1px', 'vertical-align': 'middle' });
                                 $addTable.CswTable('cell', 1, 3)
                                         .CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
                                             AlternateText: 'Add New Inspection Target Group',
@@ -397,7 +397,7 @@
                                                 return CswImageButton_ButtonType.None;
                                             }
                                         })
-                                        .css({ 'padding': '5px', 'vertical-align': 'middle' });
+                                        .css({ 'padding': '1px', 'vertical-align': 'middle' });
                             },
                             error: function (error) {
                                 //$.CswDialog('ErrorDialog', error);
@@ -415,8 +415,7 @@
                     $wizard.CswWizard('button', 'previous', 'enable');
                     $wizard.CswWizard('button', 'next', 'enable').text('Create Inspection Design');
 
-                    var groupNodes = data.groupnodenames,
-                        $addTable, $list, $addName, $groupSelect, $interval, groupValues = [];
+                    var $addTable, $list, $addName, $groupSelect, $interval, groupValues = [];
 
                     if (false === stepSixComplete) {
                         $divStep6 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step6.step);
