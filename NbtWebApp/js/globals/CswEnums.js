@@ -43,6 +43,13 @@ var CswViewMode = {
     table: { name: 'Table' }
 };
 
+var CswRateIntervalTypes = {
+        WeeklyByDay: 'WeeklyByDay',
+        MonthlyByDate: 'MonthlyByDate',
+        MonthlyByWeekAndDay: 'MonthlyByWeekAndDay',
+        YearlyByDate: 'YearlyByDate'
+    };
+
 var CswMultiEditDefaultValue = '[Unchanged]';
 
 // for CswCookie

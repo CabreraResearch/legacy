@@ -4,6 +4,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 
 ; (function ($) {
+    "use strict";
     var pluginName = "CswWizard";
 
     var methods = {

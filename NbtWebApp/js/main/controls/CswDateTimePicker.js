@@ -2,9 +2,10 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="CswInput.js" />
 
 ; (function ($) {
-        
+    "use strict";    
     var pluginName = 'CswDateTimePicker';
 
     var methods = {
@@ -47,7 +48,7 @@
                                                           width: '80px',
                                                           cssclass: 'textinput' // date' date validation broken by alternative formats
                                                   }); 
-                    $DateBox.datepicker({ 'dateFormat': o.DateFormat });
+                    $DateBox.datepicker({ 'dateFormat': ServerDateFormatToJQuery(o.DateFormat) });
                     if(o.Required) $DateBox.addClass("required");
                 }
 
@@ -81,10 +82,10 @@
                 $TimeBox = $Div.find( '#' + id + '_time'),
                 ret = {};
             if ($DateBox.length > 0) {
-                ret.Date = (false === isTrue(readOnly)) ? $DateBox.val() : $DateBox.text(); 
+                ret.date = (false === isTrue(readOnly)) ? $DateBox.val() : $DateBox.text(); 
             } 
             if ($TimeBox.length > 0) {
-                ret.Time = (false === isTrue(readOnly)) ? $TimeBox.val() : $TimeBox.text();
+                ret.time = (false === isTrue(readOnly)) ? $TimeBox.val() : $TimeBox.text();
             }
             return ret;
         }

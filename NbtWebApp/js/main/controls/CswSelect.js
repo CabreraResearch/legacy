@@ -4,7 +4,7 @@
 /// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
-    
+    "use strict";
     var pluginName = "CswSelect";
     
     var methods = {
@@ -84,7 +84,7 @@
                     var display = tryParseString(thisOpt.display);
                     var $opt = $('<option value="' + value + '">' + display + '</option>')
                         .appendTo($select);
-                    if (value === selected) {
+                    if (value === tryParseString(selected)) {
                         $opt.CswAttrDom('selected', 'selected');
                     }
                     if (false === isNullOrEmpty(thisOpt.data)) {

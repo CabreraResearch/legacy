@@ -4,7 +4,7 @@
 /// <reference path="../../globals/Global.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
-    
+    "use strict";
     var pluginName = "CswInput";
     
     var methods = {

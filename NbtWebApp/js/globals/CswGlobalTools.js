@@ -1,3 +1,20 @@
+
+//global, ChemSW namespace. Eventually home to all 'global' variables.
+var ChemSW = {
+    
+    makeSequentialArray: function (start, end) {
+        var ret = [];
+        start = +start;
+        end = +end;
+        if (isNumber(start) && isNumber(end)) {
+            for (start; start <= end; start += 1) {
+                ret.push(start);
+            }
+        }
+        return ret;
+    }
+};
+
 function isArray(obj) {
     /// <summary> Returns true if the object is an array</summary>
     /// <param name="obj" type="Object"> Object to test</param>

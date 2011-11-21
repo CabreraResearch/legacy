@@ -1103,16 +1103,14 @@ function validateInteger(value)
 
 //#region Dates
 
-function ServerDateFormatToJQuery(ServerDateFormat)
-{
+function ServerDateFormatToJQuery(ServerDateFormat) {
     var ret = ServerDateFormat;
     ret = ret.replace(/M/g, 'm');
     ret = ret.replace(/mmm/g, 'M');
     ret = ret.replace(/yyyy/g, 'yy');
     return ret;
 }
-function ServerTimeFormatToJQuery(ServerTimeFormat)
-{
+function ServerTimeFormatToJQuery(ServerTimeFormat) {
     var ret = ServerTimeFormat;
     return ret;
 }

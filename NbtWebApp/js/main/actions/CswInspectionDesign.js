@@ -7,7 +7,7 @@
 /// <reference path="../controls/CswGrid.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-
+    "use strict";
     $.fn.CswInspectionDesign = function (options) {
 
         //#region Variable Declaration
