@@ -665,7 +665,7 @@ namespace ChemSW.Nbt
                                    );
         }
 
-        private Collection<CswNbtNodeKey> _loadNodeAsChild( CswNbtNodeKey ParentNodeKey, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship,
+        public Collection<CswNbtNodeKey> _loadNodeAsChild( CswNbtNodeKey ParentNodeKey, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship,
                                                bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
                                                string IconFileName, string NameTemplate, CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
                                                string NodeTypeName, Int32 ObjectClassId, string ObjectClassName, bool Locked )
@@ -963,9 +963,9 @@ namespace ChemSW.Nbt
             return ( _CurrentNode.ParentNode.ChildNodes.Count );
         }//
 
-        public IEnumerable getKeysForNodeId( CswPrimaryKey NodeId )
+		public Collection<CswNbtNodeKey> getKeysForNodeId( CswPrimaryKey NodeId )
         {
-            ArrayList NodeInstances = new ArrayList();
+			Collection<CswNbtNodeKey> NodeInstances = new Collection<CswNbtNodeKey>();
             //_CswNbtNodeCatalogue.getKeysForNodeId(NodeId, ref NodeInstances);
             foreach( CswNbtNodeKey NodeKey in NodesAndParents.Keys )
             {

@@ -454,6 +454,7 @@
     <Compile Include="csw\TreeEvents\CswNbtTreeRuleAliquot.cs" />
     <Compile Include="csw\TreeEvents\CswPropertyValue.cs" />
     <Compile Include="csw\TreeEvents\ICswNbtTreeRule.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevel.cs" />
     <Compile Include="csw\Tree\CswNbtColumnNames.cs" />
     <Compile Include="csw\Tree\CswNbtLocationTree.cs" />
     <Compile Include="csw\Tree\CswNbtNodeCatalogue.cs" />
