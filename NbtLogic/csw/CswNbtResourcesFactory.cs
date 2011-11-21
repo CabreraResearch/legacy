@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Text;
 using System.Collections;
+using ChemSW;
 using ChemSW.RscAdo;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -28,28 +29,41 @@ namespace ChemSW.Nbt
     /// </summary>
     public class CswNbtResourcesFactory
     {
-		/// <summary>
-		/// Create a new CswNbtResources using same initialization parameters as an existing one
-		/// Does not copy data or access id
-		/// </summary>
-		public static CswNbtResources makeCswNbtResources( CswNbtResources OtherResources )
-		{
-			return makeCswNbtResources( OtherResources.AppType,
-										OtherResources.SetupVbls.SetupMode,
-										OtherResources.ExcludeDisabledModules,
-										OtherResources.IsDeleteModeLogical );
-		}
+        /// <summary>
+        /// Create a new CswNbtResources using same initialization parameters as an existing one
+        /// Does not copy data or access id
+        /// </summary>
+        public static CswNbtResources makeCswNbtResources( CswNbtResources OtherResources )
+        {
+            return makeCswNbtResources( OtherResources.AppType,
+                                        OtherResources.SetupVbls.SetupMode,
+                                        OtherResources.ExcludeDisabledModules,
+                                        OtherResources.IsDeleteModeLogical );
+        }
 
-		/// <summary>
-		/// Create a new CswNbtResources
-		/// </summary>
-		public static CswNbtResources makeCswNbtResources( AppType AppType, SetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical )
+        /// <summary>
+        /// Create a new CswNbtResources
+        /// </summary>
+        public static CswNbtResources makeCswNbtResources( AppType AppType, SetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache = null )
 		{
+
+            if( SetupMode.NbtWeb == SetupMode )
+            {
+                if( null == CswSuperCycleCache )
+                {
+                    throw( new CswDniException("The web consumer must provide a super cycle cache!") ); 
+                }
+            }
+            else
+            {
+                CswSuperCycleCache = new CswSuperCycleCacheDefault();
+            }
+
 			CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt(SetupMode);
 			CswDbCfgInfoNbt ConfigInfo = new CswDbCfgInfoNbt( SetupMode );
 			string FilesPath = CswTools.getConfigurationFilePath( SetupMode );
 
-			CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical );
+            CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical, CswSuperCycleCache );
 			ReturnVal.SetDbResources( new CswNbtTreeFactory( FilesPath ) );
 
 			//bz # 9896: This events must only be assigned when we first instance the class;
@@ -64,6 +78,6 @@ namespace ChemSW.Nbt
 
 			return ( ReturnVal );
 		}
-	} // CswNbtResourcesFactory
+    } // CswNbtResourcesFactory
 
 }//ChemSW.NbtResources

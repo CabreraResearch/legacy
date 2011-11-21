@@ -18,9 +18,9 @@ namespace ChemSW.Nbt
         public CswNbtStatisticsEvents CswNbtStatisticsEvents = null;
         private CswNbtStatistics _CswNbtStatistics = null;
 
-        public CswSessionResourcesNbt( HttpApplicationState HttpApplicationState, HttpRequest HttpRequest, HttpResponse HttpResponse, string LoginAccessId, SetupMode SetupMode )
+        public CswSessionResourcesNbt( HttpApplicationState HttpApplicationState, HttpRequest HttpRequest, HttpResponse HttpResponse, HttpContext Context, string LoginAccessId, SetupMode SetupMode )
         {
-            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false );
+            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false, new CswSuperCycleCacheWeb( Context.Cache ) );
 
             string RecordStatisticsVblName = "RecordUserStatistics";
             bool RecordStatistics = false;
