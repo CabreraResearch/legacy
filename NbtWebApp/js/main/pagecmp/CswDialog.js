@@ -164,6 +164,8 @@
         AddNodeTypeDialog: function (options) {
             var o = {
                 objectClassId: '', 
+                nodetypename: '',
+                category: '',
                 $select: '',
                 nodeTypeDescriptor: '',
                 onSuccess: null,
@@ -175,14 +177,16 @@
             }
 
             var $div = $('<div></div>'),
-                $nodeType, $category;
+                $nodeType, $category, category = tryParseString(o.category);
             
             $div.append('New ' + o.nodeTypeDescriptor + ': ');
-            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text });
+            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text, value: o.nodetypename });
             $div.append('<br />');
-            $div.append('Category Name: ');
-            $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: CswInput_Types.text });
-            $div.append('<br />');
+            if(isNullOrEmpty(category)) {
+                $div.append('Category Name: ');
+                $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: CswInput_Types.text });
+                $div.append('<br />');
+            }
             $div.CswButton({
                     ID: o.objectClassId + '_add',
                     enabledText: 'Add',
@@ -193,13 +197,17 @@
                             async: false,
                             data: { 'NodeTypeName': newNodeTypeName },
                             success: function () {
-                                o.$select.append('<option data-newNodeType="true" value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>')
-                                         .data('objectClassId', o.objectClassId)
-                                         .data('category', $category.val());
+                                o.$select.append('<option data-newNodeType="true" value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>');
                                 o.$select.val($nodeType.val());
+                                if(isNullOrEmpty(category) && false === isNullOrEmpty($category)) {
+                                    category = $category.val();
+                                }
                                 $div.dialog('close');
                                 if(isFunction(o.onSuccess)) {
-                                    o.onSuccess();
+                                    o.onSuccess({
+                                            nodetypename: newNodeTypeName,
+                                            category: category
+                                        });
                                 }
                             }
                         });

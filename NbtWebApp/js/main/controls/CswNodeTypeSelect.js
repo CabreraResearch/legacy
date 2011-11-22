@@ -17,6 +17,7 @@
                 onSelect: null, //function (nodetypeid) {},
                 onSuccess: null, //function () {}
                 width: '',
+                addNewOption: false,
                 excludeNodeTypeIds: ''
             };
             if (options) {
@@ -26,6 +27,10 @@
             var $parent = $(this),
                 $select = $('<select id="'+ o.ID +'_sel" />').css('width', '200px');
             
+            if(isTrue(o.addNewOption)) {
+                $select.append('<option value="[Create New]">[Create New]</option>');
+            }
+
             $select.change(function() { if (isFunction(o.onSelect)) o.onSelect( $select.val() ); });
 
             CswAjaxJson({
@@ -46,6 +51,7 @@
                             });
                             $select.append($thisOpt);
                         });
+                        
                         if (isFunction(o.onSuccess)) {
                             o.onSuccess();
                         }
