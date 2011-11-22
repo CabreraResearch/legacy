@@ -29,7 +29,9 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataCollectionNodeType NodeTypesCollection;
         public CswNbtMetaDataCollectionNodeTypeProp NodeTypePropsCollection;
         public CswNbtMetaDataCollectionNodeTypeTab NodeTypeTabsCollection;
-        
+
+
+        CswNbtMetaDataTableCache _CswNbtMetaDataTableCache = null;
         public CswNbtMetaDataResources( CswNbtResources Resources, CswNbtMetaData MetaData )
         {
             CswNbtResources = Resources;
@@ -42,6 +44,8 @@ namespace ChemSW.Nbt.MetaData
             NodeTypesCollection = new CswNbtMetaDataCollectionNodeType( this );
             NodeTypePropsCollection = new CswNbtMetaDataCollectionNodeTypeProp( this );
             NodeTypeTabsCollection = new CswNbtMetaDataCollectionNodeTypeTab( this );
+
+            _CswNbtMetaDataTableCache = new CswNbtMetaDataTableCache( CswNbtResources.CswSuperCycleCache );
         }
 
         public void refreshAll( bool ExcludeDisabledModules )
@@ -92,9 +96,17 @@ namespace ChemSW.Nbt.MetaData
                                                        where j.objectclassid = object_class.objectclassid))";
             }
 
-            RefreshMetaDataObject( ObjectClassesCollection, ObjectClassTableUpdate.getTable( WhereClause,
-                new Collection<OrderByClause> { new OrderByClause( "objectclass", OrderByType.Ascending ) } ) );
+
+            DataTable ObjectClassesTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.ObjectClass );
+            if( null == ObjectClassesTable )
+            {
+                ObjectClassesTable = ObjectClassTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "objectclass", OrderByType.Ascending ) } );
+                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.ObjectClass, ObjectClassesTable );
+            }
+
+            RefreshMetaDataObject( ObjectClassesCollection, ObjectClassesTable );
         }
+
         private void RefreshAllObjectClassProps( bool ExcludeDisabledModules )
         {
             string WhereClause = string.Empty;
@@ -110,9 +122,17 @@ namespace ChemSW.Nbt.MetaData
                                                         join modules m on j.moduleid = m.moduleid
                                                        where j.objectclassid = object_class_props.objectclassid))";
             }
-            RefreshMetaDataObject( ObjectClassPropsCollection, ObjectClassPropTableUpdate.getTable( WhereClause,
-                new Collection<OrderByClause> { new OrderByClause( "propname", OrderByType.Ascending ) } ) );
+
+            DataTable ObjectClasPropsTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.ObjectClassProp );
+            if( null == ObjectClasPropsTable )
+            {
+                ObjectClasPropsTable = ObjectClassPropTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "propname", OrderByType.Ascending ) } );
+                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.ObjectClassProp, ObjectClasPropsTable ); 
+            }
+
+            RefreshMetaDataObject( ObjectClassPropsCollection, ObjectClasPropsTable );
         }
+
         private void RefreshAllNodeTypes( bool ExcludeDisabledModules )
         {
             string WhereClause = string.Empty;
@@ -137,13 +157,32 @@ namespace ChemSW.Nbt.MetaData
                                                            join modules m on j.moduleid = m.moduleid
                                                           where j.nodetypeid = nodetypes.nodetypeid) ) )";
             }
-            RefreshMetaDataObject( NodeTypesCollection, NodeTypeTableUpdate.getTable( WhereClause, 
-                new Collection<OrderByClause> { new OrderByClause( "nodetypeid", OrderByType.Ascending ) } ) );
+
+
+            DataTable NodeTypesTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.NodeType );
+            if( null == NodeTypesTable )
+            {
+                NodeTypesTable = NodeTypeTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "nodetypeid", OrderByType.Ascending ) } );
+                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeType, NodeTypesTable ); 
+            }
+
+            RefreshMetaDataObject( NodeTypesCollection, NodeTypesTable );
         }
+
+
         private void RefreshAllFieldTypes( bool ExcludeDisabledModules )
         {
-            RefreshMetaDataObject( FieldTypesCollection, FieldTypeTableUpdate.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "fieldtype", OrderByType.Ascending ) } ) );
+            DataTable FieldTypesTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.FieldType );
+            if( null == FieldTypesTable )
+            {
+                FieldTypesTable = FieldTypeTableUpdate.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "fieldtype", OrderByType.Ascending ) } );
+                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.FieldType, FieldTypesTable ); 
+            }
+
+
+            RefreshMetaDataObject( FieldTypesCollection, FieldTypesTable );
         }
+
         private void RefreshAllNodeTypeProps( bool ExcludeDisabledModules )
         {
             string WhereClause = string.Empty;
@@ -168,9 +207,15 @@ namespace ChemSW.Nbt.MetaData
                                                            join modules m on j.moduleid = m.moduleid
                                                           where j.nodetypeid = nodetype_props.nodetypeid) ) )";
             }
-            
-            RefreshMetaDataObject( NodeTypePropsCollection, NodeTypePropTableUpdate.getTable( WhereClause,
-                new Collection<OrderByClause> { new OrderByClause( "propname", OrderByType.Ascending ) } ) );
+
+            DataTable NodeTypePropTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.NodeType );
+            if( null == NodeTypePropTable )
+            {
+                NodeTypePropTable = NodeTypePropTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "propname", OrderByType.Ascending ) } );
+                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeProp, NodeTypePropTable ); 
+            }
+
+            RefreshMetaDataObject( NodeTypePropsCollection, NodeTypePropTable );
 
             // BZ 9139 - Fill in the relational TableName/ColumnName on the subfield here, so that it's cached
             CswTableSelect JctDdNtpSelect = CswNbtResources.makeCswTableSelect( "JctDdNtp_select", "jct_dd_ntp" );
@@ -187,6 +232,9 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         } // RefreshAllNodeTypeProps()
+
+
+
         private void RefreshAllNodeTypeTabs( bool ExcludeDisabledModules )
         {
             string WhereClause = string.Empty;
@@ -211,8 +259,15 @@ namespace ChemSW.Nbt.MetaData
                                                            join modules m on j.moduleid = m.moduleid
                                                           where j.nodetypeid = nodetype_tabset.nodetypeid) ) )";
             }
-            RefreshMetaDataObject( NodeTypeTabsCollection, NodeTypeTabTableUpdate.getTable( WhereClause,
-                new Collection<OrderByClause> { new OrderByClause( "taborder", OrderByType.Ascending ) } ) );
+
+            DataTable NodeTypeTabsTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeTab );
+            if( null == NodeTypeTabsTable )
+            {
+                NodeTypeTabsTable = NodeTypeTabTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "taborder", OrderByType.Ascending ) } );
+                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeTab, NodeTypeTabsTable ); 
+            }
+
+            RefreshMetaDataObject( NodeTypeTabsCollection, NodeTypeTabsTable );
         }
 
 
@@ -223,15 +278,15 @@ namespace ChemSW.Nbt.MetaData
             ObjectCollection.ClearKeys();
 
             Collection<ICswNbtMetaDataObject> Objects = new Collection<ICswNbtMetaDataObject>();
-            foreach ( ICswNbtMetaDataObject ThisObject in ObjectCollection.All )
+            foreach( ICswNbtMetaDataObject ThisObject in ObjectCollection.All )
                 Objects.Add( ThisObject );
 
-            foreach ( DataRow ThisRow in UpdatedTable.Rows )
+            foreach( DataRow ThisRow in UpdatedTable.Rows )
             {
                 ICswNbtMetaDataObject MatchingObject = null;
-                foreach ( ICswNbtMetaDataObject ThisObject in Objects )
+                foreach( ICswNbtMetaDataObject ThisObject in Objects )
                 {
-                    if ( ThisObject.UniqueId == CswConvert.ToInt32( ThisRow[ ThisObject.UniqueIdFieldName ] ) )
+                    if( ThisObject.UniqueId == CswConvert.ToInt32( ThisRow[ThisObject.UniqueIdFieldName] ) )
                     {
                         // Reassign the match to the new DataRow
                         ThisObject.Reassign( ThisRow );   // won't change the uniqueid, since they match
@@ -240,7 +295,7 @@ namespace ChemSW.Nbt.MetaData
                         break;
                     }
                 }
-                if ( MatchingObject == null )
+                if( MatchingObject == null )
                 {
                     // Make New
                     ObjectCollection.RegisterNew( ThisRow );
@@ -253,7 +308,7 @@ namespace ChemSW.Nbt.MetaData
             }
 
             // Get rid of the leftovers
-            foreach ( ICswNbtMetaDataObject ThisObject in Objects )
+            foreach( ICswNbtMetaDataObject ThisObject in Objects )
             {
                 ObjectCollection.Remove( ThisObject );
             }
@@ -265,20 +320,20 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public void RecalculateQuestionNumbers( CswNbtMetaDataNodeType NodeType )
         {
-            foreach ( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
             {
                 Int32 CurrentQuestionNo = 1;
                 // Do non-conditional ones first
                 Collection<CswNbtMetaDataNodeTypeProp> PropsToDo = new Collection<CswNbtMetaDataNodeTypeProp>();
-                foreach ( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
                 {
-                    if ( Prop.UseNumbering )
+                    if( Prop.UseNumbering )
                         PropsToDo.Add( Prop );
                 }
 
-                foreach ( CswNbtMetaDataNodeTypeProp Prop in PropsToDo )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo )
                 {
-                    if ( !Prop.hasFilter() )
+                    if( !Prop.hasFilter() )
                     {
                         Prop.QuestionNo = CurrentQuestionNo;
                         Prop.SubQuestionNo = Int32.MinValue;
@@ -287,20 +342,20 @@ namespace ChemSW.Nbt.MetaData
                 }
 
                 // Now do the conditional ones (with numbered parents)
-                Int32[] SubQuestionNos = new Int32[ CurrentQuestionNo + 1 ];
-                for ( Int32 i = 1; i <= CurrentQuestionNo; i++ )
-                    SubQuestionNos[ i ] = 1;
+                Int32[] SubQuestionNos = new Int32[CurrentQuestionNo + 1];
+                for( Int32 i = 1; i <= CurrentQuestionNo; i++ )
+                    SubQuestionNos[i] = 1;
 
-                foreach ( CswNbtMetaDataNodeTypeProp Prop in PropsToDo )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo )
                 {
-                    if ( Prop.hasFilter() )
+                    if( Prop.hasFilter() )
                     {
                         CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).LatestVersionNodeTypeProp;
-                        if ( ParentProp != null && ParentProp.QuestionNo != Int32.MinValue )
+                        if( ParentProp != null && ParentProp.QuestionNo != Int32.MinValue )
                         {
                             Prop.QuestionNo = ParentProp.QuestionNo;
-                            Prop.SubQuestionNo = SubQuestionNos[ ParentProp.QuestionNo ];
-                            SubQuestionNos[ ParentProp.QuestionNo ] += 1;
+                            Prop.SubQuestionNo = SubQuestionNos[ParentProp.QuestionNo];
+                            SubQuestionNos[ParentProp.QuestionNo] += 1;
                         }
                     }
                 }
@@ -310,16 +365,16 @@ namespace ChemSW.Nbt.MetaData
         public void finalize()
         {
             bool ChangesMade = false;
-            if ( NodeTypeTableUpdate != null )
+            if( NodeTypeTableUpdate != null )
                 ChangesMade = NodeTypeTableUpdate.updateAll() || ChangesMade;
-            if ( NodeTypeTabTableUpdate != null )
+            if( NodeTypeTabTableUpdate != null )
                 ChangesMade = NodeTypeTabTableUpdate.updateAll() || ChangesMade;
-            if ( NodeTypePropTableUpdate != null )
+            if( NodeTypePropTableUpdate != null )
                 ChangesMade = NodeTypePropTableUpdate.updateAll() || ChangesMade;
-            if ( JctNodesPropsTableUpdate != null )
+            if( JctNodesPropsTableUpdate != null )
                 ChangesMade = JctNodesPropsTableUpdate.updateAll() || ChangesMade;
 
-            if ( ChangesMade )
+            if( ChangesMade )
                 CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
         }
 
