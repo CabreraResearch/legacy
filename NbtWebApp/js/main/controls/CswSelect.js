@@ -53,43 +53,62 @@
             var values = makeOptions(valueArray);
             setOptions(values, selected, $select, doEmpty);
             return $select;
+        },
+        addoption: function (value, isSelected) {
+            var $select = $(this),
+                val = makeOption(value);
+            addOption(val, isSelected, $select);
         }
     };
+    
+    function makeOption(opt) {
+        var ret, display;
+        if (contains(opt, 'value') && contains(opt, 'display')) {
+            ret = opt;
+        }
+        else if (contains(opt, 'value')) {
+            display = tryParseString(opt.display, opt.value);
+            ret = { value: opt.value, display: display };
+        } else {
+            ret = { value: opt, display: opt };
+        }
+        return ret;
+    }
     
     function makeOptions(valueArray) {
         var values = [];
         crawlObject(valueArray, function(val) {
-            if (val.hasOwnProperty('value') && val.hasOwnProperty('display')) {
-                values.push(val);
-            }
-            else if (val.hasOwnProperty('value')) {
-                var display = tryParseString(val.display, val.value);
-                values.push({ value: val.value, display: display });
-            } else {
-                values.push({ value: val, display: val });
+            var value = makeOption(val);
+            if(false === isNullOrEmpty(value)) {
+                values.push(value);
             }
         }, false);
         return values;
     }
     
+    function addOption(thisOpt, isSelected, $select) {
+        var value = tryParseString(thisOpt.value);
+        var display = tryParseString(thisOpt.display);
+        var $opt = $('<option value="' + value + '">' + display + '</option>')
+                        .appendTo($select);
+        if (isSelected) {
+            $opt.CswAttrDom('selected', 'selected');
+        }
+        if (false === isNullOrEmpty(value.data)) {
+            $opt.data(value.dataName, value.data);
+        }
+    }
+    
     function setOptions(values, selected, $select, doEmpty) {
+        var key, thisOpt;
         if (isArray(values) && values.length > 0) {
             if (doEmpty) {
                 $select.empty();
             }
-            for (var key in values) {
-                if (values.hasOwnProperty(key)) {
-                    var thisOpt = values[key];
-                    var value = tryParseString(thisOpt.value);
-                    var display = tryParseString(thisOpt.display);
-                    var $opt = $('<option value="' + value + '">' + display + '</option>')
-                        .appendTo($select);
-                    if (value === tryParseString(selected)) {
-                        $opt.CswAttrDom('selected', 'selected');
-                    }
-                    if (false === isNullOrEmpty(thisOpt.data)) {
-                        $opt.data(thisOpt.dataName, thisOpt.data);
-                    }
+            for (key in values) {
+                if (contains(values, key)) {
+                    thisOpt = values[key];
+                    addOption(thisOpt, (thisOpt.value === selected), $select);
                 }
             }
         }

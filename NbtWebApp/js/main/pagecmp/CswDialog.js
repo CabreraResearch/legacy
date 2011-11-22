@@ -161,6 +161,36 @@
             });
 
         }, // AddNodeDialog
+        AddNodeClientSideDialog: function (options) {
+            var o = {
+                ID: '',
+                nodetypename: '',
+                title: '',
+                onSuccess: null
+            };
+
+            if (options) {
+                $.extend(o, options);
+            }
+
+            var $div = $('<div></div>'), 
+                $newNode;
+            
+            $div.append('New ' + o.nodetypename + ': ');
+            $newNode = $div.CswInput('init', { ID: o.ID + '_newNode', type: CswInput_Types.text });
+            
+            $div.CswButton({
+                    ID: o.objectClassId + '_add',
+                    enabledText: 'Add',
+                    onclick: function () {
+                        if(isFunction(o.onSuccess)) {
+                            o.onSuccess($newNode.val());    
+                        }
+                        $div.dialog('close');
+                    }
+                });
+            openDialog($div, 300, 200, null, o.title);
+        }, // AddNodeClientSideDialog
         AddNodeTypeDialog: function (options) {
             var o = {
                 objectClassId: '', 
@@ -213,7 +243,7 @@
                         });
                     }
                 });
-            openDialog($div, 300, 200, null, o.title);
+            openDialog($div, 400, 200, null, o.title);
         }, // AddNodeTypeDialog
         EditLayoutDialog: function (cswNodeTabOptions) {
             cswNodeTabOptions.ID = cswNodeTabOptions.ID + '_editlayout';

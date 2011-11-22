@@ -16,7 +16,7 @@
             var $Div = $(this);
             o.propVals = o.propData.values;
             o.$parent = $Div;
-            var $interval = CswTimeInterval(o);
+            CswTimeInterval(o);
         },
         save: function (o) {
             var clientDb = new CswClientDb();

@@ -573,7 +573,6 @@ var CswTimeInterval = function (options) {
                 textValue = tryParseString(propVals.Interval.text).trim();
                 rateType = rateInterval.ratetype;
             }
-
             dateFormat = tryParseString(rateInterval.dateformat, 'M/d/yyyy');
             $interval = $('<div id="' + makeId({ ID: o.ID, suffix: '_cswTimeInterval' }) + '"></div>')
                                 .appendTo($Div);
@@ -609,8 +608,8 @@ var CswTimeInterval = function (options) {
 
     var ret = {
         $interval: $interval,
-        rateType: rateType,
-        rateInterval: rateInterval
+        rateType: function() { return rateType; },
+        rateInterval: function() { return rateInterval; }
     };
 
     return ret;

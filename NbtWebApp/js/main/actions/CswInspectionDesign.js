@@ -6,6 +6,7 @@
 /// <reference path="../pagecmp/CswWizard.js" />
 /// <reference path="../controls/CswGrid.js" />
 /// <reference path="../pagecmp/CswDialog.js" />
+/// <reference path="../controls/CswTimeInterval.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";
@@ -50,9 +51,9 @@
         // Step 4 - Select or Create Inspection Target
             $divStep4, selectedInspectionTarget, $inspectionTarget,
         // Step 5 - Add new Inspection Target Groups
-            $divStep5, inspectionTargetGroups = { }, newInspectionTargetGroups = { },
+            $divStep5, inspectionTargetGroups = { }, newSchedules = { },
         // Step 6 - Add new Inspection Schedules
-            $divStep6, inspectionSchedules = { }, newInspectionSchedules = { },
+            $divStep6, 
 
             isNewInspectionDesign = function() {
                 return ('[Create New]' === copyFromInspectionDesign);
@@ -363,7 +364,7 @@
                         $inspectionTable.CswTable('cell', 1, 4)
                             .CswDiv('init')
                             .CswButton('init', { 
-                                ID: o.ID + '_addNewInspectionTarget',
+                                ID: makeStepId('addNewInspectionTarget'),
                                 enabledText: 'Add New',
                                 disableOnClick: false,
                                 onclick: function () {
@@ -374,7 +375,7 @@
                                         nodetypename: selectedInspectionTarget,
                                         category: newCategoryName,
                                         $select: $inspectionTarget,
-                                        nodeTypeDescriptor: 'Inspection Target Type',
+                                        nodeTypeDescriptor: 'Target',
                                         onSuccess: function (data) {
                                             selectedInspectionTarget = data.nodetypename;
                                             newCategoryName = data.category;
@@ -400,36 +401,41 @@
 
                 return function () {
                     $wizard.CswWizard('button', 'previous', 'enable');
-                    $wizard.CswWizard('button', 'next', 'enable').text('Create Inspection Design');
+                    $wizard.CswWizard('button', 'next', 'enable').val('Create Inspection Design');
+
+                    if(isNullOrEmpty(selectedInspectionTarget)) {
+                        selectedInspectionTarget = $inspectionTarget.find(':selected').text();
+                    }
+                    
+                    var $newScheduleName, $newScheduleInterval, timeInterval, $addBtn, selectedGroup;
                     
                     if (false === stepFiveComplete) {
                         $divStep5 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step5.step);
 
                         CswAjaxJson({
-                            url: '/NbtWebApp/wsNBT.asmx/getNodesForInspectionTarget',
-                            data: { InspectionTargetName: selectedInspectionTarget, IncludeSchedules: true },
+                            url: '/NbtWebApp/wsNBT.asmx/getScheduleNodesForInspection',
+                            data: { InspectionTargetName: selectedInspectionTarget, 
+                                    CopyInspectionDesignName: copyFromInspectionDesign },
                             success: function (data) {
                                 var groupCount = +(data.groupcount),
                                         groupNodes = data.groupnodenames,
-                                        $addTable, $list, $addName;
+                                        $addTable, $list, $targetGroupSelect, $scheduleList, $groupTable;
 
-                                if (groupCount > 0) {
-                                    //$nextBtn.CswButton('enable');
-                                }
-
-                                $divStep5.append('<p>Inspection Target Groups: </p>');
+                                $divStep5.append('<p>Add schedules for the new Inspection.<br />Create new Inspection Target groups if needed.</p>');
+                                
+                                $scheduleList = $('<p>New Inspection Schedules: </p>')
+                                                    .appendTo($divStep5)
+                                                    .hide();
                                 $list = $divStep5.CswList('init', {
                                     ID: makeStepId('targetGroupList')
                                 });
 
                                 each(groupNodes, function (name) {
                                     inspectionTargetGroups[name] = { name: name };
-                                    $list.CswList('addItem', { value: name });
                                     inspectionTargetGroups[name].sched = {};
                                     if (contains(data, name) && false === isNullOrEmpty(data[name])) {
                                         each(data[name], function (sched) {
                                             inspectionTargetGroups[name].sched[sched] = sched;
-                                            inspectionSchedules[sched] = sched;
                                         });
                                     }
                                 });
@@ -437,35 +443,123 @@
                                 $divStep5.append('<br />');
                                 $addTable = $divStep5.CswTable();
                                 $addTable.CswTable('cell', 1, 1)
-                                        .CswDiv('init', { value: 'Add a new Inspection Target Group:' })
+                                        .CswDiv('init', { value: 'Select an Inspection Target Group: ' })
                                         .css({ 'padding': '1px', 'vertical-align': 'middle' });
-                                $addName = $addTable.CswTable('cell', 1, 2)
-                                        .CswInput('init', {
-                                            ID: makeStepId('newInspectionGroupName'),
-                                            type: CswInput_Types.text
-                                        })
-                                        .css({ 'padding': '1px', 'vertical-align': 'middle' });
-                                $addTable.CswTable('cell', 1, 3)
-                                        .CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
-                                            AlternateText: 'Add New Inspection Target Group',
-                                            onClick: function () {
-                                                var newGroup = $addName.val();
-                                                if (false === isNullOrEmpty(newGroup) &&
-                                                        false === contains(inspectionTargetGroups, newGroup) &&
-                                                            false === contains(newInspectionTargetGroups, newGroup)) {
 
-                                                    newInspectionTargetGroups[newGroup] = { name: newGroup };
-                                                    inspectionTargetGroups[newGroup] = { name: newGroup };
-                                                    $list.CswList('addItem', {
-                                                        value: newGroup + ' (NEW)'
-                                                    });
-                                                    $addName.val('');
-                                                    //$nextBtn.CswButton('enable');
-                                                }
-                                                return CswImageButton_ButtonType.None;
+                                $groupTable = $addTable.CswTable('cell', 1, 2)
+                                                       .CswTable();
+                                
+                                $targetGroupSelect = $groupTable.CswTable('cell', 1, 1)
+                                        .CswSelect('init', {
+                                            ID: makeStepId('selectInspectionGroupName'),
+                                            values: groupNodes,
+                                            onChange: function () {
+                                                selectedGroup = $targetGroupSelect.find(':selected').val();
                                             }
                                         })
                                         .css({ 'padding': '1px', 'vertical-align': 'middle' });
+                                selectedGroup = $targetGroupSelect.find(':selected').val(); 
+                                
+                                $groupTable.CswTable('cell', 1, 2)
+                                        .CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
+                                            AlternateText: 'Add New Inspection Target Group',
+                                            onClick: function () {
+                                                $.CswDialog('AddNodeClientSideDialog', {
+                                                    ID: makeStepId('newITG'),
+                                                    title: 'Create New Inspection Target Group',
+                                                    onSuccess: function (newGroup) {
+                                                        if (false === isNullOrEmpty(newGroup) &&
+                                                                false === contains(inspectionTargetGroups, newGroup) &&
+                                                                    false === contains(newSchedules, newGroup)) {
+
+                                                            groupCount += 1;
+                                                            groupNodes.push(newGroup);
+                                                            newSchedules[newGroup] = { name: newGroup, sched: {} };
+                                                            inspectionTargetGroups[newGroup] = { name: newGroup, sched: {} };
+                                                            $targetGroupSelect.CswSelect('addoption', newGroup, true);
+                                                            $addBtn.CswButton('enable');
+                                                            selectedGroup = newGroup;
+                                                        } else {
+                                                            //$.CswDialog('ErrorDialog', error);
+                                                        }
+                                                        return CswImageButton_ButtonType.None;        
+                                                    }
+                                                });
+                                            }
+                                        })
+                                        .css({ 'padding': '1px', 'vertical-align': 'middle' });
+
+                                $addTable.CswTable('cell', 2, 1)
+                                         .append('<br />');
+                                $addTable.CswTable('cell', 3, 1)
+                                         .append('New Schedule Name')
+                                         .css({ 'padding': '1px', 'vertical-align': 'middle' });
+                                $newScheduleName = $addTable.CswTable('cell', 3, 2)
+                                                            .CswInput('init', {
+                                                                ID: makeStepId('newScheduleName'),
+                                                                type: CswInput_Types.text,
+                                                                cssclass: "required"
+                                                            })
+                                                            .css({ 'padding': '1px', 'vertical-align': 'middle' });
+                                
+                                $addTable.CswTable('cell', 4, 1)
+                                         .append('<br />');
+                                $addTable.CswTable('cell', 5, 1)
+                                         .append('New Schedule Interval')
+                                         .css({ 'padding': '1px', 'vertical-align': 'middle' });
+                                $newScheduleInterval = $addTable.CswTable('cell', 5, 2)
+                                                                .CswDiv('init');
+                                timeInterval = CswTimeInterval({
+                                        $parent: $newScheduleInterval,
+                                        propVals: {
+                                            Interval: {
+                                                rateintervalvalue: {
+                                                    dateformat: 'M/d/yyyy',
+                                                    ratetype: CswRateIntervalTypes.WeeklyByDay,
+                                                    startingdate: {
+                                                        date: '',
+                                                        dateformat: 'M/d/yyyy'
+                                                    },
+                                                    weeklyday: ''
+                                                }
+                                            }
+                                        }
+                                    });
+
+                                $addBtn = $addTable.CswTable('cell', 6, 1)
+                                                    .CswButton('init', {
+                                                        ID: makeStepId('createInspectionSchedBtn'),
+                                                        enabledText: 'Add Schedule',
+                                                        disableOnClick: false,
+                                                        onclick: function() {
+                                                            var selectedName = $newScheduleName.val(),
+                                                                selectedInterval = timeInterval.rateInterval();
+                                                            
+                                                            if(false === contains(inspectionTargetGroups[selectedGroup].sched, selectedName)) {
+                                                                $scheduleList.show();
+                                                                
+                                                                inspectionTargetGroups[selectedGroup].sched[selectedName] = {
+                                                                    name: selectedName
+                                                                };
+                                                                
+                                                                if(false === contains(newSchedules, selectedGroup)) {
+                                                                    newSchedules[selectedGroup] = { name: selectedGroup, sched: { } };
+                                                                }
+                                                                newSchedules[selectedGroup].sched[selectedName] = {
+                                                                    name: selectedName,
+                                                                    interval: selectedInterval
+                                                                };
+                                                                $list.CswList('addItem', { value: selectedGroup + ': ' + selectedName + ', interval: ' + selectedInterval.ratetype });
+                                                            } else {
+                                                                //$.CswDialog('ErrorDialog', error);
+                                                            }
+                                                        }
+                                                    });
+                                if (groupCount > 0) {
+                                    $addBtn.CswButton('enable');
+                                } else {
+                                    $addBtn.CswButton('disable');
+                                }
                             },
                             error: function (error) {
                                 //$.CswDialog('ErrorDialog', error);
@@ -477,89 +571,37 @@
             } ()),
 
             makeStepSix = (function () {
-                var stepSixComplete = false;
-
+                
                 return function () {
-                    
-
-                    
-//                    $wizard.CswWizard('button', 'previous', 'disable').hide().remove();
-//                    $wizard.CswWizard('button', 'next', 'disable').hide().remove();
-//                    $wizard.CswWizard('button', 'cancel', 'disable').hide().remove();
-//                    $wizard.CswWizard('button', 'finish', 'enable').show();
-                    
+                    $wizard.CswWizard('button', 'previous', 'disable').hide().remove();
+                    $wizard.CswWizard('button', 'next', 'disable').hide().remove();
+                    $wizard.CswWizard('button', 'cancel', 'disable').hide().remove();
+                    $wizard.CswWizard('button', 'finish', 'enable').show();
                     
                     var $addTable, $list, $addName, $groupSelect, $interval, groupValues = [];
+                    $divStep6 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step6.step);
 
-                    if (false === stepSixComplete) {
-                        $divStep6 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step6.step);
-
-                        $divStep6.append('<p>Inspection Schedules: </p>');
-                        $list = $divStep6.CswList('init', {
-                            ID: makeStepId('targetGroupList')
-                        });
-
-                        each(inspectionSchedules, function (name) {
-                            $list.CswList('addItem', { value: name });
-                        });
-
-                        $divStep6.append('<br />');
-                        $addTable = $divStep6.CswTable();
-                        $addTable.CswTable('cell', 1, 1)
-                                .CswDiv('init', { value: 'Add a new Inspection Schedule:' })
-                                .css({ 'padding': '5px', 'vertical-align': 'middle' });
-
-                        each(inspectionTargetGroups, function (prop, key) {
-                            groupValues.push(key);
-                        });
-                        $groupSelect = $addTable.CswTable('cell', 1, 2)
-                                                .CswSelect('init', {
-                                                    ID: makeStepId('inspectionGroupSelect'),
-                                                    values: groupValues
-                                                })
-                                                .css({ 'padding': '5px', 'vertical-align': 'middle' });
-
-                        $addName = $addTable.CswTable('cell', 1, 3)
-                                            .CswInput('init', {
-                                                ID: makeStepId('newInspectionScheduleName'),
-                                                type: CswInput_Types.text
-                                            })
-                                            .css({ 'padding': '5px', 'vertical-align': 'middle' });
-
-                        //abstracted interval control goes here
-                        $interval = $addTable.CswTable('cell', 1, 4);
-
-                        $addTable.CswTable('cell', 1, 5)
-                                .CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
-                                    AlternateText: 'Add New Inspection Schedule',
-                                    onClick: function () {
-                                        var newSched = $addName.val(),
-                                            group = $groupSelect.find(':selected').val(),
-                                            interval = $interval.val();
-
-                                        if (false === isNullOrEmpty(newSched) &&
-                                                false === isNullOrEmpty(group) &&
-                                                    false === isNullOrEmpty(interval) &&
-                                                        false === contains(inspectionSchedules, newSched) &&
-                                                            false === contains(newInspectionSchedules, newSched)) {
-
-                                            newInspectionSchedules[newSched] = {
-                                                name: newSched,
-                                                interval: interval,
-                                                group: group
-                                            };
-                                            $list.CswList('addItem', {
-                                                value: newSched + ' (NEW)'
-                                            });
-                                            $addName.val('');
-                                        }
-                                        return CswImageButton_ButtonType.None;
-                                    }
-                                })
-                                .css({ 'padding': '5px', 'vertical-align': 'middle' });
-
-                        stepSixComplete = true;
-                    }
+                    var jsonData = {
+                        DesignGrid: inspectionGrid.$gridTable.jqGrid('getRowData'),
+                        InspectionDesignName: newInspectionName,
+                        InspectionTargetName: selectedInspectionTarget,
+                        Schedules: newSchedules,
+                        CopyFromInspectionDesign: copyFromInspectionDesign
+                    };
+                    
+                    CswAjaxJson({
+                        url: '/NbtWebApp/wsNBT.aspx/finalizeInspectionDesign',
+                        data: jsonData,
+                        success: function (data) {
+                            alert("You've won! .... a chance to implement this feature.");
+                            //load the relevant Inspection Points by Location view
+                        },
+                        error: function (error) {
+                            //$.CswDialog('ErrorDialog', error);
+                        }
+                    });    
+                    
+                    
                 };
             } ()),
 
@@ -579,7 +621,6 @@
                         makeStepFive();
                         break;
                     case CswInspectionDesign_WizardSteps.step6.step:
-                        finalize();
                         makeStepSix();
                         break;
                 } // switch(newstepno)
@@ -602,26 +643,6 @@
                         break;
                 }
             },
-
-            finalize = function (ignore) {
-                var jsonData = {
-                    DesignGrid: inspectionGrid.$gridTable.jqGrid('getRowData'),
-                    InspectionName: newInspectionName,
-                    InspectionTarget: selectedInspectionTarget
-                };
-                CswAjaxJson({
-                    url: '/NbtWebApp/wsNBT.aspx/finalizeInspectionDesign',
-                    data: jsonData,
-                    success: function (data) {
-                        //show success dialog
-                        //load the relevant Inspection Points by Location view
-                    },
-                    error: function (error) {
-                        //$.CswDialog('ErrorDialog', error);
-                    }
-                });
-
-            }, //finalize
 
             onFinish = function () {
                 //load some view

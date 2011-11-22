@@ -5,7 +5,7 @@
 /// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
 
 ; (function ($) {
-        
+    "use strict";    
     var pluginName = 'CswFieldTypeMemo';
 
     var methods = {
