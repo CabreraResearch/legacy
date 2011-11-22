@@ -64,8 +64,11 @@
                 return function() {
                     $wizard.CswWizard('button', 'previous', 'disable').hide();
                     $wizard.CswWizard('button', 'finish', 'disable').hide();
-                    $wizard.CswWizard('button', 'next', 'disable');
-
+                    $wizard.CswWizard('button', 'next', 'disable').show();
+                    if(false === isNullOrEmpty(newInspectionName)) {
+                        $wizard.CswWizard('button', 'next', 'enable');
+                    }
+                    
                     var $inspectionTable;
 
                     if (false === stepOneComplete) {
@@ -83,11 +86,10 @@
                             .CswNodeTypeSelect('init', {
                                 ID: makeSafeId('nodeTypeSelect'),
                                 objectClassName: 'InspectionDesignClass',
-                                addNewOption: true,
-                                onChange: function() {
-                                    var $selected = $(this);
-                                    copyFromInspectionDesign = $selected.find(':selected').val();
-                                }
+                                addNewOption: true
+                            })
+                            .change(function () {
+                                copyFromInspectionDesign = $inspectionDesignSelect.find(':selected').text();
                             });
                         copyFromInspectionDesign = $inspectionDesignSelect.find(':selected').val();
 
@@ -363,7 +365,7 @@
                             .CswButton('init', { 
                                 ID: o.ID + '_addNewInspectionTarget',
                                 enabledText: 'Add New',
-                                disabledText: 'Adding...',
+                                disableOnClick: false,
                                 onclick: function () {
                                     selectedInspectionTarget = $addNewTarget.val();
                                     
@@ -398,10 +400,8 @@
 
                 return function () {
                     $wizard.CswWizard('button', 'previous', 'enable');
-                    var $nextBtn = $wizard.CswWizard('button', 'next', 'disable').text('Next'); //In case we come back from step 6
-
-                    selectedInspectionTarget = $inspectionTarget.find(':selected').val();
-
+                    $wizard.CswWizard('button', 'next', 'enable').text('Create Inspection Design');
+                    
                     if (false === stepFiveComplete) {
                         $divStep5 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step5.step);
 
@@ -414,7 +414,7 @@
                                         $addTable, $list, $addName;
 
                                 if (groupCount > 0) {
-                                    $nextBtn.CswButton('enable');
+                                    //$nextBtn.CswButton('enable');
                                 }
 
                                 $divStep5.append('<p>Inspection Target Groups: </p>');
@@ -460,7 +460,7 @@
                                                         value: newGroup + ' (NEW)'
                                                     });
                                                     $addName.val('');
-                                                    $nextBtn.CswButton('enable');
+                                                    //$nextBtn.CswButton('enable');
                                                 }
                                                 return CswImageButton_ButtonType.None;
                                             }
@@ -480,8 +480,7 @@
                 var stepSixComplete = false;
 
                 return function () {
-                    $wizard.CswWizard('button', 'previous', 'enable');
-                    $wizard.CswWizard('button', 'next', 'enable').text('Create Inspection Design');
+                    
 
                     
 //                    $wizard.CswWizard('button', 'previous', 'disable').hide().remove();
