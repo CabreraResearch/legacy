@@ -586,7 +586,8 @@
                         InspectionDesignName: newInspectionName,
                         InspectionTargetName: selectedInspectionTarget,
                         Schedules: newSchedules,
-                        CopyFromInspectionDesign: copyFromInspectionDesign
+                        CopyFromInspectionDesign: copyFromInspectionDesign,
+                        Category: newCategoryName
                     };
                     
                     CswAjaxJson({

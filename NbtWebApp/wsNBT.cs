@@ -3065,7 +3065,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string finalizeInspectionDesign( string DesignGrid, string InspectionName, string InspectionTarget, string NewScheduleNodeIds )
+        public string finalizeInspectionDesign( string DesignGrid, string InspectionDesignName, string InspectionTargetName, string Schedules, string CopyFromInspectionDesign, string Category )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3077,18 +3077,27 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    if( string.IsNullOrEmpty( InspectionName ) )
+                    if( string.IsNullOrEmpty( InspectionDesignName ) )
                     {
                         throw new CswDniException( ErrorType.Warning, "Inspection Name cannot be blank.", "InspectionName was null or empty." );
                     }
-                    if( string.IsNullOrEmpty( InspectionTarget ) )
+                    if( string.IsNullOrEmpty( InspectionTargetName ) )
                     {
                         throw new CswDniException( ErrorType.Warning, "New Inspection must have a target.", "InspectionTarget was null or empty." );
                     }
 
                     CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
 
-                    ReturnVal = ws.createInspectionDesignTabsAndProps( DesignGrid, InspectionName, InspectionTarget );
+                    if( false == string.IsNullOrEmpty( CopyFromInspectionDesign ) && CopyFromInspectionDesign != "[Create New]" )
+                    {
+                        ReturnVal = ws.copyInspectionDesign( CopyFromInspectionDesign, InspectionDesignName, InspectionTargetName, Category );
+                    }
+                    else
+                    {
+                        ReturnVal = ws.createInspectionDesignTabsAndProps( DesignGrid, InspectionDesignName, InspectionTargetName, Category );
+                    }
+
+                    //do Schedules in a separate piece
 
                     ReturnVal["success"] = "true";
 

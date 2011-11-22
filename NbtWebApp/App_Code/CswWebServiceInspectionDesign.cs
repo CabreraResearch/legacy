@@ -98,108 +98,135 @@ namespace ChemSW.Nbt.WebServices
             return ExcelDataTable;
         } // ConvertExcelFileToDataTable()
 
-        public JObject createInspectionDesignTabsAndProps( string GridArrayString, string InspectionName, string InspectionTargetName )
+        public JObject copyInspectionDesign( string CopyFromInspectionDesign, string InspectionDesignName, string InspectionTargetName, string Category )
         {
             JObject RetObj = new JObject();
-            Int32 PropsWithoutError = 0;
-            CswCommaDelimitedString GridRowsSkipped = new CswCommaDelimitedString();
-            CswCommaDelimitedString PropsWithError = new CswCommaDelimitedString();
+            return RetObj;
+        }
 
-            InspectionName = InspectionName.Trim();
-
-            JArray GridArray = JArray.Parse( GridArrayString );
-            CswNbtMetaDataNodeType InspectionTargetNT = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
-            if( null != InspectionTargetNT &&
-                null != GridArray &&
-                GridArray.Count > 0 )
+        private Dictionary<string, CswNbtMetaDataNodeTypeTab> _getTabsForInspection( JArray Grid, CswNbtMetaDataNodeType NodeType )
+        {
+            Dictionary<string, CswNbtMetaDataNodeTypeTab> RetDict = new Dictionary<string, CswNbtMetaDataNodeTypeTab>();
+            for( Int32 Index = 0; Index < Grid.Count; Index += 1 )
             {
-                RetObj["totalrows"] = GridArray.Count.ToString();
-
-                CswNbtMetaDataNodeType NewInspectionNodeType = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionName, InspectionTargetNT.Category );
-
-                string FkType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
-                Int32 FkValue = InspectionTargetNT.NodeTypeId;
-                CswNbtMetaDataNodeTypeProp TargetProperty = NewInspectionNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
-                TargetProperty.SetFK( FkType, FkValue );
-
-                //Get distinct tabs
-                Dictionary<string, CswNbtMetaDataNodeTypeTab> Tabs = new Dictionary<string, CswNbtMetaDataNodeTypeTab>();
-
-                for( Int32 Index = 0; Index < GridArray.Count; Index += 1 )
+                if( Grid[Index].Type == JTokenType.Object )
                 {
-                    if( GridArray[Index].Type == JTokenType.Object )
+                    JObject ThisRow = (JObject) Grid[Index];
+                    string TabName = CswConvert.ToString( ThisRow["Section"] );
+                    if( string.IsNullOrEmpty( TabName ) )
                     {
-                        JObject ThisRow = (JObject) GridArray[Index];
-                        string TabName = CswConvert.ToString( ThisRow["Section"] );
-                        if( string.IsNullOrEmpty( TabName ) )
-                        {
-                            TabName = "Section 1";
-                        }
-                        if( false == Tabs.ContainsKey( TabName ) )
-                        {
-                            CswNbtMetaDataNodeTypeTab ThisTab = NewInspectionNodeType.getNodeTypeTab( TabName );
-                            if( null == ThisTab )
-                            {
-                                ThisTab = _CswNbtResources.MetaData.makeNewTab( NewInspectionNodeType, TabName, NewInspectionNodeType.NodeTypeTabs.Count );
-                            }
-                            Tabs.Add( TabName, ThisTab );
-                        }
+                        TabName = "Section 1";
                     }
-                }
-
-                for( Int32 Index = 0; Index < GridArray.Count; Index += 1 )
-                {
-                    if( GridArray[Index].Type == JTokenType.Object )
+                    if( false == RetDict.ContainsKey( TabName ) )
                     {
-                        JObject ThisRow = (JObject) GridArray[Index];
-                        string TabName = CswConvert.ToString( ThisRow["Section"] );
-                        if( string.IsNullOrEmpty( TabName ) )
+                        CswNbtMetaDataNodeTypeTab ThisTab = NodeType.getNodeTypeTab( TabName );
+                        if( null == ThisTab )
                         {
-                            TabName = "Section 1";
+                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.NodeTypeTabs.Count );
                         }
-                        string Question = CswConvert.ToString( ThisRow["Question"] );
-                        if( false == string.IsNullOrEmpty( Question ) )
-                        {
-                            string AllowedAnswers = CswConvert.ToString( ThisRow["Allowed Answers"] );
-                            string CompliantAnswers = CswConvert.ToString( ThisRow["Compliant Answers"] );
-                            string HelpText = CswConvert.ToString( ThisRow["Help Text"] );
-
-                            CswNbtMetaDataNodeTypeTab ThisTab;
-                            Tabs.TryGetValue( TabName, out ThisTab );
-                            Int32 ThisTabId = Int32.MinValue;
-                            if( null != ThisTab )
-                            {
-                                ThisTabId = ThisTab.TabId;
-                            }
-                            CswNbtMetaDataNodeTypeProp ThisQuestion = _CswNbtResources.MetaData.makeNewProp( NewInspectionNodeType, CswNbtMetaDataFieldType.NbtFieldType.Question, Question, ThisTabId );
-
-                            if( null != ThisQuestion )
-                            {
-                                if( false == string.IsNullOrEmpty( AllowedAnswers ) &&
-                                    false == string.IsNullOrEmpty( CompliantAnswers ) )
-                                {
-                                    PropsWithoutError += 1;
-                                }
-                                else
-                                {
-                                    PropsWithError.Add( Question );
-                                }
-                                ThisQuestion.ListOptions = AllowedAnswers;
-                                ThisQuestion.ValueOptions = CompliantAnswers;
-                                ThisQuestion.HelpText = HelpText;
-                            }
-
-                        }
-                        else
-                        {
-                            GridRowsSkipped.Add( Index.ToString() );
-                        }
+                        RetDict.Add( TabName, ThisTab );
                     }
                 }
             }
+            return RetDict;
+        }
 
+        private Int32 _createInspectionProps( JArray Grid, CswNbtMetaDataNodeType InspectionDesignNt,
+            Dictionary<string, CswNbtMetaDataNodeTypeTab> Tabs, CswCommaDelimitedString GridRowsSkipped )
+        {
+            Int32 RetCount = 0;
+            for( Int32 Index = 0; Index < Grid.Count; Index += 1 )
+            {
+                if( Grid[Index].Type == JTokenType.Object )
+                {
+                    JObject ThisRow = (JObject) Grid[Index];
+                    string TabName = CswConvert.ToString( ThisRow["Section"] );
+                    if( string.IsNullOrEmpty( TabName ) )
+                    {
+                        TabName = "Section 1";
+                    }
+                    string Question = CswConvert.ToString( ThisRow["Question"] );
+                    string AllowedAnswers = CswConvert.ToString( ThisRow["Allowed Answers"] );
+                    string CompliantAnswers = CswConvert.ToString( ThisRow["Compliant Answers"] );
+                    string HelpText = CswConvert.ToString( ThisRow["Help Text"] );
+
+                    if( false == string.IsNullOrEmpty( Question ) )
+                    {
+                        CswNbtMetaDataNodeTypeTab ThisTab;
+                        Tabs.TryGetValue( TabName, out ThisTab );
+                        Int32 ThisTabId = Int32.MinValue;
+                        if( null != ThisTab )
+                        {
+                            ThisTabId = ThisTab.TabId;
+                        }
+                        CswNbtMetaDataNodeTypeProp ThisQuestion = _CswNbtResources.MetaData.makeNewProp( InspectionDesignNt, CswNbtMetaDataFieldType.NbtFieldType.Question, Question, ThisTabId );
+
+                        if( null != ThisQuestion )
+                        {
+                            if( false == string.IsNullOrEmpty( AllowedAnswers ) )
+                            {
+                                ThisQuestion.ListOptions = AllowedAnswers;
+                            }
+                            if( false == string.IsNullOrEmpty( CompliantAnswers ) )
+                            {
+                                ThisQuestion.ValueOptions = CompliantAnswers;
+                            }
+                            if( false == string.IsNullOrEmpty( HelpText ) )
+                            {
+                                ThisQuestion.HelpText = HelpText;
+                            }
+                            RetCount += 1;
+                        }
+
+                    }
+                    else
+                    {
+                        GridRowsSkipped.Add( Index.ToString() );
+                    }
+                }
+            }
+            return RetCount;
+        }
+
+        private void _createInspectionDesignRelationships( CswNbtMetaDataNodeType InspectionDesignNt, string InspectionTargetName )
+        {
+            CswNbtMetaDataNodeType InspectionTargetNT = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
+            string FkType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
+            Int32 FkValue = InspectionTargetNT.NodeTypeId;
+            CswNbtMetaDataNodeTypeProp TargetProperty = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+            TargetProperty.SetFK( FkType, FkValue );
+        }
+
+        public JObject createInspectionDesignTabsAndProps( string GridArrayString, string InspectionDesignName, string InspectionTargetName, string Category )
+        {
+            JObject RetObj = new JObject();
+            Int32 PropsWithoutError = 0;
+            Int32 TotalRows = 0;
+            CswCommaDelimitedString GridRowsSkipped = new CswCommaDelimitedString();
+
+            InspectionDesignName = InspectionDesignName.Trim();
+
+            JArray GridArray = JArray.Parse( GridArrayString );
+
+            if( null != GridArray &&
+                GridArray.Count > 0 )
+            {
+                TotalRows = GridArray.Count;
+
+                //Build a _getCategory() method
+                //InspectionTargetNT.Category: 
+                CswNbtMetaDataNodeType NewInspectionNodeType = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, Category );
+
+                //Get distinct tabs
+                Dictionary<string, CswNbtMetaDataNodeTypeTab> Tabs = _getTabsForInspection( GridArray, NewInspectionNodeType );
+                //Create the props
+                PropsWithoutError = _createInspectionProps( GridArray, NewInspectionNodeType, Tabs, GridRowsSkipped );
+                //Build the MetaData
+                _createInspectionDesignRelationships( NewInspectionNodeType, InspectionTargetName );
+            }
+
+            RetObj["totalrows"] = TotalRows.ToString();
             RetObj["rownumbersskipped"] = new JArray( GridRowsSkipped.ToString() );
-            RetObj["questionswitherrors"] = new JArray( PropsWithError.ToString() );
             RetObj["countsucceeded"] = PropsWithoutError.ToString();
 
             return RetObj;
