@@ -1558,7 +1558,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh();
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    ReturnVal["succeeded"] = wsTools.IsNodeTypeNameUnique( NodeTypeName, _CswNbtResources );
+                    ReturnVal["succeeded"] = wsTools.isNodeTypeNameUnique( NodeTypeName, _CswNbtResources );
                 }
                 _deInitResources();
             }

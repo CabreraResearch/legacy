@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.WebServices
             return Node;
         } // getNode()
 
-        public static bool IsNodeTypeNameUnique( string NodeTypeName, CswNbtResources CswNbtResources )
+        public static bool isNodeTypeNameUnique( string NodeTypeName, CswNbtResources CswNbtResources )
         {
             if( string.IsNullOrEmpty( NodeTypeName ) )
             {
@@ -58,7 +58,6 @@ namespace ChemSW.Nbt.WebServices
             }
             return Ret;
         }
-
 
         #region Conversion
 
