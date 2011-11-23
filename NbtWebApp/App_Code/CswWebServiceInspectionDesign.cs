@@ -6,6 +6,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -13,10 +14,11 @@ namespace ChemSW.Nbt.WebServices
     public class CswWebServiceInspectionDesign
     {
         private CswNbtResources _CswNbtResources;
-
+        private CswNbtObjClassRole _CurrentUserRole;
         public CswWebServiceInspectionDesign( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
+            _CurrentUserRole = _CswNbtResources.CurrentNbtUser.RoleNode;
         }
 
         private readonly CswCommaDelimitedString _ColumnNames = new CswCommaDelimitedString()
@@ -60,6 +62,14 @@ namespace ChemSW.Nbt.WebServices
             {
                 throw new CswDniException( ErrorType.Warning, "Cannot use a " + NodeType.NodeTypeName + " as an " + ObjectClass, "Attempted to use a NodeType of an unexpected ObjectClass" );
             }
+        }
+
+        private void _setNodeTypePermissions( CswNbtMetaDataNodeType NodeType )
+        {
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Create, NodeType, _CurrentUserRole, true );
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Edit, NodeType, _CurrentUserRole, true );
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Delete, NodeType, _CurrentUserRole, true );
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentUserRole, true );
         }
 
         /// <summary>
@@ -182,9 +192,9 @@ namespace ChemSW.Nbt.WebServices
                         TabName = "Section 1";
                     }
                     string Question = CswConvert.ToString( ThisRow["QUESTION"] );
-                    string AllowedAnswers = CswConvert.ToString( ThisRow["ALLOWED ANSWERS"] );
-                    string CompliantAnswers = CswConvert.ToString( ThisRow["COMPLIANT ANSWERS"] );
-                    string HelpText = CswConvert.ToString( ThisRow["HELP TEXT"] );
+                    string AllowedAnswers = CswConvert.ToString( ThisRow["ALLOWED_ANSWERS"] );
+                    string CompliantAnswers = CswConvert.ToString( ThisRow["COMPLIANT_ANSWERS"] );
+                    string HelpText = CswConvert.ToString( ThisRow["HELP_TEXT"] );
 
                     if( false == string.IsNullOrEmpty( Question ) )
                     {
@@ -197,7 +207,11 @@ namespace ChemSW.Nbt.WebServices
                         }
                         CswNbtMetaDataNodeTypeProp ThisQuestion = _CswNbtResources.MetaData.makeNewProp( InspectionDesignNt, CswNbtMetaDataFieldType.NbtFieldType.Question, Question, ThisTabId );
 
-                        if( null != ThisQuestion )
+                        if( null == ThisQuestion )
+                        {
+                            GridRowsSkipped.Add( Index.ToString() );
+                        }
+                        else
                         {
                             if( false == string.IsNullOrEmpty( AllowedAnswers ) )
                             {
@@ -281,9 +295,13 @@ namespace ChemSW.Nbt.WebServices
 
             //Create the new NodeTypes
             CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionTargetOc.ObjectClassId, InspectionTargetName, Category );
+            _setNodeTypePermissions( InspectionTargetNt );
             CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionTargetGroupOc.ObjectClassId, InspectionGroupName, Category );
+            _setNodeTypePermissions( InspectionTargetGroupNt );
             CswNbtMetaDataNodeType InspectionRouteNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionRouteOc.ObjectClassId, InspectionRouteName, Category );
+            _setNodeTypePermissions( InspectionRouteNt );
             CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.makeNewNodeType( GeneratorOc.ObjectClassId, InspectionScheduleName, Category );
+            _setNodeTypePermissions( GeneratorNt );
 
             //Set new InspectionTarget Props and Tabs
             CswNbtMetaDataNodeTypeProp ItInspectionGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
@@ -360,17 +378,15 @@ namespace ChemSW.Nbt.WebServices
         private CswNbtView _createInspectionSchedulesView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, string InspectionTargetName )
         {
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-            CswNbtView RetView = _getSchedulesViewFromInspectionDesign( InspectionDesignNt );
+            CswNbtView RetView = new CswNbtView( _CswNbtResources );
             string InspectionSchedulesViewName = InspectionTargetName + " Schedule";
 
             try
             {
+                CswNbtView ScheduleView = _getSchedulesViewFromInspectionDesign( InspectionDesignNt );
+                RetView.makeNew( InspectionSchedulesViewName, NbtViewVisibility.Role, _CswNbtResources.CurrentNbtUser.RoleId, null, ScheduleView );
                 RetView.ViewMode = NbtViewRenderingMode.Tree;
                 RetView.Category = Category;
-                RetView.Visibility = NbtViewVisibility.Role;
-                RetView.VisibilityRoleId = _CswNbtResources.CurrentNbtUser.RoleId;
-
-                RetView.ViewName = InspectionSchedulesViewName;
                 RetView.save();
             }
             catch( Exception ex )
@@ -392,15 +408,15 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView RetView = new CswNbtView( _CswNbtResources );
             try
             {
-
-                RetView.makeNew( InspectionsViewName, Visibility, null, null, null );
-                RetView.ViewMode = ViewMode;
-                RetView.Category = Category;
-
+                CswPrimaryKey RoleId = null;
                 if( NbtViewVisibility.Role == Visibility )
                 {
-                    RetView.VisibilityRoleId = _CswNbtResources.CurrentNbtUser.RoleId;
+                    RoleId = _CswNbtResources.CurrentNbtUser.RoleId;
                 }
+                
+                RetView.makeNew( InspectionsViewName, Visibility, RoleId, null, null );
+                RetView.ViewMode = ViewMode;
+                RetView.Category = Category;
 
                 CswNbtViewRelationship InspectionVr = RetView.AddViewRelationship( InspectionDesignNt, false );
                 CswNbtMetaDataNodeTypeProp DueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.DatePropertyName );
@@ -438,15 +454,15 @@ namespace ChemSW.Nbt.WebServices
 
             try
             {
-
-                RetView.makeNew( AllInspectionPointsViewName, Visibility, null, null, null );
-                RetView.Category = Category;
-                RetView.ViewMode = ViewMode;
-
+                CswPrimaryKey RoleId = null;
                 if( NbtViewVisibility.Role == Visibility )
                 {
-                    RetView.VisibilityRoleId = _CswNbtResources.CurrentNbtUser.RoleId;
+                    RoleId = _CswNbtResources.CurrentNbtUser.RoleId;
                 }
+
+                RetView.makeNew( AllInspectionPointsViewName, Visibility, RoleId, null, null );
+                RetView.Category = Category;
+                RetView.ViewMode = ViewMode;
 
                 CswNbtViewRelationship InspectionTargetVr = RetView.AddViewRelationship( InspectionTargetNt, false );
 
@@ -507,51 +523,47 @@ namespace ChemSW.Nbt.WebServices
         public JObject createInspectionDesignTabsAndProps( string GridArrayString, string InspectionDesignName, string InspectionTargetName, string Category )
         {
             JObject RetObj = new JObject();
-            try
+
+            Int32 PropsWithoutError = 0;
+            Int32 TotalRows = 0;
+            CswCommaDelimitedString GridRowsSkipped = new CswCommaDelimitedString();
+            string CategoryName = Category;
+            InspectionDesignName = _checkUniqueNodeType( InspectionDesignName );
+
+            JArray GridArray = JArray.Parse( GridArrayString );
+
+            if( null == GridArray || GridArray.Count == 0 )
             {
-                Int32 PropsWithoutError = 0;
-                Int32 TotalRows = 0;
-                CswCommaDelimitedString GridRowsSkipped = new CswCommaDelimitedString();
-                string CategoryName = Category;
-                InspectionDesignName = _checkUniqueNodeType( InspectionDesignName );
-
-                JArray GridArray = JArray.Parse( GridArrayString );
-
-                if( null == GridArray || GridArray.Count == 0 )
-                {
-                    throw new CswDniException( ErrorType.Warning, "Cannot create Inspection Design " + InspectionDesignName + ", because the import contained no questions.", "GridArray was null or empty." );
-                }
-
-                TotalRows = GridArray.Count;
-
-                CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
-                if( string.IsNullOrEmpty( CategoryName ) )
-                {
-                    if( null != InspectionTargetNt )
-                    {
-                        CategoryName = InspectionTargetNt.Category;
-                    }
-                    else
-                    {
-                        CategoryName = InspectionDesignName;
-                    }
-                }
-                CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, CategoryName );
-
-                //Get distinct tabs
-                Dictionary<string, CswNbtMetaDataNodeTypeTab> Tabs = _getTabsForInspection( GridArray, InspectionDesignNt );
-                //Create the props
-                PropsWithoutError = _createInspectionProps( GridArray, InspectionDesignNt, Tabs, GridRowsSkipped );
-                //Build the MetaData
-                RetObj = _createInspectionDesignRelationships( InspectionDesignNt, InspectionTargetNt, InspectionTargetName, Category );
-                RetObj["totalrows"] = TotalRows.ToString();
-                RetObj["rownumbersskipped"] = new JArray( GridRowsSkipped.ToString() );
-                RetObj["countsucceeded"] = PropsWithoutError.ToString();
+                throw new CswDniException( ErrorType.Warning, "Cannot create Inspection Design " + InspectionDesignName + ", because the import contained no questions.", "GridArray was null or empty." );
             }
-            catch( Exception ex )
+
+            TotalRows = GridArray.Count;
+
+            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
+            if( string.IsNullOrEmpty( CategoryName ) )
             {
-                throw new CswDniException( ErrorType.Error, "Inspection Design failed.", "Inspection Design failed.", ex );
+                if( null != InspectionTargetNt )
+                {
+                    CategoryName = InspectionTargetNt.Category;
+                }
+                else
+                {
+                    CategoryName = InspectionDesignName;
+                }
             }
+            CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, CategoryName );
+            _setNodeTypePermissions( InspectionDesignNt );
+
+            //Get distinct tabs
+            Dictionary<string, CswNbtMetaDataNodeTypeTab> Tabs = _getTabsForInspection( GridArray, InspectionDesignNt );
+            //Create the props
+            PropsWithoutError = _createInspectionProps( GridArray, InspectionDesignNt, Tabs, GridRowsSkipped );
+            //Build the MetaData
+            RetObj = _createInspectionDesignRelationships( InspectionDesignNt, InspectionTargetNt, InspectionTargetName, Category );
+            RetObj["totalrows"] = TotalRows.ToString();
+            RetObj["rownumbersskipped"] = new JArray( GridRowsSkipped.ToString() );
+            RetObj["countsucceeded"] = PropsWithoutError.ToString();
+
             return RetObj;
         }
 

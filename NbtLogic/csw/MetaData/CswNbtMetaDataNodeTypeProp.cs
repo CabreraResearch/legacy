@@ -461,7 +461,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="inFKValue">FK Value</param>
         /// <param name="inValuePropType">Optional (for Property Reference)</param>
         /// <param name="inValuePropId">Optional  (for Property Reference)</param>
-        public void SetFK( string inFKType, Int32 inFKValue, string inValuePropType = null, Int32 inValuePropId = Int32.MinValue )
+        public void SetFK( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             SetFK( true, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
@@ -474,7 +474,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="inFKValue">FK Value</param>
         /// <param name="inValuePropType">Optional (for Property Reference)</param>
         /// <param name="inValuePropId">Optional  (for Property Reference)</param>
-        public void SetFK( bool inIsFk, string inFKType, Int32 inFKValue, string inValuePropType = null, Int32 inValuePropId = Int32.MinValue )
+        public void SetFK( bool inIsFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             IsFK = inIsFk;
             if( FKType != inFKType || FKValue != inFKValue )
