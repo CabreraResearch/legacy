@@ -582,16 +582,16 @@
                     $divStep6 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step6.step);
 
                     var jsonData = {
-                        DesignGrid: inspectionGrid.$gridTable.jqGrid('getRowData'),
-                        InspectionDesignName: newInspectionName,
-                        InspectionTargetName: selectedInspectionTarget,
-                        Schedules: newSchedules,
-                        CopyFromInspectionDesign: copyFromInspectionDesign,
-                        Category: newCategoryName
+                        DesignGrid: JSON.stringify( inspectionGrid.$gridTable.jqGrid('getRowData') ),
+                        InspectionDesignName: tryParseString(newInspectionName),
+                        InspectionTargetName: tryParseString(selectedInspectionTarget),
+                        Schedules: JSON.stringify( newSchedules ),
+                        CopyFromInspectionDesign: tryParseString(copyFromInspectionDesign),
+                        Category: tryParseString(newCategoryName)
                     };
                     
                     CswAjaxJson({
-                        url: '/NbtWebApp/wsNBT.aspx/finalizeInspectionDesign',
+                        url: '/NbtWebApp/wsNBT.asmx/finalizeInspectionDesign',
                         data: jsonData,
                         success: function (data) {
                             alert("You've won! .... a chance to implement this feature.");

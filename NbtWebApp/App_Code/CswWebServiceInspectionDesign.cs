@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.WebServices
                 if( Grid[Index].Type == JTokenType.Object )
                 {
                     JObject ThisRow = (JObject) Grid[Index];
-                    string TabName = CswConvert.ToString( ThisRow["Section"] );
+                    string TabName = CswConvert.ToString( ThisRow["SECTION"] );
                     if( string.IsNullOrEmpty( TabName ) )
                     {
                         TabName = "Section 1";
@@ -176,15 +176,15 @@ namespace ChemSW.Nbt.WebServices
                 if( Grid[Index].Type == JTokenType.Object )
                 {
                     JObject ThisRow = (JObject) Grid[Index];
-                    string TabName = CswConvert.ToString( ThisRow["Section"] );
+                    string TabName = CswConvert.ToString( ThisRow["SECTION"] );
                     if( string.IsNullOrEmpty( TabName ) )
                     {
                         TabName = "Section 1";
                     }
-                    string Question = CswConvert.ToString( ThisRow["Question"] );
-                    string AllowedAnswers = CswConvert.ToString( ThisRow["Allowed Answers"] );
-                    string CompliantAnswers = CswConvert.ToString( ThisRow["Compliant Answers"] );
-                    string HelpText = CswConvert.ToString( ThisRow["Help Text"] );
+                    string Question = CswConvert.ToString( ThisRow["QUESTION"] );
+                    string AllowedAnswers = CswConvert.ToString( ThisRow["ALLOWED ANSWERS"] );
+                    string CompliantAnswers = CswConvert.ToString( ThisRow["COMPLIANT ANSWERS"] );
+                    string HelpText = CswConvert.ToString( ThisRow["HELP TEXT"] );
 
                     if( false == string.IsNullOrEmpty( Question ) )
                     {
