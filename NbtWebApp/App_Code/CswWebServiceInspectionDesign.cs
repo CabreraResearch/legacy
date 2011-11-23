@@ -14,11 +14,13 @@ namespace ChemSW.Nbt.WebServices
     public class CswWebServiceInspectionDesign
     {
         private CswNbtResources _CswNbtResources;
-        private CswNbtObjClassRole _CurrentUserRole;
+        private readonly ICswNbtUser _CurrentUser;
+        private readonly CswNbtObjClassRole _CurrentRole;
         public CswWebServiceInspectionDesign( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            _CurrentUserRole = _CswNbtResources.CurrentNbtUser.RoleNode;
+            _CurrentUser = _CswNbtResources.CurrentNbtUser;
+            _CurrentRole = _CswNbtResources.CurrentNbtUser.RoleNode;
         }
 
         private readonly CswCommaDelimitedString _ColumnNames = new CswCommaDelimitedString()
@@ -66,10 +68,14 @@ namespace ChemSW.Nbt.WebServices
 
         private void _setNodeTypePermissions( CswNbtMetaDataNodeType NodeType )
         {
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Create, NodeType, _CurrentUserRole, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Edit, NodeType, _CurrentUserRole, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Delete, NodeType, _CurrentUserRole, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentUserRole, true );
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Create, NodeType, _CurrentUser, true );
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Edit, NodeType, _CurrentUser, true );
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Delete, NodeType, _CurrentUser, true );
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentUser, true );
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Create, NodeType, _CurrentRole, true );
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Edit, NodeType, _CurrentRole, true );
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Delete, NodeType, _CurrentRole, true );
+            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentRole, true );
         }
 
         /// <summary>
@@ -384,7 +390,7 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 CswNbtView ScheduleView = _getSchedulesViewFromInspectionDesign( InspectionDesignNt );
-                RetView.makeNew( InspectionSchedulesViewName, NbtViewVisibility.Role, _CswNbtResources.CurrentNbtUser.RoleId, null, ScheduleView );
+                RetView.makeNew( InspectionSchedulesViewName, NbtViewVisibility.Role, _CurrentUser.RoleId, null, ScheduleView );
                 RetView.ViewMode = NbtViewRenderingMode.Tree;
                 RetView.Category = Category;
                 RetView.save();
@@ -411,7 +417,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPrimaryKey RoleId = null;
                 if( NbtViewVisibility.Role == Visibility )
                 {
-                    RoleId = _CswNbtResources.CurrentNbtUser.RoleId;
+                    RoleId = _CurrentUser.RoleId;
                 }
                 
                 RetView.makeNew( InspectionsViewName, Visibility, RoleId, null, null );
@@ -457,7 +463,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPrimaryKey RoleId = null;
                 if( NbtViewVisibility.Role == Visibility )
                 {
-                    RoleId = _CswNbtResources.CurrentNbtUser.RoleId;
+                    RoleId = _CurrentUser.RoleId;
                 }
 
                 RetView.makeNew( AllInspectionPointsViewName, Visibility, RoleId, null, null );
