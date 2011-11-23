@@ -165,9 +165,10 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswNbtResources( AppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical )
+        public CswNbtResources( AppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache )
         {
-            _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical );
+
+            _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical, CswSuperCycleCache );
 
             _DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
             logMessage( "CswNbtResources CREATED GUID: " + _DebugID );
@@ -178,6 +179,8 @@ namespace ChemSW.Nbt
             SessionDataMgr = new CswNbtSessionDataMgr( this );
             Permit = new CswNbtPermit( this );
         }
+
+        public ICswSuperCycleCache CswSuperCycleCache { get { return ( _CswResources.CswSuperCycleCache ); } }
 
         public PooledConnectionState PooledConnectionState { set { _CswResources.PooledConnectionState = value; } }
 

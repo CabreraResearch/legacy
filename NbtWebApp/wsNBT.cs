@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Web;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -42,6 +43,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         private string _TempPath
         {
+
             get
             {
                 // ApplicationPhysicalPath already has \\ at the end
@@ -51,7 +53,7 @@ namespace ChemSW.Nbt.WebServices
 
         private void _initResources()
         {
-            _CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, SetupMode.NbtWeb );
+            _CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, Context, string.Empty, SetupMode.NbtWeb );
             _CswNbtResources = _CswSessionResources.CswNbtResources;
             _CswNbtStatisticsEvents = _CswSessionResources.CswNbtStatisticsEvents;
             _CswNbtResources.beginTransaction();
@@ -2630,7 +2632,10 @@ namespace ChemSW.Nbt.WebServices
             JObject Connected = new JObject();
 
             // init resources
-            CswNbtResources myResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtWeb, true, false );
+
+
+
+            CswNbtResources myResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtWeb, true, false, new CswSuperCycleCacheWeb( Context.Cache ) );
             myResources.InitCurrentUser = ConnectTestDb_InitUser;
 
             // use the first accessid
@@ -2646,6 +2651,7 @@ namespace ChemSW.Nbt.WebServices
 
             _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
+            
         } // ConnectTestDb()
 
         public ICswUser ConnectTestDb_InitUser( ICswResources Resources )

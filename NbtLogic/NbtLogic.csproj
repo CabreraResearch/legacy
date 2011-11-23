@@ -73,6 +73,7 @@
     <Compile Include="csw\ImportExport\ICswImporter.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportExport.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportExportFrame.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataTableCache.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeLayoutMgr.cs" />
     <Compile Include="csw\MetaData\CswNbtFieldResources.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaData.cs" />
