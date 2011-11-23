@@ -153,7 +153,7 @@ namespace ChemSW.NbtSchemaDiff
             // Left resources
             //CswNbtObjClassFactory _CswNbtObjClassFactoryLeft = new CswNbtObjClassFactory();
             _CswNbtResourcesLeft = new CswNbtResources( AppType.SchemDiff, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactoryLeft, 
-                                                       false, false );
+                                                       false, false, null );
             _CswNbtResourcesLeft.SetDbResources( new CswNbtTreeFactory( _ConfigurationPath ) );
             //_CswNbtResources.CswTblFactory = new CswNbtTblFactory( _CswNbtResources );
             //_CswNbtResources.CswTableCaddyFactory = new CswTableCaddyFactoryNbt( _CswNbtResources );
@@ -169,7 +169,7 @@ namespace ChemSW.NbtSchemaDiff
             // Right resources
             //CswNbtObjClassFactory _CswNbtObjClassFactoryRight = new CswNbtObjClassFactory();
             _CswNbtResourcesRight = new CswNbtResources( AppType.SchemDiff, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactoryRight, 
-                                                         false, false );
+                                                         false, false, null );
             _CswNbtResourcesRight.SetDbResources( new CswNbtTreeFactory( _ConfigurationPath ) );
             //_CswNbtResources.CswTblFactory = new CswNbtTblFactory( _CswNbtResources );
             //_CswNbtResources.CswTableCaddyFactory = new CswTableCaddyFactoryNbt( _CswNbtResources );

@@ -66,6 +66,7 @@
     <Compile Include="csw\CswQuickLaunch.cs" />
     <Compile Include="csw\CswSequencesEditor.cs" />
     <Compile Include="csw\CswSessionResourcesNbt.cs" />
+    <Compile Include="csw\CswSuperCycleCacheWeb.cs" />
     <Compile Include="csw\CswTabOuterTable.cs" />
     <Compile Include="csw\CswTreeCombo.cs" />
     <Compile Include="csw\CswViewEditorWizard.cs" />

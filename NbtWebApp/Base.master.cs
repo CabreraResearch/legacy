@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.WebPages
                 //bz # 9278
 
 
-                CswSessionResourcesNbt = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, SetupMode.NbtWeb );
+                CswSessionResourcesNbt = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, Context,string.Empty, SetupMode.NbtWeb );
 
 
                 CswNbtResources = CswSessionResourcesNbt.CswNbtResources;

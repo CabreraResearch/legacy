@@ -24,7 +24,7 @@ public class TreeViewService : System.Web.Services.WebService
     {
         //        CswNbtSession CswSessionWeb = new CswNbtSession( Context.Application, Context.Session, Context.Request, Context.Response );
 
-        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, SetupMode.NbtWeb );
+        CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response,Context, string.Empty, SetupMode.NbtWeb );
         CswNbtResources = CswInitialization.CswNbtResources;
         //        CswSessionWeb.CswNbtResources = CswNbtResources;
 
@@ -78,11 +78,11 @@ public class TreeViewService : System.Web.Services.WebService
                 contextDictionary.ContainsKey( "PageSize" ) && contextDictionary["PageSize"] != null &&
                 contextDictionary.ContainsKey( "ParentNodeKey" ) && contextDictionary["ParentNodeKey"] != null )
             {
-				CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() ) );
+                CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() ) );
                 CswNbtNodeKey SelectedNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["SelectedNodeKey"].ToString() );
                 CswNbtNodeKey ParentNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["ParentNodeKey"].ToString() );
                 CswNbtView View = new CswNbtView( CswNbtResources );
-				View = CswNbtResources.ViewSelect.getSessionView( SessionViewId );
+                View = CswNbtResources.ViewSelect.getSessionView( SessionViewId );
                 RadTreeView Tree = makeTree( View, ref ParentNodeKey, null, CswConvert.ToInt32( contextDictionary["PageSize"].ToString() ), null );
 
                 RadTreeNode Node = Tree.FindNodeByValue( contextDictionary["ParentNodeKey"].ToString() );
@@ -130,11 +130,11 @@ public class TreeViewService : System.Web.Services.WebService
             {
                 CswNbtNodeKey MoreKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["MoreNodeKey"].ToString() );
 
-				CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() ) );
+                CswNbtSessionDataId SessionViewId = new CswNbtSessionDataId( CswConvert.ToInt32( contextDictionary["SessionViewId"].ToString() ) );
                 CswNbtNodeKey SelectedNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["SelectedNodeKey"].ToString() );
                 CswNbtNodeKey ParentNodeKey = new CswNbtNodeKey( CswNbtResources, contextDictionary["ParentNodeKey"].ToString() );
                 CswNbtView View = new CswNbtView( CswNbtResources );
-				View = CswNbtResources.ViewSelect.getSessionView( SessionViewId );
+                View = CswNbtResources.ViewSelect.getSessionView( SessionViewId );
 
                 CswNbtViewRelationship FirstChildRelationship = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( MoreKey.ViewNodeUniqueId );
 
