@@ -2632,6 +2632,9 @@ namespace ChemSW.Nbt.WebServices
             JObject Connected = new JObject();
 
             // init resources
+
+
+
             CswNbtResources myResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtWeb, true, false, new CswSuperCycleCacheWeb( Context.Cache ) );
             myResources.InitCurrentUser = ConnectTestDb_InitUser;
 
@@ -2648,6 +2651,7 @@ namespace ChemSW.Nbt.WebServices
 
             _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
+            
         } // ConnectTestDb()
 
         public ICswUser ConnectTestDb_InitUser( ICswResources Resources )

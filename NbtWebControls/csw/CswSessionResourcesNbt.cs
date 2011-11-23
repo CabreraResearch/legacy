@@ -20,7 +20,22 @@ namespace ChemSW.Nbt
 
         public CswSessionResourcesNbt( HttpApplicationState HttpApplicationState, HttpRequest HttpRequest, HttpResponse HttpResponse, HttpContext Context, string LoginAccessId, SetupMode SetupMode )
         {
-            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false, new CswSuperCycleCacheWeb( Context.Cache ) );
+
+            //SuperCycleCache configuraiton has to happen here because here is where we can stash the cache,
+            //so to speak, in the wrapper class -- the resource factory is agnostic with respect to cache type
+            CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( SetupMode.NbtWeb );
+            ICswSuperCycleCache CswSuperCycleCache = null;
+            if( SetupVbls.doesSettingExist( "cachemetadata" ) && "1" == SetupVbls["cachemetadata"] )
+            {
+                CswSuperCycleCache = new CswSuperCycleCacheWeb( Context.Cache );
+            }
+            else
+            {
+                CswSuperCycleCache = new CswSuperCycleCacheDefault();
+            }
+
+
+            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false, CswSuperCycleCache );
 
             string RecordStatisticsVblName = "RecordUserStatistics";
             bool RecordStatistics = false;

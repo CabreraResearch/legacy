@@ -35,6 +35,12 @@ namespace ChemSW.Nbt.MetaData
             _CswSuperCycleCache = CswSuperCycleCache;
         }//ctor
 
+
+        public void clear()
+        {
+            _CswSuperCycleCache.clear(); 
+        }//clear() 
+
         public DataTable get( MetaDataTable TableId )
         {
             return ( (DataTable) _CswSuperCycleCache.get( TableId.ToString() ) );

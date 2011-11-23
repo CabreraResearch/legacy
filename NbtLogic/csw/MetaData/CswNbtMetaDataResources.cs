@@ -208,7 +208,7 @@ namespace ChemSW.Nbt.MetaData
                                                           where j.nodetypeid = nodetype_props.nodetypeid) ) )";
             }
 
-            DataTable NodeTypePropTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.NodeType );
+            DataTable NodeTypePropTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeProp );
             if( null == NodeTypePropTable )
             {
                 NodeTypePropTable = NodeTypePropTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "propname", OrderByType.Ascending ) } );
@@ -375,7 +375,10 @@ namespace ChemSW.Nbt.MetaData
                 ChangesMade = JctNodesPropsTableUpdate.updateAll() || ChangesMade;
 
             if( ChangesMade )
+            {
                 CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
+                _CswNbtMetaDataTableCache.clear(); //this will force a reload of tables
+            }
         }
 
         public ICswNbtFieldTypeRule makeFieldTypeRule( ICswNbtMetaDataProp MetaDataProp )
