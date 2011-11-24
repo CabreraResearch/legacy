@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Web;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -2651,7 +2650,7 @@ namespace ChemSW.Nbt.WebServices
 
             _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
-            
+
         } // ConnectTestDb()
 
         public ICswUser ConnectTestDb_InitUser( ICswResources Resources )
@@ -3139,21 +3138,6 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     _purgeTempFiles( "xls" );
-                    // putting these in the param list causes the webservice to fail with
-                    // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
-                    // These variables seem to work in Google chrome but NOT in IE
-                    string FileName = Context.Request["qqfile"];
-                    //string PropId = Context.Request["propid"];
-                    string NewInspectionName = Context.Request["InspectionName"];
-
-                    if( string.IsNullOrEmpty( FileName ) )
-                    {
-                        throw new CswDniException( ErrorType.Warning, "Invalid file name for Inspection Import.", "Imported file name was null or empty." );
-                    }
-                    if( string.IsNullOrEmpty( NewInspectionName ) )
-                    {
-                        throw new CswDniException( ErrorType.Warning, "Inpsection Name is required.", "Inspection name was null or empty." );
-                    }
                     if( 0 == Context.Request.InputStream.Length || false == Context.Request.InputStream.CanRead )
                     {
                         throw new CswDniException( ErrorType.Warning, "Cannot read the loaded file.", "File was empty or corrupt" );
@@ -3170,7 +3154,7 @@ namespace ChemSW.Nbt.WebServices
 
                     // Load the excel file into a data table
                     CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
-                    ExcelDataTable = ws.ConvertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
+                    ExcelDataTable = ws.convertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
 
                     // determine if we were successful or failure
                     if( ExcelDataTable == null || false == string.IsNullOrEmpty( ErrorMessage ) )
@@ -3183,8 +3167,7 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     ReturnVal["success"] = "true";
-                    ReturnVal["tempFileName"] = TempFileName;
-
+                    
                     ws.AddPrimaryKeys( ref ExcelDataTable );
                     CswGridData gd = new CswGridData( _CswNbtResources );
                     gd.PkColumn = "RowNumber";
