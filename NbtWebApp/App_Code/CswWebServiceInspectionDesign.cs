@@ -814,6 +814,8 @@ namespace ChemSW.Nbt.WebServices
                 //This is a new InspectionDesign on a new InspectionTarget
                 RetObj["groupcount"] = "0";
                 RetObj["succeeded"] = "true";
+                RetObj["groupnodenames"] = new JArray();
+                RetObj["groupnodetypename"] = string.Empty;
             }
             else
             {

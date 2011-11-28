@@ -309,6 +309,6 @@ var CswInspectionDesign_WizardSteps = {
     step3: { step: 3, description: 'Review Inspection Design' },
     step4: { step: 4, description: 'Select an Inspection Target' },
     step5: { step: 5, description: 'Create Inspection Schedules' },
-    step6: { step: 6, description: 'Results' },
+    step6: { step: 6, description: 'Finish' },
     stepcount: 6
 };
