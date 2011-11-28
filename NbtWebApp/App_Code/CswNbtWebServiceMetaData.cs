@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
@@ -68,18 +67,6 @@ namespace ChemSW.Nbt.WebServices
                     break;
             }
 
-        }
-
-        public string checkUniqueNodeType( string NewNodeTypeName )
-        {
-            string Ret = string.Empty;
-            CswNbtMetaDataNodeType NewNodeType = _CswNbtResources.MetaData.getNodeType( NewNodeTypeName );
-            if( null != NewNodeType )
-            {
-                throw new CswDniException( ErrorType.Error, "Suggested name is not unique.", "NodeType of name: " + NewNodeTypeName + " already exists." );
-            }
-            Ret = NewNodeTypeName;
-            return Ret;
         }
 
     } // class CswNbtWebServiceMetaData
