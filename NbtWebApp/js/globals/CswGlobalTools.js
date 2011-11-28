@@ -1,19 +1,25 @@
 
 //global, ChemSW namespace. Eventually home to all 'global' variables.
-var ChemSW = {
-    
-    makeSequentialArray: function (start, end) {
-        var ret = [];
-        start = +start;
-        end = +end;
-        if (isNumber(start) && isNumber(end)) {
-            for (start; start <= end; start += 1) {
-                ret.push(start);
+var ChemSW = ChemSW || (function(undefined) {
+
+    return {
+        makeSequentialArray: function(start, end) {
+            var ret = [];
+            start = +start;
+            end = +end;
+            if (isNumber(start) && 
+                    isNumber(end)) {
+                //This will generate a Closure compile warning: "WARNING - Suspicious code. This code lacks side-effects. Is there a bug?"
+                //The warning is incorrect but unavoidable because Closure has no way to know how we're using this function.
+                for (start; start <= end; start += 1) {
+                    ret.push(start);
+                }
             }
+            return ret;
         }
-        return ret;
-    }
-};
+    };
+}());
+
 
 function isArray(obj) {
     /// <summary> Returns true if the object is an array</summary>
