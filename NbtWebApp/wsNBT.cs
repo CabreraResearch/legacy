@@ -3167,8 +3167,7 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     ReturnVal["success"] = "true";
-                    
-                    ws.AddPrimaryKeys( ref ExcelDataTable );
+
                     CswGridData gd = new CswGridData( _CswNbtResources );
                     gd.PkColumn = "RowNumber";
 

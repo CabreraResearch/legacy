@@ -15,6 +15,8 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswWebServiceInspectionDesign
     {
+        #region ctor
+
         private CswNbtResources _CswNbtResources;
         private readonly ICswNbtUser _CurrentUser;
         private readonly CswNbtObjClassRole _CurrentRole;
@@ -27,6 +29,10 @@ namespace ChemSW.Nbt.WebServices
             CultureInfo Culture = Thread.CurrentThread.CurrentCulture;
             _TextInfo = Culture.TextInfo;
         }
+
+        #endregion ctor
+
+        #region Private
 
         private readonly CswCommaDelimitedString _ColumnNames = new CswCommaDelimitedString()
                                                            {
@@ -43,7 +49,7 @@ namespace ChemSW.Nbt.WebServices
         private readonly string _CompliantAnswersName = "COMPLIANT_ANSWERS";
         private readonly string _HelpTextName = "HELP_TEXT";
 
-        public void AddPrimaryKeys( ref DataTable myDataTable )
+        private void _addPrimaryKeys( ref DataTable myDataTable )
         {
             if( myDataTable.Columns["RowNumber"] == null )
             {
@@ -87,84 +93,6 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Edit, NodeType, _CurrentRole, true );
             _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Delete, NodeType, _CurrentRole, true );
             _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentRole, true );
-        }
-
-        /// <summary>
-        /// Reads an Excel file from the file system and converts it into a ADO.NET data table
-        /// </summary>
-        /// <param name="FullPathAndFileName"></param>
-        /// <returns></returns>
-        public DataTable convertExcelFileToDataTable( string FullPathAndFileName, ref string ErrorMessage, ref string WarningMessage )
-        {
-            DataTable ExcelDataTable = null;
-            OleDbConnection ExcelConn = null;
-
-            try
-            {
-                // Microsoft JET engine knows how to read Excel files as a database
-                // Problem is - it is old OLE technology - not newer ADO.NET
-                string ConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FullPathAndFileName + ";Extended Properties=Excel 8.0;";
-                ExcelConn = new OleDbConnection( ConnStr );
-                ExcelConn.Open();
-
-                DataTable ExcelSchemaDT = ExcelConn.GetOleDbSchemaTable( OleDbSchemaGuid.Tables, null );
-                string FirstSheetName = ExcelSchemaDT.Rows[0]["TABLE_NAME"].ToString();
-
-                OleDbDataAdapter DataAdapter = new OleDbDataAdapter();
-                OleDbCommand SelectCommand = new OleDbCommand( "SELECT * FROM [" + FirstSheetName + "]", ExcelConn );
-                DataAdapter.SelectCommand = SelectCommand;
-
-                ExcelDataTable = new DataTable();
-                DataAdapter.Fill( ExcelDataTable );
-
-                foreach( string ColumnName in _ColumnNames )
-                {
-                    if( ExcelDataTable.Columns[ColumnName] == null )
-                    {
-                        ErrorMessage += "Column named '" + ColumnName + "' was not found.  ";
-                    }
-                }
-                for( int ColumnIndex = 0; ColumnIndex < ExcelDataTable.Columns.Count; ColumnIndex++ )
-                {
-                    if( false == _ColumnNames.Contains( ExcelDataTable.Columns[ColumnIndex].ColumnName ) )
-                    {
-                        WarningMessage += "Column named '" + ExcelDataTable.Columns[ColumnIndex].ColumnName + "' was not used.  ";
-                    }
-                }
-            } // try
-            catch( Exception Exception )
-            {
-                _CswNbtResources.CswLogger.reportError( Exception );
-            }
-            finally
-            {
-                if( ExcelConn != null )
-                {
-                    ExcelConn.Close();
-                    ExcelConn.Dispose();
-                }
-            }
-            return ExcelDataTable;
-        } // convertExcelFileToDataTable()
-
-        public JObject copyInspectionDesign( string CopyFromInspectionDesign, string InspectionDesignName, string InspectionTargetName, string Category )
-        {
-            JObject RetObj = new JObject();
-
-            CswNbtMetaDataNodeType CopyInspectionDesignNt = _CswNbtResources.MetaData.getNodeType( CopyFromInspectionDesign );
-
-            _validateNodeType( CopyInspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-
-            InspectionDesignName = _checkUniqueNodeType( InspectionDesignName );
-            CswNbtMetaDataNodeType NewInspectionDesignNt = _CswNbtResources.MetaData.CopyNodeType( CopyInspectionDesignNt, InspectionDesignName );
-            if( false == string.IsNullOrEmpty( Category ) )
-            {
-                NewInspectionDesignNt.Category = Category.Trim();
-            }
-            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
-            _createInspectionDesignRelationships( NewInspectionDesignNt, InspectionTargetNt, InspectionTargetName, Category );
-
-            return RetObj;
         }
 
         private Dictionary<string, CswNbtMetaDataNodeTypeTab> _getTabsForInspection( JArray Grid, CswNbtMetaDataNodeType NodeType )
@@ -614,6 +542,170 @@ namespace ChemSW.Nbt.WebServices
             return RetView;
         }
 
+        private void _pruneSectionOneTab( CswNbtMetaDataNodeType InspectionDesignNt )
+        {
+            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            CswNbtMetaDataNodeTypeTab SectionOneTab = InspectionDesignNt.getNodeTypeTab( "Section 1" );
+            if( null != SectionOneTab )
+            {
+                if( SectionOneTab.NodeTypeProps.Count > 0 )
+                {
+                    SectionOneTab.TabName = "Questions";
+                }
+                else
+                {
+                    _CswNbtResources.MetaData.DeleteNodeTypeTab( SectionOneTab );
+                }
+            }
+        }
+
+        private CswNbtView _getSchedulesViewFromInspectionDesign( CswNbtMetaDataNodeType InspectionDesignNt )
+        {
+            CswNbtView RetView = null;
+
+            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+
+            CswNbtMetaDataNodeTypeProp GeneratorNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
+            if( GeneratorNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+            {
+                CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( GeneratorNtp.FKValue );
+                _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+
+                CswNbtMetaDataNodeTypeProp GenOwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
+                if( GenOwnerNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                {
+                    CswNbtMetaDataNodeType InspectionGroupNt = _CswNbtResources.MetaData.getNodeType( GenOwnerNtp.FKValue );
+                    _validateNodeType( InspectionGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
+
+                    RetView = new CswNbtView( _CswNbtResources );
+                    CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionGroupNt, false );
+                    RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, GenOwnerNtp, false );
+
+                }
+
+            }
+            else if( GeneratorNtp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+            {
+                throw new CswDniException( ErrorType.Warning, "Cannot create a Schedule view", "Cannot use Object Class relationships to construct a view." );
+            }
+            return RetView;
+        }
+
+        private CswNbtView _getSchedulesViewFromInspectionTarget( CswNbtMetaDataNodeType InspectionTargetNt )
+        {
+            CswNbtView RetView = null;
+            CswNbtMetaDataNodeTypeProp InTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+            if( InTargetGroupNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+            {
+                CswNbtMetaDataNodeType InTargetGroupNt = _CswNbtResources.MetaData.getNodeType( InTargetGroupNtp.FKValue );
+                _validateNodeType( InTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
+
+                RetView = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InTargetGroupNt, false );
+
+                CswNbtMetaDataObjectClass GeneratorOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+                foreach( CswNbtMetaDataNodeType GeneratorNt in GeneratorOc.NodeTypes )
+                {
+                    CswNbtMetaDataNodeTypeProp OwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
+                    if( OwnerNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
+                        OwnerNtp.FKValue == InTargetGroupNt.NodeTypeId )
+                    {
+                        RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, OwnerNtp, false );
+                    }
+                }
+            }
+            else if( InTargetGroupNtp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+            {
+                throw new CswDniException( ErrorType.Warning, "Cannot create a Schedule view", "Cannot use Object Class relationships to construct a view." );
+            }
+            return RetView;
+        }
+
+        #endregion Private
+
+        #region Public
+
+        /// <summary>
+        /// Reads an Excel file from the file system and converts it into a ADO.NET data table
+        /// </summary>
+        /// <param name="FullPathAndFileName"></param>
+        /// <returns></returns>
+        public DataTable convertExcelFileToDataTable( string FullPathAndFileName, ref string ErrorMessage, ref string WarningMessage )
+        {
+            DataTable ExcelDataTable = null;
+            OleDbConnection ExcelConn = null;
+
+            try
+            {
+                // Microsoft JET engine knows how to read Excel files as a database
+                // Problem is - it is old OLE technology - not newer ADO.NET
+                string ConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FullPathAndFileName + ";Extended Properties=Excel 8.0;";
+                ExcelConn = new OleDbConnection( ConnStr );
+                ExcelConn.Open();
+
+                DataTable ExcelSchemaDT = ExcelConn.GetOleDbSchemaTable( OleDbSchemaGuid.Tables, null );
+                string FirstSheetName = ExcelSchemaDT.Rows[0]["TABLE_NAME"].ToString();
+
+                OleDbDataAdapter DataAdapter = new OleDbDataAdapter();
+                OleDbCommand SelectCommand = new OleDbCommand( "SELECT * FROM [" + FirstSheetName + "]", ExcelConn );
+                DataAdapter.SelectCommand = SelectCommand;
+
+                ExcelDataTable = new DataTable();
+                DataAdapter.Fill( ExcelDataTable );
+
+                foreach( string ColumnName in _ColumnNames )
+                {
+                    if( ExcelDataTable.Columns[ColumnName] == null )
+                    {
+                        ErrorMessage += "Column named '" + ColumnName + "' was not found.  ";
+                    }
+                }
+                for( int ColumnIndex = 0; ColumnIndex < ExcelDataTable.Columns.Count; ColumnIndex++ )
+                {
+                    if( false == _ColumnNames.Contains( ExcelDataTable.Columns[ColumnIndex].ColumnName ) )
+                    {
+                        WarningMessage += "Column named '" + ExcelDataTable.Columns[ColumnIndex].ColumnName + "' was not used.  ";
+                    }
+                }
+
+                _addPrimaryKeys( ref ExcelDataTable );
+
+            } // try
+            catch( Exception Exception )
+            {
+                _CswNbtResources.CswLogger.reportError( Exception );
+            }
+            finally
+            {
+                if( ExcelConn != null )
+                {
+                    ExcelConn.Close();
+                    ExcelConn.Dispose();
+                }
+            }
+            return ExcelDataTable;
+        } // convertExcelFileToDataTable()
+
+        public JObject copyInspectionDesign( string CopyFromInspectionDesign, string InspectionDesignName, string InspectionTargetName, string Category )
+        {
+            JObject RetObj = new JObject();
+
+            CswNbtMetaDataNodeType CopyInspectionDesignNt = _CswNbtResources.MetaData.getNodeType( CopyFromInspectionDesign );
+
+            _validateNodeType( CopyInspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+
+            InspectionDesignName = _checkUniqueNodeType( InspectionDesignName );
+            CswNbtMetaDataNodeType NewInspectionDesignNt = _CswNbtResources.MetaData.CopyNodeType( CopyInspectionDesignNt, InspectionDesignName );
+            if( false == string.IsNullOrEmpty( Category ) )
+            {
+                NewInspectionDesignNt.Category = Category.Trim();
+            }
+            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
+            _createInspectionDesignRelationships( NewInspectionDesignNt, InspectionTargetNt, InspectionTargetName, Category );
+
+            return RetObj;
+        }
+
         public JObject createInspectionDesignTabsAndProps( string GridArrayString, string InspectionDesignName, string InspectionTargetName, string Category )
         {
             JObject RetObj = new JObject();
@@ -654,8 +746,11 @@ namespace ChemSW.Nbt.WebServices
             Dictionary<string, CswNbtMetaDataNodeTypeTab> Tabs = _getTabsForInspection( GridArray, InspectionDesignNt );
             //Create the props
             PropsWithoutError = _createInspectionProps( GridArray, InspectionDesignNt, Tabs, GridRowsSkipped );
+            //Delete or rename the "Section 1" tab
+            _pruneSectionOneTab( InspectionDesignNt );
             //Build the MetaData
             RetObj = _createInspectionDesignRelationships( InspectionDesignNt, InspectionTargetNt, InspectionTargetName, Category );
+            //More return data
             RetObj["totalrows"] = TotalRows.ToString();
             RetObj["rownumbersskipped"] = new JArray( GridRowsSkipped.ToString() );
             RetObj["countsucceeded"] = PropsWithoutError.ToString();
@@ -722,66 +817,7 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
-        private CswNbtView _getSchedulesViewFromInspectionDesign( CswNbtMetaDataNodeType InspectionDesignNt )
-        {
-            CswNbtView RetView = null;
+        #endregion Public
 
-            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-
-            CswNbtMetaDataNodeTypeProp GeneratorNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
-            if( GeneratorNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
-            {
-                CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( GeneratorNtp.FKValue );
-                _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-
-                CswNbtMetaDataNodeTypeProp GenOwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
-                if( GenOwnerNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
-                {
-                    CswNbtMetaDataNodeType InspectionGroupNt = _CswNbtResources.MetaData.getNodeType( GenOwnerNtp.FKValue );
-                    _validateNodeType( InspectionGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
-
-                    RetView = new CswNbtView( _CswNbtResources );
-                    CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionGroupNt, false );
-                    RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, GenOwnerNtp, false );
-
-                }
-
-            }
-            else if( GeneratorNtp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
-            {
-                throw new CswDniException( ErrorType.Warning, "Cannot create a Schedule view", "Cannot use Object Class relationships to construct a view." );
-            }
-            return RetView;
-        }
-
-        private CswNbtView _getSchedulesViewFromInspectionTarget( CswNbtMetaDataNodeType InspectionTargetNt )
-        {
-            CswNbtView RetView = null;
-            CswNbtMetaDataNodeTypeProp InTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
-            if( InTargetGroupNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
-            {
-                CswNbtMetaDataNodeType InTargetGroupNt = _CswNbtResources.MetaData.getNodeType( InTargetGroupNtp.FKValue );
-                _validateNodeType( InTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
-
-                RetView = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InTargetGroupNt, false );
-
-                CswNbtMetaDataObjectClass GeneratorOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-                foreach( CswNbtMetaDataNodeType GeneratorNt in GeneratorOc.NodeTypes )
-                {
-                    CswNbtMetaDataNodeTypeProp OwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
-                    if( OwnerNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
-                        OwnerNtp.FKValue == InTargetGroupNt.NodeTypeId )
-                    {
-                        RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, OwnerNtp, false );
-                    }
-                }
-            }
-            else if( InTargetGroupNtp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
-            {
-                throw new CswDniException( ErrorType.Warning, "Cannot create a Schedule view", "Cannot use Object Class relationships to construct a view." );
-            }
-            return RetView;
-        }
     }
 }
