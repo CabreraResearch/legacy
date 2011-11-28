@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.MetaData
 
         public void clear()
         {
-            _CswSuperCycleCache.clear(); 
+            _CswSuperCycleCache.delete( Enum.GetNames( typeof( MetaDataTable ) ) );
         }//clear() 
 
         public DataTable get( MetaDataTable TableId )
@@ -47,9 +47,9 @@ namespace ChemSW.Nbt.MetaData
         }//getTable() 
 
 
-        public void put( MetaDataTable TableId, DataTable DataTable ) 
+        public void put( MetaDataTable TableId, DataTable DataTable )
         {
-            _CswSuperCycleCache.put( TableId.ToString(), DataTable  );
+            _CswSuperCycleCache.put( TableId.ToString(), DataTable );
         }//put() 
 
 
