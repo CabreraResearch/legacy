@@ -51,7 +51,7 @@
         // Step 4 - Select or Create Inspection Target
             $divStep4, selectedInspectionTarget, $inspectionTarget, $addNewTarget, isNewTarget = false,
         // Step 5 - Add new Inspection Target Groups
-            $divStep5, inspectionTargetGroups = { }, newSchedules = { },
+            $divStep5, inspectionTargetGroups = { }, newSchedules = { }, $scheduleList, 
         // Step 6 - Add new Inspection Schedules
             $divStep6, 
 
@@ -379,7 +379,7 @@
                                                             onclick: function() {
                                                                 $.CswDialog('AddNodeTypeDialog', {
                                                                     objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
-                                                                    nodetypename: 'A',
+                                                                    nodetypename: '',
                                                                     category: newCategoryName,
                                                                     $select: $inspectionTarget,
                                                                     nodeTypeDescriptor: 'Target',
@@ -434,14 +434,14 @@
                             success: function (data) {
                                 var groupCount = +(data.groupcount),
                                         groupNodes = data.groupnodenames,
-                                        $addTable, $list, $targetGroupSelect, $scheduleList, $groupTable;
+                                        $addTable, $list, $targetGroupSelect, $groupTable;
 
                                 $divStep5.append('<p>Add new Inspection Target Groups and Inspection Schedules.</p>');
                                
                                 $scheduleList = $('<p>New <b>' + selectedInspectionTarget + ' Group</b> Inspection Schedules: </p>')
                                                     .appendTo($divStep5)
                                                     .hide();
-                                $list = $divStep5.CswList('init', {
+                                $list = $scheduleList.CswList('init', {
                                     ID: makeStepId('targetGroupList')
                                 });
 
@@ -560,6 +560,10 @@
                                                                 if(false === contains(newSchedules, selectedGroup)) {
                                                                     newSchedules[selectedGroup] = { name: selectedGroup, sched: { } };
                                                                 }
+                                                                if(isNullOrEmpty(newSchedules.count)) {
+                                                                    newSchedules.count = 0;
+                                                                }
+                                                                newSchedules.count += 1;
                                                                 newSchedules[selectedGroup].sched[selectedName] = {
                                                                     name: selectedName,
                                                                     interval: selectedInterval
@@ -588,14 +592,59 @@
             makeStepSix = (function () {
                 
                 return function () {
+                    var $confirmationList, $confirmTypesList, $confirmScheduleList;
+                    
                     $wizard.CswWizard('button', 'previous', 'enable');
-                    $wizard.CswWizard('button', 'next', 'enable');
+                    $wizard.CswWizard('button', 'next', 'disable');
                     $wizard.CswWizard('button', 'cancel', 'enable');
                     $wizard.CswWizard('button', 'finish', 'enable');
                     
-                    var $addTable, $list, $addName, $groupSelect, $interval, groupValues = [];
                     $divStep6 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step6.step);
-                    };
+
+                    $divStep6.append('<p>You are about to create the following items. </p>');
+                    $divStep6.append('<p>If this looks correct, click Finish to create the design.</p>');
+                    $confirmationList = $divStep6.CswList('init', {
+                        ID: makeStepId('confirmationList'),
+                        ordered: true
+                    });
+
+                    
+                    $confirmTypesList = $confirmationList.CswList('addItem', {
+                                                            value: 'New Types'
+                                                        })
+                                                  .CswList('init', {
+                                                      ID: makeStepId('confirmationTypes')
+                                                  });
+
+                    $confirmTypesList.CswList('addItem', {
+                        value: 'New Inspection Design <b>' + newInspectionName + '</b> on Inspection Target <b>' + selectedInspectionTarget + '</b>'
+                    });
+                    
+                    if (isNewTarget) {
+                        $confirmTypesList.CswList('addItem', {
+                            value: 'New Inspection Target <b>' + selectedInspectionTarget + '</b>'
+                        });
+                        
+                        $confirmTypesList.CswList('addItem', {
+                            value: 'New Inspection Target Group <b>' + selectedInspectionTarget + ' Group</b>'
+                        });
+                        
+                        $confirmTypesList.CswList('addItem', {
+                            value: 'New Inspection Route <b>' + selectedInspectionTarget + ' Route</b>'
+                        });
+                        
+                        $confirmTypesList.CswList('addItem', {
+                            value: 'New Inspection Schedule <b>' + selectedInspectionTarget + ' Schedule</b>'
+                        });
+                    }
+
+                    if(newSchedules.count > 0) {
+                        $confirmScheduleList = $confirmationList.CswList('addItem', {
+                            value: $($scheduleList.html())
+                        });
+                    }
+                    
+                };
             } ()),
 
             handleNext = function ($wizardTable, newStepNo) {
@@ -634,30 +683,43 @@
                     case CswInspectionDesign_WizardSteps.step4.step:
                         makeStepFour();
                         break;
+                    case CswInspectionDesign_WizardSteps.step5.step:
+                        makeStepFive();
+                        break;    
                 }
             },
 
             onFinish = function () {
+                var designGrid = '';
+                
+                $wizard.CswWizard('button', 'previous', 'disable');
+                $wizard.CswWizard('button', 'next', 'disable');
+                $wizard.CswWizard('button', 'cancel', 'disable');
+                
+                if(false === isNullOrEmpty(inspectionGrid)) {
+                    designGrid = JSON.stringify(inspectionGrid.$gridTable.jqGrid('getRowData'));
+                }
+                
                 var jsonData = {
-                        DesignGrid: JSON.stringify( inspectionGrid.$gridTable.jqGrid('getRowData') ),
-                        InspectionDesignName: tryParseString(newInspectionName),
-                        InspectionTargetName: tryParseString(selectedInspectionTarget),
-                        Schedules: JSON.stringify( newSchedules ),
-                        CopyFromInspectionDesign: tryParseString(copyFromInspectionDesign),
-                        Category: tryParseString(newCategoryName)
-                    };
+                    DesignGrid: designGrid,
+                    InspectionDesignName: tryParseString(newInspectionName),
+                    InspectionTargetName: tryParseString(selectedInspectionTarget),
+                    Schedules: JSON.stringify( newSchedules ),
+                    CopyFromInspectionDesign: tryParseString(copyFromInspectionDesign),
+                    Category: tryParseString(newCategoryName)
+                };
                     
-                    CswAjaxJson({
-                        url: '/NbtWebApp/wsNBT.asmx/finalizeInspectionDesign',
-                        data: jsonData,
-                        success: function (data) {
-                            alert("You've won! .... a chance to implement this feature.");
-                            //load the relevant Inspection Points by Location view
-                        },
-                        error: function (error) {
-                            //$.CswDialog('ErrorDialog', error);
-                        }
-                    });
+                CswAjaxJson({
+                    url: '/NbtWebApp/wsNBT.asmx/finalizeInspectionDesign',
+                    data: jsonData,
+                    success: function (data) {
+                        alert("You've won! .... a chance to implement this feature.");
+                        //load the relevant Inspection Points by Location view
+                    },
+                    error: function (error) {
+                        //$.CswDialog('ErrorDialog', error);
+                    }
+                });
             },
             
             makeStepId = function (suffix, stepNo) {

@@ -700,7 +700,8 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        if( string.Empty == CswConvert.ToString( Row[_SectionName] ) )
+                        if( string.Empty == CswConvert.ToString( Row[_SectionName] ) ||
+                            "Section 1" == CswConvert.ToString( Row[_SectionName] ) )
                         {
                             Row[_SectionName] = _DefaultSectionName;
                         }
