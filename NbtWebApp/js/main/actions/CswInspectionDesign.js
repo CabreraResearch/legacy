@@ -49,7 +49,7 @@
         // Step 3 - Review and Revise Inspection Design
             $divStep3, inspectionGrid,
         // Step 4 - Select or Create Inspection Target
-            $divStep4, selectedInspectionTarget, $inspectionTarget,
+            $divStep4, selectedInspectionTarget, $inspectionTarget, $addNewTarget,
         // Step 5 - Add new Inspection Target Groups
             $divStep5, inspectionTargetGroups = { }, newSchedules = { },
         // Step 6 - Add new Inspection Schedules
@@ -314,19 +314,15 @@
             makeStepFour = (function () {
                 var stepFourComplete = false;
                 return function () {
-                    $wizard.CswWizard('button', 'previous', 'enable').show();
+                    $wizard.CswWizard('button', 'previous', 'enable')
+                           .show()
+                           .val('Next');
 
-                    var $inspectionTable, $addNewTarget,
-                        $nextBtn = $wizard.CswWizard('button', 'next', 'disable').show();
-
+                    var $inspectionTable, 
+                        $nextBtn = $wizard.CswWizard('button', 'next', 'disable')
+                                          .show();
 
                     if (false === stepFourComplete) {
-                        $nextBtn.bind('click', function () {
-                            if (currentStepNo = CswInspectionDesign_WizardSteps.step4.step) {
-                                selectedInspectionTarget = $inspectionTarget.val();
-                            }
-                        });
-
                         $divStep4 = $wizard.CswWizard('div', CswInspectionDesign_WizardSteps.step4.step);
                         $divStep4.append('<br />');
 
@@ -352,10 +348,18 @@
                             $inspectionTarget.hide();
                             $addNewTarget = $inspectionTable.CswTable('cell', 1, 3)
                                 .CswInput('init', {
-                                    ID: o.ID + '_newTargetName', 
+                                    ID: o.ID + '_newTargetName',
                                     value: '[New Inspection Target]'
                                 })
-                                .css({ 'padding': '1px', 'vertical-align': 'middle' });
+                                .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                                .keypress(function() {
+                                    setTimeout(function() {
+                                        var newTargetName = $addNewTarget.val();
+                                        if (false === isNullOrEmpty(newTargetName)) {
+                                            $wizard.CswWizard('button', 'next', 'enable');
+                                        }
+                                    }, 100);
+                                });
                         } else {
                             selectedInspectionTarget = $inspectionTarget.find(':selected').text();
                             $nextBtn.CswButton('enable');
@@ -403,8 +407,16 @@
                     $wizard.CswWizard('button', 'previous', 'enable');
                     $wizard.CswWizard('button', 'next', 'enable').val('Create Inspection Design');
 
-                    if(isNullOrEmpty(selectedInspectionTarget)) {
-                        selectedInspectionTarget = $inspectionTarget.find(':selected').text();
+                    if (isNullOrEmpty(selectedInspectionTarget)) {
+                        if (false === isNullOrEmpty($addNewTarget, true)) {
+                            selectedInspectionTarget = $addNewTarget.val();
+                        } else {
+                            selectedInspectionTarget = $inspectionTarget.find(':selected').text();  
+                        }
+                    }
+                    if (isNullOrEmpty(selectedInspectionTarget)) {
+                        $wizard.CswWizard('button', 'previous', 'enable').click();
+                        $.CswDialog('ErrorDialog', 'An Inspection Design must have a Target.');
                     }
                     
                     var $newScheduleName, $newScheduleInterval, timeInterval, $addBtn, selectedGroup;
@@ -601,8 +613,6 @@
                             //$.CswDialog('ErrorDialog', error);
                         }
                     });    
-                    
-                    
                 };
             } ()),
 
