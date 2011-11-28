@@ -36,6 +36,8 @@ namespace ChemSW.Nbt.WebPages
                 FutureSchedulingWizard.onPageChange += new CswWizard.CswWizardEventHandler( _OnWizardStepChange );
                 FutureSchedulingWizard.onFinish += new CswWizard.CswWizardEventHandler( _OnWizardFinish );
 
+				FutureSchedulingWizard.NextButton.OnClientClick = "this.style.visibility = 'hidden'; return true;";
+
                 EnsureChildControls();
             }
             catch( Exception ex )
