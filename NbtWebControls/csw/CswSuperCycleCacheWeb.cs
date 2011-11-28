@@ -28,17 +28,18 @@ namespace ChemSW.Nbt
         }//ctor
 
 
-        public void clear()
+        public void delete( string[] Names )
         {
             lock( this )
             {
-                foreach( string CurrentKey in _CachedItemNames )
+                foreach( string CurrentName in Names )
                 {
-                    _Cache.Remove( CurrentKey ); 
-                }//iterate items
+                    _Cache.Remove( CurrentName.ToLower() );
+                }
             }
 
-        }//clear()
+        }//delete()
+
 
         public void put( string Name, object Object )
         {
