@@ -49,7 +49,7 @@
         // Step 3 - Review and Revise Inspection Design
             $divStep3, inspectionGrid,
         // Step 4 - Select or Create Inspection Target
-            $divStep4, selectedInspectionTarget, $inspectionTarget, $addNewTarget,
+            $divStep4, selectedInspectionTarget, $inspectionTarget, $addNewTarget, isNewTarget = false,
         // Step 5 - Add new Inspection Target Groups
             $divStep5, inspectionTargetGroups = { }, newSchedules = { },
         // Step 6 - Add new Inspection Schedules
@@ -333,68 +333,69 @@
                             .append('Select an Inspection Target: ');
 
                         $inspectionTarget = $inspectionTable.CswTable('cell', 1, 2)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .CswDiv('init')
                             .CswNodeTypeSelect('init', {
                                 ID: makeStepId('nodeTypeSelect'),
                                 objectClassName: 'InspectionTargetClass',
                                 excludeNodeTypeIds: excludeInspectionTargetId,
-                                onChange: function () {
-                                    var $this = $(this).find(':selected');
+                                onSelect: function() {
+                                    var $this = $inspectionTarget.find(':selected');
+                                    isNewTarget = isTrue($this.CswAttrXml('data-newNodeType'));
                                     selectedInspectionTarget = $this.text();
+                                },
+                                onSuccess: function(data) {
+
+                                    if (data.nodetypecount === 0) { //Add a new Target
+                                        $inspectionTarget.hide();
+                                        isNewTarget = true;
+                                        $addNewTarget = $inspectionTable.CswTable('cell', 1, 3)
+                                                                        .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                                                                        .CswInput('init', {
+                                                                            ID: o.ID + '_newTargetName',
+                                                                            value: ''
+                                                                        })
+                                                                        .keypress(function() {
+                                                                            setTimeout(function() {
+                                                                                var newTargetName = $addNewTarget.val();
+                                                                                if (false === isNullOrEmpty(newTargetName)) {
+                                                                                    $wizard.CswWizard('button', 'next', 'enable');
+                                                                                }
+                                                                            }, 100);
+                                                                        });
+                                    } else { //Select an existing Target or add a new Target
+                                        selectedInspectionTarget = $inspectionTarget.find(':selected').text();
+                                        $nextBtn.CswButton('enable');
+
+                                        $inspectionTable.CswTable('cell', 1, 4)
+                                                        .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                                                        .CswDiv('init')
+                                                        .CswButton('init', {
+                                                            ID: makeStepId('addNewInspectionTarget'),
+                                                            enabledText: 'Add New',
+                                                            disableOnClick: false,
+                                                            onclick: function() {
+                                                                $.CswDialog('AddNodeTypeDialog', {
+                                                                    objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
+                                                                    nodetypename: selectedInspectionTarget,
+                                                                    category: newCategoryName,
+                                                                    $select: $inspectionTarget,
+                                                                    nodeTypeDescriptor: 'Target',
+                                                                    onSuccess: function(data) {
+                                                                        selectedInspectionTarget = data.nodetypename;
+                                                                        isNewTarget = true;
+                                                                        newCategoryName = data.category;
+                                                                        $nextBtn.CswButton('enable');
+                                                                    },
+                                                                    title: 'Create a New Inspection Target Type.'
+                                                                });
+                                                                return false;
+                                                            }
+                                                        });
+                                    }
                                 }
                             });
-                        
-                        if ($inspectionTarget.children().length === 0) {
-                            $inspectionTarget.hide();
-                            $addNewTarget = $inspectionTable.CswTable('cell', 1, 3)
-                                .CswInput('init', {
-                                    ID: o.ID + '_newTargetName',
-                                    value: '[New Inspection Target]'
-                                })
-                                .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                                .keypress(function() {
-                                    setTimeout(function() {
-                                        var newTargetName = $addNewTarget.val();
-                                        if (false === isNullOrEmpty(newTargetName)) {
-                                            $wizard.CswWizard('button', 'next', 'enable');
-                                        }
-                                    }, 100);
-                                });
-                        } else {
-                            selectedInspectionTarget = $inspectionTarget.find(':selected').text();
-                            $nextBtn.CswButton('enable');
-                        }
-                        
-                        $inspectionTable.CswTable('cell', 1, 4)
-                            .CswDiv('init')
-                            .CswButton('init', { 
-                                ID: makeStepId('addNewInspectionTarget'),
-                                enabledText: 'Add New',
-                                disableOnClick: false,
-                                onclick: function () {
-                                    selectedInspectionTarget = $addNewTarget.val();
-                                    
-                                    $.CswDialog('AddNodeTypeDialog', {
-                                        objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
-                                        nodetypename: selectedInspectionTarget,
-                                        category: newCategoryName,
-                                        $select: $inspectionTarget,
-                                        nodeTypeDescriptor: 'Target',
-                                        onSuccess: function (data) {
-                                            selectedInspectionTarget = data.nodetypename;
-                                            newCategoryName = data.category;
-                                            
-                                            $inspectionTarget.show();
-                                            if (false === isNullOrEmpty($addNewTarget)) {
-                                                $addNewTarget.remove();
-                                            }
-                                            $nextBtn.CswButton('enable');
-                                        },
-                                        title: 'Create a New Inspection Target Type.'
-                                    });
-                                    return false;
-                                }
-                            });
+                       
                         stepFourComplete = true;
                     }
                 };
@@ -433,9 +434,13 @@
                                         groupNodes = data.groupnodenames,
                                         $addTable, $list, $targetGroupSelect, $scheduleList, $groupTable;
 
-                                $divStep5.append('<p>Add schedules for the new Inspection.<br />Create new Inspection Target groups if needed.</p>');
+                                $divStep5.append('<p>Add schedules for the new <b>' + newInspectionName + '</b> inspection.</p>');
+                                if (isNewTarget) {
+                                    $divStep5.append('<p>This will create a new inspection target type <b>' + selectedInspectionTarget + '</b> and </p>');
+                                    $divStep5.append('<p>a new inspection target group type <b>' + selectedInspectionTarget + ' Group</b> </p>');
+                                } 
                                 
-                                $scheduleList = $('<p>New Inspection Schedules: </p>')
+                                $scheduleList = $('<p>New <b>' + selectedInspectionTarget + ' Group</b> Inspection Schedules: </p>')
                                                     .appendTo($divStep5)
                                                     .hide();
                                 $list = $divStep5.CswList('init', {

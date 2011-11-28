@@ -37,14 +37,18 @@
                     url: o.NodeTypesUrl,
                     data: { ObjectClassName: tryParseString(o.objectClassName), ExcludeNodeTypeIds: o.excludeNodeTypeIds },
                     success: function (data) {
+                        var ret = data;
+                        ret.nodetypecount = 0;
                         //Case 24155
-                        each(data, function(thisNodeType) {
+                        each(ret, function(thisNodeType) {
                             var id = thisNodeType.id,
                                 name = thisNodeType.name,
                                 $thisOpt;
                             delete thisNodeType.id;
                             delete thisNodeType.name;
-
+                            
+                            ret.nodetypecount += 1;
+                            
                             $thisOpt = $('<option value="' + id + '">' + name + '</option>');
                             each(thisNodeType, function(value, key) {
                                 $thisOpt.CswAttrXml(key, value);
@@ -53,7 +57,7 @@
                         });
                         
                         if (isFunction(o.onSuccess)) {
-                            o.onSuccess();
+                            o.onSuccess(ret);
                         }
                         $select.css('width', tryParseString(o.width));    
                     }
