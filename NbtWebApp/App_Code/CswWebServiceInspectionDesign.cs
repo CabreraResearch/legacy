@@ -671,8 +671,8 @@ namespace ChemSW.Nbt.WebServices
 
                 foreach( DataColumn Column in ExcelDataTable.Columns )
                 {
-                    string ColumnName = Column.ColumnName.ToUpper().Replace( " ", "_" );
-                    if( false == _ColumnNames.Contains( ColumnName ) )
+                    Column.ColumnName = Column.ColumnName.ToUpper().Replace( " ", "_" );
+                    if( false == _ColumnNames.Contains( Column.ColumnName ) )
                     {
                         ExcelDataTable.Columns.Remove( Column );
                     }
