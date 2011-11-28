@@ -153,11 +153,11 @@ namespace ChemSW.Nbt.WebServices
                         }
                         else
                         {
-                            if( false == string.IsNullOrEmpty( AllowedAnswers ) )
+                            if( string.IsNullOrEmpty( AllowedAnswers ) )
                             {
                                 AllowedAnswers = _DefaultAllowedAnswers;
                             }
-                            if( false == string.IsNullOrEmpty( CompliantAnswers ) )
+                            if( string.IsNullOrEmpty( CompliantAnswers ) )
                             {
                                 CompliantAnswers = _DefaultCompliantAnswers;
                             }
