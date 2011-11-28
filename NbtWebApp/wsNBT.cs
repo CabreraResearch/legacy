@@ -726,6 +726,90 @@ namespace ChemSW.Nbt.WebServices
 
         } // getGrid()
 
+		/// <summary>
+		/// Prepare a tree of nodes for fetching, derived from a View
+		/// </summary>
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string runTree( string ViewId, string IdPrefix, string IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch )
+		{
+			JObject ReturnVal = new JObject();
+
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+
+					CswNbtView View = _getView( ViewId );
+					if( null != View )
+					{
+						var ws = new CswNbtWebServiceTree( _CswNbtResources );
+
+						CswNbtNodeKey RealIncludeNodeKey = null;
+						if( !string.IsNullOrEmpty( IncludeNodeKey ) )
+							RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( IncludeNodeKey ) );
+
+						ReturnVal = ws.runTree( View, IdPrefix, RealIncludeNodeKey, IncludeNodeRequired, IncludeInQuickLaunch, Context.Cache );
+					}
+				}
+
+				_deInitResources();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+
+		} // runTree()
+	
+		/// <summary>
+		/// Fetch a page of nodes from a prepared tree (see runTree)
+		/// </summary>
+		[WebMethod( EnableSession = false )]
+		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+		public string fetchTree( string ViewId, string IdPrefix, Int32 PageSize, bool ForSearch )
+		{
+			JObject ReturnVal = new JObject();
+
+			AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+			try
+			{
+				_initResources();
+				AuthenticationStatus = _attemptRefresh();
+
+				if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+				{
+
+					CswNbtView View = _getView( ViewId );
+					if( null != View )
+					{
+						var ws = new CswNbtWebServiceTree( _CswNbtResources );
+						ReturnVal = ws.fetchTree( View, Context.Cache, IdPrefix, PageSize, ForSearch );
+					}
+				}
+
+				_deInitResources();
+			}
+			catch( Exception ex )
+			{
+				ReturnVal = jError( ex );
+			}
+
+			_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+			return ReturnVal.ToString();
+
+		} // fetchTree()
+
+
         /// <summary>
         /// Generates a tree of nodes from the view
         /// </summary>
@@ -759,7 +843,9 @@ namespace ChemSW.Nbt.WebServices
                         if( !string.IsNullOrEmpty( IncludeNodeKey ) )
                             RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( IncludeNodeKey ) );
 
-                        ReturnVal = ws.getTree( View, IdPrefix, IsFirstLoad, RealParentNodeKey, RealIncludeNodeKey, IncludeNodeRequired, UsePaging, ShowEmptyTree, ForSearch, IncludeInQuickLaunch );
+                        //ReturnVal = ws.getTree( View, IdPrefix, IsFirstLoad, RealParentNodeKey, RealIncludeNodeKey, IncludeNodeRequired, UsePaging, ShowEmptyTree, ForSearch, IncludeInQuickLaunch );
+						ws.runTree( View, IdPrefix, RealIncludeNodeKey, IncludeNodeRequired, IncludeInQuickLaunch, Context.Cache );
+						ReturnVal = ws.fetchTree( View, Context.Cache, IdPrefix, 100, ForSearch );
 
                         //CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
                         //View.SaveToCache(true);
