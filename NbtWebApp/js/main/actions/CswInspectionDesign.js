@@ -474,12 +474,15 @@
                             success: function (data) {
                                 var groupCount = +(data.groupcount),
                                         groupNodes = data.groupnodenames,
-                                        $addTable, $list, $targetGroupSelect, $groupTable;
+                                        $addTable, $list, $targetGroupSelect, $groupTable, $scheduleTable, $left, $right;
 
-                                $divStep5.append('<p>Add new Inspection Target Groups and Inspection Schedules.</p>');
-                               
+                                $scheduleTable = $divStep5.CswTable('init', { ID: makeStepId('scheduleTable') });
+
+                                $left = $scheduleTable.CswTable('cell', 1, 1);
+                                $right = $scheduleTable.CswTable('cell', 1, 2);
+                                
                                 $scheduleList = $('<p>New <b>' + selectedInspectionTarget + ' Group</b> Inspection Schedules: </p>')
-                                                    .appendTo($divStep5)
+                                                    .appendTo($right)
                                                     .hide();
                                 $list = $scheduleList.CswList('init', {
                                     ID: makeStepId('targetGroupList')
@@ -495,13 +498,13 @@
                                     }
                                 });
 
-                                $divStep5.append('<br />');
-                                $addTable = $divStep5.CswTable('init', {
+                                $left.append('<br />');
+                                $addTable = $left.CswTable('init', {
                                     ID: makeStepId('schedulesTable'),
                                     FirstCellRightAlign: true
                                 });
                                 $addTable.CswTable('cell', 1, 1)
-                                        .CswDiv('init', { value: 'Select an Inspection Target Group  ' })
+                                        .CswDiv('init', { value: 'Inspection Target Group  ' })
                                         .css({ 'padding': '1px', 'vertical-align': 'middle' });
 
                                 $groupTable = $addTable.CswTable('cell', 1, 2)
@@ -649,7 +652,7 @@
                         ordered: true
                     });
 
-                    if (isNewInspectionDesign) {
+                    if (isNewInspectionDesign()) {
                         if(gridOptions) {
                             $.extend(true, confirmGridOptions, gridOptions);
                         }
