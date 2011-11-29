@@ -275,8 +275,7 @@
                         pagermode: 'default',
                         gridOpts: {
                             autowidth: true,
-                            rowNum: 20,
-                            height: 'auto'
+                            height: '200'
                         },
                         optNav: {
                             add: true,
@@ -657,6 +656,9 @@
                             $.extend(true, confirmGridOptions, gridOptions);
                         }
                         confirmGridOptions.ID = makeStepId('confirmGrid');
+                        confirmGridOptions.gridOpts.autowidth = false;
+                        confirmGridOptions.gridOpts.shrinkToFit = true;
+                        confirmGridOptions.gridOpts.height = 150;
                         confirmGridOptions.optNav.add = false;
                         confirmGridOptions.optNav.del = false;
                         confirmGridOptions.optNav.edit = false;
@@ -673,11 +675,9 @@
                             }
                         });
                         $confirmationDesign = $confirmationList.CswList('addItem', {
-                                                                    value: 'Creating a new Inspection Design <b>' + newInspectionName + '</b>.' 
-                                                                })
-                                                                .CswList('init', {
-                                                                    ID: makeStepId('confirmationGrid')
-                                                                });
+                            value: 'Creating a new Inspection Design <b>' + newInspectionName + '</b>.'
+                        });
+                                                                
                         confirmGrid = new CswGrid(confirmGridOptions, $confirmationDesign);
                     } else {
                         $confirmationList.CswList('addItem', {
