@@ -3091,7 +3091,7 @@ namespace ChemSW.Nbt.WebServices
                         throw new CswDniException( ErrorType.Warning, "New Inspection must have a target.", "InspectionTarget was null or empty." );
                     }
 
-                    CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
+                    CswNbtWebServiceInspectionDesign ws = new CswNbtWebServiceInspectionDesign( _CswNbtResources );
 
                     if( false == string.IsNullOrEmpty( CopyFromInspectionDesign ) && CopyFromInspectionDesign != "[Create New]" )
                     {
@@ -3153,7 +3153,7 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     // Load the excel file into a data table
-                    CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
+                    CswNbtWebServiceInspectionDesign ws = new CswNbtWebServiceInspectionDesign( _CswNbtResources );
                     ExcelDataTable = ws.convertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
 
                     // determine if we were successful or failure
@@ -3201,7 +3201,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new CswWebServiceInspectionDesign( _CswNbtResources );
+                    var ws = new CswNbtWebServiceInspectionDesign( _CswNbtResources );
                     ReturnVal = ws.getScheduleNodesForInspection( InspectionTargetName, CopyInspectionDesignName );
                 }
 

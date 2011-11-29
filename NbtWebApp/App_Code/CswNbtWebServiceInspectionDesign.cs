@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
-    public class CswWebServiceInspectionDesign
+    public class CswNbtWebServiceInspectionDesign
     {
         #region ctor
 
@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.WebServices
         private readonly ICswNbtUser _CurrentUser;
         private readonly CswNbtObjClassRole _CurrentRole;
         private readonly TextInfo _TextInfo;
-        public CswWebServiceInspectionDesign( CswNbtResources CswNbtResources )
+        public CswNbtWebServiceInspectionDesign( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             _CurrentUser = _CswNbtResources.CurrentNbtUser;
