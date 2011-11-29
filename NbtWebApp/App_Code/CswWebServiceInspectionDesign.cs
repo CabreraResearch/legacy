@@ -472,6 +472,7 @@ namespace ChemSW.Nbt.WebServices
                 RetView = new CswNbtView( _CswNbtResources );
                 CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InTargetGroupNt, false );
 
+                //Multiple Generators could target this Target
                 CswNbtMetaDataObjectClass GeneratorOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
                 foreach( CswNbtMetaDataNodeType GeneratorNt in GeneratorOc.NodeTypes )
                 {

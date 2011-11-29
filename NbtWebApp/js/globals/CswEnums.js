@@ -302,13 +302,3 @@ var CswSubFields_Map = {
     ViewPickList: { name: 'ViewPickList', subfields: { } },
     ViewReference: { name: 'ViewReference', subfields: { } }
 };
-
-var CswInspectionDesign_WizardSteps = {
-    step1: { step: 1, description: 'Copy an Inspection Design' },
-    step2: { step: 2, description: 'Upload Template' },
-    step3: { step: 3, description: 'Review Inspection Design' },
-    step4: { step: 4, description: 'Select an Inspection Target' },
-    step5: { step: 5, description: 'Create Inspection Schedules' },
-    step6: { step: 6, description: 'Finish' },
-    stepcount: 6
-};

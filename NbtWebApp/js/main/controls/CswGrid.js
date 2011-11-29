@@ -8,11 +8,9 @@ function CswGrid(options, $parent) {
     ///<param name="options" type="Object">Object defining paramaters for jqGrid construction</param>
     ///<param name="$parent" type="JQuery">Parent element to attach grid to.</param>
     ///<returns type="CswGrid">new CswGrid()</returns>
-    var $gridTable;
-    var $gridPager;
-    var $topPager;
-    var gridTableId;
-    var multiEdit = false;
+    var $gridTable, $gridPager, $topPager, 
+        multiEdit = false,
+        gridTableId, gridPagerId;
     //#region private
     
     (function () {
@@ -20,8 +18,6 @@ function CswGrid(options, $parent) {
             canEdit: false,
             canDelete: false,
             pagermode: 'default',
-            gridTableID: 'gridTable',
-            gridPagerID: 'gridPager',
             ID: '',
             gridOpts: {
                 autoencode: true,
@@ -39,7 +35,6 @@ function CswGrid(options, $parent) {
                 sortname: '',
                 sortorder: 'asc',
                 width: '600px',
-
                 rowNum: 10,
                 rowList: [10, 25, 50],        //page size dropdown
                 pgbuttons: true,     //page control like next, back button
@@ -116,6 +111,9 @@ function CswGrid(options, $parent) {
                 break;
         }
 
+        gridPagerId = makeId({ ID: 'CswGridPager', prefix: o.ID });
+        gridTableId = makeId({ ID: 'CswGridTable', prefix: o.ID });
+        
         makeGrid(o);
     })();
     
@@ -127,7 +125,7 @@ function CswGrid(options, $parent) {
         return ret;
     }
     
-    function makeCustomPager(gridPagerId, pagerDef) {
+    function makeCustomPager(pagerDef) {
         var prevButton = {
             caption: insertWhiteSpace(2),
             buttonicon: 'ui-icon-seek-prev',
@@ -179,10 +177,7 @@ function CswGrid(options, $parent) {
     }
     
     function makeGrid(o) {
-        var gridPagerId = makeId({ ID: o.gridPagerID, prefix: o.ID });
-        
         multiEdit = o.gridOpts.multiselect;
-        gridTableId = makeId({ ID: o.gridTableID, prefix: o.ID });
         if (isNullOrEmpty($parent)) {
             $parent = $('<div id="' + gridTableId + '_parent"></div>');
         }
@@ -205,7 +200,7 @@ function CswGrid(options, $parent) {
                 .jqGrid('navGrid', '#' + gridPagerId, o.optNav, {}, {}, {}, {}, {}); //Case 24032: Removed jqGrid search
             
             if (o.pagermode === 'custom') {
-                makeCustomPager(gridPagerId, o.customPager);
+                makeCustomPager(o.customPager);
             }
         } else {
             $gridTable.jqGrid(o.gridOpts);    
