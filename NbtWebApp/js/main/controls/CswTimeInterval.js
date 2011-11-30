@@ -66,7 +66,6 @@ var CswTimeInterval = function (options) {
         $weeklyradio.click(function () {
             rateType = CswRateIntervalTypes.WeeklyByDay;
             rateInterval.ratetype = rateType;
-            $('#' + o.ID + '_textvalue').text('Weekly');
             $WeeklyDiv = $WeeklyDiv || weeklyWeekPicker($pickerCell, o.onchange, false);
             onChange();
         });
@@ -76,7 +75,6 @@ var CswTimeInterval = function (options) {
         $monthlyradio.click(function () {
             rateType = CswRateIntervalTypes.MonthlyByDate;
             rateInterval.ratetype = rateType;
-            $('#' + o.ID + '_textvalue').text('Monthly');
             $MonthlyDiv = $MonthlyDiv || makeMonthlyPicker($pickerCell);
             onChange();
         });
@@ -86,7 +84,6 @@ var CswTimeInterval = function (options) {
         $yearlyradio.click(function () {
             rateType = CswRateIntervalTypes.YearlyByDate;
             rateInterval.ratetype = rateType;
-            $('#' + o.ID + '_textvalue').text('Yearly');
             $YearlyDiv = $YearlyDiv || makeYearlyDatePicker($pickerCell);
             onChange();
         });
