@@ -16,7 +16,11 @@
             var $Div = $(this);
             o.propVals = o.propData.values;
             o.$parent = $Div;
-            CswTimeInterval(o);
+            if (false === isTrue(o.propVals.ReadOnly)) {
+                CswTimeInterval(o);
+            } else {
+                $Div.append(o.propVals.Interval.text);
+            }
         },
         save: function (o) {
             var clientDb = new CswClientDb();

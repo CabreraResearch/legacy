@@ -553,56 +553,54 @@ var CswTimeInterval = function (options) {
         };
     })();
 
-    if (false === isTrue(o.ReadOnly)) {
-        (function () {
-            var $Div = o.$parent,
-                propVals = o.propVals,
-                textValue,
-                $table;
+    (function () {
+        var $Div = o.$parent,
+            propVals = o.propVals,
+            textValue,
+            $table;
 
-            //globals
-            if (o.Multi) {
-                //rateInterval = CswMultiEditDefaultValue;
-                textValue = CswMultiEditDefaultValue;
-                rateType = CswRateIntervalTypes.WeeklyByDay;
-            } else {
-                $.extend(true, rateInterval, propVals.Interval.rateintervalvalue);
-                textValue = tryParseString(propVals.Interval.text).trim();
-                rateType = rateInterval.ratetype;
-            }
-            dateFormat = tryParseString(rateInterval.dateformat, 'M/d/yyyy');
-            $interval = $('<div id="' + makeId({ ID: o.ID, suffix: '_cswTimeInterval' }) + '"></div>')
-                                .appendTo($Div);
+        //globals
+        if (o.Multi) {
+            //rateInterval = CswMultiEditDefaultValue;
+            textValue = CswMultiEditDefaultValue;
+            rateType = CswRateIntervalTypes.WeeklyByDay;
+        } else {
+            $.extend(true, rateInterval, propVals.Interval.rateintervalvalue);
+            textValue = tryParseString(propVals.Interval.text).trim();
+            rateType = rateInterval.ratetype;
+        }
+        dateFormat = tryParseString(rateInterval.dateformat, 'M/d/yyyy');
+        $interval = $('<div id="' + makeId({ ID: o.ID, suffix: '_cswTimeInterval' }) + '"></div>')
+                            .appendTo($Div);
 
-            //Page Components
-            $interval.append('<span id="' + o.ID + '_textvalue">' + textValue + '</span>');
-            $table = $interval.CswTable('init', { 'ID': o.ID + '_tbl', cellspacing: 5 });
+        //Page Components
+        $interval.append('<span id="' + o.ID + '_textvalue">' + textValue + '</span>');
+        $table = $interval.CswTable('init', { 'ID': o.ID + '_tbl', cellspacing: 5 });
 
-            makeRateType($table);
+        makeRateType($table);
 
-            $pickerCell = $table.CswTable('cell', 1, 3)
-                                .CswAttrDom('rowspan', '3');
+        $pickerCell = $table.CswTable('cell', 1, 3)
+                            .CswAttrDom('rowspan', '3');
 
-            // Set selected values
-            switch (rateType) {
-                case CswRateIntervalTypes.WeeklyByDay:
-                    $WeeklyDiv = weeklyWeekPicker($pickerCell, o.onchange, false);
-                    break;
-                case CswRateIntervalTypes.MonthlyByDate:
-                    $MonthlyDiv = makeMonthlyPicker($pickerCell);
-                    break;
-                case CswRateIntervalTypes.MonthlyByWeekAndDay:
-                    $MonthlyDiv = makeMonthlyPicker($pickerCell);
-                    break;
-                case CswRateIntervalTypes.YearlyByDate:
-                    $YearlyDiv = makeYearlyDatePicker($pickerCell);
-                    break;
-            } // switch(RateType)
+        // Set selected values
+        switch (rateType) {
+            case CswRateIntervalTypes.WeeklyByDay:
+                $WeeklyDiv = weeklyWeekPicker($pickerCell, o.onchange, false);
+                break;
+            case CswRateIntervalTypes.MonthlyByDate:
+                $MonthlyDiv = makeMonthlyPicker($pickerCell);
+                break;
+            case CswRateIntervalTypes.MonthlyByWeekAndDay:
+                $MonthlyDiv = makeMonthlyPicker($pickerCell);
+                break;
+            case CswRateIntervalTypes.YearlyByDate:
+                $YearlyDiv = makeYearlyDatePicker($pickerCell);
+                break;
+        } // switch(RateType)
             
-            return $interval;
-        })();
-    }
-
+        return $interval;
+    })();
+    
     var ret = {
         $interval: $interval,
         rateType: function() { return rateType; },
