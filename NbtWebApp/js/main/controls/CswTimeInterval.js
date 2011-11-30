@@ -553,6 +553,78 @@ var CswTimeInterval = function (options) {
         };
     })();
 
+    var validateRateInterval = function() {
+        var ret = false, errorString = '';
+        switch (rateType) {
+            case CswRateIntervalTypes.WeeklyByDay:
+                if (false === contains(rateInterval, 'startingdate') ||
+                        false === contains(rateInterval.startingdate, 'date') ||
+                        isNullOrEmpty(rateInterval.startingdate.date)) {
+                    errorString += 'Cannot addd a Weekly time interval without a starting date. ';
+                } 
+                if (false === contains(rateInterval, 'weeklyday') ||
+                        isNullOrEmpty(rateInterval.weeklyday)) {
+                    errorString += 'Cannot add a Weekly time interval without at least one weekday selected. ';
+                }
+                break;
+            case CswRateIntervalTypes.MonthlyByDate:
+                if (false === contains(rateInterval, 'monthlydate') || 
+                        isNullOrEmpty(rateInterval.monthlydate)) {
+                    errorString += 'Cannot add a Monthly time interval without an \'On Day of Month\' selected. ';  
+                }
+                if (false === contains(rateInterval, 'monthlyfrequency') || 
+                        isNullOrEmpty(rateInterval.monthlyfrequency)) {
+                    errorString += 'Cannot add a Monthly time interval without a frequency selected. ';  
+                }
+                if (false === contains(rateInterval, 'startingmonth') || 
+                        isNullOrEmpty(rateInterval.startingmonth)) {
+                    errorString += 'Cannot add a Monthly time interval without a Starting Month selected. ';  
+                }
+                if (false === contains(rateInterval, 'startingyear') || 
+                        isNullOrEmpty(rateInterval.startingyear)) {
+                    errorString += 'Cannot add a Monthly time interval without a Starting Year selected. ';  
+                }
+                break;
+            case CswRateIntervalTypes.MonthlyByWeekAndDay:
+                if (false === contains(rateInterval, 'monthlydate') || 
+                        isNullOrEmpty(rateInterval.monthlydate)) {
+                    errorString += 'Cannot add a Monthly time interval without an \'On Day of Month\' selected. ';  
+                }
+                if (false === contains(rateInterval, 'monthlyfrequency') || 
+                        isNullOrEmpty(rateInterval.monthlyfrequency)) {
+                    errorString += 'Cannot add a Monthly time interval without a frequency selected. ';  
+                }
+                if (false === contains(rateInterval, 'monthlyday') || 
+                        isNullOrEmpty(rateInterval.monthlyday)) {
+                    errorString += 'Cannot add a Monthly time interval without a Weekday selected. ';  
+                }
+                if (false === contains(rateInterval, 'monthlyweek') || 
+                        isNullOrEmpty(rateInterval.monthlyweek)) {
+                    errorString += 'Cannot add a Monthly time interval without a Weekly frequency selected. ';  
+                }
+                if (false === contains(rateInterval, 'startingmonth') || 
+                        isNullOrEmpty(rateInterval.startingmonth)) {
+                    errorString += 'Cannot add a Monthly time interval without a starting month selected. ';  
+                }
+                if (false === contains(rateInterval, 'startingyear') || 
+                        isNullOrEmpty(rateInterval.startingyear)) {
+                    errorString += 'Cannot add a Monthly time interval without a starting year selected. ';  
+                }
+                break;
+            case CswRateIntervalTypes.YearlyByDate:
+                if (false === contains(rateInterval, 'yearlydate') ||
+                        false === contains(rateInterval.yearlydate, 'date') ||
+                        isNullOrEmpty(rateInterval.yearlydate.date)) {
+                    errorString += 'Cannot addd a Yearly time interval without a starting date. ';
+                } 
+                break;                
+        }
+        if (false === isNullOrEmpty(errorString)) {
+            ret = ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, errorString);
+        }
+        return ret;
+    };
+    
     (function () {
         var $Div = o.$parent,
             propVals = o.propVals,
@@ -604,7 +676,8 @@ var CswTimeInterval = function (options) {
     var ret = {
         $interval: $interval,
         rateType: function() { return rateType; },
-        rateInterval: function() { return rateInterval; }
+        rateInterval: function() { return rateInterval; },
+        validateRateInterval: validateRateInterval
     };
 
     return ret;
