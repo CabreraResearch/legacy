@@ -806,7 +806,7 @@
                 $.extend(o, options);
             }
 
-            var $div = $('<div id="' + o.ID + '"><span>' + o.navigationText + '</span></div>'),
+            var $div = $('<div id="' + o.ID + '"><p>' + o.navigationText + '</p></div>'),
                 $select = $div.CswSelect('init', {
                     ID: makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
                     values: o.values
@@ -822,7 +822,7 @@
                         $div.dialog('close');
                     }
                 });
-            openDialog($div, 400, 200, null, o.title);
+            openDialog($div, 600, 150, null, o.title);
         },
         //#endregion Specialized
         

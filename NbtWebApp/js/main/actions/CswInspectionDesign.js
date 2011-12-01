@@ -661,7 +661,7 @@
                                 title: 'The Inspection Design Wizard Completed Successfully',
                                 navigationText: 'Please select from the following views. Click OK to continue.',
                                 values: values,
-                                onClickOk: function (selectedView) {
+                                onOkClick: function (selectedView) {
                                     var $selectedView = $(selectedView),
                                         viewId = $selectedView.val();
                                     if(isFunction(o.onFinish)) {

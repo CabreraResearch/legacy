@@ -81,11 +81,11 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CategoryName = InspectionTargetNt.Category;
                 }
-                else
+                else if( null != InspectionDesignNt )
                 {
                     CategoryName = InspectionDesignNt.Category;
                 }
-                if( string.IsNullOrEmpty( CategoryName ) )
+                else
                 {
                     CategoryName = InspectionTargetName;
                 }
@@ -805,7 +805,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             Int32 TotalRows = GridArray.Count;
-
+            Category = _guaranteeCategoryName( Category, null, null, InspectionTargetName );
             CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, Category );
             _setInspectionDesignTabsAndProps( InspectionDesignNt );
             _setNodeTypePermissions( InspectionDesignNt );
