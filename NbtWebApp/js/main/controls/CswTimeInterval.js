@@ -586,10 +586,6 @@ var CswTimeInterval = function (options) {
                 }
                 break;
             case CswRateIntervalTypes.MonthlyByWeekAndDay:
-                if (false === contains(rateInterval, 'monthlydate') || 
-                        isNullOrEmpty(rateInterval.monthlydate)) {
-                    errorString += 'Cannot add a Monthly time interval without an \'On Day of Month\' selected. ';  
-                }
                 if (false === contains(rateInterval, 'monthlyfrequency') || 
                         isNullOrEmpty(rateInterval.monthlyfrequency)) {
                     errorString += 'Cannot add a Monthly time interval without a frequency selected. ';  
