@@ -755,6 +755,7 @@
     <Content Include="js\main\actions\CswQuotas.js" />
     <Content Include="js\main\controls\CswTimeInterval.js" />
     <Content Include="js\main\controls\CswList.js" />
+    <Content Include="js\main\view\CswViewContentTree.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
     <Content Include="Scripts\jquery.jqGrid.src.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />
@@ -1387,7 +1388,7 @@
     <Content Include="js\main\view\CswViewEditor.js" />
     <Content Include="js\main\view\CswViewPropFilter.js" />
     <Content Include="js\main\view\CswViewSelect.js" />
-    <Content Include="js\main\view\CswViewTree.js" />
+    <Content Include="js\main\view\CswViewListTree.js" />
     <Content Include="js\main\pagecmp\CswWelcome.js" />
     <Content Include="js\main\pagecmp\CswWizard.css" />
     <Content Include="js\main\pagecmp\CswWizard.js" />

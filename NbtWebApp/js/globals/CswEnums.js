@@ -302,3 +302,23 @@ var CswSubFields_Map = {
     ViewPickList: { name: 'ViewPickList', subfields: { } },
     ViewReference: { name: 'ViewReference', subfields: { } }
 };
+
+// For CswViewEditor and CswViewContentTree
+var viewEditClasses = {
+	vieweditor_viewrootlink: { name: 'vieweditor_viewrootlink' },
+	vieweditor_viewrellink: { name: 'vieweditor_viewrellink' },
+	vieweditor_viewproplink: { name: 'vieweditor_viewproplink' },
+	vieweditor_viewfilterlink: { name: 'vieweditor_viewfilterlink' },
+	vieweditor_addfilter: { name: 'vieweditor_addfilter' },
+	vieweditor_deletespan: { name: 'vieweditor_deletespan' },
+	vieweditor_childselect: { name: 'vieweditor_childselect' }
+};
+
+var childPropNames = {
+	root: { name: 'root' },
+	childrelationships: { name: 'childrelationships' },
+	properties: { name: 'properties' },
+	filters: { name: 'filters' },
+	propfilters: { name: 'filters' },
+	filtermodes: { name: 'filtermodes' }
+};

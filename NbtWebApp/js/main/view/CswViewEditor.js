@@ -32,26 +32,7 @@
             startingStep: 1
         };
         if (options) $.extend(o, options);
-
-        var childPropNames = {
-            root: { name: 'root' },
-            childrelationships: { name: 'childrelationships' },
-            properties: { name: 'properties' },
-            filters: { name: 'filters' },
-            propfilters: { name: 'filters' },
-            filtermodes: { name: 'filtermodes' }
-        };
-
-        var viewEditClasses = {
-            vieweditor_viewrootlink: { name: 'vieweditor_viewrootlink' },
-            vieweditor_viewrellink: { name: 'vieweditor_viewrellink' },
-            vieweditor_viewproplink: { name: 'vieweditor_viewproplink' },
-            vieweditor_viewfilterlink: { name: 'vieweditor_viewfilterlink' }, 
-            vieweditor_addfilter: { name: 'vieweditor_addfilter' },
-            vieweditor_deletespan: { name: 'vieweditor_deletespan' },
-            vieweditor_childselect: { name: 'vieweditor_childselect' }
-        };
-        
+		        
         var WizardStepArray = [CswViewEditor_WizardSteps.viewselect, CswViewEditor_WizardSteps.attributes, CswViewEditor_WizardSteps.relationships,
             CswViewEditor_WizardSteps.properties, CswViewEditor_WizardSteps.filters, CswViewEditor_WizardSteps.tuning];
         var WizardSteps = { };

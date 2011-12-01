@@ -2,7 +2,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="CswViewTree.js" />
+/// <reference path="CswViewListTree.js" />
 
 
 ; (function ($) {
@@ -47,7 +47,7 @@
 												 SelectContent: $viewtreediv,
 												 Width: '266px' });
 
-				$viewtreediv.CswViewTree({ 
+				$viewtreediv.CswViewListTree({ 
 											onSelect: function(optSelect) 
 												{ 
 													_onTreeSelect({
