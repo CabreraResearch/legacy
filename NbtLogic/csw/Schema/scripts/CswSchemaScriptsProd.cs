@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.Schema
 			addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K01() ) );
 			addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K02() ) );
 			addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K03() ) );
+			addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01K04() ) );
 
 			// This automatically detects the latest version
 			_LatestVersion = _MinimumVersion;
