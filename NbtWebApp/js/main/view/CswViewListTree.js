@@ -4,7 +4,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 
 ; (function ($) { /// <param name="$" type="jQuery" />
-	$.fn.CswViewTree = function (options) { 
+	$.fn.CswViewListTree = function (options) { 
 
 		var o = {
 			ViewUrl: '/NbtWebApp/wsNBT.asmx/getViewTree',

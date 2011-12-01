@@ -22,7 +22,12 @@
 
 				if(o.EditMode !== EditMode.AddInPopup.name && false === o.Multi)
 				{
-					$table.CswTable('cell', 1, 1).CswImageButton({
+					$table.CswTable('cell', 1, 1).CswViewContentTree({
+						viewid: viewId
+					});
+
+					
+					$table.CswTable('cell', 1, 2).CswImageButton({
 						ID: o.ID + '_view',
 						ButtonType: CswImageButton_ButtonType.View,
 						AlternateText: 'View',
@@ -40,7 +45,7 @@
 					});
 					if(false === o.ReadOnly)
 					{
-						$table.CswTable('cell', 1, 2).CswImageButton({
+						$table.CswTable('cell', 1, 3).CswImageButton({
 							ID: o.ID + '_edit',
 							ButtonType: CswImageButton_ButtonType.Edit,
 							AlternateText: 'Edit',
