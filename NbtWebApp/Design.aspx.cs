@@ -1194,6 +1194,13 @@ namespace ChemSW.Nbt.WebPages
                 }
                 // NodeTypeName Edit Box
                 EditNodeTypeName.Text = SelectedNodeType.NodeTypeName;
+				
+				// case 24294 part 6
+				if( SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass &&
+					SelectedNodeType.NodeTypeName == CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName )
+				{
+					EditNodeTypeName.Enabled = false;
+				}
 
                 // EditNodeTypeCategory Edit Box
                 EditNodeTypeCategory.Text = SelectedNodeType.Category;
