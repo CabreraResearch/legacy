@@ -1,6 +1,9 @@
 ﻿using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -14,7 +17,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // case 24294
+            // Case 24294
             // Remove deprecated Inspection Actions
 
             CswTableUpdate ActionUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01K05_actions_update", "actions" );
@@ -33,7 +36,24 @@ namespace ChemSW.Nbt.Schema
             }
             ActionUpdate.update( ActionTable );
 
+            // Case 24288: Limit Wizard to ChemSW_Admin
+            CswNbtAction CreateInspection = _CswNbtSchemaModTrnsctn.Actions[CswNbtActionName.Create_Inspection];
+            CreateInspection.Url = ""; //Clear this while we're here
+            CswNbtMetaDataObjectClass RoleOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
+            foreach( CswNbtNode RoleNode in RoleOc.getNodes( true, false ) )
+            {
+                CswNbtObjClassRole Role = CswNbtNodeCaster.AsRole( RoleNode );
+                bool CanEdit = Role.Name.Text == CswNbtObjClassRole.ChemSWAdminRoleName;
+                _CswNbtSchemaModTrnsctn.Permit.set( CreateInspection, Role, CanEdit );
+            }
 
+            CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            foreach( CswNbtNode UserNode in UserOc.getNodes( true, false ) )
+            {
+                CswNbtObjClassUser User = CswNbtNodeCaster.AsUser( UserNode );
+                bool CanEdit = User.Username == CswNbtObjClassUser.ChemSWAdminUsername;
+                _CswNbtSchemaModTrnsctn.Permit.set( CreateInspection, User, CanEdit );
+            }
 
         }//Update()
 

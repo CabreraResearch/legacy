@@ -9,17 +9,17 @@ namespace ChemSW.Nbt.Actions
         Edit_View,
         Enter_Results,
         Future_Scheduling,
-        Inspection_Design,
+        //Inspection_Design,
         Create_Inspection,
         Load_Mobile_Data,
         Split_Samples,
         View_By_Location,
-        Assign_Inspection,
+        //Assign_Inspection,
         Receiving,
         Import_Fire_Extinguisher_Data,
         OOC_Inspections,
-		Quotas,
-		Sessions
+        Quotas,
+        Sessions
     }
 
     public class CswNbtAction
