@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -71,6 +72,22 @@ namespace ChemSW.Nbt
 
         }//restoreView()
 
+        public List<CswNbtView> restoreViews( string ViewName )
+        {
+            List<CswNbtView> ReturnVal = new List<CswNbtView>();
+
+            CswTableSelect ViewSelect = _CswNbtResources.makeCswTableSelect( "CswNbtViewSelect_restoreViews_select", "node_views" );
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            SelectCols.Add( "nodeviewid" );
+            DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, " where viewname='" + ViewName + "'", false );
+            foreach( DataRow CurrentRow in ViewTable.Rows )
+            {
+                ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
+            }
+
+            return ( ReturnVal );
+
+        }//restoreViews()
 
         ///// <summary>
         ///// Get a DataTable with a single view, by primary key

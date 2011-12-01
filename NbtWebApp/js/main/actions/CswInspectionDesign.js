@@ -643,12 +643,24 @@
                         data: jsonData,
                         success: function(data) {
                             //Come back and hammer this out
-                            var views = data.views;
+                            var views = data.views,
+                                values = [], view;
+
+                            each(views, function(thisView) {
+                                if(contains(thisView, 'viewid') && 
+                                        contains(thisView,'viewname')) {
+                                    values.push({
+                                            value: thisView.viewid,
+                                            display: thisView.viewname
+                                        });
+                                }
+                            });
+                            
                             $.CswDialog('NavigationSelectDialog', {
                                 ID: makeSafeId('FinishDialog'),
                                 title: 'The Inspection Design Wizard Completed Successfully',
                                 navigationText: 'Please select from the following views. Click OK to continue.',
-                                values: views,
+                                values: values,
                                 onClickOk: function (selectedView) {
                                     var $selectedView = $(selectedView),
                                         viewId = $selectedView.val();

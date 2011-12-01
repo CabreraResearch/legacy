@@ -72,6 +72,28 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
+        private string _guaranteeCategoryName( string Category, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionDesignNt, string InspectionTargetName )
+        {
+            string CategoryName = Category;
+            if( string.IsNullOrEmpty( CategoryName ) )
+            {
+                if( null != InspectionTargetNt )
+                {
+                    CategoryName = InspectionTargetNt.Category;
+                }
+                else
+                {
+                    CategoryName = InspectionDesignNt.Category;
+                }
+                if( string.IsNullOrEmpty( CategoryName ) )
+                {
+                    CategoryName = InspectionTargetName;
+                }
+            }
+            CategoryName = _TextInfo.ToTitleCase( CategoryName.Trim() );
+            return CategoryName;
+        }
+
         private void _validateNodeType( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
         {
             if( null == NodeType )
@@ -179,51 +201,38 @@ namespace ChemSW.Nbt.WebServices
             return RetCount;
         }
 
-        private JObject _createInspectionDesignRelationships( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt, string InspectionTargetName = null, string Category = null )
+        private CswNbtMetaDataNodeType _confirmInspectionDesignTarget( CswNbtMetaDataNodeType InspectionDesignNt, string InspectionTargetName, ref string Category )
         {
-            JObject RetObj = new JObject();
+            if( string.IsNullOrEmpty( InspectionTargetName ) )
+            {
+                throw new CswDniException( ErrorType.Warning, "Cannot generate an Inspection Design without a Target name.", "InspectionTargetName was null or empty." );
+            }
+            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
+
+            Category = _guaranteeCategoryName( Category, InspectionTargetNt, InspectionDesignNt, InspectionTargetName );
+
             //This is a New Target
             if( null == InspectionTargetNt )
             {
-                if( string.IsNullOrEmpty( InspectionTargetName ) )
-                {
-                    throw new CswDniException( ErrorType.Warning, "Cannot create an Inspection Target without a name.", "InspectionTargetName was null or empty." );
-                }
-                RetObj = _createNewInspectionTargetAndGroup( InspectionTargetName, Category, InspectionDesignNt );
+                InspectionTargetNt = _createNewInspectionTargetAndGroup( InspectionTargetName, Category, InspectionDesignNt );
             }
-            else //Target and therefore (presumably) Target Group and (presumably) Generator exist--we'll validate and throw if not
-            {
-                _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
-                string FkType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
-                Int32 FkValue = InspectionTargetNt.NodeTypeId;
-                CswNbtMetaDataNodeTypeProp TargetProperty = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
-                TargetProperty.SetFK( FkType, FkValue );
+            _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
 
-                RetObj["views"] = new JObject();
-
-                //Inspections Due Today view
-                CswNbtView InspectionsDueTodayView = _createInspectionsView( InspectionDesignNt, Category, NbtViewRenderingMode.Tree, NbtViewVisibility.Role, false, DateTime.Today, InspectionDesignNt.NodeTypeName + " Due Today" );
-                RetObj["views"][InspectionsDueTodayView.ViewName] = new JObject();
-                RetObj["views"][InspectionsDueTodayView.ViewName]["viewname"] = InspectionsDueTodayView.ViewName;
-                RetObj["views"][InspectionsDueTodayView.ViewName]["viewid"] = InspectionsDueTodayView.ViewId.get();
-
-                //All Inspections view
-                CswNbtView AllInspectionsView = _createInspectionsView( InspectionDesignNt, Category, NbtViewRenderingMode.Grid, NbtViewVisibility.Role, false, DateTime.MinValue, "All " + InspectionDesignNt.NodeTypeName );
-                RetObj["views"][AllInspectionsView.ViewName] = new JObject();
-                RetObj["views"][AllInspectionsView.ViewName]["viewname"] = AllInspectionsView.ViewName;
-                RetObj["views"][AllInspectionsView.ViewName]["viewid"] = AllInspectionsView.ViewId.get();
-            }
-            return RetObj;
+            return InspectionTargetNt;
         }
 
-        private JObject _createNewInspectionTargetAndGroup( string InspectionTargetName, string Category, CswNbtMetaDataNodeType InspectionDesignNt )
+        private CswNbtMetaDataNodeType _createNewInspectionTargetAndGroup( string InspectionTargetName, string Category, CswNbtMetaDataNodeType InspectionDesignNt )
         {
-            JObject RetObj = new JObject();
+            CswNbtMetaDataNodeType RetInspectionTargetNt = null;
             if( string.IsNullOrEmpty( InspectionTargetName ) )
             {
                 throw new CswDniException( ErrorType.Warning, "Cannot create Inspection Target without a name.", "InspectionTargetName was null or empty." );
             }
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+
+            CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
+            _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            _setNodeTypePermissions( GeneratorNt );
 
             //This will validate names and throw if not unique.
             InspectionTargetName = _checkUniqueNodeType( InspectionTargetName.Trim() );
@@ -236,35 +245,25 @@ namespace ChemSW.Nbt.WebServices
             //CswNbtMetaDataObjectClass InspectionRouteOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass );
 
             //Create the new NodeTypes
-            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionTargetOc.ObjectClassId, InspectionTargetName, Category );
-            _setNodeTypePermissions( InspectionTargetNt );
+            RetInspectionTargetNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionTargetOc.ObjectClassId, InspectionTargetName, Category );
+            _setNodeTypePermissions( RetInspectionTargetNt );
             CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionTargetGroupOc.ObjectClassId, InspectionGroupName, Category );
             _setNodeTypePermissions( InspectionTargetGroupNt );
-            //CswNbtMetaDataNodeType InspectionRouteNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionRouteOc.ObjectClassId, InspectionRouteName, Category );
-            //_setNodeTypePermissions( InspectionRouteNt );
-
-            CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( "Inspection Schedule" );
-            _setNodeTypePermissions( GeneratorNt );
 
             #region Set new InspectionTarget Props and Tabs
 
             //NodeTypeName Template
-            CswNbtMetaDataNodeTypeProp ItDescriptionNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
-            InspectionTargetNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( InspectionTargetNt.BarcodeProperty.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName );
+            CswNbtMetaDataNodeTypeProp ItDescriptionNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
+            RetInspectionTargetNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.BarcodeProperty.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName );
 
             //Inspection Target has Inspection Target Group Relationship
-            CswNbtMetaDataNodeTypeProp ItInspectionGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+            CswNbtMetaDataNodeTypeProp ItInspectionGroupNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
             ItInspectionGroupNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionTargetGroupNt.NodeTypeId );
             ItInspectionGroupNtp.PropName = InspectionGroupName;
 
-            ////Inspection Target has Route relationship
-            //CswNbtMetaDataNodeTypeProp ItRouteNtp = _CswNbtResources.MetaData.makeNewProp( InspectionTargetNt, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Route", InspectionTargetNt.getFirstNodeTypeTab().TabId );
-            //ItRouteNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionRouteNt.NodeTypeId );
-            //ItRouteNtp.PropName = InspectionRouteName;
-
             //Inspection Target has a tab to host a grid view of Inspections
-            CswNbtMetaDataNodeTypeTab ItInspectionsTab = _CswNbtResources.MetaData.makeNewTab( InspectionTargetNt, InspectionDesignName, 2 );
-            CswNbtMetaDataNodeTypeProp ItInspectionsNtp = _CswNbtResources.MetaData.makeNewProp( InspectionTargetNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, InspectionDesignName, ItInspectionsTab.TabId );
+            CswNbtMetaDataNodeTypeTab ItInspectionsTab = _CswNbtResources.MetaData.makeNewTab( RetInspectionTargetNt, InspectionDesignName, 2 );
+            CswNbtMetaDataNodeTypeProp ItInspectionsNtp = _CswNbtResources.MetaData.makeNewProp( RetInspectionTargetNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, InspectionDesignName, ItInspectionsTab.TabId );
             CswNbtView ItInspectionsGridView = _createInspectionsView( InspectionDesignNt, string.Empty, NbtViewRenderingMode.Grid, NbtViewVisibility.Property, true, DateTime.MinValue, InspectionTargetName + " Grid Prop View" );
             ItInspectionsNtp.ViewId = ItInspectionsGridView.ViewId;
 
@@ -282,121 +281,71 @@ namespace ChemSW.Nbt.WebServices
             //Inspection Target Group has a tab to host a grid view of Inspection Targets
             CswNbtMetaDataNodeTypeTab ItgLocationsTab = _CswNbtResources.MetaData.makeNewTab( InspectionTargetGroupNt, InspectionTargetName + " Locations", 2 );
             CswNbtMetaDataNodeTypeProp ItgLocationsNtp = _CswNbtResources.MetaData.makeNewProp( InspectionTargetGroupNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, InspectionTargetName + " Locations", ItgLocationsTab.TabId );
-            CswNbtView ItgInspectionPointsGridView = _createAllInspectionPointsView( InspectionTargetNt, string.Empty, NbtViewRenderingMode.Grid, NbtViewVisibility.Property, InspectionTargetName + " Grid Prop View" );
+            CswNbtView ItgInspectionPointsGridView = _createAllInspectionPointsView( RetInspectionTargetNt, string.Empty, NbtViewRenderingMode.Grid, NbtViewVisibility.Property, InspectionTargetName + " Grid Prop View" );
             ItgLocationsNtp.ViewId = ItgInspectionPointsGridView.ViewId;
 
             #endregion Set InspectionTargetGroup Props and Tabs
 
+            return RetInspectionTargetNt;
+        }
 
-            #region Set InspectionRoute Props and Tabs
-
-            //Route name
-            _CswNbtResources.MetaData.makeNewProp( InspectionRouteNt, CswNbtMetaDataFieldType.NbtFieldType.Text, "Name", InspectionRouteNt.getFirstNodeTypeTab().TabId );
-            InspectionRouteNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( "Name" );
-
-            //InspectionRoute has a relationship to a user
-            CswNbtMetaDataNodeTypeProp IrInspectorNtp = _CswNbtResources.MetaData.makeNewProp( InspectionRouteNt, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Inspector", InspectionRouteNt.getFirstNodeTypeTab().TabId );
-            IrInspectorNtp.SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ).ObjectClassId );
-
-            //Route has a grid view of Inspection Targets
-            CswNbtMetaDataNodeTypeTab IrTargetTab = _CswNbtResources.MetaData.makeNewTab( InspectionRouteNt, InspectionTargetName, 2 );
-            CswNbtMetaDataNodeTypeProp IrTargetNtp = _CswNbtResources.MetaData.makeNewProp( InspectionRouteNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, InspectionTargetName, IrTargetTab.TabId );
-            CswNbtView RouteGridView = new CswNbtView( _CswNbtResources );
-            RouteGridView.makeNew( InspectionTargetName + " Route Grid View", NbtViewVisibility.Property, null, null, ItInspectionsGridView );
-            IrTargetNtp.ViewId = RouteGridView.ViewId;
-
-            #endregion Set InspectionRoute Props and Tabs
-
-            #region Set Generator Props
-
-            CswNbtMetaDataNodeTypeTab GnSettingsTab = _CswNbtResources.MetaData.makeNewTab( GeneratorNt, "Settings", GeneratorNt.NodeTypeTabs.Count + 1 );
-
-            //Set generator's owner to new Inspection Target Group
-            CswNbtMetaDataNodeTypeProp GnOwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
-            GnOwnerNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionTargetGroupNt.NodeTypeId );
-            GnOwnerNtp.PropName = InspectionGroupName;
-            GnOwnerNtp.EditLayout.Tab = GnSettingsTab;
-
-            //Set generator's parent to new Inspection Target
-            CswNbtMetaDataNodeTypeProp GnParentTypeNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentTypePropertyName );
-            CswCommaDelimitedString TargetNodeTypeIds = new CswCommaDelimitedString() { InspectionTargetNt.NodeTypeId.ToString() };
-            GnParentTypeNtp.DefaultValue.AsNodeTypeSelect.SelectedNodeTypeIds = TargetNodeTypeIds;
-            GnParentTypeNtp.ReadOnly = true;
-            GnParentTypeNtp.IsRequired = true;
-            GnParentTypeNtp.PropName = "Inspection Parent";
-            GnParentTypeNtp.EditLayout.Tab = GnSettingsTab;
-
-            //Set generator's target to new Inspection Design
-            CswNbtMetaDataNodeTypeProp GnTargetTypeNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.TargetTypePropertyName );
-            CswCommaDelimitedString DesignNodeTypeIds = new CswCommaDelimitedString() { InspectionDesignNt.NodeTypeId.ToString() };
-            GnTargetTypeNtp.DefaultValue.AsNodeTypeSelect.SelectedNodeTypeIds = DesignNodeTypeIds;
-            GnTargetTypeNtp.IsRequired = true;
-            GnTargetTypeNtp.ReadOnly = true;
-            GnTargetTypeNtp.PropName = "Inspection Type";
-            GnTargetTypeNtp.EditLayout.Tab = GnSettingsTab;
-
-            //Set generator's parent view: Schedule -> Inspection Target Group -> Inspection Target
-            CswNbtMetaDataNodeTypeProp GnParentViewNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentViewPropertyName );
-            CswNbtView GeneratorView = _CswNbtResources.ViewSelect.restoreView( GnParentViewNtp.DefaultValue.AsViewReference.ViewId );
-            _createInspectionGeneratorView( GeneratorView, InspectionDesignNt, InspectionTargetNt, GeneratorNt );
-            GnParentViewNtp.ViewId = GeneratorView.ViewId;
-            GnParentViewNtp.ReadOnly = true;
-            GnParentViewNtp.EditLayout.Tab = GnSettingsTab;
-
-            CswNbtMetaDataNodeTypeProp GnSummaryNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.SummaryPropertyName );
-            GeneratorNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( GnOwnerNtp.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( GnSummaryNtp.PropName );
-
-            #endregion Set Generator Props
-
-            #region Views
+        private JObject _createInspectionDesignViews( string Category, CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt )
+        {
+            JObject RetObj = new JObject();
 
             RetObj["views"] = new JObject();
-            //Inspection Schedules view
-            CswNbtView InspectionSchedulesView = _createInspectionSchedulesView( InspectionDesignNt, Category, InspectionTargetName );
+
+            //Inspection Scheduling view
+            CswNbtView InspectionSchedulesView = _createInspectionSchedulingView( InspectionDesignNt, Category, InspectionTargetNt );
             RetObj["views"][InspectionSchedulesView.ViewName] = new JObject();
             RetObj["views"][InspectionSchedulesView.ViewName]["viewname"] = InspectionSchedulesView.ViewName;
             RetObj["views"][InspectionSchedulesView.ViewName]["viewid"] = InspectionSchedulesView.ViewId.get();
 
-            //Inspections Due Today view
-            CswNbtView InspectionsDueTodayView = _createInspectionsView( InspectionDesignNt, Category, NbtViewRenderingMode.Tree, NbtViewVisibility.Role, false, DateTime.Today, InspectionDesignNt.NodeTypeName + " Due Today" );
-            RetObj["views"][InspectionsDueTodayView.ViewName] = new JObject();
-            RetObj["views"][InspectionsDueTodayView.ViewName]["viewname"] = InspectionsDueTodayView.ViewName;
-            RetObj["views"][InspectionsDueTodayView.ViewName]["viewid"] = InspectionsDueTodayView.ViewId.get();
+            //Inspection Target Group Assignement view
+            CswNbtView InspectionTargetGroupAssignmentView = _createInspectionGroupAssignmentView( Category, InspectionTargetNt );
+            RetObj["views"][InspectionTargetGroupAssignmentView.ViewName] = new JObject();
+            RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewname"] = InspectionTargetGroupAssignmentView.ViewName;
+            RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewid"] = InspectionTargetGroupAssignmentView.ViewId.get();
 
-            //All Inspection Points view
-            CswNbtView AllInspectionPointsView = _createAllInspectionPointsView( InspectionTargetNt, Category, NbtViewRenderingMode.Tree, NbtViewVisibility.Role, "All " + InspectionTargetNt.NodeTypeName );
-            RetObj["views"][AllInspectionPointsView.ViewName] = new JObject();
-            RetObj["views"][AllInspectionPointsView.ViewName]["viewname"] = AllInspectionPointsView.ViewName;
-            RetObj["views"][AllInspectionPointsView.ViewName]["viewid"] = AllInspectionPointsView.ViewId.get();
-
-            //All Inspections view
-            CswNbtView AllInspectionsView = _createInspectionsView( InspectionDesignNt, Category, NbtViewRenderingMode.Grid, NbtViewVisibility.Role, false, DateTime.MinValue, "All " + InspectionDesignNt.NodeTypeName );
-            RetObj["views"][AllInspectionsView.ViewName] = new JObject();
-            RetObj["views"][AllInspectionsView.ViewName]["viewname"] = AllInspectionsView.ViewName;
-            RetObj["views"][AllInspectionsView.ViewName]["viewid"] = AllInspectionsView.ViewId.get();
-
-            #endregion
+            //Target Inspections view
+            CswNbtView TargetInspectionsView = _createTargetInspectionsView( InspectionDesignNt, Category, InspectionTargetNt );
+            RetObj["views"][TargetInspectionsView.ViewName] = new JObject();
+            RetObj["views"][TargetInspectionsView.ViewName]["viewname"] = TargetInspectionsView.ViewName;
+            RetObj["views"][TargetInspectionsView.ViewName]["viewid"] = TargetInspectionsView.ViewId.get();
 
             return RetObj;
         }
 
-        private void _setInspectionDesignTabsAndProps( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType GeneratorNt )
+        private void _setInspectionDesignTabsAndProps( CswNbtMetaDataNodeType InspectionDesignNt )
         {
-            CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
 
             //NodeTypeName Template
-            CswNbtMetaDataNodeTypeProp IdNameNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
-            InspectionDesignNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName );
+            if( string.IsNullOrEmpty( InspectionDesignNt.NameTemplateValue ) )
+            {
+                CswNbtMetaDataNodeTypeProp IdNameNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
+                InspectionDesignNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName );
+            }
 
             //Inspection Design Target is Inspection Target OC
+            CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
             CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
-            IdTargetNtp.SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), InspectionTargetOc.ObjectClassId );
+            if( IdTargetNtp.FKType != CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() &&
+                IdTargetNtp.FKValue != InspectionTargetOc.ObjectClassId )
+            {
+                IdTargetNtp.SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), InspectionTargetOc.ObjectClassId );
+            }
 
             //Inspection Design Generator is SI Inspection Schedule
+            CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
+            _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
             CswNbtMetaDataNodeTypeProp IdGeneratorNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
-            IdGeneratorNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), GeneratorNt.NodeTypeId );
-            IdGeneratorNtp.PropName = "Schedule";
-
+            if( IdGeneratorNtp.FKType != CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
+                IdGeneratorNtp.FKValue != GeneratorNt.NodeTypeId )
+            {
+                IdGeneratorNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), GeneratorNt.NodeTypeId );
+                IdGeneratorNtp.PropName = CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName;
+            }
         }
 
         private void _pruneSectionOneTab( CswNbtMetaDataNodeType InspectionDesignNt )
@@ -420,98 +369,101 @@ namespace ChemSW.Nbt.WebServices
 
         #region Views
 
-        private CswNbtView _getSchedulesViewFromInspectionDesign( CswNbtMetaDataNodeType InspectionDesignNt )
+        private CswNbtView _createInspectionSchedulingView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, CswNbtMetaDataNodeType InspectionTargetNt )
         {
-            string InspectionGroupName = string.Empty;
-            return _getSchedulesViewFromInspectionDesign( InspectionDesignNt, ref InspectionGroupName );
-        }
-
-        private CswNbtView _getSchedulesViewFromInspectionDesign( CswNbtMetaDataNodeType InspectionDesignNt, ref string InspectionGroupName )
-        {
-            CswNbtView RetView = null;
-
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            CswNbtView RetView = null;
+            string InspectionSchedulesViewName = InspectionDesignNt.NodeTypeName + " Scheduling";
 
-            CswNbtMetaDataNodeTypeProp GeneratorNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
-            if( GeneratorNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionSchedulesViewName ) )
             {
-                CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( GeneratorNtp.FKValue );
-                _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-
-                CswNbtMetaDataNodeTypeProp GenOwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
-                if( GenOwnerNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                if( SchedulingView.Visibility == NbtViewVisibility.Role &&
+                        SchedulingView.VisibilityRoleId == _CurrentUser.RoleId )
                 {
-                    CswNbtMetaDataNodeType InspectionGroupNt = _CswNbtResources.MetaData.getNodeType( GenOwnerNtp.FKValue );
-                    _validateNodeType( InspectionGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
+                    RetView = SchedulingView;
+                }
+            }
 
-                    InspectionGroupName = InspectionGroupNt.NodeTypeName;
-
+            if( null == RetView )
+            {
+                try
+                {
                     RetView = new CswNbtView( _CswNbtResources );
-                    CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionGroupNt, false );
-                    RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, GenOwnerNtp, false );
+                    RetView.makeNew( InspectionSchedulesViewName, NbtViewVisibility.Role, _CurrentUser.RoleId, null, null );
+                    RetView.ViewMode = NbtViewRenderingMode.Tree;
+                    RetView.Category = Category;
 
+                    _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+
+                    CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
+                    _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+                    CswNbtMetaDataNodeTypeProp GnOwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
+
+                    CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+                    CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( ItTargetGroupNtp.FKValue );
+                    _validateNodeType( InspectionTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
+
+                    /* View:
+                        [Group]
+                            [Schedule]                        
+                    */
+
+                    CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
+                    RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, GnOwnerNtp, false );
+
+                    RetView.save();
                 }
-
-            }
-            else if( GeneratorNtp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
-            {
-                throw new CswDniException( ErrorType.Warning, "Cannot create a Schedule view", "Cannot use Object Class relationships to construct a view." );
-            }
-            return RetView;
-        }
-
-        private CswNbtView _getSchedulesViewFromInspectionTarget( CswNbtMetaDataNodeType InspectionTargetNt, ref string InspectionGroupName )
-        {
-            CswNbtView RetView = null;
-            _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
-
-            CswNbtMetaDataNodeTypeProp InTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
-            if( InTargetGroupNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
-            {
-                CswNbtMetaDataNodeType InTargetGroupNt = _CswNbtResources.MetaData.getNodeType( InTargetGroupNtp.FKValue );
-                _validateNodeType( InTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
-
-                InspectionGroupName = InTargetGroupNt.NodeTypeName;
-
-                RetView = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InTargetGroupNt, false );
-
-                //Multiple Generators could target this Target
-                CswNbtMetaDataObjectClass GeneratorOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-                foreach( CswNbtMetaDataNodeType GeneratorNt in GeneratorOc.NodeTypes )
+                catch( Exception ex )
                 {
-                    CswNbtMetaDataNodeTypeProp OwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
-                    if( OwnerNtp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
-                        OwnerNtp.FKValue == InTargetGroupNt.NodeTypeId )
-                    {
-                        RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, OwnerNtp, false );
-                    }
+                    throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionSchedulesViewName, "View creation failed", ex );
                 }
-            }
-            else if( InTargetGroupNtp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
-            {
-                throw new CswDniException( ErrorType.Warning, "Cannot create a Schedule view", "Cannot use Object Class relationships to construct a view." );
             }
             return RetView;
         }
 
-        private CswNbtView _createInspectionSchedulesView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, string InspectionTargetName )
+        private CswNbtView _createInspectionGroupAssignmentView( string Category, CswNbtMetaDataNodeType InspectionTargetNt )
         {
-            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-            CswNbtView RetView = new CswNbtView( _CswNbtResources );
-            string InspectionSchedulesViewName = InspectionTargetName + " Schedule";
+            _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+            CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+            CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( ItTargetGroupNtp.FKValue );
+            _validateNodeType( InspectionTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
 
-            try
+            CswNbtView RetView = null;
+            string GroupAssignmentViewName = InspectionTargetGroupNt.NodeTypeName + " Assignment";
+
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( GroupAssignmentViewName ) )
             {
-                CswNbtView ScheduleView = _getSchedulesViewFromInspectionDesign( InspectionDesignNt );
-                RetView.makeNew( InspectionSchedulesViewName, NbtViewVisibility.Role, _CurrentUser.RoleId, null, ScheduleView );
-                RetView.ViewMode = NbtViewRenderingMode.Tree;
-                RetView.Category = Category;
-                RetView.save();
+                if( SchedulingView.Visibility == NbtViewVisibility.Role &&
+                        SchedulingView.VisibilityRoleId == _CurrentUser.RoleId )
+                {
+                    RetView = SchedulingView;
+                }
             }
-            catch( Exception ex )
+
+            if( null == RetView )
             {
-                throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionSchedulesViewName, "View creation failed", ex );
+                try
+                {
+                    RetView = new CswNbtView( _CswNbtResources );
+                    RetView.makeNew( GroupAssignmentViewName, NbtViewVisibility.Role, _CurrentUser.RoleId, null, null );
+                    RetView.ViewMode = NbtViewRenderingMode.Tree;
+                    RetView.Category = Category;
+
+                    /* View:
+                        [Group]
+                            [Target]
+                        [Target]
+                    */
+                    CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
+                    RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, ItTargetGroupNtp, false );
+                    RetView.AddViewRelationship( InspectionTargetNt, false );
+
+                    RetView.save();
+                }
+                catch( Exception ex )
+                {
+                    throw new CswDniException( ErrorType.Error, "Failed to create view: " + GroupAssignmentViewName, "View creation failed", ex );
+                }
             }
             return RetView;
         }
@@ -567,6 +519,52 @@ namespace ChemSW.Nbt.WebServices
             return RetView;
         }
 
+        private CswNbtView _createTargetInspectionsView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, CswNbtMetaDataNodeType InspectionTargetNt )
+        {
+            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+
+            CswNbtView RetView = null;
+            string InspectionTargetViewName = InspectionTargetNt.NodeTypeName + " " + InspectionDesignNt.NodeTypeName;
+
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetViewName ) )
+            {
+                if( SchedulingView.Visibility == NbtViewVisibility.Role &&
+                        SchedulingView.VisibilityRoleId == _CurrentUser.RoleId )
+                {
+                    RetView = SchedulingView;
+                }
+            }
+
+            if( null == RetView )
+            {
+                try
+                {
+                    RetView = new CswNbtView( _CswNbtResources );
+                    RetView.makeNew( InspectionTargetViewName, NbtViewVisibility.Role, _CurrentUser.RoleId, null, null );
+                    RetView.ViewMode = NbtViewRenderingMode.Tree;
+                    RetView.Category = Category;
+
+                    CswNbtMetaDataNodeTypeProp ItTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+
+                    /* View:
+                        [Target]
+                            [Inspection]                        
+                    */
+
+                    CswNbtViewRelationship TargetRelationship = RetView.AddViewRelationship( InspectionTargetNt, false );
+                    RetView.AddViewRelationship( TargetRelationship, CswNbtViewRelationship.PropOwnerType.Second, ItTargetNtp, false );
+
+                    RetView.save();
+                }
+                catch( Exception ex )
+                {
+                    throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionTargetViewName, "View creation failed", ex );
+                }
+            }
+            return RetView;
+        }
+
         private CswNbtView _createAllInspectionPointsView( CswNbtMetaDataNodeType InspectionTargetNt, string Category, NbtViewRenderingMode ViewMode, NbtViewVisibility Visibility, string AllInspectionPointsViewName )
         {
             _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
@@ -610,34 +608,6 @@ namespace ChemSW.Nbt.WebServices
             return RetView;
         }
 
-        private CswNbtView _createInspectionGeneratorView( CswNbtView ViewReference, CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionScheduleNt )
-        {
-            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-            _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
-            _validateNodeType( InspectionScheduleNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-
-            string InspectionsViewName = InspectionDesignNt.NodeTypeName + " Due Today";
-
-            try
-            {
-                ViewReference.makeNew( InspectionsViewName, NbtViewVisibility.Property, null, null, null );
-                ViewReference.ViewMode = NbtViewRenderingMode.Tree;
-
-                // Schedule -> Inspection Target Group -> Inspection Target
-                CswNbtViewRelationship InspectionVr = ViewReference.AddViewRelationship( InspectionScheduleNt, false );
-                CswNbtMetaDataNodeTypeProp OwnerNtp = InspectionScheduleNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
-                CswNbtViewRelationship InspectionPointGroupVr = ViewReference.AddViewRelationship( InspectionVr, CswNbtViewRelationship.PropOwnerType.First, OwnerNtp, false );
-                CswNbtMetaDataNodeTypeProp TargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
-                ViewReference.AddViewRelationship( InspectionPointGroupVr, CswNbtViewRelationship.PropOwnerType.Second, TargetGroupNtp, false );
-
-                ViewReference.save();
-            }
-            catch( Exception ex )
-            {
-                throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionsViewName, "View creation failed", ex );
-            }
-            return ViewReference;
-        }
 
         #endregion Views
 
@@ -733,8 +703,13 @@ namespace ChemSW.Nbt.WebServices
                 ExcelConn = new OleDbConnection( ConnStr );
                 ExcelConn.Open();
 
-                DataTable ExcelSchemaDT = ExcelConn.GetOleDbSchemaTable( OleDbSchemaGuid.Tables, null );
-                string FirstSheetName = ExcelSchemaDT.Rows[0]["TABLE_NAME"].ToString();
+                DataTable InspectionDt = ExcelConn.GetOleDbSchemaTable( OleDbSchemaGuid.Tables, null );
+                if( null == InspectionDt )
+                {
+                    throw new CswDniException( ErrorType.Error, "Could not process the uploaded file: " + FullPathAndFileName, "GetOleDbSchemaTable failed to parse a valid XLS file." );
+                }
+
+                string FirstSheetName = InspectionDt.Rows[0]["TABLE_NAME"].ToString();
 
                 OleDbDataAdapter DataAdapter = new OleDbDataAdapter();
                 OleDbCommand SelectCommand = new OleDbCommand( "SELECT * FROM [" + FirstSheetName + "]", ExcelConn );
@@ -778,6 +753,9 @@ namespace ChemSW.Nbt.WebServices
                         string ComplaintAnswers = CswConvert.ToString( Row[_CompliantAnswersName] );
                         _validateAnswers( ref ComplaintAnswers, ref AllowedAnswers );
 
+                        Row[_AllowedAnswersName] = AllowedAnswers;
+                        Row[_CompliantAnswersName] = ComplaintAnswers;
+
                         if( string.Empty == CswConvert.ToString( Row[_SectionName] ) ||
                             "Section 1" == CswConvert.ToString( Row[_SectionName] ) )
                         {
@@ -803,141 +781,51 @@ namespace ChemSW.Nbt.WebServices
             return ExcelDataTable;
         } // convertExcelFileToDataTable()
 
-        public JObject copyInspectionDesign( string CopyFromInspectionDesign, string InspectionDesignName, string InspectionTargetName, string Category )
+        public JObject recycleInspectionDesign( string InspectionDesignName, string InspectionTargetName, string Category )
         {
-            JObject RetObj = new JObject();
+            CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( InspectionDesignName );
+            _setInspectionDesignTabsAndProps( InspectionDesignNt );
 
-            CswNbtMetaDataNodeType CopyInspectionDesignNt = _CswNbtResources.MetaData.getNodeType( CopyFromInspectionDesign );
-
-            _validateNodeType( CopyInspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-
-            InspectionDesignName = _checkUniqueNodeType( InspectionDesignName );
-            CswNbtMetaDataNodeType NewInspectionDesignNt = _CswNbtResources.MetaData.CopyNodeType( CopyInspectionDesignNt, InspectionDesignName );
-            if( false == string.IsNullOrEmpty( Category ) )
-            {
-                Category = _TextInfo.ToTitleCase( Category.Trim() );
-                NewInspectionDesignNt.Category = Category;
-            }
-            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
-            _createInspectionDesignRelationships( NewInspectionDesignNt, InspectionTargetNt, InspectionTargetName, Category );
+            CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category );
+            JObject RetObj = _createInspectionDesignViews( Category, InspectionDesignNt, InspectionTargetNt );
 
             return RetObj;
         }
 
         public JObject createInspectionDesignTabsAndProps( string GridArrayString, string InspectionDesignName, string InspectionTargetName, string Category )
         {
-            JObject RetObj = new JObject();
-
-            Int32 PropsWithoutError = 0;
-            Int32 TotalRows = 0;
             CswCommaDelimitedString GridRowsSkipped = new CswCommaDelimitedString();
-            string CategoryName = Category;
+
             InspectionDesignName = _checkUniqueNodeType( InspectionDesignName );
 
             JArray GridArray = JArray.Parse( GridArrayString );
-
             if( null == GridArray || GridArray.Count == 0 )
             {
                 throw new CswDniException( ErrorType.Warning, "Cannot create Inspection Design " + InspectionDesignName + ", because the import contained no questions.", "GridArray was null or empty." );
             }
 
-            TotalRows = GridArray.Count;
+            Int32 TotalRows = GridArray.Count;
 
-            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
-            if( string.IsNullOrEmpty( CategoryName ) )
-            {
-                if( null != InspectionTargetNt )
-                {
-                    CategoryName = InspectionTargetNt.Category;
-                }
-                else
-                {
-                    CategoryName = InspectionDesignName;
-                }
-            }
-            CategoryName = _TextInfo.ToTitleCase( CategoryName.Trim() );
-
-            CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, CategoryName );
+            CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, Category );
+            _setInspectionDesignTabsAndProps( InspectionDesignNt );
             _setNodeTypePermissions( InspectionDesignNt );
 
             //Get distinct tabs
             Dictionary<string, CswNbtMetaDataNodeTypeTab> Tabs = _getTabsForInspection( GridArray, InspectionDesignNt );
             //Create the props
-            PropsWithoutError = _createInspectionProps( GridArray, InspectionDesignNt, Tabs, GridRowsSkipped );
+            Int32 PropsWithoutError = _createInspectionProps( GridArray, InspectionDesignNt, Tabs, GridRowsSkipped );
             //Delete or rename the "Section 1" tab
             _pruneSectionOneTab( InspectionDesignNt );
             //Build the MetaData
-            RetObj = _createInspectionDesignRelationships( InspectionDesignNt, InspectionTargetNt, InspectionTargetName, CategoryName );
+            CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category );
+            //Get the views
+            JObject RetObj = _createInspectionDesignViews( Category, InspectionDesignNt, InspectionTargetNt );
+
             //More return data
             RetObj["totalrows"] = TotalRows.ToString();
             RetObj["rownumbersskipped"] = new JArray( GridRowsSkipped.ToString() );
             RetObj["countsucceeded"] = PropsWithoutError.ToString();
 
-            return RetObj;
-        }
-
-        public JObject getScheduleNodesForInspection( string InspectionTargetName, string CopyInspectionDesignName )
-        {
-            JObject RetObj = new JObject();
-            CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( CopyInspectionDesignName );
-            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
-            if( null == InspectionDesignNt && null == InspectionTargetNt )
-            {
-                //This is a new InspectionDesign on a new InspectionTarget
-                RetObj["groupcount"] = "0";
-                RetObj["succeeded"] = "true";
-                RetObj["groupnodenames"] = new JArray();
-                RetObj["groupnodetypename"] = string.Empty;
-            }
-            else
-            {
-                RetObj["succeeded"] = "false";
-                CswNbtView InspectionScheduleView = null;
-                string InspectionTargetGroupName = string.Empty;
-                if( null != InspectionDesignNt && InspectionDesignNt.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
-                {
-                    InspectionScheduleView = _getSchedulesViewFromInspectionDesign( InspectionDesignNt, ref InspectionTargetGroupName );
-                }
-                else
-                {
-                    _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
-                    InspectionScheduleView = _getSchedulesViewFromInspectionTarget( InspectionTargetNt, ref InspectionTargetGroupName );
-                }
-                if( null != InspectionScheduleView )
-                {
-                    RetObj["succeeded"] = "true";
-                    ICswNbtTree GroupTree = _CswNbtResources.Trees.getTreeFromView( InspectionScheduleView, true, true, true, false );
-                    RetObj["groupcount"] = GroupTree.getChildNodeCount().ToString();
-
-                    JArray NodeNames = new JArray();
-                    RetObj["groupnodenames"] = NodeNames;
-                    if( GroupTree.getChildNodeCount() > 0 )
-                    {
-                        for( Int32 GroupChild = 0; GroupChild < GroupTree.getChildNodeCount(); GroupChild += 1 )
-                        {
-                            GroupTree.goToNthChild( GroupChild );
-                            CswNbtNode GroupNode = GroupTree.getNodeForCurrentPosition();
-
-                            if( null != GroupNode )
-                            {
-                                NodeNames.Add( GroupNode.NodeName );
-                                JArray Schedules = new JArray();
-                                RetObj[GroupNode.NodeName] = Schedules;
-                                for( Int32 SchedChild = 0; SchedChild < GroupTree.getChildNodeCount(); SchedChild += 1 )
-                                {
-                                    GroupTree.goToNthChild( SchedChild );
-                                    CswNbtNode ScheduleNode = GroupTree.getNodeForCurrentPosition();
-                                    Schedules.Add( ScheduleNode.NodeName );
-                                    GroupTree.goToParentNode();
-                                }
-                            }
-                            GroupTree.goToParentNode();
-                        }
-                    }
-
-                    RetObj["groupnodetypename"] = InspectionTargetGroupName;
-                }
-            }
             return RetObj;
         }
 

@@ -3099,7 +3099,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        ReturnVal = ws.copyInspectionDesign( CopyFromInspectionDesign, InspectionDesignName, InspectionTargetName, Category );
+                        ReturnVal = ws.recycleInspectionDesign( InspectionDesignName, InspectionTargetName, Category );
                     }
 
                     //do Schedules in a separate piece
@@ -3188,37 +3188,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // finalizeInspectionDesign()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getScheduleNodesForInspection( string InspectionTargetName, string CopyInspectionDesignName )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceInspectionDesign( _CswNbtResources );
-                    ReturnVal = ws.getScheduleNodesForInspection( InspectionTargetName, CopyInspectionDesignName );
-                }
-
-                _deInitResources();
-            }
-
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        }
-
-        #endregion Inspection Design
+       #endregion Inspection Design
 
         #endregion Web Methods
 
