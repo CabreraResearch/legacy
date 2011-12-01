@@ -15,10 +15,6 @@
 
         //#region Variable Declaration
         var o = {
-            ImportFileUrl: '',
-            viewid: '',
-            viewname: '',
-            viewmode: '',
             ID: 'cswInspectionDesignWizard',
             onCancel: null, //function($wizard) {},
             onFinish: null, //function($wizard) {},
@@ -34,16 +30,15 @@
             5: ChemSW.enums.CswInspectionDesign_WizardSteps.step5.description
         };
 
-        //var currentStep = o.startingStep;
-
         var $parent = $(this),
             $div = $('<div></div>').appendTo($parent),
             $wizard,
-            currentStepNo = 0,
+            currentStepNo = o.startingStep,
             buttons = {
                 next: 'next',
                 prev: 'prev',
-                finish: 'finish'
+                finish: 'finish',
+                cancel: 'cancel'
             },
 
         // Step 1 - Select or Create Inspection Design
@@ -189,8 +184,8 @@
                             if (isFunction(error)) {
                                 error(data);
                             }
-                            enablePrev(true);
-                            disableNext();
+                            toggleButton(buttons.next);
+                            toggleButton(buttons.prev, true);
                         }
                     });
             },
@@ -201,6 +196,8 @@
                     onSuccess();
                 }
                 gridIsPopulated = true;
+                
+                //This is ugly. Abstract the step div from this function.
                 $divStep3.empty();
                 var previewGridId = makeStepId('previewGrid_outer', 3),
                     $previewGrid = $divStep2.find('#' + previewGridId);
@@ -258,7 +255,9 @@
                 };
 
                 var uploadTemplate = '<div class="qq-uploader"><div class="qq-upload-drop-area"><span>Drop ' + f.uploadName + ' here to process</span></div><div class="qq-upload-button">Upload Design</div><ul class="qq-upload-list"></ul></div>';
-                var uploader = new qq.FileUploader({
+                
+                //We don't need the return, but this is a constructor. This is more readable than apply() in this context.
+                new qq.FileUploader({
                         element: $control.get(0),
                         multiple: false,
                         action: f.url,
@@ -281,6 +280,7 @@
                 var stepTwoComplete = false;
 
                 return function(forward) {
+                    //this is somewhat dundant, but these calls are cheap and it improves readability until we have time to tighten our shot group
                     var nextIsEnabled = function() {
                         return gridIsPopulated || false === isNewInspectionDesign();
                     };
@@ -342,18 +342,23 @@
             //Step 3. Review the Design grid.
             makeStepThree = (function() {
                 var stepThreeComplete = false;
+                //We populate this step as the result of the async design upload. Improve the readability of this code when you next visit.
                 return function(forward) {
-                    var $prevBtn = $wizard.CswWizard('button', 'previous', 'enable'),
-                        $nextBtn = $wizard.CswWizard('button', 'next', 'enable');
+                    var skipStepThree = false;
+                    var doNextClick = function() {
+                        skipStepThree = (false === isNewInspectionDesign() && forward);
+                        return skipStepThree;
+                    };
+                    var doPrevClick = function() {
+                        skipStepThree = (false === isNewInspectionDesign() && false == isTrue(forward));
+                        return skipStepThree;
+                    };
 
-                    if (false === isNewInspectionDesign()) {
-                        if (forward) {
-                            $nextBtn.click();
-                        } else {
-                            $prevBtn.click();
-                        }
-                    }
-                    else if (false === stepThreeComplete) {
+                    toggleButton(buttons.next, true, doNextClick());
+                    toggleButton(buttons.prev, true, doPrevClick());
+                    
+                    if (false === stepThreeComplete &&
+                            false === skipStepThree) {
                         $divStep3 = $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step);
                         stepThreeComplete = true;
                     }
@@ -366,6 +371,9 @@
                     lastSelectedInspectionName = selectedInspectionDesign.name;
                 return function() {
                     var $inspectionTable;
+                    
+                    //For tomorrow: remmeber that Target only affects View creation--we're using Object Classes as the target of relationships
+                    //In the case of creating a new Target, we're maintaing Object Class loyalty even as we create new Node Types
                     var onNodeTypeSelectSuccess = function(data) {
                         if (data.nodetypecount === 0) { //Add a new Target
                             $inspectionTarget.hide();
@@ -402,10 +410,10 @@
                                             category: newCategoryName,
                                             $select: $inspectionTarget,
                                             nodeTypeDescriptor: 'Target',
-                                            onSuccess: function(data) {
-                                                selectedInspectionTarget = data.nodetypename;
+                                            onSuccess: function(newData) {
+                                                selectedInspectionTarget = newData.nodetypename;
                                                 isNewTarget = true;
-                                                newCategoryName = data.category;
+                                                newCategoryName = newData.category;
                                                 $wizard.CswWizard('button', 'next', 'enable');
                                             },
                                             title: 'Create a New Inspection Target Type.'
@@ -418,11 +426,15 @@
                     
                     var makeTargetSelect = function () {
                         var excludeNodeTypeId = '';
-                        if(false === isNullOrEmpty($inspectionTarget, true)) {
-                            $inspectionTarget.remove();
-                        }
+
                         if (isNewInspectionDesign()) {
                             excludeNodeTypeId = selectedInspectionDesign.id;
+                        }
+                        
+                        //Normally this would be written as $inspectionTarget = $inspectionTarget || ...
+                        //However, the variable assignment is sufficiently complex that this deviation is justified.
+                        if(false === isNullOrEmpty($inspectionTarget, true)) {
+                            $inspectionTarget.remove();
                         }
                         $inspectionTarget = $inspectionTable.CswTable('cell', 1, 2)
                                                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
@@ -442,14 +454,6 @@
                         });
                     };
                     
-                    $wizard.CswWizard('button', 'previous', 'enable');
-                    
-                    if (false === isNullOrEmpty(selectedInspectionTarget)) {
-                        $wizard.CswWizard('button', 'next', 'enable');
-                    } else {
-                        $wizard.CswWizard('button', 'next', 'disable');
-                    }
-                    
                     if (false === stepFourComplete) {
                         $divStep4 = $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step);
                         $divStep4.append('<br />');
@@ -466,13 +470,18 @@
                         makeTargetSelect();
 
                         stepFourComplete = true;
-                    } 
+                    } // if (false === stepFourComplete)
                     else if(lastSelectedInspectionName !== selectedInspectionDesign) {
+                        //In this case, we've navigated back, changed Step 1 options and moved forward. We must refresh.
                         makeTargetSelect();
                     }
+                    
+                    toggleButton(buttons.prev, true);
+                    toggleButton(buttons.next, (false === isNullOrEmpty(selectedInspectionTarget)));
                 };
             }()),
 
+//This was seriously non-trivial to write. Don't delete it until after the ship arrives at New Earth.            
 //            //Old Step 5. Add schedules.
 //            makeStepFive = (function() {
 //                var stepFiveComplete = false,
@@ -716,11 +725,10 @@
                 return function() {
                     var $confirmationList, $confirmTypesList, $confirmViewsList, $confirmationDesign, confirmGridOptions = { }, confirmGrid;
 
-                    $wizard.CswWizard('button', 'previous', 'enable');
-                    $wizard.CswWizard('button', 'next', 'disable');
-                    $wizard.CswWizard('button', 'cancel', 'enable');
-                    $wizard.CswWizard('button', 'finish', 'enable');
-
+                    toggleButton(buttons.prev, true);
+                    toggleButton(buttons.next, false);
+                    toggleButton(buttons.finish, true);
+                    
                     $divStep5 = $divStep5 || $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step);
                     $divStep5.empty();
 
@@ -734,6 +742,8 @@
                         if (gridOptions) {
                             $.extend(true, confirmGridOptions, gridOptions);
                         }
+                        
+                        //There is still a bugg here, we must fetch the current instance of the grid rows data for preview here. It may have changed. 
                         confirmGridOptions.ID = makeStepId('confirmGrid');
                         confirmGridOptions.gridOpts.autowidth = false;
                         confirmGridOptions.gridOpts.shrinkToFit = true;
@@ -815,10 +825,10 @@
                 currentStepNo = newStepNo;
                 switch (newStepNo) {
                     case ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step:
-                        makeStepTwo(true);
+                        makeStepTwo(true); //we're moving forward
                         break;
                     case ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step:
-                        makeStepThree(true);
+                        makeStepThree(true); //we're moving forward
                         break;
                     case ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step:
                         makeStepFour();
@@ -839,13 +849,13 @@
                         makeStepOne();
                         break;
                     case ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step:
-                        makeStepTwo(false);
+                        makeStepTwo(false); //we're moving backward
                         break;
                     case ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step:
-                        makeStepThree(false);
+                        makeStepThree(false); //we're moving backward
                         break;
                     case ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step:
-                        makeStepFour();
+                        makeStepFour(); 
                         break;
 //                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step:
 //                        makeStepFive();
@@ -856,10 +866,11 @@
             onFinish = function() {
                 var designGrid = '';
 
-                $wizard.CswWizard('button', 'previous', 'disable');
-                $wizard.CswWizard('button', 'next', 'disable');
-                $wizard.CswWizard('button', 'cancel', 'disable');
-
+                toggleButton(buttons.prev, false);
+                toggleButton(buttons.next, false);
+                toggleButton(buttons.finish, false);
+                toggleButton(buttons.cancel, false);
+                
                 if (false === isNullOrEmpty(inspectionGrid)) {
                     designGrid = JSON.stringify(inspectionGrid.$gridTable.jqGrid('getRowData'));
                 }
