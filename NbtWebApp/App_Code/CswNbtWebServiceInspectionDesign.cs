@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     throw new CswDniException( ErrorType.Warning, "Cannot create an Inspection Target without a name.", "InspectionTargetName was null or empty." );
                 }
-                RetObj = _createInspectionCollection( InspectionTargetName, Category, InspectionDesignNt );
+                RetObj = _createNewInspectionTargetAndGroup( InspectionTargetName, Category, InspectionDesignNt );
             }
             else //Target and therefore (presumably) Target Group and (presumably) Generator exist--we'll validate and throw if not
             {
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
-        private JObject _createInspectionCollection( string InspectionTargetName, string Category, CswNbtMetaDataNodeType InspectionDesignNt )
+        private JObject _createNewInspectionTargetAndGroup( string InspectionTargetName, string Category, CswNbtMetaDataNodeType InspectionDesignNt )
         {
             JObject RetObj = new JObject();
             if( string.IsNullOrEmpty( InspectionTargetName ) )
@@ -229,23 +229,21 @@ namespace ChemSW.Nbt.WebServices
             InspectionTargetName = _checkUniqueNodeType( InspectionTargetName.Trim() );
             string InspectionGroupName = _checkUniqueNodeType( InspectionTargetName + " Group" );
             string InspectionDesignName = InspectionDesignNt.NodeTypeName;
-            string InspectionScheduleName = _checkUniqueNodeType( InspectionTargetName + " Schedule" );
-            string InspectionRouteName = _checkUniqueNodeType( InspectionTargetName + " Route" );
 
             //if we're here, we're validated
             CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
             CswNbtMetaDataObjectClass InspectionTargetGroupOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
-            CswNbtMetaDataObjectClass InspectionRouteOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass );
-            CswNbtMetaDataObjectClass GeneratorOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            //CswNbtMetaDataObjectClass InspectionRouteOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass );
 
             //Create the new NodeTypes
             CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionTargetOc.ObjectClassId, InspectionTargetName, Category );
             _setNodeTypePermissions( InspectionTargetNt );
             CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionTargetGroupOc.ObjectClassId, InspectionGroupName, Category );
             _setNodeTypePermissions( InspectionTargetGroupNt );
-            CswNbtMetaDataNodeType InspectionRouteNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionRouteOc.ObjectClassId, InspectionRouteName, Category );
-            _setNodeTypePermissions( InspectionRouteNt );
-            CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.makeNewNodeType( GeneratorOc.ObjectClassId, InspectionScheduleName, Category );
+            //CswNbtMetaDataNodeType InspectionRouteNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionRouteOc.ObjectClassId, InspectionRouteName, Category );
+            //_setNodeTypePermissions( InspectionRouteNt );
+
+            CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( "Inspection Schedule" );
             _setNodeTypePermissions( GeneratorNt );
 
             #region Set new InspectionTarget Props and Tabs
@@ -259,10 +257,10 @@ namespace ChemSW.Nbt.WebServices
             ItInspectionGroupNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionTargetGroupNt.NodeTypeId );
             ItInspectionGroupNtp.PropName = InspectionGroupName;
 
-            //Inspection Target has Route relationship
-            CswNbtMetaDataNodeTypeProp ItRouteNtp = _CswNbtResources.MetaData.makeNewProp( InspectionTargetNt, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Route", InspectionTargetNt.getFirstNodeTypeTab().TabId );
-            ItRouteNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionRouteNt.NodeTypeId );
-            ItRouteNtp.PropName = InspectionRouteName;
+            ////Inspection Target has Route relationship
+            //CswNbtMetaDataNodeTypeProp ItRouteNtp = _CswNbtResources.MetaData.makeNewProp( InspectionTargetNt, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Route", InspectionTargetNt.getFirstNodeTypeTab().TabId );
+            //ItRouteNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionRouteNt.NodeTypeId );
+            //ItRouteNtp.PropName = InspectionRouteName;
 
             //Inspection Target has a tab to host a grid view of Inspections
             CswNbtMetaDataNodeTypeTab ItInspectionsTab = _CswNbtResources.MetaData.makeNewTab( InspectionTargetNt, InspectionDesignName, 2 );
@@ -289,38 +287,6 @@ namespace ChemSW.Nbt.WebServices
 
             #endregion Set InspectionTargetGroup Props and Tabs
 
-            #region Set InspectionDesign Props and Tabs
-
-            //NodeTypeName Template
-            CswNbtMetaDataNodeTypeProp IdNameNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
-            InspectionDesignNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName );
-
-            //Inspection Design Target is Inspection Target
-            CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
-            IdTargetNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionTargetNt.NodeTypeId );
-
-            //Inspection Design Generator is new Inspection Schedule
-            CswNbtMetaDataNodeTypeProp IdGeneratorNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
-            IdGeneratorNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), GeneratorNt.NodeTypeId );
-            IdGeneratorNtp.PropName = "Schedule";
-
-            CswNbtMetaDataNodeTypeTab IdDetailTab = InspectionDesignNt.getNodeTypeTab( "Details" );
-            if( null == IdDetailTab )
-            {
-                IdDetailTab = _CswNbtResources.MetaData.makeNewTab( InspectionDesignNt, "Details", InspectionDesignNt.NodeTypeTabs.Count + 1 );
-            }
-            //Barcode property reference is useful
-            CswNbtMetaDataNodeTypeProp IdBarcodeNtp = _CswNbtResources.MetaData.makeNewProp( InspectionDesignNt, CswNbtMetaDataFieldType.NbtFieldType.PropertyReference, "Barcode", IdDetailTab.TabId );
-            IdBarcodeNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionTargetNt.BarcodeProperty.PropId, CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionTargetNt.BarcodeProperty.PropId );
-            IdBarcodeNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionTargetNt.BarcodeProperty.PropId, CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionTargetNt.BarcodeProperty.PropId );
-
-            //Location property reference is useful
-            CswNbtMetaDataNodeTypeProp IdLocationNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.LocationPropertyName );
-            CswNbtMetaDataNodeTypeProp ItLocationNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
-            IdLocationNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), ItLocationNtp.PropId, CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), ItLocationNtp.PropId );
-            IdLocationNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), ItLocationNtp.PropId, CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), ItLocationNtp.PropId );
-
-            #endregion Set InspectionDesign Props and Tabs
 
             #region Set InspectionRoute Props and Tabs
 
@@ -412,6 +378,25 @@ namespace ChemSW.Nbt.WebServices
             #endregion
 
             return RetObj;
+        }
+
+        private void _setInspectionDesignTabsAndProps( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType GeneratorNt )
+        {
+            CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+
+            //NodeTypeName Template
+            CswNbtMetaDataNodeTypeProp IdNameNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
+            InspectionDesignNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName );
+
+            //Inspection Design Target is Inspection Target OC
+            CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+            IdTargetNtp.SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), InspectionTargetOc.ObjectClassId );
+
+            //Inspection Design Generator is SI Inspection Schedule
+            CswNbtMetaDataNodeTypeProp IdGeneratorNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
+            IdGeneratorNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), GeneratorNt.NodeTypeId );
+            IdGeneratorNtp.PropName = "Schedule";
+
         }
 
         private void _pruneSectionOneTab( CswNbtMetaDataNodeType InspectionDesignNt )
