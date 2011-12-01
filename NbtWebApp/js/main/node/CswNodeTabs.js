@@ -34,7 +34,7 @@
             onTabSelect: null, // function (tabid) { },
             onPropertyChange: null, // function(propid, propname) { },
             onPropertyRemove: null, // function(propid) { },
-            onInitFinish: null, // function() { },
+            onInitFinish: null, // function(AtLeastOneProp) { },
             ShowCheckboxes: false,
             ShowAsReport: true,
             NodeCheckTreeId: '',
@@ -166,7 +166,7 @@
                             $tabcontentdiv.append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
                             if (isFunction(o.onInitFinish)) 
                             {
-                                o.onInitFinish();
+                                o.onInitFinish(false);
                             }
                         }
                     }
@@ -270,7 +270,7 @@
                                                 onclick: function () { Save($form, $layouttable, data, $savetab, tabid); }
                                                 });
                     }
-                    var AtLeastOneSaveable = _handleProperties($layouttable, data, $tabcontentdiv, tabid, false, $savetab);
+                    var AtLeastOne = _handleProperties($layouttable, data, $tabcontentdiv, tabid, false, $savetab);
 
                     // Validation
                     $form.validate({
@@ -317,13 +317,13 @@
 
 
                     // case 8494
-                    if (!o.Config && !AtLeastOneSaveable && o.EditMode == EditMode.AddInPopup.name) 
+                    if (!o.Config && !AtLeastOne.Saveable && o.EditMode == EditMode.AddInPopup.name) 
                     {
                         Save($form, $layouttable, data, $savetab, tabid);
                     } 
                     else if (isFunction(o.onInitFinish)) 
                     {
-                        o.onInitFinish();
+                        o.onInitFinish(AtLeastOne.Property);
                     }
                 } // success{}
             }); // ajax
@@ -381,9 +381,7 @@
             return $cellset[1][2].children('div');
         }
 
-        function handleProp($layouttable, thisProp, $tabcontentdiv, tabid, configMode, $savebtn) {
-            var isSaveable = false;
-
+        function handleProp($layouttable, thisProp, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne) {
             var propid = thisProp.id;
             var fieldtype = thisProp.fieldtype;
             var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
@@ -417,7 +415,7 @@
 
                 if (!isTrue(thisProp.readonly))
                 {
-                    isSaveable = true;
+                    AtLeastOne.Saveable = true;
                     if (o.ShowCheckboxes && isTrue(thisProp.copyable)) {
                         var $propcheck = $labelcell.CswInput('init', {ID: 'check_' + propid,
                             type: CswInput_Types.checkbox,
@@ -435,29 +433,29 @@
             if (isTrue(thisProp.highlight)) {
                 $propcell.addClass('ui-state-highlight');
             }
-            _makeProp($propcell, thisProp, $tabcontentdiv, tabid, configMode, $savebtn);
-            return isSaveable;
+            _makeProp($propcell, thisProp, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
         }
         
         function _handleProperties($layouttable, data, $tabcontentdiv, tabid, configMode, $savebtn) {
-            var AtLeastOneSaveable = false;
+            var AtLeastOne = { Property: false, Saveable: false };
             var handleSuccess = function(propObj, propKey) {
-                AtLeastOneSaveable = handleProp($layouttable, propObj, $tabcontentdiv, tabid, configMode, $savebtn) || AtLeastOneSaveable;
+                AtLeastOne.Property = true;
+				handleProp($layouttable, propObj, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne)
                 return false;
             };
             crawlObject(data, handleSuccess, false);
             
-            if(o.Config || ( AtLeastOneSaveable === false && o.EditMode != EditMode.AddInPopup.name ) )
+            if(o.Config || ( AtLeastOne.Saveable === false && o.EditMode != EditMode.AddInPopup.name ) )
             {
                 $savebtn.hide();
             } else {
                 $savebtn.show();
             }
-            return AtLeastOneSaveable;
+            return AtLeastOne;
         } // _handleProps()
 
-        function _makeProp($propcell, propData, $tabcontentdiv, tabid, configMode, $savebtn) {
-            $propcell.empty();
+        function _makeProp($propcell, propData, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne) {
+			$propcell.empty();
             if ((isTrue(propData.display, true) || configMode ) &&
                 (o.filterToPropId === '' || o.filterToPropId === propData.id)) {
 
@@ -517,7 +515,7 @@
                     var subOnSuccess = function(subProp, key) {
                         subProp.propId = key;
                         if (isTrue(subProp.display) || configMode) {
-                            handleProp($subtable, subProp, $tabcontentdiv, tabid, configMode, $savebtn);
+                            handleProp($subtable, subProp, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
                             if (configMode) {
                                 $subtable.CswLayoutTable('ConfigOn');
                             } else {
@@ -560,8 +558,9 @@
                     url: o.SinglePropUrl,
                     data: jsonData,
                     success: function(data) {
-                        data.wasmodified = true;  // keep the fact that the parent property was modified
-                        _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn);
+                        var AtLeastOne = {};
+						data.wasmodified = true;  // keep the fact that the parent property was modified
+                        _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
                     }
                 });
             }

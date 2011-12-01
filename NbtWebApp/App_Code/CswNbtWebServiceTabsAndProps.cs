@@ -556,9 +556,14 @@ namespace ChemSW.Nbt.WebServices
                 Collection<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( NodeType, Tab, LayoutType );
                 foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                 {
-                    ret["prop_" + Prop.PropId.ToString()] = new JObject();
-                    ret["prop_" + Prop.PropId.ToString()]["propid"] = Prop.PropId.ToString();
-                    ret["prop_" + Prop.PropId.ToString()]["propname"] = Prop.PropNameWithQuestionNo.ToString();
+					// case 24179
+					if( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview || 
+						Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid )
+					{
+						ret["prop_" + Prop.PropId.ToString()] = new JObject();
+						ret["prop_" + Prop.PropId.ToString()]["propid"] = Prop.PropId.ToString();
+						ret["prop_" + Prop.PropId.ToString()]["propname"] = Prop.PropNameWithQuestionNo.ToString();
+					}
                 }
             } // if( NodeType != null )
             return ret;
