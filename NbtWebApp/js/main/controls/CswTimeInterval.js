@@ -560,7 +560,7 @@ var CswTimeInterval = function (options) {
                 if (false === contains(rateInterval, 'startingdate') ||
                         false === contains(rateInterval.startingdate, 'date') ||
                         isNullOrEmpty(rateInterval.startingdate.date)) {
-                    errorString += 'Cannot addd a Weekly time interval without a starting date. ';
+                    errorString += 'Cannot add a Weekly time interval without a starting date. ';
                 } 
                 if (false === contains(rateInterval, 'weeklyday') ||
                         isNullOrEmpty(rateInterval.weeklyday)) {
