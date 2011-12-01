@@ -36,26 +36,36 @@
             currentStepNo = o.startingStep,
             buttons = {
                 next: 'next',
-                prev: 'prev',
+                prev: 'previous',
                 finish: 'finish',
                 cancel: 'cancel'
             },
 
         // Step 1 - Select or Create Inspection Design
             selectedInspectionDesign = { id: '[Create New]', name: '[Create New]' },
-            $divStep1, newInspectionName, newCategoryName, $inspectionDesignSelect, $newDesignName, $newDesignCategory,
+            $divStep1, categoryName, $inspectionDesignSelect, $newDesignName, $categoryName,
         // Step 2 - Upload Inspection Design
             $divStep2, gridIsPopulated = false,
         // Step 3 - Review and Revise Inspection Design
             $divStep3, inspectionGrid, gridOptions,
         // Step 4 - Select or Create Inspection Target
-            $divStep4, selectedInspectionTarget, $inspectionTarget, $addNewTarget, isNewTarget = false,
+            $divStep4, selectedInspectionTarget, $inspectionTarget, $addNewTarget, 
         // Step 5 - Review and Finish
             $divStep5, //inspectionTargetGroups = { }, newSchedules = { }, $scheduleList,
 
             isNewInspectionDesign = function() {
-                return ('[Create New]' === selectedInspectionDesign.name);
+                return ('[Create New]' === selectedInspectionDesign.id);
             },
+            
+            isNewTarget = (function () {
+                var ret = false;
+                return function (isNew) {
+                    if (arguments.length > 1) {
+                        ret = isTrue(isNew);
+                    }
+                    return ret;
+                };    
+            }()),
             
             toggleButton = function (button, isEnabled, doClick) {
                 var $btn;
@@ -82,18 +92,17 @@
                 return function() {
                     var toggleNewDesignName = function() {
                         if (isNewInspectionDesign()) {
-                            $newDesignName.hide();
-                        } else {
                             $newDesignName.show();
+                            $newDesignLabel.show();
+                        } else {
+                            $newDesignName.hide();
+                            $newDesignLabel.hide();
                         }
                     };
                     var nextBtnEnabled = function() {
-                        return ((isNewInspectionDesign() &&
-                                    false === isNullOrEmpty(newInspectionName)) ||
-                                (false === isNewInspectionDesign() && 
-                                    false === isNullOrEmpty(selectedInspectionDesign.name)));
+                        return (false === isNullOrEmpty(selectedInspectionDesign.name));
                     };
-                    var $inspectionTable;
+                    var $inspectionTable, $newDesignLabel;
 
                     toggleButton(buttons.prev, false);
                     toggleButton(buttons.finish, false);
@@ -111,7 +120,7 @@
                         //1. Copy from Inspection Design
                         $inspectionTable.CswTable('cell', 1, 1)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .append('<span>Copy from Inspection Design&nbsp</span>');
+                            .append('<span>Select an Inspection Design&nbsp</span>');
 
                         $inspectionDesignSelect = $inspectionTable.CswTable('cell', 1, 2)
                             .CswDiv('init')
@@ -132,9 +141,9 @@
                         $inspectionTable.CswTable('cell', 2, 1).append('<br />');
 
                         //2. New Inspection Design Name
-                        $inspectionTable.CswTable('cell', 3, 1)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .append('<span class="required">New Inspection Design Name&nbsp</span>');
+                        $newDesignLabel = $('<span class="required">New Inspection Design Name&nbsp</span>')
+                                                .appendTo($inspectionTable.CswTable('cell', 3, 1))
+                                                .css({ 'padding': '1px', 'vertical-align': 'middle' });
 
                         $newDesignName = $inspectionTable.CswTable('cell', 3, 2)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
@@ -145,7 +154,8 @@
                             })
                             .keypress(function() {
                                 setTimeout(function() {
-                                    newInspectionName = $newDesignName.val();
+                                    selectedInspectionDesign.id = '[Create New]';
+                                    selectedInspectionDesign.name = $newDesignName.val();
                                     toggleButton(buttons.next, nextBtnEnabled());
                                 }, 100);
                             });
@@ -159,7 +169,7 @@
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .append('<span>Category Name&nbsp</span>');
 
-                        $newDesignCategory = $inspectionTable.CswTable('cell', 5, 2)
+                        $categoryName = $inspectionTable.CswTable('cell', 5, 2)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .CswInput('init', {
                                 ID: o.ID + '_newDesignCategory',
@@ -202,8 +212,7 @@
                 var previewGridId = makeStepId('previewGrid_outer', 3),
                     $previewGrid = $divStep2.find('#' + previewGridId);
 
-                $divStep3.append('<p>Inspection Name: ' + newInspectionName + '</p>');
-                $divStep3.append("<p>Review the upload results. Make any necessary edits.</p>");
+                $divStep3.append('<p>Review the <b>' + selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.</p>');
 
                 if (isNullOrEmpty($previewGrid) || $previewGrid.length === 0) {
                     $previewGrid = $('<div id="' + previewGridId + '"></div>').appendTo($divStep3);
@@ -245,7 +254,7 @@
                 var f = {
                     url: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
                     params: {
-                        InspectionName: newInspectionName
+                        InspectionName: selectedInspectionDesign.name
                     },
                     onSuccess: function() {
                         $wizard.CswWizard('button', 'next', 'enable').click();
@@ -306,7 +315,7 @@
                             //1. Download template
                             $templateLink = $('<a href=\"/NbtWebApp/etc/InspectionDesign.xls\">Download Template</a>').button();
                             $step2List.CswList('addItem', {
-                                value: $('<span>Create a new <b>' + newInspectionName + '</b> Inspection Design using the Excel template.</span>')
+                                value: $('<span>Create a new <b>' + selectedInspectionDesign.name + '</b> Inspection Design using the Excel template.</span>')
                                     .append($('<p/>').append($templateLink))
                             });
 
@@ -329,10 +338,10 @@
                         }
                     }; //doStepTwo
 
-                    newCategoryName = $newDesignCategory.val();
+                    categoryName = $categoryName.val();
                     if(isNewInspectionDesign()) {
-                        newInspectionName = $newDesignName.val();
-                        checkIsNodeTypeNameUnique(newInspectionName, doStepTwo);
+                        selectedInspectionDesign.name = $newDesignName.val();
+                        checkIsNodeTypeNameUnique(selectedInspectionDesign.name, doStepTwo);
                     }
                     toggleButton(buttons.next, nextIsEnabled(), doNextClick());
                     toggleButton(buttons.prev, true, doPrevClick());
@@ -368,16 +377,15 @@
             //Step 4. Select a Target.
             makeStepFour = (function() {
                 var stepFourComplete = false,
-                    lastSelectedInspectionName = selectedInspectionDesign.name;
+                    lastSelectedInspectionName = selectedInspectionDesign.name,
+                    $inspectionTable, $addBtn;
                 return function() {
-                    var $inspectionTable;
-                    
                     //For tomorrow: remmeber that Target only affects View creation--we're using Object Classes as the target of relationships
                     //In the case of creating a new Target, we're maintaing Object Class loyalty even as we create new Node Types
                     var onNodeTypeSelectSuccess = function(data) {
                         if (data.nodetypecount === 0) { //Add a new Target
                             $inspectionTarget.hide();
-                            isNewTarget = true;
+                            isNewTarget(true);
                             $addNewTarget = $inspectionTable.CswTable('cell', 1, 3)
                                 .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                 .CswInput('init', {
@@ -396,41 +404,35 @@
                             selectedInspectionTarget = $inspectionTarget.find(':selected').text();
                             $wizard.CswWizard('button', 'next', 'enable');
 
-                            $inspectionTable.CswTable('cell', 1, 4)
-                                .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                                .CswDiv('init')
-                                .CswButton('init', {
-                                    ID: makeStepId('addNewInspectionTarget'),
-                                    enabledText: 'Add New',
-                                    disableOnClick: false,
-                                    onclick: function() {
-                                        $.CswDialog('AddNodeTypeDialog', {
-                                            objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
-                                            nodetypename: '',
-                                            category: newCategoryName,
-                                            $select: $inspectionTarget,
-                                            nodeTypeDescriptor: 'Target',
-                                            onSuccess: function(newData) {
-                                                selectedInspectionTarget = newData.nodetypename;
-                                                isNewTarget = true;
-                                                newCategoryName = newData.category;
-                                                $wizard.CswWizard('button', 'next', 'enable');
-                                            },
-                                            title: 'Create a New Inspection Target Type.'
-                                        });
-                                        return false;
-                                    }
-                                });
+                            $addBtn = $addBtn || $inspectionTable.CswTable('cell', 1, 4)
+                                                                .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                                                                .CswDiv('init')
+                                                                .CswButton('init', {
+                                                                    ID: makeStepId('addNewInspectionTarget'),
+                                                                    enabledText: 'Add New',
+                                                                    disableOnClick: false,
+                                                                    onclick: function() {
+                                                                        $.CswDialog('AddNodeTypeDialog', {
+                                                                            objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
+                                                                            nodetypename: '',
+                                                                            category: categoryName,
+                                                                            $select: $inspectionTarget,
+                                                                            nodeTypeDescriptor: 'Target',
+                                                                            onSuccess: function(newData) {
+                                                                                selectedInspectionTarget = newData.nodetypename;
+                                                                                isNewTarget(true);
+                                                                                categoryName = newData.category;
+                                                                                $wizard.CswWizard('button', 'next', 'enable');
+                                                                            },
+                                                                            title: 'Create a New Inspection Target Type.'
+                                                                        });
+                                                                        return false;
+                                                                    }
+                                                                });
                         } // else
                     };
                     
                     var makeTargetSelect = function () {
-                        var excludeNodeTypeId = '';
-
-                        if (isNewInspectionDesign()) {
-                            excludeNodeTypeId = selectedInspectionDesign.id;
-                        }
-                        
                         //Normally this would be written as $inspectionTarget = $inspectionTarget || ...
                         //However, the variable assignment is sufficiently complex that this deviation is justified.
                         if(false === isNullOrEmpty($inspectionTarget, true)) {
@@ -442,10 +444,9 @@
                                                             .CswNodeTypeSelect('init', {
                                                                 ID: makeStepId('nodeTypeSelect'),
                                                                 objectClassName: 'InspectionTargetClass',
-                                                                excludeNodeTypeIds: excludeNodeTypeId,
                                                                 onSelect: function() {
                                                                     var $this = $inspectionTarget.find(':selected');
-                                                                    isNewTarget = isTrue($this.CswAttrXml('data-newNodeType'));
+                                                                    isNewTarget($this.CswAttrXml('data-newNodeType'));
                                                                     selectedInspectionTarget = $this.text();
                                                                 },
                                                                 onSuccess: function(data) {
@@ -468,10 +469,10 @@
                             .append('<span>Select an Inspection Target&nbsp</span>');
 
                         makeTargetSelect();
-
+                        lastSelectedInspectionName = selectedInspectionDesign.name;
                         stepFourComplete = true;
                     } // if (false === stepFourComplete)
-                    else if(lastSelectedInspectionName !== selectedInspectionDesign) {
+                    else if(lastSelectedInspectionName !== selectedInspectionDesign.name) {
                         //In this case, we've navigated back, changed Step 1 options and moved forward. We must refresh.
                         makeTargetSelect();
                     }
@@ -480,6 +481,216 @@
                     toggleButton(buttons.next, (false === isNullOrEmpty(selectedInspectionTarget)));
                 };
             }()),
+
+            //Step 5. Preview and Finish.
+            makeStepFive = (function() {
+
+                return function() {
+                    var $confirmationList, $confirmTypesList, $confirmViewsList, $confirmationDesign, confirmGridOptions = { }, confirmGrid;
+
+                    toggleButton(buttons.prev, true);
+                    toggleButton(buttons.next, false);
+                    toggleButton(buttons.finish, true);
+                    
+                    $divStep5 = $divStep5 || $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step);
+                    $divStep5.empty();
+
+                    $divStep5.append('<p>You are about to create the following items. Click Finish to create the design.</p>');
+                    $confirmationList = $divStep5.CswList('init', {
+                        ID: makeStepId('confirmationList'),
+                        ordered: true
+                    });
+
+                    if (isNewInspectionDesign()) {
+                        if (gridOptions) {
+                            $.extend(true, confirmGridOptions, gridOptions);
+                        }
+                        
+                        //There is still a bugg here, we must fetch the current instance of the grid rows data for preview here. It may have changed. 
+                        confirmGridOptions.ID = makeStepId('confirmGrid');
+                        confirmGridOptions.gridOpts.autowidth = false;
+                        confirmGridOptions.gridOpts.shrinkToFit = true;
+                        confirmGridOptions.gridOpts.height = 150;
+                        confirmGridOptions.optNav.add = false;
+                        confirmGridOptions.optNav.del = false;
+                        confirmGridOptions.optNav.edit = false;
+                        confirmGridOptions.optNav.view = false;
+                        confirmGridOptions.optNav.editfunc = null;
+                        confirmGridOptions.optNav.addfunc = null;
+                        confirmGridOptions.optNav.delfunc = null;
+                        each(confirmGridOptions.gridOpts.colModel, function(col) {
+                            if (contains(col, 'editable')) {
+                                delete col.editable;
+                            }
+                            if (contains(col, 'edittype')) {
+                                delete col.edittype;
+                            }
+                        });
+                        $confirmationDesign = $confirmationList.CswList('addItem', {
+                            value: 'Creating a new Inspection Design <b>' + selectedInspectionDesign.name + '</b>.'
+                        });
+
+                        confirmGrid = new CswGrid(confirmGridOptions, $confirmationDesign);
+                    } else {
+                        $confirmationList.CswList('addItem', {
+                            value: 'Assigning Inspection Design <b>' + selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + selectedInspectionTarget + '</b>.'
+                        });
+                    }
+
+                    if (isNewInspectionDesign() || isNewTarget()) {
+                        $confirmTypesList = $confirmationList.CswList('addItem', {
+                            value: 'New Types'
+                        })
+                            .CswList('init', {
+                                ID: makeStepId('confirmationTypes')
+                            });
+
+                        if(isNewInspectionDesign()) {
+                            $confirmTypesList.CswList('addItem', {
+                                value: 'New Inspection Design <b>' + selectedInspectionDesign.name + '</b> on Inspection Target <b>' + selectedInspectionTarget + '</b>'
+                            });
+                        }
+                        
+                        if (isNewTarget) {
+                            $confirmTypesList.CswList('addItem', {
+                                value: 'New Inspection Target <b>' + selectedInspectionTarget + '</b>'
+                            });
+
+                            $confirmTypesList.CswList('addItem', {
+                                value: 'New Inspection Target Group <b>' + selectedInspectionTarget + ' Group</b>'
+                            });
+                        }
+                    }
+
+                    $confirmViewsList = $confirmationList.CswList('addItem', {
+                        value: 'New Views'
+                    })
+                        .CswList('init', {
+                            ID: makeStepId('confirmationViews')
+                        });
+                    $confirmViewsList.CswList('addItem', {
+                        value: '<b>' + selectedInspectionDesign.name + ' Scheduling</b>'
+                    });
+                    $confirmViewsList.CswList('addItem', {
+                        value: '<b>' + selectedInspectionTarget + ' Group Assignment</b>'
+                    });
+                    $confirmViewsList.CswList('addItem', {
+                        value: '<b>' + selectedInspectionTarget + ' Inspections</b>'
+                    });
+                    
+                };
+            }()),
+
+            handleNext = function($wizardTable, newStepNo) {
+                currentStepNo = newStepNo;
+                switch (newStepNo) {
+                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step:
+                        makeStepTwo(true); //we're moving forward
+                        break;
+                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step:
+                        makeStepThree(true); //we're moving forward
+                        break;
+                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step:
+                        makeStepFour();
+                        break;
+                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step:
+                        makeStepFive();
+                        break;
+                } // switch(newstepno)
+            }, // handleNext()
+
+            handlePrevious = function(newStepNo) {
+                currentStepNo = newStepNo;
+                switch (newStepNo) {
+                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step1.step:
+                        makeStepOne();
+                        break;
+                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step:
+                        makeStepTwo(false); //we're moving backward
+                        break;
+                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step:
+                        makeStepThree(false); //we're moving backward
+                        break;
+                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step:
+                        makeStepFour(); 
+                        break;
+                }
+            },
+
+            onFinish = function() {
+                var designGrid = '';
+
+                toggleButton(buttons.prev, false);
+                toggleButton(buttons.next, false);
+                toggleButton(buttons.finish, false);
+                toggleButton(buttons.cancel, false);
+                
+                if (false === isNullOrEmpty(inspectionGrid)) {
+                    designGrid = JSON.stringify(inspectionGrid.$gridTable.jqGrid('getRowData'));
+                }
+
+                var jsonData = {
+                    DesignGrid: designGrid,
+                    InspectionDesignName: tryParseString(selectedInspectionDesign.name),
+                    InspectionTargetName: tryParseString(selectedInspectionTarget),
+                    IsNewInspection: isNewInspectionDesign(),
+                    IsNewTarget: isNewTarget(),
+                    Category: tryParseString(categoryName)
+                };
+
+                CswAjaxJson({
+                        url: '/NbtWebApp/wsNBT.asmx/finalizeInspectionDesign',
+                        data: jsonData,
+                        success: function(data) {
+                            //Come back and hammer this out
+                            var views = data.views;
+                            $.CswDialog('NavigationSelectDialog', {
+                                ID: makeSafeId('FinishDialog'),
+                                title: 'The Inspection Design Wizard Completed Successfully',
+                                navigationText: 'Please select from the following views. Click OK to continue.',
+                                values: views,
+                                onClickOk: function (selectedView) {
+                                    var $selectedView = $(selectedView),
+                                        viewId = $selectedView.val();
+                                    if(isFunction(o.onFinish)) {
+                                        o.onFinish(viewId);
+                                    }
+                                }
+                            });
+                            
+                        },
+                        error: function(error) {
+                            //$.CswDialog('ErrorDialog', error);
+                        }
+                    });
+            };
+
+        //#endregion Variable Declaration
+
+        //#region Execution
+        $wizard = $div.CswWizard('init', {
+            ID: makeId({ ID: o.ID, suffix: 'wizard' }),
+            Title: 'Create New Inspection',
+            StepCount: ChemSW.enums.CswInspectionDesign_WizardSteps.stepcount,
+            Steps: wizardSteps,
+            StartingStep: o.startingStep,
+            FinishText: 'Finish',
+            onNext: handleNext,
+            onPrevious: handlePrevious,
+            onCancel: o.onCancel,
+            onFinish: onFinish,
+            doNextOnInit: false
+        });
+
+        makeStepOne();
+        //#endregion Execution
+
+        return $div;
+    }; // $.fn.ChemSW.enums.CswInspectionDesign_WizardSteps
+})(jQuery);
+
+
+//Archive
 
 //This was seriously non-trivial to write. Don't delete it until after the ship arrives at New Earth.            
 //            //Old Step 5. Add schedules.
@@ -718,206 +929,4 @@
 //                    }
 //                };
 //            }()),
-
-            //Step 5. Preview and Finish.
-            makeStepFive = (function() {
-
-                return function() {
-                    var $confirmationList, $confirmTypesList, $confirmViewsList, $confirmationDesign, confirmGridOptions = { }, confirmGrid;
-
-                    toggleButton(buttons.prev, true);
-                    toggleButton(buttons.next, false);
-                    toggleButton(buttons.finish, true);
-                    
-                    $divStep5 = $divStep5 || $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step);
-                    $divStep5.empty();
-
-                    $divStep5.append('<p>You are about to create the following items. Click Finish to create the design.</p>');
-                    $confirmationList = $divStep5.CswList('init', {
-                        ID: makeStepId('confirmationList'),
-                        ordered: true
-                    });
-
-                    if (isNewInspectionDesign()) {
-                        if (gridOptions) {
-                            $.extend(true, confirmGridOptions, gridOptions);
-                        }
-                        
-                        //There is still a bugg here, we must fetch the current instance of the grid rows data for preview here. It may have changed. 
-                        confirmGridOptions.ID = makeStepId('confirmGrid');
-                        confirmGridOptions.gridOpts.autowidth = false;
-                        confirmGridOptions.gridOpts.shrinkToFit = true;
-                        confirmGridOptions.gridOpts.height = 150;
-                        confirmGridOptions.optNav.add = false;
-                        confirmGridOptions.optNav.del = false;
-                        confirmGridOptions.optNav.edit = false;
-                        confirmGridOptions.optNav.view = false;
-                        confirmGridOptions.optNav.editfunc = null;
-                        confirmGridOptions.optNav.addfunc = null;
-                        confirmGridOptions.optNav.delfunc = null;
-                        each(confirmGridOptions.gridOpts.colModel, function(col) {
-                            if (contains(col, 'editable')) {
-                                delete col.editable;
-                            }
-                            if (contains(col, 'edittype')) {
-                                delete col.edittype;
-                            }
-                        });
-                        $confirmationDesign = $confirmationList.CswList('addItem', {
-                            value: 'Creating a new Inspection Design <b>' + newInspectionName + '</b>.'
-                        });
-
-                        confirmGrid = new CswGrid(confirmGridOptions, $confirmationDesign);
-                    } else {
-                        $confirmationList.CswList('addItem', {
-                            value: 'Copying Inspection Design <b>' + selectedInspectionDesign.id + '</b>.'
-                        });
-                    }
-
-                    $confirmTypesList = $confirmationList.CswList('addItem', {
-                        value: 'New Types'
-                    })
-                        .CswList('init', {
-                            ID: makeStepId('confirmationTypes')
-                        });
-
-                    $confirmTypesList.CswList('addItem', {
-                        value: 'New Inspection Design <b>' + newInspectionName + '</b> on Inspection Target <b>' + selectedInspectionTarget + '</b>'
-                    });
-
-                    if (isNewTarget) {
-                        $confirmTypesList.CswList('addItem', {
-                            value: 'New Inspection Target <b>' + selectedInspectionTarget + '</b>'
-                        });
-
-                        $confirmTypesList.CswList('addItem', {
-                            value: 'New Inspection Target Group <b>' + selectedInspectionTarget + ' Group</b>'
-                        });
-                    }
-
-//                    if (newSchedules.count > 0) {
-//                        $confirmationList.CswList('addItem', {
-//                            value: $($scheduleList.html())
-//                        });
-//                    }
-
-                    $confirmViewsList = $confirmationList.CswList('addItem', {
-                        value: 'New Views'
-                    })
-                        .CswList('init', {
-                            ID: makeStepId('confirmationViews')
-                        });
-                    $confirmViewsList.CswList('addItem', {
-                        value: '<b>' + selectedInspectionTarget + ' Inspections Due Today</b>'
-                    });
-                    $confirmViewsList.CswList('addItem', {
-                        value: '<b>All ' + selectedInspectionTarget + ' Inspections</b>'
-                    });
-                    if (isNewTarget) {
-                        $confirmViewsList.CswList('addItem', {
-                            value: '<b>All ' + selectedInspectionTarget + '</b>'
-                        });
-                    }
-                };
-            }()),
-
-            handleNext = function($wizardTable, newStepNo) {
-                currentStepNo = newStepNo;
-                switch (newStepNo) {
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step:
-                        makeStepTwo(true); //we're moving forward
-                        break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step:
-                        makeStepThree(true); //we're moving forward
-                        break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step:
-                        makeStepFour();
-                        break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step:
-                        makeStepFive();
-                        break;
-//                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step6.step:
-//                        makeStepFive();
-//                        break;
-                } // switch(newstepno)
-            }, // handleNext()
-
-            handlePrevious = function(newStepNo) {
-                currentStepNo = newStepNo;
-                switch (newStepNo) {
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step1.step:
-                        makeStepOne();
-                        break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step:
-                        makeStepTwo(false); //we're moving backward
-                        break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step:
-                        makeStepThree(false); //we're moving backward
-                        break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step:
-                        makeStepFour(); 
-                        break;
-//                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step:
-//                        makeStepFive();
-//                        break;
-                }
-            },
-
-            onFinish = function() {
-                var designGrid = '';
-
-                toggleButton(buttons.prev, false);
-                toggleButton(buttons.next, false);
-                toggleButton(buttons.finish, false);
-                toggleButton(buttons.cancel, false);
-                
-                if (false === isNullOrEmpty(inspectionGrid)) {
-                    designGrid = JSON.stringify(inspectionGrid.$gridTable.jqGrid('getRowData'));
-                }
-
-                var jsonData = {
-                    DesignGrid: designGrid,
-                    InspectionDesignName: tryParseString(newInspectionName),
-                    InspectionTargetName: tryParseString(selectedInspectionTarget),
-                    //Schedules: JSON.stringify(newSchedules),
-                    CopyFromInspectionDesign: tryParseString(selectedInspectionDesign.name),
-                    Category: tryParseString(newCategoryName)
-                };
-
-                CswAjaxJson({
-                        url: '/NbtWebApp/wsNBT.asmx/finalizeInspectionDesign',
-                        data: jsonData,
-                        success: function(data) {
-                            alert("You've won! .... a chance to implement this feature.");
-                            //load the relevant Inspection Points by Location view
-                        },
-                        error: function(error) {
-                            //$.CswDialog('ErrorDialog', error);
-                        }
-                    });
-            };
-
-        //#endregion Variable Declaration
-
-        //#region Execution
-        $wizard = $div.CswWizard('init', {
-            ID: makeId({ ID: o.ID, suffix: 'wizard' }),
-            Title: 'Create New Inspection',
-            StepCount: ChemSW.enums.CswInspectionDesign_WizardSteps.stepcount,
-            Steps: wizardSteps,
-            StartingStep: o.startingStep,
-            FinishText: 'Finish',
-            onNext: handleNext,
-            onPrevious: handlePrevious,
-            onCancel: o.onCancel,
-            onFinish: onFinish,
-            doNextOnInit: false
-        });
-
-        makeStepOne();
-        //#endregion Execution
-
-        return $div;
-    }; // $.fn.ChemSW.enums.CswInspectionDesign_WizardSteps
-})(jQuery);
 

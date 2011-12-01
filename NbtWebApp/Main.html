@@ -837,7 +837,7 @@ window.abandonHope = true;
                 case 'Create_Inspection':
                     clear({ 'all': true });
 
-                    var importInspectionQuestionsOptions = {
+                    var designOpt = {
                         ID: 'cswInspectionDesignWizard',
                         viewid: o.ActionOptions.viewid,
                         viewmode: o.ActionOptions.viewmode,
@@ -846,17 +846,20 @@ window.abandonHope = true;
                             setCurrent(getLast());
                             refreshSelected();
                         },
-                        onFinish: function (viewid, viewmode) {
+                        onFinish: function (viewid) {
                             clear({ 'all': true });
                             refreshSelected();
-                            // After the new inspection is imported, Phil and Steve want to send the system to Design Mode
-                            window.location = "Design.aspx";
+                            handleItemSelect({
+                                    type: 'view', // Action, Report, View
+                                    viewmode: 'tree', // Grid, Tree, List
+                                    viewid: viewid 
+                                });
                         },
                         startingStep: o.ActionOptions.startingStep,
                         menuRefresh: refreshSelected
                     };
 
-                    $('#CenterTopDiv').CswInspectionDesign(importInspectionQuestionsOptions);
+                    $('#CenterTopDiv').CswInspectionDesign(designOpt);
 
                     break;
 

@@ -20,8 +20,13 @@ var ChemSW = ChemSW || (function(undefined) {
                 step3: { step: 3, description: 'Review Inspection Design' },
                 step4: { step: 4, description: 'Select an Inspection Target' },
                 //step5: { step: 5, description: 'Create Inspection Schedules' },
-                step6: { step: 5, description: 'Finish' },
+                step5: { step: 5, description: 'Finish' },
                 stepcount: 5
+            },
+            CswDialogButtons: {
+                1: 'ok',
+                2: 'ok/cancel',
+                3: 'yes/no'
             }
         },
         ajax: {

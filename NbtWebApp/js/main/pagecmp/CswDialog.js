@@ -12,7 +12,8 @@
 
     var methods = {
 
-        // Specialized
+        //#region Specialized
+        
         ExpireDialog: function(options) {
             var o = {
                 onYes: function() { }
@@ -790,7 +791,42 @@
             openDialog($div, 200, 200, null, title);
         },
         
-        // Generic
+        NavigationSelectDialog: function (options) {
+            var o = {
+                ID: '',
+                title: 'Select from the following options',
+                navigationText: 'Click OK to continue', 
+                buttons: ChemSW.enums.CswDialogButtons["1"],
+                values: [],
+                onOkClick: null,
+                onCancelClick: null
+            };
+
+            if (options) {
+                $.extend(o, options);
+            }
+
+            var $div = $('<div id="' + o.ID + '"><span>' + o.navigationText + '</span></div>'),
+                $select = $div.CswSelect('init', {
+                    ID: makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
+                    values: o.values
+                });
+                
+            $div.CswButton({
+                    ID: makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
+                    enabledText: 'OK',
+                    onclick: function () {
+                        if(isFunction(o.onOkClick)) {
+                            o.onOkClick($select.find(':selected'));    
+                        }
+                        $div.dialog('close');
+                    }
+                });
+            openDialog($div, 400, 200, null, o.title);
+        },
+        //#endregion Specialized
+        
+        //#region Generic
 
 //		'OpenPopup': function(url) { 
 //							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
@@ -809,11 +845,12 @@
                 .dialog('close')
                 .remove();
         }
+        
+        //#region Generic
     };
 
 
-    function openDialog($div, width, height, onClose, title)
-    {
+    function openDialog($div, width, height, onClose, title) {
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo($div);
 
