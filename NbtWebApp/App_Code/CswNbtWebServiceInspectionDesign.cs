@@ -190,11 +190,16 @@ namespace ChemSW.Nbt.WebServices
         private JObject _createInspectionDesignRelationships( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt, string InspectionTargetName = null, string Category = null )
         {
             JObject RetObj = new JObject();
-            if( null == InspectionTargetNt && false == string.IsNullOrEmpty( InspectionTargetName ) )
+            //This is a New Target
+            if( null == InspectionTargetNt )
             {
+                if( string.IsNullOrEmpty( InspectionTargetName ) )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Cannot create an Inspection Target without a name.", "InspectionTargetName was null or empty." );
+                }
                 RetObj = _createInspectionCollection( InspectionTargetName, Category, InspectionDesignNt );
             }
-            else
+            else //Target and therefore (presumably) Target Group and (presumably) Generator exist--we'll validate and throw if not
             {
                 _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
                 string FkType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
