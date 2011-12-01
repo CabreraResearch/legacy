@@ -192,6 +192,7 @@
                 url: o.PropsUrl,
                 data: jsonData,
                 success: function (data) {
+					var isAdmin = isTrue(data.isadmin);
                     var $form = $tabcontentdiv.children('form');
                     $form.contents().remove();
 
@@ -297,9 +298,10 @@
                         $layouttable.CswLayoutTable('ConfigOn');
                     } 
                     else if(!o.Config && 
-                        isNullOrEmpty(o.date) && 
-                        o.filterToPropId === '' && 
-                        isTrue($tabcontentdiv.data('canEditLayout')))
+							isAdmin && // case 24199
+							isNullOrEmpty(o.date) && 
+							o.filterToPropId === '' && 
+							isTrue($tabcontentdiv.data('canEditLayout')))
                     {
                         // Show the 'fake' config button to open the dialog
                         $formtblcell12.CswImageButton({
