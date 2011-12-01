@@ -11,6 +11,7 @@ using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.NbtWebControls;
 using ChemSW.NbtWebControls.FieldTypes;
@@ -1865,7 +1866,35 @@ namespace ChemSW.Nbt.WebPages
                             if( DerivesFromObjectClassProp && ObjectClassProp.Multi.ToString() != String.Empty )
                                 SelectModeValue.Enabled = false;
                             SelectModeRow.Cells[1].Controls.Add( SelectModeValue );
-                            break;
+
+                            TableRow ConstraintOCRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) ConstraintOCRow.Cells[0].Controls[0] ).Text = "Constrain to Object Class:";
+							
+							HiddenField NodeTypeSelectIsFk = new HiddenField();
+                            NodeTypeSelectIsFk.ID = "EditProp_IsFkValue" + SelectedNodeTypeProp.PropId.ToString();
+                            NodeTypeSelectIsFk.Value = "true";
+                            ConstraintOCRow.Cells[1].Controls.Add( NodeTypeSelectIsFk );
+
+                            HiddenField NodeTypeSelectFkType = new HiddenField();
+                            NodeTypeSelectFkType.ID = "EditProp_FkTypeValue" + SelectedNodeTypeProp.PropId.ToString();
+                            NodeTypeSelectFkType.Value = "ObjectClassId";
+                            ConstraintOCRow.Cells[1].Controls.Add( NodeTypeSelectFkType );
+
+                            DropDownList NodeTypeSelectFkValue = new DropDownList();
+                            NodeTypeSelectFkValue.Items.Add( new ListItem( string.Empty, string.Empty ) );
+                            foreach( CswNbtMetaDataObjectClass ObjectClass in Master.CswNbtResources.MetaData.ObjectClasses )
+                            {
+                                NodeTypeSelectFkValue.Items.Add( new ListItem( ObjectClass.ObjectClass.ToString(), ObjectClass.ObjectClassId.ToString()));
+                            }
+                            NodeTypeSelectFkValue.CssClass = "selectinput";
+                            NodeTypeSelectFkValue.ID = "EditProp_FkValueValue" + SelectedNodeTypeProp.PropId.ToString();
+                            ConstraintOCRow.Cells[1].Controls.Add( NodeTypeSelectFkValue );
+
+							if( SelectedNodeTypeProp.FKValue != Int32.MinValue )
+							{
+								NodeTypeSelectFkValue.SelectedValue = SelectedNodeTypeProp.FKValue.ToString();
+							}
+							break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.Number:
                             TableRow PrecisionRow = makeEditPropTableRow( EditPropPlaceHolder );
