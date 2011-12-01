@@ -456,7 +456,10 @@ namespace ChemSW.Nbt.WebServices
                     */
                     CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
                     RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, ItTargetGroupNtp, false );
-                    RetView.AddViewRelationship( InspectionTargetNt, false );
+                    //Only show unrelated targets at the root level
+                    CswNbtViewRelationship DanglingTargetRel = RetView.AddViewRelationship( InspectionTargetNt, false );
+                    CswNbtViewProperty GroupVp = RetView.AddViewProperty( DanglingTargetRel, ItTargetGroupNtp );
+                    RetView.AddViewPropertyFilter( GroupVp, ItTargetGroupNtp.FieldTypeRule.SubFields[CswNbtSubField.SubFieldName.NodeID].Name, CswNbtPropFilterSql.PropertyFilterMode.Null, string.Empty, false );
 
                     RetView.save();
                 }
