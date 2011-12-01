@@ -3070,7 +3070,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string finalizeInspectionDesign( string DesignGrid, string InspectionDesignName, string InspectionTargetName, string Schedules, string CopyFromInspectionDesign, string Category )
+        public string finalizeInspectionDesign( string DesignGrid, string InspectionDesignName, string InspectionTargetName, string IsNewInspection, string IsNewTarget, string Category )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3093,13 +3093,13 @@ namespace ChemSW.Nbt.WebServices
 
                     CswNbtWebServiceInspectionDesign ws = new CswNbtWebServiceInspectionDesign( _CswNbtResources );
 
-                    if( false == string.IsNullOrEmpty( CopyFromInspectionDesign ) && CopyFromInspectionDesign != "[Create New]" )
+                    if( CswConvert.ToBoolean( IsNewInspection ) )
                     {
-                        ReturnVal = ws.copyInspectionDesign( CopyFromInspectionDesign, InspectionDesignName, InspectionTargetName, Category );
+                        ReturnVal = ws.createInspectionDesignTabsAndProps( DesignGrid, InspectionDesignName, InspectionTargetName, Category );
                     }
                     else
                     {
-                        ReturnVal = ws.createInspectionDesignTabsAndProps( DesignGrid, InspectionDesignName, InspectionTargetName, Category );
+                        ReturnVal = ws.copyInspectionDesign( CopyFromInspectionDesign, InspectionDesignName, InspectionTargetName, Category );
                     }
 
                     //do Schedules in a separate piece

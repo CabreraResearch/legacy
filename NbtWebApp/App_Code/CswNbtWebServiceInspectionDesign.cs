@@ -159,19 +159,11 @@ namespace ChemSW.Nbt.WebServices
                         }
                         else
                         {
-                            if( string.IsNullOrEmpty( AllowedAnswers ) )
-                            {
-                                AllowedAnswers = _DefaultAllowedAnswers;
-                            }
-                            if( string.IsNullOrEmpty( CompliantAnswers ) )
-                            {
-                                CompliantAnswers = _DefaultCompliantAnswers;
-                            }
+                            _validateAnswers( ref CompliantAnswers, ref AllowedAnswers );
                             if( false == string.IsNullOrEmpty( HelpText ) )
                             {
                                 ThisQuestion.HelpText = HelpText;
                             }
-
                             ThisQuestion.ValueOptions = CompliantAnswers;
                             ThisQuestion.ListOptions = AllowedAnswers;
 
@@ -664,6 +656,76 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Views
 
+        /// <summary>
+        /// Ensure that Allowed Answers contains all Compliant Answers and that both collections contain only unique answers.
+        /// </summary>
+        private void _validateAnswers( ref string CompliantAnswersString, ref string AllowedAnswersString )
+        {
+            string RetCompliantAnswersString = _DefaultCompliantAnswers;
+            string RetAllowedAnswersString = _DefaultAllowedAnswers;
+
+            CswCommaDelimitedString AllowedAnswers = new CswCommaDelimitedString();
+            AllowedAnswers.FromString( AllowedAnswersString );
+
+            CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
+            CompliantAnswers.FromString( CompliantAnswersString );
+
+            if( AllowedAnswers.Count > 0 ||
+                    CompliantAnswers.Count > 0 )
+            {
+                Dictionary<string, string> UniqueCompliantAnswers = new Dictionary<string, string>();
+                //Get the unique answers from each collection
+                foreach( string CompliantAnswer in CompliantAnswers )
+                {
+                    string ThisAnswer = CompliantAnswer.ToLower().Trim();
+                    if( false == UniqueCompliantAnswers.ContainsKey( ThisAnswer ) )
+                    {
+                        UniqueCompliantAnswers.Add( ThisAnswer, CompliantAnswer );
+                    }
+                }
+                Dictionary<string, string> UniqueAllowedAnswers = new Dictionary<string, string>();
+                foreach( string AllowedAnswer in AllowedAnswers )
+                {
+                    string ThisAnswer = AllowedAnswer.ToLower().Trim();
+                    if( false == UniqueAllowedAnswers.ContainsKey( ThisAnswer ) )
+                    {
+                        UniqueAllowedAnswers.Add( ThisAnswer, AllowedAnswer );
+                    }
+                }
+
+                //Allowed answers must contain all compliant answers
+                CswCommaDelimitedString RetCompliantAnswers = new CswCommaDelimitedString();
+                foreach( KeyValuePair<string, string> UniqueCompliantAnswer in UniqueCompliantAnswers )
+                {
+                    RetCompliantAnswers.Add( UniqueCompliantAnswer.Value );
+                    if( false == UniqueAllowedAnswers.ContainsKey( UniqueCompliantAnswer.Key ) )
+                    {
+                        UniqueAllowedAnswers.Add( UniqueCompliantAnswer.Key, UniqueCompliantAnswer.Value );
+                    }
+                }
+
+                //Get unique allowed answers
+                CswCommaDelimitedString RetAllowedAnswers = new CswCommaDelimitedString();
+                foreach( KeyValuePair<string, string> UniqueAllowedAnswer in UniqueAllowedAnswers )
+                {
+                    RetAllowedAnswers.Add( UniqueAllowedAnswer.Value );
+                }
+
+                if( CompliantAnswers.Count > 0 )
+                {
+                    RetCompliantAnswersString = RetCompliantAnswers.ToString();
+                }
+                else
+                {
+                    RetCompliantAnswersString = RetAllowedAnswers.ToString();
+                }
+
+                RetAllowedAnswersString = RetAllowedAnswers.ToString();
+            }
+            CompliantAnswersString = RetCompliantAnswersString;
+            AllowedAnswersString = RetAllowedAnswersString;
+        }
+
         #endregion Private
 
         #region Public
@@ -727,18 +789,14 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
+                        string AllowedAnswers = CswConvert.ToString( Row[_AllowedAnswersName] );
+                        string ComplaintAnswers = CswConvert.ToString( Row[_CompliantAnswersName] );
+                        _validateAnswers( ref ComplaintAnswers, ref AllowedAnswers );
+
                         if( string.Empty == CswConvert.ToString( Row[_SectionName] ) ||
                             "Section 1" == CswConvert.ToString( Row[_SectionName] ) )
                         {
                             Row[_SectionName] = _DefaultSectionName;
-                        }
-                        if( string.Empty == CswConvert.ToString( Row[_AllowedAnswersName] ) )
-                        {
-                            Row[_AllowedAnswersName] = _DefaultAllowedAnswers;
-                        }
-                        if( string.Empty == CswConvert.ToString( Row[_CompliantAnswersName] ) )
-                        {
-                            Row[_CompliantAnswersName] = _DefaultCompliantAnswers;
                         }
                         Row["RowNumber"] = RowNumber;
                         RowNumber += 1;
