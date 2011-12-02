@@ -338,7 +338,8 @@ namespace ChemSW.Nbt.WebServices
 
             //Inspection Design Generator is SI Inspection Schedule
             CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
-            _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            _validateInspectionScheduleNt( GeneratorNt );
+
             CswNbtMetaDataNodeTypeProp IdGeneratorNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
             if( IdGeneratorNtp.FKType != CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
                 IdGeneratorNtp.FKValue != GeneratorNt.NodeTypeId )
@@ -365,6 +366,18 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        private void _validateInspectionScheduleNt( CswNbtMetaDataNodeType InspectionScheduleNt )
+        {
+            _validateNodeType( InspectionScheduleNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataNodeTypeProp OwnerNtp = InspectionScheduleNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
+
+            if( OwnerNtp.FKType != CswNbtViewProperty.CswNbtPropType.ObjectClassPropId.ToString() || OwnerNtp.FKValue != InspectionScheduleNt.ObjectClass.ObjectClassId )
+            {
+                OwnerNtp.SetFK( CswNbtViewProperty.CswNbtPropType.ObjectClassPropId.ToString(), InspectionScheduleNt.ObjectClass.ObjectClassId );
+            }
+
+        }
+
         #endregion MetaData
 
         #region Views
@@ -375,13 +388,10 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView RetView = null;
             string InspectionSchedulesViewName = InspectionDesignNt.NodeTypeName + " Scheduling";
 
-            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionSchedulesViewName ) )
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionSchedulesViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
             {
-                if( SchedulingView.Visibility == NbtViewVisibility.Role &&
-                        SchedulingView.VisibilityRoleId == _CurrentUser.RoleId )
-                {
-                    RetView = SchedulingView;
-                }
+                RetView = SchedulingView;
+                break;
             }
 
             if( null == RetView )
@@ -431,13 +441,10 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView RetView = null;
             string GroupAssignmentViewName = InspectionTargetGroupNt.NodeTypeName + " Assignment";
 
-            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( GroupAssignmentViewName ) )
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( GroupAssignmentViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
             {
-                if( SchedulingView.Visibility == NbtViewVisibility.Role &&
-                        SchedulingView.VisibilityRoleId == _CurrentUser.RoleId )
-                {
-                    RetView = SchedulingView;
-                }
+                RetView = SchedulingView;
+                break;
             }
 
             if( null == RetView )
@@ -530,13 +537,10 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView RetView = null;
             string InspectionTargetViewName = InspectionTargetNt.NodeTypeName + " " + InspectionDesignNt.NodeTypeName;
 
-            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetViewName ) )
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
             {
-                if( SchedulingView.Visibility == NbtViewVisibility.Role &&
-                        SchedulingView.VisibilityRoleId == _CurrentUser.RoleId )
-                {
-                    RetView = SchedulingView;
-                }
+                RetView = SchedulingView;
+                break;
             }
 
             if( null == RetView )
