@@ -89,12 +89,13 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     if( true == _CswNbtResources.Permit.can( Action, this ) ) // permission is being granted
                     {
-                        if( Action.Name == CswNbtActionName.Design &&
-                            this.Name.Text != ChemSWAdminRoleName &&
-                            false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
+                        if( ( Action.Name == CswNbtActionName.Design ||
+                                Action.Name == CswNbtActionName.Create_Inspection ) && //Case 24288
+                              this.Name.Text != ChemSWAdminRoleName &&
+                                false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
                         {
                             // case 23677
-                            throw new CswDniException( ErrorType.Warning, "You may not grant access to Design to this role",
+                            throw new CswDniException( ErrorType.Warning, "You may not grant access to " + Action.DisplayName + " to this role",
                                 "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
                         }
                         if( false == _CswNbtResources.Permit.can( Action, _CswNbtResources.CurrentNbtUser ) )

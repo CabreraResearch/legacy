@@ -266,7 +266,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataNodeTypeProp ItInspectionsNtp = _CswNbtResources.MetaData.makeNewProp( RetInspectionTargetNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, InspectionDesignName, ItInspectionsTab.TabId );
             CswNbtView ItInspectionsGridView = _createInspectionsView( InspectionDesignNt, string.Empty, NbtViewRenderingMode.Grid, NbtViewVisibility.Property, true, DateTime.MinValue, InspectionTargetName + " Grid Prop View" );
             ItInspectionsNtp.ViewId = ItInspectionsGridView.ViewId;
-
+            ItInspectionsNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             #endregion Set new InspectionTarget Props and Tabs
 
             #region Set InspectionTargetGroup Props and Tabs
@@ -283,7 +283,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataNodeTypeProp ItgLocationsNtp = _CswNbtResources.MetaData.makeNewProp( InspectionTargetGroupNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, InspectionTargetName + " Locations", ItgLocationsTab.TabId );
             CswNbtView ItgInspectionPointsGridView = _createAllInspectionPointsView( RetInspectionTargetNt, string.Empty, NbtViewRenderingMode.Grid, NbtViewVisibility.Property, InspectionTargetName + " Grid Prop View" );
             ItgLocationsNtp.ViewId = ItgInspectionPointsGridView.ViewId;
-
+            ItgLocationsNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             #endregion Set InspectionTargetGroup Props and Tabs
 
             return RetInspectionTargetNt;
@@ -456,7 +456,10 @@ namespace ChemSW.Nbt.WebServices
                     */
                     CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
                     RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, ItTargetGroupNtp, false );
-                    RetView.AddViewRelationship( InspectionTargetNt, false );
+                    //Only show unrelated targets at the root level
+                    CswNbtViewRelationship DanglingTargetRel = RetView.AddViewRelationship( InspectionTargetNt, false );
+                    CswNbtViewProperty GroupVp = RetView.AddViewProperty( DanglingTargetRel, ItTargetGroupNtp );
+                    RetView.AddViewPropertyFilter( GroupVp, ItTargetGroupNtp.FieldTypeRule.SubFields[CswNbtSubField.SubFieldName.NodeID].Name, CswNbtPropFilterSql.PropertyFilterMode.Null, string.Empty, false );
 
                     RetView.save();
                 }
