@@ -72,17 +72,54 @@ namespace ChemSW.Nbt
 
         }//restoreView()
 
-        public List<CswNbtView> restoreViews( string ViewName )
+        public List<CswNbtView> restoreViews( string ViewName, NbtViewVisibility Visibility = NbtViewVisibility.Unknown, Int32 VisibilityId = Int32.MinValue )
         {
             List<CswNbtView> ReturnVal = new List<CswNbtView>();
 
             CswTableSelect ViewSelect = _CswNbtResources.makeCswTableSelect( "CswNbtViewSelect_restoreViews_select", "node_views" );
-            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
-            SelectCols.Add( "nodeviewid" );
-            DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, " where viewname='" + ViewName + "'", false );
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString()
+                                                     {
+                                                         "nodeviewid", 
+                                                         "viewname"
+                                                     };
+            //ViewName is limited to 30 characters
+            ViewName = ViewName.ToLower().Trim();
+            if( ViewName.Length > 200 )
+            {
+                ViewName = ViewName.Substring( 0, 200 );
+            }
+
+            string WhereClause = string.Empty;
+            if( Visibility != NbtViewVisibility.Unknown )
+            {
+                WhereClause = "where visibility='" + Visibility.ToString() + "'";
+            }
+
+            switch( Visibility )
+            {
+                case NbtViewVisibility.Role:
+                    if( Int32.MinValue != VisibilityId )
+                    {
+                        WhereClause += " and roleid='" + VisibilityId.ToString() + "'";
+                    }
+                    break;
+                case NbtViewVisibility.User:
+                    if( Int32.MinValue != VisibilityId )
+                    {
+                        WhereClause += " and userid='" + VisibilityId.ToString() + "'";
+                    }
+                    break;
+            }
+
+            DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, WhereClause, false );
             foreach( DataRow CurrentRow in ViewTable.Rows )
             {
-                ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
+                string CurrentViewName = CswConvert.ToString( CurrentRow["viewname"] ).ToLower().Trim();
+                if( ViewName == CurrentViewName ||
+                    CurrentViewName.Contains( ViewName ) )
+                {
+                    ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
+                }
             }
 
             return ( ReturnVal );

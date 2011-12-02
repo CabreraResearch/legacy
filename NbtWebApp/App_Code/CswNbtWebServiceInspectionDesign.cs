@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.WebServices
             string Ret = string.Empty;
             if( wsTools.isNodeTypeNameUnique( NodeTypeName, _CswNbtResources ) )
             {
-                Ret = _TextInfo.ToTitleCase( NodeTypeName.Trim() );
+                Ret = _standardizeName( NodeTypeName );
             }
             return Ret;
         }
@@ -77,20 +77,22 @@ namespace ChemSW.Nbt.WebServices
             string CategoryName = Category;
             if( string.IsNullOrEmpty( CategoryName ) )
             {
-                if( null != InspectionTargetNt )
-                {
-                    CategoryName = InspectionTargetNt.Category;
-                }
-                else if( null != InspectionDesignNt )
+                if( null != InspectionDesignNt )
                 {
                     CategoryName = InspectionDesignNt.Category;
                 }
+
+                if( null != InspectionTargetNt )
+                {
+                    CategoryName += ": " + InspectionTargetNt.Category;
+                }
                 else
                 {
-                    CategoryName = InspectionTargetName;
+                    CategoryName += ": " + InspectionTargetName;
                 }
+
             }
-            CategoryName = _TextInfo.ToTitleCase( CategoryName.Trim() );
+            CategoryName = _standardizeName( CategoryName );
             return CategoryName;
         }
 
@@ -118,6 +120,11 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentRole, true );
         }
 
+        private string _standardizeName( object Name )
+        {
+            return _TextInfo.ToTitleCase( CswConvert.ToString( Name ).Trim() );
+        }
+
         private Dictionary<string, CswNbtMetaDataNodeTypeTab> _getTabsForInspection( JArray Grid, CswNbtMetaDataNodeType NodeType )
         {
             Dictionary<string, CswNbtMetaDataNodeTypeTab> RetDict = new Dictionary<string, CswNbtMetaDataNodeTypeTab>();
@@ -126,7 +133,7 @@ namespace ChemSW.Nbt.WebServices
                 if( Grid[Index].Type == JTokenType.Object )
                 {
                     JObject ThisRow = (JObject) Grid[Index];
-                    string TabName = _TextInfo.ToTitleCase( CswConvert.ToString( ThisRow[_SectionName] ) );
+                    string TabName = _standardizeName( ThisRow[_SectionName] );
                     if( string.IsNullOrEmpty( TabName ) )
                     {
                         TabName = "Section 1";
@@ -154,12 +161,12 @@ namespace ChemSW.Nbt.WebServices
                 if( Grid[Index].Type == JTokenType.Object )
                 {
                     JObject ThisRow = (JObject) Grid[Index];
-                    string TabName = CswConvert.ToString( ThisRow[_SectionName] );
+                    string TabName = _standardizeName( ThisRow[_SectionName] );
                     if( string.IsNullOrEmpty( TabName ) )
                     {
                         TabName = _DefaultSectionName;
                     }
-                    string Question = _TextInfo.ToTitleCase( CswConvert.ToString( ThisRow[_QuestionName] ) );
+                    string Question = CswConvert.ToString( ThisRow[_QuestionName] );
                     string AllowedAnswers = CswConvert.ToString( ThisRow[_AllowedAnswersName] );
                     string CompliantAnswers = CswConvert.ToString( ThisRow[_CompliantAnswersName] );
                     string HelpText = CswConvert.ToString( ThisRow[_HelpTextName] );
@@ -168,28 +175,41 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswNbtMetaDataNodeTypeTab ThisTab;
                         Tabs.TryGetValue( TabName, out ThisTab );
-                        Int32 ThisTabId = Int32.MinValue;
+                        Int32 ThisTabId;
                         if( null != ThisTab )
                         {
                             ThisTabId = ThisTab.TabId;
                         }
-                        CswNbtMetaDataNodeTypeProp ThisQuestion = _CswNbtResources.MetaData.makeNewProp( InspectionDesignNt, CswNbtMetaDataFieldType.NbtFieldType.Question, Question, ThisTabId );
+                        else
+                        {
+                            ThisTabId = Tabs[_DefaultSectionName].TabId;
+                        }
 
+                        CswNbtMetaDataNodeTypeProp ThisQuestion = InspectionDesignNt.getNodeTypeProp( Question.ToLower() );
                         if( null == ThisQuestion )
                         {
-                            GridRowsSkipped.Add( Index.ToString() );
+                            ThisQuestion = _CswNbtResources.MetaData.makeNewProp( InspectionDesignNt, CswNbtMetaDataFieldType.NbtFieldType.Question, Question, ThisTabId );
+
+                            if( null == ThisQuestion )
+                            {
+                                GridRowsSkipped.Add( Index.ToString() );
+                            }
+                            else
+                            {
+                                _validateAnswers( ref CompliantAnswers, ref AllowedAnswers );
+                                if( false == string.IsNullOrEmpty( HelpText ) )
+                                {
+                                    ThisQuestion.HelpText = HelpText;
+                                }
+                                ThisQuestion.ValueOptions = CompliantAnswers;
+                                ThisQuestion.ListOptions = AllowedAnswers;
+
+                                RetCount += 1;
+                            }
                         }
                         else
                         {
-                            _validateAnswers( ref CompliantAnswers, ref AllowedAnswers );
-                            if( false == string.IsNullOrEmpty( HelpText ) )
-                            {
-                                ThisQuestion.HelpText = HelpText;
-                            }
-                            ThisQuestion.ValueOptions = CompliantAnswers;
-                            ThisQuestion.ListOptions = AllowedAnswers;
-
-                            RetCount += 1;
+                            GridRowsSkipped.Add( Index.ToString() );
                         }
                     }
                     else
@@ -254,7 +274,7 @@ namespace ChemSW.Nbt.WebServices
 
             //NodeTypeName Template
             CswNbtMetaDataNodeTypeProp ItDescriptionNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
-            RetInspectionTargetNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.BarcodeProperty.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName );
+            RetInspectionTargetNt.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.BarcodeProperty.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName );
 
             //Inspection Target has Inspection Target Group Relationship
             CswNbtMetaDataNodeTypeProp ItInspectionGroupNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
@@ -273,7 +293,7 @@ namespace ChemSW.Nbt.WebServices
 
             //NodeTypeName Template
             CswNbtMetaDataNodeTypeProp ItgNameNtp = InspectionTargetGroupNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTargetGroup.NamePropertyName );
-            InspectionTargetGroupNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName );
+            InspectionTargetGroupNt.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName );
 
             //Description is useful.
             _CswNbtResources.MetaData.makeNewProp( InspectionTargetGroupNt, CswNbtMetaDataFieldType.NbtFieldType.Text, "Description", InspectionTargetGroupNt.getFirstNodeTypeTab().TabId );
@@ -289,33 +309,6 @@ namespace ChemSW.Nbt.WebServices
             return RetInspectionTargetNt;
         }
 
-        private JObject _createInspectionDesignViews( string Category, CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt )
-        {
-            JObject RetObj = new JObject();
-
-            RetObj["views"] = new JObject();
-
-            //Inspection Scheduling view
-            CswNbtView InspectionSchedulesView = _createInspectionSchedulingView( InspectionDesignNt, Category, InspectionTargetNt );
-            RetObj["views"][InspectionSchedulesView.ViewName] = new JObject();
-            RetObj["views"][InspectionSchedulesView.ViewName]["viewname"] = InspectionSchedulesView.ViewName;
-            RetObj["views"][InspectionSchedulesView.ViewName]["viewid"] = InspectionSchedulesView.ViewId.get();
-
-            //Inspection Target Group Assignement view
-            CswNbtView InspectionTargetGroupAssignmentView = _createInspectionGroupAssignmentView( Category, InspectionTargetNt );
-            RetObj["views"][InspectionTargetGroupAssignmentView.ViewName] = new JObject();
-            RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewname"] = InspectionTargetGroupAssignmentView.ViewName;
-            RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewid"] = InspectionTargetGroupAssignmentView.ViewId.get();
-
-            //Target Inspections view
-            CswNbtView TargetInspectionsView = _createTargetInspectionsView( InspectionDesignNt, Category, InspectionTargetNt );
-            RetObj["views"][TargetInspectionsView.ViewName] = new JObject();
-            RetObj["views"][TargetInspectionsView.ViewName]["viewname"] = TargetInspectionsView.ViewName;
-            RetObj["views"][TargetInspectionsView.ViewName]["viewid"] = TargetInspectionsView.ViewId.get();
-
-            return RetObj;
-        }
-
         private void _setInspectionDesignTabsAndProps( CswNbtMetaDataNodeType InspectionDesignNt )
         {
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
@@ -324,7 +317,7 @@ namespace ChemSW.Nbt.WebServices
             if( string.IsNullOrEmpty( InspectionDesignNt.NameTemplateValue ) )
             {
                 CswNbtMetaDataNodeTypeProp IdNameNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
-                InspectionDesignNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName );
+                InspectionDesignNt.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName );
             }
 
             //Inspection Design Target is Inspection Target OC
@@ -338,7 +331,8 @@ namespace ChemSW.Nbt.WebServices
 
             //Inspection Design Generator is SI Inspection Schedule
             CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
-            _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            _validateInspectionScheduleNt( GeneratorNt );
+
             CswNbtMetaDataNodeTypeProp IdGeneratorNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
             if( IdGeneratorNtp.FKType != CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
                 IdGeneratorNtp.FKValue != GeneratorNt.NodeTypeId )
@@ -365,23 +359,71 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        private void _validateInspectionScheduleNt( CswNbtMetaDataNodeType InspectionScheduleNt )
+        {
+            _validateNodeType( InspectionScheduleNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataNodeTypeProp OwnerNtp = InspectionScheduleNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
+
+            if( OwnerNtp.FKType != CswNbtViewProperty.CswNbtPropType.ObjectClassPropId.ToString() || OwnerNtp.FKValue != InspectionScheduleNt.ObjectClass.ObjectClassId )
+            {
+                OwnerNtp.SetFK( CswNbtViewProperty.CswNbtPropType.ObjectClassPropId.ToString(), InspectionScheduleNt.ObjectClass.ObjectClassId );
+            }
+
+        }
+
         #endregion MetaData
 
         #region Views
+
+        private void _getClientViewData( CswNbtView View, JObject RetObj )
+        {
+            if( null != View )
+            {
+                RetObj[View.ViewName] = new JObject();
+                RetObj[View.ViewName]["viewname"] = View.ViewName;
+                if( null != View.SessionViewId &&
+                    View.SessionViewId.isSet() )
+                {
+                    RetObj[View.ViewName]["viewid"] = View.SessionViewId.ToString();
+                }
+                else
+                {
+                    RetObj[View.ViewName]["viewid"] = View.ViewId.ToString();
+                }
+            }
+        }
+
+        private JObject _createInspectionDesignViews( string Category, CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt )
+        {
+            JObject RetObj = new JObject();
+
+            RetObj["views"] = new JObject();
+
+            //Inspection Scheduling view
+            CswNbtView InspectionSchedulesView = _createInspectionSchedulingView( InspectionDesignNt, Category, InspectionTargetNt );
+            _getClientViewData( InspectionSchedulesView, ( (JObject) RetObj["views"] ) );
+
+            //Inspection Target Group Assignement view
+            CswNbtView InspectionTargetGroupAssignmentView = _createInspectionGroupAssignmentView( Category, InspectionTargetNt, InspectionDesignNt );
+            _getClientViewData( InspectionTargetGroupAssignmentView, ( (JObject) RetObj["views"] ) );
+
+            //Target Inspections view
+            CswNbtView TargetInspectionsView = _createTargetInspectionsView( InspectionDesignNt, Category, InspectionTargetNt );
+            _getClientViewData( TargetInspectionsView, ( (JObject) RetObj["views"] ) );
+
+            return RetObj;
+        }
 
         private CswNbtView _createInspectionSchedulingView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, CswNbtMetaDataNodeType InspectionTargetNt )
         {
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
             CswNbtView RetView = null;
-            string InspectionSchedulesViewName = InspectionDesignNt.NodeTypeName + " Scheduling";
+            string InspectionSchedulesViewName = "Scheduling, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
 
-            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionSchedulesViewName ) )
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionSchedulesViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
             {
-                if( SchedulingView.Visibility == NbtViewVisibility.Role &&
-                        SchedulingView.VisibilityRoleId == _CurrentUser.RoleId )
-                {
-                    RetView = SchedulingView;
-                }
+                RetView = SchedulingView;
+                break;
             }
 
             if( null == RetView )
@@ -392,8 +434,6 @@ namespace ChemSW.Nbt.WebServices
                     RetView.makeNew( InspectionSchedulesViewName, NbtViewVisibility.Role, _CurrentUser.RoleId, null, null );
                     RetView.ViewMode = NbtViewRenderingMode.Tree;
                     RetView.Category = Category;
-
-                    _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
 
                     CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
                     _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
@@ -410,7 +450,6 @@ namespace ChemSW.Nbt.WebServices
 
                     CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
                     RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, GnOwnerNtp, false );
-
                     RetView.save();
                 }
                 catch( Exception ex )
@@ -418,10 +457,11 @@ namespace ChemSW.Nbt.WebServices
                     throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionSchedulesViewName, "View creation failed", ex );
                 }
             }
+            RetView.SaveToCache( true );
             return RetView;
         }
 
-        private CswNbtView _createInspectionGroupAssignmentView( string Category, CswNbtMetaDataNodeType InspectionTargetNt )
+        private CswNbtView _createInspectionGroupAssignmentView( string Category, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionDesignNt )
         {
             _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
             CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
@@ -429,15 +469,12 @@ namespace ChemSW.Nbt.WebServices
             _validateNodeType( InspectionTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
 
             CswNbtView RetView = null;
-            string GroupAssignmentViewName = InspectionTargetGroupNt.NodeTypeName + " Assignment";
+            string GroupAssignmentViewName = "Groups, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
 
-            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( GroupAssignmentViewName ) )
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( GroupAssignmentViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
             {
-                if( SchedulingView.Visibility == NbtViewVisibility.Role &&
-                        SchedulingView.VisibilityRoleId == _CurrentUser.RoleId )
-                {
-                    RetView = SchedulingView;
-                }
+                RetView = SchedulingView;
+                break;
             }
 
             if( null == RetView )
@@ -460,7 +497,6 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewRelationship DanglingTargetRel = RetView.AddViewRelationship( InspectionTargetNt, false );
                     CswNbtViewProperty GroupVp = RetView.AddViewProperty( DanglingTargetRel, ItTargetGroupNtp );
                     RetView.AddViewPropertyFilter( GroupVp, ItTargetGroupNtp.FieldTypeRule.SubFields[CswNbtSubField.SubFieldName.NodeID].Name, CswNbtPropFilterSql.PropertyFilterMode.Null, string.Empty, false );
-
                     RetView.save();
                 }
                 catch( Exception ex )
@@ -468,6 +504,7 @@ namespace ChemSW.Nbt.WebServices
                     throw new CswDniException( ErrorType.Error, "Failed to create view: " + GroupAssignmentViewName, "View creation failed", ex );
                 }
             }
+            RetView.SaveToCache( true );
             return RetView;
         }
 
@@ -528,15 +565,12 @@ namespace ChemSW.Nbt.WebServices
             _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
 
             CswNbtView RetView = null;
-            string InspectionTargetViewName = InspectionTargetNt.NodeTypeName + " " + InspectionDesignNt.NodeTypeName;
+            string InspectionTargetViewName = "Inspections, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
 
-            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetViewName ) )
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
             {
-                if( SchedulingView.Visibility == NbtViewVisibility.Role &&
-                        SchedulingView.VisibilityRoleId == _CurrentUser.RoleId )
-                {
-                    RetView = SchedulingView;
-                }
+                RetView = SchedulingView;
+                break;
             }
 
             if( null == RetView )
@@ -557,7 +591,6 @@ namespace ChemSW.Nbt.WebServices
 
                     CswNbtViewRelationship TargetRelationship = RetView.AddViewRelationship( InspectionTargetNt, false );
                     RetView.AddViewRelationship( TargetRelationship, CswNbtViewRelationship.PropOwnerType.Second, ItTargetNtp, false );
-
                     RetView.save();
                 }
                 catch( Exception ex )
@@ -565,6 +598,7 @@ namespace ChemSW.Nbt.WebServices
                     throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionTargetViewName, "View creation failed", ex );
                 }
             }
+            RetView.SaveToCache( true );
             return RetView;
         }
 
@@ -636,7 +670,8 @@ namespace ChemSW.Nbt.WebServices
                 foreach( string CompliantAnswer in CompliantAnswers )
                 {
                     string ThisAnswer = CompliantAnswer.ToLower().Trim();
-                    if( false == UniqueCompliantAnswers.ContainsKey( ThisAnswer ) )
+                    if( false == string.IsNullOrEmpty( ThisAnswer ) &&
+                            false == UniqueCompliantAnswers.ContainsKey( ThisAnswer ) )
                     {
                         UniqueCompliantAnswers.Add( ThisAnswer, CompliantAnswer );
                     }
@@ -645,7 +680,8 @@ namespace ChemSW.Nbt.WebServices
                 foreach( string AllowedAnswer in AllowedAnswers )
                 {
                     string ThisAnswer = AllowedAnswer.ToLower().Trim();
-                    if( false == UniqueAllowedAnswers.ContainsKey( ThisAnswer ) )
+                    if( false == string.IsNullOrEmpty( ThisAnswer ) &&
+                            false == UniqueAllowedAnswers.ContainsKey( ThisAnswer ) )
                     {
                         UniqueAllowedAnswers.Add( ThisAnswer, AllowedAnswer );
                     }
@@ -673,7 +709,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     RetCompliantAnswersString = RetCompliantAnswers.ToString();
                 }
-                else
+                else //We need at least one compliant answer. If none are provided, then all allowed answers are compliant.
                 {
                     RetCompliantAnswersString = RetAllowedAnswers.ToString();
                 }
@@ -695,7 +731,7 @@ namespace ChemSW.Nbt.WebServices
         /// <returns></returns>
         public DataTable convertExcelFileToDataTable( string FullPathAndFileName, ref string ErrorMessage, ref string WarningMessage )
         {
-            DataTable ExcelDataTable = null;
+            DataTable RetDataTable = new DataTable();
             OleDbConnection ExcelConn = null;
 
             try
@@ -718,56 +754,55 @@ namespace ChemSW.Nbt.WebServices
                 OleDbCommand SelectCommand = new OleDbCommand( "SELECT * FROM [" + FirstSheetName + "]", ExcelConn );
                 DataAdapter.SelectCommand = SelectCommand;
 
-                ExcelDataTable = new DataTable();
-                DataAdapter.Fill( ExcelDataTable );
+                DataTable UploadDataTable = new DataTable();
 
-                foreach( DataColumn Column in ExcelDataTable.Columns )
+                DataAdapter.Fill( UploadDataTable );
+
+                //Normalize the incoming column names
+                foreach( DataColumn Column in UploadDataTable.Columns )
                 {
                     Column.ColumnName = Column.ColumnName.ToUpper().Replace( " ", "_" );
-                    if( false == _ColumnNames.Contains( Column.ColumnName ) )
-                    {
-                        ExcelDataTable.Columns.Remove( Column );
-                    }
                 }
 
+                //Prep the outgoing column names
                 foreach( string ColumnName in _ColumnNames )
                 {
-                    if( ExcelDataTable.Columns[ColumnName] == null )
-                    {
-                        ExcelDataTable.Columns.Add( ColumnName );
-                    }
+                    RetDataTable.Columns.Add( ColumnName );
                 }
-
-                if( ExcelDataTable.Columns["RowNumber"] == null )
-                {
-                    ExcelDataTable.Columns.Add( "RowNumber" );
-                }
+                RetDataTable.Columns.Add( "RowNumber" );
 
                 Int32 RowNumber = 0;
-                foreach( DataRow Row in ExcelDataTable.Rows )
+                foreach( DataRow Row in UploadDataTable.Rows )
                 {
-                    if( string.Empty == CswConvert.ToString( Row[_QuestionName] ) )
+                    string Question = _standardizeName( Row[_QuestionName] );
+                    if( false == string.IsNullOrEmpty( Question ) )
                     {
-                        ExcelDataTable.Rows.Remove( Row );
-                    }
-                    else
-                    {
+                        DataRow NewRow = RetDataTable.NewRow();
+                        NewRow[_QuestionName] = Question;
+
                         string AllowedAnswers = CswConvert.ToString( Row[_AllowedAnswersName] );
                         string ComplaintAnswers = CswConvert.ToString( Row[_CompliantAnswersName] );
                         _validateAnswers( ref ComplaintAnswers, ref AllowedAnswers );
 
-                        Row[_AllowedAnswersName] = AllowedAnswers;
-                        Row[_CompliantAnswersName] = ComplaintAnswers;
+                        NewRow[_AllowedAnswersName] = AllowedAnswers;
+                        NewRow[_CompliantAnswersName] = ComplaintAnswers;
+                        NewRow[_HelpTextName] = CswConvert.ToString( Row[_HelpTextName] );
 
-                        if( string.Empty == CswConvert.ToString( Row[_SectionName] ) ||
-                            "Section 1" == CswConvert.ToString( Row[_SectionName] ) )
+                        string SectionName = _standardizeName( Row[_SectionName] );
+                        if( string.Empty == SectionName ||
+                            "Section 1" == SectionName )
                         {
-                            Row[_SectionName] = _DefaultSectionName;
+                            SectionName = _DefaultSectionName;
                         }
-                        Row["RowNumber"] = RowNumber;
+                        NewRow[_SectionName] = SectionName;
+                        NewRow["RowNumber"] = RowNumber;
+
+                        RetDataTable.Rows.Add( NewRow );
                         RowNumber += 1;
                     }
                 }
+
+
             } // try
             catch( Exception Exception )
             {
@@ -781,7 +816,7 @@ namespace ChemSW.Nbt.WebServices
                     ExcelConn.Dispose();
                 }
             }
-            return ExcelDataTable;
+            return RetDataTable;
         } // convertExcelFileToDataTable()
 
         public JObject recycleInspectionDesign( string InspectionDesignName, string InspectionTargetName, string Category )
@@ -808,8 +843,8 @@ namespace ChemSW.Nbt.WebServices
             }
 
             Int32 TotalRows = GridArray.Count;
-            Category = _guaranteeCategoryName( Category, null, null, InspectionTargetName );
-            CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, Category );
+
+            CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, string.Empty );
             _setInspectionDesignTabsAndProps( InspectionDesignNt );
             _setNodeTypePermissions( InspectionDesignNt );
 
@@ -821,6 +856,9 @@ namespace ChemSW.Nbt.WebServices
             _pruneSectionOneTab( InspectionDesignNt );
             //Build the MetaData
             CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category );
+            //The Category name is now set
+            InspectionDesignNt.Category = Category;
+
             //Get the views
             JObject RetObj = _createInspectionDesignViews( Category, InspectionDesignNt, InspectionTargetNt );
 

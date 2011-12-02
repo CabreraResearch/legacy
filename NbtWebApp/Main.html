@@ -658,7 +658,7 @@ window.abandonHope = true;
                 onSave: function (nodeid, nodekey) {
                     unsetChanged();
                     // case 24304
-					// refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
+                    // refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
                 },
                 tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
                 onBeforeTabSelect: function (tabid) {
@@ -849,10 +849,14 @@ window.abandonHope = true;
                         },
                         onFinish: function (viewid) {
                             clear({ 'all': true });
-                            refreshSelected();
+                            refreshSelected({
+                                    type: 'view',
+                                    viewmode: 'tree',
+                                    viewid: viewid 
+                                });
                             handleItemSelect({
-                                    type: 'view', // Action, Report, View
-                                    viewmode: 'tree', // Grid, Tree, List
+                                    type: 'view',
+                                    viewmode: 'tree',
                                     viewid: viewid 
                                 });
                         },

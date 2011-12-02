@@ -136,7 +136,7 @@ var CswTimeInterval = function (options) {
     var weekDayDef = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     var makeWeekDayPicker = function (thisRateType) {
-        return (function () {
+        //return (function () {
             var weeklyDayPickerComplete = false,
                 $ret, weekdays, $startingDate,
                 isWeekly = (thisRateType === CswRateIntervalTypes.WeeklyByDay),
@@ -265,7 +265,7 @@ var CswTimeInterval = function (options) {
 
                 return $ret;
             };
-        } ()); // makeWeekDayPicker()
+       // } ()); // makeWeekDayPicker()
     };
 
     var weeklyWeekPicker = makeWeekDayPicker(CswRateIntervalTypes.WeeklyByDay),
