@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.MetaData
 	
 		public void removePropFromLayout( LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop )
 		{
-			if( LayoutType != LayoutType.Unknown && PropId != Int32.MinValue )
+			if( LayoutType != LayoutType.Unknown && Prop != null )
 			{
 				CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "removePropFromLayout_Update", "nodetype_layout" );
 				DataTable LayoutTable = LayoutUpdate.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + Prop.PropId.ToString() );

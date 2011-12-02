@@ -896,7 +896,7 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeProp.CopyPropToNewNodeTypePropRow( NewPropRow );
                 _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NewPropsTable );
 
-				NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeTypeId, NewPropId, CswConvert.ToInt32( TabMap[NodeTypeProp.EditLayout.Tab.TabId] ), NodeTypeProp.EditLayout.DisplayRow, NodeTypeProp.EditLayout.DisplayColumn );
+				NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeTypeId, NewPropId, CswConvert.ToInt32( TabMap[NodeTypeProp.EditLayout.TabId] ), NodeTypeProp.EditLayout.DisplayRow, NodeTypeProp.EditLayout.DisplayColumn );
 
 				_CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewPropRow, NodeTypeProp.PropId );
             }
