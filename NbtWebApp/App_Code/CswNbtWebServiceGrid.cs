@@ -180,7 +180,16 @@ namespace ChemSW.Nbt.WebServices
             _CswGridData.CanEdit = _CanEdit;
             _CswGridData.CanDelete = _CanDelete;
 
-            _CswGridData.GridSortName = "nodeid";
+            // Sort
+			CswNbtViewProperty SortProp = _View.getSortProperty();
+			if( SortProp != null )
+			{
+				_CswGridData.GridSortName = SortProp.NodeTypeProp.PropName.ToUpperInvariant().Replace( " ", "_" );
+			}
+			else
+			{
+				_CswGridData.GridSortName = "nodename";
+			}
 
             RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
 
