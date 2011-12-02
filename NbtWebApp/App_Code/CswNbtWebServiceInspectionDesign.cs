@@ -120,9 +120,9 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentRole, true );
         }
 
-        private string _standardizeName( object Tab )
+        private string _standardizeName( object Name )
         {
-            return _TextInfo.ToTitleCase( CswConvert.ToString( Tab ).Trim() );
+            return _TextInfo.ToTitleCase( CswConvert.ToString( Name ).Trim() );
         }
 
         private Dictionary<string, CswNbtMetaDataNodeTypeTab> _getTabsForInspection( JArray Grid, CswNbtMetaDataNodeType NodeType )
@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         TabName = _DefaultSectionName;
                     }
-                    string Question = _standardizeName( ThisRow[_QuestionName] );
+                    string Question = CswConvert.ToString( ThisRow[_QuestionName] );
                     string AllowedAnswers = CswConvert.ToString( ThisRow[_AllowedAnswersName] );
                     string CompliantAnswers = CswConvert.ToString( ThisRow[_CompliantAnswersName] );
                     string HelpText = CswConvert.ToString( ThisRow[_HelpTextName] );
@@ -185,23 +185,31 @@ namespace ChemSW.Nbt.WebServices
                             ThisTabId = Tabs[_DefaultSectionName].TabId;
                         }
 
-                        CswNbtMetaDataNodeTypeProp ThisQuestion = _CswNbtResources.MetaData.makeNewProp( InspectionDesignNt, CswNbtMetaDataFieldType.NbtFieldType.Question, Question, ThisTabId );
-
+                        CswNbtMetaDataNodeTypeProp ThisQuestion = InspectionDesignNt.getNodeTypeProp( Question.ToLower() );
                         if( null == ThisQuestion )
                         {
-                            GridRowsSkipped.Add( Index.ToString() );
+                            ThisQuestion = _CswNbtResources.MetaData.makeNewProp( InspectionDesignNt, CswNbtMetaDataFieldType.NbtFieldType.Question, Question, ThisTabId );
+
+                            if( null == ThisQuestion )
+                            {
+                                GridRowsSkipped.Add( Index.ToString() );
+                            }
+                            else
+                            {
+                                _validateAnswers( ref CompliantAnswers, ref AllowedAnswers );
+                                if( false == string.IsNullOrEmpty( HelpText ) )
+                                {
+                                    ThisQuestion.HelpText = HelpText;
+                                }
+                                ThisQuestion.ValueOptions = CompliantAnswers;
+                                ThisQuestion.ListOptions = AllowedAnswers;
+
+                                RetCount += 1;
+                            }
                         }
                         else
                         {
-                            _validateAnswers( ref CompliantAnswers, ref AllowedAnswers );
-                            if( false == string.IsNullOrEmpty( HelpText ) )
-                            {
-                                ThisQuestion.HelpText = HelpText;
-                            }
-                            ThisQuestion.ValueOptions = CompliantAnswers;
-                            ThisQuestion.ListOptions = AllowedAnswers;
-
-                            RetCount += 1;
+                            GridRowsSkipped.Add( Index.ToString() );
                         }
                     }
                     else
