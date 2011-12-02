@@ -83,7 +83,12 @@ namespace ChemSW.Nbt
                                                          "viewname"
                                                      };
             //ViewName is limited to 30 characters
-            ViewName = ViewName.ToLower().Trim().Substring( 0, 30 ).Trim();
+            ViewName = ViewName.ToLower().Trim();
+            if( ViewName.Length > 30 )
+            {
+                ViewName = ViewName.Substring( 0, 30 );
+            }
+
             string WhereClause = string.Empty;
             if( Visibility != NbtViewVisibility.Unknown )
             {
