@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.MetaData
                 CswNbtMetaDataNodeTypeTab OldNodeTypeTab = new CswNbtMetaDataNodeTypeTab( _CswNbtMetaDataResources, NodeTypeTab._DataRow );
                 _AllNodeTypeTabs.Add( OldNodeTypeTab );
 
-                NodeTypeTab.Reassign( Row );
+				NodeTypeTab.Reassign( Row );
                 
                 RegisterExisting( OldNodeTypeTab );
                 RegisterExisting( NodeTypeTab );

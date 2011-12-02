@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( _SelectedValue ) );
                         _SelectedNodeType = _SelectedNodeTypeProp.NodeType;
-                        _SelectedNodeTypeTab = _SelectedNodeTypeProp.EditLayout.Tab;
+						_SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.EditLayout.TabId );
                     }
                     else
                     {
@@ -748,7 +748,7 @@ namespace ChemSW.Nbt.WebPages
                 Int32 OldSelectedNodeTypePropId = CswConvert.ToInt32( _SelectedValue );
                 if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property )
                 {
-                    CswNbtMetaDataNodeTypeTab OriginalTab = SelectedNodeTypeProp.EditLayout.Tab;
+					CswNbtMetaDataNodeTypeTab OriginalTab = Master.CswNbtResources.MetaData.getNodeTypeTab( SelectedNodeTypeProp.EditLayout.TabId );
 
                     string MultiString = getPropAttributeValue( "EditProp_MultiValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     if( MultiString == string.Empty )
@@ -829,10 +829,10 @@ namespace ChemSW.Nbt.WebPages
                     Int32 DisplayColAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     bool SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
 
-                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, Tab, DisplayRow, DisplayColumn );
+                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, Tab.TabId, DisplayRow, DisplayColumn );
                     if( SetValueOnAdd )
                     {
-                        PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, null, DisplayRowAdd, DisplayColAdd );
+                        PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, Int32.MinValue, DisplayRowAdd, DisplayColAdd );
                     }
                     else
                     {
@@ -879,21 +879,21 @@ namespace ChemSW.Nbt.WebPages
                     }
 
                     // Conditional Filter
-                    if( _ConditionalFilter != null && _ConditionalFilter.SelectedPropLatestVersion != null &&
-                        PropToSave.EditLayout.Tab.TabName == OriginalTab.TabName ) //BZ 7415
-                    {
-                        PropToSave.setFilter( _ConditionalFilter.SelectedNodeTypePropFirstVersionId, _ConditionalFilter.SelectedSubField, _ConditionalFilter.SelectedFilterMode, _ConditionalFilter.FilterValue );
-                    }
-                    else
-                    {
-                        PropToSave.clearFilter();
+					if( _ConditionalFilter != null && _ConditionalFilter.SelectedPropLatestVersion != null &&
+						Master.CswNbtResources.MetaData.getNodeTypeTab( PropToSave.EditLayout.TabId ).TabName == OriginalTab.TabName ) //BZ 7415
+					{
+						PropToSave.setFilter( _ConditionalFilter.SelectedNodeTypePropFirstVersionId, _ConditionalFilter.SelectedSubField, _ConditionalFilter.SelectedFilterMode, _ConditionalFilter.FilterValue );
+					}
+					else
+					{
+						PropToSave.clearFilter();
 
-                        if( _ConditionalFilter != null )
-                        {
-                            _ConditionalFilter.FilterPropertiesToTabId = PropToSave.EditLayout.Tab.TabId;
-                            _ConditionalFilter.Set( SelectedNodeType.NodeTypeId, string.Empty );
-                        }
-                    }
+						if( _ConditionalFilter != null )
+						{
+							_ConditionalFilter.FilterPropertiesToTabId = PropToSave.EditLayout.TabId;
+							_ConditionalFilter.Set( SelectedNodeType.NodeTypeId, string.Empty );
+						}
+					}
 
                     // For Sequences:
                     CswSequencesEditor SequencesEditor = (CswSequencesEditor) EditPropPlaceHolder.FindControl( "EditProp_SequenceValue" + OldSelectedNodeTypePropId.ToString() );
@@ -1362,9 +1362,9 @@ namespace ChemSW.Nbt.WebPages
                     if( CswConvert.ToInt32( _SelectedValue ) > 0 )
                     {
                         // Edit Property Select box
-                        if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.EditLayout.Tab != null )
+                        if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.EditLayout.TabId != Int32.MinValue )
                         {
-                            EditPropTabSelect.SelectedValue = SelectedNodeTypeProp.EditLayout.Tab.TabName;
+							EditPropTabSelect.SelectedValue = Master.CswNbtResources.MetaData.getNodeTypeTab( SelectedNodeTypeProp.EditLayout.TabId ).TabName;
                         }
                     }
                     _SaveButton.Visible = true;
