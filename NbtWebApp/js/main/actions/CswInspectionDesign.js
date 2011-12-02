@@ -527,7 +527,7 @@
                         
                         //There is still a bugg here, we must fetch the current instance of the grid rows data for preview here. It may have changed. 
                         confirmGridOptions.ID = makeStepId('confirmGrid');
-                        //JSON.stringify(inspectionGrid.$gridTable.jqGrid('getRowData'));
+                        confirmGridOptions.gridOpts.data = inspectionGrid.$gridTable.jqGrid('getRowData');
                         confirmGridOptions.gridOpts.autowidth = false;
                         confirmGridOptions.gridOpts.shrinkToFit = true;
                         confirmGridOptions.gridOpts.height = 150;
