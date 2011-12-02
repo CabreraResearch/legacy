@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.WebServices
             string Ret = string.Empty;
             if( wsTools.isNodeTypeNameUnique( NodeTypeName, _CswNbtResources ) )
             {
-                Ret = _TextInfo.ToTitleCase( NodeTypeName.Trim() );
+                Ret = _standardizeName( NodeTypeName );
             }
             return Ret;
         }
@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.WebServices
                     CategoryName = InspectionTargetName;
                 }
             }
-            CategoryName = _TextInfo.ToTitleCase( CategoryName.Trim() );
+            CategoryName = _standardizeName( CategoryName );
             return CategoryName;
         }
 
@@ -118,6 +118,11 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentRole, true );
         }
 
+        private string _standardizeName( object Tab )
+        {
+            return _TextInfo.ToTitleCase( CswConvert.ToString( Tab ).Trim() );
+        }
+
         private Dictionary<string, CswNbtMetaDataNodeTypeTab> _getTabsForInspection( JArray Grid, CswNbtMetaDataNodeType NodeType )
         {
             Dictionary<string, CswNbtMetaDataNodeTypeTab> RetDict = new Dictionary<string, CswNbtMetaDataNodeTypeTab>();
@@ -126,7 +131,7 @@ namespace ChemSW.Nbt.WebServices
                 if( Grid[Index].Type == JTokenType.Object )
                 {
                     JObject ThisRow = (JObject) Grid[Index];
-                    string TabName = _TextInfo.ToTitleCase( CswConvert.ToString( ThisRow[_SectionName] ) );
+                    string TabName = _standardizeName( ThisRow[_SectionName] );
                     if( string.IsNullOrEmpty( TabName ) )
                     {
                         TabName = "Section 1";
@@ -154,12 +159,12 @@ namespace ChemSW.Nbt.WebServices
                 if( Grid[Index].Type == JTokenType.Object )
                 {
                     JObject ThisRow = (JObject) Grid[Index];
-                    string TabName = CswConvert.ToString( ThisRow[_SectionName] );
+                    string TabName = _standardizeName( ThisRow[_SectionName] );
                     if( string.IsNullOrEmpty( TabName ) )
                     {
                         TabName = _DefaultSectionName;
                     }
-                    string Question = _TextInfo.ToTitleCase( CswConvert.ToString( ThisRow[_QuestionName] ) );
+                    string Question = _standardizeName( ThisRow[_QuestionName] );
                     string AllowedAnswers = CswConvert.ToString( ThisRow[_AllowedAnswersName] );
                     string CompliantAnswers = CswConvert.ToString( ThisRow[_CompliantAnswersName] );
                     string HelpText = CswConvert.ToString( ThisRow[_HelpTextName] );
@@ -168,11 +173,16 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswNbtMetaDataNodeTypeTab ThisTab;
                         Tabs.TryGetValue( TabName, out ThisTab );
-                        Int32 ThisTabId = Int32.MinValue;
+                        Int32 ThisTabId;
                         if( null != ThisTab )
                         {
                             ThisTabId = ThisTab.TabId;
                         }
+                        else
+                        {
+                            ThisTabId = Tabs[_DefaultSectionName].TabId;
+                        }
+
                         CswNbtMetaDataNodeTypeProp ThisQuestion = _CswNbtResources.MetaData.makeNewProp( InspectionDesignNt, CswNbtMetaDataFieldType.NbtFieldType.Question, Question, ThisTabId );
 
                         if( null == ThisQuestion )
@@ -640,7 +650,8 @@ namespace ChemSW.Nbt.WebServices
                 foreach( string CompliantAnswer in CompliantAnswers )
                 {
                     string ThisAnswer = CompliantAnswer.ToLower().Trim();
-                    if( false == UniqueCompliantAnswers.ContainsKey( ThisAnswer ) )
+                    if( false == string.IsNullOrEmpty( ThisAnswer ) &&
+                            false == UniqueCompliantAnswers.ContainsKey( ThisAnswer ) )
                     {
                         UniqueCompliantAnswers.Add( ThisAnswer, CompliantAnswer );
                     }
@@ -649,7 +660,8 @@ namespace ChemSW.Nbt.WebServices
                 foreach( string AllowedAnswer in AllowedAnswers )
                 {
                     string ThisAnswer = AllowedAnswer.ToLower().Trim();
-                    if( false == UniqueAllowedAnswers.ContainsKey( ThisAnswer ) )
+                    if( false == string.IsNullOrEmpty( ThisAnswer ) &&
+                            false == UniqueAllowedAnswers.ContainsKey( ThisAnswer ) )
                     {
                         UniqueAllowedAnswers.Add( ThisAnswer, AllowedAnswer );
                     }
@@ -677,7 +689,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     RetCompliantAnswersString = RetCompliantAnswers.ToString();
                 }
-                else
+                else //We need at least one compliant answer. If none are provided, then all allowed answers are compliant.
                 {
                     RetCompliantAnswersString = RetAllowedAnswers.ToString();
                 }
@@ -763,11 +775,14 @@ namespace ChemSW.Nbt.WebServices
                         Row[_AllowedAnswersName] = AllowedAnswers;
                         Row[_CompliantAnswersName] = ComplaintAnswers;
 
-                        if( string.Empty == CswConvert.ToString( Row[_SectionName] ) ||
-                            "Section 1" == CswConvert.ToString( Row[_SectionName] ) )
+                        string SectionName = _standardizeName( Row[_SectionName] );
+                        if( string.Empty == SectionName ||
+                            "Section 1" == SectionName )
                         {
-                            Row[_SectionName] = _DefaultSectionName;
+                            SectionName = _DefaultSectionName;
                         }
+                        Row[_SectionName] = SectionName;
+
                         Row["RowNumber"] = RowNumber;
                         RowNumber += 1;
                     }
