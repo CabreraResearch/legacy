@@ -849,9 +849,14 @@ window.abandonHope = true;
                         },
                         onFinish: function (viewid) {
                             clear({ 'all': true });
+                            refreshSelected({
+                                    type: 'view',
+                                    viewmode: 'tree',
+                                    viewid: viewid 
+                                });
                             handleItemSelect({
-                                    type: 'view', // Action, Report, View
-                                    viewmode: 'tree', // Grid, Tree, List
+                                    type: 'view',
+                                    viewmode: 'tree',
                                     viewid: viewid 
                                 });
                         },
