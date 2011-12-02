@@ -420,7 +420,10 @@
                     };
                     
                     var makeTargetSelect = function () {
-                        var $rowTwoTable = $inspectionTable = $divStep4.CswTable('cell',2,1).CswTable();
+                        var $rowTwoTable = $inspectionTable.CswTable('cell',2,1)
+                                                            .CswTable({
+                                                                FirstCellRightAlign: true
+                                                            });
                         //Normally this would be written as $inspectionTarget = $inspectionTarget || ...
                         //However, the variable assignment is sufficiently complex that this deviation is justified.
 
@@ -438,12 +441,14 @@
                                                                     var $this = $inspectionTarget.find(':selected');
                                                                     isNewTarget($this.CswAttrXml('data-newNodeType'));
                                                                     selectedInspectionTarget = $this.text();
-                                                                    $categoryName.val(selectedInspectionDesign.name + ': ' + selectedInspectionTarget);
+                                                                    categoryName = selectedInspectionDesign.name + ': ' + selectedInspectionTarget;
+                                                                    $categoryName.val(categoryName).css('width', (categoryName.length * 7 ));
                                                                 },
                                                                 onSuccess: function(data) {
                                                                     onNodeTypeSelectSuccess(data);
                                                                     selectedInspectionTarget = $inspectionTarget.find(':selected').text();
-                                                                    $categoryName.val(selectedInspectionDesign.name + ': ' + selectedInspectionTarget);
+                                                                    categoryName = selectedInspectionDesign.name + ': ' + selectedInspectionTarget;
+                                                                    $categoryName.val(categoryName).css('width', (categoryName.length * 7 ));
                                                                 }
                         });
                         
@@ -465,11 +470,13 @@
                         $divStep4.append('<br />');
 
                         $inspectionTable = $divStep4.CswTable('init', {
-                            ID: makeStepId('setInspectionTargetTable'),
-                            FirstCellRightAlign: true
+                            ID: makeStepId('setInspectionTargetTable')
                         });
 
-                        $rowOneTable = $inspectionTable.CswTable('cell', 1, 1).CswTable();
+                        $rowOneTable = $inspectionTable.CswTable('cell', 1, 1)
+                                                        .CswTable({
+                                                            FirstCellRightAlign: true
+                                                        });
                         
                         $rowOneTable.CswTable('cell', 1, 1)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
