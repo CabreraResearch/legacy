@@ -43,13 +43,13 @@
 
         // Step 1 - Select or Create Inspection Design
             selectedInspectionDesign = { id: '[Create New]', name: '[Create New]' },
-            $divStep1, categoryName, $inspectionDesignSelect, $newDesignName, $categoryName,
+            $divStep1, categoryName, $inspectionDesignSelect, $newDesignName, 
         // Step 2 - Upload Inspection Design
             $divStep2, gridIsPopulated = false,
         // Step 3 - Review and Revise Inspection Design
             $divStep3, inspectionGrid, gridOptions,
         // Step 4 - Select or Create Inspection Target
-            $divStep4, selectedInspectionTarget, $inspectionTarget, $addNewTarget, 
+            $divStep4, selectedInspectionTarget, $inspectionTarget, $addNewTarget, $categoryName,
         // Step 5 - Review and Finish
             $divStep5, //inspectionTargetGroups = { }, newSchedules = { }, $scheduleList,
 
@@ -163,18 +163,6 @@
                         toggleNewDesignName();
                         
                         $inspectionTable.CswTable('cell', 4, 1).append('<br />');
-
-                        //3. Category Name
-                        $inspectionTable.CswTable('cell', 5, 1)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .append('<span>Category Name&nbsp</span>');
-
-                        $categoryName = $inspectionTable.CswTable('cell', 5, 2)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .CswInput('init', {
-                                ID: o.ID + '_newDesignCategory',
-                                type: CswInput_Types.text
-                            });
                     }
                     stepOneComplete = true;
                 };
@@ -338,7 +326,6 @@
                         }
                     }; //doStepTwo
 
-                    categoryName = $categoryName.val();
                     if(isNewInspectionDesign()) {
                         selectedInspectionDesign.name = $newDesignName.val();
                         checkIsNodeTypeNameUnique(selectedInspectionDesign.name, doStepTwo);
@@ -378,7 +365,7 @@
             makeStepFour = (function() {
                 var stepFourComplete = false,
                     lastSelectedInspectionName = selectedInspectionDesign.name,
-                    $inspectionTable, $addBtn;
+                    $inspectionTable, $addBtn, $categoryLabel, $rowOneTable;
                 return function() {
                     //For tomorrow: remmeber that Target only affects View creation--we're using Object Classes as the target of relationships
                     //In the case of creating a new Target, we're maintaing Object Class loyalty even as we create new Node Types
@@ -386,7 +373,7 @@
                         if (data.nodetypecount === 0) { //Add a new Target
                             $inspectionTarget.hide();
                             isNewTarget(true);
-                            $addNewTarget = $inspectionTable.CswTable('cell', 1, 3)
+                            $addNewTarget = $rowOneTable.CswTable('cell', 1, 3)
                                 .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                 .CswInput('init', {
                                     ID: o.ID + '_newTargetName',
@@ -396,6 +383,7 @@
                                     setTimeout(function() {
                                         var newTargetName = $addNewTarget.val();
                                         if (false === isNullOrEmpty(newTargetName)) {
+                                            $categoryName.val(selectedInspectionDesign.name + ': ' + $addNewTarget.val());
                                             $wizard.CswWizard('button', 'next', 'enable');
                                         }
                                     }, 100);
@@ -404,7 +392,7 @@
                             selectedInspectionTarget = $inspectionTarget.find(':selected').text();
                             $wizard.CswWizard('button', 'next', 'enable');
 
-                            $addBtn = $addBtn || $inspectionTable.CswTable('cell', 1, 4)
+                            $addBtn = $addBtn || $rowOneTable.CswTable('cell', 1, 4)
                                                                 .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                                                 .CswDiv('init')
                                                                 .CswButton('init', {
@@ -415,7 +403,6 @@
                                                                         $.CswDialog('AddNodeTypeDialog', {
                                                                             objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
                                                                             nodetypename: '',
-                                                                            category: categoryName,
                                                                             $select: $inspectionTarget,
                                                                             nodeTypeDescriptor: 'Target',
                                                                             onSuccess: function(newData) {
@@ -433,12 +420,15 @@
                     };
                     
                     var makeTargetSelect = function () {
+                        var $rowTwoTable = $inspectionTable = $divStep4.CswTable('cell',2,1).CswTable();
                         //Normally this would be written as $inspectionTarget = $inspectionTarget || ...
                         //However, the variable assignment is sufficiently complex that this deviation is justified.
+
                         if(false === isNullOrEmpty($inspectionTarget, true)) {
                             $inspectionTarget.remove();
                         }
-                        $inspectionTarget = $inspectionTable.CswTable('cell', 1, 2)
+
+                        $inspectionTarget = $rowOneTable.CswTable('cell', 1, 2)
                                                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                                             .CswDiv('init')
                                                             .CswNodeTypeSelect('init', {
@@ -448,11 +438,26 @@
                                                                     var $this = $inspectionTarget.find(':selected');
                                                                     isNewTarget($this.CswAttrXml('data-newNodeType'));
                                                                     selectedInspectionTarget = $this.text();
+                                                                    $categoryName.val(selectedInspectionDesign.name + ': ' + selectedInspectionTarget);
                                                                 },
                                                                 onSuccess: function(data) {
                                                                     onNodeTypeSelectSuccess(data);
+                                                                    selectedInspectionTarget = $inspectionTarget.find(':selected').text();
+                                                                    $categoryName.val(selectedInspectionDesign.name + ': ' + selectedInspectionTarget);
                                                                 }
                         });
+                        
+                        //2. Category Name
+                        $categoryLabel = $categoryLabel || $rowTwoTable.CswTable('cell', 2, 1)
+                                                                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                                                                            .append('<span>Category Name&nbsp</span>');
+
+                        $categoryName = $categoryName || $rowTwoTable.CswTable('cell', 2, 2)
+                                                                        .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                                                                        .CswInput('init', {
+                                                                            ID: o.ID + '_newDesignCategory',
+                                                                            type: CswInput_Types.text
+                                                                        });
                     };
                     
                     if (false === stepFourComplete) {
@@ -464,10 +469,12 @@
                             FirstCellRightAlign: true
                         });
 
-                        $inspectionTable.CswTable('cell', 1, 1)
+                        $rowOneTable = $inspectionTable.CswTable('cell', 1, 1).CswTable();
+                        
+                        $rowOneTable.CswTable('cell', 1, 1)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .append('<span>Select an Inspection Target&nbsp</span>');
-
+        
                         makeTargetSelect();
                         lastSelectedInspectionName = selectedInspectionDesign.name;
                         stepFourComplete = true;
@@ -491,6 +498,8 @@
                     toggleButton(buttons.prev, true);
                     toggleButton(buttons.next, false);
                     toggleButton(buttons.finish, true);
+                    
+                    categoryName = $categoryName.val();
                     
                     $divStep5 = $divStep5 || $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step);
                     $divStep5.empty();

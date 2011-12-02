@@ -77,18 +77,20 @@ namespace ChemSW.Nbt.WebServices
             string CategoryName = Category;
             if( string.IsNullOrEmpty( CategoryName ) )
             {
-                if( null != InspectionTargetNt )
-                {
-                    CategoryName = InspectionTargetNt.Category;
-                }
-                else if( null != InspectionDesignNt )
+                if( null != InspectionDesignNt )
                 {
                     CategoryName = InspectionDesignNt.Category;
                 }
+
+                if( null != InspectionTargetNt )
+                {
+                    CategoryName += ": " + InspectionTargetNt.Category;
+                }
                 else
                 {
-                    CategoryName = InspectionTargetName;
+                    CategoryName += ": " + InspectionTargetName;
                 }
+
             }
             CategoryName = _standardizeName( CategoryName );
             return CategoryName;
@@ -298,7 +300,7 @@ namespace ChemSW.Nbt.WebServices
 
             return RetInspectionTargetNt;
         }
-        
+
         private void _setInspectionDesignTabsAndProps( CswNbtMetaDataNodeType InspectionDesignNt )
         {
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
@@ -385,7 +387,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             //Inspection Target Group Assignement view
-            CswNbtView InspectionTargetGroupAssignmentView = _createInspectionGroupAssignmentView( Category, InspectionTargetNt );
+            CswNbtView InspectionTargetGroupAssignmentView = _createInspectionGroupAssignmentView( Category, InspectionTargetNt, InspectionDesignNt );
             RetObj["views"][InspectionTargetGroupAssignmentView.ViewName] = new JObject();
             RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewname"] = InspectionTargetGroupAssignmentView.ViewName;
             if( InspectionTargetGroupAssignmentView.SessionViewId.isSet() )
@@ -407,9 +409,9 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
-                RetObj["views"][TargetInspectionsView.ViewName]["viewid"] = TargetInspectionsView.ViewId.get().ToString();    
+                RetObj["views"][TargetInspectionsView.ViewName]["viewid"] = TargetInspectionsView.ViewId.get().ToString();
             }
-            
+
 
             return RetObj;
         }
@@ -418,7 +420,7 @@ namespace ChemSW.Nbt.WebServices
         {
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
             CswNbtView RetView = null;
-            string InspectionSchedulesViewName = InspectionDesignNt.NodeTypeName + " Scheduling";
+            string InspectionSchedulesViewName = "Scheduling, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
 
             foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionSchedulesViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
             {
@@ -434,8 +436,6 @@ namespace ChemSW.Nbt.WebServices
                     RetView.makeNew( InspectionSchedulesViewName, NbtViewVisibility.Role, _CurrentUser.RoleId, null, null );
                     RetView.ViewMode = NbtViewRenderingMode.Tree;
                     RetView.Category = Category;
-
-                    _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
 
                     CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
                     _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
@@ -463,7 +463,7 @@ namespace ChemSW.Nbt.WebServices
             return RetView;
         }
 
-        private CswNbtView _createInspectionGroupAssignmentView( string Category, CswNbtMetaDataNodeType InspectionTargetNt )
+        private CswNbtView _createInspectionGroupAssignmentView( string Category, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionDesignNt )
         {
             _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
             CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
@@ -471,7 +471,7 @@ namespace ChemSW.Nbt.WebServices
             _validateNodeType( InspectionTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
 
             CswNbtView RetView = null;
-            string GroupAssignmentViewName = InspectionTargetGroupNt.NodeTypeName + " Assignment";
+            string GroupAssignmentViewName = "Assignment, " + InspectionTargetGroupNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
 
             foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( GroupAssignmentViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
             {
@@ -567,7 +567,7 @@ namespace ChemSW.Nbt.WebServices
             _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
 
             CswNbtView RetView = null;
-            string InspectionTargetViewName = InspectionTargetNt.NodeTypeName + " " + InspectionDesignNt.NodeTypeName;
+            string InspectionTargetViewName = "Inspections, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
 
             foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
             {
@@ -849,8 +849,8 @@ namespace ChemSW.Nbt.WebServices
             }
 
             Int32 TotalRows = GridArray.Count;
-            Category = _guaranteeCategoryName( Category, null, null, InspectionTargetName );
-            CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, Category );
+
+            CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, string.Empty );
             _setInspectionDesignTabsAndProps( InspectionDesignNt );
             _setNodeTypePermissions( InspectionDesignNt );
 
@@ -862,6 +862,9 @@ namespace ChemSW.Nbt.WebServices
             _pruneSectionOneTab( InspectionDesignNt );
             //Build the MetaData
             CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category );
+            //The Category name is now set
+            InspectionDesignNt.Category = Category;
+
             //Get the views
             JObject RetObj = _createInspectionDesignViews( Category, InspectionDesignNt, InspectionTargetNt );
 
