@@ -672,7 +672,8 @@
                             
                         },
                         error: function(error) {
-                            //$.CswDialog('ErrorDialog', error);
+                            toggleButton(buttons.cancel, true);
+                            toggleButton(buttons.prev, true);
                         }
                     });
             };
