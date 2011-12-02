@@ -410,6 +410,7 @@
                                                                             onSuccess: function(newData) {
                                                                                 selectedInspectionTarget = newData.nodetypename;
                                                                                 isNewTarget(true);
+                                                                                lastSelectedInspectionName = selectedInspectionDesign.name;
                                                                                 categoryName = selectedInspectionDesign.name + ': ' + selectedInspectionTarget;
                                                                                 $categoryName.val(categoryName);
                                                                                 $wizard.CswWizard('button', 'next', 'enable');
@@ -445,6 +446,7 @@
                                                                     isNewTarget($this.CswAttrXml('data-newNodeType'));
                                                                     selectedInspectionTarget = $this.text();
                                                                     categoryName = selectedInspectionDesign.name + ': ' + selectedInspectionTarget;
+                                                                    lastSelectedInspectionName = selectedInspectionDesign.name;
                                                                     $categoryName.val(categoryName).css('width', (categoryName.length * 7 ));
                                                                 },
                                                                 onSuccess: function(data) {
