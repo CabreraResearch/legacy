@@ -82,8 +82,8 @@ namespace ChemSW.Nbt
                                                          "nodeviewid", 
                                                          "viewname"
                                                      };
-
-
+            //ViewName is limited to 30 characters
+            ViewName = ViewName.ToLower().Trim().Substring( 0, 30 ).Trim();
             string WhereClause = string.Empty;
             if( Visibility != NbtViewVisibility.Unknown )
             {
@@ -109,7 +109,9 @@ namespace ChemSW.Nbt
             DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, WhereClause, false );
             foreach( DataRow CurrentRow in ViewTable.Rows )
             {
-                if( ViewName.ToLower().Trim() == CswConvert.ToString( CurrentRow["viewname"] ).ToLower().Trim() )
+                string CurrentViewName = CswConvert.ToString( CurrentRow["viewname"] ).ToLower().Trim();
+                if( ViewName == CurrentViewName ||
+                    CurrentViewName.Contains( ViewName ) )
                 {
                     ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
                 }

@@ -377,7 +377,8 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView InspectionSchedulesView = _createInspectionSchedulingView( InspectionDesignNt, Category, InspectionTargetNt );
             RetObj["views"][InspectionSchedulesView.ViewName] = new JObject();
             RetObj["views"][InspectionSchedulesView.ViewName]["viewname"] = InspectionSchedulesView.ViewName;
-            if( InspectionSchedulesView.SessionViewId.isSet() )
+            if( null != InspectionSchedulesView.SessionViewId &&
+                InspectionSchedulesView.SessionViewId.isSet() )
             {
                 RetObj["views"][InspectionSchedulesView.ViewName]["viewid"] = InspectionSchedulesView.SessionViewId.get().ToString();
             }
@@ -390,7 +391,8 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView InspectionTargetGroupAssignmentView = _createInspectionGroupAssignmentView( Category, InspectionTargetNt, InspectionDesignNt );
             RetObj["views"][InspectionTargetGroupAssignmentView.ViewName] = new JObject();
             RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewname"] = InspectionTargetGroupAssignmentView.ViewName;
-            if( InspectionTargetGroupAssignmentView.SessionViewId.isSet() )
+            if( null != InspectionTargetGroupAssignmentView.SessionViewId &&
+                    InspectionTargetGroupAssignmentView.SessionViewId.isSet() )
             {
                 RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewid"] = InspectionTargetGroupAssignmentView.SessionViewId.get().ToString();
             }
@@ -403,7 +405,8 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView TargetInspectionsView = _createTargetInspectionsView( InspectionDesignNt, Category, InspectionTargetNt );
             RetObj["views"][TargetInspectionsView.ViewName] = new JObject();
             RetObj["views"][TargetInspectionsView.ViewName]["viewname"] = TargetInspectionsView.ViewName;
-            if( TargetInspectionsView.SessionViewId.isSet() )
+            if( null != TargetInspectionsView.SessionViewId &&
+                    TargetInspectionsView.SessionViewId.isSet() )
             {
                 RetObj["views"][TargetInspectionsView.ViewName]["viewid"] = TargetInspectionsView.SessionViewId.get().ToString();
             }
@@ -453,13 +456,13 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
                     RetView.AddViewRelationship( IpGroupRelationship, CswNbtViewRelationship.PropOwnerType.Second, GnOwnerNtp, false );
                     RetView.save();
-                    RetView.SaveToCache( true );
                 }
                 catch( Exception ex )
                 {
                     throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionSchedulesViewName, "View creation failed", ex );
                 }
             }
+            RetView.SaveToCache( true );
             return RetView;
         }
 
@@ -500,13 +503,13 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewProperty GroupVp = RetView.AddViewProperty( DanglingTargetRel, ItTargetGroupNtp );
                     RetView.AddViewPropertyFilter( GroupVp, ItTargetGroupNtp.FieldTypeRule.SubFields[CswNbtSubField.SubFieldName.NodeID].Name, CswNbtPropFilterSql.PropertyFilterMode.Null, string.Empty, false );
                     RetView.save();
-                    RetView.SaveToCache( true );
                 }
                 catch( Exception ex )
                 {
                     throw new CswDniException( ErrorType.Error, "Failed to create view: " + GroupAssignmentViewName, "View creation failed", ex );
                 }
             }
+            RetView.SaveToCache( true );
             return RetView;
         }
 
@@ -594,13 +597,13 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewRelationship TargetRelationship = RetView.AddViewRelationship( InspectionTargetNt, false );
                     RetView.AddViewRelationship( TargetRelationship, CswNbtViewRelationship.PropOwnerType.Second, ItTargetNtp, false );
                     RetView.save();
-                    RetView.SaveToCache( true );
                 }
                 catch( Exception ex )
                 {
                     throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionTargetViewName, "View creation failed", ex );
                 }
             }
+            RetView.SaveToCache( true );
             return RetView;
         }
 
