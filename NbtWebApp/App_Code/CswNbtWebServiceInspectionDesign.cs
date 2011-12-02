@@ -367,6 +367,24 @@ namespace ChemSW.Nbt.WebServices
 
         #region Views
 
+        private void _getClientViewData( CswNbtView View, JObject RetObj )
+        {
+            if( null != View )
+            {
+                RetObj[View.ViewName] = new JObject();
+                RetObj[View.ViewName]["viewname"] = View.ViewName;
+                if( null != View.SessionViewId &&
+                    View.SessionViewId.isSet() )
+                {
+                    RetObj[View.ViewName]["viewid"] = View.SessionViewId.ToString();
+                }
+                else
+                {
+                    RetObj[View.ViewName]["viewid"] = View.ViewId.ToString();
+                }
+            }
+        }
+
         private JObject _createInspectionDesignViews( string Category, CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt )
         {
             JObject RetObj = new JObject();
@@ -375,46 +393,15 @@ namespace ChemSW.Nbt.WebServices
 
             //Inspection Scheduling view
             CswNbtView InspectionSchedulesView = _createInspectionSchedulingView( InspectionDesignNt, Category, InspectionTargetNt );
-            RetObj["views"][InspectionSchedulesView.ViewName] = new JObject();
-            RetObj["views"][InspectionSchedulesView.ViewName]["viewname"] = InspectionSchedulesView.ViewName;
-            if( null != InspectionSchedulesView.SessionViewId &&
-                InspectionSchedulesView.SessionViewId.isSet() )
-            {
-                RetObj["views"][InspectionSchedulesView.ViewName]["viewid"] = InspectionSchedulesView.SessionViewId.ToString();
-            }
-            else
-            {
-                RetObj["views"][InspectionSchedulesView.ViewName]["viewid"] = InspectionSchedulesView.ViewId.ToString();
-            }
+            _getClientViewData( InspectionSchedulesView, ( (JObject) RetObj["views"] ) );
 
             //Inspection Target Group Assignement view
             CswNbtView InspectionTargetGroupAssignmentView = _createInspectionGroupAssignmentView( Category, InspectionTargetNt, InspectionDesignNt );
-            RetObj["views"][InspectionTargetGroupAssignmentView.ViewName] = new JObject();
-            RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewname"] = InspectionTargetGroupAssignmentView.ViewName;
-            if( null != InspectionTargetGroupAssignmentView.SessionViewId &&
-                    InspectionTargetGroupAssignmentView.SessionViewId.isSet() )
-            {
-                RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewid"] = InspectionTargetGroupAssignmentView.SessionViewId.ToString();
-            }
-            else
-            {
-                RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewid"] = InspectionTargetGroupAssignmentView.ViewId.ToString();
-            }
+            _getClientViewData( InspectionTargetGroupAssignmentView, ( (JObject) RetObj["views"] ) );
 
             //Target Inspections view
             CswNbtView TargetInspectionsView = _createTargetInspectionsView( InspectionDesignNt, Category, InspectionTargetNt );
-            RetObj["views"][TargetInspectionsView.ViewName] = new JObject();
-            RetObj["views"][TargetInspectionsView.ViewName]["viewname"] = TargetInspectionsView.ViewName;
-            if( null != TargetInspectionsView.SessionViewId &&
-                    TargetInspectionsView.SessionViewId.isSet() )
-            {
-                RetObj["views"][TargetInspectionsView.ViewName]["viewid"] = TargetInspectionsView.SessionViewId.ToString();
-            }
-            else
-            {
-                RetObj["views"][TargetInspectionsView.ViewName]["viewid"] = TargetInspectionsView.ViewId.ToString();
-            }
-
+            _getClientViewData( TargetInspectionsView, ( (JObject) RetObj["views"] ) );
 
             return RetObj;
         }
