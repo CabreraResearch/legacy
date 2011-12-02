@@ -377,7 +377,7 @@ namespace ChemSW.Nbt.MetaData
             if( ChangesMade )
             {
                 CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
-                _CswNbtMetaDataTableCache.clear(); //this will force a reload of tables
+                _CswNbtMetaDataTableCache.makeCacheStale(); //this will force a reload of tables
             }
         }
 
