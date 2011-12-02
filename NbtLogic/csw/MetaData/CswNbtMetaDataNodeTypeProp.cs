@@ -119,6 +119,12 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( LayoutType, this );
         }
 
+		public void clearCachedLayouts()
+		{
+			_EditLayout = null;
+			_AddLayout = null;
+		}
+
         private CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout _EditLayout = null;
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout
         {

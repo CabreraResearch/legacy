@@ -873,7 +873,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 DataRow NewPropRow = NewPropsTable.NewRow();
                 NewPropRow["nodetypeid"] = CswConvert.ToDbVal( NewNodeTypeId );
-                NewPropRow["nodetypetabsetid"] = CswConvert.ToDbVal( CswConvert.ToInt32( TabMap[NodeTypeProp.EditLayout.Tab.TabId] ) );
+                //NewPropRow["nodetypetabsetid"] = CswConvert.ToDbVal( CswConvert.ToInt32( TabMap[NodeTypeProp.EditLayout.Tab.TabId] ) );
                 NewPropsTable.Rows.Add( NewPropRow );
                 Int32 NewPropId = CswConvert.ToInt32( NewPropRow["nodetypepropid"].ToString() );
                 if( IsVersioning )
@@ -892,7 +892,9 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeProp.CopyPropToNewNodeTypePropRow( NewPropRow );
                 _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NewPropsTable );
 
-                _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewPropRow, NodeTypeProp.PropId );
+				NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeTypeId, NewPropId, CswConvert.ToInt32( TabMap[NodeTypeProp.EditLayout.Tab.TabId] ), NodeTypeProp.EditLayout.DisplayRow, NodeTypeProp.EditLayout.DisplayColumn );
+
+				_CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewPropRow, NodeTypeProp.PropId );
             }
 
             // Fix Conditional Props (case 22328)

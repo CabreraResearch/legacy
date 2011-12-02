@@ -149,7 +149,9 @@ namespace ChemSW.Nbt.MetaData
                 CswNbtMetaDataNodeTypeProp OldNodeTypeProp = new CswNbtMetaDataNodeTypeProp( _CswNbtMetaDataResources, NodeTypeProp._DataRow );
                 _AllNodeTypeProps.Add( OldNodeTypeProp );
 
-                NodeTypeProp.Reassign( Row );
+				OldNodeTypeProp.clearCachedLayouts();
+				NodeTypeProp.clearCachedLayouts();
+				NodeTypeProp.Reassign( Row );
 
                 RegisterExisting( OldNodeTypeProp );
                 RegisterExisting( NodeTypeProp );
