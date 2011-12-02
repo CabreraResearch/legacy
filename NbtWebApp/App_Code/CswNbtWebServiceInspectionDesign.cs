@@ -723,7 +723,7 @@ namespace ChemSW.Nbt.WebServices
         /// <returns></returns>
         public DataTable convertExcelFileToDataTable( string FullPathAndFileName, ref string ErrorMessage, ref string WarningMessage )
         {
-            DataTable ExcelDataTable = null;
+            DataTable RetDataTable = new DataTable();
             OleDbConnection ExcelConn = null;
 
             try
@@ -746,46 +746,39 @@ namespace ChemSW.Nbt.WebServices
                 OleDbCommand SelectCommand = new OleDbCommand( "SELECT * FROM [" + FirstSheetName + "]", ExcelConn );
                 DataAdapter.SelectCommand = SelectCommand;
 
-                ExcelDataTable = new DataTable();
-                DataAdapter.Fill( ExcelDataTable );
+                DataTable UploadDataTable = new DataTable();
 
-                foreach( DataColumn Column in ExcelDataTable.Columns )
+                DataAdapter.Fill( UploadDataTable );
+
+                //Normalize the incoming column names
+                foreach( DataColumn Column in UploadDataTable.Columns )
                 {
                     Column.ColumnName = Column.ColumnName.ToUpper().Replace( " ", "_" );
-                    if( false == _ColumnNames.Contains( Column.ColumnName ) )
-                    {
-                        ExcelDataTable.Columns.Remove( Column );
-                    }
                 }
 
+                //Prep the outgoing column names
                 foreach( string ColumnName in _ColumnNames )
                 {
-                    if( ExcelDataTable.Columns[ColumnName] == null )
-                    {
-                        ExcelDataTable.Columns.Add( ColumnName );
-                    }
+                    RetDataTable.Columns.Add( ColumnName );
                 }
-
-                if( ExcelDataTable.Columns["RowNumber"] == null )
-                {
-                    ExcelDataTable.Columns.Add( "RowNumber" );
-                }
+                RetDataTable.Columns.Add( "RowNumber" );
 
                 Int32 RowNumber = 0;
-                foreach( DataRow Row in ExcelDataTable.Rows )
+                foreach( DataRow Row in UploadDataTable.Rows )
                 {
-                    if( string.Empty == CswConvert.ToString( Row[_QuestionName] ) )
+                    string Question = _standardizeName( Row[_QuestionName] );
+                    if( false == string.IsNullOrEmpty( Question ) )
                     {
-                        ExcelDataTable.Rows.Remove( Row );
-                    }
-                    else
-                    {
+                        DataRow NewRow = RetDataTable.NewRow();
+                        NewRow[_QuestionName] = Question;
+
                         string AllowedAnswers = CswConvert.ToString( Row[_AllowedAnswersName] );
                         string ComplaintAnswers = CswConvert.ToString( Row[_CompliantAnswersName] );
                         _validateAnswers( ref ComplaintAnswers, ref AllowedAnswers );
 
-                        Row[_AllowedAnswersName] = AllowedAnswers;
-                        Row[_CompliantAnswersName] = ComplaintAnswers;
+                        NewRow[_AllowedAnswersName] = AllowedAnswers;
+                        NewRow[_CompliantAnswersName] = ComplaintAnswers;
+                        NewRow[_HelpTextName] = CswConvert.ToString( Row[_HelpTextName] );
 
                         string SectionName = _standardizeName( Row[_SectionName] );
                         if( string.Empty == SectionName ||
@@ -793,12 +786,15 @@ namespace ChemSW.Nbt.WebServices
                         {
                             SectionName = _DefaultSectionName;
                         }
-                        Row[_SectionName] = SectionName;
+                        NewRow[_SectionName] = SectionName;
+                        NewRow["RowNumber"] = RowNumber;
 
-                        Row["RowNumber"] = RowNumber;
+                        RetDataTable.Rows.Add( NewRow );
                         RowNumber += 1;
                     }
                 }
+
+
             } // try
             catch( Exception Exception )
             {
@@ -812,7 +808,7 @@ namespace ChemSW.Nbt.WebServices
                     ExcelConn.Dispose();
                 }
             }
-            return ExcelDataTable;
+            return RetDataTable;
         } // convertExcelFileToDataTable()
 
         public JObject recycleInspectionDesign( string InspectionDesignName, string InspectionTargetName, string Category )
