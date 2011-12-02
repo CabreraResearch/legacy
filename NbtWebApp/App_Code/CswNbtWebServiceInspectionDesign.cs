@@ -380,11 +380,11 @@ namespace ChemSW.Nbt.WebServices
             if( null != InspectionSchedulesView.SessionViewId &&
                 InspectionSchedulesView.SessionViewId.isSet() )
             {
-                RetObj["views"][InspectionSchedulesView.ViewName]["viewid"] = InspectionSchedulesView.SessionViewId.get().ToString();
+                RetObj["views"][InspectionSchedulesView.ViewName]["viewid"] = InspectionSchedulesView.SessionViewId.ToString();
             }
             else
             {
-                RetObj["views"][InspectionSchedulesView.ViewName]["viewid"] = InspectionSchedulesView.ViewId.get().ToString();
+                RetObj["views"][InspectionSchedulesView.ViewName]["viewid"] = InspectionSchedulesView.ViewId.ToString();
             }
 
             //Inspection Target Group Assignement view
@@ -394,11 +394,11 @@ namespace ChemSW.Nbt.WebServices
             if( null != InspectionTargetGroupAssignmentView.SessionViewId &&
                     InspectionTargetGroupAssignmentView.SessionViewId.isSet() )
             {
-                RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewid"] = InspectionTargetGroupAssignmentView.SessionViewId.get().ToString();
+                RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewid"] = InspectionTargetGroupAssignmentView.SessionViewId.ToString();
             }
             else
             {
-                RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewid"] = InspectionTargetGroupAssignmentView.ViewId.get().ToString();
+                RetObj["views"][InspectionTargetGroupAssignmentView.ViewName]["viewid"] = InspectionTargetGroupAssignmentView.ViewId.ToString();
             }
 
             //Target Inspections view
@@ -408,11 +408,11 @@ namespace ChemSW.Nbt.WebServices
             if( null != TargetInspectionsView.SessionViewId &&
                     TargetInspectionsView.SessionViewId.isSet() )
             {
-                RetObj["views"][TargetInspectionsView.ViewName]["viewid"] = TargetInspectionsView.SessionViewId.get().ToString();
+                RetObj["views"][TargetInspectionsView.ViewName]["viewid"] = TargetInspectionsView.SessionViewId.ToString();
             }
             else
             {
-                RetObj["views"][TargetInspectionsView.ViewName]["viewid"] = TargetInspectionsView.ViewId.get().ToString();
+                RetObj["views"][TargetInspectionsView.ViewName]["viewid"] = TargetInspectionsView.ViewId.ToString();
             }
 
 
@@ -474,7 +474,7 @@ namespace ChemSW.Nbt.WebServices
             _validateNodeType( InspectionTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
 
             CswNbtView RetView = null;
-            string GroupAssignmentViewName = "Assignment, " + InspectionTargetGroupNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
+            string GroupAssignmentViewName = "Groups, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
 
             foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( GroupAssignmentViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
             {
