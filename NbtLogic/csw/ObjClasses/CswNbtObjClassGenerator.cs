@@ -8,6 +8,8 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassGenerator : CswNbtObjClass, ICswNbtPropertySetScheduler
     {
+		public static string InspectionGeneratorNodeTypeName { get { return "Inspection Schedule"; } }
+
         public static string DueDateIntervalPropertyName { get { return "Due Date Interval"; } }
         public static string RunTimePropertyName { get { return "Run Time"; } }
         public static string FinalDueDatePropertyName { get { return "Final Due Date"; } }

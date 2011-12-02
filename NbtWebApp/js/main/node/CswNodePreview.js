@@ -41,24 +41,26 @@
 										cswnbtnodekeys: [ o.cswnbtnodekey ],
 										EditMode: EditMode.Preview.name,
 										ShowAsReport: false,
-										onInitFinish: function() {
-											
-											// Make sure preview div is within the window
-											windowX = $(window).width() - 10;
-											windowY = $(window).height() - 10;
-											var divwidth = $div.width();
-											var divheight = $div.height();
-											var X = o.eventArg.pageX;
-											var Y = o.eventArg.pageY;
+										onInitFinish: function(AtLeastOneProp) {
+											if(AtLeastOneProp)
+											{
+												// Make sure preview div is within the window
+												windowX = $(window).width() - 10;
+												windowY = $(window).height() - 10;
+												var divwidth = $div.width();
+												var divheight = $div.height();
+												var X = o.eventArg.pageX;
+												var Y = o.eventArg.pageY;
 
-											if(X + divwidth > windowX) X = windowX - divwidth;
-											if(Y + divheight > windowY) Y = windowY - divheight;
+												if(X + divwidth > windowX) X = windowX - divwidth;
+												if(Y + divheight > windowY) Y = windowY - divheight;
 
-											$div.css({ 
-													top: Y + 'px',
-													left: X + 'px'
-											});
-											$div.show();
+												$div.css({ 
+														top: Y + 'px',
+														left: X + 'px'
+												});
+												$div.show();
+											}
 										}
 									});
 					}, o.delay);

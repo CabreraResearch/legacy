@@ -558,7 +558,7 @@
         
         function makeTuningStep($content) {
             var $cell = $table6.CswTable('cell', 1, 2);
-            var viewmode = _getSelectedViewMode($viewgrid);
+            var viewmode = _getSelectedViewMode();
 
             // Root
             $content.find('.' + viewEditClasses.vieweditor_viewrootlink.name).click(function() {

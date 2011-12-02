@@ -3,6 +3,38 @@
 var ChemSW = ChemSW || (function(undefined) {
 
     return {
+        enums: {
+            ErrorType: {
+                warning: {
+                    name: 'warning',
+                    cssclass: 'CswErrorMessage_Warning'
+                },
+                error: {
+                    name: 'error',
+                    cssclass: 'CswErrorMessage_Error'
+                }
+            },
+            CswInspectionDesign_WizardSteps: {
+                step1: { step: 1, description: 'Name an Inspection Design' },
+                step2: { step: 2, description: 'Upload Template' },
+                step3: { step: 3, description: 'Review Inspection Design' },
+                step4: { step: 4, description: 'Select an Inspection Target' },
+                //step5: { step: 5, description: 'Create Inspection Schedules' },
+                step5: { step: 5, description: 'Finish' },
+                stepcount: 5
+            },
+            CswDialogButtons: {
+                1: 'ok',
+                2: 'ok/cancel',
+                3: 'yes/no'
+            }
+        },
+        ajax: {
+             
+        },
+        tools: {
+            
+        },
         makeSequentialArray: function(start, end) {
             var ret = [];
             start = +start;
@@ -16,6 +48,13 @@ var ChemSW = ChemSW || (function(undefined) {
                 }
             }
             return ret;
+        },
+        makeClientSideError: function(errorType, friendlyMsg, esotericMsg) {
+            return {
+                type: tryParseString(errorType, ChemSW.enums.ErrorType.warning.name),
+                message: tryParseString(friendlyMsg),
+                detail: tryParseString(esotericMsg)
+            };
         }
     };
 }());

@@ -112,9 +112,7 @@
             if (selectedAnswer !== '' && correctiveAction === '') {
                 isCompliant = false;
                 for (var i = 0; i < splitCompliantAnswers.length; i++) {
-                    if (splitCompliantAnswers[i] === selectedAnswer) {
-                        isCompliant = true;
-                    }
+                    isCompliant = isCompliant || (trim(splitCompliantAnswers[i].toLowerCase()) === trim(selectedAnswer.toLowerCase())) ;
                 }
             }
             if (isCompliant) {

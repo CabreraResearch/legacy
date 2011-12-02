@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool IsCompliant
         {
-            get { return ( CompliantAnswers.Contains( Answer ) || string.Empty != CorrectiveAction ); }
+            get { return ( CompliantAnswers.Contains( Answer, true ) || string.Empty != CorrectiveAction ); }
         }
 
         /// <summary>
@@ -287,24 +287,24 @@ namespace ChemSW.Nbt.PropTypes
                                     DateCorrected.ToShortDateString() : string.Empty ) );
         }
 
-		public override void ToJSON( JObject ParentObject )
-		{
-			ParentObject[_AnswerSubField.ToXmlNodeName( true )] = Answer;
-			ParentObject[CswNbtSubField.SubFieldName.AllowedAnswers.ToString().ToLower()] = AllowedAnswersString;
-			ParentObject[CswNbtSubField.SubFieldName.CompliantAnswers.ToString().ToLower()] = CompliantAnswersString;
-			ParentObject[_CommentsSubField.ToXmlNodeName( true )] = Comments;
-			ParentObject[_CorrectiveActionSubField.ToXmlNodeName( true )] = CorrectiveAction;
-			ParentObject[_IsCompliantSubField.ToXmlNodeName( true )] = IsCompliant.ToString();
-			//ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = ( DateAnswered != DateTime.MinValue ) ?
-			//        DateAnswered.ToShortDateString() : string.Empty;
-			//ParentObject[_DateCorrectedSubField.ToXmlNodeName( true )] = ( DateCorrected != DateTime.MinValue ) ?
-			//        DateCorrected.ToShortDateString() : string.Empty;
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject[_AnswerSubField.ToXmlNodeName( true )] = Answer;
+            ParentObject[CswNbtSubField.SubFieldName.AllowedAnswers.ToString().ToLower()] = AllowedAnswersString;
+            ParentObject[CswNbtSubField.SubFieldName.CompliantAnswers.ToString().ToLower()] = CompliantAnswersString;
+            ParentObject[_CommentsSubField.ToXmlNodeName( true )] = Comments;
+            ParentObject[_CorrectiveActionSubField.ToXmlNodeName( true )] = CorrectiveAction;
+            ParentObject[_IsCompliantSubField.ToXmlNodeName( true )] = IsCompliant.ToString();
+            //ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = ( DateAnswered != DateTime.MinValue ) ?
+            //        DateAnswered.ToShortDateString() : string.Empty;
+            //ParentObject[_DateCorrectedSubField.ToXmlNodeName( true )] = ( DateCorrected != DateTime.MinValue ) ?
+            //        DateCorrected.ToShortDateString() : string.Empty;
 
-			CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources, DateAnswered );
-			ParentObject.Add( new JProperty( _DateAnsweredSubField.ToXmlNodeName( true ), CswDateAnswered.ToClientAsDateTimeJObject() ) );
-			CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources, DateCorrected );
-			ParentObject.Add( new JProperty( _DateCorrectedSubField.ToXmlNodeName( true ), CswDateCorrected.ToClientAsDateTimeJObject() ) );
-		}
+            CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources, DateAnswered );
+            ParentObject.Add( new JProperty( _DateAnsweredSubField.ToXmlNodeName( true ), CswDateAnswered.ToClientAsDateTimeJObject() ) );
+            CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources, DateCorrected );
+            ParentObject.Add( new JProperty( _DateCorrectedSubField.ToXmlNodeName( true ), CswDateCorrected.ToClientAsDateTimeJObject() ) );
+        }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
@@ -364,28 +364,28 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-			if( DateAnswered == DateTime.MinValue )
-			{
-				//    if( null != JObject.Property( _DateAnsweredSubField.ToXmlNodeName( true ) ) )
-				//    {
-				//        DateAnswered = CswConvert.ToDateTime( JObject.Property( _DateAnsweredSubField.ToXmlNodeName( true ) ).Value );
-				//    }
-				CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources );
-				CswDateAnswered.FromClientDateTimeJObject( (JObject) JObject[_DateAnsweredSubField.ToXmlNodeName( true )] );
-				DateAnswered = CswDateAnswered.ToDateTime();
-			}
-			if( DateCorrected == DateTime.MinValue )
-			{
-				//    if( null != JObject.Property( _DateCorrectedSubField.ToXmlNodeName( true ) ) )
-				//    {
-				//        DateCorrected = CswConvert.ToDateTime( JObject.Property( _DateCorrectedSubField.ToXmlNodeName( true ) ).Value );
-				//    }
-				CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources );
-				CswDateCorrected.FromClientDateTimeJObject( (JObject) JObject[_DateCorrectedSubField.ToXmlNodeName( true )] );
-				DateCorrected = CswDateCorrected.ToDateTime();
-			}
+            if( DateAnswered == DateTime.MinValue )
+            {
+                //    if( null != JObject.Property( _DateAnsweredSubField.ToXmlNodeName( true ) ) )
+                //    {
+                //        DateAnswered = CswConvert.ToDateTime( JObject.Property( _DateAnsweredSubField.ToXmlNodeName( true ) ).Value );
+                //    }
+                CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources );
+                CswDateAnswered.FromClientDateTimeJObject( (JObject) JObject[_DateAnsweredSubField.ToXmlNodeName( true )] );
+                DateAnswered = CswDateAnswered.ToDateTime();
+            }
+            if( DateCorrected == DateTime.MinValue )
+            {
+                //    if( null != JObject.Property( _DateCorrectedSubField.ToXmlNodeName( true ) ) )
+                //    {
+                //        DateCorrected = CswConvert.ToDateTime( JObject.Property( _DateCorrectedSubField.ToXmlNodeName( true ) ).Value );
+                //    }
+                CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources );
+                CswDateCorrected.FromClientDateTimeJObject( (JObject) JObject[_DateCorrectedSubField.ToXmlNodeName( true )] );
+                DateCorrected = CswDateCorrected.ToDateTime();
+            }
 
-			if( null != JObject.Property( _AnswerSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject.Property( _AnswerSubField.ToXmlNodeName( true ) ) )
             {
                 Answer = (string) JObject.Property( _AnswerSubField.ToXmlNodeName( true ) ).Value;
             }

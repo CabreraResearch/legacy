@@ -106,6 +106,14 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+		public Int32 ConstrainObjectClassId
+		{
+			get
+			{
+				return _CswNbtMetaDataNodeTypeProp.FKValue;
+			}
+		}
+
         public DataTable Options
         {
             get
@@ -127,13 +135,16 @@ namespace ChemSW.Nbt.PropTypes
                 bool first = true;
                 foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
                 {
-                    DataRow NTRow = Data.NewRow();
-                    NTRow[NameColumn] = NodeType.NodeTypeName;          // latest name
-                    NTRow[KeyColumn] = NodeType.FirstVersionNodeTypeId;   // first nodetypeid
-                    NTRow[ValueColumn] = ( SelectedNodeTypeIds.Contains( NodeType.FirstVersionNodeTypeId.ToString() ) ||
-                                         ( first && Required && SelectedNodeTypeIds.Count == 0 ) );
-                    Data.Rows.Add( NTRow );
-                    first = false;
+					if( ConstrainObjectClassId == Int32.MinValue || NodeType.ObjectClass.ObjectClassId == ConstrainObjectClassId )
+					{
+						DataRow NTRow = Data.NewRow();
+						NTRow[NameColumn] = NodeType.NodeTypeName;          // latest name
+						NTRow[KeyColumn] = NodeType.FirstVersionNodeTypeId;   // first nodetypeid
+						NTRow[ValueColumn] = ( SelectedNodeTypeIds.Contains( NodeType.FirstVersionNodeTypeId.ToString() ) ||
+											 ( first && Required && SelectedNodeTypeIds.Count == 0 ) );
+						Data.Rows.Add( NTRow );
+						first = false;
+					}
                 }
                 return Data;
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -71,6 +72,52 @@ namespace ChemSW.Nbt
 
         }//restoreView()
 
+        public List<CswNbtView> restoreViews( string ViewName, NbtViewVisibility Visibility = NbtViewVisibility.Unknown, Int32 VisibilityId = Int32.MinValue )
+        {
+            List<CswNbtView> ReturnVal = new List<CswNbtView>();
+
+            CswTableSelect ViewSelect = _CswNbtResources.makeCswTableSelect( "CswNbtViewSelect_restoreViews_select", "node_views" );
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString()
+                                                     {
+                                                         "nodeviewid", 
+                                                         "viewname"
+                                                     };
+
+
+            string WhereClause = string.Empty;
+            if( Visibility != NbtViewVisibility.Unknown )
+            {
+                WhereClause = "where visibility='" + Visibility.ToString() + "'";
+            }
+
+            switch( Visibility )
+            {
+                case NbtViewVisibility.Role:
+                    if( Int32.MinValue != VisibilityId )
+                    {
+                        WhereClause += " and roleid='" + VisibilityId.ToString() + "'";
+                    }
+                    break;
+                case NbtViewVisibility.User:
+                    if( Int32.MinValue != VisibilityId )
+                    {
+                        WhereClause += " and userid='" + VisibilityId.ToString() + "'";
+                    }
+                    break;
+            }
+
+            DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, WhereClause, false );
+            foreach( DataRow CurrentRow in ViewTable.Rows )
+            {
+                if( ViewName.ToLower().Trim() == CswConvert.ToString( CurrentRow["viewname"] ).ToLower().Trim() )
+                {
+                    ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
+                }
+            }
+
+            return ( ReturnVal );
+
+        }//restoreViews()
 
         ///// <summary>
         ///// Get a DataTable with a single view, by primary key

@@ -1317,6 +1317,7 @@ namespace ChemSW.Nbt.WebServices
                     NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
+					ReturnVal["isadmin"] = _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower();
                     ReturnVal = ws.getProps( RealEditMode, NodeId, ParsedNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ), InDate, filterToPropId );
                 }
 
@@ -3070,7 +3071,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string finalizeInspectionDesign( string DesignGrid, string InspectionDesignName, string InspectionTargetName, string Schedules, string CopyFromInspectionDesign, string Category )
+        public string finalizeInspectionDesign( string DesignGrid, string InspectionDesignName, string InspectionTargetName, string IsNewInspection, string IsNewTarget, string Category )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3091,15 +3092,15 @@ namespace ChemSW.Nbt.WebServices
                         throw new CswDniException( ErrorType.Warning, "New Inspection must have a target.", "InspectionTarget was null or empty." );
                     }
 
-                    CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
+                    CswNbtWebServiceInspectionDesign ws = new CswNbtWebServiceInspectionDesign( _CswNbtResources );
 
-                    if( false == string.IsNullOrEmpty( CopyFromInspectionDesign ) && CopyFromInspectionDesign != "[Create New]" )
+                    if( CswConvert.ToBoolean( IsNewInspection ) )
                     {
-                        ReturnVal = ws.copyInspectionDesign( CopyFromInspectionDesign, InspectionDesignName, InspectionTargetName, Category );
+                        ReturnVal = ws.createInspectionDesignTabsAndProps( DesignGrid, InspectionDesignName, InspectionTargetName, Category );
                     }
                     else
                     {
-                        ReturnVal = ws.createInspectionDesignTabsAndProps( DesignGrid, InspectionDesignName, InspectionTargetName, Category );
+                        ReturnVal = ws.recycleInspectionDesign( InspectionDesignName, InspectionTargetName, Category );
                     }
 
                     //do Schedules in a separate piece
@@ -3153,7 +3154,7 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     // Load the excel file into a data table
-                    CswWebServiceInspectionDesign ws = new CswWebServiceInspectionDesign( _CswNbtResources );
+                    CswNbtWebServiceInspectionDesign ws = new CswNbtWebServiceInspectionDesign( _CswNbtResources );
                     ExcelDataTable = ws.convertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
 
                     // determine if we were successful or failure
@@ -3188,37 +3189,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // finalizeInspectionDesign()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getScheduleNodesForInspection( string InspectionTargetName, string CopyInspectionDesignName )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswWebServiceInspectionDesign( _CswNbtResources );
-                    ReturnVal = ws.getScheduleNodesForInspection( InspectionTargetName, CopyInspectionDesignName );
-                }
-
-                _deInitResources();
-            }
-
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        }
-
-        #endregion Inspection Design
+       #endregion Inspection Design
 
         #endregion Web Methods
 

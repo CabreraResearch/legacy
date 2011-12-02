@@ -61,7 +61,7 @@
             } else {
                 $li.append('<p>' + val + '</p>');
             }
-            return $list;
+            return $li;
         }
     };
     // Method calling logic
