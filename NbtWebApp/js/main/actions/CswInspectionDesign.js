@@ -383,7 +383,8 @@
                                     setTimeout(function() {
                                         var newTargetName = $addNewTarget.val();
                                         if (false === isNullOrEmpty(newTargetName)) {
-                                            $categoryName.val(selectedInspectionDesign.name + ': ' + $addNewTarget.val());
+                                            categoryName = selectedInspectionDesign.name + ': ' + $addNewTarget.val();
+                                            $categoryName.val(categoryName);
                                             $wizard.CswWizard('button', 'next', 'enable');
                                         }
                                     }, 100);
@@ -403,12 +404,14 @@
                                                                         $.CswDialog('AddNodeTypeDialog', {
                                                                             objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
                                                                             nodetypename: '',
+                                                                            category: 'do not show',
                                                                             $select: $inspectionTarget,
                                                                             nodeTypeDescriptor: 'Target',
                                                                             onSuccess: function(newData) {
                                                                                 selectedInspectionTarget = newData.nodetypename;
                                                                                 isNewTarget(true);
-                                                                                categoryName = newData.category;
+                                                                                categoryName = selectedInspectionDesign.name + ': ' + selectedInspectionTarget;
+                                                                                $categoryName.val(categoryName);
                                                                                 $wizard.CswWizard('button', 'next', 'enable');
                                                                             },
                                                                             title: 'Create a New Inspection Target Type.'
