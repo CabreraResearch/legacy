@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.WebServices
         public JObject getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
         {
             JObject Ret = new JObject();
+			TabOrderModifier = 0;
 
             CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, Date );
             if( filterToPropId != string.Empty )
@@ -40,7 +41,7 @@ namespace ChemSW.Nbt.WebServices
 				CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( Prop.EditLayout.TabId );
                 if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, false, Tab, _CswNbtResources.CurrentNbtUser, Node, Prop ) )
                 {
-                    _makeTab( Ret, Tab.TabOrder.ToString(), Tab.TabId.ToString(), Tab.TabName, false );
+                    _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, false );
                 }
             }
             else
@@ -79,17 +80,17 @@ namespace ChemSW.Nbt.WebServices
                                                                 .Cast<CswNbtMetaDataNodeTypeTab>()
                                                                 .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType, false, Tab ) ) )
                     {
-                        _makeTab( Ret, Tab.TabOrder.ToString(), Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
+                        _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
                     }
 
                     // History tab
                     if( false == CswConvert.ToBoolean( _IsMultiEdit ) &&
-                        Date.IsNull &&
-                                CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( "auditing" ) ) )
+						Date.IsNull &&
+						CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( "auditing" ) ) )
                     {
                         if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType ) )
                         {
-                            _makeTab( Ret, Int32.MaxValue.ToString(), HistoryTabPrefix + NodeId, "History", false );
+                            _makeTab( Ret, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
                         }
                     }
 
@@ -101,12 +102,22 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getTabs()
 
-        public void _makeTab( JObject ParentObj, string PropertyName, string Id, string Name, bool CanEditLayout )
+		private Int32 TabOrderModifier = 0;
+		public void _makeTab( JObject ParentObj, Int32 TabOrder, string Id, string Name, bool CanEditLayout )
         {
-            ParentObj[PropertyName] = new JObject();
-            ParentObj[PropertyName]["id"] = Id;
-            ParentObj[PropertyName]["name"] = Name;
-            ParentObj[PropertyName]["canEditLayout"] = CanEditLayout;
+			// case 24250
+			// This mechanism correctly orders all tabs even with redundant tab order values,
+			// as long as the tabs are added in order
+			while( ParentObj[(TabOrder + TabOrderModifier).ToString()] != null )
+			{
+				TabOrderModifier++;
+			}
+			string RealTabOrder = ( TabOrder + TabOrderModifier ).ToString();
+			
+			ParentObj[RealTabOrder] = new JObject();
+			ParentObj[RealTabOrder]["id"] = Id;
+			ParentObj[RealTabOrder]["name"] = Name;
+			ParentObj[RealTabOrder]["canEditLayout"] = CanEditLayout;
         }
 
 
