@@ -135,9 +135,10 @@
                                            .click(function() {
                                                o.MultiIsUnchanged = false;
                                                o.onchange();
-                                           });
-                            $eCell.CswAttrXml({'key': '', rowlabel: '[none]', collabel: o.cols[e], row: -1, col: e });
-                            if (false === o.Multi) {
+                                           })
+										   .CswAttrXml({'key': '', rowlabel: '[none]', collabel: o.cols[e], row: -1, col: e })
+										   .bind('change', function() { onChange(this); });
+							if (false === o.Multi) {
                                 $eCheck.CswAttrDom('checked', 'true'); // the browser will override this if another one is checked
                             }
                         } // for(var c = 0; c < o.cols.length; c++)
@@ -152,13 +153,15 @@
                         cache.MultiIsUnchanged = false;
                         if (contains(cache.data, row) && contains(cache.data[row],'values')) {
                             cache.data[row].values[col] = cB.checked;
-                            if(o.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
-                                var data = clientDb.getItem(cbaPrevSelected);
-                                if(contains(data,'row') && contains(data,'col')) {
-                                    cache.data[data.row].values[data.col] = false;
-                                }
-                                clientDb.setItem(cbaPrevSelected, {row: row, col: col});
+						}
+                        if(o.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
+                            var data = clientDb.getItem(cbaPrevSelected);
+                            if(contains(data,'row') && contains(data,'col')) {
+								if(contains(cache.data, data.row) && contains(cache.data[data.row],'values')) {
+									cache.data[data.row].values[data.col] = false;
+								}
                             }
+                            clientDb.setItem(cbaPrevSelected, {row: row, col: col});
                         }      
                         clientDb.setItem(storeDataId, cache);
                     };
@@ -184,7 +187,7 @@
 
                             if(sRow.values[f]) {
                                 if(o.UseRadios) {
-                                    clientDb.setItem('currentSelected', { col: f, row: s });
+                                    clientDb.setItem(cbaPrevSelected, { col: f, row: s });
                                 }
                                 $fCheck.CswAttrDom('checked', 'true');
                             }

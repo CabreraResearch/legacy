@@ -123,14 +123,15 @@ namespace ChemSW.Nbt.PropTypes
                 Data.Columns.Add( KeyColumn, typeof( int ) );
                 Data.Columns.Add( ValueColumn, typeof( bool ) );
 
-                if( SelectMode != PropertySelectMode.Multiple && !Required )
-                {
-                    DataRow NTRow = Data.NewRow();
-                    NTRow[NameColumn] = "[none]";
-                    NTRow[KeyColumn] = CswConvert.ToDbVal( Int32.MinValue );
-                    NTRow[ValueColumn] = ( SelectedNodeTypeIds.Count == 0 );
-                    Data.Rows.Add( NTRow );
-                }
+				// client handles this now
+				//if( SelectMode != PropertySelectMode.Multiple && !Required )
+				//{
+				//    DataRow NTRow = Data.NewRow();
+				//    NTRow[NameColumn] = "[none]";
+				//    NTRow[KeyColumn] = CswConvert.ToDbVal( Int32.MinValue );
+				//    NTRow[ValueColumn] = ( SelectedNodeTypeIds.Count == 0 );
+				//    Data.Rows.Add( NTRow );
+				//}
 
                 bool first = true;
                 foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
