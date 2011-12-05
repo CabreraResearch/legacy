@@ -284,7 +284,7 @@ namespace ChemSW.Nbt.WebServices
             //Inspection Target has a tab to host a grid view of Inspections
             CswNbtMetaDataNodeTypeTab ItInspectionsTab = _CswNbtResources.MetaData.makeNewTab( RetInspectionTargetNt, InspectionDesignName, 2 );
             CswNbtMetaDataNodeTypeProp ItInspectionsNtp = _CswNbtResources.MetaData.makeNewProp( RetInspectionTargetNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, InspectionDesignName, ItInspectionsTab.TabId );
-            CswNbtView ItInspectionsGridView = _createInspectionsView( InspectionDesignNt, string.Empty, NbtViewRenderingMode.Grid, NbtViewVisibility.Property, true, DateTime.MinValue, InspectionTargetName + " Grid Prop View" );
+			CswNbtView ItInspectionsGridView = _createInspectionsGridView( ItInspectionsNtp, InspectionDesignNt, string.Empty, NbtViewRenderingMode.Grid, NbtViewVisibility.Property, true, DateTime.MinValue, InspectionTargetName + " Grid Prop View" );
             ItInspectionsNtp.ViewId = ItInspectionsGridView.ViewId;
             ItInspectionsNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             #endregion Set new InspectionTarget Props and Tabs
@@ -509,7 +509,7 @@ namespace ChemSW.Nbt.WebServices
             return RetView;
         }
 
-        private CswNbtView _createInspectionsView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, NbtViewRenderingMode ViewMode,
+        private CswNbtView _createInspectionsGridView( CswNbtMetaDataNodeTypeProp InspectionsGridProp, CswNbtMetaDataNodeType InspectionDesignNt, string Category, NbtViewRenderingMode ViewMode,
             NbtViewVisibility Visibility, bool AllInspections, DateTime DueDate, string InspectionsViewName )
         {
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
@@ -531,10 +531,10 @@ namespace ChemSW.Nbt.WebServices
                 RetView.ViewMode = ViewMode;
                 RetView.Category = Category;
 
-                CswNbtViewRelationship InspectionVr = RetView.AddViewRelationship( InspectionDesignNt, false );
+                CswNbtViewRelationship TargetVr = RetView.AddViewRelationship( InspectionsGridProp.NodeType, true );
+				CswNbtViewRelationship InspectionVr = RetView.AddViewRelationship( TargetVr, CswNbtViewRelationship.PropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.OwnerPropertyName ), true );
                 CswNbtMetaDataNodeTypeProp DueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.DatePropertyName );
                 CswNbtViewProperty DueDateVp = RetView.AddViewProperty( InspectionVr, DueDateNtp );
-
                 CswNbtMetaDataNodeTypeProp StatusNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.StatusPropertyName );
                 CswNbtViewProperty StatusVp = RetView.AddViewProperty( InspectionVr, StatusNtp );
 
