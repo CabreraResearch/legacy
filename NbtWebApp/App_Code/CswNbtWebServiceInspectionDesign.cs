@@ -363,11 +363,12 @@ namespace ChemSW.Nbt.WebServices
         {
             _validateNodeType( InspectionScheduleNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
             CswNbtMetaDataNodeTypeProp OwnerNtp = InspectionScheduleNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
+			CswNbtMetaDataObjectClass GroupOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
 
-            if( OwnerNtp.FKType != CswNbtViewProperty.CswNbtPropType.ObjectClassPropId.ToString() || OwnerNtp.FKValue != InspectionScheduleNt.ObjectClass.ObjectClassId )
-            {
-                OwnerNtp.SetFK( CswNbtViewProperty.CswNbtPropType.ObjectClassPropId.ToString(), InspectionScheduleNt.ObjectClass.ObjectClassId );
-            }
+			if( OwnerNtp.FKType != CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() || OwnerNtp.FKValue != GroupOC.ObjectClassId )
+			{
+				OwnerNtp.SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
+			}
 
         }
 
