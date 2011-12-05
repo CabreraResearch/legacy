@@ -133,7 +133,7 @@ namespace ChemSW.Nbt
                 throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
 
-            setPropValue( InOwnerType, PropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.PropName );
+            setPropValue( InOwnerType, PropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.LatestVersionNodeTypeProp.PropName );
 
             if( InOwnerType == PropOwnerType.First )
             {
