@@ -35,10 +35,11 @@ namespace ChemSW.Nbt
         /// </summary>
         public static CswNbtResources makeCswNbtResources( CswNbtResources OtherResources )
         {
-            return makeCswNbtResources( OtherResources.AppType,
-                                        OtherResources.SetupVbls.SetupMode,
-                                        OtherResources.ExcludeDisabledModules,
-                                        OtherResources.IsDeleteModeLogical );
+			return makeCswNbtResources( OtherResources.AppType,
+										OtherResources.SetupVbls.SetupMode,
+										OtherResources.ExcludeDisabledModules,
+										OtherResources.IsDeleteModeLogical,
+										OtherResources.CswSuperCycleCache );
         }
 
         /// <summary>
