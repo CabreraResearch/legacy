@@ -185,17 +185,20 @@ namespace ChemSW.Nbt.MetaData
 			if( NodeTypeProp.EditLayout != null && NodeTypeProp.EditLayout.TabId != Int32.MinValue )
 			{
 				CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( NodeTypeProp.EditLayout.TabId );
-				Entry.ByQuestionNo.Add( Tab.SectionNo + "." + NodeTypeProp.QuestionNo + "_" + NodeTypeProp.PropId, NodeTypeProp );
-				if( !_ByNodeTypeTab.ContainsKey( NodeTypeProp.EditLayout.TabId ) )
+				if( Tab != null )
 				{
-					_ByNodeTypeTab.Add( NodeTypeProp.EditLayout.TabId, new NodeTypeTabHashEntry() );
-				}
+					Entry.ByQuestionNo.Add( Tab.SectionNo + "." + NodeTypeProp.QuestionNo + "_" + NodeTypeProp.PropId, NodeTypeProp );
+					if( !_ByNodeTypeTab.ContainsKey( NodeTypeProp.EditLayout.TabId ) )
+					{
+						_ByNodeTypeTab.Add( NodeTypeProp.EditLayout.TabId, new NodeTypeTabHashEntry() );
+					}
 
-				// By Tab
-				NodeTypeTabHashEntry TabEntry = _ByNodeTypeTab[NodeTypeProp.EditLayout.TabId] as NodeTypeTabHashEntry;
-				TabEntry.ByPropId.Add( NodeTypeProp.PropId, NodeTypeProp );
-				TabEntry.ByPropName.Add( NodeTypeProp.PropName.ToLower(), NodeTypeProp );
-				TabEntry.ByDisplayOrder.Add( NodeTypeProp, NodeTypeProp );
+					// By Tab
+					NodeTypeTabHashEntry TabEntry = _ByNodeTypeTab[NodeTypeProp.EditLayout.TabId] as NodeTypeTabHashEntry;
+					TabEntry.ByPropId.Add( NodeTypeProp.PropId, NodeTypeProp );
+					TabEntry.ByPropName.Add( NodeTypeProp.PropName.ToLower(), NodeTypeProp );
+					TabEntry.ByDisplayOrder.Add( NodeTypeProp, NodeTypeProp );
+				}
 			}
 			if( NodeTypeProp.ObjectClassProp != null )
                 Entry.ByObjectClassPropName.Add( NodeTypeProp.ObjectClassProp.PropName.ToLower(), NodeTypeProp );
