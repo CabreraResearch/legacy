@@ -94,8 +94,8 @@
             var $StartDate = o.$propdiv.find('#' + o.ID + '_sd');
             if (false === isNullOrEmpty($StartDate)) {
                 dateVal = $StartDate.CswDateTimePicker('value', o.propData.readonly);
-                attributes.startdatetime.date = dateVal.Date;
-                attributes.startdatetime.time = dateVal.Time;
+                attributes.startdatetime.date = dateVal.date;
+                attributes.startdatetime.time = dateVal.time;
             }
 
             var $Units = o.$propdiv.find('#' + o.ID + '_units');
