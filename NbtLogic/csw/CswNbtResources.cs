@@ -192,7 +192,7 @@ namespace ChemSW.Nbt
             get
             {
                 if( _ActionCollection == null )
-                    _ActionCollection = new CswNbtActionCollection( this );
+					_ActionCollection = new CswNbtActionCollection( this, _ExcludeDisabledModules );
                 return _ActionCollection;
             }
         }
@@ -524,7 +524,7 @@ namespace ChemSW.Nbt
             _clear();
             initModules();
             //_initNotifications( true );
-            _ActionCollection = new CswNbtActionCollection( this );
+			_ActionCollection = new CswNbtActionCollection( this, _ExcludeDisabledModules );
         }
         /// <summary>
         /// Stores the datetime that this class was cached
