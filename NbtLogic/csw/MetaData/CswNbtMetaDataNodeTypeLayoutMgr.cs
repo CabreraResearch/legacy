@@ -184,7 +184,7 @@ namespace ChemSW.Nbt.MetaData
 
 			CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropsInLayout_Select", "nodetype_layout" );
 			string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeType.NodeTypeId.ToString();
-			if( TabId != Int32.MinValue )
+			if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
 			{
 				WhereClause += "and nodetypetabsetid = " + TabId.ToString();
 			}
@@ -208,7 +208,7 @@ namespace ChemSW.Nbt.MetaData
 
 			CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropsNotInLayout_Select", "nodetype_layout" );
 			string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeType.NodeTypeId.ToString();
-			if( TabId != Int32.MinValue )
+			if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
 			{
 				WhereClause += "and nodetypetabsetid = " + TabId.ToString();
 			}

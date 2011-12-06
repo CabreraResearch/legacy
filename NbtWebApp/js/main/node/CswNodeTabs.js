@@ -216,8 +216,9 @@
                         {
                             onSwap(onSwapData);
                         },
-                        showConfigButton: o.Config,
-                        showRemoveButton: o.Config,
+                        showConfigButton: false, //o.Config,
+                        showRowColButtons: o.Config,
+						showRemoveButton: o.Config,
                         onConfigOn: function() {
                             doUpdateSubProps(true);
                         }, // onConfigOn
@@ -509,7 +510,8 @@
                             onSwap(onSwapData);
                         },
                         showConfigButton: false,
-                        showRemoveButton: false
+                        showRowColButtons: false,
+						showRemoveButton: false
                     });
                     
                     var subOnSuccess = function(subProp, key) {

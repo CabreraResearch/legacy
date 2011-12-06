@@ -44,6 +44,7 @@
 							showConfigButton: false,
 							showAddButton: false,
 							showRemoveButton: false,
+							showRowColButtons: false,
 							OddCellRightAlign: false,
 							ReadOnly: false
 						};
@@ -108,7 +109,7 @@
 													}
 												}).hide();
 						}
-						if(o.showConfigButton)
+						if (o.showRowColButtons)
 						{
 							$buttontable.CswTable('cell', 1, 3).CswImageButton({
 													ButtonType: CswImageButton_ButtonType.ArrowEast,
@@ -130,6 +131,9 @@
 														return CswImageButton_ButtonType.None; 
 													}
 												}).hide();
+						}
+						if (o.showConfigButton)
+						{
 							$buttontable.CswTable('cell', 1, 5).CswImageButton({
 													ButtonType: CswImageButton_ButtonType.Configure,
 													AlternateText: 'Configure',

@@ -57,7 +57,8 @@
                             });
                         },
                         'showConfigButton': true,
-                        'showAddButton': true,
+                        'showRowColButtons': true,
+						'showAddButton': true,
                         'showRemoveButton': true,
                         'onAddClick': function () { $.CswDialog('AddWelcomeItemDialog', { 'onAdd': o.onAddComponent }); },
                         'onRemove': function (ev, onRemoveData) {
