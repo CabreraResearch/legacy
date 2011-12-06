@@ -138,10 +138,7 @@ window.abandonHope = true;
                             }
                     }); // CswMenuHeader
 
-                    $('#ViewSelectDiv').CswViewSelect({
-                        'ID': 'mainviewselect',
-                        'onSelect': handleItemSelect
-                    }); // CswViewSelect
+                    refreshViewSelect();
 
                     var current = getCurrent();
                     if (false === isNullOrEmpty(current.viewid)) {
@@ -171,6 +168,14 @@ window.abandonHope = true;
             }); // CswLogin
 
         } // initAll()
+
+		function refreshViewSelect()
+		{
+			$('#ViewSelectDiv').CswViewSelect({
+				'ID': 'mainviewselect',
+				'onSelect': handleItemSelect
+			}); // CswViewSelect
+		}
 
         function refreshQuickLaunch() {
             $('#QuickLaunch').empty();
@@ -849,7 +854,8 @@ window.abandonHope = true;
                         },
                         onFinish: function (viewid) {
                             clear({ 'all': true });
-                            refreshSelected({
+                            refreshViewSelect();
+							refreshSelected({
                                     type: 'view',
                                     viewmode: 'tree',
                                     viewid: viewid 
