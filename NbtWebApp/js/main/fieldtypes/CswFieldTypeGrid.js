@@ -131,7 +131,10 @@
 //						onGenericSearch: function () { /*not possible here*/ }
 //					},
                     onEditView: function () {
-                        o.onEditView(viewid);                    
+						if(isFunction(o.onEditView))
+						{
+							o.onEditView(viewid);
+						}
                     }
             }); // CswMenuMain
         } // if( o.EditMode !== EditMode.PrintReport.name )

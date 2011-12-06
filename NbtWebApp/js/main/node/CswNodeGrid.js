@@ -28,7 +28,7 @@
         return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
     }
     
-    function editRows (rowid, grid, func) {
+    function editRows (rowid, grid, func, editViewFunc) {
         var editOpt = {
             cswnbtnodekey: [],
             nodepk: [],
@@ -36,6 +36,7 @@
         };
         var editFunc = function(opts) {
             opts.onEditNode = func;
+			opts.onEditView = editViewFunc;
             renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
             renameProperty(opts, 'nodepk', 'nodeids');
             renameProperty(opts, 'nodename', 'nodenames');
@@ -63,7 +64,8 @@
                 //onAddNode: function(nodeid,cswnbtnodekey){},
                 onEditNode: null, //function(nodeid,cswnbtnodekey){},
                 onDeleteNode: null, //function(nodeid,cswnbtnodekey){}
-                onSuccess: null
+                onSuccess: null,
+				onEditView: null // function(viewid){}
             };
         
             if (optJqGrid) {
@@ -181,7 +183,7 @@
 
                                 g.optNavEdit = {
                                     editfunc: function(rowid) {
-                                        return editRows(rowid, ret, o.onEditNode);
+                                        return editRows(rowid, ret, o.onEditNode, o.onEditView);
                                     }
                                 };
 
