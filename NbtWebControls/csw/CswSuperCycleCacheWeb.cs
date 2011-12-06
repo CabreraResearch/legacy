@@ -40,17 +40,15 @@ namespace ChemSW.Nbt
 
             set
             {
-
-                Object DateTimeObj = _Cache.Get( CachedItems.CacheDirtyThreshold.ToString() );
+                string Key = CachedItems.CacheDirtyThreshold.ToString() ;
+                Object DateTimeObj = _Cache.Get(Key );
                 if( null != DateTimeObj )
                 {
-                    DateTimeObj = value;
+                    _Cache.Remove( Key );
                 }
-                else
-                {
-                    _Cache.Add( CachedItems.CacheDirtyThreshold.ToString(), value, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.Normal, null );
 
-                }
+                _Cache.Add( Key, value, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.Normal, null );
+
             }//set
 
 
