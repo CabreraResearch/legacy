@@ -41,8 +41,8 @@
             $DTPickerDiv = o.$propdiv.find('#' + o.ID);
             if (false === isNullOrEmpty($DTPickerDiv)) {
                 dateVal = $DTPickerDiv.CswDateTimePicker('value', o.propData.readonly);
-                attributes.value.date = dateVal.Date;
-                attributes.value.time = dateVal.Time;
+                attributes.value.date = dateVal.date;
+                attributes.value.time = dateVal.time;
             }
             preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
