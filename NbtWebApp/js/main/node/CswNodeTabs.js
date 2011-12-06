@@ -153,7 +153,7 @@
         } // getTabs()
 
         function getProps($tabcontentdiv, tabid) {
-            if( o.EditMode === EditMode.AddInPopup.name ) {
+            if( o.EditMode === EditMode.AddInPopup.name && o.Config === false) {
                 // case 20970 - make sure there's room in the quota
                 CswAjaxJson({
                     url: o.QuotaUrl,
