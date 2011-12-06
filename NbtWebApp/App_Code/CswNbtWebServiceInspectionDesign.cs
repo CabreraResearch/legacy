@@ -19,12 +19,10 @@ namespace ChemSW.Nbt.WebServices
 
         private CswNbtResources _CswNbtResources;
         private readonly ICswNbtUser _CurrentUser;
-        private readonly CswNbtObjClassRole _CurrentRole;
         private readonly TextInfo _TextInfo;
         public CswNbtWebServiceInspectionDesign( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            _CurrentRole = _CswNbtResources.CurrentNbtUser.RoleNode;
 
             if( _CswNbtResources.CurrentNbtUser.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName )
             {
@@ -110,14 +108,10 @@ namespace ChemSW.Nbt.WebServices
 
         private void _setNodeTypePermissions( CswNbtMetaDataNodeType NodeType )
         {
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Create, NodeType, _CurrentUser, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Edit, NodeType, _CurrentUser, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Delete, NodeType, _CurrentUser, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentUser, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Create, NodeType, _CurrentRole, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Edit, NodeType, _CurrentRole, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Delete, NodeType, _CurrentRole, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentRole, true );
+			_CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Create, NodeType, _CurrentUser, true );
+			_CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Edit, NodeType, _CurrentUser, true );
+			_CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Delete, NodeType, _CurrentUser, true );
+			_CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentUser, true );
         }
 
         private string _standardizeName( object Name )
