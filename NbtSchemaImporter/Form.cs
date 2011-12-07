@@ -61,13 +61,7 @@ namespace ChemSW.Nbt.Schema
             InitSchemaSelectBox.DisplayMember = WorkerThread.ColName_Display;
             InitSchemaSelectBox.SelectedIndexChanged += new EventHandler( SchemaSelectBox_SelectedIndexChanged );
 
-            ExportSchemaSelectBox.DataSource = _DbInstances;
-            ExportSchemaSelectBox.ValueMember = WorkerThread.ColName_AccessId;
-            ExportSchemaSelectBox.DisplayMember = WorkerThread.ColName_Display;
-            ExportSchemaSelectBox.SelectedIndexChanged += new EventHandler( SchemaSelectBox_SelectedIndexChanged );
-
             ErrorLabel.Text = string.Empty;
-            _initNodeTypes();
 
             //_DataFilesTable = _WorkerThread.getDataFilesTable();
             //DataFileSelectBox.DataSource = _DataFilesTable;
@@ -201,24 +195,14 @@ namespace ChemSW.Nbt.Schema
             string AccessId = ( (ComboBox) sender ).SelectedValue.ToString();
             _WorkerThread.AccessId = AccessId;
             ErrorLabel.Text = string.Empty;
-            _initNodeTypes();
 
             InitSchemaSelectBox.SelectedValue = AccessId;
-            ExportSchemaSelectBox.SelectedValue = AccessId;
 
             _refreshStatus();
         } // InitializerForm()
 
 
-        public void _initNodeTypes()
-        {
-            NodeTypeCheckedListBox.Items.Clear();
-            ICollection NodeTypesCol = _WorkerThread.getNodeTypes();
-            foreach( CswNbtMetaDataNodeType NodeType in NodeTypesCol )
-            {
-                NodeTypeCheckedListBox.Items.Add( NodeType, true );
-            }
-        }
+
 
 
         void ConfirmCheckbox_CheckedChanged( object sender, EventArgs e )
@@ -238,7 +222,7 @@ namespace ChemSW.Nbt.Schema
             if( ImportButtonState.Start.ToString() == ImportButton.Text )
             {
 
-                if( MessageBox.Show( "Do not proceed unless you have made a viable backup of schema  " + ExportSchemaSelectBox.Text + "; this action is irreversable. Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+                if( MessageBox.Show( "Do not proceed unless you have made a viable backup of schema  " + InitSchemaSelectBox.Text + "; this action is irreversable. Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
                 {
 
                     if( _DataFilePath != string.Empty )
@@ -265,7 +249,7 @@ namespace ChemSW.Nbt.Schema
             }
             else if( ImportButtonState.Resume.ToString() == ImportButton.Text )
             {
-                if( MessageBox.Show( "You are about resume importing data into schema " + ExportSchemaSelectBox.Text + "; it would not hurt to make another schema backup, separate from the original backup. What you are about to do is irreversable!!! Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+                if( MessageBox.Show( "You are about resume importing data into schema " + InitSchemaSelectBox.Text + "; it would not hurt to make another schema backup, separate from the original backup. What you are about to do is irreversable!!! Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
                 {
                     ImportButton.Text = ImportButtonState.Stop.ToString();
                     ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
@@ -306,37 +290,6 @@ namespace ChemSW.Nbt.Schema
             //ConfirmCheckbox.Checked = false;
         } // ImportButton_Callback
 
-        private void ExportButton_Click( object sender, EventArgs e )
-        {
-            if( saveFileDialog1.ShowDialog() == DialogResult.OK )
-            {
-                ExportButton.Enabled = false;
-                InProgressLabel.Visible = true;
-                InProgressLabel.Refresh();
-
-                // BZ 10345
-                Collection<CswNbtMetaDataNodeType> SelectedNodeTypes = new Collection<CswNbtMetaDataNodeType>();
-                foreach( CswNbtMetaDataNodeType SelectedNodeType in NodeTypeCheckedListBox.CheckedItems )
-                    SelectedNodeTypes.Add( SelectedNodeType );
-
-                WorkerThread.ExportHandler ExportHandler = new WorkerThread.ExportHandler( _WorkerThread.DoExport );
-                ExportHandler.BeginInvoke( saveFileDialog1.FileName, SelectedNodeTypes, ExportViews.Checked, ExportNodes.Checked,
-                                           new AsyncCallback( ExportButton_Callback ), null );
-            }
-
-        } // ExportButton_Click()
-
-        private void ExportButton_Callback( IAsyncResult Result )
-        {
-            InProgressLabel.BeginInvoke( new MethodInvoker( _EndExport ), null );
-        }
-        private void _EndExport()
-        {
-            ExportButton.Enabled = true;
-            InProgressLabel.Visible = false;
-            ExportCompletedLabel.Visible = true;
-            ExportCompletedLabel.Refresh();
-        } // ImportButton_Callback
 
         //private void ClearExistingCheckBox_CheckedChanged( object sender, EventArgs e )
         //{
@@ -346,17 +299,7 @@ namespace ChemSW.Nbt.Schema
         //        ClearExistingCheckBox.ForeColor = Color.Black;
         //} // ClearExistingCheckBox_CheckedChanged()
 
-        private void CheckAllButton_Click( object sender, EventArgs e )
-        {
-            for( Int32 i = 0; i < NodeTypeCheckedListBox.Items.Count; i++ )
-                NodeTypeCheckedListBox.SetItemChecked( i, true );
-        }
 
-        private void UnCheckAllButton_Click( object sender, EventArgs e )
-        {
-            for( Int32 i = 0; i < NodeTypeCheckedListBox.Items.Count; i++ )
-                NodeTypeCheckedListBox.SetItemChecked( i, false );
-        }
 
         private void DataFileLink_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e )
         {
@@ -400,7 +343,7 @@ namespace ChemSW.Nbt.Schema
 
         private void btn_ResetSchema_Click( object sender, EventArgs e )
         {
-            if( MessageBox.Show( "Remove temporary import tables and reset the import status on schema " + ExportSchemaSelectBox.Text + "; Proceed? ", "Reset", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+            if( MessageBox.Show( "Remove temporary import tables and reset the import status on schema " + InitSchemaSelectBox.Text + "; Proceed? ", "Reset", MessageBoxButtons.YesNo ) == DialogResult.Yes )
             {
                 _WorkerThread.reset();
                 _refreshStatus();
