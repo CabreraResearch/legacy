@@ -36,9 +36,11 @@ namespace ChemSW.Nbt.MetaData
         }//ctor
 
 
-        public void clear()
+        public void makeCacheStale()
         {
-            _CswSuperCycleCache.delete( Enum.GetNames( typeof( MetaDataTable ) ) );
+            //force tables to get nulled and hence reloaded one at a time,
+            //reducing the amount of write locking
+            _CswSuperCycleCache.CacheDirtyThreshold = DateTime.Now;
         }//clear() 
 
         public DataTable get( MetaDataTable TableId )
