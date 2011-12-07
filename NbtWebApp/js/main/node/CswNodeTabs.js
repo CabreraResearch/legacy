@@ -263,7 +263,7 @@
                         crawlObject(data, updOnSuccess, false);
                     }
 
-                    if( o.EditMode !== EditMode.PrintReport.Name)
+					if( o.EditMode !== EditMode.PrintReport.name)
                     {
                         $savetab = $formtblcell11.CswButton({ID: 'SaveTab', 
                                                 enabledText: 'Save Changes', 
