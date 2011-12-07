@@ -54,7 +54,7 @@ namespace ChemSW.Nbt
 
             get
             {
-                DateTime ReturnVal = DateTime.MinValue;
+                DateTime ReturnVal = DateTime.Now;
                 Object Object = _Cache.Get( CachedItems.CacheDirtyThreshold.ToString() );
                 if( null != Object )
                 {
