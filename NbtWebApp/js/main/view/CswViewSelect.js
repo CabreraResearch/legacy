@@ -126,7 +126,7 @@
 		$icondiv.css('height' ,'16px');
 
 		var $cell2 = $table.CswTable('cell', 1, 2);
-		$cell2.append(x.viewname);
+		$cell2.append(x.viewname.substr(0,30));
 
 		x.$selectdiv.CswComboBox( 'TopContent', $newTopContent );
 		x.$selectdiv.CswAttrXml('selectedType', x.type);
