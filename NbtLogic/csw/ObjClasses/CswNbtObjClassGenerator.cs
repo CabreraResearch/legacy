@@ -78,48 +78,48 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
 			
 
-			// case 24309
-			CswNbtMetaDataNodeType ThisGeneratorNT = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
-			CswNbtMetaDataNodeTypeProp OwnerNTP = ThisGeneratorNT.getNodeTypePropByObjectClassPropName( OwnerPropertyName );
-			if( ParentType.SelectedNodeTypeIds.Count > 0 )
-			{
-				CswNbtMetaDataNodeType ParentNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ParentType.SelectedNodeTypeIds[0] ) );
-				// Only need a view if parent is defined and parent is different than owner
-				if( ParentNT != null && ( ( OwnerNTP.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() && OwnerNTP.FKValue != ParentNT.NodeTypeId ) ||
-										  ( OwnerNTP.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() && OwnerNTP.FKValue != ParentNT.ObjectClass.ObjectClassId ) ) )
-				{
-					// Default view:
-					//    This Generator nodetype
-					//      Owner nodetype (by Generator's Owner)
-					//        Parent nodetype (by whatever property connects Owner and Parent)
+			//// case 24309
+			//CswNbtMetaDataNodeType ThisGeneratorNT = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
+			//CswNbtMetaDataNodeTypeProp OwnerNTP = ThisGeneratorNT.getNodeTypePropByObjectClassPropName( OwnerPropertyName );
+			//if( ParentType.SelectedNodeTypeIds.Count > 0 )
+			//{
+			//    CswNbtMetaDataNodeType ParentNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ParentType.SelectedNodeTypeIds[0] ) );
+			//    // Only need a view if parent is defined and parent is different than owner
+			//    if( ParentNT != null && ( ( OwnerNTP.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() && OwnerNTP.FKValue != ParentNT.NodeTypeId ) ||
+			//                              ( OwnerNTP.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() && OwnerNTP.FKValue != ParentNT.ObjectClass.ObjectClassId ) ) )
+			//    {
+			//        // Default view:
+			//        //    This Generator nodetype
+			//        //      Owner nodetype (by Generator's Owner)
+			//        //        Parent nodetype (by whatever property connects Owner and Parent)
 
-					CswNbtView PView = _CswNbtResources.ViewSelect.restoreView( ParentView.ViewId );
-					if( PView.Root == null || PView.Root.ChildRelationships.Count == 0 )
-					{
-						// Discover what relates the Owner and the Parent
-						CswNbtMetaDataNodeTypeProp ParentRelationNTP = null;
-						foreach( CswNbtMetaDataNodeTypeProp RelationshipNTP in ParentNT.NodeTypeProps )
-						{
-							if( RelationshipNTP.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-								RelationshipNTP.FKType == OwnerNTP.FKType &&
-								RelationshipNTP.FKValue == OwnerNTP.FKValue )
-							{
-								ParentRelationNTP = RelationshipNTP;
-								break;
-							}
-						}
+			//        CswNbtView PView = _CswNbtResources.ViewSelect.restoreView( ParentView.ViewId );
+			//        if( PView.Root == null || PView.Root.ChildRelationships.Count == 0 )
+			//        {
+			//            // Discover what relates the Owner and the Parent
+			//            CswNbtMetaDataNodeTypeProp ParentRelationNTP = null;
+			//            foreach( CswNbtMetaDataNodeTypeProp RelationshipNTP in ParentNT.NodeTypeProps )
+			//            {
+			//                if( RelationshipNTP.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+			//                    RelationshipNTP.FKType == OwnerNTP.FKType &&
+			//                    RelationshipNTP.FKValue == OwnerNTP.FKValue )
+			//                {
+			//                    ParentRelationNTP = RelationshipNTP;
+			//                    break;
+			//                }
+			//            }
 
-						if( ParentRelationNTP != null )
-						{
-							CswNbtViewRelationship GeneratorViewRel = PView.AddViewRelationship( ThisGeneratorNT, true );
-							CswNbtViewRelationship OwnerViewRel = PView.AddViewRelationship( GeneratorViewRel, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );
-							CswNbtViewRelationship ParentViewRel = PView.AddViewRelationship( OwnerViewRel, CswNbtViewRelationship.PropOwnerType.Second, ParentRelationNTP, true );
-							PView.save();
-						}
+			//            if( ParentRelationNTP != null )
+			//            {
+			//                CswNbtViewRelationship GeneratorViewRel = PView.AddViewRelationship( ThisGeneratorNT, true );
+			//                CswNbtViewRelationship OwnerViewRel = PView.AddViewRelationship( GeneratorViewRel, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );
+			//                CswNbtViewRelationship ParentViewRel = PView.AddViewRelationship( OwnerViewRel, CswNbtViewRelationship.PropOwnerType.Second, ParentRelationNTP, true );
+			//                PView.save();
+			//            }
 
-					} // if( PView.Root == null || PView.Root.ChildRelationships.Count == 0 )
-				} // if( OwnerNTP.NodeType != ParentNT )
-			} // if( ParentType.SelectedNodeTypeIds.Count > 0 )
+			//        } // if( PView.Root == null || PView.Root.ChildRelationships.Count == 0 )
+			//    } // if( OwnerNTP.NodeType != ParentNT )
+			//} // if( ParentType.SelectedNodeTypeIds.Count > 0 )
 
 
 			_CswNbtPropertySetSchedulerImpl.updateNextDueDate();
