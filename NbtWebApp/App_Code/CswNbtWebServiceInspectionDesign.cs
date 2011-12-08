@@ -362,6 +362,8 @@ namespace ChemSW.Nbt.WebServices
             if( OwnerNtp.FKType != CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() || OwnerNtp.FKValue != GroupOC.ObjectClassId )
             {
                 OwnerNtp.SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
+                // twice to set the view
+                OwnerNtp.SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
             }
 
         }
