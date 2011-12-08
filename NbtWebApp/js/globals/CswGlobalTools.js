@@ -36,15 +36,13 @@ var ChemSW = ChemSW || (function(undefined) {
             
         },
         makeSequentialArray: function(start, end) {
-            var ret = [];
-            start = +start;
+            var ret = [],
+                i;
             end = +end;
             if (isNumber(start) && 
                     isNumber(end)) {
-                //This will generate a Closure compile warning: "WARNING - Suspicious code. This code lacks side-effects. Is there a bug?"
-                //The warning is incorrect but unavoidable because Closure has no way to know how we're using this function.
-                for (start; start <= end; start += 1) {
-                    ret.push(start);
+                for (i = +start; i <= end; i += 1) {
+                    ret.push(i);
                 }
             }
             return ret;
