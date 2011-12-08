@@ -8,8 +8,9 @@
     $.fn.CswCheckBoxArray = function (method) {
     
         var pluginName = 'CswCheckBoxArray',
-            storedDataSuffix = '_cswCbaArrayDataStore',
-            cbaPrevSelected = 'cswCba_prevSelected';
+            storedDataSuffix = 'cswCbaArrayDataStore',
+            cbaPrevSelected,
+            cbaPrevSelectedSuffix = 'cswCba_prevSelected';
         
         var methods = {
             init: function(options) {
@@ -44,7 +45,9 @@
                     $.extend(o, options);
                 }
                 
-                var storeDataId = o.ID + storedDataSuffix;
+                var storeDataId = makeId({ID: o.ID, suffix: storedDataSuffix});
+                cbaPrevSelected = makeId({ ID: storeDataId, suffix: cbaPrevSelectedSuffix });
+                
                 var clientDb = new CswClientDb();
                 clientDb.removeItem(storeDataId);
                 clientDb.removeItem(cbaPrevSelected);
@@ -136,9 +139,9 @@
                                                o.MultiIsUnchanged = false;
                                                o.onchange();
                                            })
-										   .CswAttrXml({'key': '', rowlabel: '[none]', collabel: o.cols[e], row: -1, col: e })
-										   .bind('change', function() { onChange(this); });
-							if (false === o.Multi) {
+                                           .CswAttrXml({'key': '', rowlabel: '[none]', collabel: o.cols[e], row: -1, col: e })
+                                           .bind('change', function() { onChange(this); });
+                            if (false === o.Multi) {
                                 $eCheck.CswAttrDom('checked', 'true'); // the browser will override this if another one is checked
                             }
                         } // for(var c = 0; c < o.cols.length; c++)
@@ -153,13 +156,13 @@
                         cache.MultiIsUnchanged = false;
                         if (contains(cache.data, row) && contains(cache.data[row],'values')) {
                             cache.data[row].values[col] = cB.checked;
-						}
+                        }
                         if(o.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
                             var data = clientDb.getItem(cbaPrevSelected);
                             if(contains(data,'row') && contains(data,'col')) {
-								if(contains(cache.data, data.row) && contains(cache.data[data.row],'values')) {
-									cache.data[data.row].values[data.col] = false;
-								}
+                                if(contains(cache.data, data.row) && contains(cache.data[data.row],'values')) {
+                                    cache.data[data.row].values[data.col] = false;
+                                }
                             }
                             clientDb.setItem(cbaPrevSelected, {row: row, col: col});
                         }      
