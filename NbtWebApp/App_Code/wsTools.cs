@@ -45,14 +45,23 @@ namespace ChemSW.Nbt.WebServices
             return Node;
         } // getNode()
 
-        public static bool isNodeTypeNameUnique( string NodeTypeName, CswNbtResources CswNbtResources )
+        /// <summary>
+        /// Detertimes if a Node Type name exists.
+        /// </summary>
+        /// <returns>True if the node type name is unique (available for use).</returns>
+        public static bool isNodeTypeNameUnique( string NodeTypeName, CswNbtResources CswNbtResources, bool ThrowOnError )
         {
-            if( string.IsNullOrEmpty( NodeTypeName ) )
+            bool Ret = false;
+            if( true == ThrowOnError &&
+                    string.IsNullOrEmpty( NodeTypeName ) )
             {
                 throw new CswDniException( ErrorType.Warning, "Name is required.", "Node Type name cannot be null" );
             }
-            bool Ret = ( null == CswNbtResources.MetaData.getNodeType( NodeTypeName ) );
-            if( false == Ret )
+
+            Ret = ( null == CswNbtResources.MetaData.getNodeType( NodeTypeName ) );
+
+            if( true == ThrowOnError &&
+                    false == Ret )
             {
                 throw new CswDniException( ErrorType.Warning, "The provided name is not unique.", "A NodeType with the name " + NodeTypeName + " already exists." );
             }
