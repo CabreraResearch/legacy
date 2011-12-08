@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
+using System.Web;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;
 using ChemSW.Config;
@@ -1689,6 +1690,8 @@ namespace ChemSW.Nbt.WebServices
                     string Column = Context.Request["column"];
                     string Multi = Context.Request["multi"];
 
+                    Stream FileStream = _getFileInputStream( "qqfile" );
+
                     if( !string.IsNullOrEmpty( FileName ) && !string.IsNullOrEmpty( PropId ) )
                     {
                         // Unfortunately, Context.Request.ContentType is always application/octet-stream
@@ -1710,11 +1713,11 @@ namespace ChemSW.Nbt.WebServices
                                 break;
                         }
 
-                        if( Context.Request.InputStream != null )
+                        if( FileStream != null )
                         {
                             // Read the binary data
-                            BinaryReader br = new BinaryReader( Context.Request.InputStream );
-                            long Length = Context.Request.InputStream.Length;
+                            BinaryReader br = new BinaryReader( FileStream );
+                            long Length = FileStream.Length;
                             byte[] FileData = new byte[Length];
                             for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
                             {
@@ -1767,11 +1770,13 @@ namespace ChemSW.Nbt.WebServices
                     string FileName = Context.Request["qqfile"];
                     string PropId = Context.Request["propid"];
 
-                    if( false == string.IsNullOrEmpty( FileName ) && false == string.IsNullOrEmpty( PropId ) )
+                    Stream MolStream = _getFileInputStream( "qqfile" );
+
+                    if( null != MolStream && false == string.IsNullOrEmpty( PropId ) )
                     {
                         // Read the binary data
-                        BinaryReader br = new BinaryReader( Context.Request.InputStream );
-                        long Length = Context.Request.InputStream.Length;
+                        BinaryReader br = new BinaryReader( MolStream );
+                        long Length = MolStream.Length;
                         byte[] FileData = new byte[Length];
                         for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
                         {
@@ -3138,22 +3143,16 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     _purgeTempFiles( "xls" );
-                    if( 0 == Context.Request.InputStream.Length || false == Context.Request.InputStream.CanRead )
-                    {
-                        throw new CswDniException( ErrorType.Warning, "Cannot read the loaded file.", "File was empty or corrupt" );
-                    }
 
                     string TempFileName = "excelupload_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString( "MMddyyyy_HHmmss" ) + ".xls";
                     string FullPathAndFileName = _TempPath + "\\" + TempFileName;
-                    // upload user file to temporary file
-                    // our Excel file reader only likes to read files from disk - does not read files from memory or stream
-                    using( FileStream OutputFile = File.Create( FullPathAndFileName ) )
-                    {
-                        Context.Request.InputStream.CopyTo( OutputFile );
-                    }
 
                     // Load the excel file into a data table
                     CswNbtWebServiceInspectionDesign ws = new CswNbtWebServiceInspectionDesign( _CswNbtResources );
+
+                    Stream FileStream = _getFileInputStream( "qqfile" );
+                    _cacheInputStream( FileStream, FullPathAndFileName );
+
                     ExcelDataTable = ws.convertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
 
                     // determine if we were successful or failure
@@ -3177,7 +3176,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ReturnVal["error"] = WarningMessage;
                     }
-
+                    Context.Response.Write( ReturnVal.ToString() );
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 _deInitResources();
             } // try
@@ -3188,7 +3187,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // finalizeInspectionDesign()
 
-       #endregion Inspection Design
+        #endregion Inspection Design
 
         #endregion Web Methods
 
@@ -3212,8 +3211,8 @@ namespace ChemSW.Nbt.WebServices
 
         /// <summary>  Purge files in the temporary directory  </summary>
         /// <param name="FileExtension">  Optional extension type of files to purge.  Default is to purge all files  </param>
-        /// <param name="HoursToKeepFiles">  Optional number of hours to keep temporary files around.  Default is 12 hours  </param>
-        private void _purgeTempFiles( string FileExtension = ".*", int HoursToKeepFiles = 12 )
+        /// <param name="HoursToKeepFiles">  Optional number of hours to keep temporary files around.  Default is 0 hours  </param>
+        private void _purgeTempFiles( string FileExtension = ".*", int HoursToKeepFiles = 0 )
         {
             DirectoryInfo myDirectoryInfo = new DirectoryInfo( _TempPath );
             FileInfo[] myFileInfoArray = myDirectoryInfo.GetFiles();
@@ -3231,6 +3230,38 @@ namespace ChemSW.Nbt.WebServices
                     {
                         myFileInfo.Delete();
                     }
+                }
+            }
+        }
+
+        private Stream _getFileInputStream( string ParamName = "" )
+        {
+            Stream RetStream = null;
+
+            if( false == string.IsNullOrEmpty( ParamName ) &&
+                    string.IsNullOrEmpty( Context.Request[ParamName] ) )
+            {
+                HttpPostedFile File = Context.Request.Files[0];
+                RetStream = File.InputStream;
+            }
+            else
+            {
+                if( 0 == Context.Request.InputStream.Length || false == Context.Request.InputStream.CanRead )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Cannot read the loaded file.", "File was empty or corrupt" );
+                }
+                RetStream = Context.Request.InputStream;
+            }
+            return RetStream;
+        }
+
+        private void _cacheInputStream( Stream InputStream, string Path )
+        {
+            if( null != InputStream && false == string.IsNullOrEmpty( Path ) )
+            {
+                using( FileStream OutputFile = File.Create( Path ) )
+                {
+                    InputStream.CopyTo( OutputFile );
                 }
             }
         }

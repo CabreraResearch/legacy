@@ -10,7 +10,9 @@
 /// <reference path="../controls/CswTable.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-    "use strict";
+    if(false === abandonHope) {
+        "use strict";
+    }
     $.fn.CswInspectionDesign = function (options) {
 
         //#region Variable Declaration
@@ -241,9 +243,6 @@
             makeInspectionDesignUpload = function($control) {
                 var f = {
                     url: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
-                    params: {
-                        InspectionName: selectedInspectionDesign.name
-                    },
                     onSuccess: function() {
                         $wizard.CswWizard('button', 'next', 'enable').click();
                     },
@@ -251,15 +250,11 @@
                     uploadName: 'design'
                 };
 
-                var uploadTemplate = '<div class="qq-uploader"><div class="qq-upload-drop-area"><span>Drop ' + f.uploadName + ' here to process</span></div><div class="qq-upload-button">Upload Design</div><ul class="qq-upload-list"></ul></div>';
-                
-                //We don't need the return, but this is a constructor. This is more readable than apply() in this context.
-                new qq.FileUploader({
-                        element: $control.get(0),
-                        multiple: false,
+                var uploadOpts = {
+                        element: $control[0],
                         action: f.url,
-                        template: uploadTemplate,
-                        params: f.params,
+                        multiple: false,
+                        allowedExtensions: ['xls'],
                         onSubmit: function() {
                             $('.qq-upload-list').empty();
                         },
@@ -269,7 +264,14 @@
                         showMessage: function(error) {
                             $.CswDialog('ErrorDialog', error);
                         }
-                    });
+                    };
+                
+                if(false === abandonHope) {
+                    uploadOpts.template = '<div class="qq-uploader"><div class="qq-upload-drop-area"><span>Drop ' + f.uploadName + ' here to process</span></div><div class="qq-upload-button">Upload Design</div><ul class="qq-upload-list"></ul></div>';
+                }
+                
+                //We don't need the return, but this is a constructor. This is more readable than apply() in this context.
+                new qq.FileUploader(uploadOpts);
             },
 
             //If this is a new Design, upload the template. Otherwise skip to step 4.
@@ -289,7 +291,7 @@
                     };
                    
                     var doStepTwo = function() {
-                        var $fileUploadBtn, $step2List, $templateLink, $uploadP;
+                        var $step2List, $templateLink, $uploadP;
 
                         if (false === stepTwoComplete) {
                             $divStep2 = $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step);
@@ -313,12 +315,11 @@
                             });
 
                             //3. Upload the design
-                            $uploadP = $('<p/>');
-                            $fileUploadBtn = $uploadP;
-                            makeInspectionDesignUpload($fileUploadBtn);
+                            $uploadP = $('<div id="' + makeStepId('fileUploadBtn') + '"></div>');
+                            makeInspectionDesignUpload($uploadP);
 
                             $step2List.CswList('addItem', {
-                                value: $('<span>Upload the completed InspectionDesign.</span>').append($uploadP)
+                                value: $('<span>Upload the completed InspectionDesign.<p/></span>').append($uploadP)
                             });
 
                             //$fileUploadBtn.hide();
