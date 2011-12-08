@@ -47,14 +47,6 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.Permit.set( CreateInspection, Role, CanEdit );
             }
 
-            CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            foreach( CswNbtNode UserNode in UserOc.getNodes( true, false ) )
-            {
-                CswNbtObjClassUser User = CswNbtNodeCaster.AsUser( UserNode );
-                bool CanEdit = User.Username == CswNbtObjClassUser.ChemSWAdminUsername;
-                _CswNbtSchemaModTrnsctn.Permit.set( CreateInspection, User, CanEdit );
-            }
-
         }//Update()
 
     }//class CswUpdateSchemaTo01K05
