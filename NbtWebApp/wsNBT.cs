@@ -3176,7 +3176,6 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ReturnVal["error"] = WarningMessage;
                     }
-                    Context.Response.Write( ReturnVal.ToString() );
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 _deInitResources();
             } // try
