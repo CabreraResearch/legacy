@@ -3237,6 +3237,7 @@ namespace ChemSW.Nbt.WebServices
         {
             Stream RetStream = null;
 
+            //This is the IE case
             if( false == string.IsNullOrEmpty( ParamName ) &&
                     string.IsNullOrEmpty( Context.Request[ParamName] ) )
             {
