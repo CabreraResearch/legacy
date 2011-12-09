@@ -224,7 +224,7 @@
                 if (options) {
                     $.extend(o, options);
                 }
-                var storeDataId = o.ID + storedDataSuffix;
+                var storeDataId = makeId({ID: o.ID, suffix: storedDataSuffix});
                 var clientDb = new CswClientDb();
                 var data = clientDb.getItem(storeDataId);
                 return data;
