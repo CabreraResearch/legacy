@@ -62,20 +62,19 @@ namespace ChemSW.Nbt.WebServices
 
         #region MetaData
 
-        private string _checkUniqueNodeType( string NodeTypeName )
+        /// <summary>
+        /// Verify that NodeTypeName is Unique in Database and in Session
+        /// </summary>
+        private void _checkUniqueNodeType( string NodeTypeName )
         {
-            string Ret = string.Empty;
             string NameToTest = _standardizeName( NodeTypeName );
-
             if( wsTools.isNodeTypeNameUnique( NameToTest, _CswNbtResources, true ) )
             {
                 if( _ProposedNodeTypeNames.Contains( NameToTest ) )
                 {
                     throw new CswDniException( ErrorType.Warning, "The provided name is not unique.", "A proposed NodeType with the name " + NameToTest + " already exists in ProposedNodeTypeNames." );
                 }
-                Ret = _standardizeName( NodeTypeName );
             }
-            return Ret;
         }
 
         private string _guaranteeCategoryName( string Category, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionDesignNt, string InspectionTargetName )
