@@ -192,7 +192,7 @@ namespace ChemSW.Nbt
             get
             {
                 if( _ActionCollection == null )
-					_ActionCollection = new CswNbtActionCollection( this, _ExcludeDisabledModules );
+                    _ActionCollection = new CswNbtActionCollection( this, _ExcludeDisabledModules );
                 return _ActionCollection;
             }
         }
@@ -394,10 +394,6 @@ namespace ChemSW.Nbt
             /// </summary>
             CISPro,
             /// <summary>
-            /// Fire Extinguisher Inspection
-            /// </summary>
-            FE,
-            /// <summary>
             /// Mobile
             /// </summary>
             Mobile,
@@ -437,7 +433,8 @@ namespace ChemSW.Nbt
                 {
                     try
                     {
-                        CswNbtModule Module = (CswNbtModule) Enum.Parse( typeof( CswNbtModule ), ModuleRow["name"].ToString(), true );
+                        CswNbtModule Module;
+                        Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
                         ModulesHt[Module] = ( ModuleRow["enabled"].ToString() == "1" );
                     }
                     catch( Exception ex )
@@ -524,7 +521,7 @@ namespace ChemSW.Nbt
             _clear();
             initModules();
             //_initNotifications( true );
-			_ActionCollection = new CswNbtActionCollection( this, _ExcludeDisabledModules );
+            _ActionCollection = new CswNbtActionCollection( this, _ExcludeDisabledModules );
         }
         /// <summary>
         /// Stores the datetime that this class was cached

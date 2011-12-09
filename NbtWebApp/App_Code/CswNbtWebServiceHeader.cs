@@ -39,10 +39,6 @@ namespace ChemSW.Nbt.WebServices
                                          "dash_imcs",
                                          "http://www.chemswlive.com/19013.htm",
                                          CswNbtResources.CswNbtModule.IMCS ) );
-            DashIcons.Add( new DashIcon( "FE - Fire Extinguisher Inspection",
-                                         "dash_fe",
-                                         "http://www.chemswlive.com/19002.htm",
-                                         CswNbtResources.CswNbtModule.FE ) );
             DashIcons.Add( new DashIcon( "SI - Site Inspection",
                                          "dash_si",
                                          "http://www.chemswlive.com/19002.htm",
@@ -63,10 +59,10 @@ namespace ChemSW.Nbt.WebServices
                                          "dash_biosafety",
                                          "http://www.chemswlive.com/19002.htm",
                                          CswNbtResources.CswNbtModule.BioSafety ) );
-			//DashIcons.Add( new DashIcon( "Mobile",
-			//                             "dash_hh",
-			//                             "http://www.chemswlive.com/cis-pro-mobile.htm",
-			//                             CswNbtResources.CswNbtModule.Mobile ) );
+            //DashIcons.Add( new DashIcon( "Mobile",
+            //                             "dash_hh",
+            //                             "http://www.chemswlive.com/cis-pro-mobile.htm",
+            //                             CswNbtResources.CswNbtModule.Mobile ) );
             DashIcons.Add( new DashIcon( "NBTManager",
                                          "dash_nbtmgr",
                                          "",
