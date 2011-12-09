@@ -58,13 +58,21 @@ namespace ChemSW.Nbt.WebServices
         private readonly string _DefaultAllowedAnswers = "Yes,No,N/A";
         private readonly string _DefaultCompliantAnswers = "Yes";
 
+        private CswCommaDelimitedString _ProposedNodeTypeNames = new CswCommaDelimitedString();
+
         #region MetaData
 
         private string _checkUniqueNodeType( string NodeTypeName )
         {
             string Ret = string.Empty;
-            if( wsTools.isNodeTypeNameUnique( NodeTypeName, _CswNbtResources, true ) )
+            string NameToTest = _standardizeName( NodeTypeName );
+
+            if( wsTools.isNodeTypeNameUnique( NameToTest, _CswNbtResources, true ) )
             {
+                if( _ProposedNodeTypeNames.Contains( NameToTest ) )
+                {
+                    throw new CswDniException( ErrorType.Warning, "The provided name is not unique.", "A proposed NodeType with the name " + NameToTest + " already exists in ProposedNodeTypeNames." );
+                }
                 Ret = _standardizeName( NodeTypeName );
             }
             return Ret;
@@ -114,9 +122,29 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentUser, true );
         }
 
-        private string _standardizeName( object Name )
+        /// <summary>
+        /// Standardize the NodeType Name, check for uniqueness, and add to cached list of new, unique nodetypenames
+        /// </summary>
+        private string _validateNodeTypeName( object Name, Int32 AllowedLength = Int32.MinValue )
         {
-            return _TextInfo.ToTitleCase( CswConvert.ToString( Name ).Trim() );
+            string RetString = _standardizeName( Name, AllowedLength );
+            _checkUniqueNodeType( RetString );
+            _ProposedNodeTypeNames.Add( RetString );
+            return RetString;
+        }
+
+        /// <summary>
+        /// Convert the name into Title Case, trim spaces and optionally truncate the name to a specified length
+        /// </summary>
+        private string _standardizeName( object Name, Int32 AllowedLength = Int32.MinValue )
+        {
+            string RetString = _TextInfo.ToTitleCase( CswConvert.ToString( Name ).Trim() );
+            if( 0 < AllowedLength &&
+                    AllowedLength < RetString.Length )
+            {
+                RetString = RetString.Substring( 0, ( AllowedLength - 1 ) );
+            }
+            return RetString;
         }
 
         private Dictionary<string, CswNbtMetaDataNodeTypeTab> _getTabsForInspection( JArray Grid, CswNbtMetaDataNodeType NodeType )
@@ -248,9 +276,6 @@ namespace ChemSW.Nbt.WebServices
             _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
             _setNodeTypePermissions( GeneratorNt );
 
-            //This will validate names and throw if not unique.
-            InspectionTargetName = _checkUniqueNodeType( InspectionTargetName.Trim() );
-            string InspectionGroupName = _checkUniqueNodeType( InspectionTargetName + " Group" );
             string InspectionDesignName = InspectionDesignNt.NodeTypeName;
 
             //if we're here, we're validated
@@ -258,9 +283,14 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataObjectClass InspectionTargetGroupOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
             //CswNbtMetaDataObjectClass InspectionRouteOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass );
 
+            //This will validate names and throw if not unique.
+            //Case 24408: In Db, NodeTypeName == varchar(50)
+            InspectionTargetName = _validateNodeTypeName( InspectionTargetName, 44 );
             //Create the new NodeTypes
             RetInspectionTargetNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionTargetOc.ObjectClassId, InspectionTargetName, Category );
             _setNodeTypePermissions( RetInspectionTargetNt );
+
+            string InspectionGroupName = _validateNodeTypeName( InspectionTargetName + " Group" );
             CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.makeNewNodeType( InspectionTargetGroupOc.ObjectClassId, InspectionGroupName, Category );
             _setNodeTypePermissions( InspectionTargetGroupNt );
 
@@ -834,7 +864,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswCommaDelimitedString GridRowsSkipped = new CswCommaDelimitedString();
 
-            InspectionDesignName = _checkUniqueNodeType( InspectionDesignName );
+            InspectionDesignName = _validateNodeTypeName( InspectionDesignName );
 
             JArray GridArray = JArray.Parse( GridArrayString );
             if( null == GridArray || GridArray.Count == 0 )

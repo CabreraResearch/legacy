@@ -196,6 +196,7 @@
             var o = {
                 objectClassId: '', 
                 nodetypename: '',
+                maxlength: 50, //DB nodetypename = varchar(50)
                 category: '',
                 $select: '',
                 nodeTypeDescriptor: '',
@@ -211,7 +212,7 @@
                 $nodeType, $category, category = tryParseString(o.category);
             
             $div.append('New ' + o.nodeTypeDescriptor + ': ');
-            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text, value: o.nodetypename });
+            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text, value: o.nodetypename, maxlength: o.maxlength });
             $div.append('<br />');
             if(isNullOrEmpty(category)) {
                 $div.append('Category Name: ');
@@ -353,7 +354,7 @@
                 filterToPropId: '',
                 title: '',
                 onEditNode: null, // function (nodeid, nodekey) { },
-				onEditView: null, // function (viewid) {}
+                onEditView: null, // function (viewid) {}
                 date: ''     // viewing audit records
             };
             if (options) $.extend(o, options);
@@ -391,13 +392,13 @@
                     title: o.title,
                     tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
                     date: date,
-					onEditView: function(viewid) {
-						if(isFunction(o.onEditView))
-						{
-							$div.dialog('close');
-							o.onEditView(viewid)
-						}
-					},
+                    onEditView: function(viewid) {
+                        if(isFunction(o.onEditView))
+                        {
+                            $div.dialog('close');
+                            o.onEditView(viewid)
+                        }
+                    },
                     onSave: function (nodeids, nodekeys, tabcount) {
                         unsetChanged();
                         if(tabcount === 1 || o.Multi) {

@@ -19,6 +19,7 @@
                 'cssclass': '',
                 'value': '',
                 'width': '',
+                'maxlength': '',
                 'autofocus': false,
                 'autocomplete': 'on',
                 'onChange': null //function() {}
@@ -59,6 +60,7 @@
             if (!isNullOrEmpty(o.cssclass)) $input.addClass(o.cssclass);
             if (!isNullOrEmpty(o.width)) $input.css('width', o.width);
             if (isTrue(o.autofocus)) $input.CswAttrDom('autofocus', o.autofocus);
+            if (false === isNullOrEmpty(o.maxlength)) $input.CswAttrDom('maxlength', +o.maxlength);
             if (isFunction(o.onChange)) $input.change( o.onChange );
                                 
             $parent.append($input);

@@ -152,7 +152,8 @@
                             .CswInput('init', {
                                 ID: o.ID + '_newDesignName',
                                 type: CswInput_Types.text,
-                                cssclass: 'required'
+                                cssclass: 'required',
+                                maxlength: 50
                             })
                             .keypress(function() {
                                 setTimeout(function() {
@@ -378,8 +379,10 @@
                                 .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                 .CswInput('init', {
                                     ID: o.ID + '_newTargetName',
-                                    value: ''
+                                    value: '',
+                                    maxlength: 40
                                 })
+                                .CswAttrXml('maxlength', 40)
                                 .keypress(function() {
                                     setTimeout(function() {
                                         var newTargetName = $addNewTarget.val();
@@ -408,6 +411,7 @@
                                                                             category: 'do not show',
                                                                             $select: $inspectionTarget,
                                                                             nodeTypeDescriptor: 'Target',
+                                                                            maxlength: 40,
                                                                             onSuccess: function(newData) {
                                                                                 selectedInspectionTarget = newData.nodetypename;
                                                                                 isNewTarget(true);
@@ -726,7 +730,7 @@
 })(jQuery);
 
 
-//Archive
+//#region Archive
 
 //This was seriously non-trivial to write. Don't delete it until after the ship arrives at New Earth.            
 //            //Old Step 5. Add schedules.
@@ -966,3 +970,4 @@
 //                };
 //            }()),
 
+//#endregion Archive
