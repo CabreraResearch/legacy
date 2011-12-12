@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Schema
                 JctModActUpdate.update( JctModActTable );
 
                 //jct_modules_nodetypes
-                CswTableUpdate JctModNtUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + "_jct_modules_actions_update", "jct_modules_nodetypes" );
+                CswTableUpdate JctModNtUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + "_jct_modules_nodetypes_update", "jct_modules_nodetypes" );
                 DataTable JctModNtTable = JctModNtUpdate.getTable( "moduleid", FeModuleId );
                 foreach( DataRow JctRow in JctModNtTable.Rows )
                 {
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.Schema
                 JctModNtUpdate.update( JctModNtTable );
 
                 //jct_modules_objectclass
-                CswTableUpdate JctModOcUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + "_jct_modules_actions_update", "jct_modules_objectclass" );
+                CswTableUpdate JctModOcUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + "_jct_modules_objectclass_update", "jct_modules_objectclass" );
                 DataTable JctModOcTable = JctModOcUpdate.getTable( "moduleid", FeModuleId );
                 foreach( DataRow JctRow in JctModOcTable.Rows )
                 {
