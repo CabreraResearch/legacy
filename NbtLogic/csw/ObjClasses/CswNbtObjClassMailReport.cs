@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != NodeTypeProp &&
                     null != NodeTypeProp.ObjectClassProp )
             {
-                if( NextDueDatePropertyName == NodeTypeProp.ObjectClassProp.PropName )
+                if( RunNowPropertyName == NodeTypeProp.ObjectClassProp.PropName )
                 {
                     NextDueDate.DateTimeValue = DateTime.MinValue;
                     Node.postChanges( false );
