@@ -62,9 +62,15 @@ namespace ChemSW.Nbt.WebServices
 
         }//_initResources() 
 
-        private AuthenticationStatus _attemptRefresh()
+        private AuthenticationStatus _attemptRefresh( bool ThrowOnError = false )
         {
             AuthenticationStatus ret = _CswSessionResources.attemptRefresh();
+
+            if( ThrowOnError &&
+                ret != AuthenticationStatus.Authenticated )
+            {
+                throw new CswDniException( ErrorType.Warning, "Current session is not authenticated, please login again.", "Cannot execute web method without a valid session." );
+            }
 
             if( ret == AuthenticationStatus.Authenticated )
             {
@@ -2383,6 +2389,49 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // clearProp()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string OnObjectClassButtonClick( string NodePk, string NodeTypePropPk )
+        {
+            JObject ReturnVal = new JObject();
+            bool ClickSucceeded = false;
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswPrimaryKey RealNodePk = new CswPrimaryKey();
+                RealNodePk.FromString( NodePk );
+                Int32 NodeTypePropId = CswConvert.ToInt32( NodeTypePropPk );
+
+                if( Int32.MinValue == RealNodePk.PrimaryKey &&
+                        Int32.MinValue == NodeTypePropId )
+                {
+                    throw new CswDniException( ErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
+                }
+
+                CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                ClickSucceeded = ws.DoObjectClassButtonClick( RealNodePk, NodeTypePropId );
+
+                if( false == ClickSucceeded )
+                {
+                    throw new CswDniException( ErrorType.Error, "Button click event failed.", "Attempt to call OnObjectClassButtonClick failed." );
+                }
+
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            ReturnVal["success"] = ClickSucceeded;
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        }
 
         #endregion Node DML
 
