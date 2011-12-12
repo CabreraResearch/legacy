@@ -24,17 +24,17 @@
                 var $Ctrl = "";
                 if(mode==="button"){
                     $Ctrl = $Div.CswButton('init', {'ID': o.ID,
-				                                        'enabledText': value,
-				                                        'disabledText': value,
+                                                        'enabledText': value,
+                                                        'disabledText': value,
                                                         'disableOnClick': false,
-				                                        'onclick': function () { alert('clicked!'); }
+                                                        'onclick': function () { alert('clicked!'); }
                                                       });
                 }
                 else{
                     $Ctrl = $Div.CswLink('init', {'ID': o.ID,
-				                                        'value': value,
+                                                        'value': value,
                                                         'href': '#',
-				                                        'onClick': function() { alert('clicked!'); }
+                                                        'onClick': function() { alert('clicked!'); }
                                                       });
                 }
 
