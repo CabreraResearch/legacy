@@ -19,10 +19,10 @@ namespace ChemSW.Nbt.Schema
             #region Case 24087
             OrderByClause OrderBy = new OrderByClause( "name", OrderByType.Ascending );
             CswTableUpdate ModulesTs = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + "_module_select", "modules" );
-            DataTable ModuleTable = ModulesTs.getTable( new CswCommaDelimitedString() { "moduleid", "name", "enabled" }, 
-                                                        string.Empty, 
-                                                        Int32.MinValue, "where name='FE' or name='SI'", 
-                                                        false, 
+            DataTable ModuleTable = ModulesTs.getTable( new CswCommaDelimitedString() { "moduleid", "name", "enabled" },
+                                                        string.Empty,
+                                                        Int32.MinValue, "where name='FE' or name='SI'",
+                                                        false,
                                                         new Collection<OrderByClause>() { OrderBy } );
             Int32 FeModuleId = Int32.MinValue;
             Int32 SiModuleId = Int32.MinValue;
@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.Schema
                 if( "SI" == CswConvert.ToString( ModuleRow["name"] ) )
                 {
                     SiModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
+                    EnableSi = EnableSi || CswConvert.ToBoolean( ModuleRow["enabled"] );
                     ModuleRow["enabled"] = CswConvert.ToDbVal( EnableSi );
                 }
             }
