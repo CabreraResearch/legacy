@@ -21,9 +21,9 @@ namespace ChemSW.Nbt.Schema
             #region Case 24023
 
             CswNbtMetaDataObjectClass GeneratorOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-            CswNbtMetaDataObjectClassProp RunNowOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.RunNowPropertyName );
-            CswNbtMetaDataObjectClassProp RunTimeOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.RunTimePropertyName );
-            if( null == RunNowOcp )
+            CswNbtMetaDataObjectClassProp GnRunNowOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.RunNowPropertyName );
+            CswNbtMetaDataObjectClassProp GnDueDateOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.NextDueDatePropertyName );
+            if( null == GnRunNowOcp )
             {
                 CswTableUpdate GeneratorUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + " Generator Run Now Update", "object_class_props" );
                 DataTable GeneratorPropsTable = GeneratorUpdate.getEmptyTable();
@@ -41,8 +41,8 @@ namespace ChemSW.Nbt.Schema
                                                                                    false,
                                                                                    true,
                                                                                    string.Empty,
-                                                                                   Int32.MinValue,
-                                                                                   Int32.MinValue );
+                                                                                   GnDueDateOcp.DisplayColAdd,
+                                                                                   ( GnDueDateOcp.DisplayRowAdd + 1 ) );
                 string Extended = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended );
                 RunNowRow[Extended] = CswConvert.ToDbVal( "button" );
                 string SetValOnAdd = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd );
@@ -51,14 +51,46 @@ namespace ChemSW.Nbt.Schema
                 RunNowRow[AuditLevelString] = CswConvert.ToDbVal( AuditLevel.NoAudit.ToString() );
                 string StaticText = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext );
                 RunNowRow[StaticText] = CswConvert.ToDbVal( "Run Now" );
-                string DisplayRowAdd = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_row_add );
-                RunNowRow[DisplayRowAdd] = CswConvert.ToDbVal( RunTimeOcp.DisplayRowAdd.ToString() );
 
                 GeneratorUpdate.update( GeneratorPropsTable );
-
-                _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
             }
 
+            CswNbtMetaDataObjectClass MailReportOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClassProp MrRunNowOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassMailReport.RunNowPropertyName );
+            CswNbtMetaDataObjectClassProp MrDueDateOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassMailReport.NextDueDatePropertyName );
+            if( null == MrRunNowOcp )
+            {
+                CswTableUpdate MailReportUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + " Mail Report Run Now Update", "object_class_props" );
+                DataTable MailReportPropsTable = MailReportUpdate.getEmptyTable();
+                DataRow RunNowRow = _CswNbtSchemaModTrnsctn.addObjectClassPropRow( MailReportPropsTable,
+                                                                                   MailReportOc,
+                                                                                   CswNbtObjClassMailReport.RunNowPropertyName,
+                                                                                   CswNbtMetaDataFieldType.NbtFieldType.Button,
+                                                                                   false,
+                                                                                   true,
+                                                                                   false,
+                                                                                   string.Empty,
+                                                                                   Int32.MinValue,
+                                                                                   false,
+                                                                                   false,
+                                                                                   false,
+                                                                                   true,
+                                                                                   string.Empty,
+                                                                                   MrDueDateOcp.DisplayColAdd,
+                                                                                   ( MrDueDateOcp.DisplayRowAdd + 1 ) );
+                string Extended = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended );
+                RunNowRow[Extended] = CswConvert.ToDbVal( "button" );
+                string SetValOnAdd = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd );
+                RunNowRow[SetValOnAdd] = CswConvert.ToDbVal( false );
+                string AuditLevelString = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel );
+                RunNowRow[AuditLevelString] = CswConvert.ToDbVal( AuditLevel.NoAudit.ToString() );
+                string StaticText = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext );
+                RunNowRow[StaticText] = CswConvert.ToDbVal( "Run Now" );
+
+                MailReportUpdate.update( MailReportPropsTable );
+            }
+
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
             #endregion Case 24023
 
 

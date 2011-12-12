@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string DueDateIntervalPropertyName { get { return "Due Date Interval"; } }
         public static string RunTimePropertyName { get { return "Run Time"; } }
         public static string EnabledPropertyName { get { return "Enabled"; } }
+        public static string RunNowPropertyName { get { return "Run Now"; } }
 
         public static string TypeOptionReport = "Report";
         public static string TypeOptionView = "View";
@@ -35,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerWarningDaysPropertyName { get { return WarningDaysPropertyName; } }
         public string SchedulerDueDateIntervalPropertyName { get { return DueDateIntervalPropertyName; } }
         public string SchedulerRunTimePropertyName { get { return RunTimePropertyName; } }
-
+        public string SchedulerRunNowPropertyName { get { return RunNowPropertyName; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
@@ -141,7 +142,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
-            if( null != NodeTypeProp ) { /*Do Something*/ }
+            if( null != NodeTypeProp &&
+                    null != NodeTypeProp.ObjectClassProp )
+            {
+                if( NextDueDatePropertyName == NodeTypeProp.ObjectClassProp.PropName )
+                {
+                    NextDueDate.DateTimeValue = DateTime.MinValue;
+                    Node.postChanges( false );
+                }
+            }
         }
         #endregion
 
@@ -225,6 +234,14 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[NextDueDatePropertyName].AsDateTime );
+            }
+        }
+
+        public CswNbtNodePropButton RunNow
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[RunNowPropertyName].AsButton );
             }
         }
 

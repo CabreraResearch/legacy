@@ -1,3 +1,4 @@
+using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -33,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerWarningDaysPropertyName { get { return WarningDaysPropertyName; } }
         public string SchedulerDueDateIntervalPropertyName { get { return DueDateIntervalPropertyName; } }
         public string SchedulerRunTimePropertyName { get { return RunTimePropertyName; } }
-
+        public string SchedulerRunNowPropertyName { get { return RunNowPropertyName; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
@@ -199,7 +200,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
-            if( null != NodeTypeProp ) { /*Do Something*/ }
+            if( null != NodeTypeProp &&
+                    null != NodeTypeProp.ObjectClassProp )
+            {
+                if( RunNowPropertyName == NodeTypeProp.ObjectClassProp.PropName )
+                {
+                    NextDueDate.DateTimeValue = DateTime.MinValue;
+                    Node.postChanges( false );
+                }
+            }
         }
         #endregion
 

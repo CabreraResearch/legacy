@@ -9,30 +9,27 @@
         
     var pluginName = 'CswFieldTypeButton';
 
-    var onButtonClick = function(nodeid, nodetypepropid, $button) {
-        var nodePk = tryParseString(nodeid), 
-            nodeTypePropPk = tryParseString(nodetypepropid),
+    var onButtonClick = function(propid, $button) {
+        var propAttr = tryParseString(propid),
             params;
 
         $button.CswButton('disable');
-        if(isNullOrEmpty(nodePk)) {
-            $.CswDialog('ErrorDialog', ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot execute a property\'s button click event without a valid node.', 'Attempted to click a property button with a null or empty nodeid.' ));
-            $button.CswButton('enable');
-        }
-        else if(isNullOrEmpty(nodeTypePropPk)) {
-            $.CswDialog('ErrorDialog', ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot execute a property\'s button click event without a valid node.', 'Attempted to click a property button with a null or empty nodeid.' ));
+        if(isNullOrEmpty(propAttr)) {
+            $.CswDialog('ErrorDialog', ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.' ));
             $button.CswButton('enable');
         } else {
             params = {
-                NodePk: nodePk,
-                NodeTypePropPk: nodeTypePropPk
+                NodeTypePropAttr: propAttr
             };
             
             CswAjaxJson({
-                    url: '/NbtWebApp/wsNBT.asmx/OnObjectClassButtonClick',
+                    url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
                     data: params,
                     success: function(data) {
                         $button.CswButton('enable');
+                        if(isTrue(data.success)) {
+                            window.location = "Main.html";
+                        }
                     },
                     error: function() {
                         $button.CswButton('enable');
@@ -72,7 +69,7 @@
                             });
             }
             $button.click(function() {
-                onButtonClick(o.nodeid, o.propid, $button);
+                onButtonClick(o.propid, $button);
             });
 
             if(o.Required) {

@@ -58,29 +58,30 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
-        public bool DoObjectClassButtonClick( CswPrimaryKey NodePk, Int32 NodeTypePropId )
+        public bool doObjectClassButtonClick( CswPropIdAttr PropId )
         {
             bool RetSuccess;
 
-            if( Int32.MinValue == NodeTypePropId &&
-                Int32.MinValue == NodePk.PrimaryKey )
+            if( Int32.MinValue == PropId.NodeTypePropId ||
+                    null == PropId.NodeId ||
+                        Int32.MinValue == PropId.NodeId.PrimaryKey )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call DoObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
             }
 
-            CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NodePk );
+            CswNbtNode Node = _CswNbtResources.Nodes.GetNode( PropId.NodeId );
             if( null == Node )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot find a valid node with the provided parameters.", "No node exists for NodePk " + NodePk.ToString() + "." );
+                throw new CswDniException( ErrorType.Error, "Cannot find a valid node with the provided parameters.", "No node exists for NodePk " + PropId.NodeId.ToString() + "." );
             }
 
-            CswNbtMetaDataNodeTypeProp NodeTypeProp = Node.NodeType.getNodeTypeProp( NodeTypePropId );
+            CswNbtMetaDataNodeTypeProp NodeTypeProp = Node.NodeType.getNodeTypeProp( PropId.NodeTypePropId );
             if( null == NodeTypeProp )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot find a valid property with the provided parameters.", "No property exists for NodeTypePropId " + NodeTypePropId.ToString() + "." );
+                throw new CswDniException( ErrorType.Error, "Cannot find a valid property with the provided parameters.", "No property exists for NodeTypePropId " + PropId.NodeTypePropId.ToString() + "." );
             }
 
-            CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.ObjectClass );
+            CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.ObjectClass.ObjectClassId, Node );
             NbtObjClass.onButtonClick( NodeTypeProp );
             RetSuccess = true;
 

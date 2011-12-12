@@ -2392,7 +2392,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string OnObjectClassButtonClick( string NodePk, string NodeTypePropPk )
+        public string onObjectClassButtonClick( string NodeTypePropAttr )
         {
             JObject ReturnVal = new JObject();
             bool ClickSucceeded = false;
@@ -2402,18 +2402,16 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswPrimaryKey RealNodePk = new CswPrimaryKey();
-                RealNodePk.FromString( NodePk );
-                Int32 NodeTypePropId = CswConvert.ToInt32( NodeTypePropPk );
-
-                if( Int32.MinValue == RealNodePk.PrimaryKey &&
-                        Int32.MinValue == NodeTypePropId )
+                CswPropIdAttr PropId = new CswPropIdAttr( NodeTypePropAttr );
+                if( null == PropId.NodeId ||
+                        Int32.MinValue == PropId.NodeId.PrimaryKey ||
+                            Int32.MinValue == PropId.NodeTypePropId )
                 {
                     throw new CswDniException( ErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
                 }
 
                 CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ClickSucceeded = ws.DoObjectClassButtonClick( RealNodePk, NodeTypePropId );
+                ClickSucceeded = ws.doObjectClassButtonClick( PropId );
 
                 if( false == ClickSucceeded )
                 {

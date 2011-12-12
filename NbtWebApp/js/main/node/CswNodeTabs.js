@@ -388,9 +388,10 @@
             var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
 
             if ((isTrue(thisProp.display, true) || configMode) &&
-                fieldtype !== 'Image' &&
-                    fieldtype !== 'Grid' &&
-                        (o.filterToPropId === '' || o.filterToPropId === propid))
+                fieldtype !== CswSubFields_Map.Image.name &&
+                    fieldtype !== CswSubFields_Map.Grid.name &&
+                        fieldtype !== CswSubFields_Map.Button.name &&
+                            (o.filterToPropId === '' || o.filterToPropId === propid))
             {
                 var $labelcell = _getLabelCell($cellset);
                 $labelcell.addClass('propertylabel');
