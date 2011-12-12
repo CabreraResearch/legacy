@@ -35,30 +35,43 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject Ret = new JObject();
             Collection<DashIcon> DashIcons = new Collection<DashIcon>();
+
+            string ImcsLink = string.Empty;
+            if( _CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.IMCS ) )
+            {
+                ImcsLink = "http://www.chemswlive.com/19013.htm";
+            }
             DashIcons.Add( new DashIcon( "IMCS - Instrument Maintenance and Calibration",
                                          "dash_imcs",
-                                         "http://www.chemswlive.com/19013.htm",
+                                         ImcsLink,
                                          CswNbtResources.CswNbtModule.IMCS ) );
+
+            string SiLink = string.Empty;
+            if( _CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.SI ) )
+            {
+                SiLink = "http://www.chemswlive.com/19002.htm";
+            }
             DashIcons.Add( new DashIcon( "SI - Site Inspection",
                                          "dash_si",
-                                         "http://www.chemswlive.com/19002.htm",
+                                         SiLink,
                                          CswNbtResources.CswNbtModule.SI ) );
-            DashIcons.Add( new DashIcon( "STIS - Sample Tracking and Inventory System",
-                                         "dash_stis",
-                                         "http://www.chemswlive.com/19002.htm",
-                                         CswNbtResources.CswNbtModule.STIS ) );
-            DashIcons.Add( new DashIcon( "CISPro - Chemical Inventory System",
-                                         "dash_cispro",
-                                         "http://www.chemswlive.com/19002.htm",
-                                         CswNbtResources.CswNbtModule.CISPro ) );
-            DashIcons.Add( new DashIcon( "CCPro - Control Charts",
-                                         "dash_ccpro",
-                                         "http://www.chemswlive.com/19002.htm",
-                                         CswNbtResources.CswNbtModule.CCPro ) );
-            DashIcons.Add( new DashIcon( "BioSafety",
-                                         "dash_biosafety",
-                                         "http://www.chemswlive.com/19002.htm",
-                                         CswNbtResources.CswNbtModule.BioSafety ) );
+            // Case 24091
+            //DashIcons.Add( new DashIcon( "STIS - Sample Tracking and Inventory System",
+            //                             "dash_stis",
+            //                             "http://www.chemswlive.com/19002.htm",
+            //                             CswNbtResources.CswNbtModule.STIS ) );
+            //DashIcons.Add( new DashIcon( "CISPro - Chemical Inventory System",
+            //                             "dash_cispro",
+            //                             "http://www.chemswlive.com/19002.htm",
+            //                             CswNbtResources.CswNbtModule.CISPro ) );
+            //DashIcons.Add( new DashIcon( "CCPro - Control Charts",
+            //                             "dash_ccpro",
+            //                             "http://www.chemswlive.com/19002.htm",
+            //                             CswNbtResources.CswNbtModule.CCPro ) );
+            //DashIcons.Add( new DashIcon( "BioSafety",
+            //                             "dash_biosafety",
+            //                             "http://www.chemswlive.com/19002.htm",
+            //                             CswNbtResources.CswNbtModule.BioSafety ) );
             //DashIcons.Add( new DashIcon( "Mobile",
             //                             "dash_hh",
             //                             "http://www.chemswlive.com/cis-pro-mobile.htm",
