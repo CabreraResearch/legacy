@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 
 namespace ChemSW.Nbt.Actions
@@ -87,6 +84,20 @@ namespace ChemSW.Nbt.Actions
             }
             //}
             return CopiedAssemblyNode;
+        }
+
+        public CswNbtNode CopyInspectionTargetNode( CswNbtNode OriginalInspectionTargetNode )
+        {
+            // Copy this Equipment
+            CswNbtNode CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalInspectionTargetNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedInspectionTargetNode.copyPropertyValues( OriginalInspectionTargetNode );
+            
+            CswNbtObjClassInspectionTarget TargetOc = CswNbtNodeCaster.AsInspectionTarget( CopiedInspectionTargetNode );
+            TargetOc.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
+
+            CopiedInspectionTargetNode.postChanges( true, true );  // sets the PK
+
+            return CopiedInspectionTargetNode;
         }
 
         public CswNbtNode CopyNode( CswNbtNode OriginalNode )
