@@ -218,7 +218,7 @@
                         },
                         showConfigButton: false, //o.Config,
                         showRowColButtons: o.Config,
-						showRemoveButton: o.Config,
+                        showRemoveButton: o.Config,
                         onConfigOn: function() {
                             doUpdateSubProps(true);
                         }, // onConfigOn
@@ -263,7 +263,7 @@
                         crawlObject(data, updOnSuccess, false);
                     }
 
-					if( o.EditMode !== EditMode.PrintReport.name)
+                    if( o.EditMode !== EditMode.PrintReport.name)
                     {
                         $savetab = $formtblcell11.CswButton({ID: 'SaveTab', 
                                                 enabledText: 'Save Changes', 
@@ -441,7 +441,7 @@
             var AtLeastOne = { Property: false, Saveable: false };
             var handleSuccess = function(propObj, propKey) {
                 AtLeastOne.Property = true;
-				handleProp($layouttable, propObj, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne)
+                handleProp($layouttable, propObj, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne)
                 return false;
             };
             crawlObject(data, handleSuccess, false);
@@ -456,7 +456,7 @@
         } // _handleProps()
 
         function _makeProp($propcell, propData, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne) {
-			$propcell.empty();
+            $propcell.empty();
             if ((isTrue(propData.display, true) || configMode ) &&
                 (o.filterToPropId === '' || o.filterToPropId === propData.id)) {
 
@@ -511,7 +511,7 @@
                         },
                         showConfigButton: false,
                         showRowColButtons: false,
-						showRemoveButton: false
+                        showRemoveButton: false
                     });
                     
                     var subOnSuccess = function(subProp, key) {
@@ -561,7 +561,7 @@
                     data: jsonData,
                     success: function(data) {
                         var AtLeastOne = {};
-						data.wasmodified = true;  // keep the fact that the parent property was modified
+                        data.wasmodified = true;  // keep the fact that the parent property was modified
                         _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
                     }
                 });
