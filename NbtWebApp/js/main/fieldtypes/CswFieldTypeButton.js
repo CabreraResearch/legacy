@@ -52,37 +52,33 @@
                 mode = tryParseString(propVals.mode, 'button'),
                 $button;
 
-            if(o.ReadOnly) {
-                $Div.append(value);
-            } else {
-                $button = "";
-                if (mode === 'button'){
-                    $button = $Div.CswButton('init', {
-                                    ID: o.ID,
-                                    enabledText: value,
-                                    disabledText: value,
-                                    disableOnClick: false,
-                                    onclick: function () {
-                                        onButtonClick(o.nodeid, o.propid, $button);
-                                    }
-                                });
-                }
-                else{
-                    $button = $Div.CswLink('init', {
-                                    ID: o.ID,
-                                    value: value,
-                                    href: '#',
-                                    onClick: function() {
-                                        onButtonClick(o.nodeid, o.propid, $button);
-                                    }
-                                });
-                }
-
-
-                if(o.Required) {
-                    $button.addClass('required');
-                }
+            //Read-only doesn't make sense for buttons
+//            if(o.ReadOnly) {
+//                $Div.append(value);
+//            } else {
+            if (mode === 'button'){
+                $button = $Div.CswButton('init', {
+                                ID: o.ID,
+                                enabledText: value,
+                                disabledText: value,
+                                disableOnClick: true
+                            });
             }
+            else{
+                $button = $Div.CswLink('init', {
+                                ID: o.ID,
+                                value: value,
+                                href: '#'
+                            });
+            }
+            $button.click(function() {
+                onButtonClick(o.nodeid, o.propid, $button);
+            });
+
+            if(o.Required) {
+                $button.addClass('required');
+            }
+            //}
         },
         save: function(o) {
             preparePropJsonForSave(o.propData);

@@ -14,17 +14,24 @@ namespace ChemSW.Nbt.PropTypes
     public class CswNbtNodePropButton : CswNbtNodeProp
     {
         public enum ButtonMode { button, link };
+        private CswNbtSubField _TextSubField;
 
         public CswNbtNodePropButton( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
+            _TextSubField = ( (CswNbtFieldTypeRuleButton) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).TextSubField;
         }
 
         public string Text
         {
             get
             {
-                    return _CswNbtMetaDataNodeTypeProp.StaticText.ToString();
+                return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
+            }
+            set
+            {
+                _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
+                _CswNbtNodePropData.Gestalt = value;
             }
         }
 

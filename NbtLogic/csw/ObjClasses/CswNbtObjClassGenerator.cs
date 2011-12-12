@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string SummaryPropertyName { get { return "Summary"; } }
         public static string ParentTypePropertyName { get { return "Parent Type"; } }
         public static string ParentViewPropertyName { get { return "Parent View"; } }
+        public static string RunNowPropertyName { get { return "Run Now"; } }
 
         //ICswNbtPropertySetScheduler
         public string SchedulerFinalDueDatePropertyName { get { return FinalDueDatePropertyName; } }
@@ -357,6 +358,16 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        /// <summary>
+        /// Run Now button clears the Last Run Date thereby forcing scheduler to process the Generator node on its next iteration 
+        /// </summary>
+        public CswNbtNodePropButton RunNow
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[RunNowPropertyName].AsButton );
+            }
+        }
 
         #endregion
 
