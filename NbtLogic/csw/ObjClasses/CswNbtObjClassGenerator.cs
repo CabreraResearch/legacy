@@ -1,14 +1,14 @@
-using ChemSW.Nbt.PropTypes;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Core;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassGenerator : CswNbtObjClass, ICswNbtPropertySetScheduler
     {
-		public static string InspectionGeneratorNodeTypeName { get { return "Inspection Schedule"; } }
+        public static string InspectionGeneratorNodeTypeName { get { return "Inspection Schedule"; } }
 
         public static string DueDateIntervalPropertyName { get { return "Due Date Interval"; } }
         public static string RunTimePropertyName { get { return "Run Time"; } }
@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
 
             // BZ 7845
-            if ( TargetType.Empty )
+            if( TargetType.Empty )
                 Enabled.Checked = Tristate.False;
         } // beforeCreateNode()
 
@@ -73,64 +73,64 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtPropertySetSchedulerImpl.setLastFutureDate();
         } // afterCreateNode()
 
-		public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
-			
-
-			//// case 24309
-			//CswNbtMetaDataNodeType ThisGeneratorNT = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
-			//CswNbtMetaDataNodeTypeProp OwnerNTP = ThisGeneratorNT.getNodeTypePropByObjectClassPropName( OwnerPropertyName );
-			//if( ParentType.SelectedNodeTypeIds.Count > 0 )
-			//{
-			//    CswNbtMetaDataNodeType ParentNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ParentType.SelectedNodeTypeIds[0] ) );
-			//    // Only need a view if parent is defined and parent is different than owner
-			//    if( ParentNT != null && ( ( OwnerNTP.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() && OwnerNTP.FKValue != ParentNT.NodeTypeId ) ||
-			//                              ( OwnerNTP.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() && OwnerNTP.FKValue != ParentNT.ObjectClass.ObjectClassId ) ) )
-			//    {
-			//        // Default view:
-			//        //    This Generator nodetype
-			//        //      Owner nodetype (by Generator's Owner)
-			//        //        Parent nodetype (by whatever property connects Owner and Parent)
-
-			//        CswNbtView PView = _CswNbtResources.ViewSelect.restoreView( ParentView.ViewId );
-			//        if( PView.Root == null || PView.Root.ChildRelationships.Count == 0 )
-			//        {
-			//            // Discover what relates the Owner and the Parent
-			//            CswNbtMetaDataNodeTypeProp ParentRelationNTP = null;
-			//            foreach( CswNbtMetaDataNodeTypeProp RelationshipNTP in ParentNT.NodeTypeProps )
-			//            {
-			//                if( RelationshipNTP.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-			//                    RelationshipNTP.FKType == OwnerNTP.FKType &&
-			//                    RelationshipNTP.FKValue == OwnerNTP.FKValue )
-			//                {
-			//                    ParentRelationNTP = RelationshipNTP;
-			//                    break;
-			//                }
-			//            }
-
-			//            if( ParentRelationNTP != null )
-			//            {
-			//                CswNbtViewRelationship GeneratorViewRel = PView.AddViewRelationship( ThisGeneratorNT, true );
-			//                CswNbtViewRelationship OwnerViewRel = PView.AddViewRelationship( GeneratorViewRel, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );
-			//                CswNbtViewRelationship ParentViewRel = PView.AddViewRelationship( OwnerViewRel, CswNbtViewRelationship.PropOwnerType.Second, ParentRelationNTP, true );
-			//                PView.save();
-			//            }
-
-			//        } // if( PView.Root == null || PView.Root.ChildRelationships.Count == 0 )
-			//    } // if( OwnerNTP.NodeType != ParentNT )
-			//} // if( ParentType.SelectedNodeTypeIds.Count > 0 )
 
 
-			_CswNbtPropertySetSchedulerImpl.updateNextDueDate();
+            //// case 24309
+            //CswNbtMetaDataNodeType ThisGeneratorNT = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
+            //CswNbtMetaDataNodeTypeProp OwnerNTP = ThisGeneratorNT.getNodeTypePropByObjectClassPropName( OwnerPropertyName );
+            //if( ParentType.SelectedNodeTypeIds.Count > 0 )
+            //{
+            //    CswNbtMetaDataNodeType ParentNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ParentType.SelectedNodeTypeIds[0] ) );
+            //    // Only need a view if parent is defined and parent is different than owner
+            //    if( ParentNT != null && ( ( OwnerNTP.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() && OwnerNTP.FKValue != ParentNT.NodeTypeId ) ||
+            //                              ( OwnerNTP.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() && OwnerNTP.FKValue != ParentNT.ObjectClass.ObjectClassId ) ) )
+            //    {
+            //        // Default view:
+            //        //    This Generator nodetype
+            //        //      Owner nodetype (by Generator's Owner)
+            //        //        Parent nodetype (by whatever property connects Owner and Parent)
+
+            //        CswNbtView PView = _CswNbtResources.ViewSelect.restoreView( ParentView.ViewId );
+            //        if( PView.Root == null || PView.Root.ChildRelationships.Count == 0 )
+            //        {
+            //            // Discover what relates the Owner and the Parent
+            //            CswNbtMetaDataNodeTypeProp ParentRelationNTP = null;
+            //            foreach( CswNbtMetaDataNodeTypeProp RelationshipNTP in ParentNT.NodeTypeProps )
+            //            {
+            //                if( RelationshipNTP.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+            //                    RelationshipNTP.FKType == OwnerNTP.FKType &&
+            //                    RelationshipNTP.FKValue == OwnerNTP.FKValue )
+            //                {
+            //                    ParentRelationNTP = RelationshipNTP;
+            //                    break;
+            //                }
+            //            }
+
+            //            if( ParentRelationNTP != null )
+            //            {
+            //                CswNbtViewRelationship GeneratorViewRel = PView.AddViewRelationship( ThisGeneratorNT, true );
+            //                CswNbtViewRelationship OwnerViewRel = PView.AddViewRelationship( GeneratorViewRel, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );
+            //                CswNbtViewRelationship ParentViewRel = PView.AddViewRelationship( OwnerViewRel, CswNbtViewRelationship.PropOwnerType.Second, ParentRelationNTP, true );
+            //                PView.save();
+            //            }
+
+            //        } // if( PView.Root == null || PView.Root.ChildRelationships.Count == 0 )
+            //    } // if( OwnerNTP.NodeType != ParentNT )
+            //} // if( ParentType.SelectedNodeTypeIds.Count > 0 )
+
+
+            _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
 
             // BZ 7845
-            if ( TargetType.Empty )
+            if( TargetType.Empty )
                 Enabled.Checked = Tristate.False;
         } //beforeWriteNode()
 
         public override void afterWriteNode()
-        {   
+        {
             _CswNbtPropertySetSchedulerImpl.setLastFutureDate();
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
@@ -143,9 +143,9 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClass TargetObjectClass = TargetNodeType.ObjectClass;
 
             CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
-            if ( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )
+            if( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )
                 throw new CswDniException( "CswNbtObjClassGenerator.beforeDeleteNode() got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
-            ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget)TargetObjClass;
+            ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget) TargetObjClass;
 
             CswNbtMetaDataNodeTypeProp GeneratorProp = TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratorPropertyName );
             CswNbtMetaDataNodeTypeProp IsFutureProp = TargetNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
@@ -161,12 +161,12 @@ namespace ChemSW.Nbt.ObjClasses
             ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
 
             TargetTree.goToRoot();
-            if ( TargetTree.getChildNodeCount() > 0 )  // should always be the case
+            if( TargetTree.getChildNodeCount() > 0 )  // should always be the case
             {
                 TargetTree.goToNthChild( 0 );
-                if ( TargetTree.getChildNodeCount() > 0 )   // might not always be the case
+                if( TargetTree.getChildNodeCount() > 0 )   // might not always be the case
                 {
-                    for ( int i = 0; i < TargetTree.getChildNodeCount(); i++ )
+                    for( int i = 0; i < TargetTree.getChildNodeCount(); i++ )
                     {
                         TargetTree.goToNthChild( i );
 
@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-		public CswNbtNodePropDateTime FinalDueDate
+        public CswNbtNodePropDateTime FinalDueDate
         {
             get
             {
@@ -209,7 +209,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-		public CswNbtNodePropDateTime NextDueDate
+        public CswNbtNodePropDateTime NextDueDate
         {
             get
             {
@@ -292,7 +292,7 @@ namespace ChemSW.Nbt.ObjClasses
         //        return ( _CswNbtNode.Properties[GraceDaysPropertyName].AsNumber );
         //    }
         //}
-        
+
         public CswNbtNodePropText Summary
         {
             get
@@ -316,7 +316,7 @@ namespace ChemSW.Nbt.ObjClasses
         //    }
         //}
 
-		public CswNbtNodePropDateTime RunTime
+        public CswNbtNodePropDateTime RunTime
         {
             get
             {
