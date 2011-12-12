@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -73,6 +66,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
         #endregion
 
         #region Object class specific properties
@@ -80,7 +77,6 @@ namespace ChemSW.Nbt.ObjClasses
         // GENERIC SHOULD NOT HAVE ANY!!!
 
         #endregion
-
 
 
     }//CswNbtObjClassLocation

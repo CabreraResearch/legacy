@@ -1,13 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
 using ChemSW.Core;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -144,6 +139,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
         #endregion
 
         #region Object class specific properties
@@ -205,7 +204,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-		public CswNbtNodePropDateTime LastProcessed
+        public CswNbtNodePropDateTime LastProcessed
         {
             get
             {
@@ -213,7 +212,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-		public CswNbtNodePropDateTime FinalDueDate
+        public CswNbtNodePropDateTime FinalDueDate
         {
             get
             {
@@ -221,7 +220,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-		public CswNbtNodePropDateTime NextDueDate
+        public CswNbtNodePropDateTime NextDueDate
         {
             get
             {
@@ -253,7 +252,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-		public CswNbtNodePropDateTime RunTime
+        public CswNbtNodePropDateTime RunTime
         {
             get
             {

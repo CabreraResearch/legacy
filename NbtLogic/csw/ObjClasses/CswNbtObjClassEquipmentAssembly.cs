@@ -1,16 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Text;
 using System.Data;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.DB;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-
-using ChemSW.TblDn;
 using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -177,9 +170,9 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode TypeNode = _CswNbtResources.Nodes[Type.RelatedNodeId];
                 if( TypeNode != null )
                 {
-                    CswNbtObjClassEquipmentType TypeNodeAsType = CswNbtNodeCaster.AsEquipmentType( TypeNode );                    
+                    CswNbtObjClassEquipmentType TypeNodeAsType = CswNbtNodeCaster.AsEquipmentType( TypeNode );
                     CswDelimitedString PartsString = new CswDelimitedString( '\n' );
-					PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
+                    PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
                     this.Parts.YValues = PartsString;
                 }
             }
@@ -191,6 +184,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
         #endregion
 
         #region Object class specific properties
@@ -212,8 +209,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion
-
-
 
     }//CswNbtObjClassEquipmentAssembly
 

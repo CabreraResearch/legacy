@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtObjClassUser : CswNbtObjClass, ICswNbtUser
     {
         public static string ChemSWAdminUsername { get { return CswAuthenticator.ChemSWAdminUsername; } }
-        
+
         public static string RolePropertyName { get { return "Role"; } }
         public static string AccountLockedPropertyName { get { return "AccountLocked"; } }
         public static string FailedLoginCountPropertyName { get { return "FailedLoginCount"; } }
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.ObjClasses
                     throw new CswDniException( ErrorType.Warning, "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
                 }
                 if( this.Username != ChemSWAdminUsername &&
-                    CswNbtNodeCaster.AsRole(_CswNbtResources.Nodes[Role.RelatedNodeId]).Name.Text == CswNbtObjClassRole.ChemSWAdminRoleName )
+                    CswNbtNodeCaster.AsRole( _CswNbtResources.Nodes[Role.RelatedNodeId] ).Name.Text == CswNbtObjClassRole.ChemSWAdminRoleName )
                 {
                     throw new CswDniException( ErrorType.Warning, "New users may not be assigned to the '" + CswNbtObjClassRole.ChemSWAdminRoleName + "' role", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to assign a new user to the '" + CswNbtObjClassRole.ChemSWAdminRoleName + "' role." );
                 }
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminUsername + "' user cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminUsername + "' user." );
             }
-            
+
             CswPrimaryKey RoleId = Role.RelatedNodeId;
             if( RoleId != null )
             {
@@ -199,7 +199,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( _RoleNode != null )
             {
                 CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
-                
+
                 foreach( CswNbtAction Action in _CswNbtResources.Actions )
                 {
                     if( _CswNbtResources.Permit.can( Action, this ) )
@@ -223,6 +223,11 @@ namespace ChemSW.Nbt.ObjClasses
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
+        }
+
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
         }
 
         #endregion
@@ -292,7 +297,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-    
+
         #endregion
 
 

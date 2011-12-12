@@ -1,17 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Text;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Encryption;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Security;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using Newtonsoft.Json.Linq;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -22,8 +17,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static string DeactivatedPropertyName { get { return "Deactivated"; } }
         public static string CompanyIDPropertyName { get { return "Company ID"; } }
         public static string UserCountPropertyName { get { return "User Count"; } }
-		public static string ModulesEnabledPropertyName { get { return "Modules Enabled"; } }
-		public static string ChemSWAdminPasswordPropertyName { get { return "ChemSW Admin Password"; } }
+        public static string ModulesEnabledPropertyName { get { return "Modules Enabled"; } }
+        public static string ChemSWAdminPasswordPropertyName { get { return "ChemSW Admin Password"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -44,27 +39,27 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass ); }
         }
 
-		private bool _CompanyIDDefined()
-		{
-			return ( CompanyID.Text != string.Empty && _CswNbtResources.CswDbCfgInfo.ConfigurationExists( CompanyID.Text ) );
-		}
+        private bool _CompanyIDDefined()
+        {
+            return ( CompanyID.Text != string.Empty && _CswNbtResources.CswDbCfgInfo.ConfigurationExists( CompanyID.Text ) );
+        }
 
-		private CswNbtResources makeOtherResources()
-		{
-			CswNbtResources OtherResources = CswNbtResourcesFactory.makeCswNbtResources( _CswNbtResources );
-			OtherResources.AccessId = CompanyID.Text;
-			OtherResources.InitCurrentUser = InitUser;
-			return OtherResources;
-		}
-		public ICswUser InitUser( ICswResources Resources )
-		{
-			return new CswNbtSystemUser( _CswNbtResources, "CswNbtObjClassCustomer_SystemUser" );
-		}
+        private CswNbtResources makeOtherResources()
+        {
+            CswNbtResources OtherResources = CswNbtResourcesFactory.makeCswNbtResources( _CswNbtResources );
+            OtherResources.AccessId = CompanyID.Text;
+            OtherResources.InitCurrentUser = InitUser;
+            return OtherResources;
+        }
+        public ICswUser InitUser( ICswResources Resources )
+        {
+            return new CswNbtSystemUser( _CswNbtResources, "CswNbtObjClassCustomer_SystemUser" );
+        }
 
-		private void finalizeOtherResources(CswNbtResources OtherResources)
-		{
-			OtherResources.finalize();
-		}
+        private void finalizeOtherResources( CswNbtResources OtherResources )
+        {
+            OtherResources.finalize();
+        }
 
 
         #region Inherited Events
@@ -92,59 +87,59 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _doConfigFileUpdate();
 
-			if( _CompanyIDDefined() )
-			{
+            if( _CompanyIDDefined() )
+            {
 
-				if( ChemSWAdminPassword.WasModified || ModulesEnabled.WasModified )
-				{
+                if( ChemSWAdminPassword.WasModified || ModulesEnabled.WasModified )
+                {
 
-					// Set ChemSW Admin Password and Modules Enabled
-					string NewEncryptedPassword = string.Empty;
-					if( ChemSWAdminPassword.WasModified )
-					{
-						NewEncryptedPassword = ChemSWAdminPassword.EncryptedPassword;
-					}
-					CswCommaDelimitedString NewModulesEnabled = new CswCommaDelimitedString();
-					if( ModulesEnabled.WasModified )
-					{
-						foreach( string ModuleName in ModulesEnabled.YValues )
-						{
-							if( ModulesEnabled.CheckValue( ModulesEnabledXValue, ModuleName ) )
-							{
-								NewModulesEnabled.Add( ModuleName );
-							}
-						}
-					}
-						
-					// switch to target schema
-					//string OriginalAccessId = _CswNbtResources.AccessId;
-					//_CswNbtResources.AccessId = CompanyID.Text;
-					CswNbtResources OtherResources = makeOtherResources();
+                    // Set ChemSW Admin Password and Modules Enabled
+                    string NewEncryptedPassword = string.Empty;
+                    if( ChemSWAdminPassword.WasModified )
+                    {
+                        NewEncryptedPassword = ChemSWAdminPassword.EncryptedPassword;
+                    }
+                    CswCommaDelimitedString NewModulesEnabled = new CswCommaDelimitedString();
+                    if( ModulesEnabled.WasModified )
+                    {
+                        foreach( string ModuleName in ModulesEnabled.YValues )
+                        {
+                            if( ModulesEnabled.CheckValue( ModulesEnabledXValue, ModuleName ) )
+                            {
+                                NewModulesEnabled.Add( ModuleName );
+                            }
+                        }
+                    }
 
-					if( NewEncryptedPassword != string.Empty )
-					{
-						CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-						CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.EncryptedPassword = NewEncryptedPassword;
-						ChemSWAdminUserNode.postChanges( false );
-					}
-					if( NewModulesEnabled.Count > 0 )
-					{
-						CswTableUpdate ModulesUpdate = OtherResources.makeCswTableUpdate( "CswNbtObjClassCustomer_modules_update", "modules" );
-						DataTable ModulesTable = ModulesUpdate.getTable();
-						foreach( DataRow ModulesRow in ModulesTable.Rows )
-						{
-							ModulesRow["enabled"] = CswConvert.ToDbVal( NewModulesEnabled.Contains( ModulesRow["name"].ToString() ) );
-						}
-						ModulesUpdate.update( ModulesTable );
-					}
+                    // switch to target schema
+                    //string OriginalAccessId = _CswNbtResources.AccessId;
+                    //_CswNbtResources.AccessId = CompanyID.Text;
+                    CswNbtResources OtherResources = makeOtherResources();
 
-					// reconnect to original schema
-					//_CswNbtResources.AccessId = OriginalAccessId;
-					finalizeOtherResources( OtherResources );
-				} // if( ChemSWAdminPassword.WasModified || ModulesEnabled.WasModified )
-			} // if( _CompanyIDDefined() )
+                    if( NewEncryptedPassword != string.Empty )
+                    {
+                        CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+                        CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.EncryptedPassword = NewEncryptedPassword;
+                        ChemSWAdminUserNode.postChanges( false );
+                    }
+                    if( NewModulesEnabled.Count > 0 )
+                    {
+                        CswTableUpdate ModulesUpdate = OtherResources.makeCswTableUpdate( "CswNbtObjClassCustomer_modules_update", "modules" );
+                        DataTable ModulesTable = ModulesUpdate.getTable();
+                        foreach( DataRow ModulesRow in ModulesTable.Rows )
+                        {
+                            ModulesRow["enabled"] = CswConvert.ToDbVal( NewModulesEnabled.Contains( ModulesRow["name"].ToString() ) );
+                        }
+                        ModulesUpdate.update( ModulesTable );
+                    }
 
-			_CswNbtObjClassDefault.afterWriteNode();
+                    // reconnect to original schema
+                    //_CswNbtResources.AccessId = OriginalAccessId;
+                    finalizeOtherResources( OtherResources );
+                } // if( ChemSWAdminPassword.WasModified || ModulesEnabled.WasModified )
+            } // if( _CompanyIDDefined() )
+
+            _CswNbtObjClassDefault.afterWriteNode();
         }
 
         bool UpdateConfigFile = false;
@@ -183,68 +178,71 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             // Set property values according to the value in the DbConfig file or from the target schema
-			if( _CompanyIDDefined() )
-			{
-				// get data from DbConfig file
-				_CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CompanyID.Text );
-				if( _CswNbtResources.CswDbCfgInfo.CurrentDeactivated )
-					Deactivated.Checked = Tristate.True;
-				else
-					Deactivated.Checked = Tristate.False;
-				IPFilterRegex.Text = _CswNbtResources.CswDbCfgInfo.CurrentIPFilterRegex;
-				if( CswTools.IsInteger( _CswNbtResources.CswDbCfgInfo.CurrentUserCount ) )
-					UserCount.Value = CswConvert.ToInt32( _CswNbtResources.CswDbCfgInfo.CurrentUserCount );
-				else
-					UserCount.Value = Double.NaN;
+            if( _CompanyIDDefined() )
+            {
+                // get data from DbConfig file
+                _CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CompanyID.Text );
+                if( _CswNbtResources.CswDbCfgInfo.CurrentDeactivated )
+                    Deactivated.Checked = Tristate.True;
+                else
+                    Deactivated.Checked = Tristate.False;
+                IPFilterRegex.Text = _CswNbtResources.CswDbCfgInfo.CurrentIPFilterRegex;
+                if( CswTools.IsInteger( _CswNbtResources.CswDbCfgInfo.CurrentUserCount ) )
+                    UserCount.Value = CswConvert.ToInt32( _CswNbtResources.CswDbCfgInfo.CurrentUserCount );
+                else
+                    UserCount.Value = Double.NaN;
 
 
-				CswCommaDelimitedString YValues = new CswCommaDelimitedString();
-				foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
-				{
-					YValues.Add( Module.ToString() );
-				}
-				ModulesEnabled.YValues = YValues;
-				ModulesEnabled.XValues = new CswCommaDelimitedString() { ModulesEnabledXValue };
+                CswCommaDelimitedString YValues = new CswCommaDelimitedString();
+                foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
+                {
+                    YValues.Add( Module.ToString() );
+                }
+                ModulesEnabled.YValues = YValues;
+                ModulesEnabled.XValues = new CswCommaDelimitedString() { ModulesEnabledXValue };
 
-				// get data from target schema
-				//string OriginalAccessId = _CswNbtResources.AccessId;
-				//_CswNbtResources.AccessId = CompanyID.Text;
-				CswNbtResources OtherResources = makeOtherResources();
+                // get data from target schema
+                //string OriginalAccessId = _CswNbtResources.AccessId;
+                //_CswNbtResources.AccessId = CompanyID.Text;
+                CswNbtResources OtherResources = makeOtherResources();
 
-				Collection<CswNbtResources.CswNbtModule> Modules = new Collection<CswNbtResources.CswNbtModule>();
-				foreach( CswNbtResources.CswNbtModule Module in OtherResources.ModulesEnabled() )
-				{
-					Modules.Add( Module );
-				}
+                Collection<CswNbtResources.CswNbtModule> Modules = new Collection<CswNbtResources.CswNbtModule>();
+                foreach( CswNbtResources.CswNbtModule Module in OtherResources.ModulesEnabled() )
+                {
+                    Modules.Add( Module );
+                }
 
-				CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-				string EncryptedPassword = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.EncryptedPassword;
-				DateTime ChangedDate = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.ChangedDate;
+                CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+                string EncryptedPassword = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.EncryptedPassword;
+                DateTime ChangedDate = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.ChangedDate;
 
-				// reconnect to original schema
-				//_CswNbtResources.AccessId = OriginalAccessId;
-				finalizeOtherResources( OtherResources );
+                // reconnect to original schema
+                //_CswNbtResources.AccessId = OriginalAccessId;
+                finalizeOtherResources( OtherResources );
 
-				foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
-				{
-					ModulesEnabled.SetValue( ModulesEnabledXValue, Module.ToString(), Modules.Contains( Module ) );
-				}
+                foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
+                {
+                    ModulesEnabled.SetValue( ModulesEnabledXValue, Module.ToString(), Modules.Contains( Module ) );
+                }
 
-				ChemSWAdminPassword.EncryptedPassword = EncryptedPassword;
-				ChemSWAdminPassword.ChangedDate = ChangedDate;
-			}
+                ChemSWAdminPassword.EncryptedPassword = EncryptedPassword;
+                ChemSWAdminPassword.ChangedDate = ChangedDate;
+            }
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
-		public static string ModulesEnabledXValue = "Enabled";
+        public static string ModulesEnabledXValue = "Enabled";
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
         #endregion
 
         #region Object class specific properties
@@ -256,7 +254,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[IPFilterRegexPropertyName].AsText );
             }
         }
-		public CswNbtNodePropDateTime SubscriptionExpirationDate
+        public CswNbtNodePropDateTime SubscriptionExpirationDate
         {
             get
             {
@@ -284,22 +282,23 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[UserCountPropertyName].AsNumber );
             }
         }
-		public CswNbtNodePropLogicalSet ModulesEnabled
-		{
-			get
-			{
-				return ( _CswNbtNode.Properties[ModulesEnabledPropertyName].AsLogicalSet );
-			}
-		}
-		public CswNbtNodePropPassword ChemSWAdminPassword
-		{
-			get
-			{
-				return ( _CswNbtNode.Properties[ChemSWAdminPasswordPropertyName].AsPassword );
-			}
-		}
+        public CswNbtNodePropLogicalSet ModulesEnabled
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[ModulesEnabledPropertyName].AsLogicalSet );
+            }
+        }
+        public CswNbtNodePropPassword ChemSWAdminPassword
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[ChemSWAdminPasswordPropertyName].AsPassword );
+            }
+        }
 
-		#endregion
+        #endregion
+
 
     }//CswNbtObjClassCustomer
 
