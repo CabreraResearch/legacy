@@ -22,15 +22,6 @@ namespace ChemSW.Nbt.Schema
 
             //Generators
             CswNbtMetaDataObjectClass GeneratorOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-            CswNbtMetaDataObjectClassProp GnRunNowOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.RunNowPropertyName );
-
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( GnRunNowOcp, CswNbtSubField.SubFieldName.Text, "Run Now" );
-
-            foreach( CswNbtNode GeneratorNode in GeneratorOc.getNodes( true, false ) )
-            {
-                CswNbtObjClassGenerator Generator = CswNbtNodeCaster.AsGenerator( GeneratorNode );
-                Generator.RunNow.Text = "Run Now";
-            }
 
             foreach( CswNbtMetaDataNodeType GeneratorNt in GeneratorOc.NodeTypes )
             {
@@ -42,15 +33,6 @@ namespace ChemSW.Nbt.Schema
 
             //Mail Reports
             CswNbtMetaDataObjectClass MailReportOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
-            CswNbtMetaDataObjectClassProp MrRunNowOcp = MailReportOc.getObjectClassProp( CswNbtObjClassMailReport.RunNowPropertyName );
-
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( MrRunNowOcp, CswNbtSubField.SubFieldName.Text, "Run Now" );
-
-            foreach( CswNbtNode MailReportNode in MailReportOc.getNodes( true, false ) )
-            {
-                CswNbtObjClassMailReport MailReport = CswNbtNodeCaster.AsMailReport( MailReportNode );
-                MailReport.RunNow.Text = "Run Now";
-            }
 
             foreach( CswNbtMetaDataNodeType MailReportNt in MailReportOc.NodeTypes )
             {

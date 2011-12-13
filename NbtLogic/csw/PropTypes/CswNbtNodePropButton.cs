@@ -5,7 +5,6 @@ using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -14,25 +13,15 @@ namespace ChemSW.Nbt.PropTypes
     public class CswNbtNodePropButton : CswNbtNodeProp
     {
         public enum ButtonMode { button, link };
-        private CswNbtSubField _TextSubField;
 
         public CswNbtNodePropButton( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _TextSubField = ( (CswNbtFieldTypeRuleButton) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).TextSubField;
         }
 
         public string Text
         {
-            get
-            {
-                return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
-            }
-            set
-            {
-                _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
-            }
+            get { return _CswNbtMetaDataNodeTypeProp.StaticText.ToString(); }
         }
 
         public string Mode

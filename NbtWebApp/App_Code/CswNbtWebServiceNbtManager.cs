@@ -35,9 +35,8 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
-        public JObject getScheduledRulesGrid( string AccessId )
+        private void _ValidateAccessId( string AccessId )
         {
-            JObject RetObj = new JObject();
             if( string.IsNullOrEmpty( AccessId ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot get Scheduled Rules without a Customer ID.", "getScheduledRulesGrid was called with a null or empty AccessID." );
@@ -46,6 +45,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 throw new CswDniException( ErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
             }
+        }
+
+        public JObject getScheduledRulesGrid( string AccessId )
+        {
+            JObject RetObj;
+            _ValidateAccessId( AccessId );
 
             _CswNbtResources.AccessId = AccessId;
             CswTableSelect ScheduledRulesSelect = _CswNbtResources.makeCswTableSelect( "Scheduledrules_select_on_" + AccessId, "scheduledrules" );
@@ -89,6 +94,14 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
+        public bool updateScheduledRule( string AccessId, string DataRow )
+        {
+            bool RetSuccess = false;
+
+            _ValidateAccessId( AccessId );
+
+            return RetSuccess;
+        }
 
     } // class CswNbtWebServiceNbtManager
 

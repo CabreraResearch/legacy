@@ -2963,11 +2963,6 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ) )
-                {
-                    throw new CswDniException( ErrorType.Error, "Cannot use NBT Manager web services if the NBT Manager module is not enabled.", "Attempted to instance CswNbtWebServiceNbtManager, while the NBT Manager module is not enabled." );
-                }
-
                 CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
                 ReturnVal = ws.getActiveAccessIds();
 
@@ -2992,18 +2987,8 @@ namespace ChemSW.Nbt.WebServices
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
-                if( string.IsNullOrEmpty( AccessId ) )
-                {
-                    throw new CswDniException( ErrorType.Error, "Cannot get Scheduled Rules without a Customer ID.", "Attempted to call getScheduledRulesGrid with a null or empty AccessId." );
-                }
-                
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
-                
-                if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ) )
-                {
-                    throw new CswDniException( ErrorType.Error, "Cannot use NBT Manager web services if the NBT Manager module is not enabled.", "Attempted to instance CswNbtWebServiceNbtManager, while the NBT Manager module is not enabled." );
-                }
 
                 CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
                 ReturnVal = ws.getScheduledRulesGrid( AccessId );
@@ -3020,6 +3005,33 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // getScheduledRulesGrid()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string updateScheduledRule( string AccessId, string DataRow )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
+                ReturnVal["success"] = ws.updateScheduledRule( AccessId, DataRow );
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // updateScheduledRule()
 
         #endregion Nbt Manager
 
