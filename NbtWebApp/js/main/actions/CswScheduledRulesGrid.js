@@ -139,8 +139,8 @@
                     ID: makeStepId('rulesGrid'),
                     pagermode: 'default',
                     gridOpts: {
-                        //autowidth: true,
-                        //height: '200'
+                        autowidth: true,
+                        height: '200'
                     },
                     optNav: {
                         add: false,
