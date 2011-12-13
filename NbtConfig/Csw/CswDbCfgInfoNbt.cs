@@ -49,9 +49,9 @@ namespace ChemSW.Nbt.Config
 
         }//makeConfigurationCurrent()
 
-        public bool ConfigurationExists( string AccessId )
+        public bool ConfigurationExists( string AccessId, bool OnlyIfEnabled = false )
         {
-            return _CswDbCfgInfo.ConfigurationExists( AccessId );
+            return _CswDbCfgInfo.ConfigurationExists( AccessId, OnlyIfEnabled );
         }
 
         public string CurrentAccessId

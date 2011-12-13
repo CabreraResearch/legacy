@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.WebServices
         public string GridSortName = string.Empty;
         public string GridTitle = string.Empty;
         public Int32 GridWidth = Int32.MinValue;
+        public CswCommaDelimitedString EditableColumns = null;
         public bool CanEdit = false;
         public bool CanDelete = false;
 
@@ -161,11 +162,17 @@ namespace ChemSW.Nbt.WebServices
             {
                 ThisColumnDef["key"] = true;
             }
-            if( ( IsKey && HidePkColumn ) || IsHidden )
+            if( ( IsKey &&
+                    HidePkColumn ) ||
+                  IsHidden )
             {
                 ThisColumnDef["hidden"] = true;
             }
-            if( false == IsHidden && false == IsKey && EnableGridEdit )
+            if( false == IsHidden &&
+                    false == IsKey &&
+                        EnableGridEdit &&
+                            ( null == EditableColumns ||
+                                EditableColumns.Contains( ColumnName ) ) )
             {
                 ThisColumnDef["editable"] = true;
                 ThisColumnDef["edittype"] = "text";
@@ -232,38 +239,38 @@ namespace ChemSW.Nbt.WebServices
         /// Translates property value into human readable text.
         /// Currently only handles Logical fieldtype.
         /// </summary>
-		private static void _addSafeCellContent( CswNbtResources CswNbtResources, XElement DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
-		{
-			if( null != DirtyElement )
-			{
-				string CleanPropName = DirtyElement.Attribute( "name" ).Value.Trim().ToLower().Replace( " ", "_" );
-				string CleanValue;
-				string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
-				string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
-				string PropId = DirtyElement.Attribute( "nodetypepropid" ).Value;
-				CswNbtMetaDataNodeTypeProp Prop = CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
+        private static void _addSafeCellContent( CswNbtResources CswNbtResources, XElement DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
+        {
+            if( null != DirtyElement )
+            {
+                string CleanPropName = DirtyElement.Attribute( "name" ).Value.Trim().ToLower().Replace( " ", "_" );
+                string CleanValue;
+                string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
+                string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
+                string PropId = DirtyElement.Attribute( "nodetypepropid" ).Value;
+                CswNbtMetaDataNodeTypeProp Prop = CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
 
-				var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
-				switch( PropFieldType )
-				{
-					case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-						CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
-						break;
-					default:
-						CleanValue = DirtyValue;
-						break;
-				}
-				foreach( CswViewBuilderProp VbProp in PropsInGrid )
-				{
-					if( Prop != null && VbProp.PropNameUnique == CleanPropName && VbProp.AssociatedPropIds.Contains( Prop.FirstPropVersionId ) )
-					{
-						CleanPropName += "_" + VbProp.MetaDataPropId;
-					}
-				}
+                var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
+                switch( PropFieldType )
+                {
+                    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                        CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
+                        break;
+                    default:
+                        CleanValue = DirtyValue;
+                        break;
+                }
+                foreach( CswViewBuilderProp VbProp in PropsInGrid )
+                {
+                    if( Prop != null && VbProp.PropNameUnique == CleanPropName && VbProp.AssociatedPropIds.Contains( Prop.FirstPropVersionId ) )
+                    {
+                        CleanPropName += "_" + VbProp.MetaDataPropId;
+                    }
+                }
 
-				ParentObj[CleanPropName] = CleanValue;
-			}
-		}
+                ParentObj[CleanPropName] = CleanValue;
+            }
+        }
 
         /// <summary>
         /// Generates a JSON array of friendly Column Names
