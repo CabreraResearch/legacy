@@ -88,10 +88,10 @@ namespace ChemSW.Nbt.Actions
 
         public CswNbtNode CopyInspectionTargetNode( CswNbtNode OriginalInspectionTargetNode )
         {
-            // Copy this Equipment
+            // Copy this Inspection Target
             CswNbtNode CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalInspectionTargetNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             CopiedInspectionTargetNode.copyPropertyValues( OriginalInspectionTargetNode );
-            
+
             CswNbtObjClassInspectionTarget TargetOc = CswNbtNodeCaster.AsInspectionTarget( CopiedInspectionTargetNode );
             TargetOc.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
 
