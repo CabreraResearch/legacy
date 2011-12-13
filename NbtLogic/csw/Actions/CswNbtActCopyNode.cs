@@ -92,8 +92,8 @@ namespace ChemSW.Nbt.Actions
             CswNbtNode CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalInspectionTargetNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             CopiedInspectionTargetNode.copyPropertyValues( OriginalInspectionTargetNode );
 
-            CswNbtObjClassInspectionTarget TargetOc = CswNbtNodeCaster.AsInspectionTarget( CopiedInspectionTargetNode );
-            TargetOc.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
+            CswNbtObjClassInspectionTarget NodeAsInspectionTarget = CswNbtNodeCaster.AsInspectionTarget( CopiedInspectionTargetNode );
+            NodeAsInspectionTarget.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
 
             CopiedInspectionTargetNode.postChanges( true, true );  // sets the PK
 
