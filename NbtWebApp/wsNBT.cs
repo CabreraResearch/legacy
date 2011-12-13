@@ -2960,13 +2960,13 @@ namespace ChemSW.Nbt.WebServices
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
                 if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ) )
                 {
                     throw new CswDniException( ErrorType.Error, "Cannot use NBT Manager web services if the NBT Manager module is not enabled.", "Attempted to instance CswNbtWebServiceNbtManager, while the NBT Manager module is not enabled." );
                 }
-
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
                 ReturnVal = ws.getActiveAccessIds();

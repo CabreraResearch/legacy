@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Data;
+﻿using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -17,36 +13,38 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtWebServiceNbtManager( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ))
+            if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ) )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot use NBT Manager web services if the NBT Manager module is not enabled.", "Attempted to instance CswNbtWebServiceNbtManager, while the NBT Manager module is not enabled." );    
+                throw new CswDniException( ErrorType.Error, "Cannot use NBT Manager web services if the NBT Manager module is not enabled.", "Attempted to instance CswNbtWebServiceNbtManager, while the NBT Manager module is not enabled." );
             }
         } //ctor
 
         public JObject getActiveAccessIds()
         {
             JObject RetObj = new JObject();
+            JArray CustomerIds = new JArray();
+            RetObj["customerids"] = CustomerIds;
 
             foreach( string AccessId in _CswNbtResources.CswDbCfgInfo.AccessIds )
             {
-                if(_CswNbtResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ))
+                if( _CswNbtResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
                 {
-                    RetObj[AccessId] = AccessId;
+                    CustomerIds.Add( AccessId );
                 }
             }
             return RetObj;
         }
 
-        public JObject getScheduledRulesGrid(string AccessId )
+        public JObject getScheduledRulesGrid( string AccessId )
         {
             JObject RetObj = new JObject();
-            if(string.IsNullOrEmpty(AccessId))
+            if( string.IsNullOrEmpty( AccessId ) )
             {
-                throw new CswDniException(ErrorType.Error, "Cannot get Scheduled Rules without a Customer ID.", "getScheduledRulesGrid was called with a null or empty AccessID.");
+                throw new CswDniException( ErrorType.Error, "Cannot get Scheduled Rules without a Customer ID.", "getScheduledRulesGrid was called with a null or empty AccessID." );
             }
-            if(false == _CswNbtResources.CswDbCfgInfo.ConfigurationExists(AccessId, true))
+            if( false == _CswNbtResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
             {
-                throw new CswDniException(ErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + ".");
+                throw new CswDniException( ErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
             }
 
             _CswNbtResources.AccessId = AccessId;
@@ -70,7 +68,7 @@ namespace ChemSW.Nbt.WebServices
                                                               "runendtime",
                                                               "lastrun"
                                                           };
-            
+
             foreach( string ColumnName in ExcludedColumns )
             {
                 ScheduledRulesTable.Columns.Remove( ColumnName );
@@ -79,14 +77,14 @@ namespace ChemSW.Nbt.WebServices
             GridData.EditableColumns = new CswCommaDelimitedString();
             foreach( DataColumn Column in ScheduledRulesTable.Columns )
             {
-                if(false == ReadOnlyColumns.Contains(Column.ColumnName))
+                if( false == ReadOnlyColumns.Contains( Column.ColumnName ) )
                 {
                     GridData.EditableColumns.Add( Column.ColumnName );
                 }
             }
-            
+
             RetObj = GridData.DataTableToJSON( ScheduledRulesTable, true );
-            
+
             return RetObj;
         }
 

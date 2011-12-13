@@ -882,7 +882,7 @@ window.abandonHope = true;
 
     				$('#CenterTopDiv').CswInspectionDesign(designOpt);
 
-    				break;
+    				break;  
 
     			//			case 'Design':       
     			//				break;       
@@ -941,7 +941,25 @@ window.abandonHope = true;
 
     				break;
 
+                case 'View_Scheduled_Rules':
+    				clear({ 'all': true });
 
+    				var rulesOpt = {
+    					onCancel: function () {
+    						clear({ 'all': true });
+    						setCurrent(getLast());
+    						refreshSelected();
+    					},
+    					onFinish: function () {
+    						clear({ 'all': true });
+    						refreshSelected();
+    					},
+    					menuRefresh: refreshSelected
+    				};
+
+    				$('#CenterTopDiv').CswScheduledRulesGrid(rulesOpt);
+
+    				break;
     			//			case 'Load_Mobile_Data':       
     			//				break;       
     			//			case 'Receiving':       

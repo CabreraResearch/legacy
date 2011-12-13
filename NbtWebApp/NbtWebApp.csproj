@@ -751,6 +751,7 @@
     <Content Include="crystal\urlreporting\activexviewer.js" />
     <Content Include="crystal\urlreporting\appletviewer.js" />
     <Content Include="ExternalLogin.aspx" />
+    <Content Include="js\main\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\main\actions\CswSessions.js" />
     <Content Include="js\main\actions\CswQuotaImage.js" />
     <Content Include="js\main\actions\CswQuotas.js" />
