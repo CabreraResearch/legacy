@@ -36,24 +36,14 @@ namespace ChemSW.Nbt.WebServices
             JObject Ret = new JObject();
             Collection<DashIcon> DashIcons = new Collection<DashIcon>();
 
-            string ImcsLink = string.Empty;
-            if( _CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.IMCS ) )
-            {
-                ImcsLink = "http://www.chemswlive.com/19013.htm";
-            }
             DashIcons.Add( new DashIcon( "IMCS - Instrument Maintenance and Calibration",
                                          "dash_imcs",
-                                         ImcsLink,
+                                         string.Empty,
                                          CswNbtResources.CswNbtModule.IMCS ) );
 
-            string SiLink = string.Empty;
-            if( _CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.SI ) )
-            {
-                SiLink = "http://www.chemswlive.com/19002.htm";
-            }
             DashIcons.Add( new DashIcon( "SI - Site Inspection",
                                          "dash_si",
-                                         SiLink,
+                                         string.Empty,
                                          CswNbtResources.CswNbtModule.SI ) );
             // Case 24091
             //DashIcons.Add( new DashIcon( "STIS - Sample Tracking and Inventory System",
