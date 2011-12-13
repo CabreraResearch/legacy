@@ -642,6 +642,20 @@ namespace ChemSW.Nbt.Schema
         //    }
         //}
 
+        public Int32 getModuleId( CswNbtResources.CswNbtModule Module )
+        {
+            Int32 RetModuleId = Int32.MinValue;
+            CswTableSelect ModulesTable = makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "modules" );
+            string WhereClause = " where lower(name)='" + Module.ToString().ToLower() + "'";
+            DataTable ModulesDataTable = ModulesTable.getTable( WhereClause, true );
+            if( ModulesDataTable.Rows.Count == 1 )
+            {
+                DataRow ModuleRow = ModulesDataTable.Rows[0];
+                RetModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
+            }
+            return RetModuleId;
+        }
+
         /// <summary>
         /// Convenience function for making new Module
         /// </summary>

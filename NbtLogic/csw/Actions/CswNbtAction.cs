@@ -4,6 +4,7 @@ namespace ChemSW.Nbt.Actions
 {
     public enum CswNbtActionName
     {
+        Unknown,
         Assign_Tests,
         Design,
         Edit_View,
@@ -19,7 +20,8 @@ namespace ChemSW.Nbt.Actions
         Import_Fire_Extinguisher_Data,
         OOC_Inspections,
         Quotas,
-        Sessions
+        Sessions,
+        View_Scheduled_Rules
     }
 
     public class CswNbtAction

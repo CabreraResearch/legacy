@@ -1,6 +1,8 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -75,6 +77,14 @@ namespace ChemSW.Nbt.Schema
             ScheduledRulesUpdate.update( ScheduledRulesTable );
 
             #endregion Case 24431
+
+            #region Case 24241
+
+            Int32 ViewScheduledRulesId = _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.View_Scheduled_Rules, true, string.Empty, "System" );
+            Int32 NbtManagerModuleId = _CswNbtSchemaModTrnsctn.getModuleId( CswNbtResources.CswNbtModule.NBTManager );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( NbtManagerModuleId, ViewScheduledRulesId );
+
+            #endregion Case 24241
 
         }//Update()
 
