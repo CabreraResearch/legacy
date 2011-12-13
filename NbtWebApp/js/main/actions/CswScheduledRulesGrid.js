@@ -130,10 +130,10 @@
                 toggleButton(buttons.finish, true);
                 toggleButton(buttons.prev, true);
                 
+                $divStep2.append('<p>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</p>');
+                
                 var rulesGridId = makeStepId('previewGrid_outer', 3),
                     $rulesGrid = $('<div id="' + rulesGridId + '"></div>').appendTo($divStep2);
-
-                $divStep2.append('<p>Review the <b>' + selectedCustomerId + '</b> Scheduled Rules. Make any necessary edits.</p>');
                 
                 gridOptions = {
                     ID: makeStepId('rulesGrid'),
