@@ -58,15 +58,16 @@ namespace ChemSW.Nbt.WebServices
 
             CswCommaDelimitedString ExcludedColumns = new CswCommaDelimitedString()
                                                           {
-                                                              "threadid"
+                                                              "THREADID"
                                                           };
             CswCommaDelimitedString ReadOnlyColumns = new CswCommaDelimitedString()
                                                           {
-                                                              "rulename",
-                                                              "totalroguecount",
-                                                              "runstarttime",
-                                                              "runendtime",
-                                                              "lastrun"
+                                                              "RULENAME",
+                                                              "TOTALROGUECOUNT",
+                                                              "RUNSTARTTIME",
+                                                              "RUNENDTIME",
+                                                              "LASTRUN",
+                                                              "STATUSMESSAGE"
                                                           };
 
             foreach( string ColumnName in ExcludedColumns )

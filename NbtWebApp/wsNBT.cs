@@ -2996,13 +2996,14 @@ namespace ChemSW.Nbt.WebServices
                 {
                     throw new CswDniException( ErrorType.Error, "Cannot get Scheduled Rules without a Customer ID.", "Attempted to call getScheduledRulesGrid with a null or empty AccessId." );
                 }
+                
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+                
                 if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ) )
                 {
                     throw new CswDniException( ErrorType.Error, "Cannot use NBT Manager web services if the NBT Manager module is not enabled.", "Attempted to instance CswNbtWebServiceNbtManager, while the NBT Manager module is not enabled." );
                 }
-
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
                 ReturnVal = ws.getScheduledRulesGrid( AccessId );

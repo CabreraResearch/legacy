@@ -100,15 +100,18 @@
                                 onChange: function() {
                                     var $selected = $customerIdSelect.find(':selected');
                                     selectedCustomerId = $selected.val();
+                                    if(false === isNullOrEmpty(selectedCustomerId)) {
+                                        toggleButton(buttons.next, true);
                                     }
+                                }
                             });
                         
                         CswAjaxJson({
                             url: '/NbtWebApp/wsNBT.asmx/getActiveAccessIds',
                             success: function(data) {
-                                log(data);
                                 var values = data.customerids;
                                 $customerIdSelect.CswSelect('setoptions', values);
+                                selectedCustomerId = $customerIdSelect.find(':selected').val();
                             }
                         });
                         
@@ -126,10 +129,7 @@
                 toggleButton(buttons.next);
                 toggleButton(buttons.finish, true);
                 toggleButton(buttons.prev, true);
-                //get the Grid
-                //tdb
                 
-                //show the grid
                 var rulesGridId = makeStepId('previewGrid_outer', 3),
                     $rulesGrid = $('<div id="' + rulesGridId + '"></div>').appendTo($divStep2);
 
@@ -139,8 +139,8 @@
                     ID: makeStepId('rulesGrid'),
                     pagermode: 'default',
                     gridOpts: {
-                        autowidth: true,
-                        height: '200'
+                        //autowidth: true,
+                        //height: '200'
                     },
                     optNav: {
                         add: false,
@@ -154,9 +154,14 @@
                     }
                 };
 
-                $.extend(gridOptions.gridOpts, data.jqGridOpt);
-
-                scheduledRulesGrid = new CswGrid(gridOptions, $rulesGrid);
+                CswAjaxJson({
+                    url: '/NbtWebApp/wsNBT.asmx/getScheduledRulesGrid',
+                    data: {AccessId: selectedCustomerId},
+                    success: function(data) {
+                        $.extend(gridOptions.gridOpts, data);        
+                        scheduledRulesGrid = new CswGrid(gridOptions, $rulesGrid);
+                    }
+                });
             },
 
             handleNext = function($wizardTable, newStepNo) {
@@ -192,7 +197,7 @@
         //#region Execution
         $wizard = $div.CswWizard('init', {
             ID: makeId({ ID: o.ID, suffix: 'wizard' }),
-            Title: 'Create New Inspection',
+            Title: 'View Nbt Scheduler Rules by Schema',
             StepCount: ChemSW.enums.CswScheduledRulesGrid_WizardSteps.stepcount,
             Steps: wizardSteps,
             StartingStep: o.startingStep,
