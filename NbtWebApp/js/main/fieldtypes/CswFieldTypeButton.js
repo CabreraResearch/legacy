@@ -15,7 +15,7 @@
 
         $button.CswButton('disable');
         if(isNullOrEmpty(propAttr)) {
-            $.CswDialog('ErrorDialog', ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.' ));
+            CswError( ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.' ));
             $button.CswButton('enable');
         } else {
             params = {
