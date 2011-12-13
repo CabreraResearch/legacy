@@ -1,4 +1,7 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using System.Data;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -57,6 +60,21 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Case 24023
 
+            #region Case 24431
+
+            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
+
+            CswTableUpdate ScheduledRulesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + "_scheduledrules_update", "scheduledrules" );
+            DataTable ScheduledRulesTable = ScheduledRulesUpdate.getTable();
+            foreach( DataRow Row in ScheduledRulesTable.Rows )
+            {
+                Row["totalroguecount"] = CswConvert.ToDbVal( 0 );
+                Row["reprobate"] = CswConvert.ToDbVal( 0 );
+                Row["failedcount"] = CswConvert.ToDbVal( 0 );
+            }
+            ScheduledRulesUpdate.update( ScheduledRulesTable );
+
+            #endregion Case 24431
 
         }//Update()
 
