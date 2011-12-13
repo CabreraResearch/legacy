@@ -46,33 +46,7 @@ namespace ChemSW.Nbt.Schema
 
             if( Int32.MinValue != FeModuleId && Int32.MinValue != SiModuleId )
             {
-                //jct_modules_actions
-                CswTableUpdate JctModActUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + "_jct_modules_actions_update", "jct_modules_actions" );
-                DataTable JctModActTable = JctModActUpdate.getTable( "moduleid", FeModuleId );
-                foreach( DataRow JctRow in JctModActTable.Rows )
-                {
-                    JctRow["moduleid"] = CswConvert.ToDbVal( SiModuleId );
-                }
-                JctModActUpdate.update( JctModActTable );
-
-                //jct_modules_nodetypes
-                CswTableUpdate JctModNtUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + "_jct_modules_nodetypes_update", "jct_modules_nodetypes" );
-                DataTable JctModNtTable = JctModNtUpdate.getTable( "moduleid", FeModuleId );
-                foreach( DataRow JctRow in JctModNtTable.Rows )
-                {
-                    JctRow["moduleid"] = CswConvert.ToDbVal( SiModuleId );
-                }
-                JctModNtUpdate.update( JctModNtTable );
-
-                //jct_modules_objectclass
-                CswTableUpdate JctModOcUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + "_jct_modules_objectclass_update", "jct_modules_objectclass" );
-                DataTable JctModOcTable = JctModOcUpdate.getTable( "moduleid", FeModuleId );
-                foreach( DataRow JctRow in JctModOcTable.Rows )
-                {
-                    JctRow["moduleid"] = CswConvert.ToDbVal( SiModuleId );
-                }
-                JctModOcUpdate.update( JctModOcTable );
-
+                _CswNbtSchemaModTrnsctn.changeJunctionModuleId( FeModuleId, SiModuleId );
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "delete from modules where name='FE'" );
             }
             #endregion Case 24087
