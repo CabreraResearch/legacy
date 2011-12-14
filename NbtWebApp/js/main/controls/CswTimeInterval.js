@@ -218,7 +218,7 @@ var CswTimeInterval = function (options) {
                                             weekdays.push(day);
                                         }
                                     } else {
-                                        weekdays.slice(cswIndexOf(weekdays, day), 1);
+                                        weekdays.splice(cswIndexOf(weekdays, day), 1);
                                     }
                                     saveWeekInterval();
                                 },
@@ -443,8 +443,8 @@ var CswTimeInterval = function (options) {
                     selectedMonth = CswMultiEditDefaultValue;
                     selectedYear = CswMultiEditDefaultValue;
                 } else {
-                    selectedMonth = tryParseString(rateInterval.startingmonth, (now.getMonth() + 1));
-                    selectedYear = tryParseString(rateInterval.startingyear, year);
+                    selectedMonth = tryParseNumber(rateInterval.startingmonth, (now.getMonth() + 1));
+                    selectedYear = tryParseNumber(rateInterval.startingyear, year);
                 }
 
                 $startOnMonth = $startOn.CswSelect('init', {
