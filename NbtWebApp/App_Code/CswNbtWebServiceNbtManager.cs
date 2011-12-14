@@ -125,9 +125,9 @@ namespace ChemSW.Nbt.WebServices
             bool Reprobate = CswConvert.ToBoolean( Context.Request["REPROBATE"] );
             bool Disabled = CswConvert.ToBoolean( Context.Request["DISABLED"] );
 
-            string RecurranceString = CswConvert.ToString( Context.Request["RECURRENCE"] );
-            Recurrance Recurrance;
-            Enum.TryParse( RecurranceString, true, out Recurrance );
+            string RecurrenceString = CswConvert.ToString( Context.Request["RECURRENCE"] );
+            Recurrence Recurrence;
+            Enum.TryParse( RecurrenceString, true, out Recurrence );
 
             Int32 Interval = CswConvert.ToInt32( Context.Request["INTERVAL"] );
             Int32 ReprobateThreshold = CswConvert.ToInt32( Context.Request["REPROBATETHRESHOLD"] );
@@ -146,9 +146,9 @@ namespace ChemSW.Nbt.WebServices
                 ThisRule["REPROBATE"] = CswConvert.ToDbVal( Reprobate );
                 ThisRule["DISABLED"] = CswConvert.ToDbVal( Disabled );
 
-                if( Recurrance != Recurrance.Unknown )
+                if( Recurrence != Recurrence.Unknown )
                 {
-                    ThisRule["RECURRENCE"] = CswConvert.ToDbVal( Recurrance.ToString() );
+                    ThisRule["RECURRENCE"] = CswConvert.ToDbVal( Recurrence.ToString() );
                 }
                 if( 0 < Interval )
                 {
