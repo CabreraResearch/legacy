@@ -232,11 +232,6 @@ namespace ChemSW.Nbt.WebPages
                         dash_imcs.Visible = true;
                         dash_imcs_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.FE ) )
-                    {
-                        dash_fe.Visible = true;
-                        dash_fe_off.Visible = false;
-                    }
                     if( Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.SI ) )
                     {
                         dash_si.Visible = true;

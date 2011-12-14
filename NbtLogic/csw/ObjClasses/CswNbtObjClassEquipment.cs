@@ -1,14 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Text;
-using System.Data;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -126,13 +119,18 @@ namespace ChemSW.Nbt.ObjClasses
             // Filter out Retired Equipment by default
             CswNbtMetaDataObjectClassProp StatusOCP = this.ObjectClass.getObjectClassProp( StatusPropertyName );
             CswNbtViewProperty StatusViewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, StatusOCP );
-            CswNbtViewPropertyFilter StatusViewPropFilter = ParentRelationship.View.AddViewPropertyFilter( StatusViewProp, 
-                                                                        StatusOCP.FieldTypeRule.SubFields.Default.Name, 
-                                                                        CswNbtPropFilterSql.PropertyFilterMode.NotEquals, 
-                                                                        StatusOptionToDisplayString( StatusOption.Retired ), 
+            CswNbtViewPropertyFilter StatusViewPropFilter = ParentRelationship.View.AddViewPropertyFilter( StatusViewProp,
+                                                                        StatusOCP.FieldTypeRule.SubFields.Default.Name,
+                                                                        CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                                                                        StatusOptionToDisplayString( StatusOption.Retired ),
                                                                         false );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
+        }
+
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
         }
 
         #endregion

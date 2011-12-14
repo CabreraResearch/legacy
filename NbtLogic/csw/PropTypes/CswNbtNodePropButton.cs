@@ -5,7 +5,6 @@ using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -22,10 +21,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public string Text
         {
-            get
-            {
-                    return _CswNbtMetaDataNodeTypeProp.StaticText.ToString();
-            }
+            get { return _CswNbtMetaDataNodeTypeProp.StaticText.ToString(); }
         }
 
         public string Mode

@@ -1,13 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
 using ChemSW.Core;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -29,6 +24,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string DueDateIntervalPropertyName { get { return "Due Date Interval"; } }
         public static string RunTimePropertyName { get { return "Run Time"; } }
         public static string EnabledPropertyName { get { return "Enabled"; } }
+        public static string RunNowPropertyName { get { return "Run Now"; } }
 
         public static string TypeOptionReport = "Report";
         public static string TypeOptionView = "View";
@@ -40,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerWarningDaysPropertyName { get { return WarningDaysPropertyName; } }
         public string SchedulerDueDateIntervalPropertyName { get { return DueDateIntervalPropertyName; } }
         public string SchedulerRunTimePropertyName { get { return RunTimePropertyName; } }
-
+        public string SchedulerRunNowPropertyName { get { return RunNowPropertyName; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
@@ -144,6 +140,18 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            if( null != NodeTypeProp &&
+                    null != NodeTypeProp.ObjectClassProp )
+            {
+                if( RunNowPropertyName == NodeTypeProp.ObjectClassProp.PropName )
+                {
+                    NextDueDate.DateTimeValue = DateTime.Now;
+                    Node.postChanges( false );
+                }
+            }
+        }
         #endregion
 
         #region Object class specific properties
@@ -205,7 +213,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-		public CswNbtNodePropDateTime LastProcessed
+        public CswNbtNodePropDateTime LastProcessed
         {
             get
             {
@@ -213,7 +221,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-		public CswNbtNodePropDateTime FinalDueDate
+        public CswNbtNodePropDateTime FinalDueDate
         {
             get
             {
@@ -221,11 +229,19 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-		public CswNbtNodePropDateTime NextDueDate
+        public CswNbtNodePropDateTime NextDueDate
         {
             get
             {
                 return ( _CswNbtNode.Properties[NextDueDatePropertyName].AsDateTime );
+            }
+        }
+
+        public CswNbtNodePropButton RunNow
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[RunNowPropertyName].AsButton );
             }
         }
 
@@ -253,7 +269,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-		public CswNbtNodePropDateTime RunTime
+        public CswNbtNodePropDateTime RunTime
         {
             get
             {

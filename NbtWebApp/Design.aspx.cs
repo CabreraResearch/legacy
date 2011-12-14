@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( _SelectedValue ) );
                         _SelectedNodeType = _SelectedNodeTypeProp.NodeType;
-						_SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.EditLayout.TabId );
+                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.EditLayout.TabId );
                     }
                     else
                     {
@@ -748,7 +748,7 @@ namespace ChemSW.Nbt.WebPages
                 Int32 OldSelectedNodeTypePropId = CswConvert.ToInt32( _SelectedValue );
                 if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property )
                 {
-					CswNbtMetaDataNodeTypeTab OriginalTab = Master.CswNbtResources.MetaData.getNodeTypeTab( SelectedNodeTypeProp.EditLayout.TabId );
+                    CswNbtMetaDataNodeTypeTab OriginalTab = Master.CswNbtResources.MetaData.getNodeTypeTab( SelectedNodeTypeProp.EditLayout.TabId );
 
                     string MultiString = getPropAttributeValue( "EditProp_MultiValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     if( MultiString == string.Empty )
@@ -879,21 +879,21 @@ namespace ChemSW.Nbt.WebPages
                     }
 
                     // Conditional Filter
-					if( _ConditionalFilter != null && _ConditionalFilter.SelectedPropLatestVersion != null &&
-						Master.CswNbtResources.MetaData.getNodeTypeTab( PropToSave.EditLayout.TabId ).TabName == OriginalTab.TabName ) //BZ 7415
-					{
-						PropToSave.setFilter( _ConditionalFilter.SelectedNodeTypePropFirstVersionId, _ConditionalFilter.SelectedSubField, _ConditionalFilter.SelectedFilterMode, _ConditionalFilter.FilterValue );
-					}
-					else
-					{
-						PropToSave.clearFilter();
+                    if( _ConditionalFilter != null && _ConditionalFilter.SelectedPropLatestVersion != null &&
+                        Master.CswNbtResources.MetaData.getNodeTypeTab( PropToSave.EditLayout.TabId ).TabName == OriginalTab.TabName ) //BZ 7415
+                    {
+                        PropToSave.setFilter( _ConditionalFilter.SelectedNodeTypePropFirstVersionId, _ConditionalFilter.SelectedSubField, _ConditionalFilter.SelectedFilterMode, _ConditionalFilter.FilterValue );
+                    }
+                    else
+                    {
+                        PropToSave.clearFilter();
 
-						if( _ConditionalFilter != null )
-						{
-							_ConditionalFilter.FilterPropertiesToTabId = PropToSave.EditLayout.TabId;
-							_ConditionalFilter.Set( SelectedNodeType.NodeTypeId, string.Empty );
-						}
-					}
+                        if( _ConditionalFilter != null )
+                        {
+                            _ConditionalFilter.FilterPropertiesToTabId = PropToSave.EditLayout.TabId;
+                            _ConditionalFilter.Set( SelectedNodeType.NodeTypeId, string.Empty );
+                        }
+                    }
 
                     // For Sequences:
                     CswSequencesEditor SequencesEditor = (CswSequencesEditor) EditPropPlaceHolder.FindControl( "EditProp_SequenceValue" + OldSelectedNodeTypePropId.ToString() );
@@ -1194,13 +1194,13 @@ namespace ChemSW.Nbt.WebPages
                 }
                 // NodeTypeName Edit Box
                 EditNodeTypeName.Text = SelectedNodeType.NodeTypeName;
-				
-				// case 24294 part 6
-				if( SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass &&
-					SelectedNodeType.NodeTypeName == CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName )
-				{
-					EditNodeTypeName.Enabled = false;
-				}
+
+                // case 24294 part 6
+                if( SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass &&
+                    SelectedNodeType.NodeTypeName == CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName )
+                {
+                    EditNodeTypeName.Enabled = false;
+                }
 
                 // EditNodeTypeCategory Edit Box
                 EditNodeTypeCategory.Text = SelectedNodeType.Category;
@@ -1364,7 +1364,7 @@ namespace ChemSW.Nbt.WebPages
                         // Edit Property Select box
                         if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.EditLayout.TabId != Int32.MinValue )
                         {
-							EditPropTabSelect.SelectedValue = Master.CswNbtResources.MetaData.getNodeTypeTab( SelectedNodeTypeProp.EditLayout.TabId ).TabName;
+                            EditPropTabSelect.SelectedValue = Master.CswNbtResources.MetaData.getNodeTypeTab( SelectedNodeTypeProp.EditLayout.TabId ).TabName;
                         }
                     }
                     _SaveButton.Visible = true;
@@ -1876,8 +1876,8 @@ namespace ChemSW.Nbt.WebPages
 
                             TableRow ConstraintOCRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) ConstraintOCRow.Cells[0].Controls[0] ).Text = "Constrain to Object Class:";
-							
-							HiddenField NodeTypeSelectIsFk = new HiddenField();
+
+                            HiddenField NodeTypeSelectIsFk = new HiddenField();
                             NodeTypeSelectIsFk.ID = "EditProp_IsFkValue" + SelectedNodeTypeProp.PropId.ToString();
                             NodeTypeSelectIsFk.Value = "true";
                             ConstraintOCRow.Cells[1].Controls.Add( NodeTypeSelectIsFk );
@@ -1891,17 +1891,17 @@ namespace ChemSW.Nbt.WebPages
                             NodeTypeSelectFkValue.Items.Add( new ListItem( string.Empty, string.Empty ) );
                             foreach( CswNbtMetaDataObjectClass ObjectClass in Master.CswNbtResources.MetaData.ObjectClasses )
                             {
-                                NodeTypeSelectFkValue.Items.Add( new ListItem( ObjectClass.ObjectClass.ToString(), ObjectClass.ObjectClassId.ToString()));
+                                NodeTypeSelectFkValue.Items.Add( new ListItem( ObjectClass.ObjectClass.ToString(), ObjectClass.ObjectClassId.ToString() ) );
                             }
                             NodeTypeSelectFkValue.CssClass = "selectinput";
                             NodeTypeSelectFkValue.ID = "EditProp_FkValueValue" + SelectedNodeTypeProp.PropId.ToString();
                             ConstraintOCRow.Cells[1].Controls.Add( NodeTypeSelectFkValue );
 
-							if( SelectedNodeTypeProp.FKValue != Int32.MinValue )
-							{
-								NodeTypeSelectFkValue.SelectedValue = SelectedNodeTypeProp.FKValue.ToString();
-							}
-							break;
+                            if( SelectedNodeTypeProp.FKValue != Int32.MinValue )
+                            {
+                                NodeTypeSelectFkValue.SelectedValue = SelectedNodeTypeProp.FKValue.ToString();
+                            }
+                            break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.Number:
                             TableRow PrecisionRow = makeEditPropTableRow( EditPropPlaceHolder );

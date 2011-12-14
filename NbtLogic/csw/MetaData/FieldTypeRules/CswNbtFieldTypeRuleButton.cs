@@ -22,7 +22,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources, MetaDataProp );
-
         }//ctor
 
         public CswNbtSubFieldColl SubFields

@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
     [ScriptService]
     [WebService( Namespace = "http://localhost/NbtWebApp" )]
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
-    public class wsNBT : System.Web.Services.WebService
+    public class wsNBT : WebService
     {
         #region Session and Resource Management
 
@@ -62,9 +62,15 @@ namespace ChemSW.Nbt.WebServices
 
         }//_initResources() 
 
-        private AuthenticationStatus _attemptRefresh()
+        private AuthenticationStatus _attemptRefresh( bool ThrowOnError = false )
         {
             AuthenticationStatus ret = _CswSessionResources.attemptRefresh();
+
+            if( ThrowOnError &&
+                ret != AuthenticationStatus.Authenticated )
+            {
+                throw new CswDniException( ErrorType.Warning, "Current session is not authenticated, please login again.", "Cannot execute web method without a valid session." );
+            }
 
             if( ret == AuthenticationStatus.Authenticated )
             {
@@ -2384,6 +2390,47 @@ namespace ChemSW.Nbt.WebServices
 
         } // clearProp()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string onObjectClassButtonClick( string NodeTypePropAttr )
+        {
+            JObject ReturnVal = new JObject();
+            bool ClickSucceeded = false;
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswPropIdAttr PropId = new CswPropIdAttr( NodeTypePropAttr );
+                if( null == PropId.NodeId ||
+                        Int32.MinValue == PropId.NodeId.PrimaryKey ||
+                            Int32.MinValue == PropId.NodeTypePropId )
+                {
+                    throw new CswDniException( ErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
+                }
+
+                CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                ClickSucceeded = ws.doObjectClassButtonClick( PropId );
+
+                if( false == ClickSucceeded )
+                {
+                    throw new CswDniException( ErrorType.Error, "Button click event failed.", "Attempt to call OnObjectClassButtonClick failed." );
+                }
+
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            ReturnVal["success"] = ClickSucceeded;
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        }
+
         #endregion Node DML
 
         #region Welcome Region
@@ -2902,6 +2949,93 @@ namespace ChemSW.Nbt.WebServices
         } // GetViews()
 
         #endregion Mobile
+
+        #region Nbt Manager
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getActiveAccessIds()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
+                ReturnVal = ws.getActiveAccessIds();
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getActiveAccessIds()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getScheduledRulesGrid( string AccessId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
+                ReturnVal = ws.getScheduledRulesGrid();
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getScheduledRulesGrid()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string updateScheduledRule()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                string AccessId = CswConvert.ToString( Context.Request["AccessId"] );
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
+                ReturnVal["success"] = ws.updateScheduledRule( Context );
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // updateScheduledRule()
+
+        #endregion Nbt Manager
+
 
         #region Auditing
 

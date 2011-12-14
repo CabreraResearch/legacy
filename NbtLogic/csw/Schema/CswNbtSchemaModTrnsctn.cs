@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Audit;
 using ChemSW.Core;
-using ChemSW.RscAdo;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Log;
@@ -13,6 +12,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -581,6 +581,43 @@ namespace ChemSW.Nbt.Schema
             JctModulesATable.update( JctModulesADataTable );
         }
 
+        private void _changeJunctionModuleId( Int32 ChangeModuleId, Int32 ToModuleId, string TableName, string Fk )
+        {
+            CswCommaDelimitedString FksAlreadyOnToModuleId = new CswCommaDelimitedString();
+            CswTableSelect JctModSelect = makeCswTableSelect( "SchemaModTrnsctn_ModuleJunctionUpdate_" + TableName + "_select", TableName );
+            DataTable JctModSelectTable = JctModSelect.getTable( "moduleid", ToModuleId );
+            foreach( DataRow JctRow in JctModSelectTable.Rows )
+            {
+                FksAlreadyOnToModuleId.Add( CswConvert.ToString( JctRow[Fk] ) );
+            }
+
+            CswTableUpdate JctModUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ModuleJunctionUpdate_" + TableName + "_update", TableName );
+            DataTable JctModUpdateTable = JctModUpdate.getTable( "moduleid", ChangeModuleId );
+            foreach( DataRow JctRow in JctModUpdateTable.Rows )
+            {
+                string FkId = CswConvert.ToString( JctRow[Fk] );
+                if( false == FksAlreadyOnToModuleId.Contains( FkId ) )
+                {
+                    JctRow["moduleid"] = CswConvert.ToDbVal( ToModuleId );
+                }
+                else
+                {
+                    JctRow.Delete();
+                }
+            }
+            JctModUpdate.update( JctModUpdateTable );
+        }
+
+        /// <summary>
+        /// Dereferences a moduleid from the appropriate jct tables and replaces with a new moduleid when necessary.
+        /// </summary>
+        public void changeJunctionModuleId( Int32 OldModuleId, Int32 NewModuleId )
+        {
+            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_actions", "actionid" );
+            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_nodetypes", "nodetypeid" );
+            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_objectclass", "objectclassid" );
+        }
+
         ///// <summary>
         ///// Deprecated in favor of SetActionPermission.  Don't use for new scripts.
         ///// </summary>
@@ -604,6 +641,20 @@ namespace ChemSW.Nbt.Schema
         //        RoleNode.postChanges( false );
         //    }
         //}
+
+        public Int32 getModuleId( CswNbtResources.CswNbtModule Module )
+        {
+            Int32 RetModuleId = Int32.MinValue;
+            CswTableSelect ModulesTable = makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "modules" );
+            string WhereClause = " where lower(name)='" + Module.ToString().ToLower() + "'";
+            DataTable ModulesDataTable = ModulesTable.getTable( WhereClause, true );
+            if( ModulesDataTable.Rows.Count == 1 )
+            {
+                DataRow ModuleRow = ModulesDataTable.Rows[0];
+                RetModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
+            }
+            return RetModuleId;
+        }
 
         /// <summary>
         /// Convenience function for making new Module

@@ -22,7 +22,7 @@
             var $parent = $(this);
             
             var $select = $('<select></select>');
-            var elementId = tryParseString(o.ID,'');
+            var elementId = tryParseString(o.ID);
             
             $select.CswAttrDom('id',elementId);
             $select.CswAttrDom('name',elementId);
@@ -62,13 +62,17 @@
     };
     
     function makeOption(opt) {
-        var ret, display;
+        var ret, display, value;
         if (contains(opt, 'value') && contains(opt, 'display')) {
             ret = opt;
         }
         else if (contains(opt, 'value')) {
-            display = tryParseString(opt.display, opt.value);
-            ret = { value: opt.value, display: display };
+            value = tryParseString(opt.value);
+            ret = { value: value, display: value };
+        }
+        else if (contains(opt, 'display')) {
+            display = tryParseString(opt.display);
+            ret = { value: display, display: display };
         } else {
             ret = { value: opt, display: opt };
         }
@@ -100,17 +104,14 @@
     }
     
     function setOptions(values, selected, $select, doEmpty) {
-        var key, thisOpt;
         if (isArray(values) && values.length > 0) {
             if (doEmpty) {
                 $select.empty();
             }
-            for (key in values) {
-                if (contains(values, key)) {
-                    thisOpt = values[key];
-                    addOption(thisOpt, (thisOpt.value === selected), $select);
-                }
-            }
+            each(values, function(thisOpt) {
+                var opt = makeOption(thisOpt);       
+                addOption(opt, (opt.value === selected), $select);
+            });
         }
         return $select;
     }
