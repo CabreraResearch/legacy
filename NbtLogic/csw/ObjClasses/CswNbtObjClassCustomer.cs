@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string UserCountPropertyName { get { return "User Count"; } }
         public static string ModulesEnabledPropertyName { get { return "Modules Enabled"; } }
         public static string ChemSWAdminPasswordPropertyName { get { return "ChemSW Admin Password"; } }
+        public static string LoginPropertyName { get { return "Login"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -241,7 +242,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
-            if( null != NodeTypeProp ) { /*Do Something*/ }
+            if( null != NodeTypeProp &&
+                    null != NodeTypeProp.ObjectClassProp )
+            {
+                if( LoginPropertyName == NodeTypeProp.ObjectClassProp.PropName )
+                {
+                    CswNbtResources OtherResources = makeOtherResources();
+                    CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+                    //Do our stuff
+                }
+            }
         }
         #endregion
 
@@ -294,6 +304,13 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[ChemSWAdminPasswordPropertyName].AsPassword );
+            }
+        }
+        public CswNbtNodePropButton Login
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[LoginPropertyName].AsButton );
             }
         }
 

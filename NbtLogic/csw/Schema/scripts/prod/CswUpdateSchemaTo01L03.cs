@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -34,7 +35,7 @@ namespace ChemSW.Nbt.Schema
                                                                                    false,
                                                                                    true,
                                                                                    false,
-                                                                                   string.Empty,
+                                                                                   CswNbtViewProperty.CswNbtPropType.Unknown,
                                                                                    Int32.MinValue,
                                                                                    false,
                                                                                    false,
@@ -44,7 +45,7 @@ namespace ChemSW.Nbt.Schema
                                                                                    GnDueDateOcp.DisplayColAdd,
                                                                                    ( GnDueDateOcp.DisplayRowAdd + 1 ) );
                 string Extended = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended );
-                RunNowRow[Extended] = CswConvert.ToDbVal( "button" );
+                RunNowRow[Extended] = CswConvert.ToDbVal( CswNbtNodePropButton.ButtonMode.button.ToString() );
                 string SetValOnAdd = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd );
                 RunNowRow[SetValOnAdd] = CswConvert.ToDbVal( false );
                 string AuditLevelString = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel );
@@ -69,7 +70,7 @@ namespace ChemSW.Nbt.Schema
                                                                                    false,
                                                                                    true,
                                                                                    false,
-                                                                                   string.Empty,
+                                                                                   CswNbtViewProperty.CswNbtPropType.Unknown,
                                                                                    Int32.MinValue,
                                                                                    false,
                                                                                    false,

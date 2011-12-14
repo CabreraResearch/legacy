@@ -756,6 +756,72 @@ namespace ChemSW.Nbt.Schema
             return NewObjectClassId;
         }
 
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,
+                                                                    string PropName,
+                                                                    CswNbtMetaDataFieldType.NbtFieldType FieldType,
+                                                                    bool IsBatchEntry = false,
+                                                                    bool ReadOnly = false,
+                                                                    bool IsFk = false,
+                                                                    CswNbtViewProperty.CswNbtPropType FkType = CswNbtViewProperty.CswNbtPropType.Unknown,
+                                                                    Int32 FkValue = Int32.MinValue,
+                                                                    bool IsRequired = false,
+                                                                    bool IsUnique = false,
+                                                                    bool IsGlobalUnique = false,
+                                                                    bool ServerManaged = false,
+                                                                    string ListOptions = "",
+                                                                    Int32 DisplayColAdd = Int32.MinValue,
+                                                                    Int32 DisplayRowAdd = Int32.MinValue,
+                                                                    string Extended = "",
+                                                                    bool SetValOnAdd = false,
+                                                                    AuditLevel AuditLevel = AuditLevel.NoAudit,
+                                                                    string StaticText = ""
+            )
+        {
+            CswNbtMetaDataObjectClassProp RetProp = null;
+            if( NbtObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            {
+                CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
+                RetProp = ObjectClassOc.getObjectClassProp( PropName );
+                if( null == RetProp )
+                {
+                    CswTableUpdate ObjectClassPropUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate", "object_class_props" );
+                    DataTable UpdateTable = ObjectClassPropUpdate.getEmptyTable();
+                    DataRow NewPropRow = addObjectClassPropRow( UpdateTable,
+                                                               ObjectClassOc,
+                                                               PropName,
+                                                               FieldType,
+                                                               IsBatchEntry,
+                                                               ReadOnly,
+                                                               IsFk,
+                                                               FkType,
+                                                               FkValue,
+                                                               IsRequired,
+                                                               IsUnique,
+                                                               IsGlobalUnique,
+                                                               ServerManaged,
+                                                               ListOptions,
+                                                               DisplayColAdd,
+                                                               DisplayRowAdd );
+
+                    if( false == string.IsNullOrEmpty( Extended ) )
+                    {
+                        NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended.ToString()] = CswConvert.ToDbVal( Extended );
+                    }
+                    NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( SetValOnAdd );
+                    NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( AuditLevel.ToString() );
+
+                    if( false == string.IsNullOrEmpty( StaticText ) )
+                    {
+                        NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext.ToString()] = CswConvert.ToDbVal( StaticText );
+                    }
+                    ObjectClassPropUpdate.update( UpdateTable );
+                    MetaData.makeMissingNodeTypeProps();
+                    RetProp = ObjectClassOc.getObjectClassProp( PropName );
+                }
+            }
+            return RetProp;
+        }
+
         /// <summary>
         /// Convenience function for making new Object Class Props
         /// </summary>
@@ -808,7 +874,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public DataRow addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, string PropName,
                                              CswNbtMetaDataFieldType.NbtFieldType FieldType, bool IsBatchEntry, bool ReadOnly,
-                                             bool IsFk, string FkType, Int32 FkValue, bool IsRequired, bool IsUnique, bool IsGlobalUnique,
+                                             bool IsFk, CswNbtViewProperty.CswNbtPropType FkType, Int32 FkValue, bool IsRequired, bool IsUnique, bool IsGlobalUnique,
                                              bool ServerManaged, string ListOptions, Int32 DisplayColAdd, Int32 DisplayRowAdd )
         {
             DataRow OCPRow = ObjectClassPropsTable.NewRow();
@@ -816,8 +882,18 @@ namespace ChemSW.Nbt.Schema
             OCPRow["fieldtypeid"] = CswConvert.ToDbVal( MetaData.getFieldType( FieldType ).FieldTypeId );
             OCPRow["isbatchentry"] = CswConvert.ToDbVal( IsBatchEntry );
             OCPRow["isfk"] = CswConvert.ToDbVal( IsFk );
-            OCPRow["fktype"] = FkType;
-            OCPRow["fkvalue"] = CswConvert.ToDbVal( FkValue );
+            if( IsFk &&
+                Int32.MinValue != FkValue &&
+                FkType != CswNbtViewProperty.CswNbtPropType.Unknown )
+            {
+                OCPRow["fktype"] = FkType;
+                OCPRow["fkvalue"] = CswConvert.ToDbVal( FkValue );
+            }
+            else
+            {
+                OCPRow["fktype"] = "";
+                OCPRow["fkvalue"] = CswConvert.ToDbVal( Int32.MinValue );
+            }
             OCPRow["isrequired"] = CswConvert.ToDbVal( IsRequired );
             OCPRow["isunique"] = CswConvert.ToDbVal( IsUnique );
             OCPRow["isglobalunique"] = CswConvert.ToDbVal( IsGlobalUnique );
