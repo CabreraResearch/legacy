@@ -5,22 +5,44 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
+using ChemSW.Nbt.Security;
+using ChemSW.Security;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceNbtManager
     {
-        private readonly CswNbtResources _CswNbtResources;
+        private readonly CswNbtResources _OtherResources;
+        private readonly CswNbtResources _NbtManagerResources = null;
 
-        public CswNbtWebServiceNbtManager( CswNbtResources CswNbtResources )
+        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, string AccessId )
         {
-            _CswNbtResources = CswNbtResources;
-            if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ) )
+            _NbtManagerResources = NbtManagerResources;
+            _OtherResources = makeOtherResources( AccessId );
+        } //ctor
+
+        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources )
+        {
+            _NbtManagerResources = NbtManagerResources;
+            if( false == _NbtManagerResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use NBT Manager web services if the NBT Manager module is not enabled.", "Attempted to instance CswNbtWebServiceNbtManager, while the NBT Manager module is not enabled." );
             }
         } //ctor
+
+        public CswNbtResources makeOtherResources( string AccessId )
+        {
+            _ValidateAccessId( AccessId );
+            CswNbtResources OtherResources = CswNbtResourcesFactory.makeCswNbtResources( _NbtManagerResources );
+            OtherResources.AccessId = AccessId;
+            OtherResources.InitCurrentUser = InitUser;
+            return OtherResources;
+        }
+        private ICswUser InitUser( ICswResources Resources )
+        {
+            return new CswNbtSystemUser( Resources, "CswNbtWebServiceNbtManager_SystemUser" );
+        }
 
         public JObject getActiveAccessIds()
         {
@@ -28,9 +50,9 @@ namespace ChemSW.Nbt.WebServices
             JArray CustomerIds = new JArray();
             RetObj["customerids"] = CustomerIds;
 
-            foreach( string AccessId in _CswNbtResources.CswDbCfgInfo.AccessIds )
+            foreach( string AccessId in _NbtManagerResources.CswDbCfgInfo.AccessIds )
             {
-                if( _CswNbtResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
+                if( _NbtManagerResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
                 {
                     CustomerIds.Add( AccessId );
                 }
@@ -44,22 +66,19 @@ namespace ChemSW.Nbt.WebServices
             {
                 throw new CswDniException( ErrorType.Error, "Cannot get Scheduled Rules without a Customer ID.", "getScheduledRulesGrid was called with a null or empty AccessID." );
             }
-            if( false == _CswNbtResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
+            if( false == _NbtManagerResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
             {
                 throw new CswDniException( ErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
             }
         }
 
-        public JObject getScheduledRulesGrid( string AccessId )
+        public JObject getScheduledRulesGrid()
         {
             JObject RetObj;
-            _ValidateAccessId( AccessId );
-
-            _CswNbtResources.AccessId = AccessId;
-            CswTableSelect ScheduledRulesSelect = _CswNbtResources.makeCswTableSelect( "Scheduledrules_select_on_" + AccessId, "scheduledrules" );
+            CswTableSelect ScheduledRulesSelect = _OtherResources.makeCswTableSelect( "Scheduledrules_select_on_" + _OtherResources.AccessId, "scheduledrules" );
             DataTable ScheduledRulesTable = ScheduledRulesSelect.getTable();
 
-            CswGridData GridData = new CswGridData( _CswNbtResources );
+            CswGridData GridData = new CswGridData( _OtherResources );
             string TablePkColumn = "scheduledruleid";
             GridData.PkColumn = TablePkColumn;
             GridData.HidePkColumn = true;
@@ -101,10 +120,6 @@ namespace ChemSW.Nbt.WebServices
         {
             bool RetSuccess = false;
 
-            string AccessId = CswConvert.ToString( Context.Request["AccessId"] );
-            _ValidateAccessId( AccessId );
-            _CswNbtResources.AccessId = AccessId;
-
             Int32 ScheduledRuleId = CswConvert.ToInt32( Context.Request["id"] );
             Int32 FailedCount = CswConvert.ToInt32( Context.Request["FAILEDCOUNT"] );
             bool Reprobate = CswConvert.ToBoolean( Context.Request["REPROBATE"] );
@@ -118,7 +133,7 @@ namespace ChemSW.Nbt.WebServices
             Int32 ReprobateThreshold = CswConvert.ToInt32( Context.Request["REPROBATETHRESHOLD"] );
             Int32 MaxRunTimeMs = CswConvert.ToInt32( Context.Request["MAXRUNTIMEMS"] );
 
-            CswTableUpdate RulesUpdate = _CswNbtResources.makeCswTableUpdate( "Scheduledrules_update_on_accessid_" + AccessId + "_id_" + ScheduledRuleId, "scheduledrules" );
+            CswTableUpdate RulesUpdate = _OtherResources.makeCswTableUpdate( "Scheduledrules_update_on_accessid_" + _OtherResources.AccessId + "_id_" + ScheduledRuleId, "scheduledrules" );
             DataTable RulesTable = RulesUpdate.getTable( "scheduledruleid", ScheduledRuleId, true );
             if( RulesTable.Rows.Count == 1 )
             {
@@ -152,10 +167,15 @@ namespace ChemSW.Nbt.WebServices
 
             if( false == RetSuccess )
             {
-                throw new CswDniException( ErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledruleid=" + ScheduledRuleId + " on Customer ID " + AccessId + "." );
+                throw new CswDniException( ErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledruleid=" + ScheduledRuleId + " on Customer ID " + _OtherResources.AccessId + "." );
             }
-
+            _finalize();
             return RetSuccess;
+        }
+
+        private void _finalize()
+        {
+            _OtherResources.finalize();
         }
 
     } // class CswNbtWebServiceNbtManager

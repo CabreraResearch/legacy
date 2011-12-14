@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
     [ScriptService]
     [WebService( Namespace = "http://localhost/NbtWebApp" )]
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
-    public class wsNBT : System.Web.Services.WebService
+    public class wsNBT : WebService
     {
         #region Session and Resource Management
 
@@ -2990,8 +2990,8 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
-                ReturnVal = ws.getScheduledRulesGrid( AccessId );
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
+                ReturnVal = ws.getScheduledRulesGrid();
 
                 _deInitResources();
             }
@@ -3017,7 +3017,8 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
+                string AccessId = CswConvert.ToString( Context.Request["AccessId"] );
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
                 ReturnVal["success"] = ws.updateScheduledRule( Context );
 
                 _deInitResources();
