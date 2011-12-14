@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 
 
@@ -62,11 +60,13 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    CswNbtNode ChemSWAdminUserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-                    CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).AccountLocked.Checked = Tristate.True;
-                    CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.ChangedDate = DateTime.MinValue;
-                    ChemSWAdminUserNode.postChanges( true );
-
+                    if( false == _CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.NBTManager ) )
+                    {
+                        CswNbtNode ChemSWAdminUserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+                        CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).AccountLocked.Checked = Tristate.True;
+                        CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.ChangedDate = DateTime.MinValue;
+                        ChemSWAdminUserNode.postChanges( true );
+                    }
                     _LogicRunStatus = LogicRunStatus.Succeeded; //last line
 
                 }//try
