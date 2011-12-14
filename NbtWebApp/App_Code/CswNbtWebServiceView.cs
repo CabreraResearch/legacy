@@ -251,14 +251,14 @@ namespace ChemSW.Nbt.WebServices
 
             if( null == ViewsTable )
             {
-                gd.makeJqColumn( "NODEVIEWID", JColumnNames, JColumnDefs, false, true );
-                gd.makeJqColumn( "VIEWID", JColumnNames, JColumnDefs, true, true );
-                gd.makeJqColumn( "VIEWNAME", JColumnNames, JColumnDefs, false, false );
-                gd.makeJqColumn( "VIEWMODE", JColumnNames, JColumnDefs, false, false );
-                gd.makeJqColumn( "VISIBILITY", JColumnNames, JColumnDefs, false, false );
-                gd.makeJqColumn( "CATEGORY", JColumnNames, JColumnDefs, false, false );
-                gd.makeJqColumn( "ROLENAME", JColumnNames, JColumnDefs, false, false );
-                gd.makeJqColumn( "USERNAME", JColumnNames, JColumnDefs, false, false );
+                gd.makeJqColumn( null, "NODEVIEWID", JColumnNames, JColumnDefs, false, true );
+                gd.makeJqColumn( null, "VIEWID", JColumnNames, JColumnDefs, true, true );
+                gd.makeJqColumn( null, "VIEWNAME", JColumnNames, JColumnDefs, false, false );
+                gd.makeJqColumn( null, "VIEWMODE", JColumnNames, JColumnDefs, false, false );
+                gd.makeJqColumn( null, "VISIBILITY", JColumnNames, JColumnDefs, false, false );
+                gd.makeJqColumn( null, "CATEGORY", JColumnNames, JColumnDefs, false, false );
+                gd.makeJqColumn( null, "ROLENAME", JColumnNames, JColumnDefs, false, false );
+                gd.makeJqColumn( null, "USERNAME", JColumnNames, JColumnDefs, false, false );
                 foreach( CswNbtView View in Views )
                 {
                     string RoleName = string.Empty;

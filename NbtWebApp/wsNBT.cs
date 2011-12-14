@@ -3008,7 +3008,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string updateScheduledRule( string AccessId, string DataRow )
+        public string updateScheduledRule()
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3018,7 +3018,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
-                ReturnVal["success"] = ws.updateScheduledRule( AccessId, DataRow );
+                ReturnVal["success"] = ws.updateScheduledRule( Context );
 
                 _deInitResources();
             }

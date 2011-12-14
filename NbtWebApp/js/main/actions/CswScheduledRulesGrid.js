@@ -123,6 +123,49 @@
 
             //Step 2: Review Scheduled Rules
             makeStepTwo = function() {
+                var rulesGridId = makeStepId('previewGrid_outer', 3), 
+                    $rulesGrid;
+
+                var makeRulesGrid = function() {
+                    $rulesGrid = $rulesGrid || $('<div id="' + rulesGridId + '"></div>').appendTo($divStep2);
+                    $rulesGrid.empty();
+                    
+                    gridOptions = {
+                        ID: makeStepId('rulesGrid'),
+                        pagermode: 'default',
+                        gridOpts: {
+                            autowidth: true,
+                            height: '200'
+                        },
+                        optNav: {
+                            add: false,
+                            del: false,
+                            edit: true,
+                            view: false,
+                            editfunc: function(rowid) {
+                                var onEdit = {
+                                    url: '/NbtWebApp/wsNBT.asmx/updateScheduledRule', 
+                                    editData: { AccessId: selectedCustomerId },
+                                    reloadAfterSubmit: false,
+                                    checkOnSubmit: true,
+                                    closeAfterEdit: true,
+                                    afterComplete: makeRulesGrid
+                                };
+                                return scheduledRulesGrid.$gridTable.jqGrid('editGridRow', rowid, onEdit);
+                            }
+                        }
+                    };
+                    
+                    CswAjaxJson({
+                            url: '/NbtWebApp/wsNBT.asmx/getScheduledRulesGrid',
+                            data: { AccessId: selectedCustomerId },
+                            success: function(data) {
+                                $.extend(gridOptions.gridOpts, data);
+                                scheduledRulesGrid = new CswGrid(gridOptions, $rulesGrid);
+                            }
+                        });
+                };
+                
                 $divStep2 = $divStep2 || $wizard.CswWizard('div', ChemSW.enums.CswScheduledRulesGrid_WizardSteps.step2.step);
                 $divStep2.empty();
                 
@@ -131,37 +174,9 @@
                 toggleButton(buttons.prev, true);
                 
                 $divStep2.append('<p>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</p>');
-                
-                var rulesGridId = makeStepId('previewGrid_outer', 3),
-                    $rulesGrid = $('<div id="' + rulesGridId + '"></div>').appendTo($divStep2);
-                
-                gridOptions = {
-                    ID: makeStepId('rulesGrid'),
-                    pagermode: 'default',
-                    gridOpts: {
-                        autowidth: true,
-                        height: '200'
-                    },
-                    optNav: {
-                        add: false,
-                        del: false,
-                        edit: true,
-                        view: false,
-                        editfunc: function(rowid) {
-                            //add our onEdit event here
-                            return scheduledRulesGrid.$gridTable.jqGrid('editGridRow', rowid, { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterEdit: true });
-                        }
-                    }
-                };
 
-                CswAjaxJson({
-                    url: '/NbtWebApp/wsNBT.asmx/getScheduledRulesGrid',
-                    data: {AccessId: selectedCustomerId},
-                    success: function(data) {
-                        $.extend(gridOptions.gridOpts, data);        
-                        scheduledRulesGrid = new CswGrid(gridOptions, $rulesGrid);
-                    }
-                });
+                makeRulesGrid();
+                
             },
 
             handleNext = function($wizardTable, newStepNo) {

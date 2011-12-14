@@ -148,10 +148,10 @@ namespace ChemSW.Nbt.WebServices
         public void dataColumnToJson( DataColumn Column, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false, bool EnableGridEdit = false )
         {
             string ColumnName = Column.ColumnName.ToUpperInvariant();
-            makeJqColumn( ColumnName, JColumnNames, JColumnDefs, IsKey, IsHidden, EnableGridEdit );
+            makeJqColumn( Column, ColumnName, JColumnNames, JColumnDefs, IsKey, IsHidden, EnableGridEdit );
         }
 
-        public void makeJqColumn( String ColumnName, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false, bool EnableGridEdit = false )
+        public void makeJqColumn( DataColumn Column, String ColumnName, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false, bool EnableGridEdit = false )
         {
             JColumnNames.Add( ColumnName.ToUpperInvariant() );
             JObject ThisColumnDef = new JObject();
@@ -176,6 +176,13 @@ namespace ChemSW.Nbt.WebServices
             {
                 ThisColumnDef["editable"] = true;
                 ThisColumnDef["edittype"] = "text";
+                if( null != Column &&
+                        ( Column.DataType == Type.GetType( "System.Int32" ) ||
+                            Column.DataType == Type.GetType( "System.Int64" ) ) )
+                {
+                    ThisColumnDef["editrules"] = new JObject();
+                    ThisColumnDef["editrules"]["number"] = true;
+                }
             }
             _ColumnsWidth += ColumnName.Length;
             JColumnDefs.Add( ThisColumnDef );
