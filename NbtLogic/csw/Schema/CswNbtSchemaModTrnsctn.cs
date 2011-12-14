@@ -8,9 +8,11 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Log;
+using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
 
@@ -673,6 +675,33 @@ namespace ChemSW.Nbt.Schema
             ModulesTable.update( ModulesDataTable );
             return NewModuleId;
         }
+
+        /// <summary>
+        /// Convenience function for making new Scheduled Rule
+        /// </summary>
+        public Int32 createScheduledRule( NbtScheduleRuleNames RuleName, Recurrence Recurrence, Int32 Interval )
+        {
+            Int32 RetRuleId = Int32.MinValue;
+            if( Recurrence != Recurrence.Unknown &&
+                NbtScheduleRuleNames.Unknown != RuleName )
+            {
+                CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
+                DataTable RuleTable = RulesUpdate.getEmptyTable();
+                DataRow NewRuleRow = RuleTable.NewRow();
+                NewRuleRow["recurrence"] = CswConvert.ToDbVal( Recurrence.ToString() );
+                NewRuleRow["interval"] = CswConvert.ToDbVal( Interval );
+                NewRuleRow["maxruntimems"] = CswConvert.ToDbVal( 300000 );
+                NewRuleRow["reprobatethreshold"] = CswConvert.ToDbVal( 3 );
+                NewRuleRow["disabled"] = CswConvert.ToDbVal( false );
+                NewRuleRow["rulename"] = CswConvert.ToDbVal( RuleName.ToString() );
+                RuleTable.Rows.Add( NewRuleRow );
+
+                RetRuleId = CswConvert.ToInt32( NewRuleRow["scheduledruleid"] );
+                RulesUpdate.update( RuleTable );
+            }
+            return RetRuleId;
+        }
+
 
         /// <summary>
         /// Convenience function for making new jct_module_objectclass records

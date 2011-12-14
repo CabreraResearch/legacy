@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ChemSW.MtSched.Core;
 
@@ -17,6 +16,7 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtUpdtInspection() );
             ReturnVal.Add( new CswScheduleLogicNbtUpdtMTBF() );
             ReturnVal.Add( new CswScheduleLogicNbtUpdtPropVals() );
+            ReturnVal.Add( new CswScheduleLogicNbtDisableCswAdmin() );
 
             return ( ReturnVal );
 
