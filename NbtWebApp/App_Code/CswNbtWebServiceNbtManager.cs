@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ThisRule["REPROBATETHRESHOLD"] = CswConvert.ToDbVal( ReprobateThreshold );
                 }
-                if( 0 < MaxRunTimeMs )
+                if( 5000 < MaxRunTimeMs )
                 {
                     ThisRule["MAXRUNTIMEMS"] = CswConvert.ToDbVal( MaxRunTimeMs );
                 }

@@ -100,9 +100,7 @@
                                 onChange: function() {
                                     var $selected = $customerIdSelect.find(':selected');
                                     selectedCustomerId = $selected.val();
-                                    if(false === isNullOrEmpty(selectedCustomerId)) {
-                                        toggleButton(buttons.next, true);
-                                    }
+                                    toggleButton(buttons.next, (false === isNullOrEmpty(selectedCustomerId)));
                                 }
                             });
                         
