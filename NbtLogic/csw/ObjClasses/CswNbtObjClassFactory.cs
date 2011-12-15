@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static CswNbtObjClass makeObjClass( CswNbtResources CswNbtResources, CswNbtMetaDataObjectClass ObjectClass, CswNbtNode Node )
         {
             if( Node == null )
-				throw new CswDniException( ErrorType.Error, "Invalid Node", "Wrong function used in CswNbtObjClassFactory.  If Node should be null, do not provide one." );
+                throw new CswDniException( ErrorType.Error, "Invalid Node", "Wrong function used in CswNbtObjClassFactory.  If Node should be null, do not provide one." );
 
             CswNbtObjClass ReturnVal = null;
 
@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass:
-                    ReturnVal = new CswNbtObjClassUnitType(CswNbtResources, Node);
+                    ReturnVal = new CswNbtObjClassUnitType( CswNbtResources, Node );
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.UserClass:
@@ -335,7 +335,7 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass:
-                    ReturnVal = new CswNbtObjClassUnitType(CswNbtResources);
+                    ReturnVal = new CswNbtObjClassUnitType( CswNbtResources );
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.UserClass:

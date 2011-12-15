@@ -1,6 +1,7 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -44,7 +45,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void beforeDeleteNode();
         public abstract void afterDeleteNode();
         public abstract void afterPopulateProps();
-        public abstract void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp );
+        public abstract void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj );
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
 
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }

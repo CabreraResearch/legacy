@@ -50,6 +50,13 @@ namespace ChemSW.Nbt.MetaData
             UnitTypeClass
         };
 
+        public enum OnButtonClickEvents
+        {
+            reauthenticate,
+            home,
+            url
+        }
+
         public static NbtObjectClass getObjectClassFromString( string ObjectClassName )
         {
             //return ( ( CswNbtMetaDataObjectClass.NbtObjectClass )Enum.Parse( typeof( CswNbtMetaDataObjectClass.NbtObjectClass ), ObjectClassName, true ) );
