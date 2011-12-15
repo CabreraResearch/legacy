@@ -31,6 +31,7 @@
                         if(isTrue(data.success)) {
                             switch (data.action) {
                                 case ChemSW.enums.CswOnObjectClassClick.reauthenticate:
+                                    $.CswCookie('clearAll');
                                     newParams = {
                                         AccessId: '', 
                                         UserName: '', 

@@ -143,17 +143,20 @@ namespace ChemSW.Nbt
         public CswNbtView getSessionView( CswNbtSessionDataId SessionViewId )
         {
             if( SessionViewId == null )
+            {
                 throw new CswDniException( "CswNbtViewSelect.getSessionView(): SessionViewId is null" );
+            }
 
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionViewId );
-            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.View )
-            {
-                return SessionDataItem.View;
-            }
-            else
+
+            if( null == SessionDataItem ||
+                SessionDataItem.DataType != CswNbtSessionDataItem.SessionDataType.View )
             {
                 throw new CswDniException( "CswNbtViewSelect.getSessionView(): SessionViewId (" + SessionViewId.get() + ") is not a view" );
             }
+
+            return SessionDataItem.View;
+
         } // getSessionView()
 
         /// <summary>
