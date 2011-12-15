@@ -80,12 +80,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-				//string StringValue = _CswNbtNodePropData.GetPropRowValue( _ChangedDateSubField.Column );
-				//DateTime ReturnVal = DateTime.MinValue;
-				//if( StringValue != string.Empty )
-				//    ReturnVal = Convert.ToDateTime( StringValue );
-				//return ( ReturnVal.Date );
-				return _CswNbtNodePropData.GetPropRowValueDate( _ChangedDateSubField.Column );
+                //string StringValue = _CswNbtNodePropData.GetPropRowValue( _ChangedDateSubField.Column );
+                //DateTime ReturnVal = DateTime.MinValue;
+                //if( StringValue != string.Empty )
+                //    ReturnVal = Convert.ToDateTime( StringValue );
+                //return ( ReturnVal.Date );
+                return _CswNbtNodePropData.GetPropRowValueDate( _ChangedDateSubField.Column );
             }
 
             set
@@ -136,9 +136,9 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
             ParentObject["newpassword"] = string.Empty;
-			ParentObject["isexpired"] = IsExpired.ToString().ToLower();
-			ParentObject["isadmin"] = _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower();
-		}
+            ParentObject["isexpired"] = IsExpired.ToString().ToLower();
+            ParentObject["isadmin"] = _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower();
+        }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
@@ -170,25 +170,25 @@ namespace ChemSW.Nbt.PropTypes
             EncryptedPassword = CswTools.XmlRealAttributeName( PropRow[_EncryptedPasswordSubField.ToXmlNodeName()].ToString() );
         }
 
-		public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-		{
-			if( null != JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName( true ) ) )
-			{
-				EncryptedPassword = (string) JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName( true ) ).Value;
-			}
-			if( null != JObject.Property( "newpassword" ) )
-			{
-				_saveProp( (string) JObject.Property( "newpassword" ).Value );
-			}
-			if( null != JObject.Property( "isexpired" ) )
-			{
-				bool inIsExpired = CswConvert.ToBoolean( JObject.Property( "isexpired" ).Value );
-				if( inIsExpired && !IsExpired )
-				{
-					ChangedDate = DateTime.MinValue;
-				}
-			}
-		}
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName( true ) ) )
+            {
+                EncryptedPassword = (string) JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != JObject.Property( "newpassword" ) )
+            {
+                _saveProp( (string) JObject.Property( "newpassword" ).Value );
+            }
+            if( null != JObject.Property( "isexpired" ) )
+            {
+                bool inIsExpired = CswConvert.ToBoolean( JObject.Property( "isexpired" ).Value );
+                if( inIsExpired && !IsExpired )
+                {
+                    ChangedDate = DateTime.MinValue;
+                }
+            }
+        }
 
         private void _saveProp( string NewPassword )
         {
