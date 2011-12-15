@@ -1,6 +1,7 @@
 ﻿using System;
 using ChemSW.Audit;
 using ChemSW.MtSched.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -41,6 +42,19 @@ namespace ChemSW.Nbt.Schema
             }
 
             #endregion Case 24415
+
+            #region Case 24431
+
+            CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtAction ViewRulesAction = _CswNbtSchemaModTrnsctn.Actions[CswNbtActionName.View_Scheduled_Rules];
+            foreach( CswNbtNode UserNode in UserOc.getNodes( true, false ) )
+            {
+                CswNbtObjClassUser NodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+                bool CanUse = ( NodeAsUser.Username == CswNbtObjClassUser.ChemSWAdminUsername );
+                _CswNbtSchemaModTrnsctn.Permit.set( ViewRulesAction, NodeAsUser, CanUse );
+            }
+
+            #endregion Case 24431
 
         }//Update()
 
