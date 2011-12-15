@@ -1,13 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
 using ChemSW.Core;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -52,11 +47,11 @@ namespace ChemSW.Nbt.ObjClasses
         //BZ 10247
         private void setDoneOnDate()
         {
-			if( Completed.Checked == Tristate.True && DoneOn.DateTimeValue == DateTime.MinValue )
-				DoneOn.DateTimeValue = DateTime.Today;
+            if( Completed.Checked == Tristate.True && DoneOn.DateTimeValue == DateTime.MinValue )
+                DoneOn.DateTimeValue = DateTime.Today;
 
-			if( Completed.Checked == Tristate.False && DoneOn.DateTimeValue != DateTime.MinValue )
-				DoneOn.DateTimeValue = DateTime.MinValue;
+            if( Completed.Checked == Tristate.False && DoneOn.DateTimeValue != DateTime.MinValue )
+                DoneOn.DateTimeValue = DateTime.MinValue;
         }
 
         #region Inherited Events
@@ -114,6 +109,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
         #endregion
 
         #region Object class specific properties
@@ -125,14 +124,14 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName].AsDateTime );
             }
         }
-		public CswNbtNodePropDateTime DoneOn
+        public CswNbtNodePropDateTime DoneOn
         {
             get
             {
                 return ( _CswNbtNode.Properties[DoneOnPropertyName].AsDateTime );
             }
         }
-		public CswNbtNodePropDateTime DueDate
+        public CswNbtNodePropDateTime DueDate
         {
             get
             {
@@ -187,7 +186,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[SummaryPropertyName].AsText );
             }
         }
-        
+
         public CswNbtNodePropRelationship Parent
         {
             get
@@ -196,7 +195,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         #endregion
-
 
 
     }//CswNbtObjClassTask

@@ -23,6 +23,11 @@ var ChemSW = ChemSW || (function(undefined) {
                 step5: { step: 5, description: 'Finish' },
                 stepcount: 5
             },
+            CswScheduledRulesGrid_WizardSteps: {
+                step1: { step: 1, description: 'Select a Customer ID' },
+                step2: { step: 2, description: 'Review the Scheduled Rules' },
+                stepcount: 2
+            },
             CswDialogButtons: {
                 1: 'ok',
                 2: 'ok/cancel',

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.TblDn;
+﻿using ChemSW.Nbt.PropTypes;
 
 
 namespace ChemSW.Nbt.PropertySets
@@ -18,14 +14,16 @@ namespace ChemSW.Nbt.PropertySets
         string SchedulerWarningDaysPropertyName { get; }
         string SchedulerDueDateIntervalPropertyName { get; }
         string SchedulerRunTimePropertyName { get; }
+        string SchedulerRunNowPropertyName { get; }
 
-		CswNbtNodePropDateTime FinalDueDate { get; }
-		CswNbtNodePropDateTime NextDueDate { get; }
+        CswNbtNodePropDateTime FinalDueDate { get; }
+        CswNbtNodePropDateTime NextDueDate { get; }
         CswNbtNodePropStatic RunStatus { get; }
         CswNbtNodePropNumber WarningDays { get; }
         CswNbtNodePropTimeInterval DueDateInterval { get; }
         CswNbtNodePropDateTime RunTime { get; }
         CswNbtNodePropLogical Enabled { get; }
+        CswNbtNodePropButton RunNow { get; }
 
     }//ICswNbtPropertySetScheduler
 

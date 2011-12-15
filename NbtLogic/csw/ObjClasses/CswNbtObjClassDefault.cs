@@ -200,6 +200,10 @@ namespace ChemSW.Nbt.ObjClasses
         //    }
         //}
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
     }//CswNbtObjClassDefault
 
 }//namespace ChemSW.Nbt.ObjClasses

@@ -1,7 +1,7 @@
 using System;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -56,9 +56,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setDefaultMessage()
         {
-            if (null != TargetNodeType)
+            if( null != TargetNodeType )
             {
-                switch (SelectedEvent)
+                switch( SelectedEvent )
                 {
                     case EventOption.Create:
                         Message.Text = "New " + TargetNodeType.NodeTypeName + " has been created: " +
@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.ObjClasses
                     case EventOption.Edit:
                         Message.Text = TargetNodeType.NodeTypeName + " has been edited: " + MessageNodeNameReplacement +
                                        ".\r\n";
-                        if (Property.Value != string.Empty)
+                        if( Property.Value != string.Empty )
                             Message.Text += Property.Value + " changed to: " + MessagePropertyValueReplacement;
                         break;
                     case EventOption.Delete:
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
-        
+
         public override void afterCreateNode()
         {
             // BZ 10094 - Reset cache
@@ -150,6 +150,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
         #endregion
 
         #region Object class specific properties
@@ -219,8 +223,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion
-
-
 
     }//CswNbtObjClassLocation
 
