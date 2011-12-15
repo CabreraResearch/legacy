@@ -146,7 +146,8 @@
 							AccessId: l.AccessId, 
 							UserName: l.UserName, 
 							Password: l.Password,
-							ForMobile: l.ForMobile
+							ForMobile: l.ForMobile,
+					        PropId: ''
 						},
 					success: function (data) {
 							$.CswCookie('set', CswCookieName.Username, l.UserName);

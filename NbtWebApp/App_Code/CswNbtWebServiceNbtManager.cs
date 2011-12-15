@@ -5,6 +5,8 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
@@ -13,23 +15,59 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceNbtManager
     {
+        #region ctor
+
         private readonly CswNbtResources _OtherResources;
         private readonly CswNbtResources _NbtManagerResources = null;
 
         public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, string AccessId )
         {
             _NbtManagerResources = NbtManagerResources;
+            _checkNbtManagerPermission();
             _OtherResources = makeOtherResources( AccessId );
         } //ctor
 
         public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources )
         {
             _NbtManagerResources = NbtManagerResources;
+            _checkNbtManagerPermission();
+        } //ctor
+        #endregion ctor
+
+        #region private
+
+        private void _checkNbtManagerPermission()
+        {
             if( false == _NbtManagerResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use NBT Manager web services if the NBT Manager module is not enabled.", "Attempted to instance CswNbtWebServiceNbtManager, while the NBT Manager module is not enabled." );
             }
-        } //ctor
+            if( _NbtManagerResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername )
+            {
+                throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Attempted to authenticate as " + _NbtManagerResources.CurrentNbtUser.UserNode + " on a priveleged method." );
+            }
+        }
+
+        private void _ValidateAccessId( string AccessId )
+        {
+            if( string.IsNullOrEmpty( AccessId ) )
+            {
+                throw new CswDniException( ErrorType.Error, "Cannot get Scheduled Rules without a Customer ID.", "getScheduledRulesGrid was called with a null or empty AccessID." );
+            }
+            if( false == _NbtManagerResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
+            {
+                throw new CswDniException( ErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
+            }
+        }
+
+        private void _finalize( CswNbtResources OtherResources )
+        {
+            OtherResources.finalize();
+        }
+
+        #endregion private
+
+        #region public
 
         public CswNbtResources makeOtherResources( string AccessId )
         {
@@ -60,17 +98,7 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
-        private void _ValidateAccessId( string AccessId )
-        {
-            if( string.IsNullOrEmpty( AccessId ) )
-            {
-                throw new CswDniException( ErrorType.Error, "Cannot get Scheduled Rules without a Customer ID.", "getScheduledRulesGrid was called with a null or empty AccessID." );
-            }
-            if( false == _NbtManagerResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
-            {
-                throw new CswDniException( ErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
-            }
-        }
+
 
         public JObject getScheduledRulesGrid()
         {
@@ -169,14 +197,53 @@ namespace ChemSW.Nbt.WebServices
             {
                 throw new CswDniException( ErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledruleid=" + ScheduledRuleId + " on Customer ID " + _OtherResources.AccessId + "." );
             }
-            _finalize();
+            _finalize( _OtherResources );
             return RetSuccess;
         }
 
-        private void _finalize()
+        public CswNbtObjClassCustomer openCswAdminOnTargetSchema( string PropId, ref string TempPassword )
         {
-            _OtherResources.finalize();
+            CswNbtObjClassCustomer RetNodeAsCustomer = null;
+
+            if( string.IsNullOrEmpty( PropId ) )
+            {
+                throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
+            }
+            CswPropIdAttr PropAttr = new CswPropIdAttr( PropId );
+
+            if( null == PropAttr ||
+                null == PropAttr.NodeId ||
+                Int32.MinValue == PropAttr.NodeId.PrimaryKey )
+            {
+                throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
+            }
+            CswNbtNode CustomerNode = _NbtManagerResources.Nodes.GetNode( PropAttr.NodeId );
+
+            if( null == CustomerNode ||
+                CustomerNode.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass )
+            {
+                throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
+            }
+
+            RetNodeAsCustomer = CswNbtNodeCaster.AsCustomer( CustomerNode );
+            string AccessId = RetNodeAsCustomer.CompanyID.Text;
+
+            CswNbtResources OtherResources = makeOtherResources( AccessId );
+            CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+            CswNbtObjClassUser AdminNodeAsUser = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode );
+            TempPassword = CswNbtObjClassUser.makeRandomPassword( 20 );
+
+            AdminNodeAsUser.AccountLocked.Checked = Tristate.False;
+            AdminNodeAsUser.PasswordProperty.Password = TempPassword;
+            AdminNodeAsUser.postChanges( true );
+            _finalize( OtherResources );
+
+            return RetNodeAsCustomer;
         }
+
+        #endregion public
+
+
 
     } // class CswNbtWebServiceNbtManager
 

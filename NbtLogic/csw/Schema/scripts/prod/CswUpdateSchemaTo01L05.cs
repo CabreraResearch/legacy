@@ -22,15 +22,23 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.createScheduledRule( NbtScheduleRuleNames.DisableChemSwAdmin, Recurrence.Daily, 1 );
 
-            CswNbtMetaDataObjectClassProp LoginOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass,
-                                                                                                    CswNbtObjClassCustomer.LoginPropertyName,
-                                                                                                    CswNbtMetaDataFieldType.NbtFieldType.Button,
-                                                                                                    false, true, false, CswNbtViewProperty.CswNbtPropType.Unknown, Int32.MinValue, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue,
-                                                                                                    CswNbtNodePropButton.ButtonMode.button.ToString(),
-                                                                                                    false,
-                                                                                                    AuditLevel.NoAudit,
-                                                                                                    "Login"
+            CswNbtMetaDataObjectClass CustomerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CustomerOc.ObjectClass,
+                                                           CswNbtObjClassCustomer.LoginPropertyName,
+                                                           CswNbtMetaDataFieldType.NbtFieldType.Button,
+                                                           false, true, false, CswNbtViewProperty.CswNbtPropType.Unknown, Int32.MinValue, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue,
+                                                           CswNbtNodePropButton.ButtonMode.button.ToString(),
+                                                           false,
+                                                           AuditLevel.NoAudit,
+                                                           "Login"
                 );
+
+
+            CswNbtMetaDataObjectClassProp ChemSwAdminPasswordOcp = CustomerOc.getObjectClassProp( "ChemSW Admin Password" );
+            if( null != ChemSwAdminPasswordOcp )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ChemSwAdminPasswordOcp );
+            }
 
             #endregion Case 24415
 

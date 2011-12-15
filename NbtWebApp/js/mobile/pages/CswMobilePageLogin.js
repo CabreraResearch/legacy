@@ -95,7 +95,8 @@ function CswMobilePageLogin(loginDef, $parent, mobileStorage, loginSuccess, $con
                     'AccessId': accessId, //We're displaying "Customer ID" but processing "AccessID"
                     'UserName': userName,
                     'Password': $password.val(),
-                    ForMobile: true
+                    ForMobile: true,
+                    PropId: ''
                 };
 
                 CswAjaxJson({

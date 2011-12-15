@@ -7,6 +7,8 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
+using Newtonsoft.Json.Linq;
+
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -18,7 +20,6 @@ namespace ChemSW.Nbt.ObjClasses
         public static string CompanyIDPropertyName { get { return "Company ID"; } }
         public static string UserCountPropertyName { get { return "User Count"; } }
         public static string ModulesEnabledPropertyName { get { return "Modules Enabled"; } }
-        public static string ChemSWAdminPasswordPropertyName { get { return "ChemSW Admin Password"; } }
         public static string LoginPropertyName { get { return "Login"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -54,7 +55,8 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( _CswNbtResources, "CswNbtObjClassCustomer_SystemUser" );
+            ICswUser RetUser = new CswNbtSystemUser( _CswNbtResources, "CswNbtObjClassCustomer_SystemUser" );
+            return RetUser;
         }
 
         private void finalizeOtherResources( CswNbtResources OtherResources )
@@ -91,15 +93,8 @@ namespace ChemSW.Nbt.ObjClasses
             if( _CompanyIDDefined() )
             {
 
-                if( ChemSWAdminPassword.WasModified || ModulesEnabled.WasModified )
+                if( ModulesEnabled.WasModified )
                 {
-
-                    // Set ChemSW Admin Password and Modules Enabled
-                    string NewEncryptedPassword = string.Empty;
-                    if( ChemSWAdminPassword.WasModified )
-                    {
-                        NewEncryptedPassword = ChemSWAdminPassword.EncryptedPassword;
-                    }
                     CswCommaDelimitedString NewModulesEnabled = new CswCommaDelimitedString();
                     if( ModulesEnabled.WasModified )
                     {
@@ -117,12 +112,6 @@ namespace ChemSW.Nbt.ObjClasses
                     //_CswNbtResources.AccessId = CompanyID.Text;
                     CswNbtResources OtherResources = makeOtherResources();
 
-                    if( NewEncryptedPassword != string.Empty )
-                    {
-                        CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-                        CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.EncryptedPassword = NewEncryptedPassword;
-                        ChemSWAdminUserNode.postChanges( false );
-                    }
                     if( NewModulesEnabled.Count > 0 )
                     {
                         CswTableUpdate ModulesUpdate = OtherResources.makeCswTableUpdate( "CswNbtObjClassCustomer_modules_update", "modules" );
@@ -213,10 +202,6 @@ namespace ChemSW.Nbt.ObjClasses
                     Modules.Add( Module );
                 }
 
-                CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-                string EncryptedPassword = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.EncryptedPassword;
-                DateTime ChangedDate = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.ChangedDate;
-
                 // reconnect to original schema
                 //_CswNbtResources.AccessId = OriginalAccessId;
                 finalizeOtherResources( OtherResources );
@@ -225,9 +210,6 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     ModulesEnabled.SetValue( ModulesEnabledXValue, Module.ToString(), Modules.Contains( Module ) );
                 }
-
-                ChemSWAdminPassword.EncryptedPassword = EncryptedPassword;
-                ChemSWAdminPassword.ChangedDate = ChangedDate;
             }
 
             _CswNbtObjClassDefault.afterPopulateProps();
@@ -240,19 +222,19 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
         {
             if( null != NodeTypeProp &&
                     null != NodeTypeProp.ObjectClassProp )
             {
                 if( LoginPropertyName == NodeTypeProp.ObjectClassProp.PropName )
                 {
-                    CswNbtResources OtherResources = makeOtherResources();
-                    CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-                    //Do our stuff
+                    ActionObj["action"] = CswNbtMetaDataObjectClass.OnButtonClickEvents.reauthenticate.ToString();
                 }
             }
         }
+
+
         #endregion
 
         #region Object class specific properties
@@ -297,13 +279,6 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[ModulesEnabledPropertyName].AsLogicalSet );
-            }
-        }
-        public CswNbtNodePropPassword ChemSWAdminPassword
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ChemSWAdminPasswordPropertyName].AsPassword );
             }
         }
         public CswNbtNodePropButton Login

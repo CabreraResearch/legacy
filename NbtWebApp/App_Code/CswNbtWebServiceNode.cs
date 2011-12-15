@@ -5,6 +5,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Statistics;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -58,13 +59,13 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
-        public bool doObjectClassButtonClick( CswPropIdAttr PropId )
+        public JObject doObjectClassButtonClick( CswPropIdAttr PropId )
         {
-            bool RetSuccess;
+            JObject RetObj = new JObject();
             if( null == PropId ||
-                    Int32.MinValue == PropId.NodeTypePropId ||
-                        null == PropId.NodeId ||
-                            Int32.MinValue == PropId.NodeId.PrimaryKey )
+                Int32.MinValue == PropId.NodeTypePropId ||
+                null == PropId.NodeId ||
+                Int32.MinValue == PropId.NodeId.PrimaryKey )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call DoObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
             }
@@ -82,10 +83,10 @@ namespace ChemSW.Nbt.WebServices
             }
 
             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.ObjectClass.ObjectClassId, Node );
-            NbtObjClass.onButtonClick( NodeTypeProp );
-            RetSuccess = true;
+            NbtObjClass.onButtonClick( NodeTypeProp, RetObj );
+            RetObj["success"] = true;
 
-            return RetSuccess;
+            return RetObj;
         }
 
     } // class CswNbtWebServiceNode
