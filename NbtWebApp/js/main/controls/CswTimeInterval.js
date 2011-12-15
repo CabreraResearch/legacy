@@ -312,7 +312,7 @@ var CswTimeInterval = function (options) {
                     daysInMonth.unshift(CswMultiEditDefaultValue);
                 }
                 else if (contains(rateInterval, 'monthlydate')) {
-                    selectedDay = tryParseString(rateInterval.monthlydate);
+                    selectedDay = tryParseNumber(rateInterval.monthlydate, 1);
                 }
 
                 $byDate.CswInput('init', {
@@ -408,7 +408,7 @@ var CswTimeInterval = function (options) {
                     weeksInMonth.unshift({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
                     selected = CswMultiEditDefaultValue;
                 } else {
-                    selected = tryParseString(rateInterval.monthlyweek);
+                    selected = tryParseNumber(rateInterval.monthlyweek, 1);
                 }
 
                 $MonthlyWeekSelect = $byDay.CswSelect('init', {
