@@ -98,16 +98,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Act_AssignInspection.aspx" />
-    <Content Include="Act_AssignTests.aspx" />
-    <Content Include="Act_BatchEdit.aspx" />
-    <Content Include="Act_CreateInspection.aspx" />
-    <Content Include="Act_EnterResults.aspx" />
     <Content Include="Act_FutureScheduling.aspx" />
-    <Content Include="Act_ImportData.aspx" />
-    <Content Include="Act_ImportFireExtinguisher.aspx" />
-    <Content Include="Act_Receiving.aspx" />
-    <Content Include="Act_SplitSamples.aspx" />
     <Compile Include="App_Code\CswNbtWebServiceNbtManager.cs" />
     <Compile Include="App_Code\CswNbtWebServiceQuotas.cs" />
     <Compile Include="App_Code\CswNbtWebServiceTable.cs" />
@@ -115,7 +106,6 @@
     <Compile Include="App_Code\CswNbtWebServiceInspectionDesign.cs" />
     <Compile Include="App_Code\CswNbtWebServiceInspections.cs" />
     <Content Include="CafLabelPrintUtil.cab" />
-    <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
     <Content Include="Content\images\ajax-loader.png" />
     <Content Include="Content\images\icons-18-black.png" />
@@ -759,6 +749,7 @@
     <Content Include="js\main\controls\CswList.js" />
     <Content Include="js\main\view\CswViewContentTree.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
+    <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Scripts\jquery.jqGrid.src.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -766,7 +757,6 @@
     <Content Include="Scripts\json2.js" />
     <Content Include="Scripts\json2.min.js" />
     <Content Include="Scripts\modernizr.2.0.6.min.js" />
-    <Content Include="README.jQuery.vsdoc.txt" />
     <Content Include="Scripts\i18n\grid.locale-ar.js" />
     <Content Include="Scripts\i18n\grid.locale-bg.js" />
     <Content Include="Scripts\i18n\grid.locale-bg1251.js" />
@@ -999,7 +989,6 @@
     <Content Include="Design.aspx" />
     <Content Include="Design_Layout.aspx" />
     <Content Include="DisplayLog.aspx" />
-    <Content Include="EditView.aspx" />
     <Content Include="etc\CswSetupVbls.xml" />
     <Content Include="etc\DataForHandHeld.xsl" />
     <Content Include="etc\jsTree.xsl" />
@@ -1451,8 +1440,6 @@
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\demo.html" />
     <Content Include="js\globals\Global.js" />
     <Content Include="License.aspx" />
-    <Content Include="Location.aspx" />
-    <Content Include="Login.aspx" />
     <Content Include="Main.aspx" />
     <Content Include="Main.js" />
     <Content Include="Mobile.html" />
@@ -1461,35 +1448,16 @@
     <Content Include="MainIncludes.html" />
     <Content Include="Main.html" />
     <Content Include="NodeReport.html" />
-    <Content Include="NodeReport.aspx" />
-    <Content Include="NodeTypeTreeService.asmx" />
-    <Content Include="Notifications.aspx" />
-    <Content Include="Popup_About.aspx" />
-    <Content Include="Popup_ChangeView.aspx" />
-    <Content Include="Popup_ConfigQuickLaunch.aspx" />
-    <Content Include="Popup_CopyNode.aspx" />
-    <Content Include="Popup_DeleteNode.aspx" />
-    <Content Include="Popup_DeleteView.aspx" />
     <Content Include="Popup_DesignAdd.aspx" />
     <Content Include="Popup_DesignDelete.aspx" />
-    <Content Include="Popup_EditNode.aspx" />
-    <Content Include="Popup_EditProp.aspx" />
     <Content Include="Popup_Export.aspx" />
-    <Content Include="Popup_NewView.aspx" />
-    <Content Include="Popup_PrintLabel.aspx" />
-    <Content Include="Popup_PutBlob.aspx" />
-    <Content Include="Popup_Statistics.aspx" />
-    <Content Include="Popup_WelcomeAdd.aspx" />
     <Content Include="PrintGrid.aspx" />
-    <Content Include="Report.aspx" />
     <Content Include="Reports\DueTasks.xml" />
     <Content Include="Reports\EquipmentDetail.xml" />
     <Content Include="Reports\JobSafetyAnalysis_nodetype.xml" />
     <Content Include="Reports\JobSafetyAnalysis_view.xml" />
     <Content Include="Reports\OpenProblems.xml" />
     <Content Include="Reports\TaskWorkOrder.xml" />
-    <Content Include="Search.aspx" />
-    <Content Include="SearchCustom.aspx" />
     <Content Include="SkinPrint\Calendar.ChemSWPrint.css" />
     <Content Include="SkinPrint\Calendar\arrowLeft.gif" />
     <Content Include="SkinPrint\Calendar\arrowLeftHover.gif" />
@@ -1646,9 +1614,6 @@
     <Content Include="style_print.css" />
     <Content Include="Subscriptions.aspx" />
     <Content Include="TermsOfUse.aspx" />
-    <Content Include="TimeIntervalTest.aspx" />
-    <Content Include="TreeViewService.asmx" />
-    <Content Include="UserList.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -1658,47 +1623,11 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Welcome.aspx" />
     <Content Include="wsNBT.asmx" />
     <Content Include="_Assembly.txt" />
     <Content Include="_Version.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Act_AssignInspection.aspx.cs">
-      <DependentUpon>Act_AssignInspection.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_AssignInspection.aspx.designer.cs">
-      <DependentUpon>Act_AssignInspection.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_AssignTests.aspx.cs">
-      <DependentUpon>Act_AssignTests.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_AssignTests.aspx.designer.cs">
-      <DependentUpon>Act_AssignTests.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_BatchEdit.aspx.cs">
-      <DependentUpon>Act_BatchEdit.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_BatchEdit.aspx.designer.cs">
-      <DependentUpon>Act_BatchEdit.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_CreateInspection.aspx.cs">
-      <DependentUpon>Act_CreateInspection.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_CreateInspection.aspx.designer.cs">
-      <DependentUpon>Act_CreateInspection.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_EnterResults.aspx.cs">
-      <DependentUpon>Act_EnterResults.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_EnterResults.aspx.designer.cs">
-      <DependentUpon>Act_EnterResults.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Act_FutureScheduling.aspx.cs">
       <DependentUpon>Act_FutureScheduling.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1706,39 +1635,8 @@
     <Compile Include="Act_FutureScheduling.aspx.designer.cs">
       <DependentUpon>Act_FutureScheduling.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Act_ImportData.aspx.cs">
-      <DependentUpon>Act_ImportData.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_ImportData.aspx.designer.cs">
-      <DependentUpon>Act_ImportData.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_ImportFireExtinguisher.aspx.cs">
-      <DependentUpon>Act_ImportFireExtinguisher.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_ImportFireExtinguisher.aspx.designer.cs">
-      <DependentUpon>Act_ImportFireExtinguisher.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_Receiving.aspx.cs">
-      <DependentUpon>Act_Receiving.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_Receiving.aspx.designer.cs">
-      <DependentUpon>Act_Receiving.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_SplitSamples.aspx.cs">
-      <DependentUpon>Act_SplitSamples.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_SplitSamples.aspx.designer.cs">
-      <DependentUpon>Act_SplitSamples.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Base.master.designer.cs">
       <DependentUpon>Base.master</DependentUpon>
-    </Compile>
-    <Compile Include="ChangePassword.aspx.designer.cs">
-      <DependentUpon>ChangePassword.aspx</DependentUpon>
     </Compile>
     <Compile Include="ConfigVars.aspx.designer.cs">
       <DependentUpon>ConfigVars.aspx</DependentUpon>
@@ -1751,9 +1649,6 @@
     </Compile>
     <Compile Include="DisplayLog.aspx.designer.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="EditView.aspx.designer.cs">
-      <DependentUpon>EditView.aspx</DependentUpon>
     </Compile>
     <Compile Include="ExternalLogin.aspx.cs">
       <DependentUpon>ExternalLogin.aspx</DependentUpon>
@@ -1768,27 +1663,11 @@
     <Compile Include="License.aspx.designer.cs">
       <DependentUpon>License.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Location.aspx.designer.cs">
-      <DependentUpon>Location.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Login.aspx.designer.cs">
-      <DependentUpon>Login.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Main.aspx.designer.cs">
       <DependentUpon>Main.aspx</DependentUpon>
     </Compile>
     <Compile Include="MainLayout.master.designer.cs">
       <DependentUpon>MainLayout.master</DependentUpon>
-    </Compile>
-    <Compile Include="NodeReport.aspx.designer.cs">
-      <DependentUpon>NodeReport.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="NodeTypeTreeService.cs">
-      <DependentUpon>NodeTypeTreeService.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Notifications.aspx.designer.cs">
-      <DependentUpon>Notifications.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Code\CswGridData.cs" />
     <Compile Include="App_Code\CswNbtWebServiceGrid.cs" />
@@ -1816,10 +1695,6 @@
       <DependentUpon>Base.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ChangePassword.aspx.cs">
-      <DependentUpon>ChangePassword.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="ConfigVars.aspx.cs">
       <DependentUpon>ConfigVars.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1836,24 +1711,12 @@
       <DependentUpon>DisplayLog.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="EditView.aspx.cs">
-      <DependentUpon>EditView.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="GetBlob.aspx.cs">
       <DependentUpon>GetBlob.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="License.aspx.cs">
       <DependentUpon>License.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Location.aspx.cs">
-      <DependentUpon>Location.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Login.aspx.cs">
-      <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Main.aspx.cs">
@@ -1864,13 +1727,8 @@
       <DependentUpon>MainLayout.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="NodeReport.aspx.cs">
-      <DependentUpon>NodeReport.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Notifications.aspx.cs">
-      <DependentUpon>Notifications.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
+    <Compile Include="NodeTypeTreeService.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="PopupLayout.master.cs">
       <DependentUpon>PopupLayout.master</DependentUpon>
@@ -1878,48 +1736,6 @@
     </Compile>
     <Compile Include="PopupLayout.master.designer.cs">
       <DependentUpon>PopupLayout.master</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_About.aspx.cs">
-      <DependentUpon>Popup_About.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_About.aspx.designer.cs">
-      <DependentUpon>Popup_About.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_ChangeView.aspx.cs">
-      <DependentUpon>Popup_ChangeView.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_ChangeView.aspx.designer.cs">
-      <DependentUpon>Popup_ChangeView.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_ConfigQuickLaunch.aspx.cs">
-      <DependentUpon>Popup_ConfigQuickLaunch.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_ConfigQuickLaunch.aspx.designer.cs">
-      <DependentUpon>Popup_ConfigQuickLaunch.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_CopyNode.aspx.cs">
-      <DependentUpon>Popup_CopyNode.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_CopyNode.aspx.designer.cs">
-      <DependentUpon>Popup_CopyNode.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_DeleteNode.aspx.cs">
-      <DependentUpon>Popup_DeleteNode.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_DeleteNode.aspx.designer.cs">
-      <DependentUpon>Popup_DeleteNode.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_DeleteView.aspx.cs">
-      <DependentUpon>Popup_DeleteView.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_DeleteView.aspx.designer.cs">
-      <DependentUpon>Popup_DeleteView.aspx</DependentUpon>
     </Compile>
     <Compile Include="Popup_DesignAdd.aspx.cs">
       <DependentUpon>Popup_DesignAdd.aspx</DependentUpon>
@@ -1935,61 +1751,12 @@
     <Compile Include="Popup_DesignDelete.aspx.designer.cs">
       <DependentUpon>Popup_DesignDelete.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Popup_EditNode.aspx.cs">
-      <DependentUpon>Popup_EditNode.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_EditNode.aspx.designer.cs">
-      <DependentUpon>Popup_EditNode.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_EditProp.aspx.cs">
-      <DependentUpon>Popup_EditProp.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_EditProp.aspx.designer.cs">
-      <DependentUpon>Popup_EditProp.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Popup_Export.aspx.cs">
       <DependentUpon>Popup_Export.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Popup_Export.aspx.designer.cs">
       <DependentUpon>Popup_Export.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_NewView.aspx.cs">
-      <DependentUpon>Popup_NewView.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_NewView.aspx.designer.cs">
-      <DependentUpon>Popup_NewView.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_PrintLabel.aspx.cs">
-      <DependentUpon>Popup_PrintLabel.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_PrintLabel.aspx.designer.cs">
-      <DependentUpon>Popup_PrintLabel.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_PutBlob.aspx.cs">
-      <DependentUpon>Popup_PutBlob.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_PutBlob.aspx.designer.cs">
-      <DependentUpon>Popup_PutBlob.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_Statistics.aspx.cs">
-      <DependentUpon>Popup_Statistics.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_Statistics.aspx.designer.cs">
-      <DependentUpon>Popup_Statistics.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_WelcomeAdd.aspx.cs">
-      <DependentUpon>Popup_WelcomeAdd.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_WelcomeAdd.aspx.designer.cs">
-      <DependentUpon>Popup_WelcomeAdd.aspx</DependentUpon>
     </Compile>
     <Compile Include="PrintableLayout.master.cs">
       <DependentUpon>PrintableLayout.master</DependentUpon>
@@ -2006,13 +1773,6 @@
       <DependentUpon>PrintGrid.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Report.aspx.cs">
-      <DependentUpon>Report.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Report.aspx.designer.cs">
-      <DependentUpon>Report.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Reports\DueTasks.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -2043,20 +1803,6 @@
       <DependentUpon>TaskWorkOrder.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Search.aspx.cs">
-      <DependentUpon>Search.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search.aspx.designer.cs">
-      <DependentUpon>Search.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="SearchCustom.aspx.cs">
-      <DependentUpon>SearchCustom.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SearchCustom.aspx.designer.cs">
-      <DependentUpon>SearchCustom.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Standard.master.cs">
       <DependentUpon>Standard.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2084,31 +1830,6 @@
     </Compile>
     <Compile Include="TermsOfUse.aspx.designer.cs">
       <DependentUpon>TermsOfUse.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="TimeIntervalTest.aspx.cs">
-      <DependentUpon>TimeIntervalTest.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="TimeIntervalTest.aspx.designer.cs">
-      <DependentUpon>TimeIntervalTest.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="TreeViewService.cs">
-      <DependentUpon>TreeViewService.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UserList.aspx.cs">
-      <DependentUpon>UserList.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="UserList.aspx.designer.cs">
-      <DependentUpon>UserList.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Welcome.aspx.cs">
-      <DependentUpon>Welcome.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Welcome.aspx.designer.cs">
-      <DependentUpon>Welcome.aspx</DependentUpon>
     </Compile>
     <Compile Include="wsNBT.cs">
       <DependentUpon>wsNBT.asmx</DependentUpon>
