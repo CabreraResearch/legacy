@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.WebServices
             string TempPassword = string.Empty;
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
 
-            AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false, string.Empty );
+            AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
 
             if( AuthenticationStatus != AuthenticationStatus.Authenticated )
             {
@@ -296,71 +296,63 @@ namespace ChemSW.Nbt.WebServices
         }
 
         // Authenticates and sets up resources for an accessid and user
-        private AuthenticationStatus _authenticate( string AccessId, string UserName, string Password, bool IsMobile, string PropId )
+        private AuthenticationStatus _authenticate( string AccessId, string UserName, string Password, bool IsMobile )
         {
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
 
-            if( false == string.IsNullOrEmpty( PropId ) &&
-               string.IsNullOrEmpty( AccessId ) &&
-                string.IsNullOrEmpty( UserName ) &&
-                string.IsNullOrEmpty( Password ) )
+
+            try
             {
-                AuthenticationStatus = _doCswAdminAuthenticate( PropId );
-            }
-            else
-            {
-                try
+                string ParsedAccessId = AccessId.ToLower().Trim();
+                if( !string.IsNullOrEmpty( ParsedAccessId ) )
                 {
-                    string ParsedAccessId = AccessId.ToLower().Trim();
-                    if( !string.IsNullOrEmpty( ParsedAccessId ) )
-                    {
-                        _CswSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
-                    }
-                    else
-                    {
-                        throw new CswDniException( ErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
-                    }
+                    _CswSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
                 }
-                catch( CswDniException ex )
+                else
                 {
-                    if( !ex.Message.Contains( "There is no configuration information for this AccessId" ) )
-                    {
-                        throw ex;
-                    }
-                    else
-                    {
-                        AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
-                    }
-                }
-
-                if( AuthenticationStatus == AuthenticationStatus.Unknown )
-                    AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), IsMobile );
-
-                // case 21211
-                if( AuthenticationStatus == AuthenticationStatus.Authenticated )
-                {
-                    // case 21036
-                    if( IsMobile && false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
-                    {
-                        AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
-                        _CswSessionResources.CswSessionManager.clearSession();
-                    }
-                    CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
-                    //Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
-
-                    if( _CswNbtResources.CurrentNbtUser.PasswordProperty.IsExpired )
-                    {
-                        // BZ 9077 - Password expired
-                        AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
-                    }
-                    else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
-                    {
-                        // BZ 8133 - make sure they've seen the License
-                        AuthenticationStatus = AuthenticationStatus.ShowLicense;
-                    }
-
+                    throw new CswDniException( ErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
                 }
             }
+            catch( CswDniException ex )
+            {
+                if( !ex.Message.Contains( "There is no configuration information for this AccessId" ) )
+                {
+                    throw ex;
+                }
+                else
+                {
+                    AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
+                }
+            }
+
+            if( AuthenticationStatus == AuthenticationStatus.Unknown )
+                AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), IsMobile );
+
+            // case 21211
+            if( AuthenticationStatus == AuthenticationStatus.Authenticated )
+            {
+                // case 21036
+                if( IsMobile && false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                {
+                    AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
+                    _CswSessionResources.CswSessionManager.clearSession();
+                }
+                CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
+                //Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
+
+                if( _CswNbtResources.CurrentNbtUser.PasswordProperty.IsExpired )
+                {
+                    // BZ 9077 - Password expired
+                    AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
+                }
+                else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
+                {
+                    // BZ 8133 - make sure they've seen the License
+                    AuthenticationStatus = AuthenticationStatus.ShowLicense;
+                }
+
+            }
+
             //bury the overhead of nuking old sessions in the overhead of authenticating
             _CswSessionResources.purgeExpiredSessions();
 
@@ -369,7 +361,27 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string authenticate( string AccessId, string UserName, string Password, string ForMobile, string PropId )
+        public string reauthenticate( string PropId )
+        {
+            JObject ReturnVal = new JObject();
+            try
+            {
+                _initResources();
+                AuthenticationStatus AuthenticationStatus = _doCswAdminAuthenticate( PropId );
+                _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            return ( ReturnVal.ToString() );
+        }//authenticate()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string authenticate( string AccessId, string UserName, string Password, string ForMobile )
         {
             JObject ReturnVal = new JObject();
             try
@@ -377,9 +389,9 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
 
                 bool IsMobile = CswConvert.ToBoolean( ForMobile );
-                AuthenticationStatus AuthenticationStatus = _authenticate( AccessId, UserName, Password, IsMobile, PropId );
+                AuthenticationStatus AuthenticationStatus = _authenticate( AccessId, UserName, Password, IsMobile );
 
-                if( AuthenticationStatus == ChemSW.Security.AuthenticationStatus.ExpiredPassword )
+                if( AuthenticationStatus == AuthenticationStatus.ExpiredPassword )
                 {
                     CswNbtObjClassUser CurrentUser = _CswNbtResources.CurrentNbtUser.UserNode;
                     ReturnVal.Add( new JProperty( "nodeid", CurrentUser.NodeId.ToString() ) );

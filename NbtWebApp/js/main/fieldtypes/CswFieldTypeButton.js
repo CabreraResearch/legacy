@@ -26,22 +26,14 @@
                     url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
                     data: params,
                     success: function(data) {
-                        var newParams;
                         $button.CswButton('enable');
                         if(isTrue(data.success)) {
                             switch (data.action) {
                                 case ChemSW.enums.CswOnObjectClassClick.reauthenticate:
                                     $.CswCookie('clearAll');
-                                    newParams = {
-                                        AccessId: '', 
-                                        UserName: '', 
-                                        Password: '',
-                                        ForMobile: '',
-                                        PropId: propid
-                                    };
                                     CswAjaxJson({
-                                        url: '/NbtWebApp/wsNBT.asmx/authenticate',
-                                        data: newParams,
+                                        url: '/NbtWebApp/wsNBT.asmx/reauthenticate',
+                                        data: { PropId: propAttr },
                                         success: function () {
                                             window.location = "Main.html";
                                         }
