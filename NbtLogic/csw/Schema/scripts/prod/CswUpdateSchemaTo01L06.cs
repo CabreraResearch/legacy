@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Case 24242
 
-            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswConfigurationVariables.ConfigurationVariableNames.NotifyOnSystemFailure, "Send Email Notification on Failure Events", string.Empty, true );
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswConfigurationVariables.ConfigurationVariableNames.NotifyOnSystemFailure, "Send Email Notification on Failure Events", string.Empty, false );
 
             #endregion Case 24242
 
