@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Audit;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -552,7 +553,31 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
-        /// Convenience function for making new Action
+        /// Convenience function for making new Configuration Variable
+        /// </summary>
+        public void createConfigurationVariable( CswConfigurationVariables.ConfigurationVariableNames Name, string Description, string VariableValue, bool IsSystem )
+        {
+            // Create the Configuration Variable
+            if( Name != CswConfigurationVariables.ConfigurationVariableNames.Unknown )
+            {
+                createConfigurationVariable( Name.ToString().ToLower(), Description, VariableValue, IsSystem );
+            }
+        }
+
+        /// <summary>
+        /// Convenience function for making new Configuration Variable
+        /// </summary>
+        public void createConfigurationVariable( CswNbtResources.ConfigurationVariables Name, string Description, string VariableValue, bool IsSystem )
+        {
+            // Create the Configuration Variable
+            if( Name != CswNbtResources.ConfigurationVariables.unknown )
+            {
+                createConfigurationVariable( Name.ToString().ToLower(), Description, VariableValue, IsSystem );
+            }
+        }
+
+        /// <summary>
+        /// Convenience function for making new Configuration Variable
         /// </summary>
         public void createConfigurationVariable( String Name, string Description, string VariableValue, bool IsSystem )
         {

@@ -31,6 +31,7 @@ namespace ChemSW.Nbt
         public string MD5Seed { get { return "52978"; } }
         public enum ConfigurationVariables
         {
+            unknown,
             /// <summary>
             /// 1 = auditing is on; 0 = auditing is off
             /// </summary>
@@ -740,22 +741,18 @@ namespace ChemSW.Nbt
                 foreach( Int32 UserId in SubscribedUserIds )
                 {
                     CswNbtNode UserNode = this.Nodes[new CswPrimaryKey( "nodes", UserId )];
-                    CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) CswNbtNodeCaster.AsUser( UserNode );
+                    CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
                     string EmailAddy = UserNodeAsUser.Email.Trim();
-                    if( EmailAddy != string.Empty )
+                    CswMailMessage MailMessage = makeMailMessage( Subject, Message, EmailAddy, UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName );
+                    if( null != MailMessage )
                     {
-                        CswMailMessage MailMessage = new CswMailMessage();
-                        MailMessage.Recipient = EmailAddy;
-                        MailMessage.RecipientDisplayName = UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName;
-                        MailMessage.Subject = Subject;
-                        MailMessage.Content = Message;
                         MailMessages.Add( MailMessage );
                     }
                 } // foreach( Int32 UserId in SubscribedUserIds )
 
                 if( MailMessages.Count > 0 )
                 {
-                    SendNotificationHandler Sender = new SendNotificationHandler( sendNotifications );
+                    SendNotificationHandler Sender = sendNotifications;
                     Sender.BeginInvoke( MailMessages, null, null );
                 }
             } // if( _Notifs.ContainsKey( NKey ) )
@@ -764,10 +761,7 @@ namespace ChemSW.Nbt
         public delegate void SendNotificationHandler( Collection<CswMailMessage> MailMessages );
         public void sendNotifications( Collection<CswMailMessage> MailMessages )
         {
-            foreach( CswMailMessage MailMessage in MailMessages )
-            {
-                CswMail.send( MailMessage );
-            }
+            _CswResources.sendNotifications( MailMessages );
         }
 
         #endregion Notifications
@@ -974,6 +968,10 @@ namespace ChemSW.Nbt
         /// Set the context information for this audit transaction
         /// </summary>
         public string AuditContext { set { _CswResources.AuditContext = value; } }
+
+        public CswMailMessage makeMailMessage( string Subject, string Message, string Email, string DisplayName = "" ) { return _CswResources.makeMailMessage( Subject, Message, Email, DisplayName ); }
+
+        public void sendSystemAlertEmail( string Subject, string Message ) { _CswResources.sendSystemAlertEmail( Subject, Message ); }
 
         #endregion Pass-thru to CswResources
 

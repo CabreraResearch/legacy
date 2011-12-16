@@ -1,5 +1,6 @@
 ﻿using System;
 using ChemSW.Audit;
+using ChemSW.Config;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -55,6 +56,12 @@ namespace ChemSW.Nbt.Schema
             }
 
             #endregion Case 24431
+
+            #region Case 24242
+
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswConfigurationVariables.ConfigurationVariableNames.NotifyOnSystemFailure, string.Empty, "Send Email Notification on Failure Events", true );
+
+            #endregion Case 24242
 
         }//Update()
 
