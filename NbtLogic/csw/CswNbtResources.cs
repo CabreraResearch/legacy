@@ -752,17 +752,10 @@ namespace ChemSW.Nbt
 
                 if( MailMessages.Count > 0 )
                 {
-                    SendNotificationHandler Sender = sendNotifications;
-                    Sender.BeginInvoke( MailMessages, null, null );
+                    sendEmailNotification( MailMessages );
                 }
             } // if( _Notifs.ContainsKey( NKey ) )
         } // runNotification()
-
-        public delegate void SendNotificationHandler( Collection<CswMailMessage> MailMessages );
-        public void sendNotifications( Collection<CswMailMessage> MailMessages )
-        {
-            _CswResources.sendNotifications( MailMessages );
-        }
 
         #endregion Notifications
 
@@ -970,6 +963,8 @@ namespace ChemSW.Nbt
         public string AuditContext { set { _CswResources.AuditContext = value; } }
 
         public void sendSystemAlertEmail( string Subject, string Message ) { _CswResources.sendSystemAlertEmail( Subject, Message ); }
+
+        public void sendEmailNotification( Collection<CswMailMessage> MailMessages ) { _CswResources.sendEmailNotification( MailMessages ); }
 
         #endregion Pass-thru to CswResources
 
