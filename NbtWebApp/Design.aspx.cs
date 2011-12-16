@@ -1607,7 +1607,7 @@ namespace ChemSW.Nbt.WebPages
                             Button EditGridViewButton = new Button();
                             EditGridViewButton.ID = "EditGridViewButton";
                             EditGridViewButton.CssClass = "Button";
-                            EditGridViewButton.OnClientClick = "window.location='EditView.aspx?step=2&viewid=" + GridView.ViewId + "&return=" + _ReturnURLForQueryString() + "';";
+                            EditGridViewButton.OnClientClick = "window.location='Main.html?step=2&viewid=" + GridView.ViewId + "&return=" + _ReturnURLForQueryString() + "';";
                             EditGridViewButton.Text = "Edit View";
                             GridViewXmlRow.Cells[1].Controls.Add( EditGridViewButton );
                             break;
@@ -1722,7 +1722,7 @@ namespace ChemSW.Nbt.WebPages
                             Button EditLCViewButton = new Button();
                             EditLCViewButton.ID = "EditLCViewButton";
                             EditLCViewButton.CssClass = "Button";
-                            EditLCViewButton.OnClientClick = "window.location='EditView.aspx?step=2&viewid=" + LCView.ViewId + "&return=" + _ReturnURLForQueryString() + "';";
+                            EditLCViewButton.OnClientClick = "window.location='Main.html?step=2&viewid=" + LCView.ViewId + "&return=" + _ReturnURLForQueryString() + "';";
                             EditLCViewButton.Text = "Edit View";
                             LCViewXmlRow.Cells[1].Controls.Add( EditLCViewButton );
                             break;
@@ -1852,7 +1852,6 @@ namespace ChemSW.Nbt.WebPages
                         //    Button MultiEditRelationshipViewButton = new Button();
                         //    MultiEditRelationshipViewButton.ID = "EditRelationshipViewButton";
                         //    MultiEditRelationshipViewButton.CssClass = "Button";
-                        //    MultiEditRelationshipViewButton.OnClientClick = "window.location='EditView.aspx?step=2&viewid=" + MultiRelationshipView.ViewId + "&return=Design.aspx';";
                         //    MultiEditRelationshipViewButton.Text = "Edit View";
                         //    MultiViewXmlRow.Cells[1].Controls.Add( MultiEditRelationshipViewButton );
                         //    break;
@@ -2182,7 +2181,7 @@ namespace ChemSW.Nbt.WebPages
                             Button EditRelationshipViewButton = new Button();
                             EditRelationshipViewButton.ID = "EditRelationshipViewButton";
                             EditRelationshipViewButton.CssClass = "Button";
-                            EditRelationshipViewButton.OnClientClick = "window.location='EditView.aspx?step=2&viewid=" + SelectedNodeTypeProp.ViewId + "&return=" + _ReturnURLForQueryString() + "';";
+                            EditRelationshipViewButton.OnClientClick = "window.location='Main.html?step=2&viewid=" + SelectedNodeTypeProp.ViewId + "&return=" + _ReturnURLForQueryString() + "';";
                             EditRelationshipViewButton.Text = "Edit View";
                             _ViewXmlRow.Cells[1].Controls.Add( EditRelationshipViewButton );
 

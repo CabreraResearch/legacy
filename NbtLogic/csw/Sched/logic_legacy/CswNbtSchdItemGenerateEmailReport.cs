@@ -1,9 +1,9 @@
 using System;
 using System.Collections.ObjectModel;
-using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
 using ChemSW.Mail;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -40,16 +40,16 @@ namespace ChemSW.Nbt.Sched
             CswNbtObjClassMailReport MailReportNode = CswNbtNodeCaster.AsMailReport( _CswNbtNodeMailReport );
             if( MailReportNode.Enabled.Checked == Tristate.True )
             {
-				DateTime ThisDueDateValue = MailReportNode.NextDueDate.DateTimeValue.Date;
+                DateTime ThisDueDateValue = MailReportNode.NextDueDate.DateTimeValue.Date;
                 DateTime InitialDueDateValue = MailReportNode.DueDateInterval.getStartDate().Date;
-				DateTime FinalDueDateValue = MailReportNode.FinalDueDate.DateTimeValue.Date;
+                DateTime FinalDueDateValue = MailReportNode.FinalDueDate.DateTimeValue.Date;
 
                 // BZ 7866
                 if( ThisDueDateValue != DateTime.MinValue )
                 {
                     // BZ 7124 - set runtime
-					if( MailReportNode.RunTime.DateTimeValue != DateTime.MinValue )
-						ThisDueDateValue = ThisDueDateValue.AddTicks( MailReportNode.RunTime.DateTimeValue.TimeOfDay.Ticks );
+                    if( MailReportNode.RunTime.DateTimeValue != DateTime.MinValue )
+                        ThisDueDateValue = ThisDueDateValue.AddTicks( MailReportNode.RunTime.DateTimeValue.TimeOfDay.Ticks );
 
                     Int32 WarnDays = (Int32) MailReportNode.WarningDays.Value;
                     if( WarnDays > 0 )
@@ -81,18 +81,18 @@ namespace ChemSW.Nbt.Sched
                 if( null != _CswNbtNodeMailReport )
                 {
                     CswNbtObjClassMailReport MailReportObjClass = CswNbtNodeCaster.AsMailReport( _CswNbtNodeMailReport );
-					MailReportObjClass.LastProcessed.DateTimeValue = DateTime.Now;
+                    MailReportObjClass.LastProcessed.DateTimeValue = DateTime.Now;
 
-                    string ReportReference = _CswNbtResources.SetupVbls["MailReportUrlStem"] + "Login.aspx?destination=";
+                    string ReportReference = _CswNbtResources.SetupVbls["MailReportUrlStem"] + "Main.html?destination=";
 
                     if( !MailReportObjClass.Type.Empty )
                     {
-						CswNbtViewId ViewId = new CswNbtViewId();
+                        CswNbtViewId ViewId = new CswNbtViewId();
                         string ReportParameter = string.Empty;
                         if( "View" == MailReportObjClass.Type.Value )
                         {
-							ViewId.set( CswConvert.ToInt32( MailReportObjClass.ReportView.SelectedViewIds ) );
-                            ReportParameter = CswTools.UrlToQueryStringParam( "Main.aspx?ViewId=" + ViewId.ToString() );
+                            ViewId.set( CswConvert.ToInt32( MailReportObjClass.ReportView.SelectedViewIds ) );
+                            ReportParameter = CswTools.UrlToQueryStringParam( "Main.html?ViewId=" + ViewId.ToString() );
                         }
                         else if( "Report" == MailReportObjClass.Type.Value )
                         {
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.Sched
                             {
                                 CswNbtNode ReportNode = _CswNbtResources.Nodes[MailReportObjClass.Report.RelatedNodeId];
                                 CswNbtObjClassReport ReportObjClass = CswNbtNodeCaster.AsReport( ReportNode );
-								ViewId.set( CswConvert.ToInt32( ReportObjClass.View.ViewId ) );
+                                ViewId.set( CswConvert.ToInt32( ReportObjClass.View.ViewId ) );
                                 ReportParameter = CswTools.UrlToQueryStringParam( "Report.aspx?reportid=" + ReportNode.NodeId.PrimaryKey.ToString() );
                             }
                         }
@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.Sched
                                         string EmailAddy = UserNodeAsUser.Email.Trim();
                                         if( EmailAddy != string.Empty )
                                         {
-											CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
+                                            CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
 
                                             string Subject = MailReportObjClass.Type.Value + " Notification: " + ReportView.ViewName;
 
@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.Sched
 
             catch( Exception Exception )
             {
-				_Succeeded = false;
+                _Succeeded = false;
                 _StatusMessage = "Error running Schedule: " + Exception.Message;
             }//
 

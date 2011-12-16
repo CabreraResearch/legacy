@@ -1,34 +1,23 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt;
-using ChemSW.CswWebControls;
-using ChemSW.Core;
 using ChemSW.Config;
+using ChemSW.CswWebControls;
 
 namespace ChemSW.Nbt.WebPages
 {
     public partial class ConfigVars : System.Web.UI.Page
     {
-        protected void Page_Load(object sender, EventArgs e)
+        protected void Page_Load( object sender, EventArgs e )
         {
             EnsureChildControls();
-            if (!Master.CswNbtResources.CurrentNbtUser.IsAdministrator())
+            if( !Master.CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                //Master.Redirect("Main.aspx");
                 Master.GoHome();
             }
 
             CswAutoTable AutoTable = new CswAutoTable();
-            ph.Controls.Add(AutoTable);
+            ph.Controls.Add( AutoTable );
             Int32 Row = 0;
             foreach( CswConfigVariable ConfigVar in Master.CswNbtResources.ConfigVbls.ConfigVariables )
             {
@@ -56,26 +45,26 @@ namespace ChemSW.Nbt.WebPages
             SaveButton.ID = "save";
             SaveButton.Text = "Save";
             SaveButton.CssClass = "Button";
-            SaveButton.Click += new EventHandler(SaveButton_Click);
-            ph.Controls.Add(SaveButton);
+            SaveButton.Click += new EventHandler( SaveButton_Click );
+            ph.Controls.Add( SaveButton );
         }
 
-        void SaveButton_Click(object sender, EventArgs e)
+        void SaveButton_Click( object sender, EventArgs e )
         {
-            GetConfigVarValues(ph.Controls);
+            GetConfigVarValues( ph.Controls );
             // Master.CswNbtResources.saveConfigVariables(); // finalize should take care of this
         }
 
-        private void GetConfigVarValues(ControlCollection Controls)
+        private void GetConfigVarValues( ControlCollection Controls )
         {
-            foreach (Control Control in Controls)
+            foreach( Control Control in Controls )
             {
-                if (Control is TextBox)
+                if( Control is TextBox )
                 {
-                    Master.CswNbtResources.ConfigVbls.setConfigVariableValue(((TextBox)Control).ID, ((TextBox)Control).Text);
+                    Master.CswNbtResources.ConfigVbls.setConfigVariableValue( ( (TextBox) Control ).ID, ( (TextBox) Control ).Text );
                 }
-                if (Control.Controls.Count > 0)
-                    GetConfigVarValues(Control.Controls);
+                if( Control.Controls.Count > 0 )
+                    GetConfigVarValues( Control.Controls );
             }
         }
     }
