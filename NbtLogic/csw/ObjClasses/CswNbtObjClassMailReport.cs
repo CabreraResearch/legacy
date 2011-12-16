@@ -150,6 +150,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;
                     Node.postChanges( false );
+                    ActionObj["action"] = CswNbtMetaDataObjectClass.OnButtonClickEvents.refresh.ToString();
                 }
             }
         }

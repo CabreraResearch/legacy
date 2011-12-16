@@ -36,6 +36,7 @@ var ChemSW = ChemSW || (function(undefined) {
             CswOnObjectClassClick: {
                 reauthenticate: 'reauthenticate',
                 home: 'home',
+                refresh: 'refresh',
                 url: 'url'
             }
         },

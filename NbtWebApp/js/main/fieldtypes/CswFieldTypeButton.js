@@ -9,7 +9,7 @@
         
     var pluginName = 'CswFieldTypeButton';
 
-    var onButtonClick = function(propid, $button) {
+    var onButtonClick = function(propid, $button, o) {
         var propAttr = tryParseString(propid),
             params;
 
@@ -39,8 +39,11 @@
                                         }
                                     });
                                     break;
+                                case ChemSW.enums.CswOnObjectClassClick.refresh:
+                                    o.onReload();
+                                    break;
                                 default:
-                                    window.location = "Main.html";
+                                    //Nada
                                     break;
                             }
                         }
@@ -83,7 +86,7 @@
                             });
             }
             $button.click(function() {
-                onButtonClick(o.propid, $button);
+                onButtonClick(o.propid, $button, o);
             });
 
             if(o.Required) {

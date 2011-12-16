@@ -54,7 +54,8 @@ namespace ChemSW.Nbt.MetaData
         {
             reauthenticate,
             home,
-            url
+            url,
+            refresh
         }
 
         public static NbtObjectClass getObjectClassFromString( string ObjectClassName )
