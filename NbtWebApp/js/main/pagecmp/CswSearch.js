@@ -432,7 +432,8 @@
                                                     filtarbitraryid: propsData.filtarbitraryid,
                                                     proparbitraryid: propsData.proparbitraryid,
                                                     viewbuilderpropid: propsData.viewbuilderpropid,
-                                                    advancedIsHidden: o.advancedIsHidden
+                                                    advancedIsHidden: o.advancedIsHidden,
+                                                    allowNullFilterValue: true //Case 24413
                                                 }); 
                     props.push( thisNodeProp );
                 });

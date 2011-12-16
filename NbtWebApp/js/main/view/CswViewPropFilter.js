@@ -206,6 +206,7 @@
                 //Filter input (value)
                 if (fieldtype === CswSubFields_Map.List.name) {
                     if (contains(propsData, 'filtersoptions')) {
+                        filtValAry.push({ value: '', display: '' });
                         for (filt in filtValOpt) {
                             if (contains(filtValOpt, filt)) {
                                 filtValAry.push({ value: trim(filt), display: trim(filtValOpt[filt]) });
