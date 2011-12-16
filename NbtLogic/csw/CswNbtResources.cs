@@ -743,7 +743,7 @@ namespace ChemSW.Nbt
                     CswNbtNode UserNode = this.Nodes[new CswPrimaryKey( "nodes", UserId )];
                     CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
                     string EmailAddy = UserNodeAsUser.Email.Trim();
-                    CswMailMessage MailMessage = makeMailMessage( Subject, Message, EmailAddy, UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName );
+                    CswMailMessage MailMessage = CswMail.makeMailMessage( Subject, Message, EmailAddy, UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName );
                     if( null != MailMessage )
                     {
                         MailMessages.Add( MailMessage );
@@ -968,8 +968,6 @@ namespace ChemSW.Nbt
         /// Set the context information for this audit transaction
         /// </summary>
         public string AuditContext { set { _CswResources.AuditContext = value; } }
-
-        public CswMailMessage makeMailMessage( string Subject, string Message, string Email, string DisplayName = "" ) { return _CswResources.makeMailMessage( Subject, Message, Email, DisplayName ); }
 
         public void sendSystemAlertEmail( string Subject, string Message ) { _CswResources.sendSystemAlertEmail( Subject, Message ); }
 
