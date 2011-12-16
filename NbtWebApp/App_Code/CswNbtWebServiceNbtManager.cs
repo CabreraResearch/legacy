@@ -50,11 +50,8 @@ namespace ChemSW.Nbt.WebServices
 
         private void _ValidateAccessId( string AccessId )
         {
-            if( string.IsNullOrEmpty( AccessId ) )
-            {
-                throw new CswDniException( ErrorType.Error, "Cannot get Scheduled Rules without a Customer ID.", "getScheduledRulesGrid was called with a null or empty AccessID." );
-            }
-            if( false == _NbtManagerResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
+            if( string.IsNullOrEmpty( AccessId ) ||
+                false == _NbtManagerResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
             {
                 throw new CswDniException( ErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
             }
