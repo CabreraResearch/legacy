@@ -710,6 +710,8 @@ namespace ChemSW.Nbt.Schema
             if( Recurrence != Recurrence.Unknown &&
                 NbtScheduleRuleNames.Unknown != RuleName )
             {
+                //Come back some day and make this dundant-proof
+                //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful
                 CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
                 DataTable RuleTable = RulesUpdate.getEmptyTable();
                 DataRow NewRuleRow = RuleTable.NewRow();
