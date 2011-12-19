@@ -78,6 +78,26 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Case 23687
 
+            #region Case 24023
+
+            CswNbtMetaDataObjectClass MailReportOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+
+            foreach( CswNbtMetaDataNodeType NodeType in MailReportOc.NodeTypes )
+            {
+                CswNbtMetaDataNodeTypeProp RunNowNtp = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassMailReport.RunNowPropertyName );
+                RunNowNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            }
+
+            CswNbtMetaDataObjectClass GeneratortOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+
+            foreach( CswNbtMetaDataNodeType NodeType in GeneratortOc.NodeTypes )
+            {
+                CswNbtMetaDataNodeTypeProp RunNowNtp = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.RunNowPropertyName );
+                RunNowNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            }
+
+            #endregion Case 24023
+
         }//Update()
 
     }//class CswUpdateSchemaTo01L07

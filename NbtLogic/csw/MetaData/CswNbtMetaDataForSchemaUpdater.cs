@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.ObjectModel;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -176,7 +175,12 @@ namespace ChemSW.Nbt.MetaData
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.NodeTypeProps )
                     {
-                        NodeTypeProp._DataRow[AttributeName] = DBValue;
+                        CswNbtMetaDataNodeTypeProp.NodeTypePropAttributes NodeTypeAttribute;
+                        Enum.TryParse( AttributeName, true, out NodeTypeAttribute );
+                        if( NodeTypeAttribute != CswNbtMetaDataNodeTypeProp.NodeTypePropAttributes.unknown )
+                        {
+                            NodeTypeProp._DataRow[AttributeName] = DBValue;
+                        }
                     }
                 }
             }

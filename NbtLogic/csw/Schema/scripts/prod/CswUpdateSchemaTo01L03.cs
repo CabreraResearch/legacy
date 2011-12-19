@@ -42,8 +42,8 @@ namespace ChemSW.Nbt.Schema
                                                                                    false,
                                                                                    true,
                                                                                    string.Empty,
-                                                                                   GnDueDateOcp.DisplayColAdd,
-                                                                                   ( GnDueDateOcp.DisplayRowAdd + 1 ) );
+                                                                                   Int32.MinValue,
+                                                                                   Int32.MinValue );
                 string Extended = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended );
                 RunNowRow[Extended] = CswConvert.ToDbVal( CswNbtNodePropButton.ButtonMode.button.ToString() );
                 string SetValOnAdd = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd );
@@ -77,8 +77,8 @@ namespace ChemSW.Nbt.Schema
                                                                                    false,
                                                                                    true,
                                                                                    string.Empty,
-                                                                                   MrDueDateOcp.DisplayColAdd,
-                                                                                   ( MrDueDateOcp.DisplayRowAdd + 1 ) );
+                                                                                   Int32.MinValue,
+                                                                                   Int32.MinValue );
                 string Extended = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended );
                 RunNowRow[Extended] = CswConvert.ToDbVal( "button" );
                 string SetValOnAdd = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd );

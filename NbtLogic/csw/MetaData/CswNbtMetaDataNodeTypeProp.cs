@@ -16,6 +16,7 @@ namespace ChemSW.Nbt.MetaData
     {
         public enum NodeTypePropAttributes
         {
+            unknown,
             append,
             auditlevel,
             datetoday,
@@ -49,8 +50,8 @@ namespace ChemSW.Nbt.MetaData
             multi,
             nodeviewid,
             read_only,
-            display_col_add,
-            display_row_add,
+            //display_col_add,
+            //display_row_add,
             //setvalonadd,
             numberminvalue,
             numbermaxvalue,
@@ -69,13 +70,12 @@ namespace ChemSW.Nbt.MetaData
             isquicksearch,
             extended,
             hideinmobile,
-            mobilesearch,
-            Unknown
+            mobilesearch
         }
 
         public static NodeTypePropAttributes getNodeTypePropAttributesFromString( string AttributeName )
         {
-            NodeTypePropAttributes ReturnVal = NodeTypePropAttributes.Unknown;
+            NodeTypePropAttributes ReturnVal = NodeTypePropAttributes.unknown;
             AttributeName = AttributeName.Replace( "_", "" );
             if( Enum.IsDefined( typeof( NodeTypePropAttributes ), AttributeName ) )
             {
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.MetaData
         public static String getNodeTypePropAttributesAsString( NodeTypePropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if( Attribute != NodeTypePropAttributes.Unknown )
+            if( Attribute != NodeTypePropAttributes.unknown )
                 ReturnVal = Attribute.ToString().Replace( "_", "" );
             return ( ReturnVal );
         }
@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId, Int32 DisplayRow, Int32 DisplayColumn )
         {
-			_CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, this.NodeType.NodeTypeId, this.PropId, TabId, DisplayRow, DisplayColumn );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, this.NodeType.NodeTypeId, this.PropId, TabId, DisplayRow, DisplayColumn );
         }
         public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp )
         {
@@ -119,11 +119,11 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( LayoutType, this );
         }
 
-		public void clearCachedLayouts()
-		{
-			_EditLayout = null;
-			_AddLayout = null;
-		}
+        public void clearCachedLayouts()
+        {
+            _EditLayout = null;
+            _AddLayout = null;
+        }
 
         private CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout _EditLayout = null;
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout
@@ -296,8 +296,8 @@ namespace ChemSW.Nbt.MetaData
                 if( UseNumbering && QuestionNo != Int32.MinValue )
                 {
                     name += "Q";
-					CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
-					if( Tab.SectionNo != Int32.MinValue )
+                    CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+                    if( Tab.SectionNo != Int32.MinValue )
                         name += Tab.SectionNo.ToString() + ".";
                     name += QuestionNo.ToString();
                     if( SubQuestionNo != Int32.MinValue )
@@ -454,8 +454,8 @@ namespace ChemSW.Nbt.MetaData
             CswNbtMetaDataNodeTypeTab Tab = null;
             if( Prop.EditLayout != null )
             {
-				//Tab = Prop.EditLayout.Tab;
-				Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( Prop.EditLayout.TabId );
+                //Tab = Prop.EditLayout.Tab;
+                Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( Prop.EditLayout.TabId );
             }
             var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
                         _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, false, Tab, User, Node, Prop ) );
@@ -1293,8 +1293,8 @@ namespace ChemSW.Nbt.MetaData
             PropNode.Attributes.Append( NameAttr );
 
             XmlAttribute OrderAttr = XmlDoc.CreateAttribute( _Attribute_order );
-			CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
-			OrderAttr.Value = Tab.GetPropDisplayOrder( this ).ToString();
+            CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+            OrderAttr.Value = Tab.GetPropDisplayOrder( this ).ToString();
             PropNode.Attributes.Append( OrderAttr );
 
             //XmlAttribute DisplayRowAttr = XmlDoc.CreateAttribute( _Attribute_displayrow );
