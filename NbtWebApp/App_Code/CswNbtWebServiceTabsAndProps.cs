@@ -108,12 +108,12 @@ namespace ChemSW.Nbt.WebServices
             // case 24250
             // This mechanism correctly orders all tabs even with redundant tab order values,
             // as long as the tabs are added in order
-            while( ParentObj[(TabOrder + TabOrderModifier).ToString()] != null )
+            while( ParentObj[( TabOrder + TabOrderModifier ).ToString()] != null )
             {
                 TabOrderModifier++;
             }
             string RealTabOrder = ( TabOrder + TabOrderModifier ).ToString();
-            
+
             ParentObj[RealTabOrder] = new JObject();
             ParentObj[RealTabOrder]["id"] = Id;
             ParentObj[RealTabOrder]["name"] = Name;
@@ -165,13 +165,11 @@ namespace ChemSW.Nbt.WebServices
                     //}
                     Collection<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeType, CswConvert.ToInt32( TabId ), LayoutType );
 
-                    bool CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType );
+
 
                     foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                     {
-                        if( ( ( EditMode == NodeEditMode.AddInPopup && CanCreate && Prop.EditProp( Node, _ThisUser, true ) ) ||
-                              ( EditMode != NodeEditMode.AddInPopup && Prop.ShowProp( Node, _ThisUser ) ) ) &&
-                            ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId ) )
+                        if( _showProp( Prop, EditMode, FilterPropIdAttr, Node ) )
                         {
                             _addProp( Ret, EditMode, Node, Prop );
                         }
@@ -180,6 +178,27 @@ namespace ChemSW.Nbt.WebServices
             } // if-else( TabId.StartsWith( HistoryTabPrefix ) )
             return Ret;
         } // getProps()
+
+        private bool _showProp( CswNbtMetaDataNodeTypeProp Prop, NodeEditMode EditMode, CswPropIdAttr FilterPropIdAttr, CswNbtNode Node )
+        {
+            bool RetShow = false;
+
+            switch( EditMode )
+            {
+                case NodeEditMode.AddInPopup:
+                    //Case 24023: Exclude buttons on Add
+                    bool CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType );
+                    RetShow = ( CanCreate &&
+                                Prop.EditProp( Node, _ThisUser, true ) &&
+                                Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
+                    break;
+                default:
+                    RetShow = Prop.ShowProp( Node, _ThisUser );
+                    break;
+            }
+            RetShow = RetShow && ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
+            return RetShow;
+        }
 
         /// <summary>
         /// Returns XML for a single property and its conditional properties
@@ -568,7 +587,7 @@ namespace ChemSW.Nbt.WebServices
                 foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                 {
                     // case 24179
-                    if( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview || 
+                    if( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview ||
                         Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid )
                     {
                         ret["prop_" + Prop.PropId.ToString()] = new JObject();
