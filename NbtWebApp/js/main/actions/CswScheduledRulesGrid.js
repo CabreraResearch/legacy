@@ -11,9 +11,8 @@
 /// <reference path="../controls/CswSelect.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-    if(false === abandonHope) {
-        "use strict";
-    }
+    "use strict";
+    
     $.fn.CswScheduledRulesGrid = function (options) {
 
         //#region Variable Declaration

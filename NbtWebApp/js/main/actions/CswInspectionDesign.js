@@ -10,9 +10,7 @@
 /// <reference path="../controls/CswTable.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-    if(false === abandonHope) {
-        "use strict";
-    }
+    "use strict";
     $.fn.CswInspectionDesign = function (options) {
 
         //#region Variable Declaration
