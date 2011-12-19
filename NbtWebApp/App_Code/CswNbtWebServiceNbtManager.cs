@@ -163,7 +163,11 @@ namespace ChemSW.Nbt.WebServices
             if( RulesTable.Rows.Count == 1 )
             {
                 DataRow ThisRule = RulesTable.Rows[0];
-                if( 0 <= FailedCount )
+                if( FailedCount == 0 || false == Reprobate )
+                {
+                    ThisRule["FAILEDCOUNT"] = CswConvert.ToDbVal( 0 );
+                }
+                else if( 0 <= FailedCount )
                 {
                     ThisRule["FAILEDCOUNT"] = CswConvert.ToDbVal( FailedCount );
                 }
@@ -177,7 +181,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 if( 0 < Interval )
                 {
-                    ThisRule["INTERVAL"] = CswConvert.ToDbVal( FailedCount );
+                    ThisRule["INTERVAL"] = CswConvert.ToDbVal( Interval );
                 }
                 if( 0 < ReprobateThreshold )
                 {
