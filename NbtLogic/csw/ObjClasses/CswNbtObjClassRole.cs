@@ -20,6 +20,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static string ActionPermissionsPropertyName { get { return "Action Permissions"; } }
         public static string TimeoutPropertyName { get { return "Timeout"; } }
         public static string NamePropertyName { get { return "Name"; } }
+        public static string CopyFromRolePropertyName { get { return "Copy From"; } }
+        public static string RoleSelectName { get { return "Role Select"; } }
 
         public static string ActionPermissionsXValueName { get { return CswNbtAction.PermissionXValue; } }
 
@@ -65,6 +67,9 @@ namespace ChemSW.Nbt.ObjClasses
                 _CswNbtNode.Properties.clearModifiedFlag();  // prevents multiple error messages from appearing if we attempt to write() again
                 throw new CswDniException( ErrorType.Warning, "You may not change your own administrator status", "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the Administrator property of their own Role" );
             }
+
+            //If someone has enabled Role Select on Add or if they click Save instead of the button
+            _copyRolePermissions();
 
             // case 22512
             // also case 22557 - use the original name, not the new one
@@ -201,7 +206,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             // case 8411 - for backwards compatibility
-            if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+            if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions )
             {
                 // set NodeType Permissions options
                 Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
@@ -209,19 +214,23 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     foreach( CswNbtPermit.NodeTypePermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypePermission ) ) )
                     {
-                        NodeTypeOptions.Add( MakeNodeTypePermissionValue( NodeType, Permission ),
-                                             MakeNodeTypePermissionText( NodeType, Permission ) );
+                        string Key = MakeNodeTypePermissionValue( NodeType, Permission );
+                        string Value = MakeNodeTypePermissionText( NodeType, Permission );
+                        NodeTypeOptions.Add( Key, Value );
+
                     }
                     foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
                     {
                         foreach( CswNbtPermit.NodeTypeTabPermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypeTabPermission ) ) )
                         {
-                            NodeTypeOptions.Add( MakeNodeTypeTabPermissionValue( Tab, Permission ),
-                                                 MakeNodeTypeTabPermissionText( Tab, Permission ) );
+                            string Key = MakeNodeTypeTabPermissionValue( Tab, Permission );
+                            string Value = MakeNodeTypeTabPermissionText( Tab, Permission );
+                            NodeTypeOptions.Add( Key, Value );
+
                         }
                     } // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
                 } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
-                this.NodeTypePermissions.Options = NodeTypeOptions;
+                NodeTypePermissions.Options = NodeTypeOptions;
             } // if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
 
 
@@ -232,10 +241,11 @@ namespace ChemSW.Nbt.ObjClasses
                 Dictionary<string, string> ActionOptions = new Dictionary<string, string>();
                 foreach( CswNbtAction Action in _CswNbtResources.Actions )
                 {
-                    ActionOptions.Add( MakeActionPermissionValue( Action ),
-                                       MakeActionPermissionText( Action ) );
+                    string Key = MakeActionPermissionValue( Action );
+                    string Value = MakeActionPermissionText( Action );
+                    ActionOptions.Add( Key, Value );
                 }
-                this.ActionPermissions.Options = ActionOptions;
+                ActionPermissions.Options = ActionOptions;
             }
 
             _CswNbtObjClassDefault.afterPopulateProps();
@@ -246,9 +256,44 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        private bool _copyRolePermissions()
+        {
+            bool RetSuccess = false;
+            if( null != RoleSelect &&
+                null != RoleSelect.RelatedNodeId )
+            {
+                CswNbtNode CopyFromNode = _CswNbtResources.Nodes.GetNode( RoleSelect.RelatedNodeId );
+                if( null != CopyFromNode )
+                {
+                    CswNbtObjClassRole CopyFromRoleAsRole = CswNbtNodeCaster.AsRole( CopyFromNode );
+                    if( CopyFromRoleAsRole.Name.Text == ChemSWAdminRoleName )
+                    {
+                        throw new CswDniException( ErrorType.Error, "Cannot copy the permissions of the ChemSW Administrator role.", "Cannot copy the permissions of the ChemSW Administrator role." );
+                    }
+                    Administrator.Checked = CopyFromRoleAsRole.Administrator.Checked;
+                    NodeTypePermissions.Value = CopyFromRoleAsRole.NodeTypePermissions.Value;
+                    ActionPermissions.Value = CopyFromRoleAsRole.ActionPermissions.Value;
+                    Node.postChanges( false );
+                    RetSuccess = true;
+                }
+            }
+
+            return RetSuccess;
+        }
+
         public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
         {
-            if( null != NodeTypeProp ) { /*Do Something*/ }
+            if( null != NodeTypeProp &&
+                   null != NodeTypeProp.ObjectClassProp )
+            {
+                if( CopyFromRolePropertyName == NodeTypeProp.ObjectClassProp.PropName )
+                {
+                    if( _copyRolePermissions() )
+                    {
+                        ActionObj["action"] = CswNbtMetaDataObjectClass.OnButtonClickEvents.refresh.ToString();
+                    }
+                }
+            }
         }
         #endregion
 
@@ -270,11 +315,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropMultiList NodeTypePermissions
+        public CswNbtNodePropNodeTypePermissions NodeTypePermissions
         {
             get
             {
-                return ( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].AsMultiList );
+                return ( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].AsNodeTypePermissions );
             }
         }
 
@@ -299,6 +344,22 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[NamePropertyName].AsText );
+            }
+        }
+
+        public CswNbtNodePropRelationship RoleSelect
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[RoleSelectName].AsRelationship );
+            }
+        }
+
+        public CswNbtNodePropButton CopyFromRole
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[CopyFromRolePropertyName].AsButton );
             }
         }
 
