@@ -235,7 +235,7 @@
 
                 $.extend(gridOptions.gridOpts, data.jqGridOpt);
 
-                inspectionGrid = new CswGrid(gridOptions, $previewGrid);
+                inspectionGrid = CswGrid(gridOptions, $previewGrid);
             },
 
             //File upload button for Step 2
@@ -573,7 +573,7 @@
                                 value: 'Creating a new Inspection Design <b>' + selectedInspectionDesign.name + '</b>.'
                             });
 
-                            confirmGrid = new CswGrid(confirmGridOptions, $confirmationDesign);
+                            CswGrid(confirmGridOptions, $confirmationDesign);
                         } else {
                             $confirmationList.CswList('addItem', {
                                 value: 'Assigning Inspection Design <b>' + selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + selectedInspectionTarget + '</b>.'

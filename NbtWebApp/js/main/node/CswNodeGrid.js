@@ -36,7 +36,7 @@
         };
         var editFunc = function(opts) {
             opts.onEditNode = func;
-			opts.onEditView = editViewFunc;
+            opts.onEditView = editViewFunc;
             renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
             renameProperty(opts, 'nodepk', 'nodeids');
             renameProperty(opts, 'nodename', 'nodenames');
@@ -65,7 +65,7 @@
                 onEditNode: null, //function(nodeid,cswnbtnodekey){},
                 onDeleteNode: null, //function(nodeid,cswnbtnodekey){}
                 onSuccess: null,
-				onEditView: null // function(viewid){}
+                onEditView: null // function(viewid){}
             };
         
             if (optJqGrid) {
@@ -194,7 +194,7 @@
                                 };
 
                             } // else
-                            ret = new CswGrid(g, $parent);
+                            ret = CswGrid(g, $parent);
                             if (isFunction(o.onSuccess)) {
                                 o.onSuccess(ret);
                             }

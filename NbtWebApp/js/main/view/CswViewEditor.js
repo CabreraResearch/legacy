@@ -32,7 +32,7 @@
             startingStep: 1
         };
         if (options) $.extend(o, options);
-		        
+                
         var WizardStepArray = [CswViewEditor_WizardSteps.viewselect, CswViewEditor_WizardSteps.attributes, CswViewEditor_WizardSteps.relationships,
             CswViewEditor_WizardSteps.properties, CswViewEditor_WizardSteps.filters, CswViewEditor_WizardSteps.tuning];
         var WizardSteps = { };
@@ -490,7 +490,7 @@
                             }
                         };
                         $.extend(g.gridOpts, gridJson);
-                        cswViewGrid = new CswGrid(g, $viewgrid);
+                        cswViewGrid = CswGrid(g, $viewgrid);
                         cswViewGrid.$gridPager.css({width: '100%', height: '20px' });
                         
                         cswViewGrid.hideColumn(o.ColumnFullViewId);

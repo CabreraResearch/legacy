@@ -158,7 +158,7 @@
                             data: { AccessId: selectedCustomerId },
                             success: function(data) {
                                 $.extend(gridOptions.gridOpts, data);
-                                scheduledRulesGrid = new CswGrid(gridOptions, $rulesGrid);
+                                scheduledRulesGrid = CswGrid(gridOptions, $rulesGrid);
                             }
                         });
                 };

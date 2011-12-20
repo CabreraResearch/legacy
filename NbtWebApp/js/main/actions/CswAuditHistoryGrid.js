@@ -88,7 +88,7 @@
                         };
                     }
                     
-                    var grid = new CswGrid(g, $auditGrid);
+                    var grid = CswGrid(g, $auditGrid);
                     grid.$gridPager.css({ width: '100%', height: '20px' });
                     
                     // set selected row by date
