@@ -39,6 +39,21 @@ namespace ChemSW.Nbt.WebServices
                                                             "Multi-Edit"
                                                         };
 
+        private enum MenuActions
+        {
+            Unknown,
+            AddNode,
+            CopyNode,
+            DeleteNode,
+            editview,
+            GenericSearch,
+            multiedit,
+            PrintGrid,
+            PrintLabel,
+            SaveViewAs,
+            ViewSearch
+        }
+
         private CswNbtResources _CswNbtResources;
 
         public CswNbtWebServiceMainMenu( CswNbtResources CswNbtResources, string LimitMenuTo = null )
@@ -103,26 +118,26 @@ namespace ChemSW.Nbt.WebServices
                         Ret["Search"]["This View"]["nodeid"] = NodeId;
                         Ret["Search"]["This View"]["nodetypeid"] = NodeTypeId;
                         Ret["Search"]["This View"]["sessionviewid"] = View.SessionViewId.ToString();
-                        Ret["Search"]["This View"]["action"] = "ViewSearch";
+                        Ret["Search"]["This View"]["action"] = MenuActions.ViewSearch.ToString();
                     }
                     if( View.Visibility != NbtViewVisibility.Property )
                     {
                         Ret["Search"]["Generic Search"] = new JObject();
                         Ret["Search"]["Generic Search"]["nodeid"] = NodeId;
                         Ret["Search"]["Generic Search"]["nodetypeid"] = NodeTypeId;
-                        Ret["Search"]["Generic Search"]["action"] = "GenericSearch";
+                        Ret["Search"]["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
                     }
                     else
                     {
                         Ret["Search"]["Generic Search"] = new JObject();
-                        Ret["Search"]["Generic Search"]["action"] = "GenericSearch";
+                        Ret["Search"]["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
                     }
 
                 }
                 else
                 {
                     Ret["Search"]["Generic Search"] = new JObject();
-                    Ret["Search"]["Generic Search"]["action"] = "GenericSearch";
+                    Ret["Search"]["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
                 }
             }
 
@@ -146,7 +161,7 @@ namespace ChemSW.Nbt.WebServices
                                                              new JProperty( "text", Entry.NodeType.NodeTypeName ),
                                                              new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
                                                              new JProperty( "relatednodeid", NodeIdNum ), //for Grid Props
-                                                             new JProperty( "action", "AddNode" ) ) ) ) )
+                                                             new JProperty( "action", MenuActions.AddNode.ToString() ) ) ) ) )
                     {
                         AddObj.Add( AddNodeType );
                     }
@@ -168,7 +183,7 @@ namespace ChemSW.Nbt.WebServices
                     if( false == Node.NodeType.IsUniqueAndRequired( ref BadPropertyName ) )
                     {
                         Ret["Copy"] = new JObject();
-                        Ret["Copy"]["action"] = "CopyNode";
+                        Ret["Copy"]["action"] = MenuActions.CopyNode.ToString();
                         Ret["Copy"]["nodeid"] = Node.NodeId.ToString();
                         Ret["Copy"]["nodename"] = Node.NodeName;
                     }
@@ -183,7 +198,7 @@ namespace ChemSW.Nbt.WebServices
                     _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.NodeType, false, null, null, Node, null ) )
                 {
                     Ret["Delete"] = new JObject();
-                    Ret["Delete"]["action"] = "DeleteNode";
+                    Ret["Delete"]["action"] = MenuActions.DeleteNode.ToString();
                     Ret["Delete"]["nodeid"] = Node.NodeId.ToString();
                     Ret["Delete"]["nodename"] = Node.NodeName;
                 }
@@ -195,7 +210,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     View.SaveToCache( false );
                     Ret["Save View As"] = new JObject();
-                    Ret["Save View As"]["action"] = "SaveViewAs";
+                    Ret["Save View As"]["action"] = MenuActions.SaveViewAs.ToString();
                     Ret["Save View As"]["viewid"] = View.SessionViewId.ToString();
                     Ret["Save View As"]["viewmode"] = View.ViewMode.ToString();
                 }
@@ -212,7 +227,7 @@ namespace ChemSW.Nbt.WebServices
                         Ret["Print Label"] = new JObject();
                         Ret["Print Label"]["nodeid"] = Node.NodeId.ToString();
                         Ret["Print Label"]["propid"] = new CswPropIdAttr( Node, BarcodeProperty ).ToString();
-                        Ret["Print Label"]["action"] = "PrintLabel";
+                        Ret["Print Label"]["action"] = MenuActions.PrintLabel.ToString();
                     }
                 }
                 // PRINT
@@ -221,7 +236,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     View.SaveToCache( false );
                     Ret["Print"] = new JObject();
-                    Ret["Print"]["popup"] = "PrintGrid.aspx?sessionviewid=" + View.SessionViewId.ToString();
+                    Ret["Print"]["action"] = MenuActions.PrintGrid.ToString();
                 }
 
                 // EXPORT
@@ -279,14 +294,14 @@ namespace ChemSW.Nbt.WebServices
                 _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) )
             {
                 Ret["Edit View"] = new JObject();
-                Ret["Edit View"]["action"] = "editview";
+                Ret["Edit View"]["action"] = MenuActions.editview.ToString();
             }
 
             if( _MenuItems.Contains( "Multi-Edit" ) &&
                 null != View )
             {
                 Ret["Multi-Edit"] = new JObject();
-                Ret["Multi-Edit"]["action"] = "multiedit";
+                Ret["Multi-Edit"]["action"] = MenuActions.multiedit.ToString();
             }
 
             return Ret;
