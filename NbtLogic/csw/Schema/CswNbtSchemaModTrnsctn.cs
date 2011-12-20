@@ -789,7 +789,7 @@ namespace ChemSW.Nbt.Schema
                                                                     bool IsBatchEntry = false,
                                                                     bool ReadOnly = false,
                                                                     bool IsFk = false,
-                                                                    CswNbtViewProperty.CswNbtPropType FkType = CswNbtViewProperty.CswNbtPropType.Unknown,
+                                                                    CswNbtViewRelationship.RelatedIdType FkType = CswNbtViewRelationship.RelatedIdType.Unknown,
                                                                     Int32 FkValue = Int32.MinValue,
                                                                     bool IsRequired = false,
                                                                     bool IsUnique = false,
@@ -804,6 +804,8 @@ namespace ChemSW.Nbt.Schema
                                                                     string StaticText = ""
             )
         {
+
+
             CswNbtMetaDataObjectClassProp RetProp = null;
             if( NbtObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
             {
@@ -901,7 +903,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public DataRow addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, string PropName,
                                              CswNbtMetaDataFieldType.NbtFieldType FieldType, bool IsBatchEntry, bool ReadOnly,
-                                             bool IsFk, CswNbtViewProperty.CswNbtPropType FkType, Int32 FkValue, bool IsRequired, bool IsUnique, bool IsGlobalUnique,
+                                             bool IsFk, CswNbtViewRelationship.RelatedIdType FkType, Int32 FkValue, bool IsRequired, bool IsUnique, bool IsGlobalUnique,
                                              bool ServerManaged, string ListOptions, Int32 DisplayColAdd, Int32 DisplayRowAdd )
         {
             DataRow OCPRow = ObjectClassPropsTable.NewRow();
@@ -911,7 +913,7 @@ namespace ChemSW.Nbt.Schema
             OCPRow["isfk"] = CswConvert.ToDbVal( IsFk );
             if( IsFk &&
                 Int32.MinValue != FkValue &&
-                FkType != CswNbtViewProperty.CswNbtPropType.Unknown )
+                FkType != CswNbtViewRelationship.RelatedIdType.Unknown )
             {
                 OCPRow["fktype"] = FkType;
                 OCPRow["fkvalue"] = CswConvert.ToDbVal( FkValue );
