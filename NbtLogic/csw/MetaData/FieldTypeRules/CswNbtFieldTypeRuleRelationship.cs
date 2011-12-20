@@ -1,11 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using System.Xml;
-using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -54,7 +47,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }//get
         }
 
-        public bool SearchAllowed { get { return (_CswNbtFieldTypeRuleDefault.SearchAllowed); } }
+        public bool SearchAllowed { get { return ( _CswNbtFieldTypeRuleDefault.SearchAllowed ); } }
 
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
         {
@@ -63,7 +56,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             string OldValue = CswNbtViewPropertyFilterIn.Value;
 
             // BZ 8558
-            if( OldSubfieldName == NameSubField.Name && OldValue.ToLower() == "me" ) 
+            if( OldSubfieldName == NameSubField.Name && OldValue.ToLower() == "me" )
             {
                 CswNbtViewProperty Prop = (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent;
                 ICswNbtMetaDataProp MetaDataProp = null;
@@ -101,9 +94,22 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
 
-        public void afterCreateNodeTypeProp(  CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
-            _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
+            //Schema Updater will trigger afterCreateNodeTypeProp(), but it won't call setFk
+            if( null != NodeTypeProp )
+            {
+                string FkType = NodeTypeProp.FKType;
+                Int32 FkValue = NodeTypeProp.FKValue;
+
+                if( false == string.IsNullOrEmpty( FkType ) &&
+                    Int32.MinValue != FkValue )
+                {
+                    NodeTypeProp.SetFK( FkType, FkValue );
+                }
+
+                _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
+            }
         }
 
     }//CswNbtFieldTypeRuleRelationship
