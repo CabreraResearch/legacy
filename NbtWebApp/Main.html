@@ -359,6 +359,19 @@ window.abandonHope = true;
     						break;
     				}
     			},
+    		    'onPrintView': function() {
+    		        switch (o.viewmode) {
+    				    case CswViewMode.grid.name:
+    					    if(contains(o, 'grid') && 
+        					   false == isNullOrEmpty(o.grid)) {
+    					       o.grid.print();
+    					    }
+    				        break;
+    				    default:
+    				        CswError(ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'View Printing is not enabled for views of type ' + o.viewmode));
+    				        break;
+    				}
+    		    },
     			'onSearch':
                         {
                         	'onViewSearch': function () {

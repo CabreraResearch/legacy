@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.WebServices
             editview,
             GenericSearch,
             multiedit,
-            PrintGrid,
+            PrintView,
             PrintLabel,
             SaveViewAs,
             ViewSearch
@@ -236,7 +236,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     View.SaveToCache( false );
                     Ret["Print"] = new JObject();
-                    Ret["Print"]["action"] = MenuActions.PrintGrid.ToString();
+                    Ret["Print"]["action"] = MenuActions.PrintView.ToString();
                 }
 
                 // EXPORT

@@ -95,6 +95,9 @@
                         //refreshGrid(gridOpts, cswGrid);
                         o.onReload();
                     },
+                    onPrintGrid: function () {
+                        cswGrid.print();    
+                    },
                     onMultiEdit: function () {
                         var multi = (false === cswGrid.isMulti());
                         var g = {
@@ -131,10 +134,10 @@
 //						onGenericSearch: function () { /*not possible here*/ }
 //					},
                     onEditView: function () {
-						if(isFunction(o.onEditView))
-						{
-							o.onEditView(viewid);
-						}
+                        if(isFunction(o.onEditView))
+                        {
+                            o.onEditView(viewid);
+                        }
                     }
             }); // CswMenuMain
         } // if( o.EditMode !== EditMode.PrintReport.name )

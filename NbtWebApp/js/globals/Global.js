@@ -863,7 +863,11 @@ function HandleMenuItem(options)
                     return false;
                 });
                 break;
-
+            
+            case 'PrintView':
+                $a.click(o.onPrintView);
+                break;
+                
             case 'PrintLabel':
                 $a.click(function ()
                 {
