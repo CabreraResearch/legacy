@@ -276,6 +276,32 @@ namespace ChemSW.Nbt.MetaData
 
         #region Make New...
 
+        public CswNbtMetaDataFieldType makeNewFieldType( CswNbtMetaDataFieldType.NbtFieldType FieldType, CswNbtMetaDataFieldType.DataType DataType, string FieldPrecision = "", string Mask = "" )
+        {
+            CswNbtMetaDataFieldType RetFieldType = null;
+            if( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown && DataType != CswNbtMetaDataFieldType.DataType.UNKNOWN )
+            {
+                RetFieldType = getFieldType( FieldType );
+                if( null == RetFieldType )
+                {
+                    DataTable FieldTypeTable = _CswNbtMetaDataResources.FieldTypeTableUpdate.getEmptyTable();
+                    DataRow Row = FieldTypeTable.NewRow();
+                    Row["datatype"] = CswConvert.ToDbVal( DataType.ToString().ToLower() );
+                    Row["fieldtype"] = FieldType.ToString();
+                    Row["fieldprecision"] = CswConvert.ToDbVal( FieldPrecision );
+                    Row["mask"] = CswConvert.ToDbVal( Mask );
+                    FieldTypeTable.Rows.Add( Row );
+                    _CswNbtMetaDataResources.FieldTypeTableUpdate.update( FieldTypeTable );
+
+                    // Keep MetaData up to date
+                    RetFieldType = _CswNbtMetaDataResources.FieldTypesCollection.RegisterNew( Row ) as CswNbtMetaDataFieldType;
+                }
+            }
+
+            return RetFieldType;
+        }//makeNewTab()
+        
+        
         /// <summary>
         /// Creates a brand new NodeType in the database and in the MetaData collection
         /// </summary>
@@ -570,14 +596,14 @@ namespace ChemSW.Nbt.MetaData
             string OriginalTabName;
             if( TabId != Int32.MinValue )
                 OriginalTabName = getNodeTypeTab( TabId ).TabName;
-			else if( InsertAfterProp != null && InsertAfterProp.EditLayout.TabId != Int32.MinValue )
-			{
-				CswNbtMetaDataNodeTypeTab OriginalTab = getNodeTypeTab( InsertAfterProp.EditLayout.TabId );
-				//OriginalTabName = InsertAfterProp.EditLayout.Tab.TabName;
-				OriginalTabName = OriginalTab.TabName;
-			}
-			else
-				OriginalTabName = NodeType.getFirstNodeTypeTab().TabName;
+            else if( InsertAfterProp != null && InsertAfterProp.EditLayout.TabId != Int32.MinValue )
+            {
+                CswNbtMetaDataNodeTypeTab OriginalTab = getNodeTypeTab( InsertAfterProp.EditLayout.TabId );
+                //OriginalTabName = InsertAfterProp.EditLayout.Tab.TabName;
+                OriginalTabName = OriginalTab.TabName;
+            }
+            else
+                OriginalTabName = NodeType.getFirstNodeTypeTab().TabName;
             NodeType = CheckVersioning( NodeType );
             CswNbtMetaDataNodeTypeTab Tab = NodeType.getNodeTypeTab( OriginalTabName );
 
@@ -896,9 +922,9 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeProp.CopyPropToNewNodeTypePropRow( NewPropRow );
                 _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NewPropsTable );
 
-				NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeTypeId, NewPropId, CswConvert.ToInt32( TabMap[NodeTypeProp.EditLayout.TabId] ), NodeTypeProp.EditLayout.DisplayRow, NodeTypeProp.EditLayout.DisplayColumn );
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeTypeId, NewPropId, CswConvert.ToInt32( TabMap[NodeTypeProp.EditLayout.TabId] ), NodeTypeProp.EditLayout.DisplayRow, NodeTypeProp.EditLayout.DisplayColumn );
 
-				_CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewPropRow, NodeTypeProp.PropId );
+                _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewPropRow, NodeTypeProp.PropId );
             }
 
             // Fix Conditional Props (case 22328)
@@ -1067,7 +1093,7 @@ namespace ChemSW.Nbt.MetaData
         /// <returns>Tab of deleted property (for UI to select)</returns>
         protected CswNbtMetaDataNodeTypeTab DeleteNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp, bool Internal )
         {
-			CswNbtMetaDataNodeTypeTab ret = getNodeTypeTab( NodeTypeProp.EditLayout.TabId );
+            CswNbtMetaDataNodeTypeTab ret = getNodeTypeTab( NodeTypeProp.EditLayout.TabId );
             if( !Internal )
             {
                 if( !NodeTypeProp.IsDeletable() )
@@ -1174,7 +1200,7 @@ namespace ChemSW.Nbt.MetaData
 
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToReassign )
             {
-				Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewTab.TabId, Int32.MinValue, Int32.MinValue );
+                Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewTab.TabId, Int32.MinValue, Int32.MinValue );
                 // BZ 8353 - To avoid constraint errors, post this change immediately
                 _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
             }
