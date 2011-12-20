@@ -2,6 +2,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
+/// <reference path="../../main/tools/CswPrint.js" />
 
 function CswGrid(options, $parent) {
     ///<summary>Generates a grid</summary>
@@ -353,6 +354,43 @@ function CswGrid(options, $parent) {
         return ret;
     }
 
+    var print = function() {
+        var $printDiv, $printGridTable, $printGriPager, printOpts = {},
+            printTableId = makeId({ prefix: gridTableId, ID: 'printTable' }),
+            printPagerId = makeId({ prefix: gridPagerId, ID: 'printPager' });
+
+        $.extend(true, printOpts, o.gridOpts);
+
+        $printDiv = $('<div id="' + gridTableId + '_print"></div>');
+        $printGridTable = $printDiv.CswTable('init', { ID: printTableId });
+        $printGriPager = $parent.CswDiv('init', { ID: printPagerId });
+        
+        printOpts.pager = $printGriPager;
+        printOpts.cloneToTop = false
+        printOpts.rowNum = -1;
+        printOpts.add = false;
+        printOpts.del = false;
+        printOpts.edit = false;
+        printOpts.autoencode = true;
+        printOpts.autowidth = true;
+        printOpts.altRows = false;
+        printOpts.datatype = 'local';
+        printOpts.emptyrecords = 'No Results';
+        printOpts.height = 'auto';
+        printOpts.loadtext = 'Loading...';
+        printOpts.multiselect = false;
+        printOpts.toppager = false;
+        printOpts.shrinkToFit = false;
+        
+        $printGridTable.jqGrid(printOpts)
+                        .jqGrid('navGrid', '#' + printPagerId);
+            
+        $gridTable.data(printTableId + '_data', printOpts);
+        
+        
+        CswPrint($printDiv);
+    };
+
     //#region public, priveleged
 
     return {
@@ -367,6 +405,7 @@ function CswGrid(options, $parent) {
         getValueForColumn: getValueForColumn,
         changeGridOpts: changeGridOpts,
         opGridRows: opGridRows,
+        print: print,
         isMulti: function() { return multiEdit }
     };
     
