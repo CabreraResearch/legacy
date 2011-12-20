@@ -5,7 +5,6 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
@@ -110,8 +109,8 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NodeTypePermsOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fieldtypeid, NodeTypePermFt.FieldTypeId );
 
-            CswNbtMetaDataObjectClassProp RoleSelect = _CswNbtSchemaModTrnsctn.createObjectClassProp( RoleOc.ObjectClass,
-                                               CswNbtObjClassRole.RoleSelectName,
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( RoleOc.ObjectClass,
+                                               CswNbtObjClassRole.CopyFromRolePropertyName,
                                                CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                                                false, false, true, CswNbtViewRelationship.RelatedIdType.Unknown, RoleOc.ObjectClassId, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue,
                                                string.Empty,
@@ -120,30 +119,30 @@ namespace ChemSW.Nbt.Schema
                                                string.Empty );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( RoleOc.ObjectClass,
-                                                           CswNbtObjClassRole.CopyFromRolePropertyName,
-                                                           CswNbtMetaDataFieldType.NbtFieldType.Button,
-                                                           false, true, false, CswNbtViewRelationship.RelatedIdType.Unknown, Int32.MinValue, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue,
-                                                           CswNbtNodePropButton.ButtonMode.button.ToString(),
-                                                           false,
-                                                           AuditLevel.NoAudit,
-                                                           CswNbtObjClassRole.CopyFromRolePropertyName );
+                       CswNbtObjClassRole.CopiedFromRolePropertyName,
+                       CswNbtMetaDataFieldType.NbtFieldType.Static,
+                       false, true, false, CswNbtViewRelationship.RelatedIdType.Unknown, Int32.MinValue, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue,
+                       string.Empty,
+                       false,
+                       AuditLevel.NoAudit,
+                       string.Empty );
 
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
             foreach( CswNbtMetaDataNodeType NodeType in RoleOc.NodeTypes )
             {
                 CswNbtMetaDataNodeTypeTab CopyTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( NodeType, "Copy From Role", NodeType.NodeTypeTabs.Count + 1 );
-                CswNbtMetaDataNodeTypeProp CopyFromNtp = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassRole.CopyFromRolePropertyName );
-                CswNbtMetaDataNodeTypeProp RoleSelectNtp = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassRole.RoleSelectName );
 
-                CopyFromNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RoleSelectNtp );
-                CopyFromNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, CopyTab.TabId, CopyFromNtp.EditLayout.DisplayRow, CopyFromNtp.EditLayout.DisplayColumn );
-                RoleSelectNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, CopyTab.TabId, RoleSelectNtp.EditLayout.DisplayRow, RoleSelectNtp.EditLayout.DisplayColumn );
+                CswNbtMetaDataNodeTypeProp CopyFromRoleNtp = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassRole.CopyFromRolePropertyName );
+                CswNbtMetaDataNodeTypeProp CopiedFromRoleNtp = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassRole.CopiedFromRolePropertyName );
 
-                CopyFromNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-                CopyFromNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview );
-                RoleSelectNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-                RoleSelectNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview );
+                CopyFromRoleNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, CopyTab.TabId, CopyFromRoleNtp.EditLayout.DisplayRow, CopiedFromRoleNtp.EditLayout.DisplayColumn );
+                CopyFromRoleNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                CopyFromRoleNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview );
+
+                CopiedFromRoleNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, CopyTab.TabId, CopiedFromRoleNtp.EditLayout.DisplayRow, CopiedFromRoleNtp.EditLayout.DisplayColumn );
+                CopiedFromRoleNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                CopiedFromRoleNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview );
 
                 CswNbtPermit.NodeTypeTabPermission[] Permits = new[]
                                                                     {

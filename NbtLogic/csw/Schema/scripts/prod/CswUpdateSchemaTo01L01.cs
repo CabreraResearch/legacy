@@ -4,7 +4,6 @@ using System;
 using ChemSW.Audit;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -22,7 +21,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass RoleOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( RoleOc.ObjectClass,
-                                               CswNbtObjClassRole.RoleSelectName,
+                                               CswNbtObjClassRole.CopyFromRolePropertyName,
                                                CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                                                false, false, true, CswNbtViewRelationship.RelatedIdType.ObjectClassId, RoleOc.ObjectClassId, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue,
                                                string.Empty,
@@ -31,13 +30,13 @@ namespace ChemSW.Nbt.Schema
                                                string.Empty );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( RoleOc.ObjectClass,
-                                                           CswNbtObjClassRole.CopyFromRolePropertyName,
-                                                           CswNbtMetaDataFieldType.NbtFieldType.Button,
-                                                           false, true, false, CswNbtViewRelationship.RelatedIdType.Unknown, Int32.MinValue, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue,
-                                                           CswNbtNodePropButton.ButtonMode.button.ToString(),
-                                                           false,
-                                                           AuditLevel.NoAudit,
-                                                           CswNbtObjClassRole.CopyFromRolePropertyName );
+                                   CswNbtObjClassRole.CopiedFromRolePropertyName,
+                                   CswNbtMetaDataFieldType.NbtFieldType.Static,
+                                   false, true, false, CswNbtViewRelationship.RelatedIdType.Unknown, Int32.MinValue, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue,
+                                   string.Empty,
+                                   false,
+                                   AuditLevel.NoAudit,
+                                   string.Empty );
 
             CswNbtMetaDataObjectClassProp NodeTypePermsOcp = RoleOc.getObjectClassProp( CswNbtObjClassRole.NodeTypePermissionsPropertyName );
             CswNbtMetaDataFieldType NodeTypePermFt = _CswNbtSchemaModTrnsctn.MetaData.makeNewFieldType( CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions, CswNbtMetaDataFieldType.DataType.TEXT );
