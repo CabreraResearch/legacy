@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using System.Xml;
-using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -20,15 +12,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
 
-		public CswNbtFieldTypeRuleMultiList( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRuleMultiList( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources, MetaDataProp );
 
             ValueSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Value );
-			ValueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Contains |
-										CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-										CswNbtPropFilterSql.PropertyFilterMode.Null;
+            ValueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Contains |
+                                        CswNbtPropFilterSql.PropertyFilterMode.NotNull |
+                                        CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( ValueSubField );
         }//ctor
 
@@ -60,7 +52,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
 
-        public void afterCreateNodeTypeProp(  CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }
