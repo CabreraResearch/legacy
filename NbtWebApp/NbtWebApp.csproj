@@ -1452,7 +1452,6 @@
     <Content Include="Popup_DesignAdd.aspx" />
     <Content Include="Popup_DesignDelete.aspx" />
     <Content Include="Popup_Export.aspx" />
-    <Content Include="PrintGrid.aspx" />
     <Content Include="Reports\DueTasks.xml" />
     <Content Include="Reports\EquipmentDetail.xml" />
     <Content Include="Reports\JobSafetyAnalysis_nodetype.xml" />
@@ -1765,13 +1764,6 @@
     </Compile>
     <Compile Include="PrintableLayout.master.designer.cs">
       <DependentUpon>PrintableLayout.master</DependentUpon>
-    </Compile>
-    <Compile Include="PrintGrid.aspx.cs">
-      <DependentUpon>PrintGrid.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="PrintGrid.aspx.designer.cs">
-      <DependentUpon>PrintGrid.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports\DueTasks.cs">
