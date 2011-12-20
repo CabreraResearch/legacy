@@ -17,8 +17,8 @@ namespace ChemSW.Nbt.MetaData
             File,
             Grid,
             Image,
-			ImageList,
-			Link,
+            ImageList,
+            Link,
             List,
             Location,
             LocationContents,
@@ -29,8 +29,8 @@ namespace ChemSW.Nbt.MetaData
             MTBF,
             //MultiRelationship,
             MultiList,
-            //NodeTypePermissions,
-			NFPA,
+            NodeTypePermissions,
+            NFPA,
             NodeTypeSelect,
             Number,
             Password,
@@ -48,6 +48,20 @@ namespace ChemSW.Nbt.MetaData
             ViewPickList,
             ViewReference
         };
+
+        public enum DataType
+        {
+            UNKNOWN,
+            XML,
+            DOUBLE,
+            INTEGER,
+            BLOB,
+            DATETIME,
+            TEXT,
+            STRING,
+            CLOB,
+            BOOLEAN
+        }
 
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
 

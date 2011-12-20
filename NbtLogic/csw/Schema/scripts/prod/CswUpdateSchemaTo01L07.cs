@@ -98,6 +98,19 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Case 24023
 
+            #region Case 23641
+
+            //Convert the NodeTypePermissions prop to the NodeTypePermissions field type so we can beautify later.
+            CswNbtMetaDataObjectClassProp NodeTypePermsOcp = RoleOc.getObjectClassProp( CswNbtObjClassRole.NodeTypePermissionsPropertyName );
+            CswNbtMetaDataFieldType NodeTypePermFt = _CswNbtSchemaModTrnsctn.MetaData.makeNewFieldType( CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions, CswNbtMetaDataFieldType.DataType.TEXT );
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NodeTypePermsOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fieldtypeid, NodeTypePermFt.FieldTypeId );
+
+
+
+
+            #endregion Case 23641
+
         }//Update()
 
     }//class CswUpdateSchemaTo01L07

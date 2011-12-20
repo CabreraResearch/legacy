@@ -97,9 +97,9 @@ namespace ChemSW.Nbt.PropTypes
                 case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
                     InnerProperty = new CswNbtNodePropMultiList( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;
-                //case CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions:
-                //    InnerProperty = new CswNbtNodePropNodeTypePermissions(CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp);
-                //    break;
+                case CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions:
+                    InnerProperty = new CswNbtNodePropNodeTypePermissions( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
+                    break;
                 case CswNbtMetaDataFieldType.NbtFieldType.NFPA:
                     InnerProperty = new CswNbtNodePropNFPA( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;

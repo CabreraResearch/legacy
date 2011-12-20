@@ -747,6 +747,7 @@
     <Content Include="js\main\actions\CswQuotas.js" />
     <Content Include="js\main\controls\CswTimeInterval.js" />
     <Content Include="js\main\controls\CswList.js" />
+    <Content Include="js\main\fieldtypes\CswFieldTypeNodeTypePermissions.js" />
     <Content Include="js\main\view\CswViewContentTree.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
     <Content Include="NodeTypeTreeService.asmx" />

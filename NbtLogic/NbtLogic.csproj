@@ -95,6 +95,7 @@
     <Compile Include="csw\MetaData\CswNbtPropFilterSql.cs" />
     <Compile Include="csw\MetaData\CswNbtSubField.cs" />
     <Compile Include="csw\MetaData\CswNbtSubFieldColl.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNodeTypePermissions.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleButton.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNFPA.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleImageList.cs" />

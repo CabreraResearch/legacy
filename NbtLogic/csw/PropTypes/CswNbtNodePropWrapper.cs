@@ -528,6 +528,18 @@ namespace ChemSW.Nbt.PropTypes
 
         }//AsMultiList
 
+        public CswNbtNodePropNodeTypePermissions AsNodeTypePermissions
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropNodeTypePermissions ) )
+                {
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropNodeTypePermissions ) ) ) );
+                }
+                return ( (CswNbtNodePropNodeTypePermissions) _CswNbtNodeProp );
+            }
+        }//AsNodeTypeSelect
+
         public CswNbtNodePropNodeTypeSelect AsNodeTypeSelect
         {
             get
