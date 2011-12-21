@@ -165,8 +165,18 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
             ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
             ParentObject[CswNbtSubField.SubFieldName.Href.ToString().ToLower()] = ImageUrl;
-            ParentObject["width"] = Width.ToString();
-            ParentObject["height"] = Height.ToString();
+            Int32 ValidWidth = Width;
+            if( 0 > ValidWidth )
+            {
+                ValidWidth = 100;
+            }
+            ParentObject["width"] = ValidWidth.ToString();
+            Int32 ValidHeight = Height;
+            if( 0 > ValidHeight )
+            {
+                ValidHeight = 100;
+            }
+            ParentObject["height"] = ValidHeight.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

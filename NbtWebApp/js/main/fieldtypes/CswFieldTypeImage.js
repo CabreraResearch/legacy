@@ -23,7 +23,7 @@
                 var href = tryParseString(propVals.href).trim();
                 var width = Math.abs(tryParseNumber(propVals.width, 100) - 36);
                 
-                var height = tryParseString(propVals.height);
+                var height = tryParseNumber(propVals.height, 100);
                 var fileName = tryParseString(propVals.name).trim();
 
                 var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
