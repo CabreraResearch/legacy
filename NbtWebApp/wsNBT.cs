@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
+using System.Web;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;
 using ChemSW.Config;
@@ -1746,39 +1747,19 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-
-                    // putting these in the param list causes the webservice to fail with
-                    // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
-                    string FileName = Context.Request["qqfile"];
-                    string PropId = Context.Request["propid"];
-                    string Column = Context.Request["column"];
-                    string Multi = Context.Request["multi"];
-                    wsTools Tools = new wsTools();
-                    Stream FileStream = Tools.getFileInputStream( "qqfile" );
-
-                    if( !string.IsNullOrEmpty( FileName ) && !string.IsNullOrEmpty( PropId ) )
+                    for( Int32 I = 0; I < Context.Request.Files.Count; I += 1 )
                     {
-                        // Unfortunately, Context.Request.ContentType is always application/octet-stream
-                        // So we have to detect the content type
-                        string[] SplitFileName = FileName.Split( '.' );
-                        string Extension = SplitFileName[SplitFileName.Length - 1];
-                        string ContentType = "application/" + Extension;
-                        switch( Extension )
-                        {
-                            case "jpg":
-                            case "jpeg":
-                                ContentType = "image/pjpeg";
-                                break;
-                            case "gif":
-                                ContentType = "image/gif";
-                                break;
-                            case "png":
-                                ContentType = "image/png";
-                                break;
-                        }
+                        HttpPostedFile File = Context.Request.Files[I];
+                        string FileName = File.FileName;
+                        string PropId = Context.Request["propid"];
+                        string Column = Context.Request["column"];
 
-                        if( FileStream != null )
+                        Stream FileStream = File.InputStream;
+
+                        if( false == string.IsNullOrEmpty( PropId ) )
                         {
+                            string ContentType = File.ContentType;
+
                             // Read the binary data
                             BinaryReader br = new BinaryReader( FileStream );
                             long Length = FileStream.Length;
@@ -1793,11 +1774,8 @@ namespace ChemSW.Nbt.WebServices
                             bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId, Column );
 
                             ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
-
-                        } // if( Context.Request.InputStream != null )
-
-                    } // if( FileName != string.Empty && PropId != string.Empty )
-
+                        } //if( false == string.IsNullOrEmpty( PropId ) )
+                    } //for( Int32 I = 0; I < Context.Request.Files.Count; I += 1 )
                 }
                 _deInitResources();
             }
@@ -3335,7 +3313,8 @@ namespace ChemSW.Nbt.WebServices
                     // Load the excel file into a data table
                     CswNbtWebServiceInspectionDesign ws = new CswNbtWebServiceInspectionDesign( _CswNbtResources );
 
-                    Stream FileStream = Tools.getFileInputStream( "qqfile" );
+                    HttpPostedFile File = Context.Request.Files[0];
+                    Stream FileStream = File.InputStream;
                     string FullPathAndFileName = Tools.cacheInputStream( FileStream, TempFileName );
 
                     ExcelDataTable = ws.convertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );

@@ -190,7 +190,7 @@
             },
 
             //File upload onSuccess event to prep Step 3
-            makeInspectionDesignGrid = function(id, fileName, data, onSuccess) {
+            makeInspectionDesignGrid = function(data, onSuccess) {
                 if (isFunction(onSuccess)) {
                     onSuccess();
                 }
@@ -248,29 +248,25 @@
                     stepNo: ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step,
                     uploadName: 'design'
                 };
-
-                var uploadOpts = {
-                        element: $control[0],
-                        action: f.url,
-                        multiple: false,
-                        allowedExtensions: ['xls'],
-                        onSubmit: function() {
-                            $('.qq-upload-list').empty();
-                        },
-                        onComplete: function(id, fileName, data) {
-                            makeInspectionDesignGrid(id, fileName, data, f.onSuccess);
-                        },
-                        showMessage: function(error) {
-                            $.CswDialog('ErrorDialog', error);
+               
+                $control.fileupload({
+                    datatype: 'json',
+                    url: f.url,
+                    paramName: 'fileupload',
+                    done: function (e, ret) {
+                        var gridData = { }, $resultDoc, $firstChild;
+                        //See case 24511. This is ugly, but there's not much else to be done.
+                        if(false === isNullOrEmpty(ret.result)) {
+                            $resultDoc = $(ret.result);
+                            $firstChild = $resultDoc.find(':first-child');
+                            if(false === isNullOrEmpty($firstChild) &&
+                                false === isNullOrEmpty($firstChild.text())) {
+                                gridData = JSON.parse($firstChild.text());
+                                makeInspectionDesignGrid(gridData, f.onSuccess);
+                            }
                         }
-                    };
-                
-                if(false === abandonHope) {
-                    uploadOpts.template = '<div class="qq-uploader"><div class="qq-upload-drop-area"><span>Drop ' + f.uploadName + ' here to process</span></div><div class="qq-upload-button">Upload Design</div><ul class="qq-upload-list"></ul></div>';
-                }
-                
-                //We don't need the return, but this is a constructor. This is more readable than apply() in this context.
-                new qq.FileUploader(uploadOpts);
+                    }
+                });
             },
 
             //If this is a new Design, upload the template. Otherwise skip to step 4.
@@ -314,7 +310,7 @@
                             });
 
                             //3. Upload the design
-                            $uploadP = $('<div id="' + makeStepId('fileUploadBtn') + '"></div>');
+                            $uploadP = $('<input id="' + makeStepId('fileUploadBtn') + '" type="file" name="fileupload" />');
                             makeInspectionDesignUpload($uploadP);
 
                             $step2List.CswList('addItem', {

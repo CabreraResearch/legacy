@@ -576,18 +576,20 @@
             }
 
             var $div = $('<div></div>');
-                                
-            var uploader = new qq.FileUploader({
-                element: $div.get(0),
-                action: o.url,
-                params: o.params,
-                debug: false,
-                onComplete: function() { 
-                    $div.dialog('close'); 
-                    o.onSuccess(); 
-                }
-            });
 
+            var $btn = $('<input id="fileupload" type="file" name="fileupload" />')
+                            .appendTo($div);
+            
+            $btn.fileupload({
+                    datatype: 'json',
+                    url: o.url + '?' + $.param(o.params),
+                    paramName: 'fileupload',
+                    done: function (e, data) {
+                        $div.dialog('close');
+                        o.onSuccess();
+                    }
+                });
+            
             $div.CswButton({ID: 'fileupload_cancel', 
                             enabledText: 'Cancel', 
                             disabledText: 'Canceling', 
@@ -611,22 +613,22 @@
                 $.extend(o, options);
             }
 
-            function makeUploader() {
-                return new qq.FileUploader({
-                        element: $div.get(0),
-                        action: o.FileUrl,
-                        params: { PropId: o.PropId },
-                        debug: false,
-                        onComplete: function(code, fileName, data) {
-                            $moltxtarea.text(data.molData);
-                            o.onSuccess();
-                        }
-                    });
-            }
-
             var $div = $('<div></div>'),
-                $moltxtarea, $txtsave,
-                uploader = makeUploader();
+                $moltxtarea, $txtsave;
+            
+            var $btn = $('<input id="fileupload" type="file" name="fileupload" />')
+                            .appendTo($div);
+            
+            $btn.fileupload({
+                    datatype: 'json',
+                    url: o.FileUrl + '?' + $.param({ PropId: o.PropId }),
+                    paramName: 'fileupload',
+                    done: function (e, data) {
+                        $moltxtarea.text(data.molData);
+                        $div.dialog('close');
+                        o.onSuccess();
+                    }
+                });
             
             $div.CswButton({
                     ID: 'fileupload_cancel', 
