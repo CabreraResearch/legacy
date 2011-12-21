@@ -671,7 +671,7 @@
                 toggleButton(buttons.cancel, false);
                 
                 if (false === isNullOrEmpty(inspectionGrid)) {
-                    designGrid = JSON.stringify(inspectionGrid.$gridTable.jqGrid('getRowData'));
+                    designGrid = JSON.stringify(inspectionGrid.getAllGridRows());
                 }
 
                 var jsonData = {

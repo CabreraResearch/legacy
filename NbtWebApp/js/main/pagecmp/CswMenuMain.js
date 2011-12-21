@@ -73,6 +73,7 @@
                                 onEditView: o.onEditView,
                                 onSaveView: o.onSaveView,
                                 onSearch: o.onSearch,
+                                onPrintView: o.onPrintView,
                                 Multi: o.Multi,
                                 NodeCheckTreeId: o.NodeCheckTreeId
                             };

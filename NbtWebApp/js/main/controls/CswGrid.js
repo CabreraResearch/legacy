@@ -354,41 +354,71 @@ function CswGrid(options, $parent) {
         return ret;
     }
 
+    var getAllGridRows = function() {
+        return $gridTable.jqGrid('getRowData');
+    };
+    
     var print = function() {
-        var $printDiv, $printGridTable, $printGriPager, printOpts = {},
-            printTableId = makeId({ prefix: gridTableId, ID: 'printTable' }),
-            printPagerId = makeId({ prefix: gridPagerId, ID: 'printPager' });
-
-        $.extend(true, printOpts, o.gridOpts);
-
-        $printDiv = $('<div id="' + gridTableId + '_print"></div>');
-        $printGridTable = $printDiv.CswTable('init', { ID: printTableId });
-        $printGriPager = $parent.CswDiv('init', { ID: printPagerId });
         
-        printOpts.pager = $printGriPager;
-        printOpts.cloneToTop = false
-        printOpts.rowNum = -1;
-        printOpts.add = false;
-        printOpts.del = false;
-        printOpts.edit = false;
-        printOpts.autoencode = true;
-        printOpts.autowidth = true;
-        printOpts.altRows = false;
-        printOpts.datatype = 'local';
-        printOpts.emptyrecords = 'No Results';
-        printOpts.height = 'auto';
-        printOpts.loadtext = 'Loading...';
-        printOpts.multiselect = false;
-        printOpts.toppager = false;
-        printOpts.shrinkToFit = false;
-        
-        $printGridTable.jqGrid(printOpts)
-                        .jqGrid('navGrid', '#' + printPagerId);
+        CswPrint(function ($printElement) {
+            var printOpts = { },
+                currentOpts = $gridTable.data(gridTableId + '_data'),
+                printTableId = makeId({ prefix: gridTableId, ID: 'printTable' }),
+                grid, data, i;
+
+            $.extend(printOpts, currentOpts);
             
-        $gridTable.data(printTableId + '_data', printOpts);
+            /* 
+            It is vital that grids have a unique ID--even across window objects. 
+            Until this callback returns, we're still sharing a global space.
+            */
+            printOpts.ID = printTableId;
+            
+            /* 
+            Nuke any existing options with vanilla defaults.
+            Since jqGrid 3.6, there hasn't been an 'All' rowNum option. Just use a really high number.
+            */
+            printOpts.gridOpts.rowNum = 100000;
+            printOpts.gridOpts.rowList = [100000];
+            printOpts.gridOpts.add = false;
+            printOpts.gridOpts.del = false;
+            printOpts.gridOpts.edit = false;
+            printOpts.gridOpts.autoencode = true;
+            //printOpts.gridOpts.autowidth = true;
+            printOpts.gridOpts.width = $(window).width();
+            printOpts.gridOpts.altRows = false;
+            printOpts.gridOpts.datatype = 'local';
+            printOpts.gridOpts.emptyrecords = 'No Results';
+            printOpts.gridOpts.height = 'auto';
+            printOpts.gridOpts.multiselect = false;
+            printOpts.gridOpts.toppager = false;
+            //printOpts.gridOpts.forceFit = true;
+            //printOpts.gridOpts.shrinkToFit = true;
+
+            /*
+            jqGrid cannot seem to handle the communication of the data property between window objects.
+            Just delete it and rebuild instead.
+            */
+            data = printOpts.gridOpts.data;
+            delete printOpts.gridOpts.data;
+
+            each(printOpts.gridOpts.colModel, function(column) {
+                /* This provides text wrapping in cells */
+                column.cellattr = function (rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal;"'; };
+            });
+            
+            /* Get a new CswGrid */
+            grid = CswGrid(printOpts, $printElement);
+            /* Get the data (rows) from the current grid */
+            
+            
+            /* Add the rows to the new grid */
+            for(i = 0; i <= data.length ; i += 1) {
+                grid.$gridTable.jqGrid('addRowData', i + 1, data[i]);
+            }
+
+        });
         
-        
-        CswPrint($printDiv);
     };
 
     //#region public, priveleged
@@ -397,6 +427,7 @@ function CswGrid(options, $parent) {
         $gridTable: $gridTable,
         $gridPager: $gridPager,
         $topPager: $topPager,
+        getAllGridRows: getAllGridRows,
         getGridRowHeight: getGridRowHeight,
         scrollToRow: scrollToRow,
         hideColumn: hideColumn,

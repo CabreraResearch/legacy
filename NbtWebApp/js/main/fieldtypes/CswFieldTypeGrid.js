@@ -95,7 +95,7 @@
                         //refreshGrid(gridOpts, cswGrid);
                         o.onReload();
                     },
-                    onPrintGrid: function () {
+                    onPrintView: function () {
                         cswGrid.print();    
                     },
                     onMultiEdit: function () {
