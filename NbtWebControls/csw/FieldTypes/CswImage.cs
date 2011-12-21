@@ -1,8 +1,8 @@
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ChemSW.Nbt;
 using ChemSW.CswWebControls;
+using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.NbtWebControls.FieldTypes
@@ -12,11 +12,11 @@ namespace ChemSW.NbtWebControls.FieldTypes
         public CswImage( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
-            this.DataBinding += new EventHandler(CswImage_DataBinding);
-            
+            this.DataBinding += new EventHandler( CswImage_DataBinding );
+
         }
 
-        private void CswImage_DataBinding(object sender, EventArgs e)
+        private void CswImage_DataBinding( object sender, EventArgs e )
         {
             // We don't do any loading directly on Images -- we use GetBlob.Aspx
         }
@@ -84,7 +84,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             base.CreateChildControls();
         }
 
-        protected override void OnPreRender(EventArgs e)
+        protected override void OnPreRender( EventArgs e )
         {
             if( Prop != null && Prop.AsImage != null )
             {
@@ -102,7 +102,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                         _Label.Visible = true;
                         _Image.Visible = true;
                         _Label.Text = Prop.AsImage.FileName;
-                        _Image.ImageUrl = "GetBlob.aspx?mode=image&jctnodepropid=" + Prop.AsImage.JctNodePropId + "&nodeid=" + Prop.NodeId.PrimaryKey.ToString() + "&propid=" + PropId.ToString();
+                        _Image.ImageUrl = "getBlob?mode=image&jctnodepropid=" + Prop.AsImage.JctNodePropId + "&nodeid=" + Prop.NodeId.PrimaryKey.ToString() + "&propid=" + PropId.ToString();
                         _Image.OnClientClick = "openBlobPopup('mode=image&jctnodepropid=" + Prop.AsImage.JctNodePropId + "&nodeid=" + Prop.NodeId.PrimaryKey.ToString() + "&propid=" + PropId.ToString() + "');";
                         _Image.AlternateText = Prop.AsImage.FileName;
                     }
@@ -115,21 +115,21 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 {
                     //_UploadButton.OnClientClick = this.ClientID + "_editImage('');";
                     _UploadButton.OnClientClick = "CswImage_editImage('" + _hiddenClear.ClientID + "', '" + Prop.NodeId.ToString() + "', '" + PropId + "');";
-                    _Image.ImageUrl = "GetBlob.Aspx?mode=image&nodeid=" + Prop.NodeId.ToString() + "&propid=" + PropId;
+                    _Image.ImageUrl = "getBlob?mode=image&nodeid=" + Prop.NodeId.ToString() + "&propid=" + PropId;
                     _Image.OnClientClick = "openBlobPopup('mode=image&nodeid=" + Prop.NodeId.ToString() + "&propid=" + PropId + "');";
                 }
             }
 
-            if( ReadOnly || _EditMode == NodeEditMode.AddInPopup || 
-                            _EditMode == NodeEditMode.EditInPopup || 
-                            _EditMode == NodeEditMode.Demo || 
+            if( ReadOnly || _EditMode == NodeEditMode.AddInPopup ||
+                            _EditMode == NodeEditMode.EditInPopup ||
+                            _EditMode == NodeEditMode.Demo ||
                             _EditMode == NodeEditMode.PrintReport )
             {
                 _ClearButton.Visible = false;
                 _UploadButton.Visible = false;
             }
 
-            base.OnPreRender(e);
+            base.OnPreRender( e );
         }
     }
 }

@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Act_FutureScheduling.aspx" />
+    <Compile Include="App_Code\CswNbtWebServiceBinaryData.cs" />
     <Compile Include="App_Code\CswNbtWebServiceNbtManager.cs" />
     <Compile Include="App_Code\CswNbtWebServiceQuotas.cs" />
     <Compile Include="App_Code\CswNbtWebServiceTable.cs" />
@@ -1062,7 +1063,6 @@
     <Content Include="fp_client\fpspread\4_0_3505_2008\img\uparrow.gif" />
     <Content Include="fp_client\fpspread\4_0_3505_2008\img\Update-d.gif" />
     <Content Include="fp_client\fpspread\4_0_3505_2008\img\Update.gif" />
-    <Content Include="GetBlob.aspx" />
     <Content Include="Global.asax" />
     <Content Include="ie6style.css" />
     <Content Include="Images\ajax\progress.gif" />
@@ -1658,9 +1658,6 @@
     <Compile Include="ExternalLogin.aspx.designer.cs">
       <DependentUpon>ExternalLogin.aspx</DependentUpon>
     </Compile>
-    <Compile Include="GetBlob.aspx.designer.cs">
-      <DependentUpon>GetBlob.aspx</DependentUpon>
-    </Compile>
     <Compile Include="License.aspx.designer.cs">
       <DependentUpon>License.aspx</DependentUpon>
     </Compile>
@@ -1710,10 +1707,6 @@
     </Compile>
     <Compile Include="DisplayLog.aspx.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="GetBlob.aspx.cs">
-      <DependentUpon>GetBlob.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="License.aspx.cs">

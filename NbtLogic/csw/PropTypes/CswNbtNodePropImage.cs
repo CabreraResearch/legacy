@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.PropTypes
             string PropIdStr = CswConvert.ToString( NodeTypePropId );
             string JctNpId = CswConvert.ToString( JctNodePropId );
 
-            return "GetBlob.aspx?mode=image&jctnodepropid=" + JctNpId + "&nodeid=" + NodeIdStr + "&propid=" + PropIdStr;
+            return "getBlob?mode=image&jctnodepropid=" + JctNpId + "&nodeid=" + NodeIdStr + "&propid=" + PropIdStr;
         }
 
 
@@ -165,18 +165,14 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
             ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
             ParentObject[CswNbtSubField.SubFieldName.Href.ToString().ToLower()] = ImageUrl;
-            Int32 ValidWidth = Width;
-            if( 0 > ValidWidth )
+            if( 0 < Width )
             {
-                ValidWidth = 100;
+                ParentObject["width"] = Width.ToString();
             }
-            ParentObject["width"] = ValidWidth.ToString();
-            Int32 ValidHeight = Height;
-            if( 0 > ValidHeight )
+            if( 0 < Height )
             {
-                ValidHeight = 100;
+                ParentObject["height"] = Height.ToString();
             }
-            ParentObject["height"] = ValidHeight.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
