@@ -17,7 +17,6 @@
 /// <reference path="CswFieldTypeMTBF.js" />
 /// <reference path="CswFieldTypeMultiList.js" />
 /// <reference path="CswFieldTypeNFPA.js" />
-/// <reference path="CswFieldTypeNodeTypePermissions.js" />
 /// <reference path="CswFieldTypeNodeTypeSelect.js" />
 /// <reference path="CswFieldTypeNumber.js" />
 /// <reference path="CswFieldTypePassword.js" />
@@ -128,9 +127,6 @@ $.CswFieldTypeFactory = function (method)
                     break;
                 case "NFPA":
                     m.$propdiv.CswFieldTypeNFPA('init', m); //'init', nodeid, propData, onchange
-                    break;
-                case "NodeTypePermissions":
-                    m.$propdiv.CswFieldTypeNodeTypePermissions('init', m); //'init', nodeid, propData, onchange
                     break;
                 case "NodeTypeSelect":
                     m.$propdiv.CswFieldTypeNodeTypeSelect('init', m); //'init', nodeid, propData, onchange
@@ -261,9 +257,6 @@ $.CswFieldTypeFactory = function (method)
                 case "NFPA":
                     m.$propdiv.CswFieldTypeNFPA('save', m); //('save', $propdiv, propData);
                     break;
-                case "NodeTypePermissions":
-                    m.$propdiv.CswFieldTypeNodeTypePermissions('save', m); //('save', $propdiv, propData);
-                    break;                
                 case "NodeTypeSelect":
                     m.$propdiv.CswFieldTypeNodeTypeSelect('save', m); //('save', $propdiv, propData);
                     break;
