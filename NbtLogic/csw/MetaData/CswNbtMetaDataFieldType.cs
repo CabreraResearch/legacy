@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.MetaData
             MTBF,
             //MultiRelationship,
             MultiList,
-            NodeTypePermissions,
+            //NodeTypePermissions,
             NFPA,
             NodeTypeSelect,
             Number,

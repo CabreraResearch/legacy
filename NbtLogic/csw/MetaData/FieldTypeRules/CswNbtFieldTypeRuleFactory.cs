@@ -92,16 +92,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleMultiList( CswNbtFieldResources, MetaDataProp );
                     break;
 
-                //case CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions:
-                //    ReturnVal = new CswNbtFieldTypeRuleNodeTypePermissions( CswNbtFieldResources );
-                //    break;
-
                 case CswNbtMetaDataFieldType.NbtFieldType.NFPA:
                     ReturnVal = new CswNbtFieldTypeRuleNFPA( CswNbtFieldResources, MetaDataProp );
-                    break;
-
-                case CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions:
-                    ReturnVal = new CswNbtFieldTypeRuleNodeTypePermissions( CswNbtFieldResources, MetaDataProp );
                     break;
 
                 case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
