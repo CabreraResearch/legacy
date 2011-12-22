@@ -2417,7 +2417,8 @@ namespace ChemSW.Nbt.WebPages
                         }
                     }
                     // BZ 7594, 7967, 7975, 7982, 7984
-                    if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.File &&
+                    if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button &&
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.File &&
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid &&
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Image &&
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.LocationContents &&
@@ -2438,7 +2439,8 @@ namespace ChemSW.Nbt.WebPages
                         ReadOnlyRow.Cells[1].Controls.Add( ReadOnlyValue );
                     }
 
-                    if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.File &&
+                    if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button &&
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.File &&
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid &&
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Image &&
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.LocationContents &&
