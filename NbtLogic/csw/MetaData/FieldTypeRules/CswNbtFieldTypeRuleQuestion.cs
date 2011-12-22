@@ -1,10 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using System.Xml;
-using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -21,7 +15,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public CswNbtFieldTypeRuleQuestion( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
-            _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources, MetaDataProp );
+            _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             //List
             AnswerSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Answer );
@@ -68,7 +62,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                             CswNbtPropFilterSql.PropertyFilterMode.NotNull |
                                             CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( DateAnsweredSubField );
-            
+
             //Date
             DateCorrectedSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field2_Date, CswNbtSubField.SubFieldName.DateCorrected );
             DateCorrectedSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
@@ -87,7 +81,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         /// Answer: List, field1, value
         /// </summary>
         public CswNbtSubField AnswerSubField;
-        
+
         /// <summary>
         /// Corrective Action: List, field2, value
         /// </summary>
@@ -97,12 +91,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         /// Is Compliant: Logical, field3, checked
         /// </summary>
         public CswNbtSubField IsCompliantSubField;
-        
+
         /// <summary>
         /// Comments: Memo, clobdata, value
         /// </summary>
         public CswNbtSubField CommentsSubField;
-        
+
         /// <summary>
         /// Date Answered: Date, field1_date, value
         /// </summary>
@@ -136,24 +130,24 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             CswNbtSubField CswNbtSubField = null;
             CswNbtSubField = SubFields[CswNbtViewPropertyFilterIn.SubfieldName];
 
-            if ( !CswNbtSubField.SupportedFilterModes.Contains( CswNbtViewPropertyFilterIn.FilterMode ) )
+            if( !CswNbtSubField.SupportedFilterModes.Contains( CswNbtViewPropertyFilterIn.FilterMode ) )
                 throw ( new CswDniException( "Filter mode " + CswNbtViewPropertyFilterIn.FilterMode.ToString() + " is not supported for sub field: " + CswNbtSubField.Name + "; view name is: " + CswNbtViewPropertyFilterIn.View.ViewName ) );
 
             // Are we using a Date filter?
-            if ( CswNbtSubField.Name == DateAnsweredSubField.Name || CswNbtSubField.Name == DateCorrectedSubField.Name )
+            if( CswNbtSubField.Name == DateAnsweredSubField.Name || CswNbtSubField.Name == DateCorrectedSubField.Name )
             {
                 ReturnVal = CswNbtFieldTypeRuleDateImpl.renderViewPropFilter( RunAsUser, _CswNbtFieldResources, CswNbtViewPropertyFilterIn, CswNbtSubField.Column );
             }
-            else if ( CswNbtSubField.Name == IsCompliantSubField.Name )
+            else if( CswNbtSubField.Name == IsCompliantSubField.Name )
             {
                 string ValueColumn = "jnp." + CswNbtSubField.Column.ToString();
-                if ( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                 {
-                    if ( CswNbtViewPropertyFilterIn.Value == "1" || CswNbtViewPropertyFilterIn.Value.ToLower() == "true" )
+                    if( CswNbtViewPropertyFilterIn.Value == "1" || CswNbtViewPropertyFilterIn.Value.ToLower() == "true" )
                     {
                         ReturnVal = ValueColumn + " = '1' ";
                     }
-                    else if ( CswNbtViewPropertyFilterIn.Value == "0" || CswNbtViewPropertyFilterIn.Value.ToLower() == "false" )
+                    else if( CswNbtViewPropertyFilterIn.Value == "0" || CswNbtViewPropertyFilterIn.Value.ToLower() == "false" )
                     {
                         ReturnVal = ValueColumn + " = '0' ";
                     }
@@ -162,13 +156,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                         ReturnVal = ValueColumn + " is null";
                     }
                 }
-                else if ( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
                 {
-                    if ( CswNbtViewPropertyFilterIn.Value == "1" || CswNbtViewPropertyFilterIn.Value.ToLower() == "true" )
+                    if( CswNbtViewPropertyFilterIn.Value == "1" || CswNbtViewPropertyFilterIn.Value.ToLower() == "true" )
                     {
                         ReturnVal = "(" + ValueColumn + " = '0' or " + ValueColumn + " is null) ";
                     }
-                    else if ( CswNbtViewPropertyFilterIn.Value == "0" || CswNbtViewPropertyFilterIn.Value.ToLower() == "false" )
+                    else if( CswNbtViewPropertyFilterIn.Value == "0" || CswNbtViewPropertyFilterIn.Value.ToLower() == "false" )
                     {
                         ReturnVal = "(" + ValueColumn + " = '1' or " + ValueColumn + " is null) ";
                     }
@@ -179,7 +173,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 }
                 else
                 {
-					throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtFieldTypeRuleQuestion.renderViewPropFilter()" );
+                    throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtFieldTypeRuleQuestion.renderViewPropFilter()" );
                 }
             }
             else
@@ -197,7 +191,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             string ReturnVal = string.Empty;
 
             // Are we using a Date filter?
-            if ( SubField.Name == DateAnsweredSubField.Name || SubField.Name == DateCorrectedSubField.Name )
+            if( SubField.Name == DateAnsweredSubField.Name || SubField.Name == DateCorrectedSubField.Name )
             {
                 ReturnVal = CswNbtFieldTypeRuleDateImpl.FilterModeToString( FilterMode );
             }
@@ -214,7 +208,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
 
-        public void afterCreateNodeTypeProp(  CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        {
+            _CswNbtFieldTypeRuleDefault.setFk( doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+        }
+
+        public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             NodeTypeProp.ListOptions = "Yes,No,N/A";
             NodeTypeProp.ValueOptions = "Yes";        // case 20297

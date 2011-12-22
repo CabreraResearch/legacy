@@ -130,7 +130,6 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleSequence.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleStatic.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleText.cs" />
-    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleTime.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleTimeInterval.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleUserSelect.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleViewPickList.cs" />

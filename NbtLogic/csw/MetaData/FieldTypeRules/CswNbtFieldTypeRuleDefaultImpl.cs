@@ -1,10 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using System.Xml;
-using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -17,7 +11,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         private CswNbtFieldResources _CswNbtFieldResources = null;
         private CswNbtSubFieldColl _SubFields;
 
-        public CswNbtFieldTypeRuleDefaultImpl( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRuleDefaultImpl( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _SubFields = new CswNbtSubFieldColl();      // this should be filled in by the parent class
@@ -25,6 +19,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public CswNbtSubFieldColl SubFields { get { return ( _SubFields ); } }
         public bool SearchAllowed { get { return ( true ); } }
+
+        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        {
+            doSetFk( inFKType, inFKValue, inValuePropType, inValuePropId );
+        }
 
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtSubFieldColl SubFields, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
         {

@@ -1,13 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using System.Xml;
-using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.DB;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.MetaData.FieldTypeRules
@@ -23,7 +17,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public CswNbtFieldTypeRuleBarCode( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
-            _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources, MetaDataProp );
+            _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Barcode );
             BarcodeSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
@@ -78,6 +72,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
 
+        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        {
+            _CswNbtFieldTypeRuleDefault.setFk( doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+        }
+
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             // Enforce only one Barcode property per nodetype
@@ -86,7 +85,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                                                       " and nodetypepropid <> " + NodeTypeProp.PropId +
                                                                       " and fieldtypeid=" + NodeTypeProp.FieldType.FieldTypeId.ToString() );
             if( ExistingBarcodeCount > 0 )
-				throw ( new CswDniException( ErrorType.Warning, "Nodetype already has a barcode", "Unable to add barcode node type property because the nodetype (" + NodeTypeProp.NodeType.NodeTypeId.ToString() + ") already has a barcode" ) );
+                throw ( new CswDniException( ErrorType.Warning, "Nodetype already has a barcode", "Unable to add barcode node type property because the nodetype (" + NodeTypeProp.NodeType.NodeTypeId.ToString() + ") already has a barcode" ) );
 
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }

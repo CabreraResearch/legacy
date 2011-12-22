@@ -1,11 +1,8 @@
-﻿using System;
-using System.Data;
-using ChemSW.Audit;
+﻿using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -100,6 +97,19 @@ namespace ChemSW.Nbt.Schema
             }
 
             #endregion Case 24023
+
+            #region Case 23641
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "valuepropid" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "object_class_props", "valuepropid", "If the property values are derived from another table, tablecolid of column to save as foreign key", true, false, 20 );
+            }
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "valueproptype" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addDoubleColumn( "object_class_props", "valueproptype", "If the property values are derived from another table, table reference to aid foreign key", true, false, 20 );
+            }
+
+            #endregion Case 23641
 
         }//Update()
 

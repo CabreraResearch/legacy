@@ -462,6 +462,16 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         }
 
+        private void _doSetFk( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        {
+            FKType = inFKType;
+            FKValue = inFKValue;
+            ValuePropId = inValuePropId;
+            ValuePropType = inValuePropType;
+        }
+
+        public delegate void doSetFk( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue );
+
         /// <summary>
         /// Set the FK for relationship props
         /// </summary>
@@ -484,130 +494,8 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="inValuePropId">Optional  (for Property Reference)</param>
         public void SetFK( bool inIsFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
-            IsFK = inIsFk;
-            
-            Int32 NewFkValue = inFKValue;
-            if( Int32.MinValue == NewFkValue )
-            {
-                NewFkValue = inValuePropId;
-            }
-
-            switch( FieldType.FieldType )
-            {
-                case CswNbtMetaDataFieldType.NbtFieldType.PropertyReference:
-                    CswNbtViewRelationship.PropIdType NewPropIdType;
-                    Enum.TryParse( inFKType, true, out NewPropIdType );
-
-                    CswNbtViewRelationship.PropIdType CurrentPropIdType;
-                    Enum.TryParse( FKType, true, out CurrentPropIdType );
-
-                    if( CswNbtViewRelationship.PropIdType.Unknown == NewPropIdType )
-                    {
-                        Enum.TryParse( inValuePropType, true, out NewPropIdType );
-                    }
-                    if( ( CurrentPropIdType != NewPropIdType ||
-                          FKValue != NewFkValue ) &&
-                        ( CswNbtViewRelationship.PropIdType.Unknown != NewPropIdType &&
-                          Int32.MinValue != NewFkValue ) )
-                    {
-                        ValuePropId = Int32.MinValue;
-                        ValuePropType = string.Empty;
-                        FKType = NewPropIdType.ToString();
-                        FKValue = NewFkValue;
-                    }
-                    break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
-                    CswNbtViewRelationship.RelatedIdType NewRelatedIdType;
-                    Enum.TryParse( inFKType, true, out NewRelatedIdType );
-
-                    CswNbtViewRelationship.RelatedIdType CurrentRelatedIdType;
-                    Enum.TryParse( FKType, true, out CurrentRelatedIdType );
-
-                    if( CswNbtViewRelationship.RelatedIdType.Unknown == NewRelatedIdType )
-                    {
-                        Enum.TryParse( inValuePropType, true, out NewRelatedIdType );
-                    }
-                    
-                    CswNbtViewRelationship.RelatedIdType CurrentValuePropType;
-                    Enum.TryParse( ValuePropType, true, out CurrentValuePropType );
-                    //If the values have changed, set the View
-                    //ValuePropType and ValuePropId will be null on prop creation
-                    if( ( CurrentValuePropType != NewRelatedIdType ||
-                        ValuePropId != NewFkValue ) &&
-                        ( CswNbtViewRelationship.RelatedIdType.Unknown != NewRelatedIdType &&
-                          Int32.MinValue != NewFkValue ) )
-                    {
-                        ValuePropId = NewFkValue;
-                        ValuePropType = NewFkValue.ToString();
-                        FKType = NewRelatedIdType.ToString();
-                        FKValue = NewFkValue;
-
-                        // Case 8051 - Validate that the new FKType and FKValue match the object class's restriction
-                        _validateObjectClassRelationship( NewRelatedIdType, NewFkValue );
-
-                        CswNbtView RelationshipView = null;
-                        // This is ugly...see Case 8042
-                        switch( NewRelatedIdType )
-                        {
-                            case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                                RelationshipView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( ViewId );
-                                RelationshipView.Root.ChildRelationships.Clear();
-                                RelationshipView = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( inFKValue ).CreateDefaultView();
-                                RelationshipView.ViewId = ViewId;
-                                RelationshipView.Visibility = NbtViewVisibility.Property;
-                                RelationshipView.ViewMode = NbtViewRenderingMode.List;
-                                RelationshipView.ViewName = PropName;
-                                break;
-                            case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                                RelationshipView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( ViewId );
-                                RelationshipView.Root.ChildRelationships.Clear();
-                                RelationshipView = _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( inFKValue ).CreateDefaultView();
-                                RelationshipView.ViewId = ViewId;
-                                RelationshipView.Visibility = NbtViewVisibility.Property;
-                                RelationshipView.ViewMode = NbtViewRenderingMode.List;
-                                RelationshipView.ViewName = PropName;
-                                break;
-                        }
-                        if( null != RelationshipView )
-                        {
-                            RelationshipView.save();
-                        }
-                    }
-                    break;
-                default:
-                    FKType = inFKType;
-                    FKValue = inFKValue;
-                    ValuePropId = NewFkValue;
-                    ValuePropType = inFKType;
-                    break;
-            }
-        }
-
-        private void _validateObjectClassRelationship( CswNbtViewRelationship.RelatedIdType RelatedIdType, Int32 RelatedId )
-        {
-
-            // Case 8051 - Validate that the new FKType and FKValue match the object class's restriction
-            if( null != ObjectClassProp &&
-                RelatedIdType != CswNbtViewRelationship.RelatedIdType.Unknown )
-            {
-                switch( RelatedIdType )
-                {
-                    case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                        CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( RelatedId );
-                        if( TargetObjectClass.ObjectClassId != ObjectClassProp.FKValue )
-                        {
-                            throw new CswDniException( ErrorType.Error, "Invalid Target", "The property is bound to an object class property, and so its FKValue must be consistent" );
-                        }
-                        break;
-                    case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                        CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( RelatedId );
-                        if( TargetNodeType.ObjectClass.ObjectClassId != ObjectClassProp.FKValue )
-                        {
-                            throw new CswDniException( ErrorType.Error, "Invalid Target", "The property is bound to an object class property, and so its FKValue must be consistent" );
-                        }
-                        break;
-                }
-            }
+            doSetFk setFk = _doSetFk;
+            FieldTypeRule.setFk( setFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
         public string FKType
