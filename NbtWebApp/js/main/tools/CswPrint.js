@@ -15,7 +15,6 @@ var CswPrint = CswPrint || function (onSuccess) {
     printDoc.open();
     printDoc.write('<!DOCTYPE html PUBLIC \'-//W3C//DTD XHTML 1.0 Transitional//EN\' \'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\'>');
     printDoc.write('<html>');
-    printDoc.write('<body>');
     printDoc.write('<head>');
     printDoc.write('<link rel="stylesheet" type="text/css" href="Content/themes/base/jquery.ui.all.css" />');
     printDoc.write('<link rel="stylesheet" type="text/css" href="js/thirdparty/jquery/themes/theme-aristo/css/Aristo/Aristo.css" />');
@@ -23,9 +22,8 @@ var CswPrint = CswPrint || function (onSuccess) {
     printDoc.write('<title>');
     printDoc.write(document.title);
     printDoc.write('</title>');
-        
     printDoc.write('</head>');
-    printDoc.write('</body>');
+    printDoc.write('<body></body>');
     printDoc.write('</html>');
     printDoc.close();
 
