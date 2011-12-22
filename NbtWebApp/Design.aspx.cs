@@ -853,7 +853,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.UseNumbering = Convert.ToBoolean( getPropAttributeValue( "EditProp_UseNumbering" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.HideInMobile = Convert.ToBoolean( getPropAttributeValue( "EditProp_HideInMobile" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.MobileSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_MobileSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
-                    PropToSave.SetFK( NewIsFk, NewFKType, NewFKValue,
+                    PropToSave.SetFK( NewFKType, NewFKValue,
                                       getPropAttributeValue( "EditProp_RelatedPropType" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ),
                                       CswConvert.ToInt32( getPropAttributeValue( "EditProp_RelatedPropValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) ) );
                     PropertySelectMode Multi;

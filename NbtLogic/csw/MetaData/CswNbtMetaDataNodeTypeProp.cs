@@ -468,21 +468,10 @@ namespace ChemSW.Nbt.MetaData
             FKValue = inFKValue;
             ValuePropId = inValuePropId;
             ValuePropType = inValuePropType;
+            IsFK = Int32.MinValue != FKValue;
         }
 
         public delegate void doSetFk( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue );
-
-        /// <summary>
-        /// Set the FK for relationship props
-        /// </summary>
-        /// <param name="inFKType">Either NodeTypeId or ObjectClassId</param>
-        /// <param name="inFKValue">FK Value</param>
-        /// <param name="inValuePropType">Optional (for Property Reference)</param>
-        /// <param name="inValuePropId">Optional  (for Property Reference)</param>
-        public void SetFK( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
-        {
-            SetFK( true, inFKType, inFKValue, inValuePropType, inValuePropId );
-        }
 
         /// <summary>
         /// Set the FK for relationship props
@@ -492,7 +481,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="inFKValue">FK Value</param>
         /// <param name="inValuePropType">Optional (for Property Reference)</param>
         /// <param name="inValuePropId">Optional  (for Property Reference)</param>
-        public void SetFK( bool inIsFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void SetFK( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             doSetFk setFk = _doSetFk;
             FieldTypeRule.setFk( setFk, inFKType, inFKValue, inValuePropType, inValuePropId );
