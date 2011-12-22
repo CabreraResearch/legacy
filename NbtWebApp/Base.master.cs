@@ -284,11 +284,11 @@ namespace ChemSW.Nbt.WebPages
 
         public void GoHome()
         {
-
+            Redirect( "Main.html" );
         }
         public void GoMain()
         {
-
+            Redirect( "Main.html" );
         }
 
         #endregion Page Lifecycle
