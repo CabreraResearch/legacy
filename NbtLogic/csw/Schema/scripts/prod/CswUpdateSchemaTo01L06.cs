@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CustomerOc.ObjectClass,
                                                            CswNbtObjClassCustomer.LoginPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.Button,
-                                                           false, true, false, CswNbtViewRelationship.RelatedIdType.Unknown, Int32.MinValue, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue,
+                                                           false, true, false, string.Empty, Int32.MinValue, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue,
                                                            CswNbtNodePropButton.ButtonMode.button.ToString(),
                                                            false,
                                                            AuditLevel.NoAudit,

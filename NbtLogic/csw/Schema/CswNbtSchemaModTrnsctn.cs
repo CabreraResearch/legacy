@@ -789,7 +789,7 @@ namespace ChemSW.Nbt.Schema
                                                                     bool IsBatchEntry = false,
                                                                     bool ReadOnly = false,
                                                                     bool IsFk = false,
-                                                                    CswNbtViewRelationship.RelatedIdType FkType = CswNbtViewRelationship.RelatedIdType.Unknown,
+                                                                    string FkType = "",
                                                                     Int32 FkValue = Int32.MinValue,
                                                                     bool IsRequired = false,
                                                                     bool IsUnique = false,
@@ -898,12 +898,35 @@ namespace ChemSW.Nbt.Schema
             return OCPRow;
         }
 
+
+        private bool _validateFkType( string FkType )
+        {
+            bool RetIsValid = false;
+
+            CswNbtViewRelationship.PropIdType PropIdType;
+            Enum.TryParse( FkType, true, out PropIdType );
+            if( PropIdType != CswNbtViewRelationship.PropIdType.Unknown )
+            {
+                RetIsValid = true;
+            }
+            else
+            {
+                CswNbtViewRelationship.RelatedIdType RelatedIdType;
+                Enum.TryParse( FkType, true, out RelatedIdType );
+                if( RelatedIdType != CswNbtViewRelationship.RelatedIdType.Unknown )
+                {
+                    RetIsValid = true;
+                }
+            }
+            return RetIsValid;
+        }
+
         /// <summary>
         /// Convenience function for making new Object Class Props with more granular control
         /// </summary>
         public DataRow addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, string PropName,
                                              CswNbtMetaDataFieldType.NbtFieldType FieldType, bool IsBatchEntry, bool ReadOnly,
-                                             bool IsFk, CswNbtViewRelationship.RelatedIdType FkType, Int32 FkValue, bool IsRequired, bool IsUnique, bool IsGlobalUnique,
+                                             bool IsFk, string FkType, Int32 FkValue, bool IsRequired, bool IsUnique, bool IsGlobalUnique,
                                              bool ServerManaged, string ListOptions, Int32 DisplayColAdd, Int32 DisplayRowAdd )
         {
             DataRow OCPRow = ObjectClassPropsTable.NewRow();
@@ -913,7 +936,7 @@ namespace ChemSW.Nbt.Schema
             OCPRow["isfk"] = CswConvert.ToDbVal( IsFk );
             if( IsFk &&
                 Int32.MinValue != FkValue &&
-                FkType != CswNbtViewRelationship.RelatedIdType.Unknown )
+                _validateFkType( FkType ) )
             {
                 OCPRow["fktype"] = FkType;
                 OCPRow["fkvalue"] = CswConvert.ToDbVal( FkValue );
