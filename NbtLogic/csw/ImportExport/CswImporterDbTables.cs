@@ -56,9 +56,9 @@ namespace ChemSW.Nbt.ImportExport
             if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( _TblName_TempProps ) || _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( _TblName_TempProps ) ) //belt and suspenders
             {
                 _CswNbtSchemaModTrnsctn.dropTable( _TblName_TempProps );
-            } 
-            
-            _CswNbtImportStatus.reset(); 
+            }
+
+            _CswNbtImportStatus.reset();
 
         }//reset()
 
@@ -220,9 +220,58 @@ namespace ChemSW.Nbt.ImportExport
 
             }//if we haven't done anything yet
 
+
+
+            //*********************************************************************************************************
+            //*********************** Check integrity of temporary tables
+            if( ( false == _Stop ) && ( ImportProcessPhase.PopulatingTempTableProps == _LastCompletedProcessPhase ) )
+            {
+
+                string DuplicateCountColumnName = "duplicate";
+                string DuplicatesQuery = " SELECT " + _ColName_ImportNodeId + ", COUNT(" + _ColName_ImportNodeId + ") AS " + DuplicateCountColumnName + " FROM " + _TblName_TempNodes + " GROUP BY " + _ColName_ImportNodeId + " HAVING (COUNT(importnodeid) > 1) ";
+                CswArbitrarySelect CswArbitrarySelectDuplicateCheck = _CswNbtResources.makeCswArbitrarySelect( "tmp node table duplicate count", DuplicatesQuery );
+                DataTable DataTableDuplicatesCheck = CswArbitrarySelectDuplicateCheck.getTable();
+                if( DataTableDuplicatesCheck.Rows.Count == 0 )
+                {
+                    _LastCompletedProcessPhase = ImportProcessPhase.TempTableIntegrityChecked;
+                }
+                else
+                {
+                    CswCommaDelimitedString CswCommaDelimitedString = new CswCommaDelimitedString();
+                    foreach( DataRow CurrentDataRow in DataTableDuplicatesCheck.Rows )
+                    {
+                        CswCommaDelimitedString.Add( CurrentDataRow[_ColName_ImportNodeId].ToString() );
+                    }
+
+                    _CswImportExportStatusReporter.reportError( "Processing cannot proceed because the " + _TblName_TempNodes + "." + _ColName_ImportNodeId + " column contains the following non-unique values: " + CswCommaDelimitedString );
+
+
+                }//if-else there are duplicate column values 
+
+
+                /*
+                CswArbitrarySelect CswArbitrarySelectDistinctCount = _CswNbtResources.makeCswArbitrarySelect( "tmp node table distinct count", "select count(distinct(" + _ColName_ImportNodeId + ") as \" count \" from " + _TblName_TempNodes );
+                DataTable DataTableDistictCount = CswArbitrarySelectDistinctCount.getTable();
+                Int32 DistinctCount = CswConvert.ToInt32( DataTableDistictCount.Rows[0]["count"] );
+
+                CswTableSelect CswTableSelectTotalCount = _CswNbtResources.makeCswTableSelect( "tmpnode table total count", _TblName_TempNodes );
+                Int32 TotalCount = CswTableSelectTotalCount.getRecordCount();
+
+                if( DistinctCount == TotalCount )
+                {
+                    _LastCompletedProcessPhase = ImportProcessPhase.TempTableIntegrityChecked;
+                } else 
+                {
+                    _CswImportExportStatusReporter.reportError( "The " + _TblName_TempNodes + "." + _ColName_ImportNodeId + " column contains non-unique values: processing cannot proceed" );
+                }
+                 */
+            }//
+
+
+
             CswNbtNode GeneralUserRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( _CswNbtImportOptions.NameOfDefaultRoleForUserNodes );
             CswTableUpdate CswTableUpdateTempNodesTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatenodesfornodeid", _TblName_TempNodes );
-            if( ( false == _Stop ) && ( ImportProcessPhase.PopulatingTempTableProps == _LastCompletedProcessPhase ) )
+            if( ( false == _Stop ) && ( ImportProcessPhase.TempTableIntegrityChecked == _LastCompletedProcessPhase ) )
             {
 
                 _LastCompletedProcessPhase = ImportProcessPhase.PopulatingNbtNodes;

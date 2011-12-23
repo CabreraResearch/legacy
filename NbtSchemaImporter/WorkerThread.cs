@@ -164,6 +164,15 @@ namespace ChemSW.Nbt.Schema
             return _CswNbtResources.MetaData.NodeTypes;
         }
 
+        public void writeNodeTypesAsXml()
+        {
+            CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "getnodetypesforimport", "select t.nodetypename \"NodeType\",p.propname \"PropName\",f.fieldtype \"FieldType\" from nodetypes t join nodetype_props p on (t.nodetypeid=p.nodetypeid) join field_types f on (p.fieldtypeid=f.fieldtypeid)  order by t.nodetypename,p.propname" );
+            DataTable DataTable = CswArbitrarySelect.getTable();
+            DataTable.TableName = "NodeTypes";
+            DataTable.WriteXml( "NbtNodeTypes.xml" );
+
+        }
+
         public delegate void StatusMessageHandler( string Msg );
         public event StatusMessageHandler OnStatusChange;
         public void SetStatusMessage( string Msg )

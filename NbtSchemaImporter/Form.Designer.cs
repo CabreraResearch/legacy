@@ -43,6 +43,7 @@
             this.gbxMessages = new System.Windows.Forms.GroupBox();
             this.ResultsTextBox = new System.Windows.Forms.TextBox();
             this.PhaseTextBox = new System.Windows.Forms.TextBox();
+            this.btn_Types = new System.Windows.Forms.Button();
             this.gbxMessages.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -179,11 +180,22 @@
             this.PhaseTextBox.Size = new System.Drawing.Size( 423, 73 );
             this.PhaseTextBox.TabIndex = 23;
             // 
+            // btn_Types
+            // 
+            this.btn_Types.Location = new System.Drawing.Point( 377, 88 );
+            this.btn_Types.Name = "btn_Types";
+            this.btn_Types.Size = new System.Drawing.Size( 75, 23 );
+            this.btn_Types.TabIndex = 24;
+            this.btn_Types.Text = "Types";
+            this.btn_Types.UseVisualStyleBackColor = true;
+            this.btn_Types.Click += new System.EventHandler( this.btn_Types_Click );
+            // 
             // ImporterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size( 467, 535 );
+            this.Controls.Add( this.btn_Types );
             this.Controls.Add( this.PhaseTextBox );
             this.Controls.Add( this.gbxMessages );
             this.Controls.Add( this.FileTypeSelectBox );
@@ -223,6 +235,7 @@
         private System.Windows.Forms.GroupBox gbxMessages;
         private System.Windows.Forms.TextBox ResultsTextBox;
         private System.Windows.Forms.TextBox PhaseTextBox;
+        private System.Windows.Forms.Button btn_Types;
     }
 }
 

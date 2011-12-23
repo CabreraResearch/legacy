@@ -349,6 +349,11 @@ namespace ChemSW.Nbt.Schema
                 _refreshStatus();
             }
 
+        }
+
+        private void btn_Types_Click( object sender, EventArgs e )
+        {
+            _WorkerThread.writeNodeTypesAsXml(); 
         } // FileTypeSelectBox_OnChange
 
 
