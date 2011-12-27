@@ -9,7 +9,7 @@
 /// <reference path="../main/tools/CswProfileMethod.js" />
 /// <reference path="../main/tools/CswQueryString.js" />
 /// <reference path="../main/tools/CswString.js" />
-/// <reference path="../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../Scripts/jquery.cookie.js" />
 
 //#region Globals (yuck)

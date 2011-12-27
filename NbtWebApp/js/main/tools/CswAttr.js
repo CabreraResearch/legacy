@@ -1,4 +1,4 @@
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
