@@ -518,6 +518,7 @@
                                                         if (isFunction(o.onDeleteNode)) {
                                                             o.onDeleteNode(nodeid, nodekey);
                                                         }
+                                                        $.publish('CswTabRefresh');
                                                     },
                                                     onError: function() {
                                                         $deletebtn.CswButton('enable');

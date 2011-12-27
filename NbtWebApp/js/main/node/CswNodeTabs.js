@@ -73,6 +73,11 @@
         {
             var $tabcontentdiv = $('<div id="' + tabid + '"><form onsubmit="return false;" id="' + tabid + '_form" /></div>')
                                     .appendTo($parent);
+            $.subscribe('CswTabRefresh', function() {
+                if(false === isNullOrEmpty($tabcontentdiv)) {
+                    $tabcontentdiv.remove();
+                }
+            });
             $tabcontentdiv.data('canEditLayout', canEditLayout);
             return $tabcontentdiv;
         }
