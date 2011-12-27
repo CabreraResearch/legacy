@@ -447,11 +447,13 @@
             };
             crawlObject(data, handleSuccess, false);
             
-            if(o.Config || ( AtLeastOne.Saveable === false && o.EditMode != EditMode.AddInPopup.name ) )
-            {
-                $savebtn.hide();
-            } else {
-                $savebtn.show();
+            if(false === isNullOrEmpty($savebtn, true)) {
+                if (o.Config || (AtLeastOne.Saveable === false && o.EditMode != EditMode.AddInPopup.name))
+                {
+                    $savebtn.hide();
+                } else {
+                    $savebtn.show();
+                }
             }
             return AtLeastOne;
         } // _handleProps()

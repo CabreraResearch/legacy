@@ -59,7 +59,7 @@
                         makeGridMenu($MenuDiv, o, gridOpts, grid, viewid);
                     }
                 };
-
+                log(gridOpts);
                 cswGrid = $GridDiv.CswNodeGrid('init', gridOpts);
                 
                 $Div.append($MenuDiv, $('<br/>'), $SearchDiv, $('<br/>'), $GridDiv);
