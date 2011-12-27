@@ -70,7 +70,9 @@
         },
         val: function ($element) {
             var $select = $element || $(this),
-                valArray = $select.val().sort();
+                //In IE an empty array is frequently !== [], rather === null
+                values = $select.val() || [],
+                valArray = values.sort();
             return valArray.join(',');
         }
         
