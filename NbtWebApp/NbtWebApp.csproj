@@ -746,10 +746,17 @@
     <Content Include="js\main\actions\CswSessions.js" />
     <Content Include="js\main\actions\CswQuotaImage.js" />
     <Content Include="js\main\actions\CswQuotas.js" />
+    <Content Include="js\main\controls\CswMultiSelect.js" />
     <Content Include="js\main\controls\CswTimeInterval.js" />
     <Content Include="js\main\controls\CswList.js" />
     <Content Include="js\main\tools\CswPrint.js" />
     <Content Include="js\main\view\CswViewContentTree.js" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.css" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.js" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.min.js" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.css" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.js" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.min.js" />
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\application.js" />
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\static\favicon.ico" />
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\static\robots.txt" />
@@ -769,7 +776,6 @@
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\test\index.html" />
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\test\test.js" />
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\vendor\jquery.ui.widget.js" />
-    <Content Include="js\thirdparty\jquery\plugins\ui.multiselect.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Scripts\jquery.jqGrid.src.js" />
