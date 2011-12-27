@@ -32,7 +32,7 @@
                     .css('display', 'inline-block');
 
             setButton(o.ButtonType, $ImageDiv);
-            $ImageDiv.bind('click', function () {
+            $ImageDiv.click(function () {
                 var newButtonType = o.onClick($ImageDiv);
                 return setButton(newButtonType, $ImageDiv);
             });
@@ -46,7 +46,7 @@
                 $this = $('#' + id);
             }
             if (false === isNullOrEmpty($this, true)) {
-                $this.bind('click', function () {
+                $this.click(function () {
                     if (isFunction(onClickEvent)) {
                         onClickEvent();
                     }

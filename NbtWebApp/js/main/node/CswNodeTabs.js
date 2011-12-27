@@ -545,30 +545,39 @@
             /// <param name="configMode" type="Boolean"> True if config mode </param>
             /// <param name="$savebtn" type="JQuery"> A save button </param>
             /// <returns type="void"></returns>
-        
-            // do a fake 'save' to update the json with the current value
-            $.CswFieldTypeFactory('save', fieldOpt);
-            if(fieldOpt.propData.wasmodified) {
-                // update the propxml from the server
-                var jsonData = {
-                    EditMode: fieldOpt.EditMode,
-                    NodeId: tryParseObjByIdx(o.nodeids, 0),
-                    SafeNodeKey: fieldOpt.cswnbtnodekey,
-                    PropId: propId,
-                    NodeTypeId: o.nodetypeid,
-                    NewPropJson: JSON.stringify(propData)
-                };
+            
+            /*
+                Case 24449: 
+                $.CswFieldTypeFactory('save') depends on the result of the onChange event which triggers this method.
+                Normally, the page is ready when 'Save' is clicked; however, 
+                before we can evaluate subprop behavior, the governing controls must update with the result of their change event.
+            */
+            setTimeout(function() {
+                // do a fake 'save' to update the json with the current value
+                $.CswFieldTypeFactory('save', fieldOpt);
 
-                CswAjaxJson({
-                    url: o.SinglePropUrl,
-                    data: jsonData,
-                    success: function(data) {
-                        var AtLeastOne = {};
-                        data.wasmodified = true;  // keep the fact that the parent property was modified
-                        _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
-                    }
-                });
-            }
+                if (fieldOpt.propData.wasmodified) {
+                    // update the propxml from the server
+                    var jsonData = {
+                        EditMode: fieldOpt.EditMode,
+                        NodeId: tryParseObjByIdx(o.nodeids, 0),
+                        SafeNodeKey: fieldOpt.cswnbtnodekey,
+                        PropId: propId,
+                        NodeTypeId: o.nodetypeid,
+                        NewPropJson: JSON.stringify(propData)
+                    };
+
+                    CswAjaxJson({
+                            url: o.SinglePropUrl,
+                            data: jsonData,
+                            success: function(data) {
+                                var AtLeastOne = { };
+                                data.wasmodified = true; // keep the fact that the parent property was modified
+                                _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
+                            }
+                        });
+                }
+            }, 150);
         } // _updateSubProps()
 
         function Save($form, $layouttable, propsData, $savebtn, tabid) {
