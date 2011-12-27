@@ -1,34 +1,19 @@
-﻿
-
-
+﻿using System;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01L-01
+    /// Updates the schema to version 01L-08
     /// </summary>
-    public class CswUpdateSchemaTo01L01 : CswUpdateSchemaTo
+    public class CswUpdateSchemaTo01L08 : CswUpdateSchemaTo
     {
-        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'L', 01 ); } }
+        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'L', 08 ); } }
         public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
 
         public override void update()
         {
-            #region Case 23641
-
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "valuepropid" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addStringColumn( "object_class_props", "valuepropid", "If the property values are derived from another table, tablecolid of column to save as foreign key", true, false, 20 );
-            }
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "valueproptype" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addDoubleColumn( "object_class_props", "valueproptype", "If the property values are derived from another table, table reference to aid foreign key", true, false, 20 );
-            }
-
-            #endregion Case 23641
-
             #region Case 24434
 
             CswNbtMetaDataObjectClass AssemblyOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass );
@@ -42,12 +27,21 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( AssemblyPartsOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassEquipmentAssembly.AssemblyPartsPropertyName );
                 }
             }
+        
+            foreach( CswNbtMetaDataNodeType AssemblyNt in AssemblyOc.NodeTypes )
+            {
+                CswNbtMetaDataNodeTypeProp PartsNtp = AssemblyNt.getNodeTypeProp( "Parts" );
+                if( null != PartsNtp && Int32.MinValue != PartsNtp.ObjectClassPropId )
+                {
+                    PartsNtp.PropName = "Assembly Parts";
+                }
+            }
 
             #endregion Case 24434
 
         }//Update()
 
-    }//class CswUpdateSchemaTo01K01
+    }//class CswUpdateSchemaTo01L08
 
 }//namespace ChemSW.Nbt.Schema
 

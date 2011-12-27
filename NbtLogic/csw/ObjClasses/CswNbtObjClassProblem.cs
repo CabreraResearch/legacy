@@ -111,9 +111,9 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
                         CswNbtObjClassEquipmentAssembly AssemblyNodeAsAssembly = CswNbtNodeCaster.AsEquipmentAssembly( EquipmentOrAssemblyNode );
-                        foreach( string YValue in AssemblyNodeAsAssembly.Parts.YValues )
+                        foreach( string YValue in AssemblyNodeAsAssembly.AssemblyParts.YValues )
                         {
-                            if( AssemblyNodeAsAssembly.Parts.CheckValue( CswNbtObjClassEquipmentAssembly.PartsXValueName, YValue ) )
+                            if( AssemblyNodeAsAssembly.AssemblyParts.CheckValue( CswNbtObjClassEquipmentAssembly.PartsXValueName, YValue ) )
                                 NewYValues.Add( YValue );
                         }
                         this.Parts.YValues = NewYValues;

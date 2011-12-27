@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtObjClassEquipmentAssembly : CswNbtObjClass
     {
         public static string TypePropertyName { get { return "Assembly Type"; } }
-        public static string PartsPropertyName { get { return "Parts"; } }
+        public static string AssemblyPartsPropertyName { get { return "Assembly Parts"; } }
         public static string PartsXValueName { get { return "Uses"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtObjClassEquipmentType TypeNodeAsType = CswNbtNodeCaster.AsEquipmentType( TypeNode );
                     CswDelimitedString PartsString = new CswDelimitedString( '\n' );
                     PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
-                    this.Parts.YValues = PartsString;
+                    AssemblyParts.YValues = PartsString;
                 }
             }
             _CswNbtObjClassDefault.afterPopulateProps();
@@ -201,11 +201,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropLogicalSet Parts
+        public CswNbtNodePropLogicalSet AssemblyParts
         {
             get
             {
-                return ( _CswNbtNode.Properties[PartsPropertyName].AsLogicalSet );
+                return ( _CswNbtNode.Properties[AssemblyPartsPropertyName].AsLogicalSet );
             }
         }
 
