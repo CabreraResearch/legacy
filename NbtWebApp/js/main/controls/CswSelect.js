@@ -15,6 +15,7 @@
                 selected: '',
                 values: [{value: '', display: '', data: {}}],
                 cssclass: '',
+                multiple: false,
                 onChange: null //function () {}
             };
             if (options) $.extend(o, options);
@@ -27,9 +28,14 @@
             $select.CswAttrDom('id',elementId);
             $select.CswAttrDom('name',elementId);
             
-            if (!isNullOrEmpty( o.cssclass )) $select.addClass(o.cssclass);
-            if (!isNullOrEmpty( o.value )) $select.text( o.value );
-
+            if (false === isNullOrEmpty(o.cssclass)) {
+                $select.addClass(o.cssclass);
+            }
+            
+            if (false === isNullOrEmpty(o.value)) {
+                $select.text(o.value);
+            }
+            
             var values = makeOptions(o.values);
             setOptions(values, o.selected, $select);
             
@@ -41,6 +47,11 @@
             }
             
             $parent.append($select);
+            
+            if(isTrue(o.multiple)) {
+                $select.CswAttrDom('multiple', 'multiple').multiselect();    
+            }
+            
             return $select;
         },
         setoptions: function (values, selected, doEmpty) {
