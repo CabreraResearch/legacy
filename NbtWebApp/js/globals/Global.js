@@ -718,8 +718,8 @@ function jsTreeGetSelected($treediv) { /// <param name="$" type="jQuery" />
     var $SelectedItem = $treediv.jstree('get_selected');
     var ret = {
         'iconurl': $SelectedItem.children('a').children('ins').css('background-image'),
-        'id': $SelectedItem.CswAttrDom('id').substring(idPrefix.length),
-        'text': $SelectedItem.children('a').first().text().trim(),
+        'id': tryParseString($SelectedItem.CswAttrDom('id')).substring(idPrefix.length),
+        'text': tryParseString($SelectedItem.children('a').first().text()).trim(),
         '$item': $SelectedItem
     };
     return ret;

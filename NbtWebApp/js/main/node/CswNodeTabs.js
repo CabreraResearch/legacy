@@ -71,15 +71,17 @@
             $outertabdiv.contents().remove();
         }
 
-        function makeTabContentDiv($tabParent, tabid, canEditLayout)
-        {
+        function makeTabContentDiv($tabParent, tabid, canEditLayout) {
             var $tabcontentdiv = $('<div id="' + tabid + '"><form onsubmit="return false;" id="' + tabid + '_form" /></div>')
                                     .appendTo($tabParent);
-            $.subscribe('CswTabRefresh', function() {
-                if(false === isNullOrEmpty($tabcontentdiv)) {
-                    $tabcontentdiv.remove();
-                }
-            });
+            var handle;
+            
+            if(false === isNullOrEmpty($tabParent.parent(), true)) {
+                handle = $.subscribe(ChemSW.enums.Events.CswNodeDelete, function() {
+                    $tabParent.remove();
+                    $.unsubscribe(handle);
+                });
+            }
             $tabcontentdiv.data('canEditLayout', canEditLayout);
             return $tabcontentdiv;
         }

@@ -14,6 +14,9 @@ var ChemSW = ChemSW || (function(undefined) {
                     cssclass: 'CswErrorMessage_Error'
                 }
             },
+            Events: {
+                CswNodeDelete: 'CswNodeDelete'
+            },
             CswInspectionDesign_WizardSteps: {
                 step1: { step: 1, description: 'Name an Inspection Design' },
                 step2: { step: 2, description: 'Upload Template' },

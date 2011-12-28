@@ -518,7 +518,7 @@
                                                         if (isFunction(o.onDeleteNode)) {
                                                             o.onDeleteNode(nodeid, nodekey);
                                                         }
-                                                        $.publish('CswTabRefresh');
+                                                        $.publish(ChemSW.enums.Events.CswNodeDelete);
                                                     },
                                                     onError: function() {
                                                         $deletebtn.CswButton('enable');
@@ -526,8 +526,8 @@
                                                 });
                                             }
                                         });
-
-            var $cancelbtn = $div.CswButton({ID: 'deletenode_cancel', 
+            /* Cancel Button */
+            $div.CswButton({ID: 'deletenode_cancel', 
                                                         enabledText: 'Cancel', 
                                                         disabledText: 'Canceling', 
                                                         onclick: function() {
