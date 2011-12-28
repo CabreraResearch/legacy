@@ -2,19 +2,19 @@
 /// <reference path="../../globals/Global.js" />
 
 (function($) {
+    "use strict"; 
+    var o = $({});
 
-  var o = $({});
+    $.subscribe = function() {
+        o.on.apply(o, arguments);
+    };
 
-  $.subscribe = function() {
-    o.on.apply(o, arguments);
-  };
+    $.unsubscribe = function() {
+        o.off.apply(o, arguments);
+    };
 
-  $.unsubscribe = function() {
-    o.off.apply(o, arguments);
-  };
-
-  $.publish = function() {
-    o.trigger.apply(o, arguments);
-  };
+    $.publish = function() {
+        o.trigger.apply(o, arguments);
+    };
 
 }(jQuery));

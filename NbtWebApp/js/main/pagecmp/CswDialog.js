@@ -6,8 +6,8 @@
 /// <reference path="../actions/CswAuditHistoryGrid.js" />
 /// <reference path="../node/CswNodeTabs.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-        
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict"; 
     var pluginName = 'CswDialog';
 
     var methods = {

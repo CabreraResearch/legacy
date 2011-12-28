@@ -4,8 +4,10 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../fieldtypes/_CswFieldTypeFactory.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict"; 
     $.fn.CswNodeTabs = function (options) {
+        "use strict"; 
         var o = {
             ID: '',
             TabsUrl: '/NbtWebApp/wsNBT.asmx/getTabs',
