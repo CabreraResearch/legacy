@@ -23,7 +23,7 @@
 
         function TopMenuClick()
         {
-            $this = $(this);
+            var $this = $(this);
 
             HideAllSubMenus();
 

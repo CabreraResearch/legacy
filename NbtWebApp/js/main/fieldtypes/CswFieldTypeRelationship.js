@@ -30,7 +30,7 @@
                 if (o.Multi) {
                     relationships.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
                 }
-                crawlObject(options, function (relatedObj, key) {
+                crawlObject(options, function (relatedObj) {
                     relationships.push({ value: relatedObj.id, display: relatedObj.value });
                 }, false);
 
@@ -55,10 +55,10 @@
                         var $AddButton = $('<div />').appendTo($addcell);
                         $AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
                             AlternateText: "Add New",
-                            onClick: function ($ImageDiv) {
+                            onClick: function () {
                                 $.CswDialog('AddNodeDialog', {
                                     'nodetypeid': nodeTypeId,
-                                    'onAddNode': function (nodeid, cswnbtnodekey) { o.onReload(); }
+                                    'onAddNode': function () { o.onReload(); }
                                 });
                                 return CswImageButton_ButtonType.None;
                             }
@@ -90,7 +90,7 @@
         } else if (typeof method === 'object' || !method) {
             return methods.init.apply(this, arguments);
         } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName);
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
         }
 
     };

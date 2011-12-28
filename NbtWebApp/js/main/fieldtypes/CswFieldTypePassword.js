@@ -40,7 +40,8 @@
                                                          onChange: o.onchange
                                                  }); 
                 $cell21.append('Confirm');
-                var $TextBox2 = $cell22.CswInput('init',{ID: o.ID + '_pwd2',
+                /* Text Box 2 */
+                $cell22.CswInput('init',{ID: o.ID + '_pwd2',
                                                          type: CswInput_Types.password,
                                                          value: (false === o.Multi) ? '' : CswMultiEditDefaultValue,
                                                          cssclass: 'textinput password2',
@@ -62,7 +63,7 @@
                     $TextBox1.addClass("required");
                 }
 
-                jQuery.validator.addMethod( "password2", function(value, element) { 
+                jQuery.validator.addMethod( "password2", function() { 
                             var pwd1 = $('#' + o.ID + '_pwd1').val();
                             var pwd2 = $('#' + o.ID + '_pwd2').val();
                             return ((pwd1 === '' && pwd2 === '') || pwd1 === pwd2);
@@ -95,7 +96,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

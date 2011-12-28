@@ -102,7 +102,7 @@
         else if (typeof method === 'object' || false === method) {
             return methods.init.apply(this, arguments);
         } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName);
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
         }
     };
 

@@ -208,14 +208,14 @@
                                 forsearch: o.forsearch
                             });
 
-                        }).bind('hover_node.jstree', function (e, data) {
-                            var $hoverLI = $(data.rslt.obj[0]);
+                        }).bind('hover_node.jstree', function (e, bindData) {
+                            var $hoverLI = $(bindData.rslt.obj[0]);
                             var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
                             var cswnbtnodekey = $hoverLI.CswAttrDom('cswnbtnodekey');
-                            nodeHoverIn(data.args[1], nodeid, cswnbtnodekey);
+                            nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
 
-                        }).bind('dehover_node.jstree', function (e, data) {
-                            var selected = jsTreeGetSelected($treediv);
+                        }).bind('dehover_node.jstree', function () {
+                            jsTreeGetSelected($treediv);
                             nodeHoverOut();
 
                         }).jstree({
@@ -448,7 +448,7 @@
         } else if (typeof method === 'object' || !method) {
             return methods.init.apply(this, arguments);
         } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName);
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
         }
 
     };

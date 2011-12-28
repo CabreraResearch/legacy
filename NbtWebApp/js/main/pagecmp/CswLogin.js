@@ -1,5 +1,7 @@
 /// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";
@@ -108,7 +110,7 @@
         } else if ( typeof method === 'object' || ! method ) {
             return methods.init.apply( this, arguments );
         } else {
-            $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+            $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
 
     }; // function(options) {
@@ -148,7 +150,7 @@
                             Password: l.Password,
                             ForMobile: l.ForMobile
                         },
-                    success: function (data) {
+                    success: function () {
                             $.CswCookie('set', CswCookieName.Username, l.UserName);
                             $.CswCookie('set', CswCookieName.LogoutPath, l.LogoutPath);
                             if(isFunction(l.onAuthenticate)) {

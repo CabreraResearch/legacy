@@ -123,8 +123,8 @@
             var $parent = $(this);
             var $table = $parent.CswTable('init', { ID: 'addwelcomeitem_tbl' });
 
-            var $typeselect_label = $('<span>Type:</span>')
-                                        .appendTo($table.CswTable('cell', 1, 1));
+            /* Type Select Label */
+            $('<span>Type:</span>').appendTo($table.CswTable('cell', 1, 1));
             var $typeselect = $('<select id="welcome_type" name="welcome_type"></select>')
                                         .appendTo($table.CswTable('cell', 1, 2));
             $typeselect.append('<option value="Add" selected>Add</option>');
@@ -157,8 +157,8 @@
                                       'ID': 'welcome_ntsel'
                                   });
 
-            var $welcometext_label = $('<span>Text:</span>')
-                                        .appendTo($table.CswTable('cell', 4, 1));
+            /* Welcome Text Label */
+            $('<span>Text:</span>').appendTo($table.CswTable('cell', 4, 1));
             var $welcometextcell = $table.CswTable('cell', 4, 2);
             var $welcometext = $welcometextcell.CswInput('init', { ID: 'welcome_text',
                 type: CswInput_Types.text
@@ -179,7 +179,7 @@
                 onclick: function () {
                     var viewtype = '';
                     var viewvalue = '';
-                    var selectedView = '';
+                    var selectedView;
                     if (!$viewselect.is(':hidden')) {
                         selectedView = $viewselect.CswViewSelect('value');
                         viewtype = selectedView.type;
@@ -206,7 +206,7 @@
             });
             $table.CswTable('cell', 7, 2).append($addbutton);
 
-            $buttonsel.change(function (event) {
+            $buttonsel.change(function () {
                 $buttonimg.CswAttrDom('src', 'Images/biggerbuttons/' + $buttonsel.val());
             });
 
@@ -254,7 +254,7 @@
         } else if (typeof method === 'object' || !method) {
             return methods.init.apply(this, arguments);
         } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName);
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
         }
 
     };
@@ -326,7 +326,7 @@
             CswAjaxJson({
                 url: r.RemoveWelcomeItemUrl,
                 data: dataJson,
-                success: function (result) {
+                success: function () {
                     r.onSuccess();
                 }
             });
@@ -363,7 +363,7 @@
         CswAjaxJson({
             url: a.AddWelcomeItemUrl,
             data: dataJson,
-            success: function (result) {
+            success: function () {
                 a.onSuccess();
             },
             error: a.onError

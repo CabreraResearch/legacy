@@ -12,20 +12,7 @@
             viewid: '',
             issearchable: false,
             usesession: true,
-            onSelect: function (optSelect) { 
-                            var o = {
-                                $item: '',
-                                iconurl: '',
-                                type: '',
-                                viewid: '',
-                                viewname: '',
-                                viewmode: '',
-                                actionid: '',
-                                actionname: '',
-                                actionurl: '',
-                                reportid: ''
-                                };
-                        },
+            onSelect: function () { },
             onSuccess: null //function() { }
         };
 

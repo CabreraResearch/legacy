@@ -38,7 +38,7 @@
                         .CswImageButton({  ButtonType: CswImageButton_ButtonType.Print,
                                 AlternateText: '',
                                 ID: o.ID + '_print',
-                                onClick: function($ImageDiv) {
+                                onClick: function() {
                                     $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.ID });
                                     return CswImageButton_ButtonType.None;
                                 }
@@ -69,7 +69,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

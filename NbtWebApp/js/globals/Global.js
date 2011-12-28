@@ -184,7 +184,7 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(o.data),
-        success: function (data, textStatus, XMLHttpRequest) {
+        success: function (data, textStatus, xmlHttpRequest) {
             _ajaxCount--;
             //var endtime = new Date();
             //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
@@ -192,7 +192,7 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
 
             if (result.error !== undefined) {
                 if (false === o.overrideError) {
-                    _handleAjaxError(XMLHttpRequest, {
+                    _handleAjaxError(xmlHttpRequest, {
                         'display': result.error.display,
                         'type': result.error.type,
                         'message': result.error.message,
@@ -225,7 +225,7 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
             }
             if (isFunction(onAfterAjax)) onAfterAjax(true);
         }, // success{}
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        error: function (xmlHttpRequest, textStatus, errorThrown) {
             _ajaxCount--;
             //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
             log("Webservice Request (" + o.url + ") Failed: " + textStatus);
@@ -274,7 +274,7 @@ function CswAjaxXml(options) {
             dataType: "text",
             //contentType: 'application/json; charset=utf-8',
             data: $.param(o.data),     // should be 'field1=value&field2=value'
-            success: function (data, textStatus, XMLHttpRequest)
+            success: function (data, textStatus, xmlHttpRequest)
             {
                 _ajaxCount--;
                 //var endtime = new Date();
@@ -288,12 +288,12 @@ function CswAjaxXml(options) {
                 }
                 else
                 {
-                    $realxml = $(XMLHttpRequest.responseXML).children().first();
+                    $realxml = $(xmlHttpRequest.responseXML).children().first();
                 }
 
                 if ($realxml.first().get(0).nodeName === "error")
                 {
-                    _handleAjaxError(XMLHttpRequest, {
+                    _handleAjaxError(xmlHttpRequest, {
                         'display': $realxml.CswAttrXml('display'),
                         'type': $realxml.CswAttrXml('type'),
                         'message': $realxml.CswAttrXml('message'),
@@ -310,7 +310,7 @@ function CswAjaxXml(options) {
                     
                     _handleAuthenticationStatus({
                         status: auth,
-                        success: function () { o.success($realxml) },
+                        success: function () { o.success($realxml); },
                         failure: o.onloginfail,
                         usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
                         usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
@@ -374,7 +374,7 @@ function _handleAuthenticationStatus(options) {
     if(options) $.extend(o, options);
 
     var txt = '';
-    var GoodEnoughForMobile = false; //Ignore password expirery and license accept for Mobile for now
+    var goodEnoughForMobile = false; //Ignore password expirery and license accept for Mobile for now
     switch (o.status)
     {
         case 'Authenticated': o.success(); break;
@@ -388,11 +388,11 @@ function _handleAuthenticationStatus(options) {
         case 'NonExistentSession': txt = "Your session has timed out.  Please login again."; break;
         case 'Unknown': txt = "An Unknown Error Occurred"; break;
         case 'TimedOut': 
-            GoodEnoughForMobile = true;
+            goodEnoughForMobile = true;
             txt = "Your session has timed out.  Please login again."; 
             break;
         case 'ExpiredPassword':
-            GoodEnoughForMobile = true;
+            goodEnoughForMobile = true;
             if( !o.ForMobile ) {
                 $.CswDialog('EditNodeDialog', {
                     nodeids: [ o.usernodeid ],
@@ -404,7 +404,7 @@ function _handleAuthenticationStatus(options) {
             }
             break;
         case 'ShowLicense':
-            GoodEnoughForMobile = true;
+            goodEnoughForMobile = true;
             if( !o.ForMobile ) {
                 $.CswDialog('ShowLicenseDialog', {
                     'onAccept': function () { o.success(); },
@@ -415,7 +415,7 @@ function _handleAuthenticationStatus(options) {
     }
 
     if( o.ForMobile &&   
-        ( o.status !== 'Authenticated' && GoodEnoughForMobile ) ) {
+        ( o.status !== 'Authenticated' && goodEnoughForMobile ) ) {
         o.success();
     }
     else if (!isNullOrEmpty(txt) && o.status !== 'Authenticated' )
@@ -491,6 +491,7 @@ function manuallyCheckChanges() {
     "use strict"; 
     var ret = true;
     if (checkChangesEnabled && changed === 1) {
+        /* remember: confirm is globally blocking call */
         ret = confirm('Are you sure you want to navigate away from this page?\n\nIf you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.\n\nPress OK to continue, or Cancel to stay on the current page.');
 
         // this serves several purposes:
@@ -576,7 +577,7 @@ function copyNode(options) {
     var o = {
         'nodeid': '',
         'nodekey': '',
-        'onSuccess': function (nodeid, nodekey) { },
+        'onSuccess': function () { },
         'onError': function () { }
     };
     if (options)
@@ -604,7 +605,7 @@ function deleteNodes(options) { /// <param name="$" type="jQuery" />
     var o = {
         'nodeids': [],
         'nodekeys': [],
-        'onSuccess': function (nodeid, nodekey) { },
+        'onSuccess': function () { },
         'onError': function () { }
     };
     if (options) $.extend(o, options);
@@ -623,8 +624,7 @@ function deleteNodes(options) { /// <param name="$" type="jQuery" />
     CswAjaxJson({
         url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',
         data: jData,
-        success: function (result)
-        {
+        success: function () {
             // clear selected node cookies
             o.nodeid = $.CswCookie('clear', CswCookieName.CurrentNodeId);
             o.cswnbtnodekey = $.CswCookie('clear', CswCookieName.CurrentNodeKey);
@@ -689,7 +689,7 @@ function preparePropJsonForSaveRecursive(isMulti, propVals, attributes) {
     ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
     if (false === isNullOrEmpty(propVals)) {
         var wasModified = false;
-        crawlObject(propVals, function(prop, key, par) {
+        crawlObject(propVals, function(prop, key) {
             if (contains(attributes, key)) {
                 var attr = attributes[key];
                 //don't bother sending this to server unless it's changed
@@ -714,11 +714,11 @@ function preparePropJsonForSaveRecursive(isMulti, propVals, attributes) {
 //#region jsTree
 function jsTreeGetSelected($treediv) { /// <param name="$" type="jQuery" />
     "use strict"; 
-    var IdPrefix = $treediv.CswAttrDom('id');
+    var idPrefix = $treediv.CswAttrDom('id');
     var $SelectedItem = $treediv.jstree('get_selected');
     var ret = {
         'iconurl': $SelectedItem.children('a').children('ins').css('background-image'),
-        'id': $SelectedItem.CswAttrDom('id').substring(IdPrefix.length),
+        'id': $SelectedItem.CswAttrDom('id').substring(idPrefix.length),
         'text': $SelectedItem.children('a').first().text().trim(),
         '$item': $SelectedItem
     };
@@ -1089,7 +1089,7 @@ function getTimeString(date, timeformat) {
         militaryTime = true;
     }
 
-    var ret = '';
+    var ret;
     var hours = date.getHours();
     var minutes = date.getMinutes();
     var seconds = date.getSeconds();
@@ -1165,7 +1165,7 @@ function debugOn(value) {
     return ret;
 }
 
-function cacheLogInfo(logger, includeCallStack) {
+function cacheLogInfo(logger) {
     "use strict"; 
     if (doLogging()) {
         if (hasWebStorage()) {
@@ -1174,13 +1174,6 @@ function cacheLogInfo(logger, includeCallStack) {
             var log = logStorage.getItem('debuglog');
             log += logger.toHtml();
 
-            var extendedLog = '';
-            if (isTrue(includeCallStack)) {
-                extendedLog = getCallStack();
-            }
-            if (!isNullOrEmpty(extendedLog)) {
-                log += ',' + extendedLog;
-            }
             logStorage.setItem('debuglog', log);
         }
     }

@@ -71,10 +71,10 @@
             $outertabdiv.contents().remove();
         }
 
-        function makeTabContentDiv($parent, tabid, canEditLayout)
+        function makeTabContentDiv($tabParent, tabid, canEditLayout)
         {
             var $tabcontentdiv = $('<div id="' + tabid + '"><form onsubmit="return false;" id="' + tabid + '_form" /></div>')
-                                    .appendTo($parent);
+                                    .appendTo($tabParent);
             $.subscribe('CswTabRefresh', function() {
                 if(false === isNullOrEmpty($tabcontentdiv)) {
                     $tabcontentdiv.remove();
@@ -137,21 +137,21 @@
                             $tabdiv.tabs({
                                     selected: selectedtabno,
                                     select: function(event, ui) {
-                                        var $tabcontentdiv = $($tabdiv.children('div')[ui.index]);
-                                        var tabid = $tabcontentdiv.CswAttrDom('id');
-                                        if (isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(tabid)) {
-                                            getProps($tabcontentdiv, tabid);
+                                        var $selectTabcontentdiv = $($tabdiv.children('div')[ui.index]);
+                                        var selectTabid = $selectTabcontentdiv.CswAttrDom('id');
+                                        if (isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(selectTabid)) {
+                                            getProps($selectTabcontentdiv, selectTabid);
                                             if (isFunction(o.onTabSelect)) {
-                                                o.onTabSelect(tabid);
+                                                o.onTabSelect(selectTabid);
                                             }
                                         } else {
                                             return false;
                                         }
                                     }
                                 });
-                            var $tabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
-                            var selectedtabid = $tabcontentdiv.CswAttrDom('id');
-                            getProps($tabcontentdiv, selectedtabid);
+                            var $eachTabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
+                            var selectedtabid = $eachTabcontentdiv.CswAttrDom('id');
+                            getProps($eachTabcontentdiv, selectedtabid);
                             if (isFunction(o.onTabSelect)) o.onTabSelect(selectedtabid);
                         }); // for(var t in tabdivs)
                     } // success
@@ -314,8 +314,7 @@
                                                     ButtonType: CswImageButton_ButtonType.Configure,
                                                     AlternateText: 'Configure',
                                                     ID: o.ID + 'configbtn',
-                                                    onClick: function ($ImageDiv) 
-                                                    { 
+                                                    onClick: function () { 
                                                         clearTabs();
                                                         $.CswDialog('EditLayoutDialog', o);
                                                         return CswImageButton_ButtonType.None; 
@@ -325,12 +324,10 @@
 
 
                     // case 8494
-                    if (!o.Config && !AtLeastOne.Saveable && o.EditMode == EditMode.AddInPopup.name) 
-                    {
+                    if (!o.Config && !AtLeastOne.Saveable && o.EditMode == EditMode.AddInPopup.name) {
                         Save($form, $layouttable, data, $savetab, tabid);
                     } 
-                    else if (isFunction(o.onInitFinish)) 
-                    {
+                    else if (isFunction(o.onInitFinish)) {
                         o.onInitFinish(AtLeastOne.Property);
                     }
                 } // success{}
@@ -345,8 +342,7 @@
             CswAjaxJson({
                 url: o.RemovePropUrl,
                 data: { PropId: propid, EditMode: o.EditMode },
-                success: function (data)
-                {
+                success: function () {
                     o.onPropertyRemove(propid);
                 }
             });
@@ -374,8 +370,7 @@
                 CswAjaxJson({
                     url: o.MovePropUrl,
                     data: dataJson,
-                    success: function (result)
-                    {
+                    success: function () {
 
                     }
                 });
@@ -447,9 +442,9 @@
         
         function _handleProperties($layouttable, data, $tabcontentdiv, tabid, configMode, $savebtn) {
             var AtLeastOne = { Property: false, Saveable: false };
-            var handleSuccess = function(propObj, propKey) {
+            var handleSuccess = function(propObj) {
                 AtLeastOne.Property = true;
-                handleProp($layouttable, propObj, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne)
+                handleProp($layouttable, propObj, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
                 return false;
             };
             crawlObject(data, handleSuccess, false);
@@ -605,7 +600,7 @@
                     url: o.SavePropUrl,
                     async: (false === o.Multi),
                     data: data,
-                    success: function (data) {
+                    success: function (successData) {
                         var doSave = true;
                         var dataJson = {
                             SourceNodeKey: tryParseObjByIdx(o.nodekeys, 0),
@@ -650,7 +645,7 @@
                             dataJson.PropIds = propIds;
                             copyNodeProps(function () { window.location.reload(); });
                         }
-                        if (isFunction(o.onSave) && doSave) o.onSave(data.nodeid, data.cswnbtnodekey, tabcnt);
+                        if (isFunction(o.onSave) && doSave) o.onSave(successData.nodeid, successData.cswnbtnodekey, tabcnt);
                         $savebtn.CswButton('enable');
                     }, // success
                     error: function() {
@@ -665,7 +660,7 @@
 
         function _updatePropJsonFromForm($layouttable, propData) {
             var propIds = [];
-            var updSuccess = function(thisProp, propKey, propData) {
+            var updSuccess = function(thisProp) {
                 var propOpt = {
                     propData: thisProp,
                     $propdiv: '',

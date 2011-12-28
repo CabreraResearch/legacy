@@ -18,7 +18,8 @@
             var text = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue;
             text += '&nbsp;';
 
-            var $StaticDiv = $('<div id="'+ o.ID +'" class="staticvalue">' + text + '</div>' )
+            /* Static Div */
+            $('<div id="'+ o.ID +'" class="staticvalue">' + text + '</div>' )
                             .appendTo($Div); 
         },
         save: function(o) { //$propdiv, $xml
@@ -34,7 +35,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

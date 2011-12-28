@@ -1,5 +1,7 @@
 /// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";
@@ -24,12 +26,9 @@
             var $Div = $(this);
             //$Div.contents().remove();
 
-            if (o.ReadOnly)
-            {
+            if (o.ReadOnly) {
                 $Div.append(o.Value);
-            }
-            else
-            {
+            } else {
                 var $TextBox = $Div.CswInput('init',{ID: o.ID,
                                                         type: CswInput_Types.text,
                                                         value: o.Value,
@@ -95,18 +94,14 @@
     };
 
     // Method calling logic
-    $.fn.CswNumberTextBox = function (method)
-    {
-
-        if (methods[method])
-        {
+    $.fn.CswNumberTextBox = function (method) {
+        if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method)
-        {
+        } 
+        else if (typeof method === 'object' || !method) {
             return methods.init.apply(this, arguments);
-        } else
-        {
-            $.error('Method ' + method + ' does not exist on ' + pluginName);
+        } else {
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
         }
 
     };

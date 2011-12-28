@@ -46,7 +46,7 @@
                     var r = 1;
                     var c = 1;
 
-                    crawlObject(data, function(nodeObj, nodeid) {
+                    crawlObject(data, function(nodeObj) {
                         var cellset = $table.CswLayoutTable('cellset', r, c);
                         var $thumbnailcell = cellset[1][1]
                                                 .css({ 
@@ -64,12 +64,12 @@
                         }
                         $textcell.append(name + '<br/>');
                         
-                        crawlObject(nodeObj.props, function(propObj, propid) {
+                        crawlObject(nodeObj.props, function(propObj) {
                             $textcell.append('' + propObj.propname + ': ' + propObj.gestalt + '<br/>');
                         });
             
-                        c++;
-                        if(c > o.rowsize) { c = 1; r++; }
+                        c += 1;
+                        if(c > o.rowsize) { c = 1; r += 1; }
                     });
 
 
@@ -88,7 +88,7 @@
         } else if (typeof method === 'object' || !method) {
             return methods.init.apply(this, arguments);
         } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName);
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
         }
     };
 

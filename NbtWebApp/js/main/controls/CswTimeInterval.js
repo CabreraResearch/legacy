@@ -554,7 +554,7 @@ var CswTimeInterval = function (options) {
     })();
 
     var validateRateInterval = function() {
-        var ret = false, errorString = '';
+        var retVal = false, errorString = '';
         switch (rateType) {
             case CswRateIntervalTypes.WeeklyByDay:
                 if (false === contains(rateInterval, 'startingdate') ||
@@ -616,9 +616,9 @@ var CswTimeInterval = function (options) {
                 break;                
         }
         if (false === isNullOrEmpty(errorString)) {
-            ret = ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, errorString);
+            retVal = ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, errorString);
         }
-        return ret;
+        return retVal;
     };
     
     (function () {

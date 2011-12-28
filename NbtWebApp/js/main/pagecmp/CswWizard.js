@@ -17,12 +17,12 @@
                 StartingStep: 1,
                 SelectedStep: 1,
                 FinishText: 'Finish',
-                onNext: function($wizard, newstepno) { },
-                onPrevious: function($wizard, newstepno) { },
-                onBeforeNext: function($wizard, stepno) { return true; },
-                onBeforePrevious: function($wizard, stepno) { return true; },
-                onFinish: function($wizard) { },
-                onCancel: function($wizard) {},
+                onNext: function() { },
+                onPrevious: function() { },
+                onBeforeNext: function() { return true; },
+                onBeforePrevious: function() { return true; },
+                onFinish: function() { },
+                onCancel: function() {},
                 doNextOnInit: true
             };
             if (options) $.extend(o, options);
@@ -34,7 +34,8 @@
             $table.CswAttrDom("stepcount", o.StepCount);
             $table.CswAttrDom("startingstep", o.StartingStep);
 
-            var $titlecell = $table.CswTable('cell', 1, 1)
+            /* Title Cell */
+            $table.CswTable('cell', 1, 1)
                 .addClass('CswWizard_TitleCell')
                 .CswAttrDom('colspan', 2)
                 .append(o.Title);
@@ -71,7 +72,8 @@
                 .CswAttrDom('align', 'right')
                 .CswAttrDom('width', '35%');
 
-            var $prevbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_prev',
+            /* Previous Button */
+            $bcell11.CswButton('init', { 'ID': o.ID + '_prev',
                 'enabledText': '< Previous',
                 'disableOnClick': false,
                 'onclick': function() {
@@ -83,7 +85,8 @@
                     }
                 }
             });
-            var $nextbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_next',
+            /* Next Button */
+            $bcell11.CswButton('init', { 'ID': o.ID + '_next',
                 'enabledText': 'Next >',
                 'disableOnClick': false,
                 'onclick': function() {
@@ -95,11 +98,13 @@
                     }
                 }
             });
-            var $finishbtn = $bcell11.CswButton('init', { 'ID': o.ID + '_finish',
+            /* Finish Button */
+            $bcell11.CswButton('init', { 'ID': o.ID + '_finish',
                 'enabledText': o.FinishText,
                 'onclick': function() { if (isFunction(o.onFinish)) o.onFinish($table); }
             });
-            var $cancelbtn = $bcell12.CswButton('init', { 'ID': o.ID + '_cancel',
+            /* Cancel Button */
+            $bcell12.CswButton('init', { 'ID': o.ID + '_cancel',
                 'enabledText': 'Cancel',
                 'onclick': function() { if (isFunction(o.onCancel)) o.onCancel($table); }
             });
@@ -180,7 +185,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

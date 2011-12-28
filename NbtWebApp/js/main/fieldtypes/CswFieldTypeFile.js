@@ -38,7 +38,7 @@
                                 ButtonType: CswImageButton_ButtonType.Edit,
                                 AlternateText: 'Edit',
                                 ID: o.ID + '_edit',
-                                onClick: function($ImageDiv) {
+                                onClick: function() {
                                     $.CswDialog('FileUploadDialog', {
                                         url: '/NbtWebApp/wsNBT.asmx/fileForProp',
                                         params: {
@@ -58,7 +58,8 @@
                                 ButtonType: CswImageButton_ButtonType.Clear,
                                 AlternateText: 'Clear',
                                 ID: o.ID + '_clr',
-                                onClick: function($ImageDiv) {
+                                onClick: function() {
+                                    /* remember: confirm is globally blocking call */
                                     if (confirm("Are you sure you want to clear this file?")) {
                                         var dataJson = {
                                             PropId: o.propData.id,
@@ -92,7 +93,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

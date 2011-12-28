@@ -199,11 +199,11 @@
                     } // for(var r = 0; r < o.data.length; r++)
 
                     if(false === o.UseRadios) {
-                        var CheckAllLinkText = "Check All";
+                        var checkAllLinkText = "Check All";
                         if($('.CBACheckBox_' + o.ID).not(':checked').length === 0)
-                            CheckAllLinkText = "Uncheck All";
+                            checkAllLinkText = "Uncheck All";
 
-                        var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ CheckAllLinkText +'</a></div>')
+                        var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ checkAllLinkText +'</a></div>')
                                              .appendTo($Div);
                         var $checkalllink = $checkalldiv.children('a');
                         $checkalllink.click(function() { toggleCheckAll($checkalllink, o.ID); return false; });
@@ -323,7 +323,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

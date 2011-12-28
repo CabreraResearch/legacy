@@ -1,5 +1,7 @@
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 (function ($) {
     "use strict";
@@ -7,8 +9,8 @@
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getQuickLaunchItems',
-            onViewClick: function(viewid, viewmode) { },
-            onActionClick: function(actionname, actionurl) { },
+            onViewClick: function() { },
+            onActionClick: function() { },
             onSuccess: function() { }
         };
 

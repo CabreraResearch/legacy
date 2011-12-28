@@ -44,7 +44,8 @@
         var $cell12 = $tbl.CswTable('cell', 1, 2);
         var $cell21 = $tbl.CswTable('cell', 2, 1);
 
-        var $msglink = $('<a href="#">' + o.message + '</a>')
+        /* Image Link */
+        $('<a href="#">' + o.message + '</a>')
                         .appendTo($cell11)
                         .click(function() { 
                             $cell21.toggle();
@@ -56,7 +57,7 @@
                 ButtonType: CswImageButton_ButtonType.Delete,
                 AlternateText: 'Hide',
                 ID: makeId({ 'prefix': id, 'id': 'hidebtn' }),
-                onClick: function($ImageDiv) {
+                onClick: function() {
                     $errordiv.remove();
                     if ($parentdiv.children().length === 0)
                         $parentdiv.hide();

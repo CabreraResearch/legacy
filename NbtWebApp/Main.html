@@ -85,16 +85,16 @@ window.abandonHope = true;
     	var MainTableId = 'CswNodeTable';
     	var MainSearchId = 'CswSearchForm';
 
-    	onBeforeAjax = function () {
-    		$('#ajaxSpacer').hide();
-    		$('#ajaxImage').show();
-    	}
-    	onAfterAjax = function (succeeded) {
-    		if (!ajaxInProgress()) {
-    			$('#ajaxImage').hide();
-    			$('#ajaxSpacer').show();
-    		}
-    	}
+        window.onBeforeAjax = function() {
+            $('#ajaxSpacer').hide();
+            $('#ajaxImage').show();
+        };
+        window.onAfterAjax = function(succeeded) {
+            if (!ajaxInProgress()) {
+                $('#ajaxImage').hide();
+                $('#ajaxSpacer').show();
+            }
+        };
 
     	// handle querystring arguments
     	var qs = $.CswQueryString();

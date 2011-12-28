@@ -23,7 +23,8 @@
         function viewJsonHtml(viewJson) {
             var types = {};
             var $ret = $('<ul></ul>');
-            var $root = makeViewRootHtml(viewJson, types)
+            /* Root */
+            makeViewRootHtml(viewJson, types)
                         .appendTo($ret);
 
             return { html: $ret.html(), types: types };
@@ -143,10 +144,8 @@
             return $ret;
         }
 
-        function makeViewPropertyFilterHtml(itemJson, types, propArbId) {
-            var $ret = null;
-
-            $ret = $('<li></li>');
+        function makeViewPropertyFilterHtml(itemJson, types) {
+            var $ret = $('<li></li>');
             var rel = 'filter';
             if (!isNullOrEmpty(itemJson)) {
                 var filtArbitraryId = tryParseString(itemJson.arbitraryid);
