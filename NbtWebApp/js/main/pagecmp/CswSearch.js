@@ -6,6 +6,7 @@
 /// <reference path="../view/CswViewPropFilter.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     $.fn.CswSearch = function (options) {
 
         var o = { 

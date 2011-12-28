@@ -3,9 +3,9 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 
-; (function ($)
-{
-    var PluginName = "CswNodeSelect";
+(function ($) {
+    "use strict";
+    var pluginName = "CswNodeSelect";
 
     var methods = {
         'init': function(options) {
@@ -70,7 +70,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
   
     };

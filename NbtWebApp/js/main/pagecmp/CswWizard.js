@@ -3,7 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 
-; (function ($) {
+(function ($) {
     "use strict";
     var pluginName = "CswWizard";
 

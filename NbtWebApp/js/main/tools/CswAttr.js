@@ -2,6 +2,7 @@
 /// <reference path="../../globals/Global.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     $.fn.CswAttrDom = function (name, value) {
         /// <summary>
         ///   Gets or sets a DOM attribute

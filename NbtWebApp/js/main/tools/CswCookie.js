@@ -2,8 +2,8 @@
 /// <reference path="../../globals/Global.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-    
-    var PluginName = 'CswCookie';
+    "use strict";
+    var pluginName = 'CswCookie';
 
     $.CswCookie = function (method) {
         var methods = {
@@ -40,7 +40,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
 
     };

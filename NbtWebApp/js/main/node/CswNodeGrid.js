@@ -5,8 +5,8 @@
 /// <reference path="../controls/CswGrid.js" />
 /// <reference path="../pagecmp/CswDialog.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-    
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";    
     var pluginName = 'CswNodeGrid';
     
     function deleteRows(rowid, grid, func) {

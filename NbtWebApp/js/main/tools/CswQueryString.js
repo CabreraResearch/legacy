@@ -9,10 +9,9 @@
 // qs.param   -->  'value'
 // qs.param2  -->  'value2'
 
-(function ($)
-{
-    $.CswQueryString = function()
-    {
+(function ($) {
+    "use strict";
+    $.CswQueryString = function() {
         var urlParams = { };
 
         var e,

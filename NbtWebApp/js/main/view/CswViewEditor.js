@@ -9,7 +9,7 @@
 /// <reference path="../controls/CswGrid.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-
+    "use strict";
     $.fn.CswViewEditor = function(options) {
         var o = {
             ViewGridUrl: '/NbtWebApp/wsNBT.asmx/getViewGrid',

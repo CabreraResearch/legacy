@@ -2,6 +2,7 @@
 /// <reference path="../../globals/Global.js" />
 
 (function ($) {
+    "use strict";
     $.fn.CswQuickLaunch = function (options) {
 
         var o = {

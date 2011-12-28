@@ -5,7 +5,7 @@
 /// <reference path="../controls/CswSelect.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-
+    "use strict";
     var pluginName = "CswViewPropFilter";
 
     function makePropFilterId(id, options) {

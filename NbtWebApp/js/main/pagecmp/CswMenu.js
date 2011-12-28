@@ -4,53 +4,54 @@
 /* Adapted from http://www.noupe.com/tutorial/drop-down-menu-jquery-css.html */
 
 (function ($) { /// <param name="$" type="jQuery" />
-	$.fn.CswMenu = function (options) {
+    "use strict";
+    $.fn.CswMenu = function (options) {
 
-		var o = {
-		};
+        var o = {
+        };
 
-		if (options) {
-			$.extend(o, options);
-		}
+        if (options) {
+            $.extend(o, options);
+        }
 
-		var $MenuUl = $(this);
+        var $MenuUl = $(this);
 
-		$MenuUl.children('li')
-					  .click(TopMenuClick)
-					  .hover(TopMenuClick, HideAllSubMenus);
-		$MenuUl.find(".subnav").children('li').click(SubMenuClick);
+        $MenuUl.children('li')
+                      .click(TopMenuClick)
+                      .hover(TopMenuClick, HideAllSubMenus);
+        $MenuUl.find(".subnav").children('li').click(SubMenuClick);
 
-		function TopMenuClick()
-		{
-			$this = $(this);
+        function TopMenuClick()
+        {
+            $this = $(this);
 
-			HideAllSubMenus();
+            HideAllSubMenus();
 
-			// Show this subnav
-			$this.find("ul.subnav")
-					.slideDown('fast')
-					.show();
-		}
+            // Show this subnav
+            $this.find("ul.subnav")
+                    .slideDown('fast')
+                    .show();
+        }
 
-		function SubMenuClick(event)
-		{
-			HideAllSubMenus();
-			// Prevent subnav elements from triggering topnav click
-			if(event)
-			{
-				event.stopPropagation();
-			}
-		}
-		
-		function HideAllSubMenus()
-		{
-			 $MenuUl.find('ul').stop(true, true);
-			 $MenuUl.find("ul.subnav").slideUp('fast');
-		}
+        function SubMenuClick(event)
+        {
+            HideAllSubMenus();
+            // Prevent subnav elements from triggering topnav click
+            if(event)
+            {
+                event.stopPropagation();
+            }
+        }
+        
+        function HideAllSubMenus()
+        {
+             $MenuUl.find('ul').stop(true, true);
+             $MenuUl.find("ul.subnav").slideUp('fast');
+        }
 
 
-		// For proper chaining support
-		return this;
+        // For proper chaining support
+        return this;
 
-	}; // function(options) {
+    }; // function(options) {
 })(jQuery);

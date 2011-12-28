@@ -4,7 +4,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-
+    "use strict";
     var pluginName = 'CswNodeTree';
 
     var methods = {

@@ -1,7 +1,6 @@
 /// <reference path="CswEnums.js" />
 /// <reference path="CswGlobalTools.js" />
 /// <reference path="CswPrototypeExtensions.js" />
-/// <reference path="../main/tools/CswArray.js" />
 /// <reference path="../main/tools/CswTools.js" />
 /// <reference path="../main/tools/CswAttr.js" />
 /// <reference path="../main/tools/CswClientDb.js" />

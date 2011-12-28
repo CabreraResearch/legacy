@@ -6,6 +6,7 @@
 
 
 (function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     var pluginName = "CswWelcome";
 
     var methods = {
@@ -58,7 +59,7 @@
                         },
                         'showConfigButton': true,
                         'showRowColButtons': true,
-						'showAddButton': true,
+                        'showAddButton': true,
                         'showRemoveButton': true,
                         'onAddClick': function () { $.CswDialog('AddWelcomeItemDialog', { 'onAdd': o.onAddComponent }); },
                         'onRemove': function (ev, onRemoveData) {
