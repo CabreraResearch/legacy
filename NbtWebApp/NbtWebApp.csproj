@@ -779,6 +779,7 @@
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\vendor\jquery.ui.widget.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
     <Content Include="NodeTypeTreeService.asmx" />
+    <Content Include="Report.aspx" />
     <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />
@@ -1785,6 +1786,12 @@
       <DependentUpon>PrintableLayout.master</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report.aspx.cs">
+      <DependentUpon>Report.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Report.aspx.designer.cs">
+      <DependentUpon>Report.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\DueTasks.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
