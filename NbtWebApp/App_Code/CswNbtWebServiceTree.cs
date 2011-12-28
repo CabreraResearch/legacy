@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.WebServices
 				if( UsePaging )
 					PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
 
-				CswNbtViewRelationship ChildRelationshipToStartWith = null;
+				//CswNbtViewRelationship ChildRelationshipToStartWith = null;
 				//if( IncludeNodeKey != null )
 				//    ChildRelationshipToStartWith = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( IncludeNodeKey.ViewNodeUniqueId );
 
