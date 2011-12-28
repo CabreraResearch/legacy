@@ -6,7 +6,7 @@
 //#region CswPrint
 
 var CswPrint = CswPrint || function (onSuccess) {
-    "use strict;"
+    "use strict";
     var printWindow, printDoc, $styleDiv, $newBody;
     
     printWindow = window.open();
