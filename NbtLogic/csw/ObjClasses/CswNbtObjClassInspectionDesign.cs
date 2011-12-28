@@ -267,9 +267,13 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.afterCreateNode();
 
-            // Make sure the nodetype is locked
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( _CswNbtNode.NodeTypeId );
-            NodeType.IsLocked = true;
+            //Case 20941. Not anymore.
+
+            /* 
+             * Make sure the nodetype is locked
+             * CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( _CswNbtNode.NodeTypeId );
+             * NodeType.IsLocked = true; 
+             */
         } // afterCreateNode()
 
         /// <summary>
