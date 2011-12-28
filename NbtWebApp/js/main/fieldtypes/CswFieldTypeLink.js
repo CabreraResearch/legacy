@@ -4,8 +4,8 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 
-; (function ($) {
-        
+(function ($) {
+    "use strict";        
     var pluginName = 'CswFieldTypeLink';
 
     var methods = {
@@ -25,7 +25,7 @@
             } else {
                 var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
-				$Link.appendTo($table.CswTable('cell', 1, 1));
+                $Link.appendTo($table.CswTable('cell', 1, 1));
 
                 $('<div/>')
                     .appendTo($table.CswTable('cell', 1, 2))
@@ -35,13 +35,13 @@
                         ID: o.ID + '_edit',
                         Required: o.Required,
                         onClick: function ($ImageDiv) { 
-								$edittable.show();
-								return CswImageButton_ButtonType.None; 
-							}
+                                $edittable.show();
+                                return CswImageButton_ButtonType.None; 
+                            }
                     });
 
-				var $edittable = $Div.CswTable('init', { ID: o.ID + '_edittbl' })
-									.hide();
+                var $edittable = $Div.CswTable('init', { ID: o.ID + '_edittbl' })
+                                    .hide();
 
                 $( '<span>Text</span>' )
                     .appendTo($edittable.CswTable('cell', 1, 1));
@@ -57,7 +57,7 @@
                     .appendTo($edittable.CswTable('cell', 2, 1));
                 
                 var $edithrefcell = $edittable.CswTable('cell', 2, 2);
-				var $edithref = $edithrefcell.CswInput('init',{ID: o.ID + '_href',
+                var $edithref = $edithrefcell.CswInput('init',{ID: o.ID + '_href',
                                                                type: CswInput_Types.text,
                                                                value: href,
                                                                onChange: o.onchange
@@ -65,11 +65,11 @@
 
                 if(o.Required && href === '') {
                     $edittable.show();
-					$edittext.addClass("required");
-					$edithref.addClass("required");
+                    $edittext.addClass("required");
+                    $edithref.addClass("required");
                 }
-				$edittext.clickOnEnter(o.$savebtn);
-				$edithref.clickOnEnter(o.$savebtn);
+                $edittext.clickOnEnter(o.$savebtn);
+                $edithref.clickOnEnter(o.$savebtn);
             }
         },
         save: function(o) {
@@ -82,7 +82,7 @@
                 attributes.text = $edittext.val();
             }
             var $edithref = o.$propdiv.find('#' + o.ID + '_href');
-			if (false === isNullOrEmpty($edithref)) {
+            if (false === isNullOrEmpty($edithref)) {
                 attributes.href = $edithref.val();
             }
             preparePropJsonForSave(o.Multi, o.propData, attributes);

@@ -4,8 +4,8 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 
-; (function ($) {
-        
+(function ($) {
+    "use strict";        
     var pluginName = 'CswFieldTypeScientific';
 
     var methods = {
@@ -13,37 +13,37 @@
 
             var $Div = $(this);
             var propVals = o.propData.values;
-			if (isTrue(o.ReadOnly)) {
-				$Div.append(propVals.gestalt);
-			} 
-			else 
-			{
-				var $ValueNTB = $Div.CswNumberTextBox({
-					ID: o.ID + '_val',
-					Value: (false === o.Multi) ? tryParseString(propVals.base).trim() : CswMultiEditDefaultValue,
-					Precision: 6,
-					ReadOnly: o.ReadOnly,
-					Required: o.Required,
-					onchange: o.onchange,
-					width: '60px'
-				});
-				$Div.append('E');
-				var $ExponentNTB = $Div.CswNumberTextBox({
-					ID:  o.ID + '_exp',
-					Value: (false === o.Multi) ? tryParseString(propVals.exponent).trim() : CswMultiEditDefaultValue,
-					ReadOnly: o.ReadOnly,
-					Required: o.Required,
-					onchange: o.onchange,
-					width: '25px'
-				});
+            if (isTrue(o.ReadOnly)) {
+                $Div.append(propVals.gestalt);
+            } 
+            else 
+            {
+                var $ValueNTB = $Div.CswNumberTextBox({
+                    ID: o.ID + '_val',
+                    Value: (false === o.Multi) ? tryParseString(propVals.base).trim() : CswMultiEditDefaultValue,
+                    Precision: 6,
+                    ReadOnly: o.ReadOnly,
+                    Required: o.Required,
+                    onchange: o.onchange,
+                    width: '60px'
+                });
+                $Div.append('E');
+                var $ExponentNTB = $Div.CswNumberTextBox({
+                    ID:  o.ID + '_exp',
+                    Value: (false === o.Multi) ? tryParseString(propVals.exponent).trim() : CswMultiEditDefaultValue,
+                    ReadOnly: o.ReadOnly,
+                    Required: o.Required,
+                    onchange: o.onchange,
+                    width: '25px'
+                });
 
-				if (!isNullOrEmpty($ValueNTB) && $ValueNTB.length > 0) {
-					$ValueNTB.clickOnEnter(o.$savebtn);
-				}
-				if (!isNullOrEmpty($ExponentNTB) && $ExponentNTB.length > 0) {
-					$ExponentNTB.clickOnEnter(o.$savebtn);
-				}
-			}
+                if (!isNullOrEmpty($ValueNTB) && $ValueNTB.length > 0) {
+                    $ValueNTB.clickOnEnter(o.$savebtn);
+                }
+                if (!isNullOrEmpty($ExponentNTB) && $ExponentNTB.length > 0) {
+                    $ExponentNTB.clickOnEnter(o.$savebtn);
+                }
+            }
         },
         save: function(o) { //$propdiv, $xml
             var attributes = {

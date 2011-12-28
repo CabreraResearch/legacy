@@ -4,7 +4,8 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../tools/CswClientDb.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     $.fn.CswCheckBoxArray = function (method) {
     
         var pluginName = 'CswCheckBoxArray',

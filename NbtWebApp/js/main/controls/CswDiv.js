@@ -2,13 +2,12 @@
 /// <reference path="../../globals/Global.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-    
+    "use strict";
     var PluginName = "CswDiv";
     
     var methods = {
     
-        'init': function(options) 
-        {
+        'init': function(options) {
             var o = {
                 'ID': '',
                 'value': '',

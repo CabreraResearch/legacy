@@ -5,7 +5,7 @@
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function ($) {
-        
+    "use strict";    
     var pluginName = 'CswFieldTypeDateTime';
 
     var methods = {

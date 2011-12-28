@@ -4,6 +4,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     var pluginName = 'CswImageButton';
 
     var methods = {

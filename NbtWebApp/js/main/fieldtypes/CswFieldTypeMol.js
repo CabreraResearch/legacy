@@ -5,8 +5,8 @@
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../thirdparty/js/jmol/Jmol.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     var pluginName = 'CswFieldTypeMol';
 
     var methods = {

@@ -4,7 +4,7 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 
-; (function ($) {
+(function ($) {
     "use strict";    
     var pluginName = 'CswFieldTypeMemo';
 

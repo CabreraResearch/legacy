@@ -5,8 +5,8 @@
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../controls/CswSelect.js" />
 
-; (function ($) {
-        
+(function ($) {
+    "use strict";        
     var pluginName = 'CswFieldTypeQuestion';
     var multi = false;
     var methods = {
@@ -139,6 +139,5 @@
         } else {
           $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
         }    
-  
     };
 })(jQuery);

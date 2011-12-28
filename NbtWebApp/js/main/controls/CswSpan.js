@@ -2,7 +2,7 @@
 /// <reference path="../../globals/Global.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-    
+    "use strict";
     var PluginName = "CswSpan";
     
     var methods = {

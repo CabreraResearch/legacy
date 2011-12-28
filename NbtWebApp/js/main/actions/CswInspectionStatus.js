@@ -4,10 +4,9 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../controls/CswGrid.js" />
 
-;  (function ($) { /// <param name="$" type="jQuery" />
-
-    $.fn.CswInspectionStatus = function (options) 
-    {
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
+    $.fn.CswInspectionStatus = function (options) {
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getInspectionStatusGrid',
             onEditNode: function() {},

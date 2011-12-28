@@ -5,8 +5,8 @@
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../controls/CswCheckBoxArray.js" />
 
-; (function ($) {
-        
+(function ($) {
+    "use strict";        
     var pluginName = 'CswFieldTypeLogicalSet';
     var nameCol = 'name';
     var keyCol = 'key';

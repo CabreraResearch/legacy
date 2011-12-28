@@ -5,7 +5,7 @@
 /// <reference path="CswImageButton.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-
+    "use strict";
     var pluginName = 'CswTristateCheckBox';
 
     var methods = {

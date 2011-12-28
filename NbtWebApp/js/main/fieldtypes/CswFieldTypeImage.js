@@ -5,8 +5,8 @@
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../pagecmp/CswDialog.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-        
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";        
     var pluginName = 'CswFieldTypeImage';
 
     var methods = {

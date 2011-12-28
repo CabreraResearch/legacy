@@ -4,7 +4,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-    
+    "use strict";
     $.fn.CswMenuMain = function (options) {
     /// <summary>
     ///   Generates an action menu for the current view

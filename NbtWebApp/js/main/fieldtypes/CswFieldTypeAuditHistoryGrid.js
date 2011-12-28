@@ -4,20 +4,20 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-        
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";        
     var pluginName = 'CswFieldTypeAuditHistoryGrid';
 
     var methods = {
         init: function(o) {
-			
-			var $Div = $(this);
+            
+            var $Div = $(this);
             var ret = '';
             if (false === o.Multi) {
                 ret = $Div.CswAuditHistoryGrid({
                         ID: o.ID,
                         nodeid: o.nodeid,
-						EditMode: o.EditMode,
+                        EditMode: o.EditMode,
                         onEditRow: function(date) {
                             $.CswDialog('EditNodeDialog', {
                                 nodeids: [ o.nodeid ],

@@ -5,8 +5,8 @@
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../controls/CswTristateCheckBox.js" />
 
-; (function ($) {
-        
+(function ($) {
+    "use strict";    
     var pluginName = 'CswFieldTypeLogical';
 
     var methods = {

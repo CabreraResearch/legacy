@@ -3,8 +3,8 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-	
+(function ($) { /// <param name="$" type="jQuery" />
+	"use strict";
 	var pluginName = "CswLink";
 	
 	var methods = {

@@ -3,8 +3,8 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 
-; (function ($)
-{
+(function ($) {
+    "use strict";
     var pluginName = "CswNodeTypeSelect";
 
     var methods = {

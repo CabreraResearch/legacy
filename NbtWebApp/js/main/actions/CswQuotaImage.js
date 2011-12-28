@@ -4,8 +4,8 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../controls/CswGrid.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-        
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";        
     var pluginName = 'CswQuotaImage';
 
     var methods = {

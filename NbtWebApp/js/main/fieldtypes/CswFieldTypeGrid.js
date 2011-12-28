@@ -6,8 +6,8 @@
 /// <reference path="../controls/CswGrid.js" />
 /// <reference path="../node/CswNodeGrid.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-        
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";        
     var pluginName = 'CswFieldTypeGrid';
    
     var methods = {

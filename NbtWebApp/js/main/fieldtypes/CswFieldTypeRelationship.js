@@ -6,7 +6,7 @@
 /// <reference path="../controls/CswSelect.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-
+    "use strict";
     $.fn.CswFieldTypeRelationship = function (method) {
 
         var pluginName = 'CswFieldTypeRelationship';

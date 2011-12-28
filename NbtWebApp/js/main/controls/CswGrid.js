@@ -9,6 +9,7 @@ function CswGrid(options, $parent) {
     ///<param name="options" type="Object">Object defining paramaters for jqGrid construction</param>
     ///<param name="$parent" type="JQuery">Parent element to attach grid to.</param>
     ///<returns type="CswGrid">CswGrid</returns>
+    "use strict";
     var $gridTable, $gridPager, $topPager,
         multiEdit = false,
         gridTableId, gridPagerId;
