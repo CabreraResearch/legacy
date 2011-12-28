@@ -2,11 +2,11 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../controls/CswInput.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-        
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";        
     var pluginName = 'CswFieldTypePassword';
 
     var methods = {
@@ -15,16 +15,16 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-			var isExpired = (false === o.Multi) ? isTrue(propVals.isexpired) : null;
-			var isAdmin = (false === o.Multi) ? isTrue(propVals.isadmin) : null;
+            var isExpired = (false === o.Multi) ? isTrue(propVals.isexpired) : null;
+            var isAdmin = (false === o.Multi) ? isTrue(propVals.isadmin) : null;
 
             if(o.ReadOnly) {
                 // show nothing
             } else {
                 var $table = $Div.CswTable('init', { 
-					ID: o.ID + '_tbl', 
-					'OddCellRightAlign': true 
-				});
+                    ID: o.ID + '_tbl', 
+                    'OddCellRightAlign': true 
+                });
                 var $cell11 = $table.CswTable('cell', 1, 1);
                 var $cell12 = $table.CswTable('cell', 1, 2);
                 var $cell21 = $table.CswTable('cell', 2, 1);
@@ -33,10 +33,10 @@
                 var $cell32 = $table.CswTable('cell', 3, 2);
 
                 $cell11.append('Set New');
-				var $TextBox1 = $cell12.CswInput('init',{ID: o.ID + '_pwd1',
+                var $TextBox1 = $cell12.CswInput('init',{ID: o.ID + '_pwd1',
                                                          type: CswInput_Types.password,
                                                          cssclass: 'textinput',
-				                                         value: (false === o.Multi) ? '' : CswMultiEditDefaultValue,
+                                                         value: (false === o.Multi) ? '' : CswMultiEditDefaultValue,
                                                          onChange: o.onchange
                                                  }); 
                 $cell21.append('Confirm');
@@ -47,16 +47,16 @@
                                                          onChange: o.onchange
                                                  }); 
                 if(isAdmin) {
-					var $IsExpiredCheck = $cell31.CswInput({ 
-							'id': o.ID + '_exp',
-							'name': o.ID + '_exp',
-							'type': CswInput_Types.checkbox
-						});
-					if(isExpired) {
-						$IsExpiredCheck.CswAttrDom('checked', 'true');
-					}
+                    var $IsExpiredCheck = $cell31.CswInput({ 
+                            'id': o.ID + '_exp',
+                            'name': o.ID + '_exp',
+                            'type': CswInput_Types.checkbox
+                        });
+                    if(isExpired) {
+                        $IsExpiredCheck.CswAttrDom('checked', 'true');
+                    }
                     $cell32.append('Expired');
-				}
+                }
                 
                 if (o.Required && isNullOrEmpty(propVals.password)) {
                     $TextBox1.addClass("required");

@@ -1,4 +1,4 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/Global.js" />
@@ -6,8 +6,8 @@
 /// <reference path="../actions/CswAuditHistoryGrid.js" />
 /// <reference path="../node/CswNodeTabs.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-        
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict"; 
     var pluginName = 'CswDialog';
 
     var methods = {
@@ -518,6 +518,7 @@
                                                         if (isFunction(o.onDeleteNode)) {
                                                             o.onDeleteNode(nodeid, nodekey);
                                                         }
+                                                        $.publish('CswTabRefresh');
                                                     },
                                                     onError: function() {
                                                         $deletebtn.CswButton('enable');

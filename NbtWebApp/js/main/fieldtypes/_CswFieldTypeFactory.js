@@ -34,10 +34,10 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 
-$.CswFieldTypeFactory = function (method)
-{
+$.CswFieldTypeFactory = function (method) {
+    "use strict";
     var m = {
         nodeid: '',
         fieldtype: '',

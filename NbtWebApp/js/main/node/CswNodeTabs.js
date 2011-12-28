@@ -1,11 +1,13 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../fieldtypes/_CswFieldTypeFactory.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict"; 
     $.fn.CswNodeTabs = function (options) {
+        "use strict"; 
         var o = {
             ID: '',
             TabsUrl: '/NbtWebApp/wsNBT.asmx/getTabs',
@@ -73,6 +75,11 @@
         {
             var $tabcontentdiv = $('<div id="' + tabid + '"><form onsubmit="return false;" id="' + tabid + '_form" /></div>')
                                     .appendTo($parent);
+            $.subscribe('CswTabRefresh', function() {
+                if(false === isNullOrEmpty($tabcontentdiv)) {
+                    $tabcontentdiv.remove();
+                }
+            });
             $tabcontentdiv.data('canEditLayout', canEditLayout);
             return $tabcontentdiv;
         }

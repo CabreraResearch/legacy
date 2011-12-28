@@ -1,13 +1,12 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../controls/CswGrid.js" />
 
-;  (function ($) { /// <param name="$" type="jQuery" />
-
-    $.fn.CswInspectionStatus = function (options) 
-    {
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
+    $.fn.CswInspectionStatus = function (options) {
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getInspectionStatusGrid',
             onEditNode: function() {},

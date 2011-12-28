@@ -1,10 +1,11 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../tools/CswClientDb.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     $.fn.CswCheckBoxArray = function (method) {
     
         var pluginName = 'CswCheckBoxArray',

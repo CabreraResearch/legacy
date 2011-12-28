@@ -9,7 +9,7 @@
 /// <reference path="../main/tools/CswProfileMethod.js" />
 /// <reference path="../main/tools/CswQueryString.js" />
 /// <reference path="../main/tools/CswString.js" />
-/// <reference path="../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../Scripts/jquery.cookie.js" />
 
 //#region Globals (yuck)
@@ -21,24 +21,27 @@ var expiretime = '';
 var expiretime_interval;
 var expired_interval;
 
-function getExpireTime()
-{
+function getExpireTime() {
+    "use strict"; 
     return expiretime;
 }
-function setExpireTime(value)
-{
+
+function setExpireTime(value) {
+    "use strict"; 
     expiretime = value;
     setExpireTimeInterval();
 }
-function setExpireTimeInterval()
-{
+
+function setExpireTimeInterval() {
+    "use strict"; 
     clearInterval(expiretime_interval);
     clearInterval(expired_interval);
     expiretime_interval = setInterval(function () { checkExpireTime(); }, 60000);
     expired_interval = setInterval(function () { checkExpired(); }, 60000);
 }
-function checkExpired()
-{
+
+function checkExpired() {
+    "use strict"; 
     var now = new Date();
     if (Date.parse(expiretime) - Date.parse(now) < 0)
     {
@@ -46,8 +49,9 @@ function checkExpired()
         Logout();
     }
 }
-function checkExpireTime()
-{
+
+function checkExpireTime() {
+    "use strict"; 
     var now = new Date();
     if (Date.parse(expiretime) - Date.parse(now) < 180000)     	// 3 minutes until timeout
     {
@@ -66,8 +70,8 @@ function checkExpireTime()
 //#endregion Session Expiration
 
 //#region Current State
-function setCurrentView(viewid, viewmode)
-{
+function setCurrentView(viewid, viewmode) {
+    "use strict"; 
     clearCurrent();
     if (false === isNullOrEmpty(viewid) && false === isNullOrEmpty(viewmode)) {
         $.CswCookie('set', CswCookieName.CurrentViewId, viewid);
@@ -75,21 +79,21 @@ function setCurrentView(viewid, viewmode)
     }
 }
 
-function setCurrentAction(actionname, actionurl)
-{
+function setCurrentAction(actionname, actionurl) {
+    "use strict"; 
     clearCurrent();
     $.CswCookie('set', CswCookieName.CurrentActionName, actionname);
     $.CswCookie('set', CswCookieName.CurrentActionUrl, actionurl);
 }
 
-function setCurrentReport(reportid)
-{
+function setCurrentReport(reportid) {
+    "use strict"; 
     clearCurrent();
     $.CswCookie('set', CswCookieName.CurrentReportId, reportid);
 }
 
-function clearCurrent()
-{
+function clearCurrent() {
+    "use strict"; 
     $.CswCookie('set', CswCookieName.LastViewId, $.CswCookie('get', CswCookieName.CurrentViewId));
     $.CswCookie('set', CswCookieName.LastViewMode, $.CswCookie('get', CswCookieName.CurrentViewMode));
     $.CswCookie('set', CswCookieName.LastActionName, $.CswCookie('get', CswCookieName.CurrentActionName));
@@ -104,24 +108,27 @@ function clearCurrent()
 }
 
 function getCurrent() {
+    "use strict"; 
     return {
-        'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
-        'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode),
-        'actionname': $.CswCookie('get', CswCookieName.CurrentActionName),
-        'actionurl': $.CswCookie('get', CswCookieName.CurrentActionUrl),
-        'reportid': $.CswCookie('get', CswCookieName.CurrentReportId)
+        viewid: $.CswCookie('get', CswCookieName.CurrentViewId),
+        viewmode: $.CswCookie('get', CswCookieName.CurrentViewMode),
+        actionname: $.CswCookie('get', CswCookieName.CurrentActionName),
+        actionurl: $.CswCookie('get', CswCookieName.CurrentActionUrl),
+        reportid: $.CswCookie('get', CswCookieName.CurrentReportId)
     };
 }
 function getLast() {
+    "use strict"; 
     return {
-        'viewid': $.CswCookie('get', CswCookieName.LastViewId),
-        'viewmode': $.CswCookie('get', CswCookieName.LastViewMode),
-        'actionname': $.CswCookie('get', CswCookieName.LastActionName),
-        'actionurl': $.CswCookie('get', CswCookieName.LastActionUrl),
-        'reportid': $.CswCookie('get', CswCookieName.LastReportId)
+        viewid: $.CswCookie('get', CswCookieName.LastViewId),
+        viewmode: $.CswCookie('get', CswCookieName.LastViewMode),
+        actionname: $.CswCookie('get', CswCookieName.LastActionName),
+        actionurl: $.CswCookie('get', CswCookieName.LastActionUrl),
+        reportid: $.CswCookie('get', CswCookieName.LastReportId)
     };
 }
 function setCurrent(json) {
+    "use strict"; 
     clearCurrent();
     $.CswCookie('set', CswCookieName.CurrentViewId, json.viewid);
     $.CswCookie('set', CswCookieName.CurrentViewMode, json.viewmode);
@@ -135,6 +142,7 @@ function setCurrent(json) {
 //#region Ajax
 var _ajaxCount = 0;
 function ajaxInProgress() {
+    "use strict"; 
     return (_ajaxCount > 0);
 }
 
@@ -143,6 +151,7 @@ var onBeforeAjax = null;  // function () {}
 var onAfterAjax = null;   // function (succeeded) {}
 
 function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
+    "use strict"; 
     /// <summary>
     ///   Executes Async webservice request for JSON
     /// </summary>
@@ -229,19 +238,19 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
     });                  // $.ajax({
 } // CswAjaxJson()
 
-function CswAjaxXml(options)
-{
+function CswAjaxXml(options) {
+    "use strict"; 
     /// <summary>
     ///   Executes Async webservice request for XML
     /// </summary>
-//	/// <param name="options" type="Object">
-//	///     A JSON Object
-//	///     &#10;1 - options.url: WebService URL
-//	///     &#10;2 - options.data: {field1: value, field2: value}
-//	///     &#10;3 - options.success: function() {}
-//	///     &#10;4 - options.error: function() {}
-//	///     &#10;5 - options.formobile: false
-//	/// </param>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.url: WebService URL
+    ///     &#10;2 - options.data: {field1: value, field2: value}
+    ///     &#10;3 - options.success: function() {}
+    ///     &#10;4 - options.error: function() {}
+    ///     &#10;5 - options.formobile: false
+    /// </param>
 
     var o = {
         url: '',
@@ -312,7 +321,7 @@ function CswAjaxXml(options)
                 }
 
             }, // success{}
-            error: function (XMLHttpRequest, textStatus, errorThrown)
+            error: function (xmlHttpRequest, textStatus, errorThrown)
             {
                 _ajaxCount--;
                 //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
@@ -323,13 +332,13 @@ function CswAjaxXml(options)
     } // if(o.url != '')
 } // CswAjaxXml()
 
-function _handleAjaxError(XMLHttpRequest, errorJson, errorThrown)
-{
+function _handleAjaxError(xmlHttpRequest, errorJson, errorThrown) {
+    "use strict"; 
     CswError(errorJson);
 } // _handleAjaxError()
 
-function CswError(errorJson)
-{
+function CswError(errorJson) {
+    "use strict"; 
     var e = {
         'type': '',
         'message': '',
@@ -352,8 +361,8 @@ function CswError(errorJson)
     }
 } // CswError()
 
-function _handleAuthenticationStatus(options)
-{
+function _handleAuthenticationStatus(options) {
+    "use strict"; 
     var o = {
         status: '',
         success: function () { },
@@ -418,8 +427,8 @@ function _handleAuthenticationStatus(options)
 
 //#endregion Ajax
 
-function Logout(options)
-{
+function Logout(options) {
+    "use strict"; 
     var o = {
         DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
         onDeauthenticate: function () { }
@@ -442,6 +451,7 @@ function Logout(options)
 } // logout
 
 function _finishLogout() {
+    "use strict"; 
     var logoutpath = $.CswCookie('get', CswCookieName.LogoutPath);
     $.CswCookie('clearAll');
     if (false === isNullOrEmpty(logoutpath)) {
@@ -451,88 +461,51 @@ function _finishLogout() {
     }
 }
 
-
-function jsonToString(j)
-{
-    return JSON.stringify(j);
-} // jsonToString
-
 //#endregion Ajax
 
 //#region Check Changes
 var changed = new Number(0);
 var checkChangesEnabled = true;
 
-function setChanged()
-{
-    if (checkChangesEnabled)
-    {
+function setChanged() {
+    "use strict"; 
+    if (checkChangesEnabled) {
         changed = 1;
-        //        var statusimage = getMainStatusImage();
-        //var savebutton = $('#SaveTab');
-        //        if (statusimage != null) {
-        //            statusimage.style.backgroundPosition = "0px -210px";
-        //            statusimage.onmouseover = function() { this.style.backgroundPosition = "-15px -210px"; }
-        //            statusimage.onmouseout = function() { this.style.backgroundPosition = "0px -210px"; }
-        //            statusimage.title = "There are unsaved changes";
-        //        } 
-        //		if (savebutton != null)
-        //		{
-        //			savebutton.value = "Save Changes";
-        //			savebutton.disabled = false;
-        //		}
     }
 }
 
-function unsetChanged()
-{
-    if (checkChangesEnabled)
-    {
-        //        var statusimage = getMainStatusImage();
-        //        if(statusimage != null)
-        //            statusimage.style.backgroundPosition = "0px -195px";
-        //        statusimage.onmouseover = function() { this.style.backgroundPosition = "-15px -195px"; }
-        //        statusimage.onmouseout = function() { this.style.backgroundPosition = "0px -195px"; }
-        //        statusimage.title = "There are no changes";
-        //		var savebutton = $('#SaveTab');
-        //		if (savebutton != null)
-        //		{
-        //			if (changed != 0)
-        //				savebutton.value = "Changes Saved";
-        //			savebutton.disabled = true;
-        //		}
+function unsetChanged() {
+    "use strict"; 
+    if (checkChangesEnabled) {
         changed = 0;
     }
 }
 
-function checkChanges()
-{
-    if (checkChangesEnabled && changed === 1)
-    {
+function checkChanges() {
+    "use strict"; 
+    if (checkChangesEnabled && changed === 1) {
         return 'If you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.';
     }
 }
 
-function manuallyCheckChanges()
-{
+function manuallyCheckChanges() {
+    "use strict"; 
     var ret = true;
-    if (checkChangesEnabled && changed === 1)
-    {
+    if (checkChangesEnabled && changed === 1) {
         ret = confirm('Are you sure you want to navigate away from this page?\n\nIf you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.\n\nPress OK to continue, or Cancel to stay on the current page.');
 
         // this serves several purposes:
         // 1. after you've been prompted to lose this change, you won't be prompted again for the same change later
         // 2. multiple calls to manuallyCheckChanges() in the same event won't prompt more than once
-        if (ret)
-        {
+        if (ret) {
             changed = 0;
         }
     }
     return ret;
 }
 
-function initCheckChanges()
-{
+function initCheckChanges() {
+    "use strict"; 
     // Assign the checkchanges event to happen onbeforeunload
     if (!isNullOrEmpty(window.onbeforeunload))
     {
@@ -555,37 +528,27 @@ function initCheckChanges()
             return checkChanges();
         };
     }
-
-    //	// IE6 has this annoying habit of throwing unspecified errors if we prevent
-    //	// the navigation with onbeforeunload after clicking a button.
-    //	// So we're going to trap this error and prevent it from being shown.
-    //	window.onerror = function (strError, uri, line)
-    //	{
-    //		if (strError.toLowerCase().indexOf('unspecified error') >= 0)
-    //		{
-    //			window.event.returnValue = true;
-    //		} else
-    //		{
-    //			window.event.returnValue = false;
-    //		}
-    //	}
 }
 
-if (CswAppMode.mode === 'full')
-{
-    if (!isNullOrEmpty(window.onload))
+var checkAppMode = checkAppMode || (function() {
+    "use strict";     
+    if (CswAppMode.mode === 'full')
     {
-        window.onload = new Function('initCheckChanges(); var f=' + window.onload + '; return f();');
-    } else
-    {
-        window.onload = function() { initCheckChanges(); };
-    }
-}
+        if (!isNullOrEmpty(window.onload))
+        {
+            window.onload = new Function('initCheckChanges(); var f=' + window.onload + '; return f();');
+        } else
+        {
+            window.onload = function() { initCheckChanges(); };
+        }
+    }    
+}());
+
 //#endregion Check Changes
 
 //#region User permissions
-function IsAdministrator(options)
-{
+function IsAdministrator(options) {
+    "use strict"; 
     var o = {
         'Yes': function () { },
         'No': function () { }
@@ -609,8 +572,8 @@ function IsAdministrator(options)
 //#endregion User permissions
 
 //#region Node interactions
-function copyNode(options)
-{
+function copyNode(options) {
+    "use strict"; 
     var o = {
         'nodeid': '',
         'nodekey': '',
@@ -637,8 +600,8 @@ function copyNode(options)
     });
 }
 
-function deleteNodes(options)
-{ /// <param name="$" type="jQuery" />
+function deleteNodes(options) { /// <param name="$" type="jQuery" />
+    "use strict"; 
     var o = {
         'nodeids': [],
         'nodekeys': [],
@@ -679,6 +642,7 @@ function deleteNodes(options)
 
 var $nodepreview = undefined;
 function nodeHoverIn(event, nodeid, cswnbtnodekey) {
+    "use strict"; 
     $nodepreview = $.CswNodePreview('open', {
         ID: nodeid + "_preview",
         nodeid: nodeid,
@@ -688,6 +652,7 @@ function nodeHoverIn(event, nodeid, cswnbtnodekey) {
 }
 
 function nodeHoverOut() {
+    "use strict"; 
     if ($nodepreview !== undefined)
     {
         $nodepreview.CswNodePreview('close');
@@ -700,6 +665,7 @@ function nodeHoverOut() {
 //#region Node Props
 
 function preparePropJsonForSave(isMulti, propData, attributes) {
+    "use strict"; 
     ///<summary>Takes property JSON from the form and modifies it in order to send back to the server.</summary>
     ///<param name="isMulti" type="Boolean">True if this is Multi-Edit</param>
     ///<param name="propVals" type="Object">Likely an o.propData.values object. This contains the cached prop JSON.</param>
@@ -716,6 +682,7 @@ function preparePropJsonForSave(isMulti, propData, attributes) {
 }
 
 function preparePropJsonForSaveRecursive(isMulti, propVals, attributes) {
+    "use strict"; 
     ///<summary>Recurses over the subfields and sub-subfields of a property to update its JSON.</summary>
     ///<param name="isMulti" type="Boolean">True if this is Multi-Edit</param>
     ///<param name="propVals" type="Object">Likely an o.propData.values object. This contains the cached prop JSON.</param>
@@ -746,8 +713,8 @@ function preparePropJsonForSaveRecursive(isMulti, propVals, attributes) {
 //#endregion Node Props
 
 //#region jsTree
-function jsTreeGetSelected($treediv)
-{ /// <param name="$" type="jQuery" />
+function jsTreeGetSelected($treediv) { /// <param name="$" type="jQuery" />
+    "use strict"; 
     var IdPrefix = $treediv.CswAttrDom('id');
     var $SelectedItem = $treediv.jstree('get_selected');
     var ret = {
@@ -761,14 +728,14 @@ function jsTreeGetSelected($treediv)
 //#endregion jsTree
 
 //#region Menu
-function GoHome()
-{ /// <param name="$" type="jQuery" />
+function GoHome() { /// <param name="$" type="jQuery" />
+    "use strict"; 
     clearCurrent();
     window.location = homeUrl;
 }
 
-function HandleMenuItem(options)
-{ /// <param name="$" type="jQuery" />
+function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
+    "use strict"; 
     var o = {
         $ul: '',
         itemKey: '',
@@ -798,18 +765,15 @@ function HandleMenuItem(options)
     var popup = tryParseString(json.popup);
     var action = tryParseString(json.action);
     
-    if (!isNullOrEmpty(href))
-    {
+    if (!isNullOrEmpty(href)) {
         $li = $('<li><a href="' + href + '">' + text + '</a></li>')
             .appendTo(o.$ul);
     }
-    else if (!isNullOrEmpty(popup))
-    {
+    else if (!isNullOrEmpty(popup)) {
         $li = $('<li class="headermenu_dialog"><a href="' + popup + '" target="_blank">' + text + '</a></li>')
                         .appendTo(o.$ul);
     }
-    else if (!isNullOrEmpty(action))
-    {
+    else if (!isNullOrEmpty(action)) {
         $li = $('<li><a href="#">' + text + '</a></li>')
                         .appendTo(o.$ul);
         var $a = $li.children('a');
@@ -845,6 +809,7 @@ function HandleMenuItem(options)
                         NodeCheckTreeId: o.NodeCheckTreeId,
                         Multi: o.Multi
                     });
+                    
                     return false;
                 });
                 break;
@@ -950,8 +915,8 @@ function HandleMenuItem(options)
 }
 
 // Used by CswDialog and CswViewEditor
-function makeViewVisibilitySelect($table, rownum, label)
-{
+function makeViewVisibilitySelect($table, rownum, label) {
+    "use strict"; 
     var $visibilityselect;
     var $visroleselect;
     var $visuserselect;
@@ -1012,8 +977,8 @@ function makeViewVisibilitySelect($table, rownum, label)
 
 
 //#region Popups
-function openPopup(url, height, width)
-{
+function openPopup(url, height, width) {
+    "use strict"; 
     var popup = window.open(url, null, 'height=' + height + ', width=' + width + ', status=no, resizable=yes, scrollbars=yes, toolbar=yes, location=no, menubar=yes');
     popup.focus();
     return popup;
@@ -1021,17 +986,14 @@ function openPopup(url, height, width)
 //#endregion Popups
 
 //#region Validation
-function validateTime(value)
-{
+function validateTime(value) {
+    "use strict"; 
     var isValid = true;
     var regex = /^(\d?\d):(\d\d)\s?([APap][Mm])?$/g;
     var match = regex.exec(value);
-    if (match === null)
-    {
+    if (match === null) {
         isValid = false;
-    }
-    else
-    {
+    } else {
         var hour = parseInt(match[1]);
         var minute = parseInt(match[2]);
         if (hour < 0 || hour >= 24 || minute < 0 || minute >= 60)
@@ -1042,63 +1004,55 @@ function validateTime(value)
     return isValid;
 } // validateTime()
 
-function validateFloatMinValue(value, minvalue)
-{
+function validateFloatMinValue(value, minvalue) {
+    "use strict"; 
     var nValue = parseFloat(value);
     var nMinValue = parseFloat(minvalue);
     var isValid = true;
 
-    if (nMinValue !== undefined)
-    {
-        if (nValue === undefined || nValue < nMinValue)
-        {
+    if (nMinValue !== undefined) {
+        if (nValue === undefined || nValue < nMinValue) {
             isValid = false;
         }
     }
     return isValid;
 } // validateFloatMinValue()
 
-function validateFloatMaxValue(value, maxvalue)
-{
+function validateFloatMaxValue(value, maxvalue) {
+    "use strict"; 
     var nValue = parseFloat(value);
     var nMaxValue = parseFloat(maxvalue);
     var isValid = true;
 
-    if (nMaxValue !== undefined)
-    {
-        if (nValue === undefined || nValue > nMaxValue)
-        {
+    if (nMaxValue !== undefined) {
+        if (nValue === undefined || nValue > nMaxValue) {
             isValid = false;
         }
     }
     return isValid;
 } // validateFloatMaxValue()
 
-function validateFloatPrecision(value, precision)
-{
+function validateFloatPrecision(value, precision) {
+    "use strict"; 
     var isValid = true;
 
     var regex;
-    if (precision > 0)
-    {
+    if (precision > 0) {
         // Allow any valid number -- we'll round later
         regex = /^\-?\d*\.?\d*$/g;
-    }
-    else
-    {
+    } else {
         // Integers Only
         regex = /^\-?\d*$/g;
     }
-    if (isValid && !regex.test(value))
-    {
+    if (isValid && !regex.test(value)) {
         isValid = false;
     }
 
     return isValid;
 } // validateFloatPrecision()
 
-function validateInteger(value)
-{
+function validateInteger(value) {
+    "use strict"; 
     // Integers Only
     var regex = /^\-?\d*$/g;
     return (regex.test(value));
@@ -1107,32 +1061,33 @@ function validateInteger(value)
 
 //#region Dates
 
-function ServerDateFormatToJQuery(ServerDateFormat) {
-    var ret = ServerDateFormat;
+function ServerDateFormatToJQuery(serverDateFormat) {
+    "use strict"; 
+    var ret = serverDateFormat;
     ret = ret.replace(/M/g, 'm');
     ret = ret.replace(/mmm/g, 'M');
     ret = ret.replace(/yyyy/g, 'yy');
     return ret;
 }
-function ServerTimeFormatToJQuery(ServerTimeFormat) {
-    var ret = ServerTimeFormat;
+function ServerTimeFormatToJQuery(serverTimeFormat) {
+    "use strict"; 
+    var ret = serverTimeFormat;
     return ret;
 }
 
 //#endregion Dates
 
 //#region Strings
-function startsWith(source, search)
-{
+function startsWith(source, search) {
+    "use strict"; 
     return (source.substr(0, search.length) === search);
 }
 
-function getTimeString(date, timeformat)
-{
-    var MilitaryTime = false;
-    if (!isNullOrEmpty(timeformat) && timeformat === "H:mm:ss")
-    {
-        MilitaryTime = true;
+function getTimeString(date, timeformat) {
+    "use strict"; 
+    var militaryTime = false;
+    if (!isNullOrEmpty(timeformat) && timeformat === "H:mm:ss") {
+        militaryTime = true;
     }
 
     var ret = '';
@@ -1143,18 +1098,13 @@ function getTimeString(date, timeformat)
     if (minutes < 10) minutes = "0" + minutes;
     if (seconds < 10) seconds = "0" + seconds;
 
-    if (MilitaryTime)
-    {
+    if (militaryTime) {
         ret = hours + ":" + minutes + ":" + seconds;
-    } 
-    else
-    {
+    } else {
         ret = (hours % 12) + ":" + minutes + ":" + seconds + " ";
-        if (hours > 11)
-        {
+        if (hours > 11) {
             ret += "PM";
-        } else
-        {
+        } else {
             ret += "AM";
         }
     }
@@ -1163,9 +1113,9 @@ function getTimeString(date, timeformat)
 //#endregion Strings
 
 //#region Debug
-function iterate(obj)
-{
-    var str;
+function iterate(obj) {
+    "use strict"; 
+    var str = '';
     for (var x in obj)
     {
         str = str + x + "=" + obj[x] + "<br><br>";
@@ -1177,8 +1127,8 @@ function iterate(obj)
         console.log("iterate() error: No popup!");
 }
 
-function errorHandler(error, includeCallStack, includeLocalStorage, doAlert)
-{
+function errorHandler(error, includeCallStack, includeLocalStorage, doAlert) {
+    "use strict"; 
     if (hasWebStorage() && includeLocalStorage) log(localStorage);
     if( doAlert ) {
         $.CswDialog('ErrorDialog', error);
@@ -1192,13 +1142,11 @@ function errorHandler(error, includeCallStack, includeLocalStorage, doAlert)
 
 //#region Persistent Logging
 
-function doLogging(value)
-{
+function doLogging(value) {
+    "use strict"; 
     var ret = undefined;
-    if (hasWebStorage())
-    {
-        if (arguments.length === 1)
-        {
+    if (hasWebStorage()) {
+        if (arguments.length === 1) {
             localStorage['doLogging'] = isTrue(value);
         }
         ret = isTrue(localStorage['doLogging']);
@@ -1206,13 +1154,11 @@ function doLogging(value)
     return ret;
 }
 
-function debugOn(value)
-{
+function debugOn(value) { 
+    "use strict"; 
     var ret = undefined;
-    if (hasWebStorage())
-    {
-        if (arguments.length === 1)
-        {
+    if (hasWebStorage()) {
+        if (arguments.length === 1) {
             localStorage['debugOn'] = isTrue(value);
         }
         ret = isTrue(localStorage['debugOn']);
@@ -1220,12 +1166,10 @@ function debugOn(value)
     return ret;
 }
 
-function cacheLogInfo(logger, includeCallStack)
-{
-    if ( doLogging() )
-    {
-        if (hasWebStorage())
-        {
+function cacheLogInfo(logger, includeCallStack) {
+    "use strict"; 
+    if (doLogging()) {
+        if (hasWebStorage()) {
             if (undefined !== logger.setEnded) logger.setEnded();
             var logStorage = new CswClientDb();
             var log = logStorage.getItem('debuglog');
@@ -1243,10 +1187,9 @@ function cacheLogInfo(logger, includeCallStack)
     }
 }
 
-function purgeLogInfo()
-{
-    if (hasWebStorage())
-    {
+function purgeLogInfo() {
+    "use strict"; 
+    if (hasWebStorage()) {
         window.sessionStorage.clear();
     }
 }
@@ -1255,34 +1198,10 @@ function purgeLogInfo()
 
 //#region Browser Compatibility
 
-function hasWebStorage()
-{
+function hasWebStorage() {
+    "use strict"; 
     var ret = (Modernizr.localstorage || Modernizr.sessionstorage); 
     return ret;
 }
-
-// This caused case 22968!
-// for Mobile Safari
-//function fixGeometry()
-//{
-//    //thanks to: http://www.semicomplete.com/blog/geekery/jquery-mobile-full-height-content.html
-//    /* Some orientation changes leave the scroll position at something
-//    * that isn't 0,0. This is annoying for user experience. */
-//    scroll(0, 0);
-
-//    /* Calculate the geometry that our content area should take */
-//    var $header = $('div:jqmData(role="header"):visible');
-//    var $footer = $('div:jqmData(role="footer"):visible');
-//    var $content = $('div:jqmData(role="content"):visible');
-
-//    var viewport_height = $(window).height();
-//    var content_height = viewport_height - $header.outerHeight() - $footer.outerHeight();
-
-//    //if ((content.outerHeight() - header.outerHeight() - footer.outerHeight()) <= viewport_height)
-//    //{
-//    content_height -= ($content.outerHeight() - $content.height());
-//    $content.height(content_height);
-//    //} /* Trim margin/border/padding height */
-//};
 
 //#endregion Browser Compatibility

@@ -749,6 +749,7 @@
     <Content Include="js\main\controls\CswMultiSelect.js" />
     <Content Include="js\main\controls\CswTimeInterval.js" />
     <Content Include="js\main\controls\CswList.js" />
+    <Content Include="js\main\tools\CswPubSub.js" />
     <Content Include="js\main\tools\CswPrint.js" />
     <Content Include="js\main\view\CswViewContentTree.js" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.css" />
@@ -778,6 +779,12 @@
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\vendor\jquery.ui.widget.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
     <Content Include="NodeTypeTreeService.asmx" />
+    <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.6.4.js" />
+    <Content Include="Scripts\jquery-1.6.4.min.js" />
+    <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.7.1.js" />
+    <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery.jqGrid.src.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -820,9 +827,6 @@
     <Content Include="Scripts\i18n\grid.locale-th.js" />
     <Content Include="Scripts\i18n\grid.locale-tr.js" />
     <Content Include="Scripts\i18n\grid.locale-ua.js" />
-    <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
-    <Content Include="Scripts\jquery-1.6.4.js" />
-    <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jquery-ui-1.8.16.js" />
     <Content Include="Scripts\jquery-ui-1.8.16.min.js" />
     <Content Include="Scripts\jquery.cookie.js" />
