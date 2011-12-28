@@ -65,27 +65,28 @@ namespace ChemSW.Nbt.WebServices
 
 				if( ( Tree.getChildNodeCount() > 0 ) )
 				{
-					if( View.ViewMode == NbtViewRenderingMode.Tree || ForSearch )
-					{
-						JArray ChildArray = new JArray();
-						JObject FirstObj = new JObject();
-						RootArray.Add( FirstObj );
-						FirstObj["data"] = View.ViewName;
-						FirstObj["attr"] = new JObject();
-						FirstObj["attr"]["id"] = IdPrefix + "root";
-						FirstObj["attr"]["rel"] = "root";
-						FirstObj["state"] = "open";
-						FirstObj["children"] = ChildArray;
+                    //if( View.ViewMode == NbtViewRenderingMode.Tree || ForSearch )
+                    //{
+                        //JArray ChildArray = new JArray();
+                        //JObject FirstObj = new JObject();
+                        //RootArray.Add( FirstObj );
+                        //FirstObj["data"] = View.ViewName;
+                        //FirstObj["attr"] = new JObject();
+                        //FirstObj["attr"]["id"] = IdPrefix + "root";
+                        //FirstObj["attr"]["rel"] = "root";
+                        //FirstObj["state"] = "open";
+                        //FirstObj["children"] = ChildArray;
 
-						_runTreeNodesRecursive( View, Tree, IdPrefix, ChildArray );
-					}
-					else // List, or non-top level of Tree
-					{
-						_runTreeNodesRecursive( View, Tree, IdPrefix, RootArray );
-					}
+                    //    _runTreeNodesRecursive( View, Tree, IdPrefix, ChildArray );
+                    //}
+                    //else // List, or non-top level of Tree
+                    //{
+                        _runTreeNodesRecursive( View, Tree, IdPrefix, RootArray );
+                    //}
 				} // if( Tree.getChildNodeCount() > 0 )
 
-				ReturnObj["viewid"] = View.SessionViewId.ToString();
+                View.SaveToCache( true );
+                ReturnObj["viewid"] = View.SessionViewId.ToString();
 
 				string ViewName = string.Empty;
 				string ViewId = string.Empty;
