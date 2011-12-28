@@ -325,17 +325,29 @@ namespace ChemSW.Nbt
         public CswNbtNodeKey getNodeKeyByNodeId( CswPrimaryKey NodeId )
         {
             CswNbtNodeKey ReturnVal = null;
-
-            ArrayList KeyList = (ArrayList) _CswNbtTreeNodes.getKeysForNodeId( NodeId );
+			Collection<CswNbtNodeKey> KeyList = _CswNbtTreeNodes.getKeysForNodeId( NodeId );
             if( KeyList.Count > 0 )
             {
                 ReturnVal = (CswNbtNodeKey) KeyList[0];
                 //ReturnVal.TreeKey = Key;
             }
-
             return ( ReturnVal );
-
         }//getNodeKeyByNodeId()
+
+		public CswNbtNodeKey getNodeKeyByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode )
+		{
+			CswNbtNodeKey ReturnVal = null;
+			Collection<CswNbtNodeKey> KeyList = _CswNbtTreeNodes.getKeysForNodeId( NodeId );
+			foreach( CswNbtNodeKey Key in KeyList )
+			{
+				if( Key.ViewNodeUniqueId == ViewNode.UniqueId )
+				{
+					ReturnVal = Key;
+					break;
+				}
+			}
+			return ReturnVal;
+		} // getNodeKeyByNodeIdAndViewNode()
 
 
         //public CswNbtNodeContext getNodeContextForNodeKey(CswNbtNodeKey NodeKey)
@@ -762,6 +774,16 @@ namespace ChemSW.Nbt
         }//addProperty
 
 
+        public Collection<CswNbtNodeKey> _loadNodeAsChild( CswNbtNodeKey ParentNodeKey, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship,
+                                               bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
+                                               string IconFileName, string NameTemplate, CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
+                                               string NodeTypeName, Int32 ObjectClassId, string ObjectClassName, bool Locked )
+		{
+			return _CswNbtTreeNodes._loadNodeAsChild(ParentNodeKey, UseGrouping, GroupName, Relationship,
+													   Selectable, ShowInTree, AddChildren, RowCount,
+													   IconFileName, NameTemplate, NodeId, NodeName, NodeTypeId,
+													   NodeTypeName, ObjectClassId, ObjectClassName, Locked);
+		}
 
         #endregion //Modification******************************
 
