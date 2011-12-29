@@ -28,6 +28,7 @@ namespace ChemSW.Nbt
 
         //        private Hashtable NodeEntries = null;
         private Hashtable NodesAndParents = null;
+        private Dictionary<CswNbtNodeKey, Int32> NodesAndLevels = null;
 
         /*
          * The tree is structured in such a way that the elements
@@ -101,6 +102,7 @@ namespace ChemSW.Nbt
         {
             //            NodeEntries = new Hashtable();
             NodesAndParents = new Hashtable();
+            NodesAndLevels = new Dictionary<CswNbtNodeKey, Int32>();
 
             _CswNbtTreeKey = CswNbtTreeKey;
 
@@ -566,6 +568,8 @@ namespace ChemSW.Nbt
             //            NodeEntries.Add(NewNodeKey, NewNodeContext);
             if( !NodesAndParents.ContainsKey( NewNodeKey ) )
                 NodesAndParents.Add( NewNodeKey, ParentNodeKey );
+            if( !NodesAndLevels.ContainsKey( NewNodeKey ) )
+                NodesAndLevels.Add( NewNodeKey, NodeCountPath.Count );
 
             return ( NewNodeKey );
         }
@@ -975,6 +979,18 @@ namespace ChemSW.Nbt
             return ( NodeInstances );
 
         }//getKeysForNode()
+
+        public Collection<CswNbtNodeKey> getKeysForLevel( Int32 Level )
+        {
+            Collection<CswNbtNodeKey> NodeKeys = new Collection<CswNbtNodeKey>();
+            foreach( CswNbtNodeKey NodeKey in NodesAndLevels.Keys )
+            {
+                if( NodesAndLevels[NodeKey] == Level )
+                    NodeKeys.Add( NodeKey );
+            }
+            return NodeKeys;
+        }
+
 
         public CswNbtNodeKey getParentKey( CswNbtNodeKey ChildKey )
         {

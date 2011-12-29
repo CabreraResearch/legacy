@@ -319,10 +319,17 @@ namespace ChemSW.Nbt
         /// Returns true if there is a currently indexed node 
         /// </summary>
         bool isCurrentNodeDefined();
+
         /// <summary>
         /// Returns the total number of siblings of the currently indexed node
         /// </summary>
         int getNodeCountForCurrentLevel();
+        
+        /// <summary>
+        /// Returns all siblings and cousins on a tree level
+        /// </summary>
+        Collection<CswNbtNodeKey> getKeysForLevel( Int32 Level );
+
         /// <summary>
         /// Returns the total number of children of the currently indexed node
         /// </summary>

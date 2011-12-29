@@ -561,6 +561,14 @@ namespace ChemSW.Nbt
         }//getNodeCountForCurrentLevel()
 
         /// <summary>
+        /// Returns all siblings and cousins on a tree level
+        /// </summary>
+        public Collection<CswNbtNodeKey> getKeysForLevel( Int32 Level )
+        {
+            return _CswNbtTreeNodes.getKeysForLevel( Level );
+        }
+
+        /// <summary>
         /// Returns the total number of children of the currently indexed node
         /// </summary>
         public int getChildNodeCount()

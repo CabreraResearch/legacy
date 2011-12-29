@@ -13,7 +13,8 @@
             var o = {
                 ID: '',
                 RunTreeUrl: '/NbtWebApp/wsNBT.asmx/runTree',
-                FetchTreeUrl: '/NbtWebApp/wsNBT.asmx/fetchTree',
+                fetchTreeFirstLevelUrl: '/NbtWebApp/wsNBT.asmx/fetchTreeFirstLevel',
+                fetchTreeLevelUrl: '/NbtWebApp/wsNBT.asmx/fetchTreeLevel',
                 NodeTreeUrl: '/NbtWebApp/wsNBT.asmx/getTreeOfNode',
                 viewid: '',       // loads an arbitrary view
                 viewmode: '',
@@ -66,37 +67,88 @@
             }
 
 
-            function getNextPage($treediv) {
+            function getFirstLevel($treediv, pagesize, pageno) {
+                var realpagesize = tryParseNumber(pagesize, 0);
+                var realpageno = tryParseNumber(pageno, 0);
+
                 CswAjaxJson({
-                    url: o.FetchTreeUrl,
+                    url: o.fetchTreeFirstLevelUrl,
                     data: {
                         ViewId: o.viewid,
                         IdPrefix: tryParseString(idPrefix),
-                        PageSize: 1,
+                        PageSize: realpagesize,
+                        PageNo: realpageno,
                         ForSearch: o.forsearch
                     },
                     stringify: false,
                     success: function (data) {
-                        recurseNodes($treediv, false, data.tree);
+
+                        recurseNodes($treediv, data.tree);
+
+                        if (isTrue(data.more)) {
+                            getFirstLevel($treediv, realpagesize, realpageno + 1);
+                            getLevel($treediv, 2, data.nodecountstart, data.nodecountend);
+                        }
                     } // success
                 }); // ajax
             } // getNextPage()
 
-            function recurseNodes($treediv, parentid, nodescoll) {
+            function getLevel($treediv, level, parentstart, parentend) {
+                var reallevel = tryParseNumber(level, 0);
+                var realparentstart = tryParseNumber(parentstart, 0);
+                var realparentend = tryParseNumber(parentend, 0);
+
+                CswAjaxJson({
+                    url: o.fetchTreeLevelUrl,
+                    data: {
+                        ViewId: o.viewid,
+                        IdPrefix: tryParseString(idPrefix),
+                        Level: reallevel,
+                        ParentRangeStart: realparentstart,
+                        ParentRangeEnd: realparentend,
+                        ForSearch: o.forsearch
+                    },
+                    stringify: false,
+                    success: function (data) {
+
+                        recurseNodes($treediv, data.tree);
+                        if (tryParseNumber(data.nodecountend, -1) > 0) {
+                            getLevel($treediv, reallevel + 1, data.nodecountstart, data.nodecountend);
+                        }
+                    } // success
+                }); // ajax
+            } // getNextPage()
+
+            function recurseNodes($treediv, nodescoll) {
+                var parent = false;
                 each(nodescoll, function (childObj, childKey, thisObj, value) {
                     if (false === isNullOrEmpty(childObj)) {
-                        log($('li#id=' + parentid));
-                         addNodeToTree($treediv, $treediv.find('li#' + parentid), childObj);
+                        if (false === isNullOrEmpty(childObj.attr.parentkey)) {
+                            log(childObj.attr.parentkey);
+                            log($treediv.find('li[cswnbtnodekey="' + childObj.attr.parentkey.replace(']', '\\]') + '"]'));
+                            parent = $treediv.find('li[cswnbtnodekey="' + childObj.attr.parentkey + '"]');
+                        }
+                        addNodeToTree($treediv, parent, childObj);
                         if (false === isNullOrEmpty(childObj.children) && childObj.children.length > 0) {
-                            recurseNodes($treediv, childObj.attr.id, childObj.children);
+                            recurseNodes($treediv, childObj.children);
                         }
                     }
                 }); // each
-            } // recurseNodes)(
+            } // recurseNodes()
 
-            function addNodeToTree($treediv, parentnodeid, childjs) {
-                $treediv.jstree("create", parentnodeid, "last", childjs, false, true);
-            } // addNodeToTree()
+            var rootnode = false;
+            function addNodeToTree($treediv, parentnode, childjs) {
+                if (isNullOrEmpty(parentnode) || parentnode === false) {
+                    parentnode = rootnode;
+                }
+                var newnode = $treediv.jstree("create", parentnode, "last", childjs, false, true);
+                if (rootnode === false) {
+                    rootnode = newnode;
+                }
+            }
+            function removeNodeFromTree($treediv, treenode) {
+                return $treediv.jstree("remove", treenode);
+            }
 
             CswAjaxJson({
                 url: url,
@@ -131,7 +183,10 @@
                         //$treediv.jstree("create", false, "first", data.root, false, true);
                         addNodeToTree($treediv, false, data.root);
 
-                        getNextPage($treediv);
+                        getFirstLevel($treediv, 2, 0);
+
+                        removeNodeFromTree($treediv, $('.jstree-loading'));
+
                     } // if (isTrue(data.result)) {
                 } // success
             }); // ajax
@@ -186,51 +241,51 @@
             //                    }
 
             //var selectid = '';
-            function treeJsonToHtml(json, level) {
-                hasNodes = checkHasNodes(json);
-                var treestr = '';
-                if (hasNodes) {
-                    var id = tryParseString(json.attr.id),
-			                                nodeid = tryParseString(id.substring(idPrefix.length)),
-			                                nodename = tryParseString(json.data),
-			                                nbtnodekey = tryParseString(json.attr.cswnbtnodekey),
-			                                rel = tryParseString(json.attr.rel),
-			                                species = tryParseString(json.attr.species),
-			                                state = tryParseString(json.attr.state, 'open');
+            //            function treeJsonToHtml(json, level) {
+            //                hasNodes = checkHasNodes(json);
+            //                var treestr = '';
+            //                if (hasNodes) {
+            //                    var id = tryParseString(json.attr.id),
+            //			                                nodeid = tryParseString(id.substring(idPrefix.length)),
+            //			                                nodename = tryParseString(json.data),
+            //			                                nbtnodekey = tryParseString(json.attr.cswnbtnodekey),
+            //			                                rel = tryParseString(json.attr.rel),
+            //			                                species = tryParseString(json.attr.species),
+            //			                                state = tryParseString(json.attr.state, 'open');
 
-                    if (idToSelect === id || (level === selectLevel && isNullOrEmpty(selectid))) {
-                        selectid = id;
-                    }
+            //                    if (idToSelect === id || (level === selectLevel && isNullOrEmpty(selectid))) {
+            //                        selectid = id;
+            //                    }
 
-                    var locked = isTrue(json.attr.locked);
-                    treestr += '<li id="' + id + '" rel="' + rel + '" species="' + species + '" class="jstree-' + state + '" ';
-                    if (!isNullOrEmpty(nbtnodekey)) {
-                        treestr += '    cswnbtnodekey="' + nbtnodekey.replace(/"/g, '&quot;') + '"';
-                    }
-                    treestr += '>';
-                    if (o.ShowCheckboxes) {
-                        treestr += '<input type="checkbox" class="' + idPrefix + 'check" id="check_' + nodeid + '" rel="' + rel + '" nodeid="' + nodeid + '" nodename="' + nodename + '"></input>';
-                    }
-                    treestr += '  <a href="#">' + nodename + '</a>';
-                    var children = json.children;
-                    for (var child in children) {
-                        // recurse
-                        if (children.hasOwnProperty(child)) {
-                            var childNode = children[child];
-                            treestr += '<ul>';
-                            treestr += treeJsonToHtml(childNode, 2);
-                            treestr += '</ul>';
-                        }
-                    }
-                    if (locked) {
-                        treestr += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
-                    }
-                    treestr += '</li>';
-                } else {
-                    treestr += '<li id="' + Int32MinVal + '" rel="leaf" class="jstree-leaf">No Results</li>';
-                }
-                return treestr;
-            } // _treeXmlToHtml()
+            //                    var locked = isTrue(json.attr.locked);
+            //                    treestr += '<li id="' + id + '" rel="' + rel + '" species="' + species + '" class="jstree-' + state + '" ';
+            //                    if (!isNullOrEmpty(nbtnodekey)) {
+            //                        treestr += '    cswnbtnodekey="' + nbtnodekey.replace(/"/g, '&quot;') + '"';
+            //                    }
+            //                    treestr += '>';
+            //                    if (o.ShowCheckboxes) {
+            //                        treestr += '<input type="checkbox" class="' + idPrefix + 'check" id="check_' + nodeid + '" rel="' + rel + '" nodeid="' + nodeid + '" nodename="' + nodename + '"></input>';
+            //                    }
+            //                    treestr += '  <a href="#">' + nodename + '</a>';
+            //                    var children = json.children;
+            //                    for (var child in children) {
+            //                        // recurse
+            //                        if (children.hasOwnProperty(child)) {
+            //                            var childNode = children[child];
+            //                            treestr += '<ul>';
+            //                            treestr += treeJsonToHtml(childNode, 2);
+            //                            treestr += '</ul>';
+            //                        }
+            //                    }
+            //                    if (locked) {
+            //                        treestr += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
+            //                    }
+            //                    treestr += '</li>';
+            //                } else {
+            //                    treestr += '<li id="' + Int32MinVal + '" rel="leaf" class="jstree-leaf">No Results</li>';
+            //                }
+            //                return treestr;
+            //            } // _treeXmlToHtml()
 
             //                    var treehtmlstring = '<ul>';
             //                    for (var parent in treeData) {
