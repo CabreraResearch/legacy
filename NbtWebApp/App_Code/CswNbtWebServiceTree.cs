@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnObj = new JObject();
             JArray RootArray = new JArray();
+            ReturnObj["viewmode"] = View.ViewMode.ToString();
             ReturnObj["tree"] = RootArray;
 
             string EmptyOrInvalid = "No Results";
@@ -85,12 +86,12 @@ namespace ChemSW.Nbt.WebServices
                     ShowEmpty = ( IsFirstLoad ); // else return an empty <result/> for junior most node on tree
                 }
 
-				if( IsFirstLoad )
-				{
-					View.SaveToCache( IncludeInQuickLaunch );
-					ReturnObj["viewid"] = View.SessionViewId.ToString();
-				}
-			} // else if( !ShowEmpty )
+                if( IsFirstLoad )
+                {
+                    View.SaveToCache( IncludeInQuickLaunch );
+                    ReturnObj["viewid"] = View.SessionViewId.ToString();
+                }
+            } // else if( !ShowEmpty )
 
             string ViewName = string.Empty;
             string ViewId = string.Empty;
@@ -182,8 +183,8 @@ namespace ChemSW.Nbt.WebServices
                 string ThisNodeId = "";
                 string ThisNodeRel = "";
                 bool ThisNodeLocked = false;
-				CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
-				switch( ThisNodeKey.NodeSpecies )
+                CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
+                switch( ThisNodeKey.NodeSpecies )
                 {
                     case NodeSpecies.More:
                         ThisNodeId = IdPrefix + ThisNodeKey.NodeId.ToString();
@@ -193,27 +194,27 @@ namespace ChemSW.Nbt.WebServices
                         break;
                     case NodeSpecies.Plain:
                         ThisNodeId = IdPrefix + ThisNodeKey.NodeId.ToString();
-						ThisNodeName = Tree.getNodeNameForCurrentPosition();
+                        ThisNodeName = Tree.getNodeNameForCurrentPosition();
                         ThisNodeIcon = ThisNodeType.IconFileName;
                         ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
-						ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
-                        
+                        ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
+
                         break;
                     case NodeSpecies.Group:
                         ThisNodeRel = "group";
                         break;
                 }
 
-				CswNbtViewNode ThisNodeViewNode = View.FindViewNodeByUniqueId( ThisNodeKey.ViewNodeUniqueId );
+                CswNbtViewNode ThisNodeViewNode = View.FindViewNodeByUniqueId( ThisNodeKey.ViewNodeUniqueId );
 
                 string ThisNodeState = "closed";
-				if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
-					View.ViewMode == NbtViewRenderingMode.List ||
-					( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
-					( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
-				{
-					ThisNodeState = "leaf";
-				}
+                if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
+                    View.ViewMode == NbtViewRenderingMode.List ||
+                    ( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
+                    ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
+                {
+                    ThisNodeState = "leaf";
+                }
 
                 ThisNodeObj["data"] = ThisNodeName;
                 ThisNodeObj["icon"] = "Images/icons/" + ThisNodeIcon;
