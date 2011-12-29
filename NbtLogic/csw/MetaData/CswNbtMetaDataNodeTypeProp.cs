@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( CswConvert.ToDouble( _NodeTypePropRow[FieldName] ) != (double) value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, ref CauseVersioning );
                     if( ReRegister )
                         _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( this );
                     _NodeTypePropRow[FieldName] = CswConvert.ToDbVal( (double) value );
@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( CswConvert.ToInt32( _NodeTypePropRow[FieldName] ) != (Int32) value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, ref CauseVersioning );
                     if( ReRegister )
                         _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( this );
                     _NodeTypePropRow[FieldName] = CswConvert.ToDbVal( (Int32) value );
@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( CswConvert.ToBoolean( _NodeTypePropRow[FieldName] ) != (bool) value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, ref CauseVersioning );
                     if( ReRegister )
                         _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( this );
                     _NodeTypePropRow[FieldName] = CswConvert.ToDbVal( (bool) value );
@@ -227,7 +227,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypePropRow[FieldName].ToString() != (string) value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, ref CauseVersioning );
                     if( ReRegister )
                         _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( this );
                     _NodeTypePropRow[FieldName] = (string) value;
@@ -240,7 +240,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypePropRow[FieldName].ToString() != string.Empty )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, ref CauseVersioning );
                     if( ReRegister )
                         _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( this );
                     _NodeTypePropRow[FieldName] = value;
@@ -1123,7 +1123,7 @@ namespace ChemSW.Nbt.MetaData
         {
             if( CswConvert.ToInt32( _NodeTypePropRow[SequenceIdColumn] ) != SequenceId )
             {
-                _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, CauseVersioning );
+                _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, ref CauseVersioning );
 
                 _NodeTypePropRow[SequenceIdColumn] = CswConvert.ToDbVal( SequenceId );
 

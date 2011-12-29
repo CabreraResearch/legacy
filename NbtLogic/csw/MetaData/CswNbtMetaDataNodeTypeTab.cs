@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.MetaData
 
                 if( _NodeTypeTabRow["tabname"].ToString() != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, ref CauseVersioning );
 
                     _CswNbtMetaDataResources.NodeTypeTabsCollection.Deregister( this );
                     _NodeTypeTabRow["tabname"] = value;
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( CswConvert.ToInt32( _NodeTypeTabRow["taborder"] ) != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType, ref CauseVersioning );
 
                     _CswNbtMetaDataResources.NodeTypeTabsCollection.Deregister( this );
                     _NodeTypeTabRow["taborder"] = CswConvert.ToDbVal( value );

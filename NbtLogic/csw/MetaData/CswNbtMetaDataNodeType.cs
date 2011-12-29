@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.MetaData
                     if( ExistingNodeType != null && ExistingNodeType.FirstVersionNodeTypeId != this.FirstVersionNodeTypeId )
                         throw new CswDniException( ErrorType.Warning, "Node Type Name must be unique", "Attempted to rename a nodetype to the same name as an existing nodetype" );
 
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this, CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this, ref CauseVersioning );
 
                     _CswNbtMetaDataResources.NodeTypesCollection.Deregister( this );
                     _NodeTypeRow["nodetypename"] = value;
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypeRow["category"].ToString() != value )
                 {
-                    //_CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this, ref CauseVersioning );
                     _NodeTypeRow["category"] = value;
                 }
             }
@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypeRow["iconfilename"].ToString() != value )
                 {
-                    //_CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this, ref CauseVersioning );
                     _NodeTypeRow["iconfilename"] = value;
                 }
             }
@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypeRow["nametemplate"].ToString() != value )
                 {
-                    //_CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this, ref CauseVersioning );
                     _NodeTypeRow["nametemplate"] = value;
                     // Need to set all node records to pendingupdate if this changes
                     SetNodesToPendingUpdate();

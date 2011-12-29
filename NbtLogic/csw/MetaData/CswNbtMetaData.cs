@@ -487,7 +487,7 @@ namespace ChemSW.Nbt.MetaData
                 throw new CswDniException( ErrorType.Warning, "Tab Name must be unique (per NodeType)", "Attempted to create a new nodetypetab with the same name as an existing nodetypetab on the same nodetype" );
 
             // Version, if necessary
-            NodeType = CheckVersioning( NodeType, CauseVersioning );
+            NodeType = CheckVersioning( NodeType, ref CauseVersioning );
 
             //CswTableCaddy TabsTableCaddy = _CswNbtResources.makeCswTableCaddy("nodetype_tabset");
             DataTable TabsTable = _CswNbtMetaDataResources.NodeTypeTabTableUpdate.getEmptyTable();
@@ -606,7 +606,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
                 OriginalTabName = NodeType.getFirstNodeTypeTab().TabName;
-            NodeType = CheckVersioning( NodeType, CauseVersioning );
+            NodeType = CheckVersioning( NodeType, ref CauseVersioning );
             CswNbtMetaDataNodeTypeTab Tab = NodeType.getNodeTypeTab( OriginalTabName );
 
             // Create row
@@ -719,7 +719,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Before making changes to a nodetype (or its tab or properties), call this function to handle whether the nodetype should version
         /// </summary>
-        public CswNbtMetaDataNodeType CheckVersioning( CswNbtMetaDataNodeType NodeType, bool CauseVersioning )
+        public CswNbtMetaDataNodeType CheckVersioning( CswNbtMetaDataNodeType NodeType, ref bool CauseVersioning )
         {
             CswNbtMetaDataNodeType ret = NodeType;
             if( CauseVersioning &&
@@ -727,6 +727,8 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( NodeType.IsLatestVersion )
                 {
+                    //Only version once.
+                    CauseVersioning = false;
                     CswNbtMetaDataNodeType NewNodeTypeVersion = MakeNewVersion( NodeType );
                     ret = NewNodeTypeVersion;
                     NodeType.IsLocked = true;
@@ -737,7 +739,7 @@ namespace ChemSW.Nbt.MetaData
                     NodeType.IsLocked = true;
                     throw new CswDniException( ErrorType.Warning, "Cannot modify locked nodetype", "Nodetype " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") cannot be modified because it is locked" );
                 }
-                
+
             }
             return ret;
         }
@@ -754,8 +756,8 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( getObjectClass( OriginalObjectClassId ).ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass )
                     throw new CswDniException( ErrorType.Warning, "Cannot convert this nodetype", "Nodetype " + NodeType.NodeTypeName + " cannot be converted because it is not Generic" );
-
-                NodeType = CheckVersioning( NodeType, true );
+                bool CauseVersioning = true;
+                NodeType = CheckVersioning( NodeType, ref CauseVersioning );
 
                 NodeType._DataRow["objectclassid"] = CswConvert.ToDbVal( NewObjectClass.ObjectClassId );
                 NodeType.IconFileName = NewObjectClass.IconFileName;
@@ -786,7 +788,6 @@ namespace ChemSW.Nbt.MetaData
                     {
                         // Because we handle versioning above, we don't have to worry about it here
                         CswNbtMetaDataNodeTypeProp NewNodeTypeProp = makeNewProp( NodeType, null, ObjectClassProp.FieldType.FieldTypeId, ObjectClassProp.PropName, Int32.MinValue, false, ObjectClassProp );
-
                     }
                 } // foreach (CswNbtMetaDataObjectClassProp ObjectClassProp in this.ObjectClass.ObjectClassProps)
 
@@ -1102,7 +1103,7 @@ namespace ChemSW.Nbt.MetaData
                     throw new CswDniException( ErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: PropId = " + NodeTypeProp.PropId );
 
                 string OriginalPropName = NodeTypeProp.PropName;
-                CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeProp.NodeType, CauseVersioning );
+                CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeProp.NodeType, ref CauseVersioning );
                 NodeTypeProp = NodeType.getNodeTypeProp( OriginalPropName );
             }
 
@@ -1178,7 +1179,7 @@ namespace ChemSW.Nbt.MetaData
             if( CauseVersioning )
             {
                 string OriginalTabName = NodeTypeTab.TabName;
-                CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeTab.NodeType, CauseVersioning );
+                CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeTab.NodeType, ref CauseVersioning );
                 NodeTypeTab = NodeType.getNodeTypeTab( OriginalTabName );
             }
 
