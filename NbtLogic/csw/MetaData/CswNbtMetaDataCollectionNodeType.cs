@@ -132,7 +132,8 @@ namespace ChemSW.Nbt.MetaData
                 throw new CswDniException( "CswNbtMetaDataCollectionNodeType.Register got an invalid Object as a parameter" );
             CswNbtMetaDataNodeType NodeType = Object as CswNbtMetaDataNodeType;
 
-            _CswNbtMetaDataResources.AddToMetaDataCollection( NodeType, _ById, _ByVersion );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeType, NodeType, _ByVersion, "NodeType", NodeType.NodeTypeId, NodeType.NodeTypeName );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeType.NodeTypeId, NodeType, _ById, "NodeType", NodeType.NodeTypeId, NodeType.NodeTypeName );
 
             // Handle index of latest version by first version
             if( _LatestVersionByFirstVersion.ContainsKey( NodeType.FirstVersionNodeType ) )

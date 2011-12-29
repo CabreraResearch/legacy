@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.MetaData
             }
             CswNbtMetaDataNodeTypeProp NodeTypeProp = Object as CswNbtMetaDataNodeTypeProp;
 
-            _CswNbtMetaDataResources.AddToMetaDataCollection( NodeTypeProp, _ById );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeTypeProp.PropId, NodeTypeProp, _ById, "NodeTypeProp", NodeTypeProp.PropId, NodeTypeProp.PropName );
 
             // By NodeType
             if( !_ByNodeType.ContainsKey( NodeTypeProp.NodeType.NodeTypeId ) )

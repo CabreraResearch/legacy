@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.MetaData
             }
             CswNbtMetaDataNodeTypeTab NodeTypeTab = Object as CswNbtMetaDataNodeTypeTab;
 
-            _CswNbtMetaDataResources.AddToMetaDataCollection( NodeTypeTab, _ById );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeTypeTab.TabId, NodeTypeTab, _ById, "NodeTypeTab", NodeTypeTab.TabId, NodeTypeTab.TabName );
 
             if( !_ByNodeType.ContainsKey( NodeTypeTab.NodeType.NodeTypeId ) )
             {

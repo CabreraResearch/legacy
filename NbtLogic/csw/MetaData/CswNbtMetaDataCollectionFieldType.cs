@@ -89,7 +89,8 @@ namespace ChemSW.Nbt.MetaData
                 throw new CswDniException( "CswNbtMetaDataCollectionFieldType.Register got an invalid Object as a parameter" );
             }
             CswNbtMetaDataFieldType FieldType = Object as CswNbtMetaDataFieldType;
-            _CswNbtMetaDataResources.AddToMetaDataCollection( FieldType, _ById, _ByType );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( FieldType.FieldTypeId, FieldType, _ById, "FieldType", FieldType.FieldTypeId, FieldType.FieldType.ToString() );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( FieldType.FieldType, FieldType, _ByType, "FieldType", FieldType.FieldTypeId, FieldType.FieldType.ToString() );
         }
 
         public void Deregister( ICswNbtMetaDataObject Object )

@@ -50,119 +50,40 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataTableCache = new CswNbtMetaDataTableCache( CswNbtResources.CswSuperCycleCache );
         }
 
-        private void _tryAddByType( object Type, object CswNbtMetaDataObject, SortedList ByType, string MetaDataObjectName, Int32 MetaDataObjectId, string MetaDataObjectValue )
+        public void tryAddToMetaDataCollection( object Key, object Value, IDictionary Collection, string MetaDataObjectTypeName, Int32 MetaDataObjectId, string MetaDataObjectName )
         {
-            if( false == string.IsNullOrEmpty( MetaDataObjectName ) &&
-                Int32.MinValue != MetaDataObjectId )
+            if( null != Key &&
+                null != Value )
             {
                 try
                 {
-                    ByType.Add( Type, CswNbtMetaDataObject );
+                    Collection.Add( Key, Value );
                 }
                 catch( ArgumentNullException ArgumentNullException )
                 {
-                    CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Proposed " + MetaDataObjectName + " was null and cannot be added to the MetaData collection.", "", ArgumentNullException ) );
+                    CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Proposed " + MetaDataObjectTypeName + " was null and cannot be added to the MetaData collection.", "", ArgumentNullException ) );
                 }
                 catch( ArgumentException ArgumentException )
                 {
                     CswNbtResources.CswLogger.reportError(
                         new CswDniException(
                             ErrorType.Error,
-                            "Duplicate " + MetaDataObjectName + "s exist in the database. A " + MetaDataObjectName + " named: " + MetaDataObjectValue + " on " + MetaDataObjectName.ToLower() + "id " + MetaDataObjectId + " has already been defined.",
+                            "Duplicate " + MetaDataObjectTypeName + "s exist in the database. A " + MetaDataObjectTypeName + " named: " + MetaDataObjectName + " on " + MetaDataObjectTypeName.ToLower() + "id " + MetaDataObjectId + " has already been defined.",
                             "",
                             ArgumentException )
                         );
                 }
                 catch( InvalidOperationException InvalidOperationException )
                 {
-                    CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot compare the proposed " + MetaDataObjectName + " against the MetaData collection.", "", InvalidOperationException ) );
+                    CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot compare the proposed " + MetaDataObjectTypeName + " against the MetaData collection.", "", InvalidOperationException ) );
                 }
                 catch( NotSupportedException NotSupportedException )
                 {
-                    CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot add the proposed " + MetaDataObjectName + ": " + MetaDataObjectValue + " to the MetaData collection.", "", NotSupportedException ) );
+                    CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot add the proposed " + MetaDataObjectTypeName + ": " + MetaDataObjectName + " to the MetaData collection.", "", NotSupportedException ) );
                 }
             }
         }
-
-        /// <summary>
-        /// Try to add the FieldType to the _ById Hashtable. Suppress and log errors accordingly.
-        /// </summary>
-        private void _tryAddById( object CswNbtMetaDataObject, Hashtable ById, string MetaDataObjectName, Int32 MetaDataObjectId, string MetaDataObjectValue )
-        {
-            if( false == string.IsNullOrEmpty( MetaDataObjectName ) &&
-                Int32.MinValue != MetaDataObjectId )
-            {
-                try
-                {
-                    ById.Add( MetaDataObjectId, CswNbtMetaDataObject );
-                }
-                catch( ArgumentNullException ArgumentNullException )
-                {
-                    CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Proposed " + MetaDataObjectName + " was null and cannot be added to the MetaData collection.", "", ArgumentNullException ) );
-                }
-                catch( ArgumentException ArgumentException )
-                {
-                    CswNbtResources.CswLogger.reportError(
-                        new CswDniException(
-                            ErrorType.Error,
-                            "Duplicate " + MetaDataObjectName + "s exist in the database. A " + MetaDataObjectName + " named: " + MetaDataObjectValue + " on " + MetaDataObjectName.ToLower() + "id " + MetaDataObjectId + " has already been defined.",
-                            "",
-                            ArgumentException )
-                        );
-                }
-                catch( NotSupportedException NotSupportedException )
-                {
-                    CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot add the proposed " + MetaDataObjectName + ": " + MetaDataObjectValue + " to the MetaData collection.", "", NotSupportedException ) );
-                }
-            }
-        }
-
-        /// <summary>
-        /// Try to add the NodeTypeTab to the MetaData Collection. Suppress and log errors accordingly.
-        /// </summary>
-        public void AddToMetaDataCollection( CswNbtMetaDataNodeTypeTab NodeTypeTab, Hashtable ById )
-        {
-            string MetaDataObjectName = "NodeTypeTab";
-            Int32 MetaDataObjectId = NodeTypeTab.TabId;
-            string MetaDataObjectValue = NodeTypeTab.TabName;
-            _tryAddById( NodeTypeTab, ById, MetaDataObjectName, MetaDataObjectId, MetaDataObjectValue );
-        }
-
-        /// <summary>
-        /// Try to add the NodeTypeProp to the MetaData Collection. Suppress and log errors accordingly.
-        /// </summary>
-        public void AddToMetaDataCollection( CswNbtMetaDataNodeTypeProp NodeTypeProp, Hashtable ById )
-        {
-            string MetaDataObjectName = "NodeTypeProp";
-            Int32 MetaDataObjectId = NodeTypeProp.PropId;
-            string MetaDataObjectValue = NodeTypeProp.PropName;
-            _tryAddById( NodeTypeProp, ById, MetaDataObjectName, MetaDataObjectId, MetaDataObjectValue );
-        }
-
-        /// <summary>
-        /// Try to add the NodeType to the MetaData Collection. Suppress and log errors accordingly.
-        /// </summary>
-        public void AddToMetaDataCollection( CswNbtMetaDataNodeType NodeType, Hashtable ById, SortedList ByType )
-        {
-            string MetaDataObjectName = "NodeType";
-            Int32 MetaDataObjectId = NodeType.NodeTypeId;
-            string MetaDataObjectValue = NodeType.NodeTypeName;
-            _tryAddById( NodeType, ById, MetaDataObjectName, MetaDataObjectId, MetaDataObjectValue );
-            _tryAddByType( NodeType, NodeType, ByType, MetaDataObjectName, MetaDataObjectId, MetaDataObjectValue );
-        }
-
-        /// <summary>
-        /// Try to add the FieldType to the MetaData Collection. Suppress and log errors accordingly.
-        /// </summary>
-        public void AddToMetaDataCollection( CswNbtMetaDataFieldType FieldType, Hashtable ById, SortedList ByType )
-        {
-            string MetaDataObjectName = "FieldType";
-            Int32 MetaDataObjectId = FieldType.FieldTypeId;
-            string MetaDataObjectValue = FieldType.FieldType.ToString();
-            _tryAddById( FieldType, ById, MetaDataObjectName, MetaDataObjectId, MetaDataObjectValue );
-            _tryAddByType( FieldType.FieldType, FieldType, ByType, MetaDataObjectName, MetaDataObjectId, MetaDataObjectValue );
-        }
-
+        
         public void refreshAll( bool ExcludeDisabledModules )
         {
             CswTimer refreshAllTimer = new CswTimer();
