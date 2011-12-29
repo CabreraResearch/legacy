@@ -39,6 +39,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogTester", "TestApps\LogTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebApp", "NbtWebApp\NbtWebApp.csproj", "{DB33D180-B7CC-407B-8611-52DEB49363A8}"
 EndProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
