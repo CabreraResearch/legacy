@@ -300,8 +300,8 @@ namespace ChemSW.Nbt.MetaData
 
             return RetFieldType;
         }//makeNewTab()
-        
-        
+
+
         /// <summary>
         /// Creates a brand new NodeType in the database and in the MetaData collection
         /// </summary>
@@ -383,7 +383,7 @@ namespace ChemSW.Nbt.MetaData
             DataTable NodeTypeProps = _CswNbtMetaDataResources.NodeTypePropTableUpdate.getTable( "nodetypeid", NodeTypeId );
 
             // Make an initial tab
-            CswNbtMetaDataNodeTypeTab FirstTab = makeNewTab( NewNodeType, InsertedNodeTypesRow["nodetypename"].ToString(), 1 );
+            CswNbtMetaDataNodeTypeTab FirstTab = makeNewTab( NewNodeType, InsertedNodeTypesRow["nodetypename"].ToString(), 1, false );
 
             // Make initial props
             int DisplayRow = 1;
@@ -461,11 +461,12 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         /// <param name="NodeType">NodeType to which to assign the new tab</param>
         /// <param name="NodeTypeTabRowFromXml">A DataRow derived from exported XML</param>
-        public CswNbtMetaDataNodeTypeTab makeNewTab( CswNbtMetaDataNodeType NodeType, DataRow NodeTypeTabRowFromXml )
+        public CswNbtMetaDataNodeTypeTab makeNewTab( CswNbtMetaDataNodeType NodeType, DataRow NodeTypeTabRowFromXml, bool CauseVersioning = false )
         {
             CswNbtMetaDataNodeTypeTab NewTab = makeNewTab( NodeType,
                                                            NodeTypeTabRowFromXml[CswNbtMetaDataNodeTypeTab._Attribute_TabName].ToString(),
-                                                           CswConvert.ToInt32( NodeTypeTabRowFromXml[CswNbtMetaDataNodeTypeTab._Attribute_Order] ) );
+                                                           CswConvert.ToInt32( NodeTypeTabRowFromXml[CswNbtMetaDataNodeTypeTab._Attribute_Order] ),
+                                                           CauseVersioning );
             return NewTab;
         }
 
@@ -475,7 +476,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="NodeType">Node Type for new tab</param>
         /// <param name="TabName">Name of new tab</param>
         /// <param name="TabOrder">Order value for new tab</param>
-        public CswNbtMetaDataNodeTypeTab makeNewTab( CswNbtMetaDataNodeType NodeType, string TabName, Int32 TabOrder )
+        public CswNbtMetaDataNodeTypeTab makeNewTab( CswNbtMetaDataNodeType NodeType, string TabName, Int32 TabOrder, bool CauseVersioning = false )
         {
             if( TabName == "" )
                 throw new CswDniException( ErrorType.Warning, "New Tabs must have a non-blank name",
@@ -486,7 +487,7 @@ namespace ChemSW.Nbt.MetaData
                 throw new CswDniException( ErrorType.Warning, "Tab Name must be unique (per NodeType)", "Attempted to create a new nodetypetab with the same name as an existing nodetypetab on the same nodetype" );
 
             // Version, if necessary
-            NodeType = CheckVersioning( NodeType );
+            NodeType = CheckVersioning( NodeType, CauseVersioning );
 
             //CswTableCaddy TabsTableCaddy = _CswNbtResources.makeCswTableCaddy("nodetype_tabset");
             DataTable TabsTable = _CswNbtMetaDataResources.NodeTypeTabTableUpdate.getEmptyTable();
@@ -506,15 +507,15 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName )
+        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName, bool CauseVersioning = false )
         {
             Int32 FieldTypeId = getFieldType( FieldType ).FieldTypeId;
-            return makeNewProp( NodeType, InsertAfterProp, FieldTypeId, PropName, Int32.MinValue, false, null );
+            return makeNewProp( NodeType, InsertAfterProp, FieldTypeId, PropName, Int32.MinValue, false, null, CauseVersioning );
         }
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName, string NodeTypeTabName )
+        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName, string NodeTypeTabName, bool CauseVersioning = false )
         {
             Int32 FieldTypeId = getFieldType( FieldType ).FieldTypeId;
 
@@ -526,32 +527,32 @@ namespace ChemSW.Nbt.MetaData
             if( null == CswNbtMetaDataNodeTypeTab )
                 throw ( new CswDniException( ErrorType.Error, "No such Nodetype Tab: " + NodeTypeTabName, "NodeType " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") does not contain a tab with name: " + NodeTypeTabName ) );
 
-            return makeNewProp( NodeType, null, FieldTypeId, PropName, CswNbtMetaDataNodeTypeTab.TabId, false, null );
+            return makeNewProp( NodeType, null, FieldTypeId, PropName, CswNbtMetaDataNodeTypeTab.TabId, false, null, CauseVersioning );
         }
 
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName, Int32 TabId )
+        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName, Int32 TabId, bool CauseVersioning = false )
         {
             Int32 FieldTypeId = getFieldType( FieldType ).FieldTypeId;
-            return makeNewProp( NodeType, null, FieldTypeId, PropName, TabId, false, null );
+            return makeNewProp( NodeType, null, FieldTypeId, PropName, TabId, false, null, CauseVersioning );
         }
 
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, Int32 FieldTypeId, string PropName, Int32 TabId )
+        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, Int32 FieldTypeId, string PropName, Int32 TabId, bool CauseVersioning = false )
         {
-            return makeNewProp( NodeType, null, FieldTypeId, PropName, TabId, false, null );
+            return makeNewProp( NodeType, null, FieldTypeId, PropName, TabId, false, null, CauseVersioning );
         }
 
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, Int32 FieldTypeId, string PropName )
+        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, Int32 FieldTypeId, string PropName, bool CauseVersioning = false )
         {
-            return makeNewProp( NodeType, InsertAfterProp, FieldTypeId, PropName, Int32.MinValue, false, null );
+            return makeNewProp( NodeType, InsertAfterProp, FieldTypeId, PropName, Int32.MinValue, false, null, CauseVersioning );
         }
 
         /// <summary>
@@ -560,7 +561,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="NodeType">NodeType to which to assign the new property</param>
         /// <param name="Tab">Tab to which to assign the new property</param>
         /// <param name="NodeTypePropRowFromXml">A DataRow derived from exported XML</param>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab, DataRow NodeTypePropRowFromXml )
+        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab, DataRow NodeTypePropRowFromXml, bool CauseVersioning = false )
         {
             Int32 FieldTypeId = getFieldType( (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() ) ).FieldTypeId;
             CswNbtMetaDataNodeTypeProp NewProp = makeNewProp( NodeType,
@@ -569,13 +570,14 @@ namespace ChemSW.Nbt.MetaData
                                                               NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName].ToString(),
                                                               Tab.TabId,
                                                               true,
-                                                              null );
+                                                              null,
+                                                              CauseVersioning );
             NewProp.SetFromXmlDataRow( NodeTypePropRowFromXml );
             return NewProp;
         }
 
 
-        protected CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, Int32 FieldTypeId, string PropName, Int32 TabId, bool PreventVersioning, CswNbtMetaDataObjectClassProp ObjectClassPropToCopy )
+        protected CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, Int32 FieldTypeId, string PropName, Int32 TabId, bool PreventVersioning, CswNbtMetaDataObjectClassProp ObjectClassPropToCopy, bool CauseVersioning = false )
         {
             bool OldPreventVersioning = _CswNbtMetaDataResources._PreventVersioning;
             if( PreventVersioning )
@@ -604,7 +606,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
                 OriginalTabName = NodeType.getFirstNodeTypeTab().TabName;
-            NodeType = CheckVersioning( NodeType );
+            NodeType = CheckVersioning( NodeType, CauseVersioning );
             CswNbtMetaDataNodeTypeTab Tab = NodeType.getNodeTypeTab( OriginalTabName );
 
             // Create row
@@ -714,28 +716,28 @@ namespace ChemSW.Nbt.MetaData
 
         #region Mutators
 
-
         /// <summary>
         /// Before making changes to a nodetype (or its tab or properties), call this function to handle whether the nodetype should version
         /// </summary>
-        public CswNbtMetaDataNodeType CheckVersioning( CswNbtMetaDataNodeType NodeType )
+        public CswNbtMetaDataNodeType CheckVersioning( CswNbtMetaDataNodeType NodeType, bool CauseVersioning )
         {
             CswNbtMetaDataNodeType ret = NodeType;
-            if( !_CswNbtMetaDataResources._PreventVersioning )
+            if( CauseVersioning &&
+                false == _CswNbtMetaDataResources._PreventVersioning )
             {
-                // Version, if necessary
-                if( NodeType.IsLocked )
+                if( NodeType.IsLatestVersion )
                 {
-                    if( NodeType.IsLatestVersion )
-                    {
-                        CswNbtMetaDataNodeType NewNodeTypeVersion = MakeNewVersion( NodeType );
-                        ret = NewNodeTypeVersion;
-                    }
-                    else
-                    {
-                        throw new CswDniException( ErrorType.Warning, "Cannot modify locked nodetype", "Nodetype " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") cannot be modified because it is locked" );
-                    }
+                    CswNbtMetaDataNodeType NewNodeTypeVersion = MakeNewVersion( NodeType );
+                    ret = NewNodeTypeVersion;
+                    NodeType.IsLocked = true;
                 }
+                else
+                {
+                    /* If it's not the latest version, it should be locked */
+                    NodeType.IsLocked = true;
+                    throw new CswDniException( ErrorType.Warning, "Cannot modify locked nodetype", "Nodetype " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") cannot be modified because it is locked" );
+                }
+                
             }
             return ret;
         }
@@ -753,7 +755,7 @@ namespace ChemSW.Nbt.MetaData
                 if( getObjectClass( OriginalObjectClassId ).ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass )
                     throw new CswDniException( ErrorType.Warning, "Cannot convert this nodetype", "Nodetype " + NodeType.NodeTypeName + " cannot be converted because it is not Generic" );
 
-                NodeType = CheckVersioning( NodeType );
+                NodeType = CheckVersioning( NodeType, true );
 
                 NodeType._DataRow["objectclassid"] = CswConvert.ToDbVal( NewObjectClass.ObjectClassId );
                 NodeType.IconFileName = NewObjectClass.IconFileName;
@@ -1080,9 +1082,9 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         /// <param name="NodeTypeProp">Prop to Delete</param>
         /// <returns>Returns the NodeTypeTab of this property (or the new version of the tab, if versioning was necessary)</returns>
-        public CswNbtMetaDataNodeTypeTab DeleteNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        public CswNbtMetaDataNodeTypeTab DeleteNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp, bool CauseVersioning )
         {
-            return DeleteNodeTypeProp( NodeTypeProp, false );
+            return DeleteNodeTypeProp( NodeTypeProp, false, CauseVersioning );
         }
 
         /// <summary>
@@ -1091,7 +1093,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="NodeTypeProp">Prop to delete</param>
         /// <param name="Internal">If true, allow deleting object class props, and don't version or recalculate question numbers</param>
         /// <returns>Tab of deleted property (for UI to select)</returns>
-        protected CswNbtMetaDataNodeTypeTab DeleteNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp, bool Internal )
+        protected CswNbtMetaDataNodeTypeTab DeleteNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp, bool Internal, bool CauseVersioning )
         {
             CswNbtMetaDataNodeTypeTab ret = getNodeTypeTab( NodeTypeProp.EditLayout.TabId );
             if( !Internal )
@@ -1100,7 +1102,7 @@ namespace ChemSW.Nbt.MetaData
                     throw new CswDniException( ErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: PropId = " + NodeTypeProp.PropId );
 
                 string OriginalPropName = NodeTypeProp.PropName;
-                CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeProp.NodeType );
+                CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeProp.NodeType, CauseVersioning );
                 NodeTypeProp = NodeType.getNodeTypeProp( OriginalPropName );
             }
 
@@ -1170,18 +1172,13 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         /// <param name="NodeTypeTab">Tab to Delete</param>
         /// <returns>Returns the NodeType of this tab (or the new version of the tab, if versioning was necessary)</returns>
-        public CswNbtMetaDataNodeType DeleteNodeTypeTab( CswNbtMetaDataNodeTypeTab NodeTypeTab )
-        {
-            return DeleteNodeTypeTab( NodeTypeTab, true );
-        }
-
-        private CswNbtMetaDataNodeType DeleteNodeTypeTab( CswNbtMetaDataNodeTypeTab NodeTypeTab, bool CauseVersioning )
+        public CswNbtMetaDataNodeType DeleteNodeTypeTab( CswNbtMetaDataNodeTypeTab NodeTypeTab, bool CauseVersioning )
         {
             CswNbtMetaDataNodeType ret = NodeTypeTab.NodeType;
             if( CauseVersioning )
             {
                 string OriginalTabName = NodeTypeTab.TabName;
-                CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeTab.NodeType );
+                CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeTab.NodeType, CauseVersioning );
                 NodeTypeTab = NodeType.getNodeTypeTab( OriginalTabName );
             }
 

@@ -42,6 +42,24 @@ namespace ChemSW.Nbt.WebPages
             EditPropertyPage
         }
 
+        public static readonly string AllNodesNoVersion = "All Nodes";
+        public static readonly string NewNodesNewVersion = "New Nodes Only";
+        private string _VersionAppliesTo = AllNodesNoVersion;
+        private bool _CauseVersioning
+        {
+            get
+            {
+                return _DoesThisNodeTypeVersion && 
+                       _VersionAppliesTo == NewNodesNewVersion;
+            }
+
+        }
+
+        private bool _DoesThisNodeTypeVersion
+        {
+            get { return SelectedNodeType.IsLatestVersion && 
+                         SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass; }
+        }
 
         #region Selected Value Properties
 
@@ -606,13 +624,13 @@ namespace ChemSW.Nbt.WebPages
                     }
                     else if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property && CswTools.IsInteger( _SelectedValue ) )
                     {
-                        CswNbtMetaDataNodeTypeTab TabToSelect = Master.CswNbtResources.MetaData.DeleteNodeTypeProp( _SelectedNodeTypeProp );
+                        CswNbtMetaDataNodeTypeTab TabToSelect = Master.CswNbtResources.MetaData.DeleteNodeTypeProp( _SelectedNodeTypeProp, _CauseVersioning );
 
                         setSelected( CswNodeTypeTree.NodeTypeTreeSelectedType.Tab, TabToSelect.TabId.ToString(), true );
                     }
                     else if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Tab && CswTools.IsInteger( _SelectedValue ) )
                     {
-                        CswNbtMetaDataNodeType NodeTypeToSelect = Master.CswNbtResources.MetaData.DeleteNodeTypeTab( _SelectedNodeTypeTab );
+                        CswNbtMetaDataNodeType NodeTypeToSelect = Master.CswNbtResources.MetaData.DeleteNodeTypeTab( _SelectedNodeTypeTab, _CauseVersioning );
 
                         setSelected( CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType, NodeTypeToSelect.NodeTypeId.ToString(), true );
                     }
@@ -685,8 +703,10 @@ namespace ChemSW.Nbt.WebPages
                 {
                     // BZ 8372 - Do this first, since after versioning we don't want the new version to be locked
                     if( LockedCheckbox.Checked && !SelectedNodeType.IsLocked )
+                    {
                         SelectedNodeType.IsLocked = true;
-
+                    }
+                    SelectedNodeType.CauseVersioning = _CauseVersioning;
                     SelectedNodeType.NodeTypeName = EditNodeTypeName.Text;
                     SelectedNodeType.Category = EditNodeTypeCategory.Text;
                     SelectedNodeType.IconFileName = IconSelect.SelectedValue;
@@ -722,6 +742,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
+                SelectedNodeTypeTab.CauseVersioning = _CauseVersioning;
                 Int32 NewTabOrder = SelectedNodeTypeTab.TabOrder;
                 if( CswTools.IsInteger( EditTabOrderTextBox.Text ) )
                     NewTabOrder = CswConvert.ToInt32( EditTabOrderTextBox.Text );
@@ -745,6 +766,7 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 CswNbtMetaDataNodeTypeProp PropToSave = SelectedNodeTypeProp;
+                PropToSave.CauseVersioning = _CauseVersioning;
                 Int32 OldSelectedNodeTypePropId = CswConvert.ToInt32( _SelectedValue );
                 if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property )
                 {
@@ -1036,6 +1058,8 @@ namespace ChemSW.Nbt.WebPages
         private Label _WarningLabel;
         private LinkButton _LayoutLink;
         private LinkButton _DefaultViewLink;
+        private Label NodeTypeVersionLabel;
+        private DropDownList NodeTypeVersionSelect;
 
         private void create_EditNodeTypePage( CswAutoTable TabTable )
         {
@@ -1087,6 +1111,21 @@ namespace ChemSW.Nbt.WebPages
             LockedCheckbox.Text = "Locked";
             LockedCheckbox.EnableViewState = false;
 
+            if( _DoesThisNodeTypeVersion )
+            {
+                NodeTypeVersionLabel = new Label();
+                NodeTypeVersionLabel.ID = "EditNodeTypeVersionLabel";
+                NodeTypeVersionLabel.Text = "Apply Change to:";
+
+                NodeTypeVersionSelect = new DropDownList();
+                NodeTypeVersionSelect.ID = "EditNodeTypeVersionSelect_" + _SelectedValue;
+                NodeTypeVersionSelect.Items.Add( AllNodesNoVersion );
+                NodeTypeVersionSelect.Items.Add( NewNodesNewVersion );
+                NodeTypeVersionSelect.SelectedItem.Value = AllNodesNoVersion;
+                NodeTypeVersionSelect.TextChanged += _VersionSelect_Change;
+                NodeTypeVersionSelect.CssClass = "selectinput";
+            }
+
             //Spacer1 = new Literal();
             //Spacer1.Text = "&nbsp;";
 
@@ -1137,21 +1176,26 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 4, 1, NameTemplate );
             TabTable.addControl( 4, 1, AddToNameTemplatePropSelect );
             TabTable.addControl( 5, 1, LockedCheckbox );
-            TabTable.addControl( 6, 1, _SaveButton );
-            TabTable.addControl( 7, 0, new CswLiteralNbsp() );
+            if( _DoesThisNodeTypeVersion )
+            {
+                TabTable.addControl( 6, 0, NodeTypeVersionLabel );
+                TabTable.addControl( 6, 1, NodeTypeVersionSelect );
+            }
+            TabTable.addControl( 7, 1, _SaveButton );
+            TabTable.addControl( 8, 0, new CswLiteralNbsp() );
             TableCell SpacerCell = TabTable.getCell( 8, 0 );
             SpacerCell.ColumnSpan = 2;
             SpacerCell.Controls.Add( Spacer2 );
-            TabTable.addControl( 9, 0, CopiedNodeTypeNameLabel );
-            TabTable.addControl( 9, 1, CopiedNodeTypeName );
-            TabTable.addControl( 10, 1, _CopyNodeTypeButton );
-            TabTable.addControl( 11, 0, new CswLiteralNbsp() );
-            TabTable.addControl( 12, 0, ChangeObjectClassLabel );
-            TabTable.addControl( 12, 1, ChangeObjectClassSelect );
-            TabTable.addControl( 13, 1, _ChangeObjectClassButton );
-            TabTable.addControl( 14, 0, new CswLiteralNbsp() );
-            TabTable.addControl( 15, 1, _LayoutLink );
-            TabTable.addControl( 16, 1, _DefaultViewLink );
+            TabTable.addControl( 10, 0, CopiedNodeTypeNameLabel );
+            TabTable.addControl( 10, 1, CopiedNodeTypeName );
+            TabTable.addControl( 11, 1, _CopyNodeTypeButton );
+            TabTable.addControl( 12, 0, new CswLiteralNbsp() );
+            TabTable.addControl( 13, 0, ChangeObjectClassLabel );
+            TabTable.addControl( 13, 1, ChangeObjectClassSelect );
+            TabTable.addControl( 14, 1, _ChangeObjectClassButton );
+            TabTable.addControl( 15, 0, new CswLiteralNbsp() );
+            TabTable.addControl( 16, 1, _LayoutLink );
+            TabTable.addControl( 17, 1, _DefaultViewLink );
         }
 
 
@@ -1270,6 +1314,8 @@ namespace ChemSW.Nbt.WebPages
         private TextBox EditTabOrderTextBox;
         private Literal EditTabIncludeInNodeReportLabel;
         private CheckBox EditTabIncludeInNodeReport;
+        private Label EditTabVersionLabel;
+        private DropDownList EditTabVersionSelect;
 
         private void create_EditTabPage( CswAutoTable TabTable )
         {
@@ -1302,7 +1348,43 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 1, 1, EditTabOrderTextBox );
             TabTable.addControl( 2, 0, EditTabIncludeInNodeReportLabel );
             TabTable.addControl( 2, 1, EditTabIncludeInNodeReport );
-            TabTable.addControl( 3, 1, _SaveButton );
+
+            if( _DoesThisNodeTypeVersion )
+            {
+                EditTabVersionLabel = new Label();
+                EditTabVersionLabel.ID = "EditTabVersionLabel";
+                EditTabVersionLabel.Text = "Apply Change to:";
+
+                EditTabVersionSelect = new DropDownList();
+                EditTabVersionSelect.ID = "EditNewTabVersionSelect_" + _SelectedValue;
+                EditTabVersionSelect.Items.Add( AllNodesNoVersion );
+                EditTabVersionSelect.Items.Add( NewNodesNewVersion );
+                EditTabVersionSelect.SelectedItem.Value = AllNodesNoVersion;
+                EditTabVersionSelect.TextChanged += _VersionSelect_Change;
+                EditTabVersionSelect.CssClass = "selectinput";
+
+                TabTable.addControl( 3, 0, EditTabVersionLabel );
+                TabTable.addControl( 3, 1, EditTabVersionSelect );
+            }
+            TabTable.addControl( 4, 1, _SaveButton );
+        }
+
+        private void _VersionSelect_Change( object sender, EventArgs e )
+        {
+            string VersionSelect = AllNodesNoVersion;
+            if( null != EditTabVersionSelect )
+            {
+                VersionSelect = EditTabVersionSelect.SelectedValue;
+            }
+            else if( null != NodeTypeVersionSelect )
+            {
+                VersionSelect = NodeTypeVersionSelect.SelectedValue;
+            }
+            else
+            {
+                VersionSelect = getPropAttributeValue( "EditProp_ApplyVersionTo" + SelectedNodeTypeProp.PropId, EditPropPlaceHolder );
+            }
+            _VersionAppliesTo = VersionSelect;
         }
 
         private void init_EditTabPage()
@@ -2524,6 +2606,20 @@ namespace ChemSW.Nbt.WebPages
                     AuditLevelList.Items.Add( new ListItem( "Audit", AuditLevel.PlainAudit.ToString() ) );
                     AuditLevelList.SelectedValue = SelectedNodeTypeProp.AuditLevel.ToString();
                     AuditLevelRow.Cells[1].Controls.Add( AuditLevelList );
+
+                    if( _DoesThisNodeTypeVersion )
+                    {
+                        TableRow VersionAppliesToRow = makeEditPropTableRow( EditPropPlaceHolder );
+                        ( (Literal) VersionAppliesToRow.Cells[0].Controls[0] ).Text = "Apply Change To";
+                        DropDownList VersionList = new DropDownList();
+                        VersionList.ID = "EditProp_ApplyVersionTo" + SelectedNodeTypeProp.PropId.ToString();
+                        VersionList.CssClass = "selectinput";
+                        VersionList.Items.Add( new ListItem( AllNodesNoVersion, AllNodesNoVersion ) );
+                        VersionList.Items.Add( new ListItem( NewNodesNewVersion, NewNodesNewVersion ) );
+                        VersionList.SelectedValue = AllNodesNoVersion;
+                        VersionList.TextChanged += _VersionSelect_Change;
+                        VersionAppliesToRow.Cells[1].Controls.Add( VersionList );
+                    }
 
                 } // if (NodeTypePropId > 0)
             } // if (_SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property)

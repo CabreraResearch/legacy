@@ -377,7 +377,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    _CswNbtResources.MetaData.DeleteNodeTypeTab( SectionOneTab );
+                    _CswNbtResources.MetaData.DeleteNodeTypeTab( SectionOneTab, false );
                 }
             }
         }

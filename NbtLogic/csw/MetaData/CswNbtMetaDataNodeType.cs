@@ -59,6 +59,9 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["nodetypeid"].ToString() ); }
         }
+
+        public bool CauseVersioning = false;
+
         public string NodeTypeName
         {
             get { return _NodeTypeRow["nodetypename"].ToString(); }
@@ -71,7 +74,7 @@ namespace ChemSW.Nbt.MetaData
                     if( ExistingNodeType != null && ExistingNodeType.FirstVersionNodeTypeId != this.FirstVersionNodeTypeId )
                         throw new CswDniException( ErrorType.Warning, "Node Type Name must be unique", "Attempted to rename a nodetype to the same name as an existing nodetype" );
 
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this, CauseVersioning );
 
                     _CswNbtMetaDataResources.NodeTypesCollection.Deregister( this );
                     _NodeTypeRow["nodetypename"] = value;
