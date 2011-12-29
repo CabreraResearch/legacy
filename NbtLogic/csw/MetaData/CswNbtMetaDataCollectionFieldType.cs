@@ -82,71 +82,6 @@ namespace ChemSW.Nbt.MetaData
             return FieldType;
         }
 
-        /// <summary>
-        /// Try to add the FieldType to the _ByType SortedList. Suppress and log errors accordingly.
-        /// </summary>
-        private void _tryAddFieldTypeByType( CswNbtMetaDataFieldType FieldType )
-        {
-            try
-            {
-                _ByType.Add( FieldType.FieldType, FieldType );
-            }
-            catch( ArgumentNullException ArgumentNullException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Proposed FieldType was null and cannot be added to the MetaData collection.", "", ArgumentNullException ) );
-            }
-            catch( ArgumentException ArgumentException )
-            {
-                CswNbtMetaDataFieldType ExistingFieldType = (CswNbtMetaDataFieldType) _ByType.GetKey( _ByType.IndexOfKey( FieldType ) );
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError(
-                    new CswDniException(
-                        ErrorType.Error,
-                        "Duplicate FieldTypes exist in the database. A FieldTypes named: " + FieldType.FieldType.ToString() + " on fieldtypeid " + FieldType.FieldTypeId + " has already been defined.",
-                        "FieldType Name: " + ExistingFieldType.FieldType.ToString() + " is already defined with fieldtypeid " + ExistingFieldType.FieldTypeId + ".",
-                        ArgumentException )
-                );
-            }
-            catch( InvalidOperationException InvalidOperationException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot compare the proposed FieldType: " + FieldType.FieldType.ToString() + " against the MetaData collection.", "", InvalidOperationException ) );
-            }
-            catch( NotSupportedException NotSupportedException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot add the proposed FieldType: " + FieldType.FieldType.ToString() + " to the MetaData collection.", "", NotSupportedException ) );
-            }
-        }
-
-        /// <summary>
-        /// Try to add the FieldType to the _ById Hashtable. Suppress and log errors accordingly.
-        /// </summary>
-        private void _tryAddFieldTypeById( CswNbtMetaDataFieldType FieldType )
-        {
-            try
-            {
-                _ById.Add( FieldType.FieldTypeId, FieldType );
-            }
-            catch( ArgumentNullException ArgumentNullException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Proposed FieldType was null and cannot be added to the MetaData collection.", "", ArgumentNullException ) );
-            }
-            catch( ArgumentException ArgumentException )
-            {
-                CswNbtMetaDataFieldType ExistingFieldType = (CswNbtMetaDataFieldType) _ByType.GetKey( _ByType.IndexOfKey( FieldType ) );
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError(
-                    new CswDniException(
-                        ErrorType.Error,
-                        "Duplicate FieldTypes exist in the database. A FieldTypes named: " + FieldType.FieldType.ToString() + " on fieldtypeid " + FieldType.FieldTypeId + " has already been defined.",
-                        "FieldType Name: " + ExistingFieldType.FieldType.ToString() + " is already defined with fieldtypeid " + ExistingFieldType.FieldTypeId + ".",
-                        ArgumentException )
-                );
-            }
-            catch( NotSupportedException NotSupportedException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot add the proposed FieldType: " + FieldType.FieldType.ToString() + " to the MetaData collection.", "", NotSupportedException ) );
-            }
-        }
-
-
         public void RegisterExisting( ICswNbtMetaDataObject Object )
         {
             if( !( Object is CswNbtMetaDataFieldType ) )
@@ -154,9 +89,7 @@ namespace ChemSW.Nbt.MetaData
                 throw new CswDniException( "CswNbtMetaDataCollectionFieldType.Register got an invalid Object as a parameter" );
             }
             CswNbtMetaDataFieldType FieldType = Object as CswNbtMetaDataFieldType;
-
-            _tryAddFieldTypeByType( FieldType );
-            _tryAddFieldTypeById( FieldType );
+            _CswNbtMetaDataResources.AddToMetaDataCollection( FieldType, _ById, _ByType );
         }
 
         public void Deregister( ICswNbtMetaDataObject Object )

@@ -126,78 +126,13 @@ namespace ChemSW.Nbt.MetaData
             return NodeType;
         }
 
-        /// <summary>
-        /// Attempt to add a NodeType to the _ByVersion SortedList. Suppress and log errors.
-        /// </summary>
-        private void _tryAddNodeTypeByVersion( CswNbtMetaDataNodeType NodeType )
-        {
-            try
-            {
-                _ByVersion.Add( NodeType, NodeType );
-            }
-            catch( ArgumentNullException ArgumentNullException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Proposed NodeType was null and cannot be added to the MetaData collection.", "", ArgumentNullException ) );
-            }
-            catch( ArgumentException ArgumentException )
-            {
-                CswNbtMetaDataNodeType ExistingNodeType = (CswNbtMetaDataNodeType) _ByVersion.GetKey( _ByVersion.IndexOfKey( NodeType ) );
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError(
-                    new CswDniException(
-                        ErrorType.Error,
-                        "Duplicate NodeTypes exist in the database. A NodeType named: " + NodeType.NodeTypeName + " on nodetypeid " + NodeType.NodeTypeId + " has already been defined at version " + NodeType.VersionNo + ".",
-                        "NodeType Name: " + ExistingNodeType.NodeTypeName + " is already defined at version " + ExistingNodeType.VersionNo + " with nodetypeid " + ExistingNodeType.NodeTypeId + ".",
-                        ArgumentException )
-                );
-            }
-            catch( InvalidOperationException InvalidOperationException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot compare the proposed NodeType: " + NodeType.NodeTypeName + " against the MetaData collection.", "", InvalidOperationException ) );
-            }
-            catch( NotSupportedException NotSupportedException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot add the proposed NodeType: " + NodeType.NodeTypeName + " to the MetaData collection.", "", NotSupportedException ) );
-            }
-        }
-
-        /// <summary>
-        /// Attempt to add a NodeType to the _ById Hashtable. Suppress and log errors.
-        /// </summary>
-        private void _tryAddNodeTypeById( CswNbtMetaDataNodeType NodeType )
-        {
-            try
-            {
-                _ById.Add( NodeType.NodeTypeId, NodeType );
-            }
-            catch( ArgumentNullException ArgumentNullException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Proposed NodeType was null and cannot be added to the MetaData collection.", "", ArgumentNullException ) );
-            }
-            catch( ArgumentException ArgumentException )
-            {
-                CswNbtMetaDataNodeType ExistingNodeType = (CswNbtMetaDataNodeType) _ById[NodeType.NodeTypeId];
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError(
-                    new CswDniException(
-                        ErrorType.Error,
-                        "Duplicate NodeTypes exist in the database. A NodeType named: " + NodeType.NodeTypeName + " on nodetypeid " + NodeType.NodeTypeId + " has already been defined.",
-                        "NodeType Name: " + ExistingNodeType.NodeTypeName + " is already defined with nodetypeid " + ExistingNodeType.NodeTypeId + ".",
-                        ArgumentException )
-                );
-            }
-            catch( NotSupportedException NotSupportedException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot add the proposed NodeType: " + NodeType.NodeTypeName + " to the MetaData collection.", "", NotSupportedException ) );
-            }
-        }
-
         public void RegisterExisting( ICswNbtMetaDataObject Object )
         {
             if( !( Object is CswNbtMetaDataNodeType ) )
                 throw new CswDniException( "CswNbtMetaDataCollectionNodeType.Register got an invalid Object as a parameter" );
             CswNbtMetaDataNodeType NodeType = Object as CswNbtMetaDataNodeType;
 
-            _tryAddNodeTypeByVersion( NodeType );
-            _tryAddNodeTypeById( NodeType );
+            _CswNbtMetaDataResources.AddToMetaDataCollection( NodeType, _ById, _ByVersion );
 
             // Handle index of latest version by first version
             if( _LatestVersionByFirstVersion.ContainsKey( NodeType.FirstVersionNodeType ) )
