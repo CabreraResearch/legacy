@@ -23,6 +23,22 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Case 24574
 
+            #region Case 20941
+
+            CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+
+            //Remove the oppression from existing Inspection nodetypes since they will be locked by default
+            foreach( CswNbtMetaDataNodeType NodeType in InspectionDesignOc.NodeTypes )
+            {
+                if( NodeType.IsLatestVersion )
+                {
+                    NodeType.IsLocked = false;
+                }
+            }
+
+
+            #endregion Case 20941
+
         }//Update()
 
     }//class CswUpdateSchemaTo01L09
