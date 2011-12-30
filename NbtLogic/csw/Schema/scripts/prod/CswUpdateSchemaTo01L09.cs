@@ -1,5 +1,4 @@
-﻿using System;
-using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 
@@ -20,7 +19,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass GeneratorOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
 
             CswNbtMetaDataObjectClassProp DueDateOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.NextDueDatePropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DueDateOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended, CswNbtNodePropDateTime.DateDisplayMode.DateTime );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DueDateOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended, CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() );
 
             #endregion Case 24574
 
