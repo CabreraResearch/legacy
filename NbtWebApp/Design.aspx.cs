@@ -55,10 +55,10 @@ namespace ChemSW.Nbt.WebPages
 
             if( CauseVersioning )
             {
-                SelectedNodeType.IsLocked = CauseVersioning;
+                SelectedNodeType.IsLocked = true;
                 if( null != LockedCheckbox )
                 {
-                    LockedCheckbox.Checked = CauseVersioning;
+                    LockedCheckbox.Checked = true;
                 }
             }
             return CauseVersioning;
