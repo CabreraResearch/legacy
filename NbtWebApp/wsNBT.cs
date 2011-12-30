@@ -785,7 +785,7 @@ namespace ChemSW.Nbt.WebServices
 						if( !string.IsNullOrEmpty( IncludeNodeKey ) )
 							RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( IncludeNodeKey ) );
 
-						ReturnVal = ws.runTree( View, IdPrefix, RealIncludeNodeKey, IncludeNodeRequired, IncludeInQuickLaunch, Context.Cache );
+						ReturnVal = ws.runTree( View, IdPrefix, RealIncludeNodeKey, IncludeNodeRequired, IncludeInQuickLaunch );
 					}
 				}
 
@@ -824,7 +824,7 @@ namespace ChemSW.Nbt.WebServices
 					if( null != View )
 					{
                         var ws = new CswNbtWebServiceTree( _CswNbtResources );
-                        ReturnVal = ws.fetchTreeRoot( View, Context.Cache, IdPrefix, PageSize, PageNo, ForSearch );
+                        ReturnVal = ws.fetchTreeRoot( View, IdPrefix, PageSize, PageNo, ForSearch );
 					}
 				}
 
@@ -863,7 +863,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != View )
                     {
                         var ws = new CswNbtWebServiceTree( _CswNbtResources );
-                        ReturnVal = ws.fetchTreeChildren( View, Context.Cache, IdPrefix, Level, ParentRangeStart, ParentRangeEnd, ForSearch );
+                        ReturnVal = ws.fetchTreeChildren( View, IdPrefix, Level, ParentRangeStart, ParentRangeEnd, ForSearch );
                     }
                 }
 
