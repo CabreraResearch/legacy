@@ -20,11 +20,12 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
         private string CacheTreeName = "tree_";
-
-        public JObject runTree( CswNbtView View, string IdPrefix, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch, Cache Cache )
+        
+        public JObject runTree( CswNbtView View, string IdPrefix, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch )
         {
             JObject ReturnObj = new JObject();
-            Cache.Remove( CacheTreeName + IdPrefix );
+
+            _CswNbtResources.CswSuperCycleCache.delete( CacheTreeName + IdPrefix );
             if( null != View && ( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List ) )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false );
@@ -51,7 +52,7 @@ namespace ChemSW.Nbt.WebServices
                 //ReturnObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
                 ReturnObj["root"]["state"] = "open";
 
-                Cache[CacheTreeName + IdPrefix] = Tree;
+                _CswNbtResources.CswSuperCycleCache.put( CacheTreeName + IdPrefix, Tree );
                 View.SaveToCache( IncludeInQuickLaunch );
             }
             return ReturnObj;
@@ -70,12 +71,12 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="PageNo">Page of nodes on this level, if number of nodes exceeds pagesize</param>
         /// <param name="PageSize">Size of pages</param>
         /// <param name="ForSearch">True if view is from a search</param>
-        public JObject fetchTreeRoot( CswNbtView View, Cache Cache, string IdPrefix, Int32 PageSize, Int32 PageNo, bool ForSearch )
+        public JObject fetchTreeRoot( CswNbtView View, string IdPrefix, Int32 PageSize, Int32 PageNo, bool ForSearch )
         {
             JObject ReturnObj = new JObject();
-            if( Cache != null && View != null )
+            if( _CswNbtResources.CswSuperCycleCache != null && View != null )
             {
-                ICswNbtTree CacheTree = (ICswNbtTree) Cache[CacheTreeName + IdPrefix];
+                ICswNbtTree CacheTree = (ICswNbtTree) _CswNbtResources.CswSuperCycleCache.get( CacheTreeName + IdPrefix );
                 // Make a local copy to iterate, to avoid race conditions with other threads
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromXml( View, CacheTree.getRawTreeXml() );
                 if( Tree != null )
@@ -127,12 +128,12 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnObj;
         } // fetchTreeRoot
-        public JObject fetchTreeChildren( CswNbtView View, Cache Cache, string IdPrefix, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, bool ForSearch )
+        public JObject fetchTreeChildren( CswNbtView View, string IdPrefix, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, bool ForSearch )
         {
             JObject ReturnObj = new JObject();
-            if( Cache != null && View != null )
+            if( _CswNbtResources.CswSuperCycleCache != null && View != null )
             {
-                ICswNbtTree CacheTree = (ICswNbtTree) Cache[CacheTreeName + IdPrefix];
+                ICswNbtTree CacheTree = (ICswNbtTree) _CswNbtResources.CswSuperCycleCache.get( CacheTreeName + IdPrefix );
                 // Make a local copy to iterate, to avoid race conditions with other threads
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromXml( View, CacheTree.getRawTreeXml() );
                 if( Tree != null )
