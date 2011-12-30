@@ -5,6 +5,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -21,7 +22,7 @@ namespace ChemSW.Nbt.Actions
 
         public bool MarkFuture = false;
 
-        private CswNbtNode _getTargetNodeForGenerator( CswNbtNode CswNbtNodeGenerator, CswPrimaryKey ParentPk, DateTime TargetDueDate )
+        private CswNbtNode _getTargetNodeForGenerator( CswNbtNode CswNbtNodeGenerator, CswPrimaryKey ParentPk, string TargetDateFilter )
         {
             CswNbtNode ReturnVal = null;
 
@@ -36,13 +37,15 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtObjClass CreatedObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, CreatedMetaDataObjectClass );
                 if( !( CreatedObjClass is ICswNbtPropertySetGeneratorTarget ) )
+                {
                     throw new CswDniException( "CswNbtActGenerateNodes got an invalid object class: " + CreatedObjClass.ObjectClass.ToString() );
+                }
                 ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget) CreatedObjClass;
 
                 // CreatedForNTP is the parent or owner of the new node. Inspections created for Inspection Targets, Tasks for Equipment, etc.
                 CswNbtMetaDataNodeTypeProp CreatedForNTP = CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetParentPropertyName );
                 CswNbtMetaDataNodeTypeProp GeneratorNTP = CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratorPropertyName );
-                CswNbtMetaDataNodeTypeProp IsFutureNTP = CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
+                CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
                 CswNbtMetaDataNodeTypeProp DueDateNTP = CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratedDatePropertyName );
 
                 CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
@@ -54,11 +57,12 @@ namespace ChemSW.Nbt.Actions
                 //CswNbtViewPropertyFilter GeneratedDateFilter = CswNbtView.AddViewPropertyFilter( GeneratedDateProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDueDate.Date.ToShortDateString(), false );
                 CswNbtViewRelationship RootRelationship = CswNbtView.AddViewRelationship( CreatedNodeType, false );
                 CswNbtViewProperty CreatedForParentProp = CswNbtView.AddViewProperty( RootRelationship, CreatedForNTP );
-                CswNbtViewPropertyFilter CreatedForFilter = CswNbtView.AddViewPropertyFilter( CreatedForParentProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, ParentPk.PrimaryKey.ToString(), false );
+                CswNbtView.AddViewPropertyFilter( CreatedForParentProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, ParentPk.PrimaryKey.ToString(), false );
                 CswNbtViewProperty GeneratorProp = CswNbtView.AddViewProperty( RootRelationship, GeneratorNTP );
-                CswNbtViewPropertyFilter GeneratorFilter = CswNbtView.AddViewPropertyFilter( GeneratorProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtNodeGenerator.NodeId.PrimaryKey.ToString(), false );
+                CswNbtView.AddViewPropertyFilter( GeneratorProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtNodeGenerator.NodeId.PrimaryKey.ToString(), false );
                 CswNbtViewProperty DueDateProp = CswNbtView.AddViewProperty( RootRelationship, DueDateNTP );
-                CswNbtViewPropertyFilter DueDateFilter = CswNbtView.AddViewPropertyFilter( DueDateProp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDueDate.ToShortDateString(), false );
+                //Case 24572
+                CswNbtView.AddViewPropertyFilter( DueDateProp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals,TargetDateFilter, false );
 
                 ICswNbtTree ExistingNodesTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
 
@@ -101,12 +105,29 @@ namespace ChemSW.Nbt.Actions
                 throw ( new CswDniException( "Generator node " + CswNbtNodeGenerator.NodeName + " (" + CswNbtNodeGenerator.NodeId.ToString() + ") does not have a valid nodetypeid" ) );
             }
 
+            string DateFilter = string.Empty;
             if( DueDate == DateTime.MinValue )
-                DueDate = GeneratorNode.NextDueDate.DateTimeValue.Date;
-            if( DueDate == DateTime.MinValue )
+            {
+                switch( GeneratorNode.NextDueDate.DisplayMode )
+                {
+                    case CswNbtNodePropDateTime.DateDisplayMode.Date:
+                        DueDate = GeneratorNode.NextDueDate.DateTimeValue.Date;
+                        DateFilter = DueDate.ToShortDateString();
+                        break;
+                    case CswNbtNodePropDateTime.DateDisplayMode.DateTime:
+                        DueDate = GeneratorNode.NextDueDate.DateTimeValue;
+                        DateFilter = DueDate.ToShortDateString() + " " + DueDate.ToLongTimeString();
+                        break;
+                }
+            }
+            if( DueDate == DateTime.MinValue || string.IsNullOrEmpty( DateFilter ) )
+            {
                 DueDate = GeneratorNode.DueDateInterval.getStartDate();
+                DateFilter = DueDate.ToShortDateString();
+            }
 
             Collection<CswPrimaryKey> Parents = new Collection<CswPrimaryKey>();
+            //SI will have a ParentView to fetch InspectionTargets which will be used to find existing InsepctionDesign nodes or create new ones
             if( GeneratorNode.ParentView.ViewId.isSet() )
             {
                 CswNbtView ParentsView = _CswNbtResources.ViewSelect.restoreView( GeneratorNode.ParentView.ViewId );
@@ -122,6 +143,7 @@ namespace ChemSW.Nbt.Actions
                     }
                 }
             }
+            //IMCS won't have a ParentView or a ParentType
             if( Parents.Count == 0 && string.Empty == GeneratorNode.ParentType.SelectedNodeTypeIds.ToString() )
             {
                 if( null != GeneratorNode.Owner && null != GeneratorNode.Owner.RelatedNodeId )
@@ -135,7 +157,7 @@ namespace ChemSW.Nbt.Actions
             {
                 if( null != NewParentPK )
                 {
-                    CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPK, DueDate );
+                    CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPK, DateFilter );
                     if( null == ExistingNode )
                     {
                         Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
