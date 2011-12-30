@@ -26,13 +26,22 @@ namespace ChemSW.Nbt.MetaData
             JctNodesProps
         };
 
+        private bool CacheEnabled = false;
+
 
         private Dictionary<MetaDataTable, DataTable> _Tables = new Dictionary<MetaDataTable, DataTable>();
 
         private ICswSuperCycleCache _CswSuperCycleCache = null;
-        public CswNbtMetaDataTableCache( ICswSuperCycleCache CswSuperCycleCache )
+        private CswNbtResources _CswNbtResources = null;
+        public CswNbtMetaDataTableCache( CswNbtResources CswNbtResources )
         {
-            _CswSuperCycleCache = CswSuperCycleCache;
+            _CswNbtResources = CswNbtResources;
+            _CswSuperCycleCache = CswNbtResources.CswSuperCycleCache;
+            
+            if( _CswNbtResources.SetupVbls.doesSettingExist( "cachemetadata" ) && "1" == _CswNbtResources.SetupVbls["cachemetadata"] )
+            {
+                CacheEnabled = true;
+            }
         }//ctor
 
 
@@ -45,16 +54,24 @@ namespace ChemSW.Nbt.MetaData
 
         public DataTable get( MetaDataTable TableId )
         {
-            return ( (DataTable) _CswSuperCycleCache.get( TableId.ToString() ) );
+            DataTable ret = null;
+            if( CacheEnabled )
+            {
+                ret = ( (DataTable) _CswSuperCycleCache.get( TableId.ToString() ) );
+            }
+            return ret;
         }//getTable() 
 
 
         public void put( MetaDataTable TableId, DataTable DataTable )
         {
-            _CswSuperCycleCache.put( TableId.ToString(), DataTable );
+            if( CacheEnabled )
+            {
+                _CswSuperCycleCache.put( TableId.ToString(), DataTable );
+            }
         }//put() 
 
 
-    }//ICswNbtFieldTypeRule
+    }//CswNbtMetaDataTableCache
 
 }//namespace ChemSW.Nbt.MetaData
