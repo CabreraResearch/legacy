@@ -250,7 +250,7 @@ namespace ChemSW.NbtWebControls
 
                 // LayoutComponentId == PropId (set in addPropertyToTable below)
                 CswNbtMetaDataNodeTypeProp DoomedProp = _CswNbtResources.MetaData.getNodeTypeProp( LayoutComponentId );
-                _CswNbtResources.MetaData.DeleteNodeTypeProp( DoomedProp, true );
+                _CswNbtResources.MetaData.DeleteNodeTypeProp( DoomedProp );
             }
             catch( Exception ex )
             {

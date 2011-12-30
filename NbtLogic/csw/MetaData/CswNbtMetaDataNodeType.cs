@@ -59,9 +59,6 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["nodetypeid"].ToString() ); }
         }
-
-        public bool CauseVersioning = false;
-
         public string NodeTypeName
         {
             get { return _NodeTypeRow["nodetypename"].ToString(); }
@@ -74,7 +71,7 @@ namespace ChemSW.Nbt.MetaData
                     if( ExistingNodeType != null && ExistingNodeType.FirstVersionNodeTypeId != this.FirstVersionNodeTypeId )
                         throw new CswDniException( ErrorType.Warning, "Node Type Name must be unique", "Attempted to rename a nodetype to the same name as an existing nodetype" );
 
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this, ref CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
 
                     _CswNbtMetaDataResources.NodeTypesCollection.Deregister( this );
                     _NodeTypeRow["nodetypename"] = value;
@@ -105,7 +102,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypeRow["category"].ToString() != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this, ref CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
                     _NodeTypeRow["category"] = value;
                 }
             }
@@ -117,7 +114,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypeRow["iconfilename"].ToString() != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this, ref CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
                     _NodeTypeRow["iconfilename"] = value;
                 }
             }
@@ -129,7 +126,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypeRow["nametemplate"].ToString() != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this, ref CauseVersioning );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
                     _NodeTypeRow["nametemplate"] = value;
                     // Need to set all node records to pendingupdate if this changes
                     SetNodesToPendingUpdate();
@@ -205,7 +202,13 @@ namespace ChemSW.Nbt.MetaData
             {
                 // This is the only change to islocked that's allowed
                 if( _NodeTypeRow["islocked"].ToString() == "0" && value )
+                {
                     _NodeTypeRow["islocked"] = "1";
+                }
+                else if( IsLatestVersion )
+                {
+                    _NodeTypeRow["islocked"] = CswConvert.ToDbVal( value );
+                }
             }
         }
 

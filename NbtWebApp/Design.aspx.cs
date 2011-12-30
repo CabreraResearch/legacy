@@ -45,20 +45,34 @@ namespace ChemSW.Nbt.WebPages
         public static readonly string AllNodesNoVersion = "All Nodes";
         public static readonly string NewNodesNewVersion = "New Nodes Only";
         private string _VersionAppliesTo = AllNodesNoVersion;
-        private bool _CauseVersioning
+        private bool _CheckVersioning()
+        {
+            bool CauseVersioning = ( _CanThisNodeTypeVersion &&
+                                     _VersionAppliesTo == NewNodesNewVersion ) ||
+                                   ( false == SelectedNodeType.IsLocked &&
+                                     null != LockedCheckbox &&
+                                     true == LockedCheckbox.Checked );
+
+            if( CauseVersioning )
+            {
+                SelectedNodeType.IsLocked = CauseVersioning;
+                if( null != LockedCheckbox )
+                {
+                    LockedCheckbox.Checked = CauseVersioning;
+                }
+            }
+            return CauseVersioning;
+        }
+
+        private bool _CanThisNodeTypeVersion
         {
             get
             {
-                return _DoesThisNodeTypeVersion && 
-                       _VersionAppliesTo == NewNodesNewVersion;
+                bool CanVersion = ( false == SelectedNodeType.IsLocked &&
+                                    SelectedNodeType.IsLatestVersion &&
+                                    SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                return CanVersion;
             }
-
-        }
-
-        private bool _DoesThisNodeTypeVersion
-        {
-            get { return SelectedNodeType.IsLatestVersion && 
-                         SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass; }
         }
 
         #region Selected Value Properties
@@ -624,13 +638,15 @@ namespace ChemSW.Nbt.WebPages
                     }
                     else if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property && CswTools.IsInteger( _SelectedValue ) )
                     {
-                        CswNbtMetaDataNodeTypeTab TabToSelect = Master.CswNbtResources.MetaData.DeleteNodeTypeProp( _SelectedNodeTypeProp, _CauseVersioning );
+                        _CheckVersioning();
+                        CswNbtMetaDataNodeTypeTab TabToSelect = Master.CswNbtResources.MetaData.DeleteNodeTypeProp( _SelectedNodeTypeProp );
 
                         setSelected( CswNodeTypeTree.NodeTypeTreeSelectedType.Tab, TabToSelect.TabId.ToString(), true );
                     }
                     else if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Tab && CswTools.IsInteger( _SelectedValue ) )
                     {
-                        CswNbtMetaDataNodeType NodeTypeToSelect = Master.CswNbtResources.MetaData.DeleteNodeTypeTab( _SelectedNodeTypeTab, _CauseVersioning );
+                        _CheckVersioning();
+                        CswNbtMetaDataNodeType NodeTypeToSelect = Master.CswNbtResources.MetaData.DeleteNodeTypeTab( _SelectedNodeTypeTab );
 
                         setSelected( CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType, NodeTypeToSelect.NodeTypeId.ToString(), true );
                     }
@@ -702,11 +718,11 @@ namespace ChemSW.Nbt.WebPages
                 if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType )
                 {
                     // BZ 8372 - Do this first, since after versioning we don't want the new version to be locked
-                    if( LockedCheckbox.Checked && !SelectedNodeType.IsLocked )
+                    bool IsVersioning = _CheckVersioning();
+                    if( false == IsVersioning && SelectedNodeType.IsLatestVersion )
                     {
-                        SelectedNodeType.IsLocked = true;
+                        SelectedNodeType.IsLocked = LockedCheckbox.Checked;
                     }
-                    SelectedNodeType.CauseVersioning = _CauseVersioning;
                     SelectedNodeType.NodeTypeName = EditNodeTypeName.Text;
                     SelectedNodeType.Category = EditNodeTypeCategory.Text;
                     SelectedNodeType.IconFileName = IconSelect.SelectedValue;
@@ -742,7 +758,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                SelectedNodeTypeTab.CauseVersioning = _CauseVersioning;
+                _CheckVersioning();
                 Int32 NewTabOrder = SelectedNodeTypeTab.TabOrder;
                 if( CswTools.IsInteger( EditTabOrderTextBox.Text ) )
                     NewTabOrder = CswConvert.ToInt32( EditTabOrderTextBox.Text );
@@ -766,7 +782,8 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 CswNbtMetaDataNodeTypeProp PropToSave = SelectedNodeTypeProp;
-                PropToSave.CauseVersioning = _CauseVersioning;
+                _CheckVersioning();
+
                 Int32 OldSelectedNodeTypePropId = CswConvert.ToInt32( _SelectedValue );
                 if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property )
                 {
@@ -1111,7 +1128,7 @@ namespace ChemSW.Nbt.WebPages
             LockedCheckbox.Text = "Locked";
             LockedCheckbox.EnableViewState = false;
 
-            if( _DoesThisNodeTypeVersion )
+            if( _CanThisNodeTypeVersion )
             {
                 NodeTypeVersionLabel = new Label();
                 NodeTypeVersionLabel.ID = "EditNodeTypeVersionLabel";
@@ -1176,7 +1193,7 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 4, 1, NameTemplate );
             TabTable.addControl( 4, 1, AddToNameTemplatePropSelect );
             TabTable.addControl( 5, 1, LockedCheckbox );
-            if( _DoesThisNodeTypeVersion )
+            if( _CanThisNodeTypeVersion )
             {
                 TabTable.addControl( 6, 0, NodeTypeVersionLabel );
                 TabTable.addControl( 6, 1, NodeTypeVersionSelect );
@@ -1349,7 +1366,7 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 2, 0, EditTabIncludeInNodeReportLabel );
             TabTable.addControl( 2, 1, EditTabIncludeInNodeReport );
 
-            if( _DoesThisNodeTypeVersion )
+            if( _CanThisNodeTypeVersion )
             {
                 EditTabVersionLabel = new Label();
                 EditTabVersionLabel.ID = "EditTabVersionLabel";
@@ -1384,6 +1401,11 @@ namespace ChemSW.Nbt.WebPages
             {
                 VersionSelect = getPropAttributeValue( "EditProp_ApplyVersionTo" + SelectedNodeTypeProp.PropId, EditPropPlaceHolder );
             }
+            if( VersionSelect == NewNodesNewVersion && null != LockedCheckbox )
+            {
+                LockedCheckbox.Checked = true;
+            }
+
             _VersionAppliesTo = VersionSelect;
         }
 
@@ -2607,7 +2629,7 @@ namespace ChemSW.Nbt.WebPages
                     AuditLevelList.SelectedValue = SelectedNodeTypeProp.AuditLevel.ToString();
                     AuditLevelRow.Cells[1].Controls.Add( AuditLevelList );
 
-                    if( _DoesThisNodeTypeVersion )
+                    if( _CanThisNodeTypeVersion )
                     {
                         TableRow VersionAppliesToRow = makeEditPropTableRow( EditPropPlaceHolder );
                         ( (Literal) VersionAppliesToRow.Cells[0].Controls[0] ).Text = "Apply Change To";

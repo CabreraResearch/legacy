@@ -17,9 +17,19 @@ namespace ChemSW.Nbt.WebPages
         public string LabelNodeType = "NodeType";
         public string LabelNodeTypeTab = "Tab";
         public string LabelNodeTypeProp = "Property";
-        private readonly string _AllNodesNoVersion = Design.AllNodesNoVersion;
-        private readonly string _NewNodesNewVersion = Design.NewNodesNewVersion;
-        private bool _CauseVersioning = false;
+        private readonly string _AllNodesNoVersion = "All Nodes";
+        private readonly string _NewNodesNewVersion = "New Nodes Only";
+
+        private bool _CheckVersioning()
+        {
+            bool CauseVersioning = ( SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass &&
+                                _VersionSelect == _NewNodesNewVersion );
+            if( CauseVersioning )
+            {
+                SelectedNodeType.IsLocked = true;
+            }
+            return SelectedNodeType.IsLocked;
+        }
 
         #region Selected
 
@@ -299,7 +309,9 @@ namespace ChemSW.Nbt.WebPages
                 if( CswTools.IsInteger( AddTabOrderTextBox.Text ) )
                     NewTabOrder = CswConvert.ToInt32( AddTabOrderTextBox.Text );
 
-                CswNbtMetaDataNodeTypeTab NewTab = Master.CswNbtResources.MetaData.makeNewTab( SelectedNodeType, AddTabNameTextBox.Text, NewTabOrder, _CauseVersioning );
+                _CheckVersioning();
+
+                CswNbtMetaDataNodeTypeTab NewTab = Master.CswNbtResources.MetaData.makeNewTab( SelectedNodeType, AddTabNameTextBox.Text, NewTabOrder );
                 // BZ 7543 - We might have just versioned the nodetype, but we don't care, since the tabid is correct and we're closing the popup
                 Session["Design_SelectedType"] = CswNodeTypeTree.NodeTypeTreeSelectedType.Tab.ToString();
                 Session["Design_SelectedValue"] = NewTab.TabId.ToString();
@@ -317,11 +329,12 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
+                _CheckVersioning();
+
                 CswNbtMetaDataNodeTypeProp NewProp = Master.CswNbtResources.MetaData.makeNewProp( SelectedNodeType,
                                                                                                   CswConvert.ToInt32( AddPropNewFieldTypeIdSelect.SelectedValue ),
                                                                                                   AddPropName.Text,
-                                                                                                  CswConvert.ToInt32( AddPropTabSelect.SelectedValue ),
-                                                                                                  _CauseVersioning
+                                                                                                  CswConvert.ToInt32( AddPropTabSelect.SelectedValue )
                                                                                                   );
 
                 // BZ 7543 - We might have just versioned the nodetype, but we don't care, since the propid is correct and we're closing the popup
@@ -405,20 +418,19 @@ namespace ChemSW.Nbt.WebPages
 
         }
 
+        private string _VersionSelect = Design.AllNodesNoVersion;
+
         private void _VersionSelect_Change( object sender, EventArgs e )
         {
-            string VersionSelect = _AllNodesNoVersion;
+
             if( null != AddNewTabVersionSelect )
             {
-                VersionSelect = AddNewTabVersionSelect.SelectedValue;
+                _VersionSelect = AddNewTabVersionSelect.SelectedValue;
             }
             else if( null != AddNewPropVersionSelect )
             {
-                VersionSelect = AddNewPropVersionSelect.SelectedValue;
+                _VersionSelect = AddNewPropVersionSelect.SelectedValue;
             }
-
-            _CauseVersioning = ( SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass &&
-                                 VersionSelect == _NewNodesNewVersion );
         }
 
         private Label AddTabNameLabel;
