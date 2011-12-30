@@ -517,7 +517,7 @@ function each(thisObj, onSuccess) {
     "use strict";
     /// <summary>Iterates an Object or an Array and handles length property</summary>
     /// <param name="thisObj" type="Object"> An object to crawl </param>
-    /// <param name="onSuccess" type="Function"> A function to execute on finding a property, which should return true to continue</param>
+    /// <param name="onSuccess" type="Function"> A function to execute on finding a property, which should return true to stop.</param>
     /// <returns type="Object">Returns the return of onSuccess</returns>
     var ret = false;
     if (isFunction(onSuccess)) {
