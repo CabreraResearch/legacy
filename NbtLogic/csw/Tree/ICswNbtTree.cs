@@ -1,7 +1,8 @@
+using System;
 using System.Data;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System;
+using System.Xml;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 //using ChemSW.Nbt.PropTypes;
@@ -143,7 +144,11 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Gets the Tree XML as it is stored internally
         /// </summary>
-        string getRawTreeXml();
+        XmlDocument getRawTreeXml();
+        /// <summary>
+        /// Sets the Tree XML, for copying trees
+        /// </summary>
+        void setRawTreeXml(XmlDocument XmlDoc);
 
         /// <summary>
         /// Name of view that created this tree.  Also name of root node of tree.

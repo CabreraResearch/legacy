@@ -82,13 +82,20 @@
                     },
                     stringify: false,
                     success: function (data) {
-
+                        // this page
                         recurseNodes($treediv, data.tree);
 
+                        // next page
                         if (isTrue(data.more)) {
                             getFirstLevel($treediv, realpagesize, realpageno + 1);
-                            getLevel($treediv, 2, data.nodecountstart, data.nodecountend);
                         }
+
+                        // children
+                        // Note: root is level 1
+                        //       "first" level is actually level 2
+                        //       so the next level is level 3
+                        getLevel($treediv, 3, data.nodecountstart, data.nodecountend);
+
                     } // success
                 }); // ajax
             } // getNextPage()
@@ -110,8 +117,10 @@
                     },
                     stringify: false,
                     success: function (data) {
-
+                        // this level
                         recurseNodes($treediv, data.tree);
+                        
+                        // children
                         if (tryParseNumber(data.nodecountend, -1) > 0) {
                             getLevel($treediv, reallevel + 1, data.nodecountstart, data.nodecountend);
                         }
@@ -124,9 +133,7 @@
                 each(nodescoll, function (childObj, childKey, thisObj, value) {
                     if (false === isNullOrEmpty(childObj)) {
                         if (false === isNullOrEmpty(childObj.attr.parentkey)) {
-                            log(childObj.attr.parentkey);
-                            log($treediv.find('li[cswnbtnodekey="' + childObj.attr.parentkey.replace(']', '\\]') + '"]'));
-                            parent = $treediv.find('li[cswnbtnodekey="' + childObj.attr.parentkey + '"]');
+                            parent = findParent($treediv, childObj.attr.parentkey);
                         }
                         addNodeToTree($treediv, parent, childObj);
                         if (false === isNullOrEmpty(childObj.children) && childObj.children.length > 0) {
@@ -135,6 +142,18 @@
                     }
                 }); // each
             } // recurseNodes()
+
+            function findParent($treediv, parentkey) {
+                // Using attribute selector $('li[cswnbtnodekey=""]') doesn't seem to work, so we'll do it manually
+                var ret = false;
+                $.each($treediv.find('li'), function (childkey, value) {
+                    childObj = $(value);
+                    if (childObj.attr('cswnbtnodekey') === parentkey) {
+                        ret = childObj;
+                    }
+                });
+                return ret;
+            }
 
             var rootnode = false;
             function addNodeToTree($treediv, parentnode, childjs) {

@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.WebServices
 			JObject ret = new JObject();
 			ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
 
-			XDocument XDoc = XDocument.Parse( Tree.getRawTreeXml() );
+			XDocument XDoc = XDocument.Parse( Tree.getRawTreeXml().InnerXml );
 			foreach( XElement TreeElm in XDoc.Elements() )                        // NbtTree
 			{
 				foreach( XElement RootElm in TreeElm.Elements() )                 // NbtNode (root)

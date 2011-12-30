@@ -75,7 +75,9 @@ namespace ChemSW.Nbt.WebServices
             JObject ReturnObj = new JObject();
             if( Cache != null && View != null )
             {
-                ICswNbtTree Tree = (ICswNbtTree) Cache[CacheTreeName + IdPrefix];
+                ICswNbtTree CacheTree = (ICswNbtTree) Cache[CacheTreeName + IdPrefix];
+                // Make a local copy to iterate, to avoid race conditions with other threads
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromXml( View, CacheTree.getRawTreeXml() );
                 if( Tree != null )
                 {
                     JArray RootArray = new JArray();
@@ -130,7 +132,9 @@ namespace ChemSW.Nbt.WebServices
             JObject ReturnObj = new JObject();
             if( Cache != null && View != null )
             {
-                ICswNbtTree Tree = (ICswNbtTree) Cache[CacheTreeName + IdPrefix];
+                ICswNbtTree CacheTree = (ICswNbtTree) Cache[CacheTreeName + IdPrefix];
+                // Make a local copy to iterate, to avoid race conditions with other threads
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromXml( View, CacheTree.getRawTreeXml() );
                 if( Tree != null )
                 {
                     JArray RootArray = new JArray();
@@ -187,7 +191,7 @@ namespace ChemSW.Nbt.WebServices
             Collection<CswNbtNodeKey> NodeKeys = Tree.getKeysForLevel( Level );
             foreach( CswNbtNodeKey NodeKey in NodeKeys )
             {
-                Int32 ParentCount = CswConvert.ToInt32( NodeKey.NodeCountPath[Level - 1] );
+                Int32 ParentCount = CswConvert.ToInt32( NodeKey.NodeCountPath[Level - 2] );
                 if( ParentCount >= ParentRangeStart &&
                     ParentCount <= ParentRangeEnd )
                 {
@@ -251,7 +255,7 @@ namespace ChemSW.Nbt.WebServices
                         FirstObj["attr"] = new JObject();
                         FirstObj["attr"]["id"] = IdPrefix + "root";
                         FirstObj["attr"]["rel"] = "root";
-                        FirstObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
+                        FirstObj["attr"]["cswnbtnodekey"] = wsTools.ToSafeJavaScriptParam( Tree.getNodeKeyForCurrentPosition().ToString() );
                         FirstObj["state"] = "open";
                         FirstObj["children"] = ChildArray;
 
@@ -424,7 +428,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
             if(ParentKey.NodeSpecies != NodeSpecies.Root)
             {
-                ThisNodeObj["attr"]["parentkey"] = ParentKey.ToString();
+                ThisNodeObj["attr"]["parentkey"] = wsTools.ToSafeJavaScriptParam( ParentKey.ToString() );
             }
 
             if( "leaf" != ThisNodeState && Tree.getChildNodeCount() > 0 )

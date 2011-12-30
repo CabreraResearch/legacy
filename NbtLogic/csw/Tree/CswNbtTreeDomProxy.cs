@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Xml;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -271,7 +272,7 @@ namespace ChemSW.Nbt
                 string XslFileNameFqn = _XslFilePath + "\\" + XslFileName;
 
                 _CswXmlTransformer.XslDocPath = XslFileNameFqn;
-                _CswXmlTransformer.SourceDoc = getRawTreeXml();
+                _CswXmlTransformer.SourceDoc = getRawTreeXml().InnerXml;
                 _TreeAsTransformedXml = _CswXmlTransformer.OutputDoc;
             }
 
@@ -279,20 +280,22 @@ namespace ChemSW.Nbt
 
         }//getTreeAsXml()
 
-        private string _TreeAsRawXml = "";
         /// <summary>
         /// Gets the Tree XML as it is stored internally
         /// </summary>
-        public string getRawTreeXml()
+        public XmlDocument getRawTreeXml()
         {
-            if( string.Empty == _TreeAsRawXml )
-            {
-                _TreeAsRawXml = _CswNbtTreeNodes.getRawXml();
-            }
-
-            return ( _TreeAsRawXml );
-
+            return _CswNbtTreeNodes.getRawXml();
         }//getRawTreeXml()
+
+        /// <summary>
+        /// Sets the Tree XML, for copying trees
+        /// </summary>
+        public void setRawTreeXml(XmlDocument XmlDoc)
+        {
+            _CswNbtTreeNodes.setRawXml( XmlDoc );
+        }//setRawTreeXml()
+
 
         /// <summary>
         /// Returns a CswNbtNode indexed by a CswNbtNodeKey
@@ -732,7 +735,6 @@ namespace ChemSW.Nbt
             Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship, RowCount );
             //ReturnVal.TreeKey = Key;
             _TreeAsTransformedXml = "";
-            _TreeAsRawXml = "";
             return ( ReturnVal );
         }//loadNodeAsChildFromRow() 
 
@@ -757,7 +759,6 @@ namespace ChemSW.Nbt
             Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Selectable, ShowInTree, AddChildren, RowCount );
             //ReturnVal.TreeKey = Key;
             _TreeAsTransformedXml = "";
-            _TreeAsRawXml = "";
             return ( ReturnVal );
         }//loadNodeAsChildFromRow() 
 

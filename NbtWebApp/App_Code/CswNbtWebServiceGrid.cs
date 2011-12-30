@@ -313,7 +313,7 @@ namespace ChemSW.Nbt.WebServices
             Int32 NodeCount = Tree.getChildNodeCount();
             if( NodeCount > 0 )
             {
-                RawXml = XElement.Parse( Tree.getRawTreeXml() );
+                RawXml = XElement.Parse( Tree.getRawTreeXml().InnerXml );
             }
             //else jqGrid effectively handles 'else' with emptyrecords property
 

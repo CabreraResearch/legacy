@@ -27,8 +27,7 @@ namespace ChemSW.Nbt
         //private Hashtable _ViewNodeHash = null;
 
         //        private Hashtable NodeEntries = null;
-        private Hashtable NodesAndParents = null;
-        private Dictionary<CswNbtNodeKey, Int32> NodesAndLevels = null;
+        private Dictionary<CswNbtNodeKey, CswNbtNodeKey> NodesAndParents = null;
 
         /*
          * The tree is structured in such a way that the elements
@@ -101,8 +100,7 @@ namespace ChemSW.Nbt
         //public CswNbtTreeNodes( CswNbtTreeKey CswNbtTreeKey, string XslFilePath, CswNbtResources CswNbtResources, CswNbtNodeCollection CswNbtNodeCollection)
         {
             //            NodeEntries = new Hashtable();
-            NodesAndParents = new Hashtable();
-            NodesAndLevels = new Dictionary<CswNbtNodeKey, Int32>();
+            NodesAndParents = new Dictionary<CswNbtNodeKey, CswNbtNodeKey>();
 
             _CswNbtTreeKey = CswNbtTreeKey;
 
@@ -234,10 +232,46 @@ namespace ChemSW.Nbt
         }
 
 
-        public string getRawXml()
+        public XmlDocument getRawXml()
         {
-            return ( _XmlDoc.InnerXml );
-        }//
+            //return ( _XmlDoc.InnerXml );
+            return _XmlDoc;
+        }
+        public void setRawXml(XmlDocument NewXmlDoc)
+        {
+            _XmlDoc = NewXmlDoc;
+            _TreeNode = NewXmlDoc.ChildNodes[0];
+            _RootNode = _TreeNode.ChildNodes[0];
+
+            _resetNodesAndParents();
+
+            goToRoot();
+        }
+
+        /// <summary>
+        /// Repairs the NodesAndParents hashtable
+        /// </summary>
+        private void _resetNodesAndParents()
+        {
+            NodesAndParents = new Dictionary<CswNbtNodeKey,CswNbtNodeKey>();
+            goToRoot();
+            _resetNodesAndParentsRecursive();
+        }
+        private void _resetNodesAndParentsRecursive()
+        {
+            CswNbtNodeKey CurrentKey = getKeyForCurrentNode();
+            for( Int32 c = 0; c < getChildNodeCount(); c++ )
+            {
+                goToNthChild( c );
+                CswNbtNodeKey ChildKey = getKeyForCurrentNode();
+                if( !NodesAndParents.ContainsKey( ChildKey ) )
+                {
+                    NodesAndParents.Add( ChildKey, CurrentKey );
+                }
+                _resetNodesAndParentsRecursive();
+                goToParentNode();
+            }
+        }
 
 
         public bool isNodeDefined( CswNbtNodeKey NodeKey )
@@ -568,8 +602,6 @@ namespace ChemSW.Nbt
             //            NodeEntries.Add(NewNodeKey, NewNodeContext);
             if( !NodesAndParents.ContainsKey( NewNodeKey ) )
                 NodesAndParents.Add( NewNodeKey, ParentNodeKey );
-            if( !NodesAndLevels.ContainsKey( NewNodeKey ) )
-                NodesAndLevels.Add( NewNodeKey, NodeCountPath.Count );
 
             return ( NewNodeKey );
         }
@@ -983,18 +1015,18 @@ namespace ChemSW.Nbt
         public Collection<CswNbtNodeKey> getKeysForLevel( Int32 Level )
         {
             Collection<CswNbtNodeKey> NodeKeys = new Collection<CswNbtNodeKey>();
-            foreach( CswNbtNodeKey NodeKey in NodesAndLevels.Keys )
+            foreach( CswNbtNodeKey NodeKey in NodesAndParents.Keys )
             {
-                if( NodesAndLevels[NodeKey] == Level )
+                if( NodeKey.TreeDepth == Level )
                     NodeKeys.Add( NodeKey );
             }
             return NodeKeys;
-        }
+        } // getKeysForLevel()
 
 
         public CswNbtNodeKey getParentKey( CswNbtNodeKey ChildKey )
         {
-            return (CswNbtNodeKey) NodesAndParents[ChildKey];
+            return NodesAndParents[ChildKey];
         }
 
         //public IEnumerable getKeysForNodeKey(CswNbtNodeKey CswNbtNodeKey)
