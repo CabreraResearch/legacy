@@ -163,13 +163,12 @@ namespace ChemSW.Nbt.Actions
                 if( null != NewParentPK )
                 {
                     CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPK, DateFilter );
-                    ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget;
 
                     bool MakeGeneratorTarget = ( null == ExistingNode );
                     /* Case 24572 */
                     if( false == MakeGeneratorTarget )
                     {
-                        ExistingNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( ExistingNode );
+
                         if( IsSI )
                         {
                             try
@@ -230,9 +229,9 @@ namespace ChemSW.Nbt.Actions
                         }
 
                     }//if ( null == ExistingNode )
-
                     else
                     {
+                        ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( ExistingNode );
                         if( !MarkFuture )
                         {
                             if( ExistingNodeAsGeneratorTarget.IsFuture.Checked == Tristate.True )
