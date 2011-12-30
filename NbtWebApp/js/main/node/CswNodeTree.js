@@ -4,7 +4,7 @@
 ///// <reference path="../../globals/CswEnums.js" />
 
 //(function ($) { /// <param name="$" type="jQuery" />
-    "use strict";
+//    "use strict";
 //    var pluginName = 'CswNodeTree';
 
 //    var methods = {
@@ -212,7 +212,7 @@
 //                            var $hoverLI = $(bindData.rslt.obj[0]);
 //                            var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
 //                            var cswnbtnodekey = $hoverLI.CswAttrDom('cswnbtnodekey');
-                            nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
+//                            nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
 
 //                        }).bind('dehover_node.jstree', function () {
 //                            jsTreeGetSelected($treediv);
