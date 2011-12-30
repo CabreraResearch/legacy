@@ -14,7 +14,7 @@
                 var $Div = $(this);
                 $Div.contents().remove();
 
-                var value = tryParseString(o.propData.value).trim();
+//                var value = tryParseString(o.propData.value).trim();
 
                 $Div.append('[Not Implemented Yet]');
 //                if(o.ReadOnly)
@@ -41,7 +41,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

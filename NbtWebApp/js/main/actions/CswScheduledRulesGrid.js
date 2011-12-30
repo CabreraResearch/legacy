@@ -53,7 +53,7 @@
                         $btn.click();
                     }
                 } else {
-                    $btn = $wizard.CswWizard('button', button, 'disable');
+                    $wizard.CswWizard('button', button, 'disable');
                 }
                 return false;
             },

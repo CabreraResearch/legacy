@@ -38,6 +38,8 @@
 
 $.CswFieldTypeFactory = function (method) {
     "use strict";
+    var pluginName = 'CswFieldTypeFactory';
+    
     var m = {
         nodeid: '',
         fieldtype: '',
@@ -56,8 +58,7 @@ $.CswFieldTypeFactory = function (method) {
     };
 
     var methods = {
-        'make': function (options)
-        {
+        'make': function (options) {
             if (options) {
                 //$.extend(m, options);
                 m = options;
@@ -188,8 +189,7 @@ $.CswFieldTypeFactory = function (method) {
             } // switch (fieldtype)
         }, // make
 
-        'save': function (options)
-        {
+        'save': function (options) {
             if (options) {
                 //$.extend(m, options);
                 m = options;
@@ -318,14 +318,12 @@ $.CswFieldTypeFactory = function (method) {
     };
 
     // Method calling logic
-    if (methods[method])
-    {
+    if (methods[method]) {
         return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-    } else if (typeof method === 'object' || !method)
-    {
+    } 
+    else if (typeof method === 'object' || !method) {
         return methods.init.apply(this, arguments);
-    } else
-    {
-        $.error('Method ' + method + ' does not exist on ' + PluginName);
+    } else {
+        $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
     }
 }   // $.CswFieldTypeFactory

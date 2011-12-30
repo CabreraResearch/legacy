@@ -8,28 +8,22 @@
 <span id="results"></span>
 <script language="javascript">
 
-    $(document).ready(function ()
-    {
+    $(document).ready(function () {
         $.ajax({
             type: 'POST',
             url: '/NbtWebApp/wsNBT.asmx/ConnectTestDb',
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             data: '',
-            success: function (data, textStatus, XMLHttpRequest)
-            {
+            success: function (data) {
                 var dataresult = $.parseJSON(data.d);
-                if (dataresult.error !== undefined)
-                {
-                    $('#results').text( "ERROR: " + dataresult.error );
-                }
-                else
-                {
-                    $('#results').text( dataresult.result );
+                if (dataresult.error !== undefined) {
+                    $('#results').text("ERROR: " + dataresult.error);
+                } else {
+                    $('#results').text(dataresult.result);
                 }
             }, // success{}
-            error: function (XMLHttpRequest, textStatus, errorThrown)
-            {
+            error: function () {
                 $('#results').text( "ERROR: Webservice Error" );
             }
         }); // $.ajax({

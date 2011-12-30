@@ -21,7 +21,8 @@
             if (o.ReadOnly) {
                 $Div.append(gestalt);
             } else {
-                var $SelectBox = $Div.CswMultiSelect('init', {
+                /* Select Box */
+                $Div.CswMultiSelect('init', {
                     ID: o.ID,
                     cssclass: 'selectinput',
                     values: options,
@@ -34,7 +35,7 @@
             
             var attributes = { value: null },
                 $multi = o.$propdiv.find('#' + o.ID),
-                cachedVals = [],
+                cachedVals,
                 distinctVals = [];
             
             if (false === isNullOrEmpty($multi)) {
@@ -65,7 +66,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

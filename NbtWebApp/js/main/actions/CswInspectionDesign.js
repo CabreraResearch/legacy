@@ -75,7 +75,7 @@
                         $btn.click();
                     }
                 } else {
-                    $btn = $wizard.CswWizard('button', button, 'disable');
+                    $wizard.CswWizard('button', button, 'disable');
                 }
                 return false;
             },
@@ -90,6 +90,7 @@
                 var stepOneComplete = false;
 
                 return function() {
+                    var $inspectionTable, $newDesignLabel;
                     var toggleNewDesignName = function() {
                         if (isNewInspectionDesign()) {
                             $newDesignName.show();
@@ -102,8 +103,7 @@
                     var nextBtnEnabled = function() {
                         return (false === isNullOrEmpty(selectedInspectionDesign.name));
                     };
-                    var $inspectionTable, $newDesignLabel;
-
+                    
                     toggleButton(buttons.prev, false);
                     toggleButton(buttons.finish, false);
                     toggleButton(buttons.next, nextBtnEnabled());
@@ -254,7 +254,7 @@
                     url: f.url,
                     paramName: 'fileupload',
                     done: function (e, ret) {
-                        var gridData = { }, $resultDoc, $firstChild;
+                        var gridData, $resultDoc, $firstChild;
                         //See case 24511. This is ugly, but there's not much else to be done.
                         if(false === isNullOrEmpty(ret.result)) {
                             $resultDoc = $(ret.result);
@@ -520,7 +520,7 @@
             makeStepFive = (function() {
 
                 return function() {
-                    var $confirmationList, $confirmTypesList, $confirmViewsList, $confirmationDesign, confirmGridOptions = { }, confirmGrid;
+                    var $confirmationList, $confirmTypesList, $confirmViewsList, $confirmationDesign, confirmGridOptions = { };
 
                     if(checkTargetIsClientSideUnique()) {
 
@@ -685,7 +685,7 @@
                         success: function(data) {
                             //Come back and hammer this out
                             var views = data.views,
-                                values = [], view;
+                                values = [];
 
                             each(views, function(thisView) {
                                 if(contains(thisView, 'viewid') && 
@@ -712,7 +712,7 @@
                             });
                             
                         },
-                        error: function(error) {
+                        error: function() {
                             toggleButton(buttons.cancel, true);
                             toggleButton(buttons.prev, true);
                         }

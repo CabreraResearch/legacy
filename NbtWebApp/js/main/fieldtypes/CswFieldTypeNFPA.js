@@ -54,6 +54,19 @@
                     $div.removeClass("strikethrough");
             }
 
+            function makeSelect($cell, id, selected, $div)
+            {
+                var $sel = $cell.CswSelect({
+                                        'ID': makeId({ ID: o.ID, suffix: id }),
+                                        'selected': selected,
+                                        'values': selVals,
+                                        'cssclass': '',
+                                        'onChange': function () {
+                                            setValue($div, $sel.val());
+                                        }
+                                    });
+            } // makeSelect()
+            
             setValue($reddiv, red);
             setValue($yellowdiv, yellow);
             setValue($bluediv, blue);
@@ -74,19 +87,7 @@
                 if (o.Multi) {
                     selVals.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
                 }
-                function makeSelect($cell, id, selected, $div)
-                {
-                    var $sel = $cell.CswSelect({
-                                            'ID': makeId({ ID: o.ID, suffix: id }),
-                                            'selected': selected,
-                                            'values': selVals,
-                                            'cssclass': '',
-                                            'onChange': function () {
-                                                setValue($div, $sel.val());
-                                            }
-                                        });
-                } // makeSelect()
-
+                
                 $edittable.CswTable('cell', 1, 1).append('Flammability');
                 $edittable.CswTable('cell', 2, 1).append('Health');
                 $edittable.CswTable('cell', 3, 1).append('Reactivity');
@@ -158,7 +159,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

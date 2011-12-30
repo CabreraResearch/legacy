@@ -40,7 +40,7 @@
                 });
                 
                 crawlObject(options, 
-                    function(thisOpt, key) {
+                    function(thisOpt) {
                         if (isTrue(thisOpt.selected)) {
                             addImage(thisOpt.text, thisOpt.value, false);
                         } else {
@@ -75,7 +75,7 @@
                         ButtonType: CswImageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
                         ID: makeId({ 'prefix': 'image_' + currCol, 'id': 'rembtn' }),
-                        onClick: function ($ImageDiv) {
+                        onClick: function () {
                             $namecell.fadeOut('fast');
                             $imagecell.fadeOut('fast');
 
@@ -134,7 +134,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

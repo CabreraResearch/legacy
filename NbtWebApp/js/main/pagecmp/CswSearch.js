@@ -6,6 +6,7 @@
 /// <reference path="../view/CswViewPropFilter.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     $.fn.CswSearch = function (options) {
 
         var o = { 
@@ -38,8 +39,8 @@
             nodeTypesData: '',
             $nodeTypesSelect: '',
 
-            onSearchSubmit: function (view) {},
-            onClearSubmit: function(parentviewid) {},
+            onSearchSubmit: function () {},
+            onClearSubmit: function() {},
             onSearchClose: function() {}, 
 
             //For submit
@@ -67,12 +68,12 @@
                             .addClass('CswSearch_Div');
         init();
 
-        function modAdvanced(options) {
+        function modAdvanced(modOptions) {
             var a = {
                 '$link': '',
                 'advancedIsHidden': false
             };
-            if(options) $.extend(a,options);
+            if(modOptions) $.extend(a,modOptions);
     
             if('Advanced' === a.$link.text() || ( a.advancedIsHidden ) )
             {   
@@ -149,7 +150,7 @@
             var $select = $('<select></select>');
             
             function makeOptions(optionGroup) {
-                var opt, option, value, optionCol = '', selected = '';
+                var opt, option, value, optionCol = '', selected;
                 for (opt in optionGroup) {
                     if (contains(optionGroup, opt)) {
                         option = optionGroup[opt];
@@ -174,7 +175,7 @@
             //Row 1, Column 1: empty (contains 'and' for View search)
             //Row 1, Column 2: nodetypeselect picklist
             var nodeTypeSelectId = makeId({ID: 'nodetype_select',prefix: o.ID}),
-                $typeSelectCell, $select, ocpSelect;
+                $typeSelectCell, $select;
             
             $typeSelectCell = o.$searchTable.CswTable('cell', 2, 2) //1
                                                 .empty();
@@ -230,12 +231,12 @@
                                 .change(function () {
                                     var $this = $(this),
                                         thisPropId = $this.val(),
-                                        oH = new ObjectHelper(o.propsData.properties);
+                                        newOh = new ObjectHelper(o.propsData.properties);
                                     var r = {
                                         propertyid: thisPropId,
                                         selectedSubfieldVal: '',
                                         selectedFilterVal: '',
-                                        selectedPropData: oH.find('viewbuilderpropid', thisPropId)
+                                        selectedPropData: newOh.find('viewbuilderpropid', thisPropId)
                                     };
                                     $.extend(o,r);
                                     o.$searchTable.CswViewPropFilter('init', {
@@ -417,7 +418,7 @@
                 searchUrl = '',
                 dataJson;
 
-            function collectPropFilters(cssclass) {
+            function collectPropFilters() {
                 $('.' + ViewBuilder_CssClasses.filter_value.name).each(function() {
                     var $thisProp = $(this),
                         propsData = $thisProp.data('propsData'),

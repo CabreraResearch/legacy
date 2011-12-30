@@ -9,7 +9,6 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../main/tools/CswArray.js" />
 /// <reference path="../globals/CswMobileTools.js" />
 /// <reference path="../globals/CswMobileEnums.js" />
 

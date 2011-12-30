@@ -3,9 +3,9 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-	
-	var PluginName = 'CswNodePreview';
+(function ($) { /// <param name="$" type="jQuery" />
+	"use strict";
+	var pluginName = 'CswNodePreview';
 
 	var methods = {
 		'open': function(options) 
@@ -90,7 +90,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
 		}    
   
 	};
@@ -102,7 +102,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
 		}    
   
 	};

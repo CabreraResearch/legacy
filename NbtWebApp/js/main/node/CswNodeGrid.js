@@ -5,8 +5,8 @@
 /// <reference path="../controls/CswGrid.js" />
 /// <reference path="../pagecmp/CswDialog.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-    
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";    
     var pluginName = 'CswNodeGrid';
     
     function deleteRows(rowid, grid, func) {
@@ -22,7 +22,7 @@
             renameProperty(opts, 'nodename', 'nodenames');
             $.CswDialog('DeleteNodeDialog', opts);
         };
-        var emptyFunc = function(opts) {
+        var emptyFunc = function() {
             $.CswDialog('AlertDialog', 'Please select a row to delete');
         };
         return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
@@ -42,7 +42,7 @@
             renameProperty(opts, 'nodename', 'nodenames');
             $.CswDialog('EditNodeDialog', opts);
         };
-        var emptyFunc = function(opts) {
+        var emptyFunc = function() {
             $.CswDialog('AlertDialog', 'Please select a row to edit');
         };
         return grid.opGridRows(editOpt, rowid, editFunc, emptyFunc);
@@ -86,6 +86,7 @@
             
             $parent.data('firstNodeKey', o.cswnbtnodekey);
             
+/* Not in use
             function prevClick(eventObj, firstRow) {
                 var firstNodeKey = firstRow.cswnbtnodekey,
                     prevNodeKey, currentIdx,
@@ -122,14 +123,16 @@
                     ret.changeGridOpts({ gridOpts: { url: gridRowsUrl } });
                 }
             }
-            
+
             function onLoadComplete(data) {
                 if (false === isNullOrEmpty(data) && contains(data,'moreNodeKey')) {
                     $parent.data('moreNodeKey', data.moreNodeKey);
                 }
             }
+*/
             
-            var fetchGridSkeleton = (function () {
+            /* fetchGridSkeleton */
+            (function () {
 
                 CswAjaxJson({
                         url: o.GridUrl,
@@ -212,7 +215,7 @@
         } else if (typeof method === 'object' || !method) {
             return methods.init.apply(this, arguments);
         } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName);
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
         }
     };
 

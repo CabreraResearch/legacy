@@ -56,7 +56,7 @@
             if (isFunction(o.onclick)) {
                 $button.bind('click', function() {
                     if (!ajaxInProgress()) {
-                        if (o.disableOnClick) _disable($button);
+                        if (o.disableOnClick) disable($button);
                         o.onclick();
                     } 
                     return false;
@@ -68,12 +68,12 @@
 
         'enable': function () {
             var $button = $(this);
-            _enable($button);
+            enable($button);
             return $button;
         },
         'disable': function () {
             var $button = $(this);
-            _disable($button);
+            disable($button);
             return $button;
         },
         'click': function () {
@@ -83,11 +83,11 @@
         }
     };
 
-    function _enable($button) {
+    function enable($button) {
         if ($button.length > 0)
             $button.button({ label: $button.CswAttrDom('enabledText'), disabled: false });
     }
-    function _disable($button) {
+    function disable($button) {
         if ($button.length > 0)
             $button.button({ label: $button.CswAttrDom('disabledText'), disabled: true });
     }
@@ -101,6 +101,7 @@
             return methods.init.apply(this, arguments);
         } else {
             $.error('Method ' + method + ' does not exist on ' + pluginName);
+            return false;
         }
     };
 

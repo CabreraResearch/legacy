@@ -57,7 +57,7 @@
         AddViewDialog: function (options) {
             var o = {
                 ID: 'addviewdialog',
-                onAddView: function (newviewid) { },
+                onAddView: function () { },
                 viewid: '',
                 viewmode: ''
             };
@@ -123,8 +123,8 @@
                                             });
                                         }
                                     });
-
-            var $cancelbtn = $div.CswButton({
+            /* Cancel Button */
+            $div.CswButton({
                                     ID: o.ID + '_cancel', 
                                     enabledText: 'Cancel', 
                                     disabledText: 'Canceling', 
@@ -139,7 +139,7 @@
             var o = {
                 nodetypeid: '', 
                 relatednodeid: '',
-                onAddNode: function(nodeid, cswnbtnodekey) { }
+                onAddNode: function() { }
             };
 
             if (options) {
@@ -255,7 +255,7 @@
                 cswNodeTabOptions.tabid = tabid;
                 _configAddOptions();
             };
-            cswNodeTabOptions.onPropertyRemove = function(propid) {
+            cswNodeTabOptions.onPropertyRemove = function() {
                 _configAddOptions();
             };
 
@@ -292,7 +292,7 @@
                                         CswAjaxJson({ 
                                             url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout', 
                                             data: ajaxdata,
-                                            success: function(data) {
+                                            success: function() {
                                                 _resetLayout();
                                             }
                                         }); // CswAjaxJson
@@ -396,7 +396,7 @@
                         if(isFunction(o.onEditView))
                         {
                             $div.dialog('close');
-                            o.onEditView(viewid)
+                            o.onEditView(viewid);
                         }
                     },
                     onSave: function (nodeids, nodekeys, tabcount) {
@@ -409,13 +409,13 @@
                             o.onEditNode(nodeids, nodekeys);
                         }
                     },
-                    onBeforeTabSelect: function (tabid) {
+                    onBeforeTabSelect: function () {
                         return manuallyCheckChanges();
                     },
                     onTabSelect: function (tabid) {
                         $.CswCookie('set', CswCookieName.CurrentTabId, tabid);
                     },
-                    onPropertyChange: function (propid, propname) {
+                    onPropertyChange: function () {
                         setChanged();
                     }
                 });
@@ -432,7 +432,7 @@
                 'nodename': '',
                 'nodeid': '',
                 'cswnbtnodekey': '', 
-                'onCopyNode': function(nodeid, nodekey) { }
+                'onCopyNode': function() { }
                 };
 
             if (options) {
@@ -458,8 +458,8 @@
                                                                     });
                                                         }
                                                     });
-
-            var $cancelbtn = $div.CswButton({ID: 'copynode_cancel', 
+            /* Cancel Button */
+            $div.CswButton({ID: 'copynode_cancel', 
                                                         enabledText: 'Cancel', 
                                                         disabledText: 'Canceling', 
                                                         onclick: function() {
@@ -518,7 +518,7 @@
                                                         if (isFunction(o.onDeleteNode)) {
                                                             o.onDeleteNode(nodeid, nodekey);
                                                         }
-                                                        $.publish('CswTabRefresh');
+                                                        $.publish(ChemSW.enums.Events.CswNodeDelete);
                                                     },
                                                     onError: function() {
                                                         $deletebtn.CswButton('enable');
@@ -526,8 +526,8 @@
                                                 });
                                             }
                                         });
-
-            var $cancelbtn = $div.CswButton({ID: 'deletenode_cancel', 
+            /* Cancel Button */
+            $div.CswButton({ID: 'deletenode_cancel', 
                                                         enabledText: 'Cancel', 
                                                         disabledText: 'Canceling', 
                                                         onclick: function() {
@@ -585,7 +585,7 @@
                     datatype: 'json',
                     url: o.url + '?' + $.param(o.params),
                     paramName: 'fileupload',
-                    done: function (e, data) {
+                    done: function () {
                         $div.dialog('close');
                         o.onSuccess();
                     }
@@ -698,7 +698,7 @@
                                     onclick: function() {
                                             CswAjaxJson({
                                                 url: o.AcceptLicenseUrl,
-                                                success: function(data) {
+                                                success: function() {
                                                     $div.dialog('close');
                                                     o.onAccept();
                                                 },
@@ -848,7 +848,7 @@
         OpenDialog: function (id, url) {
             var $dialogdiv = $('<div id="' + id + '"></div>');
             $dialogdiv.load(url,
-                            function (responseText, textStatus, XMLHttpRequest) {
+                            function () {
                                 openDialog($dialogdiv, 600, 400);
                             });
         },
@@ -871,7 +871,7 @@
             width: width,
             height: height,
             title: title,    
-            close: function (event, ui) { 
+            close: function () { 
                 $div.remove(); 
                 if(isFunction(onClose)) onClose();
             }
@@ -886,7 +886,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

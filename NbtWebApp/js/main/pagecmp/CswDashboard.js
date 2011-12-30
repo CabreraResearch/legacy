@@ -1,4 +1,10 @@
-; (function ($) {
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/Global.js" />
+
+(function ($) {
+    "use strict";
     $.fn.CswDashboard = function (options) {
 
         var o = {
@@ -25,7 +31,7 @@
                 for (var dashId in data) {
                     if (data.hasOwnProperty(dashId)) {
                         var thisIcon = data[dashId];
-                        var cellcontent = '';
+                        var cellcontent;
                         if (false === isNullOrEmpty( thisIcon.href )) {
                             cellcontent = '<td class="DashboardCell">' +
                                 '  <a target="_blank" href="' + thisIcon.href + '">' +

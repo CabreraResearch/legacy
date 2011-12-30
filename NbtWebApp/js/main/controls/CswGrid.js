@@ -405,7 +405,7 @@ function CswGrid(options, $parent) {
 
             each(printOpts.gridOpts.colModel, function(column) {
                 /* This provides text wrapping in cells */
-                column.cellattr = function (rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal;"'; };
+                column.cellattr = function () { return 'style="white-space: normal;"'; };
             });
             
             /* Get a new CswGrid */
@@ -427,7 +427,7 @@ function CswGrid(options, $parent) {
     return {
         $gridTable: $gridTable,
         $gridPager: $gridPager,
-        $topPager: $topPager,
+        $topPager: $topPager || null,
         getAllGridRows: getAllGridRows,
         getGridRowHeight: getGridRowHeight,
         scrollToRow: scrollToRow,
@@ -438,7 +438,7 @@ function CswGrid(options, $parent) {
         changeGridOpts: changeGridOpts,
         opGridRows: opGridRows,
         print: print,
-        isMulti: function() { return multiEdit }
+        isMulti: function() { return multiEdit; }
     };
     
     //#endregion public, priveleged

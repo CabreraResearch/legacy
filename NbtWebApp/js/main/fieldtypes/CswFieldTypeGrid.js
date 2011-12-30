@@ -59,7 +59,7 @@
                         makeGridMenu($MenuDiv, o, gridOpts, grid, viewid);
                     }
                 };
-                cswGrid = $GridDiv.CswNodeGrid('init', gridOpts);
+                $GridDiv.CswNodeGrid('init', gridOpts);
                 
                 $Div.append($MenuDiv, $('<br/>'), $SearchDiv, $('<br/>'), $GridDiv);
             } // if(o.EditMode !== EditMode.AuditHistoryInPopup.name)
@@ -151,7 +151,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

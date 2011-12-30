@@ -31,7 +31,7 @@
                             ButtonType: CswImageButton_ButtonType.Edit,
                             AlternateText: 'Edit',
                             'ID': o.ID,
-                            onClick: function ($ImageDiv) { 
+                            onClick: function () { 
                                 $edittable.show();
                             }
                         });
@@ -91,7 +91,10 @@
                 }, 
                 units: null
             };
-            var $StartDate = o.$propdiv.find('#' + o.ID + '_sd');
+            
+            var $StartDate = o.$propdiv.find('#' + o.ID + '_sd'),
+                dateVal;
+            
             if (false === isNullOrEmpty($StartDate)) {
                 dateVal = $StartDate.CswDateTimePicker('value', o.propData.readonly);
                 attributes.startdatetime.date = dateVal.date;
@@ -114,7 +117,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

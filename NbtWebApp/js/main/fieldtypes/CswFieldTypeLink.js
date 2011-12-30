@@ -34,7 +34,7 @@
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',
                         Required: o.Required,
-                        onClick: function ($ImageDiv) { 
+                        onClick: function () { 
                                 $edittable.show();
                                 return CswImageButton_ButtonType.None; 
                             }
@@ -97,7 +97,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

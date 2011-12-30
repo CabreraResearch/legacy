@@ -56,7 +56,7 @@
         },
         reBindClick: function (id, required, onClickEvent) {
             var $this = $(this),
-                buttonType, checked;   
+                buttonType;   
             if (isNullOrEmpty($this, true)) {
                 $this = $('#' + id); 
             }

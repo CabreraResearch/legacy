@@ -4,8 +4,8 @@
 //#region CswString
 CswString.inheritsFrom(String);
 
-function CswString(string)
-{
+function CswString(string) {
+    "use strict";
     String.call(this);
     
     var value = string;

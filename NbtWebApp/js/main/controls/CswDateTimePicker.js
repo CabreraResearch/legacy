@@ -60,7 +60,7 @@
                                                           value: o.Time,
                                                           width: '80px'
                                                      }); 
-                    var $nowbutton = $Div.CswButton('init',{ 'ID': o.ID +'_now',
+                    $Div.CswButton('init',{ 'ID': o.ID +'_now',
                                                             'disableOnClick': false,
                                                             'onclick': function() { $TimeBox.val( getTimeString(new Date(), o.TimeFormat) ); },
                                                             'enabledText': 'Now'
@@ -99,7 +99,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

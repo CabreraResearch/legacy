@@ -5,6 +5,7 @@
 
 //#region CswClientDb
 function CswClientDb() {
+    "use strict";
     /// <summary>
     ///   Client db class to encapsulate get/set/update and delete methods against the localStorage object.
     /// </summary>

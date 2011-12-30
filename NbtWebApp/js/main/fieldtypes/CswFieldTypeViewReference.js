@@ -16,7 +16,7 @@
                 var propVals = o.propData.values;
                 var viewId = tryParseString(propVals.viewid).trim();
                 var viewMode = tryParseString(propVals.viewmode).trim().toLowerCase();
-                var viewName = tryParseString(propVals.name).trim();
+                /* var viewName = tryParseString(propVals.name).trim(); */
 
                 var $table = $Div.CswTable('init', { 'ID': o.ID + '_tbl' });
 
@@ -32,7 +32,7 @@
                         ButtonType: CswImageButton_ButtonType.View,
                         AlternateText: 'View',
                         Required: o.Required,
-                        onClick: function ($ImageDiv) {
+                        onClick: function () {
                             setCurrentView(viewId, viewMode);
                         
                             // case 20958 - so that it doesn't treat the view as a Grid Property view
@@ -50,7 +50,7 @@
                             ButtonType: CswImageButton_ButtonType.Edit,
                             AlternateText: 'Edit',
                             Required: o.Required,
-                            onClick: function ($ImageDiv) {
+                            onClick: function () {
                                 o.onEditView(viewId);
                                 return CswImageButton_ButtonType.None; 
                             }
@@ -71,7 +71,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

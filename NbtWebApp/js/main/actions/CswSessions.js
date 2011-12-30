@@ -49,7 +49,7 @@
                     data: {},
                     success: function(result) {
 
-                        crawlObject(result, function (childObj, childKey, parentObj, value) {
+                        crawlObject(result, function (childObj) {
                             $cell1 = $table.CswTable('cell', row, 1);
                             $cell1.CswImageButton({ ButtonType: CswImageButton_ButtonType.Fire,
                                                     AlternateText: 'Burn Session',
@@ -83,12 +83,12 @@
                 }); // ajax()
             } // initTable()
 
-            function handleBurn(SessionId)
+            function handleBurn(sessionId)
             {
                 CswAjaxJson({
                     url: o.EndSessionUrl,
-                    data: { SessionId: SessionId },
-                    success: function(result) {
+                    data: { SessionId: sessionId },
+                    success: function() {
                         initTable();
                     }
                 });
@@ -108,7 +108,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

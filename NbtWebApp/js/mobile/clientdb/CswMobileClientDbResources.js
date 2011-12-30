@@ -180,6 +180,7 @@ function CswMobileClientDbResources() {
     
     this.checkNoPendingChanges = function () {
         var mobileStorage = this;
+        /* remember: confirm is globally blocking call */
         var pendingChanges = (!mobileStorage.pendingChanges() ||
             confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
         return pendingChanges;
