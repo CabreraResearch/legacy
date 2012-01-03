@@ -205,7 +205,7 @@
                         makeTargetSelect();
                     }
                     
-                    toggleButton(buttons.prev, true);
+                    toggleButton(buttons.prev, false);
                     toggleButton(buttons.next, (false === isNullOrEmpty(selectedInspectionTarget)));
                 };
             }()),
@@ -242,7 +242,7 @@
                         return (false === isNullOrEmpty(selectedInspectionDesign.name));
                     };
                     
-                    toggleButton(buttons.prev, false);
+                    toggleButton(buttons.prev, true);
                     toggleButton(buttons.finish, false);
                     toggleButton(buttons.next, nextBtnEnabled());
                     
@@ -280,8 +280,9 @@
 
                                 toggleNewDesignName();
                             });
+                        //Create New is selected by default
                         selectedInspectionDesign.id = $inspectionDesignSelect.find(':selected').val();
-                        selectedInspectionDesign.name = $inspectionDesignSelect.find(':selected').text();
+                        selectedInspectionDesign.name = makeInspectionDesignName(selectedInspectionTarget);
                         
                         $inspectionTable.CswTable('cell', 2, 1).append('<br />');
 
