@@ -194,7 +194,7 @@
                         
                         $rowOneTable.CswTable('cell', 1, 1)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .append('<span>Select an Inspection Target&nbsp</span>');
+                            .append('<span>What do you want to inspect?</span>');
         
                         makeTargetSelect();
                         lastSelectedInspectionName = selectedInspectionDesign.name;
