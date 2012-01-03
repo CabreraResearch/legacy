@@ -108,8 +108,28 @@
                     var parentwasclosed = $treediv.jstree('is_closed', parent);
 
                     var newnode = $treediv.jstree("create", parent, "last", childjs, false, true);
+                    var newnodeid = newnode.CswAttrDom('id');
+                    var newnodepk = tryParseString(newnodeid.substring(idPrefix.length));
+                    var newnodename = '';
+                    if (false === isNullOrEmpty(childjs.data)) {
+                        newnodename = childjs.data;
+                    }
+                    if (isTrue(o.ShowCheckboxes)) {
+                        var $checkbox = $('<input type="checkbox" class="' + idPrefix + 'check" id="check_' + newnodeid + '" rel="' + childjs.attr.rel + '" nodeid="' + newnodepk + '" nodename="' + newnodename + '"></input>')
+                                            .prependTo(newnode);
+                        $checkbox.click(function () { return handleCheck($treediv, $(this)); });
+                    }
 
-                    if (selectid === newnode.CswAttrDom('id')) {
+                    if (isTrue(newnode.CswAttrDom('locked'))) {
+                        $('<img src="Images/quota/lock.gif" title="Quota exceeded" />')
+                            .appendTo(newnode);
+                    }
+
+                    // case 21424 - Manufacture unique IDs on the expand <ins> for automated testing
+                    newnode.children('ins').CswAttrDom('id', newnodeid + '_expand');
+
+
+                    if (selectid === newnodeid) {
                         $treediv.jstree('select_node', newnode);
                     }
                 }
@@ -258,14 +278,7 @@
                     if (isTrue(data.result)) {
                         getFirstLevel($treediv, o.PageSize, 0);
                     } else {
-                        addNodeToTree($treediv, 1, rootnode, {
-                            data: {
-                                title: "No Results"
-                            },
-                            attr: {
-                                id: idPrefix + 'noresults'
-                            }
-                        });
+                        addNodeToTree($treediv, 1, rootnode, { data: { title: "No Results" }, attr: { id: idPrefix + 'noresults'} });
                     }
 
                     removeNodeFromTree($treediv, $('.jstree-loading'));

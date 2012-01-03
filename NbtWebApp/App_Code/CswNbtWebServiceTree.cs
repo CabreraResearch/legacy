@@ -105,51 +105,54 @@ namespace ChemSW.Nbt.WebServices
             {
                 ICswNbtTree CacheTree = (ICswNbtTree) _CswNbtResources.CswSuperCycleCache.get( CacheTreeName + IdPrefix );
                 // Make a local copy to iterate, to avoid race conditions with other threads
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromXml( View, CacheTree.getRawTreeXml() );
-                if( Tree != null )
+                if( CacheTree != null )
                 {
-                    JArray RootArray = new JArray();
-                    ReturnObj["tree"] = RootArray;
-
-                    Int32 NodeCountStart = Int32.MinValue;
-                    Int32 NodeCountEnd = Int32.MinValue;
-                    if( Tree.getChildNodeCount() > 0 )
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromXml( View, CacheTree.getRawTreeXml() );
+                    if( Tree != null )
                     {
-                        Tree.goToRoot();
-                        for( Int32 c = PageSize * PageNo; c < PageSize * ( PageNo + 1 ) && c < Tree.getChildNodeCount(); c++ )
+                        JArray RootArray = new JArray();
+                        ReturnObj["tree"] = RootArray;
+
+                        Int32 NodeCountStart = Int32.MinValue;
+                        Int32 NodeCountEnd = Int32.MinValue;
+                        if( Tree.getChildNodeCount() > 0 )
                         {
-                            Tree.goToNthChild( c );
-                            
-                            if( NodeCountStart == Int32.MinValue )
+                            Tree.goToRoot();
+                            for( Int32 c = PageSize * PageNo; c < PageSize * ( PageNo + 1 ) && c < Tree.getChildNodeCount(); c++ )
                             {
-                                NodeCountStart = Tree.getNodeKeyForCurrentPosition().NodeCount;
+                                Tree.goToNthChild( c );
+
+                                if( NodeCountStart == Int32.MinValue )
+                                {
+                                    NodeCountStart = Tree.getNodeKeyForCurrentPosition().NodeCount;
+                                }
+                                NodeCountEnd = Tree.getNodeKeyForCurrentPosition().NodeCount;
+
+                                JObject ThisNodeObj = _treeNodeJObject( View, Tree, IdPrefix );
+                                RootArray.Add( ThisNodeObj );
+
+                                Tree.goToParentNode();
                             }
-                            NodeCountEnd = Tree.getNodeKeyForCurrentPosition().NodeCount;
+                        } // if( Tree.getChildNodeCount() > 0 )
 
-                            JObject ThisNodeObj = _treeNodeJObject( View, Tree, IdPrefix );
-                            RootArray.Add( ThisNodeObj );
-
-                            Tree.goToParentNode();
-                        }
-                    } // if( Tree.getChildNodeCount() > 0 )
-
-                    View.SaveToCache( true );
-                    ReturnObj["viewid"] = View.SessionViewId.ToString();
-                    // ReturnObj["types"] = getTypes( View );
-                    ReturnObj["nodecountstart"] = NodeCountStart.ToString();
-                    ReturnObj["nodecountend"] = NodeCountEnd.ToString();
-                    ReturnObj["more"] = ( PageSize * ( PageNo + 1 ) <= Tree.getChildNodeCount() ).ToString().ToLower();
-                }
-                else
-                {
-                    ReturnObj["tree"] = new JArray( new JObject() );
-                    //ReturnObj["tree"][0] = new JObject();
-                    //ReturnObj["tree"][0]["data"] = ViewName;
-                    ReturnObj["tree"][0]["attr"] = new JObject();
-                    //ReturnObj["tree"][0]["attr"]["viewid"] = ViewId;
-                    ReturnObj["tree"][0]["state"] = "leaf";
-                    ReturnObj["tree"][0]["children"] = new JArray( new JObject() );
-                    ReturnObj["tree"][0]["children"][0] = "No Results";
+                        View.SaveToCache( true );
+                        ReturnObj["viewid"] = View.SessionViewId.ToString();
+                        // ReturnObj["types"] = getTypes( View );
+                        ReturnObj["nodecountstart"] = NodeCountStart.ToString();
+                        ReturnObj["nodecountend"] = NodeCountEnd.ToString();
+                        ReturnObj["more"] = ( PageSize * ( PageNo + 1 ) <= Tree.getChildNodeCount() ).ToString().ToLower();
+                    }
+                    else
+                    {
+                        ReturnObj["tree"] = new JArray( new JObject() );
+                        //ReturnObj["tree"][0] = new JObject();
+                        //ReturnObj["tree"][0]["data"] = ViewName;
+                        ReturnObj["tree"][0]["attr"] = new JObject();
+                        //ReturnObj["tree"][0]["attr"]["viewid"] = ViewId;
+                        ReturnObj["tree"][0]["state"] = "leaf";
+                        ReturnObj["tree"][0]["children"] = new JArray( new JObject() );
+                        ReturnObj["tree"][0]["children"][0] = "No Results";
+                    }
                 }
             }
 
@@ -162,51 +165,54 @@ namespace ChemSW.Nbt.WebServices
             {
                 ICswNbtTree CacheTree = (ICswNbtTree) _CswNbtResources.CswSuperCycleCache.get( CacheTreeName + IdPrefix );
                 // Make a local copy to iterate, to avoid race conditions with other threads
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromXml( View, CacheTree.getRawTreeXml() );
-                if( Tree != null )
+                if( CacheTree != null )
                 {
-                    JArray RootArray = new JArray();
-                    ReturnObj["tree"] = RootArray;
-
-                    Int32 NodeCountStart = Int32.MinValue;
-                    Int32 NodeCountEnd = Int32.MinValue;
-                    if( Tree.getChildNodeCount() > 0 )
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromXml( View, CacheTree.getRawTreeXml() );
+                    if( Tree != null )
                     {
-                        Collection<CswNbtNodeKey> NodeKeys = _getNextPageOfNodes( Tree, Level, ParentRangeStart, ParentRangeEnd );
-                        foreach( CswNbtNodeKey NodeKey in NodeKeys )
+                        JArray RootArray = new JArray();
+                        ReturnObj["tree"] = RootArray;
+
+                        Int32 NodeCountStart = Int32.MinValue;
+                        Int32 NodeCountEnd = Int32.MinValue;
+                        if( Tree.getChildNodeCount() > 0 )
                         {
-                            Tree.makeNodeCurrent( NodeKey );
-
-                            if( NodeCountStart == Int32.MinValue || NodeCountStart > NodeKey.NodeCount )
+                            Collection<CswNbtNodeKey> NodeKeys = _getNextPageOfNodes( Tree, Level, ParentRangeStart, ParentRangeEnd );
+                            foreach( CswNbtNodeKey NodeKey in NodeKeys )
                             {
-                                NodeCountStart = NodeKey.NodeCount;
-                            }
-                            if( NodeCountEnd == Int32.MinValue || NodeCountEnd < NodeKey.NodeCount )
-                            {
-                                NodeCountEnd = NodeKey.NodeCount;
-                            }
+                                Tree.makeNodeCurrent( NodeKey );
 
-                            JObject ThisNodeObj = _treeNodeJObject( View, Tree, IdPrefix );
-                            RootArray.Add( ThisNodeObj );
-                        } // foreach( CswNbtNodeKey NodeKey in NodeKeys )
-                    } // if( Tree.getChildNodeCount() > 0 )
+                                if( NodeCountStart == Int32.MinValue || NodeCountStart > NodeKey.NodeCount )
+                                {
+                                    NodeCountStart = NodeKey.NodeCount;
+                                }
+                                if( NodeCountEnd == Int32.MinValue || NodeCountEnd < NodeKey.NodeCount )
+                                {
+                                    NodeCountEnd = NodeKey.NodeCount;
+                                }
 
-                    View.SaveToCache( true );
-                    ReturnObj["viewid"] = View.SessionViewId.ToString();
-                    ReturnObj["nodecountstart"] = NodeCountStart.ToString();
-                    ReturnObj["nodecountend"] = NodeCountEnd.ToString();
-                    // ReturnObj["types"] = getTypes( View );
-                }
-                else
-                {
-                    ReturnObj["tree"] = new JArray( new JObject() );
-                    //ReturnObj["tree"][0] = new JObject();
-                    //ReturnObj["tree"][0]["data"] = ViewName;
-                    ReturnObj["tree"][0]["attr"] = new JObject();
-                    //ReturnObj["tree"][0]["attr"]["viewid"] = ViewId;
-                    ReturnObj["tree"][0]["state"] = "leaf";
-                    ReturnObj["tree"][0]["children"] = new JArray( new JObject() );
-                    ReturnObj["tree"][0]["children"][0] = "No Results";
+                                JObject ThisNodeObj = _treeNodeJObject( View, Tree, IdPrefix );
+                                RootArray.Add( ThisNodeObj );
+                            } // foreach( CswNbtNodeKey NodeKey in NodeKeys )
+                        } // if( Tree.getChildNodeCount() > 0 )
+
+                        View.SaveToCache( true );
+                        ReturnObj["viewid"] = View.SessionViewId.ToString();
+                        ReturnObj["nodecountstart"] = NodeCountStart.ToString();
+                        ReturnObj["nodecountend"] = NodeCountEnd.ToString();
+                        // ReturnObj["types"] = getTypes( View );
+                    }
+                    else
+                    {
+                        ReturnObj["tree"] = new JArray( new JObject() );
+                        //ReturnObj["tree"][0] = new JObject();
+                        //ReturnObj["tree"][0]["data"] = ViewName;
+                        ReturnObj["tree"][0]["attr"] = new JObject();
+                        //ReturnObj["tree"][0]["attr"]["viewid"] = ViewId;
+                        ReturnObj["tree"][0]["state"] = "leaf";
+                        ReturnObj["tree"][0]["children"] = new JArray( new JObject() );
+                        ReturnObj["tree"][0]["children"][0] = "No Results";
+                    }
                 }
             }
 
