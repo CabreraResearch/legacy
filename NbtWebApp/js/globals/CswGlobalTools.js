@@ -18,10 +18,10 @@ var ChemSW = ChemSW || (function(undefined) {
                 CswNodeDelete: 'CswNodeDelete'
             },
             CswInspectionDesign_WizardSteps: {
-                step1: { step: 1, description: 'Name an Inspection Design' },
-                step2: { step: 2, description: 'Upload Template' },
-                step3: { step: 3, description: 'Review Inspection Design' },
-                step4: { step: 4, description: 'Select an Inspection Target' },
+                step1: { step: 1, description: 'Select an Inspection Target' },
+                step2: { step: 2, description: 'Select an Inspection Design' },
+                step3: { step: 3, description: 'Upload Template' },
+                step4: { step: 4, description: 'Review Inspection Design' },
                 //step5: { step: 5, description: 'Create Inspection Schedules' },
                 step5: { step: 5, description: 'Finish' },
                 stepcount: 5

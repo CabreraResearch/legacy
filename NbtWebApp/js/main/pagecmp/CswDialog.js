@@ -209,7 +209,8 @@
             }
 
             var $div = $('<div></div>'),
-                $nodeType, $category, category = tryParseString(o.category);
+                $nodeType, $category, $addBtn,
+                category = tryParseString(o.category);
             
             $div.append('New ' + o.nodeTypeDescriptor + ': ');
             $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text, value: o.nodetypename, maxlength: o.maxlength });
@@ -219,7 +220,7 @@
                 $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: CswInput_Types.text });
                 $div.append('<br />');
             }
-            $div.CswButton({
+            $addBtn = $div.CswButton({
                     ID: o.objectClassId + '_add',
                     enabledText: 'Add',
                     onclick: function () {
@@ -241,7 +242,10 @@
                                             category: category
                                         });
                                 }
-                            }
+                            },
+                            error: function () {
+                                $addBtn.CswButton('enable');
+                            }       
                         });
                     }
                 });

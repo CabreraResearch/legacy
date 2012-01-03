@@ -12,6 +12,10 @@ if (false === isFunction(String.prototype.trim)) {
     };
 }
 
+String.prototype.toCamel = String.prototype.toCamel || function(){
+    return this.replace(/(\-[a-z])/g, function($1){return $1.toUpperCase().replace('-','');});
+};
+
 //#endregion String
 
 //#region Array
