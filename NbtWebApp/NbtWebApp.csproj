@@ -747,7 +747,6 @@
     <Content Include="js\main\actions\CswQuotaImage.js" />
     <Content Include="js\main\actions\CswQuotas.js" />
     <Content Include="js\main\controls\CswMultiSelect.js" />
-    <Content Include="js\main\node\CswNodeTreeBgLoad.js" />
     <Content Include="js\main\controls\CswTimeInterval.js" />
     <Content Include="js\main\controls\CswList.js" />
     <Content Include="js\main\tools\CswPubSub.js" />
