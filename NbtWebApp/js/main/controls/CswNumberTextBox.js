@@ -57,7 +57,7 @@
 
                 //Limit the character length max
                 $TextBox.CswAttrDom('maxlength', maxLength);
-                log(width);
+                
                 if (isNumber(minValue) && isNumeric(minValue)) {
                     jQuery.validator.addMethod(o.ID + '_validateFloatMinValue', function (value, element) {
                         return (this.optional(element) || validateFloatMinValue($(element).val(), minValue));
