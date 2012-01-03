@@ -372,7 +372,7 @@
                 var previewGridId = makeStepId('previewGrid_outer', 4),
                     $previewGrid = $divStep4.find('#' + previewGridId);
 
-                $divStep4.append('<p>Review the <b>' + selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.</p>');
+                $divStep4.append('<p>Review the upload results. Make any necessary edits.</p>');
 
                 if (isNullOrEmpty($previewGrid) || $previewGrid.length === 0) {
                     $previewGrid = $('<div id="' + previewGridId + '"></div>').appendTo($divStep4);
@@ -460,8 +460,9 @@
                         var $step3List, $templateLink, $uploadP;
 
                         if (false === stepThreeComplete) {
-                            $divStep3 = $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step);
-
+                            $divStep3 = $divStep3 || $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step);
+                            $divStep3.empty();
+                            
                             //Ordered instructions
                             $step3List = $divStep3.CswList('init', {
                                 ID: makeStepId('uploadTemplateList'),
@@ -489,7 +490,7 @@
                             });
 
                             //$fileUploadBtn.hide();
-                            stepThreeComplete = true;
+                            //stepThreeComplete = true;
                         }
                     }; //doStepTwo
 
