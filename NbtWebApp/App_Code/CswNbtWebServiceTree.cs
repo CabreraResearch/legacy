@@ -41,6 +41,8 @@ namespace ChemSW.Nbt.WebServices
                     Tree = _CswNbtResources.Trees.getTreeFromView( View, false );
                 }
                 ReturnObj["result"] = ( Tree.getChildNodeCount() > 0 ).ToString().ToLower();
+                ReturnObj["viewid"] = View.ViewId.ToString();
+                ReturnObj["viewmode"] = View.ViewMode.ToString();
                 ReturnObj["types"] = getTypes( View );
 
                 ReturnObj["root"] = new JObject();
