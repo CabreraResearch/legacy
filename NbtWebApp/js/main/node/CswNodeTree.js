@@ -105,8 +105,6 @@
                         parent = rootnode;
                     }
 
-                    var parentwasclosed = $treediv.jstree('is_closed', parent);
-
                     var newnode = $treediv.jstree("create", parent, "last", childjs, false, true);
                     var newnodeid = newnode.CswAttrDom('id');
                     var newnodepk = tryParseString(newnodeid.substring(idPrefix.length));
@@ -140,6 +138,30 @@
                 return $treediv.jstree("remove", treenode);
             } // removeNodeFromTree()
 
+            function expandAll() {
+                $treediv.jstree('open_all', rootnode);
+
+                $togglelink.text('Collapse All')
+                           .unbind('click')
+                           .click(collapseAll);
+            }
+            function collapseAll() {
+                $treediv.jstree('close_all', rootnode);
+
+                // show first level
+                $treediv.jstree('open_node', rootnode);
+
+                // show selected
+                // this has weird effects
+                //                var $sel = $treediv.jstree('get_selected');
+                //                if (false === isNullOrEmpty($sel)) {
+                //                    $treediv.jstree('open_node', $sel.parentsUntil('#' + rootnode.attr('id')));
+                //                }
+
+                $togglelink.text('Expand All')
+                           .unbind('click')
+                           .click(expandAll);
+            }
 
             var rootnode = false;  // root node of tree
             var selectid = null;   // node to select, once populated
@@ -164,6 +186,7 @@
                 onViewChange: null, // function(newviewid, newviewmode) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
                 //SelectFirstChild: true,
                 ShowCheckboxes: false,
+                ShowToggleLink: true,
                 IncludeInQuickLaunch: true,
                 PageSize: 10     // Number of first level nodes to fetch at one time
             };
@@ -174,8 +197,20 @@
             }
 
             var idPrefix = o.ID + '_';
+            var $this = $(this);
+
+            var $togglelinkdiv, $togglelink;
+            if (o.ShowToggleLink) {
+                $togglelink = $this.CswLink({
+                    ID: o.ID + '_toggle',
+                    value: 'Expand All',
+                    href: '#',
+                    onClick: function () { expandAll(); return false; }
+                });
+            }
+
             var $treediv = $('<div id="' + idPrefix + '" />')
-                                .appendTo($(this));
+                                .appendTo($this);
             if (o.UseScrollbars) {
                 $treediv.addClass('treediv');
             } else {
