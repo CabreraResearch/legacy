@@ -48,8 +48,8 @@
                                                 onInitialSelectNode: function(optSelect) {
                                                     onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function() {}); 
                                                 }, 
-                                                SelectFirstChild: false,
-                                                UsePaging: false,
+                                                //SelectFirstChild: false,
+                                                //UsePaging: false,
                                                 UseScrollbars: false,
                                                 IncludeInQuickLaunch: false
                                             });

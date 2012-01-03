@@ -109,14 +109,11 @@
 
                     var newnode = $treediv.jstree("create", parent, "last", childjs, false, true);
 
-                    if (rootnode === false) {
-                        rootnode = newnode;
-                    }
-
-                    if (selectid === childjs.attr.id) {
+                    if (selectid === newnode.CswAttrDom('id')) {
                         $treediv.jstree('select_node', newnode);
                     }
                 }
+                return newnode;
             } // addNodeToTree()
 
             function removeNodeFromTree($treediv, treenode) {
@@ -140,14 +137,15 @@
                 nodeid: '',       // if viewid are not supplied, loads a view of this node
                 cswnbtnodekey: '',
                 IncludeNodeRequired: false,
-                UsePaging: true,
+                //UsePaging: true,
                 UseScrollbars: true,
                 onSelectNode: null, // function(optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', cswnbtnodekey: '', viewid: '' }; return o; },
                 onInitialSelectNode: undefined,
                 onViewChange: null, // function(newviewid, newviewmode) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
                 //SelectFirstChild: true,
                 ShowCheckboxes: false,
-                IncludeInQuickLaunch: true
+                IncludeInQuickLaunch: true,
+                PageSize: 10     // Number of first level nodes to fetch at one time
             };
             if (options) $.extend(o, options);
 
@@ -188,82 +186,90 @@
                 data: dataParam,
                 stringify: false,
                 success: function (data) {
-                    if (isTrue(data.result)) {
-                        var treePlugins = ["themes", "ui", "types", "crrm"];
-                        var jsonTypes = data.types;
 
-                        var newviewid = data.viewid;
-                        if (false === isNullOrEmpty(newviewid) && o.viewid !== newviewid) {
-                            o.viewid = newviewid;
-                            if (isFunction(o.onViewChange)) {
-                                o.onViewChange(o.viewid, 'tree');
-                            }
+                    var treePlugins = ["themes", "ui", "types", "crrm"];
+                    var jsonTypes = data.types;
+
+                    var newviewid = data.viewid;
+                    if (false === isNullOrEmpty(newviewid) && o.viewid !== newviewid) {
+                        o.viewid = newviewid;
+                        if (isFunction(o.onViewChange)) {
+                            o.onViewChange(o.viewid, 'tree');
                         }
+                    }
 
-                        selectid = data.selectid;
+                    selectid = data.selectid;
 
-                        var treeThemes = { "dots": true };
-                        if (data.viewmode === CswViewMode.list.name) {
-                            treeThemes = { "dots": false };
-                        }
+                    var treeThemes = { "dots": true };
+                    if (data.viewmode === CswViewMode.list.name) {
+                        treeThemes = { "dots": false };
+                    }
 
-                        $treediv.jstree({
-                            "core": {
-                                "open_parents": true
-                            },
-                            "ui": {
-                                "select_limit": 1,
-                                "selected_parent_close": false,
-                                "selected_parent_open": true
-                            },
-                            "themes": treeThemes,
-                            "types": {
-                                "types": jsonTypes,
-                                "max_children": -2,
-                                "max_depth": -2
-                            },
-                            "plugins": treePlugins
-                        }); // jstree()
+                    $treediv.jstree({
+                        "core": {
+                            "open_parents": true
+                        },
+                        "ui": {
+                            "select_limit": 1,
+                            "selected_parent_close": false,
+                            "selected_parent_open": true
+                        },
+                        "themes": treeThemes,
+                        "types": {
+                            "types": jsonTypes,
+                            "max_children": -2,
+                            "max_depth": -2
+                        },
+                        "plugins": treePlugins
+                    }); // jstree()
 
-                        $treediv.bind('select_node.jstree', function (e, newData) {
-                            return firstSelectNode({
-                                e: e,
-                                data: newData,
-                                url: url,
-                                $treediv: $treediv,
-                                IdPrefix: idPrefix,
-                                onSelectNode: o.onSelectNode,
-                                onInitialSelectNode: o.onInitialSelectNode,
-                                viewid: o.viewid,
-                                UsePaging: o.UsePaging,
-                                forsearch: o.forsearch
-                            });
-
-                        }).bind('hover_node.jstree', function (e, bindData) {
-                            var $hoverLI = $(bindData.rslt.obj[0]);
-                            var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
-                            var cswnbtnodekey = $hoverLI.CswAttrDom('cswnbtnodekey');
-                            nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
-
-                        }).bind('dehover_node.jstree', function () {
-                            jsTreeGetSelected($treediv);
-                            nodeHoverOut();
+                    $treediv.bind('select_node.jstree', function (e, newData) {
+                        return firstSelectNode({
+                            e: e,
+                            data: newData,
+                            url: url,
+                            $treediv: $treediv,
+                            IdPrefix: idPrefix,
+                            onSelectNode: o.onSelectNode,
+                            onInitialSelectNode: o.onInitialSelectNode,
+                            viewid: o.viewid,
+                            //UsePaging: o.UsePaging,
+                            forsearch: o.forsearch
                         });
 
-                        // DO NOT define an onSuccess() function here that interacts with the tree.
-                        // The tree has initalization events that appear to happen asynchronously,
-                        // and thus having an onSuccess() function that changes the selected node will
-                        // cause a race condition.
+                    }).bind('hover_node.jstree', function (e, bindData) {
+                        var $hoverLI = $(bindData.rslt.obj[0]);
+                        var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
+                        var cswnbtnodekey = $hoverLI.CswAttrDom('cswnbtnodekey');
+                        nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
 
-                        addNodeToTree($treediv, 1, false, data.root);
+                    }).bind('dehover_node.jstree', function () {
+                        jsTreeGetSelected($treediv);
+                        nodeHoverOut();
+                    });
 
-                        if (isTrue(data.result)) {
-                            getFirstLevel($treediv, 10, 0);
-                        }
+                    // DO NOT define an onSuccess() function here that interacts with the tree.
+                    // The tree has initalization events that appear to happen asynchronously,
+                    // and thus having an onSuccess() function that changes the selected node will
+                    // cause a race condition.
 
-                        removeNodeFromTree($treediv, $('.jstree-loading'));
+                    rootnode = addNodeToTree($treediv, 1, false, data.root);
 
-                    } // if (isTrue(data.result)) {
+                    if (isTrue(data.result)) {
+                        getFirstLevel($treediv, o.PageSize, 0);
+                    } else {
+                        addNodeToTree($treediv, 1, rootnode, {
+                            data: {
+                                title: "No Results"
+                            },
+                            attr: {
+                                id: idPrefix + 'noresults'
+                            }
+                        });
+                    }
+
+                    removeNodeFromTree($treediv, $('.jstree-loading'));
+
                 } // success
             }); // ajax
 
@@ -294,7 +300,7 @@
             onSelectNode: null, //function() {},
             onInitialSelectNode: null, //function() {},
             viewid: '',
-            UsePaging: '',
+            //UsePaging: '',
             forsearch: ''
         };
         if (myoptions) $.extend(m, myoptions);
@@ -319,7 +325,7 @@
             IdPrefix: '',
             onSelectNode: function () { },
             viewid: '',
-            UsePaging: '',
+            //UsePaging: '',
             forsearch: ''
         };
         if (myoptions) $.extend(m, myoptions);
