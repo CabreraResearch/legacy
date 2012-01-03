@@ -1,10 +1,10 @@
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ChemSW.Nbt;
 using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
 using ChemSW.CswWebControls;
+using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.NbtWebControls.FieldTypes
@@ -47,8 +47,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     _ValueLabel.Text = Prop.AsRelationship.CachedNodeName + "&nbsp;";
 
                     // BZ 10216
-					if( Prop.AsRelationship.TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && !ReadOnly )
-						ReadOnly = !( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsRelationship.TargetId ) ) );
+                    if( Prop.AsRelationship.TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && !ReadOnly )
+                        ReadOnly = !( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsRelationship.TargetId ) ) );
 
                     //if( AllowEditValue && !ReadOnly )
                     //{
@@ -73,8 +73,10 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     if( View != null )
                     {
                         _ValueList.Items.Clear();
-                        if( !Required )
-                            _ValueList.Items.Add( new ListItem( "" ) );
+                        /* Required has no meaning for a default value (the only way this control will be used until it retires). 
+                         * if( !Required  )
+                         */
+                        _ValueList.Items.Add( new ListItem( "" ) );
                         ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
                         for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
                         {
@@ -194,9 +196,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 if( _EditMode != NodeEditMode.AddInPopup &&
                     _EditMode != NodeEditMode.EditInPopup &&
                     _EditMode != NodeEditMode.Demo &&
-					!ReadOnly &&
-					Prop.AsRelationship.TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
-                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType(Prop.AsRelationship.TargetId) ) )
+                    !ReadOnly &&
+                    Prop.AsRelationship.TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( Prop.AsRelationship.TargetId ) ) )
                 {
                     _AddNewButton.OnClientClick = "return RelationshipAddNodeDialog_openPopup('" + Prop.AsRelationship.TargetId.ToString() + "');";
                     _AddNewButton.Visible = true;
