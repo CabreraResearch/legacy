@@ -91,27 +91,27 @@
 //                    //var $selecteditem = data.find('item[id="'+ selectid + '"]');
 //                    var selectLevel = -1;
 //                    if (o.SelectFirstChild) {
-                        switch (data.viewmode) {
-                            case CswViewMode.list.name:
-                                selectLevel = 1;
-                                treeThemes = { "dots": false };    
-                                break;
-                            
-                            case CswViewMode.tree.name:
-                                selectLevel = 2;
-                                treeThemes = { "dots": true };
-                                break;
-                            
-                            default:
-                                CswError( ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot load a ' + data.viewmode + ' view as a tree.' ));
-                                break;
-                        }
-                    }
-                    else {
-                        if (isNullOrEmpty(idToSelect)) {
-                            idToSelect = idPrefix + 'root';
-                        }
-                    }
+//                        switch (data.viewmode) {
+//                            case CswViewMode.list.name:
+//                                selectLevel = 1;
+//                                treeThemes = { "dots": false };    
+//                                break;
+//                            
+//                            case CswViewMode.tree.name:
+//                                selectLevel = 2;
+//                                treeThemes = { "dots": true };
+//                                break;
+//                            
+//                            default:
+//                                CswError( ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot load a ' + data.viewmode + ' view as a tree.' ));
+//                                break;
+//                        }
+//                    }
+//                    else {
+//                        if (isNullOrEmpty(idToSelect)) {
+//                            idToSelect = idPrefix + 'root';
+//                        }
+//                    }
 
 //                    var hasNodes = false;
 //                    function checkHasNodes(json) {
