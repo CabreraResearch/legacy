@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.ImportExport
 {
 
     public enum ImportProcessPhase { NothingDoneYet, LoadingInputFile, PopulatingTempTableNodes, PopulatingTempTableProps, TempTableIntegrityChecked, PopulatingNbtNodes, VerifyingNbtTargetNodes, CreatingMissingNbtTargetNodes, PopulatingNbtProps, PostProcessingNbtNodes, Completed };
-    public enum ImportProcessStati { Unprocessed, Imported, PropsAdded, RedundancyChecked, Error };
+    public enum ImportProcessStati { Unprocessed, Imported, PropsAdded, RedundancyChecked, WontAdd, Error };
     public enum ImportSource { ImportData, Deduced }
     public enum PhaseTypes { Incremental, Monolithic }
     public enum ProcessStates { Unknown, InProcess, Complete }
