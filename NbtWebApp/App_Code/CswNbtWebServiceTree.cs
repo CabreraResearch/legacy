@@ -40,10 +40,35 @@ namespace ChemSW.Nbt.WebServices
                     View.SaveToCache( true ); // case 22713
                     Tree = _CswNbtResources.Trees.getTreeFromView( View, false );
                 }
-                ReturnObj["result"] = ( Tree.getChildNodeCount() > 0 ).ToString().ToLower();
+                
+                Tree.goToRoot();
+                bool HasResults = (Tree.getChildNodeCount() > 0 );
+                ReturnObj["result"] = HasResults.ToString().ToLower();
                 ReturnObj["viewid"] = View.ViewId.ToString();
                 ReturnObj["viewmode"] = View.ViewMode.ToString();
                 ReturnObj["types"] = getTypes( View );
+
+                if( HasResults )
+                {
+
+                    // Determine the default selected node:
+                    // If the requested node to select is on the tree, return it.
+                    // If the requested node to select is not on the tree, return the first child of the root.
+                    if( IncludeNodeKey != null )
+                    {
+                        Tree.makeNodeCurrent( IncludeNodeKey );
+                        if( Tree.isCurrentNodeDefined() )
+                        {
+                            ReturnObj["selectid"] = IdPrefix + IncludeNodeKey.NodeId.ToString();
+                        }
+                    }
+                    if( ReturnObj["selectid"] == null )
+                    {
+                        Tree.goToRoot();
+                        Tree.goToNthChild( 0 );
+                        ReturnObj["selectid"] = IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
+                    }
+                }
 
                 ReturnObj["root"] = new JObject();
                 ReturnObj["root"]["data"] = View.ViewName;

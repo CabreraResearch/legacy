@@ -99,22 +99,22 @@
                 return ret;
             } // findParent()
 
-            function addNodeToTree($treediv, level, parentnode, childjs) {
+            function addNodeToTree($treediv, level, parent, childjs) {
                 if (false === isNullOrEmpty(childjs)) {
-                    if (isNullOrEmpty(parentnode) || parentnode === false) {
-                        parentnode = rootnode;
+                    if (isNullOrEmpty(parent) || parent === false) {
+                        parent = rootnode;
                     }
-                    var newnode = $treediv.jstree("create", parentnode, "last", childjs, false, true);
+
+                    var parentwasclosed = $treediv.jstree('is_closed', parent);
+
+                    var newnode = $treediv.jstree("create", parent, "last", childjs, false, true);
+
                     if (rootnode === false) {
                         rootnode = newnode;
                     }
 
-                    if (level === selectlevel && isNullOrEmpty(selectid)) {
-                        selectid = childjs.attr.id;
-                    }
-
                     if (selectid === childjs.attr.id) {
-                        $treediv.jstree('select_node', '#' + selectid);
+                        $treediv.jstree('select_node', newnode);
                     }
                 }
             } // addNodeToTree()
@@ -126,7 +126,6 @@
 
             var rootnode = false;  // root node of tree
             var selectid = null;   // node to select, once populated
-            var selectlevel = -1;  // select first node of level, if no selectid is defined
 
             var o = {
                 ID: '',
@@ -146,7 +145,7 @@
                 onSelectNode: null, // function(optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', cswnbtnodekey: '', viewid: '' }; return o; },
                 onInitialSelectNode: undefined,
                 onViewChange: null, // function(newviewid, newviewmode) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
-                SelectFirstChild: true,
+                //SelectFirstChild: true,
                 ShowCheckboxes: false,
                 IncludeInQuickLaunch: true
             };
@@ -193,10 +192,6 @@
                         var treePlugins = ["themes", "ui", "types", "crrm"];
                         var jsonTypes = data.types;
 
-                        if (false === isNullOrEmpty(o.nodeid)) {
-                            selectid = idPrefix + o.nodeid;
-                        }
-
                         var newviewid = data.viewid;
                         if (false === isNullOrEmpty(newviewid) && o.viewid !== newviewid) {
                             o.viewid = newviewid;
@@ -205,32 +200,21 @@
                             }
                         }
 
-                        var treeThemes;
-                        if (o.SelectFirstChild) {
-                            switch (data.viewmode) {
-                                case CswViewMode.list.name:
-                                    selectlevel = 1;
-                                    treeThemes = { "dots": false };
-                                    break;
+                        selectid = data.selectid;
 
-                                case CswViewMode.tree.name:
-                                    selectlevel = 2;
-                                    treeThemes = { "dots": true };
-                                    break;
-
-                                default:
-                                    CswError(ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot load a ' + data.viewmode + ' view as a tree.'));
-                                    break;
-                            }
-                        } else {
-                            if (isNullOrEmpty(selectid)) {
-                                selectid = idPrefix + 'root';
-                            }
+                        var treeThemes = { "dots": true };
+                        if (data.viewmode === CswViewMode.list.name) {
+                            treeThemes = { "dots": false };
                         }
 
                         $treediv.jstree({
+                            "core": {
+                                "open_parents": true
+                            },
                             "ui": {
-                                "select_limit": 1
+                                "select_limit": 1,
+                                "selected_parent_close": false,
+                                "selected_parent_open": true
                             },
                             "themes": treeThemes,
                             "types": {
@@ -273,7 +257,9 @@
 
                         addNodeToTree($treediv, 1, false, data.root);
 
-                        getFirstLevel($treediv, 2, 0);
+                        if (isTrue(data.result)) {
+                            getFirstLevel($treediv, 10, 0);
+                        }
 
                         removeNodeFromTree($treediv, $('.jstree-loading'));
 
