@@ -61,7 +61,7 @@
             isNewTarget = (function () {
                 var ret = false;
                 return function (isNew) {
-                    if (arguments.length > 1) {
+                    if (arguments.length > 0) {
                         ret = isTrue(isNew);
                     }
                     return ret;
@@ -98,7 +98,7 @@
                         if (data.nodetypecount === 0) { //Add a new Target
                             $inspectionTarget.hide();
                             isNewTarget(true);
-                            $addNewTarget = $rowOneTable.CswTable('cell', 1, 3)
+                            $addNewTarget = $rowOneTable.CswTable('cell', 2, 2)
                                 .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                 .CswInput('init', {
                                     ID: o.ID + '_newTargetName',
@@ -118,7 +118,7 @@
                             selectedInspectionTarget = $inspectionTarget.find(':selected').text();
                             $wizard.CswWizard('button', 'next', 'enable');
 
-                            $addBtn = $addBtn || $rowOneTable.CswTable('cell', 1, 4)
+                            $addBtn = $addBtn || $rowOneTable.CswTable('cell', 2, 3)
                                                                 .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                                                 .CswDiv('init')
                                                                 .CswButton('init', {
@@ -160,7 +160,7 @@
                             $inspectionTarget.remove();
                         }
 
-                        $inspectionTarget = $rowOneTable.CswTable('cell', 1, 2)
+                        $inspectionTarget = $rowOneTable.CswTable('cell', 2, 1)
                                                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                                             .CswDiv('init')
                                                             .CswNodeTypeSelect('init', {
@@ -569,7 +569,6 @@
                                 $.extend(true, confirmGridOptions, gridOptions);
                             }
 
-                            //There is still a bugg here, we must fetch the current instance of the grid rows data for preview here. It may have changed. 
                             confirmGridOptions.ID = makeStepId('confirmGrid');
                             confirmGridOptions.gridOpts.data = inspectionGrid.$gridTable.jqGrid('getRowData');
                             confirmGridOptions.gridOpts.autowidth = false;
