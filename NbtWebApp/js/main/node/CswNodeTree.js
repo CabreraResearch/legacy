@@ -91,12 +91,20 @@
                     //var $selecteditem = data.find('item[id="'+ selectid + '"]');
                     var selectLevel = -1;
                     if (o.SelectFirstChild) {
-                        if (o.viewmode === 'list') {
-                            selectLevel = 1;
-                            treeThemes = { "dots": false };
-                        } else {
-                            selectLevel = 2;
-                            treeThemes = { "dots": true };
+                        switch (data.viewmode) {
+                            case CswViewMode.list.name:
+                                selectLevel = 1;
+                                treeThemes = { "dots": false };    
+                                break;
+                            
+                            case CswViewMode.tree.name:
+                                selectLevel = 2;
+                                treeThemes = { "dots": true };
+                                break;
+                            
+                            default:
+                                CswError( ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot load a ' + data.viewmode + ' view as a tree.' ));
+                                break;
                         }
                     }
                     else {

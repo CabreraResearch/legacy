@@ -164,36 +164,6 @@ namespace ChemSW.Nbt.MetaData
             return NodeTypeProp;
         }
 
-        /// <summary>
-        /// Attempt to add a NodeType to the _ById Hashtable. Suppress and log errors.
-        /// </summary>
-        private void _tryAddNodeTypePropById( CswNbtMetaDataNodeTypeProp NodeTypeProp )
-        {
-            try
-            {
-                _ById.Add( NodeTypeProp.PropId, NodeTypeProp );
-            }
-            catch( ArgumentNullException ArgumentNullException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Proposed NodeTypeProp was null and cannot be added to the MetaData collection.", "", ArgumentNullException ) );
-            }
-            catch( ArgumentException ArgumentException )
-            {
-                CswNbtMetaDataNodeTypeProp ExistingNodeTypeProp = (CswNbtMetaDataNodeTypeProp) _ById[NodeTypeProp.PropId];
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError(
-                    new CswDniException(
-                        ErrorType.Error,
-                        "Duplicate NodeTypeProps exist in the database. A NodeTypeProp named: " + NodeTypeProp.PropName + " on NodeTypePropid " + NodeTypeProp.PropId + " has already been defined.",
-                        "NodeTypeProp Name: " + ExistingNodeTypeProp.PropName + " is already defined with NodeTypePropid " + ExistingNodeTypeProp.PropId + ".",
-                        ArgumentException )
-                );
-            }
-            catch( NotSupportedException NotSupportedException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot add the proposed NodeTypeProp: " + NodeTypeProp.PropName + " to the MetaData collection.", "", NotSupportedException ) );
-            }
-        }
-
         public void RegisterExisting( ICswNbtMetaDataObject Object )
         {
             if( !( Object is CswNbtMetaDataNodeTypeProp ) )
@@ -202,7 +172,7 @@ namespace ChemSW.Nbt.MetaData
             }
             CswNbtMetaDataNodeTypeProp NodeTypeProp = Object as CswNbtMetaDataNodeTypeProp;
 
-            _tryAddNodeTypePropById( NodeTypeProp );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeTypeProp.PropId, NodeTypeProp, _ById, "NodeTypeProp", NodeTypeProp.PropId, NodeTypeProp.PropName );
 
             // By NodeType
             if( !_ByNodeType.ContainsKey( NodeTypeProp.NodeType.NodeTypeId ) )
