@@ -12,8 +12,22 @@ if (false === isFunction(String.prototype.trim)) {
     };
 }
 
-String.prototype.toCamel = String.prototype.toCamel || function(){
-    return this.replace(/(\-[a-z])/g, function($1){return $1.toUpperCase().replace('-','');});
+String.prototype.toUpperCaseFirstChar = String.prototype.toUpperCaseFirstChar || function() {
+    return this.substr(0, 1).toUpperCase() + this.substr(1);
+};
+
+String.prototype.toLowerCaseFirstChar = String.prototype.toLowerCaseFirstChar || function() {
+    return this.substr(0, 1).toLowerCase() + this.substr(1);
+};
+
+String.prototype.toUpperCaseEachWord = String.prototype.toUpperCaseEachWord || function(delim) {
+    delim = delim ? delim : ' ';
+    return this.split(delim).map(function(v) { return v.toUpperCaseFirstChar(); }).join(delim);
+};
+
+String.prototype.toLowerCaseEachWord = String.prototype.toLowerCaseEachWord || function(delim) {
+    delim = delim ? delim : ' ';
+    return this.split(delim).map(function(v) { return v.toLowerCaseFirstChar(); }).join(delim);
 };
 
 //#endregion String

@@ -215,15 +215,27 @@
                 var stepTwoComplete = false;
 
                 return function() {
-                    var $inspectionTable, $categoryLabel, $newDesignLabel, 
-                        tempInspectionName = selectedInspectionTarget.toCamel() + ' Inspection';
+                    var $inspectionTable, $categoryLabel, $newDesignLabel, $newDesignNameDisplay,
+                        tempInspectionName = selectedInspectionTarget.toUpperCaseEachWord() + ' Inspection',
+                        tempCategoryName = tempInspectionName + ': ' + selectedInspectionTarget;
+
+                    var makeInspectionDesignName = function(name) {
+                        var ret = trim(tryParseString(name));
+                        if(-1 === ret.indexOf('Inspection') && -1 === ret.indexOf('inspection')) {
+                            ret += ' Inspection';
+                        }
+                        return ret;
+                    };
+
                     var toggleNewDesignName = function() {
                         if (isNewInspectionDesign()) {
                             $newDesignName.show();
                             $newDesignLabel.show();
+                            $newDesignNameDisplay.show();
                         } else {
                             $newDesignName.hide();
                             $newDesignLabel.hide();
+                            $newDesignNameDisplay.hide();
                         }
                     };
                     var nextBtnEnabled = function() {
@@ -259,6 +271,13 @@
                                 var $selected = $inspectionDesignSelect.find(':selected');
                                 selectedInspectionDesign.id = $selected.val();
                                 selectedInspectionDesign.name = $selected.text();
+                                if(isNewInspectionDesign()) {
+                                    tempCategoryName = (selectedInspectionTarget + ': ' + selectedInspectionTarget).toUpperCaseEachWord();
+                                } else {
+                                    tempCategoryName = (selectedInspectionDesign.name + ': ' + selectedInspectionTarget).toUpperCaseEachWord();
+                                }
+                                $categoryName.val(tempCategoryName);
+
                                 toggleNewDesignName();
                             });
                         selectedInspectionDesign.id = $inspectionDesignSelect.find(':selected').val();
@@ -280,31 +299,41 @@
                                 maxlength: 50,
                                 value: tempInspectionName
                             })
-                            .keypress(function() {
+                            .on('keypress keydown keyup', function() {
                                 setTimeout(function() {
+                                    var newInspectionDesignName = makeInspectionDesignName($newDesignName.val());
                                     selectedInspectionDesign.id = '[Create New]';
-                                    selectedInspectionDesign.name = $newDesignName.val();
-                                    toggleButton(buttons.next, nextBtnEnabled());
-                                }, 100);
-                            });
+                                    selectedInspectionDesign.name = newInspectionDesignName;
 
-                        toggleNewDesignName();
+                                    $newDesignNameDisplay.text(newInspectionDesignName);
+                                    tempCategoryName = (newInspectionDesignName + ': ' + selectedInspectionTarget).toUpperCaseEachWord();
+                                    $categoryName.val(tempCategoryName);
+                                    
+                                    toggleButton(buttons.next, nextBtnEnabled());
+                                }, 10);
+                            });
                         
-                        $inspectionTable.CswTable('cell', 4, 1).append('<br />');
+                        $newDesignNameDisplay = $('<span>' + tempInspectionName + '</span>').appendTo( 
+                                                                $inspectionTable.CswTable('cell', 4, 2)
+                                                                                .css({ 'padding': '1px', 'vertical-align': 'middle' }));
+
+                        $inspectionTable.CswTable('cell', 5, 1).append('<br />');
 
                          //2. Category Name
-                        $categoryLabel = $categoryLabel || $inspectionTable.CswTable('cell', 5, 1)
+                        $categoryLabel = $categoryLabel || $inspectionTable.CswTable('cell', 6, 1)
                                                                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                                                             .append('<span>Category Name&nbsp</span>');
 
-                        $categoryName = $categoryName || $inspectionTable.CswTable('cell', 5, 2)
+                        $categoryName = $categoryName || $inspectionTable.CswTable('cell', 6, 2)
                                                                         .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                                                         .CswInput('init', {
                                                                             ID: o.ID + '_newDesignCategory',
                                                                             type: CswInput_Types.text,
-                                                                            value: tempInspectionName + ': ' + selectedInspectionTarget
+                                                                            value: tempCategoryName
                                                                         });
 
+                        toggleNewDesignName();
+                        
                         $inspectionTable.CswTable('cell', 6, 1).append('<br />');
                     }
                     stepTwoComplete = true;
@@ -442,7 +471,7 @@
                             //1. Download template
                             $templateLink = $('<a href=\"/NbtWebApp/etc/InspectionDesign.xls\">Download Template</a>').button();
                             $step3List.CswList('addItem', {
-                                value: $('<span>Create a new <b>' + selectedInspectionDesign.name + '</b> Inspection Design using the Excel template.</span>')
+                                value: $('<span>Create a new <b>' + selectedInspectionDesign.name + '</b> Design using the Excel template.</span>')
                                     .append($('<p/>').append($templateLink))
                             });
 
@@ -465,7 +494,7 @@
                     }; //doStepTwo
 
                     if(isNewInspectionDesign()) {
-                        selectedInspectionDesign.name = $newDesignName.val();
+                        //selectedInspectionDesign.name = $newDesignName.val();
                         checkIsNodeTypeNameUnique(selectedInspectionDesign.name, doStepThree);
                     }
                     toggleButton(buttons.next, nextIsEnabled(), doNextClick());
