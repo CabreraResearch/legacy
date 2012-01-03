@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Data;
-using ChemSW.DB;
 using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.MetaData
@@ -48,6 +50,40 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataTableCache = new CswNbtMetaDataTableCache( CswNbtResources );
         }
 
+        public void tryAddToMetaDataCollection( object Key, object Value, IDictionary Collection, string MetaDataObjectTypeName, Int32 MetaDataObjectId, string MetaDataObjectName )
+        {
+            if( null != Key &&
+                null != Value )
+            {
+                try
+                {
+                    Collection.Add( Key, Value );
+                }
+                catch( ArgumentNullException ArgumentNullException )
+                {
+                    CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Proposed " + MetaDataObjectTypeName + " was null and cannot be added to the MetaData collection.", "", ArgumentNullException ) );
+                }
+                catch( ArgumentException ArgumentException )
+                {
+                    CswNbtResources.CswLogger.reportError(
+                        new CswDniException(
+                            ErrorType.Error,
+                            "Duplicate " + MetaDataObjectTypeName + "s exist in the database. A " + MetaDataObjectTypeName + " named: " + MetaDataObjectName + " on " + MetaDataObjectTypeName.ToLower() + "id " + MetaDataObjectId + " has already been defined.",
+                            "",
+                            ArgumentException )
+                        );
+                }
+                catch( InvalidOperationException InvalidOperationException )
+                {
+                    CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot compare the proposed " + MetaDataObjectTypeName + " against the MetaData collection.", "", InvalidOperationException ) );
+                }
+                catch( NotSupportedException NotSupportedException )
+                {
+                    CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot add the proposed " + MetaDataObjectTypeName + ": " + MetaDataObjectName + " to the MetaData collection.", "", NotSupportedException ) );
+                }
+            }
+        }
+        
         public void refreshAll( bool ExcludeDisabledModules )
         {
             CswTimer refreshAllTimer = new CswTimer();
@@ -127,7 +163,7 @@ namespace ChemSW.Nbt.MetaData
             if( null == ObjectClasPropsTable )
             {
                 ObjectClasPropsTable = ObjectClassPropTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "propname", OrderByType.Ascending ) } );
-                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.ObjectClassProp, ObjectClasPropsTable ); 
+                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.ObjectClassProp, ObjectClasPropsTable );
             }
 
             RefreshMetaDataObject( ObjectClassPropsCollection, ObjectClasPropsTable );
@@ -163,7 +199,7 @@ namespace ChemSW.Nbt.MetaData
             if( null == NodeTypesTable )
             {
                 NodeTypesTable = NodeTypeTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "nodetypeid", OrderByType.Ascending ) } );
-                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeType, NodeTypesTable ); 
+                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeType, NodeTypesTable );
             }
 
             RefreshMetaDataObject( NodeTypesCollection, NodeTypesTable );
@@ -176,7 +212,7 @@ namespace ChemSW.Nbt.MetaData
             if( null == FieldTypesTable )
             {
                 FieldTypesTable = FieldTypeTableUpdate.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "fieldtype", OrderByType.Ascending ) } );
-                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.FieldType, FieldTypesTable ); 
+                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.FieldType, FieldTypesTable );
             }
 
 
@@ -212,7 +248,7 @@ namespace ChemSW.Nbt.MetaData
             if( null == NodeTypePropTable )
             {
                 NodeTypePropTable = NodeTypePropTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "propname", OrderByType.Ascending ) } );
-                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeProp, NodeTypePropTable ); 
+                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeProp, NodeTypePropTable );
             }
 
             RefreshMetaDataObject( NodeTypePropsCollection, NodeTypePropTable );
@@ -264,7 +300,7 @@ namespace ChemSW.Nbt.MetaData
             if( null == NodeTypeTabsTable )
             {
                 NodeTypeTabsTable = NodeTypeTabTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "taborder", OrderByType.Ascending ) } );
-                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeTab, NodeTypeTabsTable ); 
+                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeTab, NodeTypeTabsTable );
             }
 
             RefreshMetaDataObject( NodeTypeTabsCollection, NodeTypeTabsTable );

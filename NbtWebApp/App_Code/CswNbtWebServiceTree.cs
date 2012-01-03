@@ -206,6 +206,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnObj = new JObject();
             JArray RootArray = new JArray();
+            ReturnObj["viewmode"] = View.ViewMode.ToString();
             ReturnObj["tree"] = RootArray;
 
             string EmptyOrInvalid = "No Results";

@@ -103,36 +103,6 @@ namespace ChemSW.Nbt.MetaData
             return NodeTypeTab;
         }
 
-        /// <summary>
-        /// Attempt to add a NodeTypeTab to the _ById Hashtable. Suppress and log errors.
-        /// </summary>
-        private void _tryAddNodeTypeTabById( CswNbtMetaDataNodeTypeTab NodeTypeTab )
-        {
-            try
-            {
-                _ById.Add( NodeTypeTab.TabId, NodeTypeTab );
-            }
-            catch( ArgumentNullException ArgumentNullException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Proposed NodeTypeTab was null and cannot be added to the MetaData collection.", "", ArgumentNullException ) );
-            }
-            catch( ArgumentException ArgumentException )
-            {
-                CswNbtMetaDataNodeTypeTab ExistingNodeTypeTab = (CswNbtMetaDataNodeTypeTab) _ById[NodeTypeTab.TabId];
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError(
-                    new CswDniException(
-                        ErrorType.Error,
-                        "Duplicate NodeTypeTabs exist in the database. A NodeTypeTab named: " + NodeTypeTab.TabName + " on NodeTypeTabid " + NodeTypeTab.TabId + " has already been defined.",
-                        "NodeTypeTab Name: " + ExistingNodeTypeTab.TabName + " is already defined with NodeTypeTabid " + ExistingNodeTypeTab.TabId + ".",
-                        ArgumentException )
-                );
-            }
-            catch( NotSupportedException NotSupportedException )
-            {
-                _CswNbtMetaDataResources.CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, "Cannot add the proposed NodeTypeTab: " + NodeTypeTab.TabName + " to the MetaData collection.", "", NotSupportedException ) );
-            }
-        }
-
         public void RegisterExisting( ICswNbtMetaDataObject Object )
         {
             if( !( Object is CswNbtMetaDataNodeTypeTab ) )
@@ -141,7 +111,8 @@ namespace ChemSW.Nbt.MetaData
             }
             CswNbtMetaDataNodeTypeTab NodeTypeTab = Object as CswNbtMetaDataNodeTypeTab;
 
-            _tryAddNodeTypeTabById( NodeTypeTab );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeTypeTab.TabId, NodeTypeTab, _ById, "NodeTypeTab", NodeTypeTab.TabId, NodeTypeTab.TabName );
+
             if( !_ByNodeType.ContainsKey( NodeTypeTab.NodeType.NodeTypeId ) )
             {
                 _ByNodeType.Add( NodeTypeTab.NodeType.NodeTypeId, new NodeTypeHashEntry() );

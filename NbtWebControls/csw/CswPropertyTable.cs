@@ -2,19 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using Telerik.Web.UI;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Exceptions;
-using ChemSW.NbtWebControls.FieldTypes;
-using ChemSW.Nbt.PropTypes;
+using System.Web.UI.WebControls;
 using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.CswWebControls;
+using ChemSW.Exceptions;
+using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using ChemSW.NbtWebControls.FieldTypes;
+using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls
 {
@@ -245,8 +245,8 @@ namespace ChemSW.NbtWebControls
         {
             try
             {
-				if( !_CswNbtResources.Permit.can( CswNbtActionName.Design ) )
-					throw new CswDniException( ErrorType.Warning, "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
+                if( !_CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+                    throw new CswDniException( ErrorType.Warning, "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
 
                 // LayoutComponentId == PropId (set in addPropertyToTable below)
                 CswNbtMetaDataNodeTypeProp DoomedProp = _CswNbtResources.MetaData.getNodeTypeProp( LayoutComponentId );
@@ -264,23 +264,23 @@ namespace ChemSW.NbtWebControls
         {
             try
             {
-				if( !_CswNbtResources.Permit.can( CswNbtActionName.Design ) )
-					throw new CswDniException( ErrorType.Warning, "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
+                if( !_CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+                    throw new CswDniException( ErrorType.Warning, "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
 
                 // LayoutComponentId == PropId (set in addPropertyToTable below)
                 CswNbtMetaDataNodeTypeProp MovedProp = _CswNbtResources.MetaData.getNodeTypeProp( LayoutComponentId );
                 if( EditMode == NodeEditMode.AddInPopup )
                 {
-					//MovedProp.DisplayRowAdd = NewDisplayRow;
-					//MovedProp.DisplayColAdd = NewDisplayColumn;
-					MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
+                    //MovedProp.DisplayRowAdd = NewDisplayRow;
+                    //MovedProp.DisplayColAdd = NewDisplayColumn;
+                    MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
                 }
                 else
                 {
-					//MovedProp.DisplayRow = NewDisplayRow;
-					//MovedProp.DisplayColumn = NewDisplayColumn;
-					MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
-				}
+                    //MovedProp.DisplayRow = NewDisplayRow;
+                    //MovedProp.DisplayColumn = NewDisplayColumn;
+                    MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
+                }
             }
             catch( Exception ex )
             {
@@ -329,16 +329,16 @@ namespace ChemSW.NbtWebControls
                 else
                     _CancelButton.Visible = false;
 
-				if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) )
-				{
-					_ConfigButton.Visible = true;
-					_AddButton.Visible = true;
-				}
-				else
-				{
-					_ConfigButton.Visible = false;
-					_AddButton.Visible = false;
-				}
+                if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+                {
+                    _ConfigButton.Visible = true;
+                    _AddButton.Visible = true;
+                }
+                else
+                {
+                    _ConfigButton.Visible = false;
+                    _AddButton.Visible = false;
+                }
 
                 RadTab SelectedTab = TabStrip.FindTabByValue( SelectedTabId );
                 if( SelectedTab != null )
@@ -402,7 +402,7 @@ namespace ChemSW.NbtWebControls
             string FilterValue = null;
             MetaDataProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
 
-            if( _PropertyControlSetHash.ContainsKey(FilterMetaDataProp.FirstPropVersionId) )
+            if( _PropertyControlSetHash.ContainsKey( FilterMetaDataProp.FirstPropVersionId ) )
             {
                 CswFieldTypeWebControl FilterControl = _PropertyControlSetHash[FilterMetaDataProp.FirstPropVersionId].Control;
                 CswNbtNode Node = _CswNbtResources.Nodes[FilterControl.Prop.NodeId];
@@ -428,7 +428,7 @@ namespace ChemSW.NbtWebControls
                         }
                         else
                         {
-							throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable only supports 'Checked Equals' filters on Logical properties" );
+                            throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable only supports 'Checked Equals' filters on Logical properties" );
                         }
                     }
                     else
@@ -444,7 +444,7 @@ namespace ChemSW.NbtWebControls
                                 ValueToCompare = ( (CswText) FilterControl ).Text;
                                 break;
                             default:
-								throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.FieldType.FieldType.ToString() );
+                                throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.FieldType.FieldType.ToString() );
                         } // switch( FilterMetaDataProp.FieldType.FieldType )
 
                         switch( FilterMode )
@@ -462,7 +462,7 @@ namespace ChemSW.NbtWebControls
                                 FilterMatches = ( ValueToCompare != string.Empty );
                                 break;
                             default:
-								throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode: " + FilterMode.ToString() );
+                                throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode: " + FilterMode.ToString() );
                         } // switch( FilterMode )
 
                     } // if-else( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
@@ -663,7 +663,7 @@ namespace ChemSW.NbtWebControls
                     } // if( Prop.NodeTypeTab != null && Prop.NodeTypeTab.TabId.ToString() == SelectedTabId.ToString() )
                 } // foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
 
-				if( !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.MetaData.getNodeType(SelectedNodeTypeId),false, null, null, SelectedNode, null ) )
+                if( !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId ), false, null, null, SelectedNode, null ) )
                 {
                     SaveButton.Visible = false;
                 }
@@ -685,7 +685,7 @@ namespace ChemSW.NbtWebControls
                             _PropertyControlSetHash.Add( Prop.FirstPropVersionId, PCS );
                     }
                 }
-				if( !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType ) )
+                if( !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType ) )
                 {
                     SaveButton.Visible = false;
                 }
@@ -794,7 +794,7 @@ namespace ChemSW.NbtWebControls
                     PropControl = CswFieldTypeWebControlFactory.makeControl( CswNbtResources, LayoutTable.Controls, string.Empty, PropWrapper, EditMode, HandleError );
                 }
                 else
-					throw new CswDniException( ErrorType.Error, "Invalid Property", "CswPropertyTable.addPropertyToTable requires either a valid NodeKey or a valid PropWrapper" );
+                    throw new CswDniException( ErrorType.Error, "Invalid Property", "CswPropertyTable.addPropertyToTable requires either a valid NodeKey or a valid PropWrapper" );
 
                 CswLayoutTable.LayoutComponent ThisComponent = null;
                 if( EditMode == NodeEditMode.AddInPopup )
