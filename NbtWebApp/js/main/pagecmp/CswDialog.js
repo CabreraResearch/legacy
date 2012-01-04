@@ -125,18 +125,19 @@
                                     });
             /* Cancel Button */
             $div.CswButton({
-                                    ID: o.ID + '_cancel', 
-                                    enabledText: 'Cancel', 
-                                    disabledText: 'Canceling', 
-                                    onclick: function() {
-                                            $div.dialog('close');
-                                            }
-                                    });    
+                            ID: o.ID + '_cancel', 
+                            enabledText: 'Cancel', 
+                            disabledText: 'Canceling', 
+                            onclick: function() {
+                                    $div.dialog('close');
+                                    }
+                            });    
 
             openDialog($div, 400, 200);
         }, // AddViewDialog
         AddNodeDialog: function (options) {
             var o = {
+                text: '',
                 nodetypeid: '', 
                 relatednodeid: '',
                 onAddNode: function() { }
@@ -146,7 +147,8 @@
                 $.extend(o, options);
             }
 
-            var $div = $('<div></div>');
+            var $div = $('<div></div>'),
+                title = 'New ' + o.text;
             $div.CswNodeTabs({
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
@@ -157,7 +159,7 @@
                     o.onAddNode(nodeid, cswnbtnodekey);
                 },
                 onInitFinish: function() {
-                    openDialog($div, 800, 600);
+                    openDialog($div, 800, 600, null, title);
                 },
                 ShowAsReport: false
             });

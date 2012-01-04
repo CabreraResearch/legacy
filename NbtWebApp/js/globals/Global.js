@@ -790,6 +790,7 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
                 $a.click(function ()
                 {
                     $.CswDialog('AddNodeDialog', {
+                        text: text,
                         nodetypeid: tryParseString(json.nodetypeid),
                         relatednodeid: tryParseString(json.relatednodeid), //for Grid Props
                         relatednodetypeid: tryParseString(json.relatednodetypeid), //for NodeTypeSelect
