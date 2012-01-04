@@ -129,8 +129,8 @@ namespace ChemSW.Nbt.Actions
             Collection<CswPrimaryKey> Parents = new Collection<CswPrimaryKey>();
 
             //SI will have a ParentView to fetch InspectionTargets which will be used to find existing InsepctionDesign nodes or create new ones
-            bool IsSI = GeneratorNodeAsGenerator.ParentView.ViewId.isSet();
-            if( IsSI )
+            bool GeneratorUsesParentViews = GeneratorNodeAsGenerator.ParentView.ViewId.isSet();
+            if( GeneratorUsesParentViews )
             {
                 CswNbtView ParentsView = _CswNbtResources.ViewSelect.restoreView( GeneratorNodeAsGenerator.ParentView.ViewId );
                 // Case 20482
@@ -147,13 +147,13 @@ namespace ChemSW.Nbt.Actions
             }
 
             //IMCS won't have a ParentView or a ParentType
-            bool IsIMCS = ( false == IsSI &&
+            bool GeneratorDoesNotUseParentViews = ( false == GeneratorUsesParentViews &&
                             Parents.Count == 0 &&
                             string.Empty == GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds.ToString() &&
                             null != GeneratorNodeAsGenerator.Owner &&
                             null != GeneratorNodeAsGenerator.Owner.RelatedNodeId );
 
-            if( IsIMCS )
+            if( GeneratorDoesNotUseParentViews )
             {
                 Parents.Add( GeneratorNodeAsGenerator.Owner.RelatedNodeId );
             }
@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.Actions
 
                     bool MakeGeneratorTarget = ( null == ExistingNode );
                     /* Case 24572 */
-                    if( false == MakeGeneratorTarget && IsSI )
+                    if( false == MakeGeneratorTarget && GeneratorUsesParentViews )
                     {
                         CswNbtObjClassInspectionDesign ExistingNodeAsInspectionDesign = CswNbtNodeCaster.AsInspectionDesign( ExistingNode );
                         MakeGeneratorTarget = ExistingNodeAsInspectionDesign.GeneratedDate.DateTimeValue != DueDate;
