@@ -726,7 +726,7 @@ namespace ChemSW.Nbt.ImportExport
                                                 }
                                                 else
                                                 {
-                                                    CurrentRowError += "Unable to import nodeprop with nodetypename " + CurrentNodeTypePropname + ": could not find a node type prop of this name in node type " + CurrentNodeTypeName;
+                                                    CurrentRowError += "Unable to import the " + CurrentNodeTypePropname + " property for the node named " + CurrentImportNodeName + " (importnodeid " + CurrentImportNodeId + "): it's Node type " + CurrentNodeTypeName + " does not have this property";
                                                     CurrentErrorStatus = ImportProcessStati.Error;
 
                                                 }//if-else we were able to retrieve the nodetype prop
@@ -1105,6 +1105,11 @@ namespace ChemSW.Nbt.ImportExport
 
         }//_doesNodeNameAlreadyExist() 
 
+        /// <summary>
+        /// Return node id for a nodename iff the name is unique
+        /// </summary>
+        /// <param name="NodeName"></param>
+        /// <returns></returns>
         private Int32 _getNodeIdForNodeName( string NodeName )
         {
             Int32 ReturnVal = Int32.MinValue;
@@ -1112,7 +1117,7 @@ namespace ChemSW.Nbt.ImportExport
             CswTableSelect CswTableSelectFromNodes = _CswNbtResources.makeCswTableSelect( "rawselectfromnodes", "nodes" );
             DataTable DataTable = CswTableSelectFromNodes.getTable( " where lower(nodename)='" + NodeName.ToLower() + "'" );
 
-            if( DataTable.Rows.Count > 0 )
+            if( 1 == DataTable.Rows.Count )
             {
                 ReturnVal = CswConvert.ToInt32( DataTable.Rows[0]["nodeid"] );
             }
