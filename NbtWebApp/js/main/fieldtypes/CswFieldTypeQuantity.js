@@ -16,20 +16,14 @@
             $Div.contents().remove();
             var propVals = o.propData.values,
                 precision = tryParseNumber(propVals.precision, 6),
-                maxValue = '999999999',
-                i;
-            if(precision > 0) {
-                maxValue += '.';
-                for(i=0; i < precision; i += 1) {
-                    maxValue += '9';
-                }
-            }
+                ceilingVal = '999999999' + ChemSW.tools.getMaxValueForPrecision(precision);
             
             var $NumberTextBox = $Div.CswNumberTextBox({
                 ID: o.ID + '_qty',
                 Value: (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue,
                 MinValue: tryParseNumber(propVals.minvalue),
-                MaxValue: tryParseNumber(propVals.maxvalue, +maxValue),
+                MaxValue: tryParseNumber(propVals.maxvalue),
+                ceilingVal: +ceilingVal,
                 Precision: precision,
                 ReadOnly: isTrue(o.ReadOnly),
                 Required: isTrue(o.Required),

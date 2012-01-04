@@ -47,7 +47,20 @@ var ChemSW = ChemSW || (function(undefined) {
              
         },
         tools: {
-            
+            getMaxValueForPrecision: function (precision, maxPrecision) {
+                var i, 
+                    ret = '',
+                    precisionMax = maxPrecision || 6;
+                if (precision > 0 && 
+                    precision <= precisionMax) {
+                    
+                    ret += '.';
+                    for(i=0; i < precision; i += 1) {
+                        ret += '9';
+                    }
+                }
+                return ret;
+            }
         },
         makeSequentialArray: function(start, end) {
             var ret = [],

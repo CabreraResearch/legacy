@@ -19,15 +19,16 @@
                 ReadOnly: false,
                 Required: false,
                 onchange: function() { },
-                width: ''
+                width: '',
+                ceilingVal: 999999999.999999
             };
             if(options) $.extend(o, options);
 
             var $Div = $(this),
-                dbMax = 999999999.999999,
+                ceilingVal = tryParseNumber(o.ceilingVal),
                 width, maxLength, $TextBox,
                 minValue = +o.MinValue,
-                maxValue = +o.MaxValue,
+                maxValue = tryParseNumber(o.MaxValue, ceilingVal),
                 precision = +o.Precision;
             
             //$Div.contents().remove();
@@ -82,13 +83,14 @@
                     $TextBox.addClass(o.ID + '_validateFloatPrecision');
                 }
 
-                //Independant of any other validation, no number can be greater than this.
-                $TextBox.CswAttrDom('max', '999999999.999999');
-                jQuery.validator.addMethod(o.ID + '_validateDb_15_6_FieldLength', function (value, element) {
-                    return validateFloatMaxValue($(element).val(), dbMax);
-                }, 'Value cannot be greater than ' + dbMax + '.');
-                $TextBox.addClass(o.ID + '_validateDb_15_6_FieldLength');
-                
+                if(0 < ceilingVal) {
+                    //Independant of any other validation, no number can be greater than this.
+                    $TextBox.CswAttrDom('max', ceilingVal);
+                    jQuery.validator.addMethod(o.ID + '_validateDb_15_6_FieldLength', function(value, element) {
+                        return validateFloatMaxValue($(element).val(), ceilingVal);
+                    }, 'Value cannot be greater than ' + ceilingVal + '.');
+                    $TextBox.addClass(o.ID + '_validateDb_15_6_FieldLength');
+                }
                 if (o.Required) {
                     $TextBox.addClass('required');
                 }
