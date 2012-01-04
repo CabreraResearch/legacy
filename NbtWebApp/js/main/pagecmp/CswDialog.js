@@ -150,6 +150,7 @@
             $div.CswNodeTabs({
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
+                relatednodetypeid: o.relatednodetypeid,
                 EditMode: EditMode.AddInPopup.name,
                 onSave: function (nodeid, cswnbtnodekey) {
                     $div.dialog('close');

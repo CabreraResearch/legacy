@@ -792,6 +792,7 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
                     $.CswDialog('AddNodeDialog', {
                         nodetypeid: tryParseString(json.nodetypeid),
                         relatednodeid: tryParseString(json.relatednodeid), //for Grid Props
+                        relatednodetypeid: tryParseString(json.relatednodetypeid), //for NodeTypeSelect
                         onAddNode: o.onAlterNode
                     });
                     return false;

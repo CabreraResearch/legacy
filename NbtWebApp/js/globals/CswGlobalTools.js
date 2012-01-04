@@ -3,7 +3,35 @@
 var ChemSW = ChemSW || (function(undefined) {
     "use strict";
     return {
+        constants: {
+            unknownEnum: 'unknown'    
+        },
         enums: {
+            tryParse: function (cswEnum, enumMember, caseSensitive) {
+                var ret = ChemSW.constants.unknownEnum;
+                if(contains(cswEnum, enumMember)) {
+                    ret = cswEnum[enumMember];
+                } 
+                else if (false === caseSensitive) {
+                    each(cswEnum, function(member) {
+                        if(contains(cswEnum, member) && 
+                            tryParseString(member).toLowerCase() === tryParseString(enumMember).toLowerCase() ) {
+                            ret = member;
+                        }
+                    });
+                }
+                return ret;
+            },
+            EditMode: {
+                Edit: 'Edit',
+                AddInPopup: 'AddInPopup',
+                EditInPopup: 'EditInPopup',
+                Demo: 'Demo',
+                PrintReport: 'PrintReport',
+                DefaultValue: 'DefaultValue',
+                AuditHistoryInPopup: 'AuditHistoryInPopup',
+                Preview: 'Preview' 
+            },
             ErrorType: {
                 warning: {
                     name: 'warning',
