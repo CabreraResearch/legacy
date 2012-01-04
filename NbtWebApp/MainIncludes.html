@@ -4,11 +4,11 @@
 <link rel="stylesheet" type="text/css" href="js/CswAll.min.css" />
 <link rel="stylesheet" type="text/css" href="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.css" />
 <link rel="stylesheet" type="text/css" href="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.filter.css" />
+<script src="js/config.js" type="text/javascript"></script>
 
 <script type="text/javascript">
     
     if (window.CswDebug) {
-        debugOn(true);
         if (undefined === window.JSON || null === window.JSON || false === window.JSON.hasOwnProperty('parse') || false === window.JSON.hasOwnProperty('stringify')) {
             document.write('<script type="text/javascript" src="Scripts/json2.js"><\/script>');
         }
@@ -148,6 +148,7 @@
         document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeUserSelect.js"><\/script>');
         document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeViewPickList.js"><\/script>');
         document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeViewReference.js"><\/script>');
+        debugOn(true);
     } else {
         if (undefined === window.JSON || null === window.JSON || false === window.JSON.hasOwnProperty('parse') || false === window.JSON.hasOwnProperty('stringify')) {
             document.write('<script type="text/javascript" src="Scripts/json2.min.js"><\/script>');
