@@ -65,7 +65,10 @@
                     }, 'Number must be greater than or equal to ' + minValue);
                     $TextBox.addClass(o.ID + '_validateFloatMinValue');
                 }
-                if (isNumber(maxValue) && isNumeric(maxValue)) {
+                if (isNumber(maxValue) && 
+                    isNumeric(maxValue) &&
+                    maxValue > minValue
+                    ) {
                     jQuery.validator.addMethod(o.ID + '_validateFloatMaxValue', function (value, element) {
                         return (this.optional(element) || validateFloatMaxValue($(element).val(), maxValue));
                     }, 'Number must be less than or equal to ' + maxValue);
