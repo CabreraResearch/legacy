@@ -5,7 +5,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropertySets;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -108,17 +107,8 @@ namespace ChemSW.Nbt.Actions
             string DateFilter = string.Empty;
             if( DueDate == DateTime.MinValue )
             {
-                switch( GeneratorNodeAsGenerator.NextDueDate.DisplayMode )
-                {
-                    case CswNbtNodePropDateTime.DateDisplayMode.Date:
-                        DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue.Date;
-                        DateFilter = DueDate.ToShortDateString();
-                        break;
-                    case CswNbtNodePropDateTime.DateDisplayMode.DateTime:
-                        DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue;
-                        DateFilter = DueDate.ToShortDateString() + " " + DueDate.ToLongTimeString();
-                        break;
-                }
+                DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue;
+                DateFilter = DueDate.ToShortDateString() + " " + DueDate.ToLongTimeString();
             }
             if( DueDate == DateTime.MinValue || string.IsNullOrEmpty( DateFilter ) )
             {
