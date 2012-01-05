@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void setDoneOnDate()
         {
             if( Completed.Checked == Tristate.True && DoneOn.DateTimeValue == DateTime.MinValue )
-                DoneOn.DateTimeValue = DateTime.Today;
+                DoneOn.DateTimeValue = DateTime.Now;
 
             if( Completed.Checked == Tristate.False && DoneOn.DateTimeValue != DateTime.MinValue )
                 DoneOn.DateTimeValue = DateTime.MinValue;
