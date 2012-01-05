@@ -22,3 +22,4 @@ glob:pullMainKeith.bat
 pullMainKeith.bat
 syntax: glob
 NbtWebApp/js/CswAll.min.css
+NbtWebApp/js/config.js
