@@ -80,12 +80,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
 
-            //Case 24572
-            if( TargetType.WasModified || ParentType.WasModified )
-            {
-                _deleteFutureNodes();
-            }
-
             //// case 24309
             //CswNbtMetaDataNodeType ThisGeneratorNT = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
             //CswNbtMetaDataNodeTypeProp OwnerNTP = ThisGeneratorNT.getNodeTypePropByObjectClassPropName( OwnerPropertyName );
@@ -129,8 +123,9 @@ namespace ChemSW.Nbt.ObjClasses
             //    } // if( OwnerNTP.NodeType != ParentNT )
             //} // if( ParentType.SelectedNodeTypeIds.Count > 0 )
 
-
-            _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
+            //Case 24572
+            bool DeleteFutureNodes = ( TargetType.WasModified || ParentType.WasModified );
+            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( DeleteFutureNodes );
 
             // BZ 7845
             if( TargetType.Empty )
