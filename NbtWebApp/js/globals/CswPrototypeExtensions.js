@@ -6,11 +6,9 @@
 //#region String
 
 // for IE 8
-if (false === isFunction(String.prototype.trim)) {
-    String.prototype.trim = function () {
-        return this.replace(/^\s+|\s+$/g, '');
-    };
-}
+String.prototype.trim = String.prototype.trim || function() {
+    return this.replace( /^\s+|\s+$/g , '');
+};
 
 String.prototype.toUpperCaseFirstChar = String.prototype.toUpperCaseFirstChar || function() {
     return this.substr(0, 1).toUpperCase() + this.substr(1);

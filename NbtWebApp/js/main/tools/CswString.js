@@ -2,24 +2,21 @@
 /// <reference path="../../globals/Global.js" />
 
 //#region CswString
-CswString.inheritsFrom(String);
-
-function CswString(string) {
+var CswString = function(string) {
     "use strict";
-    String.call(this);
-    
     var value = string;
-    this.val = function (newString)
-    {
-        if (arguments.length === 1) {
-            value = newString;
-            return this; //for chaining
-        } else {
-            return value;
-        }
+    return {
+        val: function (newString) {
+            if (arguments.length === 1) {
+                value = newString;
+                return this; //for chaining
+            } else {
+                return value;
+            }
+        },
+        contains: function (findString) { return value.indexOf(findString) !== -1; },
+        toString: function () { return value; }
     };
-    this.contains = function (findString) { return value.indexOf(findString) !== -1; };
-    this.toString = function () { return value; };
 }
 
 //#endregion CswString
