@@ -74,6 +74,7 @@
                     var $customerIdTable, $customerIdSelect;
 
                     toggleButton(buttons.prev, false);
+                    toggleButton(buttons.cancel, true);
                     toggleButton(buttons.finish, false);
                     toggleButton(buttons.next, nextBtnEnabled());
                     
@@ -166,7 +167,8 @@
                 $divStep2 = $divStep2 || $wizard.CswWizard('div', ChemSW.enums.CswScheduledRulesGrid_WizardSteps.step2.step);
                 $divStep2.empty();
                 
-                toggleButton(buttons.next);
+                toggleButton(buttons.next, false);
+                toggleButton(buttons.cancel, false);
                 toggleButton(buttons.finish, true);
                 toggleButton(buttons.prev, true);
                 
@@ -194,16 +196,6 @@
                 }
             },
 
-            onFinish = function() {
-
-                toggleButton(buttons.prev, false);
-                toggleButton(buttons.next, false);
-                toggleButton(buttons.finish, false);
-                toggleButton(buttons.cancel, false);
-                
-                //Probably load Welcome
-            };
-
         //#endregion Variable Declaration
 
         //#region Execution
@@ -216,8 +208,8 @@
             FinishText: 'Finish',
             onNext: handleNext,
             onPrevious: handlePrevious,
-            onCancel: o.onCancel,
-            onFinish: onFinish,
+            onCancel: o.onFinish,
+            onFinish: o.onFinish,
             doNextOnInit: false
         });
 

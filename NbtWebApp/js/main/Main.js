@@ -915,13 +915,9 @@
                  clear({ 'all': true });
 
                  var rulesOpt = {
-                     onCancel: function() {
-                         clear({ 'all': true });
-                         setCurrent(getLast());
-                         refreshSelected();
-                     },
                      onFinish: function() {
                          clear({ 'all': true });
+                         setCurrent(getLast());
                          refreshSelected();
                      },
                      menuRefresh: refreshSelected
