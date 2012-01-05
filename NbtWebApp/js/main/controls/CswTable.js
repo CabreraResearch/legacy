@@ -51,8 +51,8 @@
                     $table.CswAttrDom('cellalign', o.cellalign);
                     $table.CswAttrDom('cellvalign', o.cellvalign);
                     $table.CswAttrDom('cellcssclass', o.CellCssClass);
-                    $table.CswAttrDom('FirstCellRightAlign', o.FirstCellRightAlign);
-                    $table.CswAttrDom('OddCellRightAlign', o.OddCellRightAlign);
+                    $table.CswAttrNonDom('FirstCellRightAlign', o.FirstCellRightAlign);
+                    $table.CswAttrNonDom('OddCellRightAlign', o.OddCellRightAlign);
 
                     $table.bind('CswTable_onCreateCell', function(e, $eTable, $cell, row, column) { 
                                                             o.onCreateCell(e, $eTable, $cell, row, column); 
@@ -179,8 +179,8 @@
             while (col > $row.children('td').length) 
             {
                 var align = $table.CswAttrDom('cellalign');
-                if(($row.children('td').length === 0 && isTrue($table.CswAttrDom('FirstCellRightAlign'))) ||
-                    ($row.children('td').length % 2 === 0 && isTrue($table.CswAttrDom('OddCellRightAlign'))))
+                if(($row.children('td').length === 0 && isTrue($table.CswAttrNonDom('FirstCellRightAlign'))) ||
+                    ($row.children('td').length % 2 === 0 && isTrue($table.CswAttrNonDom('OddCellRightAlign'))))
                 {
                     align = 'right';
                 }

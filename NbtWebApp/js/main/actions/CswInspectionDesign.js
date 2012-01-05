@@ -105,7 +105,7 @@
                                     value: '',
                                     maxlength: 40
                                 })
-                                .CswAttrXml('maxlength', 40)
+                                .CswAttrNonDom('maxlength', 40)
                                 .keypress(function() {
                                     setTimeout(function() {
                                         var newTargetName = $addNewTarget.val();
@@ -168,7 +168,7 @@
                                                                 objectClassName: 'InspectionTargetClass',
                                                                 onSelect: function() {
                                                                     var $this = $inspectionTarget.find(':selected');
-                                                                    isNewTarget($this.CswAttrXml('data-newNodeType'));
+                                                                    isNewTarget($this.CswAttrNonDom('data-newNodeType'));
                                                                     selectedInspectionTarget = $this.text();
                                                                     lastSelectedInspectionName = selectedInspectionDesign.name;
                                                                 },

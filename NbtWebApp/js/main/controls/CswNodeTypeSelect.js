@@ -53,7 +53,7 @@
 
                                 $thisOpt = $('<option value="' + id + '">' + name + '</option>');
                                 each(thisNodeType, function(value, key) {
-                                    $thisOpt.CswAttrXml(key, value);
+                                    $thisOpt.CswAttrNonDom(key, value);
                                 });
                                 $select.append($thisOpt);
                             }

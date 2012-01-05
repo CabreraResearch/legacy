@@ -294,27 +294,27 @@ function CswAjaxXml(options) {
                 if ($realxml.first().get(0).nodeName === "error")
                 {
                     _handleAjaxError(xmlHttpRequest, {
-                        'display': $realxml.CswAttrXml('display'),
-                        'type': $realxml.CswAttrXml('type'),
-                        'message': $realxml.CswAttrXml('message'),
-                        'detail': $realxml.CswAttrXml('detail')
+                        'display': $realxml.CswAttrNonDom('display'),
+                        'type': $realxml.CswAttrNonDom('type'),
+                        'message': $realxml.CswAttrNonDom('message'),
+                        'detail': $realxml.CswAttrNonDom('detail')
                     }, '');
                     o.error();
                 }
                 else
                 {
-                    var auth = tryParseString($realxml.CswAttrXml('authenticationstatus'), 'Unknown');
+                    var auth = tryParseString($realxml.CswAttrNonDom('authenticationstatus'), 'Unknown');
                     if (!o.formobile) {
-                        setExpireTime($realxml.CswAttrXml('timeout'));
+                        setExpireTime($realxml.CswAttrNonDom('timeout'));
                     }
                     
                     _handleAuthenticationStatus({
                         status: auth,
                         success: function () { o.success($realxml); },
                         failure: o.onloginfail,
-                        usernodeid: tryParseString($realxml.CswAttrXml('nodeid'), ''),
-                        usernodekey: tryParseString($realxml.CswAttrXml('cswnbtnodekey'), ''),
-                        passwordpropid: tryParseString($realxml.CswAttrXml('passwordpropid'), ''),
+                        usernodeid: tryParseString($realxml.CswAttrNonDom('nodeid'), ''),
+                        usernodekey: tryParseString($realxml.CswAttrNonDom('cswnbtnodekey'), ''),
+                        passwordpropid: tryParseString($realxml.CswAttrNonDom('passwordpropid'), ''),
                         ForMobile: o.formobile
                     });
                 }

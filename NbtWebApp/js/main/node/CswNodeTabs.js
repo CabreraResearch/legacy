@@ -246,7 +246,7 @@
                                 var propId = key; //key
                                 var $subtable = $layouttable.find('#' + propId + '_subproptable');
                                 var $parentcell = $subtable.parent().parent();
-                                var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrXml('row'), $parentcell.CswAttrXml('column'));
+                                var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrNonDom('row'), $parentcell.CswAttrNonDom('column'));
                                 var $propcell = _getPropertyCell($cellset);
 
                                 if ($subtable.length > 0)
@@ -489,9 +489,9 @@
                     onEditView: o.onEditView,
                     ReadOnly: isTrue(propData.readonly)
                 };
-                fieldOpt.$propdiv.CswAttrXml('nodeid', fieldOpt.nodeid);
-                fieldOpt.$propdiv.CswAttrXml('propid', fieldOpt.propid);
-                fieldOpt.$propdiv.CswAttrXml('cswnbtnodekey', fieldOpt.cswnbtnodekey);
+                fieldOpt.$propdiv.CswAttrNonDom('nodeid', fieldOpt.nodeid);
+                fieldOpt.$propdiv.CswAttrNonDom('propid', fieldOpt.propid);
+                fieldOpt.$propdiv.CswAttrNonDom('cswnbtnodekey', fieldOpt.cswnbtnodekey);
 
                 fieldOpt.onchange = function () { if(isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName); };
                 if (isTrue(propData.hassubprops)) {

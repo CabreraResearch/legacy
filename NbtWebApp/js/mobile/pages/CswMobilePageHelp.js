@@ -62,7 +62,7 @@ function CswMobilePageHelp(helpDef, $parent, mobileStorage, $contentRole) {
         if (debugOn()) { //this is set onLoad based on the includes variable 'debug'
             $help.append('</br></br></br>');
             var $logLevelDiv = $help.CswDiv('init')
-                                    .CswAttrXml({ 'data-role': 'fieldcontain' });
+                                    .CswAttrNonDom({ 'data-role': 'fieldcontain' });
             $('<label for="mobile_log_level">Logging</label>')
                                     .appendTo($logLevelDiv);
 
@@ -81,7 +81,7 @@ function CswMobilePageHelp(helpDef, $parent, mobileStorage, $contentRole) {
                                     }
                                 }
                             })
-                            .CswAttrXml({ 'data-role': 'slider' });
+                            .CswAttrNonDom({ 'data-role': 'slider' });
             doSuccess(onSuccess, $contentRole);
         }
         $contentRole.append($content);

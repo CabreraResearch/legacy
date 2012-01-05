@@ -103,7 +103,7 @@
                                 var $welcomehidden = $textcell.CswInput('init', { ID: welcomeId,
                                     type: CswInput_Types.hidden
                                 });
-                                $welcomehidden.CswAttrXml('welcomeid', welcomeId);
+                                $welcomehidden.CswAttrNonDom('welcomeid', welcomeId);
                             }
                         }
                     }
@@ -316,7 +316,7 @@
         }
         var $textcell = $(r.cellset[2][1]);
         if ($textcell.length > 0) {
-            var welcomeid = $textcell.find('input').CswAttrXml('welcomeid');
+            var welcomeid = $textcell.find('input').CswAttrNonDom('welcomeid');
 
             var dataJson = {
                 RoleId: '',
@@ -392,7 +392,7 @@
     function _moveItem(MoveWelcomeItemUrl, cellset, newrow, newcolumn) {
         var $textcell = $(cellset[2][1]);
         if ($textcell.length > 0) {
-            var welcomeid = $textcell.find('input').CswAttrXml('welcomeid');
+            var welcomeid = $textcell.find('input').CswAttrNonDom('welcomeid');
             if (false === isNullOrEmpty(welcomeid)) {
                 var dataJson = {
                     RoleId: '',

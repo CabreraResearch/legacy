@@ -78,17 +78,17 @@ function CswMobilePageSearch(searchDef, $parent, mobileStorage, $contentRole) {
                           cssclass: 'csw_search_select',
                           values: values
                       })  
-                      .CswAttrXml({ 'data-native-menu': 'false' });
+                      .CswAttrNonDom({ 'data-native-menu': 'false' });
 
             $searchCtn = $('<div data-role="fieldcontain"></div>')
                             .appendTo($content);
             $searchCtn.CswInput('init', { type: CswInput_Types.search, ID: id + '_searchfor' })
-                       .CswAttrXml({
+                       .CswAttrNonDom({
                             'placeholder': 'Search',
                             'data-placeholder': 'Search'
                         });
             $content.CswLink('init', { type: 'button', ID: id + '_searchgo', value: 'Go', href: 'javascript:void(0)' })
-                .CswAttrXml({ 'data-role': 'button' })
+                .CswAttrNonDom({ 'data-role': 'button' })
                 .unbind('click')
                 .bind('click', function() {
                     return startLoadingMsg(function() { onSearchSubmit(viewId); });

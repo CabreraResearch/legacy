@@ -46,7 +46,7 @@ function ICswMobileWebControls(controlDef, $parent) {
         if( _enabled ) {
             _$control.removeAttr('disabled');
         } else {
-            _$control.CswAttrXml('disabled','disabled');
+            _$control.CswAttrNonDom('disabled','disabled');
         }
         return _$control;
     };

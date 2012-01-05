@@ -53,7 +53,7 @@
                                 function () {
                                     var selected = jsTreeGetSelected($viewsdiv);
                                     var $item = selected.$item;
-                                    var isLeaf = isTrue($item.CswAttrXml('isleaf'));
+                                    var isLeaf = isTrue($item.CswAttrNonDom('isleaf'));
                                     if (false === isLeaf) {
                                         var $node = $(this);
                                         $viewsdiv.jstree('close_all');
@@ -63,14 +63,14 @@
                                         var optSelect = {
                                             $item: $item,
                                             iconurl: selected.iconurl,
-                                            type: $item.CswAttrXml('viewtype'),
-                                            viewid: $item.CswAttrXml('viewid'),
+                                            type: $item.CswAttrNonDom('viewtype'),
+                                            viewid: $item.CswAttrNonDom('viewid'),
                                             viewname: selected.text,
-                                            viewmode: $item.CswAttrXml('viewmode'),
-                                            actionid: $item.CswAttrXml('actionid'),
-                                            actionname: $item.CswAttrXml('actionname'),
-                                            actionurl: $item.CswAttrXml('actionurl'),
-                                            reportid: $item.CswAttrXml('reportid')
+                                            viewmode: $item.CswAttrNonDom('viewmode'),
+                                            actionid: $item.CswAttrNonDom('actionid'),
+                                            actionname: $item.CswAttrNonDom('actionname'),
+                                            actionurl: $item.CswAttrNonDom('actionurl'),
+                                            reportid: $item.CswAttrNonDom('reportid')
                                         };
                                         o.onSelect(optSelect); //Selected.SelectedId, Selected.SelectedText, Selected.SelectedIconUrl, Selected.SelectedCswNbtNodeKey
                                     }

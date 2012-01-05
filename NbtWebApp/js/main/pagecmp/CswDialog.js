@@ -497,9 +497,9 @@
                     var n = 0;
                     $nodechecks.each(function() {
                         var $nodecheck = $(this);
-                        o.nodeids[n] = $nodecheck.CswAttrXml('nodeid');
-                        o.cswnbtnodekeys[n] = $nodecheck.CswAttrXml('cswnbtnodekey');
-                        $div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.CswAttrXml('nodename') + '</span>');
+                        o.nodeids[n] = $nodecheck.CswAttrNonDom('nodeid');
+                        o.cswnbtnodekeys[n] = $nodecheck.CswAttrNonDom('cswnbtnodekey');
+                        $div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.CswAttrNonDom('nodename') + '</span>');
                         n++;
                     });
                 } else {
