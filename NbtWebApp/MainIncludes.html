@@ -4,177 +4,216 @@
 <link rel="stylesheet" type="text/css" href="js/CswAll.min.css" />
 <link rel="stylesheet" type="text/css" href="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.css" />
 <link rel="stylesheet" type="text/css" href="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.filter.css" />
-<script src="js/config.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="Scripts/jquery-ui-1.8.16.min.js"></script>
+<script type="text/javascript" src="Scripts/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/thirdparty/jquery/plugins/jsTree.v.1.0rc2/jquery.jstree.js"></script>
+
+<script type="text/javascript" src="Scripts/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="Scripts/modernizr.2.0.6.min.js"></script>
+<script type="text/javascript" src="js/thirdparty/js/jmol/Jmol.js"></script>
+<script type="text/javascript" src="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.min.js"></script>
+<script type="text/javascript" src="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.filter.min.js"></script>
+
+<script type="text/javascript" src="js/thirdparty/jquery/plugins/jQueryFileUpload_2011.12.15/jquery.fileupload.js"></script>
+<script type="text/javascript" src="js/thirdparty/jquery/plugins/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js"></script>
+
+<script type="text/javascript" src="Scripts/i18n/grid.locale-en.js"></script>
+<script type="text/javascript" src="Scripts/jquery.jqGrid.min.js"></script>
 
 <script type="text/javascript">
-    
-    if (window.CswDebug) {
-        if (undefined === window.JSON || null === window.JSON || false === window.JSON.hasOwnProperty('parse') || false === window.JSON.hasOwnProperty('stringify')) {
-            document.write('<script type="text/javascript" src="Scripts/json2.js"><\/script>');
-        }
-        
-        // JQuery
-        document.write('<script type="text/javascript" src="Scripts/jquery-1.7.1.js"><\/script>');
-        document.write('<script type="text/javascript" src="Scripts/jquery-ui-1.8.16.js"><\/script>');
-        document.write('<script type="text/javascript" src="Scripts/jquery.validate.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/jsTree.v.1.0rc2/jquery.jstree.js"><\/script>');
 
-        // Plugins
-        document.write('<script type="text/javascript" src="Scripts/jquery.cookie.js"><\/script>');
-        document.write('<script type="text/javascript" src="Scripts/modernizr-2.0.6-development-only.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/thirdparty/js/jmol/Jmol.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.filter.js"><\/script>');
-        
-        //File Upload
-        document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/jQueryFileUpload_2011.12.15/jquery.fileupload.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js"><\/script>');
-        
-        // jqGrid 
-        document.write('<script type="text/javascript" src="Scripts/i18n/grid.locale-en.js"><\/script>');
-        document.write('<script type="text/javascript" src="Scripts/jquery.jqGrid.src.js"><\/script>');
-        
+    function loadResource(filename, filetype, useJquery){
+        var fileref, type = filetype || 'js';
+        switch(type) {
+            case 'js':
+                if( jQuery && (($.browser.msie && $.browser.version <= 8) || useJquery)) {
+                    $.ajax({
+                       url: '/NbtWebApp/' + filename,
+                       dataType: 'script'
+                    });
+                } else {
+                    fileref = document.createElement('script');
+                    fileref.setAttribute("type", "text/javascript");
+                    fileref.setAttribute("src", filename);
+                }
+                break;
+            case 'css':
+                fileref = document.createElement("link");
+                fileref.setAttribute("rel", "stylesheet");
+                fileref.setAttribute("type", "text/css");
+                fileref.setAttribute("href", filename);         
+                break;
+        }
+        if (fileref) {
+            document.getElementsByTagName("head")[0].appendChild(fileref);
+        }
+    }
+    
+    if (undefined === window.JSON || 
+        null === window.JSON || 
+        false === window.JSON.hasOwnProperty('parse') || 
+        false === window.JSON.hasOwnProperty('stringify')) {
+           loadResource('Scripts/json2.min.js', 'js');
+        }
+    
+    var onDevelopment = function() {
+//        // JQuery
+//        loadResource('Scripts/jquery-1.7.1.js');
+//        loadResource('Scripts/jquery-ui-1.8.16.js');
+//        loadResource('Scripts/jquery.validate.js');
+//        loadResource('js/thirdparty/jquery/plugins/jsTree.v.1.0rc2/jquery.jstree.js');
+
+//        // Plugins
+//        loadResource('Scripts/jquery.cookie.js');
+//        loadResource('Scripts/modernizr-2.0.6-development-only.js');
+//        loadResource('js/thirdparty/js/jmol/Jmol.js');
+//        loadResource('js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.js');
+//        loadResource('js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.filter.js');
+//        
+//        //File Upload
+//        loadResource('js/thirdparty/jquery/plugins/jQueryFileUpload_2011.12.15/jquery.fileupload.js');
+//        loadResource('js/thirdparty/jquery/plugins/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js');
+//        
+//        // jqGrid 
+//        loadResource('Scripts/i18n/grid.locale-en.js');
+//        loadResource('Scripts/jquery.jqGrid.src.js');
+
         // ChemSW 
         // Globals: load first (because order matters)
-        document.write('<script type="text/javascript" src="js/globals/CswEnums.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/globals/CswGlobalTools.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/globals/CswPrototypeExtensions.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/globals/Global.js"><\/script>');
-        
+        loadResource('js/globals/CswEnums.js');
+        loadResource('js/globals/CswGlobalTools.js');
+        loadResource('js/globals/CswPrototypeExtensions.js');
+        loadResource('js/globals/Global.js');
+
         // Actions
-        document.write('<script type="text/javascript" src="js/main/actions/CswAuditHistoryGrid.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/actions/CswInspectionStatus.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/actions/CswInspectionDesign.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/actions/CswQuotas.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/actions/CswQuotaImage.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/actions/CswScheduledRulesGrid.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/actions/CswSessions.js"><\/script>');
-        
+        loadResource('js/main/actions/CswAuditHistoryGrid.js');
+        loadResource('js/main/actions/CswInspectionStatus.js');
+        loadResource('js/main/actions/CswInspectionDesign.js');
+        loadResource('js/main/actions/CswQuotas.js');
+        loadResource('js/main/actions/CswQuotaImage.js');
+        loadResource('js/main/actions/CswScheduledRulesGrid.js');
+        loadResource('js/main/actions/CswSessions.js');
+
         // Controls
-        document.write('<script type="text/javascript" src="js/main/controls/CswDateTimePicker.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswDiv.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswGrid.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswInput.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswLink.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswMultiSelect.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswSelect.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswSpan.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswButton.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswCheckBoxArray.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswComboBox.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswLayoutTable.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswList.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswImageButton.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswNodeTypeSelect.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswNumberTextBox.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswTimeInterval.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswTable.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/controls/CswTristateCheckBox.js"><\/script>');
-        
+        loadResource('js/main/controls/CswDateTimePicker.js');
+        loadResource('js/main/controls/CswDiv.js');
+        loadResource('js/main/controls/CswGrid.js');
+        loadResource('js/main/controls/CswInput.js');
+        loadResource('js/main/controls/CswLink.js');
+        loadResource('js/main/controls/CswMultiSelect.js');
+        loadResource('js/main/controls/CswSelect.js');
+        loadResource('js/main/controls/CswSpan.js');
+        loadResource('js/main/controls/CswButton.js');
+        loadResource('js/main/controls/CswCheckBoxArray.js');
+        loadResource('js/main/controls/CswComboBox.js');
+        loadResource('js/main/controls/CswLayoutTable.js');
+        loadResource('js/main/controls/CswList.js');
+        loadResource('js/main/controls/CswImageButton.js');
+        loadResource('js/main/controls/CswNodeTypeSelect.js');
+        loadResource('js/main/controls/CswNumberTextBox.js');
+        loadResource('js/main/controls/CswTimeInterval.js');
+        loadResource('js/main/controls/CswTable.js');
+        loadResource('js/main/controls/CswTristateCheckBox.js');
+
         // Tools
-        document.write('<script type="text/javascript" src="js/main/tools/CswAttr.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/tools/CswCookie.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/tools/CswTools.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/tools/CswQueryString.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/tools/CswString.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/tools/CswPrint.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/tools/CswClientDb.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/tools/CswProfileMethod.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/tools/CswPubSub.js"><\/script>');
-        
+        loadResource('js/main/tools/CswAttr.js');
+        loadResource('js/main/tools/CswCookie.js');
+        loadResource('js/main/tools/CswTools.js');
+        loadResource('js/main/tools/CswQueryString.js');
+        loadResource('js/main/tools/CswString.js');
+        loadResource('js/main/tools/CswPrint.js');
+        loadResource('js/main/tools/CswClientDb.js');
+        loadResource('js/main/tools/CswProfileMethod.js');
+        loadResource('js/main/tools/CswPubSub.js');
+
         // PageCmp 
-        document.write('<script type="text/javascript" src="js/main/pagecmp/CswDashboard.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/pagecmp/CswDialog.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/pagecmp/CswErrorMessage.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/pagecmp/CswLogin.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/pagecmp/CswMenu.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/pagecmp/CswMenuHeader.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/pagecmp/CswMenuMain.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/pagecmp/CswQuickLaunch.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/pagecmp/CswSearch.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/pagecmp/CswWelcome.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/pagecmp/CswWizard.js"><\/script>');
-        
+        loadResource('js/main/pagecmp/CswDashboard.js');
+        loadResource('js/main/pagecmp/CswDialog.js');
+        loadResource('js/main/pagecmp/CswErrorMessage.js');
+        loadResource('js/main/pagecmp/CswLogin.js');
+        loadResource('js/main/pagecmp/CswMenu.js');
+        loadResource('js/main/pagecmp/CswMenuHeader.js');
+        loadResource('js/main/pagecmp/CswMenuMain.js');
+        loadResource('js/main/pagecmp/CswQuickLaunch.js');
+        loadResource('js/main/pagecmp/CswSearch.js');
+        loadResource('js/main/pagecmp/CswWelcome.js');
+        loadResource('js/main/pagecmp/CswWizard.js');
+
         // Node
-        document.write('<script type="text/javascript" src="js/main/node/CswNodeGrid.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/node/CswNodePreview.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/node/CswNodeSelect.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/node/CswNodeTabs.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/node/CswNodeTable.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/node/CswNodeTree.js"><\/script>');
-        
+        loadResource('js/main/node/CswNodeGrid.js');
+        loadResource('js/main/node/CswNodePreview.js');
+        loadResource('js/main/node/CswNodeSelect.js');
+        loadResource('js/main/node/CswNodeTabs.js');
+        loadResource('js/main/node/CswNodeTable.js');
+        loadResource('js/main/node/CswNodeTree.js');
+
         // View
-        document.write('<script type="text/javascript" src="js/main/view/CswViewContentTree.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/view/CswViewEditor.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/view/CswViewListTree.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/view/CswViewPropFilter.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/view/CswViewSelect.js"><\/script>');
+        loadResource('js/main/view/CswViewContentTree.js');
+        loadResource('js/main/view/CswViewEditor.js');
+        loadResource('js/main/view/CswViewListTree.js');
+        loadResource('js/main/view/CswViewPropFilter.js');
+        loadResource('js/main/view/CswViewSelect.js');
 
         // Field Types
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/_CswFieldTypeFactory.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeAuditHistoryGrid.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeBarcode.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeButton.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeComposite.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeDateTime.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeFile.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeGrid.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeImage.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeImageList.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeLink.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeList.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeLocation.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeLocationContents.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeLogical.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeLogicalSet.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeMemo.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeMol.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeMultiList.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeMTBF.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeNFPA.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeNodeTypeSelect.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeNumber.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypePassword.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypePropertyReference.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeQuantity.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeQuestion.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeRelationship.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeScientific.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeSequence.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeStatic.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeText.js"><\/script>');
-        //document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeTime.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeTimeInterval.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeUserSelect.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeViewPickList.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/main/Fieldtypes/CswFieldTypeViewReference.js"><\/script>');
-    } else {
-        if (undefined === window.JSON || null === window.JSON || false === window.JSON.hasOwnProperty('parse') || false === window.JSON.hasOwnProperty('stringify')) {
-            document.write('<script type="text/javascript" src="Scripts/json2.min.js"><\/script>');
+        loadResource('js/main/Fieldtypes/_CswFieldTypeFactory.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeAuditHistoryGrid.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeBarcode.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeButton.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeComposite.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeDateTime.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeFile.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeGrid.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeImage.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeImageList.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeLink.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeList.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeLocation.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeLocationContents.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeLogical.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeLogicalSet.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeMemo.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeMol.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeMultiList.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeMTBF.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeNFPA.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeNodeTypeSelect.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeNumber.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypePassword.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypePropertyReference.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeQuantity.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeQuestion.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeRelationship.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeScientific.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeSequence.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeStatic.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeText.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeTimeInterval.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeUserSelect.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeViewPickList.js');
+        loadResource('js/main/Fieldtypes/CswFieldTypeViewReference.js');
+
+        loadResource('js/main/Main.js');
+    };
+
+    var onProduction = function() {
+        loadResource('js/CswAll.min.js');
+    };
+    
+    $.ajax({
+        url: '/NbtWebApp/js/config.js',
+        dataType: 'script',
+        success: function () {
+            if (window.CswDebug) {
+                onDevelopment();
+            } else {
+                onProduction();
+            }
+        },
+        error: function() {
+            onProduction();
         }
-        // JQuery
-        document.write('<script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"><\/script>');
-        document.write('<script type="text/javascript" src="Scripts/jquery-ui-1.8.16.min.js"><\/script>');
-        document.write('<script type="text/javascript" src="Scripts/jquery.validate.min.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/jsTree.v.1.0rc2/jquery.jstree.js"><\/script>');
+    });
 
-        // Plugins
-        document.write('<script type="text/javascript" src="Scripts/jquery.cookie.min.js"><\/script>');
-        document.write('<script type="text/javascript" src="Scripts/modernizr.2.0.6.min.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/thirdparty/js/jmol/Jmol.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.min.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.filter.min.js"><\/script>');
-        
-        //File Upload
-        document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/jQueryFileUpload_2011.12.15/jquery.fileupload.js"><\/script>');
-        document.write('<script type="text/javascript" src="js/thirdparty/jquery/plugins/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js"><\/script>');
-        
-        // jqGrid
-        document.write('<script type="text/javascript" src="Scripts/i18n/grid.locale-en.js"><\/script>');
-        document.write('<script type="text/javascript" src="Scripts/jquery.jqGrid.min.js"><\/script>');
-
-        // ChemSW
-        document.write('<script type="text/javascript" src="js/CswAll.min.js"><\/script>');
-    }
-        
 </script>
