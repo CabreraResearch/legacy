@@ -24,17 +24,9 @@
                                     };
                                 },
                             onAddClick: function() { },
-                            onConfigOn: function($buttontable) { },
-                            onConfigOff: function($buttontable) { },
-                            onRemove: function(event, onRemoveData)
-                                { 
-                                    var r = { 
-                                        table: '',
-                                        cellset: '',
-                                        row: '',
-                                        column: ''
-                                    };
-                                },
+                            onConfigOn: function() { },
+                            onConfigOff: function() { },
+                            onRemove: function() { },
                             TableCssClass: '',
                             CellCssClass: '',
                             cellalign: '',
@@ -402,12 +394,12 @@
         { 
             if(isConfigMode($table))
             {
-                var $dropdiv = $dropcell.children('div');
+                //var $dropdiv = $dropcell.children('div');
                 var $dragdiv = dd.draggable;
                 var $dragcell = $dragdiv.parent();
 
-                $dragcells = $table.CswTable('findCell', '[row="'+ $dragcell.CswAttrNonDom('row') +'"][column="'+ $dragcell.CswAttrNonDom('column') +'"]');
-                $dropcells = $table.CswTable('findCell', '[row="'+ $dropcell.CswAttrNonDom('row') +'"][column="'+ $dropcell.CswAttrNonDom('column') +'"]');
+                var $dragcells = $table.CswTable('findCell', '[row="'+ $dragcell.CswAttrNonDom('row') +'"][column="'+ $dragcell.CswAttrNonDom('column') +'"]');
+                var $dropcells = $table.CswTable('findCell', '[row="'+ $dropcell.CswAttrNonDom('row') +'"][column="'+ $dropcell.CswAttrNonDom('column') +'"]');
 
                 $dragcells.removeClass('CswLayoutTable_dragcell');
 
@@ -422,9 +414,9 @@
                                         swapcolumn: $dropcells.first().CswAttrNonDom('column')
                                     });
 
-                for(r = 1; r <= cellsetrows; r++)
+                for(var r = 1; r <= cellsetrows; r+=1)
                 {
-                    for(c = 1; c <= cellsetcolumns; c++)
+                    for(var c = 1; c <= cellsetcolumns; c+=1)
                     {
                         var $thisdragcell = $dragcells.filter('[cellsetrow="'+ r +'"][cellsetcolumn="'+ c +'"]');
                         var $thisdropcell = $dropcells.filter('[cellsetrow="'+ r +'"][cellsetcolumn="'+ c +'"]');
