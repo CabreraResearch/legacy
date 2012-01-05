@@ -47,10 +47,10 @@ namespace ChemSW.Nbt.WebServices
                 ReturnObj["viewid"] = View.ViewId.ToString();
                 ReturnObj["viewmode"] = View.ViewMode.ToString();
                 ReturnObj["types"] = getTypes( View );
+                ReturnObj["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize.ToString();
 
                 if( HasResults )
                 {
-
                     // Determine the default selected node:
                     // If the requested node to select is on the tree, return it.
                     // If the requested node to select is not on the tree, return the first child of the root.

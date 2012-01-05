@@ -12,7 +12,7 @@
         'init': function (options)     // options are defined in _getTreeContent()
         {
             function getFirstLevel($treediv, pagesize, pageno) {
-                var realpagesize = tryParseNumber(pagesize, 0);
+                var realpagesize = tryParseNumber(pagesize, 10);
                 var realpageno = tryParseNumber(pageno, 0);
 
                 CswAjaxJson({
@@ -187,8 +187,7 @@
                 //SelectFirstChild: true,
                 ShowCheckboxes: false,
                 ShowToggleLink: true,
-                IncludeInQuickLaunch: true,
-                PageSize: 10     // Number of first level nodes to fetch at one time
+                IncludeInQuickLaunch: true
             };
             if (options) $.extend(o, options);
 
@@ -311,7 +310,7 @@
                     rootnode = addNodeToTree($treediv, 1, false, data.root);
 
                     if (isTrue(data.result)) {
-                        getFirstLevel($treediv, o.PageSize, 0);
+                        getFirstLevel($treediv, data.pagesize, 0);
                     } else {
                         addNodeToTree($treediv, 1, rootnode, { data: { title: "No Results" }, attr: { id: idPrefix + 'noresults'} });
                     }
