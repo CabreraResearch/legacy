@@ -41,7 +41,7 @@
                 cancel: 'cancel'
             },
 
-        // Step 4 - Select or Create Inspection Target
+        // Step 1 - Select or Create Inspection Target
             $divStep1, selectedInspectionTarget, $inspectionTarget, $addNewTarget, $categoryName,
         // Step 2 - Select or Create Inspection Design
             selectedInspectionDesign = { id: '[Create New]', name: '[Create New]' },
@@ -216,7 +216,7 @@
 
                 return function() {
                     var $inspectionTable, $categoryLabel, $newDesignLabel, $newDesignNameDisplay,
-                        tempInspectionName = selectedInspectionTarget.toUpperCaseEachWord() + ' Inspection',
+                        tempInspectionName = selectedInspectionTarget + ' Inspection',
                         tempCategoryName = tempInspectionName + ': ' + selectedInspectionTarget;
 
                     var makeInspectionDesignName = function(name) {
@@ -272,9 +272,9 @@
                                 selectedInspectionDesign.id = $selected.val();
                                 selectedInspectionDesign.name = $selected.text();
                                 if(isNewInspectionDesign()) {
-                                    tempCategoryName = (selectedInspectionTarget + ': ' + selectedInspectionTarget).toUpperCaseEachWord();
+                                    tempCategoryName = selectedInspectionTarget + ': ' + selectedInspectionTarget;
                                 } else {
-                                    tempCategoryName = (selectedInspectionDesign.name + ': ' + selectedInspectionTarget).toUpperCaseEachWord();
+                                    tempCategoryName = selectedInspectionDesign.name + ': ' + selectedInspectionTarget;
                                 }
                                 $categoryName.val(tempCategoryName);
 
@@ -307,7 +307,7 @@
                                     selectedInspectionDesign.name = newInspectionDesignName;
 
                                     $newDesignNameDisplay.text(newInspectionDesignName);
-                                    tempCategoryName = (newInspectionDesignName + ': ' + selectedInspectionTarget).toUpperCaseEachWord();
+                                    tempCategoryName = newInspectionDesignName + ': ' + selectedInspectionTarget;
                                     $categoryName.val(tempCategoryName);
                                     
                                     toggleButton(buttons.next, nextBtnEnabled());
