@@ -88,7 +88,7 @@ function CswMobileFieldTypeLogical(ftDef) {
                 if ((value === 'false' && answers[i] === 'False') ||
                     (value === 'true' && answers[i] === 'True') ||
                         (value === '' && answers[i] === 'Null')) {
-                    $input.CswAttrNonDom({ 'checked': 'checked' });
+                    $input.CswAttrDom({ 'checked': 'checked' });
                 }
             } // if (answers.hasOwnProperty(i))
         } // for (var i = 0; i < answers.length; i++)

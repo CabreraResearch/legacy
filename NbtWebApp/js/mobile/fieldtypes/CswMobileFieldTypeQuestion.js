@@ -77,7 +77,7 @@ function CswMobileFieldTypeQuestion(ftDef) {
                     .appendTo($fieldset);
 
                 if (answer === allowedAnswers[i]) {
-                    $answer.CswAttrNonDom('checked', 'checked');
+                    $answer.CswAttrDom('checked', 'checked');
                 }
             }
         }
