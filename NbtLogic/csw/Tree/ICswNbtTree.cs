@@ -1,7 +1,8 @@
+using System;
 using System.Data;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System;
+using System.Xml;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 //using ChemSW.Nbt.PropTypes;
@@ -143,7 +144,11 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Gets the Tree XML as it is stored internally
         /// </summary>
-        string getRawTreeXml();
+        XmlDocument getRawTreeXml();
+        /// <summary>
+        /// Sets the Tree XML, for copying trees
+        /// </summary>
+        void setRawTreeXml(XmlDocument XmlDoc);
 
         /// <summary>
         /// Name of view that created this tree.  Also name of root node of tree.
@@ -172,7 +177,14 @@ namespace ChemSW.Nbt
         /// </remarks>
         /// <param name="NodeId">Primary key of node</param>
         CswNbtNodeKey getNodeKeyByNodeId( CswPrimaryKey NodeId );
-        
+
+		/// <summary>
+		/// Return a node key for the first matching node in the tree which derived from the given ViewNode
+		/// </summary>
+		/// <param name="NodeId">Primary key of node</param>
+		/// <param name="NodeId">View Node</param>
+		CswNbtNodeKey getNodeKeyByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode );
+
         /// <summary>
         /// Returns the currently indexed node
         /// </summary>
@@ -312,10 +324,17 @@ namespace ChemSW.Nbt
         /// Returns true if there is a currently indexed node 
         /// </summary>
         bool isCurrentNodeDefined();
+
         /// <summary>
         /// Returns the total number of siblings of the currently indexed node
         /// </summary>
         int getNodeCountForCurrentLevel();
+        
+        /// <summary>
+        /// Returns all siblings and cousins on a tree level
+        /// </summary>
+        Collection<CswNbtNodeKey> getKeysForLevel( Int32 Level );
+
         /// <summary>
         /// Returns the total number of children of the currently indexed node
         /// </summary>

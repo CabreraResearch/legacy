@@ -89,6 +89,21 @@ namespace ChemSW.Nbt
 
         }//delete()
 
+        public void delete( string Name )
+        {
+            try
+            {
+                _ReaderWriterLockSlim.EnterWriteLock();
+                string Key = _makeRealKey( Name );
+                _Cache.Remove( Key );
+            }
+
+            finally
+            {
+                _ReaderWriterLockSlim.ExitWriteLock();
+            }
+
+        }//delete()
 
         public void put( string Name, object Object )
         {

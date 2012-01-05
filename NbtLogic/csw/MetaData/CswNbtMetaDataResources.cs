@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.MetaData
             NodeTypePropsCollection = new CswNbtMetaDataCollectionNodeTypeProp( this );
             NodeTypeTabsCollection = new CswNbtMetaDataCollectionNodeTypeTab( this );
 
-            _CswNbtMetaDataTableCache = new CswNbtMetaDataTableCache( CswNbtResources.CswSuperCycleCache );
+            _CswNbtMetaDataTableCache = new CswNbtMetaDataTableCache( CswNbtResources );
         }
 
         public void tryAddToMetaDataCollection( object Key, object Value, IDictionary Collection, string MetaDataObjectTypeName, Int32 MetaDataObjectId, string MetaDataObjectName )

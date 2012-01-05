@@ -799,7 +799,7 @@ namespace ChemSW.Nbt.WebPages
                     }
 
                     // For Relationship and MultiRelationship properties:
-                    bool NewIsFk = false;
+                    //bool NewIsFk = false;
                     string NewFKType = CswNbtViewRelationship.RelatedIdType.Unknown.ToString();
                     Int32 NewFKValue = Int32.MinValue;
                     if( PropToSave.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
@@ -808,7 +808,7 @@ namespace ChemSW.Nbt.WebPages
                         if( TargetValue != String.Empty )
                         {
                             // Get settings from the form
-                            NewIsFk = true;
+                            //NewIsFk = true;
                             if( TargetValue.Substring( 0, "nt_".Length ) == "nt_" )
                             {
                                 NewFKType = CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString();
@@ -823,7 +823,7 @@ namespace ChemSW.Nbt.WebPages
                     }
                     else
                     {
-                        NewIsFk = false;
+                        //NewIsFk = false;
                         NewFKType = getPropAttributeValue( "EditProp_FkTypeValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                         NewFKValue = CswConvert.ToInt32( getPropAttributeValue( "EditProp_FkValueValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     }
