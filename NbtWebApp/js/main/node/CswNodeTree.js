@@ -13,7 +13,9 @@
         {
             function getFirstLevel($treediv, pagesize, pageno) {
                 var realpagesize = tryParseNumber(pagesize, 10);
+                if (realpagesize < 1) realpagesize = 10;
                 var realpageno = tryParseNumber(pageno, 0);
+                if (realpageno < 1) realpageno = 0;
 
                 CswAjaxJson({
                     url: o.fetchTreeFirstLevelUrl,
@@ -244,18 +246,18 @@
                     var treePlugins = ["themes", "ui", "types", "crrm"];
                     var jsonTypes = data.types;
 
-                    var newviewid = data.viewid;
+                    var newviewid = data.newviewid;
                     if (false === isNullOrEmpty(newviewid) && o.viewid !== newviewid) {
                         o.viewid = newviewid;
                         if (isFunction(o.onViewChange)) {
-                            o.onViewChange(o.viewid, 'tree');
+                            o.onViewChange(o.viewid, o.viewmode);
                         }
                     }
 
                     selectid = data.selectid;
 
                     var treeThemes = { "dots": true };
-                    if (data.viewmode === CswViewMode.list.name) {
+                    if (o.viewmode === CswViewMode.list.name) {
                         treeThemes = { "dots": false };
                     }
 
@@ -308,7 +310,6 @@
                     // cause a race condition.
 
                     rootnode = addNodeToTree($treediv, 1, false, data.root);
-
                     if (isTrue(data.result)) {
                         getFirstLevel($treediv, data.pagesize, 0);
                     } else {

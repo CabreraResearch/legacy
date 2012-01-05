@@ -29,6 +29,7 @@ namespace ChemSW.Nbt.WebServices
             if( null != View && ( View.ViewMode == NbtViewRenderingMode.Tree || View.ViewMode == NbtViewRenderingMode.List ) )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false );
+                View.SaveToCache( IncludeInQuickLaunch );
 
                 if( IncludeNodeKey != null && IncludeNodeRequired && ( //IncludeNodeKey.TreeKey != Tree.Key || 
                                                                         Tree.getNodeKeyByNodeId( IncludeNodeKey.NodeId ) == null ) )
@@ -37,15 +38,14 @@ namespace ChemSW.Nbt.WebServices
                     View = IncludeKeyNodeType.CreateDefaultView();
                     View.ViewName = "New " + IncludeKeyNodeType.NodeTypeName;
                     View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeKey.NodeId );
-                    View.SaveToCache( true ); // case 22713
+                    View.SaveToCache( IncludeInQuickLaunch ); // case 22713
+                    ReturnObj["newviewid"] = View.SessionViewId.ToString();
                     Tree = _CswNbtResources.Trees.getTreeFromView( View, false );
                 }
                 
                 Tree.goToRoot();
                 bool HasResults = (Tree.getChildNodeCount() > 0 );
                 ReturnObj["result"] = HasResults.ToString().ToLower();
-                ReturnObj["viewid"] = View.ViewId.ToString();
-                ReturnObj["viewmode"] = View.ViewMode.ToString();
                 ReturnObj["types"] = getTypes( View );
                 ReturnObj["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize.ToString();
 
@@ -134,10 +134,7 @@ namespace ChemSW.Nbt.WebServices
                                 Tree.goToParentNode();
                             }
                         } // if( Tree.getChildNodeCount() > 0 )
-
-                        View.SaveToCache( true );
-                        ReturnObj["viewid"] = View.SessionViewId.ToString();
-                        // ReturnObj["types"] = getTypes( View );
+                        
                         ReturnObj["nodecountstart"] = NodeCountStart.ToString();
                         ReturnObj["nodecountend"] = NodeCountEnd.ToString();
                         ReturnObj["more"] = ( PageSize * ( PageNo + 1 ) <= Tree.getChildNodeCount() ).ToString().ToLower();
@@ -196,8 +193,6 @@ namespace ChemSW.Nbt.WebServices
                             } // foreach( CswNbtNodeKey NodeKey in NodeKeys )
                         } // if( Tree.getChildNodeCount() > 0 )
 
-                        View.SaveToCache( true );
-                        ReturnObj["viewid"] = View.SessionViewId.ToString();
                         ReturnObj["nodecountstart"] = NodeCountStart.ToString();
                         ReturnObj["nodecountend"] = NodeCountEnd.ToString();
                         // ReturnObj["types"] = getTypes( View );
