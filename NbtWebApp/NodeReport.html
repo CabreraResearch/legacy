@@ -20,9 +20,10 @@
 
     <script type="text/javascript">
 
+    
         $(document).ready(function () {
             var initReport = function() {
-                if($.CswQueryString) {
+                if ($.CswQueryString) {
                     var qs = $.CswQueryString();
                     $('#ReportContent').CswNodeTabs({
                         ID: 'nodereporttabs',
@@ -30,11 +31,15 @@
                         nodekeys: [qs.cswnbtnodekey],
                         EditMode: EditMode.PrintReport.name
                     });
-                } else {
+                } else if ($.browser.msie) {
                     setTimeout(initReport, 100);
                 }
             };
-            initReport();
+            
+            $(window).load(function() {
+                initReport();    
+            });
+           
         });
 
     </script>

@@ -83,7 +83,16 @@ window.abandonHope = true;
             setTimeout(function () { doInitMain(); }, 100);
         }
     };
-    doInitMain();
+    
+    if($.browser.msie) {
+        doInitMain();
+    } else {
+        $(window).load(function() {
+            if (window.initMain) {
+                initMain();
+            }
+        });
+    }
 
 </script>
 
