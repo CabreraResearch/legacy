@@ -16,10 +16,10 @@
             var $Div = $(this);
             o.propVals = o.propData.values;
             o.$parent = $Div;
-            if (false === isTrue(o.propVals.ReadOnly)) {
+            if (false === isTrue(o.ReadOnly)) {
                 CswTimeInterval(o);
             } else {
-                $Div.append(o.propVals.Interval.text);
+                $Div.append(o.propData.gestalt);
             }
         },
         save: function (o) {

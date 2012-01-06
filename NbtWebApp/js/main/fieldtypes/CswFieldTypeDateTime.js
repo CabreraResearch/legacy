@@ -16,19 +16,23 @@
             var date = (false === o.Multi) ? tryParseString(propVals.value.date).trim() : CswMultiEditDefaultValue;
             var time = (false === o.Multi) ? tryParseString(propVals.value.time).trim() : CswMultiEditDefaultValue;
             
-            var $DTPickerDiv = $Div.CswDateTimePicker('init', {
-                                                    ID: o.ID,
-                                                    Date: date,
-                                                    Time: time,
-                                                    DateFormat: ServerDateFormatToJQuery(propVals.value.dateformat),
-                                                    TimeFormat: ServerTimeFormatToJQuery(propVals.value.timeformat),
-                                                    DisplayMode: propVals.displaymode,
-                                                    ReadOnly: o.ReadOnly,
-                                                    Required: o.Required,
-                                                    OnChange: o.onchange
-                                                });
+            if(o.ReadOnly) {
+                $Div.append(o.propData.gestalt);    
+            } else {
+                var $DTPickerDiv = $Div.CswDateTimePicker('init', {
+                    ID: o.ID,
+                    Date: date,
+                    Time: time,
+                    DateFormat: ServerDateFormatToJQuery(propVals.value.dateformat),
+                    TimeFormat: ServerTimeFormatToJQuery(propVals.value.timeformat),
+                    DisplayMode: propVals.displaymode,
+                    ReadOnly: o.ReadOnly,
+                    Required: o.Required,
+                    OnChange: o.onchange
+                });
 
-            $DTPickerDiv.find('input').clickOnEnter(o.$savebtn);
+                $DTPickerDiv.find('input').clickOnEnter(o.$savebtn);
+            }
         },
         save: function(o) { //$propdiv, $xml
             var attributes, $DTPickerDiv, dateVal;
