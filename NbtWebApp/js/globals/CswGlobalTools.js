@@ -88,6 +88,32 @@ var ChemSW = ChemSW || (function(undefined) {
                     }
                 }
                 return ret;
+            },
+            loadResource: function(filename, filetype, useJquery) {
+                var fileref, type = filetype || 'js';
+                switch (type) {
+                    case 'js':
+                        if (jQuery && (($.browser.msie && $.browser.version <= 8) || useJquery)) {
+                            $.ajax({
+                                url: '/NbtWebApp/' + filename,
+                                dataType: 'script'
+                            });
+                        } else {
+                            fileref = document.createElement('script');
+                            fileref.setAttribute("type", "text/javascript");
+                            fileref.setAttribute("src", filename);
+                        }
+                        break;
+                    case 'css':
+                        fileref = document.createElement("link");
+                        fileref.setAttribute("rel", "stylesheet");
+                        fileref.setAttribute("type", "text/css");
+                        fileref.setAttribute("href", filename);
+                        break;
+                }
+                if (fileref) {
+                    document.getElementsByTagName("head")[0].appendChild(fileref);
+                }
             }
         },
         makeSequentialArray: function(start, end) {

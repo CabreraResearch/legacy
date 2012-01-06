@@ -76,22 +76,9 @@ window.abandonHope = true;
                 
 <script type="text/javascript">
 
-    var doInitMain = function() {
-        if (window.initMain) {
-            initMain();
-        } else {
-            setTimeout(function () { doInitMain(); }, 100);
-        }
-    };
-    
-    if($.browser.msie) {
-        doInitMain();
-    } else {
-        $(window).load(function() {
-            if (window.initMain) {
-                initMain();
-            }
-        });
+    //This will always be true in Production
+    if(window.initMain) {
+        initMain();
     }
 
 </script>
