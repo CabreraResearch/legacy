@@ -1,338 +1,330 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections;
-using System.Text;
 using System.Data;
-using System.Xml;
-using System.Xml.XPath;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
-	public class CswNbtTreeLoaderFromXmlViewByLevel : CswNbtTreeLoader
-	{
-		public Int32 ResultLimit = 1001;  // BZ 8460
+    public class CswNbtTreeLoaderFromXmlViewByLevel : CswNbtTreeLoader
+    {
+        public Int32 ResultLimit = 1001;  // BZ 8460
 
-		private CswNbtResources _CswNbtResources = null;
-		private CswNbtView _View;
-		private ICswNbtUser _RunAsUser;
-		private bool _IncludeSystemNodes = false;
+        private CswNbtResources _CswNbtResources = null;
+        private CswNbtView _View;
+        private ICswNbtUser _RunAsUser;
+        private bool _IncludeSystemNodes = false;
 
-		public CswNbtTreeLoaderFromXmlViewByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, CswNbtView View, bool IncludeSystemNodes )
-			: base( pCswNbtTree )
-		{
-			_CswNbtResources = CswNbtResources;
-			_RunAsUser = RunAsUser;
-			_View = View;
-			_IncludeSystemNodes = IncludeSystemNodes;
+        public CswNbtTreeLoaderFromXmlViewByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, CswNbtView View, bool IncludeSystemNodes )
+            : base( pCswNbtTree )
+        {
+            _CswNbtResources = CswNbtResources;
+            _RunAsUser = RunAsUser;
+            _View = View;
+            _IncludeSystemNodes = IncludeSystemNodes;
 
-			string ResultLimitString = CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" );
-			if( CswTools.IsInteger( ResultLimitString ) )
-				ResultLimit = CswConvert.ToInt32( ResultLimitString );
-		}
+            string ResultLimitString = CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" );
+            if( CswTools.IsInteger( ResultLimitString ) )
+                ResultLimit = CswConvert.ToInt32( ResultLimitString );
+        }
 
-		public override void load( ref CswNbtNodeKey ParentNodeKey,
-								   CswNbtViewRelationship ChildRelationshipToStartWith,
-								   Int32 PageSize,
-								   bool FetchAllPrior,
-								   bool SingleLevelOnly,
-								   CswNbtNodeKey IncludedKey,
-								   bool RequireViewPermissions )
-		{
-		}
+        public override void load( ref CswNbtNodeKey ParentNodeKey,
+                                   CswNbtViewRelationship ChildRelationshipToStartWith,
+                                   Int32 PageSize,
+                                   bool FetchAllPrior,
+                                   bool SingleLevelOnly,
+                                   CswNbtNodeKey IncludedKey,
+                                   bool RequireViewPermissions )
+        {
+        }
 
-		public void load()
-		{
-			_CswNbtTree.makeRootNode( _View.Root );
+        public void load()
+        {
+            _CswNbtTree.makeRootNode( _View.Root );
 
-			_CswNbtTree.goToRoot();
-			foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships )
-			{
-				loadRelationshipRecursive( Relationship );
-			}
-			_CswNbtTree.goToRoot();
+            _CswNbtTree.goToRoot();
+            foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships )
+            {
+                loadRelationshipRecursive( Relationship );
+            }
+            _CswNbtTree.goToRoot();
 
-		} // load()
+        } // load()
 
-		private void loadRelationshipRecursive( CswNbtViewRelationship Relationship )
-		{
-			DataTable NodesTable = _getNodes( Relationship );
-			foreach( DataRow NodesRow in NodesTable.Rows )
-			{
-				bool AddChild = true;
-				CswNbtNodeKey ParentNodeKey = null;
-				if( NodesTable.Columns.Contains( "parentnodeid" ) )
-				{
-					CswPrimaryKey ParentNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["parentnodeid"] ) );
+        private void loadRelationshipRecursive( CswNbtViewRelationship Relationship )
+        {
+            DataTable NodesTable = _getNodes( Relationship );
+            foreach( DataRow NodesRow in NodesTable.Rows )
+            {
+                bool AddChild = true;
+                CswNbtNodeKey ParentNodeKey = null;
+                if( NodesTable.Columns.Contains( "parentnodeid" ) )
+                {
+                    CswPrimaryKey ParentNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["parentnodeid"] ) );
 
-					// We can't use getNodeKeyByNodeId, because there may be more instances of this node at different places in the tree
-					//ParentNodeKey = _CswNbtTree.getNodeKeyByNodeId( ParentNodeId );
-					ParentNodeKey = _CswNbtTree.getNodeKeyByNodeIdAndViewNode( ParentNodeId, Relationship.Parent );
+                    // We can't use getNodeKeyByNodeId, because there may be more instances of this node at different places in the tree
+                    //ParentNodeKey = _CswNbtTree.getNodeKeyByNodeId( ParentNodeId );
+                    ParentNodeKey = _CswNbtTree.getNodeKeyByNodeIdAndViewNode( ParentNodeId, Relationship.Parent );
 
-					if( ParentNodeKey != null )
-					{
-						_CswNbtTree.makeNodeCurrent( ParentNodeKey );
-					}
-					else
-					{
-						// If the parent isn't in the tree, don't add the child
-						AddChild = false;
-					}
-				} // if( NodesTable.Columns.Contains( "parentnodeid" ) )
+                    if( ParentNodeKey != null )
+                    {
+                        _CswNbtTree.makeNodeCurrent( ParentNodeKey );
+                    }
+                    else
+                    {
+                        // If the parent isn't in the tree, don't add the child
+                        AddChild = false;
+                    }
+                } // if( NodesTable.Columns.Contains( "parentnodeid" ) )
 
-				if( AddChild )
-				{
-					Int32 ChildCount = _CswNbtTree.getChildNodeCount();
+                if( AddChild )
+                {
+                    Int32 ChildCount = _CswNbtTree.getChildNodeCount();
 
-					string GroupName = string.Empty;
-					if( Relationship.GroupByPropId != Int32.MinValue )
-					{
-						GroupName = NodesRow["groupname"].ToString();
-						if( GroupName == string.Empty )
-							GroupName = "[blank]";
-					}
+                    string GroupName = string.Empty;
+                    if( Relationship.GroupByPropId != Int32.MinValue )
+                    {
+                        GroupName = NodesRow["groupname"].ToString();
+                        if( GroupName == string.Empty )
+                            GroupName = "[blank]";
+                    }
 
-					Collection<CswNbtNodeKey> ChildKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
-					foreach( CswNbtNodeKey ChildKey in ChildKeys )
-					{
-						_CswNbtTree.makeNodeCurrent( ChildKey );
-						_handleProperties( ChildKey, Relationship.Properties );
-					}
-					_CswNbtTree.goToParentNode();
-				}
-			}
-			
+                    Collection<CswNbtNodeKey> ChildKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
+                    foreach( CswNbtNodeKey ChildKey in ChildKeys )
+                    {
+                        _CswNbtTree.makeNodeCurrent( ChildKey );
+                        _handleProperties( ChildKey, Relationship.Properties );
+                    }
+                    _CswNbtTree.goToParentNode();
+                }
+            }
 
-			foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
-			{
-				loadRelationshipRecursive( ChildRelationship );
-			}
-		} // loadRelationshipRecursive()
 
-		private void _handleProperties( CswNbtNodeKey Key, Collection<CswNbtViewProperty> PropertyList )
-		{
-			//// ObjectClassProps
-			//string PropIds = String.Empty;
-			//foreach( CswNbtViewProperty Prop in PropertyList )
-			//{
-			//    if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
-			//    {
-			//        if( PropIds != String.Empty ) PropIds += ",";
-			//        PropIds += Prop.ObjectClassPropId;
-			//    }
-			//}
-			//if( PropIds != String.Empty )
-			//{
-			//    DataTable ResultTable = null;
-			//    _getObjectClassProperties( Key, PropIds, ref ResultTable );
+            foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
+            {
+                loadRelationshipRecursive( ChildRelationship );
+            }
+        } // loadRelationshipRecursive()
 
-			//    foreach( DataRow CurrentRow in ResultTable.Rows )
-			//    {
-			//        _CswNbtTree.addProperty( CswConvert.ToInt32( CurrentRow["nodetypepropid"].ToString() ),
-			//                                CurrentRow["propname"].ToString(),
-			//                                CurrentRow["gestalt"].ToString(),
-			//                                _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( CurrentRow["fieldtype"].ToString() ) ) );
-			//    }
-			//}
+        private void _handleProperties( CswNbtNodeKey Key, Collection<CswNbtViewProperty> PropertyList )
+        {
+            //// ObjectClassProps
+            //string PropIds = String.Empty;
+            //foreach( CswNbtViewProperty Prop in PropertyList )
+            //{
+            //    if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
+            //    {
+            //        if( PropIds != String.Empty ) PropIds += ",";
+            //        PropIds += Prop.ObjectClassPropId;
+            //    }
+            //}
+            //if( PropIds != String.Empty )
+            //{
+            //    DataTable ResultTable = null;
+            //    _getObjectClassProperties( Key, PropIds, ref ResultTable );
 
-			// NodeTypeProps
-			CswCommaDelimitedString PropsInClause = new CswCommaDelimitedString( 0, true );
-			foreach( CswNbtViewProperty Prop in PropertyList )
-			{
-				if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-				{
-					PropsInClause.Add( Prop.NodeTypePropId.ToString() );
-				}
-			}
-			if( PropsInClause.Count > 0 )
-			{
-				DataTable ResultTable = new CswDataTable( "getNodeTypeProperties_ResultTable", "" );
-				_getNodeTypeProperties( Key, PropsInClause, ref ResultTable );
+            //    foreach( DataRow CurrentRow in ResultTable.Rows )
+            //    {
+            //        _CswNbtTree.addProperty( CswConvert.ToInt32( CurrentRow["nodetypepropid"].ToString() ),
+            //                                CurrentRow["propname"].ToString(),
+            //                                CurrentRow["gestalt"].ToString(),
+            //                                _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( CurrentRow["fieldtype"].ToString() ) ) );
+            //    }
+            //}
 
-				foreach( DataRow CurrentRow in ResultTable.Rows )
-				{
-					_CswNbtTree.addProperty( CswConvert.ToInt32( CurrentRow["nodetypepropid"].ToString() ),
-											 CswConvert.ToInt32( CurrentRow["jctnodepropid"].ToString() ),
-											 CurrentRow["propname"].ToString(),
-											 CurrentRow["gestalt"].ToString(),
-											 _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( CurrentRow["fieldtype"].ToString() ) ) );
-				}
-			}
-		} // _handleProperties()
+            // NodeTypeProps
+            CswCommaDelimitedString PropsInClause = new CswCommaDelimitedString( 0, true );
+            foreach( CswNbtViewProperty Prop in PropertyList )
+            {
+                if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                {
+                    PropsInClause.Add( Prop.NodeTypePropId.ToString() );
+                }
+            }
+            if( PropsInClause.Count > 0 )
+            {
+                DataTable ResultTable = new CswDataTable( "getNodeTypeProperties_ResultTable", "" );
+                _getNodeTypeProperties( Key, PropsInClause, ref ResultTable );
 
-		private DataTable _getNodes( CswNbtViewRelationship Relationship )
-		{
-			DataTable ResultTable = new DataTable();
-			string Select = @"select n.nodeid,
+                foreach( DataRow CurrentRow in ResultTable.Rows )
+                {
+                    _CswNbtTree.addProperty( CswConvert.ToInt32( CurrentRow["nodetypepropid"].ToString() ),
+                                             CswConvert.ToInt32( CurrentRow["jctnodepropid"].ToString() ),
+                                             CurrentRow["propname"].ToString(),
+                                             CurrentRow["gestalt"].ToString(),
+                                             _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( CurrentRow["fieldtype"].ToString() ) ) );
+                }
+            }
+        } // _handleProperties()
+
+        private DataTable _getNodes( CswNbtViewRelationship Relationship )
+        {
+            DataTable ResultTable = new DataTable();
+            string Select = @"select n.nodeid,
                                      n.nodename, 
-									 n.locked,
+                                     n.locked,
                                      t.iconfilename,
                                      t.nodetypename,
                                      t.nametemplate,
                                      t.nodetypeid,
                                      o.objectclass,
                                      o.objectclassid";
-			string From = @"from nodes n
+            string From = @"from nodes n
                             join nodetypes t on (n.nodetypeid = t.nodetypeid)
                             join object_class o on (t.objectclassid = o.objectclassid) ";
-			string Where = string.Empty;
-			string OrderBy = string.Empty;
+            string Where = string.Empty;
+            string OrderBy = string.Empty;
 
-			// Nodetype/Object Class filter
-			if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
-				Where += "and (t.firstversionid = " + Relationship.SecondId + ") ";
-			else
-				Where += "and (o.objectclassid = " + Relationship.SecondId + ") ";
+            // Nodetype/Object Class filter
+            if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                Where += "and (t.firstversionid = " + Relationship.SecondId + ") ";
+            else
+                Where += "and (o.objectclassid = " + Relationship.SecondId + ") ";
 
-			// Parent Node
-			if( Relationship.FirstId != Int32.MinValue )
-			{
-				Select += ",parent.parentnodeid ";
-				if( Relationship.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
-				{
+            // Parent Node
+            if( Relationship.FirstId != Int32.MinValue )
+            {
+                Select += ",parent.parentnodeid ";
+                if( Relationship.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
+                {
                     From += @"            join (select jnp.nodeid parentnodeid, jnp.field1_fk thisnodeid
-		                                          from jct_nodes_props jnp
-		                                          join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
+                                                  from jct_nodes_props jnp
+                                                  join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
                     if( Relationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
-					{
+                    {
                         From += @"               where p.firstpropversionid = " + Relationship.PropId;
-					}
-					else
-					{
+                    }
+                    else
+                    {
                         From += @"                join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
-		                                         where op.objectclasspropid = " + Relationship.PropId;
-					}
+                                                 where op.objectclasspropid = " + Relationship.PropId;
+                    }
                     From += @"                ) parent on (parent.thisnodeid = n.nodeid)";
                 }
-				else
-				{
-					From += @"          join (select jnp.nodeid thisnodeid, jnp.field1_fk parentnodeid
-		                                        from jct_nodes_props jnp
-		                                        join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
-					if( Relationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
-					{
+                else
+                {
+                    From += @"          join (select jnp.nodeid thisnodeid, jnp.field1_fk parentnodeid
+                                                from jct_nodes_props jnp
+                                                join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
+                    if( Relationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+                    {
                         From += @"             where p.firstpropversionid = " + Relationship.PropId;
-					}
-					else
-					{
+                    }
+                    else
+                    {
                         From += @"              join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
-		                                       where op.objectclasspropid = " + Relationship.PropId;
-					}
+                                               where op.objectclasspropid = " + Relationship.PropId;
+                    }
                     From += @"        ) parent on (parent.thisnodeid = n.nodeid)";
                 }
-			} // if( Relationship.FirstId != Int32.MinValue )
+            } // if( Relationship.FirstId != Int32.MinValue )
 
-			// Grouping
-			if( Relationship.GroupByPropId != Int32.MinValue )
-			{
-				CswNbtSubField GroupBySubField = _getDefaultSubFieldForProperty( Relationship.GroupByPropType, Relationship.GroupByPropId );
-				Select += " ,g." + GroupBySubField.Column + " groupname";
-				if( Relationship.GroupByPropType == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
-				{
-					From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
+            // Grouping
+            if( Relationship.GroupByPropId != Int32.MinValue )
+            {
+                CswNbtSubField GroupBySubField = _getDefaultSubFieldForProperty( Relationship.GroupByPropType, Relationship.GroupByPropId );
+                Select += " ,g." + GroupBySubField.Column + " groupname";
+                if( Relationship.GroupByPropType == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
+                {
+                    From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
                                                       from jct_nodes_props j 
                                                       join nodetype_props p on j.nodetypepropid = p.nodetypepropid 
                                                      where p.objectclasspropid = " + Relationship.GroupByPropId.ToString() + @") g
                                    on (g.nodeid = n.nodeid)";
-				}
-				else
-				{
-					From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
+                }
+                else
+                {
+                    From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
                                                       from jct_nodes_props j 
                                                      where j.nodetypepropid = " + Relationship.GroupByPropId.ToString() + @") g 
                                    on (g.nodeid = n.nodeid)";
-				}
-			} // if( Relationship.GroupByPropId != Int32.MinValue )
+                }
+            } // if( Relationship.GroupByPropId != Int32.MinValue )
 
-			// Handle sort order
-			Int32 sortAlias = 0;
-			CswCommaDelimitedString OrderByProps = new CswCommaDelimitedString();
-			String OrderByString = String.Empty;
-			foreach( CswNbtViewProperty Prop in Relationship.Properties )
-			{
-				if( Prop.SortBy )
-				{
-					// Case 10530
-					sortAlias++;
-					CswNbtSubField.PropColumn SubFieldColumn = Prop.NodeTypeProp.FieldTypeRule.SubFields.Default.Column;
-					if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
-						SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
-						SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
-						SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
-					{
-						Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
-					}
-					else
-					{
-						Select += ",lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ") mssqlorder" + sortAlias;
-					}
+            // Handle sort order
+            Int32 sortAlias = 0;
+            CswCommaDelimitedString OrderByProps = new CswCommaDelimitedString();
+            String OrderByString = String.Empty;
+            foreach( CswNbtViewProperty Prop in Relationship.Properties )
+            {
+                if( Prop.SortBy )
+                {
+                    // Case 10530
+                    sortAlias++;
+                    CswNbtSubField.PropColumn SubFieldColumn = Prop.NodeTypeProp.FieldTypeRule.SubFields.Default.Column;
+                    if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
+                        SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
+                        SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
+                        SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
+                    {
+                        Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
+                    }
+                    else
+                    {
+                        Select += ",lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ") mssqlorder" + sortAlias;
+                    }
 
-					// Case 10533
-					if( SubFieldColumn == CswNbtSubField.PropColumn.Gestalt ||
-						SubFieldColumn == CswNbtSubField.PropColumn.ClobData )
-					{
-						OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
-					}
-					else
-					{
-						OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
-					}
-					From += " left outer join jct_nodes_props j" + sortAlias + " ";
-					From += "   on (j" + sortAlias + ".nodeid = n.nodeid and j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
+                    // Case 10533
+                    if( SubFieldColumn == CswNbtSubField.PropColumn.Gestalt ||
+                        SubFieldColumn == CswNbtSubField.PropColumn.ClobData )
+                    {
+                        OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
+                    }
+                    else
+                    {
+                        OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
+                    }
+                    From += " left outer join jct_nodes_props j" + sortAlias + " ";
+                    From += "   on (j" + sortAlias + ".nodeid = n.nodeid and j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
 
-					OrderByProps.Insert( Prop.Order, OrderByString );
+                    OrderByProps.Insert( Prop.Order, OrderByString );
 
-				} // if( Prop.SortBy )
-			} // foreach( CswNbtViewProperty Prop in Relationship.Properties )
+                } // if( Prop.SortBy )
+            } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
 
-			if( OrderByProps.Count == 0 )
-			{
-				Select += ",lower(n.nodename) mssqlorder ";
-				OrderBy = " order by lower(n.nodename)";
-			}
-			else
-			{
-				OrderBy = " order by " + OrderByProps.ToString() + " ";
-			}
+            if( OrderByProps.Count == 0 )
+            {
+                Select += ",lower(n.nodename) mssqlorder ";
+                OrderBy = " order by lower(n.nodename)";
+            }
+            else
+            {
+                OrderBy = " order by " + OrderByProps.ToString() + " ";
+            }
 
-			// Filter out disabled nodetypes/object classes
-			Where += @"where ((exists (select j.jctmoduleobjectclassid
-			                  from jct_modules_objectclass j
-			                  join modules m on j.moduleid = m.moduleid
-			                 where j.objectclassid = t.objectclassid
-			                   and m.enabled = '1')
-			    or not exists (select j.jctmoduleobjectclassid
-			                     from jct_modules_objectclass j
-			                     join modules m on j.moduleid = m.moduleid
-			                    where j.objectclassid = t.objectclassid) )
-			   and (exists (select j.jctmodulenodetypeid
-			                  from jct_modules_nodetypes j
-			                  join modules m on j.moduleid = m.moduleid
-			                 where j.nodetypeid = t.firstversionid
-			                   and m.enabled = '1')
-			    or not exists (select j.jctmodulenodetypeid
-			                     from jct_modules_nodetypes j
-			                     join modules m on j.moduleid = m.moduleid
-			                    where j.nodetypeid = t.firstversionid) )) ";
-
-
+            // Filter out disabled nodetypes/object classes
+            Where += @"where ((exists (select j.jctmoduleobjectclassid
+                              from jct_modules_objectclass j
+                              join modules m on j.moduleid = m.moduleid
+                             where j.objectclassid = t.objectclassid
+                               and m.enabled = '1')
+                or not exists (select j.jctmoduleobjectclassid
+                                 from jct_modules_objectclass j
+                                 join modules m on j.moduleid = m.moduleid
+                                where j.objectclassid = t.objectclassid) )
+               and (exists (select j.jctmodulenodetypeid
+                              from jct_modules_nodetypes j
+                              join modules m on j.moduleid = m.moduleid
+                             where j.nodetypeid = t.firstversionid
+                               and m.enabled = '1')
+                or not exists (select j.jctmodulenodetypeid
+                                 from jct_modules_nodetypes j
+                                 join modules m on j.moduleid = m.moduleid
+                                where j.nodetypeid = t.firstversionid) )) ";
 
 
-			// Property Filters
 
-			foreach( CswNbtViewProperty Prop in Relationship.Properties )
-			{
-				foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
-				{
+
+            // Property Filters
+
+            foreach( CswNbtViewProperty Prop in Relationship.Properties )
+            {
+                foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
+                {
                     if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null ||
                         Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull ||
                         Filter.Value != string.Empty )
@@ -353,8 +345,8 @@ namespace ChemSW.Nbt
                             {
                                 Where += @" and (n.nodeid not in (
                                   select jnp.nodeid
-		                            from jct_nodes_props jnp
-		                            join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
+                                    from jct_nodes_props jnp
+                                    join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
                                 if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
                                 {
                                     Where += @"  where p.firstpropversionid = " + Prop.FirstVersionNodeTypeProp.PropId + @")";
@@ -362,7 +354,7 @@ namespace ChemSW.Nbt
                                 else
                                 {
                                     Where += @"   join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
-		                           where op.objectclasspropid = " + Prop.ObjectClassPropId + @")";
+                                   where op.objectclasspropid = " + Prop.ObjectClassPropId + @")";
                                 }
                                 Where += @"     or ";
 
@@ -381,172 +373,180 @@ namespace ChemSW.Nbt
                             else
                             {
                                 Where += @"            join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
-		                                     join nodetype_props p on (p.objectclasspropid = op.objectclasspropid  ";
+                                             join nodetype_props p on (p.objectclasspropid = op.objectclasspropid  ";
                             }
-                            Where += @"                                         and p.nodetypeid = s.nodetypeid)
-                                             left outer join (select j.jctnodepropid,
-		                                                             j.nodetypepropid, j.nodeid, j.nodeidtablename,
-		                                                             j.field1, j.field2, j.field3, j.field4, j.field5,
-		                                                             j.gestalt,
-		                                                             j.field1_fk, j.field1_numeric, j.field1_date,
-		                                                             j.field2_numeric, j.field2_date
-		                                                             from jct_nodes_props j) jnp
-		                                                  ON (jnp.nodeid = s.nodeid and jnp.nodetypepropid = p.nodetypepropid)
-		                                     where " + FilterValue + @"))";
+
+                            Where += @"                                         and p.nodetypeid = s.nodetypeid)";
+                            if( false == string.IsNullOrEmpty( FilterValue ) )
+                            {
+                                Where += @" left outer join (select j.jctnodepropid,
+                                                                     j.nodetypepropid, j.nodeid, j.nodeidtablename,
+                                                                     j.field1, j.field2, j.field3, j.field4, j.field5,
+                                                                     j.gestalt,
+                                                                     j.field1_fk, j.field1_numeric, j.field1_date,
+                                                                     j.field2_numeric, j.field2_date
+                                                                     from jct_nodes_props j) jnp
+                                                          ON (jnp.nodeid = s.nodeid and jnp.nodetypepropid = p.nodetypepropid)
+                                             where " + FilterValue + @"))";
+                            }
+                            else
+                            {
+                                Where += "))";
+                            }
                         } // if( FilterSubField.RelationalTable == string.empty )
-                        else
+                        else if( false == string.IsNullOrEmpty( FilterValue ) )
                         {
                             Where += " and " + FilterValue; // n." + FilterSubField.Column + " is not null";
                         }
                     } // if we have a filter
-				} // foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
-			} // foreach( CswNbtViewProperty Prop in Relationship.Properties )
+                } // foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
+            } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
 
 
-			if( Relationship.NodeIdsToFilterOut.Count > 0 )
-			{
-				string inclause = "";
-				bool first = true;
-				foreach( CswPrimaryKey NodeId in Relationship.NodeIdsToFilterOut )
-				{
-					if( NodeId != null )
-					{
-						if( first ) first = false;
-						else inclause += ",";
-						inclause += NodeId.PrimaryKey.ToString();
-					}
-				}
-				if( inclause != string.Empty )
-					Where += " and n.nodeid not in ( " + inclause + " ) ";
-			}
-			if( Relationship.NodeIdsToFilterIn.Count > 0 )
-			{
-				string inclause = "";
-				bool first = true;
-				foreach( CswPrimaryKey NodeId in Relationship.NodeIdsToFilterIn )
-				{
-					if( NodeId != null )
-					{
-						if( first ) first = false;
-						else inclause += ",";
-						inclause += NodeId.PrimaryKey.ToString();
-					}
-				}
-				if( inclause != string.Empty )
-					Where += " and n.nodeid in ( " + inclause + " ) ";
-			}
+            if( Relationship.NodeIdsToFilterOut.Count > 0 )
+            {
+                string inclause = "";
+                bool first = true;
+                foreach( CswPrimaryKey NodeId in Relationship.NodeIdsToFilterOut )
+                {
+                    if( NodeId != null )
+                    {
+                        if( first ) first = false;
+                        else inclause += ",";
+                        inclause += NodeId.PrimaryKey.ToString();
+                    }
+                }
+                if( inclause != string.Empty )
+                    Where += " and n.nodeid not in ( " + inclause + " ) ";
+            }
+            if( Relationship.NodeIdsToFilterIn.Count > 0 )
+            {
+                string inclause = "";
+                bool first = true;
+                foreach( CswPrimaryKey NodeId in Relationship.NodeIdsToFilterIn )
+                {
+                    if( NodeId != null )
+                    {
+                        if( first ) first = false;
+                        else inclause += ",";
+                        inclause += NodeId.PrimaryKey.ToString();
+                    }
+                }
+                if( inclause != string.Empty )
+                    Where += " and n.nodeid in ( " + inclause + " ) ";
+            }
 
-			// BZ 6008
-			if( !_IncludeSystemNodes )
-				Where += " and n.issystem = '0' ";
+            // BZ 6008
+            if( !_IncludeSystemNodes )
+                Where += " and n.issystem = '0' ";
 
-			string Sql = Select + " " + From + " " + Where + " " + OrderBy;
+            string Sql = Select + " " + From + " " + Where + " " + OrderBy;
 
-			CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
-			CswTimer SqlTimer = new CswTimer();
-			try
-			{
-				ResultTable = ResultSelect.getTable( 0, ResultLimit, false, false );
-			}
-			catch( Exception ex )
-			{
-				throw new CswDniException( ErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
-			}
+            CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
+            CswTimer SqlTimer = new CswTimer();
+            try
+            {
+                ResultTable = ResultSelect.getTable( 0, ResultLimit, false, false );
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
+            }
 
-			if( SqlTimer.ElapsedDurationInSeconds > 2 )
-				_CswNbtResources.logMessage( "Tree View SQL required longer than 2 seconds to run: " + Sql );
-			
-			return ResultTable;
+            if( SqlTimer.ElapsedDurationInSeconds > 2 )
+                _CswNbtResources.logMessage( "Tree View SQL required longer than 2 seconds to run: " + Sql );
 
-		} //_getNodes()
+            return ResultTable;
+
+        } //_getNodes()
 
 
-		private void _getNodeTypeProperties( CswNbtNodeKey Key, CswCommaDelimitedString PropsInClause, ref DataTable ResultTable )
-		{
-			string Sql = @"select p.nodetypepropid, d.tablename, d.columnname
+        private void _getNodeTypeProperties( CswNbtNodeKey Key, CswCommaDelimitedString PropsInClause, ref DataTable ResultTable )
+        {
+            string Sql = @"select p.nodetypepropid, d.tablename, d.columnname
                              from nodetype_props p
                              left outer join jct_dd_ntp j on (p.nodetypepropid = j.nodetypepropid)
                              left outer join data_dictionary d on (j.datadictionaryid = d.tablecolid)
                             where nodetypeid = " + Key.NodeTypeId.ToString() + @" 
-							  and p.firstpropversionid in (select firstpropversionid 
-														     from nodetype_props 
-														    where nodetypepropid in (" + PropsInClause.ToString() + @"))";
-			CswArbitrarySelect PropSelect = _CswNbtResources.makeCswArbitrarySelect( "_getNodeTypeProperties_select1", Sql );
-			DataTable PropTable = null;
-			try
-			{
-				PropTable = PropSelect.getTable();
-			}
-			catch( Exception ex )
-			{
-				throw new CswDniException( ErrorType.Error, "Invalid View", "_getProperties() attempted to run invalid SQL: " + Sql, ex );
-			}
+                              and p.firstpropversionid in (select firstpropversionid 
+                                                             from nodetype_props 
+                                                            where nodetypepropid in (" + PropsInClause.ToString() + @"))";
+            CswArbitrarySelect PropSelect = _CswNbtResources.makeCswArbitrarySelect( "_getNodeTypeProperties_select1", Sql );
+            DataTable PropTable = null;
+            try
+            {
+                PropTable = PropSelect.getTable();
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid View", "_getProperties() attempted to run invalid SQL: " + Sql, ex );
+            }
 
-			ResultTable.Columns.Add( new DataColumn( "nodetypepropid" ) );
-			ResultTable.Columns.Add( new DataColumn( "propname" ) );
-			ResultTable.Columns.Add( new DataColumn( "jctnodepropid" ) );
-			ResultTable.Columns.Add( new DataColumn( "gestalt" ) );
-			ResultTable.Columns.Add( new DataColumn( "fieldtype" ) );
+            ResultTable.Columns.Add( new DataColumn( "nodetypepropid" ) );
+            ResultTable.Columns.Add( new DataColumn( "propname" ) );
+            ResultTable.Columns.Add( new DataColumn( "jctnodepropid" ) );
+            ResultTable.Columns.Add( new DataColumn( "gestalt" ) );
+            ResultTable.Columns.Add( new DataColumn( "fieldtype" ) );
 
-			foreach( DataRow PropRow in PropTable.Rows )
-			{
-				DataTable ThisResultTable = null;
-				string Sql2 = string.Empty;
-				if( PropRow["tablename"].ToString() == string.Empty )
-				{
-					Sql2 = @"select p.nodetypepropid, p.propname, j.jctnodepropid, j.gestalt, f.fieldtype
+            foreach( DataRow PropRow in PropTable.Rows )
+            {
+                DataTable ThisResultTable = null;
+                string Sql2 = string.Empty;
+                if( PropRow["tablename"].ToString() == string.Empty )
+                {
+                    Sql2 = @"select p.nodetypepropid, p.propname, j.jctnodepropid, j.gestalt, f.fieldtype
                              from nodetype_props p
                              join field_types f on (p.fieldtypeid = f.fieldtypeid) 
                              left outer join jct_nodes_props j 
                                on (p.nodetypepropid = j.nodetypepropid 
                                    and j.nodeid = " + Key.NodeId.PrimaryKey.ToString() + @")
                             where p.nodetypepropid = " + PropRow["nodetypepropid"].ToString();
-				}
-				else
-				{
-					Sql2 = @"select p.nodetypepropid, p.propname, j.jctnodepropid, j." + PropRow["columnname"].ToString() + @" gestalt, f.fieldtype
+                }
+                else
+                {
+                    Sql2 = @"select p.nodetypepropid, p.propname, j.jctnodepropid, j." + PropRow["columnname"].ToString() + @" gestalt, f.fieldtype
                              from nodetype_props p
                              join field_types f on (p.fieldtypeid = f.fieldtypeid) 
                              left outer join " + PropRow["tablename"].ToString() + @" j 
                                on (j." + _CswNbtResources.getPrimeKeyColName( PropRow["tablename"].ToString() ) + @" = " + Key.NodeId.PrimaryKey.ToString() + @")
                             where p.nodetypepropid = " + PropRow["nodetypepropid"].ToString();
-				}
-				CswArbitrarySelect ThisResultSelect = _CswNbtResources.makeCswArbitrarySelect( "_getNodeTypeProperties_select2", Sql2 );
-				try
-				{
-					ThisResultTable = ThisResultSelect.getTable();
-				}
-				catch( Exception ex )
-				{
-					throw new CswDniException( ErrorType.Error, "Invalid View", "_getProperties() attempted to run invalid SQL: " + Sql, ex );
-				}
+                }
+                CswArbitrarySelect ThisResultSelect = _CswNbtResources.makeCswArbitrarySelect( "_getNodeTypeProperties_select2", Sql2 );
+                try
+                {
+                    ThisResultTable = ThisResultSelect.getTable();
+                }
+                catch( Exception ex )
+                {
+                    throw new CswDniException( ErrorType.Error, "Invalid View", "_getProperties() attempted to run invalid SQL: " + Sql, ex );
+                }
 
-				DataRow ResultRow = ResultTable.NewRow();
-				ResultRow["nodetypepropid"] = ThisResultTable.Rows[0]["nodetypepropid"];
-				ResultRow["propname"] = ThisResultTable.Rows[0]["propname"];
-				ResultRow["jctnodepropid"] = ThisResultTable.Rows[0]["jctnodepropid"];
-				ResultRow["gestalt"] = ThisResultTable.Rows[0]["gestalt"];
-				ResultRow["fieldtype"] = ThisResultTable.Rows[0]["fieldtype"];
-				ResultTable.Rows.Add( ResultRow );
-			}
-		}
+                DataRow ResultRow = ResultTable.NewRow();
+                ResultRow["nodetypepropid"] = ThisResultTable.Rows[0]["nodetypepropid"];
+                ResultRow["propname"] = ThisResultTable.Rows[0]["propname"];
+                ResultRow["jctnodepropid"] = ThisResultTable.Rows[0]["jctnodepropid"];
+                ResultRow["gestalt"] = ThisResultTable.Rows[0]["gestalt"];
+                ResultRow["fieldtype"] = ThisResultTable.Rows[0]["fieldtype"];
+                ResultTable.Rows.Add( ResultRow );
+            }
+        }
 
-		private CswNbtSubField _getDefaultSubFieldForProperty( CswNbtViewRelationship.PropIdType Type, Int32 Id )
-		{
-			CswNbtSubField ret = null;
-			if( Type == CswNbtViewRelationship.PropIdType.NodeTypePropId )
-			{
-				CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Id );
-				ret = NodeTypeProp.FieldTypeRule.SubFields.Default;
-			}
-			else if( Type == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
-			{
-				CswNbtMetaDataObjectClassProp ObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( Id );
-				ret = ObjectClassProp.FieldTypeRule.SubFields.Default;
-			}
-			return ret;
-		}
+        private CswNbtSubField _getDefaultSubFieldForProperty( CswNbtViewRelationship.PropIdType Type, Int32 Id )
+        {
+            CswNbtSubField ret = null;
+            if( Type == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+            {
+                CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Id );
+                ret = NodeTypeProp.FieldTypeRule.SubFields.Default;
+            }
+            else if( Type == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
+            {
+                CswNbtMetaDataObjectClassProp ObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( Id );
+                ret = ObjectClassProp.FieldTypeRule.SubFields.Default;
+            }
+            return ret;
+        }
 
-	} // class CswNbtTreeLoaderFromXmlViewByLevel
+    } // class CswNbtTreeLoaderFromXmlViewByLevel
 
 } // namespace CswNbt
