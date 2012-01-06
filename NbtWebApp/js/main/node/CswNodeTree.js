@@ -200,7 +200,7 @@
             var idPrefix = o.ID + '_';
             var $this = $(this);
 
-            var $togglelinkdiv, $togglelink;
+            var $togglelink;
             if (o.ShowToggleLink) {
                 $togglelink = $this.CswLink({
                     ID: o.ID + '_toggle',
@@ -227,6 +227,7 @@
                 // ParentNodeKey: '',
                 IncludeNodeRequired: o.IncludeNodeRequired,
                 IncludeNodeKey: tryParseString(o.cswnbtnodekey),
+                IncludeNodeId: tryParseString(o.nodeid),
                 // ShowEmpty: o.showempty,
                 // ForSearch: o.forsearch,
                 // NodePk: tryParseString(o.nodeid),
@@ -255,7 +256,6 @@
                     }
 
                     selectid = data.selectid;
-
                     var treeThemes = { "dots": true };
                     if (o.viewmode === CswViewMode.list.name) {
                         treeThemes = { "dots": false };
@@ -332,10 +332,17 @@
             if (optSelect) {
                 $.extend(o, optSelect);
             }
-            var $treediv = $(this).children('.treediv');
+            var $treediv = $(this);
             var idPrefix = $treediv.CswAttrDom('id');
             $treediv.jstree('select_node', '#' + idPrefix + o.newnodeid);
+        },
+
+        'expandAll': function () {
+            var $treediv = $(this);
+            var rootnode = $treediv.find('li').first();
+            $treediv.jstree('open_all', rootnode);
         }
+
     };
 
     function firstSelectNode(myoptions) {

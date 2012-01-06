@@ -763,7 +763,7 @@ namespace ChemSW.Nbt.WebServices
 		/// </summary>
 		[WebMethod( EnableSession = false )]
 		[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-		public string runTree( string ViewId, string IdPrefix, string IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch )
+        public string runTree( string ViewId, string IdPrefix, string IncludeNodeId, string IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch )
 		{
 			JObject ReturnVal = new JObject();
 
@@ -780,12 +780,14 @@ namespace ChemSW.Nbt.WebServices
 					if( null != View )
 					{
 						var ws = new CswNbtWebServiceTree( _CswNbtResources );
+                        CswPrimaryKey RealIncludeNodeId = new CswPrimaryKey();
+                        RealIncludeNodeId.FromString( IncludeNodeId );
 
 						CswNbtNodeKey RealIncludeNodeKey = null;
 						if( !string.IsNullOrEmpty( IncludeNodeKey ) )
 							RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( IncludeNodeKey ) );
 
-						ReturnVal = ws.runTree( View, IdPrefix, RealIncludeNodeKey, IncludeNodeRequired, IncludeInQuickLaunch );
+                        ReturnVal = ws.runTree( View, IdPrefix, RealIncludeNodeId, RealIncludeNodeKey, IncludeNodeRequired, IncludeInQuickLaunch );
 					}
 				}
 

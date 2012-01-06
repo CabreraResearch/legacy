@@ -51,13 +51,24 @@
                                                 //SelectFirstChild: false,
                                                 //UsePaging: false,
                                                 UseScrollbars: false,
-                                                IncludeInQuickLaunch: false
+                                                IncludeInQuickLaunch: false,
+                                                ShowToggleLink: false
                                             });
     
                     $selectdiv.CswComboBox( 'init', {	'ID': o.ID + '_combo', 
                                                         'TopContent': name,
                                                         'SelectContent': $locationtree,
-                                                        'Width': '290px' 
+                                                        'Width': '290px',
+                                                        onClick: function () {
+                                                                    var first = true;
+                                                                    return function() { 
+                                                                        // only do this once
+                                                                        if(first) {
+                                                                            $locationtree.CswNodeTree('expandAll');
+                                                                            first = false;
+                                                                        }
+                                                                    }
+                                                                }()
                                                     });
 
 //					var $addcell = $table.CswTable('cell', 2, 2);
