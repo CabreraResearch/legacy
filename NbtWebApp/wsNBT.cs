@@ -14,6 +14,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Schema;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
 using ChemSW.NbtWebControls;
@@ -2684,12 +2685,10 @@ namespace ChemSW.Nbt.WebServices
                     string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
                     if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                         UseRoleId = RoleId;
-                    CswNbtWebServiceWelcomeItems.WelcomeComponentType ComponentType = (CswNbtWebServiceWelcomeItems.WelcomeComponentType) Enum.Parse( typeof( CswNbtWebServiceWelcomeItems.WelcomeComponentType ), Type );
-                    CswViewListTree.ViewType RealViewType = CswViewListTree.ViewType.Unknown;
-                    if( ViewType != string.Empty )
-                    {
-                        RealViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), ViewType, true );
-                    }
+                    CswNbtWelcomeTable.WelcomeComponentType ComponentType;
+                    Enum.TryParse( Type, true, out ComponentType );
+                    CswNbtView.ViewType RealViewType;
+                    Enum.TryParse( ViewType, true, out RealViewType );
                     ws.AddWelcomeItem( ComponentType, RealViewType, ViewValue, CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
                     ReturnVal.Add( new JProperty( "Succeeded", true ) );
                 }
