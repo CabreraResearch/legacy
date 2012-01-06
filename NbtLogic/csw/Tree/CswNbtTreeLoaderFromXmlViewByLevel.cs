@@ -199,45 +199,36 @@ namespace ChemSW.Nbt
 				Select += ",parent.parentnodeid ";
 				if( Relationship.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
 				{
-					if( Relationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
-					{
-						From += @"       join (select jnp.nodeid parentnodeid, jnp.field1_fk thisnodeid
+                    From += @"            join (select jnp.nodeid parentnodeid, jnp.field1_fk thisnodeid
 		                                          from jct_nodes_props jnp
-		                                          join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
-		                                         where p.firstpropversionid = " + Relationship.PropId + @") parent 
-                                             on (parent.thisnodeid = n.nodeid)";
+		                                          join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
+                    if( Relationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+					{
+                        From += @"               where p.firstpropversionid = " + Relationship.PropId;
 					}
 					else
 					{
-
-						Where += @"      join (select jnp.nodeid parentnodeid, jnp.field1_fk thisnodeid
-		                                          from jct_nodes_props jnp
-		                                          join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
-		                                          join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
-		                                         where op.objectclasspropid = " + Relationship.PropId + @") parent 
-                                             on (parent.thisnodeid = n.nodeid)";
+                        From += @"                join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
+		                                         where op.objectclasspropid = " + Relationship.PropId;
 					}
-				}
+                    From += @"                ) parent on (parent.thisnodeid = n.nodeid)";
+                }
 				else
 				{
+					From += @"          join (select jnp.nodeid thisnodeid, jnp.field1_fk parentnodeid
+		                                        from jct_nodes_props jnp
+		                                        join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
 					if( Relationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
 					{
-						From += @"       join (select jnp.nodeid thisnodeid, jnp.field1_fk parentnodeid
-		                                          from jct_nodes_props jnp
-		                                          join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
-		                                         where p.firstpropversionid = " + Relationship.PropId + @") parent 
-                                             on (parent.thisnodeid = n.nodeid)";
+                        From += @"             where p.firstpropversionid = " + Relationship.PropId;
 					}
 					else
 					{
-						From += @"       join (select jnp.nodeid thisnodeid, jnp.field1_fk parentnodeid
-		                                          from jct_nodes_props jnp
-		                                          join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
-		                                          join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
-		                                         where op.objectclasspropid = " + Relationship.PropId + @") parent 
-                                             on (parent.thisnodeid = n.nodeid)";
+                        From += @"              join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
+		                                       where op.objectclasspropid = " + Relationship.PropId;
 					}
-				}
+                    From += @"        ) parent on (parent.thisnodeid = n.nodeid)";
+                }
 			} // if( Relationship.FirstId != Int32.MinValue )
 
 			// Grouping
@@ -342,159 +333,75 @@ namespace ChemSW.Nbt
 			{
 				foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
 				{
-					ICswNbtFieldTypeRule FilterFieldTypeRule = null;
-					if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-						FilterFieldTypeRule = Prop.NodeTypeProp.FieldTypeRule;
-					else if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
-						FilterFieldTypeRule = Prop.ObjectClassProp.FieldTypeRule;
+                    if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null ||
+                        Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull ||
+                        Filter.Value != string.Empty )
+                    {
+                        ICswNbtFieldTypeRule FilterFieldTypeRule = null;
+                        if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                            FilterFieldTypeRule = Prop.NodeTypeProp.FieldTypeRule;
+                        else if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
+                            FilterFieldTypeRule = Prop.ObjectClassProp.FieldTypeRule;
 
-					string FilterValue = FilterFieldTypeRule.renderViewPropFilter( _RunAsUser, Filter );
-					CswNbtSubField FilterSubField = FilterFieldTypeRule.SubFields[Filter.SubfieldName];
+                        string FilterValue = FilterFieldTypeRule.renderViewPropFilter( _RunAsUser, Filter );
+                        CswNbtSubField FilterSubField = FilterFieldTypeRule.SubFields[Filter.SubfieldName];
 
-					if( FilterValue != string.Empty )
-					{
-						if( FilterSubField.RelationalTable == string.Empty )
-						{
-							if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
-							{
-								if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-								{
-									Where += @" and (n.nodeid not in (
-		                                            select jnp.nodeid
-		                                              from jct_nodes_props jnp
-		                                              join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
-		                                             where p.firstpropversionid = " + Prop.FirstVersionNodeTypeProp.PropId + @")
-		                                            or n.nodeid in (select s.nodeid 
-		                                                              from nodes s
-		                                                               join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"' 
-		                                                                                     and p.nodetypeid = s.nodetypeid)
-		                                                              left outer join (select j.jctnodepropid,
-		                                                                                      j.nodetypepropid,
-		                                                                                      j.nodeid, j.nodeidtablename,
-		                                                                                      j.field1, j.field2, j.field3, j.field4, j.field5,
-		                                                                                      j.gestalt,
-		                                                                                      j.field1_fk, j.field1_numeric, j.field1_date,
-		                                                                                      j.field2_numeric, j.field2_date
-		                                                                                 from jct_nodes_props j) jnp
-		                                                                           ON (jnp.nodeid = s.nodeid 
-		                                                                           and jnp.nodetypepropid = p.nodetypepropid)
-		                                                             where " + FilterValue + @"))";
-								}
-								else
-								{
-									Where += @" and (n.nodeid not in (
-		                                            select jnp.nodeid
-		                                              from jct_nodes_props jnp
-		                                              join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
-		                                              join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
-		                                             where op.objectclasspropid = " + Prop.ObjectClassPropId + @")
-		                                            or n.nodeid in (select s.nodeid 
-		                                                              from nodes s
-		                                                              join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
-		                                                              join nodetype_props p on (p.objectclasspropid = op.objectclasspropid  
-		                                                                                    and p.nodetypeid = s.nodetypeid)
-		                                                              left outer join (select j.jctnodepropid,
-		                                                                                      j.nodetypepropid,
-		                                                                                      j.nodeid, j.nodeidtablename,
-		                                                                                      j.field1, j.field2, j.field3, j.field4, j.field5,
-		                                                                                      j.gestalt,
-		                                                                                      j.field1_fk, j.field1_numeric, j.field1_date,
-		                                                                                      j.field2_numeric, j.field2_date
-		                                                                                 from jct_nodes_props j) jnp
-		                                                                           ON (jnp.nodeid = s.nodeid 
-		                                                                           and jnp.nodetypepropid = p.nodetypepropid)
-		                                                             where " + FilterValue + @"))";
-								}
-							}
-							else if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
-							{
-								if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-								{
-									Where += @" and n.nodeid in (select s.nodeid 
-		                                                               from nodes s
-		                                                               join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"' 
-		                                                                                     and p.nodetypeid = s.nodetypeid)
-		                                                               left outer join (select j.jctnodepropid,
-		                                                                                       j.nodetypepropid,
-		                                                                                       j.nodeid, j.nodeidtablename,
-		                                                                                       j.field1, j.field2, j.field3, j.field4, j.field5,
-		                                                                                       j.gestalt,
-		                                                                                       j.field1_fk, j.field1_numeric, j.field1_date,
-		                                                                                       j.field2_numeric, j.field2_date
-		                                                                                  from jct_nodes_props j) jnp
-		                                                                           ON (jnp.nodeid = s.nodeid 
-		                                                                           and jnp.nodetypepropid = p.nodetypepropid)
-		                                                              where " + FilterValue + @")";
-								}
-								else
-								{
-									Where += @" and n.nodeid in (select s.nodeid 
-		                                                               from nodes s
-		                                                               join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
-		                                                               join nodetype_props p on (p.objectclasspropid = op.objectclasspropid  
-		                                                                                     and p.nodetypeid = s.nodetypeid)
-		                                                               left outer join (select j.jctnodepropid,
-		                                                                                       j.nodetypepropid,
-		                                                                                       j.nodeid, j.nodeidtablename,
-		                                                                                       j.field1, j.field2, j.field3, j.field4, j.field5,
-		                                                                                       j.gestalt,
-		                                                                                       j.field1_fk, j.field1_numeric, j.field1_date,
-		                                                                                       j.field2_numeric, j.field2_date
-		                                                                                  from jct_nodes_props j) jnp 
-		                                                                           ON (jnp.nodeid = s.nodeid 
-		                                                                           and jnp.nodetypepropid = p.nodetypepropid)
-		                                                              where " + FilterValue + @")";
-								}
+                        if( FilterSubField.RelationalTable == string.Empty )
+                        {
 
-							}
-							else if( Filter.Value != String.Empty )
-							{
-								if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-								{
-									Where += @" and n.nodeid in (select s.nodeid
-		                                                               from nodes s
-		                                                               join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"' 
-		                                                                                     and p.nodetypeid = s.nodetypeid)
-		                                                               left outer join (select j.jctnodepropid,
-		                                                                                       j.nodetypepropid,
-		                                                                                       j.nodeid, j.nodeidtablename,
-		                                                                                       field1, field2, field3, field4, field5,
-		                                                                                       j.gestalt,
-		                                                                                       j.field1_fk, j.field1_numeric, j.field1_date,
-		                                                                                       j.field2_numeric, j.field2_date
-		                                                                                  from jct_nodes_props j) jnp
-		                                                                           ON (jnp.nodeid = s.nodeid 
-		                                                                           and jnp.nodetypepropid = p.nodetypepropid)
-		                                                              where " + FilterValue + @")";
-								}
-								else
-								{
-									Where += @" and n.nodeid in (select s.nodeid
-		                                                               from nodes s
-		                                                               join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
-		                                                               join nodetype_props p on (p.objectclasspropid = op.objectclasspropid  
-		                                                                                     and p.nodetypeid = s.nodetypeid)
-		                                                               left outer join (select j.jctnodepropid,
-		                                                                                       j.nodetypepropid,
-		                                                                                       j.nodeid, j.nodeidtablename,
-		                                                                                       field1, field2, field3, field4, field5,
-		                                                                                       j.gestalt,
-		                                                                                       j.field1_fk, j.field1_numeric, j.field1_date,
-		                                                                                       j.field2_numeric, j.field2_date
-		                                                                                  from jct_nodes_props j) jnp 
-		                                                                           ON (jnp.nodeid = s.nodeid 
-		                                                                           and jnp.nodetypepropid = p.nodetypepropid)
-		                                                              where " + FilterValue + @")";
-								}
-							}
-						} //  if( FilterSubField.RelationalTable == string.empty )
-						else
-						{
-							Where += " and " + FilterValue; // n." + FilterSubField.Column + " is not null";
-						}
-					} // if( FilterValue != string.Empty )
-				}
-			}
+                            if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                            {
+                                Where += @" and (n.nodeid not in (
+                                  select jnp.nodeid
+		                            from jct_nodes_props jnp
+		                            join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
+                                if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                                {
+                                    Where += @"  where p.firstpropversionid = " + Prop.FirstVersionNodeTypeProp.PropId + @")";
+                                }
+                                else
+                                {
+                                    Where += @"   join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
+		                           where op.objectclasspropid = " + Prop.ObjectClassPropId + @")";
+                                }
+                                Where += @"     or ";
+
+                            }
+                            else
+                            {
+                                Where += @" and (";
+                            }
+
+                            Where += @" n.nodeid in (select s.nodeid from nodes s ";
+
+                            if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                            {
+                                Where += @"            join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"' ";
+                            }
+                            else
+                            {
+                                Where += @"            join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
+		                                     join nodetype_props p on (p.objectclasspropid = op.objectclasspropid  ";
+                            }
+                            Where += @"                                         and p.nodetypeid = s.nodetypeid)
+                                             left outer join (select j.jctnodepropid,
+		                                                             j.nodetypepropid, j.nodeid, j.nodeidtablename,
+		                                                             j.field1, j.field2, j.field3, j.field4, j.field5,
+		                                                             j.gestalt,
+		                                                             j.field1_fk, j.field1_numeric, j.field1_date,
+		                                                             j.field2_numeric, j.field2_date
+		                                                             from jct_nodes_props j) jnp
+		                                                  ON (jnp.nodeid = s.nodeid and jnp.nodetypepropid = p.nodetypepropid)
+		                                     where " + FilterValue + @"))";
+                        } // if( FilterSubField.RelationalTable == string.empty )
+                        else
+                        {
+                            Where += " and " + FilterValue; // n." + FilterSubField.Column + " is not null";
+                        }
+                    } // if we have a filter
+				} // foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
+			} // foreach( CswNbtViewProperty Prop in Relationship.Properties )
+
 
 			if( Relationship.NodeIdsToFilterOut.Count > 0 )
 			{
@@ -533,8 +440,6 @@ namespace ChemSW.Nbt
 			if( !_IncludeSystemNodes )
 				Where += " and n.issystem = '0' ";
 
-
-
 			string Sql = Select + " " + From + " " + Where + " " + OrderBy;
 
 			CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
@@ -554,6 +459,7 @@ namespace ChemSW.Nbt
 			return ResultTable;
 
 		} //_getNodes()
+
 
 		private void _getNodeTypeProperties( CswNbtNodeKey Key, CswCommaDelimitedString PropsInClause, ref DataTable ResultTable )
 		{

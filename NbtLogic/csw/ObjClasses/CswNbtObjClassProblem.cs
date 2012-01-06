@@ -15,6 +15,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string ClosedPropertyName { get { return "Closed"; } }
         public static string ReportedByPropertyName { get { return "Reported By"; } }
         public static string FailurePropertyName { get { return "Failure"; } }
+
         public static string PartsXValueName { get { return "Service"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -40,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             // BZ 10051 - Set the Date Opened to today
-            DateOpened.DateTimeValue = DateTime.Today;
+            DateOpened.DateTimeValue = DateTime.Now;
             ReportedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
             ReportedBy.CachedNodeName = _CswNbtResources.CurrentNbtUser.Username;
 

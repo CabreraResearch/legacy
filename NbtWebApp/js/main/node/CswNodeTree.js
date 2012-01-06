@@ -12,8 +12,10 @@
         'init': function (options)     // options are defined in _getTreeContent()
         {
             function getFirstLevel($treediv, pagesize, pageno) {
-                var realpagesize = tryParseNumber(pagesize, 0);
+                var realpagesize = tryParseNumber(pagesize, 10);
+                if (realpagesize < 1) realpagesize = 10;
                 var realpageno = tryParseNumber(pageno, 0);
+                if (realpageno < 1) realpageno = 0;
 
                 CswAjaxJson({
                     url: o.fetchTreeFirstLevelUrl,
@@ -187,8 +189,7 @@
                 //SelectFirstChild: true,
                 ShowCheckboxes: false,
                 ShowToggleLink: true,
-                IncludeInQuickLaunch: true,
-                PageSize: 10     // Number of first level nodes to fetch at one time
+                IncludeInQuickLaunch: true
             };
             if (options) $.extend(o, options);
 
@@ -199,7 +200,7 @@
             var idPrefix = o.ID + '_';
             var $this = $(this);
 
-            var $togglelinkdiv, $togglelink;
+            var $togglelink;
             if (o.ShowToggleLink) {
                 $togglelink = $this.CswLink({
                     ID: o.ID + '_toggle',
@@ -226,6 +227,7 @@
                 // ParentNodeKey: '',
                 IncludeNodeRequired: o.IncludeNodeRequired,
                 IncludeNodeKey: tryParseString(o.cswnbtnodekey),
+                IncludeNodeId: tryParseString(o.nodeid),
                 // ShowEmpty: o.showempty,
                 // ForSearch: o.forsearch,
                 // NodePk: tryParseString(o.nodeid),
@@ -245,18 +247,17 @@
                     var treePlugins = ["themes", "ui", "types", "crrm"];
                     var jsonTypes = data.types;
 
-                    var newviewid = data.viewid;
+                    var newviewid = data.newviewid;
                     if (false === isNullOrEmpty(newviewid) && o.viewid !== newviewid) {
                         o.viewid = newviewid;
                         if (isFunction(o.onViewChange)) {
-                            o.onViewChange(o.viewid, 'tree');
+                            o.onViewChange(o.viewid, o.viewmode);
                         }
                     }
 
                     selectid = data.selectid;
-
                     var treeThemes = { "dots": true };
-                    if (data.viewmode === CswViewMode.list.name) {
+                    if (o.viewmode === CswViewMode.list.name) {
                         treeThemes = { "dots": false };
                     }
 
@@ -309,9 +310,8 @@
                     // cause a race condition.
 
                     rootnode = addNodeToTree($treediv, 1, false, data.root);
-
                     if (isTrue(data.result)) {
-                        getFirstLevel($treediv, o.PageSize, 0);
+                        getFirstLevel($treediv, data.pagesize, 0);
                     } else {
                         addNodeToTree($treediv, 1, rootnode, { data: { title: "No Results" }, attr: { id: idPrefix + 'noresults'} });
                     }
@@ -332,10 +332,17 @@
             if (optSelect) {
                 $.extend(o, optSelect);
             }
-            var $treediv = $(this).children('.treediv');
+            var $treediv = $(this);
             var idPrefix = $treediv.CswAttrDom('id');
             $treediv.jstree('select_node', '#' + idPrefix + o.newnodeid);
+        },
+
+        'expandAll': function () {
+            var $treediv = $(this);
+            var rootnode = $treediv.find('li').first();
+            $treediv.jstree('open_all', rootnode);
         }
+
     };
 
     function firstSelectNode(myoptions) {
