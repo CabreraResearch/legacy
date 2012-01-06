@@ -1,10 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using System.Xml;
-using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Security;
 
@@ -52,7 +46,7 @@ namespace ChemSW.Nbt.MetaData
             if( CswNbtSubField == null )
                 throw ( new CswDniException( "CswNbtPropFilterSql.renderViewPropFilter() got a null CswNbtSubField for view: " + CswNbtViewPropertyFilterIn.View.ViewName ) );
 
-            if ( !CswNbtSubField.SupportedFilterModes.Contains( CswNbtViewPropertyFilterIn.FilterMode ) )
+            if( !CswNbtSubField.SupportedFilterModes.Contains( CswNbtViewPropertyFilterIn.FilterMode ) )
                 throw ( new CswDniException( "Filter mode " + CswNbtViewPropertyFilterIn.FilterMode.ToString() + " is not supported for sub field: " + CswNbtSubField.Name + "; view name is: " + CswNbtViewPropertyFilterIn.View.ViewName ) );
 
             string Column = CswNbtSubField.Column.ToString();
@@ -68,12 +62,12 @@ namespace ChemSW.Nbt.MetaData
             //This is sort of a hacky way of dealing with the bz # 6936 issue. But since it's all going to need to be
             //revisited for bz #6682 anyway, this seems like the clearest and simplest way of handling the problem.
             //Also, see 7095
-            if ( CswNbtPropFilterSql.PropertyFilterMode.Null != CswNbtViewPropertyFilterIn.FilterMode &&
+            if( CswNbtPropFilterSql.PropertyFilterMode.Null != CswNbtViewPropertyFilterIn.FilterMode &&
                  CswNbtPropFilterSql.PropertyFilterMode.NotNull != CswNbtViewPropertyFilterIn.FilterMode )
             {
-                if ( UseNumericHack )
+                if( UseNumericHack )
                 {
-                    if (
+                    if(
                         CswNbtPropFilterSql.PropertyFilterMode.Begins == CswNbtViewPropertyFilterIn.FilterMode ||
                         CswNbtPropFilterSql.PropertyFilterMode.Contains == CswNbtViewPropertyFilterIn.FilterMode ||
                         CswNbtPropFilterSql.PropertyFilterMode.Ends == CswNbtViewPropertyFilterIn.FilterMode
@@ -85,7 +79,7 @@ namespace ChemSW.Nbt.MetaData
 
                     string NumericValueColumn = " nvl(" + FilterTableAlias + Column + ", 0) ";
 
-                    switch ( CswNbtViewPropertyFilterIn.FilterMode )
+                    switch( CswNbtViewPropertyFilterIn.FilterMode )
                     {
                         case CswNbtPropFilterSql.PropertyFilterMode.Equals:
                             ReturnVal = NumericValueColumn + " = " + CswNbtViewPropertyFilterIn.Value;
@@ -106,54 +100,54 @@ namespace ChemSW.Nbt.MetaData
                             ReturnVal = NumericValueColumn + " <> " + CswNbtViewPropertyFilterIn.Value;
                             break;
                         default:
-							throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+                            throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
                     }  //switch
                 }
                 else
                 {
                     string CasePrepend = "";
                     string CaseAppend = "";
-                    if ( !CswNbtViewPropertyFilterIn.CaseSensitive )
+                    if( !CswNbtViewPropertyFilterIn.CaseSensitive )
                     {
                         CasePrepend = "lower(";
                         CaseAppend = ")";
                     }
 
                     string NonNumericValueColumn = CasePrepend + FilterTableAlias + Column + CaseAppend;
-					string SafeValue = CswNbtViewPropertyFilterIn.Value.Replace( "'", "''" );   // case 21455
+                    string SafeValue = CswNbtViewPropertyFilterIn.Value.Replace( "'", "''" );   // case 21455
 
-                    switch ( CswNbtViewPropertyFilterIn.FilterMode )
+                    switch( CswNbtViewPropertyFilterIn.FilterMode )
                     {
                         case CswNbtPropFilterSql.PropertyFilterMode.Begins:
-							ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "%'" + CaseAppend;
+                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "%'" + CaseAppend;
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.Contains:
-							ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "%'" + CaseAppend;
+                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "%'" + CaseAppend;
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.Ends:
-							ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "'" + CaseAppend;
+                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "'" + CaseAppend;
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.Equals: //covers the case of clobs
-							ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
+                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.GreaterThan:
-							ReturnVal = NonNumericValueColumn + " > '" + SafeValue + "'";
+                            ReturnVal = NonNumericValueColumn + " > '" + SafeValue + "'";
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals:
-							ReturnVal = NonNumericValueColumn + " >= '" + SafeValue + "'";
+                            ReturnVal = NonNumericValueColumn + " >= '" + SafeValue + "'";
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.LessThan:
-							ReturnVal = NonNumericValueColumn + " < '" + SafeValue + "'";
+                            ReturnVal = NonNumericValueColumn + " < '" + SafeValue + "'";
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals:
-							ReturnVal = NonNumericValueColumn + " <= '" + SafeValue + "'";
+                            ReturnVal = NonNumericValueColumn + " <= '" + SafeValue + "'";
                             break;
                         case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-							ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend +
-										" or " + NonNumericValueColumn + " is null )";   // case 21623
+                            ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend +
+                                        " or " + NonNumericValueColumn + " is null )";   // case 21623
                             break;
                         default:
-							throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+                            throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
                     }  //switch
 
                 }//if-else UserNumericHack
@@ -162,7 +156,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 string NullValueColumn = FilterTableAlias + Column;
 
-                switch ( CswNbtViewPropertyFilterIn.FilterMode )
+                switch( CswNbtViewPropertyFilterIn.FilterMode )
                 {
                     case CswNbtPropFilterSql.PropertyFilterMode.NotNull:
                         ReturnVal = NullValueColumn + " is not null";
@@ -171,7 +165,7 @@ namespace ChemSW.Nbt.MetaData
                         ReturnVal = NullValueColumn + " is null";
                         break;
                     default:
-						throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+                        throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
                 }  //switch
 
             }//if-else filter mode is not null or not-null
