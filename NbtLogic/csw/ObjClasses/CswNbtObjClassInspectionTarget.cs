@@ -11,7 +11,6 @@ namespace ChemSW.Nbt.ObjClasses
         public static string StatusPropertyName { get { return "Status"; } }
         public static string LocationPropertyName { get { return "Location"; } }
         public static string DescriptionPropertyName { get { return "Description"; } }
-        public static string TypePropertyName { get { return "Type"; } }
         public static string BarcodePropertyName { get { return "Barcode"; } }
         public static string InspectionTargetGroupPropertyName { get { return "Inspection Target Group"; } }
 
@@ -174,14 +173,6 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[LocationPropertyName].AsLocation );
-            }
-        }
-
-        public CswNbtNodePropList Type
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[TypePropertyName].AsList );
             }
         }
 

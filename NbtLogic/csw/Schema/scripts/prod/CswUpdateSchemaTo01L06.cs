@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp ChemSwAdminPasswordOcp = CustomerOc.getObjectClassProp( "ChemSW Admin Password" );
             if( null != ChemSwAdminPasswordOcp )
             {
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ChemSwAdminPasswordOcp );
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ChemSwAdminPasswordOcp, true );
             }
 
             #endregion Case 24415

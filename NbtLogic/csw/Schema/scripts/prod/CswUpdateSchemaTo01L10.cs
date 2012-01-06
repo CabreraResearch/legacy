@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using System.Collections.ObjectModel;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -57,6 +58,23 @@ namespace ChemSW.Nbt.Schema
             }
 
             #endregion Case 24566
+
+            #region Case 24564
+
+            CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+            CswNbtMetaDataObjectClassProp TypeOcp = InspectionTargetOc.getObjectClassProp( "Type" );
+
+            Collection<CswNbtMetaDataNodeTypeProp> NodeTypeProps = _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( TypeOcp, false );
+
+            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeProps )
+            {
+                if( string.IsNullOrEmpty( Prop.ListOptions ) )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( Prop );
+                }
+            }
+
+            #endregion Case 24564
 
         }//Update()
 
