@@ -70,7 +70,8 @@
                         if (tryParseNumber(data.nodecountend, -1) > 0) {
                             getLevel($treediv, reallevel + 1, data.nodecountstart, data.nodecountend);
                         }
-                    } // success
+                    }, // success
+                    watchGlobal: false
                 }); // ajax
             } // getLevel()
 

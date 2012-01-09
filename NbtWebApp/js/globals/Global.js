@@ -169,12 +169,15 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
         error: null, //function () { },
         overrideError: false,
         formobile: false,
-        async: true
+        async: true,
+        watchGlobal: true
     };
     if (options) $.extend(o, options);
 
     //var starttime = new Date();
-    _ajaxCount++;
+    if(o.watchGlobal) {
+        _ajaxCount+=1;
+    }
     if(isFunction(onBeforeAjax)) onBeforeAjax();
 
     $.ajax({
@@ -185,7 +188,9 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(o.data),
         success: function (data, textStatus, xmlHttpRequest) {
-            _ajaxCount--;
+            if(o.watchGlobal) {
+                _ajaxCount-=1;
+            }
             //var endtime = new Date();
             //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
             var result = $.parseJSON(data.d);
@@ -226,7 +231,9 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
             if (isFunction(onAfterAjax)) onAfterAjax(true);
         }, // success{}
         error: function (xmlHttpRequest, textStatus, errorThrown) {
-            _ajaxCount--;
+            if(o.watchGlobal) {
+                _ajaxCount-=1;
+            }
             //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
             log("Webservice Request (" + o.url + ") Failed: " + textStatus);
             if (isFunction(o.error)) {
@@ -259,14 +266,16 @@ function CswAjaxXml(options) {
         success: function () { },
         error: function () { },
         formobile: false,
-        async: true
+        async: true,
+        watchGlobal: true
     };
 
     if (options) $.extend(o, options);
     
-    if (!isNullOrEmpty(o.url))
-    {
-        _ajaxCount++;
+    if (!isNullOrEmpty(o.url)) {
+        if(o.watchGlobal) {
+            _ajaxCount+=1;
+        }
         $.ajax({
             type: 'POST',
             async: o.async,
@@ -276,7 +285,9 @@ function CswAjaxXml(options) {
             data: $.param(o.data),     // should be 'field1=value&field2=value'
             success: function (data, textStatus, xmlHttpRequest)
             {
-                _ajaxCount--;
+                if(o.watchGlobal) {
+                    _ajaxCount-=1;
+                }
                 //var endtime = new Date();
                 //$('body').append("[" + endtime.getHours() + ":" + endtime.getMinutes() + ":" + endtime.getSeconds() + "] " + o.url + " time: " + (endtime - starttime) + "ms<br>");
 
@@ -320,9 +331,10 @@ function CswAjaxXml(options) {
                 }
 
             }, // success{}
-            error: function (xmlHttpRequest, textStatus, errorThrown)
-            {
-                _ajaxCount--;
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+                if(o.watchGlobal) {
+                    _ajaxCount-=1;
+                }
                 //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
                 log("Webservice Request (" + o.url + ") Failed: " + textStatus);
                 o.error();
@@ -460,7 +472,6 @@ function _finishLogout() {
     }
 }
 
-//#endregion Ajax
 
 //#region Check Changes
 var changed = new Number(0);
