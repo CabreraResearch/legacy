@@ -18,8 +18,7 @@
         //#region Variable Declaration
         var o = {
             ID: 'cswScheduledRulesGrid',
-            onCancel: null, //function($wizard) {},
-            onFinish: null, //function($wizard) {},
+            exitFunc: null, //function($wizard) {},
             startingStep: 1
         };
         if (options) $.extend(o, options);
@@ -208,8 +207,8 @@
             FinishText: 'Finish',
             onNext: handleNext,
             onPrevious: handlePrevious,
-            onCancel: o.onFinish,
-            onFinish: o.onFinish,
+            onCancel: o.exitFunc, //There is nothing to finish or cancel, just exixt the wizard
+            onFinish: o.exitFunc, 
             doNextOnInit: false
         });
 
