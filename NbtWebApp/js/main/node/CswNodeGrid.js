@@ -72,80 +72,16 @@
                 $.extend(o, optJqGrid);
             }
             var $parent = $(this);
-            var currentPage = (function() {
-                var page = 0;
-                return function(direction) {
-                    var ret = page;
-                    switch(direction) {
-                        case 'forward':
-                            ret += 1;
-                            break;
-                        case 'backward':
-                            if(ret > 0) {
-                                ret -= 1;
-                            }
-                            break;
-                    }
-                    return ret;
-                };
-            }());
 
             function getGridRowsUrl() {
-                return o.gridPageUrl + '?viewid=' + o.viewid + '&IsReport=' + forReporting + '"';
+                return o.gridPageUrl + '?viewid=' + o.viewid + '&IsReport=' + forReporting + '"&IdPrefix=' + o.ID + '&IncludeNodeKey=' + o.cswnbtnodekey;
             }
 
-            function prevClick(eventObj, firstRow) {
-                var firstNodeKey = firstRow.cswnbtnodekey,
-                    prevNodeKey, currentIdx,
-                    pageContext = $parent.data('pageContext');
-                currentPage('backward');
-                if(false === isNullOrEmpty(pageContext)) {
-                    currentIdx = cswIndexOf(pageContext, firstNodeKey);
-                    if (currentIdx > 0) {
-                        prevNodeKey = pageContext[currentIdx - 1];
-                    } 
-                    if (false === isNullOrEmpty(prevNodeKey)) {
-                        gridRowsUrl = getGridRowsUrl(prevNodeKey);
-                        ret.changeGridOpts({ gridOpts: { url: gridRowsUrl } });
-                    }
-                }
-            }
-    
-            function nextClick(eventObj, firstRow) {
-                var firstNodeKey = firstRow.cswnbtnodekey,
-                    pageContext = $parent.data('pageContext'),
-                    moreNodeKey = $parent.data('moreNodeKey');
-                currentPage('forward');
-                if (false === isNullOrEmpty(firstNodeKey) &&
-                    false === isNullOrEmpty(moreNodeKey)) {
-                    if (isNullOrEmpty(pageContext)) {
-                        pageContext = [];
-                    }
-
-                    if (false === contains(pageContext, firstNodeKey)) {
-                        pageContext.push(firstNodeKey);
-                    }
-
-                    $parent.data('pageContext', pageContext);
-                    gridRowsUrl = getGridRowsUrl(moreNodeKey);
-                    ret.changeGridOpts({ gridOpts: { url: gridRowsUrl } });
-                }
-            }
-
-            function onLoadComplete(data) {
-                if (false === isNullOrEmpty(data) && contains(data,'moreNodeKey')) {
-                    $parent.data('moreNodeKey', data.moreNodeKey);
-                }
-            }
-            
             if (o.reinit) $parent.empty();
 
             var forReporting = (o.EditMode === EditMode.PrintReport.name),
-                gridRowsUrl = getGridRowsUrl(o.cswnbtnodekey),
                 ret;
 
-            $parent.data('firstNodeKey', o.cswnbtnodekey);
-            
             /* fetchGridSkeleton */
             (function () {
 
@@ -155,7 +91,7 @@
                         url: o.runGridUrl,
                         data: {
                             ViewId: o.viewid,
-                            IdPrefix: '',
+                            IdPrefix: o.ID,
                             IncludeNodeKey: o.cswnbtnodekey,
                             IncludeInQuickLaunch: true
                         },
@@ -214,20 +150,12 @@
                         cswGridOpts.gridOpts.datatype = 'json';
                         cswGridOpts.gridOpts.url = getGridRowsUrl();
                                 
-                        cswGridOpts.gridOpts.loadComplete = onLoadComplete;
                         cswGridOpts.gridOpts.jsonReader = {
                             root: 'rows',
                             page: 'page',
                             total: 'total',
                             records: 'records',
                             repeatitems: false
-                        };
-
-                        cswGridOpts.customPager = {
-                            prevDisabled: true,
-                            nextDisabled: false,
-                            onPrevPageClick: prevClick,
-                            onNextPageClick: nextClick
                         };
 
                         cswGridOpts.optNavEdit = {

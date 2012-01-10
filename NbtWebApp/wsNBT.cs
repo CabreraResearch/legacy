@@ -633,10 +633,11 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string runGrid( string ViewId, string IdPrefix, string IncludeNodeKey, bool IncludeInQuickLaunch )
+        public string runGrid( string ViewId, string IdPrefix, string IncludeNodeKey, string IncludeInQuickLaunch )
         {
             JObject ReturnVal = new JObject();
             string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( IncludeNodeKey );
+            bool IsQuickLaunch = CswConvert.ToBoolean( IncludeInQuickLaunch );
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -656,12 +657,14 @@ namespace ChemSW.Nbt.WebServices
                         {
                             ( View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
                             ( View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( RealNodeKey.NodeId );
+                            //If this is a grid prop, no quick launch
+                            IsQuickLaunch = false;
                         }
                     }
 
                     var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey, IdPrefix );
 
-                    ReturnVal = ws.runGrid( IncludeInQuickLaunch );
+                    ReturnVal = ws.runGrid( IsQuickLaunch );
                 }
 
                 _deInitResources();
@@ -679,7 +682,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public void getGridPage( string ViewId, string Page, string Rows, string IsReport )
+        public void getGridPage( string ViewId, string Page, string Rows, string IsReport, string IncludeNodeKey, string IdPrefix )
         {
             JObject ReturnVal = new JObject();
 
@@ -692,7 +695,14 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View );
+                    CswNbtNodeKey RealNodeKey = _getNodeKey( IncludeNodeKey );
+                    if( null != RealNodeKey )
+                    {
+                        ( View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
+                        ( View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( RealNodeKey.NodeId );
+                    }
+
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey, IdPrefix );
                     ReturnVal = g.getGridPage( CswConvert.ToInt32( Page ) - 1, CswConvert.ToInt32( Rows ), CswConvert.ToBoolean( IsReport ) );
                 }
 
@@ -3488,6 +3498,20 @@ namespace ChemSW.Nbt.WebServices
             }
             return View;
         } // _getView()
+
+        private CswNbtNodeKey _getNodeKey( string NodeKeyString )
+        {
+            CswNbtNodeKey ret = null;
+            if( false == string.IsNullOrEmpty( NodeKeyString ) )
+            {
+                CswNbtNodeKey tryRet = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( NodeKeyString ) );
+                if( null != tryRet.NodeId )
+                {
+                    ret = tryRet;
+                }
+            }
+            return ret;
+        }
 
         #endregion Private
     }//wsNBT
