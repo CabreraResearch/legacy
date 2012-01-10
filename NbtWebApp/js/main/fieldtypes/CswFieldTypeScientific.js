@@ -21,20 +21,23 @@
                 var $ValueNTB = $Div.CswNumberTextBox({
                     ID: o.ID + '_val',
                     Value: (false === o.Multi) ? tryParseString(propVals.base).trim() : CswMultiEditDefaultValue,
-                    Precision: 6,
+                    MaxValue: 999999999,
+                    Precision: 0,
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
                     onchange: o.onchange,
-                    width: '60px'
+                    width: '65px'
                 });
                 $Div.append('E');
                 var $ExponentNTB = $Div.CswNumberTextBox({
                     ID:  o.ID + '_exp',
                     Value: (false === o.Multi) ? tryParseString(propVals.exponent).trim() : CswMultiEditDefaultValue,
+                    MaxValue: 999999,
+                    Precision: 0,
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
                     onchange: o.onchange,
-                    width: '25px'
+                    width: '40px'
                 });
 
                 if (!isNullOrEmpty($ValueNTB) && $ValueNTB.length > 0) {

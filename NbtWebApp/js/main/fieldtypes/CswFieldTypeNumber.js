@@ -11,14 +11,18 @@
     var methods = {
         init: function(o) {
 
-            var $Div = $(this);
-            var propVals = o.propData.values;
+            var $Div = $(this),
+                propVals = o.propData.values,
+                precision = tryParseNumber(propVals.precision, 6),
+                ceilingVal = '999999999' + ChemSW.tools.getMaxValueForPrecision(precision);
+            
             var $NumberTextBox = $Div.CswNumberTextBox({
                 ID: o.ID,
                 Value: (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue,
-                MinValue: tryParseString(propVals.minvalue),
-                MaxValue: tryParseString(propVals.maxvalue),
-                Precision: tryParseString(propVals.precision),
+                MinValue: tryParseNumber(propVals.minvalue),
+                MaxValue: tryParseNumber(propVals.maxvalue),
+                ceilingVal: ceilingVal,
+                Precision: precision,
                 ReadOnly: isTrue(o.ReadOnly),
                 Required: isTrue(o.Required),
                 onchange: o.onchange

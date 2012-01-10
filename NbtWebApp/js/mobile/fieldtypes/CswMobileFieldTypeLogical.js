@@ -54,7 +54,7 @@ function CswMobileFieldTypeLogical(ftDef) {
                                 'class': CswMobileCssClasses.fieldset.name,
                                 'id': propId + divSuffix
                             })
-                            .CswAttrXml({
+                            .CswAttrNonDom({
                                 'data-role': 'controlgroup',
                                 'data-type': 'horizontal'
                             })
@@ -88,7 +88,7 @@ function CswMobileFieldTypeLogical(ftDef) {
                 if ((value === 'false' && answers[i] === 'False') ||
                     (value === 'true' && answers[i] === 'True') ||
                         (value === '' && answers[i] === 'Null')) {
-                    $input.CswAttrXml({ 'checked': 'checked' });
+                    $input.CswAttrDom({ 'checked': 'checked' });
                 }
             } // if (answers.hasOwnProperty(i))
         } // for (var i = 0; i < answers.length; i++)

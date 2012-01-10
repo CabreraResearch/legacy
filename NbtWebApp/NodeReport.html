@@ -20,15 +20,26 @@
 
     <script type="text/javascript">
 
-        $(document).ready(function ()
-        {
-            var qs = $.CswQueryString();
-            $('#ReportContent').CswNodeTabs({
-                ID: 'nodereporttabs',
-                nodeids: [ qs.nodeid ],
-                nodekeys: [ qs.cswnbtnodekey ],
-                EditMode: EditMode.PrintReport.name
+    
+        $(document).ready(function () {
+            var initReport = function() {
+                if ($.CswQueryString) {
+                    var qs = $.CswQueryString();
+                    $('#ReportContent').CswNodeTabs({
+                        ID: 'nodereporttabs',
+                        nodeids: [qs.nodeid],
+                        nodekeys: [qs.cswnbtnodekey],
+                        EditMode: EditMode.PrintReport.name
+                    });
+                } else if ($.browser.msie) {
+                    setTimeout(initReport, 100);
+                }
+            };
+            
+            $(window).load(function() {
+                initReport();    
             });
+           
         });
 
     </script>

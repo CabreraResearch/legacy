@@ -295,14 +295,18 @@ namespace ChemSW.Nbt.WebServices
 
             #region Set new InspectionTarget Props and Tabs
 
-            //NodeTypeName Template
-            CswNbtMetaDataNodeTypeProp ItDescriptionNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
-            RetInspectionTargetNt.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.BarcodeProperty.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName );
-
             //Inspection Target has Inspection Target Group Relationship
             CswNbtMetaDataNodeTypeProp ItInspectionGroupNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
             ItInspectionGroupNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionTargetGroupNt.NodeTypeId );
             ItInspectionGroupNtp.PropName = InspectionGroupName;
+
+            //NodeTypeName Template
+            CswNbtMetaDataNodeTypeProp ItDescriptionNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
+            RetInspectionTargetNt.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.BarcodeProperty.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName );
+            ItDescriptionNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, ItInspectionGroupNtp );
+
+            CswNbtMetaDataNodeTypeProp ItBarcodeNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.BarcodePropertyName );
+            ItBarcodeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, ItDescriptionNtp );
 
             //Inspection Target has a tab to host a grid view of Inspections
             CswNbtMetaDataNodeTypeTab ItInspectionsTab = _CswNbtResources.MetaData.makeNewTab( RetInspectionTargetNt, InspectionDesignName, 2 );

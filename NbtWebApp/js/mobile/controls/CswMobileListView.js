@@ -66,7 +66,7 @@ function CswMobileListView(listDef, $parent, bindEvent) {
                 'data-inset': p['data-inset']
             };
 
-            $ul.CswAttrXml(ulAttr)
+            $ul.CswAttrNonDom(ulAttr)
                 .css(p.cssStyles);
 
             classes = p.cssClass.split(' ');
@@ -105,7 +105,7 @@ function CswMobileListView(listDef, $parent, bindEvent) {
         var $li = addListItem(id, '', onEvent, p);
         $li.CswLink('init', { ID: id + aSuffix, href: 'javascript:void(0);', value: text })
                                               .css('white-space', 'normal')
-                                              .CswAttrXml({
+                                              .CswAttrNonDom({
                                               'data-identity': id,
                                               'data-url': id
                                           });
@@ -186,7 +186,7 @@ function CswMobileListView(listDef, $parent, bindEvent) {
             $li = $('<li id="' + id + liSuffix + '"></li>')
                         .appendTo($control);
         }
-        $li.CswAttrXml(p.attr);
+        $li.CswAttrNonDom(p.attr);
         if (!isNullOrEmpty(text)) {
             $li.text(text);
         }

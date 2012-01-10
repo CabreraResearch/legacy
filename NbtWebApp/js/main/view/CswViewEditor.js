@@ -763,7 +763,7 @@
         function bindDeleteBtns(stepno) {
             $('.' + viewEditClasses.vieweditor_deletespan.name).each(function() {
                 var $span = $(this);
-                var arbid = $span.CswAttrXml('arbid');
+                var arbid = $span.CswAttrNonDom('arbid');
                 var $btn = $span.children('div').first();
                 $btn.bind('click', function() {
                     var objUtil = new ObjectHelper(currentViewJson);
@@ -777,7 +777,7 @@
         function bindViewPropFilterBtns(stepno) {
             $('.' + viewEditClasses.vieweditor_addfilter.name).each(function() {
                 var $span = $(this);
-                var arbitraryId = $span.CswAttrXml('arbid');
+                var arbitraryId = $span.CswAttrNonDom('arbid');
 
                 var $btn = $span.find('#' + arbitraryId + '_addfiltbtn');
                 $btn.bind('click', function() {

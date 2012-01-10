@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.PropertySets
             _Scheduler = Scheduler;
             _CswNbtNode = CswNbtNode;
         }
+
         public CswNbtPropertySetSchedulerImpl( CswNbtResources CswNbtResources, ICswNbtPropertySetScheduler Scheduler )
         {
             _CswNbtResources = CswNbtResources;
@@ -29,9 +30,12 @@ namespace ChemSW.Nbt.PropertySets
 
         bool _UpdateFutureTasks = false;
 
-        public void updateNextDueDate()
+        public void updateNextDueDate( bool DeleteFutureNodes = false )
         {
-            if( _Scheduler.DueDateInterval.WasModified || _Scheduler.FinalDueDate.WasModified || _CswNbtNode.New )
+            if( _Scheduler.DueDateInterval.WasModified ||
+                _Scheduler.FinalDueDate.WasModified ||
+                _CswNbtNode.New ||
+                DeleteFutureNodes )
             {
                 DateTime CandidateDueDate = DateTime.MinValue;
                 if( _Scheduler.DueDateInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )

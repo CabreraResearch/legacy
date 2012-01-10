@@ -31,7 +31,7 @@
                 onclick: function() { $div.dialog('close'); o.onYes(); }
             });
 
-            openDialog($div, 300, 250);
+            openDialog($div, 300, 250, null, 'Expire Warning');
 
         }, // ExpireDialog
         AddWelcomeItemDialog: function(options) {
@@ -51,7 +51,7 @@
                 } 
             });
 
-            openDialog($div, 400, 400);
+            openDialog($div, 400, 400, null, 'New Welcome Item');
 
         }, // AddWelcomeItemDialog
         AddViewDialog: function (options) {
@@ -125,18 +125,19 @@
                                     });
             /* Cancel Button */
             $div.CswButton({
-                                    ID: o.ID + '_cancel', 
-                                    enabledText: 'Cancel', 
-                                    disabledText: 'Canceling', 
-                                    onclick: function() {
-                                            $div.dialog('close');
-                                            }
-                                    });    
+                            ID: o.ID + '_cancel', 
+                            enabledText: 'Cancel', 
+                            disabledText: 'Canceling', 
+                            onclick: function() {
+                                    $div.dialog('close');
+                                    }
+                            });    
 
-            openDialog($div, 400, 200);
+            openDialog($div, 400, 200, null, 'New View');
         }, // AddViewDialog
         AddNodeDialog: function (options) {
             var o = {
+                text: '',
                 nodetypeid: '', 
                 relatednodeid: '',
                 onAddNode: function() { }
@@ -146,17 +147,19 @@
                 $.extend(o, options);
             }
 
-            var $div = $('<div></div>');
+            var $div = $('<div></div>'),
+                title = 'New ' + o.text;
             $div.CswNodeTabs({
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
+                relatednodetypeid: o.relatednodetypeid,
                 EditMode: EditMode.AddInPopup.name,
                 onSave: function (nodeid, cswnbtnodekey) {
                     $div.dialog('close');
                     o.onAddNode(nodeid, cswnbtnodekey);
                 },
                 onInitFinish: function() {
-                    openDialog($div, 800, 600);
+                    openDialog($div, 800, 600, null, title);
                 },
                 ShowAsReport: false
             });
@@ -209,7 +212,8 @@
             }
 
             var $div = $('<div></div>'),
-                $nodeType, $category, category = tryParseString(o.category);
+                $nodeType, $category, $addBtn,
+                category = tryParseString(o.category);
             
             $div.append('New ' + o.nodeTypeDescriptor + ': ');
             $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text, value: o.nodetypename, maxlength: o.maxlength });
@@ -219,7 +223,7 @@
                 $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: CswInput_Types.text });
                 $div.append('<br />');
             }
-            $div.CswButton({
+            $addBtn = $div.CswButton({
                     ID: o.objectClassId + '_add',
                     enabledText: 'Add',
                     onclick: function () {
@@ -241,7 +245,10 @@
                                             category: category
                                         });
                                 }
-                            }
+                            },
+                            error: function () {
+                                $addBtn.CswButton('enable');
+                            }       
                         });
                     }
                 });
@@ -342,7 +349,7 @@
 
             _resetLayout();
 
-            openDialog($div, 900, 600, _onclose);
+            openDialog($div, 900, 600, _onclose, 'Edit Layout');
         }, // EditLayoutDialog
         EditNodeDialog: function (options) {
             var o = {
@@ -389,7 +396,7 @@
                     filterToPropId: o.filterToPropId,
                     Multi: o.Multi,    
                     EditMode: myEditMode,
-                    title: o.title,
+                    //title: o.title,
                     tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
                     date: date,
                     onEditView: function(viewid) {
@@ -420,12 +427,11 @@
                     }
                 });
             } // _setupTabs()
-            var title = (false === o.Multi) ? '' : o.nodenames.join(', ');
-            if(o.filterToPropId !== '') {
-                openDialog($div, 600, 400);
-            } else {
-                openDialog($div, 900, 600, null, title);
+            var title = tryParseString(o.title);
+            if(isNullOrEmpty(title)) {
+                title = (false === o.Multi) ? o.nodenames[0] : o.nodenames.join(', ');
             }
+            openDialog($div, 900, 600, null, title);
         }, // EditNodeDialog
         CopyNodeDialog: function (options) {
             var o = {
@@ -445,29 +451,29 @@
                                                     enabledText: 'Copy', 
                                                     disabledText: 'Copying', 
                                                     onclick: function() {
-                                                            copyNode({
-                                                                        'nodeid': o.nodeid, 
-                                                                        'nodekey': o.nodekey, 
-                                                                        'onSuccess': function(nodeid, nodekey) { 
-                                                                            $div.dialog('close');
-                                                                            o.onCopyNode(nodeid, nodekey);
-                                                                        },
-                                                                        'onError':  function() {
-                                                                            $copybtn.CswButton('enable');
-                                                                        }
-                                                                    });
-                                                        }
-                                                    });
+                                                        copyNode({
+                                                            'nodeid': o.nodeid, 
+                                                            'nodekey': o.nodekey, 
+                                                            'onSuccess': function(nodeid, nodekey) { 
+                                                                $div.dialog('close');
+                                                                o.onCopyNode(nodeid, nodekey);
+                                                            },
+                                                            'onError':  function() {
+                                                                $copybtn.CswButton('enable');
+                                                            }
+                                                        });
+                                                    }
+                                             });
             /* Cancel Button */
             $div.CswButton({ID: 'copynode_cancel', 
-                                                        enabledText: 'Cancel', 
-                                                        disabledText: 'Canceling', 
-                                                        onclick: function() {
-                                                                    $div.dialog('close');
-                                                                }
-                                                        });    
+                            enabledText: 'Cancel', 
+                            disabledText: 'Canceling', 
+                            onclick: function() {
+                                        $div.dialog('close');
+                                    }
+                            });    
                             
-            openDialog($div, 400, 300);
+            openDialog($div, 400, 300, null, 'Confirm Copy');
         }, // CopyNodeDialog       
         DeleteNodeDialog: function (options) {
             var o = {
@@ -491,9 +497,9 @@
                     var n = 0;
                     $nodechecks.each(function() {
                         var $nodecheck = $(this);
-                        o.nodeids[n] = $nodecheck.CswAttrXml('nodeid');
-                        o.cswnbtnodekeys[n] = $nodecheck.CswAttrXml('cswnbtnodekey');
-                        $div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.CswAttrXml('nodename') + '</span>');
+                        o.nodeids[n] = $nodecheck.CswAttrNonDom('nodeid');
+                        o.cswnbtnodekeys[n] = $nodecheck.CswAttrNonDom('cswnbtnodekey');
+                        $div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.CswAttrNonDom('nodename') + '</span>');
                         n++;
                     });
                 } else {
@@ -528,13 +534,13 @@
                                         });
             /* Cancel Button */
             $div.CswButton({ID: 'deletenode_cancel', 
-                                                        enabledText: 'Cancel', 
-                                                        disabledText: 'Canceling', 
-                                                        onclick: function() {
-                                                                    $div.dialog('close');
-                                                            }
-                                                        });
-            openDialog($div, 400, 200);
+                            enabledText: 'Cancel', 
+                            disabledText: 'Canceling', 
+                            onclick: function() {
+                                        $div.dialog('close');
+                                }
+                            });
+            openDialog($div, 400, 200, null, 'Confirm Delete');
         }, // DeleteNodeDialog
         AboutDialog: function () {
             var $div = $('<div></div>');
@@ -564,7 +570,7 @@
                     }
                 }
             });
-            openDialog($div, 600, 400);
+            openDialog($div, 600, 400, null, 'About');
         }, // AboutDialog
         FileUploadDialog: function (options) {
             var o = {
@@ -599,7 +605,7 @@
                             }
             });
 
-                            openDialog($div, 400, 300);
+                            openDialog($div, 400, 300, null, 'Upload');
                         },
 
         'EditMolDialog': function (options) {
@@ -668,7 +674,7 @@
                                             }); // CswButton
                             
 
-            openDialog($div, 400, 300);
+            openDialog($div, 400, 300, null, 'Upload');
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
             var o = {
@@ -718,7 +724,7 @@
                                 }
                             });
 
-            openDialog($div, 800, 600);
+            openDialog($div, 800, 600, null, 'Terms and Conditions');
         }, // ShowLicenseDialog
         PrintLabelDialog: function (options) {
 
@@ -791,7 +797,7 @@
             $("<OBJECT ID='labelx' Name='labelx' classid='clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0' codebase='CafLabelPrintUtil.cab#version=0,1,6,0' width=500 height=300 align=center hspace=0 vspace=0></OBJECT>")
                                 .appendTo($hiddendiv);
 
-            openDialog($div, 400, 300);
+            openDialog($div, 400, 300, null, 'Print');
         }, // PrintLabelDialog
         ErrorDialog: function (error) {
             var $div = $('<div />');

@@ -44,7 +44,7 @@ function CswMobilePageFooter(footerDef, $parent) {
         if (isNullOrEmpty($footer) || $footer.length === 0)
         {
             $footer = $parent.CswDiv('init', { ID: id })
-                .CswAttrXml({
+                .CswAttrNonDom({
                         'data-role': 'footer',
                         'data-position': 'fixed',
                         'data-id': o.dataId,

@@ -59,24 +59,24 @@
         return ret;
     }
 
-    $.fn.CswAttrXml = function (name, value) {
+    $.fn.CswAttrNonDom = function (name, value) {
 
         /// <summary>
-        ///   Gets or sets an Xml attribute
+        ///   Gets or sets an Non-Dom attribute
         /// </summary>
         /// <param name="name" type="String">The name of the attribute</param>
         /// <param name="value" type="String">The value of the attribute</param>
         /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
 
-        var X$xml = $(this);
-        var ret = X$xml;
+        var $this = $(this);
+        var ret = $this;
         try {
             if (typeof name === "object") {
                 for (var prop in name) {
-                    doAttr(X$xml, prop, name[prop]);
+                    doAttr($this, prop, name[prop]);
                 }
             } else {
-                ret = doAttr(X$xml, name, value);
+                ret = doAttr($this, name, value);
             }
             // For proper chaining support
         } catch (e) {
@@ -86,16 +86,16 @@
 
     }; // function(options) {
 
-    function doAttr(X$xml, name, value) {
-        var ret = X$xml;
+    function doAttr($this, name, value) {
+        var ret = $this;
 
         try {
             switch (arguments.length) {
                 case 2:
-                    ret = X$xml.attr(name);
+                    ret = $this.attr(name);
                     break;
                 case 3:
-                    ret = X$xml.attr(name, value);
+                    ret = $this.attr(name, value);
                     break;
             }
         } catch (e) {

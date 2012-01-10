@@ -106,13 +106,13 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-		public Int32 ConstrainObjectClassId
-		{
-			get
-			{
-				return _CswNbtMetaDataNodeTypeProp.FKValue;
-			}
-		}
+        public Int32 ConstrainObjectClassId
+        {
+            get
+            {
+                return _CswNbtMetaDataNodeTypeProp.FKValue;
+            }
+        }
 
         public DataTable Options
         {
@@ -123,29 +123,29 @@ namespace ChemSW.Nbt.PropTypes
                 Data.Columns.Add( KeyColumn, typeof( int ) );
                 Data.Columns.Add( ValueColumn, typeof( bool ) );
 
-				// client handles this now
-				//if( SelectMode != PropertySelectMode.Multiple && !Required )
-				//{
-				//    DataRow NTRow = Data.NewRow();
-				//    NTRow[NameColumn] = "[none]";
-				//    NTRow[KeyColumn] = CswConvert.ToDbVal( Int32.MinValue );
-				//    NTRow[ValueColumn] = ( SelectedNodeTypeIds.Count == 0 );
-				//    Data.Rows.Add( NTRow );
-				//}
+                // client handles this now
+                //if( SelectMode != PropertySelectMode.Multiple && !Required )
+                //{
+                //    DataRow NTRow = Data.NewRow();
+                //    NTRow[NameColumn] = "[none]";
+                //    NTRow[KeyColumn] = CswConvert.ToDbVal( Int32.MinValue );
+                //    NTRow[ValueColumn] = ( SelectedNodeTypeIds.Count == 0 );
+                //    Data.Rows.Add( NTRow );
+                //}
 
                 bool first = true;
                 foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
                 {
-					if( ConstrainObjectClassId == Int32.MinValue || NodeType.ObjectClass.ObjectClassId == ConstrainObjectClassId )
-					{
-						DataRow NTRow = Data.NewRow();
-						NTRow[NameColumn] = NodeType.NodeTypeName;          // latest name
-						NTRow[KeyColumn] = NodeType.FirstVersionNodeTypeId;   // first nodetypeid
-						NTRow[ValueColumn] = ( SelectedNodeTypeIds.Contains( NodeType.FirstVersionNodeTypeId.ToString() ) ||
-											 ( first && Required && SelectedNodeTypeIds.Count == 0 ) );
-						Data.Rows.Add( NTRow );
-						first = false;
-					}
+                    if( ConstrainObjectClassId == Int32.MinValue || NodeType.ObjectClass.ObjectClassId == ConstrainObjectClassId )
+                    {
+                        DataRow NTRow = Data.NewRow();
+                        NTRow[NameColumn] = NodeType.NodeTypeName;          // latest name
+                        NTRow[KeyColumn] = NodeType.FirstVersionNodeTypeId;   // first nodetypeid
+                        NTRow[ValueColumn] = ( SelectedNodeTypeIds.Contains( NodeType.FirstVersionNodeTypeId.ToString() ) ||
+                                             ( first && Required && SelectedNodeTypeIds.Count == 0 ) );
+                        Data.Rows.Add( NTRow );
+                        first = false;
+                    }
                 }
                 return Data;
             }

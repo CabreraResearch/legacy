@@ -79,8 +79,8 @@
             {
                 var $selectdiv = $(this);
                 return {
-                    'type': $selectdiv.CswAttrXml('selectedType'),
-                    'value': $selectdiv.CswAttrXml('selectedValue')
+                    'type': $selectdiv.CswAttrNonDom('selectedType'),
+                    'value': $selectdiv.CswAttrNonDom('selectedValue')
                 };
             }
     };
@@ -130,17 +130,17 @@
         $cell2.append(x.viewname.substr(0,30));
 
         x.$selectdiv.CswComboBox( 'TopContent', $newTopContent );
-        x.$selectdiv.CswAttrXml('selectedType', x.type);
+        x.$selectdiv.CswAttrNonDom('selectedType', x.type);
         switch(x.type.toLowerCase())
         {
             case 'view':
-                x.$selectdiv.CswAttrXml('selectedValue', x.viewid);
+                x.$selectdiv.CswAttrNonDom('selectedValue', x.viewid);
                 break;
             case 'action':
-                x.$selectdiv.CswAttrXml('selectedValue', x.actionid);
+                x.$selectdiv.CswAttrNonDom('selectedValue', x.actionid);
                 break;
             case 'report':
-                x.$selectdiv.CswAttrXml('selectedValue', x.reportid);
+                x.$selectdiv.CswAttrNonDom('selectedValue', x.reportid);
                 break;
         }
 

@@ -5,7 +5,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropertySets;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -45,7 +44,7 @@ namespace ChemSW.Nbt.Actions
                 // CreatedForNTP is the parent or owner of the new node. Inspections created for Inspection Targets, Tasks for Equipment, etc.
                 CswNbtMetaDataNodeTypeProp CreatedForNTP = CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetParentPropertyName );
                 CswNbtMetaDataNodeTypeProp GeneratorNTP = CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratorPropertyName );
-                CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
+                //CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
                 CswNbtMetaDataNodeTypeProp DueDateNTP = CreatedNodeType.getNodeTypePropByObjectClassPropName( GeneratorTarget.GeneratorTargetGeneratedDatePropertyName );
 
                 CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
@@ -108,17 +107,8 @@ namespace ChemSW.Nbt.Actions
             string DateFilter = string.Empty;
             if( DueDate == DateTime.MinValue )
             {
-                switch( GeneratorNodeAsGenerator.NextDueDate.DisplayMode )
-                {
-                    case CswNbtNodePropDateTime.DateDisplayMode.Date:
-                        DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue.Date;
-                        DateFilter = DueDate.ToShortDateString();
-                        break;
-                    case CswNbtNodePropDateTime.DateDisplayMode.DateTime:
-                        DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue;
-                        DateFilter = DueDate.ToShortDateString() + " " + DueDate.ToLongTimeString();
-                        break;
-                }
+                DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue;
+                DateFilter = DueDate.ToShortDateString() + " " + DueDate.ToLongTimeString();
             }
             if( DueDate == DateTime.MinValue || string.IsNullOrEmpty( DateFilter ) )
             {
@@ -129,8 +119,8 @@ namespace ChemSW.Nbt.Actions
             Collection<CswPrimaryKey> Parents = new Collection<CswPrimaryKey>();
 
             //SI will have a ParentView to fetch InspectionTargets which will be used to find existing InsepctionDesign nodes or create new ones
-            bool IsSI = GeneratorNodeAsGenerator.ParentView.ViewId.isSet();
-            if( IsSI )
+            bool GeneratorUsesParentViews = GeneratorNodeAsGenerator.ParentView.ViewId.isSet();
+            if( GeneratorUsesParentViews )
             {
                 CswNbtView ParentsView = _CswNbtResources.ViewSelect.restoreView( GeneratorNodeAsGenerator.ParentView.ViewId );
                 // Case 20482
@@ -147,13 +137,13 @@ namespace ChemSW.Nbt.Actions
             }
 
             //IMCS won't have a ParentView or a ParentType
-            bool IsIMCS = ( false == IsSI &&
+            bool GeneratorDoesNotUseParentViews = ( false == GeneratorUsesParentViews &&
                             Parents.Count == 0 &&
                             string.Empty == GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds.ToString() &&
                             null != GeneratorNodeAsGenerator.Owner &&
                             null != GeneratorNodeAsGenerator.Owner.RelatedNodeId );
 
-            if( IsIMCS )
+            if( GeneratorDoesNotUseParentViews )
             {
                 Parents.Add( GeneratorNodeAsGenerator.Owner.RelatedNodeId );
             }
@@ -165,43 +155,6 @@ namespace ChemSW.Nbt.Actions
                     CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPK, DateFilter );
 
                     bool MakeGeneratorTarget = ( null == ExistingNode );
-                    /* Case 24572 */
-                    if( false == MakeGeneratorTarget && IsSI )
-                    {
-                        CswNbtObjClassInspectionDesign ExistingNodeAsInspectionDesign = CswNbtNodeCaster.AsInspectionDesign( ExistingNode );
-                        MakeGeneratorTarget = ExistingNodeAsInspectionDesign.GeneratedDate.DateTimeValue != DueDate;
-                        if( false == MakeGeneratorTarget )
-                        {
-                            try
-                            {
-                                /* Make sure that the existing target matches one target type of the generator */
-                                Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
-                                SelectedNodeTypeIds = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection();
-                                bool HasMatch = false;
-                                foreach( Int32 NodeTypeId in SelectedNodeTypeIds )
-                                {
-                                    CswNbtMetaDataNodeType GeneratorTargetNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                                    HasMatch = ( HasMatch || GeneratorTargetNodeType.LatestVersionNodeType == ExistingNode.NodeType.LatestVersionNodeType );
-                                }
-                                MakeGeneratorTarget = ( false == HasMatch );
-
-                                if( false == MakeGeneratorTarget )
-                                {
-                                    /* Make sure the Inspection Target matches the Generator's Parent Type */
-                                    Int32 GeneratorParentTypeNodeTypeId = CswConvert.ToInt32( GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds[0] );
-                                    CswNbtMetaDataNodeType GeneratorParentType = _CswNbtResources.MetaData.getNodeType( GeneratorParentTypeNodeTypeId );
-                                    CswNbtNode OwnerNode = _CswNbtResources.Nodes.GetNode( ExistingNodeAsInspectionDesign.Target.RelatedNodeId );
-                                    CswNbtMetaDataNodeType InspectionOwnerType = OwnerNode.NodeType;
-                                    MakeGeneratorTarget = ( GeneratorParentType.LatestVersionNodeType != InspectionOwnerType.LatestVersionNodeType );
-                                }
-                            }
-                            catch
-                            {
-                                MakeGeneratorTarget = true;
-                            }
-                        }
-                    }
-
                     if( MakeGeneratorTarget )
                     {
                         Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();

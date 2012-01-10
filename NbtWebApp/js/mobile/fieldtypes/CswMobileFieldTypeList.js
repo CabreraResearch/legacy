@@ -60,7 +60,7 @@ function CswMobileFieldTypeList(ftDef) {
                                 values: values,
                                 cssclass: CswMobileCssClasses.select.name
                             })
-                .CswAttrXml({ 'data-native-menu': 'false' });
+                .CswAttrNonDom({ 'data-native-menu': 'false' });
     })(); //ctor
         
     function applyFieldTypeLogicToContent($control) {

@@ -38,7 +38,7 @@ function CswMobilePageFactory(theme, mobileStorage, $parent) {
             }
 
             $ret = $parent.CswDiv('init', { ID: id })
-                            .CswAttrXml({
+                            .CswAttrNonDom({
                                     'data-role': 'page',
                                     'data-url': id,
                                     'data-title': headerText,

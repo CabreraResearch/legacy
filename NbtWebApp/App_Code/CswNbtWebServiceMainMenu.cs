@@ -85,7 +85,8 @@ namespace ChemSW.Nbt.WebServices
             JObject Ret = new JObject();
 
             string NodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
-            string NodeIdNum = string.Empty;
+            string RelatedNodeId = string.Empty;
+            string RelatedNodeTypeId = string.Empty;
             CswNbtNode Node = null;
             Int32 NodeTypeId = Int32.MinValue;
             Int32 NodeId = Int32.MinValue;
@@ -98,7 +99,8 @@ namespace ChemSW.Nbt.WebServices
                 {
                     NodeId = Node.NodeId.PrimaryKey;
                     NodeTypeId = Node.NodeTypeId;
-                    NodeIdNum = NodeId.ToString();
+                    RelatedNodeId = NodeId.ToString();
+                    RelatedNodeTypeId = Node.NodeTypeId.ToString();
                 }
             }
 
@@ -160,7 +162,8 @@ namespace ChemSW.Nbt.WebServices
                                                          new JObject(
                                                              new JProperty( "text", Entry.NodeType.NodeTypeName ),
                                                              new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
-                                                             new JProperty( "relatednodeid", NodeIdNum ), //for Grid Props
+                                                             new JProperty( "relatednodeid", RelatedNodeId ), //for Grid Props
+                                                             new JProperty( "relatednodetypeid", RelatedNodeTypeId ),
                                                              new JProperty( "action", MenuActions.AddNode.ToString() ) ) ) ) )
                     {
                         AddObj.Add( AddNodeType );

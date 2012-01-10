@@ -70,7 +70,7 @@ function CswMobileMenuButton(buttonDef, $parent) {
             $button.CswAttrDom(buttonProp);
         }
 
-        $button.CswAttrXml(buttonAttr)
+        $button.CswAttrNonDom(buttonAttr)
             .css(o.cssStyles);
 
         _o = o;
@@ -114,7 +114,7 @@ function CswMobileMenuButton(buttonDef, $parent) {
         /// <param name="keepVisible" type="Boolean">True to show the button.</param>
         /// <returns type="jQuery">Returns the button.</returns>
         _o.dataTransition = tryParseString(transition, 'pop');
-        _$control.CswAttrXml('data-transition', _o.dataTransition);
+        _$control.CswAttrNonDom('data-transition', _o.dataTransition);
         return _$control;
     };
     this.setDataRelationship = function(relationship) {
@@ -122,7 +122,7 @@ function CswMobileMenuButton(buttonDef, $parent) {
         /// <param name="keepVisible" type="Boolean">True to show the button.</param>
         /// <returns type="jQuery">Returns the button.</returns>
         _o.dataRelationship = tryParseString(relationship, 'page');
-        _$control.CswAttrXml('data-rel', _o.dataRelationship);
+        _$control.CswAttrNonDom('data-rel', _o.dataRelationship);
         return _$control;
     };
     this.setDataIcon = function(icon) {
@@ -130,7 +130,7 @@ function CswMobileMenuButton(buttonDef, $parent) {
         /// <param name="keepVisible" type="Boolean">True to show the button.</param>
         /// <returns type="jQuery">Returns the button.</returns>
         _o.dataIcon = tryParseString(icon, '');
-        _$control.CswAttrXml('data-icon', _o.dataIcon);
+        _$control.CswAttrNonDom('data-icon', _o.dataIcon);
         return _$control;
     };
     

@@ -3,7 +3,35 @@
 var ChemSW = ChemSW || (function(undefined) {
     "use strict";
     return {
+        constants: {
+            unknownEnum: 'unknown'    
+        },
         enums: {
+            tryParse: function (cswEnum, enumMember, caseSensitive) {
+                var ret = ChemSW.constants.unknownEnum;
+                if(contains(cswEnum, enumMember)) {
+                    ret = cswEnum[enumMember];
+                } 
+                else if (false === caseSensitive) {
+                    each(cswEnum, function(member) {
+                        if(contains(cswEnum, member) && 
+                            tryParseString(member).toLowerCase() === tryParseString(enumMember).toLowerCase() ) {
+                            ret = member;
+                        }
+                    });
+                }
+                return ret;
+            },
+            EditMode: {
+                Edit: 'Edit',
+                AddInPopup: 'AddInPopup',
+                EditInPopup: 'EditInPopup',
+                Demo: 'Demo',
+                PrintReport: 'PrintReport',
+                DefaultValue: 'DefaultValue',
+                AuditHistoryInPopup: 'AuditHistoryInPopup',
+                Preview: 'Preview' 
+            },
             ErrorType: {
                 warning: {
                     name: 'warning',
@@ -18,10 +46,10 @@ var ChemSW = ChemSW || (function(undefined) {
                 CswNodeDelete: 'CswNodeDelete'
             },
             CswInspectionDesign_WizardSteps: {
-                step1: { step: 1, description: 'Name an Inspection Design' },
-                step2: { step: 2, description: 'Upload Template' },
-                step3: { step: 3, description: 'Review Inspection Design' },
-                step4: { step: 4, description: 'Select an Inspection Target' },
+                step1: { step: 1, description: 'Select an Inspection Target' },
+                step2: { step: 2, description: 'Select an Inspection Design' },
+                step3: { step: 3, description: 'Upload Template' },
+                step4: { step: 4, description: 'Review Inspection Design' },
                 //step5: { step: 5, description: 'Create Inspection Schedules' },
                 step5: { step: 5, description: 'Finish' },
                 stepcount: 5
@@ -47,7 +75,46 @@ var ChemSW = ChemSW || (function(undefined) {
              
         },
         tools: {
-            
+            getMaxValueForPrecision: function (precision, maxPrecision) {
+                var i, 
+                    ret = '',
+                    precisionMax = maxPrecision || 6;
+                if (precision > 0 && 
+                    precision <= precisionMax) {
+                    
+                    ret += '.';
+                    for(i=0; i < precision; i += 1) {
+                        ret += '9';
+                    }
+                }
+                return ret;
+            },
+            loadResource: function(filename, filetype, useJquery) {
+                var fileref, type = filetype || 'js';
+                switch (type) {
+                    case 'js':
+                        if (jQuery && (($.browser.msie && $.browser.version <= 8) || useJquery)) {
+                            $.ajax({
+                                url: '/NbtWebApp/' + filename,
+                                dataType: 'script'
+                            });
+                        } else {
+                            fileref = document.createElement('script');
+                            fileref.setAttribute("type", "text/javascript");
+                            fileref.setAttribute("src", filename);
+                        }
+                        break;
+                    case 'css':
+                        fileref = document.createElement("link");
+                        fileref.setAttribute("rel", "stylesheet");
+                        fileref.setAttribute("type", "text/css");
+                        fileref.setAttribute("href", filename);
+                        break;
+                }
+                if (fileref) {
+                    document.getElementsByTagName("head")[0].appendChild(fileref);
+                }
+            }
         },
         makeSequentialArray: function(start, end) {
             var ret = [],

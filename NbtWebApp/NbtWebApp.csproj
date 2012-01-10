@@ -742,6 +742,8 @@
     <Content Include="crystal\urlreporting\activexviewer.js" />
     <Content Include="crystal\urlreporting\appletviewer.js" />
     <Content Include="ExternalLogin.aspx" />
+    <Content Include="_config.js" />
+    <Content Include="js\CswAll.min.css" />
     <Content Include="js\main\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\main\actions\CswSessions.js" />
     <Content Include="js\main\actions\CswQuotaImage.js" />
@@ -749,9 +751,11 @@
     <Content Include="js\main\controls\CswMultiSelect.js" />
     <Content Include="js\main\controls\CswTimeInterval.js" />
     <Content Include="js\main\controls\CswList.js" />
+    <Content Include="js\main\Main.js" />
     <Content Include="js\main\tools\CswPubSub.js" />
     <Content Include="js\main\tools\CswPrint.js" />
     <Content Include="js\main\view\CswViewContentTree.js" />
+    <Content Include="js\style.css" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.css" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.js" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.min.js" />
@@ -778,6 +782,7 @@
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\test\test.js" />
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\vendor\jquery.ui.widget.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
+    <Content Include="MainIncludes.html" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Report.aspx" />
     <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
@@ -1446,19 +1451,6 @@
     <Content Include="js\main\fieldtypes\_CswFieldTypeFactory.js" />
     <Content Include="js\main\fieldtypes\_CswFieldTypes.css" />
     <Content Include="Scripts\jquery.cookie.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jpopit\jpopit.css" />
-    <Content Include="js\thirdparty\jquery\plugins\jpopit\jpopit.jquery.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jpopit\jpopit.jquery.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drag\resources.htm" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drop\resources.htm" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\bg_fallback.png" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\icon_sprite.png" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\progress_bar.gif" />
@@ -1473,7 +1465,6 @@
     <Content Include="Mobile.html" />
     <Content Include="MobileIncludes.html" />
     <Content Include="MainHeader.html" />
-    <Content Include="MainIncludes.html" />
     <Content Include="Main.html" />
     <Content Include="NodeReport.html" />
     <Content Include="Popup_DesignAdd.aspx" />
@@ -1894,6 +1885,7 @@
     <None Include="Images\biggerbuttons\BiggerButtons.pspimage" />
     <None Include="Images\buttons\Buttons.pspimage" />
     <None Include="Images\buttons\Buttons18.pspimage" />
+    <None Include="js\_compressor.pl" />
     <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\app.yaml" />
     <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\app\main.go" />
     <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\resize\resize.go" />
@@ -1980,7 +1972,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>call $(ProjectDir)js\_compile.pl $(ProjectDir)
-call $(ProjectDir)js\_compileMobile.pl $(ProjectDir)</PostBuildEvent>
+call $(ProjectDir)js\_compileMobile.pl $(ProjectDir)
+call $(ProjectDir)js\_compressor.pl $(ProjectDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -102,14 +102,22 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Deletes an object class prop and all nodetype props from the database and metadata collection
         /// </summary>
-        public void DeleteObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
+        public Collection<CswNbtMetaDataNodeTypeProp> DeleteObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, bool DeleteNodeTypeProps )
         {
-            // Delete Nodetype Props first
-            while( ObjectClassProp.NodeTypeProps.Count > 0 )
+            Collection<CswNbtMetaDataNodeTypeProp> Ret = new Collection<CswNbtMetaDataNodeTypeProp>();
+
+            foreach( CswNbtMetaDataNodeTypeProp Prop in ObjectClassProp.NodeTypeProps )
             {
-                IEnumerator e = ObjectClassProp.NodeTypeProps.GetEnumerator();
-                e.MoveNext();
-                DeleteNodeTypeProp( (CswNbtMetaDataNodeTypeProp) e.Current, true );
+                if( DeleteNodeTypeProps )
+                {
+                    DeleteNodeTypeProp( Prop, true );
+                }
+                else
+                {
+                    Prop._DataRow["objectclasspropid"] = DBNull.Value;
+                    _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
+                    Ret.Add( Prop );
+                }
             }
 
             // Update MetaData
@@ -118,6 +126,7 @@ namespace ChemSW.Nbt.MetaData
             // Delete the Object Class Prop
             ObjectClassProp._DataRow.Delete();
             _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );
+            return Ret;
         }
 
 

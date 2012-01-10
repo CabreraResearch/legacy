@@ -19,7 +19,23 @@
                 var propVals = o.propData.values;
                 var optData = propVals.options;
                 var selectMode = propVals.selectmode; // Single, Multiple, Blank
+                var editMode = ChemSW.enums.tryParse(ChemSW.enums.EditMode, o.EditMode);
 
+                /*
+                Case 24606: Once we can validate the control
+                if(editMode === ChemSW.enums.EditMode.AddInPopup) {
+                    each(propVals.options, function(option) {
+                        if (contains(option, 'key')) {
+                            
+                              var relatedNodeTypeId = tryParseString(o.relatednodetypeid);
+                              if (tryParseString(option.key) === relatedNodeTypeId) 
+                              one day we can try to set the defaults using the context of the view. Not today.
+                            
+                                option.value = 'False';
+                        }
+                    });
+                }
+                */
                 var $cbaDiv = $('<div />')
                                 .CswCheckBoxArray('init', {
                                     ID: o.ID + '_cba',
@@ -34,7 +50,11 @@
                                     valCol: valueCol,
                                     valColName: 'Include'
                                 });
-
+                
+                if(o.Required) {
+                    $cbaDiv.addClass("required");
+                }
+                
                 $Div.contents().remove();
                 $Div.append($cbaDiv);            
                 return $Div;
