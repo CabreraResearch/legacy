@@ -5,7 +5,6 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -217,6 +216,10 @@ namespace ChemSW.Nbt.WebServices
             if( NodeCount > 0 )
             {
                 Tree.goToRoot();
+                if( _View.Visibility == NbtViewVisibility.Property )
+                {
+                    Tree.goToNthChild( 0 );
+                }
                 for( Int32 C = StartingNode; ( C < EndingNode || IsReport ) && C < NodeCount; C += 1 )
                 {
                     Tree.goToNthChild( C );
@@ -303,35 +306,12 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
             string ThisNodeName = Tree.getNodeNameForCurrentPosition();
-            string ThisNodeIcon = default( string );
-            string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
-            string ThisNodeId = default( string );
-            string ThisNodePk = default( string );
-
-            //string ThisNodeRel = default(string);
-            bool ThisNodeLocked = false;
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
-            switch( ThisNodeKey.NodeSpecies )
-            {
-                case NodeSpecies.More:
-                    ThisNodePk = ThisNodeKey.NodeId.PrimaryKey.ToString();
-                    ThisNodeId = _IdPrefix + ThisNodeKey.NodeId.ToString();
-                    ThisNodeName = NodeSpecies.More.ToString() + "...";
-                    ThisNodeIcon = "triangle_blueS.gif";
-                    //ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
-                    break;
-                case NodeSpecies.Plain:
-                    ThisNodePk = ThisNodeKey.NodeId.PrimaryKey.ToString();
-                    ThisNodeId = _IdPrefix + ThisNodeKey.NodeId.ToString();
-                    ThisNodeName = Tree.getNodeNameForCurrentPosition();
-                    ThisNodeIcon = ThisNodeType.IconFileName;
-                    //ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
-                    ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
-                    break;
-                //case NodeSpecies.Group:
-                //    ThisNodeRel = "group";
-                //    break;
-            }
+            string ThisNodeIcon = ThisNodeType.IconFileName;
+            string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
+            string ThisNodeId = _IdPrefix + ThisNodeKey.NodeId.ToString();
+            string ThisNodePk = ThisNodeKey.NodeId.PrimaryKey.ToString();
+            bool ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
 
             ThisNodeObj["nodeid"] = ThisNodeId;
             ThisNodeObj["nodepk"] = ThisNodePk;
