@@ -9,7 +9,7 @@
     var pluginName = 'CswNodeTree';
 
     var methods = {
-        'init': function (options)     // options are defined in _getTreeContent()
+        'init': function (options)
         {
             function getFirstLevel($treediv, pagesize, pageno) {
                 var realpagesize = tryParseNumber(pagesize, 10);
