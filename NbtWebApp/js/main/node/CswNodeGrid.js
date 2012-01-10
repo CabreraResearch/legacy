@@ -62,11 +62,10 @@
                 cswnbtnodekey: '',
                 reinit: false,
                 EditMode: EditMode.Edit.name,
-                //onAddNode: function(nodeid,cswnbtnodekey){},
-                onEditNode: null, //function(nodeid,cswnbtnodekey){},
-                onDeleteNode: null, //function(nodeid,cswnbtnodekey){}
+                onEditNode: null, 
+                onDeleteNode: null, 
                 onSuccess: null,
-                onEditView: null // function(viewid){}
+                onEditView: null
             };
         
             if (optJqGrid) {
@@ -91,8 +90,8 @@
                 };
             }());
 
-            function getGridRowsUrl(nodeKey) {
-                return o.gridPageUrl + '?viewid=' + o.viewid + '&page=' + currentPage() + '&pagesize=50' + '&IsReport=' + forReporting;
+            function getGridRowsUrl() {
+                return o.gridPageUrl + '?viewid=' + o.viewid + '&IsReport=' + forReporting + '"';
             }
 
             function prevClick(eventObj, firstRow) {
@@ -150,7 +149,8 @@
             /* fetchGridSkeleton */
             (function () {
 
-                var prepTree = (function() {
+                //Get the grid skeleton definition
+                (function() {
                     CswAjaxJson({
                         url: o.runGridUrl,
                         data: {
@@ -165,83 +165,89 @@
                     });
                 }());
 
+                //jqGrid will handle the rest
                 var buildGrid = function(gridJson) {
-                    CswAjaxJson({
-                        url: o.gridPageUrl,
-                        data: {
-                            ViewId: o.viewid,
-                            Page: currentPage(),
-                            PageSize: 50,
-                            IsReport: forReporting
-                        },
-                        success: function(rows) {
-                            log(rows);
-                            var jqGridOpt = gridJson.jqGridOpt;
-                            $.extend(jqGridOpt, rows);
-                            var g = {
-                                ID: o.ID,
-                                canEdit: isTrue(jqGridOpt.CanEdit),
-                                canDelete: isTrue(jqGridOpt.CanDelete),
-                                pagermode: (forReporting) ? 'none' : 'default', 
-                                gridOpts: { }, //toppager: (jqGridOpt.rowNum >= 50 && contains(gridJson, 'rows') && gridJson.rows.length >= 49)
-                                optNav: { },
-                                optSearch: { },
-                                optNavEdit: { },
-                                optNavDelete: { }
-                            };
-                            $.extend(g.gridOpts, jqGridOpt);
-
-                            if (isNullOrEmpty(g.gridOpts.width)) {
-                                g.gridOpts.width = '650px';
-                            }
-
-                            if (forReporting) {
-                                g.gridOpts.caption = '';
-
-                            } else {
-                                g.gridOpts.datatype = 'local';
-//                                g.gridOpts.url = getGridRowsUrl();
-//                                g.gridOpts.loadComplete = onLoadComplete;
-//                                g.gridOpts.jsonReader = {
-//                                    root: "rows",
-//                                    page: "page",
-//                                    total: "total",
-//                                    records: "records",
-//                                    repeatitems: false,
-//                                    id: "id",
-//                                    cell: "cell"
-//                                };
-
-                                g.customPager = {
-                                    prevDisabled: true,
-                                    nextDisabled: false,
-                                    onPrevPageClick: prevClick,
-                                    onNextPageClick: nextClick
-                                };
-
-                                g.optNavEdit = {
-                                    editfunc: function(rowid) {
-                                        return editRows(rowid, ret, o.onEditNode, o.onEditView);
-                                    }
-                                };
-
-                                g.optNavDelete = {
-                                    delfunc: function(rowid) {
-                                        return deleteRows(rowid, ret, o.onDeleteNode);
-                                    }
-                                };
-
-                            } // else
-                            ret = CswGrid(g, $parent);
                             
-                            if (isFunction(o.onSuccess)) {
-                                o.onSuccess(ret);
+                    var jqGridOpt = gridJson.jqGridOpt;
+                            
+                    var cswGridOpts = {
+                        ID: o.ID,
+                        canEdit: isTrue(jqGridOpt.CanEdit),
+                        canDelete: isTrue(jqGridOpt.CanDelete),
+                        pagermode: (forReporting) ? 'none' : 'default', 
+                        gridOpts: { }, //toppager: (jqGridOpt.rowNum >= 50 && contains(gridJson, 'rows') && gridJson.rows.length >= 49)
+                        optNav: { },
+                        optSearch: { },
+                        optNavEdit: { },
+                        optNavDelete: { }
+                    };
+                    $.extend(cswGridOpts.gridOpts, jqGridOpt);
+
+                    if (isNullOrEmpty(cswGridOpts.gridOpts.width)) {
+                        cswGridOpts.gridOpts.width = '650px';
+                    }
+
+                    if (forReporting) {
+                        cswGridOpts.gridOpts.caption = '';
+                    } else {
+                        /*
+                        This is the root of much suffering. 3rd-party libs which use jQuery.ajax() frequently screw it up such that the request is sent with an invalid return type.
+                        .NET will helpfully wrap the response in XML for you. 
+                        This is actually not helpful.
+
+                        We can either overwrite jqGrid's ajax implementation: in which case we have to build the _WHOLE_ thing,
+                        or we can modify the HTTPContext.Response object directly. 
+                                
+                        In the case of the latter, we need to guarantee that ONLY jqGrid properties defined in the jsonReader property are returned from the server.
+
+                        cswGridOpts.gridOpts.ajaxGridOptions = {
+                            url: o.gridPageUrl,
+                            dataType: 'json',
+                            contentType: 'application/json; charset=utf-8',
+                            type: 'POST',
+                            data: JSON.stringify({
+                                ViewId: o.viewid, Page: currentPage(), PageSize: 50, IsReport: forReporting  
+                            })
+                        };
+
+                        */
+                        cswGridOpts.gridOpts.datatype = 'json';
+                        cswGridOpts.gridOpts.url = getGridRowsUrl();
+                                
+                        cswGridOpts.gridOpts.loadComplete = onLoadComplete;
+                        cswGridOpts.gridOpts.jsonReader = {
+                            root: 'rows',
+                            page: 'page',
+                            total: 'total',
+                            records: 'records',
+                            repeatitems: false
+                        };
+
+                        cswGridOpts.customPager = {
+                            prevDisabled: true,
+                            nextDisabled: false,
+                            onPrevPageClick: prevClick,
+                            onNextPageClick: nextClick
+                        };
+
+                        cswGridOpts.optNavEdit = {
+                            editfunc: function(rowid) {
+                                return editRows(rowid, ret, o.onEditNode, o.onEditView);
                             }
-                        }, // success{} 
-                        error: function (e) {
-                                debugger;
-                        }
-                    }); // ajax
+                        };
+
+                        cswGridOpts.optNavDelete = {
+                            delfunc: function(rowid) {
+                                return deleteRows(rowid, ret, o.onDeleteNode);
+                            }
+                        };
+
+                    } // else
+                    ret = CswGrid(cswGridOpts, $parent);
+                            
+                    if (isFunction(o.onSuccess)) {
+                        o.onSuccess(ret);
+                    }
                 };
             })();
             return ret;

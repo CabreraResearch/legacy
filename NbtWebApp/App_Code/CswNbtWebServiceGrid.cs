@@ -166,8 +166,6 @@ namespace ChemSW.Nbt.WebServices
             Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
             _getGridProperties( _View.Root.ChildRelationships, PropsInGrid );
 
-            JArray GridRows = new JArray();
-
             JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
             _AddIconColumnName( ref GridOrderedColumnDisplayNames );
             _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, PropsInGrid );
@@ -195,7 +193,7 @@ namespace ChemSW.Nbt.WebServices
                 _CswGridData.GridSortName = "nodename";
             }
 
-            RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
+            RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, null );
 
             return RetObj;
         } // getGridOuterJson()
@@ -203,22 +201,36 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
         /// </summary>
-        public JObject getGridPage( Int32 PageNumber, Int32 PageSize )
+        public JObject getGridPage( Int32 PageNumber, Int32 PageSize, bool IsReport )
         {
             JObject RetObj = new JObject();
-
-            string MoreNodeKey = String.Empty;
 
             Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
             _getGridProperties( _View.Root.ChildRelationships, PropsInGrid );
 
-            JArray GridRows = _getGridTree( PageNumber, PropsInGrid );
+            ICswNbtTree Tree = _WsTreeOfView.getTreeFromCache();
 
-            //RetObj["moreNodeKey"] = wsTools.ToSafeJavaScriptParam( MoreNodeKey );
-            Int32 PageCount = ( ( GridRows.Count + _CswGridData.PageSize - 1 ) / _CswGridData.PageSize );
-            RetObj["total"] = PageCount.ToString();
+            Int32 NodeCount = Tree.getChildNodeCount();
+            Int32 StartingNode = PageSize * PageNumber;
+            Int32 EndingNode = PageSize * ( PageNumber + 1 );
+            JArray GridRows = new JArray();
+            if( NodeCount > 0 )
+            {
+                Tree.goToRoot();
+                for( Int32 C = StartingNode; ( C < EndingNode || IsReport ) && C < NodeCount; C += 1 )
+                {
+                    Tree.goToNthChild( C );
+
+                    GridRows.Add( _getGridRow( Tree, PropsInGrid ) );
+
+                    Tree.goToParentNode();
+                }
+            }
+
+            Int32 PageCount = ( ( NodeCount + PageSize - 1 ) / PageSize );
+            RetObj["total"] = PageCount;
             RetObj["page"] = PageNumber + 1;
-            RetObj["records"] = GridRows.Count.ToString();
+            RetObj["records"] = NodeCount;
             RetObj["rows"] = GridRows;
             return RetObj;
         } // getGridOuterJson()
@@ -274,44 +286,16 @@ namespace ChemSW.Nbt.WebServices
         private void _AddIconColumnDefinition( ref JArray ColumnDefArray )
         {
             ColumnDefArray.AddFirst( new JObject(
-                                new JProperty( "name", "icon" ),
-                                new JProperty( "index", "icon" ),
+                                new JProperty( "name", "Icon" ),
+                                new JProperty( "index", "Icon" ),
                                 new JProperty( "formatter", "image" ),
-                                new JProperty( CswGridData.JqGridJsonOptions.width.ToString(), "30" )
+                                new JProperty( CswGridData.JqGridJsonOptions.width.ToString(), "40" )
                                 ) );
         }
         private void _AddIconColumnName( ref JArray ColumnNameArray )
         {
-            ColumnNameArray.Add( "icon" );
+            ColumnNameArray.Add( "Icon" );
         }
-
-        /// <summary>
-        /// Returns an XElement of the View's Tree
-        /// </summary>
-        private JArray _getGridTree( Int32 PageNo, Collection<CswViewBuilderProp> PropsInGrid )
-        {
-            JArray RetArray = new JArray();
-
-
-            ICswNbtTree Tree = _WsTreeOfView.getTreeFromCache();
-
-            Int32 PageSize = _CswGridData.PageSize;
-            Int32 NodeCount = Tree.getChildNodeCount();
-            if( NodeCount > 0 )
-            {
-                Tree.goToRoot();
-                for( Int32 C = PageSize * PageNo; C < PageSize * ( PageNo + 1 ) && C < NodeCount; C += 1 )
-                {
-                    Tree.goToNthChild( C );
-
-                    RetArray.Add( _getGridRow( Tree, PropsInGrid ) );
-
-                    Tree.goToParentNode();
-                }
-            }
-
-            return RetArray;
-        } // _getGridTree()
 
         private JObject _getGridRow( ICswNbtTree Tree, Collection<CswViewBuilderProp> PropsInGrid )
         {
@@ -363,7 +347,7 @@ namespace ChemSW.Nbt.WebServices
                 Icon += "Images/icons/" + ThisNodeIcon;
             }
             Icon += "\'/>";
-            ThisNodeObj["icon"] = Icon;
+            ThisNodeObj["Icon"] = Icon;
 
             foreach( XElement Prop in Tree.getChildNodePropsOfNode() )
             {

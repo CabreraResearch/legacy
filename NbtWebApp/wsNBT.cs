@@ -679,7 +679,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getGridPage( string ViewId, string Page, string PageSize, string IsReport )
+        public void getGridPage( string ViewId, string Page, string Rows, string IsReport )
         {
             JObject ReturnVal = new JObject();
 
@@ -687,14 +687,14 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
+                _attemptRefresh( true );
 
                 CswNbtView View = _getView( ViewId );
 
                 if( null != View )
                 {
                     var g = new CswNbtWebServiceGrid( _CswNbtResources, View );
-                    ReturnVal = g.getGridPage( CswConvert.ToInt32( Page ), CswConvert.ToInt32( PageSize ) );
+                    ReturnVal = g.getGridPage( CswConvert.ToInt32( Page ) - 1, CswConvert.ToInt32( Rows ), CswConvert.ToBoolean( IsReport ) );
                 }
 
                 _deInitResources();
@@ -704,14 +704,16 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = jError( Ex );
             }
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            //Context.Response.Clear();
-            //Context.Response.ContentType = "application/json";
-            //Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
-            //Context.Response.Flush();
-            //Context.Response.Write( ReturnVal.ToString() );
-            return ReturnVal.ToString();
+            /*
+             * See the comment in CswNodeGrid.js for the rationale behind this.
+             * _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+             */
+            Context.Response.Clear();
+            Context.Response.ContentType = "application/json";
+            Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
+            Context.Response.Flush();
+            Context.Response.Write( ReturnVal.ToString() );
+            //return ReturnVal.ToString();
         } // getGrid()
 
         [WebMethod( EnableSession = false )]
