@@ -53,7 +53,8 @@
         'init': function (optJqGrid) {
 
             var o = {
-                GridUrl: '/NbtWebApp/wsNBT.asmx/getGrid',
+                runGridUrl: '/NbtWebApp/wsNBT.asmx/runGrid',
+                gridPageUrl: '/NbtWebApp/wsNBT.asmx/getGridPage',
                 viewid: '',
                 showempty: false,
                 ID: '',
@@ -71,26 +72,34 @@
             if (optJqGrid) {
                 $.extend(o, optJqGrid);
             }
-            
             var $parent = $(this);
-            if (o.reinit) $parent.empty();
+            var currentPage = (function() {
+                var page = 0;
+                return function(direction) {
+                    var ret = page;
+                    switch(direction) {
+                        case 'forward':
+                            ret += 1;
+                            break;
+                        case 'backward':
+                            if(ret > 0) {
+                                ret -= 1;
+                            }
+                            break;
+                    }
+                    return ret;
+                };
+            }());
 
             function getGridRowsUrl(nodeKey) {
-                return '/NbtWebApp/wsNBT.asmx/getGridRows?viewid=' + o.viewid + '&SafeNodeKey=' + nodeKey + '&ShowEmpty=' + o.showempty;
+                return o.gridPageUrl + '?viewid=' + o.viewid + '&page=' + currentPage() + '&pagesize=50' + '&IsReport=' + forReporting;
             }
-            
-            var forReporting = (o.EditMode === EditMode.PrintReport.name),
-                dataJson = { ViewId: o.viewid, SafeNodeKey: o.cswnbtnodekey, ShowEmpty: o.showempty, IsReport: forReporting },
-                gridRowsUrl = getGridRowsUrl(o.cswnbtnodekey),
-                ret;
-            
-            $parent.data('firstNodeKey', o.cswnbtnodekey);
-            
-/* Not in use
+
             function prevClick(eventObj, firstRow) {
                 var firstNodeKey = firstRow.cswnbtnodekey,
                     prevNodeKey, currentIdx,
                     pageContext = $parent.data('pageContext');
+                currentPage('backward');
                 if(false === isNullOrEmpty(pageContext)) {
                     currentIdx = cswIndexOf(pageContext, firstNodeKey);
                     if (currentIdx > 0) {
@@ -107,7 +116,7 @@
                 var firstNodeKey = firstRow.cswnbtnodekey,
                     pageContext = $parent.data('pageContext'),
                     moreNodeKey = $parent.data('moreNodeKey');
-                
+                currentPage('forward');
                 if (false === isNullOrEmpty(firstNodeKey) &&
                     false === isNullOrEmpty(moreNodeKey)) {
                     if (isNullOrEmpty(pageContext)) {
@@ -129,23 +138,51 @@
                     $parent.data('moreNodeKey', data.moreNodeKey);
                 }
             }
-*/
+            
+            if (o.reinit) $parent.empty();
+
+            var forReporting = (o.EditMode === EditMode.PrintReport.name),
+                gridRowsUrl = getGridRowsUrl(o.cswnbtnodekey),
+                ret;
+
+            $parent.data('firstNodeKey', o.cswnbtnodekey);
             
             /* fetchGridSkeleton */
             (function () {
 
-                CswAjaxJson({
-                        url: o.GridUrl,
-                        data: dataJson,
-                        success: function(gridJson) {
+                var prepTree = (function() {
+                    CswAjaxJson({
+                        url: o.runGridUrl,
+                        data: {
+                            ViewId: o.viewid,
+                            IdPrefix: '',
+                            IncludeNodeKey: o.cswnbtnodekey,
+                            IncludeInQuickLaunch: true
+                        },
+                        success: function(data) {
+                            buildGrid(data);
+                        }
+                    });
+                }());
 
+                var buildGrid = function(gridJson) {
+                    CswAjaxJson({
+                        url: o.gridPageUrl,
+                        data: {
+                            ViewId: o.viewid,
+                            Page: currentPage(),
+                            PageSize: 50,
+                            IsReport: forReporting
+                        },
+                        success: function(rows) {
+                            log(rows);
                             var jqGridOpt = gridJson.jqGridOpt;
-
+                            $.extend(jqGridOpt, rows);
                             var g = {
                                 ID: o.ID,
                                 canEdit: isTrue(jqGridOpt.CanEdit),
                                 canDelete: isTrue(jqGridOpt.CanDelete),
-                                pagermode: (forReporting) ? 'none' : 'default', // 'custom', Use 'custom' to revert to Case 24004
+                                pagermode: (forReporting) ? 'none' : 'default', 
                                 gridOpts: { }, //toppager: (jqGridOpt.rowNum >= 50 && contains(gridJson, 'rows') && gridJson.rows.length >= 49)
                                 optNav: { },
                                 optSearch: { },
@@ -162,8 +199,8 @@
                                 g.gridOpts.caption = '';
 
                             } else {
-//                                g.gridOpts.datatype = 'json';
-//                                g.gridOpts.url = gridRowsUrl;
+                                g.gridOpts.datatype = 'local';
+//                                g.gridOpts.url = getGridRowsUrl();
 //                                g.gridOpts.loadComplete = onLoadComplete;
 //                                g.gridOpts.jsonReader = {
 //                                    root: "rows",
@@ -172,17 +209,15 @@
 //                                    records: "records",
 //                                    repeatitems: false,
 //                                    id: "id",
-//                                    cell: "cell",
-//                                    userdata: "userdata",
-//                                    subgrid: { }
+//                                    cell: "cell"
 //                                };
 
-//                                g.customPager = {
-//                                    prevDisabled: true,
-//                                    nextDisabled: false,
-//                                    onPrevPageClick: prevClick,
-//                                    onNextPageClick: nextClick
-//                                };
+                                g.customPager = {
+                                    prevDisabled: true,
+                                    nextDisabled: false,
+                                    onPrevPageClick: prevClick,
+                                    onNextPageClick: nextClick
+                                };
 
                                 g.optNavEdit = {
                                     editfunc: function(rowid) {
@@ -198,11 +233,16 @@
 
                             } // else
                             ret = CswGrid(g, $parent);
+                            
                             if (isFunction(o.onSuccess)) {
                                 o.onSuccess(ret);
                             }
-                        } // success{} 
+                        }, // success{} 
+                        error: function (e) {
+                                debugger;
+                        }
                     }); // ajax
+                };
             })();
             return ret;
         } // 'init'

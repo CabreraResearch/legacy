@@ -99,6 +99,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Act_FutureScheduling.aspx" />
+    <Compile Include="App_Code\wsTreeOfView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="App_Code\CswNbtWebServiceBinaryData.cs" />
     <Compile Include="App_Code\CswNbtWebServiceNbtManager.cs" />
     <Compile Include="App_Code\CswNbtWebServiceQuotas.cs" />
