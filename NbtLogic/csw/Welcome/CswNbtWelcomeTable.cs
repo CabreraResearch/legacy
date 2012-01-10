@@ -6,7 +6,7 @@ using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 
-namespace ChemSW.Nbt.Schema
+namespace ChemSW.Nbt.Welcome
 {
     public class CswNbtWelcomeTable
     {

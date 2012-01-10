@@ -1,6 +1,7 @@
 ﻿using System;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Welcome;
 
 namespace ChemSW.Nbt.Schema
 {

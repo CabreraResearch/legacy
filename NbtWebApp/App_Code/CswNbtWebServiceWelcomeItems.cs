@@ -8,8 +8,8 @@ using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Schema;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.Welcome;
 using ChemSW.NbtWebControls;
 using Newtonsoft.Json.Linq;
 
