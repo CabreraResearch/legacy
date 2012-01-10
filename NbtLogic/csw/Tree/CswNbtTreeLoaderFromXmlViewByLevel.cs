@@ -331,55 +331,62 @@ namespace ChemSW.Nbt
                     {
                         ICswNbtFieldTypeRule FilterFieldTypeRule = null;
                         if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-                            FilterFieldTypeRule = Prop.NodeTypeProp.FieldTypeRule;
-                        else if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
-                            FilterFieldTypeRule = Prop.ObjectClassProp.FieldTypeRule;
-
-                        string FilterValue = FilterFieldTypeRule.renderViewPropFilter( _RunAsUser, Filter );
-                        CswNbtSubField FilterSubField = FilterFieldTypeRule.SubFields[Filter.SubfieldName];
-
-                        if( FilterSubField.RelationalTable == string.Empty )
                         {
+                            FilterFieldTypeRule = Prop.NodeTypeProp.FieldTypeRule;
+                        }
+                        else if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
+                        {
+                            FilterFieldTypeRule = Prop.ObjectClassProp.FieldTypeRule;
+                        }
+                        string FilterValue = string.Empty;
+                        if( null != FilterFieldTypeRule )
+                        {
+                            FilterValue = FilterFieldTypeRule.renderViewPropFilter( _RunAsUser, Filter );
+                        }
+                        if( false == string.IsNullOrEmpty( FilterValue ) )
+                        {
+                            CswNbtSubField FilterSubField = FilterFieldTypeRule.SubFields[Filter.SubfieldName];
 
-                            if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                            if( FilterSubField.RelationalTable == string.Empty )
                             {
-                                Where += @" and (n.nodeid not in (
+
+                                if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                                {
+                                    Where += @" and (n.nodeid not in (
                                   select jnp.nodeid
                                     from jct_nodes_props jnp
                                     join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
-                                if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-                                {
-                                    Where += @"  where p.firstpropversionid = " + Prop.FirstVersionNodeTypeProp.PropId + @")";
+                                    if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                                    {
+                                        Where += @"  where p.firstpropversionid = " + Prop.FirstVersionNodeTypeProp.PropId + @")";
+                                    }
+                                    else
+                                    {
+                                        Where += @"   join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
+                                   where op.objectclasspropid = " + Prop.ObjectClassPropId + @")";
+                                    }
+                                    Where += @"     or ";
+
                                 }
                                 else
                                 {
-                                    Where += @"   join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
-                                   where op.objectclasspropid = " + Prop.ObjectClassPropId + @")";
+                                    Where += @" and (";
                                 }
-                                Where += @"     or ";
 
-                            }
-                            else
-                            {
-                                Where += @" and (";
-                            }
+                                Where += @" n.nodeid in (select s.nodeid from nodes s ";
 
-                            Where += @" n.nodeid in (select s.nodeid from nodes s ";
-
-                            if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-                            {
-                                Where += @"            join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"' ";
-                            }
-                            else
-                            {
-                                Where += @"            join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
+                                if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                                {
+                                    Where += @"            join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"' ";
+                                }
+                                else
+                                {
+                                    Where += @"            join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
                                              join nodetype_props p on (p.objectclasspropid = op.objectclasspropid  ";
-                            }
+                                }
 
-                            Where += @"                                         and p.nodetypeid = s.nodetypeid)";
-                            if( false == string.IsNullOrEmpty( FilterValue ) )
-                            {
-                                Where += @" left outer join (select j.jctnodepropid,
+                                Where += @"                                         and p.nodetypeid = s.nodetypeid) 
+                                                         left outer join (select j.jctnodepropid,
                                                                      j.nodetypepropid, j.nodeid, j.nodeidtablename,
                                                                      j.field1, j.field2, j.field3, j.field4, j.field5,
                                                                      j.gestalt,
@@ -388,16 +395,14 @@ namespace ChemSW.Nbt
                                                                      from jct_nodes_props j) jnp
                                                           ON (jnp.nodeid = s.nodeid and jnp.nodetypepropid = p.nodetypepropid)
                                              where " + FilterValue + @"))";
-                            }
-                            else
+
+
+                            } // if( FilterSubField.RelationalTable == string.empty )
+                            else if( false == string.IsNullOrEmpty( FilterValue ) )
                             {
-                                Where += "))";
+                                Where += " and " + FilterValue; // n." + FilterSubField.Column + " is not null";
                             }
-                        } // if( FilterSubField.RelationalTable == string.empty )
-                        else if( false == string.IsNullOrEmpty( FilterValue ) )
-                        {
-                            Where += " and " + FilterValue; // n." + FilterSubField.Column + " is not null";
-                        }
+                        } // if we really have a filter
                     } // if we have a filter
                 } // foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
             } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
