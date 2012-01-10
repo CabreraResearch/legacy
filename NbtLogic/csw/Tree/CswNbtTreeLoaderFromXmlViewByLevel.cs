@@ -281,7 +281,20 @@ namespace ChemSW.Nbt
                     From += " left outer join jct_nodes_props j" + sortAlias + " ";
                     From += "   on (j" + sortAlias + ".nodeid = n.nodeid and j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
 
-                    OrderByProps.Insert( Prop.Order, OrderByString );
+                    Int32 OrderByOrder = Prop.Order;
+                    if( OrderByOrder != 0 && ( OrderByProps.Count <= OrderByOrder || OrderByOrder < 0 ) )
+                    {
+                        if( OrderByProps.Count == 0 )
+                        {
+                            OrderByOrder = 0;
+                        }
+                        else
+                        {
+                            OrderByOrder = OrderByProps.Count - 1;
+                        }
+                    }
+
+                    OrderByProps.Insert( OrderByOrder, OrderByString );
 
                 } // if( Prop.SortBy )
             } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
