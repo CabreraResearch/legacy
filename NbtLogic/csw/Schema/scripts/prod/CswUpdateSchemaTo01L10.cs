@@ -33,6 +33,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp TargetTypeNtp = InspectionSchedNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.TargetTypePropertyName );
                 TargetTypeNtp.DefaultValue.ClearValue();
                 TargetTypeNtp.HelpText = "What Inspection Design will be used. (ex: Eye Wash Station Check)";
+                TargetTypeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, ParentTypeNtp );
             }
 
             /* We used the unfortunate naming conventions "A" and "B". If they still exist on the Master schema's data, fix 'em. */
