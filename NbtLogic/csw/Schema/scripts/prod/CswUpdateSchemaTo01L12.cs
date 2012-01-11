@@ -23,11 +23,17 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtMetaDataNodeTypeProp ParentTypeNtp = InspectionSchedNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentTypePropertyName );
                 ParentTypeNtp.HelpText = "What will be inspected? (ex: Eye Wash Station)";
+                /* Case 24654 */
+                ParentTypeNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
 
                 CswNbtMetaDataNodeTypeProp TargetTypeNtp = InspectionSchedNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.TargetTypePropertyName );
                 TargetTypeNtp.HelpText = "What Inspection Design will be used. (ex: Eye Wash Station Check)";
+                /* Case 24654 */
+                TargetTypeNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             }
             #endregion Case 24656
+
+
 
         }//Update()
 

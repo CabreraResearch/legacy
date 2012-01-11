@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -127,9 +128,102 @@ namespace ChemSW.Nbt.ObjClasses
             bool DeleteFutureNodes = ( TargetType.WasModified || ParentType.WasModified );
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate( DeleteFutureNodes );
 
+            bool RequiresParentView = Owner.RelatedNodeId != null &&
+                                      ( Node.NodeType.FirstVersionNodeType.NodeTypeName == InspectionGeneratorNodeTypeName ||
+                                        ( ParentView.ViewId != null &&
+                                          ParentView.ViewId.isSet() ) );
+
+            if( RequiresParentView )
+            {
+                CswNbtNode OwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
+                Collection<CswNbtMetaDataNodeType> MatchingInspectionTargetNts = new Collection<CswNbtMetaDataNodeType>();
+
+                bool SetDefaultParentType = ( ( false == ParentType.WasModified ||
+                                                ParentType.SelectedNodeTypeIds.Count == 0 ) &&
+                                                OwnerNode.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass &&
+                                                ParentType.SelectMode != PropertySelectMode.Blank );
+                if( SetDefaultParentType )
+                {
+                    CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+                    foreach( CswNbtMetaDataNodeType InspectionTargetNt in InspectionTargetOc.NodeTypes )
+                    {
+                        if( InspectionTargetNt.IsLatestVersion )
+                        {
+                            CswNbtMetaDataNodeTypeProp TargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+                            if( TargetGroupNtp.IsFK &&
+                                CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() == TargetGroupNtp.FKType &&
+                                Int32.MinValue != TargetGroupNtp.FKValue )
+                            {
+                                CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( TargetGroupNtp.FKValue ).LatestVersionNodeType;
+                                if( null != InspectionTargetGroupNt &&
+                                    false == MatchingInspectionTargetNts.Contains( InspectionTargetNt ) &&
+                                    InspectionTargetGroupNt == OwnerNode.NodeType.LatestVersionNodeType )
+                                {
+                                    MatchingInspectionTargetNts.Add( InspectionTargetNt );
+                                    ParentType.SelectedNodeTypeIds.Add( true, InspectionTargetNt.NodeTypeId.ToString() );
+                                    if( ParentType.SelectMode == PropertySelectMode.Single )
+                                    {
+                                        break;
+                                    }
+                                }
+                            } // is valid FK
+                        } // if( InspectionTargetNt.IsLatestVersion )
+                    } // foreach( CswNbtMetaDataNodeType InspectionTargetNt in InspectionTargetOc.NodeTypes )
+                } // if( SetDefaultTargetType )
+
+                bool SetDefaultTargetType = ( ( false == TargetType.WasModified ||
+                                            TargetType.SelectedNodeTypeIds.Count == 0 ) &&
+                                          TargetType.SelectMode != PropertySelectMode.Blank &&
+                                          ( MatchingInspectionTargetNts.Count > 0 ||
+                                            TargetType.SelectedNodeTypeIds.Count > 0 ) );
+                if( SetDefaultTargetType )
+                {
+                    if( MatchingInspectionTargetNts.Count == 0 )
+                    {
+                        foreach( Int32 InspectionTargetNodeTypeId in TargetType.SelectedNodeTypeIds.ToIntCollection() )
+                        {
+                            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetNodeTypeId ).LatestVersionNodeType;
+                            if( InspectionTargetNt.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass &&
+                                false == MatchingInspectionTargetNts.Contains( InspectionTargetNt ) )
+                            {
+                                MatchingInspectionTargetNts.Add( InspectionTargetNt );
+                            }
+                        }
+                    }
+                    if( MatchingInspectionTargetNts.Count > 0 )
+                    {
+                        CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                        foreach( CswNbtMetaDataNodeType InspectionDesignNt in InspectionDesignOc.NodeTypes )
+                        {
+                            if( InspectionDesignNt.IsLatestVersion )
+                            {
+                                CswNbtMetaDataNodeTypeProp DesignTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+                                foreach( CswNbtMetaDataNodeType MatchingInspectionTargetNt in MatchingInspectionTargetNts )
+                                {
+                                    if( DesignTargetNtp.IsFK &&
+                                        CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() == DesignTargetNtp.FKType &&
+                                        Int32.MinValue != DesignTargetNtp.FKValue )
+                                    {
+                                        if( MatchingInspectionTargetNt.NodeTypeId == DesignTargetNtp.FKValue )
+                                        {
+                                            TargetType.SelectedNodeTypeIds.Add( true, InspectionDesignNt.NodeTypeId.ToString() );
+                                            if( TargetType.SelectMode == PropertySelectMode.Single )
+                                            {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             // BZ 7845
             if( TargetType.Empty )
+            {
                 Enabled.Checked = Tristate.False;
+            }
         } //beforeWriteNode()
 
         public override void afterWriteNode()
