@@ -826,7 +826,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != View )
                     {
                         var ws = new CswNbtWebServiceTree( _CswNbtResources );
-                        ReturnVal = ws.fetchTreeRoot( View, IdPrefix, PageSize, PageNo, ForSearch );
+                        ReturnVal = ws.fetchTreeFirstLevel( View, IdPrefix, PageSize, PageNo, ForSearch );
                     }
                 }
 
@@ -848,7 +848,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string fetchTreeLevel( string ViewId, string IdPrefix, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, bool ForSearch )
+        public string fetchTreeLevel( string ViewId, string IdPrefix, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, Int32 PageSize, Int32 PageNo, bool ForSearch )
         {
             JObject ReturnVal = new JObject();
 
@@ -865,7 +865,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != View )
                     {
                         var ws = new CswNbtWebServiceTree( _CswNbtResources );
-                        ReturnVal = ws.fetchTreeChildren( View, IdPrefix, Level, ParentRangeStart, ParentRangeEnd, ForSearch );
+                        ReturnVal = ws.fetchTreeChildren( View, IdPrefix, Level, ParentRangeStart, ParentRangeEnd, PageSize, PageNo, ForSearch );
                     }
                 }
 

@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="PageNo">Page of nodes on this level, if number of nodes exceeds pagesize</param>
         /// <param name="PageSize">Size of pages</param>
         /// <param name="ForSearch">True if view is from a search</param>
-        public JObject fetchTreeRoot( CswNbtView View, string IdPrefix, Int32 PageSize, Int32 PageNo, bool ForSearch )
+        public JObject fetchTreeFirstLevel( CswNbtView View, string IdPrefix, Int32 PageSize, Int32 PageNo, bool ForSearch )
         {
             JObject ReturnObj = new JObject();
 
@@ -192,9 +192,9 @@ namespace ChemSW.Nbt.WebServices
                 ReturnObj["tree"][0]["children"][0] = "No Results";
             }
             return ReturnObj;
-        } // fetchTreeRoot
+        } // fetchTreeFirstLevel
 
-        public JObject fetchTreeChildren( CswNbtView View, string IdPrefix, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, bool ForSearch )
+        public JObject fetchTreeChildren( CswNbtView View, string IdPrefix, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, Int32 PageSize, Int32 PageNo, bool ForSearch )
         {
             JObject ReturnObj = new JObject();
 
@@ -205,24 +205,17 @@ namespace ChemSW.Nbt.WebServices
                 JArray RootArray = new JArray();
                 ReturnObj["tree"] = RootArray;
 
-                Int32 NodeCountStart = Int32.MinValue;
-                Int32 NodeCountEnd = Int32.MinValue;
+                Int32 NodeCountStart = PageSize * PageNo;
+                Int32 NodeCountEnd = PageSize * PageNo;
+                bool More = false;
                 if( Tree.getChildNodeCount() > 0 )
                 {
-                    Collection<CswNbtNodeKey> NodeKeys = _getNextPageOfNodes( Tree, Level, ParentRangeStart, ParentRangeEnd );
+                    Collection<CswNbtNodeKey> NodeKeys = _getNextPageOfNodes( Tree, Level, ParentRangeStart, ParentRangeEnd, PageSize, PageNo, ref More );
+
                     foreach( CswNbtNodeKey NodeKey in NodeKeys )
                     {
                         Tree.makeNodeCurrent( NodeKey );
-
-                        if( NodeCountStart == Int32.MinValue || NodeCountStart > NodeKey.NodeCount )
-                        {
-                            NodeCountStart = NodeKey.NodeCount;
-                        }
-                        if( NodeCountEnd == Int32.MinValue || NodeCountEnd < NodeKey.NodeCount )
-                        {
-                            NodeCountEnd = NodeKey.NodeCount;
-                        }
-
+                        NodeCountEnd++;
                         JObject ThisNodeObj = _treeNodeJObject( View, Tree, IdPrefix );
                         RootArray.Add( ThisNodeObj );
                     } // foreach( CswNbtNodeKey NodeKey in NodeKeys )
@@ -230,6 +223,7 @@ namespace ChemSW.Nbt.WebServices
 
                 ReturnObj["nodecountstart"] = NodeCountStart.ToString();
                 ReturnObj["nodecountend"] = NodeCountEnd.ToString();
+                ReturnObj["more"] = More.ToString().ToLower();
                 // ReturnObj["types"] = getTypes( View );
             }
             else
@@ -246,21 +240,30 @@ namespace ChemSW.Nbt.WebServices
             return ReturnObj;
         } // fetchTree()
 
-        private Collection<CswNbtNodeKey> _getNextPageOfNodes( ICswNbtTree Tree, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd )
+        private Collection<CswNbtNodeKey> _getNextPageOfNodes( ICswNbtTree Tree, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, Int32 PageSize, Int32 PageNo, ref bool More )
         {
             Collection<CswNbtNodeKey> ret = new Collection<CswNbtNodeKey>();
             Collection<CswNbtNodeKey> NodeKeys = Tree.getKeysForLevel( Level );
+            Int32 c = 0;
             foreach( CswNbtNodeKey NodeKey in NodeKeys )
             {
                 Int32 ParentCount = CswConvert.ToInt32( NodeKey.NodeCountPath[Level - 2] );
                 if( ParentCount >= ParentRangeStart &&
-                    ParentCount <= ParentRangeEnd )
+                    ParentCount <= ParentRangeEnd &&
+                    c >= ( PageSize * PageNo ) &&
+                    c < ( PageSize * ( PageNo + 1 ) ) )
                 {
                     ret.Add( NodeKey );
                 }
+                else if( c >= ( PageSize * ( PageNo + 1 ) ) )
+                {
+                    More = true;
+                    break;
+                }
+                c++;
             }
             return ret;
-        }
+        } // _getNextPageOfNodes()
 
         /// <summary>
         /// Deprecated
@@ -500,6 +503,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 ThisNodeObj["state"] = ThisNodeState;
                 ThisNodeObj["children"] = new JArray();
+                ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
             }
             return ThisNodeObj;
         } // _treeNodeJObject()

@@ -9,9 +9,9 @@
     var pluginName = 'CswNodeTree';
 
     var methods = {
-        'init': function (options)
-        {
-            function getFirstLevel($treediv, pagesize, pageno) {
+        'init': function (options) {
+
+            function getFirstLevel($treediv, pagesize, pageno, selectFirst) {
                 var realpagesize = tryParseNumber(pagesize, 10);
                 if (realpagesize < 1) realpagesize = 10;
                 var realpageno = tryParseNumber(pageno, 0);
@@ -29,27 +29,39 @@
                     stringify: false,
                     success: function (data) {
                         // this page
-                        recurseNodes($treediv, 2, data.tree);
+                        var hasChildren = recurseNodes($treediv, 2, data.tree, selectFirst);
 
                         // next page
                         if (isTrue(data.more)) {
-                            getFirstLevel($treediv, realpagesize, realpageno + 1);
+                            setTimeout(function () { getFirstLevel($treediv, realpagesize, realpageno + 1); }, o.Delay);
+
+                            // add a more node to click on instead
+                            // var MoreNode = addNodeToTree($treediv, 2, false, "More");
+                            // MoreNode.click(function () {
+                            //     $(this).remove();
+                            //     getFirstLevel($treediv, realpagesize, realpageno + 1, true);
+                            // });
                         }
 
                         // children
                         // Note: root is level 1
                         //       "first" level is actually level 2
                         //       so the next level is level 3
-                        getLevel($treediv, 3, data.nodecountstart, data.nodecountend);
-
+                        if (hasChildren) {
+                            setTimeout(function () { getLevel($treediv, 3, data.nodecountstart, data.nodecountend, realpagesize, 0); }, o.Delay);
+                        }
                     } // success
                 }); // ajax
             } // getFirstLevel()
 
-            function getLevel($treediv, level, parentstart, parentend) {
+            function getLevel($treediv, level, parentstart, parentend, pagesize, pageno) {
                 var reallevel = tryParseNumber(level, 0);
                 var realparentstart = tryParseNumber(parentstart, 0);
                 var realparentend = tryParseNumber(parentend, 0);
+                var realpagesize = tryParseNumber(pagesize, 10);
+                if (realpagesize < 1) realpagesize = 10;
+                var realpageno = tryParseNumber(pageno, 0);
+                if (realpageno < 1) realpageno = 0;
 
                 CswAjaxJson({
                     url: o.fetchTreeLevelUrl,
@@ -59,34 +71,49 @@
                         Level: reallevel,
                         ParentRangeStart: realparentstart,
                         ParentRangeEnd: realparentend,
+                        PageSize: realpagesize,
+                        PageNo: realpageno,
                         ForSearch: o.forsearch
                     },
                     stringify: false,
                     success: function (data) {
-                        // this level
-                        recurseNodes($treediv, reallevel, data.tree);
+
+                        // this level, this page
+                        var hasChildren = recurseNodes($treediv, reallevel, data.tree);
+
+                        // this level, next page
+                        if (isTrue(data.more)) {
+                            setTimeout(function () { getLevel($treediv, reallevel, parentstart, parentend, realpagesize, realpageno + 1); }, o.Delay);
+                        }
 
                         // children
-                        if (tryParseNumber(data.nodecountend, -1) > 0) {
-                            getLevel($treediv, reallevel + 1, data.nodecountstart, data.nodecountend);
+                        if (hasChildren && tryParseNumber(data.nodecountend, -1) > 0) {
+                            setTimeout(function () { getLevel($treediv, reallevel + 1, data.nodecountstart, data.nodecountend, realpagesize, 0); }, o.Delay);
                         }
                     } // success
                 }); // ajax
             } // getLevel()
 
-            function recurseNodes($treediv, level, nodescoll) {
+            function recurseNodes($treediv, level, nodescoll, selectFirst) {
+                var hasChildren = false;
                 var parent = false;
                 each(nodescoll, function (childObj, childKey, thisObj, value) {
                     if (false === isNullOrEmpty(childObj)) {
                         if (false === isNullOrEmpty(childObj.attr.parentkey)) {
                             parent = findParent($treediv, childObj.attr.parentkey);
                         }
+                        if (selectFirst) {
+                            selectid = childObj.attr.id;
+                            selectFirst = false;
+                        }
                         addNodeToTree($treediv, level, parent, childObj);
                         if (false === isNullOrEmpty(childObj.children) && childObj.children.length > 0) {
                             recurseNodes($treediv, (level + 1), childObj.children);
                         }
+                        hasChildren = hasChildren || (tryParseNumber(childObj.childcnt, 0) > 0);
                     }
                 }); // each
+                return hasChildren;
             } // recurseNodes()
 
             function findParent($treediv, parentkey) {
@@ -127,7 +154,6 @@
 
                     // case 21424 - Manufacture unique IDs on the expand <ins> for automated testing
                     newnode.children('ins').CswAttrDom('id', newnodeid + '_expand');
-
 
                     if (selectid === newnodeid) {
                         $treediv.jstree('select_node', newnode);
@@ -189,7 +215,8 @@
                 //SelectFirstChild: true,
                 ShowCheckboxes: false,
                 ShowToggleLink: true,
-                IncludeInQuickLaunch: true
+                IncludeInQuickLaunch: true,
+                Delay: 250
             };
             if (options) $.extend(o, options);
 
