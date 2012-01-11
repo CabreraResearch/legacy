@@ -2,6 +2,7 @@
 
 create index nodes1 on nodes(nodeid, nodename);
 create index nodes2 on nodes(nodeid, nodetypeid);
+create index NODES3 on nodes(nodeid, nodename, nodetypeid, locked, issystem);
 create index propsbynodetype on nodetype_props(nodetypeid);
 create index prop1 on nodetype_props(nodetypeid, nodetypepropid);
 create index prop3 on nodetype_props(fieldtypeid, nodetypeid, nodetypepropid);

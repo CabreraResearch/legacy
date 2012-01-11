@@ -59,7 +59,8 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Reporting compatible format
         /// </summary>
-        ReportingDataSet
+        ReportingDataSet,
+        jsTree
     }
 
     /// <summary>

@@ -196,6 +196,23 @@ namespace ChemSW.Nbt.WebServices
             }
             return RetPath;
         }
+
+
+        public void saveToTempFile( string SaveString, string Path )
+        {
+            if( false == string.IsNullOrEmpty( SaveString ) &&
+                false == string.IsNullOrEmpty( Path ) )
+            {
+                string RetPath = _TempPath + "\\" + Path;
+                using( FileStream OutputFile = File.Create( RetPath ) )
+                {
+                    StreamWriter w = new StreamWriter( OutputFile );
+                    w.Write( SaveString );
+                    w.Close();
+                }
+            }
+        }
+
         #endregion Temporary Files
 
         #region Client
