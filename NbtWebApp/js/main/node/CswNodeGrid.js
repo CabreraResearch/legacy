@@ -17,6 +17,7 @@
         };
         var delFunc = function(opts) {
             opts.onDeleteNode = func;
+            opts.publishDeleteEvent = false;
             renameProperty(opts, 'cswnbtnodekey', 'cswnbtnodekeys');
             renameProperty(opts, 'nodepk', 'nodeids');
             renameProperty(opts, 'nodename', 'nodenames');

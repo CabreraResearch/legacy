@@ -75,13 +75,14 @@
         function makeTabContentDiv($tabParent, tabid, canEditLayout) {
             var $tabcontentdiv = $('<div id="' + tabid + '"><form onsubmit="return false;" id="' + tabid + '_form" /></div>')
                                     .appendTo($tabParent);
-            var handle;
+            
+            var handle = function(eventObj) {
+                $tabParent.remove();
+                $.unsubscribe(handle);
+            };
             
             if(false === isNullOrEmpty($tabParent.parent(), true)) {
-                handle = $.subscribe(ChemSW.enums.Events.CswNodeDelete, function() {
-                    $tabParent.remove();
-                    $.unsubscribe(handle);
-                });
+                $.subscribe(ChemSW.enums.Events.CswNodeDelete, handle);
             }
             $tabcontentdiv.data('canEditLayout', canEditLayout);
             return $tabcontentdiv;

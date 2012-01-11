@@ -482,7 +482,8 @@
                 cswnbtnodekeys: [], 
                 onDeleteNode: null, //function(nodeid, nodekey) { },
                 Multi: false,
-                NodeCheckTreeId: ''
+                NodeCheckTreeId: '',
+                publishDeleteEvent: true
             };
 
             if (options) {
@@ -524,7 +525,9 @@
                                                         if (isFunction(o.onDeleteNode)) {
                                                             o.onDeleteNode(nodeid, nodekey);
                                                         }
-                                                        $.publish(ChemSW.enums.Events.CswNodeDelete);
+                                                        if(isTrue(o.publishDeleteEvent)) {
+                                                            $.publish(ChemSW.enums.Events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
+                                                        }
                                                     },
                                                     onError: function() {
                                                         $deletebtn.CswButton('enable');

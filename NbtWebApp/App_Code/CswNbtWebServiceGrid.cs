@@ -219,6 +219,7 @@ namespace ChemSW.Nbt.WebServices
                 if( _View.Visibility == NbtViewVisibility.Property )
                 {
                     Tree.goToNthChild( 0 );
+                    NodeCount = Tree.getChildNodeCount();
                 }
                 for( Int32 C = StartingNode; ( C < EndingNode || IsReport ) && C < NodeCount; C += 1 )
                 {
