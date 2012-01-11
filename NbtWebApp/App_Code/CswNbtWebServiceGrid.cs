@@ -230,7 +230,15 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            Int32 PageCount = ( ( NodeCount + PageSize - 1 ) / PageSize );
+            Int32 PageCount;
+            if( IsReport )
+            {
+                PageCount = 1;
+            }
+            else
+            {
+                PageCount = ( ( NodeCount + PageSize - 1 ) / PageSize );
+            }
             RetObj["total"] = PageCount;
             RetObj["page"] = PageNumber + 1;
             RetObj["records"] = NodeCount;

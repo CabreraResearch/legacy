@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -267,7 +266,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Combines required jqGrid options into jqGrid consumable JObject
         /// </summary>
-        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows = null )
+        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows = null, bool ShowAllRows = false )
         {
             JObject Ret = new JObject();
 
@@ -278,7 +277,10 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret[JqGridJsonOptions.data.ToString()] = Rows;
             }
-            Ret[JqGridJsonOptions.rowNum.ToString()] = PageSize;
+            if( false == ShowAllRows )
+            {
+                Ret[JqGridJsonOptions.rowNum.ToString()] = PageSize;
+            }
             Ret[JqGridJsonOptions.viewrecords.ToString()] = true;
             Ret[JqGridJsonOptions.emptyrecords.ToString()] = _NoResultsDisplayString;
             if( GridWidth == Int32.MinValue )
@@ -297,7 +299,7 @@ namespace ChemSW.Nbt.WebServices
 
             return Ret;
         }
-       
+
     } // class CswGridData
 
     /// <summary>
