@@ -200,7 +200,7 @@ function CswGrid(options, $parent) {
         if (o.pagermode === 'default' || o.pagermode === 'custom') {
             $gridTable.jqGrid(o.gridOpts)
                       .jqGrid('navGrid', '#' + gridPagerId, o.optNav, { }, { }, { }, { }, { }); //Case 24032: Removed jqGrid search
-            log(o);
+
             if (o.pagermode === 'custom') {
                 makeCustomPager(o.customPager);
             }
