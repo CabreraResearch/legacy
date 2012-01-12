@@ -71,6 +71,20 @@ namespace ChemSW.Nbt
             }
         } // IsQuickLaunch
 
+        public enum ViewType
+        {
+            Unknown,
+            Root,
+            View,
+            //ViewCategory, 
+            Category,
+            Action,
+            Report,
+            //ReportCategory, 
+            Search,
+            RecentView
+        };
+
         /// <summary>
         /// Visibility permission setting
         /// </summary>
@@ -1370,8 +1384,8 @@ namespace ChemSW.Nbt
         public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
         {
             // don't cache twice
-            if( SessionViewId == null || ForceCache 
-				|| IncludeInQuickLaunch )  // case 23999
+            if( SessionViewId == null || ForceCache
+                || IncludeInQuickLaunch )  // case 23999
             {
                 bool ForQuickLaunch = ( IncludeInQuickLaunch && IsQuickLaunch );
                 _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch, KeepInQuickLaunch );

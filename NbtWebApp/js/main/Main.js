@@ -915,7 +915,7 @@
                  clear({ 'all': true });
 
                  var rulesOpt = {
-                     onFinish: function() {
+                     exitFunc: function() {
                          clear({ 'all': true });
                          setCurrent(getLast());
                          refreshSelected();

@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -19,6 +18,8 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtResources = Resources;
             PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
+            PageSize = ( PageSize > 0 ) ? PageSize : CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.treeview_resultlimit.ToString() ) );
+            PageSize = ( PageSize > 0 ) ? PageSize : 50;
         }
 
         public string PkColumn = string.Empty;
@@ -204,82 +205,6 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
-        /// Returns a JSON Array representing grid rows (a row as a JObject of JProperty key/value pairs);
-        /// This anticipates XElements as derived from a Tree from a View
-        /// </summary>
-        public JArray getGridRowsJSON( IEnumerable<XElement> GridNodes, Collection<CswViewBuilderProp> PropsInGrid )
-        {
-            JArray GridRows = new JArray();
-            foreach( XElement GridNode in GridNodes )
-            {
-                JObject Row = new JObject();
-                Row["nodeid"] = GridNode.Attribute( "nodeid" ).Value;
-                Row["nodepk"] = new CswPrimaryKey( "nodes", CswConvert.ToInt32( GridNode.Attribute( "nodeid" ).Value ) ).ToString();
-                Row["cswnbtnodekey"] = wsTools.ToSafeJavaScriptParam( GridNode.Attribute( "key" ).Value );
-                Row["nodename"] = GridNode.Attribute( "nodename" ).Value;
-                string Icon = "<img src=\'";
-                if( CswConvert.ToBoolean( GridNode.Attribute( "locked" ).Value ) )
-                {
-                    Icon += "Images/quota/lock.gif\' title=\'Quota exceeded";
-                }
-                else
-                {
-                    Icon += "Images/icons/" + _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( GridNode.Attribute( "nodetypeid" ).Value ) ).IconFileName;
-                }
-                Icon += "\'/>";
-                Row["icon"] = Icon;
-
-                foreach( XElement Related in GridNode.DescendantNodes().OfType<XElement>() )
-                {
-                    if( Related.Name == "NbtNodeProp" )
-                    {
-                        _addSafeCellContent( _CswNbtResources, Related, Row, PropsInGrid );
-                    }
-                }
-                GridRows.Add( Row );
-            }
-
-            return GridRows;
-        } // getGridRowsJSON()
-
-        /// <summary>
-        /// Translates property value into human readable text.
-        /// Currently only handles Logical fieldtype.
-        /// </summary>
-        private static void _addSafeCellContent( CswNbtResources CswNbtResources, XElement DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
-        {
-            if( null != DirtyElement )
-            {
-                string CleanPropName = DirtyElement.Attribute( "name" ).Value.Trim().ToLower().Replace( " ", "_" );
-                string CleanValue;
-                string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
-                string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
-                string PropId = DirtyElement.Attribute( "nodetypepropid" ).Value;
-                CswNbtMetaDataNodeTypeProp Prop = CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
-
-                var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
-                switch( PropFieldType )
-                {
-                    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-                        CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
-                        break;
-                    default:
-                        CleanValue = DirtyValue;
-                        break;
-                }
-                foreach( CswViewBuilderProp VbProp in PropsInGrid )
-                {
-                    if( Prop != null && VbProp.PropNameUnique == CleanPropName && VbProp.AssociatedPropIds.Contains( Prop.FirstPropVersionId ) )
-                    {
-                        CleanPropName += "_" + VbProp.MetaDataPropId;
-                    }
-                }
-
-                ParentObj[CleanPropName] = CleanValue;
-            }
-        }
-
-        /// <summary>
         /// Generates a JSON array of friendly Column Names
         /// </summary>
         public JArray getGridColumnNamesJson( JArray ColumnArrary, IEnumerable<CswNbtViewProperty> PropCollection )
@@ -341,7 +266,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Combines required jqGrid options into jqGrid consumable JObject
         /// </summary>
-        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows = null )
+        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows = null, bool ShowAllRows = false )
         {
             JObject Ret = new JObject();
 
@@ -352,7 +277,10 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret[JqGridJsonOptions.data.ToString()] = Rows;
             }
-            Ret[JqGridJsonOptions.rowNum.ToString()] = PageSize;
+            if( false == ShowAllRows )
+            {
+                Ret[JqGridJsonOptions.rowNum.ToString()] = PageSize;
+            }
             Ret[JqGridJsonOptions.viewrecords.ToString()] = true;
             Ret[JqGridJsonOptions.emptyrecords.ToString()] = _NoResultsDisplayString;
             if( GridWidth == Int32.MinValue )

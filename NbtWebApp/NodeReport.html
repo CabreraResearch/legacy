@@ -6,6 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache">
     <title>NBT</title>
     <!--#include file="MainIncludes.html" -->
+    <script type="text/javascript" src="js/CswAll.min.js"></script>
     <style type="text/css">
         
         .propertylabel
@@ -13,13 +14,12 @@
             font-weight: bold;
         }
 
-        </style>
+    </style>
 </head>
 <body>
     <div id="ReportContent"></div>
 
     <script type="text/javascript">
-
     
         $(document).ready(function () {
             var initReport = function() {
@@ -31,9 +31,7 @@
                         nodekeys: [qs.cswnbtnodekey],
                         EditMode: EditMode.PrintReport.name
                     });
-                } else if ($.browser.msie) {
-                    setTimeout(initReport, 100);
-                }
+                } 
             };
             
             $(window).load(function() {

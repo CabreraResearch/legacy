@@ -1,39 +1,40 @@
 using System;
-using System.Data;
-using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Xml;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
+using System.Xml.Linq;
 //using ChemSW.Nbt.PropTypes;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
     enum TblRtrvlType { CreateNonExistent, ComplainAboutNonExistent };
-    
-	///// <summary>
-	///// Audit Level definition
-	///// </summary>
-	//public enum NbtAuditLevel
-	//{
-	//    /// <summary>
-	//    /// No auditing
-	//    /// </summary>
-	//    None, 
-	//    /// <summary>
-	//    /// Records changes only
-	//    /// </summary>
-	//    Simple, 
-	//    /// <summary>
-	//    /// Records changes and a one-way encrypted hash of values
-	//    /// </summary>
-	//    Hashed, 
-	//    /// <summary>
-	//    /// Requires an electronic signature
-	//    /// </summary>
-	//    Esig
-	//}
+
+    ///// <summary>
+    ///// Audit Level definition
+    ///// </summary>
+    //public enum NbtAuditLevel
+    //{
+    //    /// <summary>
+    //    /// No auditing
+    //    /// </summary>
+    //    None, 
+    //    /// <summary>
+    //    /// Records changes only
+    //    /// </summary>
+    //    Simple, 
+    //    /// <summary>
+    //    /// Records changes and a one-way encrypted hash of values
+    //    /// </summary>
+    //    Hashed, 
+    //    /// <summary>
+    //    /// Requires an electronic signature
+    //    /// </summary>
+    //    Esig
+    //}
 
     /// <summary>
     /// Formats for Tree XML export
@@ -81,7 +82,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Event handler for events that occur during <see cref="ICswNbtTree.iterateTree"/>
     /// </summary>
-    public delegate void CswNbtNodeVisitHandler( object VisitedNodeKey , NodeVisitEventArgs NodeVisitEventArgs );
+    public delegate void CswNbtNodeVisitHandler( object VisitedNodeKey, NodeVisitEventArgs NodeVisitEventArgs );
 
     //public interface NodeAttributes
     //{
@@ -97,12 +98,12 @@ namespace ChemSW.Nbt
 
         //NodeAttributes CurrentNodeAttributes { get;}
 
-//        void finalize();
+        //        void finalize();
 
-		///// <summary>
-		///// TreeKey which is used to index this tree.
-		///// </summary>
-		CswNbtTreeKey Key { get; }
+        ///// <summary>
+        ///// TreeKey which is used to index this tree.
+        ///// </summary>
+        CswNbtTreeKey Key { get; }
 
         /// <summary>
         /// Event to call when iterating nodes.  See <see cref="iterateTree" />.
@@ -119,10 +120,10 @@ namespace ChemSW.Nbt
         /// </summary>
         void iterateTree();
 
-		///// <summary>
-		///// Audit Level for tree
-		///// </summary>
-		//NbtAuditLevel NbtAuditLevel { get; set; }
+        ///// <summary>
+        ///// Audit Level for tree
+        ///// </summary>
+        //NbtAuditLevel NbtAuditLevel { get; set; }
 
         /// <summary>
         /// View XML that was used to create this tree
@@ -149,14 +150,14 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets the Tree XML, for copying trees
         /// </summary>
-        void setRawTreeXml(XmlDocument XmlDoc);
+        void setRawTreeXml( XmlDocument XmlDoc );
 
         /// <summary>
         /// Name of view that created this tree.  Also name of root node of tree.
         /// </summary>
         string ViewName { get; }
 
-		bool IsFullyPopulated { get; }
+        bool IsFullyPopulated { get; }
 
 
         /// <summary>
@@ -179,31 +180,31 @@ namespace ChemSW.Nbt
         /// <param name="NodeId">Primary key of node</param>
         CswNbtNodeKey getNodeKeyByNodeId( CswPrimaryKey NodeId );
 
-		/// <summary>
-		/// Return a node key for the first matching node in the tree which derived from the given ViewNode
-		/// </summary>
-		/// <param name="NodeId">Primary key of node</param>
-		/// <param name="NodeId">View Node</param>
-		CswNbtNodeKey getNodeKeyByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode );
+        /// <summary>
+        /// Return a node key for the first matching node in the tree which derived from the given ViewNode
+        /// </summary>
+        /// <param name="NodeId">Primary key of node</param>
+        /// <param name="NodeId">View Node</param>
+        CswNbtNodeKey getNodeKeyByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode );
 
         /// <summary>
         /// Returns the currently indexed node
         /// </summary>
         CswNbtNode getNodeForCurrentPosition();
 
-        
+
         /// <summary>
         /// Creates a root node on the tree.  Mostly used by TreeLoaders.
         /// </summary>
         /// <param name="ViewRoot">The corresponding ViewRoot node in the View</param>
-        void makeRootNode(CswNbtViewRoot ViewRoot);
+        void makeRootNode( CswNbtViewRoot ViewRoot );
         /// <summary>
         /// Creates a root node on the tree.  Mostly used by TreeLoaders.
         /// </summary>
         /// <param name="IconFileName">Icon filename for root node</param>
         /// <param name="Selectable">True if the root is selectable, false otherwise</param>
         /// <param name="AddChildren">True if users can add children to the root, false otherwise</param>
-        void makeRootNode(string IconFileName, bool Selectable, NbtViewAddChildrenSetting AddChildren);
+        void makeRootNode( string IconFileName, bool Selectable, NbtViewAddChildrenSetting AddChildren );
 
         /// <summary>
         /// Creates a placeholder "More..." node on the tree.  Mostly used by TreeLoaders.
@@ -213,7 +214,7 @@ namespace ChemSW.Nbt
         /// <param name="NodeCount">Rowcount in results for this node</param>
         /// <param name="ViewNode">Node of View which created this placeholder node and its siblings</param>
         void makeMoreNodeFromRow( CswNbtNodeKey ParentNodeKey, DataRow Row, Int32 NodeCount, CswNbtViewNode ViewNode );
-            
+
         /// <summary>
         /// Returns all node keys of nodes of a given Object Class
         /// </summary>
@@ -226,6 +227,13 @@ namespace ChemSW.Nbt
         /// <param name="NodeTypeId">Primary key of Node Type</param>
         /// <returns>Collection of Node Keys</returns>
         Collection<CswPrimaryKey> getNodeKeysOfNodeType( Int32 NodeTypeId );
+
+        /// <summary>
+        /// Returns all node keys of nodes of a given NodeType
+        /// </summary>
+        /// <param name="NodeTypeId">Primary key of Node Type</param>
+        /// <returns>Collection of Node Keys</returns>
+        IEnumerable<XElement> getChildNodePropsOfNode();
 
         //Navigation and interrogation methods*****************************************
         #region Navigation and interrogation methods
@@ -268,14 +276,14 @@ namespace ChemSW.Nbt
         /// True if the currently indexed node's parent has a previous child
         /// </summary>
         bool previousSiblingExists();
-        
+
         /// <summary>
         /// Sets the current index to the currently indexed node's parent
         /// </summary>
         void goToParentNode();
 
-//        CswNbtNodeKey getNodeKeyForNodeRow( DataRow DataRow );
-       
+        //        CswNbtNodeKey getNodeKeyForNodeRow( DataRow DataRow );
+
         /// <summary>
         /// Returns the NodeKey for the currently indexed node
         /// </summary>
@@ -284,15 +292,15 @@ namespace ChemSW.Nbt
         /// Returns the primary key of the currently indexed node
         /// </summary>
         CswPrimaryKey getNodeIdForCurrentPosition();
-		/// <summary>
-		/// Returns the Name of the currently indexed node
-		/// </summary>
-		String getNodeNameForCurrentPosition();
-		/// <summary>
-		/// Returns whether the currently indexed node is locked
-		/// </summary>
-		bool getNodeLockedForCurrentPosition();
-		/// <summary>
+        /// <summary>
+        /// Returns the Name of the currently indexed node
+        /// </summary>
+        String getNodeNameForCurrentPosition();
+        /// <summary>
+        /// Returns whether the currently indexed node is locked
+        /// </summary>
+        bool getNodeLockedForCurrentPosition();
+        /// <summary>
         /// True if the currently indexed node is selectable, false otherwise
         /// </summary>
         bool getNodeSelectableForCurrentPosition();
@@ -330,7 +338,7 @@ namespace ChemSW.Nbt
         /// Returns the total number of siblings of the currently indexed node
         /// </summary>
         int getNodeCountForCurrentLevel();
-        
+
         /// <summary>
         /// Returns all siblings and cousins on a tree level
         /// </summary>
@@ -356,8 +364,8 @@ namespace ChemSW.Nbt
         /// <param name="GroupName">If grouping nodes, name of Group for this node</param>
         /// <param name="Relationship">ViewRelationship node which caused this node to be added</param>
         /// <returns>Returns NodeKey index for node</returns>
-        Collection<CswNbtNodeKey> loadNodeAsChildFromRow(CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount);
-        
+        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount );
+
         ///// <summary>
         ///// Add a node from the information in its key
         ///// </summary>
@@ -379,7 +387,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets the client-side expandmode of the current node
         /// </summary>
-        void setCurrentNodeExpandMode(string ExpandMode);
+        void setCurrentNodeExpandMode( string ExpandMode );
 
         /// <summary>
         /// Adds a Property value to a node.  This is the uncommon way to fill property data in for nodes.
@@ -388,7 +396,7 @@ namespace ChemSW.Nbt
         /// <param name="Name">Name of Property</param>
         /// <param name="Gestalt">Text representation of the value of the property</param>
         /// <param name="FieldType">FieldType of the property</param>
-        void addProperty(Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType);
+        void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType );
 
         //CswNbtNodeKey loadNodeAsChildFromDb( System.Int32 NodeId, string GroupName );
 
