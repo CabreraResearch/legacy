@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnObj["root"]["children"] = new JArray();
 
                 Tree.goToRoot();
-                _runTreeNodesRecursive( View, Tree, IdPrefix, (JArray) ReturnObj["root"]["children"], true );
+                _runTreeNodesRecursive( Tree, (JArray) ReturnObj["root"]["children"], true );
                 
                 //_wsTreeOfView.saveTreeToCache( Tree );
                 //_View.SaveToCache( IncludeInQuickLaunch );
