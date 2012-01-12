@@ -475,6 +475,10 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getQuickLaunchItems()
         {
+
+            CswTimer QuickLaunchItemsTimer = new CswTimer();
+
+
             //XElement ReturnVal = new XElement( "quicklaunch" );
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -501,6 +505,9 @@ namespace ChemSW.Nbt.WebServices
             }
 
             _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            _CswNbtResources.logTimerResult( "wsNBT.getQuickLaunchItems()", QuickLaunchItemsTimer.ElapsedDurationInSecondsAsString );
+
 
             return ReturnVal.ToString();
 
@@ -1476,6 +1483,9 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi )
         {
+
+            CswTimer GetPropsTimer = new CswTimer();
+
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -1503,7 +1513,10 @@ namespace ChemSW.Nbt.WebServices
 
             _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
+            _CswNbtResources.logTimerResult( "wsNBT.getProps()", GetPropsTimer.ElapsedDurationInSecondsAsString );
+
             return ReturnVal.ToString();
+
         } // getProps()
 
         [WebMethod( EnableSession = false )]
