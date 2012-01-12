@@ -82,6 +82,9 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject getMenu( CswNbtView View, string SafeNodeKey, string PropIdAttr )
         {
+
+            CswTimer MainMenuTimer = new CswTimer();
+
             JObject Ret = new JObject();
 
             string NodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
@@ -306,6 +309,9 @@ namespace ChemSW.Nbt.WebServices
                 Ret["Multi-Edit"] = new JObject();
                 Ret["Multi-Edit"]["action"] = MenuActions.multiedit.ToString();
             }
+
+            _CswNbtResources.logTimerResult( "CswNbtWebServiceMainMenu.getMenu()", MainMenuTimer.ElapsedDurationInSecondsAsString );
+
 
             return Ret;
         } // getMenu()

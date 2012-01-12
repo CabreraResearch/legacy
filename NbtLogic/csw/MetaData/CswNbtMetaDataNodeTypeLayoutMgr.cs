@@ -64,6 +64,8 @@ namespace ChemSW.Nbt.MetaData
 
         public NodeTypeLayout getLayout(LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop)
         {
+            CswTimer GetLayoutTimer = new CswTimer();
+
             NodeTypeLayout Layout = null;
             CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getLayout_Select", "nodetype_layout" );
             DataTable LayoutTable = LayoutSelect.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + Prop.PropId.ToString() );
@@ -77,7 +79,12 @@ namespace ChemSW.Nbt.MetaData
                 Layout.DisplayRow = CswConvert.ToInt32( LayoutTable.Rows[0]["display_row"] );
                 Layout.DisplayColumn = CswConvert.ToInt32( LayoutTable.Rows[0]["display_column"] );
             }
+
+            _CswNbtMetaDataResources.CswNbtResources.logTimerResult( "CswNbtMetaDataNodeTypeLayoutMgr.getLayout()", GetLayoutTimer.ElapsedDurationInSecondsAsString );
+
+
             return Layout;
+
         } // getLayout()
 
 
