@@ -20,6 +20,98 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
+        /// <summary>
+        /// Recursively iterate the tree and add child nodes according to parent hierarchy
+        /// </summary>
+        private void _runTreeNodesRecursive( CswNbtView View, ICswNbtTree Tree, string IdPrefix, JArray GrandParentNode, bool Recurse )
+        {
+            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            {
+                Tree.goToNthChild( c );
+
+                JObject ThisNodeObj = _treeNodeJObject( View, Tree, IdPrefix );
+                GrandParentNode.Add( ThisNodeObj );
+
+                if( Recurse )
+                {
+                    _runTreeNodesRecursive( View, Tree, IdPrefix, (JArray) ThisNodeObj["children"], Recurse );
+                }
+                Tree.goToParentNode();
+            } // for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+        } // _runTreeNodesRecursive()
+
+
+        /// <summary>
+        /// Generate a JObject for the tree's current node
+        /// </summary>
+        private JObject _treeNodeJObject( CswNbtView View, ICswNbtTree Tree, string IdPrefix )
+        {
+            JObject ThisNodeObj = new JObject();
+
+            CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
+            string ThisNodeName = Tree.getNodeNameForCurrentPosition();
+            string ThisNodeIcon = "";
+            string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
+            string ThisNodeId = "";
+            string ThisNodeRel = "";
+            bool ThisNodeLocked = false;
+            CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
+            switch( ThisNodeKey.NodeSpecies )
+            {
+                case NodeSpecies.More:
+                    ThisNodeId = IdPrefix + ThisNodeKey.NodeId.ToString();
+                    ThisNodeName = NodeSpecies.More.ToString() + "...";
+                    ThisNodeIcon = "triangle_blueS.gif";
+                    ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
+                    break;
+                case NodeSpecies.Plain:
+                    ThisNodeId = IdPrefix + ThisNodeKey.NodeId.ToString();
+                    ThisNodeName = Tree.getNodeNameForCurrentPosition();
+                    ThisNodeIcon = ThisNodeType.IconFileName;
+                    ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
+                    ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
+
+                    break;
+                case NodeSpecies.Group:
+                    ThisNodeRel = "group";
+                    break;
+            }
+
+            CswNbtViewNode ThisNodeViewNode = View.FindViewNodeByUniqueId( ThisNodeKey.ViewNodeUniqueId );
+
+            string ThisNodeState = "closed";
+            if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
+                View.ViewMode == NbtViewRenderingMode.List ||
+                ( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
+                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
+            {
+                ThisNodeState = "leaf";
+            }
+
+            ThisNodeObj["data"] = ThisNodeName;
+            ThisNodeObj["icon"] = "Images/icons/" + ThisNodeIcon;
+            ThisNodeObj["attr"] = new JObject();
+            ThisNodeObj["attr"]["id"] = ThisNodeId;
+            ThisNodeObj["attr"]["rel"] = ThisNodeRel;
+            ThisNodeObj["attr"]["state"] = ThisNodeState;
+            ThisNodeObj["attr"]["species"] = ThisNodeKey.NodeSpecies.ToString();
+            ThisNodeObj["attr"]["cswnbtnodekey"] = ThisNodeKeyString;
+            ThisNodeObj["attr"]["locked"] = ThisNodeLocked.ToString().ToLower();
+            CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
+            if( ParentKey.NodeSpecies != NodeSpecies.Root )
+            {
+                ThisNodeObj["attr"]["parentkey"] = wsTools.ToSafeJavaScriptParam( ParentKey.ToString() );
+            }
+
+            if( "leaf" != ThisNodeState && Tree.getChildNodeCount() > 0 )
+            {
+                ThisNodeObj["state"] = ThisNodeState;
+                ThisNodeObj["children"] = new JArray();
+                ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
+            }
+            return ThisNodeObj;
+        } // _treeNodeJObject()
+
         public JObject runTree( CswNbtView View, string IdPrefix, CswPrimaryKey IncludeNodeId, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch )
         {
             JObject ReturnObj = new JObject();
@@ -364,98 +456,6 @@ namespace ChemSW.Nbt.WebServices
             }
             return TypesJson;
         } // getTypes()
-
-        /// <summary>
-        /// Recursively iterate the tree and add child nodes according to parent hierarchy
-        /// </summary>
-        private void _runTreeNodesRecursive( CswNbtView View, ICswNbtTree Tree, string IdPrefix, JArray GrandParentNode, bool Recurse )
-        {
-            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
-            {
-                Tree.goToNthChild( c );
-
-                JObject ThisNodeObj = _treeNodeJObject( View, Tree, IdPrefix );
-                GrandParentNode.Add( ThisNodeObj );
-
-                if( Recurse )
-                {
-                    _runTreeNodesRecursive( View, Tree, IdPrefix, (JArray) ThisNodeObj["children"], Recurse );
-                }
-                Tree.goToParentNode();
-            } // for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
-        } // _runTreeNodesRecursive()
-
-
-        /// <summary>
-        /// Generate a JObject for the tree's current node
-        /// </summary>
-        private JObject _treeNodeJObject( CswNbtView View, ICswNbtTree Tree, string IdPrefix )
-        {
-            JObject ThisNodeObj = new JObject();
-
-            CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
-            string ThisNodeName = Tree.getNodeNameForCurrentPosition();
-            string ThisNodeIcon = "";
-            string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
-            string ThisNodeId = "";
-            string ThisNodeRel = "";
-            bool ThisNodeLocked = false;
-            CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
-            switch( ThisNodeKey.NodeSpecies )
-            {
-                case NodeSpecies.More:
-                    ThisNodeId = IdPrefix + ThisNodeKey.NodeId.ToString();
-                    ThisNodeName = NodeSpecies.More.ToString() + "...";
-                    ThisNodeIcon = "triangle_blueS.gif";
-                    ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
-                    break;
-                case NodeSpecies.Plain:
-                    ThisNodeId = IdPrefix + ThisNodeKey.NodeId.ToString();
-                    ThisNodeName = Tree.getNodeNameForCurrentPosition();
-                    ThisNodeIcon = ThisNodeType.IconFileName;
-                    ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
-                    ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
-
-                    break;
-                case NodeSpecies.Group:
-                    ThisNodeRel = "group";
-                    break;
-            }
-
-            CswNbtViewNode ThisNodeViewNode = View.FindViewNodeByUniqueId( ThisNodeKey.ViewNodeUniqueId );
-
-            string ThisNodeState = "closed";
-            if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
-                View.ViewMode == NbtViewRenderingMode.List ||
-                ( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
-                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
-            {
-                ThisNodeState = "leaf";
-            }
-
-            ThisNodeObj["data"] = ThisNodeName;
-            ThisNodeObj["icon"] = "Images/icons/" + ThisNodeIcon;
-            ThisNodeObj["attr"] = new JObject();
-            ThisNodeObj["attr"]["id"] = ThisNodeId;
-            ThisNodeObj["attr"]["rel"] = ThisNodeRel;
-            ThisNodeObj["attr"]["state"] = ThisNodeState;
-            ThisNodeObj["attr"]["species"] = ThisNodeKey.NodeSpecies.ToString();
-            ThisNodeObj["attr"]["cswnbtnodekey"] = ThisNodeKeyString;
-            ThisNodeObj["attr"]["locked"] = ThisNodeLocked.ToString().ToLower();
-            CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
-            if(ParentKey.NodeSpecies != NodeSpecies.Root)
-            {
-                ThisNodeObj["attr"]["parentkey"] = wsTools.ToSafeJavaScriptParam( ParentKey.ToString() );
-            }
-
-            if( "leaf" != ThisNodeState && Tree.getChildNodeCount() > 0 )
-            {
-                ThisNodeObj["state"] = ThisNodeState;
-                ThisNodeObj["children"] = new JArray();
-                ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
-            }
-            return ThisNodeObj;
-        } // _treeNodeJObject()
 
     } // class CswNbtWebServiceTree
 
