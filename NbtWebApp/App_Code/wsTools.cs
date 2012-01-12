@@ -182,34 +182,41 @@ namespace ChemSW.Nbt.WebServices
             return RetStream;
         }
 
+        private void _getFileStream( string RelativePath, out FileStream FileStream, out string FullPath )
+        {
+            FileStream = null;
+            FullPath = string.Empty;
+            if( false == string.IsNullOrEmpty( RelativePath ) )
+            {
+                FullPath = System.IO.Path.Combine( new string[] { _TempPath, RelativePath } );
+                FileStream = File.Create( FullPath );
+            }
+        } // _getFileStream
+
         public string cacheInputStream( Stream InputStream, string Path )
         {
-            string RetPath = string.Empty;
-            if( null != InputStream &&
-                false == string.IsNullOrEmpty( Path ) )
-            {
-                RetPath = _TempPath + "\\" + Path;
-                using( FileStream OutputFile = File.Create( RetPath ) )
-                {
-                    InputStream.CopyTo( OutputFile );
-                }
-            }
-            return RetPath;
-        }
+            FileStream OutputStream = null;
+            string FullPath = string.Empty;
+            _getFileStream( Path, out OutputStream, out FullPath );
 
+            if( null != InputStream && null != OutputStream )
+            {
+                InputStream.CopyTo( OutputStream );
+            }
+            return FullPath;
+        }
 
         public void saveToTempFile( string SaveString, string Path )
         {
-            if( false == string.IsNullOrEmpty( SaveString ) &&
-                false == string.IsNullOrEmpty( Path ) )
+            FileStream OutputStream = null;
+            string FullPath = string.Empty;
+            _getFileStream( Path, out OutputStream, out FullPath );
+
+            if( false == string.IsNullOrEmpty( SaveString ) && null != OutputStream )
             {
-                string RetPath = _TempPath + "\\" + Path;
-                using( FileStream OutputFile = File.Create( RetPath ) )
-                {
-                    StreamWriter w = new StreamWriter( OutputFile );
-                    w.Write( SaveString );
-                    w.Close();
-                }
+                StreamWriter w = new StreamWriter( OutputStream );
+                w.Write( SaveString );
+                w.Close();
             }
         }
 
