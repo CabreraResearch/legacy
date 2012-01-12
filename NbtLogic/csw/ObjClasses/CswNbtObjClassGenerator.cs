@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     InspectionTargetGroupNt == OwnerNode.NodeType.LatestVersionNodeType )
                                 {
                                     MatchingInspectionTargetNts.Add( InspectionTargetNt );
-                                    ParentType.SelectedNodeTypeIds.Add( true, InspectionTargetNt.NodeTypeId.ToString() );
+                                    ParentType.SelectedNodeTypeIds.Add(  InspectionTargetNt.NodeTypeId.ToString(), false, true );
                                     if( ParentType.SelectMode == PropertySelectMode.Single )
                                     {
                                         break;
@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     {
                                         if( MatchingInspectionTargetNt.NodeTypeId == DesignTargetNtp.FKValue )
                                         {
-                                            TargetType.SelectedNodeTypeIds.Add( true, InspectionDesignNt.NodeTypeId.ToString() );
+                                            TargetType.SelectedNodeTypeIds.Add( InspectionDesignNt.NodeTypeId.ToString(), false, true );
                                             if( TargetType.SelectMode == PropertySelectMode.Single )
                                             {
                                                 break;
