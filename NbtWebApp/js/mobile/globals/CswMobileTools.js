@@ -1,4 +1,4 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="CswMobileEnums.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
@@ -9,6 +9,7 @@
 //#region plugins
 
 (function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     $.fn.CswChangePage = function (options) {
         /// <summary>
         ///   Initiates page transition between CswMobilePages
@@ -64,6 +65,7 @@
 //#region functions
 
 function startLoadingMsg(onSuccess) {
+    "use strict";
     /// <summary> Starts the JQM "loading.." message and executes a function.
     /// </summary>
     /// <param name="onSuccess" type="Function">Function to execute.</param>
@@ -76,6 +78,7 @@ function startLoadingMsg(onSuccess) {
 }
         
 function stopLoadingMsg(onSuccess,mobilePage) {
+    "use strict";
     /// <summary> Stops the JQM "loading.." message and executes a function.
     /// </summary>
     /// <param name="onSuccess" type="Function">Function to execute.</param>
@@ -94,11 +97,13 @@ function stopLoadingMsg(onSuccess,mobilePage) {
 }
 
 function onError() {
+    "use strict";
     /// <summary> Stops the JQM "loading.." message on error. </summary> 
     stopLoadingMsg();
 }
 
 function onLoginFail(text,mobileStorage) {
+    "use strict";
     /// <summary> On login failure event </summary>
     /// <param name="text" type="String">Login failure text</param>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
@@ -109,6 +114,7 @@ function onLoginFail(text,mobileStorage) {
 }
 
 function onLogout(mobileStorage) {
+    "use strict";
     /// <summary> Calls Logout() </summary>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <returns type="Boolean">false, for use in 'click' event.</returns>
@@ -118,6 +124,7 @@ function onLogout(mobileStorage) {
 
     
 function Logout(mobileStorage, reloadWindow) {
+    "use strict";
     /// <summary> On login failure event </summary>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="reloadWindow" type="Boolean">If true, reload the login page.</param>
@@ -138,6 +145,7 @@ function Logout(mobileStorage, reloadWindow) {
 }
 
 function setOffline(mobileStorage, onComplete) {
+    "use strict";
     /// <summary>
     ///   Sets 'Online' button style 'offline'
     /// </summary>
@@ -172,6 +180,7 @@ function setOffline(mobileStorage, onComplete) {
 }
 
 function setOnline(mobileStorage, onComplete) {
+    "use strict";
     /// <summary>
     ///   Sets 'Online' button style 'online'
     /// </summary>
@@ -208,6 +217,7 @@ function setOnline(mobileStorage, onComplete) {
 }
 
 function toggleOnline(mobileStorage, onComplete) {
+    "use strict";
     /// <summary>
     ///   Toggles the online status displayed in UI according to actual status.
     /// </summary>
@@ -225,6 +235,7 @@ function toggleOnline(mobileStorage, onComplete) {
 }
 
 function makeFooterButtonDef(name, id, onClick, mobileStorage) {
+    "use strict";
     /// <summary>Generate the JSON definition for a Mobile footer button</summary>
     /// <param name="name" type="CswMobileFooterButtons">CswMobileFooterButtons enum name for the button</param>
     /// <param name="id" type="String">Proposed Element ID</param>
@@ -271,6 +282,7 @@ function makeFooterButtonDef(name, id, onClick, mobileStorage) {
 }
 
 function makeHeaderButtonDef(name, id, onClick) {
+    "use strict";
     /// <summary>Generate the JSON definition for a Mobile header button</summary>
     /// <param name="name" type="CswMobileHeaderButtons">CswMobileHeaderButtons enum name for the button</param>
     /// <param name="id" type="String">Proposed Element ID</param>
@@ -298,6 +310,7 @@ function makeHeaderButtonDef(name, id, onClick) {
 }
 
 function makeMenuButtonDef(pageDef,id,buttonNames,mobileStorage) {
+    "use strict";
     /// <summary>Generate the JSON definition for a Mobile button header and footer</summary>
     /// <param name="pageDef" type="Object">JSON page defintion to extend</param>
     /// <param name="id" type="String">Page ID</param>
@@ -353,6 +366,7 @@ function makeMenuButtonDef(pageDef,id,buttonNames,mobileStorage) {
 }
 
 function makeEmptyListView(listView, $parent, noResultsText) {
+    "use strict";
     /// <summary>Generate a 'No Results' list item.</summary>
     /// <param name="listView" type="CswMobileListView">Csw Mobile List View.</param>
     /// <param name="$parent" type="jQuery">Some parent element to attach to, if listView is null.</param>
@@ -375,6 +389,7 @@ function makeEmptyListView(listView, $parent, noResultsText) {
 }
 
 function ensureContent($contentRole, contentDivId) {
+    "use strict";
     /// <summary>
     ///    Ensures every page has a valid content Div to insert new HTML.
     ///    if content is populated, empty it.
@@ -391,6 +406,7 @@ function ensureContent($contentRole, contentDivId) {
 }    
 
 function modifyPropJson(json,key,value) {
+    "use strict";
     /// <summary> Sets the value of a key on a JSON object, and adds a 'wasmodified' = true property. </summary>
     /// <param name="json" type="Object">Some JSON object.</param>
     /// <param name="key" type="String">A JSON property name (key).</param>
@@ -425,6 +441,7 @@ function modifyPropJson(json,key,value) {
 }
 
 function isTimeToRefresh(mobileStorage,refreshInterval) {
+    "use strict";
     /// <summary> Determines whether to use cached data or request new data from server.</summary>
     /// <param name="mobileStorage" type="CswMobileClientDbResources">Client DB Resources</param>
     /// <param name="refreshInterval" type="Number">A refresh interval. Default is 5 minutes (300000).</param>
@@ -443,6 +460,7 @@ function isTimeToRefresh(mobileStorage,refreshInterval) {
 }
 
 function recalculateFooter($page, startingHeight) {
+    "use strict";
     /// <summary> JQM's footer position calculation is based on document height, which for some as-of-yet-unknown reason is WAY off (too high). So let's recalibrate using the window height.</summary>
     /// <param name="$page" type="JQuery">A page to fix</param>
     /// <returns type="void" />
@@ -464,7 +482,7 @@ function recalculateFooter($page, startingHeight) {
 }
 
 function doSuccess(onSuccess) {
-
+    "use strict";
     var args = Array.prototype.slice.call(arguments);
     if (args.length > 0) {
         args.shift();

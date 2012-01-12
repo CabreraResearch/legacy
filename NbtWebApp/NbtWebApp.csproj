@@ -788,9 +788,6 @@
     <Content Include="MainIncludes.html" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Report.aspx" />
-    <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
-    <Content Include="Scripts\jquery-1.6.4.js" />
-    <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
@@ -1466,7 +1463,7 @@
     <Content Include="Main.aspx" />
     <Content Include="Main.js" />
     <Content Include="Mobile.html" />
-    <Content Include="MobileIncludes.html" />
+    <Content Include="_DevMobileIncludes.html" />
     <Content Include="MainHeader.html" />
     <Content Include="Main.html" />
     <Content Include="NodeReport.html" />
