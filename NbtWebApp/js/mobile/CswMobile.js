@@ -31,7 +31,6 @@ CswAppMode.mode = 'mobile';
         /// </summary>
 
         //#region Resource Initialization
-        debugOn(debug);
         var x = {
             Theme: CswMobileGlobal_Config.theme,
             PollingInterval: 30000 //30 seconds

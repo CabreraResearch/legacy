@@ -757,6 +757,7 @@
     <Content Include="js\main\tools\CswPubSub.js" />
     <Content Include="js\main\tools\CswPrint.js" />
     <Content Include="js\main\view\CswViewContentTree.js" />
+    <Content Include="js\mobile\CswAllMobile.min.js" />
     <Content Include="js\style.css" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.css" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.js" />

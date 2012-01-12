@@ -1257,7 +1257,7 @@ function cacheLogInfo(logger) {
     if (doLogging()) {
         if (hasWebStorage()) {
             if (undefined !== logger.setEnded) logger.setEnded();
-            var logStorage = new CswClientDb();
+            var logStorage = CswClientDb();
             var log = logStorage.getItem('debuglog');
             log += logger.toHtml();
 
