@@ -128,10 +128,28 @@ namespace ChemSW.Nbt.ObjClasses
             bool DeleteFutureNodes = ( TargetType.WasModified || ParentType.WasModified );
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate( DeleteFutureNodes );
 
+
+            _trySetNodeTypeSelectDefaultValues();
+
+            // BZ 7845
+            if( TargetType.Empty )
+            {
+                Enabled.Checked = Tristate.False;
+            }
+        } //beforeWriteNode()
+
+        public override void afterWriteNode()
+        {
+            _CswNbtPropertySetSchedulerImpl.setLastFutureDate();
+            _CswNbtObjClassDefault.afterWriteNode();
+        }//afterWriteNode()
+
+        private void _trySetNodeTypeSelectDefaultValues()
+        {
             bool RequiresParentView = Owner.RelatedNodeId != null &&
-                                      ( Node.NodeType.FirstVersionNodeType.NodeTypeName == InspectionGeneratorNodeTypeName ||
-                                        ( ParentView.ViewId != null &&
-                                          ParentView.ViewId.isSet() ) );
+                          ( Node.NodeType.FirstVersionNodeType.NodeTypeName == InspectionGeneratorNodeTypeName ||
+                            ( ParentView.ViewId != null &&
+                              ParentView.ViewId.isSet() ) );
 
             if( RequiresParentView )
             {
@@ -219,18 +237,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-            // BZ 7845
-            if( TargetType.Empty )
-            {
-                Enabled.Checked = Tristate.False;
-            }
-        } //beforeWriteNode()
-
-        public override void afterWriteNode()
-        {
-            _CswNbtPropertySetSchedulerImpl.setLastFutureDate();
-            _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
+        }
 
         private void _deleteFutureNodes()
         {

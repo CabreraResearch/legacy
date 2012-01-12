@@ -28,6 +28,7 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtMetaDataNodeTypeProp TargetTypeNtp = InspectionSchedNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.TargetTypePropertyName );
                 TargetTypeNtp.HelpText = "What Inspection Design will be used. (ex: Eye Wash Station Check)";
+                TargetTypeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, OwnerNtp );
             }
             #endregion Case 24656
 
