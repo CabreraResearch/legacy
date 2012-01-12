@@ -199,8 +199,8 @@ function CswGrid(options, $parent) {
 
         if (o.pagermode === 'default' || o.pagermode === 'custom') {
             $gridTable.jqGrid(o.gridOpts)
-                .jqGrid('navGrid', '#' + gridPagerId, o.optNav, { }, { }, { }, { }, { }); //Case 24032: Removed jqGrid search
-
+                      .jqGrid('navGrid', '#' + gridPagerId, o.optNav, { }, { }, { }, { }, { }); //Case 24032: Removed jqGrid search
+            log(o);
             if (o.pagermode === 'custom') {
                 makeCustomPager(o.customPager);
             }
@@ -367,6 +367,15 @@ function CswGrid(options, $parent) {
                 printTableId = makeId({ prefix: gridTableId, ID: 'printTable' }),
                 grid, data, i;
 
+            var addRowsToGrid = function(rowData) {
+                if (rowData) {
+                    /* Add the rows to the new grid */
+                    for (i = 0; i <= rowData.length; i += 1) {
+                        grid.$gridTable.jqGrid('addRowData', i + 1, rowData[i]);
+                    }
+                }
+            };
+
             $.extend(printOpts, currentOpts);
             
             /* 
@@ -379,6 +388,11 @@ function CswGrid(options, $parent) {
             Nuke any existing options with vanilla defaults.
             Since jqGrid 3.6, there hasn't been an 'All' rowNum option. Just use a really high number.
             */
+            delete printOpts.gridOpts.canEdit;
+            delete printOpts.gridOpts.canDelete;
+            delete printOpts.canEdit;
+            delete printOpts.canDelete;
+
             printOpts.gridOpts.rowNum = 100000;
             printOpts.gridOpts.rowList = [100000];
             printOpts.gridOpts.add = false;
@@ -386,9 +400,10 @@ function CswGrid(options, $parent) {
             printOpts.gridOpts.edit = false;
             printOpts.gridOpts.autoencode = true;
             //printOpts.gridOpts.autowidth = true;
-            printOpts.gridOpts.width = $(window).width();
+            printOpts.gridOpts.width = $(window).width() - 40;
             printOpts.gridOpts.altRows = false;
             printOpts.gridOpts.datatype = 'local';
+            delete printOpts.gridOpts.url;
             printOpts.gridOpts.emptyrecords = 'No Results';
             printOpts.gridOpts.height = 'auto';
             printOpts.gridOpts.multiselect = false;
@@ -407,17 +422,22 @@ function CswGrid(options, $parent) {
                 /* This provides text wrapping in cells */
                 column.cellattr = function () { return 'style="white-space: normal;"'; };
             });
-            
+
             /* Get a new CswGrid */
             grid = CswGrid(printOpts, $printElement);
-            /* Get the data (rows) from the current grid */
             
-            
-            /* Add the rows to the new grid */
-            for(i = 0; i <= data.length ; i += 1) {
-                grid.$gridTable.jqGrid('addRowData', i + 1, data[i]);
+            if(isNullOrEmpty(data) && false === isNullOrEmpty(printOpts.printUrl)) {
+                CswAjaxJsonGet({
+                    url: printOpts.printUrl,
+                    success: function (rows) {
+                        addRowsToGrid(rows.rows);    
+                    }
+                });
+            } else {
+                /* Get the data (rows) from the current grid */
+                addRowsToGrid(data);
             }
-
+            
         });
         
     };
