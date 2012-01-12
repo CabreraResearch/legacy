@@ -30,9 +30,9 @@
 
                 // Header row
                 $cell1 = $table.CswTable('cell', row, 1);
-                $cell1.append('<b>Class</b>');
+                $cell1.append('<b>Object Class</b>');
                 $cell2 = $table.CswTable('cell', row, 2);
-                $cell2.append('<b>Includes</b>');
+                $cell2.append('<b>Node Types</b>');
                 $cell3 = $table.CswTable('cell', row, 3);
                 $cell3.append('<b>Current Usage</b>');
                 $cell4 = $table.CswTable('cell', row, 4);
@@ -50,30 +50,15 @@
                         crawlObject(quotaJson.objectclasses, function (childObj) {
                             if(tryParseNumber(childObj.nodetypecount) > 0) {
 
-                                $cell1 = $table.CswTable('cell', row, 1);
-                                $cell1.append(childObj.objectclass);
-
-                                $cell2 = $table.CswTable('cell', row, 2);
-                                crawlObject(childObj.nodetypes, function (childObj_nt) {
-                                    $cell2.append(childObj_nt.nodetypename + '<br/>');
-                                }, false);
-
-                                $cell3 = $table.CswTable('cell', row, 3);
-                                $cell3.append(childObj.currentusage);
-                                
-                                $cell4 = $table.CswTable('cell', row, 4);
-                                if(canedit) {
-                                    $cell4.CswInput({	ID: o.ID + '_' + childObj.objectclassid + '_quota',
-                                                        name: o.ID + '_' + childObj.objectclassid + '_quota',
-                                                        type: CswInput_Types.text,
-                                                        value: childObj.quota,
-                                                        width: '50px'
-                                                    });
-                                } else {
-                                    $cell4.append(childObj.quota);
-                                }
-
+                                // one object class row                                
+                                makeQuotaRow($table, row, canedit, 'OC_' + childObj.objectclassid, childObj.objectclass, '', childObj.currentusage, childObj.quota);
                                 row += 1;
+
+                                // several nodetype rows
+                                crawlObject(childObj.nodetypes, function (childObj_nt) {
+                                    makeQuotaRow($table, row, canedit, 'NT_' + childObj_nt.nodetypeid, '', childObj_nt.nodetypename, childObj_nt.currentusage, childObj_nt.quota);
+                                    row += 1;
+                                }, false);
                             }
                         }, false); // crawlObject()
 
@@ -89,9 +74,38 @@
                 }); // ajax()
             } // initTable()
 
+            function makeQuotaRow($table, row, canedit, id, objectclass, nodetype, currentusage, quota)
+            {
+                // one object class row                                
+                $cell1 = $table.CswTable('cell', row, 1);
+                $cell1.append(objectclass);
+
+                $cell2 = $table.CswTable('cell', row, 2);
+                $cell2.append(nodetype);
+
+                $cell3 = $table.CswTable('cell', row, 3);
+                $cell3.append(currentusage);
+                                
+                $cell4 = $table.CswTable('cell', row, 4);
+                if(canedit) {
+                    $cell4.CswInput({	
+                        ID: o.ID + '_' + id + '_quota',
+                        name: o.ID + '_' + id + '_quota',
+                        type: CswInput_Types.text,
+                        value: quota,
+                        width: '50px'
+                    });
+                } else {
+                    $cell4.append(quota);
+                }
+            } // makeQuotaRow()
+
             function handleSave() {
                 crawlObject(quotaJson.objectclasses, function (childObj) {
-                    childObj.quota = $('#' + o.ID + '_' + childObj.objectclassid + '_quota').val();
+                    childObj.quota = $('#' + o.ID + '_OC_' + childObj.objectclassid + '_quota').val();
+                    crawlObject(childObj.nodetypes, function (childObj_nt) {
+                        childObj_nt.quota = $('#' + o.ID + '_NT_' + childObj_nt.nodetypeid + '_quota').val();
+                    }, false);
                 }, false);
 
                 CswAjaxJson({
@@ -104,21 +118,18 @@
             } // handleSave()
 
             initTable();
-
         } // init
     }; // methods
 
     
     // Method calling logic
     $.fn.CswQuotas = function (method) {
-        
         if ( methods[method] ) {
           return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
           $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+        }
     };
 })(jQuery);
