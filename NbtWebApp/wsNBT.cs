@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
+using System.IO.Compression;
 using System.Web;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;
@@ -770,6 +771,17 @@ namespace ChemSW.Nbt.WebServices
 
         } // getTable()
 
+        private void UseCompression()
+        {
+            string encoding = "gzip";
+            if( Context.Request.Headers["Accept-encoding"] != null &&
+                Context.Request.Headers["Accept-encoding"].Contains( encoding ) )
+            {
+                Context.Response.Filter = new GZipStream( Context.Response.Filter, CompressionMode.Compress );
+                Context.Response.AppendHeader( "Content-encoding", encoding );
+            }
+        } // UseCompression()
+
         /// <summary>
         /// Prepare a tree of nodes for fetching, derived from a View
         /// </summary>
@@ -777,6 +789,7 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string runTree( string ViewId, string IdPrefix, string IncludeNodeId, string IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch )
         {
+            UseCompression();
             JObject ReturnVal = new JObject();
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -816,83 +829,83 @@ namespace ChemSW.Nbt.WebServices
 
         } // runTree()
 
-        /// <summary>
-        /// Fetch a page of first level nodes from a prepared tree (see runTree)
-        /// </summary>
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string fetchTreeFirstLevel( string ViewId, string IdPrefix, Int32 PageSize, Int32 PageNo, bool ForSearch )
-        {
-            JObject ReturnVal = new JObject();
+        ///// <summary>
+        ///// Fetch a page of first level nodes from a prepared tree (see runTree)
+        ///// </summary>
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string fetchTreeFirstLevel( string ViewId, string IdPrefix, Int32 PageSize, Int32 PageNo, bool ForSearch )
+        //{
+        //    JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
 
-                    CswNbtView View = _getView( ViewId );
-                    if( null != View )
-                    {
-                        var ws = new CswNbtWebServiceTree( _CswNbtResources, View, IdPrefix );
-                        ReturnVal = ws.fetchTreeRoot( PageSize, PageNo, ForSearch );
-                    }
-                }
+        //            CswNbtView View = _getView( ViewId );
+        //            if( null != View )
+        //            {
+        //                var ws = new CswNbtWebServiceTree( _CswNbtResources, View, IdPrefix );
+        //                ReturnVal = ws.fetchTreeFirstLevel( PageSize, PageNo, ForSearch );
+        //            }
+        //        }
 
-                _deInitResources();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = jError( ex );
+        //    }
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+        //    return ReturnVal.ToString();
 
-        } // fetchTree()
+        //} // fetchTree()
 
-        /// <summary>
-        /// Fetch a page of child nodes from a prepared tree (see runTree) and parent range
-        /// </summary>
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string fetchTreeLevel( string ViewId, string IdPrefix, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, bool ForSearch )
-        {
-            JObject ReturnVal = new JObject();
+        ///// <summary>
+        ///// Fetch a page of child nodes from a prepared tree (see runTree) and parent range
+        ///// </summary>
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string fetchTreeLevel( string ViewId, string IdPrefix, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, Int32 PageSize, Int32 PageNo, bool ForSearch )
+        //{
+        //    JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
 
-                    CswNbtView View = _getView( ViewId );
-                    if( null != View )
-                    {
-                        var ws = new CswNbtWebServiceTree( _CswNbtResources, View, IdPrefix );
-                        ReturnVal = ws.fetchTreeChildren( Level, ParentRangeStart, ParentRangeEnd, ForSearch );
-                    }
-                }
+        //            CswNbtView View = _getView( ViewId );
+        //            if( null != View )
+        //            {
+        //                var ws = new CswNbtWebServiceTree( _CswNbtResources, View, IdPrefix );
+        //                ReturnVal = ws.fetchTreeChildren( Level, ParentRangeStart, ParentRangeEnd, ForSearch );
+        //            }
+        //        }
 
-                _deInitResources();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = jError( ex );
+        //    }
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+        //    return ReturnVal.ToString();
 
-        } // fetchTree()
+        //} // fetchTree()
 
         /// <summary>
         /// Generates a tree of nodes from the view
