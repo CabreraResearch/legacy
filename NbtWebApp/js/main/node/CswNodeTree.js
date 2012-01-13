@@ -344,9 +344,9 @@
                         $treediv.find('li').each(function () {
                             var $childObj = $(this);
                             var thisid = $childObj.CswAttrDom('id');
-                            var thisnodeid = $childObj.CswAttrDom('nodeid');
-                            var thisrel = $childObj.CswAttrDom('rel');
-                            var thisnodename = $childObj.CswAttrDom('nodename');
+                            var thisnodeid = $childObj.CswAttrNonDom('nodeid');
+                            var thisrel = $childObj.CswAttrNonDom('rel');
+                            var thisnodename = $childObj.CswAttrNonDom('nodename');
                             $('<input type="checkbox" class="' + idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '"></input>')
                                 .prependTo($childObj)
                                 .click(function () { return handleCheck($treediv, $(this)); });
