@@ -57,6 +57,8 @@ namespace ChemSW.Nbt
 
         private void loadRelationshipRecursive( CswNbtViewRelationship Relationship )
         {
+            CswNbtNodeKey PriorCurrentNodeKey = _CswNbtTree.getNodeKeyForCurrentPosition();
+
             DataTable NodesTable = _getNodes( Relationship );
             foreach( DataRow NodesRow in NodesTable.Rows )
             {
@@ -94,20 +96,25 @@ namespace ChemSW.Nbt
                     }
 
                     Collection<CswNbtNodeKey> ChildKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
-                    foreach( CswNbtNodeKey ChildKey in ChildKeys )
+                    if( ChildKeys != null && ChildKeys.Count > 0 )
                     {
-                        _CswNbtTree.makeNodeCurrent( ChildKey );
-                        _handleProperties( ChildKey, Relationship.Properties );
+                        foreach( CswNbtNodeKey ChildKey in ChildKeys )
+                        {
+                            _CswNbtTree.makeNodeCurrent( ChildKey );
+                            _handleProperties( ChildKey, Relationship.Properties );
+                        }
+                        _CswNbtTree.goToParentNode();
                     }
-                    _CswNbtTree.goToParentNode();
                 }
             }
-
 
             foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
             {
                 loadRelationshipRecursive( ChildRelationship );
             }
+            
+            _CswNbtTree.makeNodeCurrent( PriorCurrentNodeKey );
+
         } // loadRelationshipRecursive()
 
         private void _handleProperties( CswNbtNodeKey Key, Collection<CswNbtViewProperty> PropertyList )
@@ -179,16 +186,38 @@ namespace ChemSW.Nbt
             string Where = string.Empty;
             string OrderBy = string.Empty;
 
+            
+            // Filter out disabled nodetypes/object classes
+            Where += @"where ((exists (select j.jctmoduleobjectclassid
+                              from jct_modules_objectclass j
+                              join modules m on j.moduleid = m.moduleid
+                             where j.objectclassid = t.objectclassid
+                               and m.enabled = '1')
+                or not exists (select j.jctmoduleobjectclassid
+                                 from jct_modules_objectclass j
+                                 join modules m on j.moduleid = m.moduleid
+                                where j.objectclassid = t.objectclassid) )
+               and (exists (select j.jctmodulenodetypeid
+                              from jct_modules_nodetypes j
+                              join modules m on j.moduleid = m.moduleid
+                             where j.nodetypeid = t.firstversionid
+                               and m.enabled = '1')
+                or not exists (select j.jctmodulenodetypeid
+                                 from jct_modules_nodetypes j
+                                 join modules m on j.moduleid = m.moduleid
+                                where j.nodetypeid = t.firstversionid) )) ";
+
             // Nodetype/Object Class filter
             if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
-                Where += "and (t.firstversionid = " + Relationship.SecondId + ") ";
+                Where += " and (t.firstversionid = " + Relationship.SecondId + ") ";
             else
-                Where += "and (o.objectclassid = " + Relationship.SecondId + ") ";
+                Where += " and (o.objectclassid = " + Relationship.SecondId + ") ";
 
             // Parent Node
             if( Relationship.FirstId != Int32.MinValue )
             {
                 Select += ",parent.parentnodeid ";
+                Where += " and parent.parentnodeid is not null ";
                 if( Relationship.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
                 {
                     From += @"            join (select jnp.nodeid parentnodeid, jnp.field1_fk thisnodeid
@@ -308,27 +337,6 @@ namespace ChemSW.Nbt
             {
                 OrderBy = " order by " + OrderByProps.ToString() + " ";
             }
-
-            // Filter out disabled nodetypes/object classes
-            Where += @"where ((exists (select j.jctmoduleobjectclassid
-                              from jct_modules_objectclass j
-                              join modules m on j.moduleid = m.moduleid
-                             where j.objectclassid = t.objectclassid
-                               and m.enabled = '1')
-                or not exists (select j.jctmoduleobjectclassid
-                                 from jct_modules_objectclass j
-                                 join modules m on j.moduleid = m.moduleid
-                                where j.objectclassid = t.objectclassid) )
-               and (exists (select j.jctmodulenodetypeid
-                              from jct_modules_nodetypes j
-                              join modules m on j.moduleid = m.moduleid
-                             where j.nodetypeid = t.firstversionid
-                               and m.enabled = '1')
-                or not exists (select j.jctmodulenodetypeid
-                                 from jct_modules_nodetypes j
-                                 join modules m on j.moduleid = m.moduleid
-                                where j.nodetypeid = t.firstversionid) )) ";
-
 
 
 
