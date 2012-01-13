@@ -162,6 +162,11 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public void SetQuotaForObjectClass( Int32 ObjectClassId, Int32 NewQuota )
         {
+            if( NewQuota < 0 )
+            {
+                NewQuota = Int32.MinValue;
+            }
+
             if( UserCanEditQuotas( _CswNbtResources.CurrentNbtUser ) )
             {
                 CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
@@ -206,6 +211,11 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public void SetQuotaForNodeType( Int32 NodeTypeId, Int32 NewQuota )
         {
+            if( NewQuota < 0 )
+            {
+                NewQuota = Int32.MinValue;
+            }
+
             if( UserCanEditQuotas( _CswNbtResources.CurrentNbtUser ) )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
