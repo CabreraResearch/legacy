@@ -1,4 +1,4 @@
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -22,6 +22,7 @@
 //#region CswMobilePropsFactory
 
 function CswMobilePropsFactory(propDef) {
+    "use strict";
     /// <summary>
     ///   Props class factory. Responsible for generating properties according to Field Type rules.
     /// </summary>
