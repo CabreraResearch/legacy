@@ -74,8 +74,12 @@
             }
             var $parent = $(this);
 
-            function getGridRowsUrl() {
-                return o.gridPageUrl + '?viewid=' + o.viewid + '&IsReport=' + forReporting + '"&IdPrefix=' + o.ID + '&IncludeNodeKey=' + o.cswnbtnodekey;
+            function getGridRowsUrl(isPrint) {
+                var url = o.gridPageUrl + '?ViewId=' + o.viewid + '&IsReport=' + isTrue(forReporting || isPrint).toString() + '"&IdPrefix=' + o.ID + '&IncludeNodeKey=' + o.cswnbtnodekey;
+                if (isPrint) {
+                    url += '&Page=1&Rows=100000000';
+                }
+                return url; 
             }
 
             if (o.reinit) $parent.empty();
@@ -162,7 +166,7 @@
                     */
                     cswGridOpts.gridOpts.datatype = 'json';
                     cswGridOpts.gridOpts.url = getGridRowsUrl();
-                                
+                    cswGridOpts.printUrl = getGridRowsUrl(true);            
                     cswGridOpts.gridOpts.jsonReader = {
                         root: 'rows',
                         page: 'page',

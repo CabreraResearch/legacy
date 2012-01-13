@@ -5,15 +5,23 @@
     <base href="Mobile.html"/>
     <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1" />
     <title>Main</title>
+    
     <link rel="shortcut icon" href="images/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="Content/jquery.mobile-1.0rc1.min.css" />
+    <link type="text/css" rel="stylesheet" href="js/mobile/CswMobile.css" />
+    
+    <script type="text/javascript" src="Scripts/modernizr.2.0.6.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.cookie.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.mobile-1.0rc1.min.js"></script>
+    <script type="text/javascript" src="js/mobile/CswAllMobile.min.js"></script>
+    
 </head>
 <body>
-    <!--#include file="MobileIncludes.html" -->
     <script type="text/javascript">
 
         (function(undefined) {
-            "use strict";
-
+            
             function redirectOnError(e) {
                 var $refreshPage = $('#' + localStorage['refreshPage']);
                 if (false === isNullOrEmpty($refreshPage, true)) {
@@ -22,19 +30,14 @@
                     window.location.href = window.location.pathname;
                 }
                 onError();
-                if (debugOn()) {
-                    errorHandler(e, true, true, true);
-                } else {
-                    errorHandler(e);
-                }
             }
 
             try {
                 if (hasWebStorage()) {
 
                     // override value in _Globals.js
-                    homeUrl = "Mobile.html";
-
+                    window.xmlStandalonehomeUrl = "Mobile.html";
+                    window.debug = false;
                     // This causes case 22968!
                     //$(window).bind("orientationchange resize scrollstart", fixGeometry);
 
@@ -48,7 +51,7 @@
                 }
             }
             catch(e) {
-                redirectOnError();
+                errorHandler(e);
             }
         })();
     </script>

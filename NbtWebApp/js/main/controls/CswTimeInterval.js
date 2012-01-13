@@ -22,7 +22,7 @@ var CswTimeInterval = function (options) {
     }
 
     var now = new Date(),
-        clientDb = new CswClientDb(),
+        clientDb = CswClientDb(),
         nowString = (now.getMonth() + 1) + '/' + now.getDate() + '/' + now.getFullYear(),
         rateType, $WeeklyDiv, $MonthlyDiv, $YearlyDiv, dateFormat, rateInterval = {}, $pickerCell, $interval;
 

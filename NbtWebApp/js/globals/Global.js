@@ -244,6 +244,80 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
     });                  // $.ajax({
 } // CswAjaxJson()
 
+function CswAjaxJsonGet(options) { /// <param name="$" type="jQuery" />
+    "use strict"; 
+    /// <summary>
+    ///   Executes Async webservice request for JSON
+    /// </summary>
+    /// <param name="options" type="Object">
+    ///     A JSON Object
+    ///     &#10;1 - options.url: WebService URL
+    ///     &#10;2 - options.data: {field1: value, field2: value}
+    ///     &#10;3 - options.success: function() {}
+    ///     &#10;4 - options.error: function() {}
+    /// </param>
+    var o = {
+        url: '',
+        data: {},
+        onloginfail: function () { _finishLogout(); },
+        success: null, //function () { },
+        error: null, //function () { },
+        overrideError: false,
+        formobile: false,
+        async: true,
+        watchGlobal: true
+    };
+    if (options) $.extend(o, options);
+
+    if(o.watchGlobal) {
+        _ajaxCount+=1;
+    }
+    if(isFunction(onBeforeAjax)) onBeforeAjax();
+
+    $.ajax({
+        type: 'GET',
+        async: o.async,
+        url: o.url,
+        dataType: 'json',
+        data: JSON.stringify(o.data),
+        success: function (result, textStatus, xmlHttpRequest) {
+            if(o.watchGlobal) {
+                _ajaxCount-=1;
+            }
+            
+            if (false === isNullOrEmpty(result.error)) {
+                if (false === o.overrideError) {
+                    _handleAjaxError(xmlHttpRequest, {
+                        'display': result.error.display,
+                        'type': result.error.type,
+                        'message': result.error.message,
+                        'detail': result.error.detail
+                    }, '');
+                }
+                if (isFunction(o.error)) {
+                    o.error(result.error);
+                }
+            } else {
+                if (isFunction(o.success)) {
+                     o.success(result);
+                }
+            }
+            if (isFunction(onAfterAjax)) onAfterAjax(true);
+        }, // success{}
+        error: function (xmlHttpRequest, textStatus, errorThrown) {
+            if(o.watchGlobal) {
+                _ajaxCount-=1;
+            }
+            //_handleAjaxError(XMLHttpRequest, { 'message': 'A Webservices Error Occurred', 'detail': textStatus }, errorThrown);
+            log("Webservice Request (" + o.url + ") Failed: " + textStatus);
+            if (isFunction(o.error)) {
+                o.error();
+            }
+            if (isFunction(onAfterAjax)) onAfterAjax(false);
+        }
+    }); // $.ajax({
+} // CswAjaxJsonGet()
+
 function CswAjaxXml(options) {
     "use strict"; 
     /// <summary>
@@ -1183,7 +1257,7 @@ function cacheLogInfo(logger) {
     if (doLogging()) {
         if (hasWebStorage()) {
             if (undefined !== logger.setEnded) logger.setEnded();
-            var logStorage = new CswClientDb();
+            var logStorage = CswClientDb();
             var log = logStorage.getItem('debuglog');
             log += logger.toHtml();
 
