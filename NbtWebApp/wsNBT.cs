@@ -643,7 +643,6 @@ namespace ChemSW.Nbt.WebServices
         public string runGrid( string ViewId, string IdPrefix, string IncludeNodeKey, string IncludeInQuickLaunch )
         {
             JObject ReturnVal = new JObject();
-            string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( IncludeNodeKey );
             bool IsQuickLaunch = CswConvert.ToBoolean( IncludeInQuickLaunch );
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -657,14 +656,13 @@ namespace ChemSW.Nbt.WebServices
                 if( null != View )
                 {
                     CswNbtNodeKey RealNodeKey = null;
-                    if( false == string.IsNullOrEmpty( ParsedNodeKey ) )
+                    if( View.Visibility == NbtViewVisibility.Property )
                     {
-                        RealNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
-                        if( RealNodeKey.NodeId != null && View.Visibility == NbtViewVisibility.Property ) // This is a Grid Property
+                        RealNodeKey = _getNodeKey( IncludeNodeKey );
+                        if( null != RealNodeKey )
                         {
                             ( View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
                             ( View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( RealNodeKey.NodeId );
-                            //If this is a grid prop, no quick launch
                             IsQuickLaunch = false;
                         }
                     }
@@ -702,11 +700,15 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    CswNbtNodeKey RealNodeKey = _getNodeKey( IncludeNodeKey );
-                    if( null != RealNodeKey )
+                    CswNbtNodeKey RealNodeKey = null;
+                    if( View.Visibility == NbtViewVisibility.Property )
                     {
-                        ( View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
-                        ( View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( RealNodeKey.NodeId );
+                        RealNodeKey = _getNodeKey( IncludeNodeKey );
+                        if( null != RealNodeKey )
+                        {
+                            ( View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
+                            ( View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( RealNodeKey.NodeId );
+                        }
                     }
 
                     var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey, IdPrefix );
