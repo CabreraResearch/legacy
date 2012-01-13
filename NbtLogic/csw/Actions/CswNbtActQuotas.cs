@@ -245,6 +245,8 @@ namespace ChemSW.Nbt.Actions
             }
         } // SetQuota()
 
+
+
         /// <summary>
         /// Unlocks all nodes of an object class
         /// </summary>
@@ -268,19 +270,9 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             if( NodeType != null )
             {
-                CswTableUpdate NodesUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtActQuotas_UpdateNodes", "nodes" );
-                OrderByClause OrderBy = new OrderByClause( "nodeid", OrderByType.Ascending );
                 string WhereClause = @"where nodetypeid in (select nodetypeid from nodetypes
-                                                            where firstversionid = " + NodeType.FirstVersionNodeTypeId.ToString() + @") 
-										and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
-                DataTable NodesTable = NodesUpdate.getTable( WhereClause, new Collection<OrderByClause> { OrderBy } );
-
-                for( Int32 i = 0; ( NumberToUnlock == Int32.MinValue || i < NumberToUnlock ) && i < NodesTable.Rows.Count; i++ )
-                {
-                    DataRow NodesRow = NodesTable.Rows[i];
-                    NodesRow["locked"] = CswConvert.ToDbVal( false );
-                }
-                NodesUpdate.update( NodesTable );
+                                                            where firstversionid = " + NodeType.FirstVersionNodeTypeId.ToString() + @") ";
+                _UnlockNodes( WhereClause, NumberToUnlock );
             }
         } // _UnlockNodesByNodeType()
 
@@ -289,11 +281,19 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         private void _UnlockNodesByObjectClass( Int32 ObjectClassId, Int32 NumberToUnlock )
         {
+            string WhereClause = @"where nodetypeid in (select nodetypeid from nodetypes 
+														 where objectclassid = " + ObjectClassId.ToString() + @") ";
+			_UnlockNodes(WhereClause, NumberToUnlock);
+        } // _UnlockNodesByObjectClass()
+
+        /// <summary>
+        /// Used by the other _UnlockNodes functions
+        /// </summary>
+        private void _UnlockNodes( string WhereClause, Int32 NumberToUnlock )
+        {
             CswTableUpdate NodesUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtActQuotas_UpdateNodes", "nodes" );
             OrderByClause OrderBy = new OrderByClause( "nodeid", OrderByType.Ascending );
-            string WhereClause = @"where nodetypeid in (select nodetypeid from nodetypes 
-														 where objectclassid = " + ObjectClassId.ToString() + @") 
-										and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
+            WhereClause += @" and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
             DataTable NodesTable = NodesUpdate.getTable( WhereClause, new Collection<OrderByClause> { OrderBy } );
 
             for( Int32 i = 0; ( NumberToUnlock == Int32.MinValue || i < NumberToUnlock ) && i < NodesTable.Rows.Count; i++ )
@@ -302,7 +302,9 @@ namespace ChemSW.Nbt.Actions
                 NodesRow["locked"] = CswConvert.ToDbVal( false );
             }
             NodesUpdate.update( NodesTable );
-        } // _UnlockNodesByObjectClass()
+        } // _UnlockNodes()
+
+
 
         /// <summary>
 		/// Determins a percentage for total quota usage
@@ -353,7 +355,7 @@ namespace ChemSW.Nbt.Actions
 		} // GetQuotaPercent()
 
 		/// <summary>
-		/// Returns true if the quota has not been reached for the given nodetype
+		/// Returns true if the quota has not been reached for the given nodetype, or its object class
 		/// </summary>
 		public bool CheckQuotaNT( Int32 NodeTypeId )
 		{
