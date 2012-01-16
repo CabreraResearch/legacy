@@ -205,6 +205,7 @@
                     
                     toggleButton(buttons.prev, false);
                     toggleButton(buttons.next, (false === isNullOrEmpty(selectedInspectionTarget)));
+                    toggleButton(buttons.finish, false);
                 };
             }()),
 
@@ -527,6 +528,7 @@
                     }
                     toggleButton(buttons.next, nextIsEnabled(), doNextClick());
                     toggleButton(buttons.prev, true, doPrevClick());
+                    toggleButton(buttons.finish, false);
                 };
             }()),
 
@@ -547,6 +549,7 @@
 
                     toggleButton(buttons.next, true, doNextClick());
                     toggleButton(buttons.prev, true, doPrevClick());
+                    toggleButton(buttons.finish, false);
                     
                     if (false === stepFourComplete &&
                             false === skipStepFour) {
