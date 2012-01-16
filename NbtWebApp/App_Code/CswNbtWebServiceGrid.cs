@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.WebServices
         private bool _CanDelete = true;
         private wsTreeOfView _WsTreeOfView;
         private readonly string _IdPrefix;
-
+        private Collection<CswViewBuilderProp> _PropsInGrid = null;
         public enum GridReturnType
         {
             Xml,
@@ -88,7 +88,8 @@ namespace ChemSW.Nbt.WebServices
             }
 
             _CswGridData = new CswGridData( _CswNbtResources );
-
+            _PropsInGrid = new Collection<CswViewBuilderProp>();
+            _getGridProperties( _View.Root.ChildRelationships, _PropsInGrid );
         } //ctor
 
         public JObject runGrid( bool IncludeInQuickLaunch )
@@ -161,15 +162,12 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject RetObj = new JObject();
             RetObj["nodetypeid"] = _View.ViewMetaDataTypeId;
-
-            Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
-            _getGridProperties( _View.Root.ChildRelationships, PropsInGrid );
-
+            
             JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
             _AddIconColumnName( ref GridOrderedColumnDisplayNames );
-            _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, PropsInGrid );
+            _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, _PropsInGrid );
 
-            JArray GridColumnDefinitions = _CswGridData.getGridColumnDefinitionJson( PropsInGrid );
+            JArray GridColumnDefinitions = _CswGridData.getGridColumnDefinitionJson( _PropsInGrid );
             _AddIconColumnDefinition( ref GridColumnDefinitions );
             _AddHiddenColumnDefiniton( GridColumnDefinitions );
 
@@ -198,21 +196,33 @@ namespace ChemSW.Nbt.WebServices
         } // getGridOuterJson()
 
         /// <summary>
-        /// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
+        /// Returns a JSON Object of all Grid Rows
         /// </summary>
-        public JObject getGridPage( Int32 PageNumber, Int32 PageSize, bool IsReport )
+        public JObject getAllGridRows( bool IsReport )
         {
-            JObject RetObj = new JObject();
-
-            Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
-            _getGridProperties( _View.Root.ChildRelationships, PropsInGrid );
-
             ICswNbtTree Tree = _WsTreeOfView.getTreeFromCache();
+            Int32 StartingNode = 0;
+            Int32 EndingNode = Tree.getChildNodeCount();
+            return _getGridRows( Tree, 1, _CswGridData.PageSize, StartingNode, EndingNode, IsReport );
+        } // getGridOuterJson()
 
-            Int32 NodeCount = Tree.getChildNodeCount();
+        /// <summary>
+        /// Returns a JSON Object of Grid Rows for a specific page
+        /// </summary>
+        public JObject getGridRowsByPage( Int32 PageNumber, Int32 PageSize, bool IsReport )
+        {
+            ICswNbtTree Tree = _WsTreeOfView.getTreeFromCache();
             Int32 StartingNode = PageSize * PageNumber;
             Int32 EndingNode = PageSize * ( PageNumber + 1 );
+            return _getGridRows( Tree, PageNumber, PageSize, StartingNode, EndingNode, IsReport );
+        } // getGridOuterJson()
+
+        private JObject _getGridRows( ICswNbtTree Tree, Int32 PageNumber, Int32 PageSize, Int32 StartingNode, Int32 EndingNode, bool IsReport )
+        {
+            JObject RetObj = new JObject();
             JArray GridRows = new JArray();
+            
+            Int32 NodeCount = Tree.getChildNodeCount();
             if( NodeCount > 0 )
             {
                 Tree.goToRoot();
@@ -225,7 +235,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Tree.goToNthChild( C );
 
-                    GridRows.Add( _getGridRow( Tree, PropsInGrid ) );
+                    GridRows.Add( _getGridRow( Tree, _PropsInGrid ) );
 
                     Tree.goToParentNode();
                 }
@@ -245,7 +255,7 @@ namespace ChemSW.Nbt.WebServices
             RetObj["records"] = NodeCount;
             RetObj["rows"] = GridRows;
             return RetObj;
-        } // getGridOuterJson()
+        }
 
         /// <summary>
         /// Adds required columns for edit/add/delete functions
