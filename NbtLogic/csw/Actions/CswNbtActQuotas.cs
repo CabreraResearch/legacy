@@ -127,10 +127,11 @@ namespace ChemSW.Nbt.Actions
 										   left outer join nodetypes t on n.nodetypeid = t.nodetypeid
 										   left outer join object_class o on t.objectclassid = o.objectclassid
 										UNION
-										 select n.nodeid, ta.firstversionid, oa.objectclassid
+										 select n.nodeid, ta.firstversionid, o.objectclassid
 										   from nodes_audit n
 										   left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid
-										   left outer join object_class_audit oa on ta.objectclassid = oa.objectclassid)";
+										   left outer join object_class o on ta.objectclassid = o.objectclassid)";
+                                         //left outer join object_class_audit oa on ta.objectclassid = oa.objectclassid)";
 			if( ObjectClassId != Int32.MinValue )
 			{
 				SqlSelect += "where objectclassid = '" + ObjectClassId.ToString() + "'";
