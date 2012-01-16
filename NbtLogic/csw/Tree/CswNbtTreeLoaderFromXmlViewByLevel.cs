@@ -59,55 +59,94 @@ namespace ChemSW.Nbt
         {
             CswNbtNodeKey PriorCurrentNodeKey = _CswNbtTree.getNodeKeyForCurrentPosition();
 
-            DataTable NodesTable = _getNodes( Relationship );
-            foreach( DataRow NodesRow in NodesTable.Rows )
+            // Nodes and Properties
+            DataTable NodesTable = new DataTable();
+            string Sql = _makeNodeSql( Relationship );
+
+            CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
+            CswTimer SqlTimer = new CswTimer();
+            try
             {
-                bool AddChild = true;
-                CswNbtNodeKey ParentNodeKey = null;
-                if( NodesTable.Columns.Contains( "parentnodeid" ) )
-                {
-                    CswPrimaryKey ParentNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["parentnodeid"] ) );
-
-                    // We can't use getNodeKeyByNodeId, because there may be more instances of this node at different places in the tree
-                    //ParentNodeKey = _CswNbtTree.getNodeKeyByNodeId( ParentNodeId );
-                    ParentNodeKey = _CswNbtTree.getNodeKeyByNodeIdAndViewNode( ParentNodeId, Relationship.Parent );
-
-                    if( ParentNodeKey != null )
-                    {
-                        _CswNbtTree.makeNodeCurrent( ParentNodeKey );
-                    }
-                    else
-                    {
-                        // If the parent isn't in the tree, don't add the child
-                        AddChild = false;
-                    }
-                } // if( NodesTable.Columns.Contains( "parentnodeid" ) )
-
-                if( AddChild )
-                {
-                    Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-
-                    string GroupName = string.Empty;
-                    if( Relationship.GroupByPropId != Int32.MinValue )
-                    {
-                        GroupName = NodesRow["groupname"].ToString();
-                        if( GroupName == string.Empty )
-                            GroupName = "[blank]";
-                    }
-
-                    Collection<CswNbtNodeKey> ChildKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
-                    if( ChildKeys != null && ChildKeys.Count > 0 )
-                    {
-                        foreach( CswNbtNodeKey ChildKey in ChildKeys )
-                        {
-                            _CswNbtTree.makeNodeCurrent( ChildKey );
-                            _handleProperties( ChildKey, Relationship.Properties );
-                        }
-                        _CswNbtTree.goToParentNode();
-                    }
-                }
+                NodesTable = ResultSelect.getTable( 0, ResultLimit, false, false );
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
             }
 
+            if( SqlTimer.ElapsedDurationInSeconds > 2 )
+            {
+                _CswNbtResources.logMessage( "Tree View SQL required longer than 2 seconds to run: " + Sql );
+            }
+
+
+            Int32 PriorNodeId = Int32.MinValue;
+            foreach(DataRow NodesRow in NodesTable.Rows)
+            {
+                Int32 ThisNodeId = CswConvert.ToInt32(NodesRow["nodeid"]);
+                
+                // Handle property multiplexing
+                // This assumes that property rows for the same nodeid are next to one another
+                if( ThisNodeId != PriorNodeId )
+                {
+                    PriorNodeId = ThisNodeId;
+
+                    bool AddChild = true;
+                    CswNbtNodeKey ParentNodeKey = null;
+                    if( NodesTable.Columns.Contains( "parentnodeid" ) )
+                    {
+                        CswPrimaryKey ParentNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["parentnodeid"] ) );
+
+                        // We can't use getNodeKeyByNodeId, because there may be more instances of this node at different places in the tree
+                        //ParentNodeKey = _CswNbtTree.getNodeKeyByNodeId( ParentNodeId );
+                        ParentNodeKey = _CswNbtTree.getNodeKeyByNodeIdAndViewNode( ParentNodeId, Relationship.Parent );
+
+                        if( ParentNodeKey != null )
+                        {
+                            _CswNbtTree.makeNodeCurrent( ParentNodeKey );
+                        }
+                        else
+                        {
+                            // If the parent isn't in the tree, don't add the child
+                            AddChild = false;
+                        }
+                    } // if( NodesTable.Columns.Contains( "parentnodeid" ) )
+
+                    if( AddChild )
+                    {
+                        Int32 ChildCount = _CswNbtTree.getChildNodeCount();
+
+                        string GroupName = string.Empty;
+                        if( Relationship.GroupByPropId != Int32.MinValue )
+                        {
+                            GroupName = NodesRow["groupname"].ToString();
+                            if( GroupName == string.Empty )
+                                GroupName = "[blank]";
+                        }
+
+                        _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
+                    }
+                }
+
+                // This assumes that property rows for the same nodeid are next to one another
+                // It also assumes that loadNodeAsChildFromRow() made the node current
+                if( NodesTable.Columns.Contains( "jctnodepropid" ) )
+                {
+                    Int32 ThisJctNodePropId = CswConvert.ToInt32( NodesRow["jctnodepropid"] );
+                    if( ThisJctNodePropId != Int32.MinValue )
+                    {
+                        _CswNbtTree.addProperty( CswConvert.ToInt32( NodesRow["nodetypepropid"] ),
+                                                 ThisJctNodePropId,
+                                                 NodesRow["propname"].ToString(),
+                                                 NodesRow["gestalt"].ToString(),
+                                                 _CswNbtResources.MetaData.getFieldType( CswConvert.ToInt32( NodesRow["fieldtypeid"] ) ) );
+                    }
+                }
+
+            } // foreach(DataRow NodesRow in NodesTable.Rows)
+            
+
+            // Recurse
             foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
             {
                 loadRelationshipRecursive( ChildRelationship );
@@ -117,60 +156,9 @@ namespace ChemSW.Nbt
 
         } // loadRelationshipRecursive()
 
-        private void _handleProperties( CswNbtNodeKey Key, Collection<CswNbtViewProperty> PropertyList )
+
+        private string _makeNodeSql( CswNbtViewRelationship Relationship )
         {
-            //// ObjectClassProps
-            //string PropIds = String.Empty;
-            //foreach( CswNbtViewProperty Prop in PropertyList )
-            //{
-            //    if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
-            //    {
-            //        if( PropIds != String.Empty ) PropIds += ",";
-            //        PropIds += Prop.ObjectClassPropId;
-            //    }
-            //}
-            //if( PropIds != String.Empty )
-            //{
-            //    DataTable ResultTable = null;
-            //    _getObjectClassProperties( Key, PropIds, ref ResultTable );
-
-            //    foreach( DataRow CurrentRow in ResultTable.Rows )
-            //    {
-            //        _CswNbtTree.addProperty( CswConvert.ToInt32( CurrentRow["nodetypepropid"].ToString() ),
-            //                                CurrentRow["propname"].ToString(),
-            //                                CurrentRow["gestalt"].ToString(),
-            //                                _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( CurrentRow["fieldtype"].ToString() ) ) );
-            //    }
-            //}
-
-            // NodeTypeProps
-            CswCommaDelimitedString PropsInClause = new CswCommaDelimitedString( 0, true );
-            foreach( CswNbtViewProperty Prop in PropertyList )
-            {
-                if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-                {
-                    PropsInClause.Add( Prop.NodeTypePropId.ToString() );
-                }
-            }
-            if( PropsInClause.Count > 0 )
-            {
-                DataTable ResultTable = new CswDataTable( "getNodeTypeProperties_ResultTable", "" );
-                _getNodeTypeProperties( Key, PropsInClause, ref ResultTable );
-
-                foreach( DataRow CurrentRow in ResultTable.Rows )
-                {
-                    _CswNbtTree.addProperty( CswConvert.ToInt32( CurrentRow["nodetypepropid"].ToString() ),
-                                             CswConvert.ToInt32( CurrentRow["jctnodepropid"].ToString() ),
-                                             CurrentRow["propname"].ToString(),
-                                             CurrentRow["gestalt"].ToString(),
-                                             _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( CurrentRow["fieldtype"].ToString() ) ) );
-                }
-            }
-        } // _handleProperties()
-
-        private DataTable _getNodes( CswNbtViewRelationship Relationship )
-        {
-            DataTable ResultTable = new DataTable();
             string Select = @"select n.nodeid,
                                      n.nodename, 
                                      n.locked,
@@ -186,7 +174,6 @@ namespace ChemSW.Nbt
             string Where = string.Empty;
             string OrderBy = string.Empty;
 
-            
             // Filter out disabled nodetypes/object classes
             Where += @"where ((exists (select j.jctmoduleobjectclassid
                               from jct_modules_objectclass j
@@ -337,7 +324,55 @@ namespace ChemSW.Nbt
             {
                 OrderBy = " order by " + OrderByProps.ToString() + " ";
             }
+            
+            OrderBy += ",n.nodeid "; // for property multiplexing
 
+            // Properties for Select
+            if( Relationship.Properties.Count > 0 )
+            {
+                CswCommaDelimitedString NTPropsInClause = new CswCommaDelimitedString( 0, true );
+                CswCommaDelimitedString OCPropsInClause = new CswCommaDelimitedString( 0, true );
+                foreach( CswNbtViewProperty Prop in Relationship.Properties )
+                {
+                    if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId && Prop.NodeTypePropId != Int32.MinValue )
+                    {
+                        NTPropsInClause.Add( Prop.NodeTypePropId.ToString() );
+                    }
+                    else if( Prop.ObjectClassPropId != Int32.MinValue )
+                    {
+                        OCPropsInClause.Add( Prop.ObjectClassPropId.ToString() );
+                    }
+                }
+
+                // This will multiplex the results by the number of properties!
+                if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
+                {
+                    Select += @" ,props.nodetypepropid, props.propname, props.jctnodepropid, props.gestalt, props.fieldtypeid ";
+
+                    From += @"  left outer join ( ";
+                    if( NTPropsInClause.Count > 0 )
+                    {
+                        From += @"  select p2.nodetypepropid, p2.propname, j.jctnodepropid, j.gestalt, p2.fieldtypeid, j.nodeid
+                                  from nodetype_props p1
+                                  join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid)
+                                  join jct_nodes_props j on (p2.nodetypepropid = j.nodetypepropid)
+                                 where p1.nodetypepropid in (" + NTPropsInClause.ToString() + @")";
+                        if( OCPropsInClause.Count > 0 )
+                        {
+                            From += @" UNION ";
+                        }
+                    }
+                    if( OCPropsInClause.Count > 0 )
+                    {
+                        From += @" select ntp.nodetypepropid, ntp.propname, j.jctnodepropid, j.gestalt, ntp.fieldtypeid, j.nodeid
+                                  from object_class_props op
+                                  join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid)
+                                  join jct_nodes_props j on (ntp.nodetypepropid = j.nodetypepropid)
+                                 where op.objectclasspropid in (" + OCPropsInClause.ToString() + @")";
+                    }
+                    From += @"   ) props on (props.nodeid = n.nodeid)";
+                } // if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
+            } // if(Relationship.Properties.Count > 0)
 
 
             // Property Filters
@@ -466,96 +501,8 @@ namespace ChemSW.Nbt
             if( !_IncludeSystemNodes )
                 Where += " and n.issystem = '0' ";
 
-            string Sql = Select + " " + From + " " + Where + " " + OrderBy;
-
-            CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
-            CswTimer SqlTimer = new CswTimer();
-            try
-            {
-                ResultTable = ResultSelect.getTable( 0, ResultLimit, false, false );
-            }
-            catch( Exception ex )
-            {
-                throw new CswDniException( ErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
-            }
-
-            if( SqlTimer.ElapsedDurationInSeconds > 2 )
-                _CswNbtResources.logMessage( "Tree View SQL required longer than 2 seconds to run: " + Sql );
-
-            return ResultTable;
-
-        } //_getNodes()
-
-
-        private void _getNodeTypeProperties( CswNbtNodeKey Key, CswCommaDelimitedString PropsInClause, ref DataTable ResultTable )
-        {
-            string Sql = @"select p.nodetypepropid, d.tablename, d.columnname
-                             from nodetype_props p
-                             left outer join jct_dd_ntp j on (p.nodetypepropid = j.nodetypepropid)
-                             left outer join data_dictionary d on (j.datadictionaryid = d.tablecolid)
-                            where nodetypeid = " + Key.NodeTypeId.ToString() + @" 
-                              and p.firstpropversionid in (select firstpropversionid 
-                                                             from nodetype_props 
-                                                            where nodetypepropid in (" + PropsInClause.ToString() + @"))";
-            CswArbitrarySelect PropSelect = _CswNbtResources.makeCswArbitrarySelect( "_getNodeTypeProperties_select1", Sql );
-            DataTable PropTable = null;
-            try
-            {
-                PropTable = PropSelect.getTable();
-            }
-            catch( Exception ex )
-            {
-                throw new CswDniException( ErrorType.Error, "Invalid View", "_getProperties() attempted to run invalid SQL: " + Sql, ex );
-            }
-
-            ResultTable.Columns.Add( new DataColumn( "nodetypepropid" ) );
-            ResultTable.Columns.Add( new DataColumn( "propname" ) );
-            ResultTable.Columns.Add( new DataColumn( "jctnodepropid" ) );
-            ResultTable.Columns.Add( new DataColumn( "gestalt" ) );
-            ResultTable.Columns.Add( new DataColumn( "fieldtype" ) );
-
-            foreach( DataRow PropRow in PropTable.Rows )
-            {
-                DataTable ThisResultTable = null;
-                string Sql2 = string.Empty;
-                if( PropRow["tablename"].ToString() == string.Empty )
-                {
-                    Sql2 = @"select p.nodetypepropid, p.propname, j.jctnodepropid, j.gestalt, f.fieldtype
-                             from nodetype_props p
-                             join field_types f on (p.fieldtypeid = f.fieldtypeid) 
-                             left outer join jct_nodes_props j 
-                               on (p.nodetypepropid = j.nodetypepropid 
-                                   and j.nodeid = " + Key.NodeId.PrimaryKey.ToString() + @")
-                            where p.nodetypepropid = " + PropRow["nodetypepropid"].ToString();
-                }
-                else
-                {
-                    Sql2 = @"select p.nodetypepropid, p.propname, j.jctnodepropid, j." + PropRow["columnname"].ToString() + @" gestalt, f.fieldtype
-                             from nodetype_props p
-                             join field_types f on (p.fieldtypeid = f.fieldtypeid) 
-                             left outer join " + PropRow["tablename"].ToString() + @" j 
-                               on (j." + _CswNbtResources.getPrimeKeyColName( PropRow["tablename"].ToString() ) + @" = " + Key.NodeId.PrimaryKey.ToString() + @")
-                            where p.nodetypepropid = " + PropRow["nodetypepropid"].ToString();
-                }
-                CswArbitrarySelect ThisResultSelect = _CswNbtResources.makeCswArbitrarySelect( "_getNodeTypeProperties_select2", Sql2 );
-                try
-                {
-                    ThisResultTable = ThisResultSelect.getTable();
-                }
-                catch( Exception ex )
-                {
-                    throw new CswDniException( ErrorType.Error, "Invalid View", "_getProperties() attempted to run invalid SQL: " + Sql, ex );
-                }
-
-                DataRow ResultRow = ResultTable.NewRow();
-                ResultRow["nodetypepropid"] = ThisResultTable.Rows[0]["nodetypepropid"];
-                ResultRow["propname"] = ThisResultTable.Rows[0]["propname"];
-                ResultRow["jctnodepropid"] = ThisResultTable.Rows[0]["jctnodepropid"];
-                ResultRow["gestalt"] = ThisResultTable.Rows[0]["gestalt"];
-                ResultRow["fieldtype"] = ThisResultTable.Rows[0]["fieldtype"];
-                ResultTable.Rows.Add( ResultRow );
-            }
-        }
+            return Select + " " + From + " " + Where + " " + OrderBy;
+        } //_makeNodeSql()
 
         private CswNbtSubField _getDefaultSubFieldForProperty( CswNbtViewRelationship.PropIdType Type, Int32 Id )
         {
