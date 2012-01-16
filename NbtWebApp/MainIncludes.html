@@ -25,10 +25,15 @@
 <script type="text/javascript">
     
         if (undefined === window.JSON || 
-        null === window.JSON || 
-        false === window.JSON.hasOwnProperty('parse') || 
-        false === window.JSON.hasOwnProperty('stringify')) {
-           ChemSW.tools.loadResource('Scripts/json2.min.js', 'js');
+            null === window.JSON || 
+            false === window.JSON.hasOwnProperty('parse') || 
+            false === window.JSON.hasOwnProperty('stringify')) {
+           
+           if(window.ChemSW) {
+               ChemSW.tools.loadResource('Scripts/json2.min.js', 'js');
+           } else {
+               document.write('<script type="text/javascript" src="Scripts/json2.min.js"><\/script>');
+           }
         }
 
 

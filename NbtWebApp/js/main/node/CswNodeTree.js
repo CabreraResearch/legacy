@@ -356,8 +356,9 @@
 
                     }
 
-                    $togglelink.show();
-
+                    if(o.ShowToggleLink && $togglelink) {
+                        $togglelink.show();
+                    }
                     // DO NOT define an onSuccess() function here that interacts with the tree.
                     // The tree has initalization events that appear to happen asynchronously,
                     // and thus having an onSuccess() function that changes the selected node will
