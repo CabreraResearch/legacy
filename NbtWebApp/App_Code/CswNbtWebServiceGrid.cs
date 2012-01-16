@@ -98,8 +98,6 @@ namespace ChemSW.Nbt.WebServices
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
 
-            Tree.goToRoot();
-
             _WsTreeOfView.saveTreeToCache( Tree );
             _View.SaveToCache( IncludeInQuickLaunch );
 
