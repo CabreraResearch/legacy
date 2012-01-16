@@ -357,7 +357,7 @@
                 date: ''     // viewing audit records
             };
             if (options) $.extend(o, options);
-
+log(o.nodeids);
             var $div = $('<div></div>');
 
             var myEditMode = EditMode.EditInPopup.name;

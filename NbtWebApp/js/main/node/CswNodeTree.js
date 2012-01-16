@@ -356,7 +356,9 @@
 
                     }
 
-                    $togglelink.show();
+                    if (false === isNullOrEmpty($togglelink)) {
+                        $togglelink.show();
+                    }
 
                     // DO NOT define an onSuccess() function here that interacts with the tree.
                     // The tree has initalization events that appear to happen asynchronously,
