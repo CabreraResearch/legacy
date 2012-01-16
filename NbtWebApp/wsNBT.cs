@@ -702,7 +702,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public void getGridPage( string ViewId, string Page, string Rows, string IsReport, string IncludeNodeKey, string IdPrefix )
+        public void getGridRowsByPage( string ViewId, string Page, string Rows, string IsReport, string IncludeNodeKey, string IdPrefix )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
