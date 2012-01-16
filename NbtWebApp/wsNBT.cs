@@ -2596,8 +2596,8 @@ namespace ChemSW.Nbt.WebServices
 
                 CswPropIdAttr PropId = new CswPropIdAttr( NodeTypePropAttr );
                 if( null == PropId.NodeId ||
-                        Int32.MinValue == PropId.NodeId.PrimaryKey ||
-                            Int32.MinValue == PropId.NodeTypePropId )
+                    Int32.MinValue == PropId.NodeId.PrimaryKey ||
+                    Int32.MinValue == PropId.NodeTypePropId )
                 {
                     throw new CswDniException( ErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
                 }

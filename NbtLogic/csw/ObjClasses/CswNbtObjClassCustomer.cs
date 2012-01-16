@@ -225,7 +225,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
         {
             if( null != NodeTypeProp &&
-                    null != NodeTypeProp.ObjectClassProp )
+                null != NodeTypeProp.ObjectClassProp )
             {
                 if( LoginPropertyName == NodeTypeProp.ObjectClassProp.PropName )
                 {
