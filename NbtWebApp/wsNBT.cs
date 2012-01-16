@@ -805,8 +805,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != View )
                     {
                         var ws = new CswNbtWebServiceTree( _CswNbtResources, View, IdPrefix );
-                        CswPrimaryKey RealIncludeNodeId = new CswPrimaryKey();
-                        RealIncludeNodeId.FromString( IncludeNodeId );
+                        CswPrimaryKey RealIncludeNodeId = _getNodeId( IncludeNodeId );
 
                         CswNbtNodeKey RealIncludeNodeKey = null;
                         if( !string.IsNullOrEmpty( IncludeNodeKey ) )
@@ -982,8 +981,7 @@ namespace ChemSW.Nbt.WebServices
 
                     if( string.Empty != NodePk )
                     {
-                        CswPrimaryKey NodeId = new CswPrimaryKey();
-                        NodeId.FromString( NodePk );
+                        CswPrimaryKey NodeId = _getNodeId( NodePk );
                         CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
                         CswNbtView View = Node.NodeType.CreateDefaultView();
                         View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
@@ -1333,13 +1331,11 @@ namespace ChemSW.Nbt.WebServices
                         Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
                         if( RealVisibility == NbtViewVisibility.Role )
                         {
-                            RealVisibilityRoleId = new CswPrimaryKey();
-                            RealVisibilityRoleId.FromString( VisibilityRoleId );
+                            RealVisibilityRoleId = _getNodeId( VisibilityRoleId );
                         }
                         else if( RealVisibility == NbtViewVisibility.User )
                         {
-                            RealVisibilityUserId = new CswPrimaryKey();
-                            RealVisibilityUserId.FromString( VisibilityUserId );
+                            RealVisibilityUserId = _getNodeId( VisibilityUserId );
                         }
                     }
                     else
@@ -2474,8 +2470,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         foreach( string NodePk in NodePks )
                         {
-                            CswPrimaryKey PrimaryKey = new CswPrimaryKey();
-                            PrimaryKey.FromString( NodePk );
+                            CswPrimaryKey PrimaryKey = _getNodeId( NodePk );
                             if( PrimaryKey.PrimaryKey != Int32.MinValue && !NodePrimaryKeys.Contains( PrimaryKey ) )
                             {
                                 NodePrimaryKeys.Add( PrimaryKey );
@@ -2521,8 +2516,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswPrimaryKey RealNodePk = new CswPrimaryKey();
-                    RealNodePk.FromString( NodePk );
+                    CswPrimaryKey RealNodePk = _getNodeId( NodePk );
                     if( RealNodePk.PrimaryKey != Int32.MinValue )
                     {
                         CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
@@ -3236,8 +3230,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceAuditing ws = new CswNbtWebServiceAuditing( _CswNbtResources );
-                    CswPrimaryKey RealNodeId = new CswPrimaryKey();
-                    RealNodeId.FromString( NodeId );
+                    CswPrimaryKey RealNodeId = _getNodeId( NodeId );
                     ReturnVal = ws.getAuditHistoryGrid( _CswNbtResources.Nodes[RealNodeId], CswConvert.ToBoolean( JustDateColumn ) );
                 }
                 _deInitResources();
@@ -3537,6 +3530,23 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ret = tryRet;
                 }
+            }
+            return ret;
+        }
+
+        private CswPrimaryKey _getNodeId( string NodeId )
+        {
+            CswPrimaryKey ret = null;
+            if( CswTools.IsInteger( NodeId ) )
+            {
+                // If we use this, it means someone somewhere is using nodeids incorrectly
+                // And the day may come when it must be fixed.
+                ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeId ) );
+            }
+            else
+            {
+                ret = new CswPrimaryKey();
+                ret.FromString( NodeId );
             }
             return ret;
         }
