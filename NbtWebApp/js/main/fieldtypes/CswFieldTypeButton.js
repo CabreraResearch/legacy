@@ -35,6 +35,7 @@
                                         url: '/NbtWebApp/wsNBT.asmx/reauthenticate',
                                         data: { PropId: propAttr },
                                         success: function () {
+                                            unsetChanged(); // case 24669
                                             window.location = "Main.html";
                                         }
                                     });
