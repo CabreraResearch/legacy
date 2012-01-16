@@ -3484,7 +3484,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string previewInspectionFile()
+        public void previewInspectionFile()
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3541,7 +3541,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 ReturnVal = jError( ex );
             }
-            return ReturnVal.ToString();
+
+            Context.Response.Clear();
+            Context.Response.ContentType = "application/json";
+            Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
+            Context.Response.Flush();
+            Context.Response.Write( ReturnVal.ToString() );
         } // finalizeInspectionDesign()
 
         #endregion Inspection Design

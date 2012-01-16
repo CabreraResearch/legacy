@@ -198,9 +198,17 @@ function CswGrid(options, $parent) {
         }
 
         if (o.pagermode === 'default' || o.pagermode === 'custom') {
-            $gridTable.jqGrid(o.gridOpts)
-                      .jqGrid('navGrid', '#' + gridPagerId, o.optNav, { }, { }, { }, { }, { }); //Case 24032: Removed jqGrid search
-
+            try {
+                if(false === contains(o.gridOpts, 'colNames') ||
+                    o.gridOpts.colNames.length === 0 ||
+                   (contains(o.gridOpts, 'colModel') && o.gridOpts.colNames.length !== o.gridOpts.colModel.length) ) {
+                    throw new Error('Cannot create a grid without at least one column defined.');
+                }
+                $gridTable.jqGrid(o.gridOpts)
+                          .jqGrid('navGrid', '#' + gridPagerId, o.optNav, { }, { }, { }, { }, { }); //Case 24032: Removed jqGrid search
+            } catch (e) {
+                CswError(ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, e.message));
+            }
             if (o.pagermode === 'custom') {
                 makeCustomPager(o.customPager);
             }

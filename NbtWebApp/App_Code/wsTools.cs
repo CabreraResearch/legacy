@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.WebServices
             FullPath = string.Empty;
             if( false == string.IsNullOrEmpty( RelativePath ) )
             {
-                FullPath = System.IO.Path.Combine( new string[] { _TempPath, RelativePath } );
+                FullPath = Path.Combine( new string[] { _TempPath, RelativePath } );
                 FileStream = File.Create( FullPath );
             }
         } // _getFileStream
@@ -202,6 +202,8 @@ namespace ChemSW.Nbt.WebServices
             if( null != InputStream && null != OutputStream )
             {
                 InputStream.CopyTo( OutputStream );
+                InputStream.Close();
+                OutputStream.Close();
             }
             return FullPath;
         }
