@@ -398,36 +398,15 @@ namespace ChemSW.Nbt.ImportExport
 
             }//if temptables have been populated
 
-
-
-
+            //24658: We don't make target nodes that don't exist: they probably don't exist because they were deleted in the target data
+            //( we need to remember that IMCS is an applicaiton that probably left around dangling references to records that were deleted)
+            /*
             if( ( false == _Stop ) && ( ImportProcessPhase.PopulatingNbtNodes == _LastCompletedProcessPhase ) )
             {
 
                 _LastCompletedProcessPhase = ImportProcessPhase.VerifyingNbtTargetNodes;
 
                 _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.InProcess );
-
-                /*
-                string QueryForMissingTargetNodes = @"select distinct p.importtargetnodeid
-                                                      from tmp_import_props p
-                                                      left outer join tmp_import_nodes n on (p.importtargetnodeid =
-                                                                                            n.importnodeid)
-                                                     where n.importnodeid is null
-                                                       and p.importtargetnodeid is not null";
-                 */
-
-                //query for nodes that are targets of relationship proeprties ,
-                //and whose which additionally do not have nbtnodeid's, presumably because the 
-                //first stage could not be created
-                /*
-                string QueryForMissingTargetNodes = @"select distinct p.importtargetnodeid
-                                      from tmp_import_props p
-                                     where p.importtargetnodeid is not null
-                                       and ( p.importtargetnodeid not in
-                                           (select distinct importnodeid from tmp_import_nodes) ) or 
-                                           nbtnodeid is null";
-                */
 
                 string QueryForMissingTargetNodes = @"select distinct p.importtargetnodeid
                                                       from tmp_import_props p, tmp_import_nodes n
@@ -568,8 +547,10 @@ namespace ChemSW.Nbt.ImportExport
 
 
             }//if nodes were processed
+             * 
+             */
 
-            if( ( false == _Stop ) && ( ImportProcessPhase.VerifyingNbtTargetNodes == _LastCompletedProcessPhase ) )
+            if( ( false == _Stop ) && ( ImportProcessPhase.PopulatingNbtNodes == _LastCompletedProcessPhase ) )
             {
 
                 _LastCompletedProcessPhase = ImportProcessPhase.PopulatingNbtProps;
@@ -665,7 +646,7 @@ namespace ChemSW.Nbt.ImportExport
                                                 {
 
                                                     Dictionary<string, Int32> ImportNodeIdToNbtNodeId = new Dictionary<string, int>();
-                                                    if( false == CurrentImportProprow.IsNull( _ColName_Props_ImportTargetNodeIdUnique ) )
+                                                    if( false == CurrentImportProprow.IsNull( _ColName_Props_ImportTargetNodeIdUnique ) ) //populate ImportNodeIdToNbtNodeId for relationships and locations
                                                     {
                                                         string CurrentImportTargetNodeId = CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
                                                         CswNbtImportNodeId CswNbtImportTargetNodeId = new ImportExport.CswNbtImportNodeId( CurrentImportTargetNodeId );
