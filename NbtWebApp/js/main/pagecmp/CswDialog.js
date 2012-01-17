@@ -494,8 +494,9 @@
             var $div = $('<div><span>Are you sure you want to delete:&nbsp;</span></div>');
             
             if(o.Multi) {
-                if (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0 ) {
-                    var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+                var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+                if (false === isNullOrEmpty($nodechecks, true) && 
+                    (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0 )) {
                     var n = 0;
                     $nodechecks.each(function() {
                         var $nodecheck = $(this);
