@@ -83,6 +83,10 @@
                 } else {
                     $wizard.CswWizard('button', button, 'disable');
                 }
+                if(button !== buttons.finish) {
+                    toggleButton(buttons.finish, (currentStepNo === 5));
+                }
+
                 return false;
             },
             
@@ -205,7 +209,6 @@
                     
                     toggleButton(buttons.prev, false);
                     toggleButton(buttons.next, (false === isNullOrEmpty(selectedInspectionTarget)));
-                    toggleButton(buttons.finish, false);
                 };
             }()),
 
@@ -252,7 +255,6 @@
                     };
                     
                     toggleButton(buttons.prev, true);
-                    toggleButton(buttons.finish, false);
                     toggleButton(buttons.next, nextBtnEnabled());
                     
                     if (false === stepTwoComplete) {
@@ -528,7 +530,6 @@
                     }
                     toggleButton(buttons.next, nextIsEnabled(), doNextClick());
                     toggleButton(buttons.prev, true, doPrevClick());
-                    toggleButton(buttons.finish, false);
                 };
             }()),
 
@@ -549,7 +550,6 @@
 
                     toggleButton(buttons.next, true, doNextClick());
                     toggleButton(buttons.prev, true, doPrevClick());
-                    toggleButton(buttons.finish, false);
                     
                     if (false === stepFourComplete &&
                             false === skipStepFour) {
@@ -580,7 +580,6 @@
 
                         toggleButton(buttons.prev, true);
                         toggleButton(buttons.next, false);
-                        toggleButton(buttons.finish, true);
 
                         categoryName = $categoryName.val();
 
