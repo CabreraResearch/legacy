@@ -105,7 +105,7 @@
             {
                 //Row i, Column 1: and
                 $andCell = o.$searchTable.CswTable('cell', andRow, 1)
-                               .CswAttrDom({align:"right"});
+                               .css({align:"right"});
                 $andText = $('<span>&nbsp;and&nbsp;</span>');
                 $andCell.append($andText);
                 andRow++;
@@ -120,7 +120,7 @@
                     $nodeTypeCell.CswSpan('init', { ID: nodeTypeId,
                         value: thisProp.metadatatypename,
                         cssclass: ViewBuilder_CssClasses.metadatatype_static.name})
-                        .CswAttrDom('relatedidtype', thisProp.relatedidtype);
+                        .CswAttrNonDom('relatedidtype', thisProp.relatedidtype);
                     o.selectedSubfieldVal = '';
                     o.selectedFilterVal = '';
 
@@ -189,7 +189,7 @@
                                            var $thisSelect = $(this);
                                            var r = {
                                                 nodetypeorobjectclassid: $thisSelect.val(),
-                                                relatedidtype: $thisSelect.find(':selected').CswAttrDom('type'),
+                                                relatedidtype: $thisSelect.find(':selected').CswAttrNonDom('type'),
                                                 cswnbtnodekey: '',
                                                 optionId: $thisSelect.find(':selected').CswAttrDom('id'),
                                                 $parent: o.$searchTable,
@@ -198,7 +198,7 @@
                                            $.extend(o,r);
                                            getNewProps();  
                                     });
-            o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrDom('type');
+            o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrNonDom('type');
             
             if (false === isNullOrEmpty(o.nodetypeorobjectclassid)) {
                 o.$nodeTypesSelect.find('option[id="' + o.optionId + '"]').CswAttrDom('selected',true);
@@ -347,7 +347,7 @@
             
             //Row i, Column 5: search button
             var $searchButtonCell = o.$searchTable.CswTable('cell', o.bottomRow, o.searchBtnCell)
-                                    .CswAttrDom({align:"right"})
+                                    .css({align:"right"})
                                     .empty();
             var searchButtonId = makeId({ID: 'search_button', prefix: o.ID});
             var $searchButton = $searchButtonCell.CswButton({ID: searchButtonId, 
@@ -444,7 +444,7 @@
                 case 'nodetypesearch':
                     searchUrl = o.doNodeSearchUrl;
                     o.nodetypeorobjectclassid = o.$nodeTypesSelect.val();
-                    o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrDom('type');
+                    o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrNonDom('type');
                     
                     collectPropFilters();
                     
