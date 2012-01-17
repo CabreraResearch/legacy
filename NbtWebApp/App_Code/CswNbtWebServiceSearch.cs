@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( SelectedNodeType == NodeType )
                 {
-                    NodeTypeSelObj[OptionId]["selected"] = "selected";
+                    NodeTypeSelObj[OptionId]["selected"] = true;
                 }
                 if( NodeType.NodeTypeName.Length > SelectWidth )
                 {
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null == SelectedNodeType && SearchOC == ObjectClass )
                 {
-                    ObjectClassSelObj[OptionId]["selected"] = "selected";
+                    ObjectClassSelObj[OptionId]["selected"] = true;
                 }
                 if( ObjectClass.ObjectClass.ToString().Length > SelectWidth )
                 {

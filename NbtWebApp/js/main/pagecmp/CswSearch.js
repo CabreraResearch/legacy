@@ -150,14 +150,17 @@
             var $select = $('<select></select>');
             
             function makeOptions(optionGroup) {
-                var opt, option, value, optionCol = '', selected;
+                var opt, option, value, optionCol = '';
                 for (opt in optionGroup) {
                     if (contains(optionGroup, opt)) {
                         option = optionGroup[opt];
                         value = tryParseString(option.value, option.id);
                         if(contains(option,'name') && false === isNullOrEmpty(value)) {
-                            selected = (isTrue(option.selected)) ? 'selected="true"' : '';
-                            optionCol += '<option ' + selected + ' id="' + option.id + '" type="' + option.type + '" value="' + value + '">' + option.name + '</option>';
+                            optionCol += '<option id="' + option.id + '" type="' + option.type + '" value="' + value + '" ';
+                            if((isTrue(option.selected))) {
+                                optionCol += 'selected="selected" ';    
+                            }
+                            optionCol += '>' + option.name + '</option>';
                         }
                     }
                 }
