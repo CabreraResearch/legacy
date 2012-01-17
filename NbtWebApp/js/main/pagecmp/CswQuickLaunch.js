@@ -43,7 +43,7 @@
 
                         var $li = $('<li></li>')
                             .appendTo($list);
-                        log(text);
+
                         switch (launchtype.toLowerCase()) //webservice converts to lower case
                         {
                             case 'view':
