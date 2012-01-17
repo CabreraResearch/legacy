@@ -12,14 +12,14 @@
     function deleteRows(rowid, grid, func) {
         var delOpt = {
             cswnbtnodekey: [],
-            nodepk: [],
+            //nodepk: [],
             nodename: []
         };
         var delFunc = function(opts) {
             opts.onDeleteNode = func;
             opts.publishDeleteEvent = false;
             renameProperty(opts, 'cswnbtnodekey', 'cswnbtnodekeys');
-            renameProperty(opts, 'nodepk', 'nodeids');
+//            renameProperty(opts, 'nodepk', 'nodeids');
             renameProperty(opts, 'nodename', 'nodenames');
             $.CswDialog('DeleteNodeDialog', opts);
         };
@@ -32,14 +32,14 @@
     function editRows (rowid, grid, func, editViewFunc) {
         var editOpt = {
             cswnbtnodekey: [],
-            nodepk: [],
+            //nodepk: [],
             nodename: []
         };
         var editFunc = function(opts) {
             opts.onEditNode = func;
             opts.onEditView = editViewFunc;
             renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
-            renameProperty(opts, 'nodepk', 'nodeids');
+//            renameProperty(opts, 'nodepk', 'nodeids');
             renameProperty(opts, 'nodename', 'nodenames');
             $.CswDialog('EditNodeDialog', opts);
         };

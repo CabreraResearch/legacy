@@ -3264,7 +3264,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getAuditHistoryGrid( string NodeId, string JustDateColumn )
+        public string getAuditHistoryGrid( string NodeId, string NbtNodeKey, string JustDateColumn )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3275,8 +3275,15 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceAuditing ws = new CswNbtWebServiceAuditing( _CswNbtResources );
-                    CswPrimaryKey RealNodeId = new CswPrimaryKey();
-                    RealNodeId.FromString( NodeId );
+                    CswPrimaryKey RealNodeId = _getNodeId( NodeId );
+                    if( null == RealNodeId )
+                    {
+                        CswNbtNodeKey RealNodeKey = _getNodeKey( NbtNodeKey );
+                        if( null != RealNodeKey && null != RealNodeKey.NodeId )
+                        {
+                            RealNodeId = RealNodeKey.NodeId;
+                        }
+                    }
                     ReturnVal = ws.getAuditHistoryGrid( _CswNbtResources.Nodes[RealNodeId], CswConvert.ToBoolean( JustDateColumn ) );
                 }
                 _deInitResources();
@@ -3571,18 +3578,41 @@ namespace ChemSW.Nbt.WebServices
             return View;
         } // _getView()
 
+        private CswPrimaryKey _getNodeId( string NodeId )
+        {
+            CswPrimaryKey RetPk = null;
+            CswPrimaryKey TryPk = null;
+            if( CswTools.IsInteger( NodeId ) )
+            {
+                // If we use this, it means someone somewhere is using nodeids incorrectly
+                // And the day may come when it must be fixed.
+                TryPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeId ) );
+            }
+            else if( false == string.IsNullOrWhiteSpace( NodeId ) )
+            {
+                TryPk = new CswPrimaryKey();
+                TryPk.FromString( NodeId );
+            }
+            if( null != TryPk && Int32.MinValue != TryPk.PrimaryKey )
+            {
+                RetPk = TryPk;
+            }
+            return RetPk;
+        }
+
         private CswNbtNodeKey _getNodeKey( string NodeKeyString )
         {
-            CswNbtNodeKey ret = null;
+            CswNbtNodeKey RetKey = null;
+            CswNbtNodeKey TryKey = null;
             if( false == string.IsNullOrEmpty( NodeKeyString ) )
             {
-                CswNbtNodeKey tryRet = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( NodeKeyString ) );
-                if( null != tryRet.NodeId )
-                {
-                    ret = tryRet;
-                }
+                TryKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( NodeKeyString ) );
             }
-            return ret;
+            if( null != TryKey && null != TryKey.NodeId && Int32.MinValue != TryKey.NodeId.PrimaryKey )
+            {
+                RetKey = TryKey;
+            }
+            return RetKey;
         }
 
         #endregion Private

@@ -375,6 +375,7 @@
                 $table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
                     ID: o.nodeids[0] + '_history',
                     nodeid: o.nodeids[0],
+                    cswnbtnodekey: o.nodekeys[0],
                     onEditNode: o.onEditNode,
                     JustDateColumn: true,
                     selectedDate: o.date,

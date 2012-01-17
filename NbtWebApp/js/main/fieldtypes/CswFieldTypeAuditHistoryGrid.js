@@ -17,10 +17,12 @@
                 ret = $Div.CswAuditHistoryGrid({
                         ID: o.ID,
                         nodeid: o.nodeid,
+                        cswnbtnodekey: o.cswnbtnodekey,
                         EditMode: o.EditMode,
                         onEditRow: function(date) {
                             $.CswDialog('EditNodeDialog', {
                                 nodeids: [ o.nodeid ],
+                                nodekeys: [ o.cswnbtnodekey ],
                                 onEditNode: o.onEditNode,
                                 date: date
                             });
