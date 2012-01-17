@@ -344,7 +344,7 @@
                         $treediv.find('li').each(function () {
                             var $childObj = $(this);
                             var thisid = tryParseString($childObj.CswAttrDom('id'));
-                            var thisnodeid = tryParseString($childObj.CswAttrNonDom('nodeid'));
+                            var thisnodeid = tryParseString($childObj.CswAttrNonDom('nodeid'), thisid.substring(idPrefix.length));
                             var thisrel = tryParseString($childObj.CswAttrNonDom('rel'));
                             var altName = tryParseString($childObj.find('a').first().text());
                             var thisnodename = trim(tryParseString($childObj.CswAttrNonDom('nodename'), altName));
