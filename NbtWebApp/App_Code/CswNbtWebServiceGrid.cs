@@ -201,6 +201,11 @@ namespace ChemSW.Nbt.WebServices
             ICswNbtTree Tree = _WsTreeOfView.getTreeFromCache();
             Int32 StartingNode = 0;
             Int32 EndingNode = Tree.getChildNodeCount();
+            if( _View.Visibility == NbtViewVisibility.Property )
+            {
+                Tree.goToNthChild( 0 );
+                EndingNode = Tree.getChildNodeCount();
+            }
             return _getGridRows( Tree, 1, _CswGridData.PageSize, StartingNode, EndingNode, IsReport );
         } // getGridOuterJson()
 
@@ -223,12 +228,6 @@ namespace ChemSW.Nbt.WebServices
             Int32 NodeCount = Tree.getChildNodeCount();
             if( NodeCount > 0 )
             {
-                Tree.goToRoot();
-                if( _View.Visibility == NbtViewVisibility.Property )
-                {
-                    Tree.goToNthChild( 0 );
-                    NodeCount = Tree.getChildNodeCount();
-                }
                 for( Int32 C = StartingNode; ( C < EndingNode || IsReport ) && C < NodeCount; C += 1 )
                 {
                     Tree.goToNthChild( C );
