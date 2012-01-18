@@ -29,6 +29,15 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Case 23641
 
+            #region Case 24086
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", "quota" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addLongColumn( "nodetypes", "quota", "NodeType Quota", false, false );
+            }
+
+            #endregion Case 24656
+
             #region Case 24434
 
             CswNbtMetaDataObjectClass AssemblyOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass );

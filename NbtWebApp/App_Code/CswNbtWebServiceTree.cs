@@ -113,6 +113,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 ThisNodeObj["state"] = ThisNodeState;
                 ThisNodeObj["children"] = new JArray();
+                ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
             }
             return ThisNodeObj;
         } // _treeNodeJObject()
@@ -120,9 +121,11 @@ namespace ChemSW.Nbt.WebServices
         public JObject runTree( CswPrimaryKey IncludeNodeId, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch )
         {
             JObject ReturnObj = new JObject();
-            _wsTreeOfView.deleteTreeFromCache();
+            //_wsTreeOfView.deleteTreeFromCache();
 
             if( null != _View && ( _View.ViewMode == NbtViewRenderingMode.Tree || _View.ViewMode == NbtViewRenderingMode.List ) )
+
+            //_CswNbtResources.CswSuperCycleCache.delete( CacheTreeName );
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
                 _View.SaveToCache( IncludeInQuickLaunch );
@@ -156,7 +159,7 @@ namespace ChemSW.Nbt.WebServices
                 bool HasResults = ( Tree.getChildNodeCount() > 0 );
                 ReturnObj["result"] = HasResults.ToString().ToLower();
                 ReturnObj["types"] = getTypes();
-                ReturnObj["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize.ToString();
+                //ReturnObj["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize.ToString();
 
                 if( HasResults )
                 {
@@ -187,123 +190,130 @@ namespace ChemSW.Nbt.WebServices
                 //Tree.goToRoot();
                 //ReturnObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
                 ReturnObj["root"]["state"] = "open";
+                ReturnObj["root"]["children"] = new JArray();
 
-                _wsTreeOfView.saveTreeToCache( Tree );
-                _View.SaveToCache( IncludeInQuickLaunch );
+                Tree.goToRoot();
+                _runTreeNodesRecursive( Tree, (JArray) ReturnObj["root"]["children"], true );
+                
+                //_wsTreeOfView.saveTreeToCache( Tree );
+                //_View.SaveToCache( IncludeInQuickLaunch );
+
+                //_CswNbtResources.CswSuperCycleCache.put( CacheTreeName, Tree );
+                //View.SaveToCache( IncludeInQuickLaunch );
             }
             return ReturnObj;
         } // runTree()
 
 
-        /// <summary>
-        /// Fetch a page of nodes out of a tree
-        /// </summary>
-        /// <param name="PageNo">Page of nodes on this level, if number of nodes exceeds pagesize</param>
-        /// <param name="PageSize">Size of pages</param>
-        /// <param name="ForSearch">True if view is from a search</param>
-        public JObject fetchTreeRoot( Int32 PageSize, Int32 PageNo, bool ForSearch )
-        {
-            JObject ReturnObj = new JObject();
+        ///// <summary>
+        ///// Fetch a page of nodes out of a tree
+        ///// </summary>
+        ///// <param name="View">View from which the Tree was created</param>
+        ///// <param name="Cache">Storage mechanism for Tree</param>
+        ///// <param name="IdPrefix">Prefix for Tree ID</param>
+        ///// <param name="Level">Level of tree to populate</param>
+        ///// <param name="ParentRangeStart">Parent number on previous level to start (inclusive)</param>
+        ///// <param name="ParentRangeEnd">Parent number on previous level to end (inclusive)</param>
+        ///// <param name="PageNo">Page of nodes on this level, if number of nodes exceeds pagesize</param>
+        ///// <param name="PageSize">Size of pages</param>
+        ///// <param name="ForSearch">True if view is from a search</param>
+        //public JObject fetchTreeFirstLevel( Int32 PageSize, Int32 PageNo, bool ForSearch )
+        //{
+        //    JObject ReturnObj = new JObject();
 
-            ICswNbtTree Tree = _wsTreeOfView.getTreeFromCache();
+        //    ICswNbtTree Tree = _wsTreeOfView.getTreeFromCache();
 
-            if( Tree != null )
-            {
-                JArray RootArray = new JArray();
-                ReturnObj["tree"] = RootArray;
+        //    if( Tree != null )
+        //    {
+        //        JArray RootArray = new JArray();
+        //        ReturnObj["tree"] = RootArray;
 
-                Int32 NodeCountStart = Int32.MinValue;
-                Int32 NodeCountEnd = Int32.MinValue;
-                if( Tree.getChildNodeCount() > 0 )
-                {
-                    Tree.goToRoot();
-                    for( Int32 c = PageSize * PageNo; c < PageSize * ( PageNo + 1 ) && c < Tree.getChildNodeCount(); c++ )
-                    {
-                        Tree.goToNthChild( c );
+        //        Int32 NodeCountStart = Int32.MinValue;
+        //        Int32 NodeCountEnd = Int32.MinValue;
+        //        if( Tree.getChildNodeCount() > 0 )
+        //        {
+        //            Tree.goToRoot();
+        //            for( Int32 c = PageSize * PageNo; c < PageSize * ( PageNo + 1 ) && c < Tree.getChildNodeCount(); c++ )
+        //            {
+        //                Tree.goToNthChild( c );
 
-                        if( NodeCountStart == Int32.MinValue )
-                        {
-                            NodeCountStart = Tree.getNodeKeyForCurrentPosition().NodeCount;
-                        }
-                        NodeCountEnd = Tree.getNodeKeyForCurrentPosition().NodeCount;
+        //                if( NodeCountStart == Int32.MinValue )
+        //                {
+        //                    NodeCountStart = Tree.getNodeKeyForCurrentPosition().NodeCount;
+        //                }
+        //                NodeCountEnd = Tree.getNodeKeyForCurrentPosition().NodeCount;
 
-                        JObject ThisNodeObj = _treeNodeJObject( Tree );
-                        RootArray.Add( ThisNodeObj );
+        //                JObject ThisNodeObj = _treeNodeJObject( Tree );
+        //                RootArray.Add( ThisNodeObj );
 
-                        Tree.goToParentNode();
-                    }
-                } // if( Tree.getChildNodeCount() > 0 )
+        //                Tree.goToParentNode();
+        //            }
+        //        } // if( Tree.getChildNodeCount() > 0 )
 
-                ReturnObj["nodecountstart"] = NodeCountStart.ToString();
-                ReturnObj["nodecountend"] = NodeCountEnd.ToString();
-                ReturnObj["more"] = ( PageSize * ( PageNo + 1 ) <= Tree.getChildNodeCount() ).ToString().ToLower();
-            }
-            else
-            {
-                ReturnObj["tree"] = new JArray( new JObject() );
-                //ReturnObj["tree"][0] = new JObject();
-                //ReturnObj["tree"][0]["data"] = ViewName;
-                ReturnObj["tree"][0]["attr"] = new JObject();
-                //ReturnObj["tree"][0]["attr"]["viewid"] = ViewId;
-                ReturnObj["tree"][0]["state"] = "leaf";
-                ReturnObj["tree"][0]["children"] = new JArray( new JObject() );
-                ReturnObj["tree"][0]["children"][0] = "No Results";
-            }
-            return ReturnObj;
-        } // fetchTreeRoot
+        //        ReturnObj["nodecountstart"] = NodeCountStart.ToString();
+        //        ReturnObj["nodecountend"] = NodeCountEnd.ToString();
+        //        ReturnObj["more"] = ( PageSize * ( PageNo + 1 ) <= Tree.getChildNodeCount() ).ToString().ToLower();
+        //    }
+        //    else
+        //    {
+        //        ReturnObj["tree"] = new JArray( new JObject() );
+        //        //ReturnObj["tree"][0] = new JObject();
+        //        //ReturnObj["tree"][0]["data"] = ViewName;
+        //        ReturnObj["tree"][0]["attr"] = new JObject();
+        //        //ReturnObj["tree"][0]["attr"]["viewid"] = ViewId;
+        //        ReturnObj["tree"][0]["state"] = "leaf";
+        //        ReturnObj["tree"][0]["children"] = new JArray( new JObject() );
+        //        ReturnObj["tree"][0]["children"][0] = "No Results";
+        //    }
+        //    return ReturnObj;
+        //} // fetchTreeFirstLevel
 
-        public JObject fetchTreeChildren( Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, bool ForSearch )
-        {
-            JObject ReturnObj = new JObject();
+        //public JObject fetchTreeChildren( Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, bool ForSearch )
+        //{
+        //    JObject ReturnObj = new JObject();
 
-            ICswNbtTree Tree = _wsTreeOfView.getTreeFromCache();
+        //    ICswNbtTree Tree = _wsTreeOfView.getTreeFromCache();
 
-            if( Tree != null )
-            {
-                JArray RootArray = new JArray();
-                ReturnObj["tree"] = RootArray;
+        //    if( Tree != null )
+        //    {
+        //        JArray RootArray = new JArray();
+        //        ReturnObj["tree"] = RootArray;
 
-                Int32 NodeCountStart = Int32.MinValue;
-                Int32 NodeCountEnd = Int32.MinValue;
-                if( Tree.getChildNodeCount() > 0 )
-                {
-                    Collection<CswNbtNodeKey> NodeKeys = _wsTreeOfView.getNextPageOfNodes( Tree, Level, ParentRangeStart, ParentRangeEnd );
-                    foreach( CswNbtNodeKey NodeKey in NodeKeys )
-                    {
-                        Tree.makeNodeCurrent( NodeKey );
+        //        Int32 NodeCountStart = PageSize * PageNo;
+        //        Int32 NodeCountEnd = PageSize * PageNo;
+        //        bool More = false;
+        //        if( Tree.getChildNodeCount() > 0 )
+        //        {
+        //            Collection<CswNbtNodeKey> NodeKeys = _wsTreeOfView.getNextPageOfNodes( Tree, Level, ParentRangeStart, ParentRangeEnd );
+        //                JObject ThisNodeObj = _treeNodeJObject( Tree );
 
-                        if( NodeCountStart == Int32.MinValue || NodeCountStart > NodeKey.NodeCount )
-                        {
-                            NodeCountStart = NodeKey.NodeCount;
-                        }
-                        if( NodeCountEnd == Int32.MinValue || NodeCountEnd < NodeKey.NodeCount )
-                        {
-                            NodeCountEnd = NodeKey.NodeCount;
-                        }
+        //            foreach( CswNbtNodeKey NodeKey in NodeKeys )
+        //            {
+        //                Tree.makeNodeCurrent( NodeKey );
+        //                NodeCountEnd++;
+        //                JObject ThisNodeObj = _treeNodeJObject( View, Tree, IdPrefix );
+        //                RootArray.Add( ThisNodeObj );
+        //            } // foreach( CswNbtNodeKey NodeKey in NodeKeys )
+        //        } // if( Tree.getChildNodeCount() > 0 )
 
-                        JObject ThisNodeObj = _treeNodeJObject( Tree );
-                        RootArray.Add( ThisNodeObj );
-                    } // foreach( CswNbtNodeKey NodeKey in NodeKeys )
-                } // if( Tree.getChildNodeCount() > 0 )
-
-                ReturnObj["nodecountstart"] = NodeCountStart.ToString();
-                ReturnObj["nodecountend"] = NodeCountEnd.ToString();
-                // ReturnObj["types"] = getTypes( View );
-            }
-            else
-            {
-                ReturnObj["tree"] = new JArray( new JObject() );
-                //ReturnObj["tree"][0] = new JObject();
-                //ReturnObj["tree"][0]["data"] = ViewName;
-                ReturnObj["tree"][0]["attr"] = new JObject();
-                //ReturnObj["tree"][0]["attr"]["viewid"] = ViewId;
-                ReturnObj["tree"][0]["state"] = "leaf";
-                ReturnObj["tree"][0]["children"] = new JArray( new JObject() );
-                ReturnObj["tree"][0]["children"][0] = "No Results";
-            }
-            return ReturnObj;
-        } // fetchTree()
-
+        //        ReturnObj["nodecountstart"] = NodeCountStart.ToString();
+        //        ReturnObj["nodecountend"] = NodeCountEnd.ToString();
+        //        ReturnObj["more"] = More.ToString().ToLower();
+        //        // ReturnObj["types"] = getTypes( View );
+        //    }
+        //    else
+        //    {
+        //        ReturnObj["tree"] = new JArray( new JObject() );
+        //        //ReturnObj["tree"][0] = new JObject();
+        //        //ReturnObj["tree"][0]["data"] = ViewName;
+        //        ReturnObj["tree"][0]["attr"] = new JObject();
+        //        //ReturnObj["tree"][0]["attr"]["viewid"] = ViewId;
+        //        ReturnObj["tree"][0]["state"] = "leaf";
+        //        ReturnObj["tree"][0]["children"] = new JArray( new JObject() );
+        //        ReturnObj["tree"][0]["children"][0] = "No Results";
+        //    }
+        //    return ReturnObj;
+        //} // fetchTree()
         /// <summary>
         /// Deprecated
         /// </summary>

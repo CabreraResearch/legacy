@@ -54,6 +54,7 @@
                                                         { viewid: viewid, viewmode: viewmode }));
                                 break;
                             case 'action':
+                                text = text.replace('_', ' ');
                                 $('<a href="#">' + text + '</a>')
                                     .appendTo($li)
                                     //.click(function() { o.onActionClick(actionname, actionurl); return false; });

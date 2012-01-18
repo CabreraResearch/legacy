@@ -47,21 +47,32 @@
           <xsl:attribute name="id">
             <xsl:value-of select="@key" />
           </xsl:attribute>
+          <xsl:attribute name="nodeid">
+            <xsl:value-of select="@nodeid" />
+          </xsl:attribute>
+          <xsl:attribute name="cswnbtnodekey">
+            <xsl:value-of select="@key" />
+          </xsl:attribute>
+          <xsl:attribute name="locked">
+            <xsl:value-of select="@locked" />
+          </xsl:attribute>
           <xsl:choose>
             <xsl:when test="@nodetypeid=0">
-              <xsl:attribute name="state">
+			  <xsl:attribute name="state">
                 <xsl:text>open</xsl:text>
               </xsl:attribute>
               <xsl:attribute name="rel">
-                <xsl:text>nodetypeid_0</xsl:text>
+                <xsl:text>root</xsl:text>
               </xsl:attribute>
             </xsl:when>
             <xsl:otherwise>
-              <xsl:attribute name="state">
+              <!--
+			  <xsl:attribute name="state">
                 <xsl:text>closed</xsl:text>
               </xsl:attribute>
+			  -->
               <xsl:attribute name="rel">
-                <xsl:text>nodetypeid_</xsl:text>
+                <xsl:text>nt_</xsl:text>
                 <xsl:value-of select="@nodetypeid" />
               </xsl:attribute>
             </xsl:otherwise>

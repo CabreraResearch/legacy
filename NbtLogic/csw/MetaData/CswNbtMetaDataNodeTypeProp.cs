@@ -106,9 +106,9 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( LayoutType, this );
         }
-        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId, Int32 DisplayRow, Int32 DisplayColumn )
+        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue )
         {
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, this.NodeType.NodeTypeId, this.PropId, TabId, DisplayRow, DisplayColumn );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, NodeType.NodeTypeId, PropId, TabId, DisplayRow, DisplayColumn );
         }
         public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp )
         {

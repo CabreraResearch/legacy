@@ -1,5 +1,5 @@
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="ICswMobileWebControls.js" />
 
 //#region CswMobileMenuButton
@@ -7,6 +7,7 @@
 CswMobileMenuButton.inheritsFrom(ICswMobileWebControls);
 
 function CswMobileMenuButton(buttonDef, $parent) {
+    "use strict";
     /// <summary>
     ///   Menu button class. Responsible for creating Mobile menu buttons suitable for consumption by a header/footer.
     ///   Menu buttons must be tied to static pages to wire their events properly, with the exception of 'Back'.

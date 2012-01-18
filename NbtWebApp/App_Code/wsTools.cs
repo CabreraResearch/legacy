@@ -182,20 +182,46 @@ namespace ChemSW.Nbt.WebServices
             return RetStream;
         }
 
+        private void _getFileStream( string RelativePath, out FileStream FileStream, out string FullPath )
+        {
+            FileStream = null;
+            FullPath = string.Empty;
+            if( false == string.IsNullOrEmpty( RelativePath ) )
+            {
+                FullPath = Path.Combine( new string[] { _TempPath, RelativePath } );
+                FileStream = File.Create( FullPath );
+            }
+        } // _getFileStream
+
         public string cacheInputStream( Stream InputStream, string Path )
         {
-            string RetPath = string.Empty;
-            if( null != InputStream &&
-                false == string.IsNullOrEmpty( Path ) )
+            FileStream OutputStream = null;
+            string FullPath = string.Empty;
+            _getFileStream( Path, out OutputStream, out FullPath );
+
+            if( null != InputStream && null != OutputStream )
             {
-                RetPath = _TempPath + "\\" + Path;
-                using( FileStream OutputFile = File.Create( RetPath ) )
-                {
-                    InputStream.CopyTo( OutputFile );
-                }
+                InputStream.CopyTo( OutputStream );
+                InputStream.Close();
+                OutputStream.Close();
             }
-            return RetPath;
+            return FullPath;
         }
+
+        public void saveToTempFile( string SaveString, string Path )
+        {
+            FileStream OutputStream = null;
+            string FullPath = string.Empty;
+            _getFileStream( Path, out OutputStream, out FullPath );
+
+            if( false == string.IsNullOrEmpty( SaveString ) && null != OutputStream )
+            {
+                StreamWriter w = new StreamWriter( OutputStream );
+                w.Write( SaveString );
+                w.Close();
+            }
+        }
+
         #endregion Temporary Files
 
         #region Client

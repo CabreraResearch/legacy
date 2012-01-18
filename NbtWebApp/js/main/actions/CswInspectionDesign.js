@@ -83,6 +83,10 @@
                 } else {
                     $wizard.CswWizard('button', button, 'disable');
                 }
+                if(button !== buttons.finish) {
+                    toggleButton(buttons.finish, (currentStepNo === 5));
+                }
+
                 return false;
             },
             
@@ -251,7 +255,6 @@
                     };
                     
                     toggleButton(buttons.prev, true);
-                    toggleButton(buttons.finish, false);
                     toggleButton(buttons.next, nextBtnEnabled());
                     
                     if (false === stepTwoComplete) {
@@ -373,7 +376,7 @@
             },
 
             //File upload onSuccess event to prep Step 4
-            makeInspectionDesignGrid = function(data, onSuccess) {
+            makeInspectionDesignGrid = function(jqGridOpts, onSuccess) {
                 if (isFunction(onSuccess)) {
                     onSuccess();
                 }
@@ -421,8 +424,15 @@
                     }
                 };
 
-                $.extend(gridOptions.gridOpts, data.jqGridOpt);
-
+                if(false === contains(jqGridOpts, 'data') || 
+                   false === contains(jqGridOpts, 'colNames') || 
+                   jqGridOpts.colNames.length === 0) {
+                    CswError(ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
+                    toggleButton(buttons.next, false);
+                    toggleButton(buttons.prev, true, true);
+                } else {
+                    $.extend(gridOptions.gridOpts, jqGridOpts);
+                }
                 inspectionGrid = CswGrid(gridOptions, $previewGrid);
             },
 
@@ -439,19 +449,14 @@
                
                 $control.fileupload({
                     datatype: 'json',
+                    dataType: 'json',
                     url: f.url,
                     paramName: 'fileupload',
                     done: function (e, ret) {
-                        var gridData, $resultDoc, $firstChild;
-                        //See case 24511. This is ugly, but there's not much else to be done.
-                        if(false === isNullOrEmpty(ret.result)) {
-                            $resultDoc = $(ret.result);
-                            $firstChild = $resultDoc.find(':first-child');
-                            if(false === isNullOrEmpty($firstChild) &&
-                                false === isNullOrEmpty($firstChild.text())) {
-                                gridData = JSON.parse($firstChild.text());
-                                makeInspectionDesignGrid(gridData, f.onSuccess);
-                            }
+                        var gridData = {};
+                        if(contains(ret, 'result') && contains(ret.result, 'jqGridOpt')) {
+                            gridData = ret.result.jqGridOpt;
+                            makeInspectionDesignGrid(gridData, f.onSuccess);
                         }
                     }
                 });
@@ -575,7 +580,6 @@
 
                         toggleButton(buttons.prev, true);
                         toggleButton(buttons.next, false);
-                        toggleButton(buttons.finish, true);
 
                         categoryName = $categoryName.val();
 

@@ -290,16 +290,16 @@
                         highlight: function (element)
                         {
                             var $elm = $(element);
-                            $elm.CswAttrDom('csw_invalid', '1');
+                            $elm.CswAttrNonDom('csw_invalid', '1');
                             $elm.animate({ backgroundColor: '#ff6666' });
                         },
                         unhighlight: function (element)
                         {
                             var $elm = $(element);
-                            if($elm.CswAttrDom('csw_invalid') === '1')  // only unhighlight where we highlighted
+                            if($elm.CswAttrNonDom('csw_invalid') === '1')  // only unhighlight where we highlighted
                             {
                                 $elm.css('background-color', '#66ff66');
-                                $elm.CswAttrDom('csw_invalid', '0');
+                                $elm.CswAttrNonDom('csw_invalid', '0');
                                 setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
                             }
                         }
@@ -342,7 +342,7 @@
         function onRemove(onRemoveData)
         {
             var $propdiv = _getPropertyCell(onRemoveData.cellset).children('div').first();
-            var propid = $propdiv.CswAttrDom('propid');
+            var propid = $propdiv.CswAttrNonDom('propid');
             
             CswAjaxJson({
                 url: o.RemovePropUrl,
@@ -363,7 +363,7 @@
         function _moveProp($propdiv, newrow, newcolumn) {
             if ($propdiv.length > 0)
             {
-                var propid = $propdiv.CswAttrDom('propid');
+                var propid = $propdiv.CswAttrNonDom('propid');
 
                 var dataJson = { 
                     PropId: propid, 
@@ -431,7 +431,7 @@
                             value: false, // Value --not defined?,
                             cssclass: o.ID + '_check'
                         });
-                        $propcheck.CswAttrDom('propid', propid);
+                        $propcheck.CswAttrNonDom('propid', propid);
                     }
                 }
             }
@@ -631,12 +631,12 @@
                             
                             if($nodechecks.length > 0 && $propchecks.length > 0) {
                                 $nodechecks.each(function() { 
-                                    var nodeid = $(this).CswAttrDom('nodeid');
+                                    var nodeid = $(this).CswAttrNonDom('nodeid');
                                     dataJson.CopyNodeIds.push(nodeid); 
                                 });
 
                                 $propchecks.each(function() { 
-                                    var propid = $(this).CswAttrDom('propid');
+                                    var propid = $(this).CswAttrNonDom('propid');
                                     dataJson.PropIds.push(propid);
                                 });
                                 copyNodeProps();

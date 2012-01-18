@@ -119,6 +119,10 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         }
+        public Int32 Quota
+        {
+            get { return CswConvert.ToInt32( _NodeTypeRow["quota"] ); }
+        }
         public string NameTemplateValue
         {
             get { return _NodeTypeRow["nametemplate"].ToString(); }

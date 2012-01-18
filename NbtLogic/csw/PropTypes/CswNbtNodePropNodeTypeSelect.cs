@@ -63,8 +63,8 @@ namespace ChemSW.Nbt.PropTypes
                 if( _SelectedNodeTypeIds == null )
                 {
                     _SelectedNodeTypeIds = new CswCommaDelimitedString();
-                    _SelectedNodeTypeIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedNodeTypeIds_OnChange );
                     _SelectedNodeTypeIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedNodeTypeIdsSubField.Column ) );
+                    _SelectedNodeTypeIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedNodeTypeIds_OnChange );
                 }
                 return _SelectedNodeTypeIds;
             }

@@ -1,13 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
 using System.Data;
-using ChemSW.DB;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
@@ -27,12 +23,12 @@ namespace ChemSW.Nbt
 
         private CswNbtNodeReaderDataNative _CswNbtNodeReaderDataNative = null;
         private CswNbtNodeReaderDataRelationalDb _CswNbtNodeReaderDataRelationalDb = null;
-        private ICswNbtNodeReaderData this[ CswPrimaryKey NodeKey ]
+        private ICswNbtNodeReaderData this[CswPrimaryKey NodeKey]
         {
             get
             {
                 ICswNbtNodeReaderData ReturnVal = null;
-                if ( "nodes" == NodeKey.TableName.ToLower() )
+                if( "nodes" == NodeKey.TableName.ToLower() )
                 {
                     ReturnVal = _CswNbtNodeReaderDataNative;
                 }
@@ -57,22 +53,22 @@ namespace ChemSW.Nbt
         {
             Object ReturnVal = null;
 
-            if ( DataRow.Table.Columns.Contains( ColName ) )
+            if( DataRow.Table.Columns.Contains( ColName ) )
             {
-                if ( !DataRow.IsNull( ColName ) )
+                if( !DataRow.IsNull( ColName ) )
                 {
-                    ReturnVal = DataRow[ ColName ];
+                    ReturnVal = DataRow[ColName];
                 }
                 else
                 {
-                    if ( !ThrowOnNull )
+                    if( !ThrowOnNull )
                     {
                         string EmptyString = "";
                         ReturnVal = EmptyString;
                     }
                     else
                     {
-						throw ( new CswDniException( ErrorType.Error, "A data error occurred", "Column value is null: " + ColName ) );
+                        throw ( new CswDniException( ErrorType.Error, "A data error occurred", "Column value is null: " + ColName ) );
                     }
 
                 }//if-else val is null
@@ -80,14 +76,14 @@ namespace ChemSW.Nbt
             }
             else
             {
-                if ( !ThrowOnNotExists )
+                if( !ThrowOnNotExists )
                 {
                     string EmptyString = "";
                     ReturnVal = EmptyString;
                 }
                 else
                 {
-					throw ( new CswDniException( ErrorType.Error, "A data error occurred", "Column does not exist: " + ColName ) );
+                    throw ( new CswDniException( ErrorType.Error, "A data error occurred", "Column does not exist: " + ColName ) );
                 }
 
             }//if-else table contains column
@@ -99,27 +95,27 @@ namespace ChemSW.Nbt
         //bz # 7816: Don't throw if you cannot find the node data
         public void completeNodeData( CswNbtNode CswNbtNode, DateTime Date )
         {
-            if ( CswNbtNode.NodeSpecies == NodeSpecies.Plain )
+            if( CswNbtNode.NodeSpecies == NodeSpecies.Plain )
             {
                 //bool NodeInfoFetched = false;
-                if ( CswNbtNode.NodeId != null && ( CswNbtNode.NodeTypeId <= 0 || CswNbtNode.NodeName == String.Empty ) )
+                if( CswNbtNode.NodeId != null && ( CswNbtNode.NodeTypeId <= 0 || CswNbtNode.NodeName == String.Empty ) )
                 {
 
-					if( this[CswNbtNode.NodeId].fetchNodeInfo( CswNbtNode, Date ) )
+                    if( this[CswNbtNode.NodeId].fetchNodeInfo( CswNbtNode, Date ) )
                     {
                         CswTimer Timer = new CswTimer();
                         //this[ CswNbtNode.NodeId ].fillFromNodeTypeId( CswNbtNode, CswNbtNode.NodeTypeId );
-                        _CswNbtResources.logTimerResult( "completeNodeData about to call fillFromNodeTypeId() on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString ); 
+                        _CswNbtResources.logTimerResult( "completeNodeData about to call fillFromNodeTypeId() on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
                         fillFromNodeTypeId( CswNbtNode, CswNbtNode.NodeTypeId );
-                        _CswNbtResources.logTimerResult( "completeNodeData called fillFromNodeTypeId(), finished on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString ); 
-                        if(CswNbtNode.NodeType != null)
-							CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, CswNbtNode.NodeTypeId, Date );
+                        _CswNbtResources.logTimerResult( "completeNodeData called fillFromNodeTypeId(), finished on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
+                        if( CswNbtNode.NodeType != null )
+                            CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, CswNbtNode.NodeTypeId, Date );
                         _CswNbtResources.logTimerResult( "Filled in node property data for node (" + CswNbtNode.NodeId.ToString() + "): " + CswNbtNode.NodeName, Timer.ElapsedDurationInSecondsAsString );
 
-						if( Date != DateTime.MinValue )
-						{
-							CswNbtNode.ReadOnly = true;
-						}
+                        if( Date != DateTime.MinValue )
+                        {
+                            CswNbtNode.ReadOnly = true;
+                        }
                     }
                     // BZ 8117 - This is actually possibly expected behavior now when we delete a node
                     //else
@@ -134,7 +130,7 @@ namespace ChemSW.Nbt
         public void fillFromNodeTypeIdWithProps( CswNbtNode CswNbtNode, Int32 NodeTypeId )
         {
             CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, NodeTypeId, DateTime.MinValue );
-			CswNbtNode.Properties.fillFromNodeTypeId( CswNbtNode.NodeTypeId );
+            CswNbtNode.Properties.fillFromNodeTypeId( CswNbtNode.NodeTypeId );
 
         }//_fillFromNodeTypeId()
 
@@ -142,7 +138,7 @@ namespace ChemSW.Nbt
         public void fillFromNodeTypeId( CswNbtNode CswNbtNode, Int32 NodeTypeId )
         {
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-            
+
             // This error causes issues for NbtSched
             //if( NodeType == null )
             //    throw ( new System.Exception( "There is no information for this NodeTypeId " + NodeTypeId.ToString() ) );
