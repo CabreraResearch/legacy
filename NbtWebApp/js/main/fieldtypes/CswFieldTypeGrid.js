@@ -35,7 +35,6 @@
                 var $GridDiv = $('<div id="' + gridDivId + '" name="' + gridDivId + '"></div>');
 
                 var viewid = tryParseString(propVals.viewid).trim();
-                var cswGrid;
                 var gridOpts = {
                     ID: o.ID + '_fieldtypegrid',
                     viewid: viewid, 
@@ -56,7 +55,7 @@
                         o.onReload();
                     },
                     onSuccess: function (grid) {
-                        makeGridMenu($MenuDiv, o, gridOpts, grid, viewid);
+                        makeGridMenu($MenuDiv, o, gridOpts, grid, viewid, $SearchDiv);
                     }
                 };
                 $GridDiv.CswNodeGrid('init', gridOpts);
@@ -82,7 +81,7 @@
 //		cswGrid.changeGridOpts(g);
 //	};
     
-    function makeGridMenu($MenuDiv, o, gridOpts, cswGrid, viewid) {
+    function makeGridMenu($MenuDiv, o, gridOpts, cswGrid, viewid, $SearchDiv) {
         //Case 21741
         if (o.EditMode !== EditMode.PrintReport.name) {
             $MenuDiv.CswMenuMain({
@@ -106,32 +105,32 @@
                         };
                         cswGrid.changeGridOpts(g);
                     },
-//                    onSearch: {
-//						onViewSearch: function () {
-//							var onSearchSubmit = function(searchviewid) {
-//								var s = {};
-//								$.extend(s,gridOpts);
-//								s.viewid = searchviewid;
-//								refreshGrid(s, cswGrid);
-//							};
-//                                
-//							var onClearSubmit = function(parentviewid) {
-//								var s = {};
-//								$.extend(s,gridOpts);
-//								s.viewid = parentviewid;
-//								refreshGrid(s, cswGrid);
-//							};
+                    onSearch: {
+                        onViewSearch: function () {
+                            var onSearchSubmit = function(searchviewid) {
+                                var s = {};
+                                $.extend(s,gridOpts);
+                                s.viewid = searchviewid;
+                                refreshGrid(s, cswGrid);
+                            };
+                                
+                            var onClearSubmit = function(parentviewid) {
+                                var s = {};
+                                $.extend(s,gridOpts);
+                                s.viewid = parentviewid;
+                                refreshGrid(s, cswGrid);
+                            };
 
-//							$SearchDiv.empty();
-//							$SearchDiv.CswSearch({parentviewid: viewid,
-//													cswnbtnodekey: o.cswnbtnodekey,
-//													ID: searchDivId,
-//													onSearchSubmit: onSearchSubmit,
-//													onClearSubmit: onClearSubmit
-//													});
-//						},
-//						onGenericSearch: function () { /*not possible here*/ }
-//					},
+                            $SearchDiv.empty();
+                            $SearchDiv.CswSearch({parentviewid: viewid,
+                                                    cswnbtnodekey: o.cswnbtnodekey,
+                                                    ID: $SearchDiv.CswAttrDom('id'),
+                                                    onSearchSubmit: onSearchSubmit,
+                                                    onClearSubmit: onClearSubmit
+                                                    });
+                        },
+                        onGenericSearch: null /*not possible here*/
+                    },
                     onEditView: function () {
                         if(isFunction(o.onEditView))
                         {

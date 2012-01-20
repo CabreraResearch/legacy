@@ -114,7 +114,14 @@ var ChemSW = ChemSW || (function(undefined) {
                 if (fileref) {
                     document.getElementsByTagName("head")[0].appendChild(fileref);
                 }
+            },
+            tryExecMethod: function (func) {
+                if(isFunction(func)) {
+                    func.apply(this, arguments);
+                }
             }
+
+
         },
         makeSequentialArray: function(start, end) {
             var ret = [],

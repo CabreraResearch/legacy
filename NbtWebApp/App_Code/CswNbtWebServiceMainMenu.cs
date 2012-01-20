@@ -132,12 +132,7 @@ namespace ChemSW.Nbt.WebServices
                         Ret["Search"]["Generic Search"]["nodetypeid"] = NodeTypeId;
                         Ret["Search"]["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
                     }
-                    else
-                    {
-                        Ret["Search"]["Generic Search"] = new JObject();
-                        Ret["Search"]["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
-                    }
-
+                    /* Case 24744: No Generic Search on Grid Props */
                 }
                 else
                 {
