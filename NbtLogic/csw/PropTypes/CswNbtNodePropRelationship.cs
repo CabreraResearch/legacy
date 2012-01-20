@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
@@ -305,26 +304,26 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["allowadd"] = "true";
             }
 
-			JArray JOptions = new JArray();
-			ParentObject["options"] = JOptions;
+            JArray JOptions = new JArray();
+            ParentObject["options"] = JOptions;
 
             Dictionary<CswPrimaryKey, string> Options = getOptions();
             foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
             {
-				JObject JOption = new JObject();
-				if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
-				{
-					JOption["id"] = NodePk.PrimaryKey.ToString().ToLower();
-					JOption["value"] = Options[NodePk];
-				}
-				else
-				{
-					JOption["id"] = "";
-					JOption["value"] = "";
-				}
-				JOptions.Add( JOption );
-			}
-			
+                JObject JOption = new JObject();
+                if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
+                {
+                    JOption["id"] = NodePk.PrimaryKey.ToString().ToLower();
+                    JOption["value"] = Options[NodePk];
+                }
+                else
+                {
+                    JOption["id"] = "";
+                    JOption["value"] = "";
+                }
+                JOptions.Add( JOption );
+            }
+
         } // ToJSON()
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -396,7 +395,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( null != JObject.Property( _NodeIDSubField.ToXmlNodeName( true ) ) )
             {
-                Int32 NodeId = CswConvert.ToInt32( JObject.Property( _NodeIDSubField.ToXmlNodeName( true ) ).Value );
+                Int32 NodeId = CswConvert.ToInt32( JObject[_NodeIDSubField.ToXmlNodeName( true )] );
                 if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
                 {
                     NodeId = NodeMap[NodeId];
@@ -404,7 +403,7 @@ namespace ChemSW.Nbt.PropTypes
                 RelatedNodeId = new CswPrimaryKey( "nodes", NodeId );
                 if( null != RelatedNodeId )
                 {
-                    JObject.Add( new JProperty( "destnodeid", RelatedNodeId.PrimaryKey.ToString() ) );
+                    JObject["destnodeid"] = RelatedNodeId.PrimaryKey.ToString();
                     PendingUpdate = true;
                 }
             }
