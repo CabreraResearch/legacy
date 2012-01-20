@@ -123,10 +123,9 @@ namespace ChemSW.Nbt.Actions
                                            left outer join nodetypes t on n.nodetypeid = t.nodetypeid
                                            left outer join object_class o on t.objectclassid = o.objectclassid
                                         UNION
-                                         select n.nodeid, ta.firstversionid, oa.objectclassid
+                                         select n.nodeid, ta.firstversionid, ta.objectclassid
                                            from nodes_audit n
-                                           left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid
-                                           left outer join object_class_audit oa on ta.objectclassid = oa.objectclassid)";
+                                           left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid )";
             if( ObjectClassId != Int32.MinValue )
             {
                 SqlSelect += "where objectclassid = '" + ObjectClassId.ToString() + "'";
@@ -140,24 +139,23 @@ namespace ChemSW.Nbt.Actions
                 Int32 ThisObjectClassId = CswConvert.ToInt32( NodeCountRow["objectclassid"] );
                 Int32 ThisNodeTypeId = CswConvert.ToInt32( NodeCountRow["firstversionid"] );
 
-                Int32 NodeTypeCount = CswConvert.ToInt32( NodeCountRow["cnt"] );
+                Int32 NodeCount = CswConvert.ToInt32( NodeCountRow["cnt"] );
                 if( NodeCountsForNodeType.ContainsKey( ThisNodeTypeId ) )
                 {
-                    NodeCountsForNodeType[ThisNodeTypeId] += NodeTypeCount;
+                    NodeCountsForNodeType[ThisNodeTypeId] += NodeCount;
                 }
                 else
                 {
-                    NodeCountsForNodeType.Add( ThisNodeTypeId, NodeTypeCount );
+                    NodeCountsForNodeType.Add( ThisNodeTypeId, NodeCount );
                 }
 
-                Int32 ObjectClassCount = CswConvert.ToInt32( NodeCountRow["cnt"] );
                 if( NodeCountsForObjectClass.ContainsKey( ThisObjectClassId ) )
                 {
-                    NodeCountsForObjectClass[ThisObjectClassId] += ObjectClassCount;
+                    NodeCountsForObjectClass[ThisObjectClassId] += NodeCount;
                 }
                 else
                 {
-                    NodeCountsForObjectClass.Add( ThisObjectClassId, ObjectClassCount );
+                    NodeCountsForObjectClass.Add( ThisObjectClassId, NodeCount );
                 }
             } // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
         } // _getNodeCounts()
