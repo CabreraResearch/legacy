@@ -78,7 +78,12 @@
             
             var handle = function(eventObj) {
                 $tabParent.remove();
-                $.unsubscribe(handle);
+                try {
+                    $.unsubscribe(handle);
+                } catch (e) {
+                    
+                }
+                return false;
             };
             
             if(false === isNullOrEmpty($tabParent.parent(), true)) {
