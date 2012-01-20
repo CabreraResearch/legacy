@@ -3609,24 +3609,6 @@ namespace ChemSW.Nbt.WebServices
             return RetKey;
         }
 
-
-        private CswPrimaryKey _getNodeId( string NodeId )
-        {
-            CswPrimaryKey ret = null;
-            if( CswTools.IsInteger( NodeId ) )
-            {
-                // If we use this, it means someone somewhere is using nodeids incorrectly
-                // And the day may come when it must be fixed.
-                ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeId ) );
-            }
-            else
-            {
-                ret = new CswPrimaryKey();
-                ret.FromString( NodeId );
-            }
-            return ret;
-        }
-
         #endregion Private
     }//wsNBT
 
