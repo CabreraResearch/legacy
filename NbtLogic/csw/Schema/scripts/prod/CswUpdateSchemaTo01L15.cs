@@ -23,6 +23,18 @@ namespace ChemSW.Nbt.Schema
             }
             #endregion Case 24656
 
+            #region Case 24394
+
+            CswNbtMetaDataObjectClass MailReportOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+
+            CswNbtMetaDataObjectClassProp EnabledOcp = MailReportOc.getObjectClassProp( CswNbtObjClassMailReport.EnabledPropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOcp, EnabledOcp.FieldTypeRule.SubFields.Default.Name, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( EnabledOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( EnabledOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+
+            #endregion Case 24394
+
+
         }//Update()
 
     }//class CswUpdateSchemaTo01L15

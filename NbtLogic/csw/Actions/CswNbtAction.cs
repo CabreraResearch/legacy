@@ -48,7 +48,9 @@ namespace ChemSW.Nbt.Actions
         }
         public static CswNbtActionName ActionNameStringToEnum( string ActionName )
         {
-            return (CswNbtActionName) Enum.Parse( typeof( CswNbtActionName ), ActionName.Replace( ' ', '_' ) );
+            CswNbtActionName Ret;
+            Enum.TryParse( ActionName.Replace( ' ', '_' ), true, out Ret );
+            return Ret;
         }
 
         public CswNbtSessionDataId SaveToCache( bool IncludeInQuickLaunch, bool KeepInQuickLaunch )
