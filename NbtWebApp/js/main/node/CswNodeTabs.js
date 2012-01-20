@@ -123,8 +123,7 @@
 
                         var tabFunc = function(thisTab) {
                             var thisTabId = thisTab.id;
-                            if (o.EditMode === 'PrintReport' || tabdivs.length === 0)
-                            {
+                            if (o.EditMode === 'PrintReport' || tabdivs.length === 0) {
                                 // For PrintReports, we're going to make a separate tabstrip for each tab
                                 tabdivs[tabdivs.length] = $("<div><ul></ul></div>").appendTo($outertabdiv);
                             }
@@ -310,16 +309,19 @@
                         }
                     }); // validate()
 
-                    if(isTrue(o.Config))
-                    {
+                    if(isTrue(o.Config)) {
                         $layouttable.CswLayoutTable('ConfigOn');
                     } 
                     else if(!o.Config && 
                         isNullOrEmpty(o.date) && 
                         o.filterToPropId === '' && 
-                        isTrue($tabcontentdiv.data('canEditLayout')))
-                    {
-                        // Show the 'fake' config button to open the dialog
+                        isTrue($tabcontentdiv.data('canEditLayout'))) {
+                        /* Case 24437 */
+                        o.Refresh = function() {
+                            o.Config = false;
+                            getTabs();
+                        };
+                        /* Show the 'fake' config button to open the dialog */
                         $formtblcell12.CswImageButton({
                                                     ButtonType: CswImageButton_ButtonType.Configure,
                                                     AlternateText: 'Configure',
@@ -331,9 +333,8 @@
                                                     }
                                                 });
                     }
-
-
-                    // case 8494
+                    
+                    /* case 8494 */
                     if (!o.Config && !AtLeastOne.Saveable && o.EditMode == EditMode.AddInPopup.name) {
                         Save($form, $layouttable, data, $savetab, tabid);
                     } 

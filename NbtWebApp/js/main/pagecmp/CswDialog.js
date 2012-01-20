@@ -292,8 +292,8 @@
                                     onChange: function () {
 
                                         var ajaxdata = {
-                                                PropId: $addSelect.val(),
-                                                TabId: cswNodeTabOptions.tabid,
+                                                PropId: tryParseString($addSelect.val()),
+                                                TabId: tryParseString(cswNodeTabOptions.tabid),
                                                 EditMode: $layoutSelect.val()
                                         };
                                         CswAjaxJson({ 
@@ -306,20 +306,18 @@
                                     } // onChange
                                 }); // CswSelect
                             
-            function _resetLayout()
-            {
+            function _resetLayout() {
                 $cell12.contents().remove();
                 $cell12.CswNodeTabs(cswNodeTabOptions);
                 _configAddOptions();
             }
 
-            function _configAddOptions()
-            {
+            function _configAddOptions() {
                 var ajaxdata = {
-                    NodeId: cswNodeTabOptions.nodeids[0], 
-                    NodeKey: cswNodeTabOptions.nodekeys[0], 
-                    NodeTypeId: cswNodeTabOptions.nodetypeid, 
-                    TabId: cswNodeTabOptions.tabid, 
+                    NodeId: tryParseString(cswNodeTabOptions.nodeids[0]), 
+                    NodeKey: tryParseString(cswNodeTabOptions.nodekeys[0]), 
+                    NodeTypeId: tryParseString(cswNodeTabOptions.nodetypeid), 
+                    TabId: tryParseString(cswNodeTabOptions.tabid), 
                     EditMode: $layoutSelect.val()
                 };
                 CswAjaxJson({ 
@@ -327,10 +325,8 @@
                     data: ajaxdata,
                     success: function(data) {
                         var propOpts = [{ value: '', display: 'Select...' }];
-                        for(var p in data) 
-                        {
-                            if(data.hasOwnProperty(p))
-                            {
+                        for(var p in data) {
+                            if(data.hasOwnProperty(p)) {
                                 propOpts.push({
                                     value: data[p].propid, 
                                     display: data[p].propname
@@ -342,9 +338,8 @@
                 });  // CswAjaxJson
             } // _configAddOptions()
 
-            function _onclose()
-            {
-                cswNodeTabOptions.Refresh();
+            function _onclose() {
+                ChemSW.tools.tryExecMethod(cswNodeTabOptions.Refresh);
             }
 
             _resetLayout();
