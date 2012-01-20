@@ -28,6 +28,7 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtMetaDataNodeTypeProp ParentTypeNtp = InspectionSchedNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.ParentTypePropertyName );
                 ParentTypeNtp.DefaultValue.ClearValue();
+                ParentTypeNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                 ParentTypeNtp.HelpText = "What will be inspected? (ex: Eye Wash Station)";
 
                 CswNbtMetaDataNodeTypeProp TargetTypeNtp = InspectionSchedNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.TargetTypePropertyName );
