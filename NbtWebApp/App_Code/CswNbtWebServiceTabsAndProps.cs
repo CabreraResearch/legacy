@@ -390,7 +390,7 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // removeProp()
 
-        public JObject saveProps( NodeEditMode EditMode, CswCommaDelimitedString NodeIds, CswCommaDelimitedString NodeKeys, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
+        public JObject saveProps( NodeEditMode EditMode, Collection<CswPrimaryKey> NodePks, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
         {
             JObject ret = new JObject();
             JObject PropsObj = JObject.Parse( NewPropsJson );
@@ -429,11 +429,9 @@ namespace ChemSW.Nbt.WebServices
                         }
                         break;
                     default:
-                        for( Int32 i = 0; i < NodeIds.Count; i++ )
+                        foreach( CswPrimaryKey NodePk in NodePks )
                         {
-                            string NodeId = NodeIds[i];
-                            string NodeKey = NodeKeys[i];
-                            Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+                            Node = _CswNbtResources.Nodes.GetNode( NodePk );
                             bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
                             if( CanEdit )
                             {
@@ -445,11 +443,11 @@ namespace ChemSW.Nbt.WebServices
                                 RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
                                 if( null != RetNbtNodeKey )
                                 {
-                                    Succeeded++;
+                                    Succeeded += 1;
                                 }
                             }
                         }
-                        AllSucceeded = NodeIds.Count == Succeeded;
+                        AllSucceeded = ( NodePks.Count == Succeeded );
                         break;
                 } //switch( EditMode )
                 if( AllSucceeded && null != RetNbtNodeKey )
@@ -472,7 +470,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        ErrString = Succeeded + " out of " + NodeIds.Count + " prop updates succeeded. Remaining prop updates failed";
+                        ErrString = Succeeded + " out of " + NodePks.Count + " prop updates succeeded. Remaining prop updates failed";
                     }
                     ret = new JObject();
                     ret["result"] = ErrString;
