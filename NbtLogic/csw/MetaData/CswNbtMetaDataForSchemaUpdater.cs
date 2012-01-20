@@ -190,6 +190,10 @@ namespace ChemSW.Nbt.MetaData
                         {
                             NodeTypeProp._DataRow[AttributeName] = DBValue;
                         }
+                        else if( Attribute == CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd )
+                        {
+                            NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                        }
                     }
                 }
             }

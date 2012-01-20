@@ -29,7 +29,8 @@
             CswAjaxJson({
                 url: o.Url,
                 data: {
-                    NodeId: o.nodeid,
+                    NodeId: tryParseString(o.nodeid), 
+                    NbtNodeKey: tryParseString(o.cswnbtnodekey),
                     JustDateColumn: o.JustDateColumn
                 },
                 success: function (gridJson) {

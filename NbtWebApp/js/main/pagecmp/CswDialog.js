@@ -367,6 +367,7 @@
                 $table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
                     ID: o.nodeids[0] + '_history',
                     nodeid: o.nodeids[0],
+                    cswnbtnodekey: o.nodekeys[0],
                     onEditNode: o.onEditNode,
                     JustDateColumn: true,
                     selectedDate: o.date,
@@ -484,7 +485,9 @@
 
             if (o.Multi) {
                 if (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0) {
-                    var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+                var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+                if (false === isNullOrEmpty($nodechecks, true) && 
+                    (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0 )) {
                     var n = 0;
                     $nodechecks.each(function () {
                         var $nodecheck = $(this);

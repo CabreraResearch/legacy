@@ -1,50 +1,46 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
-using System.Text;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.Security;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
-
-using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Actions
 {
-	/// <summary>
-	/// Holds logic for handling node quotas
-	/// </summary>
-	public class CswNbtActQuotas
-	{
-		private CswNbtResources _CswNbtResources = null;
+    /// <summary>
+    /// Holds logic for handling node quotas
+    /// </summary>
+    public class CswNbtActQuotas
+    {
+        private CswNbtResources _CswNbtResources = null;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public CswNbtActQuotas( CswNbtResources CswNbtResources )
-		{
-			_CswNbtResources = CswNbtResources;
-		}
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public CswNbtActQuotas( CswNbtResources CswNbtResources )
+        {
+            _CswNbtResources = CswNbtResources;
+        }
 
-		/// <summary>
-		/// True if the user is allowed to edit quotas
-		/// </summary>
-		public bool UserCanEditQuotas( ICswNbtUser User )
-		{
-			return ( User.Username == CswNbtObjClassUser.ChemSWAdminUsername );
-		}
+        /// <summary>
+        /// True if the user is allowed to edit quotas
+        /// </summary>
+        public bool UserCanEditQuotas( ICswNbtUser User )
+        {
+            return ( User.Username == CswNbtObjClassUser.ChemSWAdminUsername );
+        }
 
-		/// <summary>
-		/// Returns a dictionary of ObjectClassId=>Node-Count for all object classes
-		/// </summary>
+        /// <summary>
+        /// Returns a dictionary of ObjectClassId=>Node-Count for all object classes
+        /// </summary>
         public void GetNodeCounts( out Dictionary<Int32, Int32> NodeCountsForNodeType, out Dictionary<Int32, Int32> NodeCountsForObjectClass )
-		{
-			_GetNodeCounts( Int32.MinValue, out NodeCountsForNodeType, out NodeCountsForObjectClass );
-		}
+        {
+            _GetNodeCounts( Int32.MinValue, out NodeCountsForNodeType, out NodeCountsForObjectClass );
+        }
 
         /// <summary>
         /// Returns a Node Count for one object class
@@ -92,8 +88,8 @@ namespace ChemSW.Nbt.Actions
         {
             CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "CswNbtActQuotas_SelectLockedNodes", "nodes" );
             string WhereClause = @"where nodetypeid in (select nodetypeid from nodetypes 
-														 where objectclassid = " + ObjectClassId.ToString() + @") 
-										and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
+                                                         where objectclassid = " + ObjectClassId.ToString() + @") 
+                                        and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
             return NodesSelect.getRecordCount( WhereClause );
         } // GetLockedNodeCountForObjectClass()
 
@@ -109,54 +105,63 @@ namespace ChemSW.Nbt.Actions
                 CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "CswNbtActQuotas_SelectLockedNodes", "nodes" );
                 string WhereClause = @"where nodetypeid in (select nodetypeid from nodetypes
                                                              where firstversionid = " + NodeType.FirstVersionNodeTypeId.ToString() + @") 
-										and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
+                                        and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
                 ret = NodesSelect.getRecordCount( WhereClause );
             }
             return ret;
         } // GetLockedNodeCountForNodeType()
 
         private void _GetNodeCounts( Int32 ObjectClassId, out Dictionary<Int32, Int32> NodeCountsForNodeType, out Dictionary<Int32, Int32> NodeCountsForObjectClass )
-		{
+        {
             NodeCountsForNodeType = new Dictionary<Int32, Int32>();
             NodeCountsForObjectClass = new Dictionary<Int32, Int32>();
 
-			// Look up the object class of all nodes (deleted or no)
+            // Look up the object class of all nodes (deleted or no)
             string SqlSelect = @"select count(distinct nodeid) cnt, firstversionid, objectclassid 
-							       from (select n.nodeid, t.firstversionid, o.objectclassid
-										   from nodes_audit n
-										   left outer join nodetypes t on n.nodetypeid = t.nodetypeid
-										   left outer join object_class o on t.objectclassid = o.objectclassid
-										UNION
+                                   from (select n.nodeid, t.firstversionid, o.objectclassid
+                                           from nodes_audit n
+                                           left outer join nodetypes t on n.nodetypeid = t.nodetypeid
+                                           left outer join object_class o on t.objectclassid = o.objectclassid
+                                        UNION
 										 select n.nodeid, ta.firstversionid, o.objectclassid
-										   from nodes_audit n
-										   left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid
+                                           from nodes_audit n
+                                           left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid
 										   left outer join object_class o on ta.objectclassid = o.objectclassid)";
                                          //left outer join object_class_audit oa on ta.objectclassid = oa.objectclassid)";
-			if( ObjectClassId != Int32.MinValue )
-			{
-				SqlSelect += "where objectclassid = '" + ObjectClassId.ToString() + "'";
-			}
+            if( ObjectClassId != Int32.MinValue )
+            {
+                SqlSelect += "where objectclassid = '" + ObjectClassId.ToString() + "'";
+            }
             SqlSelect += "group by objectclassid, firstversionid";
 
-			CswArbitrarySelect NodeCountSelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtActQuotas_historicalNodeCount", SqlSelect );
-			DataTable NodeCountTable = NodeCountSelect.getTable();
-			foreach( DataRow NodeCountRow in NodeCountTable.Rows )
-			{
+            CswArbitrarySelect NodeCountSelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtActQuotas_historicalNodeCount", SqlSelect );
+            DataTable NodeCountTable = NodeCountSelect.getTable();
+            foreach( DataRow NodeCountRow in NodeCountTable.Rows )
+            {
                 Int32 ThisObjectClassId = CswConvert.ToInt32( NodeCountRow["objectclassid"] );
-                Int32 ThisNodeTypeId= CswConvert.ToInt32( NodeCountRow["firstversionid"] );
+                Int32 ThisNodeTypeId = CswConvert.ToInt32( NodeCountRow["firstversionid"] );
 
-                NodeCountsForNodeType.Add( ThisNodeTypeId, CswConvert.ToInt32( NodeCountRow["cnt"] ) );
-
-                if( NodeCountsForObjectClass.ContainsKey( ThisObjectClassId ) )
+                Int32 NodeTypeCount = CswConvert.ToInt32( NodeCountRow["cnt"] );
+                if( NodeCountsForNodeType.ContainsKey( ThisNodeTypeId ) )
                 {
-                    NodeCountsForObjectClass[ThisObjectClassId] += CswConvert.ToInt32( NodeCountRow["cnt"] );
+                    NodeCountsForNodeType[ThisNodeTypeId] += NodeTypeCount;
                 }
                 else
                 {
-                    NodeCountsForObjectClass.Add( ThisObjectClassId, CswConvert.ToInt32( NodeCountRow["cnt"] ) );
+                    NodeCountsForNodeType.Add( ThisNodeTypeId, NodeTypeCount );
                 }
-			} // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
-		} // _getNodeCounts()
+
+                Int32 ObjectClassCount = CswConvert.ToInt32( NodeCountRow["cnt"] );
+                if( NodeCountsForObjectClass.ContainsKey( ThisObjectClassId ) )
+                {
+                    NodeCountsForObjectClass[ThisObjectClassId] += ObjectClassCount;
+                }
+                else
+                {
+                    NodeCountsForObjectClass.Add( ThisObjectClassId, ObjectClassCount );
+                }
+            } // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
+        } // _getNodeCounts()
 
         /// <summary>
         /// Set the quota for an object class
@@ -293,8 +298,8 @@ namespace ChemSW.Nbt.Actions
         private void _UnlockNodesByObjectClass( Int32 ObjectClassId, Int32 NumberToUnlock )
         {
             string WhereClause = @"where nodetypeid in (select nodetypeid from nodetypes 
-														 where objectclassid = " + ObjectClassId.ToString() + @") ";
-			_UnlockNodes(WhereClause, NumberToUnlock);
+                                                         where objectclassid = " + ObjectClassId.ToString() + @") ";
+            _UnlockNodes( WhereClause, NumberToUnlock );
         } // _UnlockNodesByObjectClass()
 
         /// <summary>
@@ -318,13 +323,13 @@ namespace ChemSW.Nbt.Actions
 
 
         /// <summary>
-		/// Determins a percentage for total quota usage
-		/// </summary>
-		public Double GetQuotaPercent()
-		{
-			Double ret = 0;
-			Double TotalUsed = 0;
-			Double TotalQuota = 0;
+        /// Determins a percentage for total quota usage
+        /// </summary>
+        public Double GetQuotaPercent()
+        {
+            Double ret = 0;
+            Double TotalUsed = 0;
+            Double TotalQuota = 0;
 
             Dictionary<Int32, Int32> NodeCountsForNodeType;
             Dictionary<Int32, Int32> NodeCountsForObjectClass;
@@ -358,38 +363,38 @@ namespace ChemSW.Nbt.Actions
                 }
             } // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
 
-			if( TotalQuota > 0 )
-			{
-				ret = TotalUsed / TotalQuota * 100;
-			}
-			return ret;
-		} // GetQuotaPercent()
+            if( TotalQuota > 0 )
+            {
+                ret = TotalUsed / TotalQuota * 100;
+            }
+            return ret;
+        } // GetQuotaPercent()
 
-		/// <summary>
-		/// Returns true if the quota has not been reached for the given nodetype, or its object class
-		/// </summary>
-		public bool CheckQuotaNT( Int32 NodeTypeId )
-		{
-			bool ret = false;
-			CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-			if( NodeType != null )
-			{
+        /// <summary>
+        /// Returns true if the quota has not been reached for the given nodetype, or its object class
+        /// </summary>
+        public bool CheckQuotaNT( Int32 NodeTypeId )
+        {
+            bool ret = false;
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+            if( NodeType != null )
+            {
                 Int32 NodeCount = GetNodeCountForNodeType( NodeTypeId );
                 ret = ( ( NodeType.Quota <= 0 || NodeCount < NodeType.Quota ) &&
                         CheckQuotaOC( NodeType.ObjectClass.ObjectClassId ) );
-			}
-			return ret;
-		} // CheckQuota()
+            }
+            return ret;
+        } // CheckQuota()
 
-		/// <summary>
-		/// Returns true if the quota has not been reached for the given object class
-		/// </summary>
-		public bool CheckQuotaOC( Int32 ObjectClassId )
-		{
-			CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-			Int32 NodeCount = GetNodeCountForObjectClass( ObjectClassId );
-			return ( ObjectClass.Quota <= 0 || NodeCount < ObjectClass.Quota );
-		} // CheckQuota()
+        /// <summary>
+        /// Returns true if the quota has not been reached for the given object class
+        /// </summary>
+        public bool CheckQuotaOC( Int32 ObjectClassId )
+        {
+            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
+            Int32 NodeCount = GetNodeCountForObjectClass( ObjectClassId );
+            return ( ObjectClass.Quota <= 0 || NodeCount < ObjectClass.Quota );
+        } // CheckQuota()
 
-	} // class CswNbtActQuotas
+    } // class CswNbtActQuotas
 }// namespace ChemSW.Nbt.Actions

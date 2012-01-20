@@ -327,7 +327,7 @@
                     }).bind('hover_node.jstree', function (e, bindData) {
                         var $hoverLI = $(bindData.rslt.obj[0]);
                         var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
-                        var cswnbtnodekey = $hoverLI.CswAttrDom('cswnbtnodekey');
+                        var cswnbtnodekey = $hoverLI.CswAttrNonDom('cswnbtnodekey');
                         nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
 
                     }).bind('dehover_node.jstree', function () {
@@ -343,10 +343,11 @@
 
                         $treediv.find('li').each(function () {
                             var $childObj = $(this);
-                            var thisid = $childObj.CswAttrDom('id');
-                            var thisnodeid = $childObj.CswAttrNonDom('nodeid');
-                            var thisrel = $childObj.CswAttrNonDom('rel');
-                            var thisnodename = $childObj.CswAttrNonDom('nodename');
+                            var thisid = tryParseString($childObj.CswAttrDom('id'));
+                            var thisnodeid = tryParseString($childObj.CswAttrNonDom('nodeid'), thisid.substring(idPrefix.length));
+                            var thisrel = tryParseString($childObj.CswAttrNonDom('rel'));
+                            var altName = tryParseString($childObj.find('a').first().text());
+                            var thisnodename = trim(tryParseString($childObj.CswAttrNonDom('nodename'), altName));
                             $('<input type="checkbox" class="' + idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '"></input>')
                                 .prependTo($childObj)
                                 .click(function () { return handleCheck($treediv, $(this)); });
@@ -356,10 +357,9 @@
 
                     }
 
-                    if (false === isNullOrEmpty($togglelink)) {
+                    if(o.ShowToggleLink && $togglelink) {
                         $togglelink.show();
                     }
-
                     // DO NOT define an onSuccess() function here that interacts with the tree.
                     // The tree has initalization events that appear to happen asynchronously,
                     // and thus having an onSuccess() function that changes the selected node will
@@ -446,8 +446,8 @@
             nodeid: selected.id,
             nodename: selected.text,
             iconurl: selected.iconurl,
-            cswnbtnodekey: selected.$item.CswAttrDom('cswnbtnodekey'),
-            nodespecies: selected.$item.CswAttrDom('species'),
+            cswnbtnodekey: selected.$item.CswAttrNonDom('cswnbtnodekey'),
+            nodespecies: selected.$item.CswAttrNonDom('species'),
             viewid: m.viewid
         };
 
@@ -457,7 +457,7 @@
 
     function handleCheck($treediv, $checkbox) {
         var $selected = jsTreeGetSelected($treediv);
-        return ($selected.$item.CswAttrDom('rel') === $checkbox.CswAttrDom('rel'));
+        return ($selected.$item.CswAttrNonDom('rel') === $checkbox.CswAttrNonDom('rel'));
     }
 
     function clearChecks(IdPrefix) {

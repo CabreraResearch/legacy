@@ -35,7 +35,14 @@ namespace ChemSW.Nbt.ImportExport
         public string NodeNodeType { get { return ( _NodeNodeType ); } }
         public string NodeNodeName { get { return ( _NodeNodeName ); } }
 
-        public bool IsNull { get { return ( ( false == String.IsNullOrEmpty( _NodeNodeIdType ) ) && ( false == String.IsNullOrEmpty( _NodeNodeName ) ) && ( false == String.IsNullOrEmpty( _NodeNodeType ) ) ); } }
+        public bool IsNull
+        {
+            get
+            {
+                bool ReturnVal =  String.IsNullOrEmpty( _NodeNodeIdType )  ||  String.IsNullOrEmpty( _NodeNodeName )  ||  String.IsNullOrEmpty( _NodeNodeType ) ;
+                return ( ReturnVal );
+            }//get
+        }//IsNull
 
 
     }//class CswNbtImportNodeId

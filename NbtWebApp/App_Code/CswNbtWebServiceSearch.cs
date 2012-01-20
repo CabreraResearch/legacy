@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( SelectedNodeType == NodeType )
                 {
-                    NodeTypeSelObj[OptionId]["selected"] = "selected";
+                    NodeTypeSelObj[OptionId]["selected"] = true;
                 }
                 if( NodeType.NodeTypeName.Length > SelectWidth )
                 {
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null == SelectedNodeType && SearchOC == ObjectClass )
                 {
-                    ObjectClassSelObj[OptionId]["selected"] = "selected";
+                    ObjectClassSelObj[OptionId]["selected"] = true;
                 }
                 if( ObjectClass.ObjectClass.ToString().Length > SelectWidth )
                 {
@@ -447,7 +447,10 @@ namespace ChemSW.Nbt.WebServices
                 _SearchableView.SaveToCache( true, true );
                 SearchView = _SearchableView;
                 SearchViewId = _SearchableView.SessionViewId.ToString();
-                if( ViewMode == NbtViewRenderingMode.Unknown ) ViewMode = _SearchableView.ViewMode;
+                if( ViewMode == NbtViewRenderingMode.Unknown )
+                {
+                    ViewMode = _SearchableView.ViewMode;
+                }
                 // If we're coming from the Welcome page, this will be true
                 if( null == _ParentView )
                 {
@@ -460,7 +463,10 @@ namespace ChemSW.Nbt.WebServices
             if( null != _ParentView )
             {
                 ParentViewId = _ParentView.SessionViewId.ToString();
-                ViewMode = _ParentView.ViewMode;
+                if( ViewMode == NbtViewRenderingMode.Unknown )
+                {
+                    ViewMode = _ParentView.ViewMode;
+                }
             }
         }
 

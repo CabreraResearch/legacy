@@ -97,9 +97,10 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtObjClassGenerator GeneratorNodeAsGenerator = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
 
+            string SelectedNodeTypeId = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds[0];
             if( 0 == GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.Count ||
-                "0" == GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds[0] ||
-                null == _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds[0] ) ) )
+                "0" == SelectedNodeTypeId ||
+                null == _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( SelectedNodeTypeId ) ) )
             {
                 throw ( new CswDniException( "Generator node " + CswNbtNodeGenerator.NodeName + " (" + CswNbtNodeGenerator.NodeId.ToString() + ") does not have a valid nodetypeid" ) );
             }
@@ -127,10 +128,10 @@ namespace ChemSW.Nbt.Actions
                 if( ParentsView.Root.ChildRelationships.Count > 0 )
                 {
                     ( (CswNbtViewRelationship) ParentsView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( GeneratorNodeAsGenerator.NodeId );
-                    ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( ParentsView, false, true, false, true );
+                    ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( ParentsView, false );
                     if( GeneratorNodeAsGenerator.ParentType.SelectMode == PropertySelectMode.Single )
                     {
-                        Int32 ParentNtId = CswConvert.ToInt32( GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds.ToString() );
+                        Int32 ParentNtId = CswConvert.ToInt32( GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds[0] );
                         Parents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
                     }
                 }
