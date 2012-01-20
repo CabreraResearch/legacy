@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Actions;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
-using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.PropertySets
@@ -29,6 +21,7 @@ namespace ChemSW.Nbt.PropertySets
             _Scheduler = Scheduler;
             _CswNbtNode = CswNbtNode;
         }
+
         public CswNbtPropertySetSchedulerImpl( CswNbtResources CswNbtResources, ICswNbtPropertySetScheduler Scheduler )
         {
             _CswNbtResources = CswNbtResources;
@@ -37,21 +30,24 @@ namespace ChemSW.Nbt.PropertySets
 
         bool _UpdateFutureTasks = false;
 
-        public void updateNextDueDate()
+        public void updateNextDueDate( bool DeleteFutureNodes = false )
         {
-            if( _Scheduler.DueDateInterval.WasModified || _Scheduler.FinalDueDate.WasModified || _CswNbtNode.New )
+            if( _Scheduler.DueDateInterval.WasModified ||
+                _Scheduler.FinalDueDate.WasModified ||
+                _CswNbtNode.New ||
+                DeleteFutureNodes )
             {
                 DateTime CandidateDueDate = DateTime.MinValue;
                 if( _Scheduler.DueDateInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
                 {
                     CandidateDueDate = _Scheduler.DueDateInterval.getNextOccuranceAfter( DateTime.Now.Date ).Date;
-					if( _Scheduler.FinalDueDate.DateTimeValue != DateTime.MinValue &&
-						CandidateDueDate.Date > _Scheduler.FinalDueDate.DateTimeValue.Date )
+                    if( _Scheduler.FinalDueDate.DateTimeValue != DateTime.MinValue &&
+                        CandidateDueDate.Date > _Scheduler.FinalDueDate.DateTimeValue.Date )
                     {
                         CandidateDueDate = DateTime.MinValue;
                     }
                 }
-				_Scheduler.NextDueDate.DateTimeValue = CandidateDueDate;
+                _Scheduler.NextDueDate.DateTimeValue = CandidateDueDate;
                 _UpdateFutureTasks = true;
             }//If one of the main properties is modified
 

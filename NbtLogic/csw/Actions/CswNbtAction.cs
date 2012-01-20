@@ -4,22 +4,15 @@ namespace ChemSW.Nbt.Actions
 {
     public enum CswNbtActionName
     {
-        Assign_Tests,
+        Unknown,
         Design,
         Edit_View,
-        Enter_Results,
         Future_Scheduling,
-        Inspection_Design,
         Create_Inspection,
-        Load_Mobile_Data,
-        Split_Samples,
-        View_By_Location,
-        Assign_Inspection,
-        Receiving,
-        Import_Fire_Extinguisher_Data,
         OOC_Inspections,
-		Quotas,
-		Sessions
+        Quotas,
+        Sessions,
+        View_Scheduled_Rules
     }
 
     public class CswNbtAction

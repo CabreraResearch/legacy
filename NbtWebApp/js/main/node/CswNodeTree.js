@@ -1,18 +1,205 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
 
     var pluginName = 'CswNodeTree';
 
     var methods = {
-        'init': function (options)     // options are defined in _getTreeContent()
-        {
+        'init': function (options) {
+
+            //            function getFirstLevel($treediv, pagesize, pageno, selectFirst) {
+            //                var realpagesize = tryParseNumber(pagesize, 10);
+            //                if (realpagesize < 1) realpagesize = 10;
+            //                var realpageno = tryParseNumber(pageno, 0);
+            //                if (realpageno < 1) realpageno = 0;
+
+            //                CswAjaxJson({
+            //                    url: o.fetchTreeFirstLevelUrl,
+            //                    data: {
+            //                        ViewId: o.viewid,
+            //                        IdPrefix: tryParseString(idPrefix),
+            //                        PageSize: realpagesize,
+            //                        PageNo: realpageno,
+            //                        ForSearch: o.forsearch
+            //                    },
+            //                    stringify: false,
+            //                    success: function (data) {
+            //                        // this page
+            //                        var hasChildren = recurseNodes($treediv, 2, data.tree, selectFirst);
+
+            //                        // next page
+            //                        if (isTrue(data.more)) {
+            //                            setTimeout(function () { getFirstLevel($treediv, realpagesize, realpageno + 1); }, o.Delay);
+
+            //                            // add a more node to click on instead
+            //                            // var MoreNode = addNodeToTree($treediv, 2, false, "More");
+            //                            // MoreNode.click(function () {
+            //                            //     $(this).remove();
+            //                            //     getFirstLevel($treediv, realpagesize, realpageno + 1, true);
+            //                            // });
+            //                        }
+
+            //                        // children
+            //                        // Note: root is level 1
+            //                        //       "first" level is actually level 2
+            //                        //       so the next level is level 3
+            //                        if (hasChildren) {
+            //                            setTimeout(function () { getLevel($treediv, 3, data.nodecountstart, data.nodecountend, realpagesize, 0); }, o.Delay);
+            //                        }
+            //                    } // success
+            //                }); // ajax
+            //            } // getFirstLevel()
+
+            //            function getLevel($treediv, level, parentstart, parentend, pagesize, pageno) {
+            //                var reallevel = tryParseNumber(level, 0);
+            //                var realparentstart = tryParseNumber(parentstart, 0);
+            //                var realparentend = tryParseNumber(parentend, 0);
+            //                var realpagesize = tryParseNumber(pagesize, 10);
+            //                if (realpagesize < 1) realpagesize = 10;
+            //                var realpageno = tryParseNumber(pageno, 0);
+            //                if (realpageno < 1) realpageno = 0;
+
+            //                CswAjaxJson({
+            //                    url: o.fetchTreeLevelUrl,
+            //                    data: {
+            //                        ViewId: o.viewid,
+            //                        IdPrefix: tryParseString(idPrefix),
+            //                        Level: reallevel,
+            //                        ParentRangeStart: realparentstart,
+            //                        ParentRangeEnd: realparentend,
+            //                        PageSize: realpagesize,
+            //                        PageNo: realpageno,
+            //                        ForSearch: o.forsearch
+            //                    },
+            //                    stringify: false,
+            //                    success: function (data) {
+
+            //                        // this level, this page
+            //                        var hasChildren = recurseNodes($treediv, reallevel, data.tree);
+
+            //                        // this level, next page
+            //                        if (isTrue(data.more)) {
+            //                            setTimeout(function () { getLevel($treediv, reallevel, parentstart, parentend, realpagesize, realpageno + 1); }, o.Delay);
+            //                        }
+
+            //                        // children
+            //                        if (hasChildren && tryParseNumber(data.nodecountend, -1) > 0) {
+            //                            setTimeout(function () { getLevel($treediv, reallevel + 1, data.nodecountstart, data.nodecountend, realpagesize, 0); }, o.Delay);
+            //                        }
+            //                    }, // success
+            //                    watchGlobal: false
+            //                }); // ajax
+            //            } // getLevel()
+
+            //            function recurseNodes($treediv, level, nodescoll, selectFirst) {
+            //                var hasChildren = false;
+            //                var parent = false;
+            //                each(nodescoll, function (childObj, childKey, thisObj, value) {
+            //                    if (false === isNullOrEmpty(childObj)) {
+            //                        if (false === isNullOrEmpty(childObj.attr.parentkey)) {
+            //                            parent = findParent($treediv, childObj.attr.parentkey);
+            //                        }
+            //                        if (selectFirst) {
+            //                            selectid = childObj.attr.id;
+            //                            selectFirst = false;
+            //                        }
+            //                        addNodeToTree($treediv, level, parent, childObj);
+            //                        if (false === isNullOrEmpty(childObj.children) && childObj.children.length > 0) {
+            //                            recurseNodes($treediv, (level + 1), childObj.children);
+            //                        }
+            //                        hasChildren = hasChildren || (tryParseNumber(childObj.childcnt, 0) > 0);
+            //                    }
+            //                }); // each
+            //                return hasChildren;
+            //            } // recurseNodes()
+
+            //            function findParent($treediv, parentkey) {
+            //                // Using attribute selector $('li[cswnbtnodekey=""]') doesn't seem to work, so we'll do it manually
+            //                var ret = false;
+            //                $.each($treediv.find('li'), function (childkey, value) {
+            //                    var childObj = $(value);
+            //                    if (childObj.attr('cswnbtnodekey') === parentkey) {
+            //                        ret = childObj;
+            //                    }
+            //                });
+            //                return ret;
+            //            } // findParent()
+
+            //            function addNodeToTree($treediv, level, parent, childjs) {
+            //                if (false === isNullOrEmpty(childjs)) {
+            //                    if (isNullOrEmpty(parent) || parent === false) {
+            //                        parent = rootnode;
+            //                    }
+
+            //                    var newnode = $treediv.jstree("create", parent, "last", childjs, false, true);
+            //                    var newnodeid = newnode.CswAttrDom('id');
+            //                    var newnodepk = tryParseString(newnodeid.substring(idPrefix.length));
+            //                    var newnodename = '';
+            //                    if (false === isNullOrEmpty(childjs.data)) {
+            //                        newnodename = childjs.data;
+            //                    }
+            //                    if (isTrue(o.ShowCheckboxes)) {
+            //                        var $checkbox = $('<input type="checkbox" class="' + idPrefix + 'check" id="check_' + newnodeid + '" rel="' + childjs.attr.rel + '" nodeid="' + newnodepk + '" nodename="' + newnodename + '"></input>')
+            //                                            .prependTo(newnode);
+            //                        $checkbox.click(function () { return handleCheck($treediv, $(this)); });
+            //                    }
+
+            //                    if (isTrue(newnode.CswAttrDom('locked'))) {
+            //                        $('<img src="Images/quota/lock.gif" title="Quota exceeded" />')
+            //                            .appendTo(newnode);
+            //                    }
+
+            //                    // case 21424 - Manufacture unique IDs on the expand <ins> for automated testing
+            //                    newnode.children('ins').CswAttrDom('id', newnodeid + '_expand');
+
+            //                    if (selectid === newnodeid) {
+            //                        $treediv.jstree('select_node', newnode);
+            //                    }
+            //                }
+            //                return newnode;
+            //            } // addNodeToTree()
+
+            //            function removeNodeFromTree($treediv, treenode) {
+            //                return $treediv.jstree("remove", treenode);
+            //            } // removeNodeFromTree()
+
+            function expandAll() {
+                $treediv.jstree('open_all', rootnode);
+
+                $togglelink.text('Collapse All')
+                           .unbind('click')
+                           .click(collapseAll);
+            }
+            function collapseAll() {
+                $treediv.jstree('close_all', rootnode);
+
+                // show first level
+                $treediv.jstree('open_node', rootnode);
+
+                // show selected
+                // this has weird effects
+                //                var $sel = $treediv.jstree('get_selected');
+                //                if (false === isNullOrEmpty($sel)) {
+                //                    $treediv.jstree('open_node', $sel.parentsUntil('#' + rootnode.attr('id')));
+                //                }
+
+                $togglelink.text('Expand All')
+                           .unbind('click')
+                           .click(expandAll);
+            }
+
+            var rootnode = false;  // root node of tree
+            //var selectid = null;   // node to select, once populated
+
             var o = {
                 ID: '',
-                ViewTreeUrl: '/NbtWebApp/wsNBT.asmx/getTreeOfView',
+                RunTreeUrl: '/NbtWebApp/wsNBT.asmx/runTree',
+                fetchTreeFirstLevelUrl: '/NbtWebApp/wsNBT.asmx/fetchTreeFirstLevel',
+                fetchTreeLevelUrl: '/NbtWebApp/wsNBT.asmx/fetchTreeLevel',
                 NodeTreeUrl: '/NbtWebApp/wsNBT.asmx/getTreeOfNode',
                 viewid: '',       // loads an arbitrary view
                 viewmode: '',
@@ -21,42 +208,58 @@
                 nodeid: '',       // if viewid are not supplied, loads a view of this node
                 cswnbtnodekey: '',
                 IncludeNodeRequired: false,
-                UsePaging: true,
-				UseScrollbars: true,
+                //UsePaging: true,
+                UseScrollbars: true,
                 onSelectNode: null, // function(optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', cswnbtnodekey: '', viewid: '' }; return o; },
                 onInitialSelectNode: undefined,
                 onViewChange: null, // function(newviewid, newviewmode) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
-                SelectFirstChild: true,
+                //SelectFirstChild: true,
                 ShowCheckboxes: false,
-                IncludeInQuickLaunch: true
+                ShowToggleLink: true,
+                IncludeInQuickLaunch: true,
+                Delay: 250
             };
             if (options) $.extend(o, options);
 
-            if (o.onInitialSelectNode === undefined) {
+            if (false === isFunction(o.onInitialSelectNode)) {
                 o.onInitialSelectNode = o.onSelectNode;
             }
 
             var idPrefix = o.ID + '_';
-            var $treediv = $('<div id="' + idPrefix + '" />')
-                                .appendTo($(this));
-            if (o.UseScrollbars) {
-            	$treediv.addClass('treediv');
-            } else {
-            	$treediv.addClass('treediv_noscroll');
+            var $this = $(this);
+
+            var $togglelink;
+            if (o.ShowToggleLink) {
+                $togglelink = $this.CswLink({
+                    ID: o.ID + '_toggle',
+                    value: 'Expand All',
+                    href: '#',
+                    onClick: function () { expandAll(); return false; }
+                });
+                $togglelink.hide();
             }
 
-            var url = o.ViewTreeUrl;
+            var $treediv = $('<div id="' + idPrefix + '" />')
+                                .appendTo($this);
+            if (o.UseScrollbars) {
+                $treediv.addClass('treediv');
+            } else {
+                $treediv.addClass('treediv_noscroll');
+            }
+
+            var url = o.RunTreeUrl;
             var dataParam = {
-                UsePaging: o.UsePaging,
+                // UsePaging: o.UsePaging,
                 ViewId: o.viewid,
                 IdPrefix: tryParseString(idPrefix),
-                IsFirstLoad: true,
-                ParentNodeKey: '',
+                // IsFirstLoad: true,
+                // ParentNodeKey: '',
                 IncludeNodeRequired: o.IncludeNodeRequired,
                 IncludeNodeKey: tryParseString(o.cswnbtnodekey),
-                ShowEmpty: o.showempty,
-                ForSearch: o.forsearch,
-                NodePk: tryParseString(o.nodeid),
+                IncludeNodeId: tryParseString(o.nodeid),
+                // ShowEmpty: o.showempty,
+                // ForSearch: o.forsearch,
+                // NodePk: tryParseString(o.nodeid),
                 IncludeInQuickLaunch: o.IncludeInQuickLaunch
             };
 
@@ -69,231 +272,109 @@
                 data: dataParam,
                 stringify: false,
                 success: function (data) {
-                    var idToSelect = '';
-                    //var treePlugins = ["themes", "xml_data", "ui", "types", "crrm"];
-                    var treePlugins = ["themes", "html_data", "ui", "types", "crrm"];
-                    var treeThemes;
-                    if (false === isNullOrEmpty(o.nodeid)) {
-                        idToSelect = idPrefix + o.nodeid;
-                    }
 
-                    var newviewid = data.viewid;
+                    var treePlugins = ["themes", "ui", "types", "crrm", "json_data"];
+                    var jsonTypes = data.types;
+
+                    var newviewid = data.newviewid;
                     if (false === isNullOrEmpty(newviewid) && o.viewid !== newviewid) {
                         o.viewid = newviewid;
                         if (isFunction(o.onViewChange)) {
-                            o.onViewChange(o.viewid, 'tree');
+                            o.onViewChange(o.viewid, o.viewmode);
                         }
                     }
 
-                    var treeData = data.tree;
-                    var jsonTypes = data.types;
-
-                    //var $selecteditem = data.find('item[id="'+ selectid + '"]');
-                    var selectLevel = -1;
-                    if (o.SelectFirstChild) {
-                        if (o.viewmode === 'list') {
-                            selectLevel = 1;
-                            treeThemes = { "dots": false };
-                        } else {
-                            selectLevel = 2;
-                            treeThemes = { "dots": true };
-                        }
+                    //selectid = data.selectid;
+                    var treeThemes = { "dots": true };
+                    if (o.viewmode === CswViewMode.list.name) {
+                        treeThemes = { "dots": false };
                     }
-                    else {
-                        if (isNullOrEmpty(idToSelect)) {
-                            idToSelect = idPrefix + 'root';
-                        }
-                    }
+                    $treediv.jstree({
+                        "json_data": {
+                            "data": data.root
+                        },
+                        "core": {
+                            "open_parents": true
+                        },
+                        "ui": {
+                            "select_limit": 1,
+                            "selected_parent_close": false,
+                            "selected_parent_open": true
+                        },
+                        "themes": treeThemes,
+                        "types": {
+                            "types": jsonTypes,
+                            "max_children": -2,
+                            "max_depth": -2
+                        },
+                        "plugins": treePlugins
+                    }); // jstree()
 
-                    var hasNodes = false;
-                    function checkHasNodes(json) {
-                        var ret = false;
-                        if ('No Results' !== json &&
-                            contains(json, 'attr') &&
-                            (false === contains(json, 'children') ||
-                           (json.children.length > 1 ||
-                             'No Results' !== json.children[0]))) {
-                            ret = true;
-                        }
-                        return ret;
-                    }
-
-                    var selectid = '';
-                    function treeJsonToHtml(json, level) {
-                        hasNodes = checkHasNodes(json);
-                        var treestr = '';
-                        if (hasNodes) {
-                            var id = tryParseString(json.attr.id),
-                                nodeid = tryParseString(id.substring(idPrefix.length)),
-                                nodename = tryParseString(json.data),
-                                nbtnodekey = tryParseString(json.attr.cswnbtnodekey),
-                                rel = tryParseString(json.attr.rel),
-                                species = tryParseString(json.attr.species),
-                                state = tryParseString(json.attr.state, 'open');
-
-                            if (idToSelect === id || (level === selectLevel && isNullOrEmpty(selectid))) {
-                                selectid = id;
-                            }
-
-							var locked = isTrue(json.attr.locked);
-                            treestr += '<li id="' + id + '" rel="' + rel + '" species="' + species + '" class="jstree-' + state + '" ';
-                            if (!isNullOrEmpty(nbtnodekey)) {
-                                treestr += '    cswnbtnodekey="' + nbtnodekey.replace(/"/g, '&quot;') + '"';
-                            }
-                            treestr += '>';
-                            if (o.ShowCheckboxes) {
-                                treestr += '<input type="checkbox" class="' + idPrefix + 'check" id="check_' + nodeid + '" rel="' + rel + '" nodeid="' + nodeid + '" nodename="' + nodename + '"></input>';
-                            }
-                            treestr += '  <a href="#">' + nodename + '</a>';
-                            var children = json.children;
-                            for (var child in children) {
-                                // recurse
-                                if (children.hasOwnProperty(child)) {
-                                    var childNode = children[child];
-                                    treestr += '<ul>';
-                                    treestr += treeJsonToHtml(childNode, 2);
-                                    treestr += '</ul>';
-                                }
-                            }
-					        if(locked) {
-								treestr += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
-							}
-							treestr += '</li>';
-                        } else {
-                            treestr += '<li id="' + Int32MinVal + '" rel="leaf" class="jstree-leaf">No Results</li>';
-                        }
-                        return treestr;
-                    } // _treeXmlToHtml()
-
-                    var treehtmlstring = '<ul>';
-                    for (var parent in treeData) {
-                        if (treeData.hasOwnProperty(parent)) {
-                            var parentNode = treeData[parent];
-                            treehtmlstring += treeJsonToHtml(parentNode, 1);
-                        }
-                    }
-                    treehtmlstring += '</ul>';
-
-                    if (hasNodes) {
-                        $treediv.bind('init_done.jstree', function () {
-
-                            // initially_open and initially_select cause multiple event triggers and race conditions.
-                            // So we'll do it ourselves instead.
-                            // Open
-                            if (!isNullOrEmpty(selectid)) {
-                                var $selecteditem = $treediv.find('#' + selectid);
-                                var $itemparents = $selecteditem.parents().andSelf();
-                                $itemparents.each(function () {
-                                    $treediv.jstree('open_node', '#' + $(this).CswAttrXml('id'));
-                                });
-
-                                // Select
-                                $treediv.jstree('select_node', '#' + selectid);
-                            }
-                        }).bind('load_node.jstree', function () {
-                            $('.' + idPrefix + 'check').unbind('click');
-                            $('.' + idPrefix + 'check').click(function () { return handleCheck($treediv, $(this)); });
-
-                        }).bind('select_node.jstree', function (e, newData) {
-                            return firstSelectNode({
-                                e: e,
-                                data: newData,
-                                url: url,
-                                $treediv: $treediv,
-                                IdPrefix: idPrefix,
-                                onSelectNode: o.onSelectNode,
-                                onInitialSelectNode: o.onInitialSelectNode,
-                                viewid: o.viewid,
-                                UsePaging: o.UsePaging,
-                                forsearch: o.forsearch
-                            });
-
-                        }).bind('hover_node.jstree', function (e, data) {
-                            var $hoverLI = $(data.rslt.obj[0]);
-                            var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
-                            var cswnbtnodekey = $hoverLI.CswAttrDom('cswnbtnodekey');
-                            nodeHoverIn(data.args[1], nodeid, cswnbtnodekey);
-
-                        }).bind('dehover_node.jstree', function (e, data) {
-                            var selected = jsTreeGetSelected($treediv);
-                            nodeHoverOut();
-
-                        }).jstree({
-                            "html_data":
-                                    {
-                                        "data": treehtmlstring,
-                                        "ajax":
-                                            {
-                                                type: 'POST',
-                                                url: url,
-                                                dataType: "json",
-                                                contentType: 'application/json; charset=utf-8',
-                                                data: function ($nodeOpening) {
-                                                    var nodekey = $nodeOpening.CswAttrXml('cswnbtnodekey');
-                                                    var retDataParam = {
-                                                        UsePaging: o.UsePaging,
-                                                        ViewId: o.viewid,
-                                                        IdPrefix: idPrefix,
-                                                        IsFirstLoad: false,
-                                                        ParentNodeKey: nodekey,
-                                                        IncludeNodeRequired: false,
-                                                        IncludeNodeKey: '',
-                                                        ShowEmpty: false,
-                                                        ForSearch: o.forsearch,
-                                                        NodePk: tryParseString(o.nodeid),
-                                                        IncludeInQuickLaunch: false
-                                                    };
-                                                    return JSON.stringify(retDataParam);
-                                                },
-                                                success: function (rawData) {
-                                                    var newData = JSON.parse(rawData.d);
-                                                    var nodeData = newData.tree;
-                                                    var childhtmlstr = '';
-                                                    for (var nodeItem in nodeData) {
-                                                        if (nodeData.hasOwnProperty(nodeItem)) {
-                                                            var thisNode = nodeData[nodeItem];
-                                                            childhtmlstr += treeJsonToHtml(thisNode);
-                                                        }
-                                                    }
-                                                    return childhtmlstr;
-                                                }
-                                            }
-                                    },
-                            "ui": {
-                                "select_limit": 1//,
-                                //"initially_select": selectid
-                            },
-                            "themes": treeThemes,
-                            "core": {
-                                //"initially_open": initiallyOpen
-                            },
-                            "types": {
-                                "types": jsonTypes,
-                                "max_children": -2,
-                                "max_depth": -2
-                            },
-                            "plugins": treePlugins
+                    $treediv.bind('select_node.jstree', function (e, newData) {
+                        return firstSelectNode({
+                            e: e,
+                            data: newData,
+                            url: url,
+                            $treediv: $treediv,
+                            IdPrefix: idPrefix,
+                            onSelectNode: o.onSelectNode,
+                            onInitialSelectNode: o.onInitialSelectNode,
+                            viewid: o.viewid,
+                            //UsePaging: o.UsePaging,
+                            forsearch: o.forsearch
                         });
 
-                        // DO NOT define an onSuccess() function here that interacts with the tree.
-                        // The tree has initalization events that appear to happen asynchronously,
-                        // and thus having an onSuccess() function that changes the selected node will
-                        // cause a race condition.
+                    }).bind('hover_node.jstree', function (e, bindData) {
+                        var $hoverLI = $(bindData.rslt.obj[0]);
+                        var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
+                        var cswnbtnodekey = $hoverLI.CswAttrNonDom('cswnbtnodekey');
+                        nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
 
-                        $('.' + idPrefix + 'check').click(function () { return handleCheck($treediv, $(this)); });
+                    }).bind('dehover_node.jstree', function () {
+                        jsTreeGetSelected($treediv);
+                        nodeHoverOut();
+                    });
 
-                        // case 21424 - Manufacture unique IDs on the expand <ins> for automated testing
+                    $treediv.jstree('select_node', '#' + data.selectid);
+                    //setTimeout(function () { log('select: #' + data.selectid);  }, 1000);
+                    rootnode = $treediv.find('li').first();
+
+                    if (isTrue(o.ShowCheckboxes)) {
+
                         $treediv.find('li').each(function () {
-                            var $li = $(this);
-                            $li.children('ins').CswAttrDom('id', $li.CswAttrDom('id') + '_expand');
+                            var $childObj = $(this);
+                            var thisid = tryParseString($childObj.CswAttrDom('id'));
+                            var thisnodeid = tryParseString($childObj.CswAttrNonDom('nodeid'), thisid.substring(idPrefix.length));
+                            var thisrel = tryParseString($childObj.CswAttrNonDom('rel'));
+                            var altName = tryParseString($childObj.find('a').first().text());
+                            var thisnodename = trim(tryParseString($childObj.CswAttrNonDom('nodename'), altName));
+                            $('<input type="checkbox" class="' + idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '"></input>')
+                                .prependTo($childObj)
+                                .click(function () { return handleCheck($treediv, $(this)); });
+
                         });
 
-                    } else {
-                        $treediv.append('No Results');
-                        o.onInitialSelectNode({ viewid: o.viewid });
+
                     }
 
-                } // success{}
+                    if(o.ShowToggleLink && $togglelink) {
+                        $togglelink.show();
+                    }
+                    // DO NOT define an onSuccess() function here that interacts with the tree.
+                    // The tree has initalization events that appear to happen asynchronously,
+                    // and thus having an onSuccess() function that changes the selected node will
+                    // cause a race condition.
+
+                    //                    rootnode = addNodeToTree($treediv, 1, false, data.root);
+                    //                    if (isTrue(data.result)) {
+                    //                        getFirstLevel($treediv, data.pagesize, 0);
+                    //                    } else {
+                    //                        addNodeToTree($treediv, 1, rootnode, { data: { title: "No Results" }, attr: { id: idPrefix + 'noresults'} });
+                    //                    }
+
+                    //                    removeNodeFromTree($treediv, $('.jstree-loading'));
+
+                } // success
             }); // ajax
 
             return $treediv;
@@ -307,10 +388,17 @@
             if (optSelect) {
                 $.extend(o, optSelect);
             }
-            var $treediv = $(this).children('.treediv');
+            var $treediv = $(this);
             var idPrefix = $treediv.CswAttrDom('id');
             $treediv.jstree('select_node', '#' + idPrefix + o.newnodeid);
+        },
+
+        'expandAll': function () {
+            var $treediv = $(this);
+            var rootnode = $treediv.find('li').first();
+            $treediv.jstree('open_all', rootnode);
         }
+
     };
 
     function firstSelectNode(myoptions) {
@@ -323,7 +411,7 @@
             onSelectNode: null, //function() {},
             onInitialSelectNode: null, //function() {},
             viewid: '',
-            UsePaging: '',
+            //UsePaging: '',
             forsearch: ''
         };
         if (myoptions) $.extend(m, myoptions);
@@ -348,7 +436,7 @@
             IdPrefix: '',
             onSelectNode: function () { },
             viewid: '',
-            UsePaging: '',
+            //UsePaging: '',
             forsearch: ''
         };
         if (myoptions) $.extend(m, myoptions);
@@ -358,80 +446,18 @@
             nodeid: selected.id,
             nodename: selected.text,
             iconurl: selected.iconurl,
-            cswnbtnodekey: selected.$item.CswAttrDom('cswnbtnodekey'),
-            nodespecies: selected.$item.CswAttrDom('species'),
+            cswnbtnodekey: selected.$item.CswAttrNonDom('cswnbtnodekey'),
+            nodespecies: selected.$item.CswAttrNonDom('species'),
             viewid: m.viewid
         };
 
-        if (optSelect.nodespecies === "More") {
-            var parentNodeKey = '';
-            var parent = m.data.inst._get_parent(m.data.rslt.obj);
-            if (parent !== -1) {
-                parentNodeKey = tryParseString(parent.CswAttrDom('cswnbtnodekey'), '');
-            }
-
-            var nextDataParam = {
-                UsePaging: m.UsePaging,
-                ViewId: m.viewid,
-                IdPrefix: m.IdPrefix,
-                IsFirstLoad: false,
-                ParentNodeKey: parentNodeKey,
-                IncludeNodeRequired: false,
-                IncludeNodeKey: optSelect.cswnbtnodekey,
-                ShowEmpty: false,
-                ForSearch: m.forsearch,
-                NodePk: selected.id,
-                IncludeInQuickLaunch: false
-            };
-
-            // get next page of nodes
-            CswAjaxJson({
-                url: m.url,
-                data: nextDataParam,
-                success: function (data) {
-                    var afterNodeId = m.IdPrefix + optSelect.nodeid;
-                    var itemJson = data.tree;
-
-                    // we have to do these one at a time in successive OnSuccess callbacks, 
-                    // or else they won't end up in the right place on the tree
-                    doContinue(0);
-
-                    function doContinue(index) {
-                        var thisItem;
-                        if (contains(itemJson, index)) {
-                            thisItem = itemJson[index];
-                            m.$treediv.jstree('create',
-                                              '#' + afterNodeId,
-                                              'after',
-                                              thisItem,
-                                                function () {
-                                                    // remove 'More' node
-                                                    if (afterNodeId === thisItem.attr.id) {
-                                                        m.$treediv.jstree('remove', '#' + m.IdPrefix + optSelect.nodeid + '[species="More"]');
-                                                    }
-
-                                                    afterNodeId = thisItem.attr.id;
-                                                    index += 1;
-                                                    doContinue(index);
-                                                },
-                                               true,
-                                               true);
-
-                        } // if($itemxml.length > 0)
-                    } // _continue()
-
-                } // success
-            }); // ajax
-        }
-        else {
-            clearChecks(m.IdPrefix);
-            m.onSelectNode(optSelect);
-        }
+        clearChecks(m.IdPrefix);
+        m.onSelectNode(optSelect);
     }
 
     function handleCheck($treediv, $checkbox) {
         var $selected = jsTreeGetSelected($treediv);
-        return ($selected.$item.CswAttrDom('rel') === $checkbox.CswAttrDom('rel'));
+        return ($selected.$item.CswAttrNonDom('rel') === $checkbox.CswAttrNonDom('rel'));
     }
 
     function clearChecks(IdPrefix) {
@@ -452,4 +478,3 @@
     };
 
 })(jQuery);
-

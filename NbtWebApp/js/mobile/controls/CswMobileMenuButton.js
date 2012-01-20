@@ -1,5 +1,5 @@
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="ICswMobileWebControls.js" />
 
 //#region CswMobileMenuButton
@@ -7,6 +7,7 @@
 CswMobileMenuButton.inheritsFrom(ICswMobileWebControls);
 
 function CswMobileMenuButton(buttonDef, $parent) {
+    "use strict";
     /// <summary>
     ///   Menu button class. Responsible for creating Mobile menu buttons suitable for consumption by a header/footer.
     ///   Menu buttons must be tied to static pages to wire their events properly, with the exception of 'Back'.
@@ -70,7 +71,7 @@ function CswMobileMenuButton(buttonDef, $parent) {
             $button.CswAttrDom(buttonProp);
         }
 
-        $button.CswAttrXml(buttonAttr)
+        $button.CswAttrNonDom(buttonAttr)
             .css(o.cssStyles);
 
         _o = o;
@@ -114,7 +115,7 @@ function CswMobileMenuButton(buttonDef, $parent) {
         /// <param name="keepVisible" type="Boolean">True to show the button.</param>
         /// <returns type="jQuery">Returns the button.</returns>
         _o.dataTransition = tryParseString(transition, 'pop');
-        _$control.CswAttrXml('data-transition', _o.dataTransition);
+        _$control.CswAttrNonDom('data-transition', _o.dataTransition);
         return _$control;
     };
     this.setDataRelationship = function(relationship) {
@@ -122,7 +123,7 @@ function CswMobileMenuButton(buttonDef, $parent) {
         /// <param name="keepVisible" type="Boolean">True to show the button.</param>
         /// <returns type="jQuery">Returns the button.</returns>
         _o.dataRelationship = tryParseString(relationship, 'page');
-        _$control.CswAttrXml('data-rel', _o.dataRelationship);
+        _$control.CswAttrNonDom('data-rel', _o.dataRelationship);
         return _$control;
     };
     this.setDataIcon = function(icon) {
@@ -130,7 +131,7 @@ function CswMobileMenuButton(buttonDef, $parent) {
         /// <param name="keepVisible" type="Boolean">True to show the button.</param>
         /// <returns type="jQuery">Returns the button.</returns>
         _o.dataIcon = tryParseString(icon, '');
-        _$control.CswAttrXml('data-icon', _o.dataIcon);
+        _$control.CswAttrNonDom('data-icon', _o.dataIcon);
         return _$control;
     };
     

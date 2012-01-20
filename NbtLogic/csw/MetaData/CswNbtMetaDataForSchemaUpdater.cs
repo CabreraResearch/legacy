@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -43,7 +41,8 @@ namespace ChemSW.Nbt.MetaData
                 foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in NodeType.ObjectClass.ObjectClassProps )
                 {
                     // Find exact matches
-                    bool DoSynch = false;
+                    string PropName = ObjectClassProp.PropName;
+                    bool DoSync = false;
                     CswNbtMetaDataNodeTypeProp MatchingNodeTypeProp = null;
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps )
                     {
@@ -58,27 +57,36 @@ namespace ChemSW.Nbt.MetaData
                     {
                         foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps )
                         {
-                            if( NodeTypeProp.PropName.ToLower() == ObjectClassProp.PropName.ToLower() &&
+                            if( false == DoSync &&
+                                NodeTypeProp.PropName.ToLower() == PropName.ToLower() &&
                                 NodeTypeProp.FieldType.FieldType == ObjectClassProp.FieldType.FieldType )
                             {
                                 MatchingNodeTypeProp = NodeTypeProp;
-                                DoSynch = true;
-                                break;
+                                DoSync = true;
+                            }
+                            else if( NodeTypeProp.PropName.ToLower() == PropName.ToLower() )
+                            {
+                                PropName += " " + NodeTypeProp.FieldType.FieldType.ToString();
                             }
                         }
+                        while( null != NodeType.getNodeTypeProp( PropName ) )
+                        {
+                            PropName += " " + ObjectClassProp.ObjectClassPropId;
+                        }
+
                     }
                     // Make missing ones
                     if( MatchingNodeTypeProp == null )
                     {
                         //CswNbtMetaDataNodeTypeTab Tab = NodeType.getFirstNodeTypeTab();
-                        MatchingNodeTypeProp = makeNewProp(NodeType, null, ObjectClassProp.FieldType.FieldTypeId, ObjectClassProp.PropName, Int32.MinValue, true, ObjectClassProp);
-                        DoSynch = false;   // because makeNewProp does it for us
+                        makeNewProp( NodeType, null, ObjectClassProp.FieldType.FieldTypeId, PropName, Int32.MinValue, true, ObjectClassProp );
+                        DoSync = false;
                     }
 
-                    if (DoSynch)
+                    if( DoSync )
                     {
-                        CopyNodeTypePropFromObjectClassProp(ObjectClassProp, MatchingNodeTypeProp._DataRow);
-                        CopyNodeTypePropDefaultValueFromObjectClassProp(ObjectClassProp, MatchingNodeTypeProp);
+                        CopyNodeTypePropFromObjectClassProp( ObjectClassProp, MatchingNodeTypeProp._DataRow );
+                        CopyNodeTypePropDefaultValueFromObjectClassProp( ObjectClassProp, MatchingNodeTypeProp );
                     }
 
                 } // foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in NodeType.ObjectClass.ObjectClassProps )
@@ -90,18 +98,26 @@ namespace ChemSW.Nbt.MetaData
 
         } // makeMissingNodeTypeProps()
 
-        
+
         /// <summary>
         /// Deletes an object class prop and all nodetype props from the database and metadata collection
         /// </summary>
-        public void DeleteObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
+        public Collection<CswNbtMetaDataNodeTypeProp> DeleteObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, bool DeleteNodeTypeProps )
         {
-            // Delete Nodetype Props first
-            while( ObjectClassProp.NodeTypeProps.Count > 0 )
+            Collection<CswNbtMetaDataNodeTypeProp> Ret = new Collection<CswNbtMetaDataNodeTypeProp>();
+
+            foreach( CswNbtMetaDataNodeTypeProp Prop in ObjectClassProp.NodeTypeProps )
             {
-                IEnumerator e = ObjectClassProp.NodeTypeProps.GetEnumerator();
-                e.MoveNext();
-                DeleteNodeTypeProp( (CswNbtMetaDataNodeTypeProp) e.Current, true );
+                if( DeleteNodeTypeProps )
+                {
+                    DeleteNodeTypeProp( Prop, true );
+                }
+                else
+                {
+                    Prop._DataRow["objectclasspropid"] = DBNull.Value;
+                    _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
+                    Ret.Add( Prop );
+                }
             }
 
             // Update MetaData
@@ -110,6 +126,7 @@ namespace ChemSW.Nbt.MetaData
             // Delete the Object Class Prop
             ObjectClassProp._DataRow.Delete();
             _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );
+            return Ret;
         }
 
 
@@ -167,7 +184,16 @@ namespace ChemSW.Nbt.MetaData
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.NodeTypeProps )
                     {
-                        NodeTypeProp._DataRow[AttributeName] = DBValue;
+                        CswNbtMetaDataNodeTypeProp.NodeTypePropAttributes NodeTypeAttribute;
+                        Enum.TryParse( AttributeName, true, out NodeTypeAttribute );
+                        if( NodeTypeAttribute != CswNbtMetaDataNodeTypeProp.NodeTypePropAttributes.unknown )
+                        {
+                            NodeTypeProp._DataRow[AttributeName] = DBValue;
+                        }
+                        else if( Attribute == CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd )
+                        {
+                            NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                        }
                     }
                 }
             }

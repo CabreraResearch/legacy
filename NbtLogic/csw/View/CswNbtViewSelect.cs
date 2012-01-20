@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -71,6 +72,59 @@ namespace ChemSW.Nbt
 
         }//restoreView()
 
+        public List<CswNbtView> restoreViews( string ViewName, NbtViewVisibility Visibility = NbtViewVisibility.Unknown, Int32 VisibilityId = Int32.MinValue )
+        {
+            List<CswNbtView> ReturnVal = new List<CswNbtView>();
+
+            CswTableSelect ViewSelect = _CswNbtResources.makeCswTableSelect( "CswNbtViewSelect_restoreViews_select", "node_views" );
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString()
+                                                     {
+                                                         "nodeviewid", 
+                                                         "viewname"
+                                                     };
+            //ViewName is limited to 30 characters
+            ViewName = ViewName.ToLower().Trim();
+            if( ViewName.Length > 200 )
+            {
+                ViewName = ViewName.Substring( 0, 200 );
+            }
+
+            string WhereClause = string.Empty;
+            if( Visibility != NbtViewVisibility.Unknown )
+            {
+                WhereClause = "where visibility='" + Visibility.ToString() + "'";
+            }
+
+            switch( Visibility )
+            {
+                case NbtViewVisibility.Role:
+                    if( Int32.MinValue != VisibilityId )
+                    {
+                        WhereClause += " and roleid='" + VisibilityId.ToString() + "'";
+                    }
+                    break;
+                case NbtViewVisibility.User:
+                    if( Int32.MinValue != VisibilityId )
+                    {
+                        WhereClause += " and userid='" + VisibilityId.ToString() + "'";
+                    }
+                    break;
+            }
+
+            DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, WhereClause, false );
+            foreach( DataRow CurrentRow in ViewTable.Rows )
+            {
+                string CurrentViewName = CswConvert.ToString( CurrentRow["viewname"] ).ToLower().Trim();
+                if( ViewName == CurrentViewName ||
+                    CurrentViewName.Contains( ViewName ) )
+                {
+                    ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
+                }
+            }
+
+            return ( ReturnVal );
+
+        }//restoreViews()
 
         ///// <summary>
         ///// Get a DataTable with a single view, by primary key
@@ -89,17 +143,20 @@ namespace ChemSW.Nbt
         public CswNbtView getSessionView( CswNbtSessionDataId SessionViewId )
         {
             if( SessionViewId == null )
+            {
                 throw new CswDniException( "CswNbtViewSelect.getSessionView(): SessionViewId is null" );
+            }
 
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionViewId );
-            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.View )
-            {
-                return SessionDataItem.View;
-            }
-            else
+
+            if( null == SessionDataItem ||
+                SessionDataItem.DataType != CswNbtSessionDataItem.SessionDataType.View )
             {
                 throw new CswDniException( "CswNbtViewSelect.getSessionView(): SessionViewId (" + SessionViewId.get() + ") is not a view" );
             }
+
+            return SessionDataItem.View;
+
         } // getSessionView()
 
         /// <summary>

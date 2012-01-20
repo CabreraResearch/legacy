@@ -460,13 +460,7 @@ namespace ChemSW.NbtWebControls
                             DesignExportItem.Attributes.Add( "onclick", "openExportPopup('nodetypeid=" + NodeType.NodeTypeId.ToString() + "&format=" + ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + NbtViewRenderingMode.ToString() + "');" );
                             ExportMenuItem.Items.Add( DesignExportItem );
                         }
-                        RadMenuItem DesignImportItem = new RadMenuItem();
-                        DesignImportItem.Text = "Import NodeType XML";
-                        DesignImportItem.Value = "import_" + ExportOutputFormat.MobileXML.ToString().ToLower();
-                        DesignImportItem.CssClass = SubMenuGroupCssClass;
-                        DesignImportItem.NavigateUrl = _CswNbtResources.Actions[CswNbtActionName.Load_Mobile_Data].Url;
-                        ExportMenuItem.Items.Add( DesignImportItem );
-                    }
+                        }
                 } // if( AllowExport )
 
                 if( AllowMobile && _View != null && _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
@@ -480,13 +474,6 @@ namespace ChemSW.NbtWebControls
                     MobileExportItem.CssClass = SubMenuGroupCssClass;
                     MobileExportItem.Attributes.Add( "onclick", "openExportPopup('sessionviewid=" + _View.SessionViewId + "&format=" + ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + NbtViewRenderingMode.ToString() + "');" );
                     _MobileMenuItem.Items.Add( MobileExportItem );
-
-                    RadMenuItem MobileImportItem = new RadMenuItem();
-                    MobileImportItem.Text = "Import Mobile XML";
-                    MobileImportItem.Value = "import_" + ExportOutputFormat.MobileXML.ToString().ToLower();
-                    MobileImportItem.CssClass = SubMenuGroupCssClass;
-                    MobileImportItem.NavigateUrl = _CswNbtResources.Actions[CswNbtActionName.Load_Mobile_Data].Url;
-                    _MobileMenuItem.Items.Add( MobileImportItem );
                 }
                 else
                 {

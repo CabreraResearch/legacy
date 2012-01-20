@@ -2,8 +2,8 @@ using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ChemSW.Nbt;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {
@@ -12,7 +12,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         public CswList( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
-            DataBinding += new EventHandler(CswList_DataBinding);
+            DataBinding += new EventHandler( CswList_DataBinding );
         }
 
         private void CswList_DataBinding( object sender, EventArgs e )
@@ -30,7 +30,12 @@ namespace ChemSW.NbtWebControls.FieldTypes
         void _DropDownList_DataBound( object sender, EventArgs e )
         {
             if( Prop != null )
-                SelectedValue = Prop.AsList.Value;
+            {
+                if( null != _DropDownList.Items.FindByValue( Prop.AsList.Value ) )
+                {
+                    SelectedValue = Prop.AsList.Value;
+                }
+            }
         }
 
         public override void Save()
@@ -54,13 +59,19 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             get
             {
+                string Selected = _DropDownList.SelectedValue;
+                if( null == _DropDownList.Items.FindByText( Selected ) )
+                {
+                    Selected = string.Empty;
+                }
+
                 EnsureChildControls();
-                return _DropDownList.SelectedValue;
+                return Selected;
             }
             set
             {
                 EnsureChildControls();
-                if (value == String.Empty && _DropDownList.Items.Count > 0)
+                if( value == String.Empty && _DropDownList.Items.Count > 0 )
                     _DropDownList.SelectedIndex = 0;
                 else
                     _DropDownList.SelectedValue = value;
@@ -105,31 +116,32 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         protected override void OnPreRender( EventArgs e )
         {
-            if( Prop != null && Prop.AsList != null )
-            {
-                if( null == _DropDownList.Items.FindByValue( Prop.AsList.Value ) )
-                {
-                    // Add it!  This guarantees we see the data that was saved, even if the options change
-                    ListItem SelectedItem = new ListItem( Prop.AsList.Value, Prop.AsList.Value );
-                    _DropDownList.Items.Add( SelectedItem );
-                    SelectedValue = Prop.AsList.Value;
-                }
-            }
+            //Case 22769. This now only affects Design mode, so get rid of it
+            //if( Prop != null && Prop.AsList != null )
+            //{
+            //    if( null == _DropDownList.Items.FindByValue( Prop.AsList.Value ) )
+            //    {
+            //        // Add it!  This guarantees we see the data that was saved, even if the options change
+            //        ListItem SelectedItem = new ListItem( Prop.AsList.Value, Prop.AsList.Value );
+            //        _DropDownList.Items.Add( SelectedItem );
+            //        SelectedValue = Prop.AsList.Value;
+            //    }
+            //}
 
             _DropDownList.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange();" );
 
             base.OnPreRender( e );
         }
 
-        public override void RenderControl(HtmlTextWriter writer)
+        public override void RenderControl( HtmlTextWriter writer )
         {
-            if (ReadOnly)
+            if( ReadOnly )
             {
-                writer.Write(this.SelectedValue);
+                writer.Write( this.SelectedValue );
             }
             else
             {
-                base.RenderControl(writer);
+                base.RenderControl( writer );
             }
         }
     }

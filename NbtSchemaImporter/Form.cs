@@ -34,6 +34,9 @@ namespace ChemSW.Nbt.Schema
         private string _DataFilePath = string.Empty;
         private WorkerThread _WorkerThread;
 
+        private CswNbtImportStatus _CswNbtImportStatus = null;
+
+
         public ImporterForm()
         {
             InitializeComponent();
@@ -45,6 +48,8 @@ namespace ChemSW.Nbt.Schema
             }
 
             _WorkerThread = new WorkerThread( _ConfigurationPath );
+
+
             _WorkerThread.OnStatusChange += new WorkerThread.StatusMessageHandler( _WorkerThread_OnStatusChange );
             _WorkerThread.OnImportPhaseChange += new WorkerThread.ImportPhaseMessageHandler( _WorkerThread_OnImportPhaseChange );
 
@@ -56,23 +61,60 @@ namespace ChemSW.Nbt.Schema
             InitSchemaSelectBox.DisplayMember = WorkerThread.ColName_Display;
             InitSchemaSelectBox.SelectedIndexChanged += new EventHandler( SchemaSelectBox_SelectedIndexChanged );
 
-            ExportSchemaSelectBox.DataSource = _DbInstances;
-            ExportSchemaSelectBox.ValueMember = WorkerThread.ColName_AccessId;
-            ExportSchemaSelectBox.DisplayMember = WorkerThread.ColName_Display;
-            ExportSchemaSelectBox.SelectedIndexChanged += new EventHandler( SchemaSelectBox_SelectedIndexChanged );
-
             ErrorLabel.Text = string.Empty;
-            _initNodeTypes();
 
             //_DataFilesTable = _WorkerThread.getDataFilesTable();
             //DataFileSelectBox.DataSource = _DataFilesTable;
             //DataFileSelectBox.ValueMember = WorkerThread.ColName_DataFileFullName;
             //DataFileSelectBox.DisplayMember = WorkerThread.ColName_DataFileName;
 
-            ConfirmCheckbox.CheckedChanged += new EventHandler( ConfirmCheckbox_CheckedChanged );
+            //ConfirmCheckbox.CheckedChanged += new EventHandler( ConfirmCheckbox_CheckedChanged );
 
             _initModeComboBox();
-        }
+
+
+            _CswNbtImportStatus = _WorkerThread.getThreadSafeImportStatus();
+
+            _refreshStatus();
+
+
+        }//ctor
+
+
+        private void _refreshStatus()
+        {
+
+            PhaseTextBox.Text = string.Empty;
+            PhaseTextBox.AppendText( "Last Status: " + _CswNbtImportStatus.CompletedPhaseDescription );
+
+
+            if( _CswNbtImportStatus.CompletedProcessPhase == ImportProcessPhase.NothingDoneYet )
+            {
+                ImportButton.Text = ImportButtonState.Start.ToString();
+                ImportButton.Enabled = true;
+
+            }
+            else
+            {
+                PhaseTextBox.Text = string.Empty;
+                PhaseTextBox.AppendText( "Last Status: " + _CswNbtImportStatus.CompletedPhaseDescription );
+
+                if( _CswNbtImportStatus.CompletedProcessPhase != ImportProcessPhase.Completed )
+                {
+                    ImportButton.Text = ImportButtonState.Resume.ToString();
+                    ImportButton.Enabled = true;
+
+                }
+                else
+                {
+                    ImportButton.Text = ImportButtonState.Start.ToString();
+                    ImportButton.Enabled = false;
+                }
+            }
+
+        }//_refreshStatus() 
+
+
 
 
         void _WorkerThread_OnImportPhaseChange( CswNbtImportStatus CswNbtImportStatus )
@@ -105,14 +147,14 @@ namespace ChemSW.Nbt.Schema
 
         private void _AddImportStatus( CswNbtImportStatus CswNbtImportStatus )
         {
-            if( _LastProcessPhase != CswNbtImportStatus.ProcessPhase )
+            if( _LastProcessPhase != CswNbtImportStatus.TargetProcessPhase )
             {
                 _WorkerThread_OnStatusChange( PhaseTextBox.Text );
-                _LastProcessPhase = CswNbtImportStatus.ProcessPhase;
+                _LastProcessPhase = CswNbtImportStatus.TargetProcessPhase;
             }
 
 
-            if( CswNbtImportStatus.PhaseTypes.Monolithic == CswNbtImportStatus.PhaseType )
+            if( PhaseTypes.Monolithic == CswNbtImportStatus.PhaseType )
             {
                 if( null == _ProgressTimer )
                 {
@@ -128,7 +170,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             PhaseTextBox.Clear();
-            PhaseTextBox.AppendText( "Current Phase " + ": " + CswNbtImportStatus.PhaseDescription + "\r\n" );
+            PhaseTextBox.AppendText( "Current Phase " + ": " + CswNbtImportStatus.TargetPhaseDescription + "\r\n" );
             PhaseTextBox.AppendText( "Status " + ": " + CswNbtImportStatus.PhaseStatus + "\r\n" );
         }
 
@@ -153,94 +195,101 @@ namespace ChemSW.Nbt.Schema
             string AccessId = ( (ComboBox) sender ).SelectedValue.ToString();
             _WorkerThread.AccessId = AccessId;
             ErrorLabel.Text = string.Empty;
-            _initNodeTypes();
 
             InitSchemaSelectBox.SelectedValue = AccessId;
-            ExportSchemaSelectBox.SelectedValue = AccessId;
+
+            _refreshStatus();
         } // InitializerForm()
 
 
-        public void _initNodeTypes()
-        {
-            NodeTypeCheckedListBox.Items.Clear();
-            ICollection NodeTypesCol = _WorkerThread.getNodeTypes();
-            foreach( CswNbtMetaDataNodeType NodeType in NodeTypesCol )
-            {
-                NodeTypeCheckedListBox.Items.Add( NodeType, true );
-            }
-        }
+
 
 
         void ConfirmCheckbox_CheckedChanged( object sender, EventArgs e )
         {
-            ImportButton.Enabled = ConfirmCheckbox.Checked;
+            //ImportButton.Enabled = ConfirmCheckbox.Checked;
         } // ConfirmCheckbox_CheckedChanged()
 
+
+
+        //TODO: Add "nuke current state" button to start over from scratch
+        //      Take away checkbox and add confirm diaglogue button.
+
+        private enum ImportButtonState { Start, Stop, Resume }
         private void ImportButton_Click( object sender, EventArgs e )
         {
-            if( _DataFilePath != string.Empty )
-            {
-                ImportButton.Enabled = false;
-                ImportInProgressLabel.Visible = true;
-                ImportInProgressLabel.Refresh();
 
-                //string DataFileName = DataFileSelectBox.SelectedText;
-                //bool ClearExisting = ClearExistingCheckBox.Checked;
-                ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
-
-                WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
-                ImportHandler.BeginInvoke( _DataFilePath, Mode, new AsyncCallback( ImportButton_Callback ), null );
-            }
-            else
+            if( ImportButtonState.Start.ToString() == ImportButton.Text )
             {
-                _AddStatusMsg( "Error: You must choose a file to import" );
+
+                if( MessageBox.Show( "Do not proceed unless you have made a viable backup of schema  " + InitSchemaSelectBox.Text + "; this action is irreversable. Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+                {
+
+                    if( _DataFilePath != string.Empty )
+                    {
+                        //ImportButton.Enabled = false;
+                        ImportButton.Text = ImportButtonState.Stop.ToString();
+
+
+                        //ImportInProgressLabel.Visible = true;
+                        //ImportInProgressLabel.Refresh();
+
+                        //string DataFileName = DataFileSelectBox.SelectedText;
+                        //bool ClearExisting = ClearExistingCheckBox.Checked;
+                        ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
+
+                        WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
+                        ImportHandler.BeginInvoke( _DataFilePath, Mode, false, new AsyncCallback( ImportButton_Callback ), null );
+                    }
+                    else
+                    {
+                        _AddStatusMsg( "Error: You must choose a file to import" );
+                    }
+                }//if the user took responsibility for his actions
             }
+            else if( ImportButtonState.Resume.ToString() == ImportButton.Text )
+            {
+                if( MessageBox.Show( "You are about resume importing data into schema " + InitSchemaSelectBox.Text + "; it would not hurt to make another schema backup, separate from the original backup. What you are about to do is irreversable!!! Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+                {
+                    ImportButton.Text = ImportButtonState.Stop.ToString();
+                    ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
+
+                    WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
+                    ImportHandler.BeginInvoke( _DataFilePath, Mode, true, new AsyncCallback( ImportButton_Callback ), null );
+                }
+            }
+            else if( ImportButtonState.Stop.ToString() == ImportButton.Text )
+            {
+                if( _CswNbtImportStatus.CompletedProcessPhase >= ImportProcessPhase.PopulatingTempTableProps )
+                {
+
+                    if( MessageBox.Show( "You are about to halt the import process. If you remove or alter the temporary import tables, you will be unable to resume later", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+                    {
+                        _WorkerThread.stopImport();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show( "You cannot halt the import process until after temporary tables are created", "Do Import", MessageBoxButtons.OK );
+                }
+            }//if-else-if on importbutton state
+
+
         } // ImportButton_Click()
 
         private void ImportButton_Callback( IAsyncResult Result )
         {
-            ImportInProgressLabel.BeginInvoke( new MethodInvoker( _EndImport ), null );
+            //ImportInProgressLabel.BeginInvoke( new MethodInvoker( _EndImport ), null );
         }
         private void _EndImport()
         {
-            ImportInProgressLabel.Visible = false;
-            ImportInProgressLabel.Refresh();
-            ImportCompleteLabel.Visible = true;
-            ImportCompleteLabel.Refresh();
-            ConfirmCheckbox.Checked = false;
+            //ImportInProgressLabel.Visible = false;
+            //ImportInProgressLabel.Refresh();
+            //ImportCompleteLabel.Visible = true;
+            //ImportCompleteLabel.Refresh();
+            //ConfirmCheckbox.Checked = false;
         } // ImportButton_Callback
 
-        private void ExportButton_Click( object sender, EventArgs e )
-        {
-            if( saveFileDialog1.ShowDialog() == DialogResult.OK )
-            {
-                ExportButton.Enabled = false;
-                InProgressLabel.Visible = true;
-                InProgressLabel.Refresh();
-
-                // BZ 10345
-                Collection<CswNbtMetaDataNodeType> SelectedNodeTypes = new Collection<CswNbtMetaDataNodeType>();
-                foreach( CswNbtMetaDataNodeType SelectedNodeType in NodeTypeCheckedListBox.CheckedItems )
-                    SelectedNodeTypes.Add( SelectedNodeType );
-
-                WorkerThread.ExportHandler ExportHandler = new WorkerThread.ExportHandler( _WorkerThread.DoExport );
-                ExportHandler.BeginInvoke( saveFileDialog1.FileName, SelectedNodeTypes, ExportViews.Checked, ExportNodes.Checked,
-                                           new AsyncCallback( ExportButton_Callback ), null );
-            }
-
-        } // ExportButton_Click()
-
-        private void ExportButton_Callback( IAsyncResult Result )
-        {
-            InProgressLabel.BeginInvoke( new MethodInvoker( _EndExport ), null );
-        }
-        private void _EndExport()
-        {
-            ExportButton.Enabled = true;
-            InProgressLabel.Visible = false;
-            ExportCompletedLabel.Visible = true;
-            ExportCompletedLabel.Refresh();
-        } // ImportButton_Callback
 
         //private void ClearExistingCheckBox_CheckedChanged( object sender, EventArgs e )
         //{
@@ -250,17 +299,7 @@ namespace ChemSW.Nbt.Schema
         //        ClearExistingCheckBox.ForeColor = Color.Black;
         //} // ClearExistingCheckBox_CheckedChanged()
 
-        private void CheckAllButton_Click( object sender, EventArgs e )
-        {
-            for( Int32 i = 0; i < NodeTypeCheckedListBox.Items.Count; i++ )
-                NodeTypeCheckedListBox.SetItemChecked( i, true );
-        }
 
-        private void UnCheckAllButton_Click( object sender, EventArgs e )
-        {
-            for( Int32 i = 0; i < NodeTypeCheckedListBox.Items.Count; i++ )
-                NodeTypeCheckedListBox.SetItemChecked( i, false );
-        }
 
         private void DataFileLink_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e )
         {
@@ -300,6 +339,21 @@ namespace ChemSW.Nbt.Schema
                     ModeComboBox.SelectedItem = ImportMode.Duplicate.ToString();
                     break;
             }
+        }
+
+        private void btn_ResetSchema_Click( object sender, EventArgs e )
+        {
+            if( MessageBox.Show( "Remove temporary import tables and reset the import status on schema " + InitSchemaSelectBox.Text + "; Proceed? ", "Reset", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+            {
+                _WorkerThread.reset();
+                _refreshStatus();
+            }
+
+        }
+
+        private void btn_Types_Click( object sender, EventArgs e )
+        {
+            _WorkerThread.writeNodeTypesAsXml(); 
         } // FileTypeSelectBox_OnChange
 
 

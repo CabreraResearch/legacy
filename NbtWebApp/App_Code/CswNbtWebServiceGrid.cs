@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
@@ -19,19 +18,29 @@ namespace ChemSW.Nbt.WebServices
         private CswGridData _CswGridData;
         private bool _CanEdit = true;
         private bool _CanDelete = true;
-        private readonly Int32 _GridPageSize = 50;
-
+        private wsTreeOfView _WsTreeOfView;
+        private readonly string _IdPrefix;
+        private Collection<CswViewBuilderProp> _PropsInGrid = null;
         public enum GridReturnType
         {
             Xml,
             Json
         };
 
-        public CswNbtWebServiceGrid( CswNbtResources CswNbtResources, CswNbtView View, CswNbtNodeKey ParentNodeKey )
+        public CswNbtWebServiceGrid( CswNbtResources CswNbtResources, CswNbtView View, CswNbtNodeKey ParentNodeKey = null, string IdPrefix = "grid_" )
         {
             _CswNbtResources = CswNbtResources;
             _View = View;
+
+            if( _View.ViewMode != NbtViewRenderingMode.Grid )
+            {
+                throw new CswDniException( ErrorType.Error, "Cannot create a grid using a view type of " + _View.ViewMode, "Cannot create a grid view if the view is not a grid." );
+            }
+
             _ParentNodeKey = ParentNodeKey;
+            _IdPrefix = IdPrefix;
+            _WsTreeOfView = new wsTreeOfView( _CswNbtResources, _View, _IdPrefix );
+
             Collection<CswNbtViewRelationship> FirstLevelRelationships = new Collection<CswNbtViewRelationship>();
             if( null != _ParentNodeKey && _View.Visibility == NbtViewVisibility.Property )
             {
@@ -43,11 +52,6 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 FirstLevelRelationships = _View.Root.ChildRelationships;
-            }
-            Int32 PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
-            if( Int32.MinValue != PageSize )
-            {
-                _GridPageSize = PageSize;
             }
             // Case 21778
             // Maybe do this in Permit someday; however, the meaning of Edit and Delete is very specific in this context:
@@ -84,14 +88,23 @@ namespace ChemSW.Nbt.WebServices
             }
 
             _CswGridData = new CswGridData( _CswNbtResources );
+            _PropsInGrid = new Collection<CswViewBuilderProp>();
+            _getGridProperties( _View.Root.ChildRelationships, _PropsInGrid );
         } //ctor
 
-        public JObject getGrid( bool ShowEmpty = false, bool ForReporting = false )
+        public JObject runGrid( bool IncludeInQuickLaunch )
         {
-            return _getGridOuterJson( ShowEmpty, ForReporting );
+            _WsTreeOfView.deleteTreeFromCache();
+
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+
+            _WsTreeOfView.saveTreeToCache( Tree );
+            _View.SaveToCache( IncludeInQuickLaunch );
+
+            return _getGridOuterJson();
         } // getGrid()
 
-        private void _getGridProperties( Collection<CswNbtViewRelationship> ChildRelationships, ref Collection<CswViewBuilderProp> Ret )
+        private void _getGridProperties( Collection<CswNbtViewRelationship> ChildRelationships, Collection<CswViewBuilderProp> Ret )
         {
             CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
             Collection<CswNbtViewProperty> PropsAtThisLevel = new Collection<CswNbtViewProperty>();
@@ -136,39 +149,23 @@ namespace ChemSW.Nbt.WebServices
             //Now recurse, damn you.
             if( NextChildRelationships.Count > 0 )
             {
-                _getGridProperties( NextChildRelationships, ref Ret );
+                _getGridProperties( NextChildRelationships, Ret );
             }
         }
 
         /// <summary>
         /// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
         /// </summary>
-        private JObject _getGridOuterJson( bool ShowEmpty = false, bool ForReporting = false )
+        private JObject _getGridOuterJson()
         {
             JObject RetObj = new JObject();
             RetObj["nodetypeid"] = _View.ViewMetaDataTypeId;
 
-            Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
-            _getGridProperties( _View.Root.ChildRelationships, ref PropsInGrid );
-
-            //JArray GridRows = null;
-            //if( ForReporting )
-            //{
-            JArray GridRows = new JArray();
-            string MoreNodeKey = string.Empty;
-            IEnumerable<XElement> GridNodes = _getGridXElements( ref MoreNodeKey );
-            var HasResults = ( false == ShowEmpty && null != GridNodes && GridNodes.Count() > 0 );
-            if( HasResults )
-            {
-                GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
-            }
-            //}
             JArray GridOrderedColumnDisplayNames = _makeHiddenColumnNames();
             _AddIconColumnName( ref GridOrderedColumnDisplayNames );
-            _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, PropsInGrid );   //_getGridColumnNamesJson( ColumnCollection );
-            //_makeHiddenColumnNames( ref GridOrderedColumnDisplayNames );
+            _CswGridData.getGridColumnNamesJson( GridOrderedColumnDisplayNames, _PropsInGrid );
 
-            JArray GridColumnDefinitions = _CswGridData.getGridColumnDefinitionJson( PropsInGrid );
+            JArray GridColumnDefinitions = _CswGridData.getGridColumnDefinitionJson( _PropsInGrid );
             _AddIconColumnDefinition( ref GridColumnDefinitions );
             _AddHiddenColumnDefiniton( GridColumnDefinitions );
 
@@ -180,42 +177,82 @@ namespace ChemSW.Nbt.WebServices
             _CswGridData.CanEdit = _CanEdit;
             _CswGridData.CanDelete = _CanDelete;
 
-            _CswGridData.GridSortName = "nodeid";
+            // Sort
+            CswNbtViewProperty SortProp = _View.getSortProperty();
+            if( SortProp != null )
+            {
+                _CswGridData.GridSortName = SortProp.NodeTypeProp.PropName.ToUpperInvariant().Replace( " ", "_" );
+            }
+            else
+            {
+                _CswGridData.GridSortName = "nodename";
+            }
 
-            RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, GridRows );
+            RetObj["jqGridOpt"] = _CswGridData.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, null );
 
             return RetObj;
         } // getGridOuterJson()
 
         /// <summary>
-        /// Returns a JSON Object of Column Names, Definition and Rows representing a jqGrid-consumable JSON object
+        /// Returns a JSON Object of all Grid Rows
         /// </summary>
-        public JObject getGridRows( bool ShowEmpty )
+        public JObject getAllGridRows( bool IsReport )
+        {
+            ICswNbtTree Tree = _WsTreeOfView.getTreeFromCache();
+            Int32 StartingNode = 0;
+            Int32 EndingNode = Tree.getChildNodeCount();
+            if( _View.Visibility == NbtViewVisibility.Property )
+            {
+                Tree.goToNthChild( 0 );
+                EndingNode = Tree.getChildNodeCount();
+            }
+            return _getGridRows( Tree, 1, _CswGridData.PageSize, StartingNode, EndingNode, IsReport );
+        } // getGridOuterJson()
+
+        /// <summary>
+        /// Returns a JSON Object of Grid Rows for a specific page
+        /// </summary>
+        public JObject getGridRowsByPage( Int32 PageNumber, Int32 PageSize, bool IsReport )
+        {
+            ICswNbtTree Tree = _WsTreeOfView.getTreeFromCache();
+            Int32 StartingNode = PageSize * PageNumber;
+            Int32 EndingNode = PageSize * ( PageNumber + 1 );
+            return _getGridRows( Tree, PageNumber, PageSize, StartingNode, EndingNode, IsReport );
+        } // getGridOuterJson()
+
+        private JObject _getGridRows( ICswNbtTree Tree, Int32 PageNumber, Int32 PageSize, Int32 StartingNode, Int32 EndingNode, bool IsReport )
         {
             JObject RetObj = new JObject();
-
-            string MoreNodeKey = string.Empty;
-            IEnumerable<XElement> GridNodes = _getGridXElements( ref MoreNodeKey );
-
-            Collection<CswViewBuilderProp> PropsInGrid = new Collection<CswViewBuilderProp>();
-            _getGridProperties( _View.Root.ChildRelationships, ref PropsInGrid );
-
             JArray GridRows = new JArray();
-            Int32 RowCount = GridNodes.Count();
-            var HasResults = ( false == ShowEmpty && null != GridNodes && RowCount > 0 );
-            if( HasResults )
+
+            Int32 NodeCount = Tree.getChildNodeCount();
+            if( NodeCount > 0 )
             {
-                GridRows = _CswGridData.getGridRowsJSON( GridNodes, PropsInGrid ); //_getGridRowsJson( GridNodes );
+                for( Int32 C = StartingNode; ( C < EndingNode || IsReport ) && C < NodeCount; C += 1 )
+                {
+                    Tree.goToNthChild( C );
+
+                    GridRows.Add( _getGridRow( Tree, _PropsInGrid ) );
+
+                    Tree.goToParentNode();
+                }
             }
 
-            //RetObj["moreNodeKey"] = wsTools.ToSafeJavaScriptParam( MoreNodeKey );
-            Double Pages = RowCount / _GridPageSize;
-            RetObj["total"] = Math.Round( Pages, 0 ).ToString();
-            RetObj["page"] = "1";
-            RetObj["records"] = RowCount.ToString();
+            Int32 PageCount;
+            if( IsReport )
+            {
+                PageCount = 1;
+            }
+            else
+            {
+                PageCount = ( ( NodeCount + PageSize - 1 ) / PageSize );
+            }
+            RetObj["total"] = PageCount;
+            RetObj["page"] = PageNumber + 1;
+            RetObj["records"] = NodeCount;
             RetObj["rows"] = GridRows;
             return RetObj;
-        } // getGridOuterJson()
+        }
 
         /// <summary>
         /// Adds required columns for edit/add/delete functions
@@ -223,8 +260,7 @@ namespace ChemSW.Nbt.WebServices
         private JArray _makeHiddenColumnNames()
         {
             JArray Ret = new JArray();
-            Ret.Add( "nodepk" );
-            Ret.Add( "nodeid" ); //better to use int for jqGrid key
+            Ret.Add( "jqgridid" ); //better to use int for jqGrid key
             Ret.Add( "cswnbtnodekey" ); //we'll want CswNbtNodeKey for add/edit/delete
             Ret.Add( "nodename" );
             return Ret;
@@ -251,15 +287,9 @@ namespace ChemSW.Nbt.WebServices
 
             //better to use int for jqGrid key
             ColumnDefArray.AddFirst( new JObject(
-                                new JProperty( "name", "nodeid" ),
-                                new JProperty( "index", "nodeid" ),
+                                new JProperty( "name", "jqgridid" ),
+                                new JProperty( "index", "jqgridid" ),
                                 new JProperty( "key", true ),
-                                new JProperty( "hidden", true )
-                                ) );
-
-            ColumnDefArray.AddFirst( new JObject(
-                                new JProperty( "name", "nodepk" ),
-                                new JProperty( "index", "nodepk" ),
                                 new JProperty( "hidden", true )
                                 ) );
 
@@ -268,132 +298,90 @@ namespace ChemSW.Nbt.WebServices
         private void _AddIconColumnDefinition( ref JArray ColumnDefArray )
         {
             ColumnDefArray.AddFirst( new JObject(
-                                new JProperty( "name", "icon" ),
-                                new JProperty( "index", "icon" ),
+                                new JProperty( "name", "Icon" ),
+                                new JProperty( "index", "Icon" ),
                                 new JProperty( "formatter", "image" ),
-                                new JProperty( CswGridData.JqGridJsonOptions.width.ToString(), "30" )
+                                new JProperty( CswGridData.JqGridJsonOptions.width.ToString(), "40" )
                                 ) );
         }
         private void _AddIconColumnName( ref JArray ColumnNameArray )
         {
-            ColumnNameArray.Add( "icon" );
+            ColumnNameArray.Add( "Icon" );
         }
 
-        /// <summary>
-        /// Returns an XElement of the View's Tree
-        /// </summary>
-        private XElement _getGridTree( CswNbtNodeKey ParentKey )
+        private JObject _getGridRow( ICswNbtTree Tree, Collection<CswViewBuilderProp> PropsInGrid )
         {
-            XElement RawXml = null;
-            ICswNbtTree Tree;
-            if( _ParentNodeKey != null && _View.Visibility == NbtViewVisibility.Property ) // This is a Grid Property
+            JObject ThisNodeObj = new JObject();
+
+            CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
+            string ThisNodeName = Tree.getNodeNameForCurrentPosition();
+            CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
+            string ThisNodeIcon = ThisNodeType.IconFileName;
+            string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
+            string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
+            bool ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
+
+            ThisNodeObj["jqgridid"] = ThisNodeId;
+            ThisNodeObj["cswnbtnodekey"] = ThisNodeKeyString;
+            ThisNodeObj["nodename"] = ThisNodeName;
+            string Icon = "<img src=\'";
+            if( ThisNodeLocked )
             {
-                ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
-                ( _View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeKey.NodeId );
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref _ParentNodeKey, null, Int32.MinValue, true, false, null, false );
+                Icon += "Images/quota/lock.gif\' title=\'Quota exceeded";
             }
-            // Case 24004
-            //else if( _ParentNodeKey != null && _ParentNodeKey.NodeSpecies == NodeSpecies.More )
-            //{
-            //    Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref ParentKey, null, _GridPageSize, false, false, _ParentNodeKey, false );
-            //}
             else
             {
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, true, false, false );
+                Icon += "Images/icons/" + ThisNodeIcon;
             }
-            Int32 NodeCount = Tree.getChildNodeCount();
-            if( NodeCount > 0 )
-            {
-                RawXml = XElement.Parse( Tree.getRawTreeXml() );
-            }
-            //else jqGrid effectively handles 'else' with emptyrecords property
+            Icon += "\'/>";
+            ThisNodeObj["Icon"] = Icon;
 
-            return RawXml;
-        } // _getGridTree()
+            foreach( XElement Prop in Tree.getChildNodePropsOfNode() )
+            {
+                _addSafeCellContent( _CswNbtResources, Prop, ThisNodeObj, PropsInGrid );
+            }
+
+            return ThisNodeObj;
+
+        } // _treeNodeJObject()
+
 
         /// <summary>
-        /// Transforms the Tree XML into an XDocument
+        /// Translates property value into human readable text.
+        /// Currently only handles Logical fieldtype.
         /// </summary>
-        private IEnumerable<XElement> _getGridXElements( ref string MoreNodeKey )
+        private static void _addSafeCellContent( CswNbtResources CswNbtResources, XElement DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
         {
-            var RawXml = _getGridTree( null );
-            IEnumerable<XElement> NodesInGrid = null;
-            // case 21535: tree is not null
-            if( null != RawXml )
+            if( null != DirtyElement )
             {
-                // case 21463: this collection should represent the XElements of distinct rows
-                // root == <NbtTree />, 
-                // first child <NbtNode /> == View, 
-                // second child <NbtNode /> is first CswNbtNode
-                IEnumerable<XElement> GridRows = RawXml.Elements( "NbtNode" ).Elements( "NbtNode" );
-                //case 21627
-                if( _View.Visibility == NbtViewVisibility.Property )
+                string CleanPropName = DirtyElement.Attribute( "name" ).Value.Trim().ToLower().Replace( " ", "_" );
+                string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
+                string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
+                string PropId = DirtyElement.Attribute( "nodetypepropid" ).Value;
+                CswNbtMetaDataNodeTypeProp Prop = CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
+
+                var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
+                string CleanValue;
+                switch( PropFieldType )
                 {
-                    //Grid Properties have an additional level of depth
-                    GridRows = GridRows.Elements( "NbtNode" );
+                    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                        CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
+                        break;
+                    default:
+                        CleanValue = DirtyValue;
+                        break;
+                }
+                foreach( CswViewBuilderProp VbProp in PropsInGrid )
+                {
+                    if( Prop != null && VbProp.PropNameUnique == CleanPropName && VbProp.AssociatedPropIds.Contains( Prop.FirstPropVersionId ) )
+                    {
+                        CleanPropName += "_" + VbProp.MetaDataPropId;
+                    }
                 }
 
-                NodesInGrid = ( from Element in GridRows
-                                where Element.Attribute( "nodeid" ).Value != "0" && //has a valid nodeid
-                                      Element.DescendantNodesAndSelf().OfType<XElement>().Elements( "NbtNodeProp" ).Count() > 0 //has at least one property
-                                select Element );
-
-                foreach( XElement XNode in GridRows.Where( XNode => XNode.HasAttributes &&
-                                                                    null != XNode.Attribute( "nodename" ) &&
-                    //Remember to use NodeSpecies here
-                                                                    XNode.Attribute( "nodename" ).Value == "More..." &&
-                                                                    null != XNode.Attribute( "key" ) ) )
-                {
-                    MoreNodeKey = XNode.Attribute( "key" ).Value;
-                }
+                ParentObj[CleanPropName] = CleanValue;
             }
-            return NodesInGrid;
-        } // getGridXElements()
-
-        #region Archived Valid Grid Json
-
-        //        private static JObject getDebugGridJson()
-        //        {
-        //            String JsonString = @"{""viewname"": ""Debug View""
-        //								,""viewwnodeidth"": ""150""
-        //								,""columnnames"": [""nodeid"",""Equipment"",""Assembly""]
-        //								,""columndefinition"": [{""name"": ""nodeid"", ""index"": ""nodeid"", ""key"":""true"", ""sortable"":""true"", ""sorttype"":""int""}
-        //													  ,{""name"": ""Equipment"", ""index"": ""Equipment"", ""sortable"":""true"", ""search"":""true""}
-        //												      ,{""name"": ""Assembly"", ""index"": ""Assembly"", ""sortable"":""true"", ""search"":""true""}]
-        //								,""grid"": {""total"": ""1""
-        //										   ,""page"": ""1""
-        //										   ,""records"": ""2""
-        //										   ,""rows"": [{""nodeid"":""0"", ""Equipment"":""big box"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""1"", ""Equipment"":""small box 1"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""2"", ""Equipment"":""small box 2"", ""Assembly"":""ancient collection of boxes""}
-        //													  ,{""nodeid"":""3"", ""Equipment"":""small box 3"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""4"", ""Equipment"":""small box 4"", ""Assembly"":""dazzling collection of boxes""}
-        //													  ,{""nodeid"":""5"", ""Equipment"":""small box 5"", ""Assembly"":""old collection of boxes""}
-        //													  ,{""nodeid"":""6"", ""Equipment"":""small box 6"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""7"", ""Equipment"":""small box 7"", ""Assembly"":""dazzling collection of boxes""}
-        //													  ,{""nodeid"":""8"", ""Equipment"":""small box 8"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""9"", ""Equipment"":""small box 9"", ""Assembly"":""old collection of boxes""}
-        //													  ,{""nodeid"":""10"", ""Equipment"":""small box 10"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""11"", ""Equipment"":""small box 11"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""12"", ""Equipment"":""small box 12"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""13"", ""Equipment"":""small box 13"", ""Assembly"":""big collection of boxes""}
-        //													  ,{""nodeid"":""14"", ""Equipment"":""small box 14"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""15"", ""Equipment"":""small box 15"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""16"", ""Equipment"":""small box 16"", ""Assembly"":""medium collection of boxes""}
-        //													  ,{""nodeid"":""17"", ""Equipment"":""small box 17"", ""Assembly"":""collection of boxes""}
-        //													  ,{""nodeid"":""18"", ""Equipment"":""small box 18"", ""Assembly"":""dazzling collection of boxes""}
-        //													  ,{""nodeid"":""19"", ""Equipment"":""small box 19"", ""Assembly"":""dazzling collection of boxes""}
-        //													  ,{""nodeid"":""20"", ""Equipment"":""small box 20"", ""Assembly"":""dazzling collection of boxes""}
-        //													  ,{""nodeid"":""21"", ""Equipment"":""small box 21"", ""Assembly"":""new collection of boxes""}
-        //													  ,{""nodeid"":""22"", ""Equipment"":""small box 22"", ""Assembly"":""new collection of boxes""}
-        //													  ]
-        //											}
-        //								}";
-        //            JObject DebugGrid = JObject.Parse( JsonString );
-        //            return DebugGrid;
-        //        }
-        #endregion Archived Valid Grid Json
-
+        }
     } // class CswNbtWebServiceGrid
 
 } // namespace ChemSW.Nbt.WebServices

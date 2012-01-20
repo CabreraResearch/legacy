@@ -1,4 +1,4 @@
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../globals/CswMobileTools.js" />
 /// <reference path="../globals/CswMobileEnums.js" />
 /// <reference path="../../globals/CswEnums.js" />
@@ -60,7 +60,7 @@ function CswMobileFieldTypeList(ftDef) {
                                 values: values,
                                 cssclass: CswMobileCssClasses.select.name
                             })
-                .CswAttrXml({ 'data-native-menu': 'false' });
+                .CswAttrNonDom({ 'data-native-menu': 'false' });
     })(); //ctor
         
     function applyFieldTypeLogicToContent($control) {

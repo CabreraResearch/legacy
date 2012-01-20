@@ -1,11 +1,11 @@
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../controls/CswGrid.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-        
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";        
     var pluginName = 'CswAuditHistoryGrid';
 
     var methods = {
@@ -29,7 +29,8 @@
             CswAjaxJson({
                 url: o.Url,
                 data: {
-                    NodeId: o.nodeid, 
+                    NodeId: tryParseString(o.nodeid), 
+                    NbtNodeKey: tryParseString(o.cswnbtnodekey),
                     JustDateColumn: o.JustDateColumn 
                 },
                 success: function(gridJson) {
@@ -51,9 +52,9 @@
                         gridOpts: {
                             height: 180,
                             rowNum: 10,
-                            onSelectRow: function(rowid) {
-                                if (!preventSelectTrigger && false === isNullOrEmpty(rowid)) {
-                                    var cellVal = grid.getValueForColumn('CHANGEDATE', rowid);
+                            onSelectRow: function(selRowid) {
+                                if (!preventSelectTrigger && false === isNullOrEmpty(selRowid)) {
+                                    var cellVal = grid.getValueForColumn('CHANGEDATE', selRowid);
                                     if (isFunction(o.onSelectRow)) {
                                         o.onSelectRow(cellVal);
                                     }
@@ -75,20 +76,20 @@
                     }
                     else {
                         g.optNavEdit = {
-                            editfunc: function(rowid) {
-                                if (false === isNullOrEmpty(rowid)) {
-                                    var cellVal = grid.getValueForColumn('CHANGEDATE', rowid);
+                            editfunc: function(selRowid) {
+                                if (false === isNullOrEmpty(selRowid)) {
+                                    var cellVal = grid.getValueForColumn('CHANGEDATE', selRowid);
                                     if (isFunction(o.onEditRow)) {
                                         o.onEditRow(cellVal);
                                     }
                                 } else {
-                                    alert('Please select a row to edit');
+                                    $.CswDialog('AlertDialog', 'Please select a row to edit');
                                 }
                             }
                         };
                     }
                     
-                    var grid = new CswGrid(g, $auditGrid);
+                    var grid = CswGrid(g, $auditGrid);
                     grid.$gridPager.css({ width: '100%', height: '20px' });
                     
                     // set selected row by date
@@ -115,7 +116,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

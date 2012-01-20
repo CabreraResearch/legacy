@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Sched
         public bool doesItemRunNow()
         {
 
-            return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrance, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
+            return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
 
         }//doesItemRunNow()
 
@@ -274,8 +274,8 @@ namespace ChemSW.Nbt.Sched
                 {
 
                     _CompletionMessage = "CswScheduleLogicNbtGenEmailRpt::GetUpdatedItems() exception: " + Exception.Message;
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
                     _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
+                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch
 

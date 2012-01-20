@@ -1,11 +1,11 @@
-﻿/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+﻿/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-	
-	var PluginName = 'CswNodePreview';
+(function ($) { /// <param name="$" type="jQuery" />
+	"use strict";
+	var pluginName = 'CswNodePreview';
 
 	var methods = {
 		'open': function(options) 
@@ -41,24 +41,26 @@
 										cswnbtnodekeys: [ o.cswnbtnodekey ],
 										EditMode: EditMode.Preview.name,
 										ShowAsReport: false,
-										onInitFinish: function() {
-											
-											// Make sure preview div is within the window
-											windowX = $(window).width() - 10;
-											windowY = $(window).height() - 10;
-											var divwidth = $div.width();
-											var divheight = $div.height();
-											var X = o.eventArg.pageX;
-											var Y = o.eventArg.pageY;
+										onInitFinish: function(AtLeastOneProp) {
+											if(AtLeastOneProp)
+											{
+												// Make sure preview div is within the window
+												windowX = $(window).width() - 10;
+												windowY = $(window).height() - 10;
+												var divwidth = $div.width();
+												var divheight = $div.height();
+												var X = o.eventArg.pageX;
+												var Y = o.eventArg.pageY;
 
-											if(X + divwidth > windowX) X = windowX - divwidth;
-											if(Y + divheight > windowY) Y = windowY - divheight;
+												if(X + divwidth > windowX) X = windowX - divwidth;
+												if(Y + divheight > windowY) Y = windowY - divheight;
 
-											$div.css({ 
-													top: Y + 'px',
-													left: X + 'px'
-											});
-											$div.show();
+												$div.css({ 
+														top: Y + 'px',
+														left: X + 'px'
+												});
+												$div.show();
+											}
 										}
 									});
 					}, o.delay);
@@ -88,7 +90,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
 		}    
   
 	};
@@ -100,7 +102,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
 		}    
   
 	};

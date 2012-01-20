@@ -1,4 +1,4 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="CswMobileClientDb.js" />
 /// <reference path="../globals/CswMobileTools.js" />
 /// <reference path="../globals/CswMobileEnums.js" />
@@ -8,15 +8,15 @@
 
 //#region CswMobileClientDbResources
 
-CswMobileClientDbResources.inheritsFrom(CswMobileClientDb);
-
 function CswMobileClientDbResources() {
+    "use strict";
+    
     /// <summary>
     ///   Resources class to encapsulate common Mobile persistence methods.
     ///   Inherits from CswMobileClientDb.
     /// </summary>
     /// <returns type="CswMobileClientDbResources">Instance of itself. Must instance with 'new' keyword.</returns>
-    CswMobileClientDb.call(this);
+    var mobileClientDb = CswMobileClientDb();
    
     function handleStorageRequest(key, value, mobileStorage) {
         var ret = '';
@@ -30,53 +30,53 @@ function CswMobileClientDbResources() {
         return ret;
     }
     
-    this.currentViewId = function (viewId) {
+    mobileClientDb.currentViewId = function (viewId) {
         /// <summary>
         ///   Persists the current NBT ViewId. 
         /// </summary>
         /// <param name="viewId" type="String">Optional. An NBT ViewId</param>
         /// <returns type="String">Stored viewid</returns>
-        return handleStorageRequest('currentviewid', viewId, this);
+        return handleStorageRequest('currentviewid', viewId, mobileClientDb);
     };
     
-    this.currentNodeId = function (nodeId) {
+    mobileClientDb.currentNodeId = function (nodeId) {
         /// <summary>
         ///   Persists the current NBT NodeId. 
         /// </summary>
         /// <param name="nodeId" type="String">Optional. An NBT NodeId</param>
         /// <returns type="String">Stored nodeid</returns>
-        return handleStorageRequest('currentnodeid', nodeId, this);
+        return handleStorageRequest('currentnodeid', nodeId, mobileClientDb);
     };
     
-    this.currentTabId = function (tabId) {
+    mobileClientDb.currentTabId = function (tabId) {
         /// <summary>
         ///   Persists the current NBT TabId. 
         /// </summary>
         /// <param name="tabId" type="String">Optional. An NBT NodeId</param>
         /// <returns type="String">Stored nodeid</returns>
-        return handleStorageRequest('currenttabid', tabId, this);
+        return handleStorageRequest('currenttabid', tabId, mobileClientDb);
     };
     
-    this.username = function (username) {
+    mobileClientDb.username = function (username) {
         /// <summary>
         ///   Persists the current NBT user's username. 
         /// </summary>
         /// <param name="username" type="String">Optional. An NBT username</param>
         /// <returns type="String">Stored username</returns>
-        return handleStorageRequest('username', username, this);
+        return handleStorageRequest('username', username, mobileClientDb);
     };
 
-    this.customerid = function (customerid)
+    mobileClientDb.customerid = function (customerid)
     {
         /// <summary>
         ///   Persists the current NBT user's customerid. 
         /// </summary>
         /// <param name="customerid" type="String">Optional. An NBT customerid</param>
         /// <returns type="String">Stored userid</returns>
-        return handleStorageRequest('customerid', customerid, this);
+        return handleStorageRequest('customerid', customerid, mobileClientDb);
     };
 
-    this.sessionid = function (sessionid)
+    mobileClientDb.sessionid = function (sessionid)
     {
         /// <summary>
         ///   Persists the current NBT user's sessionid. 
@@ -85,17 +85,17 @@ function CswMobileClientDbResources() {
         /// <returns type="String">Stored sessionid</returns>
         var sessionId = $.CswCookie('get', CswCookieName.SessionId);
         if (false === isNullOrEmpty(sessionId)) {
-            sessionId = handleStorageRequest('sessionid', sessionid, this);
+            sessionId = handleStorageRequest('sessionid', sessionid, mobileClientDb);
         }
         return sessionId;
     };
 
-    this.lastSyncSuccess = function () {
+    mobileClientDb.lastSyncSuccess = function () {
         /// <summary>
         ///   Stores the time of the last successful sync as now. 
         /// </summary>
         /// <returns type="String">Now, as human-readable string</returns>
-        var mobileStorage = this;
+        var mobileStorage = mobileClientDb;
         var now = new Date();
         var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
         mobileStorage.setItem('lastSyncSuccess', ret);
@@ -104,12 +104,12 @@ function CswMobileClientDbResources() {
         return ret;
     };
     
-    this.lastSyncAttempt = function () {
+    mobileClientDb.lastSyncAttempt = function () {
         /// <summary>
         ///   Stores the time of the last attempted (failed) sync as now. 
         /// </summary>
         /// <returns type="String">Now, as human-readable string</returns>
-        var mobileStorage = this;
+        var mobileStorage = mobileClientDb;
         var now = new Date();
         var ret = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
         mobileStorage.setItem('lastSyncAttempt', ret);
@@ -117,35 +117,35 @@ function CswMobileClientDbResources() {
         return ret;
     };
     
-    this.lastSyncTime = this.getItem('lastSyncTime');
+    mobileClientDb.lastSyncTime = mobileClientDb.getItem('lastSyncTime');
     
-    this.addUnsyncedChange = function () {
+    mobileClientDb.addUnsyncedChange = function () {
         /// <summary>
         ///   Increments the number of pending, unsyced changes 
         /// </summary>
         /// <returns type="String">Number of unsynced changes</returns>
-        var mobileStorage = this;
+        var mobileStorage = mobileClientDb;
         var unSyncedChanges = tryParseNumber(mobileStorage.getItem('unSyncedChanges'), '0');
         unSyncedChanges++;
-        this.setItem('unSyncedChanges', unSyncedChanges);
+        mobileClientDb.setItem('unSyncedChanges', unSyncedChanges);
         return unSyncedChanges;
     };
     
-    this.clearUnsyncedChanges = function () {
+    mobileClientDb.clearUnsyncedChanges = function () {
         /// <summary>
         ///   Resets number of unsynced changes to 0. 
         /// </summary>
         /// <returns type="void"></returns>
-        var mobileStorage = this;
+        var mobileStorage = mobileClientDb;
         mobileStorage.setItem('unSyncedChanges', '0');
     };
     
-    this.stayOffline = function (value) {
+    mobileClientDb.stayOffline = function (value) {
         /// <summary>
         ///   If the user chooses to 'Go Offline', set this preference in storage. 
         /// </summary>
         /// <returns type="Boolean">True if the user elected to go offline.</returns>
-        var mobileStorage = this;
+        var mobileStorage = mobileClientDb;
         if (arguments.length === 1)
         {
             mobileStorage.setItem('stayOffline', isTrue(value));
@@ -154,12 +154,12 @@ function CswMobileClientDbResources() {
         return ret;
     };
 
-    this.amOnline = function (isOnline, loginFailure) {
+    mobileClientDb.amOnline = function (isOnline, loginFailure) {
         /// <summary>Evaluates or sets the user's online status.</summary>
         /// <param name="isOnline" type="Boolean">True if online.</param>
         /// <param name="loginFailure" type="String">Text of login failure, if any.</param>
         /// <returns type="Boolean">True if online. False otherwise.</returns>
-        var mobileStorage = this;
+        var mobileStorage = mobileClientDb;
         if (arguments.length > 0) {
             mobileStorage.setItem('online', isTrue(isOnline) );
         } 
@@ -170,33 +170,34 @@ function CswMobileClientDbResources() {
         return ret;
     };
 
-    this.onlineStatus = function () {
+    mobileClientDb.onlineStatus = function () {
         /// <summary>Evaluates the user's online status for display.</summary>
         /// <returns type="String">'Online' or 'Offline'</returns>
-        var mobileStorage = this;
+        var mobileStorage = mobileClientDb;
         var ret = (!mobileStorage.amOnline() || mobileStorage.stayOffline()) ? 'Offline' : 'Online';
         return ret;
     };
     
-    this.checkNoPendingChanges = function () {
-        var mobileStorage = this;
+    mobileClientDb.checkNoPendingChanges = function () {
+        var mobileStorage = mobileClientDb;
+        /* remember: confirm is globally blocking call */
         var pendingChanges = (!mobileStorage.pendingChanges() ||
             confirm('You have pending unsaved changes.  These changes will be lost.  Continue?'));
         return pendingChanges;
     };
 
-    this.pendingChanges = function () {
-        var mobileStorage = this;
+    mobileClientDb.pendingChanges = function () {
+        var mobileStorage = mobileClientDb;
         var changes = new Number(tryParseString(mobileStorage.getItem('unSyncedChanges'), '0'));
         return (changes > 0);
     };
 
-    this.forceContentRefresh = function(value) {
+    mobileClientDb.forceContentRefresh = function(value) {
         /// <summary>
         ///   On 'Refresh' force a call to the relevant webservice. 
         /// </summary>
         /// <returns type="Boolean">True if the very next request should specify a server refresh.</returns>
-        var mobileStorage = this,
+        var mobileStorage = mobileClientDb,
             ret;
         if (arguments.length === 1) {
             mobileStorage.setItem('forceContentRefresh', isTrue(value));
@@ -204,7 +205,8 @@ function CswMobileClientDbResources() {
         ret = isTrue(mobileStorage.getItem('forceContentRefresh'));
         return ret;
     };
-
+    
+    return mobileClientDb;
 }
 
 //#endregion CswMobileClientDbResourcesz

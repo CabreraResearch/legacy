@@ -1,4 +1,4 @@
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../controls/ICswMobileWebControls.js" />
 /// <reference path="../controls/CswMobilePageHeader.js" />
 /// <reference path="../controls/CswMobilePageFooter.js" />
@@ -9,7 +9,6 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../main/tools/CswArray.js" />
 /// <reference path="../globals/CswMobileTools.js" />
 /// <reference path="../globals/CswMobileEnums.js" />
 

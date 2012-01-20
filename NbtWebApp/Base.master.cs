@@ -2,15 +2,15 @@
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
-using ChemSW.Exceptions;
-using ChemSW.Security;
+using ChemSW.Config;
 //using ChemSW.Nbt.TableEvents;
 using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Session;
-using ChemSW.Config;
-using ChemSW.Nbt.Statistics;
 using ChemSW.CswWebControls;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Statistics;
+using ChemSW.Security;
+using ChemSW.Session;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.WebPages
             if( CswSessionManager.IsAuthenticated() )
             {
                 ReturnVal = true;
-                CswSessionManager.updateLastAccess(false);
+                CswSessionManager.updateLastAccess( false );
             }
 
             return ( ReturnVal );
@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.WebPages
                 //bz # 9278
 
 
-                CswSessionResourcesNbt = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, string.Empty, SetupMode.NbtWeb );
+                CswSessionResourcesNbt = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, Context, string.Empty, SetupMode.NbtWeb );
 
 
                 CswNbtResources = CswSessionResourcesNbt.CswNbtResources;
@@ -151,7 +151,7 @@ namespace ChemSW.Nbt.WebPages
 
                 _CswSessionManager = CswSessionResourcesNbt.CswSessionManager;
                 _CswNbtStatisticsEvents = CswSessionResourcesNbt.CswNbtStatisticsEvents;
-				CswNbtResources.beginTransaction();
+                CswNbtResources.beginTransaction();
 
                 // Setup statistics events
                 OnEndOfPageLifeCycle += new EndOfPageLifeCycleHandler( _CswNbtStatisticsEvents.OnEndOfPageLifeCycle );
@@ -250,8 +250,8 @@ namespace ChemSW.Nbt.WebPages
                     OnEndOfPageLifeCycle( CswNbtResources.Timer );
 
                 ReleaseAll();
-				//if( CswSessionResourcesNbt != null )
-				//    CswSessionResourcesNbt.setCache();
+                //if( CswSessionResourcesNbt != null )
+                //    CswSessionResourcesNbt.setCache();
 
                 base.OnUnload( e );
             }
@@ -284,11 +284,11 @@ namespace ChemSW.Nbt.WebPages
 
         public void GoHome()
         {
-            Redirect( "Welcome.aspx" );
+            Redirect( "Main.html" );
         }
         public void GoMain()
         {
-            Redirect( "Main.aspx" );
+            Redirect( "Main.html" );
         }
 
         #endregion Page Lifecycle

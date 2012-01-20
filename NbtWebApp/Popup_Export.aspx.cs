@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.WebPages
 
             base.CreateChildControls();
         }
-        
+
         protected void ExportButton_Click( object sender, EventArgs e )
         {
             try
@@ -118,21 +118,21 @@ namespace ChemSW.Nbt.WebPages
                 }
                 else if( Request.QueryString["sessionviewid"] != null )
                 {
-					CswNbtView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( Request.QueryString["sessionviewid"] ) );
+                    CswNbtView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( Request.QueryString["sessionviewid"] ) );
                 }
-				else if( Request.QueryString["nodeid"] != null &&
-						 Request.QueryString["propid"] != null &&
-						 CswTools.IsInteger( Request.QueryString["propid"].ToString() ) )
-				{
-					CswNbtMetaDataNodeTypeProp MetaDataProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( Request.QueryString["propid"].ToString() ) );
-					CswPrimaryKey NodeId = new CswPrimaryKey();
-					NodeId.FromString( Request.QueryString["nodeid"] );
-					CswNbtNode Node = Master.CswNbtResources.Nodes[NodeId];
-					CswNbtNodePropWrapper Prop = Node.Properties[MetaDataProp];
-					CswNbtView = Prop.AsGrid.View;
-					CswNbtView.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
-				}				
-				else
+                else if( Request.QueryString["nodeid"] != null &&
+                         Request.QueryString["propid"] != null &&
+                         CswTools.IsInteger( Request.QueryString["propid"].ToString() ) )
+                {
+                    CswNbtMetaDataNodeTypeProp MetaDataProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( Request.QueryString["propid"].ToString() ) );
+                    CswPrimaryKey NodeId = new CswPrimaryKey();
+                    NodeId.FromString( Request.QueryString["nodeid"] );
+                    CswNbtNode Node = Master.CswNbtResources.Nodes[NodeId];
+                    CswNbtNodePropWrapper Prop = Node.Properties[MetaDataProp];
+                    CswNbtView = Prop.AsGrid.View;
+                    CswNbtView.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
+                }
+                else
                 {
                     CswNbtView = View;
                 }
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.WebPages
                 else if( Format == CswMainMenu.ExportOutputFormat.MobileXML )
                 {
                     bool PropsInViewOnly = ( PropsInViewOnlyRadio.Checked );
-                    CswNbtImportExport Exporter = new CswNbtImportExport( Master.CswNbtResources );
+                    CswNbtImportExport Exporter = new CswNbtImportExport( Master.CswNbtResources, new CswNbtImportStatus( Master.CswNbtResources ) );
                     XmlDocument ExportXmlDoc = null;
                     if( CswNbtView != null )
                         ExportXmlDoc = Exporter.ExportView( CswNbtView, true, PropsInViewOnly );
@@ -218,12 +218,12 @@ namespace ChemSW.Nbt.WebPages
                         CswNbtNodePropWrapper Prop = Node.Properties[MetaDataProp];
                         CswNbtView GridView = Prop.AsGrid.View;
                         _NodesGrid.View = GridView;
-						_NodesGrid.ParentNodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, string.Empty, NodeId, Node.NodeSpecies, Node.NodeTypeId, Node.ObjectClassId, string.Empty, string.Empty );
+                        _NodesGrid.ParentNodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, string.Empty, NodeId, Node.NodeSpecies, Node.NodeTypeId, Node.ObjectClassId, string.Empty, string.Empty );
                     }
                     else if( Request.QueryString["sessionviewid"] != null )
                     {
                         //CswNbtView AView = (CswNbtView) CswNbtViewFactory.restoreView( Master.CswNbtResources, CswConvert.ToInt32( Request.QueryString["viewid"].ToString() ) );
-						CswNbtView AView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( Request.QueryString["sessionviewid"] ) );
+                        CswNbtView AView = Master.CswNbtResources.ViewSelect.getSessionView( new CswNbtSessionDataId( Request.QueryString["sessionviewid"] ) );
                         _NodesGrid.View = AView;
                     }
                     else
@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.WebPages
                             _NodesGrid.Grid.MasterTableView.ExportToWord();
                             break;
                         default:
-							throw new CswDniException( ErrorType.Error, "Unknown Export Format", "The export format " + Request.QueryString["format"].ToString() + " is not supported." );
+                            throw new CswDniException( ErrorType.Error, "Unknown Export Format", "The export format " + Request.QueryString["format"].ToString() + " is not supported." );
                     }
 
                 } // if( NbtViewRenderingMode.Grid == NbtViewRenderingMode )

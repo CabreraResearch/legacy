@@ -105,14 +105,22 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-				return makeImageUrl( JctNodePropId, NodeId, NodeTypePropId );
+                return makeImageUrl( JctNodePropId, NodeId, NodeTypePropId );
             }
         }
 
-		public static string makeImageUrl(Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId)
-		{
-			return "GetBlob.aspx?mode=image&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.PrimaryKey.ToString() + "&propid=" + NodeTypePropId.ToString();
-		}
+        public static string makeImageUrl( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId )
+        {
+            string NodeIdStr = string.Empty;
+            if( null != NodeId )
+            {
+                NodeIdStr = CswConvert.ToString( NodeId.PrimaryKey );
+            }
+            string PropIdStr = CswConvert.ToString( NodeTypePropId );
+            string JctNpId = CswConvert.ToString( JctNodePropId );
+
+            return "getBlob?mode=image&jctnodepropid=" + JctNpId + "&nodeid=" + NodeIdStr + "&propid=" + PropIdStr;
+        }
 
 
         public override void ToXml( XmlNode ParentNode )
@@ -157,8 +165,14 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
             ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
             ParentObject[CswNbtSubField.SubFieldName.Href.ToString().ToLower()] = ImageUrl;
-            ParentObject["width"] = Width.ToString();
-            ParentObject["height"] = Height.ToString();
+            if( 0 < Width )
+            {
+                ParentObject["width"] = Width.ToString();
+            }
+            if( 0 < Height )
+            {
+                ParentObject["height"] = Height.ToString();
+            }
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

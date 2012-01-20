@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Xml;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -8,7 +9,6 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using ChemSW.Audit;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -16,12 +16,13 @@ namespace ChemSW.Nbt.MetaData
     {
         public enum NodeTypePropAttributes
         {
+            unknown,
             append,
             auditlevel,
             datetoday,
             //display_col,
             //display_row,
-            //fieldtypeid, 
+            fieldtypeid,
             //fkvalue, 
             isbatchentry,
             //isfk, 
@@ -49,8 +50,8 @@ namespace ChemSW.Nbt.MetaData
             multi,
             nodeviewid,
             read_only,
-            display_col_add,
-            display_row_add,
+            //display_col_add,
+            //display_row_add,
             //setvalonadd,
             numberminvalue,
             numbermaxvalue,
@@ -69,13 +70,12 @@ namespace ChemSW.Nbt.MetaData
             isquicksearch,
             extended,
             hideinmobile,
-            mobilesearch,
-            Unknown
+            mobilesearch
         }
 
         public static NodeTypePropAttributes getNodeTypePropAttributesFromString( string AttributeName )
         {
-            NodeTypePropAttributes ReturnVal = NodeTypePropAttributes.Unknown;
+            NodeTypePropAttributes ReturnVal = NodeTypePropAttributes.unknown;
             AttributeName = AttributeName.Replace( "_", "" );
             if( Enum.IsDefined( typeof( NodeTypePropAttributes ), AttributeName ) )
             {
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.MetaData
         public static String getNodeTypePropAttributesAsString( NodeTypePropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if( Attribute != NodeTypePropAttributes.Unknown )
+            if( Attribute != NodeTypePropAttributes.unknown )
                 ReturnVal = Attribute.ToString().Replace( "_", "" );
             return ( ReturnVal );
         }
@@ -106,9 +106,9 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( LayoutType, this );
         }
-        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeTab Tab, Int32 DisplayRow, Int32 DisplayColumn )
+        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue )
         {
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, this, Tab, DisplayRow, DisplayColumn );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, NodeType.NodeTypeId, PropId, TabId, DisplayRow, DisplayColumn );
         }
         public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp )
         {
@@ -117,6 +117,12 @@ namespace ChemSW.Nbt.MetaData
         public void removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
         {
             _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( LayoutType, this );
+        }
+
+        public void clearCachedLayouts()
+        {
+            _EditLayout = null;
+            _AddLayout = null;
         }
 
         private CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout _EditLayout = null;
@@ -290,8 +296,9 @@ namespace ChemSW.Nbt.MetaData
                 if( UseNumbering && QuestionNo != Int32.MinValue )
                 {
                     name += "Q";
-                    if( EditLayout.Tab.SectionNo != Int32.MinValue )
-                        name += EditLayout.Tab.SectionNo.ToString() + ".";
+                    CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+                    if( Tab.SectionNo != Int32.MinValue )
+                        name += Tab.SectionNo.ToString() + ".";
                     name += QuestionNo.ToString();
                     if( SubQuestionNo != Int32.MinValue )
                         name += "." + SubQuestionNo.ToString();
@@ -350,7 +357,7 @@ namespace ChemSW.Nbt.MetaData
                     if( this.DefaultValue.Empty )
                     {
                         //_NodeTypePropRow["setvalonadd"] = CswConvert.ToDbVal( true );
-                        updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, null, Int32.MinValue, Int32.MinValue );
+                        updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, Int32.MinValue, Int32.MinValue, Int32.MinValue );
                     }
                 }
             }
@@ -447,24 +454,24 @@ namespace ChemSW.Nbt.MetaData
             CswNbtMetaDataNodeTypeTab Tab = null;
             if( Prop.EditLayout != null )
             {
-                Tab = Prop.EditLayout.Tab;
+                //Tab = Prop.EditLayout.Tab;
+                Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( Prop.EditLayout.TabId );
             }
             var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
                         _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.NodeType, false, Tab, User, Node, Prop ) );
             return ret;
         }
 
-        /// <summary>
-        /// Set the FK for relationship props
-        /// </summary>
-        /// <param name="inFKType">Either NodeTypeId or ObjectClassId</param>
-        /// <param name="inFKValue">FK Value</param>
-        /// <param name="inValuePropType">Optional (for Property Reference)</param>
-        /// <param name="inValuePropId">Optional  (for Property Reference)</param>
-        public void SetFK( string inFKType, Int32 inFKValue, string inValuePropType, Int32 inValuePropId )
+        private void _doSetFk( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
-            SetFK( true, inFKType, inFKValue, inValuePropType, inValuePropId );
+            FKType = inFKType;
+            FKValue = inFKValue;
+            ValuePropId = inValuePropId;
+            ValuePropType = inValuePropType;
+            IsFK = Int32.MinValue != FKValue;
         }
+
+        public delegate void doSetFk( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue );
 
         /// <summary>
         /// Set the FK for relationship props
@@ -474,84 +481,10 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="inFKValue">FK Value</param>
         /// <param name="inValuePropType">Optional (for Property Reference)</param>
         /// <param name="inValuePropId">Optional  (for Property Reference)</param>
-        public void SetFK( bool inIsFk, string inFKType, Int32 inFKValue, string inValuePropType, Int32 inValuePropId )
+        public void SetFK( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
-            IsFK = inIsFk;
-            if( FKType != inFKType || FKValue != inFKValue )
-            {
-                if( FKType != string.Empty && FKValue != Int32.MinValue )
-                {
-                    // For PropertyReference - Clear these and ignore submitted values if the relationship changes
-                    // TODO: This is bad for schema update scripts!
-                    ValuePropId = Int32.MinValue;
-                    ValuePropType = string.Empty;
-                }
-                else
-                {
-                    ValuePropId = inValuePropId;
-                    ValuePropType = inValuePropType;
-                }
-
-                // BZ 8051 - Validate that the new FKType and FKValue match the object class's restriction
-                if( ObjectClassProp != null && ObjectClassProp.FKType != string.Empty )
-                {
-                    if( inFKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
-                    {
-                        CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( inFKValue );
-                        if( TargetNodeType.ObjectClass.ObjectClassId != ObjectClassProp.FKValue )
-                            throw new CswDniException( ErrorType.Error, "Invalid Target", "The property is bound to an object class property, and so its FKValue must be consistent" );
-
-                    }
-                    else if( inFKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
-                    {
-                        CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( inFKValue );
-                        if( TargetObjectClass.ObjectClassId != ObjectClassProp.FKValue )
-                            throw new CswDniException( ErrorType.Error, "Invalid Target", "The property is bound to an object class property, and so its FKValue must be consistent" );
-                    }
-                }
-
-                // For Relationships - Reset the View if the target changed
-                if( this.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
-                {
-                    CswNbtView RelationshipView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( ViewId );
-                    RelationshipView.Root.ChildRelationships.Clear();
-                    if( inFKType != string.Empty && inFKValue != Int32.MinValue )
-                    {
-                        // This is ugly...see BZ 8042
-                        if( inFKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
-                        {
-                            RelationshipView = _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( inFKValue ).CreateDefaultView();
-                            RelationshipView.ViewId = ViewId;
-                            RelationshipView.Visibility = NbtViewVisibility.Property;
-                            RelationshipView.ViewMode = NbtViewRenderingMode.List;
-                            RelationshipView.ViewName = this.PropName;
-                        }
-                        else if( inFKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
-                        {
-                            RelationshipView = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( inFKValue ).CreateDefaultView();
-                            RelationshipView.ViewId = ViewId;
-                            RelationshipView.Visibility = NbtViewVisibility.Property;
-                            RelationshipView.ViewMode = NbtViewRenderingMode.List;
-                            RelationshipView.ViewName = this.PropName;
-                        }
-                        //CswNbtViewRelationship DefaultRelationship = RelationshipView.MakeEmptyViewRelationship();
-                        //if( inFKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
-                        //    DefaultRelationship.setSecond( _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( inFKValue ) );
-                        //else if( inFKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
-                        //    DefaultRelationship.setSecond( _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( inFKValue ) );
-                        //RelationshipView.Root.addChildRelationship( DefaultRelationship );
-                    }
-                    RelationshipView.save();
-                }
-
-                FKType = inFKType;
-                FKValue = inFKValue;
-            }
-            else
-            {
-                ValuePropId = inValuePropId;
-                ValuePropType = inValuePropType;
-            }
+            doSetFk setFk = _doSetFk;
+            FieldTypeRule.setFk( setFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
         public string FKType
@@ -1285,7 +1218,8 @@ namespace ChemSW.Nbt.MetaData
             PropNode.Attributes.Append( NameAttr );
 
             XmlAttribute OrderAttr = XmlDoc.CreateAttribute( _Attribute_order );
-            OrderAttr.Value = EditLayout.Tab.GetPropDisplayOrder( this ).ToString();
+            CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+            OrderAttr.Value = Tab.GetPropDisplayOrder( this ).ToString();
             PropNode.Attributes.Append( OrderAttr );
 
             //XmlAttribute DisplayRowAttr = XmlDoc.CreateAttribute( _Attribute_displayrow );

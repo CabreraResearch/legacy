@@ -31,6 +31,7 @@ namespace ChemSW.Nbt
         public string MD5Seed { get { return "52978"; } }
         public enum ConfigurationVariables
         {
+            unknown,
             /// <summary>
             /// 1 = auditing is on; 0 = auditing is off
             /// </summary>
@@ -123,7 +124,7 @@ namespace ChemSW.Nbt
         public CswNbtPermit Permit = null;
         private ICswNbtTreeFactory _CswNbtTreeFactory;
         private bool _ExcludeDisabledModules = true;
-		public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
+        public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
 
         /// <summary>
         /// Provides a means to get lists of views
@@ -159,15 +160,16 @@ namespace ChemSW.Nbt
         /// </summary>
         public string _DebugID;
 
-		public AppType AppType { get { return _CswResources.AppType; } }
-		public bool IsDeleteModeLogical { get { return _CswResources.IsDeleteModeLogical(); } }
+        public AppType AppType { get { return _CswResources.AppType; } }
+        public bool IsDeleteModeLogical { get { return _CswResources.IsDeleteModeLogical(); } }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswNbtResources( AppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical )
+        public CswNbtResources( AppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache )
         {
-            _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical );
+
+            _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical, CswSuperCycleCache );
 
             _DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
             logMessage( "CswNbtResources CREATED GUID: " + _DebugID );
@@ -179,6 +181,8 @@ namespace ChemSW.Nbt
             Permit = new CswNbtPermit( this );
         }
 
+        public ICswSuperCycleCache CswSuperCycleCache { get { return ( _CswResources.CswSuperCycleCache ); } }
+
         public PooledConnectionState PooledConnectionState { set { _CswResources.PooledConnectionState = value; } }
 
         /// <summary>
@@ -189,7 +193,7 @@ namespace ChemSW.Nbt
             get
             {
                 if( _ActionCollection == null )
-                    _ActionCollection = new CswNbtActionCollection( this );
+                    _ActionCollection = new CswNbtActionCollection( this, _ExcludeDisabledModules );
                 return _ActionCollection;
             }
         }
@@ -391,10 +395,6 @@ namespace ChemSW.Nbt
             /// </summary>
             CISPro,
             /// <summary>
-            /// Fire Extinguisher Inspection
-            /// </summary>
-            FE,
-            /// <summary>
             /// Mobile
             /// </summary>
             Mobile,
@@ -434,7 +434,8 @@ namespace ChemSW.Nbt
                 {
                     try
                     {
-                        CswNbtModule Module = (CswNbtModule) Enum.Parse( typeof( CswNbtModule ), ModuleRow["name"].ToString(), true );
+                        CswNbtModule Module;
+                        Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
                         ModulesHt[Module] = ( ModuleRow["enabled"].ToString() == "1" );
                     }
                     catch( Exception ex )
@@ -521,7 +522,7 @@ namespace ChemSW.Nbt
             _clear();
             initModules();
             //_initNotifications( true );
-            _ActionCollection = new CswNbtActionCollection( this );
+            _ActionCollection = new CswNbtActionCollection( this, _ExcludeDisabledModules );
         }
         /// <summary>
         /// Stores the datetime that this class was cached
@@ -740,35 +741,21 @@ namespace ChemSW.Nbt
                 foreach( Int32 UserId in SubscribedUserIds )
                 {
                     CswNbtNode UserNode = this.Nodes[new CswPrimaryKey( "nodes", UserId )];
-                    CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) CswNbtNodeCaster.AsUser( UserNode );
+                    CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
                     string EmailAddy = UserNodeAsUser.Email.Trim();
-                    if( EmailAddy != string.Empty )
+                    CswMailMessage MailMessage = CswMail.makeMailMessage( Subject, Message, EmailAddy, UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName );
+                    if( null != MailMessage )
                     {
-                        CswMailMessage MailMessage = new CswMailMessage();
-                        MailMessage.Recipient = EmailAddy;
-                        MailMessage.RecipientDisplayName = UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName;
-                        MailMessage.Subject = Subject;
-                        MailMessage.Content = Message;
                         MailMessages.Add( MailMessage );
                     }
                 } // foreach( Int32 UserId in SubscribedUserIds )
 
                 if( MailMessages.Count > 0 )
                 {
-                    SendNotificationHandler Sender = new SendNotificationHandler( sendNotifications );
-                    Sender.BeginInvoke( MailMessages, null, null );
+                    sendEmailNotification( MailMessages );
                 }
             } // if( _Notifs.ContainsKey( NKey ) )
         } // runNotification()
-
-        public delegate void SendNotificationHandler( Collection<CswMailMessage> MailMessages );
-        public void sendNotifications( Collection<CswMailMessage> MailMessages )
-        {
-            foreach( CswMailMessage MailMessage in MailMessages )
-            {
-                CswMail.send( MailMessage );
-            }
-        }
 
         #endregion Notifications
 
@@ -818,6 +805,16 @@ namespace ChemSW.Nbt
 
         public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswResources.execStoredProc( StoredProcName, Params ); }
 
+        public bool getNextSchemaDumpFileInfo( string DirectoryId, ref string PhysicalDirectoryPath, ref string NameOfCurrentDump, ref string StatusMsg )
+        {
+            return ( _CswResources.getNextSchemaDumpFileInfo( DirectoryId, ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) );
+        }
+
+        public bool takeADump( string DirectoryId, ref string DumpFileName, ref string StatusMessage )
+        {
+            return ( _CswResources.takeADump( DirectoryId, ref DumpFileName, ref StatusMessage ) );
+        }
+
 
         /// <summary>
         /// Allows you to get a value from one of the setup variables (located in CswSetupVbls.xml)
@@ -834,15 +831,19 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Reading of values located in the configuration_variables table
         /// </summary>
-        public string getConfigVariableValue( string VariableName ) { return _CswResources.getConfigVariableValue( VariableName ); }
-        /// <summary>
-        /// Setting of values located in the configuration_variables table
-        /// </summary>
-        public void setConfigVariableValue( string VariableName, string VariableValue ) { _CswResources.setConfigVariableValue( VariableName, VariableValue ); }
-        /// <summary>
-        /// The collection of variables and values in the configuration_variables table
-        /// </summary>
-        public ICollection ConfigVariables { get { return _CswResources.ConfigVariables; } }
+        /// 
+        public CswConfigurationVariables ConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
+        //public string getConfigVariableValue( string VariableName ) { return _CswResources.getConfigVariableValue( VariableName ); }
+        ///// <summary>
+        ///// Setting of values located in the configuration_variables table
+        ///// </summary>
+        //public void setConfigVariableValue( string VariableName, string VariableValue ) { _CswResources.setConfigVariableValue( VariableName, VariableValue ); }
+        ///// <summary>
+        ///// The collection of variables and values in the configuration_variables table
+        ///// </summary>
+        ////public ICollection ConfigVariables { get { return _CswResources.ConfigVariables; } }
+        //public CswConfigurationVariables CswConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
+
         /// <summary>
         /// Information associated with the currently logged in user, Nbt-specific.
         /// </summary>
@@ -960,6 +961,10 @@ namespace ChemSW.Nbt
         /// Set the context information for this audit transaction
         /// </summary>
         public string AuditContext { set { _CswResources.AuditContext = value; } }
+
+        public void sendSystemAlertEmail( string Subject, string Message ) { _CswResources.sendSystemAlertEmail( Subject, Message ); }
+
+        public void sendEmailNotification( Collection<CswMailMessage> MailMessages ) { _CswResources.sendEmailNotification( MailMessages ); }
 
         #endregion Pass-thru to CswResources
 

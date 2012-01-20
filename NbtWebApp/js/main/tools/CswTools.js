@@ -1,11 +1,12 @@
-/// <reference path="../../../js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 
 // adapted from http://plugins.jquery.com/project/SafeEnter
 // by teedyay
-; (function ($) { /// <param name="$" type="jQuery" />
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     $.fn.listenForEnter = function ()
     {
         var $elements = this;
@@ -62,49 +63,8 @@
                     });
         });
     };
-    
-//    $.fn.replaceText = function( search, replace ) { /// <param name="$" type="jQuery" />
-//        /// <summary>
-//        ///   Replaces text or HTML in a jQuery object
-//        /// </summary>
-//        /// <param name="search" type="RegExp|String">A RegExp object or substring to be replaced</param>
-//        /// <param name="replace" type="String|Function">The String that replaces the substring received from the search argument, or a function to be invoked to create the new substring. </param>
-//        /// <returns type="jQuery>The initial jQuery collection of elementss</returns>
-//    
-//        var $ret = this;
-//        if ($ret instanceof jQuery)
-//        {
-//            $ret.each(function(){
-//                
-//                var $node = this;
-//                var oldVal;
-//                var newVal = '';
+  
 
-//                if( !isNullOrEmpty($node) )
-//                {
-//                    // 3 === Node.TEXT_NODE
-//                    if (!isNullOrEmpty( $node ) && $node.nodeType === 3 ) 
-//                    {
-//                        oldVal = tryParseString( $node.val(), '');
-//                        if( !isNullOrEmpty(oldVal) )
-//                        {
-//                            log(oldVal,true);
-//                            newVal = oldVal.replace( search, replace );
-//                            if ( newVal !== oldVal ) 
-//                            {
-//                                $node.replaceWith(newVal);
-//                            }
-//                        }
-//                    }
-//                }
-//                //recurse each $node
-//                $node.replaceText( search, replace );
-//            });
-
-//        }
-//        return $ret;
-//    
-//  };  
 
 })(jQuery);
 

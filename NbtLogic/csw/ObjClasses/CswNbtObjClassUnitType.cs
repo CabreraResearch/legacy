@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.TblDn;
+using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -36,9 +30,9 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode(bool OverrideUniqueValidation)
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
-			_CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
         public override void afterCreateNode()
@@ -46,9 +40,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-		public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool OverrideUniqueValidation )
         {
-			_CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -93,11 +87,16 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return (_CswNbtNode.Properties[BaseUnitPropertyName].AsRelationship);
+                return ( _CswNbtNode.Properties[BaseUnitPropertyName].AsRelationship );
             }
         }
-        #endregion
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
+
+        #endregion
 
 
     }//CswNbtObjClassUnitType

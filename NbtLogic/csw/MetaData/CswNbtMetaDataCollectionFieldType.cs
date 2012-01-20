@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
 using ChemSW.Exceptions;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -20,7 +17,7 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataCollectionFieldType( CswNbtMetaDataResources CswNbtMetaDataResources )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
-            
+
             _AllFieldTypes = new Collection<ICswNbtMetaDataObject>();
             _ById = new Hashtable();
             _ByType = new SortedList();
@@ -28,7 +25,7 @@ namespace ChemSW.Nbt.MetaData
 
         public Collection<ICswNbtMetaDataObject> All { get { return _AllFieldTypes; } }
 
-        public ICollection getFieldTypeIds() { return _ById.Keys; } 
+        public ICollection getFieldTypeIds() { return _ById.Keys; }
         public ICollection getFieldTypes() { return _ByType.Values; }
 
         public CswNbtMetaDataFieldType getFieldType( CswNbtMetaDataFieldType.NbtFieldType FieldType )
@@ -71,7 +68,7 @@ namespace ChemSW.Nbt.MetaData
                 _AllFieldTypes.Add( OldFieldType );
 
                 FieldType.Reassign( Row );
-                
+
                 RegisterExisting( OldFieldType );
                 RegisterExisting( FieldType );
             }
@@ -79,7 +76,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 FieldType = new CswNbtMetaDataFieldType( _CswNbtMetaDataResources, Row );
                 _AllFieldTypes.Add( FieldType );
-                
+
                 RegisterExisting( FieldType );
             }
             return FieldType;
@@ -88,17 +85,20 @@ namespace ChemSW.Nbt.MetaData
         public void RegisterExisting( ICswNbtMetaDataObject Object )
         {
             if( !( Object is CswNbtMetaDataFieldType ) )
+            {
                 throw new CswDniException( "CswNbtMetaDataCollectionFieldType.Register got an invalid Object as a parameter" );
+            }
             CswNbtMetaDataFieldType FieldType = Object as CswNbtMetaDataFieldType;
-
-            _ByType.Add( FieldType.FieldType, FieldType );
-            _ById.Add( FieldType.FieldTypeId, FieldType );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( FieldType.FieldTypeId, FieldType, _ById, "FieldType", FieldType.FieldTypeId, FieldType.FieldType.ToString() );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( FieldType.FieldType, FieldType, _ByType, "FieldType", FieldType.FieldTypeId, FieldType.FieldType.ToString() );
         }
 
         public void Deregister( ICswNbtMetaDataObject Object )
         {
             if( !( Object is CswNbtMetaDataFieldType ) )
+            {
                 throw new CswDniException( "CswNbtMetaDataCollectionFieldType.Register got an invalid Object as a parameter" );
+            }
             CswNbtMetaDataFieldType FieldType = Object as CswNbtMetaDataFieldType;
 
             _AllFieldTypes.Remove( FieldType );
@@ -109,7 +109,9 @@ namespace ChemSW.Nbt.MetaData
         public void Remove( ICswNbtMetaDataObject Object )
         {
             if( !( Object is CswNbtMetaDataFieldType ) )
+            {
                 throw new CswDniException( "CswNbtMetaDataCollectionFieldType.Register got an invalid Object as a parameter" );
+            }
             CswNbtMetaDataFieldType FieldType = Object as CswNbtMetaDataFieldType;
 
             _AllFieldTypes.Remove( FieldType );

@@ -1,14 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Text;
-using System.Data;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -21,6 +15,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string ClosedPropertyName { get { return "Closed"; } }
         public static string ReportedByPropertyName { get { return "Reported By"; } }
         public static string FailurePropertyName { get { return "Failure"; } }
+
         public static string PartsXValueName { get { return "Service"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -46,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             // BZ 10051 - Set the Date Opened to today
-			DateOpened.DateTimeValue = DateTime.Today;
+            DateOpened.DateTimeValue = DateTime.Now;
             ReportedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
             ReportedBy.CachedNodeName = _CswNbtResources.CurrentNbtUser.Username;
 
@@ -70,12 +65,12 @@ namespace ChemSW.Nbt.ObjClasses
         private void _checkClosed()
         {
             // BZ 10051 - If we're closing the Problem, set the Date Closed to today
-			if( Closed.Checked == Tristate.True && DateClosed.DateTimeValue == DateTime.MinValue )
-				DateClosed.DateTimeValue = DateTime.Today;
+            if( Closed.Checked == Tristate.True && DateClosed.DateTimeValue == DateTime.MinValue )
+                DateClosed.DateTimeValue = DateTime.Today;
 
             // BZ 10051 - If we're reopening the Problem, clear the Date Closed
-			if( Closed.Checked == Tristate.False && DateClosed.DateTimeValue != DateTime.MinValue )
-				DateClosed.DateTimeValue = DateTime.MinValue;
+            if( Closed.Checked == Tristate.False && DateClosed.DateTimeValue != DateTime.MinValue )
+                DateClosed.DateTimeValue = DateTime.MinValue;
         }
 
         public override void afterWriteNode()
@@ -117,9 +112,9 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
                         CswNbtObjClassEquipmentAssembly AssemblyNodeAsAssembly = CswNbtNodeCaster.AsEquipmentAssembly( EquipmentOrAssemblyNode );
-                        foreach( string YValue in AssemblyNodeAsAssembly.Parts.YValues )
+                        foreach( string YValue in AssemblyNodeAsAssembly.AssemblyParts.YValues )
                         {
-                            if( AssemblyNodeAsAssembly.Parts.CheckValue( CswNbtObjClassEquipmentAssembly.PartsXValueName, YValue ) )
+                            if( AssemblyNodeAsAssembly.AssemblyParts.CheckValue( CswNbtObjClassEquipmentAssembly.PartsXValueName, YValue ) )
                                 NewYValues.Add( YValue );
                         }
                         this.Parts.YValues = NewYValues;
@@ -135,6 +130,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
         #endregion
 
         #region Object class specific properties
@@ -178,14 +177,14 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-		public CswNbtNodePropDateTime DateOpened
+        public CswNbtNodePropDateTime DateOpened
         {
             get
             {
                 return ( _CswNbtNode.Properties[DateOpenedPropertyName].AsDateTime );
             }
         }
-		public CswNbtNodePropDateTime DateClosed
+        public CswNbtNodePropDateTime DateClosed
         {
             get
             {
@@ -201,8 +200,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion
-
-
 
     }//CswNbtObjClassProblem
 

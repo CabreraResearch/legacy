@@ -1,14 +1,32 @@
 /// <reference path="CswEnums.js" />
 /// <reference path="CswGlobalTools.js" />
+/// <reference path="../../Scripts/modernizr-2.0.6-development-only.js" />
+
 
 //#region String
 
 // for IE 8
-if (false === isFunction(String.prototype.trim)) {
-    String.prototype.trim = function () {
-        return this.replace(/^\s+|\s+$/g, '');
-    };
-}
+String.prototype.trim = String.prototype.trim || function() {
+    return this.replace( /^\s+|\s+$/g , '');
+};
+
+String.prototype.toUpperCaseFirstChar = String.prototype.toUpperCaseFirstChar || function() {
+    return this.substr(0, 1).toUpperCase() + this.substr(1);
+};
+
+String.prototype.toLowerCaseFirstChar = String.prototype.toLowerCaseFirstChar || function() {
+    return this.substr(0, 1).toLowerCase() + this.substr(1);
+};
+
+String.prototype.toUpperCaseEachWord = String.prototype.toUpperCaseEachWord || function(delim) {
+    delim = delim ? delim : ' ';
+    return this.split(delim).map(function(v) { return v.toUpperCaseFirstChar(); }).join(delim);
+};
+
+String.prototype.toLowerCaseEachWord = String.prototype.toLowerCaseEachWord || function(delim) {
+    delim = delim ? delim : ' ';
+    return this.split(delim).map(function(v) { return v.toLowerCaseFirstChar(); }).join(delim);
+};
 
 //#endregion String
 
@@ -61,7 +79,7 @@ if (!Array.prototype.forEach) {
 }
 
 if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function (searchElement /*, fromIndex */) {
+    Array.prototype.indexOf = function(searchElement /*, fromIndex */) {
         "use strict";
         if (this === void 0 || this === null) {
             throw new TypeError();
@@ -90,7 +108,7 @@ if (!Array.prototype.indexOf) {
             }
         }
         return -1;
-    }
+    };
 }
 
 //#endregion Array
@@ -117,3 +135,144 @@ Function.prototype.inheritsFrom = function(parentClassOrObject) {
 //#region Object
 
 //#endregion Object
+
+//#region Window
+
+//Case 24114: IE7 doesn't support web storage
+if (false === Modernizr.localstorage) {
+    window.localStorage = (function () {
+        var storage = {};
+        var keys = [];
+        var length = 0;
+        return {
+            getItem: function (sKey) {
+                var ret = null;
+                if (false === isNullOrEmpty(sKey) && contains(storage, sKey)) {
+                    ret = storage[sKey];
+                }
+                return ret;
+            },
+            key: function (nKeyId) {
+                var ret = null;
+                if (contains(keys, nKeyId)) {
+                    ret = keys[nKeyId];
+                }
+                return ret;
+            },
+            setItem: function (sKey, sValue) {
+                var ret = null;
+                if (false === isNullOrEmpty(sKey)) {
+                    if (false === contains(storage, sKey)) {
+                        keys.push(sKey);
+                        length += 1;
+                    }
+                    storage[sKey] = sValue;
+                }
+                return ret;
+            },
+            length: length,
+            removeItem: function (sKey) {
+                var ret = false;
+                if (false === isNullOrEmpty(sKey) && contains(storage, sKey)) {
+                    keys.splice(sKey, 1);
+                    length -= 1;
+                    delete storage[sKey];
+                    ret = true;
+                }
+                return ret;
+            },
+            clear: function () {
+                storage = {};
+                keys = [];
+                length = 0;
+                return true;
+            },
+            hasOwnProperty: function (sKey) {
+                return contains(storage, sKey);
+            }
+        };
+    } ());
+}
+if (false === Modernizr.sessionstorage) {
+    //https://developer.mozilla.org/en/DOM/Storage
+//    window.sessionStorage = {
+//        getItem: function (sKey) {
+//            if (isNullOrEmpty(sKey) || false === contains(this, sKey)) { return null; }
+//            return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+//        },
+//        key: function (nKeyId) { return unescape(document.cookie.replace(/\s*\=(?:.(?!;))*$/, "").split(/\s*\=(?:[^;](?!;))*[^;]?;\s*/)[nKeyId]); },
+//        setItem: function (sKey, sValue) {
+//            if (isNullOrEmpty(sKey)) { return; }
+//            var now = new Date();
+//            var soon = now.setTime(now.getTime() + 90000);
+//            var expires = "; expires=" + soon.toGMTString();
+//            document.cookie = escape(sKey) + "=" + escape(sValue) + expires + "; path=/";
+//            this.length = document.cookie.match(/\=/g).length;
+//        },
+//        length: 0,
+//        removeItem: function (sKey) {
+//            if (isNullOrEmpty(sKey) || false === contains(this, sKey)) { return; }
+//            var sExpDate = new Date();
+//            sExpDate.setDate(sExpDate.getDate() - 1);
+//            document.cookie = escape(sKey) + "=; expires=" + sExpDate.toGMTString() + "; path=/";
+//            this.length--;
+//        },
+//        clear: function () { },
+//        hasOwnProperty: function (sKey) { return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie); }
+//    };
+    //    window.sessionStorage.length = (document.cookie.match(/\=/g) || window.sessionStorage).length;
+    window.sessionStorage = (function () {
+        var storage = {};
+        var keys = [];
+        var length = 0;
+        return {
+            getItem: function (sKey) {
+                var ret = null;
+                if (false === isNullOrEmpty(sKey) && contains(storage, sKey)) {
+                    ret = storage[sKey];
+                }
+                return ret;
+            },
+            key: function (nKeyId) {
+                var ret = null;
+                if (contains(keys, nKeyId)) {
+                    ret = keys[nKeyId];
+                }
+                return ret;
+            },
+            setItem: function (sKey, sValue) {
+                var ret = null;
+                if (false === isNullOrEmpty(sKey)) {
+                    if (false === contains(storage, sKey)) {
+                        keys.push(sKey);
+                        length += 1;
+                    }
+                    storage[sKey] = sValue;
+                }
+                return ret;
+            },
+            length: length,
+            removeItem: function (sKey) {
+                var ret = false;
+                if (false === isNullOrEmpty(sKey) && contains(storage, sKey)) {
+                    keys.splice(sKey, 1);
+                    length -= 1;
+                    delete storage[sKey];
+                    ret = true;
+                }
+                return ret;
+            },
+            clear: function () {
+                storage = {};
+                keys = [];
+                length = 0;
+                return true;
+            },
+            hasOwnProperty: function (sKey) {
+                return contains(storage, sKey);
+            }
+        };
+    } ());
+}
+
+//#endregion Window

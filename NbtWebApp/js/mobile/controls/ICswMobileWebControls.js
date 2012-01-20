@@ -1,9 +1,10 @@
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 
 //#region ICswMobileWebControls
 
 function ICswMobileWebControls(controlDef, $parent) {
+    "use strict";
     /// <summary>
     ///   Faux interface class for Csw Client Web Controls.
     /// </summary>
@@ -46,7 +47,7 @@ function ICswMobileWebControls(controlDef, $parent) {
         if( _enabled ) {
             _$control.removeAttr('disabled');
         } else {
-            _$control.CswAttrXml('disabled','disabled');
+            _$control.CswAttrNonDom('disabled','disabled');
         }
         return _$control;
     };

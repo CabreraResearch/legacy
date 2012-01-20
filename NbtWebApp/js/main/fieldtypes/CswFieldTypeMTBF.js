@@ -2,10 +2,10 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 
-; (function ($) {
-        
+(function ($) {
+    "use strict";    
     var pluginName = 'CswFieldTypeMTBF';
 
     var methods = {
@@ -31,7 +31,7 @@
                             ButtonType: CswImageButton_ButtonType.Edit,
                             AlternateText: 'Edit',
                             'ID': o.ID,
-                            onClick: function ($ImageDiv) { 
+                            onClick: function () { 
                                 $edittable.show();
                             }
                         });
@@ -91,11 +91,14 @@
                 }, 
                 units: null
             };
-            var $StartDate = o.$propdiv.find('#' + o.ID + '_sd');
+            
+            var $StartDate = o.$propdiv.find('#' + o.ID + '_sd'),
+                dateVal;
+            
             if (false === isNullOrEmpty($StartDate)) {
                 dateVal = $StartDate.CswDateTimePicker('value', o.propData.readonly);
-                attributes.startdatetime.date = dateVal.Date;
-                attributes.startdatetime.time = dateVal.Time;
+                attributes.startdatetime.date = dateVal.date;
+                attributes.startdatetime.time = dateVal.time;
             }
 
             var $Units = o.$propdiv.find('#' + o.ID + '_units');
@@ -114,7 +117,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

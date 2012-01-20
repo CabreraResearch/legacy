@@ -18,12 +18,17 @@ namespace ChemSW.Nbt.Schema
 
         CswSchemaVersion LatestVersion { get; }
         CswSchemaVersion MinimumVersion { get; }
-		CswSchemaVersion CurrentVersion( CswNbtResources CswNbtResources );
-		CswSchemaVersion TargetVersion( CswNbtResources CswNbtResources );
-		CswSchemaUpdateDriver Next( CswNbtResources CswNbtResources );
+        CswSchemaVersion CurrentVersion( CswNbtResources CswNbtResources );
+        CswSchemaVersion TargetVersion( CswNbtResources CswNbtResources );
+        CswSchemaUpdateDriver Next( CswNbtResources CswNbtResources );
         CswSchemaUpdateDriver this[CswSchemaVersion CswSchemaVersion] { get; }
-		void stampSchemaVersion( CswNbtResources CswNbtResources, CswSchemaUpdateDriver CswSchemaUpdateDriver );
-		Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get; }
+        void stampSchemaVersion( CswNbtResources CswNbtResources, CswSchemaUpdateDriver CswSchemaUpdateDriver );
+        Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get; }
+
+        void addUniversalPreProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver );
+        void addReleaseDmlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver );
+        void addReleaseDdlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver );
+        void addUniversalPostProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver );
 
 
     }//CswScriptCollections

@@ -1,14 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Text;
-using System.Data;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -109,13 +103,13 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtObjClassEquipmentType TypeNodeAsType = CswNbtNodeCaster.AsEquipmentType( TypeNode );
                     CswDelimitedString PartsString = new CswDelimitedString( '\n' );
-					PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
+                    PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
                     this.Parts.YValues = PartsString;
                 }
             }
 
-			// case 21809
-			SynchEquipmentToAssembly();
+            // case 21809
+            SynchEquipmentToAssembly();
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
@@ -126,13 +120,18 @@ namespace ChemSW.Nbt.ObjClasses
             // Filter out Retired Equipment by default
             CswNbtMetaDataObjectClassProp StatusOCP = this.ObjectClass.getObjectClassProp( StatusPropertyName );
             CswNbtViewProperty StatusViewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, StatusOCP );
-            CswNbtViewPropertyFilter StatusViewPropFilter = ParentRelationship.View.AddViewPropertyFilter( StatusViewProp, 
-                                                                        StatusOCP.FieldTypeRule.SubFields.Default.Name, 
-                                                                        CswNbtPropFilterSql.PropertyFilterMode.NotEquals, 
-                                                                        StatusOptionToDisplayString( StatusOption.Retired ), 
+            CswNbtViewPropertyFilter StatusViewPropFilter = ParentRelationship.View.AddViewPropertyFilter( StatusViewProp,
+                                                                        StatusOCP.FieldTypeRule.SubFields.Default.Name,
+                                                                        CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                                                                        StatusOptionToDisplayString( StatusOption.Retired ),
                                                                         false );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
+        }
+
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
         }
 
         #endregion
@@ -193,8 +192,8 @@ namespace ChemSW.Nbt.ObjClasses
                                 EquipProp.copy( AssemblyProp );
                                 EquipProp.ReadOnly = true;
                                 FoundMatch = true;
-								// case 21809
-								EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
+                                // case 21809
+                                EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
                             }
                         }
                         if( !FoundMatch )

@@ -2,11 +2,11 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../controls/CswSelect.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-
+    "use strict";
     $.fn.CswFieldTypeRelationship = function (method) {
 
         var pluginName = 'CswFieldTypeRelationship';
@@ -28,15 +28,15 @@
                 }
 
                 if (o.Multi) {
-	                relationships.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
+                    relationships.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
                 }
-		        crawlObject(options, function (relatedObj, key) {
-			        relationships.push({ value: relatedObj.id, display: relatedObj.value });
+                crawlObject(options, function (relatedObj) {
+                    relationships.push({ value: relatedObj.id, display: relatedObj.value });
                 }, false);
 
                 if (o.ReadOnly) {
                     $Div.append(selectedName);
-					$Div.hover(function(event) { nodeHoverIn(event, selectedNodeId); }, nodeHoverOut);
+                    $Div.hover(function(event) { nodeHoverIn(event, selectedNodeId); }, nodeHoverOut);
                 } else {
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
@@ -55,10 +55,10 @@
                         var $AddButton = $('<div />').appendTo($addcell);
                         $AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
                             AlternateText: "Add New",
-                            onClick: function ($ImageDiv) {
+                            onClick: function () {
                                 $.CswDialog('AddNodeDialog', {
                                     'nodetypeid': nodeTypeId,
-                                    'onAddNode': function (nodeid, cswnbtnodekey) { o.onReload(); }
+                                    'onAddNode': function () { o.onReload(); }
                                 });
                                 return CswImageButton_ButtonType.None;
                             }
@@ -69,7 +69,7 @@
                         $SelectBox.addClass("required");
                     }
 
-					$Div.hover(function(event) { nodeHoverIn(event, $SelectBox.val()); }, nodeHoverOut);
+                    $Div.hover(function(event) { nodeHoverIn(event, $SelectBox.val()); }, nodeHoverOut);
                 }
             },
             save: function (o) {
@@ -90,7 +90,7 @@
         } else if (typeof method === 'object' || !method) {
             return methods.init.apply(this, arguments);
         } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName);
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
         }
 
     };

@@ -1,4 +1,4 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -9,7 +9,7 @@
 /// <reference path="../controls/CswGrid.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-
+    "use strict";
     $.fn.CswViewEditor = function(options) {
         var o = {
             ViewGridUrl: '/NbtWebApp/wsNBT.asmx/getViewGrid',
@@ -32,26 +32,7 @@
             startingStep: 1
         };
         if (options) $.extend(o, options);
-
-        var childPropNames = {
-            root: { name: 'root' },
-            childrelationships: { name: 'childrelationships' },
-            properties: { name: 'properties' },
-            filters: { name: 'filters' },
-            propfilters: { name: 'filters' },
-            filtermodes: { name: 'filtermodes' }
-        };
-
-        var viewEditClasses = {
-            vieweditor_viewrootlink: { name: 'vieweditor_viewrootlink' },
-            vieweditor_viewrellink: { name: 'vieweditor_viewrellink' },
-            vieweditor_viewproplink: { name: 'vieweditor_viewproplink' },
-            vieweditor_viewfilterlink: { name: 'vieweditor_viewfilterlink' }, 
-            vieweditor_addfilter: { name: 'vieweditor_addfilter' },
-            vieweditor_deletespan: { name: 'vieweditor_deletespan' },
-            vieweditor_childselect: { name: 'vieweditor_childselect' }
-        };
-        
+                
         var WizardStepArray = [CswViewEditor_WizardSteps.viewselect, CswViewEditor_WizardSteps.attributes, CswViewEditor_WizardSteps.relationships,
             CswViewEditor_WizardSteps.properties, CswViewEditor_WizardSteps.filters, CswViewEditor_WizardSteps.tuning];
         var WizardSteps = { };
@@ -110,7 +91,8 @@
 
         IsAdministrator({
                 'Yes': function() {
-                    var $showOther = $allcheck_div.CswInput('init', {ID: o.ID + '_all',
+                    /* Show Other */
+                    $allcheck_div.CswInput('init', {ID: o.ID + '_all',
                         type: CswInput_Types.checkbox,
                         onChange: function() {
                             _getViewsGrid();
@@ -153,10 +135,9 @@
                 disableOnClick: true,
                 onclick: function() {
                     var viewid = _getSelectedViewId();
-                    if (!isNullOrEmpty(viewid))
-                    {
-                        if (confirm("Are you sure you want to delete: " + _getSelectedViewName()))
-                        {
+                    if (!isNullOrEmpty(viewid)) {
+                        /* remember: confirm is globally blocking call */
+                        if (confirm("Are you sure you want to delete: " + _getSelectedViewName())) {
                             var dataJson = {
                                 ViewId: viewid
                             };
@@ -266,21 +247,20 @@
 
         var currentViewJson;
 
-        function _onBeforePrevious($wizard, stepno)
-        {
+        function _onBeforePrevious($prevWizard, stepno) {
+            /* remember: confirm is globally blocking call */
             return (stepno !== CswViewEditor_WizardSteps.attributes.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?"));
         }
 
-        function _handleNext($wizard, newstepno)
-        {
+        function _handleNext($nextWizard, newstepno) {
             CurrentStep = newstepno;
             switch (newstepno)
             {
                 case CswViewEditor_WizardSteps.viewselect.step:
                     break;
                 case CswViewEditor_WizardSteps.attributes.step:
-                    $wizard.CswWizard('button', 'finish', 'enable');
-                    $wizard.CswWizard('button', 'next', 'disable');
+                    $nextWizard.CswWizard('button', 'finish', 'enable');
+                    $nextWizard.CswWizard('button', 'next', 'disable');
 
                     var jsonData = {
                         ViewId: _getSelectedViewId()
@@ -317,7 +297,7 @@
                                     $gridwidthtextboxcell.hide();
                                 }
 
-                                $wizard.CswWizard('button', 'next', 'enable');
+                                $nextWizard.CswWizard('button', 'next', 'enable');
                             } // success
                         }); // ajax
                     break;
@@ -423,7 +403,7 @@
             return ret;
         }
 
-        function _handleFinish($wizard)
+        function _handleFinish($finishWizard)
         {
             var viewid = _getSelectedViewId();
             var processView = true;
@@ -435,7 +415,7 @@
                 
                 if (currentViewJson.mode === 'Grid' && false === gridHasOneProp()) {
                     processView = confirm('You are attempting to create a Grid without properties. This will not display any information. Do you want to continue?');
-                    if (false === processView) $wizard.CswWizard('button', 'finish', 'enable');
+                    if (false === processView) $finishWizard.CswWizard('button', 'finish', 'enable');
                 }
             }
 
@@ -509,7 +489,7 @@
                             }
                         };
                         $.extend(g.gridOpts, gridJson);
-                        cswViewGrid = new CswGrid(g, $viewgrid);
+                        cswViewGrid = CswGrid(g, $viewgrid);
                         cswViewGrid.$gridPager.css({width: '100%', height: '20px' });
                         
                         cswViewGrid.hideColumn(o.ColumnFullViewId);
@@ -523,33 +503,33 @@
                 }); // ajax
         } // _getViewsGrid()
 
-        function _getSelectedViewId(rowid)
+        function _getSelectedViewId(selRowId)
         {
-            var ret = '';
+            var ret;
             if (o.startingStep === 1) {
-                ret = cswViewGrid.getValueForColumn(o.ColumnFullViewId, rowid);
+                ret = cswViewGrid.getValueForColumn(o.ColumnFullViewId, selRowId);
             } else {
                 ret = o.viewid;
             }
             return ret;
         }
 
-        function _getSelectedViewMode(rowid)
+        function _getSelectedViewMode(selRowId)
         {
-            var ret = '';
+            var ret;
             if (o.startingStep === 1) {
-                ret = cswViewGrid.getValueForColumn(o.ColumnViewMode, rowid);
+                ret = cswViewGrid.getValueForColumn(o.ColumnViewMode, selRowId);
             } else {
                 ret = o.viewmode;
             }
             return ret;
         }
 
-        function _getSelectedViewName(rowid)
+        function _getSelectedViewName(selRowId)
         {
-            var ret = '';
+            var ret;
             if (o.startingStep === 1) {
-                ret = cswViewGrid.getValueForColumn(o.ColumnViewName, rowid);
+                ret = cswViewGrid.getValueForColumn(o.ColumnViewName, selRowId);
             } else {
                 ret = o.viewname;
             }
@@ -558,7 +538,7 @@
         
         function makeTuningStep($content) {
             var $cell = $table6.CswTable('cell', 1, 2);
-            var viewmode = _getSelectedViewMode($viewgrid);
+            var viewmode = _getSelectedViewMode();
 
             // Root
             $content.find('.' + viewEditClasses.vieweditor_viewrootlink.name).click(function() {
@@ -598,7 +578,7 @@
                                                   onChange: function() {
                                                       var $selected = $groupbyselect.find(':selected');
                                                       var selval = $selected.val();
-                                                      var propData = { };
+                                                      var propData;
 
                                                       if (false === isNullOrEmpty(selval)) {
                                                           if(selval === 'none') {
@@ -783,7 +763,7 @@
         function bindDeleteBtns(stepno) {
             $('.' + viewEditClasses.vieweditor_deletespan.name).each(function() {
                 var $span = $(this);
-                var arbid = $span.CswAttrXml('arbid');
+                var arbid = $span.CswAttrNonDom('arbid');
                 var $btn = $span.children('div').first();
                 $btn.bind('click', function() {
                     var objUtil = new ObjectHelper(currentViewJson);
@@ -797,7 +777,7 @@
         function bindViewPropFilterBtns(stepno) {
             $('.' + viewEditClasses.vieweditor_addfilter.name).each(function() {
                 var $span = $(this);
-                var arbitraryId = $span.CswAttrXml('arbid');
+                var arbitraryId = $span.CswAttrNonDom('arbid');
 
                 var $btn = $span.find('#' + arbitraryId + '_addfiltbtn');
                 $btn.bind('click', function() {
@@ -840,7 +820,8 @@
         function viewJsonHtml(stepno, viewJson) {
             var types = { };
             var $ret = $('<ul></ul>');
-            var $root = makeViewRootHtml(stepno, viewJson, types)
+            /* Root */
+            makeViewRootHtml(stepno, viewJson, types)
                             .appendTo($ret);
 
             return { html: $ret.html(), types: types };
@@ -999,7 +980,7 @@
                 if (!isNullOrEmpty(itemJson)) {
                     var filtArbitraryId = tryParseString(itemJson.arbitraryid);
                     if (stepno === CswViewEditor_WizardSteps.tuning.step) {
-                        var selectedSubfield = tryParseString(itemJson.subfield);
+                        var selectedSubfield = tryParseString(itemJson.subfield, itemJson.subfieldname);
                         var selectedFilterMode = tryParseString(itemJson.filtermode);
                         var filterValue = tryParseString(itemJson.value);
                         var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
@@ -1117,21 +1098,21 @@
                         data: dataJson,
                         success: function(data)
                         {
-                            var $select = $('#' + stepno + '_' + arbid + '_child');
-                            $select.empty();
-                            $select.append('<option value="">Select...</option>');
+                            var $successSelect = $('#' + stepno + '_' + arbid + '_child');
+                            $successSelect.empty();
+                            $successSelect.append('<option value="">Select...</option>');
                             for (var optionName in data) {
                                 if (data.hasOwnProperty(optionName)) {
                                     var thisOpt = data[optionName];
                                     var dataOpt = { };
                                     dataOpt[optionName] = thisOpt;
                                     var $option = $('<option value="' + thisOpt.arbitraryid + '">' + optionName + '</option>')
-                                        .appendTo($select);
+                                        .appendTo($successSelect);
                                     $option.data('thisViewJson', dataOpt);
                                 }
                             }
                             
-                            $select.change(function() {
+                            $successSelect.change(function() {
                                 var $this = $(this);
                                 var childJson = $this.find('option:selected').data('thisViewJson');
                                 if (arbid === "root") {

@@ -2,12 +2,12 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../controls/CswGrid.js" />
 /// <reference path="../node/CswNodeGrid.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-        
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";        
     var pluginName = 'CswFieldTypeGrid';
    
     var methods = {
@@ -59,8 +59,7 @@
                         makeGridMenu($MenuDiv, o, gridOpts, grid, viewid);
                     }
                 };
-
-                cswGrid = $GridDiv.CswNodeGrid('init', gridOpts);
+                $GridDiv.CswNodeGrid('init', gridOpts);
                 
                 $Div.append($MenuDiv, $('<br/>'), $SearchDiv, $('<br/>'), $GridDiv);
             } // if(o.EditMode !== EditMode.AuditHistoryInPopup.name)
@@ -94,6 +93,9 @@
                     onAddNode: function () {
                         //refreshGrid(gridOpts, cswGrid);
                         o.onReload();
+                    },
+                    onPrintView: function () {
+                        cswGrid.print();    
                     },
                     onMultiEdit: function () {
                         var multi = (false === cswGrid.isMulti());
@@ -131,7 +133,10 @@
 //						onGenericSearch: function () { /*not possible here*/ }
 //					},
                     onEditView: function () {
-                        o.onEditView(viewid);                    
+                        if(isFunction(o.onEditView))
+                        {
+                            o.onEditView(viewid);
+                        }
                     }
             }); // CswMenuMain
         } // if( o.EditMode !== EditMode.PrintReport.name )
@@ -146,7 +151,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

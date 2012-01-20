@@ -1,44 +1,44 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-
-	var pluginName = "CswButton";
+    "use strict";
+    var pluginName = "CswButton";
 
     var methods = {
         'init': function (options) {
 
             var o = {
-				ID: '',
-				enabledText: '',
-				disabledText: '',
-			    cssclass: '',
-				hasText: true,
-				disableOnClick: true,
-				inputType: CswInput_Types.button.name,
-				primaryicon: '',
-				secondaryicon: '',
-				ReadOnly: false,
+                ID: '',
+                enabledText: '',
+                disabledText: '',
+                cssclass: '',
+                hasText: true,
+                disableOnClick: true,
+                inputType: CswInput_Types.button.name,
+                primaryicon: '',
+                secondaryicon: '',
+                ReadOnly: false,
                 //'Required': false,
-				onclick: null //function () { }
+                onclick: null //function () { }
             };
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-			var $button = $('<input />').CswAttrDom({type: o.inputType,
-										             id: o.ID, 
-			                                         name: o.ID,
-			                                         enabledText: o.enabledText,
-			                                         disabledText: o.disabledText
-			                            })
-			                            .appendTo($parent);
+            var $button = $('<input />').CswAttrDom({type: o.inputType,
+                                                     id: o.ID, 
+                                                     name: o.ID,
+                                                     enabledText: o.enabledText,
+                                                     disabledText: o.disabledText
+                                        })
+                                        .appendTo($parent);
 
-		    if (!isNullOrEmpty(o.cssclass)) {
-		        $button.addClass(o.cssclass);
-		    }
-		    
+            if (!isNullOrEmpty(o.cssclass)) {
+                $button.addClass(o.cssclass);
+            }
+            
             var buttonOpt = {
                 text: (o.hasText),
                 label: o.enabledText,
@@ -51,29 +51,29 @@
             if (buttonOpt.disabled) {
                 buttonOpt.label = o.disabledText;
             }
-			$button.button(buttonOpt);
-		    
-		    if (isFunction(o.onclick)) {
-		        $button.bind('click', function() {
-		            if (!ajaxInProgress()) {
-		                if (o.disableOnClick) _disable($button);
-		                o.onclick();
-		            } 
-		            return false;
-		        });
-		    } 
+            $button.button(buttonOpt);
+            
+            if (isFunction(o.onclick)) {
+                $button.bind('click', function() {
+                    if (!ajaxInProgress()) {
+                        if (o.disableOnClick) disable($button);
+                        o.onclick();
+                    } 
+                    return false;
+                });
+            } 
 
             return $button;
         },
 
         'enable': function () {
             var $button = $(this);
-            _enable($button);
+            enable($button);
             return $button;
         },
         'disable': function () {
             var $button = $(this);
-            _disable($button);
+            disable($button);
             return $button;
         },
         'click': function () {
@@ -83,11 +83,11 @@
         }
     };
 
-    function _enable($button) {
+    function enable($button) {
         if ($button.length > 0)
             $button.button({ label: $button.CswAttrDom('enabledText'), disabled: false });
     }
-    function _disable($button) {
+    function disable($button) {
         if ($button.length > 0)
             $button.button({ label: $button.CswAttrDom('disabledText'), disabled: true });
     }
@@ -100,7 +100,8 @@
         } else if (typeof method === 'object' || !method) {
             return methods.init.apply(this, arguments);
         } else {
-			$.error('Method ' + method + ' does not exist on ' + pluginName);
+            $.error('Method ' + method + ' does not exist on ' + pluginName);
+            return false;
         }
     };
 

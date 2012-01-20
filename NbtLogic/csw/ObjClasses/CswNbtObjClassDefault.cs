@@ -6,6 +6,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -200,6 +201,10 @@ namespace ChemSW.Nbt.ObjClasses
         //    }
         //}
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
     }//CswNbtObjClassDefault
 
 }//namespace ChemSW.Nbt.ObjClasses

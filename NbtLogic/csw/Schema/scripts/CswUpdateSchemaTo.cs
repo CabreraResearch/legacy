@@ -6,14 +6,14 @@ namespace ChemSW.Nbt.Schema
 {
     public abstract class CswUpdateSchemaTo
     {
-		protected CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
-		public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
-		{
-			set { _CswNbtSchemaModTrnsctn = value; }
-		}
+        protected CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
+        public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
+        {
+            set { _CswNbtSchemaModTrnsctn = value; }
+        }
 
-		public abstract CswSchemaVersion SchemaVersion { get; }
-		public abstract string Description { get; }	
-		public abstract void update();
-	}
+        public abstract CswSchemaVersion SchemaVersion { get; }
+        public abstract string Description { get; }
+        public abstract void update();
+    }
 }

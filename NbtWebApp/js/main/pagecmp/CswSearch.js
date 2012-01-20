@@ -1,4 +1,4 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
@@ -6,6 +6,7 @@
 /// <reference path="../view/CswViewPropFilter.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     $.fn.CswSearch = function (options) {
 
         var o = { 
@@ -38,8 +39,8 @@
             nodeTypesData: '',
             $nodeTypesSelect: '',
 
-            onSearchSubmit: function (view) {},
-            onClearSubmit: function(parentviewid) {},
+            onSearchSubmit: function () {},
+            onClearSubmit: function() {},
             onSearchClose: function() {}, 
 
             //For submit
@@ -67,12 +68,12 @@
                             .addClass('CswSearch_Div');
         init();
 
-        function modAdvanced(options) {
+        function modAdvanced(modOptions) {
             var a = {
                 '$link': '',
                 'advancedIsHidden': false
             };
-            if(options) $.extend(a,options);
+            if(modOptions) $.extend(a,modOptions);
     
             if('Advanced' === a.$link.text() || ( a.advancedIsHidden ) )
             {   
@@ -104,7 +105,7 @@
             {
                 //Row i, Column 1: and
                 $andCell = o.$searchTable.CswTable('cell', andRow, 1)
-                               .CswAttrDom({align:"right"});
+                               .css({align:"right"});
                 $andText = $('<span>&nbsp;and&nbsp;</span>');
                 $andCell.append($andText);
                 andRow++;
@@ -119,7 +120,7 @@
                     $nodeTypeCell.CswSpan('init', { ID: nodeTypeId,
                         value: thisProp.metadatatypename,
                         cssclass: ViewBuilder_CssClasses.metadatatype_static.name})
-                        .CswAttrDom('relatedidtype', thisProp.relatedidtype);
+                        .CswAttrNonDom('relatedidtype', thisProp.relatedidtype);
                     o.selectedSubfieldVal = '';
                     o.selectedFilterVal = '';
 
@@ -149,14 +150,17 @@
             var $select = $('<select></select>');
             
             function makeOptions(optionGroup) {
-                var opt, option, value, optionCol = '', selected = '';
+                var opt, option, value, optionCol = '';
                 for (opt in optionGroup) {
                     if (contains(optionGroup, opt)) {
                         option = optionGroup[opt];
                         value = tryParseString(option.value, option.id);
                         if(contains(option,'name') && false === isNullOrEmpty(value)) {
-                            selected = (isTrue(option.selected)) ? 'selected="true"' : '';
-                            optionCol += '<option ' + selected + ' id="' + option.id + '" type="' + option.type + '" value="' + value + '">' + option.name + '</option>';
+                            optionCol += '<option id="' + option.id + '" type="' + option.type + '" value="' + value + '" ';
+                            if((isTrue(option.selected))) {
+                                optionCol += 'selected="selected" ';    
+                            }
+                            optionCol += '>' + option.name + '</option>';
                         }
                     }
                 }
@@ -174,7 +178,7 @@
             //Row 1, Column 1: empty (contains 'and' for View search)
             //Row 1, Column 2: nodetypeselect picklist
             var nodeTypeSelectId = makeId({ID: 'nodetype_select',prefix: o.ID}),
-                $typeSelectCell, $select, ocpSelect;
+                $typeSelectCell, $select;
             
             $typeSelectCell = o.$searchTable.CswTable('cell', 2, 2) //1
                                                 .empty();
@@ -188,7 +192,7 @@
                                            var $thisSelect = $(this);
                                            var r = {
                                                 nodetypeorobjectclassid: $thisSelect.val(),
-                                                relatedidtype: $thisSelect.find(':selected').CswAttrDom('type'),
+                                                relatedidtype: $thisSelect.find(':selected').CswAttrNonDom('type'),
                                                 cswnbtnodekey: '',
                                                 optionId: $thisSelect.find(':selected').CswAttrDom('id'),
                                                 $parent: o.$searchTable,
@@ -197,7 +201,7 @@
                                            $.extend(o,r);
                                            getNewProps();  
                                     });
-            o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrDom('type');
+            o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrNonDom('type');
             
             if (false === isNullOrEmpty(o.nodetypeorobjectclassid)) {
                 o.$nodeTypesSelect.find('option[id="' + o.optionId + '"]').CswAttrDom('selected',true);
@@ -230,12 +234,12 @@
                                 .change(function () {
                                     var $this = $(this),
                                         thisPropId = $this.val(),
-                                        oH = new ObjectHelper(o.propsData.properties);
+                                        newOh = new ObjectHelper(o.propsData.properties);
                                     var r = {
                                         propertyid: thisPropId,
                                         selectedSubfieldVal: '',
                                         selectedFilterVal: '',
-                                        selectedPropData: oH.find('viewbuilderpropid', thisPropId)
+                                        selectedPropData: newOh.find('viewbuilderpropid', thisPropId)
                                     };
                                     $.extend(o,r);
                                     o.$searchTable.CswViewPropFilter('init', {
@@ -346,7 +350,7 @@
             
             //Row i, Column 5: search button
             var $searchButtonCell = o.$searchTable.CswTable('cell', o.bottomRow, o.searchBtnCell)
-                                    .CswAttrDom({align:"right"})
+                                    .css({align:"right"})
                                     .empty();
             var searchButtonId = makeId({ID: 'search_button', prefix: o.ID});
             var $searchButton = $searchButtonCell.CswButton({ID: searchButtonId, 
@@ -417,7 +421,7 @@
                 searchUrl = '',
                 dataJson;
 
-            function collectPropFilters(cssclass) {
+            function collectPropFilters() {
                 $('.' + ViewBuilder_CssClasses.filter_value.name).each(function() {
                     var $thisProp = $(this),
                         propsData = $thisProp.data('propsData'),
@@ -432,7 +436,8 @@
                                                     filtarbitraryid: propsData.filtarbitraryid,
                                                     proparbitraryid: propsData.proparbitraryid,
                                                     viewbuilderpropid: propsData.viewbuilderpropid,
-                                                    advancedIsHidden: o.advancedIsHidden
+                                                    advancedIsHidden: o.advancedIsHidden,
+                                                    allowNullFilterValue: true //Case 24413
                                                 }); 
                     props.push( thisNodeProp );
                 });
@@ -442,7 +447,7 @@
                 case 'nodetypesearch':
                     searchUrl = o.doNodeSearchUrl;
                     o.nodetypeorobjectclassid = o.$nodeTypesSelect.val();
-                    o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrDom('type');
+                    o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrNonDom('type');
                     
                     collectPropFilters();
                     

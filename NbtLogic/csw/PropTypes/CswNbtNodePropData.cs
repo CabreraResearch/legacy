@@ -375,7 +375,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ret = _PropRow[Column.ToString(), DataRowVersion.Original].ToString();
             }
-            catch( System.Data.VersionNotFoundException ex )
+            catch( System.Data.VersionNotFoundException )
             {
                 ret = _PropRow[Column.ToString()].ToString();
             }

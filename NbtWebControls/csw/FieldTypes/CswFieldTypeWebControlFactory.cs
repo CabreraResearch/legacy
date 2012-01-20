@@ -192,9 +192,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     Control = new CswText( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-				//case CswNbtMetaDataFieldType.NbtFieldType.Time:
-				//    Control = new CswTime( CswNbtResources, MetaDataProp, EditMode );
-				//    break;
+                //case CswNbtMetaDataFieldType.NbtFieldType.Time:
+                //    Control = new CswTime( CswNbtResources, MetaDataProp, EditMode );
+                //    break;
 
                 case CswNbtMetaDataFieldType.NbtFieldType.TimeInterval:
                     Control = new CswTimeInterval( CswNbtResources, MetaDataProp, EditMode );
@@ -233,24 +233,24 @@ namespace ChemSW.NbtWebControls.FieldTypes
         }//makeControl()
 
 
-		private static void _setReadOnly( CswNbtResources CswNbtResources, CswFieldTypeWebControl Control, CswNbtNodePropWrapper PropWrapper, CswNbtNode Node, NodeEditMode EditMode )
-		{
-			if( !Control.ReadOnly )
-			{
-				Control.ReadOnly = ( ( EditMode == NodeEditMode.PrintReport || EditMode == NodeEditMode.AuditHistoryInPopup ) ||
-									 ( PropWrapper != null &&
-									   ( PropWrapper.ReadOnly ||
-										 PropWrapper.NodeTypeProp.ServerManaged ||
-										 ( EditMode == NodeEditMode.AddInPopup &&
-										   !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, PropWrapper.NodeTypeProp.NodeType ) ) ||
-										 ( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) &&
-										   !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, PropWrapper.NodeTypeProp.NodeType, false, null, null, Node, PropWrapper.NodeTypeProp ) ) ) ) );
-			}
+        private static void _setReadOnly( CswNbtResources CswNbtResources, CswFieldTypeWebControl Control, CswNbtNodePropWrapper PropWrapper, CswNbtNode Node, NodeEditMode EditMode )
+        {
+            if( !Control.ReadOnly )
+            {
+                Control.ReadOnly = ( ( EditMode == NodeEditMode.PrintReport || EditMode == NodeEditMode.AuditHistoryInPopup ) ||
+                                     ( PropWrapper != null &&
+                                       ( PropWrapper.ReadOnly ||
+                                         PropWrapper.NodeTypeProp.ServerManaged ||
+                                         ( EditMode == NodeEditMode.AddInPopup &&
+                                           !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, PropWrapper.NodeTypeProp.NodeType ) ) ||
+                                         ( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) &&
+                                           !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, PropWrapper.NodeTypeProp.NodeType, false, null, null, Node, PropWrapper.NodeTypeProp ) ) ) ) );
+            }
 
-			// BZ 8307
-			if( EditMode == NodeEditMode.DefaultValue )
-				Control.ReadOnly = false;
-		}
+            // BZ 8307
+            if( EditMode == NodeEditMode.DefaultValue )
+                Control.ReadOnly = false;
+        }
         
         //public delegate void ErrorHandler( Exception ex );
         //public event ErrorHandler OnError;

@@ -1,7 +1,10 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Diagnostics;
+using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -271,7 +274,7 @@ namespace ChemSW.Nbt
                 string XslFileNameFqn = _XslFilePath + "\\" + XslFileName;
 
                 _CswXmlTransformer.XslDocPath = XslFileNameFqn;
-                _CswXmlTransformer.SourceDoc = getRawTreeXml();
+                _CswXmlTransformer.SourceDoc = getRawTreeXml().InnerXml;
                 _TreeAsTransformedXml = _CswXmlTransformer.OutputDoc;
             }
 
@@ -279,20 +282,22 @@ namespace ChemSW.Nbt
 
         }//getTreeAsXml()
 
-        private string _TreeAsRawXml = "";
         /// <summary>
         /// Gets the Tree XML as it is stored internally
         /// </summary>
-        public string getRawTreeXml()
+        public XmlDocument getRawTreeXml()
         {
-            if( string.Empty == _TreeAsRawXml )
-            {
-                _TreeAsRawXml = _CswNbtTreeNodes.getRawXml();
-            }
-
-            return ( _TreeAsRawXml );
-
+            return _CswNbtTreeNodes.getRawXml();
         }//getRawTreeXml()
+
+        /// <summary>
+        /// Sets the Tree XML, for copying trees
+        /// </summary>
+        public void setRawTreeXml( XmlDocument XmlDoc )
+        {
+            _CswNbtTreeNodes.setRawXml( XmlDoc );
+        }//setRawTreeXml()
+
 
         /// <summary>
         /// Returns a CswNbtNode indexed by a CswNbtNodeKey
@@ -325,17 +330,29 @@ namespace ChemSW.Nbt
         public CswNbtNodeKey getNodeKeyByNodeId( CswPrimaryKey NodeId )
         {
             CswNbtNodeKey ReturnVal = null;
-
-            ArrayList KeyList = (ArrayList) _CswNbtTreeNodes.getKeysForNodeId( NodeId );
+            Collection<CswNbtNodeKey> KeyList = _CswNbtTreeNodes.getKeysForNodeId( NodeId );
             if( KeyList.Count > 0 )
             {
                 ReturnVal = (CswNbtNodeKey) KeyList[0];
                 //ReturnVal.TreeKey = Key;
             }
-
             return ( ReturnVal );
-
         }//getNodeKeyByNodeId()
+
+        public CswNbtNodeKey getNodeKeyByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode )
+        {
+            CswNbtNodeKey ReturnVal = null;
+            Collection<CswNbtNodeKey> KeyList = _CswNbtTreeNodes.getKeysForNodeId( NodeId );
+            foreach( CswNbtNodeKey Key in KeyList )
+            {
+                if( Key.ViewNodeUniqueId == ViewNode.UniqueId )
+                {
+                    ReturnVal = Key;
+                    break;
+                }
+            }
+            return ReturnVal;
+        } // getNodeKeyByNodeIdAndViewNode()
 
 
         //public CswNbtNodeContext getNodeContextForNodeKey(CswNbtNodeKey NodeKey)
@@ -478,16 +495,16 @@ namespace ChemSW.Nbt
         {
             return _CswNbtTreeNodes.getNameForCurrentNode();
         }//getNodeNameForCurrentPosition()
-    
-		/// <summary>
-		/// Returns whether the currently indexed node is locked
-		/// </summary>
-		public bool getNodeLockedForCurrentPosition()
+
+        /// <summary>
+        /// Returns whether the currently indexed node is locked
+        /// </summary>
+        public bool getNodeLockedForCurrentPosition()
         {
-			return _CswNbtTreeNodes.getLockedForCurrentNode();
+            return _CswNbtTreeNodes.getLockedForCurrentNode();
         }//getNodeLockedForCurrentPosition()
 
-		/// <summary>
+        /// <summary>
         /// True if the currently indexed node is selectable, false otherwise
         /// </summary>
         public bool getNodeSelectableForCurrentPosition()
@@ -512,6 +529,12 @@ namespace ChemSW.Nbt
 
             return ( ReturnVal );
         }//
+
+        [DebuggerStepThrough]
+        public IEnumerable<XElement> getChildNodePropsOfNode()
+        {
+            return _CswNbtTreeNodes.getChildPropNodesOfCurrentNode();
+        }
 
         /// <summary>
         /// Sets a given node to be the currently indexed node in the tree, by node key
@@ -547,6 +570,14 @@ namespace ChemSW.Nbt
         {
             return ( _CswNbtTreeNodes.getNodeCountForCurrentLevel() );
         }//getNodeCountForCurrentLevel()
+
+        /// <summary>
+        /// Returns all siblings and cousins on a tree level
+        /// </summary>
+        public Collection<CswNbtNodeKey> getKeysForLevel( Int32 Level )
+        {
+            return _CswNbtTreeNodes.getKeysForLevel( Level );
+        }
 
         /// <summary>
         /// Returns the total number of children of the currently indexed node
@@ -712,7 +743,6 @@ namespace ChemSW.Nbt
             Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship, RowCount );
             //ReturnVal.TreeKey = Key;
             _TreeAsTransformedXml = "";
-            _TreeAsRawXml = "";
             return ( ReturnVal );
         }//loadNodeAsChildFromRow() 
 
@@ -737,7 +767,6 @@ namespace ChemSW.Nbt
             Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Selectable, ShowInTree, AddChildren, RowCount );
             //ReturnVal.TreeKey = Key;
             _TreeAsTransformedXml = "";
-            _TreeAsRawXml = "";
             return ( ReturnVal );
         }//loadNodeAsChildFromRow() 
 
@@ -762,6 +791,16 @@ namespace ChemSW.Nbt
         }//addProperty
 
 
+        public Collection<CswNbtNodeKey> _loadNodeAsChild( CswNbtNodeKey ParentNodeKey, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship,
+                                               bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
+                                               string IconFileName, string NameTemplate, CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
+                                               string NodeTypeName, Int32 ObjectClassId, string ObjectClassName, bool Locked )
+        {
+            return _CswNbtTreeNodes._loadNodeAsChild( ParentNodeKey, UseGrouping, GroupName, Relationship,
+                                                       Selectable, ShowInTree, AddChildren, RowCount,
+                                                       IconFileName, NameTemplate, NodeId, NodeName, NodeTypeId,
+                                                       NodeTypeName, ObjectClassId, ObjectClassName, Locked );
+        }
 
         #endregion //Modification******************************
 

@@ -1,6 +1,7 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -10,7 +11,6 @@ namespace ChemSW.Nbt.ObjClasses
         public static string StatusPropertyName { get { return "Status"; } }
         public static string LocationPropertyName { get { return "Location"; } }
         public static string DescriptionPropertyName { get { return "Description"; } }
-        public static string TypePropertyName { get { return "Type"; } }
         public static string BarcodePropertyName { get { return "Barcode"; } }
         public static string InspectionTargetGroupPropertyName { get { return "Inspection Target Group"; } }
 
@@ -135,6 +135,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
         #endregion
 
         #region Object class specific properties
@@ -172,14 +176,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropList Type
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[TypePropertyName].AsList );
-            }
-        }
-
         public CswNbtNodePropText Description
         {
             get
@@ -205,8 +201,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion
-
-
 
     }//CswNbtObjClassLocation
 

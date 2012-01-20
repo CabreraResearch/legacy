@@ -1,11 +1,11 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 
-; (function ($)
-{
-    var PluginName = "CswNodeSelect";
+(function ($) {
+    "use strict";
+    var pluginName = "CswNodeSelect";
 
     var methods = {
         'init': function(options) {
@@ -40,9 +40,10 @@
                     url: o.NodesUrl,
                     data: jsonData,
                     success: function (data) {
-                        for (var nodeId in data) {
+                        var nodeId, nodeName;
+                        for (nodeId in data) {
                             if (contains(data, nodeId)) {
-                                var nodeName = data[nodeId];
+                                nodeName = data[nodeId];
                                 $select.append('<option value="' + nodeId + '">' + nodeName + '</option>');
                             }
                         }
@@ -69,7 +70,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

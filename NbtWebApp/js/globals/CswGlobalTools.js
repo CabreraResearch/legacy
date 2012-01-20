@@ -1,4 +1,146 @@
+
+//global, ChemSW namespace. Eventually home to all 'global' variables.
+var ChemSW = ChemSW || (function(undefined) {
+    "use strict";
+    return {
+        constants: {
+            unknownEnum: 'unknown'    
+        },
+        enums: {
+            tryParse: function (cswEnum, enumMember, caseSensitive) {
+                var ret = ChemSW.constants.unknownEnum;
+                if(contains(cswEnum, enumMember)) {
+                    ret = cswEnum[enumMember];
+                } 
+                else if (false === caseSensitive) {
+                    each(cswEnum, function(member) {
+                        if(contains(cswEnum, member) && 
+                            tryParseString(member).toLowerCase() === tryParseString(enumMember).toLowerCase() ) {
+                            ret = member;
+                        }
+                    });
+                }
+                return ret;
+            },
+            EditMode: {
+                Edit: 'Edit',
+                AddInPopup: 'AddInPopup',
+                EditInPopup: 'EditInPopup',
+                Demo: 'Demo',
+                PrintReport: 'PrintReport',
+                DefaultValue: 'DefaultValue',
+                AuditHistoryInPopup: 'AuditHistoryInPopup',
+                Preview: 'Preview' 
+            },
+            ErrorType: {
+                warning: {
+                    name: 'warning',
+                    cssclass: 'CswErrorMessage_Warning'
+                },
+                error: {
+                    name: 'error',
+                    cssclass: 'CswErrorMessage_Error'
+                }
+            },
+            Events: {
+                CswNodeDelete: 'CswNodeDelete'
+            },
+            CswInspectionDesign_WizardSteps: {
+                step1: { step: 1, description: 'Select an Inspection Target' },
+                step2: { step: 2, description: 'Select an Inspection Design' },
+                step3: { step: 3, description: 'Upload Template' },
+                step4: { step: 4, description: 'Review Inspection Design' },
+                //step5: { step: 5, description: 'Create Inspection Schedules' },
+                step5: { step: 5, description: 'Finish' },
+                stepcount: 5
+            },
+            CswScheduledRulesGrid_WizardSteps: {
+                step1: { step: 1, description: 'Select a Customer ID' },
+                step2: { step: 2, description: 'Review the Scheduled Rules' },
+                stepcount: 2
+            },
+            CswDialogButtons: {
+                1: 'ok',
+                2: 'ok/cancel',
+                3: 'yes/no'
+            },
+            CswOnObjectClassClick: {
+                reauthenticate: 'reauthenticate',
+                home: 'home',
+                refresh: 'refresh',
+                url: 'url'
+            }
+        },
+        ajax: {
+             
+        },
+        tools: {
+            getMaxValueForPrecision: function (precision, maxPrecision) {
+                var i, 
+                    ret = '',
+                    precisionMax = maxPrecision || 6;
+                if (precision > 0 && 
+                    precision <= precisionMax) {
+                    
+                    ret += '.';
+                    for(i=0; i < precision; i += 1) {
+                        ret += '9';
+                    }
+                }
+                return ret;
+            },
+            loadResource: function(filename, filetype, useJquery) {
+                var fileref, type = filetype || 'js';
+                switch (type) {
+                    case 'js':
+                        if (jQuery && (($.browser.msie && $.browser.version <= 8) || useJquery)) {
+                            $.ajax({
+                                url: '/NbtWebApp/' + filename,
+                                dataType: 'script'
+                            });
+                        } else {
+                            fileref = document.createElement('script');
+                            fileref.setAttribute("type", "text/javascript");
+                            fileref.setAttribute("src", filename);
+                        }
+                        break;
+                    case 'css':
+                        fileref = document.createElement("link");
+                        fileref.setAttribute("rel", "stylesheet");
+                        fileref.setAttribute("type", "text/css");
+                        fileref.setAttribute("href", filename);
+                        break;
+                }
+                if (fileref) {
+                    document.getElementsByTagName("head")[0].appendChild(fileref);
+                }
+            }
+        },
+        makeSequentialArray: function(start, end) {
+            var ret = [],
+                i;
+            end = +end;
+            if (isNumber(start) && 
+                    isNumber(end)) {
+                for (i = +start; i <= end; i += 1) {
+                    ret.push(i);
+                }
+            }
+            return ret;
+        },
+        makeClientSideError: function(errorType, friendlyMsg, esotericMsg) {
+            return {
+                type: tryParseString(errorType, ChemSW.enums.ErrorType.warning.name),
+                message: tryParseString(friendlyMsg),
+                detail: tryParseString(esotericMsg)
+            };
+        }
+    };
+}());
+
+
 function isArray(obj) {
+    "use strict";
     /// <summary> Returns true if the object is an array</summary>
     /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
@@ -7,11 +149,13 @@ function isArray(obj) {
 }
 
 function isJQuery(obj) {
+    "use strict";
     var ret = (obj instanceof jQuery);
     return ret;
 }
 
 function hasLength(obj) {
+    "use strict";
     /// <summary> Returns true if the object is an Array or jQuery</summary>
     /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
@@ -21,6 +165,7 @@ function hasLength(obj) {
 
 var dateTimeMinValue = new Date('1/1/0001 12:00:00 AM');
 function isDate(obj) {
+    "use strict";
     /// <summary> Returns true if the object is a Date</summary>
     /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
@@ -29,6 +174,7 @@ function isDate(obj) {
 }
 
 function isNumber(obj) {
+    "use strict";
     /// <summary> Returns true if the object is typeof number</summary>
     /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
@@ -37,6 +183,7 @@ function isNumber(obj) {
 }
 
 function isFunction(obj) {
+    "use strict";
     /// <summary> Returns true if the object is a function</summary>
     /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
@@ -45,6 +192,7 @@ function isFunction(obj) {
 }
 
 function isPlainObject(obj) {
+    "use strict";
     /// <summary> 
     ///    Returns true if the object is a JavaScript object.
     ///     &#10; isPlainObject(CswInput_Types) === true 
@@ -57,6 +205,7 @@ function isPlainObject(obj) {
 }
 
 function isGeneric(obj) {
+    "use strict";
     /// <summary> Returns true if the object is not a function, array, jQuery or JSON object</summary>
     /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
@@ -65,6 +214,7 @@ function isGeneric(obj) {
 }
 
 function isNullOrEmpty(obj, checkLength) {
+    "use strict";
     /// <summary> Returns true if the input is null, undefined, or ''</summary>
     /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
@@ -79,6 +229,7 @@ function isNullOrEmpty(obj, checkLength) {
 }
 
 function isNullOrUndefined(obj) {
+    "use strict";
     /// <summary> Returns true if the input is null or undefined</summary>
     /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
@@ -90,6 +241,7 @@ function isNullOrUndefined(obj) {
 }
 
 function makeId(options) {
+    "use strict";
     /// <summary>
     ///   Generates an ID for DOM assignment
     /// </summary>
@@ -100,7 +252,7 @@ function makeId(options) {
     ///     &#10;3 - options.suffix: String suffix to append
     ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
     /// </param>
-    /// <returns type="String>A concatenated string of provided values</returns>
+    /// <returns type="String">A concatenated string of provided values</returns>
     var o = {
         'ID': '',
         'prefix': '',
@@ -119,6 +271,7 @@ function makeId(options) {
 }
 
 function makeSafeId(options) {
+    "use strict";
     /// <summary>   Generates a "safe" ID for DOM assignment </summary>
     /// <param name="options" type="Object">
     ///     A JSON Object
@@ -127,7 +280,7 @@ function makeSafeId(options) {
     ///     &#10;3 - options.suffix: String suffix to append
     ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
     /// </param>
-    /// <returns type="String>A concatenated string of provided values</returns>
+    /// <returns type="String">A concatenated string of provided values</returns>
     var o = {
         'ID': '',
         'prefix': '',
@@ -156,6 +309,7 @@ function makeSafeId(options) {
 }
 
 function isString(obj) {
+    "use strict";
     /// <summary> Returns true if the object is a String object. </summary>
     /// <param name="obj" type="Object"> Object to test</param>
     /// <returns type="Boolean" />
@@ -165,6 +319,7 @@ function isString(obj) {
 
 
 function isNumeric(obj) {
+    "use strict";
     /// <summary> Returns true if the input can be parsed as a Number </summary>
     /// <param name="str" type="Object"> String or object to test </param>
     /// <returns type="Boolean" />
@@ -178,6 +333,7 @@ function isNumeric(obj) {
     return ret;
 }
 function isTrue(str, isTrueIfNull) {
+    "use strict";
     /// <summary>
     ///   Returns true if the input is true, 'true', '1' or 1.
     ///   &#10;1 Returns false if the input is false, 'false', '0' or 0.
@@ -203,6 +359,7 @@ function isTrue(str, isTrueIfNull) {
     return ret;
 }
 function tryParseString(inputStr, defaultStr) {
+    "use strict";
     /// <summary>
     ///   Returns the inputStr if !isNullOrEmpty, else returns the defaultStr
     /// </summary>
@@ -222,22 +379,30 @@ function tryParseString(inputStr, defaultStr) {
     }
     return ret;
 }
-var Int32MinVal = new Number(-2147483648);
+var Int32MinVal = -2147483648;
 function tryParseNumber(inputNum, defaultNum) {
+    "use strict";
     /// <summary>
     ///   Returns the inputNum if !NaN, else returns the defaultNum
     /// </summary>
     /// <param name="inputNum" type="Number"> String to parse to number </param>
     /// <param name="defaultNum" type="Number"> Default value if not a number </param>
     /// <returns type="Number" />
-    var ret = new Number(defaultNum);
-    var tryRet = new Number(inputNum);
+    var ret = 0;
+    var tryRet = +inputNum;
+
     if (false === isNaN(tryRet) && tryRet !== Int32MinVal) {
         ret = tryRet;
+    } else {
+        tryRet = +defaultNum;
+        if (false === isNaN(tryRet) && tryRet !== Int32MinVal) {
+            ret = tryRet;
+        }
     }
     return ret;
 }
 function cswIndexOf(object, property) {
+    "use strict";
     /// <summary>
     ///   Because IE 8 doesn't implement indexOf on the Array prototype.
     /// </summary>
@@ -256,6 +421,7 @@ function cswIndexOf(object, property) {
     return ret;
 }
 function contains(object, index) {
+    "use strict";
     /// <summary>Determines whether an object or an array contains a property or index. Null-safe.</summary>
     /// <param name="object" type="Object"> An object to evaluate </param>
     /// <param name="index" type="String"> An index or property to find </param>
@@ -272,6 +438,7 @@ function contains(object, index) {
     return ret;
 }
 function tryParseObjByIdx(object, index, defaultStr) {
+    "use strict";
     /// <summary> Attempts to fetch the value at an array index. Null-safe.</summary>
     /// <param name="object" type="Object"> Object or array to parse </param>
     /// <param name="index" type="String"> Index or property to find </param>
@@ -289,6 +456,7 @@ function tryParseObjByIdx(object, index, defaultStr) {
     return ret;
 }
 function tryParseElement(elementId, $context) {
+    "use strict";
     /// <summary>Attempts to fetch an element from the DOM first through jQuery, then through JavaScript.</summary>
     /// <param name="elementId" type="String"> ElementId to find </param>
     /// <param name="$context" type="jQuery"> Optional context to limit the search </param>
@@ -310,6 +478,7 @@ function tryParseElement(elementId, $context) {
     return $ret;
 }
 function renameProperty(obj, oldName, newName) {
+    "use strict";
     if (false === isNullOrUndefined(obj) && contains(obj, oldName)) {
         obj[newName] = obj[oldName];
         delete obj[oldName];
@@ -317,15 +486,16 @@ function renameProperty(obj, oldName, newName) {
     return obj;
 }
 function trim(str) {
+    "use strict";
     /// <summary>Returns a string without left and right whitespace</summary>
     /// <param name="str" type="String"> String to parse </param>
     /// <returns type="String">Parsed string</returns>
     return $.trim(str);
 }
 function makeDelegate(method, options) {
+    "use strict";
     /// <summary>
     /// Returns a function with the argument parameter of the value of the current instance of the object.
-    /// <para>For example, in a "for(i=0;i<10;i++)" loop, makeDelegate will capture the value of "i" for a given function.</para>
     /// </summary>
     /// <param name="method" type="Function"> A function to delegate. </param>
     /// <param name="options" type="Object"> A single parameter to hand the delegate function.</param>
@@ -333,6 +503,7 @@ function makeDelegate(method, options) {
     return function () { method(options); };
 }
 function makeEventDelegate(method, options) {
+    "use strict";
     /// <summary>
     /// Returns a function with the event object as the first parameter, and the current value of options as the second parameter.
     /// </summary>
@@ -342,6 +513,7 @@ function makeEventDelegate(method, options) {
     return function (eventObj) { method(eventObj, options); };
 }
 function foundMatch(anObj, prop, value) {
+    "use strict";
     var ret = false;
     if (false === isNullOrEmpty(anObj) &&contains(anObj, prop) &&anObj[prop] === value) {
         ret = true;
@@ -349,6 +521,7 @@ function foundMatch(anObj, prop, value) {
     return ret;
 }
 function ObjectHelper(obj) {
+    "use strict";
     /// <summary>Find an object in a JSON object.</summary>
     /// <param name="obj" type="Object"> Object to search </param>
     /// <returns type="ObjectHelper"></returns>
@@ -408,9 +581,10 @@ function ObjectHelper(obj) {
 }
 //http://stackoverflow.com/questions/7356835/jquery-each-fumbles-if-non-array-object-has-length-property
 function each(thisObj, onSuccess) {
+    "use strict";
     /// <summary>Iterates an Object or an Array and handles length property</summary>
     /// <param name="thisObj" type="Object"> An object to crawl </param>
-    /// <param name="onSuccess" type="Function"> A function to execute on finding a property, which should return true to continue</param>
+    /// <param name="onSuccess" type="Function"> A function to execute on finding a property, which should return true to stop.</param>
     /// <returns type="Object">Returns the return of onSuccess</returns>
     var ret = false;
     if (isFunction(onSuccess)) {
@@ -439,6 +613,7 @@ function each(thisObj, onSuccess) {
 } // each()
 //borrowed from http://code.google.com/p/shadejs
 function crawlObject(thisObj, onSuccess, doRecursion) {
+    "use strict";
     /// <summary>Iterates (optionally recursively) an object and executes a function on each of its properties.</summary>
     /// <param name="thisObj" type="Object"> An object to crawl </param>
     /// <param name="onSuccess" type="Function"> A function to execute on finding a property. To force iteration to stop, onSuccess should return false. </param>
@@ -459,6 +634,7 @@ function crawlObject(thisObj, onSuccess, doRecursion) {
 }
 // because IE 8 doesn't support console.log unless the console is open (*duh*)
 function log(s, includeCallStack) {
+    "use strict";
     /// <summary>Outputs a message to the console log(Webkit,FF) or an alert(IE)</summary>
     /// <param name="s" type="String"> String to output </param>
     /// <param name="includeCallStack" type="Boolean"> If true, include the callStack </param>
@@ -476,3 +652,5 @@ function log(s, includeCallStack) {
         if (!isNullOrEmpty(extendedLog)) alert(extendedLog);
     }
 }
+
+window.abandonHope = false;

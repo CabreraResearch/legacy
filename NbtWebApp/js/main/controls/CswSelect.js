@@ -1,10 +1,10 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-    
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     var pluginName = "CswSelect";
     
     var methods = {
@@ -15,6 +15,7 @@
                 selected: '',
                 values: [{value: '', display: '', data: {}}],
                 cssclass: '',
+                multiple: false,
                 onChange: null //function () {}
             };
             if (options) $.extend(o, options);
@@ -22,14 +23,19 @@
             var $parent = $(this);
             
             var $select = $('<select></select>');
-            var elementId = tryParseString(o.ID,'');
+            var elementId = tryParseString(o.ID);
             
             $select.CswAttrDom('id',elementId);
             $select.CswAttrDom('name',elementId);
             
-            if (!isNullOrEmpty( o.cssclass )) $select.addClass(o.cssclass);
-            if (!isNullOrEmpty( o.value )) $select.text( o.value );
-
+            if (false === isNullOrEmpty(o.cssclass)) {
+                $select.addClass(o.cssclass);
+            }
+            
+            if (false === isNullOrEmpty(o.value)) {
+                $select.text(o.value);
+            }
+            
             var values = makeOptions(o.values);
             setOptions(values, o.selected, $select);
             
@@ -41,6 +47,11 @@
             }
             
             $parent.append($select);
+            
+            if(isTrue(o.multiple)) {
+                $select.CswAttrDom('multiple', 'multiple').multiselect();    
+            }
+            
             return $select;
         },
         setoptions: function (values, selected, doEmpty) {
@@ -53,23 +64,54 @@
             var values = makeOptions(valueArray);
             setOptions(values, selected, $select, doEmpty);
             return $select;
+        },
+        addoption: function (value, isSelected) {
+            var $select = $(this),
+                val = makeOption(value);
+            addOption(val, isSelected, $select);
         }
     };
+    
+    function makeOption(opt) {
+        var ret, display, value;
+        if (contains(opt, 'value') && contains(opt, 'display')) {
+            ret = opt;
+        }
+        else if (contains(opt, 'value')) {
+            value = tryParseString(opt.value);
+            ret = { value: value, display: value };
+        }
+        else if (contains(opt, 'display')) {
+            display = tryParseString(opt.display);
+            ret = { value: display, display: display };
+        } else {
+            ret = { value: opt, display: opt };
+        }
+        return ret;
+    }
     
     function makeOptions(valueArray) {
         var values = [];
         crawlObject(valueArray, function(val) {
-            if (val.hasOwnProperty('value') && val.hasOwnProperty('display')) {
-                values.push(val);
-            }
-            else if (val.hasOwnProperty('value')) {
-                var display = tryParseString(val.display, val.value);
-                values.push({ value: val.value, display: display });
-            } else {
-                values.push({ value: val, display: val });
+            var value = makeOption(val);
+            if(false === isNullOrEmpty(value)) {
+                values.push(value);
             }
         }, false);
         return values;
+    }
+    
+    function addOption(thisOpt, isSelected, $select) {
+        var value = tryParseString(thisOpt.value);
+        var display = tryParseString(thisOpt.display);
+        var $opt = $('<option value="' + value + '">' + display + '</option>')
+                        .appendTo($select);
+        if (isSelected) {
+            $opt.CswAttrDom('selected', 'selected');
+        }
+        if (false === isNullOrEmpty(value.data)) {
+            $opt.data(value.dataName, value.data);
+        }
     }
     
     function setOptions(values, selected, $select, doEmpty) {
@@ -77,21 +119,10 @@
             if (doEmpty) {
                 $select.empty();
             }
-            for (var key in values) {
-                if (values.hasOwnProperty(key)) {
-                    var thisOpt = values[key];
-                    var value = tryParseString(thisOpt.value);
-                    var display = tryParseString(thisOpt.display);
-                    var $opt = $('<option value="' + value + '">' + display + '</option>')
-                        .appendTo($select);
-                    if (value === selected) {
-                        $opt.CswAttrDom('selected', 'selected');
-                    }
-                    if (false === isNullOrEmpty(thisOpt.data)) {
-                        $opt.data(thisOpt.dataName, thisOpt.data);
-                    }
-                }
-            }
+            each(values, function(thisOpt) {
+                var opt = makeOption(thisOpt);       
+                addOption(opt, (opt.value === selected), $select);
+            });
         }
         return $select;
     }
@@ -106,7 +137,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

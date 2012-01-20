@@ -4,14 +4,18 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Audit;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Log;
+using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Security;
+using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -540,7 +544,7 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode ), true );
             }
-			CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+            CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
             if( RoleNode2 != null )
             {
                 _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
@@ -549,7 +553,31 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
-        /// Convenience function for making new Action
+        /// Convenience function for making new Configuration Variable
+        /// </summary>
+        public void createConfigurationVariable( CswConfigurationVariables.ConfigurationVariableNames Name, string Description, string VariableValue, bool IsSystem )
+        {
+            // Create the Configuration Variable
+            if( Name != CswConfigurationVariables.ConfigurationVariableNames.Unknown )
+            {
+                createConfigurationVariable( Name.ToString().ToLower(), Description, VariableValue, IsSystem );
+            }
+        }
+
+        /// <summary>
+        /// Convenience function for making new Configuration Variable
+        /// </summary>
+        public void createConfigurationVariable( CswNbtResources.ConfigurationVariables Name, string Description, string VariableValue, bool IsSystem )
+        {
+            // Create the Configuration Variable
+            if( Name != CswNbtResources.ConfigurationVariables.unknown )
+            {
+                createConfigurationVariable( Name.ToString().ToLower(), Description, VariableValue, IsSystem );
+            }
+        }
+
+        /// <summary>
+        /// Convenience function for making new Configuration Variable
         /// </summary>
         public void createConfigurationVariable( String Name, string Description, string VariableValue, bool IsSystem )
         {
@@ -580,6 +608,43 @@ namespace ChemSW.Nbt.Schema
             JctModulesATable.update( JctModulesADataTable );
         }
 
+        private void _changeJunctionModuleId( Int32 ChangeModuleId, Int32 ToModuleId, string TableName, string Fk )
+        {
+            CswCommaDelimitedString FksAlreadyOnToModuleId = new CswCommaDelimitedString();
+            CswTableSelect JctModSelect = makeCswTableSelect( "SchemaModTrnsctn_ModuleJunctionUpdate_" + TableName + "_select", TableName );
+            DataTable JctModSelectTable = JctModSelect.getTable( "moduleid", ToModuleId );
+            foreach( DataRow JctRow in JctModSelectTable.Rows )
+            {
+                FksAlreadyOnToModuleId.Add( CswConvert.ToString( JctRow[Fk] ) );
+            }
+
+            CswTableUpdate JctModUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ModuleJunctionUpdate_" + TableName + "_update", TableName );
+            DataTable JctModUpdateTable = JctModUpdate.getTable( "moduleid", ChangeModuleId );
+            foreach( DataRow JctRow in JctModUpdateTable.Rows )
+            {
+                string FkId = CswConvert.ToString( JctRow[Fk] );
+                if( false == FksAlreadyOnToModuleId.Contains( FkId ) )
+                {
+                    JctRow["moduleid"] = CswConvert.ToDbVal( ToModuleId );
+                }
+                else
+                {
+                    JctRow.Delete();
+                }
+            }
+            JctModUpdate.update( JctModUpdateTable );
+        }
+
+        /// <summary>
+        /// Dereferences a moduleid from the appropriate jct tables and replaces with a new moduleid when necessary.
+        /// </summary>
+        public void changeJunctionModuleId( Int32 OldModuleId, Int32 NewModuleId )
+        {
+            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_actions", "actionid" );
+            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_nodetypes", "nodetypeid" );
+            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_objectclass", "objectclassid" );
+        }
+
         ///// <summary>
         ///// Deprecated in favor of SetActionPermission.  Don't use for new scripts.
         ///// </summary>
@@ -604,6 +669,20 @@ namespace ChemSW.Nbt.Schema
         //    }
         //}
 
+        public Int32 getModuleId( CswNbtResources.CswNbtModule Module )
+        {
+            Int32 RetModuleId = Int32.MinValue;
+            CswTableSelect ModulesTable = makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "modules" );
+            string WhereClause = " where lower(name)='" + Module.ToString().ToLower() + "'";
+            DataTable ModulesDataTable = ModulesTable.getTable( WhereClause, true );
+            if( ModulesDataTable.Rows.Count == 1 )
+            {
+                DataRow ModuleRow = ModulesDataTable.Rows[0];
+                RetModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
+            }
+            return RetModuleId;
+        }
+
         /// <summary>
         /// Convenience function for making new Module
         /// </summary>
@@ -621,6 +700,35 @@ namespace ChemSW.Nbt.Schema
             ModulesTable.update( ModulesDataTable );
             return NewModuleId;
         }
+
+        /// <summary>
+        /// Convenience function for making new Scheduled Rule
+        /// </summary>
+        public Int32 createScheduledRule( NbtScheduleRuleNames RuleName, Recurrence Recurrence, Int32 Interval )
+        {
+            Int32 RetRuleId = Int32.MinValue;
+            if( Recurrence != Recurrence.Unknown &&
+                NbtScheduleRuleNames.Unknown != RuleName )
+            {
+                //Come back some day and make this dundant-proof
+                //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful
+                CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
+                DataTable RuleTable = RulesUpdate.getEmptyTable();
+                DataRow NewRuleRow = RuleTable.NewRow();
+                NewRuleRow["recurrence"] = CswConvert.ToDbVal( Recurrence.ToString() );
+                NewRuleRow["interval"] = CswConvert.ToDbVal( Interval );
+                NewRuleRow["maxruntimems"] = CswConvert.ToDbVal( 300000 );
+                NewRuleRow["reprobatethreshold"] = CswConvert.ToDbVal( 3 );
+                NewRuleRow["disabled"] = CswConvert.ToDbVal( false );
+                NewRuleRow["rulename"] = CswConvert.ToDbVal( RuleName.ToString() );
+                RuleTable.Rows.Add( NewRuleRow );
+
+                RetRuleId = CswConvert.ToInt32( NewRuleRow["scheduledruleid"] );
+                RulesUpdate.update( RuleTable );
+            }
+            return RetRuleId;
+        }
+
 
         /// <summary>
         /// Convenience function for making new jct_module_objectclass records
@@ -675,6 +783,74 @@ namespace ChemSW.Nbt.Schema
             return NewObjectClassId;
         }
 
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,
+                                                                    string PropName,
+                                                                    CswNbtMetaDataFieldType.NbtFieldType FieldType,
+                                                                    bool IsBatchEntry = false,
+                                                                    bool ReadOnly = false,
+                                                                    bool IsFk = false,
+                                                                    string FkType = "",
+                                                                    Int32 FkValue = Int32.MinValue,
+                                                                    bool IsRequired = false,
+                                                                    bool IsUnique = false,
+                                                                    bool IsGlobalUnique = false,
+                                                                    bool ServerManaged = false,
+                                                                    string ListOptions = "",
+                                                                    Int32 DisplayColAdd = Int32.MinValue,
+                                                                    Int32 DisplayRowAdd = Int32.MinValue,
+                                                                    string Extended = "",
+                                                                    bool SetValOnAdd = false,
+                                                                    AuditLevel AuditLevel = AuditLevel.NoAudit,
+                                                                    string StaticText = ""
+            )
+        {
+
+
+            CswNbtMetaDataObjectClassProp RetProp = null;
+            if( NbtObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            {
+                CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
+                RetProp = ObjectClassOc.getObjectClassProp( PropName );
+                if( null == RetProp )
+                {
+                    CswTableUpdate ObjectClassPropUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate", "object_class_props" );
+                    DataTable UpdateTable = ObjectClassPropUpdate.getEmptyTable();
+                    DataRow NewPropRow = addObjectClassPropRow( UpdateTable,
+                                                               ObjectClassOc,
+                                                               PropName,
+                                                               FieldType,
+                                                               IsBatchEntry,
+                                                               ReadOnly,
+                                                               IsFk,
+                                                               FkType,
+                                                               FkValue,
+                                                               IsRequired,
+                                                               IsUnique,
+                                                               IsGlobalUnique,
+                                                               ServerManaged,
+                                                               ListOptions,
+                                                               DisplayColAdd,
+                                                               DisplayRowAdd );
+
+                    if( false == string.IsNullOrEmpty( Extended ) )
+                    {
+                        NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended.ToString()] = CswConvert.ToDbVal( Extended );
+                    }
+                    NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( SetValOnAdd );
+                    NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( AuditLevel.ToString() );
+
+                    if( false == string.IsNullOrEmpty( StaticText ) )
+                    {
+                        NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext.ToString()] = CswConvert.ToDbVal( StaticText );
+                    }
+                    ObjectClassPropUpdate.update( UpdateTable );
+                    MetaData.makeMissingNodeTypeProps();
+                    RetProp = ObjectClassOc.getObjectClassProp( PropName );
+                }
+            }
+            return RetProp;
+        }
+
         /// <summary>
         /// Convenience function for making new Object Class Props
         /// </summary>
@@ -722,6 +898,29 @@ namespace ChemSW.Nbt.Schema
             return OCPRow;
         }
 
+
+        private bool _validateFkType( string FkType )
+        {
+            bool RetIsValid = false;
+
+            CswNbtViewRelationship.PropIdType PropIdType;
+            Enum.TryParse( FkType, true, out PropIdType );
+            if( PropIdType != CswNbtViewRelationship.PropIdType.Unknown )
+            {
+                RetIsValid = true;
+            }
+            else
+            {
+                CswNbtViewRelationship.RelatedIdType RelatedIdType;
+                Enum.TryParse( FkType, true, out RelatedIdType );
+                if( RelatedIdType != CswNbtViewRelationship.RelatedIdType.Unknown )
+                {
+                    RetIsValid = true;
+                }
+            }
+            return RetIsValid;
+        }
+
         /// <summary>
         /// Convenience function for making new Object Class Props with more granular control
         /// </summary>
@@ -735,8 +934,18 @@ namespace ChemSW.Nbt.Schema
             OCPRow["fieldtypeid"] = CswConvert.ToDbVal( MetaData.getFieldType( FieldType ).FieldTypeId );
             OCPRow["isbatchentry"] = CswConvert.ToDbVal( IsBatchEntry );
             OCPRow["isfk"] = CswConvert.ToDbVal( IsFk );
-            OCPRow["fktype"] = FkType;
-            OCPRow["fkvalue"] = CswConvert.ToDbVal( FkValue );
+            if( IsFk &&
+                Int32.MinValue != FkValue &&
+                _validateFkType( FkType ) )
+            {
+                OCPRow["fktype"] = FkType;
+                OCPRow["fkvalue"] = CswConvert.ToDbVal( FkValue );
+            }
+            else
+            {
+                OCPRow["fktype"] = "";
+                OCPRow["fkvalue"] = CswConvert.ToDbVal( Int32.MinValue );
+            }
             OCPRow["isrequired"] = CswConvert.ToDbVal( IsRequired );
             OCPRow["isunique"] = CswConvert.ToDbVal( IsUnique );
             OCPRow["isglobalunique"] = CswConvert.ToDbVal( IsGlobalUnique );
@@ -994,17 +1203,61 @@ namespace ChemSW.Nbt.Schema
         {
             if( !String.IsNullOrEmpty( VariableValue ) && !String.IsNullOrEmpty( VariableName ) )
             {
-                _CswNbtResources.setConfigVariableValue( VariableName, VariableValue );
+                _CswNbtResources.ConfigVbls.setConfigVariableValue( VariableName, VariableValue );
             }
         }
 
         public string getConfigVariableValue( String VariableName )
         {
-            return ( _CswNbtResources.getConfigVariableValue( VariableName ) );
+            return ( _CswNbtResources.ConfigVbls.getConfigVariableValue( VariableName ) );
         }
 
 
         public CswNbtActUpdatePropertyValue getCswNbtActUpdatePropertyValue() { return ( new CswNbtActUpdatePropertyValue( _CswNbtResources ) ); }
+
+
+
+        public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswNbtResources.execStoredProc( StoredProcName, Params ); }
+
+
+        private string _DumpDirectorySetupVblName = "DumpFileDirectoryId";
+        public void getNextSchemaDumpFileInfo( ref string PhysicalDirectoryPath, ref string NameOfCurrentDump )
+        {
+
+            if( _CswNbtResources.SetupVbls.doesSettingExist( _DumpDirectorySetupVblName ) )
+            {
+                string StatusMsg = string.Empty;
+                if( false == _CswNbtResources.getNextSchemaDumpFileInfo( _CswNbtResources.SetupVbls[_DumpDirectorySetupVblName], ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) )
+                {
+                    throw ( new CswDniException( "Unable to take retrieve dump file information: " + StatusMsg ) );
+                }
+            }
+            else
+            {
+                throw ( new CswDniException( "Unable to get dump file information: there is no " + _DumpDirectorySetupVblName + " setup variable" ) );
+
+            }//if-else the dump setup setting exists
+
+        }//TakeADump() 
+
+        public void takeADump( ref string DumpFileName, ref string StatusMessage )
+        {
+
+            if( _CswNbtResources.SetupVbls.doesSettingExist( _DumpDirectorySetupVblName ) )
+            {
+                if( false == _CswNbtResources.takeADump( _CswNbtResources.SetupVbls[_DumpDirectorySetupVblName], ref DumpFileName, ref StatusMessage ) )
+                {
+                    throw ( new CswDniException( "Unable to take a dump: " + StatusMessage ) );
+                }
+            }
+            else
+            {
+                throw ( new CswDniException( "Unable to take a dump: there is no " + _DumpDirectorySetupVblName + " setup variable" ) );
+
+            }//if-else the dump setup setting exists
+
+        }//takeADump() 
+
     }//class CswNbtSchemaModTrnsctn
 
 }//ChemSW.Nbt.Schema

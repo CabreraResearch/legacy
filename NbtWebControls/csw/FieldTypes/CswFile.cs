@@ -1,21 +1,21 @@
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ChemSW.CswWebControls;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
-using ChemSW.CswWebControls;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswFile : CswFieldTypeWebControl, INamingContainer
     {
-        public CswFile(CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswFile( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
-            this.DataBinding += new EventHandler(CswFile_DataBinding);
+            this.DataBinding += new EventHandler( CswFile_DataBinding );
         }
 
-        private void CswFile_DataBinding(object sender, EventArgs e)
+        private void CswFile_DataBinding( object sender, EventArgs e )
         {
             // We don't do any loading directly on Files -- we use GetBlob.Aspx
         }
@@ -40,7 +40,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 Prop.ClearBlob();
             }
         }
-   
+
         //private Literal _Spacer = null;
         private HyperLink _FileLink = null;
         private CswImageButton _UploadButton;
@@ -78,17 +78,17 @@ namespace ChemSW.NbtWebControls.FieldTypes
             base.CreateChildControls();
         }
 
-        protected override void OnPreRender(EventArgs e)
+        protected override void OnPreRender( EventArgs e )
         {
             _UploadButton.Visible = false;
             _ClearButton.Visible = false;
-            if (Prop != null && Prop.AsBlob != null)
+            if( Prop != null && Prop.AsBlob != null )
             {
-                if (Prop.AsBlob.JctNodePropId != Int32.MinValue)
+                if( Prop.AsBlob.JctNodePropId != Int32.MinValue )
                 {
                     _FileLink.Text = Prop.AsBlob.FileName;
                     _FileLink.Target = "_blank";
-                    _FileLink.NavigateUrl = "GetBlob.Aspx?mode=doc&jctnodepropid=" + Prop.AsBlob.JctNodePropId + "&nodeid=" + Prop.NodeId.ToString() + "&propid=" + PropId.ToString();
+                    _FileLink.NavigateUrl = "getBlob?mode=doc&jctnodepropid=" + Prop.AsBlob.JctNodePropId + "&nodeid=" + Prop.NodeId.ToString() + "&propid=" + PropId.ToString();
                     _UploadButton.OnClientClick = "CswFile_editDocument('" + _hiddenClear.ClientID + "', '" + Prop.NodeId.ToString() + "', '" + PropId.ToString() + "');";
                     _ClearButton.OnClientClick = "return CswFile_clearDocument('" + _hiddenClear.ClientID + "', '" + _FileLink.ClientID + "');";
                     _UploadButton.Visible = true;
@@ -102,16 +102,16 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
             } // if (_PropAsBlob != null)
 
-            if( ReadOnly || _EditMode == NodeEditMode.AddInPopup || 
-                            _EditMode == NodeEditMode.EditInPopup || 
-                            _EditMode == NodeEditMode.Demo || 
+            if( ReadOnly || _EditMode == NodeEditMode.AddInPopup ||
+                            _EditMode == NodeEditMode.EditInPopup ||
+                            _EditMode == NodeEditMode.Demo ||
                             _EditMode == NodeEditMode.PrintReport )
             {
                 _ClearButton.Visible = false;
                 _UploadButton.Visible = false;
             }
 
-            base.OnPreRender(e);
+            base.OnPreRender( e );
         }
     }
 }

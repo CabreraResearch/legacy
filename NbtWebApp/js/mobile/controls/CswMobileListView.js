@@ -1,4 +1,4 @@
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="ICswMobileWebControls.js" />
 /// <reference path="../globals/CswMobileEnums.js" />
 /// <reference path="../globals/CswMobileTools.js" />
@@ -11,6 +11,7 @@
 CswMobileListView.inheritsFrom(ICswMobileWebControls);
 
 function CswMobileListView(listDef, $parent, bindEvent) {
+    "use strict";
     /// <summary>
     ///   Menu button class. Responsible for creating Mobile menu buttons suitable for consumption by a header/footer.
     ///   Menu buttons must be tied to static pages to wire their events properly, with the exception of 'Back'.
@@ -66,7 +67,7 @@ function CswMobileListView(listDef, $parent, bindEvent) {
                 'data-inset': p['data-inset']
             };
 
-            $ul.CswAttrXml(ulAttr)
+            $ul.CswAttrNonDom(ulAttr)
                 .css(p.cssStyles);
 
             classes = p.cssClass.split(' ');
@@ -105,7 +106,7 @@ function CswMobileListView(listDef, $parent, bindEvent) {
         var $li = addListItem(id, '', onEvent, p);
         $li.CswLink('init', { ID: id + aSuffix, href: 'javascript:void(0);', value: text })
                                               .css('white-space', 'normal')
-                                              .CswAttrXml({
+                                              .CswAttrNonDom({
                                               'data-identity': id,
                                               'data-url': id
                                           });
@@ -186,7 +187,7 @@ function CswMobileListView(listDef, $parent, bindEvent) {
             $li = $('<li id="' + id + liSuffix + '"></li>')
                         .appendTo($control);
         }
-        $li.CswAttrXml(p.attr);
+        $li.CswAttrNonDom(p.attr);
         if (!isNullOrEmpty(text)) {
             $li.text(text);
         }

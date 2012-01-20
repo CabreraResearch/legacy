@@ -2,11 +2,11 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../thirdparty/js/jmol/Jmol.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";
     var pluginName = 'CswFieldTypeMol';
 
     var methods = {
@@ -35,13 +35,14 @@
             }
 
             if (false === isTrue(o.ReadOnly) && o.EditMode !== EditMode.AddInPopup.name) {
-                var $editButton = $('<div/>')
+                /* Edit Button */
+                $('<div/>')
                     .appendTo($cell22)
                     .CswImageButton({
                         ButtonType: CswImageButton_ButtonType.Edit,
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',
-                        onClick: function ($ImageDiv) {
+                        onClick: function () {
                             $.CswDialog('EditMolDialog', {
                                 TextUrl: '/NbtWebApp/wsNBT.asmx/saveMolProp',
                                 FileUrl: '/NbtWebApp/wsNBT.asmx/saveMolPropFile',
@@ -54,14 +55,15 @@
                             return CswImageButton_ButtonType.None;
                         }
                     });
-                var $clearButton = $('<div/>')
+                /* Clear Button */
+                $('<div/>')
                     .appendTo($cell23)
                     .CswImageButton({
                         ButtonType: CswImageButton_ButtonType.Clear,
                         AlternateText: 'Clear',
                         ID: o.ID + '_clr',
-                        onClick: function ($ImageDiv) {
-
+                        onClick: function () {
+                            /* remember: confirm is globally blocking call */
                             if (confirm("Are you sure you want to clear this structure?")) {
                                 var dataJson = {
                                     PropId: o.propData.id,
@@ -93,7 +95,7 @@
         } else if (typeof method === 'object' || !method) {
             return methods.init.apply(this, arguments);
         } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName);
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
         }
 
     };

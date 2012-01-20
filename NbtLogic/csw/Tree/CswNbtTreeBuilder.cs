@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System.Xml.Schema;
-using System.IO;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
@@ -141,79 +137,76 @@ namespace ChemSW.Nbt
 
 
         private TreeMode _TreeMode = TreeMode.DomProxy;
-		private ICswNbtTree _makeTree( CswNbtView View, bool IsFullyPopulated ) //CswNbtTreeKey CswNbtTreeKey )
+        private ICswNbtTree _makeTree( CswNbtView View, bool IsFullyPopulated ) //CswNbtTreeKey CswNbtTreeKey )
         {
-			return ( _CswNbtTreeFactory.makeTree( _TreeMode, View, IsFullyPopulated ) ); //, CswNbtTreeKey ) );
+            return ( _CswNbtTreeFactory.makeTree( _TreeMode, View, IsFullyPopulated ) ); //, CswNbtTreeKey ) );
 
         }//_makeTree()
 
 
-
-
-		public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes, Int32 PageSize = Int32.MinValue )
-		{
-			CswNbtNodeKey ParentNodeKey = null;
-			return getTreeFromView( View, ForceReInit, ref ParentNodeKey, null, PageSize, FetchAllPrior, SingleLevelOnly, null, IncludeSystemNodes );
-		}
-
-		public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes, bool RequireViewPermissions )
-		{
-			CswNbtNodeKey ParentNodeKey = null;
-			return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, ForceReInit, ref ParentNodeKey, null, Int32.MinValue, FetchAllPrior, SingleLevelOnly, null, IncludeSystemNodes, RequireViewPermissions );
-		}
-
-		public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes )
-		{
-		    CswNbtNodeKey ParentNodeKey = null;
-		    return getTreeFromView( RunAsUser, View, ForceReInit, ref ParentNodeKey, null, Int32.MinValue, FetchAllPrior, SingleLevelOnly, null, IncludeSystemNodes, true );
-		}
-
-		public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, ref CswNbtNodeKey ParentNodeKey, CswNbtViewRelationship ChildRelationshipToStartWith, Int32 PageSize, bool FetchAllPrior, bool SingleLevelOnly, CswNbtNodeKey IncludedKey, bool IncludeSystemNodes )
-		{
-			return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, ForceReInit, ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, FetchAllPrior, SingleLevelOnly, IncludedKey, IncludeSystemNodes, true );
-		}
-
-        public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, 
-											//CswNbtTreeKey CswNbtTreeKey, 
-											CswNbtView View, 
-											bool ForceReInit,
-											ref CswNbtNodeKey ParentNodeKey, 
-											CswNbtViewRelationship ChildRelationshipToStartWith, 
-											Int32 PageSize, 
-											bool FetchAllPrior, 
-											bool SingleLevelOnly, 
-											CswNbtNodeKey IncludedKey, 
-											bool IncludeSystemNodes,
-											bool RequireViewPermissions )
+        /// <summary>
+        /// Deprecated
+        /// </summary>
+        public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes, Int32 PageSize = Int32.MinValue )
         {
-			ICswNbtTree ReturnVal = _makeTree( View, ( FetchAllPrior && !SingleLevelOnly ) ); // CswNbtTreeKey );
-            CswNbtTreeLoaderFactory CswNbtTreeLoaderFactory = new CswNbtTreeLoaderFactory( _CswNbtResources );
+            return getTreeFromView( View, IncludeSystemNodes );
+        }
 
-            CswNbtTreeLoader CswNbtTreeLoader = null;
-            CswNbtTreeLoader = CswNbtTreeLoaderFactory.makeTreeLoaderFromXmlView( RunAsUser, ReturnVal, View, IncludeSystemNodes );
-			CswNbtTreeLoader.load( ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, FetchAllPrior, SingleLevelOnly, IncludedKey, RequireViewPermissions );
-			
-			//ReturnVal.goToRoot();
+        /// <summary>
+        /// Deprecated
+        /// </summary>
+        public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes, bool RequireViewPermissions )
+        {
+            return getTreeFromView( View, IncludeSystemNodes );
+        }
+
+        /// <summary>
+        /// Deprecated
+        /// </summary>
+        public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes )
+        {
+            return getTreeFromView( RunAsUser, View, IncludeSystemNodes );
+        }
+
+        /// <summary>
+        /// Deprecated
+        /// </summary>
+        public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, ref CswNbtNodeKey ParentNodeKey, CswNbtViewRelationship ChildRelationshipToStartWith, Int32 PageSize, bool FetchAllPrior, bool SingleLevelOnly, CswNbtNodeKey IncludedKey, bool IncludeSystemNodes )
+        {
+            return getTreeFromView( View, IncludeSystemNodes );
+        }
+
+        /// <summary>
+        /// Instance a Tree from a View
+        /// </summary>
+        public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes )
+        {
+            return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, IncludeSystemNodes );
+        }
+
+        /// <summary>
+        /// Instance a Tree from a View
+        /// </summary>
+        public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool IncludeSystemNodes )
+        {
+            ICswNbtTree ReturnVal = _makeTree( View, true );
+
+            CswNbtTreeLoaderFromXmlViewByLevel TreeLoader = new CswNbtTreeLoaderFromXmlViewByLevel( _CswNbtResources, RunAsUser, ReturnVal, View, IncludeSystemNodes );
+            TreeLoader.load();
 
             return ( ReturnVal );
 
         }//getTreeFromView()
 
-        //public ICswNbtTree getTreeFromSearchString( CswNbtTreeKey CswNbtTreeKey, CswNbtSearch NbtSearch )
-        //{
-        //    ICswNbtTree ReturnVal = _makeTree( CswNbtTreeKey );
-        //    //            CswNbtTree ReturnVal = new CswNbtTree( _CswNbtResources, SchemaPath );
-
-        //    CswNbtTreeLoaderFactory CswNbtTreeLoaderFactory = new CswNbtTreeLoaderFactory( _CswNbtResources );
-
-        //    CswNbtTreeLoader CswNbtTreeLoader = null;
-        //    CswNbtTreeLoader = CswNbtTreeLoaderFactory.makeTreeLoaderFromSearchString( ReturnVal, NbtSearch );
-
-        //    CswNbtNodeKey ParentNodeKey = null;
-        //    CswNbtTreeLoader.load(ref ParentNodeKey, null, Int32.MinValue, false, false, null);
-
-        //    return ( ReturnVal );
-        //}
+        /// <summary>
+        /// Instance a Tree from Raw XML
+        /// </summary>
+        public ICswNbtTree getTreeFromXml( CswNbtView View, XmlDocument XmlDoc )
+        {
+            ICswNbtTree ReturnVal = _makeTree( View, true );
+            ReturnVal.setRawTreeXml( XmlDoc );
+            return ( ReturnVal );
+        }
 
     }//CswNbtTreeBuilder
 

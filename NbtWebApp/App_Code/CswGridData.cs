@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -19,6 +18,8 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtResources = Resources;
             PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
+            PageSize = ( PageSize > 0 ) ? PageSize : CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.treeview_resultlimit.ToString() ) );
+            PageSize = ( PageSize > 0 ) ? PageSize : 50;
         }
 
         public string PkColumn = string.Empty;
@@ -30,6 +31,7 @@ namespace ChemSW.Nbt.WebServices
         public string GridSortName = string.Empty;
         public string GridTitle = string.Empty;
         public Int32 GridWidth = Int32.MinValue;
+        public CswCommaDelimitedString EditableColumns = null;
         public bool CanEdit = false;
         public bool CanDelete = false;
 
@@ -120,7 +122,7 @@ namespace ChemSW.Nbt.WebServices
 
         private const string _NoResultsDisplayString = "No Results";
 
-        public JObject DataTableToJSON( DataTable Data )
+        public JObject DataTableToJSON( DataTable Data, bool EnableGridEdit = false )
         {
             // Columns
             JArray JColumnNames = new JArray();
@@ -128,7 +130,7 @@ namespace ChemSW.Nbt.WebServices
             foreach( DataColumn Column in Data.Columns )
             {
                 bool IsKey = ( Column.ColumnName.ToLower() == PkColumn.ToLower() );
-                dataColumnToJson( Column, JColumnNames, JColumnDefs, IsKey );
+                dataColumnToJson( Column, JColumnNames, JColumnDefs, IsKey, false, EnableGridEdit );
             } // foreach( DataColumn Column in Data.Columns )
 
             // Rows
@@ -144,25 +146,44 @@ namespace ChemSW.Nbt.WebServices
 
         } // _mapDataTable()
 
-        public void dataColumnToJson( DataColumn Column, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false )
+        public void dataColumnToJson( DataColumn Column, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false, bool EnableGridEdit = false )
         {
             string ColumnName = Column.ColumnName.ToUpperInvariant();
-            makeJqColumn( ColumnName, JColumnNames, JColumnDefs, IsKey, IsHidden );
+            makeJqColumn( Column, ColumnName, JColumnNames, JColumnDefs, IsKey, IsHidden, EnableGridEdit );
         }
 
-        public void makeJqColumn( String ColumnName, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false )
+        public void makeJqColumn( DataColumn Column, String ColumnName, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false, bool EnableGridEdit = false )
         {
             JColumnNames.Add( ColumnName.ToUpperInvariant() );
             JObject ThisColumnDef = new JObject();
-            ThisColumnDef["name"] = ColumnName.ToUpperInvariant();
-            ThisColumnDef["index"] = ColumnName.ToUpperInvariant();
+            ThisColumnDef["name"] = ColumnName.ToUpperInvariant().Replace( " ", "_" );
+            ThisColumnDef["index"] = ColumnName.ToUpperInvariant().Replace( " ", "_" );
+            ThisColumnDef["label"] = ColumnName.ToUpperInvariant();
             if( IsKey )
             {
                 ThisColumnDef["key"] = true;
             }
-            if( ( IsKey && HidePkColumn ) || IsHidden )
+            if( ( IsKey &&
+                    HidePkColumn ) ||
+                  IsHidden )
             {
                 ThisColumnDef["hidden"] = true;
+            }
+            if( false == IsHidden &&
+                    false == IsKey &&
+                        EnableGridEdit &&
+                            ( null == EditableColumns ||
+                                EditableColumns.Contains( ColumnName ) ) )
+            {
+                ThisColumnDef["editable"] = true;
+                ThisColumnDef["edittype"] = "text";
+                if( null != Column &&
+                        ( Column.DataType == Type.GetType( "System.Int32" ) ||
+                            Column.DataType == Type.GetType( "System.Int64" ) ) )
+                {
+                    ThisColumnDef["editrules"] = new JObject();
+                    ThisColumnDef["editrules"]["number"] = true;
+                }
             }
             _ColumnsWidth += ColumnName.Length;
             JColumnDefs.Add( ThisColumnDef );
@@ -173,7 +194,7 @@ namespace ChemSW.Nbt.WebServices
             JObject RowObj = new JObject();
             foreach( DataColumn Column in Row.Table.Columns )
             {
-                makeJqCell( RowObj, Column.ColumnName.ToUpperInvariant(), Row[Column].ToString() );
+                makeJqCell( RowObj, Column.ColumnName.ToUpperInvariant().Replace( " ", "_" ), Row[Column].ToString() );
             }
             JRows.Add( RowObj );
         } // _mapDataTable()
@@ -181,80 +202,6 @@ namespace ChemSW.Nbt.WebServices
         public void makeJqCell( JObject RowObj, String ColumnName, String Value )
         {
             RowObj[ColumnName] = Value;
-        }
-
-        /// <summary>
-        /// Returns a JSON Array representing grid rows (a row as a JObject of JProperty key/value pairs);
-        /// This anticipates XElements as derived from a Tree from a View
-        /// </summary>
-        public JArray getGridRowsJSON( IEnumerable<XElement> GridNodes, Collection<CswViewBuilderProp> PropsInGrid )
-        {
-            JArray GridRows = new JArray();
-            foreach( XElement GridNode in GridNodes )
-            {
-                JObject Row = new JObject();
-                Row["nodeid"] = GridNode.Attribute( "nodeid" ).Value;
-                Row["nodepk"] = new CswPrimaryKey( "nodes", CswConvert.ToInt32( GridNode.Attribute( "nodeid" ).Value ) ).ToString();
-                Row["cswnbtnodekey"] = wsTools.ToSafeJavaScriptParam( GridNode.Attribute( "key" ).Value );
-                Row["nodename"] = GridNode.Attribute( "nodename" ).Value;
-				string Icon = "<img src=\'";
-				if( CswConvert.ToBoolean( GridNode.Attribute( "locked" ).Value ) )
-				{
-					Icon += "Images/quota/lock.gif\' title=\'Quota exceeded";
-				}
-				else
-				{
-					Icon += "Images/icons/" + _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( GridNode.Attribute( "nodetypeid" ).Value ) ).IconFileName;
-				}
-				Icon += "\'/>";
-				Row["icon"] = Icon;
-
-                foreach( XElement Related in GridNode.DescendantNodes().OfType<XElement>() )
-                {
-                    if( Related.Name == "NbtNodeProp" )
-                    {
-                        _addSafeCellContent( Related, Row, PropsInGrid );
-                    }
-                }
-                GridRows.Add( Row );
-            }
-
-            return GridRows;
-        } // getGridRowsJSON()
-
-        /// <summary>
-        /// Translates property value into human readable text.
-        /// Currently only handles Logical fieldtype.
-        /// </summary>
-        private static void _addSafeCellContent( XElement DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
-        {
-            if( null != DirtyElement )
-            {
-                string CleanPropName = DirtyElement.Attribute( "name" ).Value.Trim().ToLower().Replace( " ", "_" );
-                string CleanValue;
-                string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
-                string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
-                string PropId = DirtyElement.Attribute( "nodetypepropid" ).Value;
-                var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
-                switch( PropFieldType )
-                {
-                    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-                        CleanValue = CswConvert.ToDisplayString( CswConvert.ToTristate( DirtyValue ) );
-                        break;
-                    default:
-                        CleanValue = DirtyValue;
-                        break;
-                }
-                foreach( CswViewBuilderProp VbProp in PropsInGrid )
-                {
-                    if( VbProp.PropNameUnique == CleanPropName && VbProp.AssociatedPropIds.Contains( PropId ) )
-                    {
-                        CleanPropName += "_" + VbProp.MetaDataPropId;
-                    }
-                }
-
-                ParentObj[CleanPropName] = CleanValue;
-            }
         }
 
         /// <summary>
@@ -319,7 +266,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Combines required jqGrid options into jqGrid consumable JObject
         /// </summary>
-        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows = null )
+        public JObject makeJqGridJSON( JArray ColumnNames, JArray ColumnDefinition, JArray Rows = null, bool ShowAllRows = false )
         {
             JObject Ret = new JObject();
 
@@ -330,7 +277,10 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret[JqGridJsonOptions.data.ToString()] = Rows;
             }
-            Ret[JqGridJsonOptions.rowNum.ToString()] = PageSize;
+            if( false == ShowAllRows )
+            {
+                Ret[JqGridJsonOptions.rowNum.ToString()] = PageSize;
+            }
             Ret[JqGridJsonOptions.viewrecords.ToString()] = true;
             Ret[JqGridJsonOptions.emptyrecords.ToString()] = _NoResultsDisplayString;
             if( GridWidth == Int32.MinValue )

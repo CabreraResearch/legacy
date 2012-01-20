@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
 using ChemSW.Exceptions;
 
@@ -114,7 +112,7 @@ namespace ChemSW.Nbt.MetaData
                 _AllNodeTypes.Add( OldNodeType );
 
                 NodeType.Reassign( Row );
-                
+
                 RegisterExisting( OldNodeType );
                 RegisterExisting( NodeType );
             }
@@ -128,31 +126,35 @@ namespace ChemSW.Nbt.MetaData
             return NodeType;
         }
 
-
         public void RegisterExisting( ICswNbtMetaDataObject Object )
         {
-            if( !(Object is CswNbtMetaDataNodeType ))
+            if( !( Object is CswNbtMetaDataNodeType ) )
                 throw new CswDniException( "CswNbtMetaDataCollectionNodeType.Register got an invalid Object as a parameter" );
             CswNbtMetaDataNodeType NodeType = Object as CswNbtMetaDataNodeType;
-            
-            _ByVersion.Add( NodeType, NodeType );
-            _ById.Add( NodeType.NodeTypeId, NodeType );
+
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeType, NodeType, _ByVersion, "NodeType", NodeType.NodeTypeId, NodeType.NodeTypeName );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeType.NodeTypeId, NodeType, _ById, "NodeType", NodeType.NodeTypeId, NodeType.NodeTypeName );
 
             // Handle index of latest version by first version
             if( _LatestVersionByFirstVersion.ContainsKey( NodeType.FirstVersionNodeType ) )
             {
                 CswNbtMetaDataNodeType LatestVersionNodeType = (CswNbtMetaDataNodeType) _LatestVersionByFirstVersion[NodeType.FirstVersionNodeType];
                 if( LatestVersionNodeType.VersionNo < NodeType.VersionNo )
+                {
                     _LatestVersionByFirstVersion[NodeType.FirstVersionNodeType] = NodeType;
+                }
             }
             else
             {
                 _LatestVersionByFirstVersion.Add( NodeType.FirstVersionNodeType, NodeType );
             }
 
-            if( !_ByObjectClass.ContainsKey( NodeType.ObjectClass.ObjectClassId ) )
+            if( false == _ByObjectClass.ContainsKey( NodeType.ObjectClass.ObjectClassId ) )
+            {
                 _ByObjectClass.Add( NodeType.ObjectClass.ObjectClassId, new ObjectClassHashEntry() );
+            }
             ( (ObjectClassHashEntry) _ByObjectClass[NodeType.ObjectClass.ObjectClassId] )._ById.Add( NodeType.NodeTypeId, NodeType );
+
         }
 
         public void Deregister( ICswNbtMetaDataObject Object )
@@ -174,7 +176,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-				throw new CswDniException( ErrorType.Warning, "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
+                throw new CswDniException( ErrorType.Warning, "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
             }
 
             if( _ByObjectClass.ContainsKey( NodeType.ObjectClass.ObjectClassId ) )
@@ -188,7 +190,7 @@ namespace ChemSW.Nbt.MetaData
             if( !( Object is CswNbtMetaDataNodeType ) )
                 throw new CswDniException( "CswNbtMetaDataCollectionNodeType.Deregister got an invalid Object as a parameter" );
             CswNbtMetaDataNodeType NodeType = Object as CswNbtMetaDataNodeType;
-            
+
             _AllNodeTypes.Remove( NodeType );
         }
 

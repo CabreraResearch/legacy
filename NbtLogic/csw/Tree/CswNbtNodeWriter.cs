@@ -1,10 +1,10 @@
 using System;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt
 {
@@ -60,28 +60,28 @@ namespace ChemSW.Nbt
             return ( ReturnVal );
         }
 
-		public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase, bool IsCopy, bool OverrideUniqueValidation )
+        public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase, bool IsCopy, bool OverrideUniqueValidation )
         {
             // case 20970
-			CswNbtActQuotas Quotas = new CswNbtActQuotas(_CswNbtResources);
-			if( !Quotas.CheckQuotaNT( Node.NodeTypeId ) )
-			{
-				Node.Locked = true;
-			}
+            CswNbtActQuotas Quotas = new CswNbtActQuotas( _CswNbtResources );
+            if( !Quotas.CheckQuotaNT( Node.NodeTypeId ) )
+            {
+                Node.Locked = true;
+            }
 
-			getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, PostToDatabase );
+            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, PostToDatabase );
             //setDefaultPropertyValues( Node );
 
-			// case 22591 - make empty rows for every property
-			if( PostToDatabase )
-			{
-				foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
-				{
-					PropWrapper.makePropRow();
-				}
-				Node.postChanges( true, IsCopy, OverrideUniqueValidation );
-			}
-		}//makeNewNodeEntry()
+            // case 22591 - make empty rows for every property
+            if( PostToDatabase )
+            {
+                foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
+                {
+                    PropWrapper.makePropRow();
+                }
+                Node.postChanges( true, IsCopy, OverrideUniqueValidation );
+            }
+        }//makeNewNodeEntry()
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -95,7 +95,7 @@ namespace ChemSW.Nbt
                     //the db, after which it will have a node id
                     if( null == Node.NodeId )
                     {
-						makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
+                        makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
                         //setDefaultPropertyValues( Node );
                     }
 
@@ -104,7 +104,7 @@ namespace ChemSW.Nbt
 
                     //bz # 5878
                     //Node.Properties.ManageTransaction = _ManageTransaction;
-					Node.Properties.update( IsCopy, OverrideUniqueValidation );
+                    Node.Properties.update( IsCopy, OverrideUniqueValidation );
 
                     //set nodename with updated prop values
                     _synchNodeName( Node );
@@ -140,13 +140,13 @@ namespace ChemSW.Nbt
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )
             {
                 Prop.NodeId = Node.NodeId;
-				// Only set values for unmodified properties
-				// This is important for nodes created through workflows
-				if( !Prop.WasModified )
-				{
-					Prop.SetDefaultValue();
-				}
-			} // foreach( CswNbtNodePropWrapper Prop in Node.Properties )
+                // Only set values for unmodified properties
+                // This is important for nodes created through workflows
+                if( !Prop.WasModified )
+                {
+                    Prop.SetDefaultValue();
+                }
+            } // foreach( CswNbtNodePropWrapper Prop in Node.Properties )
         } // setDefaultPropertyValues()
 
         public void setSequenceValues( CswNbtNode Node )

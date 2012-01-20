@@ -2,25 +2,27 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-        
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";        
     var pluginName = 'CswFieldTypeAuditHistoryGrid';
 
     var methods = {
         init: function(o) {
-			
-			var $Div = $(this);
+            
+            var $Div = $(this);
             var ret = '';
             if (false === o.Multi) {
                 ret = $Div.CswAuditHistoryGrid({
                         ID: o.ID,
                         nodeid: o.nodeid,
-						EditMode: o.EditMode,
+                        cswnbtnodekey: o.cswnbtnodekey,
+                        EditMode: o.EditMode,
                         onEditRow: function(date) {
                             $.CswDialog('EditNodeDialog', {
                                 nodeids: [ o.nodeid ],
+                                nodekeys: [ o.cswnbtnodekey ],
                                 onEditNode: o.onEditNode,
                                 date: date
                             });
@@ -42,7 +44,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

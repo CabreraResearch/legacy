@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.WebServices
 			JObject ret = new JObject();
 			ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
 
-			XDocument XDoc = XDocument.Parse( Tree.getRawTreeXml() );
+			XDocument XDoc = XDocument.Parse( Tree.getRawTreeXml().InnerXml );
 			foreach( XElement TreeElm in XDoc.Elements() )                        // NbtTree
 			{
 				foreach( XElement RootElm in TreeElm.Elements() )                 // NbtNode (root)
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.WebServices
 							ret[NodeId.ToString()]["thumbnailurl"] = "Images/icons/" + NodeType.IconFileName;
 						}
 
-						foreach( XElement PropElm in NodeElm.Elements() )         // NbtNodeProp
+						foreach( XElement PropElm in NodeElm.Descendants( "NbtNodeProp" ) )
 						{
 							Int32 NodeTypePropId = CswConvert.ToInt32( PropElm.Attribute( "nodetypepropid" ).Value );
 							Int32 JctNodePropId = CswConvert.ToInt32( PropElm.Attribute( "jctnodepropid" ).Value );

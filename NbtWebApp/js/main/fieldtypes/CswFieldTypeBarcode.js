@@ -2,10 +2,10 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-        
+(function ($) { /// <param name="$" type="jQuery" />
+    "use strict";        
     var pluginName = 'CswFieldTypeBarcode';
 
     var methods = {
@@ -38,7 +38,7 @@
                         .CswImageButton({  ButtonType: CswImageButton_ButtonType.Print,
                                 AlternateText: '',
                                 ID: o.ID + '_print',
-                                onClick: function($ImageDiv) {
+                                onClick: function() {
                                     $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.ID });
                                     return CswImageButton_ButtonType.None;
                                 }
@@ -47,8 +47,8 @@
                 if(o.Required) {
                     $TextBox.addClass("required");
                 }
-				
-				$TextBox.clickOnEnter(o.$savebtn);
+                
+                $TextBox.clickOnEnter(o.$savebtn);
             }
         },
         save: function(o) {
@@ -69,7 +69,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

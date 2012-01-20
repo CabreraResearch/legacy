@@ -196,7 +196,7 @@ namespace ChemSW.NbtWebControls
                     SelectedProperty = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PriorSelectedValue ) );
                     if( SelectedProperty != null )
                     {
-                        SelectedTab = SelectedProperty.EditLayout.Tab;
+						SelectedTab = _CswNbtResources.MetaData.getNodeTypeTab( SelectedProperty.EditLayout.TabId );
                         SelectedNodeType = SelectedTab.NodeType;
                         SelectedBaseVersion = SelectedNodeType.FirstVersionNodeType;
                         SelectedCategory = SelectedBaseVersion.LatestVersionNodeType.Category;
@@ -215,7 +215,7 @@ namespace ChemSW.NbtWebControls
                     SelectedProperty = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PriorSelectedValue.Substring( 0, PriorSelectedValue.IndexOf( "_" ) ) ) );
                     if( SelectedProperty != null )
                     {
-                        SelectedTab = SelectedProperty.EditLayout.Tab;
+						SelectedTab = _CswNbtResources.MetaData.getNodeTypeTab( SelectedProperty.EditLayout.TabId );
                         SelectedNodeType = SelectedTab.NodeType;
                         SelectedBaseVersion = SelectedNodeType.FirstVersionNodeType;
                         SelectedCategory = SelectedBaseVersion.LatestVersionNodeType.Category;

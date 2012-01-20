@@ -935,7 +935,8 @@
 				var s = this._get_settings().ui,
 					is_multiple = (s.select_multiple_modifier == "on" || (s.select_multiple_modifier !== false && e && e[s.select_multiple_modifier + "Key"])),
 					is_selected = this.is_selected(obj),
-					proceed = true;
+					proceed = true,
+                    t = this;
 				if(check) {
 					if(s.disable_selecting_children && is_multiple && obj.parents("li", this.get_container()).children(".jstree-clicked").length) {
 						return false;
@@ -965,7 +966,10 @@
 				}
 				if(proceed && !is_selected) {
 					obj.children("a").addClass("jstree-clicked");
-					this.data.ui.selected = this.data.ui.selected.add(obj);
+                    if(s.selected_parent_open) {
+						obj.parents(".jstree-closed").each(function () { t.open_node(this, false, true); });
+					}
+                    this.data.ui.selected = this.data.ui.selected.add(obj);
 					this.data.ui.last_selected = obj;
 					this.__callback({ "obj" : obj });
 				}
@@ -1104,7 +1108,8 @@
 					var p = this._get_parent(t),
 						pos = $(t).index();
 					if(callback) { callback.call(this, t); }
-					if(p.length && p.hasClass("jstree-closed")) { this.open_node(p, false, true); }
+// commented out by sds of chemsw
+//					if(p.length && p.hasClass("jstree-closed")) { this.open_node(p, false, true); }
 					if(!skip_rename) { 
 						this._show_input(t, function (obj, new_name, old_name) { 
 							_this.__callback({ "obj" : obj, "name" : new_name, "parent" : p, "position" : pos });
@@ -3319,7 +3324,7 @@
 						};
 						success_func = function (d, t, x) {
 							var sf = this.get_settings().html_data.ajax.success; 
-							if(sf) { d = sf.call(this,d,t,x); } //|| d; }    sds for case 20798
+							if(sf) { d = sf.call(this,d,t,x); } //|| d; }    sds of chemsw for case 20798
 							if(d == "") {
 								return error_func.call(this, x, t, "");
 							}

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
-using ChemSW.Exceptions;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -91,34 +89,38 @@ namespace ChemSW.Nbt.MetaData
                 _AllNodeTypeTabs.Add( OldNodeTypeTab );
 
                 NodeTypeTab.Reassign( Row );
-                
+
                 RegisterExisting( OldNodeTypeTab );
                 RegisterExisting( NodeTypeTab );
             }
             else
             {
                 NodeTypeTab = new CswNbtMetaDataNodeTypeTab( _CswNbtMetaDataResources, Row );
-                _AllNodeTypeTabs.Add( NodeTypeTab ); 
-                
+                _AllNodeTypeTabs.Add( NodeTypeTab );
+
                 RegisterExisting( NodeTypeTab );
             }
             return NodeTypeTab;
         }
 
-
         public void RegisterExisting( ICswNbtMetaDataObject Object )
         {
             if( !( Object is CswNbtMetaDataNodeTypeTab ) )
+            {
                 throw new CswDniException( "CswNbtMetaDataCollectionNodeTypeTab.Register got an invalid Object as a parameter" );
+            }
             CswNbtMetaDataNodeTypeTab NodeTypeTab = Object as CswNbtMetaDataNodeTypeTab;
 
-            _ById.Add( NodeTypeTab.TabId, NodeTypeTab );
+            _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeTypeTab.TabId, NodeTypeTab, _ById, "NodeTypeTab", NodeTypeTab.TabId, NodeTypeTab.TabName );
+
             if( !_ByNodeType.ContainsKey( NodeTypeTab.NodeType.NodeTypeId ) )
+            {
                 _ByNodeType.Add( NodeTypeTab.NodeType.NodeTypeId, new NodeTypeHashEntry() );
+            }
             NodeTypeHashEntry Entry = _ByNodeType[NodeTypeTab.NodeType.NodeTypeId] as NodeTypeHashEntry;
             Entry.ByTabId.Add( NodeTypeTab.TabId, NodeTypeTab );
             Entry.ByTabName.Add( NodeTypeTab.TabName.ToLower(), NodeTypeTab );
-            Entry.ByTabOrder.Add( CswTools.PadInt(NodeTypeTab.TabOrder, 3) + "_" + NodeTypeTab.TabId, NodeTypeTab );
+            Entry.ByTabOrder.Add( CswTools.PadInt( NodeTypeTab.TabOrder, 3 ) + "_" + NodeTypeTab.TabId, NodeTypeTab );
         }
 
         public void Deregister( ICswNbtMetaDataObject Object )
@@ -145,7 +147,7 @@ namespace ChemSW.Nbt.MetaData
 
             _AllNodeTypeTabs.Remove( NodeTypeTab );
         }
-        
+
         private class NodeTypeHashEntry
         {
             public Hashtable ByTabId = new Hashtable();

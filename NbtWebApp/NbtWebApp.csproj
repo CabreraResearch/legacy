@@ -14,7 +14,7 @@
     <AssemblyName>NbtWebApp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
-    <JSLintSkip>\fp_client\fpspread\4_0_3505_2008\HTC\fpspreadmac.js|\fp_client\fpspread\4_0_3505_2008\HTC\fpspread.js|\fp_client\fpspread\4_0_3505_2008\HTC\multicolumncombobox.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq-vsdoc.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.min.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq.min.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq-vsdoc.js|\js\thirdparty\js\modernizr-2.0.3.min.js|\js\thirdparty\js\modernizr-2.0.3.js|\js\thirdparty\js\gserializer.js|\js\thirdparty\js\jblas-profiler\profiler.js|\js\thirdparty\js\jblas-profiler\profiler-dump.js|\js\thirdparty\jquery\core\jquery.cookie.js|\js\thirdparty\jquery\core\jquery-1.6.2.min.js|\js\thirdparty\jquery\core\jquery-1.6.2.js|\js\thirdparty\jquery\core\jquery-1.6.2-vsdoc.js|\js\thirdparty\jquery\core\jquery-1.6.1.min.js|\js\thirdparty\jquery\core\jquery-1.6.1.js|\js\thirdparty\jquery\core\jquery.cookie.min.js|\js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.css|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css|\js\thirdparty\jquery\core\jquery-ui-1.8.12\jquery-1.5.1.js|\js\thirdparty\jquery\plugins\fileuploader.js|\js\thirdparty\jquery\plugins\fileuploader.css|\js\thirdparty\jquery\plugins\jquery.xml.js|\js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.min.js|\js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.min.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery-1.4.4.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.min.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.min.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\additional-methods.min.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\additional-methods.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate.min.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate-vsdoc.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-HK.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-CN.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-vi.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-uk.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-tr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-tj.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-th.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ta.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sv.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sr-SR.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sq.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sk.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ru.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ro.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-rm.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pt.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pt-BR.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-no.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-nl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ms.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ml.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-lv.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-lt.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-kz.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ko.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ja.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-it.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-is.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-id.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hy.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hu.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-he.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-gl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fr-CH.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fo.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fi.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fa.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-eu.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-et.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-es.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-eo.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-NZ.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-GB.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-AU.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-el.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-de.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-da.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-cs.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ca.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-bs.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-bg.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-az.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ar.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ar-DZ.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-af.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-TW.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery-ui-i18n.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\jquery-ui.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\jquery-ui.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-HK.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-CN.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-vi.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-uk.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-tr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-tj.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-th.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ta.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sv.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sr-SR.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sq.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sk.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ru.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ro.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-rm.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pt.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pt-BR.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-no.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-nl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ms.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ml.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-lv.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-lt.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-kz.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ko.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ja.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-it.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-is.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-id.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hy.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hu.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-he.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-gl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fr-CH.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fo.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fi.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fa.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-eu.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-et.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-es.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-eo.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-NZ.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-GB.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-AU.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-el.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-de.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-da.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-cs.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ca.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-bs.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-bg.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-az.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ar.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ar-DZ.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-af.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-TW.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery-ui-i18n.min.js|\iphone.html|\Main.js|\jmol\Jmol.js|\js\CswAll.min.js</JSLintSkip>
+    <JSLintSkip>\fp_client\fpspread\4_0_3505_2008\HTC\fpspreadmac.js|\fp_client\fpspread\4_0_3505_2008\HTC\fpspread.js|\fp_client\fpspread\4_0_3505_2008\HTC\multicolumncombobox.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq-vsdoc.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.min.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq.min.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq-vsdoc.js|\js\thirdparty\js\modernizr-2.0.3.min.js|\js\thirdparty\js\modernizr-2.0.3.js|\js\thirdparty\js\gserializer.js|\js\thirdparty\js\jblas-profiler\profiler.js|\js\thirdparty\js\jblas-profiler\profiler-dump.js|\js\thirdparty\jquery\core\jquery.cookie.js|\js\thirdparty\jquery\core\jquery-1.6.2.min.js|\js\thirdparty\jquery\core\jquery-1.6.2.js|\js\thirdparty\jquery\core\jquery-1.6.2-vsdoc.js|\js\thirdparty\jquery\core\jquery-1.6.1.min.js|\js\thirdparty\jquery\core\jquery-1.6.1.js|\js\thirdparty\jquery\core\jquery.cookie.min.js|\js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.css|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css|\js\thirdparty\jquery\core\jquery-ui-1.8.12\jquery-1.5.1.js|\js\thirdparty\jquery\plugins\fileuploader.js|\js\thirdparty\jquery\plugins\fileuploader.css|\js\thirdparty\jquery\plugins\jquery.xml.js|\js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.min.js|\js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.min.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery-1.4.4.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.min.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.min.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\additional-methods.min.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\additional-methods.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate.min.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate-vsdoc.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-HK.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-CN.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-vi.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-uk.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-tr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-tj.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-th.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ta.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sv.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sr-SR.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sq.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sk.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ru.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ro.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-rm.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pt.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pt-BR.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-no.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-nl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ms.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ml.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-lv.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-lt.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-kz.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ko.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ja.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-it.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-is.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-id.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hy.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hu.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-he.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-gl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fr-CH.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fo.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fi.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fa.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-eu.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-et.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-es.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-eo.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-NZ.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-GB.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-AU.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-el.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-de.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-da.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-cs.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ca.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-bs.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-bg.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-az.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ar.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ar-DZ.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-af.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-TW.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery-ui-i18n.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\jquery-ui.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\jquery-ui.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-HK.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-CN.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-vi.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-uk.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-tr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-tj.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-th.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ta.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sv.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sr-SR.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sq.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sk.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ru.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ro.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-rm.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pt.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pt-BR.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-no.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-nl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ms.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ml.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-lv.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-lt.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-kz.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ko.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ja.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-it.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-is.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-id.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hy.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hu.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-he.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-gl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fr-CH.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fo.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fi.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fa.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-eu.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-et.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-es.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-eo.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-NZ.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-GB.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-AU.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-el.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-de.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-da.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-cs.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ca.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-bs.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-bg.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-az.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ar.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ar-DZ.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-af.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-TW.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery-ui-i18n.min.js|\iphone.html|\jmol\Jmol.js|\js\CswAll.min.js|\Scripts\modernizr-2.0.6-development-only.js|\Scripts\json2.min.js|\Scripts\json2.js|\Scripts\jquery.validate.min.js|\Scripts\jquery.validate.js|\Scripts\jquery.validate-vsdoc.js|\Scripts\jquery.mobile-1.0rc1.min.js|\Scripts\jquery.mobile-1.0rc1.js|\Scripts\jquery.jqGrid.src.js|\Scripts\jquery.jqGrid.min.js|\Scripts\jquery.cookie.min.js|\Scripts\jquery.cookie.js|\Scripts\jquery-ui-1.8.16.min.js|\Scripts\jquery-ui-1.8.16.js|\Scripts\jquery-1.7.1.min.js|\Scripts\jquery-1.7.1.js|\Scripts\jquery-1.7.1-vsdoc.js|\Scripts\jquery-1.6.4.min.js|\Scripts\jquery-1.6.4.js|\Scripts\modernizr.2.0.6.min.js|\Scripts\jquery-1.6.4-vsdoc.js|\Scripts\i18n\grid.locale-tr.js|\Scripts\i18n\grid.locale-th.js|\Scripts\i18n\grid.locale-sv.js|\Scripts\i18n\grid.locale-sr.js|\Scripts\i18n\grid.locale-sk.js|\Scripts\i18n\grid.locale-ru.js|\Scripts\i18n\grid.locale-ro.js|\Scripts\i18n\grid.locale-pt.js|\Scripts\i18n\grid.locale-pt-br.js|\Scripts\i18n\grid.locale-pl.js|\Scripts\i18n\grid.locale-no.js|\Scripts\i18n\grid.locale-nl.js|\Scripts\i18n\grid.locale-mne.js|\Scripts\i18n\grid.locale-lt.js|\Scripts\i18n\grid.locale-ja.js|\Scripts\i18n\grid.locale-it.js|\Scripts\i18n\grid.locale-is.js|\Scripts\i18n\grid.locale-hu.js|\Scripts\i18n\grid.locale-he.js|\Scripts\i18n\grid.locale-gl.js|\Scripts\i18n\grid.locale-fr.js|\Scripts\i18n\grid.locale-fi.js|\Scripts\i18n\grid.locale-fa.js|\Scripts\i18n\grid.locale-es.js|\Scripts\i18n\grid.locale-en.js|\Scripts\i18n\grid.locale-el.js|\Scripts\i18n\grid.locale-de.js|\Scripts\i18n\grid.locale-da.js|\Scripts\i18n\grid.locale-cs.js|\Scripts\i18n\grid.locale-cn.js|\Scripts\i18n\grid.locale-cat.js|\Scripts\i18n\grid.locale-bg1251.js|\Scripts\i18n\grid.locale-bg.js|\Scripts\i18n\grid.locale-ua.js|\Scripts\i18n\grid.locale-ar.js|\Content\|\js\thirdparty\|\crystal\|\ie6style.css</JSLintSkip>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -73,7 +73,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ThirdParty\SMTP\SMTP.Net.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -99,23 +98,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Act_AssignInspection.aspx" />
-    <Content Include="Act_AssignTests.aspx" />
-    <Content Include="Act_BatchEdit.aspx" />
-    <Content Include="Act_CreateInspection.aspx" />
-    <Content Include="Act_EnterResults.aspx" />
     <Content Include="Act_FutureScheduling.aspx" />
-    <Content Include="Act_ImportData.aspx" />
-    <Content Include="Act_ImportFireExtinguisher.aspx" />
-    <Content Include="Act_Receiving.aspx" />
-    <Content Include="Act_SplitSamples.aspx" />
+    <Compile Include="App_Code\wsTreeOfView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="App_Code\CswNbtWebServiceBinaryData.cs" />
+    <Compile Include="App_Code\CswNbtWebServiceNbtManager.cs" />
     <Compile Include="App_Code\CswNbtWebServiceQuotas.cs" />
     <Compile Include="App_Code\CswNbtWebServiceTable.cs" />
     <Compile Include="App_Code\CswNbtWebServiceAuditing.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceImportInspectionQuestions.cs" />
+    <Compile Include="App_Code\CswNbtWebServiceInspectionDesign.cs" />
     <Compile Include="App_Code\CswNbtWebServiceInspections.cs" />
     <Content Include="CafLabelPrintUtil.cab" />
-    <Content Include="ChangePassword.aspx" />
     <Content Include="ConfigVars.aspx" />
     <Content Include="Content\images\ajax-loader.png" />
     <Content Include="Content\images\icons-18-black.png" />
@@ -182,16 +176,628 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="crystal\ActiveXControls\PrintControl.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_cs.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_da.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_de.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_en.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_es.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_fi.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_fr.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_hu.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_it.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_ja.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_ko.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_nb.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_nl.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_pl.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_pt.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_ru.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_sk.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_sv.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_th.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_tr.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_zh_CN.cab" />
+    <Content Include="crystal\ActiveXControls\PrintControl_res_zh_TW.cab" />
+    <Content Include="crystal\allInOne.js" />
+    <Content Include="crystal\allStrings_cs.js" />
+    <Content Include="crystal\allStrings_da.js" />
+    <Content Include="crystal\allStrings_de.js" />
+    <Content Include="crystal\allStrings_en.js" />
+    <Content Include="crystal\allStrings_es.js" />
+    <Content Include="crystal\allStrings_fi.js" />
+    <Content Include="crystal\allStrings_fr.js" />
+    <Content Include="crystal\allStrings_hu.js" />
+    <Content Include="crystal\allStrings_it.js" />
+    <Content Include="crystal\allStrings_ja.js" />
+    <Content Include="crystal\allStrings_ko.js" />
+    <Content Include="crystal\allStrings_nb.js" />
+    <Content Include="crystal\allStrings_nl.js" />
+    <Content Include="crystal\allStrings_pl.js" />
+    <Content Include="crystal\allStrings_pt.js" />
+    <Content Include="crystal\allStrings_ru.js" />
+    <Content Include="crystal\allStrings_sk.js" />
+    <Content Include="crystal\allStrings_sv.js" />
+    <Content Include="crystal\allStrings_th.js" />
+    <Content Include="crystal\allStrings_tr.js" />
+    <Content Include="crystal\allStrings_zh_CN.js" />
+    <Content Include="crystal\allStrings_zh_TW.js" />
+    <Content Include="crystal\crsmarttag.asp" />
+    <Content Include="crystal\crystalimagehandler.asp" />
+    <Content Include="crystal\css\cedefault.css" />
+    <Content Include="crystal\css\default.css" />
+    <Content Include="crystal\css\exception.css" />
+    <Content Include="crystal\css\prompting.css" />
+    <Content Include="crystal\html\calendar.html" />
+    <Content Include="crystal\html\calendarbottom.html" />
+    <Content Include="crystal\html\calendartop.html" />
+    <Content Include="crystal\imagehandlerdotnetbridge.aspx" />
+    <Content Include="crystal\images\buttonl.gif" />
+    <Content Include="crystal\images\buttonm.gif" />
+    <Content Include="crystal\images\buttonr.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortActive100.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortActive150.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortActive200.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortActive250.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortActive300.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortActive350.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortActive400.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortActive50.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortHover100.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortHover150.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortHover200.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortHover250.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortHover300.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortHover350.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortHover400.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortHover50.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortInactive100.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortInactive150.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortInactive200.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortInactive250.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortInactive300.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortInactive400.gif" />
+    <Content Include="crystal\images\isort\DownArrowSortInactive50.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortActive100.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortActive150.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortActive200.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortActive250.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortActive300.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortActive350.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortActive400.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortActive50.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortHover100.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortHover150.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortHover200.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortHover250.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortHover300.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortHover350.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortHover400.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortHover50.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortInactive100.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortInactive150.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortInactive200.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortInactive250.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortInactive300.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortInactive400.gif" />
+    <Content Include="crystal\images\isort\UpArrowSortInactive50.gif" />
+    <Content Include="crystal\js\calendar.js" />
+    <Content Include="crystal\js\calendar_param.js" />
+    <Content Include="crystal\js\crviewerinclude.js" />
+    <Content Include="crystal\js\crviewer\api.js" />
+    <Content Include="crystal\js\crviewer\ArgumentNormalizer.js" />
+    <Content Include="crystal\js\crviewer\bobjcallback.js" />
+    <Content Include="crystal\js\crviewer\ButtonList.js" />
+    <Content Include="crystal\js\crviewer\Calendar.js" />
+    <Content Include="crystal\js\crviewer\Colors.js" />
+    <Content Include="crystal\js\crviewer\common.js" />
+    <Content Include="crystal\js\crviewer\crv.js" />
+    <Content Include="crystal\js\crviewer\Dialogs.js" />
+    <Content Include="crystal\js\crviewer\dom.js" />
+    <Content Include="crystal\js\crviewer\encoding.js" />
+    <Content Include="crystal\js\crviewer\event.js" />
+    <Content Include="crystal\js\crviewer\GroupTree.js" />
+    <Content Include="crystal\js\crviewer\GroupTreeListener.js" />
+    <Content Include="crystal\js\crviewer\GroupTreeNode.js" />
+    <Content Include="crystal\js\crviewer\html.js" />
+    <Content Include="crystal\js\crviewer\ImageSprites.js" />
+    <Content Include="crystal\js\crviewer\images\allInOne.gif" />
+    <Content Include="crystal\js\crviewer\images\allInOneBG.gif" />
+    <Content Include="crystal\js\crviewer\images\arrow_button_depressed.gif" />
+    <Content Include="crystal\js\crviewer\images\arrow_button_hover.gif" />
+    <Content Include="crystal\js\crviewer\images\breadcrumbSep.gif" />
+    <Content Include="crystal\js\crviewer\images\calendar.gif" />
+    <Content Include="crystal\js\crviewer\images\catalyst.gif" />
+    <Content Include="crystal\js\crviewer\images\clearValues.gif" />
+    <Content Include="crystal\js\crviewer\images\clear_x.gif" />
+    <Content Include="crystal\js\crviewer\images\closePanel.gif" />
+    <Content Include="crystal\js\crviewer\images\delete.gif" />
+    <Content Include="crystal\js\crviewer\images\drill_cursor.cur" />
+    <Content Include="crystal\js\crviewer\images\export.gif" />
+    <Content Include="crystal\js\crviewer\images\filledCircle.gif" />
+    <Content Include="crystal\js\crviewer\images\first.gif" />
+    <Content Include="crystal\js\crviewer\images\grouptree_toggle.gif" />
+    <Content Include="crystal\js\crviewer\images\hollowCircle.gif" />
+    <Content Include="crystal\js\crviewer\images\last.gif" />
+    <Content Include="crystal\js\crviewer\images\leftTriangle.gif" />
+    <Content Include="crystal\js\crviewer\images\line.gif" />
+    <Content Include="crystal\js\crviewer\images\logo.gif" />
+    <Content Include="crystal\js\crviewer\images\magnify.gif" />
+    <Content Include="crystal\js\crviewer\images\min.gif" />
+    <Content Include="crystal\js\crviewer\images\next.gif" />
+    <Content Include="crystal\js\crviewer\images\open_parameter_arrow.gif" />
+    <Content Include="crystal\js\crviewer\images\panelHeaderBG.gif" />
+    <Content Include="crystal\js\crviewer\images\panelNavigatorItemHL.gif" />
+    <Content Include="crystal\js\crviewer\images\panelNavigatorItemSelectedBG.gif" />
+    <Content Include="crystal\js\crviewer\images\panel_toggle.gif" />
+    <Content Include="crystal\js\crviewer\images\param_datafetching.gif" />
+    <Content Include="crystal\js\crviewer\images\param_dirty.gif" />
+    <Content Include="crystal\js\crviewer\images\param_info.gif" />
+    <Content Include="crystal\js\crviewer\images\param_run.gif" />
+    <Content Include="crystal\js\crviewer\images\param_warning.gif" />
+    <Content Include="crystal\js\crviewer\images\plus.gif" />
+    <Content Include="crystal\js\crviewer\images\prev.gif" />
+    <Content Include="crystal\js\crviewer\images\print.gif" />
+    <Content Include="crystal\js\crviewer\images\refresh.gif" />
+    <Content Include="crystal\js\crviewer\images\rightTriangle.gif" />
+    <Content Include="crystal\js\crviewer\images\search.gif" />
+    <Content Include="crystal\js\crviewer\images\separator.gif" />
+    <Content Include="crystal\js\crviewer\images\StackedTab.gif" />
+    <Content Include="crystal\js\crviewer\images\style.css" />
+    <Content Include="crystal\js\crviewer\images\toolbar_background.gif" />
+    <Content Include="crystal\js\crviewer\images\toolbar_buttongroup_background.gif" />
+    <Content Include="crystal\js\crviewer\images\toolbar_buttongroup_left.gif" />
+    <Content Include="crystal\js\crviewer\images\toolbar_buttongroup_right.gif" />
+    <Content Include="crystal\js\crviewer\images\toolbar_button_depressed.gif" />
+    <Content Include="crystal\js\crviewer\images\toolbar_button_hover.gif" />
+    <Content Include="crystal\js\crviewer\images\toolbar_menuarrow_depressed.gif" />
+    <Content Include="crystal\js\crviewer\images\toolbar_menuarrow_hover.gif" />
+    <Content Include="crystal\js\crviewer\images\toolbar_pagenav_buttons.gif" />
+    <Content Include="crystal\js\crviewer\images\toolbar_separator_icon.gif" />
+    <Content Include="crystal\js\crviewer\images\undo.gif" />
+    <Content Include="crystal\js\crviewer\images\up.gif" />
+    <Content Include="crystal\js\crviewer\images\WarningPopupTriangle.gif" />
+    <Content Include="crystal\js\crviewer\initDhtmlLib.js" />
+    <Content Include="crystal\js\crviewer\IOAdapters.js" />
+    <Content Include="crystal\js\crviewer\LeftPanel.js" />
+    <Content Include="crystal\js\crviewer\OptionalParameterUI.js" />
+    <Content Include="crystal\js\crviewer\OptionalParameterValueRow.js" />
+    <Content Include="crystal\js\crviewer\PanelHeader.js" />
+    <Content Include="crystal\js\crviewer\PanelNavigator.js" />
+    <Content Include="crystal\js\crviewer\PanelNavigatorItem.js" />
+    <Content Include="crystal\js\crviewer\Parameter.js" />
+    <Content Include="crystal\js\crviewer\ParameterController.js" />
+    <Content Include="crystal\js\crviewer\ParameterDialog.js" />
+    <Content Include="crystal\js\crviewer\ParameterInfoRow.js" />
+    <Content Include="crystal\js\crviewer\ParameterPanel.js" />
+    <Content Include="crystal\js\crviewer\ParameterPanelToolbar.js" />
+    <Content Include="crystal\js\crviewer\ParameterUI.js" />
+    <Content Include="crystal\js\crviewer\ParameterValueRow.js" />
+    <Content Include="crystal\js\crviewer\PromptPage.js" />
+    <Content Include="crystal\js\crviewer\RangeField.js" />
+    <Content Include="crystal\js\crviewer\ReportAlbum.js" />
+    <Content Include="crystal\js\crviewer\ReportPage.js" />
+    <Content Include="crystal\js\crviewer\ReportView.js" />
+    <Content Include="crystal\js\crviewer\Separator.js" />
+    <Content Include="crystal\js\crviewer\SharedWidgetHolder.js" />
+    <Content Include="crystal\js\crviewer\SignalDisposer.js" />
+    <Content Include="crystal\js\crviewer\StackedPanel.js" />
+    <Content Include="crystal\js\crviewer\StackedTab.js" />
+    <Content Include="crystal\js\crviewer\StateManager.js" />
+    <Content Include="crystal\js\crviewer\Statusbar.js" />
+    <Content Include="crystal\js\crviewer\strings_cs.js" />
+    <Content Include="crystal\js\crviewer\strings_da.js" />
+    <Content Include="crystal\js\crviewer\strings_de.js" />
+    <Content Include="crystal\js\crviewer\strings_en.js" />
+    <Content Include="crystal\js\crviewer\strings_es.js" />
+    <Content Include="crystal\js\crviewer\strings_fi.js" />
+    <Content Include="crystal\js\crviewer\strings_fr.js" />
+    <Content Include="crystal\js\crviewer\strings_hu.js" />
+    <Content Include="crystal\js\crviewer\strings_it.js" />
+    <Content Include="crystal\js\crviewer\strings_ja.js" />
+    <Content Include="crystal\js\crviewer\strings_ko.js" />
+    <Content Include="crystal\js\crviewer\strings_nb.js" />
+    <Content Include="crystal\js\crviewer\strings_nl.js" />
+    <Content Include="crystal\js\crviewer\strings_pl.js" />
+    <Content Include="crystal\js\crviewer\strings_pt.js" />
+    <Content Include="crystal\js\crviewer\strings_ru.js" />
+    <Content Include="crystal\js\crviewer\strings_sk.js" />
+    <Content Include="crystal\js\crviewer\strings_sv.js" />
+    <Content Include="crystal\js\crviewer\strings_th.js" />
+    <Content Include="crystal\js\crviewer\strings_tr.js" />
+    <Content Include="crystal\js\crviewer\strings_zh_CN.js" />
+    <Content Include="crystal\js\crviewer\strings_zh_TW.js" />
+    <Content Include="crystal\js\crviewer\TextCombo.js" />
+    <Content Include="crystal\js\crviewer\TextField.js" />
+    <Content Include="crystal\js\crviewer\Toolbar.js" />
+    <Content Include="crystal\js\crviewer\ToolPanel.js" />
+    <Content Include="crystal\js\crviewer\Viewer.js" />
+    <Content Include="crystal\js\crviewer\ViewerFlexParameterAdapter.js" />
+    <Content Include="crystal\js\crviewer\ViewerListener.js" />
+    <Content Include="crystal\js\crviewer\WarningPopup.js" />
+    <Content Include="crystal\js\dhtmllib\bolist.js" />
+    <Content Include="crystal\js\dhtmllib\calendar.js" />
+    <Content Include="crystal\js\dhtmllib\dialog.js" />
+    <Content Include="crystal\js\dhtmllib\dom.js" />
+    <Content Include="crystal\js\dhtmllib\empty.html" />
+    <Content Include="crystal\js\dhtmllib\images\borders.gif" />
+    <Content Include="crystal\js\dhtmllib\images\help.gif" />
+    <Content Include="crystal\js\dhtmllib\images\loading.gif" />
+    <Content Include="crystal\js\dhtmllib\images\lov.gif" />
+    <Content Include="crystal\js\dhtmllib\images\min.gif" />
+    <Content Include="crystal\js\dhtmllib\images\plus.gif" />
+    <Content Include="crystal\js\dhtmllib\images\print.css" />
+    <Content Include="crystal\js\dhtmllib\images\print_fe.css" />
+    <Content Include="crystal\js\dhtmllib\images\prompt.gif" />
+    <Content Include="crystal\js\dhtmllib\images\resizepattern.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\bolist.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\button.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\buttonIcons.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\critical_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\dialogelements.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\dialogframe.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\dialogframeleftright.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\dialogframetopbottom.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\dialogtitle.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\down.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\iconsep.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\information_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\left.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\menus.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\node.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\progress.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\resize.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\right.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\scroll_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\sep.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\sep_solid.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\style.css" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\style.js" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\style_fe.css" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\tabs.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\up.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\wait01.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\wait02.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_coloredline\warning_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\bolist.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\button.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\buttonIcons.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\critical_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\dialogelements.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\dialogframe.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\dialogframeleftright.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\dialogframetopbottom.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\dialogtitle.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\down.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\iconsep.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\information_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\left.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\menus.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\node.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\progress.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\resize.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\right.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\scroll_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\sep.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\sep_solid.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\style.css" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\style.js" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\style_fe.css" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\tabs.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\up.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\wait01.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\wait02.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_corporate\warning_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\bolist.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\button.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\buttonIcons.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\critical_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\dialogelements.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\dialogframe.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\dialogframeleftright.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\dialogframetopbottom.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\dialogtitle.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\down.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\iconsep.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\information_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\left.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\menus.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\node.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\progress.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\resize.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\right.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\scroll_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\sep.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\sep_solid.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\style.css" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\style.js" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\style_fe.css" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\tabs.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\up.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\wait01.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\wait02.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_default\warning_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\background_field.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\background_menusel.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\bolist.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\button.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\buttonIcons.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\critical_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\critical_icon.png" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\dialogelements.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\dialogframe.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\dialogframeleftright.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\dialogframetopbottom.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\dialogtitle.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\down.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\hgrab.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\horiz_tabs.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\iconsep.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\information_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\left.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\menuitem_check.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\menus.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\node.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\panemenu.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\panetitle.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\progress.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\resize.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\right.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\scroll_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\sep.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\sep_solid.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\style.css" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\style.js" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\style_fe.css" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\tabs.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\toolbar_elements.png" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\up.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\vgrab.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\wait01.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\wait02.gif" />
+    <Content Include="crystal\js\dhtmllib\images\skin_standard\warning_icon.gif" />
+    <Content Include="crystal\js\dhtmllib\images\swap.gif" />
+    <Content Include="crystal\js\dhtmllib\images\transp.gif" />
+    <Content Include="crystal\js\dhtmllib\images\tree.gif" />
+    <Content Include="crystal\js\dhtmllib\language\cs\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\da\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\de\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\en\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\es\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\fi\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\fr\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\hu\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\it\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\ja\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\ko\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\nb\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\nl\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\pl\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\pt\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\ru\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\sk\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\sv\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\th\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\tr\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\zh_CN\labels.js" />
+    <Content Include="crystal\js\dhtmllib\language\zh_TW\labels.js" />
+    <Content Include="crystal\js\dhtmllib\lov.js" />
+    <Content Include="crystal\js\dhtmllib\menu.js" />
+    <Content Include="crystal\js\dhtmllib\palette.js" />
+    <Content Include="crystal\js\dhtmllib\prompttree.js" />
+    <Content Include="crystal\js\dhtmllib\psheet.js" />
+    <Content Include="crystal\js\dhtmllib\samples\andorwidget.html" />
+    <Content Include="crystal\js\dhtmllib\samples\basicDialog.html" />
+    <Content Include="crystal\js\dhtmllib\samples\blockWhileWait.html" />
+    <Content Include="crystal\js\dhtmllib\samples\bolist.html" />
+    <Content Include="crystal\js\dhtmllib\samples\borderswidget.html" />
+    <Content Include="crystal\js\dhtmllib\samples\buttons.html" />
+    <Content Include="crystal\js\dhtmllib\samples\calendar.html" />
+    <Content Include="crystal\js\dhtmllib\samples\checktree.html" />
+    <Content Include="crystal\js\dhtmllib\samples\default.html" />
+    <Content Include="crystal\js\dhtmllib\samples\dim.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\dim_close.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\dim_o.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\dim_open.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\empty.html" />
+    <Content Include="crystal\js\dhtmllib\samples\eventsDialog.html" />
+    <Content Include="crystal\js\dhtmllib\samples\fieldswidget.html" />
+    <Content Include="crystal\js\dhtmllib\samples\format.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\framezone.html" />
+    <Content Include="crystal\js\dhtmllib\samples\grabber.html" />
+    <Content Include="crystal\js\dhtmllib\samples\iconlistpopupwidget.html" />
+    <Content Include="crystal\js\dhtmllib\samples\iconscrollmenuwidget.html" />
+    <Content Include="crystal\js\dhtmllib\samples\imgtabs.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\inconwidget.html" />
+    <Content Include="crystal\js\dhtmllib\samples\infowidget.html" />
+    <Content Include="crystal\js\dhtmllib\samples\lov.html" />
+    <Content Include="crystal\js\dhtmllib\samples\measure.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\measure_o.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\menu.html" />
+    <Content Include="crystal\js\dhtmllib\samples\navigation.html" />
+    <Content Include="crystal\js\dhtmllib\samples\palettes.html" />
+    <Content Include="crystal\js\dhtmllib\samples\pane.html" />
+    <Content Include="crystal\js\dhtmllib\samples\parent_dialog.html" />
+    <Content Include="crystal\js\dhtmllib\samples\progressBar.html" />
+    <Content Include="crystal\js\dhtmllib\samples\prompttree.html" />
+    <Content Include="crystal\js\dhtmllib\samples\qualif.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\scrolltabs.html" />
+    <Content Include="crystal\js\dhtmllib\samples\simplelist.html" />
+    <Content Include="crystal\js\dhtmllib\samples\skinIntl.html" />
+    <Content Include="crystal\js\dhtmllib\samples\tabs.html" />
+    <Content Include="crystal\js\dhtmllib\samples\textcombowidget.html" />
+    <Content Include="crystal\js\dhtmllib\samples\tooltipwidget.html" />
+    <Content Include="crystal\js\dhtmllib\samples\treeicons.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\treeview.html" />
+    <Content Include="crystal\js\dhtmllib\samples\unv_close.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\unv_o.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\unv_open.gif" />
+    <Content Include="crystal\js\dhtmllib\samples\waitDialog.html" />
+    <Content Include="crystal\js\dhtmllib\treeview.js" />
+    <Content Include="crystal\js\dhtmllib\validator\default.html" />
+    <Content Include="crystal\js\dhtmllib\validator\validator_res.html" />
+    <Content Include="crystal\js\dhtmllib\waitdialog.js" />
+    <Content Include="crystal\js\dt_param.js" />
+    <Content Include="crystal\js\external\date.js" />
+    <Content Include="crystal\js\FlexParameterBridge.js" />
+    <Content Include="crystal\js\KeyDownEvent.js" />
+    <Content Include="crystal\js\log4javascript\log4javascript.js" />
+    <Content Include="crystal\js\log4javascript\log4javascript_stub.js" />
+    <Content Include="crystal\js\log4javascript\log4javascript_stub_uncompressed.js" />
+    <Content Include="crystal\js\log4javascript\log4javascript_uncompressed.js" />
+    <Content Include="crystal\js\log4javascript\main.css" />
+    <Content Include="crystal\js\MochiKit\3rdParty.txt" />
+    <Content Include="crystal\js\MochiKit\Async.js" />
+    <Content Include="crystal\js\MochiKit\Base.js" />
+    <Content Include="crystal\js\MochiKit\Color.js" />
+    <Content Include="crystal\js\MochiKit\Controls.js" />
+    <Content Include="crystal\js\MochiKit\DateTime.js" />
+    <Content Include="crystal\js\MochiKit\DOM.js" />
+    <Content Include="crystal\js\MochiKit\DragAndDrop.js" />
+    <Content Include="crystal\js\MochiKit\Format.js" />
+    <Content Include="crystal\js\MochiKit\Iter.js" />
+    <Content Include="crystal\js\MochiKit\License.js" />
+    <Content Include="crystal\js\MochiKit\Logging.js" />
+    <Content Include="crystal\js\MochiKit\LoggingPane.js" />
+    <Content Include="crystal\js\MochiKit\MochiKit.js" />
+    <Content Include="crystal\js\MochiKit\MockDOM.js" />
+    <Content Include="crystal\js\MochiKit\New.js" />
+    <Content Include="crystal\js\MochiKit\Signal.js" />
+    <Content Include="crystal\js\MochiKit\Sortable.js" />
+    <Content Include="crystal\js\MochiKit\Style.js" />
+    <Content Include="crystal\js\MochiKit\Test.js" />
+    <Content Include="crystal\js\MochiKit\Visual.js" />
+    <Content Include="crystal\js\MochiKit\__package__.js" />
+    <Content Include="crystal\js\previewerror.js" />
+    <Content Include="crystal\js\prompts.js" />
+    <Content Include="crystal\js\prompts_param.js" />
+    <Content Include="crystal\js\swfobject\swfobject.js" />
+    <Content Include="crystal\parameterUIController-compressed.js" />
+    <Content Include="crystal\preview.aspx" />
+    <Content Include="crystal\processindicator.js" />
+    <Content Include="crystal\promptengine-compressed.js" />
+    <Content Include="crystal\prompting\css\promptengine2.css" />
+    <Content Include="crystal\prompting\css\promptengine_default.css" />
+    <Content Include="crystal\prompting\html\calendar.html" />
+    <Content Include="crystal\prompting\html\calendarbottom.html" />
+    <Content Include="crystal\prompting\html\calendartop.html" />
+    <Content Include="crystal\prompting\images\addallfield.gif" />
+    <Content Include="crystal\prompting\images\addallfield_over.gif" />
+    <Content Include="crystal\prompting\images\addfield.gif" />
+    <Content Include="crystal\prompting\images\addfield_over.gif" />
+    <Content Include="crystal\prompting\images\back.gif" />
+    <Content Include="crystal\prompting\images\background_field.gif" />
+    <Content Include="crystal\prompting\images\back_over.gif" />
+    <Content Include="crystal\prompting\images\button.gif" />
+    <Content Include="crystal\prompting\images\button_left_normal.gif" />
+    <Content Include="crystal\prompting\images\button_middle_normal.gif" />
+    <Content Include="crystal\prompting\images\button_right_normal.gif" />
+    <Content Include="crystal\prompting\images\calendar.gif" />
+    <Content Include="crystal\prompting\images\cfilter.gif" />
+    <Content Include="crystal\prompting\images\cfilter_over.gif" />
+    <Content Include="crystal\prompting\images\dialogelements.gif" />
+    <Content Include="crystal\prompting\images\dialogtitle.gif" />
+    <Content Include="crystal\prompting\images\error.gif" />
+    <Content Include="crystal\prompting\images\errormsg.gif" />
+    <Content Include="crystal\prompting\images\filter.gif" />
+    <Content Include="crystal\prompting\images\filter_over.gif" />
+    <Content Include="crystal\prompting\images\forward.gif" />
+    <Content Include="crystal\prompting\images\forward_over.gif" />
+    <Content Include="crystal\prompting\images\info.gif" />
+    <Content Include="crystal\prompting\images\infomsg.gif" />
+    <Content Include="crystal\prompting\images\minus.gif" />
+    <Content Include="crystal\prompting\images\next.gif" />
+    <Content Include="crystal\prompting\images\next_over.gif" />
+    <Content Include="crystal\prompting\images\plus.gif" />
+    <Content Include="crystal\prompting\images\prev.gif" />
+    <Content Include="crystal\prompting\images\prev_over.gif" />
+    <Content Include="crystal\prompting\images\resize.gif" />
+    <Content Include="crystal\prompting\images\transp.gif" />
+    <Content Include="crystal\prompting\images\warning.gif" />
+    <Content Include="crystal\prompting\images\warningmsg.gif" />
+    <Content Include="crystal\prompting\js\initDhtmlLib.js" />
+    <Content Include="crystal\prompting\js\promptengine_calendar.js" />
+    <Content Include="crystal\prompting\js\promptengine_calendar2.js" />
+    <Content Include="crystal\prompting\js\promptengine_prompts.js" />
+    <Content Include="crystal\prompting\js\promptengine_prompts2.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_cs.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_da.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_de.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_en.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_es.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_fi.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_fr.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_hu.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_it.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_ja.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_ko.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_nb.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_nl.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_pl.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_pt.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_ru.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_sk.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_sv.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_th.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_tr.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_zh_CN.js" />
+    <Content Include="crystal\prompting\js\promptengine_strings_zh_TW.js" />
+    <Content Include="crystal\urlreporting\activexviewer.js" />
+    <Content Include="crystal\urlreporting\appletviewer.js" />
     <Content Include="ExternalLogin.aspx" />
+    <Content Include="js\CswAll.min.css" />
+    <Content Include="js\main\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\main\actions\CswSessions.js" />
     <Content Include="js\main\actions\CswQuotaImage.js" />
     <Content Include="js\main\actions\CswQuotas.js" />
+    <Content Include="js\main\controls\CswMultiSelect.js" />
+    <Content Include="js\main\controls\CswTimeInterval.js" />
+    <Content Include="js\main\controls\CswList.js" />
+    <Content Include="js\main\Main.js" />
+    <Content Include="js\main\tools\CswPubSub.js" />
+    <Content Include="js\main\tools\CswPrint.js" />
+    <Content Include="js\main\view\CswViewContentTree.js" />
+    <Content Include="js\mobile\CswAllMobile.min.js" />
+    <Content Include="js\style.css" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.css" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.js" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.min.js" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.css" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.js" />
+    <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.min.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\application.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\static\favicon.ico" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\static\robots.txt" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-python\static\favicon.ico" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-python\static\robots.txt" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\index.html" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\jquery.fileupload-ui.css" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\jquery.fileupload-ui.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\jquery.fileupload.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\jquery.iframe-transport.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\jquery.postmessage-transport.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\jquery.xdr-transport.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\postmessage.html" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\progressbar.gif" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\result.html" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\style.css" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\test\index.html" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\test\test.js" />
+    <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\vendor\jquery.ui.widget.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
+    <Content Include="MainIncludes.html" />
+    <Content Include="NodeTypeTreeService.asmx" />
+    <Content Include="Report.aspx" />
+    <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.7.1.js" />
+    <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery.jqGrid.src.js" />
+    <Content Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\json2.js" />
     <Content Include="Scripts\json2.min.js" />
     <Content Include="Scripts\modernizr.2.0.6.min.js" />
-    <Content Include="README.jQuery.vsdoc.txt" />
     <Content Include="Scripts\i18n\grid.locale-ar.js" />
     <Content Include="Scripts\i18n\grid.locale-bg.js" />
     <Content Include="Scripts\i18n\grid.locale-bg1251.js" />
@@ -227,22 +833,16 @@
     <Content Include="Scripts\i18n\grid.locale-th.js" />
     <Content Include="Scripts\i18n\grid.locale-tr.js" />
     <Content Include="Scripts\i18n\grid.locale-ua.js" />
-    <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
-    <Content Include="Scripts\jquery-1.6.4.js" />
-    <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jquery-ui-1.8.16.js" />
     <Content Include="Scripts\jquery-ui-1.8.16.min.js" />
     <Content Include="Scripts\jquery.cookie.js" />
     <Content Include="Scripts\jquery.jqGrid.min.js" />
     <Content Include="Scripts\jquery.mobile-1.0rc1.js" />
     <Content Include="Scripts\jquery.mobile-1.0rc1.min.js" />
-    <Content Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\modernizr-2.0.6-development-only.js" />
     <Content Include="wsTests1.html" />
     <Content Include="ConnectTest.html" />
-    <Content Include="js\main\actions\CswImportInspectionQuestions.js" />
+    <Content Include="js\main\actions\CswInspectionDesign.js" />
     <Content Include="js\main\controls\CswGrid.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeButton.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeMol.js" />
@@ -353,7 +953,6 @@
     <Content Include="js\main\fieldtypes\CswFieldTypeNFPA.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeImageList.js" />
     <Content Include="js\main\node\CswNodePreview.js" />
-    <Content Include="js\main\tools\CswArray.js" />
     <Content Include="js\main\tools\CswClientDb.js" />
     <Content Include="js\globals\CswEnums.js" />
     <Content Include="js\main\tools\CswProfileMethod.js" />
@@ -427,7 +1026,6 @@
     <Content Include="Design.aspx" />
     <Content Include="Design_Layout.aspx" />
     <Content Include="DisplayLog.aspx" />
-    <Content Include="EditView.aspx" />
     <Content Include="etc\CswSetupVbls.xml" />
     <Content Include="etc\DataForHandHeld.xsl" />
     <Content Include="etc\jsTree.xsl" />
@@ -499,7 +1097,6 @@
     <Content Include="fp_client\fpspread\4_0_3505_2008\img\uparrow.gif" />
     <Content Include="fp_client\fpspread\4_0_3505_2008\img\Update-d.gif" />
     <Content Include="fp_client\fpspread\4_0_3505_2008\img\Update.gif" />
-    <Content Include="GetBlob.aspx" />
     <Content Include="Global.asax" />
     <Content Include="ie6style.css" />
     <Content Include="Images\ajax\progress.gif" />
@@ -818,7 +1415,7 @@
     <Content Include="js\main\view\CswViewEditor.js" />
     <Content Include="js\main\view\CswViewPropFilter.js" />
     <Content Include="js\main\view\CswViewSelect.js" />
-    <Content Include="js\main\view\CswViewTree.js" />
+    <Content Include="js\main\view\CswViewListTree.js" />
     <Content Include="js\main\pagecmp\CswWelcome.js" />
     <Content Include="js\main\pagecmp\CswWizard.css" />
     <Content Include="js\main\pagecmp\CswWizard.js" />
@@ -854,22 +1451,6 @@
     <Content Include="js\main\fieldtypes\_CswFieldTypeFactory.js" />
     <Content Include="js\main\fieldtypes\_CswFieldTypes.css" />
     <Content Include="Scripts\jquery.cookie.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\fileuploader.css" />
-    <Content Include="js\thirdparty\jquery\plugins\fileuploader.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jpopit\jpopit.css" />
-    <Content Include="js\thirdparty\jquery\plugins\jpopit\jpopit.jquery.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jpopit\jpopit.jquery.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drag\resources.htm" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.min.js" />
-    <Content Include="js\thirdparty\jquery\plugins\jquery.event.drop\resources.htm" />
-    <Content Include="js\thirdparty\jquery\plugins\loading.gif" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\bg_fallback.png" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\icon_sprite.png" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\progress_bar.gif" />
@@ -879,45 +1460,22 @@
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\demo.html" />
     <Content Include="js\globals\Global.js" />
     <Content Include="License.aspx" />
-    <Content Include="Location.aspx" />
-    <Content Include="Login.aspx" />
     <Content Include="Main.aspx" />
     <Content Include="Main.js" />
     <Content Include="Mobile.html" />
-    <Content Include="MobileIncludes.html" />
+    <Content Include="_DevMobileIncludes.html" />
     <Content Include="MainHeader.html" />
-    <Content Include="MainIncludes.html" />
     <Content Include="Main.html" />
     <Content Include="NodeReport.html" />
-    <Content Include="NodeReport.aspx" />
-    <Content Include="NodeTypeTreeService.asmx" />
-    <Content Include="Notifications.aspx" />
-    <Content Include="Popup_About.aspx" />
-    <Content Include="Popup_ChangeView.aspx" />
-    <Content Include="Popup_ConfigQuickLaunch.aspx" />
-    <Content Include="Popup_CopyNode.aspx" />
-    <Content Include="Popup_DeleteNode.aspx" />
-    <Content Include="Popup_DeleteView.aspx" />
     <Content Include="Popup_DesignAdd.aspx" />
     <Content Include="Popup_DesignDelete.aspx" />
-    <Content Include="Popup_EditNode.aspx" />
-    <Content Include="Popup_EditProp.aspx" />
     <Content Include="Popup_Export.aspx" />
-    <Content Include="Popup_NewView.aspx" />
-    <Content Include="Popup_PrintLabel.aspx" />
-    <Content Include="Popup_PutBlob.aspx" />
-    <Content Include="Popup_Statistics.aspx" />
-    <Content Include="Popup_WelcomeAdd.aspx" />
-    <Content Include="PrintGrid.aspx" />
-    <Content Include="Report.aspx" />
     <Content Include="Reports\DueTasks.xml" />
     <Content Include="Reports\EquipmentDetail.xml" />
     <Content Include="Reports\JobSafetyAnalysis_nodetype.xml" />
     <Content Include="Reports\JobSafetyAnalysis_view.xml" />
     <Content Include="Reports\OpenProblems.xml" />
     <Content Include="Reports\TaskWorkOrder.xml" />
-    <Content Include="Search.aspx" />
-    <Content Include="SearchCustom.aspx" />
     <Content Include="SkinPrint\Calendar.ChemSWPrint.css" />
     <Content Include="SkinPrint\Calendar\arrowLeft.gif" />
     <Content Include="SkinPrint\Calendar\arrowLeftHover.gif" />
@@ -1074,57 +1632,21 @@
     <Content Include="style_print.css" />
     <Content Include="Subscriptions.aspx" />
     <Content Include="TermsOfUse.aspx" />
-    <Content Include="TimeIntervalTest.aspx" />
-    <Content Include="TreeViewService.asmx" />
-    <Content Include="UserList.aspx" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Welcome.aspx" />
     <Content Include="wsNBT.asmx" />
     <Content Include="_Assembly.txt" />
+    <Content Include="_DevIncludes.html" />
     <Content Include="_Version.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Act_AssignInspection.aspx.cs">
-      <DependentUpon>Act_AssignInspection.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_AssignInspection.aspx.designer.cs">
-      <DependentUpon>Act_AssignInspection.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_AssignTests.aspx.cs">
-      <DependentUpon>Act_AssignTests.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_AssignTests.aspx.designer.cs">
-      <DependentUpon>Act_AssignTests.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_BatchEdit.aspx.cs">
-      <DependentUpon>Act_BatchEdit.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_BatchEdit.aspx.designer.cs">
-      <DependentUpon>Act_BatchEdit.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_CreateInspection.aspx.cs">
-      <DependentUpon>Act_CreateInspection.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_CreateInspection.aspx.designer.cs">
-      <DependentUpon>Act_CreateInspection.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_EnterResults.aspx.cs">
-      <DependentUpon>Act_EnterResults.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_EnterResults.aspx.designer.cs">
-      <DependentUpon>Act_EnterResults.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Act_FutureScheduling.aspx.cs">
       <DependentUpon>Act_FutureScheduling.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1132,39 +1654,8 @@
     <Compile Include="Act_FutureScheduling.aspx.designer.cs">
       <DependentUpon>Act_FutureScheduling.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Act_ImportData.aspx.cs">
-      <DependentUpon>Act_ImportData.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_ImportData.aspx.designer.cs">
-      <DependentUpon>Act_ImportData.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_ImportFireExtinguisher.aspx.cs">
-      <DependentUpon>Act_ImportFireExtinguisher.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_ImportFireExtinguisher.aspx.designer.cs">
-      <DependentUpon>Act_ImportFireExtinguisher.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_Receiving.aspx.cs">
-      <DependentUpon>Act_Receiving.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_Receiving.aspx.designer.cs">
-      <DependentUpon>Act_Receiving.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Act_SplitSamples.aspx.cs">
-      <DependentUpon>Act_SplitSamples.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_SplitSamples.aspx.designer.cs">
-      <DependentUpon>Act_SplitSamples.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Base.master.designer.cs">
       <DependentUpon>Base.master</DependentUpon>
-    </Compile>
-    <Compile Include="ChangePassword.aspx.designer.cs">
-      <DependentUpon>ChangePassword.aspx</DependentUpon>
     </Compile>
     <Compile Include="ConfigVars.aspx.designer.cs">
       <DependentUpon>ConfigVars.aspx</DependentUpon>
@@ -1178,9 +1669,6 @@
     <Compile Include="DisplayLog.aspx.designer.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
     </Compile>
-    <Compile Include="EditView.aspx.designer.cs">
-      <DependentUpon>EditView.aspx</DependentUpon>
-    </Compile>
     <Compile Include="ExternalLogin.aspx.cs">
       <DependentUpon>ExternalLogin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1188,33 +1676,14 @@
     <Compile Include="ExternalLogin.aspx.designer.cs">
       <DependentUpon>ExternalLogin.aspx</DependentUpon>
     </Compile>
-    <Compile Include="GetBlob.aspx.designer.cs">
-      <DependentUpon>GetBlob.aspx</DependentUpon>
-    </Compile>
     <Compile Include="License.aspx.designer.cs">
       <DependentUpon>License.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Location.aspx.designer.cs">
-      <DependentUpon>Location.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Login.aspx.designer.cs">
-      <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
     <Compile Include="Main.aspx.designer.cs">
       <DependentUpon>Main.aspx</DependentUpon>
     </Compile>
     <Compile Include="MainLayout.master.designer.cs">
       <DependentUpon>MainLayout.master</DependentUpon>
-    </Compile>
-    <Compile Include="NodeReport.aspx.designer.cs">
-      <DependentUpon>NodeReport.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="NodeTypeTreeService.cs">
-      <DependentUpon>NodeTypeTreeService.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Notifications.aspx.designer.cs">
-      <DependentUpon>Notifications.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Code\CswGridData.cs" />
     <Compile Include="App_Code\CswNbtWebServiceGrid.cs" />
@@ -1242,10 +1711,6 @@
       <DependentUpon>Base.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ChangePassword.aspx.cs">
-      <DependentUpon>ChangePassword.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="ConfigVars.aspx.cs">
       <DependentUpon>ConfigVars.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1262,24 +1727,8 @@
       <DependentUpon>DisplayLog.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="EditView.aspx.cs">
-      <DependentUpon>EditView.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="GetBlob.aspx.cs">
-      <DependentUpon>GetBlob.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="License.aspx.cs">
       <DependentUpon>License.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Location.aspx.cs">
-      <DependentUpon>Location.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Login.aspx.cs">
-      <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Main.aspx.cs">
@@ -1290,13 +1739,8 @@
       <DependentUpon>MainLayout.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="NodeReport.aspx.cs">
-      <DependentUpon>NodeReport.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Notifications.aspx.cs">
-      <DependentUpon>Notifications.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
+    <Compile Include="NodeTypeTreeService.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="PopupLayout.master.cs">
       <DependentUpon>PopupLayout.master</DependentUpon>
@@ -1304,48 +1748,6 @@
     </Compile>
     <Compile Include="PopupLayout.master.designer.cs">
       <DependentUpon>PopupLayout.master</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_About.aspx.cs">
-      <DependentUpon>Popup_About.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_About.aspx.designer.cs">
-      <DependentUpon>Popup_About.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_ChangeView.aspx.cs">
-      <DependentUpon>Popup_ChangeView.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_ChangeView.aspx.designer.cs">
-      <DependentUpon>Popup_ChangeView.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_ConfigQuickLaunch.aspx.cs">
-      <DependentUpon>Popup_ConfigQuickLaunch.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_ConfigQuickLaunch.aspx.designer.cs">
-      <DependentUpon>Popup_ConfigQuickLaunch.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_CopyNode.aspx.cs">
-      <DependentUpon>Popup_CopyNode.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_CopyNode.aspx.designer.cs">
-      <DependentUpon>Popup_CopyNode.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_DeleteNode.aspx.cs">
-      <DependentUpon>Popup_DeleteNode.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_DeleteNode.aspx.designer.cs">
-      <DependentUpon>Popup_DeleteNode.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_DeleteView.aspx.cs">
-      <DependentUpon>Popup_DeleteView.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_DeleteView.aspx.designer.cs">
-      <DependentUpon>Popup_DeleteView.aspx</DependentUpon>
     </Compile>
     <Compile Include="Popup_DesignAdd.aspx.cs">
       <DependentUpon>Popup_DesignAdd.aspx</DependentUpon>
@@ -1361,20 +1763,6 @@
     <Compile Include="Popup_DesignDelete.aspx.designer.cs">
       <DependentUpon>Popup_DesignDelete.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Popup_EditNode.aspx.cs">
-      <DependentUpon>Popup_EditNode.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_EditNode.aspx.designer.cs">
-      <DependentUpon>Popup_EditNode.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_EditProp.aspx.cs">
-      <DependentUpon>Popup_EditProp.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_EditProp.aspx.designer.cs">
-      <DependentUpon>Popup_EditProp.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Popup_Export.aspx.cs">
       <DependentUpon>Popup_Export.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1382,54 +1770,12 @@
     <Compile Include="Popup_Export.aspx.designer.cs">
       <DependentUpon>Popup_Export.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Popup_NewView.aspx.cs">
-      <DependentUpon>Popup_NewView.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_NewView.aspx.designer.cs">
-      <DependentUpon>Popup_NewView.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_PrintLabel.aspx.cs">
-      <DependentUpon>Popup_PrintLabel.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_PrintLabel.aspx.designer.cs">
-      <DependentUpon>Popup_PrintLabel.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_PutBlob.aspx.cs">
-      <DependentUpon>Popup_PutBlob.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_PutBlob.aspx.designer.cs">
-      <DependentUpon>Popup_PutBlob.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_Statistics.aspx.cs">
-      <DependentUpon>Popup_Statistics.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_Statistics.aspx.designer.cs">
-      <DependentUpon>Popup_Statistics.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_WelcomeAdd.aspx.cs">
-      <DependentUpon>Popup_WelcomeAdd.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_WelcomeAdd.aspx.designer.cs">
-      <DependentUpon>Popup_WelcomeAdd.aspx</DependentUpon>
-    </Compile>
     <Compile Include="PrintableLayout.master.cs">
       <DependentUpon>PrintableLayout.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="PrintableLayout.master.designer.cs">
       <DependentUpon>PrintableLayout.master</DependentUpon>
-    </Compile>
-    <Compile Include="PrintGrid.aspx.cs">
-      <DependentUpon>PrintGrid.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="PrintGrid.aspx.designer.cs">
-      <DependentUpon>PrintGrid.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Report.aspx.cs">
@@ -1469,20 +1815,6 @@
       <DependentUpon>TaskWorkOrder.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Search.aspx.cs">
-      <DependentUpon>Search.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search.aspx.designer.cs">
-      <DependentUpon>Search.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="SearchCustom.aspx.cs">
-      <DependentUpon>SearchCustom.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SearchCustom.aspx.designer.cs">
-      <DependentUpon>SearchCustom.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Standard.master.cs">
       <DependentUpon>Standard.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1510,31 +1842,6 @@
     </Compile>
     <Compile Include="TermsOfUse.aspx.designer.cs">
       <DependentUpon>TermsOfUse.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="TimeIntervalTest.aspx.cs">
-      <DependentUpon>TimeIntervalTest.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="TimeIntervalTest.aspx.designer.cs">
-      <DependentUpon>TimeIntervalTest.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="TreeViewService.cs">
-      <DependentUpon>TreeViewService.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UserList.aspx.cs">
-      <DependentUpon>UserList.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="UserList.aspx.designer.cs">
-      <DependentUpon>UserList.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Welcome.aspx.cs">
-      <DependentUpon>Welcome.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Welcome.aspx.designer.cs">
-      <DependentUpon>Welcome.aspx</DependentUpon>
     </Compile>
     <Compile Include="wsNBT.cs">
       <DependentUpon>wsNBT.asmx</DependentUpon>
@@ -1571,12 +1878,25 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="crystal\crsmarttag.jsp" />
+    <None Include="crystal\preview.jsp" />
     <None Include="etc\CswNbtData.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Images\biggerbuttons\BiggerButtons.pspimage" />
     <None Include="Images\buttons\Buttons.pspimage" />
     <None Include="Images\buttons\Buttons18.pspimage" />
+    <None Include="js\_compressor.pl" />
+    <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\app.yaml" />
+    <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\app\main.go" />
+    <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\resize\resize.go" />
+    <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-python\app.yaml" />
+    <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-python\main.py" />
+    <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\package.json" />
+    <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\php\files\.htaccess" />
+    <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\php\index.php" />
+    <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\php\thumbnails\.htaccess" />
+    <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\README.md" />
     <None Include="js\thirdparty\js\jmol\jmol" />
     <None Include="js\thirdparty\js\jmol\jmol.bat" />
     <None Include="js\thirdparty\js\jmol\jmol.mac" />
@@ -1653,7 +1973,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>call $(ProjectDir)js\_compile.pl $(ProjectDir)
-call $(ProjectDir)js\_compileMobile.pl $(ProjectDir)</PostBuildEvent>
+call $(ProjectDir)js\_compileMobile.pl $(ProjectDir)
+call $(ProjectDir)js\_compressor.pl $(ProjectDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

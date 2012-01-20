@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -14,7 +10,7 @@ namespace ChemSW.Nbt.ObjClasses
         //protected CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         protected CswNbtNode _CswNbtNode = null;
         protected CswNbtResources _CswNbtResources = null;
-        
+
         /// <summary>
         /// Constructor for when we have a node instance
         /// </summary>
@@ -42,13 +38,14 @@ namespace ChemSW.Nbt.ObjClasses
         }//postChanges()
 
         public abstract CswNbtMetaDataObjectClass ObjectClass { get; }
-		public abstract void beforeCreateNode( bool OverrideUniqueValidation );
+        public abstract void beforeCreateNode( bool OverrideUniqueValidation );
         public abstract void afterCreateNode();
-		public abstract void beforeWriteNode( bool OverrideUniqueValidation );
+        public abstract void beforeWriteNode( bool OverrideUniqueValidation );
         public abstract void afterWriteNode();
         public abstract void beforeDeleteNode();
         public abstract void afterDeleteNode();
         public abstract void afterPopulateProps();
+        public abstract void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj );
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
 
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }

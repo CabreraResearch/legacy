@@ -1,18 +1,14 @@
 using System;
 using System.Data;
-using System.Threading;
-using System.Collections.Generic;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Config;
 using ChemSW.DB;
 using ChemSW.MtSched.Core;
 
 namespace ChemSW.Nbt.Sched
 {
-    public enum NbtScheduleRuleNames { UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt }
-    public enum NbtScheduledRuleColumns { ScheduledRuleId, RuleName, MaxRunTimeMs, ThreadId, ReprobateThreshold, TotalRogueCount, FailedCount, Reprobate, Disabled, StatusMessage, Recurrence, Interval, RunStartTime, RunEndTime, LastRun }
-    public enum NbtScheduledRuleParamsColumns { ScheduledRuleParamId, ParamName, ParamVal }
+    public enum NbtScheduleRuleNames { Unknown, UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt, DisableChemSwAdmin }
+    public enum NbtScheduledRuleColumns { Unknown, ScheduledRuleId, RuleName, MaxRunTimeMs, ThreadId, ReprobateThreshold, TotalRogueCount, FailedCount, Reprobate, Disabled, StatusMessage, Recurrence, Interval, RunStartTime, RunEndTime, LastRun }
+    public enum NbtScheduledRuleParamsColumns { Unknown, ScheduledRuleParamId, ParamName, ParamVal }
     public class CswScheduleLogicDetailPersistenceNbt : ICswScheduleLogicDetailPersistence
     {
 
@@ -50,7 +46,6 @@ namespace ChemSW.Nbt.Sched
                 ReturnVal.MaxRunTimeMs = CswConvert.ToInt32( DataRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] );
             }
 
-
             if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.ThreadId.ToString() ) )
             {
                 ReturnVal.ThreadId = CswConvert.ToInt32( DataRowScheduledRules[NbtScheduledRuleColumns.ThreadId.ToString()] );
@@ -83,7 +78,7 @@ namespace ChemSW.Nbt.Sched
 
             if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.Recurrence.ToString() ) )
             {
-                Enum.TryParse<Recurrance>( DataRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()].ToString(), true, out ReturnVal.Recurrance );
+                Enum.TryParse<Recurrence>( DataRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()].ToString(), true, out ReturnVal.Recurrence );
             }
 
             if( false == DataRowScheduledRules.IsNull( NbtScheduledRuleColumns.Interval.ToString() ) )
@@ -142,7 +137,7 @@ namespace ChemSW.Nbt.Sched
                     DataRowScheduledRules[NbtScheduledRuleColumns.Reprobate.ToString()] = CswConvert.ToDbVal( CswScheduleLogicDetail.Reprobate );
                     DataRowScheduledRules[NbtScheduledRuleColumns.TotalRogueCount.ToString()] = CswScheduleLogicDetail.TotalRogueCount;
                     DataRowScheduledRules[NbtScheduledRuleColumns.StatusMessage.ToString()] = CswScheduleLogicDetail.StatusMessage;
-                    DataRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = CswScheduleLogicDetail.Recurrance.ToString();
+                    DataRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = CswScheduleLogicDetail.Recurrence.ToString();
                     DataRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = CswScheduleLogicDetail.Interval;
                     DataRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = CswScheduleLogicDetail.ReprobateThreshold;
                     DataRowScheduledRules[NbtScheduledRuleColumns.RunStartTime.ToString()] = CswScheduleLogicDetail.RunStartTime;
@@ -184,7 +179,7 @@ namespace ChemSW.Nbt.Sched
 
 
                     _CswResources.commitTransaction();
-                    _CswResources.clearUpdates(); 
+                    _CswResources.clearUpdates();
 
 
                 } //try 

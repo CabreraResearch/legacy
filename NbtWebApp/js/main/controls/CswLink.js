@@ -1,10 +1,10 @@
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 
-; (function ($) { /// <param name="$" type="jQuery" />
-	
+(function ($) { /// <param name="$" type="jQuery" />
+	"use strict";
 	var pluginName = "CswLink";
 	
 	var methods = {
@@ -56,7 +56,7 @@
 		} else if ( typeof method === 'object' || ! method ) {
 		  return methods.init.apply( this, arguments );
 		} else {
-		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName );
+		  $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
 		}    
   
 	};

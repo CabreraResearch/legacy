@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.MetaData
@@ -35,6 +32,8 @@ namespace ChemSW.Nbt.MetaData
         CswNbtMetaDataFieldType FieldType { get; }
         string FKType { get; }
         Int32 FKValue { get; }
+        string ValuePropType { get; }
+        Int32 ValuePropId { get; }
         string ListOptions { get; }
         PropertySelectMode Multi { get; }
         ICswNbtFieldTypeRule FieldTypeRule { get; }

@@ -1,13 +1,11 @@
 using System;
+using System.Data;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data;
-using ChemSW.Nbt;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
-using ChemSW.DB;
 using ChemSW.CswWebControls;
+using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {
@@ -34,8 +32,12 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 SelectMode = Prop.AsNodeTypeSelect.SelectMode;
                 if( _AllowEditValue )
                 {
+                    /* Options is going to be wrong if this prop is required. 
+                     * There is no good way to distinguish between default value (the only context this class will be used until it retires)
+                     * and an actual instance of the property. This is OK, because we're replicating the behavior on prop instance:
+                     * if required, the first nodetype is selected. */
                     DataTable Data = Prop.AsNodeTypeSelect.Options;
-                    
+
                     _CBArray.UseRadios = ( SelectMode == PropertySelectMode.Single );
                     _CBArray.CreateCheckBoxes( Data, CswNbtNodePropNodeTypeSelect.NameColumn, CswNbtNodePropNodeTypeSelect.KeyColumn );
                 }
@@ -80,25 +82,25 @@ namespace ChemSW.NbtWebControls.FieldTypes
             }
             else
             {
-                _EditButton = new CswImageButton(CswImageButton.ButtonType.Edit);
+                _EditButton = new CswImageButton( CswImageButton.ButtonType.Edit );
                 _EditButton.ID = "edit";
                 Table.addControl( 0, 1, _EditButton );
             }
-                
+
             base.CreateChildControls();
         }
 
 
-        protected override void OnPreRender(EventArgs e)
+        protected override void OnPreRender( EventArgs e )
         {
             EnsureChildControls();
 
             if( Prop != null )
-            {   
+            {
                 _ValueLabel.Text = Prop.AsNodeTypeSelect.SelectedNodeTypeNames().ToString();
                 if( !_AllowEditValue )
                 {
-                    if(Prop.NodeId != null)
+                    if( Prop.NodeId != null )
                         _EditButton.OnClientClick = "EditPropertyInPopup('" + Prop.NodeId.ToString() + "', '" + PropId.ToString() + "');";
                     if( ReadOnly )
                         _EditButton.Visible = false;
@@ -107,7 +109,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 }
             }
 
-            base.OnPreRender(e);
+            base.OnPreRender( e );
         }
 
     }

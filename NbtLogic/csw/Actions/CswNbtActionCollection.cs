@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswNbtActionCollection( CswNbtResources Resources )
+        public CswNbtActionCollection( CswNbtResources Resources, bool ExcludeDisabledActions )
         {
             _CswNbtResources = Resources;
 
@@ -29,8 +29,18 @@ namespace ChemSW.Nbt.Actions
             _ActionHash = new Hashtable();
 
             // Actions
-            CswStaticSelect ActionsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtActionCollection.ActionsSelect", "getActiveActions" );
-            DataTable ActionsTable = ActionsSelect.getTable();
+			DataTable ActionsTable = null;
+			if( ExcludeDisabledActions )
+			{
+				CswStaticSelect ActionsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtActionCollection.ActionsSelect", "getActiveActions" );
+				ActionsTable = ActionsSelect.getTable();
+			}
+			else
+			{
+				CswTableSelect ActionsSelect = _CswNbtResources.makeCswTableSelect( "CswNbtActionCollection.AllActionsSelect", "actions" );
+				ActionsTable = ActionsSelect.getTable();
+			}
+
             foreach( DataRow ActionRow in ActionsTable.Rows )
             {
                 CswNbtActionName CurrentActionName;

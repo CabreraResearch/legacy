@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -266,9 +267,13 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.afterCreateNode();
 
-            // Make sure the nodetype is locked
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( _CswNbtNode.NodeTypeId );
-            NodeType.IsLocked = true;
+            //Case 20941. Not anymore.
+
+            /* 
+             * Make sure the nodetype is locked
+             * CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( _CswNbtNode.NodeTypeId );
+             * NodeType.IsLocked = true; 
+             */
         } // afterCreateNode()
 
         /// <summary>
@@ -393,6 +398,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
         #endregion
 
         #region Object class specific properties
@@ -573,8 +582,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion
-
-
 
     }//CswNbtObjClassInspectionDesign
 

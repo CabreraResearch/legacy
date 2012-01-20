@@ -1,4 +1,4 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="CswMobileMenuButton.js" />
 /// <reference path="ICswMobileWebControls.js" />
 /// <reference path="../../globals/CswEnums.js" />
@@ -40,7 +40,7 @@ function CswMobilePageHeader(headerDef, $page) {
 
         if (isNullOrEmpty($header) || $header.length === 0) {
             $header = $page.CswDiv('init', { ID: id });
-            $header.CswAttrXml({
+            $header.CswAttrNonDom({
                 'data-role': 'header',
                 'data-position': 'fixed',
                 'data-id': o.dataId,

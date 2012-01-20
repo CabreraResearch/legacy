@@ -1,13 +1,9 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Text;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -60,7 +56,7 @@ namespace ChemSW.Nbt.MetaData
                 ReturnVal = Attribute.ToString();
             return ( ReturnVal );
         }
-        
+
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _ObjectClassPropRow;
 
@@ -262,6 +258,14 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        public Int32 ValuePropId
+        {
+            get { return CswConvert.ToInt32( _ObjectClassPropRow["valuepropid"] ); }
+        }
+        public string ValuePropType
+        {
+            get { return _ObjectClassPropRow["valueproptype"].ToString(); }
+        }
 
         public Int32 DisplayColAdd
         {
@@ -387,19 +391,19 @@ namespace ChemSW.Nbt.MetaData
             foreach( DataColumn Column in _ObjectClassPropRow.Table.Columns )
             {
                 string ColumnName = Column.ColumnName;
-				if( ColumnName != "display_rowadd" &&
-					ColumnName != "display_coladd" &&
-					ColumnName != "setvalonadd" &&
-					ColumnName != "defaultvalueid" )
-				{
-					if( NewPropRow.Table.Columns.Contains( ColumnName ) )
-					{
-						if( !_ObjectClassPropRow.IsNull( ColumnName ) )
-						{
-							NewPropRow[ColumnName] = _ObjectClassPropRow[ColumnName];
-						}
-					}
-				}
+                if( ColumnName != "display_rowadd" &&
+                    ColumnName != "display_coladd" &&
+                    ColumnName != "setvalonadd" &&
+                    ColumnName != "defaultvalueid" )
+                {
+                    if( NewPropRow.Table.Columns.Contains( ColumnName ) )
+                    {
+                        if( !_ObjectClassPropRow.IsNull( ColumnName ) )
+                        {
+                            NewPropRow[ColumnName] = _ObjectClassPropRow[ColumnName];
+                        }
+                    }
+                }
             }
         } // CopyPropToNewPropRow()
 

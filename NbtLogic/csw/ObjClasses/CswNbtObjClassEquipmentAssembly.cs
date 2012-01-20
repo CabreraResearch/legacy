@@ -1,23 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Text;
 using System.Data;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.DB;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-
-using ChemSW.TblDn;
 using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassEquipmentAssembly : CswNbtObjClass
     {
         public static string TypePropertyName { get { return "Assembly Type"; } }
-        public static string PartsPropertyName { get { return "Parts"; } }
+        public static string AssemblyPartsPropertyName { get { return "Assembly Parts"; } }
         public static string PartsXValueName { get { return "Uses"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -177,10 +171,10 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode TypeNode = _CswNbtResources.Nodes[Type.RelatedNodeId];
                 if( TypeNode != null )
                 {
-                    CswNbtObjClassEquipmentType TypeNodeAsType = CswNbtNodeCaster.AsEquipmentType( TypeNode );                    
+                    CswNbtObjClassEquipmentType TypeNodeAsType = CswNbtNodeCaster.AsEquipmentType( TypeNode );
                     CswDelimitedString PartsString = new CswDelimitedString( '\n' );
-					PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
-                    this.Parts.YValues = PartsString;
+                    PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
+                    AssemblyParts.YValues = PartsString;
                 }
             }
             _CswNbtObjClassDefault.afterPopulateProps();
@@ -191,6 +185,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
         #endregion
 
         #region Object class specific properties
@@ -203,17 +201,15 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropLogicalSet Parts
+        public CswNbtNodePropLogicalSet AssemblyParts
         {
             get
             {
-                return ( _CswNbtNode.Properties[PartsPropertyName].AsLogicalSet );
+                return ( _CswNbtNode.Properties[AssemblyPartsPropertyName].AsLogicalSet );
             }
         }
 
         #endregion
-
-
 
     }//CswNbtObjClassEquipmentAssembly
 

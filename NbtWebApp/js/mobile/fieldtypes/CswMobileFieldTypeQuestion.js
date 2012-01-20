@@ -1,4 +1,4 @@
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../globals/CswMobileTools.js" />
 /// <reference path="../globals/CswMobileEnums.js" />
 /// <reference path="../../globals/CswEnums.js" />
@@ -58,7 +58,7 @@ function CswMobileFieldTypeQuestion(ftDef) {
                                 .CswAttrDom({
                                     'id': propId + '_fieldset'
                                 })
-                                .CswAttrXml({
+                                .CswAttrNonDom({
                                     'data-role': 'controlgroup',
                                     'data-type': 'horizontal',
                                     'data-theme': 'b'
@@ -77,7 +77,7 @@ function CswMobileFieldTypeQuestion(ftDef) {
                     .appendTo($fieldset);
 
                 if (answer === allowedAnswers[i]) {
-                    $answer.CswAttrXml('checked', 'checked');
+                    $answer.CswAttrDom('checked', 'checked');
                 }
             }
         }
@@ -121,11 +121,11 @@ function CswMobileFieldTypeQuestion(ftDef) {
                 $control.find('h2').addClass(CswMobileCssClasses.OOC.name);
             }
             if(isNullOrEmpty(correctiveAction) && compliant) {
-                $collapsible.CswAttrXml('data-collapsed', true);
+                $collapsible.CswAttrNonDom('data-collapsed', true);
                 $collapsible.trigger('collapse');
                 $control.find('#' + propId + '_cor').css('display', 'none').hide();
             } else {
-                $collapsible.CswAttrXml('data-collapsed', false);
+                $collapsible.CswAttrNonDom('data-collapsed', false);
                 $collapsible.trigger('expand');
             }
         }

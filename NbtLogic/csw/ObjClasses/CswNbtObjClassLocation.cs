@@ -1,5 +1,6 @@
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -72,7 +73,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             // BZ 6744
             // Hide the Child Location Type and Location Template controls
-            if( _CswNbtResources.getConfigVariableValue( "loc_use_images" ) == "0" )
+            if( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_use_images" ) == "0" )
             {
                 this.ChildLocationType.Hidden = true;
                 this.Rows.Hidden = true;
@@ -88,6 +89,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
+        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        {
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+        }
         #endregion
 
         #region Object class specific properties
@@ -157,8 +162,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion
-
-
 
     }//CswNbtObjClassLocation
 

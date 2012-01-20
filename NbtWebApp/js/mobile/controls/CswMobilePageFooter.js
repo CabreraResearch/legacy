@@ -1,4 +1,4 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="CswMobileMenuButton.js" />
 /// <reference path="ICswMobileWebControls.js" />
 /// <reference path="../../globals/Global.js" />
@@ -12,6 +12,7 @@
 CswMobilePageFooter.inheritsFrom(ICswMobileWebControls);
 
 function CswMobilePageFooter(footerDef, $parent) {
+    "use strict";
     /// <summary>
     ///   Footer class. Responsible for generating a Mobile page footer.
     /// </summary>
@@ -44,7 +45,7 @@ function CswMobilePageFooter(footerDef, $parent) {
         if (isNullOrEmpty($footer) || $footer.length === 0)
         {
             $footer = $parent.CswDiv('init', { ID: id })
-                .CswAttrXml({
+                .CswAttrNonDom({
                         'data-role': 'footer',
                         'data-position': 'fixed',
                         'data-id': o.dataId,

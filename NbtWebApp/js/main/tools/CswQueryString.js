@@ -1,4 +1,4 @@
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
 
 // adapted from 
@@ -9,10 +9,9 @@
 // qs.param   -->  'value'
 // qs.param2  -->  'value2'
 
-(function ($)
-{
-    $.CswQueryString = function()
-    {
+(function ($) {
+    "use strict";
+    $.CswQueryString = function() {
         var urlParams = { };
 
         var e,

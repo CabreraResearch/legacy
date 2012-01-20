@@ -1,13 +1,16 @@
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
+/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="../../globals/CswEnums.js" />
 
 (function ($) {
+    "use strict";
     $.fn.CswQuickLaunch = function (options) {
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getQuickLaunchItems',
-            onViewClick: function(viewid, viewmode) { },
-            onActionClick: function(actionname, actionurl) { },
+            onViewClick: function() { },
+            onActionClick: function() { },
             onSuccess: function() { }
         };
 
@@ -51,6 +54,7 @@
                                                         { viewid: viewid, viewmode: viewmode }));
                                 break;
                             case 'action':
+                                text = text.replace('_', ' ');
                                 $('<a href="#">' + text + '</a>')
                                     .appendTo($li)
                                     //.click(function() { o.onActionClick(actionname, actionurl); return false; });

@@ -1,11 +1,11 @@
-/// <reference path="/js/../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 
-; (function ($)
-{
-    var PluginName = "CswNodeTypeSelect";
+(function ($) {
+    "use strict";
+    var pluginName = "CswNodeTypeSelect";
 
     var methods = {
         'init': function(options) {
@@ -13,32 +13,56 @@
                 ID: '',
                 NodeTypesUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
                 nodetypeid: '',
+                objectClassName: '',
                 onSelect: null, //function (nodetypeid) {},
-                onSuccess: null //function () {}
+                onSuccess: null, //function () {}
+                width: '',
+                addNewOption: false,
+                excludeNodeTypeIds: ''
             };
-
             if (options) {
                 $.extend(o, options);
             }
-            var $parent = $(this);
-            var $select = $('<select id="'+ o.ID +'_sel" />').css('width', '200px');
+            
+            var $parent = $(this),
+                $select = $('<select id="'+ o.ID +'_sel" />').css('width', '200px');
+            
+            if(isTrue(o.addNewOption)) {
+                $select.append('<option value="[Create New]">[Create New]</option>');
+            }
+
             $select.change(function() { if (isFunction(o.onSelect)) o.onSelect( $select.val() ); });
 
             CswAjaxJson({
                     url: o.NodeTypesUrl,
-                    data: {},
-                    success: function (data)
-                    {
-                        for (var nodeType in data) {
-                            if (contains(data, nodeType)) {
-                                var thisNodeType = data[nodeType];
-                                $select.append('<option value="' + thisNodeType.id + '">' + thisNodeType.name + '</option>');
+                    data: { ObjectClassName: tryParseString(o.objectClassName), ExcludeNodeTypeIds: o.excludeNodeTypeIds },
+                    success: function (data) {
+                        var ret = data;
+                        ret.nodetypecount = 0;
+                        //Case 24155
+                        each(ret, function(thisNodeType) {
+                            if(contains(thisNodeType, 'id') &&
+                                    contains(thisNodeType, 'name')) {
+                                var id = thisNodeType.id,
+                                    name = thisNodeType.name,
+                                    $thisOpt;
+                                delete thisNodeType.id;
+                                delete thisNodeType.name;
+
+                                ret.nodetypecount += 1;
+
+                                $thisOpt = $('<option value="' + id + '">' + name + '</option>');
+                                each(thisNodeType, function(value, key) {
+                                    $thisOpt.CswAttrNonDom(key, value);
+                                });
+                                $select.append($thisOpt);
                             }
-                        }
+                        });
+                        
                         if (isFunction(o.onSuccess)) {
-                            o.onSuccess();
+                            o.onSuccess(ret);
                         }
-                        $select.css('width', '');    
+                        $select.css('width', tryParseString(o.width));    
                     }
             });
             //Case 23986: Wait until options collection is built before appending
@@ -59,7 +83,7 @@
         } else if ( typeof method === 'object' || ! method ) {
           return methods.init.apply( this, arguments );
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + PluginName );
+          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
   
     };

@@ -1,23 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using System.Xml;
-using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.MetaData.FieldTypeRules
 {
 
     public class CswNbtFieldTypeRuleFactory
     {
-        public static ICswNbtFieldTypeRule makeRule(CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp)
+        public static ICswNbtFieldTypeRule makeRule( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
         {
             ICswNbtFieldTypeRule ReturnVal = null;
             //CswNbtFieldResources CswNbtFieldResources = new CswNbtFieldResources( CswNbtResources );
-            
+
             switch( MetaDataProp.FieldType.FieldType )
             {
                 case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
@@ -48,15 +40,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleGrid( CswNbtFieldResources, MetaDataProp );
                     break;
 
-				case CswNbtMetaDataFieldType.NbtFieldType.Image:
-					ReturnVal = new CswNbtFieldTypeRuleImage( CswNbtFieldResources, MetaDataProp );
-					break;
+                case CswNbtMetaDataFieldType.NbtFieldType.Image:
+                    ReturnVal = new CswNbtFieldTypeRuleImage( CswNbtFieldResources, MetaDataProp );
+                    break;
 
-				case CswNbtMetaDataFieldType.NbtFieldType.ImageList:
-					ReturnVal = new CswNbtFieldTypeRuleImageList( CswNbtFieldResources, MetaDataProp );
-					break;
+                case CswNbtMetaDataFieldType.NbtFieldType.ImageList:
+                    ReturnVal = new CswNbtFieldTypeRuleImageList( CswNbtFieldResources, MetaDataProp );
+                    break;
 
-				case CswNbtMetaDataFieldType.NbtFieldType.Link:
+                case CswNbtMetaDataFieldType.NbtFieldType.Link:
                     ReturnVal = new CswNbtFieldTypeRuleLink( CswNbtFieldResources, MetaDataProp );
                     break;
 
@@ -92,27 +84,23 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleMTBF( CswNbtFieldResources, MetaDataProp );
                     break;
 
-				//case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
-				//    ReturnVal = new CswNbtFieldTypeRuleMultiRelationship( CswNbtFieldResources );
-				//    break;
-
-				case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
-					ReturnVal = new CswNbtFieldTypeRuleMultiList( CswNbtFieldResources, MetaDataProp );
-					break;
-
-                //case CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions:
-                //    ReturnVal = new CswNbtFieldTypeRuleNodeTypePermissions( CswNbtFieldResources );
+                //case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
+                //    ReturnVal = new CswNbtFieldTypeRuleMultiRelationship( CswNbtFieldResources );
                 //    break;
 
-				case CswNbtMetaDataFieldType.NbtFieldType.NFPA:
-					ReturnVal = new CswNbtFieldTypeRuleNFPA( CswNbtFieldResources, MetaDataProp );
-					break;
+                case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
+                    ReturnVal = new CswNbtFieldTypeRuleMultiList( CswNbtFieldResources, MetaDataProp );
+                    break;
 
-				case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
-					ReturnVal = new CswNbtFieldTypeRuleNodeTypeSelect( CswNbtFieldResources, MetaDataProp );
-					break;
+                case CswNbtMetaDataFieldType.NbtFieldType.NFPA:
+                    ReturnVal = new CswNbtFieldTypeRuleNFPA( CswNbtFieldResources, MetaDataProp );
+                    break;
 
-				case CswNbtMetaDataFieldType.NbtFieldType.Number:
+                case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
+                    ReturnVal = new CswNbtFieldTypeRuleNodeTypeSelect( CswNbtFieldResources, MetaDataProp );
+                    break;
+
+                case CswNbtMetaDataFieldType.NbtFieldType.Number:
                     ReturnVal = new CswNbtFieldTypeRuleNumber( CswNbtFieldResources, MetaDataProp );
                     break;
 
@@ -129,22 +117,22 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     break;
 
                 case CswNbtMetaDataFieldType.NbtFieldType.Question:
-                    ReturnVal = new CswNbtFieldTypeRuleQuestion(CswNbtFieldResources, MetaDataProp);
+                    ReturnVal = new CswNbtFieldTypeRuleQuestion( CswNbtFieldResources, MetaDataProp );
                     break;
 
                 case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
                     ReturnVal = new CswNbtFieldTypeRuleRelationship( CswNbtFieldResources, MetaDataProp );
                     break;
 
-				case CswNbtMetaDataFieldType.NbtFieldType.Scientific:
-					ReturnVal = new CswNbtFieldTypeRuleScientific( CswNbtFieldResources, MetaDataProp );
-					break;
+                case CswNbtMetaDataFieldType.NbtFieldType.Scientific:
+                    ReturnVal = new CswNbtFieldTypeRuleScientific( CswNbtFieldResources, MetaDataProp );
+                    break;
 
-				case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
-					ReturnVal = new CswNbtFieldTypeRuleSequence( CswNbtFieldResources, MetaDataProp );
-					break;
+                case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
+                    ReturnVal = new CswNbtFieldTypeRuleSequence( CswNbtFieldResources, MetaDataProp );
+                    break;
 
-				case CswNbtMetaDataFieldType.NbtFieldType.Static:
+                case CswNbtMetaDataFieldType.NbtFieldType.Static:
                     ReturnVal = new CswNbtFieldTypeRuleStatic( CswNbtFieldResources, MetaDataProp );
                     break;
 
@@ -152,9 +140,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleText( CswNbtFieldResources, MetaDataProp );
                     break;
 
-				//case CswNbtMetaDataFieldType.NbtFieldType.Time:
-				//    ReturnVal = new CswNbtFieldTypeRuleTime( CswNbtFieldResources, MetaDataProp );
-				//    break;
+                //case CswNbtMetaDataFieldType.NbtFieldType.Time:
+                //    ReturnVal = new CswNbtFieldTypeRuleTime( CswNbtFieldResources, MetaDataProp );
+                //    break;
 
                 case CswNbtMetaDataFieldType.NbtFieldType.TimeInterval:
                     ReturnVal = new CswNbtFieldTypeRuleTimeInterval( CswNbtFieldResources, MetaDataProp );
@@ -173,8 +161,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     break;
 
                 default:
-                    throw( new CswDniException( "There is no field rule class for field type " + MetaDataProp.FieldType.FieldType.ToString() ) );
-                    //break;
+                    throw ( new CswDniException( "There is no field rule class for field type " + MetaDataProp.FieldType.FieldType.ToString() ) );
+                //break;
             }//switch
 
 

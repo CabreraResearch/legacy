@@ -130,8 +130,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
             //initValidationJS();
             //initCheckChangesJS();
 
-            string Length = _CswNbtResources.getConfigVariableValue( "password_length" );
-            string Complexity = _CswNbtResources.getConfigVariableValue( "password_complexity" );
+            string Length = _CswNbtResources.ConfigVbls.getConfigVariableValue( "password_length" );
+            string Complexity = _CswNbtResources.ConfigVbls.getConfigVariableValue( "password_complexity" );
             _Password.Attributes.Add( "onkeypress", "CswPassword_onchange('" + _Password.ClientID + "','" + _Confirm.ClientID + "','" + _InvalidImg.ClientID + "'," + Length + "," + Complexity + ");" );
             //User must type password-no copy/paste
             //_Password.Attributes.Add( "onchange", "CswPassword_onchange('" + _Password.ClientID + "','" + _Confirm.ClientID + "','" + _InvalidImg.ClientID + "'," + Length + "," + Complexity + ");" );

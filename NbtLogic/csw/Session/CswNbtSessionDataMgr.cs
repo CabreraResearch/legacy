@@ -177,7 +177,11 @@ namespace ChemSW.Nbt
             SessionViewRow[SessionDataColumn_Name] = CswConvert.ToString( Name );
             SessionViewRow[SessionDataColumn_SessionId] = SessionId;
             SessionViewRow[SessionDataColumn_SessionDataType] = DataType.ToString();
-            SessionViewRow[SessionDataColumn_QuickLaunch] = CswConvert.ToDbVal( IncludeInQuickLaunch );
+			if( CswConvert.ToBoolean( SessionViewRow[SessionDataColumn_QuickLaunch] ) == false )
+			{
+				// Only set false to true, not true to false.  See case 23999.
+				SessionViewRow[SessionDataColumn_QuickLaunch] = CswConvert.ToDbVal( IncludeInQuickLaunch );
+			}
             SessionViewRow[SessionDataColumn_KeepInQuickLaunch] = CswConvert.ToDbVal( KeepInQuickLaunch );
 
             return SessionViewRow;

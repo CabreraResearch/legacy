@@ -1,4 +1,4 @@
-/// <reference path="../../Scripts/jquery-1.6.4-vsdoc.js" />
+/// <reference path="../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../Scripts/jquery.mobile-1.0rc1.js" />
 /// <reference path="../globals/CswGlobalTools.js" />
 /// <reference path="../globals/Global.js" />
@@ -31,7 +31,6 @@ CswAppMode.mode = 'mobile';
         /// </summary>
 
         //#region Resource Initialization
-        debugOn(debug);
         var x = {
             Theme: CswMobileGlobal_Config.theme,
             PollingInterval: 30000 //30 seconds

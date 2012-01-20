@@ -204,8 +204,8 @@ namespace ChemSW.Nbt.PropTypes
                     CswNbtViewPropertyFilter LocationViewPropNull = _View.AddViewPropertyFilter( LocationViewProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Null, string.Empty, false );
 
                     Int32 MaxDepth = 5;
-                    if( CswTools.IsInteger( _CswNbtResources.getConfigVariableValue( "loc_max_depth" ) ) )
-                        MaxDepth = CswConvert.ToInt32( _CswNbtResources.getConfigVariableValue( "loc_max_depth" ) );
+                    if( CswTools.IsInteger( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_max_depth" ) ) )
+                        MaxDepth = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_max_depth" ) );
 
                     CswNbtViewRelationship PriorLocationLevel = LocationLevel1;
                     for( int i = 2; i <= MaxDepth; i++ )
