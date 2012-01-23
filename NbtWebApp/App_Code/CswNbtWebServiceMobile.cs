@@ -366,24 +366,22 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtNode Node = _CswNbtResources.Nodes[NodePk];
                     CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
+                    JObject PropObj = (JObject) Prop.Value;
+
+                    CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToString( PropObj["currenttab"] ) );
+                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, NodeEditMode.Edit, Tab );
+
                     //Case 20964. Client needs to know whether the inspection is complete.
                     if( false == Ret && Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
                     {
                         CswNbtMetaDataObjectClassProp Finished = Node.ObjectClass.getObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
                         CswNbtMetaDataObjectClassProp Cancelled = Node.ObjectClass.getObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
-                        if( ( MetaDataProp.ObjectClassProp == Finished &&
-                            Tristate.True == CswConvert.ToTristate( Prop.Value ) ) ||
-                            ( MetaDataProp.ObjectClassProp == Cancelled )
-                            )
+                        if( MetaDataProp.ObjectClassProp == Finished ||
+                            MetaDataProp.ObjectClassProp == Cancelled )
                         {
-                            Ret = true;
+                            Ret = Ret || Node.Properties[MetaDataProp].AsLogical.Checked == Tristate.True;
                         }
                     }
-
-                    JObject PropObj = (JObject) Prop.Value;
-
-                    CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToString( PropObj["currenttab"] ) );
-                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, NodeEditMode.Edit, Tab );
 
                     if( false == NodesToPost.Contains( Node ) )
                     {

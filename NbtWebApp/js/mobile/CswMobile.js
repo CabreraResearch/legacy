@@ -421,7 +421,7 @@ CswAppMode.mode = 'mobile';
         }
         
         function processUpdatedNodes(data,objectId,objectJson,isBackgroundTask) {
-            var isView, isNode, json, completed;
+            var isView, isNode, json, completed, $viewPage;
             if (false === isNullOrEmpty(data)) {
                 setOnline(mobileStorage);
                 completed = isTrue(data.completed);
@@ -441,7 +441,9 @@ CswAppMode.mode = 'mobile';
                     mobileStorage.deleteNode(objectId, objectJson.viewid);
                     if (false === isBackgroundTask) {
                         mobileStorage.forceContentRefresh(true);
-                        $('#' + objectJson.viewid).CswChangePage();
+                        $viewPage = $('#' + objectJson.viewid);
+                        $viewPage.find('#' + objectId + '_li').remove();
+                        $viewPage.CswChangePage();
                     }
                 }
             }

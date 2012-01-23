@@ -12,7 +12,6 @@
 CswMobilePageFooter.inheritsFrom(ICswMobileWebControls);
 
 function CswMobilePageFooter(footerDef, $parent) {
-    "use strict";
     /// <summary>
     ///   Footer class. Responsible for generating a Mobile page footer.
     /// </summary>

@@ -3084,10 +3084,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtWebServiceMobile wsM = new CswNbtWebServiceMobile( _CswNbtResources, ForMobile );
                     bool CompletedNodes = wsM.updateViewProps( UpdatedViewJson );
                     ReturnVal = wsM.getNode( ParentId );
-                    if( CompletedNodes )
-                    {
-                        ReturnVal.Add( new JProperty( "completed", true ) );
-                    }
+                    ReturnVal["completed"] = CompletedNodes;
                 }
 
                 _deInitResources();
@@ -3617,7 +3614,7 @@ namespace ChemSW.Nbt.WebServices
             return RetKey;
         }
 
-        private Collection<CswPrimaryKey> _getNodePks(CswCommaDelimitedString NodeIds, CswCommaDelimitedString NodeKeys )
+        private Collection<CswPrimaryKey> _getNodePks( CswCommaDelimitedString NodeIds, CswCommaDelimitedString NodeKeys )
         {
             Collection<CswPrimaryKey> RetCol = new Collection<CswPrimaryKey>();
             foreach( string NodeId in NodeIds )
