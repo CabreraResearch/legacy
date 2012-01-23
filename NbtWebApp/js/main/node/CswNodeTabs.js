@@ -317,10 +317,14 @@
                         o.filterToPropId === '' && 
                         isTrue($tabcontentdiv.data('canEditLayout'))) {
                         /* Case 24437 */
-                        o.Refresh = function() {
-                            o.Config = false;
-                            getTabs();
-                        };
+                        var refreshFunc = function() {
+                                o.Config = false;
+                                getTabs();
+                            };
+                        o.Refresh = function () {
+                            ChemSW.tools.tryExecMethod(o.Refresh);
+                            refreshFunc();
+                        }
                         /* Show the 'fake' config button to open the dialog */
                         $formtblcell12.CswImageButton({
                                                     ButtonType: CswImageButton_ButtonType.Configure,
