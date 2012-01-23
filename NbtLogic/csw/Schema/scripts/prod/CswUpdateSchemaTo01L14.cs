@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp TypeOcp = MailReportOc.getObjectClassProp( CswNbtObjClassMailReport.TypePropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOcp, CswNbtSubField.SubFieldName.Value, "View" );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOcp, TypeOcp.FieldTypeRule.SubFields.Default.Name, "View" );
 
             #endregion Case 24394
 

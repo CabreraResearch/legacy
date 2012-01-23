@@ -1672,10 +1672,12 @@ namespace ChemSW.Nbt.WebServices
                     ParsedNodeKeys.FromString( wsTools.FromSafeJavaScriptParam( SafeNodeKeys ) );
                     CswCommaDelimitedString ParsedNodeIds = new CswCommaDelimitedString();
                     ParsedNodeIds.FromString( NodeIds );
+                    Collection<CswPrimaryKey> NodePks = _getNodePks( ParsedNodeIds, ParsedNodeKeys );
+
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
                     NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.saveProps( RealEditMode, ParsedNodeIds, ParsedNodeKeys, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View );
+                    ReturnVal = ws.saveProps( RealEditMode, NodePks, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View );
                 }
                 _deInitResources();
             }
@@ -3607,6 +3609,30 @@ namespace ChemSW.Nbt.WebServices
                 RetKey = TryKey;
             }
             return RetKey;
+        }
+
+        private Collection<CswPrimaryKey> _getNodePks(CswCommaDelimitedString NodeIds, CswCommaDelimitedString NodeKeys )
+        {
+            Collection<CswPrimaryKey> RetCol = new Collection<CswPrimaryKey>();
+            foreach( string NodeId in NodeIds )
+            {
+                CswPrimaryKey NodePk = _getNodeId( NodeId );
+                if( null != NodePk )
+                {
+                    RetCol.Add( NodePk );
+                }
+            }
+
+            foreach( string NodeKey in NodeKeys )
+            {
+                CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
+                if( null != NbtNodeKey )
+                {
+                    RetCol.Add( NbtNodeKey.NodeId );
+                }
+            }
+
+            return RetCol;
         }
 
         #endregion Private

@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.WebServices
             }
             return Node;
         } // getNode()
-
+        
         /// <summary>
         /// Detertimes if a Node Type name exists.
         /// </summary>
@@ -109,9 +109,13 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public static string FromSafeJavaScriptParam( object Param )
         {
-            string ParamText = CswConvert.ToString( Param );
-            JavaScriptSerializer Serializer = new JavaScriptSerializer();
-            string ReturnText = Serializer.Deserialize<string>( ParamText );
+            string ReturnText = CswConvert.ToString( Param );
+            try
+            {
+                JavaScriptSerializer Serializer = new JavaScriptSerializer();
+                ReturnText = Serializer.Deserialize<string>( ReturnText );
+            }
+            catch( Exception ){ }
             return ReturnText;
         }
 

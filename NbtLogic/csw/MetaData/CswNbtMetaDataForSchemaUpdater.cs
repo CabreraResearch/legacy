@@ -180,6 +180,11 @@ namespace ChemSW.Nbt.MetaData
                 if( ObjectClassProp._DataRow[AttributeName] != DBValue )
                 {
                     ObjectClassProp._DataRow[AttributeName] = DBValue;
+                    if( Attribute == CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd )
+                    {
+                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_col_add)] = DBNull.Value;
+                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_row_add )] = DBNull.Value;
+                    }
                     _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.NodeTypeProps )
@@ -192,22 +197,18 @@ namespace ChemSW.Nbt.MetaData
                         }
                         else if( Attribute == CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd )
                         {
-                            NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                            if( CswConvert.ToBoolean( Value ) )
+                            {
+                                NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                            }
+                            else
+                            {
+                                NodeTypeProp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                            }
                         }
                     }
                 }
             }
-
-
         } // UpdateObjectClassProp()
-
-
-
-
-
-
-
     }//CswNbtMetaDataForSchemaUpdater
-
-
 }//ChemSW.Nbt.MetaData

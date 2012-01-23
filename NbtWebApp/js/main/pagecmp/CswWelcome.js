@@ -314,23 +314,25 @@
         if (removedata) {
             $.extend(r, removedata);
         }
-        var $textcell = $(r.cellset[2][1]);
+        var $textcell = $(r.cellset[2][1]),
+            welcomeid, dataJson;
+        
         if ($textcell.length > 0) {
-            var welcomeid = $textcell.find('input').CswAttrNonDom('welcomeid');
+            welcomeid = $textcell.find('input').CswAttrNonDom('welcomeid');
+            if(welcomeid) {
+                dataJson = {
+                    RoleId: '',
+                    WelcomeId: welcomeid
+                };
 
-            var dataJson = {
-                RoleId: '',
-                WelcomeId: welcomeid
-            };
-
-            CswAjaxJson({
-                url: r.RemoveWelcomeItemUrl,
-                data: dataJson,
-                success: function () {
-                    r.onSuccess();
-                }
-            });
-
+                CswAjaxJson({
+                    url: r.RemoveWelcomeItemUrl,
+                    data: dataJson,
+                    success: function() {
+                        r.onSuccess();
+                    }
+                });
+            }
         } // if($textcell.length > 0)
     } // _removeItem()
 

@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.WebServices
                                 }
                                 ThisQuestion.ValueOptions = CompliantAnswers;
                                 ThisQuestion.ListOptions = AllowedAnswers;
-
+                                ThisQuestion.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                                 RetCount += 1;
                             }
                         }
@@ -340,16 +340,19 @@ namespace ChemSW.Nbt.WebServices
         {
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
 
+            CswNbtMetaDataNodeTypeProp IdNameNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
+            IdNameNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             //NodeTypeName Template
             if( string.IsNullOrEmpty( InspectionDesignNt.NameTemplateValue ) )
             {
-                CswNbtMetaDataNodeTypeProp IdNameNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
                 InspectionDesignNt.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName );
             }
 
             //Inspection Design Target is Inspection Target OC
             CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
             CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+            IdTargetNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            IdTargetNtp.IsRequired = true;
             if( IdTargetNtp.FKType != CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() &&
                 IdTargetNtp.FKValue != InspectionTargetOc.ObjectClassId )
             {
@@ -367,6 +370,10 @@ namespace ChemSW.Nbt.WebServices
                 IdGeneratorNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), GeneratorNt.NodeTypeId );
                 IdGeneratorNtp.PropName = CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName;
             }
+
+            CswNbtMetaDataNodeTypeProp IdDueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.DatePropertyName );
+            IdDueDateNtp.IsRequired = true;
+            IdDueDateNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
         }
 
         private void _pruneSectionOneTab( CswNbtMetaDataNodeType InspectionDesignNt )

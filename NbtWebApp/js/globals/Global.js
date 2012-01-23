@@ -952,16 +952,14 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
                 break;
 
             case 'ViewSearch':
-                $a.click(function ()
-                {
-                    o.onSearch.onViewSearch();
+                $a.click(function () {
+                    ChemSW.tools.tryExecMethod(o.onSearch.onViewSearch);
                 });
                 break;
 
             case 'GenericSearch':
-                $a.click(function ()
-                {
-                    o.onSearch.onGenericSearch();
+                $a.click(function () {
+                    ChemSW.tools.tryExecMethod(o.onSearch.onGenericSearch);
                 });
                 break;
 
