@@ -105,7 +105,8 @@
             {
                 //Row i, Column 1: and
                 $andCell = o.$searchTable.CswTable('cell', andRow, 1)
-                               .css({align:"right"});
+                               .CswAttrDom({align: 'right'})
+                               .css({'text-align': 'right'});
                 $andText = $('<span>&nbsp;and&nbsp;</span>');
                 $andCell.append($andText);
                 andRow++;
@@ -350,7 +351,8 @@
             
             //Row i, Column 5: search button
             var $searchButtonCell = o.$searchTable.CswTable('cell', o.bottomRow, o.searchBtnCell)
-                                    .css({align:"right"})
+                                    .CswAttrDom({align: 'right'})
+                                    .css({'text-align': 'right'})
                                     .empty();
             var searchButtonId = makeId({ID: 'search_button', prefix: o.ID});
             var $searchButton = $searchButtonCell.CswButton({ID: searchButtonId, 
@@ -388,7 +390,8 @@
                     
                     //close btn
                     o.$searchTable.CswTable('cell',1,10)
-                                   .css('align','right')
+                                   .CswAttrDom({align: 'right'})
+                                   .css({'text-align': 'right'})
                                    .CswImageButton({
                                         ButtonType: CswImageButton_ButtonType.Delete,
                                         AlternateText: 'Close',
