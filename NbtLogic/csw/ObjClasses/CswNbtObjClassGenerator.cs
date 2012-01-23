@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     InspectionTargetGroupNt == OwnerNode.NodeType.LatestVersionNodeType )
                                 {
                                     MatchingInspectionTargetNts.Add( InspectionTargetNt );
-                                    ParentType.SelectedNodeTypeIds.Add(  InspectionTargetNt.NodeTypeId.ToString(), false, true );
+                                    ParentType.SelectedNodeTypeIds.Add( InspectionTargetNt.NodeTypeId.ToString(), false, true );
                                     if( ParentType.SelectMode == PropertySelectMode.Single )
                                     {
                                         break;
@@ -312,6 +312,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( RunNowPropertyName == NodeTypeProp.ObjectClassProp.PropName )
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;
+                    RunStatus.StaticText = string.Empty;
                     Node.postChanges( false );
                     ActionObj["action"] = CswNbtMetaDataObjectClass.OnButtonClickEvents.refresh.ToString();
                 }

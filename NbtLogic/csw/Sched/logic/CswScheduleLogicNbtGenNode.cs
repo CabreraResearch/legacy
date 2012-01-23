@@ -117,11 +117,9 @@ namespace ChemSW.Nbt.Sched
 
                 catch( Exception Exception )
                 {
-
                     _CompletionMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
                     _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
                     _LogicRunStatus = LogicRunStatus.Failed;
-
                 }//catch
 
             }//if we're not shutting down
@@ -135,11 +133,11 @@ namespace ChemSW.Nbt.Sched
             Int32 NodesCreated = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
             if( NodesCreated > 0 )
             {
-                RetMessage = "Created " + NodesCreated.ToString() + " target(s) from the " + CurrentGenerator.Node.NodeName + " " + CurrentGenerator.Node.NodeType.NodeTypeName;
+                RetMessage = "Created " + NodesCreated.ToString() + " " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) from: " + CurrentGenerator.Node.NodeName + ", " + CurrentGenerator.Node.NodeType.NodeTypeName;
             }
             else
             {
-                RetMessage = "No targets created from the " + CurrentGenerator.Node.NodeName + " " + CurrentGenerator.Node.NodeType.NodeTypeName;
+                RetMessage = "No " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " targets created from: " + CurrentGenerator.Node.NodeName + ", " + CurrentGenerator.Node.NodeType.NodeTypeName;
             }
             return RetMessage;
         }
