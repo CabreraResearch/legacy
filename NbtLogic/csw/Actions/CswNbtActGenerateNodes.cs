@@ -26,7 +26,6 @@ namespace ChemSW.Nbt.Actions
             CswNbtNode ReturnVal = null;
 
             CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
-            CswNbtMetaDataObjectClass GeneratorClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
 
             if( GeneratorNode.TargetType.SelectMode == PropertySelectMode.Single )
             {
@@ -97,10 +96,18 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtObjClassGenerator GeneratorNodeAsGenerator = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
 
-            string SelectedNodeTypeId = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds[0];
-            if( 0 == GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.Count ||
-                "0" == SelectedNodeTypeId ||
-                null == _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( SelectedNodeTypeId ) ) )
+            string SelectedNodeTypeIdStr = string.Empty;
+            Int32 SelectedNodeTypeId = Int32.MinValue;
+            if( 0 < GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.Count )
+            {
+                SelectedNodeTypeIdStr = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds[0];
+                SelectedNodeTypeId = CswConvert.ToInt32( SelectedNodeTypeIdStr );
+            }
+
+            if( string.IsNullOrEmpty( SelectedNodeTypeIdStr ) ||
+                "0" == SelectedNodeTypeIdStr ||
+                Int32.MinValue == SelectedNodeTypeId ||
+                null == _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId ) )
             {
                 throw ( new CswDniException( "Generator node " + CswNbtNodeGenerator.NodeName + " (" + CswNbtNodeGenerator.NodeId.ToString() + ") does not have a valid nodetypeid" ) );
             }
@@ -117,106 +124,118 @@ namespace ChemSW.Nbt.Actions
                 DateFilter = DueDate.ToShortDateString();
             }
 
-            Collection<CswPrimaryKey> Parents = new Collection<CswPrimaryKey>();
+            bool GeneratorBaseIsProperlyConfigured = ( null != GeneratorNodeAsGenerator.Owner &&
+                                                   null != GeneratorNodeAsGenerator.Owner.RelatedNodeId &&
+                                                   GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.Count > 0 );
 
-            //SI will have a ParentView to fetch InspectionTargets which will be used to find existing InsepctionDesign nodes or create new ones
-            bool GeneratorUsesParentViews = GeneratorNodeAsGenerator.ParentView.ViewId.isSet();
-            if( GeneratorUsesParentViews )
+            if( GeneratorBaseIsProperlyConfigured )
             {
-                CswNbtView ParentsView = _CswNbtResources.ViewSelect.restoreView( GeneratorNodeAsGenerator.ParentView.ViewId );
-                // Case 20482
-                if( ParentsView.Root.ChildRelationships.Count > 0 )
+
+                Collection<CswPrimaryKey> Parents = new Collection<CswPrimaryKey>();
+
+                //SI will have a ParentView to fetch InspectionTargets which will be used to find existing InsepctionDesign nodes or create new ones
+                CswNbtView ParentView = null;
+                if( GeneratorNodeAsGenerator.ParentView.ViewId.isSet() )
                 {
-                    ( (CswNbtViewRelationship) ParentsView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( GeneratorNodeAsGenerator.NodeId );
-                    ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( ParentsView, false );
-                    if( GeneratorNodeAsGenerator.ParentType.SelectMode == PropertySelectMode.Single )
+                    ParentView = _CswNbtResources.ViewSelect.restoreView( GeneratorNodeAsGenerator.ParentView.ViewId );
+                }
+                bool GeneratorUsesParentViews = ( null != ParentView &&
+                                                  false == ParentView.IsEmpty() &&
+                                                  GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds.Count > 0 );
+                if( GeneratorUsesParentViews )
+                {
+                    CswNbtView ParentsView = _CswNbtResources.ViewSelect.restoreView( GeneratorNodeAsGenerator.ParentView.ViewId );
+                    // Case 20482
+                    if( ParentsView.Root.ChildRelationships.Count > 0 )
                     {
-                        Int32 ParentNtId = CswConvert.ToInt32( GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds[0] );
-                        Parents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
+                        ( ParentsView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( GeneratorNodeAsGenerator.NodeId );
+                        ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( ParentsView, false );
+                        if( GeneratorNodeAsGenerator.ParentType.SelectMode == PropertySelectMode.Single )
+                        {
+                            Int32 ParentNtId = CswConvert.ToInt32( GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds[0] );
+                            Parents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
+                        }
                     }
                 }
-            }
 
-            //IMCS won't have a ParentView or a ParentType
-            bool GeneratorDoesNotUseParentViews = ( false == GeneratorUsesParentViews &&
-                            Parents.Count == 0 &&
-                            string.Empty == GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds.ToString() &&
-                            null != GeneratorNodeAsGenerator.Owner &&
-                            null != GeneratorNodeAsGenerator.Owner.RelatedNodeId );
+                //IMCS won't have a ParentView or a ParentType
+                bool GeneratorDoesNotUseParentViews = ( false == GeneratorUsesParentViews &&
+                                                        Parents.Count == 0 );
 
-            if( GeneratorDoesNotUseParentViews )
-            {
-                Parents.Add( GeneratorNodeAsGenerator.Owner.RelatedNodeId );
-            }
-
-            foreach( CswPrimaryKey NewParentPK in Parents )
-            {
-                if( null != NewParentPK )
+                if( GeneratorDoesNotUseParentViews )
                 {
-                    CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPK, DateFilter );
+                    Parents.Add( GeneratorNodeAsGenerator.Owner.RelatedNodeId );
+                }
 
-                    bool MakeGeneratorTarget = ( null == ExistingNode );
-                    if( MakeGeneratorTarget )
+                foreach( CswPrimaryKey NewParentPk in Parents )
+                {
+                    if( null != NewParentPk )
                     {
-                        Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
-                        SelectedNodeTypeIds = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection();
-                        foreach( Int32 refNodeTypeId in SelectedNodeTypeIds )
+                        CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPk, DateFilter );
+
+                        bool MakeGeneratorTarget = ( null == ExistingNode );
+                        if( MakeGeneratorTarget )
                         {
-                            CswNbtMetaDataNodeType LatestVersionNT = _CswNbtResources.MetaData.getNodeType( refNodeTypeId ).LatestVersionNodeType;
-
-                            CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                            NewNode.copyPropertyValues( CswNbtNodeGenerator );
-
-                            ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( NewNode );
-                            NewNodeAsGeneratorTarget.GeneratedDate.DateTimeValue = DueDate;
-                            NewNodeAsGeneratorTarget.GeneratedDate.ReadOnly = true; //bz # 5349
-                            NewNodeAsGeneratorTarget.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
-                            NewNodeAsGeneratorTarget.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
-                            NewNodeAsGeneratorTarget.Parent.RelatedNodeId = NewParentPK;
-                            //NewTaskNodeAsTask.Completed.Checked = Tristate.False;
-
-                            if( MarkFuture )
+                            Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
+                            SelectedNodeTypeIds = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection();
+                            foreach( Int32 refNodeTypeId in SelectedNodeTypeIds )
                             {
-                                NewNodeAsGeneratorTarget.IsFuture.Checked = Tristate.True;
+                                CswNbtMetaDataNodeType LatestVersionNT = _CswNbtResources.MetaData.getNodeType( refNodeTypeId ).LatestVersionNodeType;
+
+                                CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                                NewNode.copyPropertyValues( CswNbtNodeGenerator );
+
+                                ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( NewNode );
+                                NewNodeAsGeneratorTarget.GeneratedDate.DateTimeValue = DueDate;
+                                NewNodeAsGeneratorTarget.GeneratedDate.ReadOnly = true; //bz # 5349
+                                NewNodeAsGeneratorTarget.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
+                                NewNodeAsGeneratorTarget.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
+                                NewNodeAsGeneratorTarget.Parent.RelatedNodeId = NewParentPk;
+                                //NewTaskNodeAsTask.Completed.Checked = Tristate.False;
+
+                                if( MarkFuture )
+                                {
+                                    NewNodeAsGeneratorTarget.IsFuture.Checked = Tristate.True;
+                                }
+                                else
+                                {
+                                    NewNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
+                                }
+
+                                if( null != onBeforeInsertNode )
+                                {
+                                    onBeforeInsertNode( NewNode );
+                                }
+                                ret = true;
+                                NewNode.PendingUpdate = true;
+                                NewNode.postChanges( true );
+                            }
+
+                        } //if ( null == ExistingNode )
+                        else
+                        {
+                            ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( ExistingNode );
+                            if( !MarkFuture )
+                            {
+                                if( ExistingNodeAsGeneratorTarget.IsFuture.Checked == Tristate.True )
+                                {
+                                    ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
+                                }
                             }
                             else
                             {
-                                NewNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
+                                if( DateTime.Now.Date >= ExistingNodeAsGeneratorTarget.GeneratedDate.DateTimeValue.Date )
+                                {
+                                    ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
+                                }
                             }
+                            ExistingNode.PendingUpdate = true;
+                            ExistingNode.postChanges( false ); //BZ # 6961
 
-                            if( null != onBeforeInsertNode )
-                            {
-                                onBeforeInsertNode( NewNode );
-                            }
-                            ret = true;
-                            NewNode.PendingUpdate = true;
-                            NewNode.postChanges( true );
-                        }
-
-                    }//if ( null == ExistingNode )
-                    else
-                    {
-                        ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( ExistingNode );
-                        if( !MarkFuture )
-                        {
-                            if( ExistingNodeAsGeneratorTarget.IsFuture.Checked == Tristate.True )
-                            {
-                                ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
-                            }
-                        }
-                        else
-                        {
-                            if( DateTime.Now.Date >= ExistingNodeAsGeneratorTarget.GeneratedDate.DateTimeValue.Date )
-                            {
-                                ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
-                            }
-                        }
-                        ExistingNode.PendingUpdate = true;
-                        ExistingNode.postChanges( false ); //BZ # 6961
-
-                    }//if-else ( null == ExistingNode )
-                }//foreach ( CswPrimaryKey NewParentPK in Parents )
-            }
+                        } //if-else ( null == ExistingNode )
+                    } // if( null != NewParentPk )
+                } // foreach( CswPrimaryKey NewParentPk in Parents )
+            } // if( GeneratorBaseIsProperlyConfigured )
             return ret;
 
         }//makeNode()

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
-using ChemSW.DB;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.Actions
@@ -29,17 +27,17 @@ namespace ChemSW.Nbt.Actions
             _ActionHash = new Hashtable();
 
             // Actions
-			DataTable ActionsTable = null;
-			if( ExcludeDisabledActions )
-			{
-				CswStaticSelect ActionsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtActionCollection.ActionsSelect", "getActiveActions" );
-				ActionsTable = ActionsSelect.getTable();
-			}
-			else
-			{
-				CswTableSelect ActionsSelect = _CswNbtResources.makeCswTableSelect( "CswNbtActionCollection.AllActionsSelect", "actions" );
-				ActionsTable = ActionsSelect.getTable();
-			}
+            DataTable ActionsTable = null;
+            if( ExcludeDisabledActions )
+            {
+                CswStaticSelect ActionsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtActionCollection.ActionsSelect", "getActiveActions" );
+                ActionsTable = ActionsSelect.getTable();
+            }
+            else
+            {
+                CswTableSelect ActionsSelect = _CswNbtResources.makeCswTableSelect( "CswNbtActionCollection.AllActionsSelect", "actions" );
+                ActionsTable = ActionsSelect.getTable();
+            }
 
             foreach( DataRow ActionRow in ActionsTable.Rows )
             {
@@ -47,15 +45,25 @@ namespace ChemSW.Nbt.Actions
                 try
                 {
                     CurrentActionName = CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() );
-                    Int32 ActionId = CswConvert.ToInt32( ActionRow["actionid"] );
-                    CswNbtAction Action = new CswNbtAction( _CswNbtResources, ActionId, ActionRow["url"].ToString(), CurrentActionName, ( ActionRow["showinlist"].ToString() == "1" ), ActionRow["category"].ToString() );
-                    _ActionSL.Add( CswNbtAction.ActionNameEnumToString( CurrentActionName ), Action );
-                    _ActionHash.Add( ActionId, Action );
+                    if( CurrentActionName != CswNbtActionName.Unknown )
+                    {
+                        Int32 ActionId = CswConvert.ToInt32( ActionRow["actionid"] );
+                        CswNbtAction Action = new CswNbtAction( _CswNbtResources, ActionId, ActionRow["url"].ToString(), CurrentActionName, ( ActionRow["showinlist"].ToString() == "1" ), ActionRow["category"].ToString() );
+                        string ActionNameAsString = CswNbtAction.ActionNameEnumToString( CurrentActionName );
+                        if( false == _ActionSL.ContainsKey( ActionNameAsString ) )
+                        {
+                            _ActionSL.Add( ActionNameAsString, Action );
+                        }
+                        if( false == _ActionHash.ContainsKey( ActionId ) )
+                        {
+                            _ActionHash.Add( ActionId, Action );
+                        }
+                    }
                 }
                 catch( Exception ex )
                 {
                     // Log the error but keep going
-					_CswNbtResources.logError( new CswDniException( ErrorType.Error, "System Error", "Encountered an invalid Action: " + ActionRow["actionname"] + " (" + ActionRow["actionid"] + ")", ex ) );
+                    _CswNbtResources.logError( new CswDniException( ErrorType.Error, "System Error", "Encountered an invalid Action: " + ActionRow["actionname"] + " (" + ActionRow["actionid"] + ")", ex ) );
                 }
             }
 
@@ -76,7 +84,7 @@ namespace ChemSW.Nbt.Actions
         /// <param name="ActionName">CswNbtActionName value for action</param>
         public CswNbtAction this[CswNbtActionName ActionName]
         {
-            get { return (CswNbtAction) _ActionSL[CswNbtAction.ActionNameEnumToString(ActionName)]; }
+            get { return (CswNbtAction) _ActionSL[CswNbtAction.ActionNameEnumToString( ActionName )]; }
         }
 
         /// <summary>

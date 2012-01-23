@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( !ViewId.isSet() );
+                return ( false == ViewId.isSet() );
             }
         }//Empty
 
@@ -130,12 +130,12 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
-			if( null != View )
-			{
-				ParentObject[_ViewIdSubField.ToXmlNodeName( true )] = ViewId.ToString();
-				ParentObject["viewmode"] = View.ViewMode.ToString();
-				ParentObject[_CachedViewNameSubField.ToXmlNodeName( true )] = CachedViewName.ToString();
-			}
+            if( null != View )
+            {
+                ParentObject[_ViewIdSubField.ToXmlNodeName( true )] = ViewId.ToString();
+                ParentObject["viewmode"] = View.ViewMode.ToString();
+                ParentObject[_CachedViewNameSubField.ToXmlNodeName( true )] = CachedViewName.ToString();
+            }
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -157,8 +157,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-			//ViewId = new CswNbtViewId( CswConvert.ToInt32( JObject[_ViewIdSubField.ToXmlNodeName()] ) );
-			//PendingUpdate = true;
+            //ViewId = new CswNbtViewId( CswConvert.ToInt32( JObject[_ViewIdSubField.ToXmlNodeName()] ) );
+            //PendingUpdate = true;
         }
     }//CswNbtNodeProp
 

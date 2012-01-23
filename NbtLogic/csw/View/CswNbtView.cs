@@ -774,6 +774,11 @@ namespace ChemSW.Nbt
 
         #region Find ViewNode
 
+        public bool IsEmpty()
+        {
+            return Root.ChildRelationships.Count == 0;
+        }
+
         /// <summary>
         /// Determines if all the object classes and nodetypes are enabled in a view
         /// </summary>
