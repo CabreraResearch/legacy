@@ -20,6 +20,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleButton( CswNbtFieldResources, MetaDataProp );
                     break;
 
+                case CswNbtMetaDataFieldType.NbtFieldType.Comments:
+                    ReturnVal = new CswNbtFieldTypeRuleComments( CswNbtFieldResources, MetaDataProp );
+                    break;
+
                 case CswNbtMetaDataFieldType.NbtFieldType.Composite:
                     ReturnVal = new CswNbtFieldTypeRuleComposite( CswNbtFieldResources, MetaDataProp );
                     break;

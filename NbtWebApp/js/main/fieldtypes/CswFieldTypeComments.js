@@ -28,13 +28,13 @@
             var $commentsDiv = $Div.CswDiv('init',{
                 'ID': makeId({ID: o.ID, suffix: 'commentsDiv'}),
                 'value': '',
-                'cssclass': ''
+                'cssclass': 'scrollingdiv'
             });
             var $myTable = $commentsDiv.CswTable('init', {
 							ID: makeId({ID: o.ID, suffix: 'commentsTbl'}),
 							TableCssClass: '',
 							CellCssClass: '',
-							cellpadding: 0,
+							cellpadding: 2,
 							cellspacing: 0,
 							align: '',
 							width: '',
@@ -46,16 +46,26 @@
 							border: 0
 						});
             var arow=0;
+            var bgclass='';
             each(propVals.comments,function(acomment){
                arow+=1;
-               var $cell1 = $myTable.CswTable('cell',arow,1); 
-               var $cell2 = $myTable.CswTable('cell',arow,2); 
-               var $cell3 = $myTable.CswTable('cell',arow,3); 
+               var $cell1 = $myTable.CswTable('cell',arow*2,1); 
+               var $cell2 = $myTable.CswTable('cell',arow*2,2); 
+                if( (arow % 2)===0 ){
+                    bgclass='OddRow';
+                }
+                else{
+                    bgclass='EvenRow';
+                }
+                $cell1.addClass(bgclass);
+                $cell2.addClass(bgclass);
                 $cell1.append(acomment.datetime);
                 $cell2.append(acomment.commenter);
+               var $cell3 = $myTable.CswTable('cell',arow*2 + 1,1); 
+                $cell3.CswAttrDom('colspan','2');
+                $cell3.addClass(bgclass);
                 $cell3.append(acomment.message);
             });
-
             if (o.ReadOnly) {
                 $Div.append(value);
             } else {
