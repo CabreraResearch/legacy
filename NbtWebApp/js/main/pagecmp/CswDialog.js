@@ -289,8 +289,8 @@
                 onChange: function () {
 
                     var ajaxdata = {
-                                                PropId: tryParseString($addSelect.val()),
-                                                TabId: tryParseString(cswNodeTabOptions.tabid),
+                        PropId: tryParseString($addSelect.val()),
+                        TabId: tryParseString(cswNodeTabOptions.tabid),
                         EditMode: $layoutSelect.val()
                     };
                     CswAjaxJson({
@@ -311,10 +311,10 @@
 
             function _configAddOptions() {
                 var ajaxdata = {
-                    NodeId: tryParseString(cswNodeTabOptions.nodeids[0]), 
-                    NodeKey: tryParseString(cswNodeTabOptions.nodekeys[0]), 
-                    NodeTypeId: tryParseString(cswNodeTabOptions.nodetypeid), 
-                    TabId: tryParseString(cswNodeTabOptions.tabid), 
+                    NodeId: tryParseString(cswNodeTabOptions.nodeids[0]),
+                    NodeKey: tryParseString(cswNodeTabOptions.nodekeys[0]),
+                    NodeTypeId: tryParseString(cswNodeTabOptions.nodetypeid),
+                    TabId: tryParseString(cswNodeTabOptions.tabid),
                     EditMode: $layoutSelect.val()
                 };
                 CswAjaxJson({
@@ -322,8 +322,8 @@
                     data: ajaxdata,
                     success: function (data) {
                         var propOpts = [{ value: '', display: 'Select...'}];
-                        for(var p in data) {
-                            if(data.hasOwnProperty(p)) {
+                        for (var p in data) {
+                            if (data.hasOwnProperty(p)) {
                                 propOpts.push({
                                     value: data[p].propid,
                                     display: data[p].propname
@@ -484,10 +484,8 @@
             var $div = $('<div><span>Are you sure you want to delete:&nbsp;</span></div>');
 
             if (o.Multi) {
-                if (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0) {
                 var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
-                if (false === isNullOrEmpty($nodechecks, true) && 
-                    (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0 )) {
+                if (false === isNullOrEmpty($nodechecks, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
                     var n = 0;
                     $nodechecks.each(function () {
                         var $nodecheck = $(this);
