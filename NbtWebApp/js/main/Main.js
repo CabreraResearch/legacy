@@ -903,7 +903,11 @@
                  break;
              case 'Quotas':
                  clear({ 'all': true });
-                 $('#CenterTopDiv').CswQuotas();
+                 $('#CenterTopDiv').CswQuotas({
+                    onQuotaChange: function () {
+                        $('#header_quota').CswQuotaImage();
+                    }
+                 });
 
                  break;
              case 'Sessions':
