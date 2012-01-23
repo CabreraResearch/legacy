@@ -77,8 +77,10 @@ window.abandonHope = true;
 <script type="text/javascript">
 
     //This will always be true in Production
-    if(window.initMain) {
+    if (window.initMain) {
         initMain();
+    } else {
+        console.log('initMain() does not exist.  Probably a javascript compilation error.');
     }
 
 </script>
