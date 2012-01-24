@@ -217,7 +217,8 @@
                 ShowCheckboxes: false,
                 ShowToggleLink: true,
                 IncludeInQuickLaunch: true,
-                Delay: 250
+                //Delay: 250,
+                DefaultSelect: CswNodeTree_DefaultSelect.firstchild.name
             };
             if (options) $.extend(o, options);
 
@@ -260,7 +261,8 @@
                 // ShowEmpty: o.showempty,
                 // ForSearch: o.forsearch,
                 // NodePk: tryParseString(o.nodeid),
-                IncludeInQuickLaunch: o.IncludeInQuickLaunch
+                IncludeInQuickLaunch: o.IncludeInQuickLaunch,
+                DefaultSelect: o.DefaultSelect
             };
 
             if (isNullOrEmpty(o.viewid)) {
@@ -284,7 +286,6 @@
                         }
                     }
 
-                    //selectid = data.selectid;
                     var treeThemes = { "dots": true };
                     if (o.viewmode === CswViewMode.list.name) {
                         treeThemes = { "dots": false };
@@ -357,7 +358,7 @@
 
                     }
 
-                    if(o.ShowToggleLink && $togglelink) {
+                    if (o.ShowToggleLink && $togglelink) {
                         $togglelink.show();
                     }
                     // DO NOT define an onSuccess() function here that interacts with the tree.

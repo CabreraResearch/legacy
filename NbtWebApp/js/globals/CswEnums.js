@@ -328,3 +328,10 @@ var childPropNames = {
     propfilters: { name: 'filters' },
     filtermodes: { name: 'filtermodes' }
 };
+
+
+var CswNodeTree_DefaultSelect = {
+    root: { name: 'root' },
+    firstchild: { name: 'firstchild' },
+    none: { name: 'none' }
+};
