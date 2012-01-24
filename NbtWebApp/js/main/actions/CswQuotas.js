@@ -114,7 +114,7 @@
                     data: { Quotas: JSON.stringify(quotaJson) },
                     success: function() {
                         initTable();
-                        o.onQuotaChange();
+                        ChemSW.tools.tryExecMethod(o.onQuotaChange);
                     }
                 });
             } // handleSave()
