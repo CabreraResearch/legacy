@@ -149,6 +149,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( RunNowPropertyName == NodeTypeProp.ObjectClassProp.PropName )
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;
+                    RunStatus.StaticText = string.Empty;
                     Node.postChanges( false );
                     ActionObj["action"] = CswNbtMetaDataObjectClass.OnButtonClickEvents.refresh.ToString();
                 }

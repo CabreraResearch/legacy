@@ -1,59 +1,47 @@
 <!DOCTYPE html>
-<html> <!-- manifest="Mobile.manifest"> <!--Still not ready for primetime-->
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <base href="Mobile.html"/>
-    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1" />
-    <title>Main</title>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <base href="Mobile.html"/>
+        <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1" />
+        <title>Main</title>
     
-    <link rel="shortcut icon" href="images/favicon.ico" />
-    <link type="text/css" rel="stylesheet" href="Content/jquery.mobile-1.0rc1.min.css" />
-    <link type="text/css" rel="stylesheet" href="js/mobile/CswMobile.css" />
-    
-    <script type="text/javascript" src="Scripts/modernizr.2.0.6.min.js"></script>
-    <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="Scripts/jquery.cookie.min.js"></script>
-    <script type="text/javascript" src="Scripts/jquery.mobile-1.0rc1.min.js"></script>
-    <script type="text/javascript" src="js/mobile/CswAllMobile.min.js"></script>
-    
-</head>
-<body>
-    <script type="text/javascript">
+        <link rel="shortcut icon" href="images/favicon.ico" />
+        <link type="text/css" rel="stylesheet" href="Content/jquery.mobile-1.0rc1.min.css" />
+        <link type="text/css" rel="stylesheet" href="js/mobile/CswMobile.css" />
+        
+        <script type="text/javascript" src="Scripts/modernizr.2.0.6.min.js"></script>
+        <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="Scripts/jquery.cookie.min.js"></script>
+        <script type="text/javascript" src="Scripts/jquery.mobile-1.0rc1.min.js"></script>
+        <script type="text/javascript" src="js/mobile/CswAllMobile.min.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
 
-        (function(undefined) {
-            
-            function redirectOnError(e) {
-                var $refreshPage = $('#' + localStorage['refreshPage']);
-                if (false === isNullOrEmpty($refreshPage, true)) {
-                    $.mobile.changePage($refreshPage);
-                } else {
-                    window.location.href = window.location.pathname;
+            (function(undefined) {
+                try {
+                    if (hasWebStorage()) {
+
+                        // override value in _Globals.js
+                        window.xmlStandalonehomeUrl = "Mobile.html";
+                        window.debug = false;
+                        // This causes case 22968!
+                        //$(window).bind("orientationchange resize scrollstart", fixGeometry);
+
+                        $('body').CswMobile({
+                                'Theme': 'b'
+                            });
+
+                    }
+                    else {
+                        throw ('This browser does not support localStorage.');
+                    }
                 }
-                onError();
-            }
-
-            try {
-                if (hasWebStorage()) {
-
-                    // override value in _Globals.js
-                    window.xmlStandalonehomeUrl = "Mobile.html";
-                    window.debug = false;
-                    // This causes case 22968!
-                    //$(window).bind("orientationchange resize scrollstart", fixGeometry);
-
-                    $('body').CswMobile({
-                            'Theme': 'b'
-                        });
-
+                catch(e) {
+                    //errorHandler(e);
                 }
-                else {
-                    throw ('This browser does not support localStorage.');
-                }
-            }
-            catch(e) {
-                errorHandler(e);
-            }
-        })();
-    </script>
-</body>
+            })();
+        </script>
+    </body>
 </html>

@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Actions
                         CswNbtNode CurrentTargetNode = TargetNodeTree.getNodeForCurrentPosition();
                         ICswNbtPropertySetGeneratorTarget CurrentTargetNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( CurrentTargetNode );
 
-						DateTime CurrentDate = CurrentTargetNodeAsGeneratorTarget.GeneratedDate.DateTimeValue;
+                        DateTime CurrentDate = CurrentTargetNodeAsGeneratorTarget.GeneratedDate.DateTimeValue;
                         if( CurrentDate.Date > ReturnVal.Date )
                         {
                             ReturnVal = CurrentDate.Date;
@@ -67,50 +67,54 @@ namespace ChemSW.Nbt.Actions
             Int32 ReturnVal = 0;
 
             // Must have create permissions on this generator's target's nodetype
-			if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId ) ) )
-			{
-				deleteExistingFutureNodes( CswNbtNodeGenerator );
+            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId ) ) )
+            {
+                deleteExistingFutureNodes( CswNbtNodeGenerator );
 
-				// BZ 6752 - The first future node is the first node generated 
-				// after today + warning days, according to the time interval
-				// But it has to include initial due date, no matter what the time interval.
+                // BZ 6752 - The first future node is the first node generated 
+                // after today + warning days, according to the time interval
+                // But it has to include initial due date, no matter what the time interval.
 
-				CswNbtNodePropTimeInterval NextDueDateTimeInterval = GeneratorNode.DueDateInterval;
-				Double WarningDays = 0;
-				if( GeneratorNode.WarningDays.Value > 0 )
-					WarningDays = GeneratorNode.WarningDays.Value;
-				DateTime StartDate = DateTime.Now.AddDays( WarningDays ).Date; //bz# 6937 (capture date only, not time)
+                CswNbtNodePropTimeInterval NextDueDateTimeInterval = GeneratorNode.DueDateInterval;
+                Double WarningDays = 0;
+                if( GeneratorNode.WarningDays.Value > 0 )
+                    WarningDays = GeneratorNode.WarningDays.Value;
+                DateTime StartDate = DateTime.Now.AddDays( WarningDays ).Date; //bz# 6937 (capture date only, not time)
 
-				DateTime DateOfNextOccurance = DateTime.MinValue;
-				if( GeneratorNode.DueDateInterval.getStartDate().Date >= StartDate ) //bz # 6937 (change gt to gteq)
-				{
-					StartDate = GeneratorNode.DueDateInterval.getStartDate().Date;
-					DateOfNextOccurance = StartDate;
-				}
-				else
-				{
-					DateOfNextOccurance = NextDueDateTimeInterval.getNextOccuranceAfter( StartDate );
-				}
+                DateTime DateOfNextOccurance = DateTime.MinValue;
+                if( GeneratorNode.DueDateInterval.getStartDate().Date >= StartDate ) //bz # 6937 (change gt to gteq)
+                {
+                    StartDate = GeneratorNode.DueDateInterval.getStartDate().Date;
+                    DateOfNextOccurance = StartDate;
+                }
+                else
+                {
+                    DateOfNextOccurance = NextDueDateTimeInterval.getNextOccuranceAfter( StartDate );
+                }
 
-				DateTime PreviousDateOfNextOccurance = DateOfNextOccurance;  // infinite loop guard
-				while( DateOfNextOccurance.Date <= FutureDate.Date &&
-					   ( GeneratorNode.FinalDueDate.Empty || DateOfNextOccurance.Date <= GeneratorNode.FinalDueDate.DateTimeValue.Date ) )
-				{
-					bool taskgenerated = _CswNbtActGenerateNodes.makeNode( CswNbtNodeGenerator, DateOfNextOccurance );
-					if( taskgenerated )
-						ReturnVal++;
+                DateTime PreviousDateOfNextOccurance = DateOfNextOccurance;  // infinite loop guard
+                while( DateOfNextOccurance.Date <= FutureDate.Date &&
+                       ( GeneratorNode.FinalDueDate.Empty || DateOfNextOccurance.Date <= GeneratorNode.FinalDueDate.DateTimeValue.Date ) )
+                {
+                    Int32 TasksGenerated = _CswNbtActGenerateNodes.makeNode( CswNbtNodeGenerator, DateOfNextOccurance );
+                    if( TasksGenerated > 0 )
+                    {
+                        ReturnVal += 1;
+                    }
 
-					PreviousDateOfNextOccurance = DateOfNextOccurance;
-					DateOfNextOccurance = NextDueDateTimeInterval.getNextOccuranceAfter( DateOfNextOccurance );
-					if( DateOfNextOccurance == PreviousDateOfNextOccurance )
-						throw new CswDniException( ErrorType.Error, "Invalid Rate Interval", "While generating future tasks for Generator: " + CswNbtNodeGenerator.NodeId + ", the next calculated date was equal to the previous calculated date" );
+                    PreviousDateOfNextOccurance = DateOfNextOccurance;
+                    DateOfNextOccurance = NextDueDateTimeInterval.getNextOccuranceAfter( DateOfNextOccurance );
+                    if( DateOfNextOccurance == PreviousDateOfNextOccurance )
+                    {
+                        throw new CswDniException( ErrorType.Error, "Invalid Rate Interval", "While generating future tasks for Generator: " + CswNbtNodeGenerator.NodeId + ", the next calculated date was equal to the previous calculated date" );
+                    }
 
-				}//create nodes until we hit either the future date or the final date
+                }//create nodes until we hit either the future date or the final date
 
-				//bz# 6130
-				//_CswNbtResources.Nodes.finalize();
+                //bz# 6130
+                //_CswNbtResources.Nodes.finalize();
 
-			} // if( _CswNbtResources.Permit.can( NodeTypePermission.Create, TargetNodeTypeId ) )
+            } // if( _CswNbtResources.Permit.can( NodeTypePermission.Create, TargetNodeTypeId ) )
 
             return ( ReturnVal );
 

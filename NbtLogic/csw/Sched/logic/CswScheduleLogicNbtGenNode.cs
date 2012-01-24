@@ -73,7 +73,6 @@ namespace ChemSW.Nbt.Sched
 
                     for( Int32 idx = 0; ( idx < ObjectGenerators.Count && idx < _GeneratorLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
-
                         CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
                         if( CurrentGenerator.Enabled.Checked == Tristate.True )
                         {
@@ -86,7 +85,9 @@ namespace ChemSW.Nbt.Sched
                             {
                                 // BZ 7124 - set runtime
                                 if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue )
+                                {
                                     ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
+                                }
 
                                 Int32 WarnDays = (Int32) CurrentGenerator.WarningDays.Value;
                                 if( WarnDays > 0 )
@@ -101,11 +102,7 @@ namespace ChemSW.Nbt.Sched
                                     ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
                                     ( DateTime.Now >= ThisDueDateValue ) )
                                 {
-                                    CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
-                                    bool NodesCreated = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
-                                    string Message = "No node created for generator " + CurrentGenerator.Node.NodeName;
-                                    if( NodesCreated )
-                                        Message = "Created node from generator " + CurrentGenerator.Node.NodeName;
+                                    string Message = _runGenerator( CurrentGenerator );
                                     _CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
                                 }
                             } // if( ThisDueDateValue != DateTime.MinValue )
@@ -114,23 +111,36 @@ namespace ChemSW.Nbt.Sched
 
                     }//iterate generators
 
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
+                    _LogicRunStatus = LogicRunStatus.Succeeded; //last line
 
                 }//try
 
                 catch( Exception Exception )
                 {
-
                     _CompletionMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
                     _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
-
+                    _LogicRunStatus = LogicRunStatus.Failed;
                 }//catch
 
             }//if we're not shutting down
 
         }//threadCallBack()
 
+        private string _runGenerator( CswNbtObjClassGenerator CurrentGenerator )
+        {
+            string RetMessage;
+            CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
+            Int32 NodesCreated = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
+            if( NodesCreated > 0 )
+            {
+                RetMessage = "Created " + NodesCreated.ToString() + " " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) from: " + CurrentGenerator.Node.NodeName + ", " + CurrentGenerator.Node.NodeType.NodeTypeName;
+            }
+            else
+            {
+                RetMessage = "No " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " targets created from: " + CurrentGenerator.Node.NodeName + ", " + CurrentGenerator.Node.NodeType.NodeTypeName;
+            }
+            return RetMessage;
+        }
 
         public void stop()
         {
