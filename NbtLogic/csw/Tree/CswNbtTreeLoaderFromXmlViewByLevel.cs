@@ -66,11 +66,17 @@ namespace ChemSW.Nbt
             DataTable NodesTable = new DataTable();
             string Sql = _makeNodeSql( Relationship );
 
+            Int32 thisResultLimit = ResultLimit;
+            if( Relationship.Properties.Count > 0 )
+            {
+                thisResultLimit = ResultLimit * Relationship.Properties.Count;
+            }
+
             CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
             CswTimer SqlTimer = new CswTimer();
             try
             {
-                NodesTable = ResultSelect.getTable( 0, ResultLimit, false, false );
+                NodesTable = ResultSelect.getTable( 0, thisResultLimit, false, false );
             }
             catch( Exception ex )
             {
