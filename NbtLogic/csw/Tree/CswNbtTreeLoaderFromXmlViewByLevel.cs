@@ -370,7 +370,7 @@ namespace ChemSW.Nbt
                     From += @"  left outer join ( ";
                     if( NTPropsInClause.Count > 0 )
                     {
-                        From += @"  select p2.nodetypepropid, p2.propname, j.jctnodepropid, j.gestalt, p2.fieldtypeid, j.nodeid
+                        From += @"  select p2.nodetypepropid, p2.propname, j.jctnodepropid, TO_CHAR(j.gestalt) gestalt, p2.fieldtypeid, j.nodeid
                                   from nodetype_props p1
                                   join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid)
                                   join jct_nodes_props j on (p2.nodetypepropid = j.nodetypepropid)
@@ -382,7 +382,7 @@ namespace ChemSW.Nbt
                     }
                     if( OCPropsInClause.Count > 0 )
                     {
-                        From += @" select ntp.nodetypepropid, ntp.propname, j.jctnodepropid, j.gestalt, ntp.fieldtypeid, j.nodeid
+                        From += @" select ntp.nodetypepropid, ntp.propname, j.jctnodepropid, TO_CHAR(j.gestalt) gestalt, ntp.fieldtypeid, j.nodeid
                                   from object_class_props op
                                   join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid)
                                   join jct_nodes_props j on (ntp.nodetypepropid = j.nodetypepropid)
