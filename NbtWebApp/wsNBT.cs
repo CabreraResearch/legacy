@@ -2313,10 +2313,10 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-
+                    CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
                     var ws = new CswNbtWebServiceSearch( _CswNbtResources );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.getSearchJson( View, SelectedNodeTypeIdNum, NodeKey );
+                    ReturnVal = ws.getSearchJson( View, SelectedNodeTypeIdNum, NbtNodeKey );
                 }
 
                 _deInitResources();
