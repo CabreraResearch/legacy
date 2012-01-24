@@ -13,7 +13,8 @@
             var o = {
                 Url: '/NbtWebApp/wsNBT.asmx/getQuotas',
                 SaveUrl: '/NbtWebApp/wsNBT.asmx/saveQuotas',
-                ID: 'action_quotas'
+                ID: 'action_quotas',
+                onQuotaChange: null // function() { }
             };
             if(options) $.extend(o, options);
 
@@ -113,6 +114,7 @@
                     data: { Quotas: JSON.stringify(quotaJson) },
                     success: function() {
                         initTable();
+                        o.onQuotaChange();
                     }
                 });
             } // handleSave()

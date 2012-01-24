@@ -844,8 +844,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != View )
                     {
                         var ws = new CswNbtWebServiceTree( _CswNbtResources, View, IdPrefix );
-                        CswPrimaryKey RealIncludeNodeId = new CswPrimaryKey();
-                        RealIncludeNodeId.FromString( IncludeNodeId );
+                        CswPrimaryKey RealIncludeNodeId = _getNodeId( IncludeNodeId );
 
                         CswNbtNodeKey RealIncludeNodeKey = null;
                         if( !string.IsNullOrEmpty( IncludeNodeKey ) )
@@ -1021,8 +1020,7 @@ namespace ChemSW.Nbt.WebServices
 
                     if( string.Empty != NodePk )
                     {
-                        CswPrimaryKey NodeId = new CswPrimaryKey();
-                        NodeId.FromString( NodePk );
+                        CswPrimaryKey NodeId = _getNodeId( NodePk );
                         CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
                         CswNbtView View = Node.NodeType.CreateDefaultView();
                         View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
@@ -1372,13 +1370,11 @@ namespace ChemSW.Nbt.WebServices
                         Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
                         if( RealVisibility == NbtViewVisibility.Role )
                         {
-                            RealVisibilityRoleId = new CswPrimaryKey();
-                            RealVisibilityRoleId.FromString( VisibilityRoleId );
+                            RealVisibilityRoleId = _getNodeId( VisibilityRoleId );
                         }
                         else if( RealVisibility == NbtViewVisibility.User )
                         {
-                            RealVisibilityUserId = new CswPrimaryKey();
-                            RealVisibilityUserId.FromString( VisibilityUserId );
+                            RealVisibilityUserId = _getNodeId( VisibilityUserId );
                         }
                     }
                     else
@@ -2515,8 +2511,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         foreach( string NodePk in NodePks )
                         {
-                            CswPrimaryKey PrimaryKey = new CswPrimaryKey();
-                            PrimaryKey.FromString( NodePk );
+                            CswPrimaryKey PrimaryKey = _getNodeId( NodePk );
                             if( PrimaryKey.PrimaryKey != Int32.MinValue && !NodePrimaryKeys.Contains( PrimaryKey ) )
                             {
                                 NodePrimaryKeys.Add( PrimaryKey );
@@ -2562,8 +2557,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswPrimaryKey RealNodePk = new CswPrimaryKey();
-                    RealNodePk.FromString( NodePk );
+                    CswPrimaryKey RealNodePk = _getNodeId( NodePk );
                     if( RealNodePk.PrimaryKey != Int32.MinValue )
                     {
                         CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
@@ -2637,8 +2631,8 @@ namespace ChemSW.Nbt.WebServices
 
                 CswPropIdAttr PropId = new CswPropIdAttr( NodeTypePropAttr );
                 if( null == PropId.NodeId ||
-                        Int32.MinValue == PropId.NodeId.PrimaryKey ||
-                            Int32.MinValue == PropId.NodeTypePropId )
+                    Int32.MinValue == PropId.NodeId.PrimaryKey ||
+                    Int32.MinValue == PropId.NodeTypePropId )
                 {
                     throw new CswDniException( ErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
                 }

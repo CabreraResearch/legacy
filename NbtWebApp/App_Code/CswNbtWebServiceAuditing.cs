@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.WebServices
 				DataTable HistoryTable = HistorySelect.getTable();
 
 				CswGridData g = new CswGridData( _CswNbtResources );
-				ret = g.DataTableToJSON( HistoryTable );
+				ret["jqGridOpt"] = g.DataTableToJSON( HistoryTable );
 			}
 			return ret;
 

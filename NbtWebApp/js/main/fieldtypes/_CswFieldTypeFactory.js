@@ -39,7 +39,7 @@
 $.CswFieldTypeFactory = function (method) {
     "use strict";
     var pluginName = 'CswFieldTypeFactory';
-    
+
     var m = {
         nodeid: '',
         fieldtype: '',
@@ -67,8 +67,7 @@ $.CswFieldTypeFactory = function (method) {
             m.Required = isTrue(m.propData.required);
             m.ReadOnly = isTrue(m.propData.readonly) || m.EditMode === EditMode.PrintReport.name;
 
-            switch (m.fieldtype)
-            {
+            switch (m.fieldtype) {
                 case "AuditHistoryGrid":
                     m.$propdiv.CswFieldTypeAuditHistoryGrid('init', m); //'init', nodeid, propData, onchange
                     break;
@@ -162,9 +161,9 @@ $.CswFieldTypeFactory = function (method) {
                 case "Text":
                     m.$propdiv.CswFieldTypeText('init', m); //('init', nodeid, propData, onchange);
                     break;
-//				case "Time":
-//					m.$propdiv.CswFieldTypeTime('init', m); //('init', nodeid, propData, onchange);
-//					break;
+                //				case "Time":   
+                //					m.$propdiv.CswFieldTypeTime('init', m); //('init', nodeid, propData, onchange);   
+                //					break;   
                 case "TimeInterval":
                     m.$propdiv.CswFieldTypeTimeInterval('init', m); //('init', nodeid, propData, onchange);
                     break;
@@ -198,8 +197,7 @@ $.CswFieldTypeFactory = function (method) {
             m.Required = isTrue(m.propData.required);
             m.ReadOnly = isTrue(m.propData.readonly);
 
-            switch (m.fieldtype)
-            {
+            switch (m.fieldtype) {
                 case "Barcode":
                     m.$propdiv.CswFieldTypeBarcode('save', m); //('save', $propdiv, propData);
                     break;
@@ -290,9 +288,9 @@ $.CswFieldTypeFactory = function (method) {
                 case "Text":
                     m.$propdiv.CswFieldTypeText('save', m); //('save', $propdiv, propData);
                     break;
-//				case "Time":
-//					m.$propdiv.CswFieldTypeTime('save', m); //('save', $propdiv, propData);
-//					break;
+                //				case "Time":   
+                //					m.$propdiv.CswFieldTypeTime('save', m); //('save', $propdiv, propData);   
+                //					break;   
                 case "TimeInterval":
                     m.$propdiv.CswFieldTypeTimeInterval('save', m); //('save', $propdiv, propData);
                     break;
@@ -320,10 +318,10 @@ $.CswFieldTypeFactory = function (method) {
     // Method calling logic
     if (methods[method]) {
         return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-    } 
+    }
     else if (typeof method === 'object' || !method) {
         return methods.init.apply(this, arguments);
     } else {
         $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
     }
-}   // $.CswFieldTypeFactory
+}      // $.CswFieldTypeFactory

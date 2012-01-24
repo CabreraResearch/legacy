@@ -5,11 +5,11 @@
 /// <reference path="../controls/CswGrid.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-    "use strict";        
+    "use strict";
     var pluginName = 'CswAuditHistoryGrid';
 
     var methods = {
-        init: function(options) {
+        init: function (options) {
             var o = {
                 Url: '/NbtWebApp/wsNBT.asmx/getAuditHistoryGrid',
                 ID: '',
@@ -21,7 +21,7 @@
                 selectedDate: '',
                 allowEditRow: true
             };
-            if(options) $.extend(o, options);
+            if (options) $.extend(o, options);
 
             var $Div = $(this);
             $Div.contents().remove();
@@ -31,12 +31,12 @@
                 data: {
                     NodeId: tryParseString(o.nodeid), 
                     NbtNodeKey: tryParseString(o.cswnbtnodekey),
-                    JustDateColumn: o.JustDateColumn 
+                    JustDateColumn: o.JustDateColumn
                 },
-                success: function(gridJson) {
-                
+                success: function (gridJson) {
+
                     var preventSelectTrigger = false;
-                    
+
                     var auditGridId = o.ID + '_csw_auditGrid_outer';
                     var $auditGrid = $Div.find('#' + auditGridId);
                     if (isNullOrEmpty($auditGrid) || $auditGrid.length === 0) {
@@ -44,7 +44,7 @@
                     } else {
                         $auditGrid.empty();
                     }
-                    
+
                     var g = {
                         ID: o.ID,
                         canEdit: isTrue(o.allowEditRow),
@@ -52,7 +52,7 @@
                         gridOpts: {
                             height: 180,
                             rowNum: 10,
-                            onSelectRow: function(selRowid) {
+                            onSelectRow: function (selRowid) {
                                 if (!preventSelectTrigger && false === isNullOrEmpty(selRowid)) {
                                     var cellVal = grid.getValueForColumn('CHANGEDATE', selRowid);
                                     if (isFunction(o.onSelectRow)) {
@@ -68,38 +68,40 @@
                         }
                     };
 
-                    $.extend(g.gridOpts, gridJson);
+                    if (contains(gridJson,'jqGridOpt')) {
 
-                    if (o.EditMode === EditMode.PrintReport.name) {
-                        g.gridOpts.caption = '';
-                        g.hasPager = false;
-                    }
-                    else {
-                        g.optNavEdit = {
-                            editfunc: function(selRowid) {
-                                if (false === isNullOrEmpty(selRowid)) {
-                                    var cellVal = grid.getValueForColumn('CHANGEDATE', selRowid);
-                                    if (isFunction(o.onEditRow)) {
-                                        o.onEditRow(cellVal);
+                        $.extend(g.gridOpts, gridJson.jqGridOpt);
+
+                        if (o.EditMode === EditMode.PrintReport.name) {
+                            g.gridOpts.caption = '';
+                            g.hasPager = false;
+                        }
+                        else {
+                            g.optNavEdit = {
+                                editfunc: function (selRowid) {
+                                    if (false === isNullOrEmpty(selRowid)) {
+                                        var cellVal = grid.getValueForColumn('CHANGEDATE', selRowid);
+                                        if (isFunction(o.onEditRow)) {
+                                            o.onEditRow(cellVal);
+                                        }
+                                    } else {
+                                        $.CswDialog('AlertDialog', 'Please select a row to edit');
                                     }
-                                } else {
-                                    $.CswDialog('AlertDialog', 'Please select a row to edit');
                                 }
-                            }
-                        };
-                    }
-                    
-                    var grid = CswGrid(g, $auditGrid);
-                    grid.$gridPager.css({ width: '100%', height: '20px' });
-                    
-                    // set selected row by date
-                    
-                    if(!isNullOrEmpty(o.selectedDate))
-                    {
-                        preventSelectTrigger = true;
-                        var rowid = grid.getRowIdForVal('CHANGEDATE', o.selectedDate.toString());
-                        grid.setSelection(rowid);
-                        preventSelectTrigger = false;
+                            };
+                        }
+
+                        var grid = CswGrid(g, $auditGrid);
+                        grid.$gridPager.css({ width: '100%', height: '20px' });
+
+                        // set selected row by date
+
+                        if (!isNullOrEmpty(o.selectedDate)) {
+                            preventSelectTrigger = true;
+                            var rowid = grid.getRowIdForVal('CHANGEDATE', o.selectedDate.toString());
+                            grid.setSelection(rowid);
+                            preventSelectTrigger = false;
+                        }
                     }
                 }
             });
@@ -107,17 +109,17 @@
 
         }
     };
-    
+
     // Method calling logic
     $.fn.CswAuditHistoryGrid = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
+
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
+
     };
 })(jQuery);

@@ -7,48 +7,48 @@
 /// <reference path="../node/CswNodeTabs.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
-    "use strict"; 
+    "use strict";
     var pluginName = 'CswDialog';
 
     var methods = {
 
         //#region Specialized
-        
-        ExpireDialog: function(options) {
+
+        ExpireDialog: function (options) {
             var o = {
-                onYes: function() { }
+                onYes: function () { }
             };
 
             if (options) $.extend(o, options);
 
             var $div = $('<div></div>');
-                            
+
             $div.append('<p>Your session is about to time out.  Would you like to continue working?</p>');
 
             $div.CswButton({
                 ID: 'renew_btn',
                 enabledText: 'Yes',
-                onclick: function() { $div.dialog('close'); o.onYes(); }
+                onclick: function () { $div.dialog('close'); o.onYes(); }
             });
 
             openDialog($div, 300, 250, null, 'Expire Warning');
 
         }, // ExpireDialog
-        AddWelcomeItemDialog: function(options) {
+        AddWelcomeItemDialog: function (options) {
             var o = {
-                onAdd: function() { }
+                onAdd: function () { }
             };
 
             if (options) $.extend(o, options);
 
             var $div = $('<div></div>');
-                            
-            $div.CswWelcome('getAddItemForm', { 'onAdd': function() {
-                    $div.dialog('close'); 
-                    if (isFunction(o.onAdd)) { 
-                        o.onAdd(); 
-                    } 
-                } 
+
+            $div.CswWelcome('getAddItemForm', { 'onAdd': function () {
+                $div.dialog('close');
+                if (isFunction(o.onAdd)) {
+                    o.onAdd();
+                }
+            }
             });
 
             openDialog($div, 400, 400, null, 'New Welcome Item');
@@ -67,80 +67,77 @@
             var $table = $div.CswTable('init', { 'ID': o.ID + '_tbl', 'FirstCellRightAlign': true });
 
             $table.CswTable('cell', 1, 1).append('Name:');
-            var $nametextcell = $table.CswTable('cell', 1, 2); 
-            var $nametextbox =  $nametextcell.CswInput('init',{ID: o.ID + '_nametb',
-                                                                type: CswInput_Types.text,
-                                                                cssclass: 'textinput'
-                                                        });
+            var $nametextcell = $table.CswTable('cell', 1, 2);
+            var $nametextbox = $nametextcell.CswInput('init', { ID: o.ID + '_nametb',
+                type: CswInput_Types.text,
+                cssclass: 'textinput'
+            });
             var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />');
-            if(isNullOrEmpty(o.viewid))
-            {
+            if (isNullOrEmpty(o.viewid)) {
                 $table.CswTable('cell', 2, 1).append('Display Mode:');
                 $displaymodeselect.append('<option value="Grid">Grid</option>');
-                                $displaymodeselect.append('<option value="List" selected>List</option>');
-                                $displaymodeselect.append('<option value="Table">Table</option>');
-                                $displaymodeselect.append('<option value="Tree">Tree</option>');
+                $displaymodeselect.append('<option value="List" selected>List</option>');
+                $displaymodeselect.append('<option value="Table">Table</option>');
+                $displaymodeselect.append('<option value="Tree">Tree</option>');
                 $displaymodeselect.appendTo($table.CswTable('cell', 2, 2));
             }
 
             var v = makeViewVisibilitySelect($table, 3, 'Available to:');
             var $savebtn = $div.CswButton({
-                                    ID: o.ID + '_submit', 
-                                    enabledText: 'Create View', 
-                                    disabledText: 'Creating View', 
-                                    onclick: function() {
-                                                                            
-                                            var createData = {};
-                                            createData.ViewName = $nametextbox.val();
-                                            createData.ViewId = o.viewid;
-                                            if(isNullOrEmpty(o.viewmode))
-                                            {
-                                                createData.ViewMode = $displaymodeselect.val();
-                                            } else {
-                                                createData.ViewMode = o.viewmode;
-                                            }
-                                            if(!isNullOrEmpty(v.getvisibilityselect()))
-                                            {
-                                                createData.Visibility = v.getvisibilityselect().val();
-                                                createData.VisibilityRoleId = v.getvisroleselect().val();
-                                                createData.VisibilityUserId = v.getvisuserselect().val();
-                                            } else {
-                                                createData.Visibility = "";
-                                                createData.VisibilityRoleId = "";
-                                                createData.VisibilityUserId = "";
-                                            }
+                ID: o.ID + '_submit',
+                enabledText: 'Create View',
+                disabledText: 'Creating View',
+                onclick: function () {
 
-                                            CswAjaxJson({
-                                                url: '/NbtWebApp/wsNBT.asmx/createView',
-                                                data: createData,
-                                                success: function(data) {
-                                                    $div.dialog('close');
-                                                    o.onAddView(data.newviewid);
-                                                }, 
-                                                error: function() {
-                                                    $savebtn.CswButton('enable');
-                                                }
-                                            });
-                                        }
-                                    });
+                    var createData = {};
+                    createData.ViewName = $nametextbox.val();
+                    createData.ViewId = o.viewid;
+                    if (isNullOrEmpty(o.viewmode)) {
+                        createData.ViewMode = $displaymodeselect.val();
+                    } else {
+                        createData.ViewMode = o.viewmode;
+                    }
+                    if (!isNullOrEmpty(v.getvisibilityselect())) {
+                        createData.Visibility = v.getvisibilityselect().val();
+                        createData.VisibilityRoleId = v.getvisroleselect().val();
+                        createData.VisibilityUserId = v.getvisuserselect().val();
+                    } else {
+                        createData.Visibility = "";
+                        createData.VisibilityRoleId = "";
+                        createData.VisibilityUserId = "";
+                    }
+
+                    CswAjaxJson({
+                        url: '/NbtWebApp/wsNBT.asmx/createView',
+                        data: createData,
+                        success: function (data) {
+                            $div.dialog('close');
+                            o.onAddView(data.newviewid);
+                        },
+                        error: function () {
+                            $savebtn.CswButton('enable');
+                        }
+                    });
+                }
+            });
             /* Cancel Button */
             $div.CswButton({
-                            ID: o.ID + '_cancel', 
-                            enabledText: 'Cancel', 
-                            disabledText: 'Canceling', 
-                            onclick: function() {
-                                    $div.dialog('close');
-                                    }
-                            });    
+                ID: o.ID + '_cancel',
+                enabledText: 'Cancel',
+                disabledText: 'Canceling',
+                onclick: function () {
+                    $div.dialog('close');
+                }
+            });
 
             openDialog($div, 400, 200, null, 'New View');
         }, // AddViewDialog
         AddNodeDialog: function (options) {
             var o = {
                 text: '',
-                nodetypeid: '', 
+                nodetypeid: '',
                 relatednodeid: '',
-                onAddNode: function() { }
+                onAddNode: function () { }
             };
 
             if (options) {
@@ -158,7 +155,7 @@
                     $div.dialog('close');
                     o.onAddNode(nodeid, cswnbtnodekey);
                 },
-                onInitFinish: function() {
+                onInitFinish: function () {
                     openDialog($div, 800, 600, null, title);
                 },
                 ShowAsReport: false
@@ -177,27 +174,27 @@
                 $.extend(o, options);
             }
 
-            var $div = $('<div></div>'), 
+            var $div = $('<div></div>'),
                 $newNode;
-            
+
             $div.append('New ' + o.nodetypename + ': ');
             $newNode = $div.CswInput('init', { ID: o.ID + '_newNode', type: CswInput_Types.text });
-            
+
             $div.CswButton({
-                    ID: o.objectClassId + '_add',
-                    enabledText: 'Add',
-                    onclick: function () {
-                        if(isFunction(o.onSuccess)) {
-                            o.onSuccess($newNode.val());    
-                        }
-                        $div.dialog('close');
+                ID: o.objectClassId + '_add',
+                enabledText: 'Add',
+                onclick: function () {
+                    if (isFunction(o.onSuccess)) {
+                        o.onSuccess($newNode.val());
                     }
-                });
+                    $div.dialog('close');
+                }
+            });
             openDialog($div, 300, 200, null, o.title);
         }, // AddNodeClientSideDialog
         AddNodeTypeDialog: function (options) {
             var o = {
-                objectClassId: '', 
+                objectClassId: '',
                 nodetypename: '',
                 maxlength: 50, //DB nodetypename = varchar(50)
                 category: '',
@@ -214,55 +211,55 @@
             var $div = $('<div></div>'),
                 $nodeType, $category, $addBtn,
                 category = tryParseString(o.category);
-            
+
             $div.append('New ' + o.nodeTypeDescriptor + ': ');
             $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text, value: o.nodetypename, maxlength: o.maxlength });
             $div.append('<br />');
-            if(isNullOrEmpty(category)) {
+            if (isNullOrEmpty(category)) {
                 $div.append('Category Name: ');
                 $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: CswInput_Types.text });
                 $div.append('<br />');
             }
             $addBtn = $div.CswButton({
-                    ID: o.objectClassId + '_add',
-                    enabledText: 'Add',
-                    onclick: function () {
-                        var newNodeTypeName = $nodeType.val();
-                        CswAjaxJson({
-                            url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
-                            async: false,
-                            data: { 'NodeTypeName': newNodeTypeName },
-                            success: function () {
-                                o.$select.append('<option data-newNodeType="true" value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>');
-                                o.$select.val($nodeType.val());
-                                if(isNullOrEmpty(category) && false === isNullOrEmpty($category)) {
-                                    category = $category.val();
-                                }
-                                $div.dialog('close');
-                                if(isFunction(o.onSuccess)) {
-                                    o.onSuccess({
-                                            nodetypename: newNodeTypeName,
-                                            category: category
-                                        });
-                                }
-                            },
-                            error: function () {
-                                $addBtn.CswButton('enable');
-                            }       
-                        });
-                    }
-                });
+                ID: o.objectClassId + '_add',
+                enabledText: 'Add',
+                onclick: function () {
+                    var newNodeTypeName = $nodeType.val();
+                    CswAjaxJson({
+                        url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
+                        async: false,
+                        data: { 'NodeTypeName': newNodeTypeName },
+                        success: function () {
+                            o.$select.append('<option data-newNodeType="true" value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>');
+                            o.$select.val($nodeType.val());
+                            if (isNullOrEmpty(category) && false === isNullOrEmpty($category)) {
+                                category = $category.val();
+                            }
+                            $div.dialog('close');
+                            if (isFunction(o.onSuccess)) {
+                                o.onSuccess({
+                                    nodetypename: newNodeTypeName,
+                                    category: category
+                                });
+                            }
+                        },
+                        error: function () {
+                            $addBtn.CswButton('enable');
+                        }
+                    });
+                }
+            });
             openDialog($div, 400, 200, null, o.title);
         }, // AddNodeTypeDialog
         EditLayoutDialog: function (cswNodeTabOptions) {
             cswNodeTabOptions.ID = cswNodeTabOptions.ID + '_editlayout';
             cswNodeTabOptions.Config = true;
             cswNodeTabOptions.ShowAsReport = false;
-            cswNodeTabOptions.onTabSelect = function(tabid) {
+            cswNodeTabOptions.onTabSelect = function (tabid) {
                 cswNodeTabOptions.tabid = tabid;
                 _configAddOptions();
             };
-            cswNodeTabOptions.onPropertyRemove = function() {
+            cswNodeTabOptions.onPropertyRemove = function () {
                 _configAddOptions();
             };
 
@@ -273,39 +270,39 @@
 
             $cell11.append("Configure:<br/>");
             var $layoutSelect = $cell11.CswSelect('init', {
-                                    ID: 'EditLayoutDialog_layoutselect',
-                                    selected: 'Edit',
-                                    values: [ { value: 'AddInPopup', display: 'Add' },
+                ID: 'EditLayoutDialog_layoutselect',
+                selected: 'Edit',
+                values: [{ value: 'AddInPopup', display: 'Add' },
                                                 { value: 'Edit', display: 'Edit' },
-                                                { value: 'Preview', display: 'Preview' } ],
-                                    onChange: function () {
-                                        cswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
-                                        _resetLayout();
-                                    }
-                                });
+                                                { value: 'Preview', display: 'Preview'}],
+                onChange: function () {
+                    cswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
+                    _resetLayout();
+                }
+            });
 
             $cell11.append("<br/><br/>Add:<br/>");
             var $addSelect = $cell11.CswSelect('init', {
-                                    ID: 'EditLayoutDialog_addselect',
-                                    selected: '',
-                                    values: [],
-                                    onChange: function () {
+                ID: 'EditLayoutDialog_addselect',
+                selected: '',
+                values: [],
+                onChange: function () {
 
-                                        var ajaxdata = {
-                                                PropId: tryParseString($addSelect.val()),
-                                                TabId: tryParseString(cswNodeTabOptions.tabid),
-                                                EditMode: $layoutSelect.val()
-                                        };
-                                        CswAjaxJson({ 
-                                            url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout', 
-                                            data: ajaxdata,
-                                            success: function() {
-                                                _resetLayout();
-                                            }
-                                        }); // CswAjaxJson
-                                    } // onChange
-                                }); // CswSelect
-                            
+                    var ajaxdata = {
+                        PropId: tryParseString($addSelect.val()),
+                        TabId: tryParseString(cswNodeTabOptions.tabid),
+                        EditMode: $layoutSelect.val()
+                    };
+                    CswAjaxJson({
+                        url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout',
+                        data: ajaxdata,
+                        success: function () {
+                            _resetLayout();
+                        }
+                    }); // CswAjaxJson
+                } // onChange
+            }); // CswSelect
+
             function _resetLayout() {
                 $cell12.contents().remove();
                 $cell12.CswNodeTabs(cswNodeTabOptions);
@@ -314,21 +311,21 @@
 
             function _configAddOptions() {
                 var ajaxdata = {
-                    NodeId: tryParseString(cswNodeTabOptions.nodeids[0]), 
-                    NodeKey: tryParseString(cswNodeTabOptions.nodekeys[0]), 
-                    NodeTypeId: tryParseString(cswNodeTabOptions.nodetypeid), 
-                    TabId: tryParseString(cswNodeTabOptions.tabid), 
+                    NodeId: tryParseString(cswNodeTabOptions.nodeids[0]),
+                    NodeKey: tryParseString(cswNodeTabOptions.nodekeys[0]),
+                    NodeTypeId: tryParseString(cswNodeTabOptions.nodetypeid),
+                    TabId: tryParseString(cswNodeTabOptions.tabid),
                     EditMode: $layoutSelect.val()
                 };
-                CswAjaxJson({ 
-                    url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd', 
+                CswAjaxJson({
+                    url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd',
                     data: ajaxdata,
-                    success: function(data) {
-                        var propOpts = [{ value: '', display: 'Select...' }];
-                        for(var p in data) {
-                            if(data.hasOwnProperty(p)) {
+                    success: function (data) {
+                        var propOpts = [{ value: '', display: 'Select...'}];
+                        for (var p in data) {
+                            if (data.hasOwnProperty(p)) {
                                 propOpts.push({
-                                    value: data[p].propid, 
+                                    value: data[p].propid,
                                     display: data[p].propname
                                 });
                             }
@@ -360,12 +357,12 @@
                 date: ''     // viewing audit records
             };
             if (options) $.extend(o, options);
-            
+
             var $div = $('<div></div>');
-                            
+
             var myEditMode = EditMode.EditInPopup.name;
             var $table = $div.CswTable();
-            if(false === isNullOrEmpty(o.date) && false === o.Multi) {
+            if (false === isNullOrEmpty(o.date) && false === o.Multi) {
                 myEditMode = EditMode.AuditHistoryInPopup.name;
                 $table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
                     ID: o.nodeids[0] + '_history',
@@ -374,7 +371,7 @@
                     onEditNode: o.onEditNode,
                     JustDateColumn: true,
                     selectedDate: o.date,
-                    onSelectRow: function(date) { setupTabs(date); },
+                    onSelectRow: function (date) { setupTabs(date); },
                     allowEditRow: false
                 });
             }
@@ -382,31 +379,29 @@
 
             setupTabs(o.date);
 
-            function setupTabs(date)
-            {
+            function setupTabs(date) {
                 $tabcell.empty();
                 $tabcell.CswNodeTabs({
                     nodeids: o.nodeids,
                     nodekeys: o.nodekeys,
                     nodenames: o.nodenames,
                     filterToPropId: o.filterToPropId,
-                    Multi: o.Multi,    
+                    Multi: o.Multi,
                     EditMode: myEditMode,
                     //title: o.title,
                     tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
                     date: date,
-                    onEditView: function(viewid) {
-                        if(isFunction(o.onEditView))
-                        {
+                    onEditView: function (viewid) {
+                        if (isFunction(o.onEditView)) {
                             $div.dialog('close');
                             o.onEditView(viewid);
                         }
                     },
                     onSave: function (nodeids, nodekeys, tabcount) {
                         unsetChanged();
-                        if(tabcount === 1 || o.Multi) {
+                        if (tabcount === 1 || o.Multi) {
                             $div.dialog('close');
-                        } 
+                        }
                         setupTabs(date);
                         if (isFunction(o.onEditNode)) {
                             o.onEditNode(nodeids, nodekeys);
@@ -424,7 +419,7 @@
                 });
             } // _setupTabs()
             var title = tryParseString(o.title);
-            if(isNullOrEmpty(title)) {
+            if (isNullOrEmpty(title)) {
                 title = (false === o.Multi) ? o.nodenames[0] : o.nodenames.join(', ');
             }
             openDialog($div, 900, 600, null, title);
@@ -433,9 +428,9 @@
             var o = {
                 'nodename': '',
                 'nodeid': '',
-                'cswnbtnodekey': '', 
-                'onCopyNode': function() { }
-                };
+                'cswnbtnodekey': '',
+                'onCopyNode': function () { }
+            };
 
             if (options) {
                 $.extend(o, options);
@@ -443,39 +438,39 @@
 
             var $div = $('<div>Copying: ' + o.nodename + '<br/><br/></div>');
 
-            var $copybtn = $div.CswButton({ID: 'copynode_submit', 
-                                                    enabledText: 'Copy', 
-                                                    disabledText: 'Copying', 
-                                                    onclick: function() {
-                                                        copyNode({
-                                                            'nodeid': o.nodeid, 
-                                                            'nodekey': o.nodekey, 
-                                                            'onSuccess': function(nodeid, nodekey) { 
-                                                                $div.dialog('close');
-                                                                o.onCopyNode(nodeid, nodekey);
-                                                            },
-                                                            'onError':  function() {
-                                                                $copybtn.CswButton('enable');
-                                                            }
-                                                        });
-                                                    }
-                                             });
+            var $copybtn = $div.CswButton({ ID: 'copynode_submit',
+                enabledText: 'Copy',
+                disabledText: 'Copying',
+                onclick: function () {
+                    copyNode({
+                        'nodeid': o.nodeid,
+                        'nodekey': o.nodekey,
+                        'onSuccess': function (nodeid, nodekey) {
+                            $div.dialog('close');
+                            o.onCopyNode(nodeid, nodekey);
+                        },
+                        'onError': function () {
+                            $copybtn.CswButton('enable');
+                        }
+                    });
+                }
+            });
             /* Cancel Button */
-            $div.CswButton({ID: 'copynode_cancel', 
-                            enabledText: 'Cancel', 
-                            disabledText: 'Canceling', 
-                            onclick: function() {
-                                        $div.dialog('close');
-                                    }
-                            });    
-                            
+            $div.CswButton({ ID: 'copynode_cancel',
+                enabledText: 'Cancel',
+                disabledText: 'Canceling',
+                onclick: function () {
+                    $div.dialog('close');
+                }
+            });
+
             openDialog($div, 400, 300, null, 'Confirm Copy');
         }, // CopyNodeDialog       
         DeleteNodeDialog: function (options) {
             var o = {
                 nodenames: [],
                 nodeids: [],
-                cswnbtnodekeys: [], 
+                cswnbtnodekeys: [],
                 onDeleteNode: null, //function(nodeid, nodekey) { },
                 Multi: false,
                 NodeCheckTreeId: '',
@@ -487,13 +482,12 @@
             }
 
             var $div = $('<div><span>Are you sure you want to delete:&nbsp;</span></div>');
-            
-            if(o.Multi) {
+
+            if (o.Multi) {
                 var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
-                if (false === isNullOrEmpty($nodechecks, true) && 
-                    (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0 )) {
+                if (false === isNullOrEmpty($nodechecks, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
                     var n = 0;
-                    $nodechecks.each(function() {
+                    $nodechecks.each(function () {
                         var $nodecheck = $(this);
                         o.nodeids[n] = $nodecheck.CswAttrNonDom('nodeid');
                         o.cswnbtnodekeys[n] = $nodecheck.CswAttrNonDom('cswnbtnodekey');
@@ -501,7 +495,7 @@
                         n++;
                     });
                 } else {
-                    for(var i=0; i <o.nodenames.length; i++) {
+                    for (var i = 0; i < o.nodenames.length; i++) {
                         $div.append('<br/><span style="padding-left: 10px;">' + o.nodenames[i] + '</span>');
                     }
                 }
@@ -509,37 +503,37 @@
                 $div.append('<span>' + o.nodenames + '?</span>');
             }
             $div.append('<br/><br/>');
-    
-            var $deletebtn = $div.CswButton({ID: 'deletenode_submit', 
-                                            enabledText: 'Delete', 
-                                            disabledText: 'Deleting', 
-                                            onclick: function() {
-                                                deleteNodes({
-                                                    nodeids: o.nodeids, 
-                                                    nodekeys: o.cswnbtnodekeys,
-                                                    onSuccess: function(nodeid, nodekey) {
-                                                        $div.dialog('close');
-                                                        if (isFunction(o.onDeleteNode)) {
-                                                            o.onDeleteNode(nodeid, nodekey);
-                                                        }
-                                                        if(isTrue(o.publishDeleteEvent)) {
-                                                            $.publish(ChemSW.enums.Events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
-                                                        }
-                                                    },
-                                                    onError: function() {
-                                                        $deletebtn.CswButton('enable');
-                                                    }
-                                                });
-                                            }
-                                        });
+
+            var $deletebtn = $div.CswButton({ ID: 'deletenode_submit',
+                enabledText: 'Delete',
+                disabledText: 'Deleting',
+                onclick: function () {
+                    deleteNodes({
+                        nodeids: o.nodeids,
+                        nodekeys: o.cswnbtnodekeys,
+                        onSuccess: function (nodeid, nodekey) {
+                            $div.dialog('close');
+                            if (isFunction(o.onDeleteNode)) {
+                                o.onDeleteNode(nodeid, nodekey);
+                            }
+                            if (isTrue(o.publishDeleteEvent)) {
+                                $.publish(ChemSW.enums.Events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
+                            }
+                        },
+                        onError: function () {
+                            $deletebtn.CswButton('enable');
+                        }
+                    });
+                }
+            });
             /* Cancel Button */
-            $div.CswButton({ID: 'deletenode_cancel', 
-                            enabledText: 'Cancel', 
-                            disabledText: 'Canceling', 
-                            onclick: function() {
-                                        $div.dialog('close');
-                                }
-                            });
+            $div.CswButton({ ID: 'deletenode_cancel',
+                enabledText: 'Cancel',
+                disabledText: 'Canceling',
+                onclick: function () {
+                    $div.dialog('close');
+                }
+            });
             openDialog($div, 400, 200, null, 'Confirm Delete');
         }, // DeleteNodeDialog
         AboutDialog: function () {
@@ -576,9 +570,9 @@
             var o = {
                 url: '',
                 params: {},
-                onSuccess: function() { }
+                onSuccess: function () { }
             };
-            if(options) {
+            if (options) {
                 $.extend(o, options);
             }
 
@@ -586,27 +580,27 @@
 
             var $btn = $('<input id="fileupload" type="file" name="fileupload" />')
                             .appendTo($div);
-            
+
             $btn.fileupload({
-                    datatype: 'json',
-                    url: o.url + '?' + $.param(o.params),
-                    paramName: 'fileupload',
-                    done: function () {
-                        $div.dialog('close');
-                        o.onSuccess();
-                    }
-                });
-            
-            $div.CswButton({ID: 'fileupload_cancel', 
-                            enabledText: 'Cancel', 
-                            disabledText: 'Canceling', 
-                            onclick: function() {
-                                        $div.dialog('close');
-                            }
+                datatype: 'json',
+                url: o.url + '?' + $.param(o.params),
+                paramName: 'fileupload',
+                done: function () {
+                    $div.dialog('close');
+                    o.onSuccess();
+                }
             });
 
-                            openDialog($div, 400, 300, null, 'Upload');
-                        },
+            $div.CswButton({ ID: 'fileupload_cancel',
+                enabledText: 'Cancel',
+                disabledText: 'Canceling',
+                onclick: function () {
+                    $div.dialog('close');
+                }
+            });
+
+            openDialog($div, 400, 300, null, 'Upload');
+        },
 
         'EditMolDialog': function (options) {
             var o = {
@@ -614,65 +608,63 @@
                 FileUrl: '',
                 PropId: '',
                 molData: '',
-                onSuccess: function() { }
+                onSuccess: function () { }
             };
-            if(options) {
+            if (options) {
                 $.extend(o, options);
             }
 
             var $div = $('<div></div>'),
                 $moltxtarea, $txtsave;
-            
+
             var $btn = $('<input id="fileupload" type="file" name="fileupload" />')
                             .appendTo($div);
-            
+
             $btn.fileupload({
-                    datatype: 'json',
-                    url: o.FileUrl + '?' + $.param({ PropId: o.PropId }),
-                    paramName: 'fileupload',
-                    done: function (e, data) {
-                        $moltxtarea.text(data.molData);
-                        $div.dialog('close');
-                        o.onSuccess();
-                    }
-                });
-            
+                datatype: 'json',
+                url: o.FileUrl + '?' + $.param({ PropId: o.PropId }),
+                paramName: 'fileupload',
+                done: function (e, data) {
+                    $moltxtarea.text(data.molData);
+                    $div.dialog('close');
+                    o.onSuccess();
+                }
+            });
+
             $div.CswButton({
-                    ID: 'fileupload_cancel', 
-                    enabledText: 'Cancel', 
-                    disabledText: 'Canceling', 
-                    onclick: function() {
-                        $div.dialog('close');
-                    }
-                });
-                            
+                ID: 'fileupload_cancel',
+                enabledText: 'Cancel',
+                disabledText: 'Canceling',
+                onclick: function () {
+                    $div.dialog('close');
+                }
+            });
+
             $div.append('<br/>MOL Text (Paste from Clipboard):<br/>');
             $moltxtarea = $('<textarea id="moltxt" rows="4" cols="40">' + o.molData + '</textarea>')
                                     .appendTo($div);
             $div.append('<br/>');
-            $txtsave = $div.CswButton({ID: 'txt_save', 
-                                            enabledText: 'Save MOL Text', 
-                                            disabledText: 'Saving MOL...', 
-                                            onclick: function() {
-                                                    CswAjaxJson({
-                                                        url: o.TextUrl,
-                                                        data: {
-                                                                molData: $moltxtarea.val(),
-                                                                PropId: o.PropId
-                                                                },
-                                                        success: function(data) 
-                                                            {
-                                                                $div.dialog('close');
-                                                                o.onSuccess();
-                                                            },
-                                                        error: function() 
-                                                            {
-                                                                $txtsave.CswButton('enable');	
-                                                            }
-                                                    }); // ajax
-                                                } // onclick
-                                            }); // CswButton
-                            
+            $txtsave = $div.CswButton({ ID: 'txt_save',
+                enabledText: 'Save MOL Text',
+                disabledText: 'Saving MOL...',
+                onclick: function () {
+                    CswAjaxJson({
+                        url: o.TextUrl,
+                        data: {
+                            molData: $moltxtarea.val(),
+                            PropId: o.PropId
+                        },
+                        success: function (data) {
+                            $div.dialog('close');
+                            o.onSuccess();
+                        },
+                        error: function () {
+                            $txtsave.CswButton('enable');
+                        }
+                    }); // ajax
+                } // onclick
+            }); // CswButton
+
 
             openDialog($div, 400, 300, null, 'Upload');
         }, // FileUploadDialog
@@ -680,10 +672,10 @@
             var o = {
                 GetLicenseUrl: '/NbtWebApp/wsNBT.asmx/getLicense',
                 AcceptLicenseUrl: '/NbtWebApp/wsNBT.asmx/acceptLicense',
-                onAccept: function() {},
-                onDecline: function() {}
+                onAccept: function () { },
+                onDecline: function () { }
             };
-            if(options) $.extend(o, options);
+            if (options) $.extend(o, options);
             var $div = $('<div align="center"></div>');
             $div.append('Service Level Agreement<br/>');
             var $licensetextarea = $('<textarea id="license" disabled="true" rows="30" cols="80"></textarea>')
@@ -692,37 +684,37 @@
 
             CswAjaxJson({
                 url: o.GetLicenseUrl,
-                success: function(data) {
+                success: function (data) {
                     $licensetextarea.text(data.license);
                 }
             });
 
             var $acceptbtn = $div.CswButton({
-                                    ID: 'license_accept', 
-                                    enabledText: 'I Accept', 
-                                    disabledText: 'Accepting...', 
-                                    onclick: function() {
-                                            CswAjaxJson({
-                                                url: o.AcceptLicenseUrl,
-                                                success: function() {
-                                                    $div.dialog('close');
-                                                    o.onAccept();
-                                                },
-                                                error: function() {
-                                                    $acceptbtn.CswButton('enable');	
-                                                }
-                                            }); // ajax
-                                        } // onclick
-                                    }); // CswButton
+                ID: 'license_accept',
+                enabledText: 'I Accept',
+                disabledText: 'Accepting...',
+                onclick: function () {
+                    CswAjaxJson({
+                        url: o.AcceptLicenseUrl,
+                        success: function () {
+                            $div.dialog('close');
+                            o.onAccept();
+                        },
+                        error: function () {
+                            $acceptbtn.CswButton('enable');
+                        }
+                    }); // ajax
+                } // onclick
+            }); // CswButton
 
-            $div.CswButton({ID: 'license_decline', 
-                            enabledText: 'I Decline', 
-                            disabledText: 'Declining...', 
-                            onclick: function() {
-                                        $div.dialog('close');
-                                        o.onDecline();
-                                }
-                            });
+            $div.CswButton({ ID: 'license_decline',
+                enabledText: 'I Decline',
+                disabledText: 'Declining...',
+                onclick: function () {
+                    $div.dialog('close');
+                    o.onDecline();
+                }
+            });
 
             openDialog($div, 800, 600, null, 'Terms and Conditions');
         }, // ShowLicenseDialog
@@ -735,10 +727,10 @@
                 nodeid: '',
                 propid: ''
             };
-            if(options) $.extend(o, options);
-                            
+            if (options) $.extend(o, options);
+
             var $div = $('<div align="center"></div>');
-                            
+
             $div.append('Select a Label to Print:<br/>');
             var $labelsel_div = $('<div />')
                                 .appendTo($div);
@@ -748,12 +740,12 @@
             CswAjaxJson({
                 url: o.GetPrintLabelsUrl,
                 data: jData,
-                success: function(data) {
-                    if(data.labels.length > 0) {
+                success: function (data) {
+                    if (data.labels.length > 0) {
                         $labelsel = $('<select id="' + o.ID + '_labelsel"></select>');
-                        for(var i = 0; i < data.labels.length; i++) {
+                        for (var i = 0; i < data.labels.length; i++) {
                             var label = data.labels[i];
-                            $labelsel.append('<option value="'+ label.nodeid +'">'+ label.name +'</option>');
+                            $labelsel.append('<option value="' + label.nodeid + '">' + label.name + '</option>');
                         }
                         $labelsel.appendTo($labelsel_div);
                         $printbtn.CswButton('enable');
@@ -765,32 +757,32 @@
             }); // ajax
 
             var $printbtn = $div.CswButton({
-                                    ID: 'print_label_print', 
-                                    enabledText: 'Print', 
-                                    //disabledText: 'Printing...', 
-                                    disableOnClick: false,
-                                    onclick: function() {
-                                        var jData2 = { PropId: o.propid, PrintLabelNodeId: $labelsel.val() };
-                                        CswAjaxJson({
-                                            url: o.GetEPLTextUrl,
-                                            data: jData2,
-                                            success: function(data) {
-                                                var labelx = $('#labelx').get(0);
-                                                labelx.EPLScript = data.epl;
-                                                labelx.Print();
-                                            } // success
-                                        }); // ajax
-                                    } // onclick
-                                }); // CswButton
+                ID: 'print_label_print',
+                enabledText: 'Print',
+                //disabledText: 'Printing...', 
+                disableOnClick: false,
+                onclick: function () {
+                    var jData2 = { PropId: o.propid, PrintLabelNodeId: $labelsel.val() };
+                    CswAjaxJson({
+                        url: o.GetEPLTextUrl,
+                        data: jData2,
+                        success: function (data) {
+                            var labelx = $('#labelx').get(0);
+                            labelx.EPLScript = data.epl;
+                            labelx.Print();
+                        } // success
+                    }); // ajax
+                } // onclick
+            }); // CswButton
             $printbtn.CswButton('disable');
 
-            $div.CswButton({ID: 'print_label_close', 
-                                                enabledText: 'Close', 
-                                                disabledText: 'Closing...', 
-                                                onclick: function() {
-                                                        $div.dialog('close');
-                                                    }
-                                                });
+            $div.CswButton({ ID: 'print_label_close',
+                enabledText: 'Close',
+                disabledText: 'Closing...',
+                onclick: function () {
+                    $div.dialog('close');
+                }
+            });
 
             var $hiddendiv = $('<div style="display: none; border: 1px solid red;"></div>')
                                 .appendTo($div);
@@ -808,12 +800,12 @@
             var $div = $('<div>' + message + '</div>');
             openDialog($div, 200, 200, null, title);
         },
-        
+
         NavigationSelectDialog: function (options) {
             var o = {
                 ID: '',
                 title: 'Select from the following options',
-                navigationText: 'Click OK to continue', 
+                navigationText: 'Click OK to continue',
                 buttons: ChemSW.enums.CswDialogButtons["1"],
                 values: [],
                 onOkClick: null,
@@ -829,28 +821,28 @@
                     ID: makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
                     values: o.values
                 });
-                
+
             $div.CswButton({
-                    ID: makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
-                    enabledText: 'OK',
-                    onclick: function () {
-                        if(isFunction(o.onOkClick)) {
-                            o.onOkClick($select.find(':selected'));    
-                        }
-                        $div.dialog('close');
+                ID: makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
+                enabledText: 'OK',
+                onclick: function () {
+                    if (isFunction(o.onOkClick)) {
+                        o.onOkClick($select.find(':selected'));
                     }
-                });
+                    $div.dialog('close');
+                }
+            });
             openDialog($div, 600, 150, null, o.title);
         },
         //#endregion Specialized
-        
+
         //#region Generic
 
-//		'OpenPopup': function(url) { 
-//							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
-//							popup.focus();
-//							return popup;
-//						},
+        //		'OpenPopup': function(url) { 
+        //							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
+        //							popup.focus();
+        //							return popup;
+        //						},
         OpenDialog: function (id, url) {
             var $dialogdiv = $('<div id="' + id + '"></div>');
             $dialogdiv.load(url,
@@ -863,7 +855,7 @@
                 .dialog('close')
                 .remove();
         }
-        
+
         //#region Generic
     };
 
@@ -872,28 +864,28 @@
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo($div);
 
-        $div.dialog({ 
+        $div.dialog({
             modal: true,
             width: width,
             height: height,
-            title: title,    
-            close: function () { 
-                $div.remove(); 
-                if(isFunction(onClose)) onClose();
+            title: title,
+            close: function () {
+                $div.remove();
+                if (isFunction(onClose)) onClose();
             }
         });
     }
-    
+
     // Method calling logic
     $.CswDialog = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
+
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
+
     };
 })(jQuery);
