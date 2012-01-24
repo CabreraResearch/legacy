@@ -23,9 +23,10 @@
                 url: o.Url,
                 data: {},
                 success: function(data) {
-                    var percentUsed = tryParseNumber( data.result, 0 );
+                    var percentUsed = tryParseNumber(data.result, 0);
                     var image = '';
-                    if(percentUsed > 0)
+                    $Div.contents().remove();
+                    if (percentUsed > 0)
                     {
                         if(percentUsed <= 33) {
                             image = "good.gif";
