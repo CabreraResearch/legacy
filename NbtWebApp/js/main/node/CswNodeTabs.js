@@ -316,26 +316,31 @@
                         isNullOrEmpty(o.date) && 
                         o.filterToPropId === '' && 
                         isTrue($tabcontentdiv.data('canEditLayout'))) {
-                        /* Case 24437 */
-                        var refreshFunc = function() {
-                                o.Config = false;
-                                getTabs();
+                            /* Case 24437 */
+                            var editLayoutOpt = {
+                                ID: o.ID,
+                                nodeids: o.nodeids,
+                                nodekeys: o.nodekeys,
+                                tabid: o.tabid,
+                                nodetypeid: o.nodetypeid,
+                                Refresh: function () {
+                                    ChemSW.tools.tryExecMethod(o.Refresh);
+                                    o.Config = false;
+                                    getTabs();
+                                }                                
                             };
-                        o.Refresh = function () {
-                            ChemSW.tools.tryExecMethod(o.Refresh);
-                            refreshFunc();
-                        }
-                        /* Show the 'fake' config button to open the dialog */
-                        $formtblcell12.CswImageButton({
-                                                    ButtonType: CswImageButton_ButtonType.Configure,
-                                                    AlternateText: 'Configure',
-                                                    ID: o.ID + 'configbtn',
-                                                    onClick: function () { 
-                                                        clearTabs();
-                                                        $.CswDialog('EditLayoutDialog', o);
-                                                        return CswImageButton_ButtonType.None; 
-                                                    }
-                                                });
+                        
+                            /* Show the 'fake' config button to open the dialog */
+                            $formtblcell12.CswImageButton({
+                                                        ButtonType: CswImageButton_ButtonType.Configure,
+                                                        AlternateText: 'Configure',
+                                                        ID: o.ID + 'configbtn',
+                                                        onClick: function () { 
+                                                            clearTabs();
+                                                            $.CswDialog('EditLayoutDialog', editLayoutOpt);
+                                                            return CswImageButton_ButtonType.None; 
+                                                        }
+                                                    });
                     }
                     
                     /* case 8494 */
