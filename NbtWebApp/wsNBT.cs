@@ -666,7 +666,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string runGrid( string ViewId, string IdPrefix, string IncludeNodeKey, string IncludeInQuickLaunch )
+        public string runGrid( string ViewId, string IncludeNodeKey, string IncludeInQuickLaunch )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -683,7 +683,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey, IdPrefix );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
                     ReturnVal = ws.runGrid( IsQuickLaunch );
                 }
 
@@ -702,7 +702,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public void getGridRowsByPage( string ViewId, string Page, string Rows, string IsReport, string IncludeNodeKey, string IdPrefix )
+        public void getGridRowsByPage( string ViewId, string Page, string Rows, string IsReport, string IncludeNodeKey )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -716,7 +716,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey, IdPrefix );
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
                     ReturnVal = g.getGridRowsByPage( CswConvert.ToInt32( Page ) - 1, CswConvert.ToInt32( Rows ), CswConvert.ToBoolean( IsReport ) );
                 }
 
@@ -741,7 +741,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getAllGridRows( string ViewId, string IsReport, string IncludeNodeKey, string IdPrefix )
+        public string getAllGridRows( string ViewId, string IsReport, string IncludeNodeKey )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -756,7 +756,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey, IdPrefix );
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
                     ReturnVal = g.getAllGridRows( CswConvert.ToBoolean( IsReport ) );
                 }
 

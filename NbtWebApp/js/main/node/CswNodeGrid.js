@@ -12,14 +12,12 @@
     function deleteRows(rowid, grid, func) {
         var delOpt = {
             cswnbtnodekey: [],
-            //nodepk: [],
             nodename: []
         };
         var delFunc = function(opts) {
             opts.onDeleteNode = func;
             opts.publishDeleteEvent = false;
             renameProperty(opts, 'cswnbtnodekey', 'cswnbtnodekeys');
-//            renameProperty(opts, 'nodepk', 'nodeids');
             renameProperty(opts, 'nodename', 'nodenames');
             $.CswDialog('DeleteNodeDialog', opts);
         };
@@ -32,14 +30,12 @@
     function editRows (rowid, grid, func, editViewFunc) {
         var editOpt = {
             cswnbtnodekey: [],
-            //nodepk: [],
             nodename: []
         };
         var editFunc = function(opts) {
             opts.onEditNode = func;
             opts.onEditView = editViewFunc;
             renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
-//            renameProperty(opts, 'nodepk', 'nodeids');
             renameProperty(opts, 'nodename', 'nodenames');
             $.CswDialog('EditNodeDialog', opts);
         };
@@ -76,7 +72,7 @@
             var $parent = $(this);
 
             function getGridRowsUrl(isPrint) {
-                var url = o.gridPageUrl + '?ViewId=' + o.viewid + '&IsReport=' + isTrue(forReporting || isPrint).toString() + '"&IdPrefix=' + o.ID + '&IncludeNodeKey=' + o.cswnbtnodekey;
+                var url = o.gridPageUrl + '?ViewId=' + o.viewid + '&IsReport=' + isTrue(forReporting || isPrint).toString() + '&IncludeNodeKey=' + o.cswnbtnodekey;
                 if (isPrint) {
                     url += '&Page=1&Rows=100000000';
                 }
@@ -97,7 +93,6 @@
                         url: o.runGridUrl,
                         data: {
                             ViewId: o.viewid,
-                            IdPrefix: o.ID,
                             IncludeNodeKey: o.cswnbtnodekey,
                             IncludeInQuickLaunch: true
                         },
@@ -200,8 +195,7 @@
                             data: {
                                 ViewId: o.viewid,
                                 IsReport: forReporting,
-                                IncludeNodeKey: o.cswnbtnodekey,
-                                IdPrefix: o.ID
+                                IncludeNodeKey: o.cswnbtnodekey
                             },
                             success: function(data) {
                                 makeGrid('local', data);
