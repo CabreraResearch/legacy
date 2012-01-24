@@ -78,11 +78,7 @@
             
             var handle = function(eventObj) {
                 $tabParent.remove();
-                try {
-                    $.unsubscribe(handle);
-                } catch (e) {
-                    
-                }
+                $.unsubscribe(ChemSW.enums.Events.CswNodeDelete, handle);
                 return false;
             };
             
