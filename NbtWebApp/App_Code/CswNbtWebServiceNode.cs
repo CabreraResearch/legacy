@@ -21,41 +21,47 @@ namespace ChemSW.Nbt.WebServices
 
         public CswPrimaryKey CopyNode( CswPrimaryKey NodePk )
         {
-            CswNbtNode OriginalNode = _CswNbtResources.Nodes[NodePk];
+            CswPrimaryKey RetKey = null;
+            CswNbtNode OriginalNode = _CswNbtResources.Nodes.GetNode( NodePk );
 
-            CswNbtNode NewNode = null;
-            CswNbtActCopyNode CswNbtActCopyNode = new CswNbtActCopyNode( _CswNbtResources );
-            switch( OriginalNode.ObjectClass.ObjectClass )
+            if( null != OriginalNode )
             {
-                case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass:
-                    NewNode = CswNbtActCopyNode.CopyEquipmentNode( OriginalNode );
-                    break;
-                case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass:
-                    NewNode = CswNbtActCopyNode.CopyEquipmentAssemblyNode( OriginalNode );
-                    break;
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
-                    NewNode = CswNbtActCopyNode.CopyInspectionTargetNode( OriginalNode );
-                    break;
-                default:
-                    NewNode = CswNbtActCopyNode.CopyNode( OriginalNode );
-                    break;
-            }
+                CswNbtNode NewNode = null;
+                CswNbtActCopyNode CswNbtActCopyNode = new CswNbtActCopyNode( _CswNbtResources );
+                switch( OriginalNode.ObjectClass.ObjectClass )
+                {
+                    case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass:
+                        NewNode = CswNbtActCopyNode.CopyEquipmentNode( OriginalNode );
+                        break;
+                    case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass:
+                        NewNode = CswNbtActCopyNode.CopyEquipmentAssemblyNode( OriginalNode );
+                        break;
+                    case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
+                        NewNode = CswNbtActCopyNode.CopyInspectionTargetNode( OriginalNode );
+                        break;
+                    default:
+                        NewNode = CswNbtActCopyNode.CopyNode( OriginalNode );
+                        break;
+                }
 
-            if( NewNode != null )
-            {
-                _CswNbtStatisticsEvents.OnCopyNode( OriginalNode, NewNode );
+                if( NewNode != null )
+                {
+                    _CswNbtStatisticsEvents.OnCopyNode( OriginalNode, NewNode );
+                    RetKey = NewNode.NodeId;
+                }
             }
-            return NewNode.NodeId;
+            return RetKey;
         }
 
         public bool DeleteNode( CswPrimaryKey NodePk )
         {
             bool ret = false;
-
-            CswNbtNode NodeToDelete = _CswNbtResources.Nodes[NodePk];
-            NodeToDelete.delete();
-            ret = true;
-
+            CswNbtNode NodeToDelete = _CswNbtResources.Nodes.GetNode( NodePk );
+            if( null != NodeToDelete )
+            {
+                NodeToDelete.delete();
+                ret = true;
+            }
             return ret;
         }
 

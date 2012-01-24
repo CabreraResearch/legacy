@@ -18,8 +18,6 @@ namespace ChemSW.Nbt.WebServices
         private CswGridData _CswGridData;
         private bool _CanEdit = true;
         private bool _CanDelete = true;
-        private wsTreeOfView _WsTreeOfView;
-        private readonly string _IdPrefix;
         private Collection<CswViewBuilderProp> _PropsInGrid = null;
         public enum GridReturnType
         {
@@ -27,7 +25,7 @@ namespace ChemSW.Nbt.WebServices
             Json
         };
 
-        public CswNbtWebServiceGrid( CswNbtResources CswNbtResources, CswNbtView View, CswNbtNodeKey ParentNodeKey = null, string IdPrefix = "grid_" )
+        public CswNbtWebServiceGrid( CswNbtResources CswNbtResources, CswNbtView View, CswNbtNodeKey ParentNodeKey = null )
         {
             _CswNbtResources = CswNbtResources;
             _View = View;
@@ -38,8 +36,6 @@ namespace ChemSW.Nbt.WebServices
             }
 
             _ParentNodeKey = ParentNodeKey;
-            _IdPrefix = IdPrefix;
-            _WsTreeOfView = new wsTreeOfView( _CswNbtResources, _View, _IdPrefix );
 
             Collection<CswNbtViewRelationship> FirstLevelRelationships = new Collection<CswNbtViewRelationship>();
             if( null != _ParentNodeKey && _View.Visibility == NbtViewVisibility.Property )
@@ -94,13 +90,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject runGrid( bool IncludeInQuickLaunch )
         {
-            _WsTreeOfView.deleteTreeFromCache();
-
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
-
-            _WsTreeOfView.saveTreeToCache( Tree );
             _View.SaveToCache( IncludeInQuickLaunch );
-
             return _getGridOuterJson();
         } // getGrid()
 
@@ -198,7 +188,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JObject getAllGridRows( bool IsReport )
         {
-            ICswNbtTree Tree = _WsTreeOfView.getTreeFromCache();
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
             Int32 StartingNode = 0;
             Int32 EndingNode = Tree.getChildNodeCount();
             if( _View.Visibility == NbtViewVisibility.Property )
@@ -214,7 +204,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JObject getGridRowsByPage( Int32 PageNumber, Int32 PageSize, bool IsReport )
         {
-            ICswNbtTree Tree = _WsTreeOfView.getTreeFromCache();
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
             Int32 StartingNode = PageSize * PageNumber;
             Int32 EndingNode = PageSize * ( PageNumber + 1 );
             return _getGridRows( Tree, PageNumber, PageSize, StartingNode, EndingNode, IsReport );

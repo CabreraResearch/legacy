@@ -166,25 +166,28 @@ namespace ChemSW.Nbt.WebServices
         /// Returns the JSON for filtered (searchable) View properties, if the View is searchable.
         /// Else, returns JSON for a NodeTypeSelect.
         /// </summary>
-        public JObject getSearchJson( CswNbtView View, string SelectedNodeTypeIdNum, string NodeKey )
+        public JObject getSearchJson( CswNbtView View, string SelectedNodeTypeIdNum, CswNbtNodeKey NbtNodeKey = null )
         {
             JObject RetObj = new JObject();
 
             if( null == View || false == View.IsSearchable() )
             {
                 CswNbtMetaDataNodeType SelectedNodeType = null;
-                if( string.IsNullOrEmpty( SelectedNodeTypeIdNum ) && false == string.IsNullOrEmpty( NodeKey ) )
+                if( null != NbtNodeKey )
                 {
-                    string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
-                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
-                    CswNbtNode Node = _CswNbtResources.Nodes[NbtNodeKey];
-                    SelectedNodeType = Node.NodeType;
+                    CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NbtNodeKey.NodeId );
+                    if( null != Node )
+                    {
+                        SelectedNodeType = Node.NodeType;
+                    }
                 }
-                else if( false == string.IsNullOrEmpty( SelectedNodeTypeIdNum ) )
+
+                if( null == SelectedNodeType && false == string.IsNullOrEmpty( SelectedNodeTypeIdNum ) )
                 {
                     Int32 SelectedNodeTypeId = CswConvert.ToInt32( SelectedNodeTypeIdNum );
                     SelectedNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
                 }
+
                 RetObj = _getNodeTypeBasedSearch( SelectedNodeType );
             }
             else
