@@ -121,6 +121,7 @@ namespace ChemSW.Nbt
                         {
                             // If the parent isn't in the tree, don't add the child
                             AddChild = false;
+                            PriorNodeId = Int32.MinValue;   // case 24788
                         }
                     } // if( NodesTable.Columns.Contains( "parentnodeid" ) )
 
