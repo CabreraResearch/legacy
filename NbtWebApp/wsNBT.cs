@@ -826,7 +826,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string runTree( string ViewId, string IdPrefix, string IncludeNodeId, string IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch )
+        public string runTree( string ViewId, string IdPrefix, string IncludeNodeId, string IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch, string DefaultSelect )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -850,7 +850,7 @@ namespace ChemSW.Nbt.WebServices
                         if( !string.IsNullOrEmpty( IncludeNodeKey ) )
                             RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( IncludeNodeKey ) );
 
-                        ReturnVal = ws.runTree( RealIncludeNodeId, RealIncludeNodeKey, IncludeNodeRequired, IncludeInQuickLaunch );
+                        ReturnVal = ws.runTree( RealIncludeNodeId, RealIncludeNodeKey, IncludeNodeRequired, IncludeInQuickLaunch, DefaultSelect );
                     }
                 }
 

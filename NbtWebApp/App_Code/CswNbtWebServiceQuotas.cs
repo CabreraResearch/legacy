@@ -73,22 +73,26 @@ namespace ChemSW.Nbt.WebServices
 				{
 					if( NodeType.IsLatestVersion )
 					{
-						string NTId = "nt_" + NodeType.FirstVersionNodeTypeId.ToString();
+                        Int32 NodeTypeId = NodeType.FirstVersionNodeTypeId;
+                        string NodeTypeName = NodeType.NodeTypeName;
+						Int32 Quota = NodeType.FirstVersionNodeType.Quota;
+                        string NTId = "nt_" + NodeType.FirstVersionNodeTypeId.ToString();
+                        
 						ret["objectclasses"][OCId]["nodetypes"][NTId] = new JObject();
-						ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypename"] = NodeType.NodeTypeName;
-						ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypeid"] = NodeType.NodeTypeId;
+						ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypename"] = NodeTypeName;
+						ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypeid"] = NodeTypeId;
 
-                        if( NodeCountsForNodeType.ContainsKey( NodeType.NodeTypeId ) )
+                        if( NodeCountsForNodeType.ContainsKey( NodeTypeId ) )
                         {
-                            ret["objectclasses"][OCId]["nodetypes"][NTId]["currentusage"] = NodeCountsForNodeType[NodeType.NodeTypeId];
+                            ret["objectclasses"][OCId]["nodetypes"][NTId]["currentusage"] = NodeCountsForNodeType[NodeTypeId];
                         }
                         else
                         {
                             ret["objectclasses"][OCId]["nodetypes"][NTId]["currentusage"] = "0";
                         }
-                        if( NodeType.Quota != Int32.MinValue )
+                        if( Quota != Int32.MinValue )
                         {
-                            ret["objectclasses"][OCId]["nodetypes"][NTId]["quota"] = NodeType.Quota;
+                            ret["objectclasses"][OCId]["nodetypes"][NTId]["quota"] = Quota;
                         }
                         else
                         {

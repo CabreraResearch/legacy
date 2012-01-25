@@ -65,18 +65,17 @@ namespace ChemSW.Nbt.WebServices
             switch( ThisNodeKey.NodeSpecies )
             {
                 case NodeSpecies.More:
-                    ThisNodeId = _IdPrefix + ThisNodeKey.NodeId.ToString();
+                    ThisNodeId = ThisNodeKey.NodeId.ToString();
                     ThisNodeName = NodeSpecies.More.ToString() + "...";
                     ThisNodeIcon = "triangle_blueS.gif";
                     ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
                     break;
                 case NodeSpecies.Plain:
-                    ThisNodeId = _IdPrefix + ThisNodeKey.NodeId.ToString();
+                    ThisNodeId = ThisNodeKey.NodeId.ToString();
                     ThisNodeName = Tree.getNodeNameForCurrentPosition();
                     ThisNodeIcon = ThisNodeType.IconFileName;
                     ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
-
                     break;
                 case NodeSpecies.Group:
                     ThisNodeRel = "group";
@@ -97,10 +96,12 @@ namespace ChemSW.Nbt.WebServices
             ThisNodeObj["data"] = ThisNodeName;
             ThisNodeObj["icon"] = "Images/icons/" + ThisNodeIcon;
             ThisNodeObj["attr"] = new JObject();
-            ThisNodeObj["attr"]["id"] = ThisNodeId;
+            //ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeKeyString;   // This is the only unique string for this node in this tree
+            ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeId;
             ThisNodeObj["attr"]["rel"] = ThisNodeRel;
             ThisNodeObj["attr"]["state"] = ThisNodeState;
             ThisNodeObj["attr"]["species"] = ThisNodeKey.NodeSpecies.ToString();
+            ThisNodeObj["attr"]["nodeid"] = ThisNodeId;
             ThisNodeObj["attr"]["cswnbtnodekey"] = ThisNodeKeyString;
             ThisNodeObj["attr"]["locked"] = ThisNodeLocked.ToString().ToLower();
             CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
@@ -118,7 +119,7 @@ namespace ChemSW.Nbt.WebServices
             return ThisNodeObj;
         } // _treeNodeJObject()
 
-        public JObject runTree( CswPrimaryKey IncludeNodeId, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch )
+        public JObject runTree( CswPrimaryKey IncludeNodeId, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch, string DefaultSelect )
         {
             JObject ReturnObj = new JObject();
             //_wsTreeOfView.deleteTreeFromCache();
@@ -176,11 +177,21 @@ namespace ChemSW.Nbt.WebServices
                     }
                     if( ReturnObj["selectid"] == null )
                     {
-                        Tree.goToRoot();
-                        Tree.goToNthChild( 0 );
-                        ReturnObj["selectid"] = _IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
+                        switch( DefaultSelect )
+                        {
+                            case "none": 
+                                break;
+                            case "root":
+                                ReturnObj["selectid"] = _IdPrefix + "root";
+                                break;
+                            case "firstchild":
+                                Tree.goToRoot();
+                                Tree.goToNthChild( 0 );
+                                ReturnObj["selectid"] = _IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
+                                break;
+                        }
                     }
-                }
+                } // if( HasResults )
 
                 ReturnObj["root"] = new JObject();
                 ReturnObj["root"]["data"] = _View.ViewName;
