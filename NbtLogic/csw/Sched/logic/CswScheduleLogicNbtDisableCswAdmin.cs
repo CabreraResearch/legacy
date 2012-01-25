@@ -57,16 +57,22 @@ namespace ChemSW.Nbt.Sched
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
-
                 try
                 {
+                    CswNbtNode ChemSWAdminUserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+                    CswNbtObjClassUser CswAdminAsUser = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode );
                     if( false == _CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.NBTManager ) )
                     {
-                        CswNbtNode ChemSWAdminUserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-                        CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).AccountLocked.Checked = Tristate.True;
-                        CswNbtNodeCaster.AsUser( ChemSWAdminUserNode ).PasswordProperty.ChangedDate = DateTime.MinValue;
-                        ChemSWAdminUserNode.postChanges( true );
+                        CswAdminAsUser.AccountLocked.Checked = Tristate.True;
+                        CswAdminAsUser.PasswordProperty.ChangedDate = DateTime.MinValue;
                     }
+                    else
+                    {
+                        CswAdminAsUser.AccountLocked.Checked = Tristate.False;
+                        CswAdminAsUser.FailedLoginCount.Value = 0;
+                    }
+                    ChemSWAdminUserNode.postChanges( true );
+
                     _LogicRunStatus = LogicRunStatus.Succeeded; //last line
 
                 }//try
