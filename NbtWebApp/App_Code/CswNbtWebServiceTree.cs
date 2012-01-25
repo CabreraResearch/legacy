@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         switch( DefaultSelect )
                         {
-                            case "none": 
+                            case "none":
                                 break;
                             case "root":
                                 ReturnObj["selectid"] = _IdPrefix + "root";
@@ -192,6 +192,10 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
                 } // if( HasResults )
+                else
+                {
+                    ReturnObj["selectid"] = _IdPrefix + "root";
+                }
 
                 ReturnObj["root"] = new JObject();
                 ReturnObj["root"]["data"] = _View.ViewName;
@@ -203,9 +207,18 @@ namespace ChemSW.Nbt.WebServices
                 ReturnObj["root"]["state"] = "open";
                 ReturnObj["root"]["children"] = new JArray();
 
-                Tree.goToRoot();
-                _runTreeNodesRecursive( Tree, (JArray) ReturnObj["root"]["children"], true );
-                
+                if( HasResults )
+                {
+                    Tree.goToRoot();
+                    _runTreeNodesRecursive( Tree, (JArray) ReturnObj["root"]["children"], true );
+                }
+                else
+                {
+                    JObject NoResultsObj = new JObject();
+                    NoResultsObj["state"] = "leaf";
+                    NoResultsObj["data"] = "No Results";
+                    ( (JArray) ReturnObj["root"]["children"] ).Add( NoResultsObj );
+                }
                 //_wsTreeOfView.saveTreeToCache( Tree );
                 //_View.SaveToCache( IncludeInQuickLaunch );
 

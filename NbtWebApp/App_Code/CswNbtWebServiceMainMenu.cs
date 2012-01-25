@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.WebServices
                                                             "Multi-Edit"
                                                         };
 
-        private enum MenuActions
+        public enum MenuActions
         {
             Unknown,
             AddNode,
@@ -146,7 +146,22 @@ namespace ChemSW.Nbt.WebServices
                 // ADD
                 if( _MenuItems.Contains( "Add" ) )
                 {
-                    JObject AddObj = getAddMenu(View, RelatedNodeId, RelatedNodeTypeId);
+                    JObject AddObj = new JObject();
+
+                    // case 21672
+                    CswNbtViewNode ParentNode = View.Root;
+                    bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
+                    if( LimitToFirstGeneration && View.Visibility == NbtViewVisibility.Property )
+                    {
+                        ParentNode = View.Root.ChildRelationships[0];
+                    }
+                    foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstGeneration )
+                        .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
+                                                         makeAddMenuItem( Entry, RelatedNodeId, RelatedNodeTypeId ) ) ) )
+                    {
+                        AddObj.Add( AddNodeType );
+                    }
+
                     if( AddObj.HasValues )
                     {
                         AddObj["haschildren"] = true;
@@ -291,31 +306,15 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getMenu()
 
-
-        public static JObject getAddMenu(CswNbtView View, string RelatedNodeId, string RelatedNodeTypeId )
+        public static JObject makeAddMenuItem( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry, string RelatedNodeId, string RelatedNodeTypeId )
         {
-            JObject AddObj = new JObject();
+            return new JObject( new JProperty( "text", Entry.NodeType.NodeTypeName ),
+                                new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
+                                new JProperty( "relatednodeid", RelatedNodeId ),  //for Grid Props
+                                new JProperty( "relatednodetypeid", RelatedNodeTypeId ),
+                                new JProperty( "action", CswNbtWebServiceMainMenu.MenuActions.AddNode.ToString() ) );
+        } // makeAddMenuItem()
 
-            // case 21672
-            CswNbtViewNode ParentNode = View.Root;
-            bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
-            if( LimitToFirstGeneration && View.Visibility == NbtViewVisibility.Property )
-            {
-                ParentNode = View.Root.ChildRelationships[0];
-            }
-            foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstGeneration )
-                .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
-                                                    new JObject(
-                                                        new JProperty( "text", Entry.NodeType.NodeTypeName ),
-                                                        new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
-                                                        new JProperty( "relatednodeid", RelatedNodeId ), //for Grid Props
-                                                        new JProperty( "relatednodetypeid", RelatedNodeTypeId ),
-                                                        new JProperty( "action", MenuActions.AddNode.ToString() ) ) ) ) )
-            {
-                AddObj.Add( AddNodeType );
-            }
-            return AddObj;
-        } // getAddMenu()
 
     } // class CswNbtWebServiceMainMenu
 } // namespace ChemSW.Nbt.WebServices

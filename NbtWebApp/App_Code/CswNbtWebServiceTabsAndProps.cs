@@ -746,9 +746,27 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JObject getDefaultContent( CswNbtView View )
         {
-            return CswNbtWebServiceMainMenu.getAddMenu( View, string.Empty, string.Empty );
+            JObject ret = new JObject();
+            _getDefaultContentRecursive( ret, View.Root );
+            return ret;
         }
+        private void _getDefaultContentRecursive( JObject ParentObj, CswNbtViewNode ViewNode )
+        {
+            ParentObj["entries"] = new JObject();
+            foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in ViewNode.AllowedChildNodeTypes( true ) )
+            {
+                ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, string.Empty, string.Empty );
+            }
 
+            JObject ChildObj = new JObject();
+            ParentObj["children"] = ChildObj;
+
+            // recurse
+            foreach( CswNbtViewRelationship ChildViewRel in ViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+            {
+                _getDefaultContentRecursive( ChildObj, ChildViewRel );
+            }
+        } // _getDefaultContentRecursive()
 
     } // class CswNbtWebServiceTabsAndProps
 

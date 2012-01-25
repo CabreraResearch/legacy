@@ -617,28 +617,10 @@ window.initMain = window.initMain || function (undefined) {
     } // onSelectTreeNode()
 
     function showDefaultContent(options) {
-        var o = {
-            viewid: '',
-            viewmode: ''
-        };
-        if (options) $.extend(o, options);
 
-        CswAjaxJson({
-            url: 'NbtWebApp/wsNBT.asmx/getDefaultContent',
-            data: { ViewId: o.viewid },
-            success: function (data) {
-                clear({ 'right': true });
+        $('#RightDiv').CswDefaultContent(options);
 
-
-                log(data);
-
-            }
-        });
-
-        $('#RightDiv').append('This is a test');
-
-
-    } // setDefaultContent()
+    } // showDefaultContent()
 
 
     function getTabs(options) {
@@ -846,11 +828,11 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         switch (o.actionname) {
-            //			case 'Assign_Inspection':             
-            //				break;             
-            //			case 'Assign_Tests':             
-            //				break;             
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin             
+            //			case 'Assign_Inspection':                
+            //				break;                
+            //			case 'Assign_Tests':                
+            //				break;                
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                
             case 'Create_Inspection':
                 clear({ 'all': true });
 
@@ -884,8 +866,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswInspectionDesign(designOpt);
 
                 break;
-            //			case 'Design':             
-            //				break;             
+            //			case 'Design':                
+            //				break;                
             case 'Edit_View':
                 clear({ 'all': true });
 
@@ -912,14 +894,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(EditViewOptions);
 
                 break;
-            //			case 'Enter_Results':             
-            //				break;             
-            //			case 'Future_Scheduling':             
-            //				break;             
-            //			case 'Import_Fire_Extinguisher_Data':             
-            //				break;             
-            //			case 'Inspection_Design':             
-            //				break;             
+            //			case 'Enter_Results':                
+            //				break;                
+            //			case 'Future_Scheduling':                
+            //				break;                
+            //			case 'Import_Fire_Extinguisher_Data':                
+            //				break;                
+            //			case 'Inspection_Design':                
+            //				break;                
             case 'OOC_Inspections':
                 _setupOOCInspections();
 
@@ -953,14 +935,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswScheduledRulesGrid(rulesOpt);
 
                 break;
-            //			case 'Load_Mobile_Data':             
-            //				break;             
-            //			case 'Receiving':             
-            //				break;             
-            //			case 'Split_Samples':             
-            //				break;             
-            //			case 'View_By_Location':             
-            //				break;             
+            //			case 'Load_Mobile_Data':                
+            //				break;                
+            //			case 'Receiving':                
+            //				break;                
+            //			case 'Split_Samples':                
+            //				break;                
+            //			case 'View_By_Location':                
+            //				break;                
             default:
                 if (!isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;
