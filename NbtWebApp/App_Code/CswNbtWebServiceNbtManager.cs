@@ -202,6 +202,45 @@ namespace ChemSW.Nbt.WebServices
             return RetSuccess;
         }
 
+        private enum ScheduledRuleActions
+        {
+            Unknown,
+            ClearAllReprobates
+        }
+
+        public bool updateAllScheduledRules( string Action )
+        {
+            bool RetSuccess = false;
+
+            ScheduledRuleActions RuleAction;
+            Enum.TryParse( Action, true, out RuleAction );
+
+            switch( RuleAction )
+            {
+                case ScheduledRuleActions.Unknown:
+                    throw new CswDniException( ErrorType.Error, "Method was invoked with an invalid action", "Cannot call this web method with action " + Action + "." );
+                    break;
+                case ScheduledRuleActions.ClearAllReprobates:
+                    CswTableUpdate RulesUpdate = _OtherResources.makeCswTableUpdate( "ClearAllReprobates_on_accessid_" + _OtherResources.AccessId + "_id", "scheduledrules" );
+                    DataTable RulesTable = RulesUpdate.getTable();
+                    foreach( DataRow Row in RulesTable.Rows )
+                    {
+                        Row["FAILEDCOUNT"] = CswConvert.ToDbVal( 0 );
+                        Row["REPROBATE"] = CswConvert.ToDbVal( 0 );
+                    }
+
+                    RetSuccess = RulesUpdate.update( RulesTable );
+                    break;
+            }
+
+            if( false == RetSuccess )
+            {
+                throw new CswDniException( ErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledrules on Customer ID " + _OtherResources.AccessId + "." );
+            }
+            _finalize( _OtherResources );
+            return RetSuccess;
+        }
+
         public CswNbtObjClassCustomer openCswAdminOnTargetSchema( string PropId, ref string TempPassword )
         {
             CswNbtObjClassCustomer RetNodeAsCustomer = null;

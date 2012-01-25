@@ -3276,6 +3276,34 @@ namespace ChemSW.Nbt.WebServices
 
         } // updateScheduledRule()
 
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string updateAllScheduledRules( string AccessId, string Action )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+                
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
+                ReturnVal["success"] = ws.updateAllScheduledRules( Action );
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // updateScheduledRule()
+
         #endregion Nbt Manager
 
 
