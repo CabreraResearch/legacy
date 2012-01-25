@@ -594,6 +594,22 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
+        /// Convenience function for making new Configuration Variable
+        /// </summary>
+        public void deleteConfigurationVariable( string Name )
+        {
+            // Create the Configuration Variable
+            CswTableUpdate ConfigVarTable = makeCswTableUpdate( "SchemaModTrnsctn_ConfigVarUpdate", "configuration_variables" );
+            DataTable ConfigVarDataTable = ConfigVarTable.getTable( "where variablename='" + Name + "'", true );
+            if( ConfigVarDataTable.Rows.Count == 1 )
+            {
+                ConfigVarDataTable.Rows[0].Delete();
+            }
+            ConfigVarTable.update( ConfigVarDataTable );
+        }
+
+
+        /// <summary>
         /// Convenience function for making new jct_module_actions records
         /// </summary>
         public void createModuleActionJunction( Int32 ModuleId, Int32 ActionId )

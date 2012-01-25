@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data;
-using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -19,15 +16,14 @@ namespace ChemSW.Nbt.Schema
             #region case 24587
 
             // The FKType and FKValue of all Location properties on Location nodetypes should be the Location object class in the master.
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass);
-            foreach(CswNbtMetaDataNodeType LocationNT in LocationOC.NodeTypes)
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+            foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.NodeTypes )
             {
-                CswNbtMetaDataNodeTypeProp LocationProp = LocationNT.getNodeTypePropByObjectClassPropName(CswNbtObjClassLocation.LocationPropertyName);
-                LocationProp.SetFK(CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), LocationOC.ObjectClassId);
+                CswNbtMetaDataNodeTypeProp LocationProp = LocationNT.getNodeTypePropByObjectClassPropName( CswNbtObjClassLocation.LocationPropertyName );
+                LocationProp.SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), LocationOC.ObjectClassId );
             }
-            
-            #endregion case 24587
 
+            #endregion case 24587
 
         }//Update()
 

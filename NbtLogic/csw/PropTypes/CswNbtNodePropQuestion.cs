@@ -59,6 +59,8 @@ namespace ChemSW.Nbt.PropTypes
             get { return _CswNbtNodePropData.Gestalt; }
         }
 
+        private bool _IsValidNode { get { return ( null != NodeId && Int32.MinValue != NodeId.PrimaryKey ); } }
+
         /// <summary>
         /// Answer value as string
         /// </summary>
@@ -74,7 +76,8 @@ namespace ChemSW.Nbt.PropTypes
                     DateTime UpdateDateAnswered = DateAnswered;
                     if( !string.IsNullOrEmpty( AnswerVal ) )
                     {
-                        if( UpdateDateAnswered == DateTime.MinValue )  // case 21056
+                        if( _IsValidNode &&
+                            UpdateDateAnswered == DateTime.MinValue )  // case 21056
                         {
                             UpdateDateAnswered = DateTime.Today;
                         }
@@ -102,14 +105,14 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( value != _CswNbtNodePropData.GetPropRowValue( _CorrectiveActionSubField.Column ) )
                 {
+                    DateTime UpdateDateCorrected = DateTime.MinValue;
+
                     string val = value;
-                    DateTime UpdateDateCorrected = DateTime.Today;
-
-                    if( string.IsNullOrEmpty( val ) )
+                    if( _IsValidNode && false == string.IsNullOrEmpty( val ) )
                     {
-                        UpdateDateCorrected = DateTime.MinValue;
+                        UpdateDateCorrected = DateTime.Today;
                     }
-
+                    
                     DateCorrected = UpdateDateCorrected;
                     //IsCompliant = _IsCompliant;
                     _CswNbtNodePropData.SetPropRowValue( _CorrectiveActionSubField.Column, val );

@@ -597,7 +597,7 @@ namespace ChemSW.Nbt
 
                 if( NodeTypePropId != Int32.MinValue )
                 {
-                    CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtMetaData.getNodeTypeProp( NodeTypePropId );
+                    CswNbtMetaDataNodeTypeProp NodeTypeProp = MetaData.getNodeTypeProp( NodeTypePropId );
                     if( null != NodeTypeProp )
                     {
                         ReturnVal = NodeTypeProp.AuditLevel;
