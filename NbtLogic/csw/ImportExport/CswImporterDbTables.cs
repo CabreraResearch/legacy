@@ -652,10 +652,11 @@ namespace ChemSW.Nbt.ImportExport
                                     try
                                     {
 
+
                                         //Select he corresponding property records
                                         CurrentImportNodeId = CurrentImportNodeRow[_ColName_ImportNodeId].ToString();
                                         CurrentImportNodeName = CurrentImportNodeRow[_ColName_Nodes_NodeName].ToString();
-                                        string TheQuery = "select n.importnodeid, n.nodename,p.* from tmp_import_nodes n join tmp_import_props p on (n.importnodeid=p.importnodeid) where  n.importnodeid='" + CurrentImportNodeId + "'";
+                                        string TheQuery = "select n.importnodeid, n.nodename,p.* from " + _TblName_ImportNodes + " n join " + _TblName_ImportProps + " p on (n.importnodeid=p.importnodeid) where  n.importnodeid='" + CurrentImportNodeId + "'";
                                         CswArbitrarySelect CswArbitrarySelectUnProcessedProps = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssedprops", TheQuery );
                                         DataTable CurrentUnprocssedPropsTable = CswArbitrarySelectUnProcessedProps.getTable();
 
