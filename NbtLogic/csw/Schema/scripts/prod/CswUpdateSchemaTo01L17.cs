@@ -1,8 +1,8 @@
 ﻿
 
+
 using System;
 using System.Data;
-using ChemSW.Core;
 using ChemSW.DB;
 
 namespace ChemSW.Nbt.Schema
@@ -19,13 +19,6 @@ namespace ChemSW.Nbt.Schema
         {
             #region Case 24786
 
-            bool AuditingIsOn = CswConvert.ToBoolean( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.auditing.ToString() ) );
-
-            if( AuditingIsOn )
-            {
-                _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.auditing.ToString(), "0" );
-            }
-
             CswTableUpdate TableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( SchemaVersion.ToString() + "_jct_nodes_props_update", "jct_nodes_props" );
             string UpdateWhere = @"where jctnodepropid in ( 
                                         select n.defaultvalueid from nodetype_props n 
@@ -40,13 +33,8 @@ namespace ChemSW.Nbt.Schema
             }
             TableUpdate.update( UpdateTable );
 
-            if( AuditingIsOn )
-            {
-                _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.auditing.ToString(), "1" );
-            }
 
-            #endregion Case 24769
-
+            #endregion Case 24786
 
         }//Update()
 
