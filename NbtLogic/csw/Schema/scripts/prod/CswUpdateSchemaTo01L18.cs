@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Data;
+using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -33,6 +36,32 @@ namespace ChemSW.Nbt.Schema
 
 
             #endregion Case 24786
+
+            #region Case 24806
+
+            CswNbtMetaDataObjectClass CustomerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
+
+            CswCommaDelimitedString UniqueCustomers = new CswCommaDelimitedString();
+            foreach( CswNbtNode CustomerNode in CustomerOc.getNodes( true, false ) )
+            {
+                CswNbtObjClassCustomer NodeAsCustomer = CswNbtNodeCaster.AsCustomer( CustomerNode );
+                string CustomerId = NodeAsCustomer.CompanyID.Text.Trim().ToLower();
+                if( false == UniqueCustomers.Contains( CustomerId, false ) )
+                {
+                    UniqueCustomers.Add( CustomerId );
+                }
+                else
+                {
+                    CustomerNode.delete();
+                }
+            }
+
+            CswNbtMetaDataObjectClassProp CustomerIdOcp = CustomerOc.getObjectClassProp( CswNbtObjClassCustomer.CompanyIDPropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CustomerIdOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isunique, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CustomerIdOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CustomerIdOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+
+            #endregion Case 24806
 
         }//Update()
 
