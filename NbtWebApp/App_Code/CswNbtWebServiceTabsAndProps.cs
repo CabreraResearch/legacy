@@ -740,6 +740,16 @@ namespace ChemSW.Nbt.WebServices
             return ( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() );
         }
 
+        
+        /// <summary>
+        /// Default content to display when no node is selected, or the tree is empty
+        /// </summary>
+        public JObject getDefaultContent( CswNbtView View )
+        {
+            return CswNbtWebServiceMainMenu.getAddMenu( View, string.Empty, string.Empty );
+        }
+
+
     } // class CswNbtWebServiceTabsAndProps
 
 } // namespace ChemSW.Nbt.WebServices

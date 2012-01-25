@@ -146,27 +146,7 @@ namespace ChemSW.Nbt.WebServices
                 // ADD
                 if( _MenuItems.Contains( "Add" ) )
                 {
-                    JObject AddObj = new JObject();
-
-                    // case 21672
-                    CswNbtViewNode ParentNode = View.Root;
-                    bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
-                    if( LimitToFirstGeneration && View.Visibility == NbtViewVisibility.Property )
-                    {
-                        ParentNode = View.Root.ChildRelationships[0];
-                    }
-                    foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstGeneration )
-                        .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
-                                                         new JObject(
-                                                             new JProperty( "text", Entry.NodeType.NodeTypeName ),
-                                                             new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
-                                                             new JProperty( "relatednodeid", RelatedNodeId ), //for Grid Props
-                                                             new JProperty( "relatednodetypeid", RelatedNodeTypeId ),
-                                                             new JProperty( "action", MenuActions.AddNode.ToString() ) ) ) ) )
-                    {
-                        AddObj.Add( AddNodeType );
-                    }
-
+                    JObject AddObj = getAddMenu(View, RelatedNodeId, RelatedNodeTypeId);
                     if( AddObj.HasValues )
                     {
                         AddObj["haschildren"] = true;
@@ -310,5 +290,32 @@ namespace ChemSW.Nbt.WebServices
 
             return Ret;
         } // getMenu()
+
+
+        public static JObject getAddMenu(CswNbtView View, string RelatedNodeId, string RelatedNodeTypeId )
+        {
+            JObject AddObj = new JObject();
+
+            // case 21672
+            CswNbtViewNode ParentNode = View.Root;
+            bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
+            if( LimitToFirstGeneration && View.Visibility == NbtViewVisibility.Property )
+            {
+                ParentNode = View.Root.ChildRelationships[0];
+            }
+            foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstGeneration )
+                .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
+                                                    new JObject(
+                                                        new JProperty( "text", Entry.NodeType.NodeTypeName ),
+                                                        new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
+                                                        new JProperty( "relatednodeid", RelatedNodeId ), //for Grid Props
+                                                        new JProperty( "relatednodetypeid", RelatedNodeTypeId ),
+                                                        new JProperty( "action", MenuActions.AddNode.ToString() ) ) ) ) )
+            {
+                AddObj.Add( AddNodeType );
+            }
+            return AddObj;
+        } // getAddMenu()
+
     } // class CswNbtWebServiceMainMenu
 } // namespace ChemSW.Nbt.WebServices
