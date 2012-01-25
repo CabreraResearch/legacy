@@ -40,6 +40,7 @@
             onInitFinish: null, // function(AtLeastOneProp) { },
             ShowCheckboxes: false,
             ShowAsReport: true,
+            AjaxWatchGlobal: true,
             NodeCheckTreeId: '',
             onEditView: null, // function(viewid) { }
             Config: false
@@ -109,6 +110,7 @@
                 getProps($tabcontentdiv, tabid);
             } else {
                 CswAjaxJson({
+                    watchGlobal: o.AjaxWatchGlobal,
                     url: o.TabsUrl,
                     data: jsonData,
                     success: function (data) {
@@ -167,6 +169,7 @@
             if( o.EditMode === EditMode.AddInPopup.name && o.Config === false) {
                 // case 20970 - make sure there's room in the quota
                 CswAjaxJson({
+                    watchGlobal: o.AjaxWatchGlobal,
                     url: o.QuotaUrl,
                     data: { NodeTypeId: o.nodetypeid },
                     success: function (data) {
@@ -200,6 +203,7 @@
             };
 
             CswAjaxJson({
+                watchGlobal: o.AjaxWatchGlobal,
                 url: o.PropsUrl,
                 data: jsonData,
                 success: function (data) {
@@ -356,6 +360,7 @@
             var propid = $propdiv.CswAttrNonDom('propid');
             
             CswAjaxJson({
+                watchGlobal: o.AjaxWatchGlobal,
                 url: o.RemovePropUrl,
                 data: { PropId: propid, EditMode: o.EditMode },
                 success: function () {
@@ -384,6 +389,7 @@
                 };
 
                 CswAjaxJson({
+                    watchGlobal: o.AjaxWatchGlobal,
                     url: o.MovePropUrl,
                     data: dataJson,
                     success: function () {
@@ -587,7 +593,8 @@
                     };
 
                     CswAjaxJson({
-                            url: o.SinglePropUrl,
+                        watchGlobal: o.AjaxWatchGlobal,
+                        url: o.SinglePropUrl,
                             data: jsonData,
                             success: function(data) {
                                 var AtLeastOne = { };
@@ -614,6 +621,7 @@
                 };
 
                 CswAjaxJson({
+                    watchGlobal: o.AjaxWatchGlobal,
                     url: o.SavePropUrl,
                     async: (false === o.Multi),
                     data: data,
@@ -626,6 +634,7 @@
                         };
                         function copyNodeProps(onSuccess) {
                             CswAjaxJson({
+                                watchGlobal: o.AjaxWatchGlobal,
                                 url: o.CopyPropValuesUrl,
                                 data: dataJson,
                                 success: function (copy) {

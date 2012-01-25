@@ -666,7 +666,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string runGrid( string ViewId, string IdPrefix, string IncludeNodeKey, string IncludeInQuickLaunch )
+        public string runGrid( string ViewId, string IncludeNodeKey, string IncludeInQuickLaunch )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -683,7 +683,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey, IdPrefix );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
                     ReturnVal = ws.runGrid( IsQuickLaunch );
                 }
 
@@ -702,7 +702,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public void getGridRowsByPage( string ViewId, string Page, string Rows, string IsReport, string IncludeNodeKey, string IdPrefix )
+        public void getGridRowsByPage( string ViewId, string Page, string Rows, string IsReport, string IncludeNodeKey )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -716,7 +716,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey, IdPrefix );
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
                     ReturnVal = g.getGridRowsByPage( CswConvert.ToInt32( Page ) - 1, CswConvert.ToInt32( Rows ), CswConvert.ToBoolean( IsReport ) );
                 }
 
@@ -741,7 +741,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getAllGridRows( string ViewId, string IsReport, string IncludeNodeKey, string IdPrefix )
+        public string getAllGridRows( string ViewId, string IsReport, string IncludeNodeKey )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -756,7 +756,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey, IdPrefix );
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
                     ReturnVal = g.getAllGridRows( CswConvert.ToBoolean( IsReport ) );
                 }
 
@@ -826,7 +826,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string runTree( string ViewId, string IdPrefix, string IncludeNodeId, string IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch )
+        public string runTree( string ViewId, string IdPrefix, string IncludeNodeId, string IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch, string DefaultSelect )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -850,7 +850,7 @@ namespace ChemSW.Nbt.WebServices
                         if( !string.IsNullOrEmpty( IncludeNodeKey ) )
                             RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, wsTools.FromSafeJavaScriptParam( IncludeNodeKey ) );
 
-                        ReturnVal = ws.runTree( RealIncludeNodeId, RealIncludeNodeKey, IncludeNodeRequired, IncludeInQuickLaunch );
+                        ReturnVal = ws.runTree( RealIncludeNodeId, RealIncludeNodeKey, IncludeNodeRequired, IncludeInQuickLaunch, DefaultSelect );
                     }
                 }
 
@@ -2313,10 +2313,10 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-
+                    CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
                     var ws = new CswNbtWebServiceSearch( _CswNbtResources );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.getSearchJson( View, SelectedNodeTypeIdNum, NodeKey );
+                    ReturnVal = ws.getSearchJson( View, SelectedNodeTypeIdNum, NbtNodeKey );
                 }
 
                 _deInitResources();
@@ -2495,15 +2495,10 @@ namespace ChemSW.Nbt.WebServices
                     {
                         foreach( string NodeKey in NodeKeys )
                         {
-                            string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
-                            CswNbtNodeKey NbtNodeKey = null;
-                            if( !string.IsNullOrEmpty( ParsedNodeKey ) )
+                            CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
+                            if( null != NbtNodeKey )
                             {
-                                NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
-                                if( null != NbtNodeKey.NodeId )
-                                {
-                                    NodePrimaryKeys.Add( NbtNodeKey.NodeId );
-                                }
+                                NodePrimaryKeys.Add( NbtNodeKey.NodeId );
                             }
                         }
                     }
@@ -2512,7 +2507,7 @@ namespace ChemSW.Nbt.WebServices
                         foreach( string NodePk in NodePks )
                         {
                             CswPrimaryKey PrimaryKey = _getNodeId( NodePk );
-                            if( PrimaryKey.PrimaryKey != Int32.MinValue && !NodePrimaryKeys.Contains( PrimaryKey ) )
+                            if( null != PrimaryKey && !NodePrimaryKeys.Contains( PrimaryKey ) )
                             {
                                 NodePrimaryKeys.Add( PrimaryKey );
                             }
@@ -2527,7 +2522,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
 
-                    ReturnVal.Add( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
+                    ReturnVal["Succeeded"] = ret;
                 }
 
                 _deInitResources();
@@ -2558,17 +2553,17 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswPrimaryKey RealNodePk = _getNodeId( NodePk );
-                    if( RealNodePk.PrimaryKey != Int32.MinValue )
+                    if( null != RealNodePk )
                     {
                         CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
                         CswPrimaryKey NewNodePk = ws.CopyNode( RealNodePk );
                         if( NewNodePk != null )
                         {
-                            ReturnVal.Add( new JProperty( "NewNodeId", NewNodePk.ToString() ) );
+                            ReturnVal["NewNodeId"] = NewNodePk.ToString();
                         }
                         else
                         {
-                            ReturnVal.Add( new JProperty( "NewNodeId", "" ) );
+                            ReturnVal["NewNodeId"] = "";
                         }
                     }
                 }
@@ -3543,7 +3538,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
+            Context.Response.ContentType = "application/json; charset=utf-8";
             Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
             Context.Response.Flush();
             Context.Response.Write( ReturnVal.ToString() );

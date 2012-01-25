@@ -52,7 +52,8 @@
                                                 //UsePaging: false,
                                                 UseScrollbars: false,
                                                 IncludeInQuickLaunch: false,
-                                                ShowToggleLink: false
+                                                ShowToggleLink: false,
+                                                DefaultSelect: CswNodeTree_DefaultSelect.root.name
                                             });
     
                     $selectdiv.CswComboBox( 'init', {	'ID': o.ID + '_combo', 

@@ -146,7 +146,7 @@ function ajaxInProgress() {
 }
 
 // Events for all Ajax requests
-var onBeforeAjax = null;  // function () {}
+var onBeforeAjax = null;  // function (watchGlobal) {}
 var onAfterAjax = null;   // function (succeeded) {}
 
 function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
@@ -178,7 +178,7 @@ function CswAjaxJson(options) { /// <param name="$" type="jQuery" />
     if(o.watchGlobal) {
         _ajaxCount+=1;
     }
-    if(isFunction(onBeforeAjax)) onBeforeAjax();
+    if (isFunction(onBeforeAjax)) onBeforeAjax(o.watchGlobal);
 
     $.ajax({
         type: 'POST',
@@ -272,7 +272,7 @@ function CswAjaxJsonGet(options) { /// <param name="$" type="jQuery" />
     if(o.watchGlobal) {
         _ajaxCount+=1;
     }
-    if(isFunction(onBeforeAjax)) onBeforeAjax();
+    if (isFunction(onBeforeAjax)) onBeforeAjax(o.watchGlobal);
 
     $.ajax({
         type: 'GET',

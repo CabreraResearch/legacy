@@ -73,9 +73,9 @@ namespace ChemSW.Nbt.Actions
                 Dictionary<Int32, Int32> NodeCountsForObjectClass;
                 _GetNodeCounts( NodeType.ObjectClass.ObjectClassId, out NodeCountsForNodeType, out NodeCountsForObjectClass );
 
-                if( NodeCountsForNodeType.ContainsKey( NodeTypeId ) )
+                if( NodeCountsForNodeType.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
                 {
-                    ret = NodeCountsForNodeType[NodeTypeId];
+                    ret = NodeCountsForNodeType[NodeType.FirstVersionNodeTypeId];
                 }
             }
             return ret;
@@ -379,7 +379,8 @@ namespace ChemSW.Nbt.Actions
             if( NodeType != null )
             {
                 Int32 NodeCount = GetNodeCountForNodeType( NodeTypeId );
-                ret = ( ( NodeType.Quota <= 0 || NodeCount < NodeType.Quota ) &&
+                Int32 Quota = NodeType.FirstVersionNodeType.Quota;
+                ret = ( ( Quota <= 0 || NodeCount < Quota ) &&
                         CheckQuotaOC( NodeType.ObjectClass.ObjectClassId ) );
             }
             return ret;
