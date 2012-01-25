@@ -121,7 +121,7 @@
             //Step 2: Review Scheduled Rules
             makeStepTwo = function() {
                 var rulesGridId = makeStepId('previewGrid_outer', 3), 
-                    $rulesGrid;
+                    $rulesGrid, $headerTable;
 
                 var makeRulesGrid = function() {
                     $rulesGrid = $rulesGrid || $('<div id="' + rulesGridId + '"></div>').appendTo($divStep2);
@@ -170,9 +170,23 @@
                 toggleButton(buttons.cancel, false);
                 toggleButton(buttons.finish, true);
                 toggleButton(buttons.prev, true);
-                
-                $divStep2.append('<p>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</p>');
 
+                $headerTable = $divStep2.CswTable('init', { ID: makeStepId('headerTable') });
+                $headerTable.CswTable('cell', 1, 1).append('<span>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</span>');
+                $headerTable.CswTable('cell', 1, 2).CswButton('init', {
+                        ID: makeSafeId('clearAll'),
+                        enabledText: 'Clear All Reprobates',
+                        disabledText: 'Clearing...',
+                        onclick: function () {
+                            CswAjaxJson({
+                                url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
+                                data: {AccessId: selectedCustomerId, Action: 'ClearAllReprobates'},
+                                success: makeStepTwo
+                            });
+                        }
+                    });
+                $divStep2.append('<br/>');
+                
                 makeRulesGrid();
                 
             },
