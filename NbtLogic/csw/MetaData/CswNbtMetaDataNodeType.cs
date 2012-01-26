@@ -74,9 +74,8 @@ namespace ChemSW.Nbt.MetaData
 
                     _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
 
-                    //_CswNbtMetaDataResources.NodeTypesCollection.Deregister( this );
                     _NodeTypeRow["nodetypename"] = value;
-                    //_CswNbtMetaDataResources.NodeTypesCollection.RegisterExisting( this );
+                    _CswNbtMetaDataResources.NodeTypesCollection.clearCache();
 
                     if( _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypeName != null )
                         _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypeName( this );
@@ -195,9 +194,8 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToInt32( _NodeTypeRow["versionno"] ); }
             set
             {
-                //_CswNbtMetaDataResources.NodeTypesCollection.Deregister( this );
                 _NodeTypeRow["versionno"] = CswConvert.ToDbVal( value );
-                //_CswNbtMetaDataResources.NodeTypesCollection.RegisterExisting( this );
+                _CswNbtMetaDataResources.NodeTypesCollection.clearCache();
             }
         }
         public bool IsLocked

@@ -95,6 +95,13 @@ namespace ChemSW.Nbt.MetaData
         
         public void refreshAll( bool ExcludeDisabledModules )
         {
+            ObjectClassesCollection.clearCache();
+            ObjectClassPropsCollection.clearCache();
+            FieldTypesCollection.clearCache();
+            NodeTypesCollection.clearCache();
+            NodeTypePropsCollection.clearCache();
+            NodeTypeTabsCollection.clearCache();
+
             //CswTimer refreshAllTimer = new CswTimer();
             //// Post existing changes first, so we don't lose them
             //finalize();

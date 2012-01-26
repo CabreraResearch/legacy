@@ -120,9 +120,8 @@ namespace ChemSW.Nbt.MetaData
                 {
                     _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType );
 
-                    //_CswNbtMetaDataResources.NodeTypeTabsCollection.Deregister( this );
                     _NodeTypeTabRow["tabname"] = value;
-                    //_CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterExisting( this );
+                    _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
                 }
             }
         }
@@ -135,9 +134,8 @@ namespace ChemSW.Nbt.MetaData
                 {
                     _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType );
 
-                    //_CswNbtMetaDataResources.NodeTypeTabsCollection.Deregister( this );
                     _NodeTypeTabRow["taborder"] = CswConvert.ToDbVal( value );
-                    //_CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterExisting( this );
+                    _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
                 }
             }
         }

@@ -23,17 +23,14 @@ namespace ChemSW.Nbt.MetaData
                                                           makeFieldType );
         }
 
+        public void clearCache()
+        {
+            _CollImpl.clearCache();
+        }
+
         public CswNbtMetaDataFieldType makeFieldType( CswNbtMetaDataResources Resources, DataRow Row )
         {
             return new CswNbtMetaDataFieldType( Resources, Row );
-        }
-
-        public Collection<ICswNbtMetaDataObject> All
-        {
-            get
-            {
-                return _CollImpl.getAll();
-            }
         }
 
         public Collection<Int32> getFieldTypeIds()
@@ -46,11 +43,13 @@ namespace ChemSW.Nbt.MetaData
             return _CollImpl.getAll().Cast<CswNbtMetaDataFieldType>();
         }
 
+        private Dictionary<CswNbtMetaDataFieldType.NbtFieldType, CswNbtMetaDataFieldType> _ByType = null;
         public CswNbtMetaDataFieldType getFieldType( CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
             return (CswNbtMetaDataFieldType) _CollImpl.getWhereFirst( "where lower(fieldtype)='" + FieldType.ToString().ToLower() + "'" );
         }
 
+        private Dictionary<Int32, CswNbtMetaDataFieldType> _ById = null;
         public CswNbtMetaDataFieldType getFieldType( Int32 FieldTypeId )
         {
             return (CswNbtMetaDataFieldType) _CollImpl.getByPk( FieldTypeId );

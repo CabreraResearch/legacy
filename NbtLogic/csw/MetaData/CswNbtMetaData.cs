@@ -774,12 +774,10 @@ namespace ChemSW.Nbt.MetaData
 
                     foreach( CswNbtMetaDataNodeTypeProp Match in MatchingProps )
                     {
-                        //_CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( Match );
-
                         Match._DataRow["objectclasspropid"] = ObjectClassProp.PropId;
                         FoundMatch = true;
 
-                        //_CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting( Match );
+                        _CswNbtMetaDataResources.NodeTypePropsCollection.clearCache();
                     }
 
                     if( !FoundMatch )
@@ -1047,7 +1045,7 @@ namespace ChemSW.Nbt.MetaData
             ViewsUpdate.update( ViewsTable );
 
             // Update MetaData
-            //_CswNbtMetaDataResources.NodeTypesCollection.Deregister( NodeType );
+            _CswNbtMetaDataResources.NodeTypesCollection.clearCache();
 
             // Delete the NodeType
             NodeType._DataRow.Delete();
@@ -1155,7 +1153,7 @@ namespace ChemSW.Nbt.MetaData
                 OnDeleteNodeTypeProp( NodeTypeProp );
 
             // Update MetaData
-            //_CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( NodeTypeProp );
+            _CswNbtMetaDataResources.NodeTypePropsCollection.clearCache();
 
             // Delete NodeType Prop record
             NodeTypeProp._DataRow.Delete();
@@ -1209,7 +1207,7 @@ namespace ChemSW.Nbt.MetaData
 
 
             // Update MetaData
-            //_CswNbtMetaDataResources.NodeTypeTabsCollection.Deregister( NodeTypeTab );
+            _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
 
             // Delete NodeType Tab record
             NodeTypeTab._DataRow.Delete();

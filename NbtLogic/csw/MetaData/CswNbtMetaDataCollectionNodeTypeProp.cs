@@ -23,17 +23,14 @@ namespace ChemSW.Nbt.MetaData
                                                           makeNodeTypeProp );
         }
 
+        public void clearCache()
+        {
+            _CollImpl.clearCache();
+        }
+
         public CswNbtMetaDataNodeTypeProp makeNodeTypeProp( CswNbtMetaDataResources Resources, DataRow Row )
         {
             return new CswNbtMetaDataNodeTypeProp( Resources, Row );
-        }
-
-        public Collection<ICswNbtMetaDataObject> All
-        {
-            get
-            {
-                return _CollImpl.getAll();
-            }
         }
 
         public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId )

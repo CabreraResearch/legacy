@@ -23,17 +23,14 @@ namespace ChemSW.Nbt.MetaData
                                                           makeNodeTypeTab );
         }
 
+        public void clearCache()
+        {
+            _CollImpl.clearCache();
+        }
+
         public CswNbtMetaDataNodeTypeTab makeNodeTypeTab( CswNbtMetaDataResources Resources, DataRow Row )
         {
             return new CswNbtMetaDataNodeTypeTab( Resources, Row );
-        }
-
-        public Collection<ICswNbtMetaDataObject> All
-        {
-            get
-            {
-                return _CollImpl.getAll();
-            }
         }
 
         public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId )
