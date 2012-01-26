@@ -100,6 +100,8 @@ namespace ChemSW.Nbt.MetaData
                 if( Table.Rows.Count > 0 )
                 {
                     _ByPk[Pk] = _MetaDataObjectMaker( _CswNbtMetaDataResources, Table.Rows[0] );
+                } else {
+                    _ByPk[Pk] = null;
                 }
             }
             return _ByPk[Pk];
