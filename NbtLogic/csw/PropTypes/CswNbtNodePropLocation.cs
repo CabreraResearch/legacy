@@ -351,26 +351,26 @@ namespace ChemSW.Nbt.PropTypes
             string LocationBarcode = string.Empty;
             Int32 Row = Int32.MinValue;
             Int32 Column = Int32.MinValue;
-            if( null != JObject.Property( ( _NodeIdSubField.ToXmlNodeName( true ) ) ) )
+            if( null != JObject[_NodeIdSubField.ToXmlNodeName( true )] )
             {
-                LocationNodeIdStr = (string) JObject.Property( _NodeIdSubField.ToXmlNodeName( true ) ).Value;
+                LocationNodeIdStr = (string) JObject[_NodeIdSubField.ToXmlNodeName( true )];
             }
-            if( null != JObject.Property( _BarcodeSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_BarcodeSubField.ToXmlNodeName( true )] )
             {
-                LocationBarcode = (string) JObject.Property( _BarcodeSubField.ToXmlNodeName( true ) ).Value;
+                LocationBarcode = (string) JObject[_BarcodeSubField.ToXmlNodeName( true )];
             }
-            if( null != JObject.Property( _RowSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_RowSubField.ToXmlNodeName( true )] )
             {
-                Row = CswConvert.ToInt32( JObject.Property( _RowSubField.ToXmlNodeName( true ) ).Value );
+                Row = CswConvert.ToInt32( JObject[_RowSubField.ToXmlNodeName( true )] );
             }
-            if( null != JObject.Property( _ColumnSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_ColumnSubField.ToXmlNodeName( true )] )
             {
-                Column = CswConvert.ToInt32( JObject.Property( _ColumnSubField.ToXmlNodeName( true ) ).Value );
+                Column = CswConvert.ToInt32( JObject[_ColumnSubField.ToXmlNodeName( true )] );
             }
             string SelectedNodeId = _saveProp( LocationNodeIdStr, LocationBarcode, NodeMap, Row, Column );
             if( !string.IsNullOrEmpty( SelectedNodeId ) )
             {
-                JObject.Add( new JProperty( "destnodeid", SelectedNodeId ) );
+                JObject["destnodeid"] = SelectedNodeId;
             }
         }
 
@@ -393,11 +393,11 @@ namespace ChemSW.Nbt.PropTypes
                 SelectedNodeId = LocationNodeId;
             }
 
-             /* As per steve, the intention of this side effect was that the input table from which the PropRow parameter
-              comes would be written back to the original input xml. As Steve says, "it's a bit kookie." Since 
-              the exeprimental algorithm keeps track of all this data in the temporary database tables, we don't need
-              to maintain this. And since it brakes with the column structure of the temp tables, I'm commenting it 
-              out at least for now. Bye bye . . . */
+            /* As per steve, the intention of this side effect was that the input table from which the PropRow parameter
+             comes would be written back to the original input xml. As Steve says, "it's a bit kookie." Since 
+             the exeprimental algorithm keeps track of all this data in the temporary database tables, we don't need
+             to maintain this. And since it brakes with the column structure of the temp tables, I'm commenting it 
+             out at least for now. Bye bye . . . */
             /*
             if( SelectedNodeId != null )
             {
