@@ -1641,7 +1641,7 @@ namespace ChemSW.Nbt.WebServices
 
                     if( nId != Int32.MinValue )
                     {
-                        ICollection Props = null;
+                        IEnumerable<ICswNbtMetaDataProp> Props = null;
                         string PropType = string.Empty;
                         if( Type == "NodeTypeId" )
                         {

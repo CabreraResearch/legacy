@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
@@ -229,7 +230,7 @@ namespace ChemSW.Nbt.WebPages
 
             // Data
 
-            ICollection Props = null;
+            IEnumerable<CswNbtMetaDataNodeTypeProp> Props = null;
             if( _Mode == LayoutMode.Add )
                 Props = NodeType.NodeTypeProps;
             else

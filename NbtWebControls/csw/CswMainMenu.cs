@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -917,7 +918,7 @@ namespace ChemSW.NbtWebControls
                     {
                         // Can't delete the first tab
                         if( ( DesignSelectedType != CswNodeTypeTree.NodeTypeTreeSelectedType.Tab ) ||
-                            ( _CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) ).NodeType.NodeTypeTabs.Count > 1 ) )
+                            ( _CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) ).NodeType.NodeTypeTabs.Count() > 1 ) )
                         {
                             DeleteMenuItem.Visible = true;
 
