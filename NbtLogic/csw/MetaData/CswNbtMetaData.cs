@@ -64,11 +64,11 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Node Type primary keys (Int32)
         /// </summary>
-        public ICollection NodeTypeIds { get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds(); } }
+        public Collection<Int32> NodeTypeIds { get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds(); } }
         /// <summary>
         /// Collection of CswNbtMetaDataNodeType objects
         /// </summary>
-        public ICollection NodeTypes { get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes(); } }
+        public IEnumerable<CswNbtMetaDataNodeType> NodeTypes { get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes(); } }
 
         /// <summary>
         /// Collection of CswNbtMetaDataNodeType objects that have the provided object class
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
 
 
-        public ICollection LatestVersionNodeTypes
+        public IEnumerable<CswNbtMetaDataNodeType> LatestVersionNodeTypes
         {
             get
             {
@@ -103,19 +103,19 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Object Class primary keys (Int32)
         /// </summary>
-        public ICollection ObjectClassIds { get { return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds(); } }
+        public Collection<Int32> ObjectClassIds { get { return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds(); } }
         /// <summary>
         /// Collection of CswNbtMetaDataObjectClass objects
         /// </summary>
-        public ICollection ObjectClasses { get { return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClasses(); } }
+        public IEnumerable<CswNbtMetaDataObjectClass> ObjectClasses { get { return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClasses(); } }
         /// <summary>
         /// Collection of Field Type primary keys
         /// </summary>
-        public ICollection FieldTypeIds { get { return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeIds(); } }
+        public Collection<Int32> FieldTypeIds { get { return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeIds(); } }
         /// <summary>
         /// Collection of CswNbtMetaDataFieldType objects
         /// </summary>
-        public ICollection FieldTypes { get { return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypes(); } }
+        public IEnumerable<CswNbtMetaDataFieldType> FieldTypes { get { return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypes(); } }
 
         /// <summary>
         /// Returns a CswNbtMetaDataObjectClass based on the given NbtObjectClass parameter
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.MetaData
                     _CswNbtMetaDataResources.FieldTypeTableUpdate.update( FieldTypeTable );
 
                     // Keep MetaData up to date
-                    RetFieldType = _CswNbtMetaDataResources.FieldTypesCollection.RegisterNew( Row ) as CswNbtMetaDataFieldType;
+                    //RetFieldType = _CswNbtMetaDataResources.FieldTypesCollection.RegisterNew( Row ) as CswNbtMetaDataFieldType;
                 }
             }
 
@@ -374,7 +374,7 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataResources.NodeTypeTableUpdate.update( NodeTypesTable );
 
             // Update MetaData Collection
-            _CswNbtMetaDataResources.NodeTypesCollection.RegisterNew( InsertedNodeTypesRow );
+            //_CswNbtMetaDataResources.NodeTypesCollection.RegisterNew( InsertedNodeTypesRow );
 
             CswNbtMetaDataNodeType NewNodeType = getNodeType( NodeTypeId );
 
@@ -408,7 +408,8 @@ namespace ChemSW.Nbt.MetaData
                 // Now copy information from the Object Class Prop
                 CopyNodeTypePropFromObjectClassProp( OCProp, NewNodeTypePropRow );
 
-                CswNbtMetaDataNodeTypeProp NewProp = (CswNbtMetaDataNodeTypeProp) _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewNodeTypePropRow );
+                //CswNbtMetaDataNodeTypeProp NewProp = (CswNbtMetaDataNodeTypeProp) _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewNodeTypePropRow );
+                CswNbtMetaDataNodeTypeProp NewProp = new CswNbtMetaDataNodeTypeProp( _CswNbtMetaDataResources, NewNodeTypePropRow );
 
                 // Handle default values
                 CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, NewProp );
@@ -499,8 +500,8 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataResources.NodeTypeTabTableUpdate.update( TabsTable );
 
             // Keep MetaData up to date
-            CswNbtMetaDataNodeTypeTab NewTab = _CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterNew( Row ) as CswNbtMetaDataNodeTypeTab;
-            return NewTab;
+            //CswNbtMetaDataNodeTypeTab NewTab = _CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterNew( Row ) as CswNbtMetaDataNodeTypeTab;
+            return new CswNbtMetaDataNodeTypeTab( _CswNbtMetaDataResources, Row );
         }//makeNewTab()
 
         /// <summary>
@@ -679,7 +680,8 @@ namespace ChemSW.Nbt.MetaData
 
 
             // Keep MetaData up to date
-            CswNbtMetaDataNodeTypeProp NewProp = _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( InsertedRow ) as CswNbtMetaDataNodeTypeProp;
+            //CswNbtMetaDataNodeTypeProp NewProp = _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( InsertedRow ) as CswNbtMetaDataNodeTypeProp;
+            CswNbtMetaDataNodeTypeProp NewProp = new CswNbtMetaDataNodeTypeProp( _CswNbtMetaDataResources, InsertedRow );
             NewProp.IsQuickSearch = NewProp.FieldTypeRule.SearchAllowed;
 
             NewProp.FieldTypeRule.afterCreateNodeTypeProp( NewProp );
@@ -772,12 +774,12 @@ namespace ChemSW.Nbt.MetaData
 
                     foreach( CswNbtMetaDataNodeTypeProp Match in MatchingProps )
                     {
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( Match );
+                        //_CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( Match );
 
                         Match._DataRow["objectclasspropid"] = ObjectClassProp.PropId;
                         FoundMatch = true;
 
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting( Match );
+                        //_CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting( Match );
                     }
 
                     if( !FoundMatch )
@@ -847,7 +849,7 @@ namespace ChemSW.Nbt.MetaData
             if( IsVersioning )
             {
                 // This swaps the existing reference to the new reference!
-                _CswNbtMetaDataResources.NodeTypesCollection.RegisterNew( InsertedNodeTypeRow, OriginalNodeTypeId );
+                //_CswNbtMetaDataResources.NodeTypesCollection.RegisterNew( InsertedNodeTypeRow, OriginalNodeTypeId );
                 // "NodeType" is now the new nodetype copy
                 NewNodeType = NodeType;
                 // get the old one again
@@ -856,7 +858,7 @@ namespace ChemSW.Nbt.MetaData
             else
             {
                 // No swapping
-                _CswNbtMetaDataResources.NodeTypesCollection.RegisterNew( InsertedNodeTypeRow );
+                //_CswNbtMetaDataResources.NodeTypesCollection.RegisterNew( InsertedNodeTypeRow );
                 // "NodeType" is still the original nodetype
                 OldNodeType = NodeType;
                 // get the new one
@@ -891,7 +893,7 @@ namespace ChemSW.Nbt.MetaData
                 _CswNbtMetaDataResources.NodeTypeTabTableUpdate.update( NewTabsTable );
                 TabMap.Add( NodeTypeTab.TabId, NewTabId );
 
-                _CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterNew( NewTabRow, NodeTypeTab.TabId );
+                //_CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterNew( NewTabRow, NodeTypeTab.TabId );
             }
 
             // Copy props 
@@ -924,7 +926,7 @@ namespace ChemSW.Nbt.MetaData
 
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeTypeId, NewPropId, CswConvert.ToInt32( TabMap[NodeTypeProp.EditLayout.TabId] ), NodeTypeProp.EditLayout.DisplayRow, NodeTypeProp.EditLayout.DisplayColumn );
 
-                _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewPropRow, NodeTypeProp.PropId );
+                //_CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewPropRow, NodeTypeProp.PropId );
             }
 
             // Fix Conditional Props (case 22328)
@@ -1045,7 +1047,7 @@ namespace ChemSW.Nbt.MetaData
             ViewsUpdate.update( ViewsTable );
 
             // Update MetaData
-            _CswNbtMetaDataResources.NodeTypesCollection.Deregister( NodeType );
+            //_CswNbtMetaDataResources.NodeTypesCollection.Deregister( NodeType );
 
             // Delete the NodeType
             NodeType._DataRow.Delete();
@@ -1153,7 +1155,7 @@ namespace ChemSW.Nbt.MetaData
                 OnDeleteNodeTypeProp( NodeTypeProp );
 
             // Update MetaData
-            _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( NodeTypeProp );
+            //_CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( NodeTypeProp );
 
             // Delete NodeType Prop record
             NodeTypeProp._DataRow.Delete();
@@ -1207,7 +1209,7 @@ namespace ChemSW.Nbt.MetaData
 
 
             // Update MetaData
-            _CswNbtMetaDataResources.NodeTypeTabsCollection.Deregister( NodeTypeTab );
+            //_CswNbtMetaDataResources.NodeTypeTabsCollection.Deregister( NodeTypeTab );
 
             // Delete NodeType Tab record
             NodeTypeTab._DataRow.Delete();
@@ -1254,7 +1256,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Change a Template Value (with Property IDs) to a Template Text (with Property Names)
         /// </summary>
-        public static string TemplateValueToTemplateText( ICollection PropsCollection, string Template )
+        public static string TemplateValueToTemplateText( IEnumerable<CswNbtMetaDataNodeTypeProp> PropsCollection, string Template )
         {
             string Text = Template;
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsCollection )
@@ -1267,7 +1269,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Change a Template Text (with Property Names) to a Template Value (with Property IDs)
         /// </summary>
-        public static string TemplateTextToTemplateValue( ICollection PropsCollection, string Text )
+        public static string TemplateTextToTemplateValue( IEnumerable<CswNbtMetaDataNodeTypeProp> PropsCollection, string Text )
         {
             string Template = Text;
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsCollection )
@@ -1280,7 +1282,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Change a Template Value (with Property IDs) to an instance value (using the values of those properties)
         /// </summary>
-        public static string TemplateValueToDisplayValue( ICollection PropsCollection, string Template, CswNbtNodePropData PropData )
+        public static string TemplateValueToDisplayValue( IEnumerable<CswNbtMetaDataNodeTypeProp> PropsCollection, string Template, CswNbtNodePropData PropData )
         {
             string Value = Template;
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsCollection )

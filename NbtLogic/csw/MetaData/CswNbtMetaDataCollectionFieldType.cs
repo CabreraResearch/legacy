@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
@@ -9,112 +12,48 @@ namespace ChemSW.Nbt.MetaData
     public class CswNbtMetaDataCollectionFieldType : ICswNbtMetaDataObjectCollection
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
-
-        private Collection<ICswNbtMetaDataObject> _AllFieldTypes;
-        private Hashtable _ById;
-        private SortedList _ByType;
+        private CswNbtMetaDataCollectionImpl _CollImpl;
 
         public CswNbtMetaDataCollectionFieldType( CswNbtMetaDataResources CswNbtMetaDataResources )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
-
-            _AllFieldTypes = new Collection<ICswNbtMetaDataObject>();
-            _ById = new Hashtable();
-            _ByType = new SortedList();
+            _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
+                                                          "fieldtypeid",
+                                                          _CswNbtMetaDataResources.FieldTypeTableUpdate,
+                                                          makeFieldType );
         }
 
-        public Collection<ICswNbtMetaDataObject> All { get { return _AllFieldTypes; } }
+        public CswNbtMetaDataFieldType makeFieldType( CswNbtMetaDataResources Resources, DataRow Row )
+        {
+            return new CswNbtMetaDataFieldType( Resources, Row );
+        }
 
-        public ICollection getFieldTypeIds() { return _ById.Keys; }
-        public ICollection getFieldTypes() { return _ByType.Values; }
+        public Collection<ICswNbtMetaDataObject> All
+        {
+            get
+            {
+                return _CollImpl.getAll();
+            }
+        }
+
+        public Collection<Int32> getFieldTypeIds()
+        {
+            return _CollImpl.getPks();
+        }
+
+        public IEnumerable<CswNbtMetaDataFieldType> getFieldTypes()
+        {
+            return _CollImpl.getAll().Cast<CswNbtMetaDataFieldType>();
+        }
 
         public CswNbtMetaDataFieldType getFieldType( CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
-            CswNbtMetaDataFieldType ret = null;
-            if( _ByType.Contains( FieldType ) )
-                ret = _ByType[FieldType] as CswNbtMetaDataFieldType;
-            return ret;
+            return (CswNbtMetaDataFieldType) _CollImpl.getWhereFirst( "where lower(fieldtype)='" + FieldType.ToString().ToLower() + "'" );
         }
 
         public CswNbtMetaDataFieldType getFieldType( Int32 FieldTypeId )
         {
-            CswNbtMetaDataFieldType ret = null;
-            if( _ById.Contains( FieldTypeId ) )
-                ret = _ById[FieldTypeId] as CswNbtMetaDataFieldType;
-            return ret;
+            return (CswNbtMetaDataFieldType) _CollImpl.getByPk( FieldTypeId );
         }
-
-
-        public void ClearKeys()
-        {
-            _ById.Clear();
-            _ByType.Clear();
-        }
-
-        public ICswNbtMetaDataObject RegisterNew( DataRow Row )
-        {
-            return RegisterNew( Row, Int32.MinValue );
-        }
-        public ICswNbtMetaDataObject RegisterNew( DataRow Row, Int32 PkToOverride )
-        {
-            CswNbtMetaDataFieldType FieldType = null;
-            if( PkToOverride != Int32.MinValue )
-            {
-                // This allows existing objects to always point to the latest version of a field type in the collection
-                FieldType = getFieldType( PkToOverride );
-                Deregister( FieldType );
-
-                CswNbtMetaDataFieldType OldFieldType = new CswNbtMetaDataFieldType( _CswNbtMetaDataResources, FieldType._DataRow );
-                _AllFieldTypes.Add( OldFieldType );
-
-                FieldType.Reassign( Row );
-
-                RegisterExisting( OldFieldType );
-                RegisterExisting( FieldType );
-            }
-            else
-            {
-                FieldType = new CswNbtMetaDataFieldType( _CswNbtMetaDataResources, Row );
-                _AllFieldTypes.Add( FieldType );
-
-                RegisterExisting( FieldType );
-            }
-            return FieldType;
-        }
-
-        public void RegisterExisting( ICswNbtMetaDataObject Object )
-        {
-            if( !( Object is CswNbtMetaDataFieldType ) )
-            {
-                throw new CswDniException( "CswNbtMetaDataCollectionFieldType.Register got an invalid Object as a parameter" );
-            }
-            CswNbtMetaDataFieldType FieldType = Object as CswNbtMetaDataFieldType;
-            _CswNbtMetaDataResources.tryAddToMetaDataCollection( FieldType.FieldTypeId, FieldType, _ById, "FieldType", FieldType.FieldTypeId, FieldType.FieldType.ToString() );
-            _CswNbtMetaDataResources.tryAddToMetaDataCollection( FieldType.FieldType, FieldType, _ByType, "FieldType", FieldType.FieldTypeId, FieldType.FieldType.ToString() );
-        }
-
-        public void Deregister( ICswNbtMetaDataObject Object )
-        {
-            if( !( Object is CswNbtMetaDataFieldType ) )
-            {
-                throw new CswDniException( "CswNbtMetaDataCollectionFieldType.Register got an invalid Object as a parameter" );
-            }
-            CswNbtMetaDataFieldType FieldType = Object as CswNbtMetaDataFieldType;
-
-            _AllFieldTypes.Remove( FieldType );
-            _ByType.Remove( FieldType.FieldType );
-            _ById.Remove( FieldType.FieldTypeId );
-        }
-
-        public void Remove( ICswNbtMetaDataObject Object )
-        {
-            if( !( Object is CswNbtMetaDataFieldType ) )
-            {
-                throw new CswDniException( "CswNbtMetaDataCollectionFieldType.Register got an invalid Object as a parameter" );
-            }
-            CswNbtMetaDataFieldType FieldType = Object as CswNbtMetaDataFieldType;
-
-            _AllFieldTypes.Remove( FieldType );
-        }
-    }
-}
+    } // class CswNbtMetaDataCollectionFieldType
+} // namespace ChemSW.Nbt.MetaData
