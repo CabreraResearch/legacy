@@ -29,57 +29,100 @@ namespace ChemSW.Nbt.MetaData
             _MetaDataObjectMaker = MetaDataObjectMaker;
         } // constructor
 
+        public void clearCache()
+        {
+            _All = null;
+            _Pks = null;
+            _PksWhere = null;
+            _ByPk = null;
+            _getWhere = null;
+        }
+
+        private Collection<ICswNbtMetaDataObject> _All = null;
         public Collection<ICswNbtMetaDataObject> getAll()
         {
-            Collection<ICswNbtMetaDataObject> Coll = new Collection<ICswNbtMetaDataObject>();
-            DataTable Table = _TableUpdate.getTable();
-            foreach( DataRow Row in Table.Rows )
+            if( _All == null )
             {
-                Coll.Add( _MetaDataObjectMaker( _CswNbtMetaDataResources, Row ) );
+                _All = new Collection<ICswNbtMetaDataObject>();
+                DataTable Table = _TableUpdate.getTable();
+                foreach( DataRow Row in Table.Rows )
+                {
+                    _All.Add( _MetaDataObjectMaker( _CswNbtMetaDataResources, Row ) );
+                }
             }
-            return Coll;
+            return _All;
         } // getAll()
 
+        private Collection<Int32> _Pks = null;
         public Collection<Int32> getPks()
         {
-            return getPks( string.Empty );
+            if( _Pks == null )
+            {
+                _Pks = getPks( string.Empty );
+            }
+            return _Pks;
         } // getPks()
 
+        private Dictionary<string,Collection<Int32>> _PksWhere = null;
         public Collection<Int32> getPks(string Where)
         {
-            Collection<Int32> Coll = new Collection<Int32>();
-
-            CswCommaDelimitedString Select = new CswCommaDelimitedString();
-            Select.Add( _PkColumnName );
-            DataTable Table = _TableUpdate.getTable( Select, string.Empty, Int32.MinValue, Where, false );
-
-            foreach( DataRow Row in Table.Rows )
+            if( _PksWhere == null )
             {
-                Coll.Add( CswConvert.ToInt32( Row[_PkColumnName] ) );
+                _PksWhere = new Dictionary<string, Collection<Int32>>();
             }
-            return Coll;
+            if( false == _PksWhere.ContainsKey( Where ) )
+            {
+                CswCommaDelimitedString Select = new CswCommaDelimitedString();
+                Select.Add( _PkColumnName );
+                DataTable Table = _TableUpdate.getTable( Select, string.Empty, Int32.MinValue, Where, false );
+
+                Collection<Int32> Coll = new Collection<Int32>();
+                foreach( DataRow Row in Table.Rows )
+                {
+                    Coll.Add( CswConvert.ToInt32( Row[_PkColumnName] ) );
+                }
+                _PksWhere[Where] = Coll;
+            }
+            return _PksWhere[Where];
         } // getPks(Where)
 
+        private Dictionary<Int32, ICswNbtMetaDataObject> _ByPk = null;
         public ICswNbtMetaDataObject getByPk( Int32 Pk )
         {
-            ICswNbtMetaDataObject ret = null;
-            DataTable Table = _TableUpdate.getTable( _PkColumnName, Pk );
-            if( Table.Rows.Count > 0 )
+            if( _ByPk == null )
             {
-                ret = _MetaDataObjectMaker( _CswNbtMetaDataResources, Table.Rows[0] );
+                _ByPk = new Dictionary<Int32,ICswNbtMetaDataObject>();
             }
-            return ret;
+            if( false == _ByPk.ContainsKey( Pk ) )
+            {
+                ICswNbtMetaDataObject ret = null;
+                DataTable Table = _TableUpdate.getTable( _PkColumnName, Pk );
+                if( Table.Rows.Count > 0 )
+                {
+                    _ByPk[Pk] = _MetaDataObjectMaker( _CswNbtMetaDataResources, Table.Rows[0] );
+                }
+            }
+            return _ByPk[Pk];
         } // getByPk()
 
+        private Dictionary<string, Collection<ICswNbtMetaDataObject>> _getWhere = null;
         public Collection<ICswNbtMetaDataObject> getWhere( string WhereClause )
         {
-            Collection<ICswNbtMetaDataObject> Coll = new Collection<ICswNbtMetaDataObject>();
-            DataTable Table = _TableUpdate.getTable( WhereClause );
-            foreach( DataRow Row in Table.Rows )
+            if( _getWhere == null )
             {
-                Coll.Add( _MetaDataObjectMaker( _CswNbtMetaDataResources, Row ) );
+                _getWhere = new Dictionary<string, Collection<ICswNbtMetaDataObject>>();
             }
-            return Coll;
+            if( false == _getWhere.ContainsKey( WhereClause ) )
+            {
+                Collection<ICswNbtMetaDataObject> Coll = new Collection<ICswNbtMetaDataObject>();
+                DataTable Table = _TableUpdate.getTable( WhereClause );
+                foreach( DataRow Row in Table.Rows )
+                {
+                    Coll.Add( _MetaDataObjectMaker( _CswNbtMetaDataResources, Row ) );
+                }
+                _getWhere[WhereClause] = Coll;
+            }
+            return _getWhere[WhereClause];
         } // getWhere()
 
         public ICswNbtMetaDataObject getWhereFirst( string WhereClause )
