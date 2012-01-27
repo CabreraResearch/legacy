@@ -95,7 +95,6 @@ namespace ChemSW.Nbt.MetaData
             }
             if( false == _ByPk.ContainsKey( Pk ) )
             {
-                ICswNbtMetaDataObject ret = null;
                 DataTable Table = _TableUpdate.getTable( _PkColumnName, Pk );
                 if( Table.Rows.Count > 0 )
                 {
