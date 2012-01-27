@@ -246,10 +246,13 @@ namespace ChemSW.Nbt.ImportExport
             //*********************** Fill Temporary tables
             //_CswImportExportStatusReporter.reportProgress( "Filling temporary tables (this may take a while)" );
             _LastCompletedProcessPhase = ImportProcessPhase.PopulatingTempTableNodes;
+
+            //            CswArbitrarySelect CswArbitrarySelectNodesCriterion = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "importnodesrecorddoesnotexist", "select " + _ColName_ImportNodeId + " from " + _TblName_ImportNodes + " where " + _ColName_ImportNodeId + "=:" + _ColName_ImportNodeId );
             _createTempRecords( TableOfNodesFromXml, _TblName_ImportNodes, _CswNbtImportOptions.MaxInsertRecordsPerTransaction, _CswNbtImportOptions.MaxInsertRecordsPerDisplayUpdate );
             _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
 
             _LastCompletedProcessPhase = ImportProcessPhase.PopulatingTempTableProps;
+            //CswArbitrarySelect CswArbitrarySelectNodesCriterion = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "importnodesrecorddoesnotexist", "select " + _ColName_ImportNodeId + " from " + _TblName_ImportNodes + " where " + _ColName_ImportNodeId + "=:" + _ColName_ImportNodeId );
             _createTempRecords( TableOfPropsFromXml, _TblName_ImportProps, _CswNbtImportOptions.MaxInsertRecordsPerTransaction, _CswNbtImportOptions.MaxInsertRecordsPerDisplayUpdate );
             _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
 
@@ -1100,7 +1103,17 @@ namespace ChemSW.Nbt.ImportExport
                     TotalRecordsToInsert--;
                 }
 
-                if( ( TotalInsertsThisTransaction >= _CswNbtImportOptions.MaxInsertRecordsPerTransaction ) || ( TotalRecordsInsertedSoFar >= TotalRecordsToInsert ) )
+                bool MoreOfSameRecordToImportIETheseArePropRecords_IAgreeThisIsAKludge_SoSueMe = false;
+                Int32 CurrentRowIndex = SourceTable.Rows.IndexOf( CurrentSourceRow );
+                if( ( CurrentRowIndex + 1 ) < SourceTable.Rows.Count )
+                {
+                    if( SourceTable.Rows[CurrentRowIndex + 1][_ColName_ImportNodeId].ToString() == CurrentSourceRow[_ColName_ImportNodeId].ToString() )
+                    {
+                        MoreOfSameRecordToImportIETheseArePropRecords_IAgreeThisIsAKludge_SoSueMe = true; 
+                    }
+                }
+
+                if( ( ( TotalInsertsThisTransaction >= _CswNbtImportOptions.MaxInsertRecordsPerTransaction ) && ( false == MoreOfSameRecordToImportIETheseArePropRecords_IAgreeThisIsAKludge_SoSueMe ) ) || ( TotalRecordsInsertedSoFar >= TotalRecordsToInsert ) )
                 {
                     CswTableUpdate.update( DestinationDataTable );
                     _CswNbtSchemaModTrnsctn.commitTransaction();
