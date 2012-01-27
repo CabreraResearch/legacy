@@ -307,7 +307,7 @@ namespace ChemSW.Nbt.WebServices
             string ThisNodeName = Tree.getNodeNameForCurrentPosition();
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
             string ThisNodeIcon = ThisNodeType.IconFileName;
-            string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
+            string ThisNodeKeyString = ThisNodeKey.ToString();
             string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
             bool ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
 
