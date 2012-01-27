@@ -11,9 +11,5 @@
     <asp:PlaceHolder runat="server" ID="ph" />
     
     <asp:Button runat="server" ID="LoadReportButton" />
-    
-    <script>
-    LoadReport();
-    </script>
 
 </asp:Content>

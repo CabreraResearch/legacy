@@ -167,10 +167,10 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         private void _getVbPropData( JObject ParentObj, CswViewBuilderProp ViewBuilderProp )
         {
-            if( null != ViewBuilderProp )
+            if( null != ViewBuilderProp && ViewBuilderProp.FieldTypeRule.SearchAllowed )
             {
                 CswNbtSubFieldColl SubFields = ViewBuilderProp.FieldTypeRule.SubFields;
-
+                
                 ParentObj["propname"] = ViewBuilderProp.MetaDataPropName;
                 ParentObj["viewbuilderpropid"] = ViewBuilderProp.MetaDataPropId.ToString();
                 ParentObj["relatedidtype"] = ViewBuilderProp.RelatedIdType.ToString();
