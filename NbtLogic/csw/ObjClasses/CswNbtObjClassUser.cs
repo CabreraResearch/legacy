@@ -29,11 +29,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static string DateFormatPropertyName { get { return "Date Format"; } }
         public static string TimeFormatPropertyName { get { return "Time Format"; } }
 
-
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-        private CswNbtObjClassRole _RoleNodeObjClass = null;
-        private CswNbtNode _RoleNode = null;
-        //private CswNbtNode _UserNode = null;
+
 
         public CswNbtObjClassUser( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
@@ -45,42 +42,72 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
+        }//ctor()
 
+        private CswNbtNode __RoleNode = null;
+        private CswNbtNode _RoleNode
+        {
+            get
+            {
+                if( __RoleNode == null )
+                {
+                    _initRole();
+                }
+                return __RoleNode;
+            }
+        } // _RoleNode
+
+        private CswNbtObjClassRole __RoleNodeObjClass= null;
+        private CswNbtObjClassRole _RoleNodeObjClass {
+            get {
+                if( __RoleNodeObjClass == null )
+                {
+                    _initRole();
+                }
+                return __RoleNodeObjClass;
+            } 
+        } // _RoleNodeObjClass
+
+        private void _initRole()
+        {
             if( Node.NodeId != null )
             {
-                CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
-                CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.UsernamePropertyName );
-                CswNbtMetaDataObjectClassProp Role_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.RolePropertyName );
+                //CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                //CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
+                //CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.UsernamePropertyName );
+                //CswNbtMetaDataObjectClassProp Role_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.RolePropertyName );
 
-                // generate the view
-                CswNbtView View = new CswNbtView( _CswNbtResources );
-                View.ViewName = "CswNbtObjClassUser(" + Node.NodeId.ToString() + ")";
-                CswNbtViewRelationship UserRelationship = View.AddViewRelationship( User_ObjectClass, false );
-                UserRelationship.NodeIdsToFilterIn.Add( Node.NodeId );
-                CswNbtViewRelationship RoleRelationship = View.AddViewRelationship( UserRelationship, CswNbtViewRelationship.PropOwnerType.First, Role_ObjectClassProp, false );
+                //// generate the view
+                //CswNbtView View = new CswNbtView( _CswNbtResources );
+                //View.ViewName = "CswNbtObjClassUser(" + Node.NodeId.ToString() + ")";
+                //CswNbtViewRelationship UserRelationship = View.AddViewRelationship( User_ObjectClass, false );
+                //UserRelationship.NodeIdsToFilterIn.Add( Node.NodeId );
+                //CswNbtViewRelationship RoleRelationship = View.AddViewRelationship( UserRelationship, CswNbtViewRelationship.PropOwnerType.First, Role_ObjectClassProp, false );
 
-                // generate the tree
-                ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, true );
+                //// generate the tree
+                //ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, true );
 
 
-                // get user node
-                UserTree.goToRoot();
-                if( UserTree.getChildNodeCount() > 0 )
-                {
-                    UserTree.goToNthChild( 0 );
+                //// get user node
+                //UserTree.goToRoot();
+                //if( UserTree.getChildNodeCount() > 0 )
+                //{
+                //    UserTree.goToNthChild( 0 );
 
-                    //get role node
-                    if( UserTree.getChildNodeCount() > 0 )
-                    {
-                        UserTree.goToNthChild( 0 );
-                        _RoleNode = UserTree.getNodeForCurrentPosition();
-                        _RoleNodeObjClass = CswNbtNodeCaster.AsRole( _RoleNode );
-                    }
-                }
+                //    //get role node
+                //    if( UserTree.getChildNodeCount() > 0 )
+                //    {
+                //        UserTree.goToNthChild( 0 );
+                //        _RoleNode = UserTree.getNodeForCurrentPosition();
+                //        _RoleNodeObjClass = CswNbtNodeCaster.AsRole( _RoleNode );
+                //    }
+                //}
 
-            }
-        }//ctor()
+                __RoleNode = _CswNbtResources.Nodes[RoleId];
+                __RoleNodeObjClass = CswNbtNodeCaster.AsRole( __RoleNode );
+
+            } // if( Node.NodeId != null )
+        } // _initRole()
 
         public new void postChanges( bool ForceUpdate ) //bz# 5446
         {
@@ -258,7 +285,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswPrimaryKey UserId { get { return _CswNbtNode.NodeId; } }
-        public CswPrimaryKey RoleId { get { return _RoleNode.NodeId; } }
+        public CswPrimaryKey RoleId { get { return Role.RelatedNodeId; } }
 
         public CswNbtObjClassUser UserNode { get { return this; } }
         public CswNbtObjClassRole RoleNode { get { return _RoleNodeObjClass; } }

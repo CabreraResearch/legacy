@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using ChemSW.Core;
@@ -66,7 +67,7 @@ namespace ChemSW.Nbt.WebServices
 				{
 					ret["objectclasses"][OCId]["quota"] = "";
 				}
-				ret["objectclasses"][OCId]["nodetypecount"] = ObjectClass.NodeTypes.Count.ToString();
+				ret["objectclasses"][OCId]["nodetypecount"] = ObjectClass.NodeTypes.Count().ToString();
 
 				ret["objectclasses"][OCId]["nodetypes"] = new JObject();
 				foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )

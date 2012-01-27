@@ -379,7 +379,7 @@ namespace ChemSW.NbtWebControls
             if( ShowTabsAndProperties )
             {
                 // Do non-conditional properties (or all properties if ShowConditionalPropertiesBeneath = false)
-                ICollection PropCollection = null;
+                IEnumerable<CswNbtMetaDataNodeTypeProp> PropCollection = null;
                 if( PropertySort == PropertySortSetting.DisplayOrder )
                     PropCollection = Tab.NodeTypePropsByDisplayOrder;
                 else

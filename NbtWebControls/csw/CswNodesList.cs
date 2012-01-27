@@ -129,16 +129,16 @@ namespace ChemSW.NbtWebControls
                                 if( EnableLinks )
                                 {
                                     LinkButton ListLink = new LinkButton();
-                                    ListLink.ID = Tree.getNodeKeyForCurrentPosition().ToJavaScriptParam();
+                                    ListLink.ID = Tree.getNodeKeyForCurrentPosition().ToString();
                                     ListLink.Text = Tree.getNodeNameForCurrentPosition();
-                                    ListLink.OnClientClick = "return " + ClientClickFunctionName + "('" + Tree.getNodeKeyForCurrentPosition().ToJavaScriptParam() + "');";
+                                    ListLink.OnClientClick = "return " + ClientClickFunctionName + "('" + Tree.getNodeKeyForCurrentPosition().ToString() + "');";
                                     _Table.addControl( ThisRow, ListLinkCellNumber, ListLink );
                                     _Table.getCell( ThisRow, ListLinkCellNumber ).Width = Unit.Parse( "100%" );
                                 }
                                 else
                                 {
                                     Label ListLabel = new Label();
-                                    ListLabel.ID = Tree.getNodeKeyForCurrentPosition().ToJavaScriptParam();
+                                    ListLabel.ID = Tree.getNodeKeyForCurrentPosition().ToString();
                                     ListLabel.Text = Tree.getNodeNameForCurrentPosition();
                                     _Table.addControl( ThisRow, ListLinkCellNumber, ListLabel );
                                     _Table.getCell( ThisRow, ListLinkCellNumber ).Width = Unit.Parse( "100%" );

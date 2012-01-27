@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
@@ -108,7 +109,7 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 FakeNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                FakeNodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, string.Empty, FakeNode.NodeId, NodeSpecies.Plain, NodeType.NodeTypeId, NodeType.ObjectClass.ObjectClassId, string.Empty, string.Empty );
+                FakeNodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, FakeNode.NodeId, NodeSpecies.Plain, NodeType.NodeTypeId, NodeType.ObjectClass.ObjectClassId, string.Empty, string.Empty );
 
                 PropertyTable = new CswPropertyTable( Master.CswNbtResources, Master.AjaxManager );
                 PropertyTable.EnableViewState = false;
@@ -229,7 +230,7 @@ namespace ChemSW.Nbt.WebPages
 
             // Data
 
-            ICollection Props = null;
+            IEnumerable<CswNbtMetaDataNodeTypeProp> Props = null;
             if( _Mode == LayoutMode.Add )
                 Props = NodeType.NodeTypeProps;
             else
