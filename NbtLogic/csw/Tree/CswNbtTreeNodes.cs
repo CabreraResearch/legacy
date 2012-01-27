@@ -109,8 +109,9 @@ namespace ChemSW.Nbt
 
             _TreeNode.Attributes.Append( _XmlDoc.CreateAttribute( _AttrName_TreeName ) );
             _TreeNode.Attributes[_AttrName_TreeName].Value = TreeName;
-            CswDelimitedString Path = _makePathToNode( null, _TreeNode );
-            CswNbtNodeKey NodeKey = _makeNodeEntry( null, _TreeNode, Path, null, new CswDelimitedString( CswNbtNodeKey.NodeCountDelimiter ), NodeSpecies.UnKnown );
+            //CswDelimitedString Path = _makePathToNode( null, _TreeNode );
+            //CswNbtNodeKey NodeKey = _makeNodeEntry( null, _TreeNode, Path, null, new CswDelimitedString( CswNbtNodeKey.NodeCountDelimiter ), NodeSpecies.UnKnown );
+            CswNbtNodeKey NodeKey = _makeNodeEntry( null, _TreeNode, null, new CswDelimitedString( CswNbtNodeKey.NodeCountDelimiter ), NodeSpecies.UnKnown );
             _TreeNode.Attributes.Append( _makeAttribute( _AttrName_Key, NodeKey.ToString() ) );
 
             ////Make Root Node*******************************************
@@ -170,14 +171,15 @@ namespace ChemSW.Nbt
             else
                 ParentXmlNode = _TreeNode;
             CswNbtNodeKey ThisParentKey = new CswNbtNodeKey( _CswNbtResources, ParentXmlNode.Attributes[_AttrName_Key].Value.ToString() );
-            CswDelimitedString Path = _makePathToNode( ThisParentKey.TreePath, MoreNode );
+            //CswDelimitedString Path = _makePathToNode( ThisParentKey.TreePath, MoreNode );
 
             CswDelimitedString CountPath = new CswDelimitedString( CswNbtNodeKey.NodeCountDelimiter );
             if( ThisParentKey != null && ThisParentKey.NodeCountPath.Count > 0 )
                 CountPath.FromDelimitedString( ThisParentKey.NodeCountPath );
             CountPath.Add( NodeCount.ToString() );
 
-            CswNbtNodeKey NodeKey = _makeNodeEntry( ParentNodeKey, MoreNode, Path, ViewNode, CountPath, NodeSpecies.More );
+            //CswNbtNodeKey NodeKey = _makeNodeEntry( ParentNodeKey, MoreNode, Path, ViewNode, CountPath, NodeSpecies.More );
+            CswNbtNodeKey NodeKey = _makeNodeEntry( ParentNodeKey, MoreNode, ViewNode, CountPath, NodeSpecies.More );
 
             MoreNode.Attributes.Append( _makeAttribute( _AttrName_Key, NodeKey.ToString() ) );
             //MoreNode.Attributes.Append( _makeAttribute( _AttrName_ShowInGrid, "false" ) );
@@ -208,10 +210,11 @@ namespace ChemSW.Nbt
                 _RootNode.Attributes.Append( _makeAttribute( _AttrName_ObjectClassId, "0" ) );
                 _RootNode.Attributes.Append( _makeAttribute( _AttrName_IconFileName, IconFileName ) );
                 _RootNode.Attributes.Append( _makeAttribute( _AttrName_Selectable, Selectable.ToString().ToLower() ) );
-                CswDelimitedString Path = _makePathToNode( null, _RootNode );
+                //CswDelimitedString Path = _makePathToNode( null, _RootNode );
                 CswDelimitedString CountPath = new CswDelimitedString( CswNbtNodeKey.NodeCountDelimiter );
-                CountPath.Add( "0" );
-                CswNbtNodeKey NodeKey = _makeNodeEntry( null, _RootNode, Path, ViewRoot, CountPath, NodeSpecies.Root );
+                CountPath.Add( "1" );
+                //CswNbtNodeKey NodeKey = _makeNodeEntry( null, _RootNode, Path, ViewRoot, CountPath, NodeSpecies.Root );
+                CswNbtNodeKey NodeKey = _makeNodeEntry( null, _RootNode, ViewRoot, CountPath, NodeSpecies.Root );
                 _RootNode.Attributes.Append( _makeAttribute( _AttrName_Key, NodeKey.ToString() ) );
                 //_RootNode.Attributes.Append( _makeAttribute( _AttrName_ShowInGrid, "false" ) );
                 _RootNode.Attributes.Append( _makeAttribute( _AttrName_ShowInTree, "true" ) );
@@ -275,21 +278,42 @@ namespace ChemSW.Nbt
 
         public bool isNodeDefined( CswNbtNodeKey NodeKey )
         {
-            return ( null != _XmlDoc.SelectSingleNode( NodeKey.TreePath.ToString() ) );
+            return ( null != _getXmlNodeFromKey( NodeKey ) );
         }
 
-        private XmlNode _getXmlNodeFromPath( CswDelimitedString Path )
+        private XmlNode _getXmlNodeFromKey( CswNbtNodeKey NodeKey )
         {
-            XmlNode SelectedNode = null;
+            XmlNode CurrentNode = _XmlDoc.DocumentElement;
+            foreach( Int32 ThisCount in NodeKey.NodeCountPath.ToIntCollection() )
+            {
+                if( CurrentNode != null )
+                {
+                    XmlNodeList ChildNodes = CurrentNode.SelectNodes( _ElemName_Node );
+                    if( ChildNodes.Count >= ThisCount )
+                    {
+                        CurrentNode = ChildNodes[ThisCount - 1];
+                    }
+                    else
+                    {
+                        CurrentNode = null;
+                    }
+                } // if( CurrentNode == null )
+            } // foreach( Int32 ThisCount in NodeKey.NodeCountPath.ToIntCollection() )
+            return CurrentNode;
+        } // _getXmlNodeFromKey()
 
-            // Don't throw -- just return null.
-            //if( null == ( SelectedNode = _XmlDoc.SelectSingleNode( Path ) ) )
-            //    throw ( new CswDniException( "No node matches this path: " + Path ) );
-            SelectedNode = _XmlDoc.SelectSingleNode( Path.ToString( false ) );
+        //private XmlNode _getXmlNodeFromPath( CswDelimitedString Path )
+        //{
+        //    XmlNode SelectedNode = null;
 
-            return ( SelectedNode );
+        //    // Don't throw -- just return null.
+        //    //if( null == ( SelectedNode = _XmlDoc.SelectSingleNode( Path ) ) )
+        //    //    throw ( new CswDniException( "No node matches this path: " + Path ) );
+        //    SelectedNode = _XmlDoc.SelectSingleNode( Path.ToString( false ) );
 
-        }//_getXmlNodeFromPath()
+        //    return ( SelectedNode );
+
+        //}//_getXmlNodeFromPath()
 
         private CswNbtNodeKey _makeNodeKeyFromString( string KeyString )
         {
@@ -366,7 +390,7 @@ namespace ChemSW.Nbt
         public CswNbtNode getNode( CswNbtNodeKey NodeKey )
         {
 
-            return ( _getNbtNodeObjFromXmlNode( _getXmlNodeFromPath( NodeKey.TreePath ) ) );
+            return ( _getNbtNodeObjFromXmlNode( _getXmlNodeFromKey( NodeKey ) ) );
 
         }//getNode()
 
@@ -380,7 +404,7 @@ namespace ChemSW.Nbt
 
             if( !isCurrentPositionRoot() )
             {
-                ReturnVal = _getNbtNodeObjFromXmlNode( _getXmlNodeFromPath( getNodeKeyForParentOfCurrentPosition().TreePath ) );
+                ReturnVal = _getNbtNodeObjFromXmlNode( _getXmlNodeFromKey( getNodeKeyForParentOfCurrentPosition() ) );
             }
 
             _CurrentNode = CurrentNodeSave;
@@ -497,13 +521,13 @@ namespace ChemSW.Nbt
 
         public void makeNodeCurrent( CswNbtNodeKey NodeKey )
         {
-            makeNodeCurrent( NodeKey.TreePath );
+            _CurrentNode = _getXmlNodeFromKey( NodeKey );
         }//makeNodeCurrent() 
 
-        public void makeNodeCurrent( CswDelimitedString TreePath )
-        {
-            _CurrentNode = _getXmlNodeFromPath( TreePath );
-        }//makeNodeCurrent() 
+        //public void makeNodeCurrent( CswDelimitedString TreePath )
+        //{
+        //    _CurrentNode = _getXmlNodeFromPath( TreePath );
+        //}//makeNodeCurrent() 
 
         public CswNbtNode getCurrentNode()
         {
@@ -566,11 +590,12 @@ namespace ChemSW.Nbt
         //    return ( ReturnVal );
         //}//
 
-        private CswNbtNodeKey _makeNodeEntry( CswNbtNodeKey ParentNodeKey, XmlNode XmlNode, CswDelimitedString Path, CswNbtViewNode ViewNode, CswDelimitedString NodeCountPath, NodeSpecies Species )
+        //private CswNbtNodeKey _makeNodeEntry( CswNbtNodeKey ParentNodeKey, XmlNode XmlNode, CswDelimitedString Path, CswNbtViewNode ViewNode, CswDelimitedString NodeCountPath, NodeSpecies Species )
+        private CswNbtNodeKey _makeNodeEntry( CswNbtNodeKey ParentNodeKey, XmlNode XmlNode, CswNbtViewNode ViewNode, CswDelimitedString NodeCountPath, NodeSpecies Species )
         {
             CswNbtNodeKey NewNodeKey = _makeEmptyNodeKey();
 
-            NewNodeKey.TreePath = Path;
+            //NewNodeKey.TreePath = Path;
             NewNodeKey.NodeSpecies = Species;
             NewNodeKey.NodeCountPath = NodeCountPath;
 
@@ -765,19 +790,20 @@ namespace ChemSW.Nbt
                         ParentNodes.Add( NewGroupNode );
 
                         CswDelimitedString GroupCountPath = new CswDelimitedString( CswNbtNodeKey.NodeCountDelimiter );
-                        CswDelimitedString GroupParentTreePath = new CswDelimitedString( CswNbtNodeKey.TreePathDelimiter );
+                        //CswDelimitedString GroupParentTreePath = new CswDelimitedString( CswNbtNodeKey.TreePathDelimiter );
                         CswNbtNodeKey ThisParentKey = new CswNbtNodeKey( _CswNbtResources, ParentXmlNode.Attributes[_AttrName_Key].Value.ToString() );
                         if( ThisParentKey != null && ThisParentKey.NodeCountPath.Count > 0 )
                         {
                             GroupCountPath.FromDelimitedString( ThisParentKey.NodeCountPath );
-                            GroupParentTreePath.FromDelimitedString( ThisParentKey.TreePath );
+                            //GroupParentTreePath.FromDelimitedString( ThisParentKey.TreePath );
                         }
                         XmlNodeList AllGroupList = ParentXmlNode.SelectNodes( _ElemName_NodeGroup );
                         GroupCountPath.Add( ( AllGroupList.Count + 1 ).ToString() );
 
-                        CswDelimitedString GroupTreePath = _makePathToNode( GroupParentTreePath, NewGroupNode );
+                        //CswDelimitedString GroupTreePath = _makePathToNode( GroupParentTreePath, NewGroupNode );
 
-                        CswNbtNodeKey GroupKey = _makeNodeEntry( ParentNodeKey, NewGroupNode, GroupTreePath, Relationship, GroupCountPath, NodeSpecies.Group );
+                        //CswNbtNodeKey GroupKey = _makeNodeEntry( ParentNodeKey, NewGroupNode, GroupTreePath, Relationship, GroupCountPath, NodeSpecies.Group );
+                        CswNbtNodeKey GroupKey = _makeNodeEntry( ParentNodeKey, NewGroupNode, Relationship, GroupCountPath, NodeSpecies.Group );
                         NewGroupNode.Attributes.Append( _makeAttribute( _AttrName_Key, GroupKey.ToString() ) );
                     }
                 }
@@ -807,14 +833,15 @@ namespace ChemSW.Nbt
                 ThisParentNode.AppendChild( NewXmlNode );
                 CswNbtNodeKey ThisParentKey = new CswNbtNodeKey( _CswNbtResources, ThisParentNode.Attributes[_AttrName_Key].Value.ToString() );
 
-                CswDelimitedString Path = _makePathToNode( ThisParentKey.TreePath, NewXmlNode );
+                //CswDelimitedString Path = _makePathToNode( ThisParentKey.TreePath, NewXmlNode );
 
                 CswDelimitedString CountPath = new CswDelimitedString( CswNbtNodeKey.NodeCountDelimiter );
                 if( ThisParentKey != null && ThisParentKey.NodeCountPath.Count > 0 )
                     CountPath.FromDelimitedString( ThisParentKey.NodeCountPath );
                 CountPath.Add( RowCount.ToString() );
 
-                CswNbtNodeKey ThisKey = _makeNodeEntry( ThisParentKey, NewXmlNode, Path, Relationship, CountPath, NodeSpecies.Plain );
+                //CswNbtNodeKey ThisKey = _makeNodeEntry( ThisParentKey, NewXmlNode, Path, Relationship, CountPath, NodeSpecies.Plain );
+                CswNbtNodeKey ThisKey = _makeNodeEntry( ThisParentKey, NewXmlNode, Relationship, CountPath, NodeSpecies.Plain );
                 NewXmlNode.Attributes.Append( _makeAttribute( _AttrName_Key, ThisKey.ToString() ) );
 
                 ReturnKeyColl.Add( ThisKey );
@@ -836,58 +863,60 @@ namespace ChemSW.Nbt
         }
 
 
-        private CswDelimitedString _makePathToNode( CswDelimitedString ParentNodeTreePath, XmlNode XmlNode )
-        {
-            CswDelimitedString Path = new CswDelimitedString( CswNbtNodeKey.TreePathDelimiter );
+        //private CswDelimitedString _makePathToNode( CswDelimitedString ParentNodeTreePath, XmlNode XmlNode )
+        //{
+        //    CswDelimitedString Path = new CswDelimitedString( CswNbtNodeKey.TreePathDelimiter );
 
-            if( XmlNode != _XmlDoc.ChildNodes[0] )
-            {
-                string NewSegment = XmlNode.Name;
-                if( _ElemName_Node == XmlNode.Name && XmlNode != _RootNode )
-                {
-                    NewSegment += "[@" + _AttrName_TableName + "='" + XmlNode.Attributes[_AttrName_TableName].Value + "' and ";
-                    NewSegment += " @" + _AttrName_NodeId + "=" + XmlNode.Attributes[_AttrName_NodeId].Value + "]";
-                }
-                if( _ElemName_NodeGroup == XmlNode.Name )
-                    NewSegment += "[@" + _AttrName_GroupName + "='" + XmlNode.Attributes[_AttrName_GroupName].Value + "']";
+        //    if( XmlNode != _XmlDoc.ChildNodes[0] )
+        //    {
+        //        string NewSegment = XmlNode.Name;
+        //        if( _ElemName_Node == XmlNode.Name && XmlNode != _RootNode )
+        //        {
+        //            //NewSegment += "[@" + _AttrName_TableName + "='" + XmlNode.Attributes[_AttrName_TableName].Value + "' and ";
+        //            NewSegment += "[@" + _AttrName_NodeId + "=" + XmlNode.Attributes[_AttrName_NodeId].Value + "]";
+        //        }
+        //        else if( _ElemName_NodeGroup == XmlNode.Name )
+        //        {
+        //            NewSegment += "[@" + _AttrName_GroupName + "='" + XmlNode.Attributes[_AttrName_GroupName].Value + "']";
+        //        }
 
 
-                if( ParentNodeTreePath != null && ParentNodeTreePath.Count > 0 )
-                {
-                    Path.FromDelimitedString( ParentNodeTreePath );
-                    Path.Add( NewSegment );
-                }
-                else
-                {
-                    Path = _makePathToNode( null, XmlNode.ParentNode );
-                    Path.Add( NewSegment );
-                }
-            }
-            else
-            {
-                Path.Add( "" );  // should start with a delimiter
-                Path.Add( XmlNode.Name );
-            }
-            return Path;
-        }//_makePathToNode()
+        //        if( ParentNodeTreePath != null && ParentNodeTreePath.Count > 0 )
+        //        {
+        //            Path.FromDelimitedString( ParentNodeTreePath );
+        //            Path.Add( NewSegment );
+        //        }
+        //        else
+        //        {
+        //            Path = _makePathToNode( null, XmlNode.ParentNode );
+        //            Path.Add( NewSegment );
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Path.Add( "" );  // should start with a delimiter
+        //        Path.Add( XmlNode.Name );
+        //    }
+        //    return Path;
+        //}//_makePathToNode()
 
         //private static string _makeNodePathSegment( string Attribute, string Value )
         //{
         //    return ( "[@" + Attribute + "=" + Value + "]" );
         //}//_makeNodePathSegment()
 
-        public static CswDelimitedString makeProspectiveNodePath( CswNbtNodeKey ParentKey, CswNbtNode ChildNode )
-        {
-            CswDelimitedString Path = ParentKey.TreePath;
-            if( ChildNode.NodeId != null )
-            {
-                if( Path.Count == 0 )
-                    Path.Add( "" ); // string should start with a delimiter
+        //public static CswDelimitedString makeProspectiveNodePath( CswNbtNodeKey ParentKey, CswNbtNode ChildNode )
+        //{
+        //    CswDelimitedString Path = ParentKey.TreePath;
+        //    if( ChildNode.NodeId != null )
+        //    {
+        //        if( Path.Count == 0 )
+        //            Path.Add( "" ); // string should start with a delimiter
 
-                Path.Add( _ElemName_Node + "[@" + _AttrName_TableName + "='" + ChildNode.NodeId.TableName + "' and " + _AttrName_NodeId + "=" + ChildNode.NodeId.PrimaryKey.ToString() + "]" );
-            }
-            return Path;
-        }//makeProspectiveNodePath()
+        //        Path.Add( _ElemName_Node + "[@" + _AttrName_TableName + "='" + ChildNode.NodeId.TableName + "' and " + _AttrName_NodeId + "=" + ChildNode.NodeId.PrimaryKey.ToString() + "]" );
+        //    }
+        //    return Path;
+        //}//makeProspectiveNodePath()
 
 
         //We cache paths as we build them so that if a path is needed
