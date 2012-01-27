@@ -96,8 +96,8 @@ namespace ChemSW.Nbt.WebServices
             ThisNodeObj["data"] = ThisNodeName;
             ThisNodeObj["icon"] = "Images/icons/" + ThisNodeIcon;
             ThisNodeObj["attr"] = new JObject();
-            //ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeKeyString;   // This is the only unique string for this node in this tree
-            ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeId;
+            ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeKeyString;   // This is the only unique string for this node in this tree
+            //ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeId;
             ThisNodeObj["attr"]["rel"] = ThisNodeRel;
             ThisNodeObj["attr"]["state"] = ThisNodeState;
             ThisNodeObj["attr"]["species"] = ThisNodeKey.NodeSpecies.ToString();
@@ -172,7 +172,8 @@ namespace ChemSW.Nbt.WebServices
                         Tree.makeNodeCurrent( IncludeNodeKey );
                         if( Tree.isCurrentNodeDefined() )
                         {
-                            ReturnObj["selectid"] = _IdPrefix + IncludeNodeKey.NodeId.ToString();
+                            //ReturnObj["selectid"] = _IdPrefix + IncludeNodeKey.NodeId.ToString();
+                            ReturnObj["selectid"] = _IdPrefix + wsTools.ToSafeJavaScriptParam( IncludeNodeKey.ToString() );
                         }
                     }
                     if( ReturnObj["selectid"] == null )
@@ -187,7 +188,8 @@ namespace ChemSW.Nbt.WebServices
                             case "firstchild":
                                 Tree.goToRoot();
                                 Tree.goToNthChild( 0 );
-                                ReturnObj["selectid"] = _IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
+                                //ReturnObj["selectid"] = _IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
+                                ReturnObj["selectid"] = _IdPrefix + wsTools.ToSafeJavaScriptParam( Tree.getNodeKeyForCurrentPosition().ToString() );
                                 break;
                         }
                     }
