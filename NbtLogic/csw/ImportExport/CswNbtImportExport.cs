@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Linq;
 using System.Xml;
 using System.Data;
 using ChemSW.Nbt;
@@ -193,7 +194,7 @@ namespace ChemSW.Nbt.ImportExport
             else
                 return ExportAll( new Collection<CswNbtMetaDataNodeType>(), DoViews, DoNodes );
         }
-        public XmlDocument ExportAll( ICollection NodeTypes, bool DoViews, bool DoNodes )
+        public XmlDocument ExportAll( IEnumerable<CswNbtMetaDataNodeType> NodeTypes, bool DoViews, bool DoNodes )
         {
             _StatusUpdate( "Starting Export" );
 
@@ -204,12 +205,13 @@ namespace ChemSW.Nbt.ImportExport
             //    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
 
             _StatusUpdate( "Saving Selected NodeTypes" );
+            string NodeTypeCount = NodeTypes.Count().ToString();
             Int32 t = 0;
             foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
             {
                 t++;
                 if( t % 10 == 1 )
-                    _StatusUpdate( "Processing NodeType: " + t.ToString() + " of " + NodeTypes.Count.ToString() );
+                    _StatusUpdate( "Processing NodeType: " + t.ToString() + " of " + NodeTypeCount );
                 Frame.AddNodeType( NodeType );
             }
             // }

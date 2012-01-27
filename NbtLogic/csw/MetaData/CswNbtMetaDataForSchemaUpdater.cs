@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.MetaData
             }
 
             // Update MetaData
-            _CswNbtMetaDataResources.ObjectClassPropsCollection.Deregister( ObjectClassProp );
+            _CswNbtMetaDataResources.ObjectClassPropsCollection.clearCache();
 
             // Delete the Object Class Prop
             ObjectClassProp._DataRow.Delete();
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.MetaData
             }
 
             // Update MetaData
-            _CswNbtMetaDataResources.ObjectClassesCollection.Deregister( ObjectClass );
+            _CswNbtMetaDataResources.ObjectClassesCollection.clearCache();
 
             // Delete the Object Class Prop
             ObjectClass._DataRow.Delete();
