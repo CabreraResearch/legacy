@@ -441,8 +441,8 @@ CswAppMode.mode = 'mobile';
                     mobileStorage.deleteNode(objectId, objectJson.viewid);
                     if (false === isBackgroundTask) {
                         mobileStorage.forceContentRefresh(true);
-                        $viewPage = $('#' + objectJson.viewid);
-                        $viewPage.find('#' + objectId + '_li').remove();
+                        $viewPage = $('#' + mobileStorage.currentViewId());
+                        $('#' + objectId + '_li').remove();
                         $viewPage.CswChangePage();
                     }
                 }
