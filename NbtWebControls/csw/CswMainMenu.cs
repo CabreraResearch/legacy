@@ -514,7 +514,7 @@ namespace ChemSW.NbtWebControls
                                     TypeMenuItem.CssClass = SubMenuGroupCssClass;
                                     //TypeMenuItem.Attributes.Add( "onclick", "openNewNodePopup('" + Entry.NodeType.NodeTypeId.ToString() + "', '" + ParentNodeKey.ToJavaScriptParam() + "', '" + ParentNodeKeyViewNode.View.SessionViewId.ToString() + "', '" + Entry.ViewRelationship.UniqueId + "', '" + AddMenuDoesntChangeViewString + "', '" + AddMenuDoesntChangeSelectedNodeString + "');" );
                                     // Case 20544 - Add viewid to querystring
-                                    TypeMenuItem.Attributes.Add( "onclick", "openNewNodePopup('" + Entry.NodeType.NodeTypeId.ToString() + "', '" + ParentNodeKey.ToJavaScriptParam() + "', '" + ParentNodeKeyViewNode.View.SessionViewId.ToString() + "', '" + AddMenuDoesntChangeViewString + "', '" + AddMenuDoesntChangeSelectedNodeString + "', '" + _View.ViewId.ToString() + "');" );
+                                    TypeMenuItem.Attributes.Add( "onclick", "openNewNodePopup('" + Entry.NodeType.NodeTypeId.ToString() + "', '" + ParentNodeKey.ToString() + "', '" + ParentNodeKeyViewNode.View.SessionViewId.ToString() + "', '" + AddMenuDoesntChangeViewString + "', '" + AddMenuDoesntChangeSelectedNodeString + "', '" + _View.ViewId.ToString() + "');" );
                                     _AddMenuItem.Items.Add( TypeMenuItem );
                                 }
                             }
@@ -659,7 +659,7 @@ namespace ChemSW.NbtWebControls
                         if( !CopyNodeType.IsUniqueAndRequired( ref badproperty ) )
                         {
                             _CopyMenuItem.Visible = true;
-                            _CopyMenuItem.Attributes.Add( "onclick", "openCopyPopup('" + SelectedNodeKey.ToJavaScriptParam() + "');" );
+                            _CopyMenuItem.Attributes.Add( "onclick", "openCopyPopup('" + SelectedNodeKey.ToString() + "');" );
                         }
                     }
                 }
@@ -906,7 +906,7 @@ namespace ChemSW.NbtWebControls
                             DeleteMenuItem.Visible = true;
 
                             // This lives in MainLayout.aspx, because the dialog cannot be inside an UpdatePanel.
-                            DeleteMenuItem.Attributes.Add( "onclick", "openDeleteNodePopup('" + SelectedNodeKey.ToJavaScriptParam() + "');" );
+                            DeleteMenuItem.Attributes.Add( "onclick", "openDeleteNodePopup('" + SelectedNodeKey.ToString() + "');" );
                         }
                     }
                     else if( IsDesignMode &&

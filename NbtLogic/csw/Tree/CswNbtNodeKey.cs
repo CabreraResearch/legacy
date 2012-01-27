@@ -52,13 +52,13 @@ namespace ChemSW.Nbt
             return _DelimitedString.ToString();
         }
 
-        /// <summary>
-        /// Convert the NodeKey information into a Javascript-safe delimited string
-        /// </summary>
-        public string ToJavaScriptParam()
-        {
-            return ToString().Replace( @"\", @"\\" ).Replace( "'", @"\'" );
-        }
+        ///// <summary>
+        ///// Convert the NodeKey information into a Javascript-safe delimited string
+        ///// </summary>
+        //public string ToJavaScriptParam()
+        //{
+        //    return ToString().Replace( @"\", @"\\" ).Replace( "'", @"\'" );
+        //}
 
         ///// <summary>
         ///// Returns the TreePath to the parent node

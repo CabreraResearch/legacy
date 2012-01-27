@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
             string ThisNodeName = Tree.getNodeNameForCurrentPosition();
             string ThisNodeIcon = "";
-            string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
+            string ThisNodeKeyString = ThisNodeKey.ToString();
             string ThisNodeId = "";
 
             string ThisNodeRel = "";
@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
             if( ParentKey.NodeSpecies != NodeSpecies.Root )
             {
-                ThisNodeObj["attr"]["parentkey"] = wsTools.ToSafeJavaScriptParam( ParentKey.ToString() );
+                ThisNodeObj["attr"]["parentkey"] = ParentKey.ToString();
             }
 
             if( "leaf" != ThisNodeState && Tree.getChildNodeCount() > 0 )
@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.WebServices
                         if( Tree.isCurrentNodeDefined() )
                         {
                             //ReturnObj["selectid"] = _IdPrefix + IncludeNodeKey.NodeId.ToString();
-                            ReturnObj["selectid"] = _IdPrefix + wsTools.ToSafeJavaScriptParam( IncludeNodeKey.ToString() );
+                            ReturnObj["selectid"] = _IdPrefix + IncludeNodeKey.ToString();
                         }
                     }
                     if( ReturnObj["selectid"] == null )
@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.WebServices
                                 Tree.goToRoot();
                                 Tree.goToNthChild( 0 );
                                 //ReturnObj["selectid"] = _IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
-                                ReturnObj["selectid"] = _IdPrefix + wsTools.ToSafeJavaScriptParam( Tree.getNodeKeyForCurrentPosition().ToString() );
+                                ReturnObj["selectid"] = _IdPrefix + Tree.getNodeKeyForCurrentPosition().ToString();
                                 break;
                         }
                     }
@@ -398,7 +398,7 @@ namespace ChemSW.Nbt.WebServices
                         FirstObj["attr"] = new JObject();
                         FirstObj["attr"]["id"] = _IdPrefix + "root";
                         FirstObj["attr"]["rel"] = "root";
-                        FirstObj["attr"]["cswnbtnodekey"] = wsTools.ToSafeJavaScriptParam( Tree.getNodeKeyForCurrentPosition().ToString() );
+                        FirstObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
                         FirstObj["state"] = "open";
                         FirstObj["children"] = ChildArray;
 

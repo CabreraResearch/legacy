@@ -452,7 +452,7 @@ namespace ChemSW.Nbt.WebServices
                 } //switch( EditMode )
                 if( AllSucceeded && null != RetNbtNodeKey )
                 {
-                    string RetNodeKey = wsTools.ToSafeJavaScriptParam( RetNbtNodeKey );
+                    string RetNodeKey = RetNbtNodeKey.ToString();
                     //string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
                     string RetNodeId = RetNbtNodeKey.NodeId.ToString();
 
