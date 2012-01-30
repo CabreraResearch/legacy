@@ -110,7 +110,7 @@
         var ret = false;
         if (false === Csw.isNullOrUndefined(object)) {
             if (Csw.isArray(object)) {
-                ret = Csw.cswIndexOf(object, index) !== -1;
+                ret = object.indexOf(index) !== -1;
             }
             if (false === ret && object.hasOwnProperty(index)) {
                 ret = true;

@@ -1,10 +1,5 @@
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswSelect.js" />
-/// <reference path="../tools/CswClientDb.js" />
-/// <reference path="CswDateTimePicker.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 var CswTimeInterval = function (options) {
     "use strict";
@@ -218,7 +213,7 @@ var CswTimeInterval = function (options) {
                                             weekdays.push(day);
                                         }
                                     } else {
-                                        weekdays.splice(Csw.cswIndexOf(weekdays, day), 1);
+                                        weekdays.splice(weekdays.indexOf(day), 1);
                                     }
                                     saveWeekInterval();
                                 },

@@ -97,28 +97,6 @@
     Csw.register('isArray', isArray);
     Csw.isArray = Csw.isArray || isArray;
 
-    function cswIndexOf(object, property) {
-        /// <summary>
-        ///   Because IE 8 doesn't implement indexOf on the Array prototype.
-        /// </summary>
-        var ret = -1,
-            i = 0,
-            len = object.length;
-        if (Csw.isFunction(object.indexOf)) {
-            ret = object.indexOf(property);
-        } else if (Csw.hasLength(object) && len > 0) {
-            for ( ; i < len; i++) {
-                if (object[i] === property) {
-                    ret = i;
-                    break;
-                }
-            }
-        }
-        return ret;
-    };
-    Csw.register('cswIndexOf', cswIndexOf);
-    Csw.cswIndexOf = Csw.cswIndexOf || cswIndexOf;
-    
     function array() {
         var retArray = []; 
         if(arguments.length > 0) {
@@ -126,7 +104,7 @@
         }
         
         retArray.contains = retArray.contains || function (value) {
-            return retArray.cswIndexOf(value) != -1;
+            return retArray.indexOf(value) != -1;
         };
         
         return retArray;
