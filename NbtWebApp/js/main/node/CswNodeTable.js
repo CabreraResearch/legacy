@@ -24,7 +24,9 @@
                 onEditNode: null, //function(nodeid,cswnbtnodekey){},
                 onDeleteNode: null, //function(nodeid,cswnbtnodekey){}
                 onSuccess: null, // function() {}
-                rowsize: 3
+                columns: 3,
+                maxlength: 35,
+                rowpadding: 25
             };
             if (options) $.extend(o, options);
             
@@ -32,7 +34,9 @@
             var $table = $parent.CswLayoutTable('init', { 
                                                     ID: o.ID + '_tbl', 
                                                     cellset: { rows: 2, columns: 1 },
-                                                    cellalign: 'center'
+                                                    cellalign: 'center',
+                                                    width: '100%',
+                                                    cellspacing: '5px'
                                                 });
 
             CswAjaxJson({
@@ -53,14 +57,24 @@
                             r+=1;
                         }
                         var cellset = $table.CswLayoutTable('cellset', r, c);
+                        var width = (1/o.columns * 100) + '%';
                         var $thumbnailcell = cellset[1][1]
                                                 .css({ 
-                                                    width: '33%',
-                                                    verticalAlign: 'bottom'
+                                                        paddingTop: o.rowpadding + 'px',
+                                                        width: width,
+                                                        verticalAlign: 'bottom'
                                                      });
                         var $textcell = cellset[2][1]
-                                                .css({ width: '33%' });
-                        var name = '<b>' + nodeObj.nodename + '</b>';
+                                                .css({
+                                                    width: width 
+                                                });
+                        var name;
+                        if (nodeObj.nodename.length > o.maxlength)
+                        {
+                            name = '<b>' + nodeObj.nodename.substr(0,o.maxlength) + '...</b>';
+                        } else {
+                            name = '<b>' + nodeObj.nodename + '</b>';
+                        }
                         var locked = isTrue(nodeObj.locked);
 
                         if (false === isNullOrEmpty(nodeObj.thumbnailurl))
@@ -75,11 +89,18 @@
                         $textcell.append(name + '<br/>');
                         
                         crawlObject(nodeObj.props, function(propObj) {
-                            $textcell.append('' + propObj.propname + ': ' + propObj.gestalt + '<br/>');
+                            $textcell.append('' + propObj.propname + ': ');
+                            if (propObj.gestalt.length > o.maxlength)
+                            {
+                                $textcell.append(propObj.gestalt.substr(0,o.maxlength) + '...');
+                            }else {
+                                $textcell.append(propObj.gestalt);
+                            }
+                            $textcell.append('<br/>');
                         });
             
                         c += 1;
-                        if(c > o.rowsize) { c = 1; r += 1; }
+                        if (c > o.columns) { c = 1; r += 1; }
                     });
 
 
