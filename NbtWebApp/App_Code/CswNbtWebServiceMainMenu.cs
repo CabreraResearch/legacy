@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.WebServices
             if( _MenuItems.Contains( "Search" ) )
             {
                 JObject SearchObj = new JObject();
-                SearchObj["haschildren"] = true;
+                bool HasChildren = false;
                 if( View != null )
                 {
                     if( View.IsSearchable() )
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.WebServices
                         SearchObj["This View"]["nodetypeid"] = NodeTypeId;
                         SearchObj["This View"]["sessionviewid"] = View.SessionViewId.ToString();
                         SearchObj["This View"]["action"] = MenuActions.ViewSearch.ToString();
-                        Ret["Search"] = SearchObj;
+                        HasChildren = true;
                     }
                     if( View.Visibility != NbtViewVisibility.Property )
                     {
@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.WebServices
                         SearchObj["Generic Search"]["nodeid"] = NodeId;
                         SearchObj["Generic Search"]["nodetypeid"] = NodeTypeId;
                         SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
-                        Ret["Search"] = SearchObj;
+                        HasChildren = true;
                     }
                     /* Case 24744: No Generic Search on Grid Props */
                 }
@@ -139,8 +139,14 @@ namespace ChemSW.Nbt.WebServices
                 {
                     SearchObj["Generic Search"] = new JObject();
                     SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                    HasChildren = true;
+                }
+
+                if( HasChildren )
+                {
                     Ret["Search"] = SearchObj;
                 }
+
             }
 
             if( View != null )
