@@ -530,6 +530,7 @@
 
             // Relationship
             $content.find('.' + viewEditClasses.vieweditor_viewrellink.name).click(function () {
+                var row = 1;
                 var $a = $(this);
                 $cell.empty();
                 //$cell.append('For ' + $a.text());
@@ -538,24 +539,39 @@
                 var arbitraryId = $a.CswAttrDom('arbid');
                 var viewnodejson = objHelper.find('arbitraryid', arbitraryId);
 
-                var $table = $cell.CswTable({ 'ID': o.ID + '_editrel', 'FirstCellRightAlign': true });
-                $table.CswTable('cell', 1, 1).append('Allow Deleting');
-                var $allowdeletingcell = $table.CswTable('cell', 1, 2);
-                var $allowdeletingcheck = $allowdeletingcell.CswInput('init',
-                                                                { ID: o.ID + '_adcb',
-                                                                    type: CswInput_Types.checkbox,
-                                                                    onChange: function () {
-                                                                        var $this = $(this);
-                                                                        viewnodejson.allowdelete = $this.is(':checked');
-                                                                    }
-                                                                });
+                var $table = $cell.CswTable({
+                    ID: makeId({ id: o.ID, suffix: "editrel" }),
+                    FirstCellRightAlign: true
+                });
 
-                if (isTrue(viewnodejson.allowdelete)) {
-                    $allowdeletingcheck.CswAttrDom('checked', 'true');
-                }
+                function _makeAllowCB(row, idsuffix, text, checked, onchange) {
+                    $table.CswTable('cell', row, 1).append('Allow ' + text);
+                    var $allowcell = $table.CswTable('cell', row, 2);
+                    var $allowcheck = $allowcell.CswInput('init', {
+                        ID: o.ID + '_adcb',
+                        type: CswInput_Types.checkbox,
+                        onChange: function () {
+                            var $this = $(this);
+                            if (isFunction(onchange)) {
+                                onchange($this.is(':checked'));
+                            }
+                        }
+                    });
 
-                $table.CswTable('cell', 2, 1).append('Group By');
-                var $groupbyselect = $table.CswTable('cell', 2, 2)
+                    if (checked) {
+                        $allowcheck.CswAttrDom('checked', 'true');
+                    }
+                } // makeAllowCB()
+
+                _makeAllowCB(row, 'editrel_view', 'View', isTrue(viewnodejson.allowview), function (checked) { viewnodejson.allowview = checked; });
+                row += 1;
+                _makeAllowCB(row, 'editrel_edit', 'Edit', isTrue(viewnodejson.allowedit), function (checked) { viewnodejson.allowedit = checked; });
+                row += 1;
+                _makeAllowCB(row, 'editrel_del', 'Delete', isTrue(viewnodejson.allowdelete), function (checked) { viewnodejson.allowdelete = checked; });
+                row += 1;
+
+                $table.CswTable('cell', row, 1).append('Group By');
+                var $groupbyselect = $table.CswTable('cell', row, 2)
                                             .CswSelect('init',
                                                 { ID: o.ID + '_gbs',
                                                     onChange: function () {
@@ -577,6 +593,7 @@
                                                         } // if (false === isNullOrEmpty(selval)) {
                                                     } // onChange
                                                 }); // CswSelect
+                row += 1;
 
                 var jsonData = {
                     Type: viewnodejson.secondtype,
@@ -610,8 +627,8 @@
 
                 var $showtreecheck;
                 if (viewmode === "Tree") {
-                    $table.CswTable('cell', 3, 1).append('Show In Tree');
-                    var $showtreecheckcell = $table.CswTable('cell', 3, 2);
+                    $table.CswTable('cell', row, 1).append('Show In Tree');
+                    var $showtreecheckcell = $table.CswTable('cell', row, 2);
                     $showtreecheck = $showtreecheckcell.CswInput('init',
                                                             { ID: o.ID + '_stcb',
                                                                 type: CswInput_Types.checkbox,
@@ -624,6 +641,8 @@
                         $showtreecheck.CswAttrDom('checked', 'true');
                     }
                 }
+                row += 1;
+
             }); // $content.find('.vieweditor_viewrellink').click(function() {
 
             // Property
