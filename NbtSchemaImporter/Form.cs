@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtImportStatus = _WorkerThread.getThreadSafeImportStatus();
 
-            _refreshStatus();
+//            _refreshStatus();
 
 
         }//ctor
@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.Schema
 
             InitSchemaSelectBox.SelectedValue = AccessId;
 
-            _refreshStatus();
+//            _refreshStatus();
         } // InitializerForm()
 
 
@@ -346,7 +346,7 @@ namespace ChemSW.Nbt.Schema
             if( MessageBox.Show( "Remove temporary import tables and reset the import status on schema " + InitSchemaSelectBox.Text + "; Proceed? ", "Reset", MessageBoxButtons.YesNo ) == DialogResult.Yes )
             {
                 _WorkerThread.reset();
-                _refreshStatus();
+//                _refreshStatus();
             }
 
         }
