@@ -802,6 +802,16 @@ namespace ChemSW.Nbt
                                                        NodeTypeName, ObjectClassId, ObjectClassName, Locked );
         }
 
+
+        public void setCurrentNodeChildrenTruncated( bool Truncated )
+        {
+            _CswNbtTreeNodes.setCurrentNodeChildrenTruncated( Truncated );
+        }
+        public bool getCurrentNodeChildrenTruncated()
+        {
+            return _CswNbtTreeNodes.getCurrentNodeChildrenTruncated();
+        }
+
         #endregion //Modification******************************
 
 

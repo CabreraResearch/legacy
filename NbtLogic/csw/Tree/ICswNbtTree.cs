@@ -389,6 +389,18 @@ namespace ChemSW.Nbt
         /// </summary>
         void setCurrentNodeExpandMode( string ExpandMode );
 
+
+        /// <summary>
+        /// Sets whether the current node's children are truncated
+        /// </summary>
+        void setCurrentNodeChildrenTruncated( bool Truncated );
+        
+        /// <summary>
+        /// True if the current node's children are truncated
+        /// </summary>
+        /// <returns></returns>
+        bool getCurrentNodeChildrenTruncated();
+
         /// <summary>
         /// Adds a Property value to a node.  This is the uncommon way to fill property data in for nodes.
         /// </summary>

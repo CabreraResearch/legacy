@@ -65,6 +65,7 @@ namespace ChemSW.Nbt
         private static string _AttrName_ShowInTree = "showintree";
         private static string _AttrName_AddChildren = "addchildren";
         private static string _AttrName_ExpandMode = "expandmode";
+        private static string _AttrName_Truncated = "truncated";
         private static string _AttrName_Locked = "locked";
 
         //******************** NbtNodeProp element
@@ -860,6 +861,30 @@ namespace ChemSW.Nbt
                 _CurrentNode.Attributes.Append( _makeAttribute( _AttrName_ExpandMode, ExpandMode ) );
             else
                 _CurrentNode.Attributes[_AttrName_ExpandMode].Value = ExpandMode;
+        }
+
+        public void setCurrentNodeChildrenTruncated( bool Truncated )
+        {
+            if( null == _CurrentNode )
+                throw ( new CswDniException( "There is no current node" ) );
+
+            if( _CurrentNode.Attributes[_AttrName_Truncated] == null )
+                _CurrentNode.Attributes.Append( _makeAttribute( _AttrName_Truncated, Truncated.ToString().ToLower() ) );
+            else
+                _CurrentNode.Attributes[_AttrName_Truncated].Value = Truncated.ToString().ToLower();
+        }
+
+        public bool getCurrentNodeChildrenTruncated()
+        {
+            bool ret = false;
+            if( null == _CurrentNode )
+                throw ( new CswDniException( "There is no current node" ) );
+
+            if( _CurrentNode.Attributes[_AttrName_Truncated] != null )
+            {
+                ret = CswConvert.ToBoolean( _CurrentNode.Attributes[_AttrName_Truncated].Value );
+            }
+            return ret;
         }
 
 
