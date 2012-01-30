@@ -1,7 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";
@@ -9,7 +7,7 @@
     
     var methods = {
     
-        init: function(options) {
+        init: function (options) {
             var o = {
                 ID: '',
                 selected: '',
@@ -23,23 +21,23 @@
             var $parent = $(this);
             
             var $select = $('<select></select>');
-            var elementId = tryParseString(o.ID);
+            var elementId = Csw.string(o.ID);
             
             $select.CswAttrDom('id',elementId);
             $select.CswAttrDom('name',elementId);
             
-            if (false === isNullOrEmpty(o.cssclass)) {
+            if (false === Csw.isNullOrEmpty(o.cssclass)) {
                 $select.addClass(o.cssclass);
             }
             
-            if (false === isNullOrEmpty(o.value)) {
+            if (false === Csw.isNullOrEmpty(o.value)) {
                 $select.text(o.value);
             }
             
             var values = makeOptions(o.values);
             setOptions(values, o.selected, $select);
             
-            if (isFunction(o.onChange)) {
+            if (Csw.isFunction(o.onChange)) {
                  $select.bind('change', function () {
                     var $this = $(this);
                     o.onChange($this);
@@ -48,7 +46,7 @@
             
             $parent.append($select);
             
-            if(isTrue(o.multiple)) {
+            if(Csw.bool(o.multiple)) {
                 $select.CswAttrDom('multiple', 'multiple').multiselect();    
             }
             
@@ -74,15 +72,15 @@
     
     function makeOption(opt) {
         var ret, display, value;
-        if (contains(opt, 'value') && contains(opt, 'display')) {
+        if (Csw.contains(opt, 'value') && Csw.contains(opt, 'display')) {
             ret = opt;
         }
-        else if (contains(opt, 'value')) {
-            value = tryParseString(opt.value);
+        else if (Csw.contains(opt, 'value')) {
+            value = Csw.string(opt.value);
             ret = { value: value, display: value };
         }
-        else if (contains(opt, 'display')) {
-            display = tryParseString(opt.display);
+        else if (Csw.contains(opt, 'display')) {
+            display = Csw.string(opt.display);
             ret = { value: display, display: display };
         } else {
             ret = { value: opt, display: opt };
@@ -92,9 +90,9 @@
     
     function makeOptions(valueArray) {
         var values = [];
-        crawlObject(valueArray, function(val) {
+        Csw.crawlObject(valueArray, function (val) {
             var value = makeOption(val);
-            if(false === isNullOrEmpty(value)) {
+            if(false === Csw.isNullOrEmpty(value)) {
                 values.push(value);
             }
         }, false);
@@ -102,24 +100,24 @@
     }
     
     function addOption(thisOpt, isSelected, $select) {
-        var value = tryParseString(thisOpt.value);
-        var display = tryParseString(thisOpt.display);
+        var value = Csw.string(thisOpt.value);
+        var display = Csw.string(thisOpt.display);
         var $opt = $('<option value="' + value + '">' + display + '</option>')
                         .appendTo($select);
         if (isSelected) {
             $opt.CswAttrDom('selected', 'selected');
         }
-        if (false === isNullOrEmpty(value.data)) {
+        if (false === Csw.isNullOrEmpty(value.data)) {
             $opt.data(value.dataName, value.data);
         }
     }
     
     function setOptions(values, selected, $select, doEmpty) {
-        if (isArray(values) && values.length > 0) {
+        if (Csw.isArray(values) && values.length > 0) {
             if (doEmpty) {
                 $select.empty();
             }
-            each(values, function(thisOpt) {
+            Csw.each(values, function (thisOpt) {
                 var opt = makeOption(thisOpt);       
                 addOption(opt, (opt.value === selected), $select);
             });

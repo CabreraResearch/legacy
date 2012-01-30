@@ -1,9 +1,5 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswCheckBoxArray.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -24,11 +20,11 @@
                 /*
                 Case 24606: Once we can validate the control
                 if(editMode === ChemSW.enums.EditMode.AddInPopup) {
-                    each(propVals.options, function(option) {
-                        if (contains(option, 'key')) {
+                    Csw.each(propVals.options, function (option) {
+                        if (Csw.contains(option, 'key')) {
                             
-                              var relatedNodeTypeId = tryParseString(o.relatednodetypeid);
-                              if (tryParseString(option.key) === relatedNodeTypeId) 
+                              var relatedNodeTypeId = Csw.string(o.relatednodetypeid);
+                              if (Csw.string(option.key) === relatedNodeTypeId) 
                               one day we can try to set the defaults using the context of the view. Not today.
                             
                                 option.value = 'False';
@@ -66,7 +62,7 @@
                 if(false === o.Multi || false === formdata.MultiIsUnchanged) {
                     attributes.options = formdata.data;
                 } 
-                preparePropJsonForSave(o.Multi, o.propData, attributes);
+                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
                 return $(this);
             } // save()
     };

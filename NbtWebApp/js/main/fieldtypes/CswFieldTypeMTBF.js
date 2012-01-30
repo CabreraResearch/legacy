@@ -1,24 +1,21 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";    
     var pluginName = 'CswFieldTypeMTBF';
 
     var methods = {
-        init: function(o) {
+        init: function (o) {
 
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var startDate = (false === o.Multi) ? tryParseString(propVals.startdatetime.date) : CswMultiEditDefaultValue; 
-            var dateFormat = ServerDateFormatToJQuery(propVals.startdatetime.dateformat);
+            var startDate = (false === o.Multi) ? Csw.string(propVals.startdatetime.date) : CswMultiEditDefaultValue; 
+            var dateFormat = Csw.serverDateFormatToJQuery(propVals.startdatetime.dateformat);
 
-            var value = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue; 
-            var units = (false === o.Multi) ? tryParseString(propVals.units).trim() : CswMultiEditDefaultValue; 
+            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : CswMultiEditDefaultValue; 
+            var units = (false === o.Multi) ? Csw.string(propVals.units).trim() : CswMultiEditDefaultValue; 
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1);
@@ -82,7 +79,7 @@
                 $edittable.hide();
             }
         },
-        save: function(o) { //$propdiv, $xml
+        save: function (o) { //$propdiv, $xml
 
             var attributes = {
                 startdatetime: {
@@ -95,17 +92,17 @@
             var $StartDate = o.$propdiv.find('#' + o.ID + '_sd'),
                 dateVal;
             
-            if (false === isNullOrEmpty($StartDate)) {
+            if (false === Csw.isNullOrEmpty($StartDate)) {
                 dateVal = $StartDate.CswDateTimePicker('value', o.propData.readonly);
                 attributes.startdatetime.date = dateVal.date;
                 attributes.startdatetime.time = dateVal.time;
             }
 
             var $Units = o.$propdiv.find('#' + o.ID + '_units');
-            if (false === isNullOrEmpty($Units)) {
+            if (false === Csw.isNullOrEmpty($Units)) {
                 attributes.units = $Units.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

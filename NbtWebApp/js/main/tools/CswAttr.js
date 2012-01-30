@@ -27,7 +27,7 @@
         }
         return ret;
 
-    }; // function(options) {
+    }; // function (options) {
 
     function doProp($Dom, name, value) {
         var ret = '';
@@ -84,7 +84,7 @@
         }
         return ret;
 
-    }; // function(options) {
+    }; // function (options) {
 
     function doAttr($this, name, value) {
         var ret = $this;

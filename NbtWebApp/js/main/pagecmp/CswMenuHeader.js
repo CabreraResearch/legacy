@@ -1,6 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -8,7 +7,7 @@
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getHeaderMenu',
-            onLogout: function() { },
+            onLogout: function () { },
             onQuotas: function () { },
             onSessions: function () { },
             onSuccess: function () { }
@@ -20,7 +19,7 @@
 
         var $MenuDiv = $(this);
 
-        CswAjaxJson({
+        Csw.ajax({
             url: o.Url,
             data: {},
             success: function (data) {
@@ -31,23 +30,23 @@
                 for (var menuItem in data) {
                     if (data.hasOwnProperty(menuItem)) {
                         var thisItem = data[menuItem];
-                        if (!isNullOrEmpty(menuItem))
+                        if (!Csw.isNullOrEmpty(menuItem))
                         {
-                            var $li = HandleMenuItem({ $ul: $ul, 
+                            var $li = Csw.handleMenuItem({ $ul: $ul, 
                                                         itemKey: menuItem,
                                                         itemJson: thisItem, 
                                                         onLogout: o.onLogout,
                                                         onQuotas: o.onQuotas,
                                                         onSessions: o.onSessions });
 
-                            if (isTrue(thisItem.haschildren)) {
+                            if (Csw.bool(thisItem.haschildren)) {
                                 delete thisItem.haschildren;
                                 var $subul = $('<ul class="subnav"></ul>')
                                     .appendTo($li);
                                 for (var childItem in thisItem) {
                                     if (thisItem.hasOwnProperty(childItem)) {
                                         var thisChild = thisItem[childItem];
-                                        HandleMenuItem({ $ul: $subul, 
+                                        Csw.handleMenuItem({ $ul: $subul, 
                                                          itemKey: childItem,
                                                          itemJson: thisChild, 
                                                          onLogout: o.onLogout,
@@ -69,6 +68,6 @@
         // For proper chaining support
         return this;
 
-    }; // function(options) {
+    }; // function (options) {
 })(jQuery);
 

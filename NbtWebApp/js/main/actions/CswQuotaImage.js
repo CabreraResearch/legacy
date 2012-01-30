@@ -9,7 +9,7 @@
     var pluginName = 'CswQuotaImage';
 
     var methods = {
-        init: function(options) {
+        init: function (options) {
             var o = {
                 Url: '/NbtWebApp/wsNBT.asmx/getQuotaPercent',
                 ID: 'action_quota_image'
@@ -19,11 +19,11 @@
             var $Div = $(this);
 
             // Quota table
-            CswAjaxJson({
+            Csw.ajax({
                 url: o.Url,
                 data: {},
-                success: function(data) {
-                    var percentUsed = tryParseNumber(data.result, 0);
+                success: function (data) {
+                    var percentUsed = Csw.number(data.result, 0);
                     var image = '';
                     $Div.contents().remove();
                     if (percentUsed > 0)

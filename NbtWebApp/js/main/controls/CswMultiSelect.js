@@ -11,7 +11,7 @@
     
     var methods = {
     
-        init: function(options) {
+        init: function (options) {
             var o = {
                 ID: '',
                 values: [{value: '', text: '', selected: '', disabled: ''}],
@@ -22,36 +22,36 @@
             if (options) $.extend(o, options);
             
             
-            var elementId = tryParseString(o.ID),
+            var elementId = Csw.string(o.ID),
                 $select = $('<select multiple="multiple" id="' + elementId + '" name="' + elementId + '"></select>'),
                 optionCount = 0,
-                isMultiEdit = isTrue(o.isMultiEdit);
+                isMultiEdit = Csw.bool(o.isMultiEdit);
             
-            if(false === isNullOrEmpty($(this), true)) {
+            if(false === Csw.isNullOrEmpty($(this), true)) {
                 $(this).append($select);
             }
             
-            if (false === isNullOrEmpty(o.cssclass)) {
+            if (false === Csw.isNullOrEmpty(o.cssclass)) {
                 $select.addClass(o.cssclass);
             }
             
-            if (isFunction(o.onChange)) {
+            if (Csw.isFunction(o.onChange)) {
                  $select.bind('change', function () {
                     var $this = $(this);
                     o.onChange($this);
                  });
             }
 
-            each(o.values, function(option) {
+            Csw.each(o.values, function (option) {
                 var $option,
-                    value = tryParseString(option.value),
-                    text = tryParseString(option.text, value);
-                if(false === isNullOrEmpty(value)) {
+                    value = Csw.string(option.value),
+                    text = Csw.string(option.text, value);
+                if(false === Csw.isNullOrEmpty(value)) {
                     $option = $('<option value="' + value + '" text="' + text + '">' + text + '</option>');
-                    if(isTrue(option.disabled)) {
+                    if(Csw.bool(option.disabled)) {
                         $option.CswAttrDom('disabled', 'disabled');
                     }
-                    if(isTrue(option.selected) && 
+                    if(Csw.bool(option.selected) && 
                        false === isMultiEdit) {
                         $option.CswAttrDom('selected', 'selected');
                     }

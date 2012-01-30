@@ -8,7 +8,7 @@
 	var pluginName = 'CswNodePreview';
 
 	var methods = {
-		'open': function(options) 
+		'open': function (options) 
 			{    
 				var o = {
 					ID: '',
@@ -34,7 +34,7 @@
 								.appendTo('body')
 								.hide();
 
-				var timeoutHandle = setTimeout(function() {
+				var timeoutHandle = setTimeout(function () {
 						$div.CswNodeTabs({
 										ID: o.ID + 'tabs',
 										nodeids: [ o.nodeid ],
@@ -42,7 +42,7 @@
 										EditMode: EditMode.Preview.name,
 										AjaxWatchGlobal: false,
                                         ShowAsReport: false,
-										onInitFinish: function(AtLeastOneProp) {
+										onInitFinish: function (AtLeastOneProp) {
 											if(AtLeastOneProp)
 											{
 												// Make sure preview div is within the window
@@ -70,7 +70,7 @@
 
 				return $div;
 			},
-		'close': function()
+		'close': function ()
 			{
 				var $div = $(this);
 				if($div.length > 0)

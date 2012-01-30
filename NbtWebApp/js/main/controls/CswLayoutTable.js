@@ -7,11 +7,11 @@
         var PluginName = "CswLayoutTable";
 
         var methods = {
-            'init': function(options) {
+            'init': function (options) {
                         var o = {
                             ID: '',
                             cellset: { rows: 1, columns: 1 },
-                            onSwap: function(event, onSwapData)
+                            onSwap: function (event, onSwapData)
                                 { 
                                     var s = { 
                                         table: '',
@@ -23,10 +23,10 @@
                                         swapcolumn: ''
                                     };
                                 },
-                            onAddClick: function() { },
-                            onConfigOn: function() { },
-                            onConfigOff: function() { },
-                            onRemove: function() { },
+                            onAddClick: function () { },
+                            onConfigOn: function () { },
+                            onConfigOff: function () { },
+                            onRemove: function () { },
                             TableCssClass: '',
                             CellCssClass: '',
                             cellalign: '',
@@ -62,7 +62,7 @@
                                                   'OddCellRightAlign': o.OddCellRightAlign,
                                                   'width': o.width,
                                                   'align': o.align,
-                                                  'onCreateCell': function(ev, $table, $newcell, realrow, realcolumn) { 
+                                                  'onCreateCell': function (ev, $table, $newcell, realrow, realcolumn) { 
                                                                     onCreateCell($table, $newcell, realrow, realcolumn, o.cellset.rows, o.cellset.columns);
                                                                   }
                                                 })
@@ -142,7 +142,7 @@
                         return $table;
                     },
 
-            'cellset': function(row, column) 
+            'cellset': function (row, column) 
                     {
                         var $table = $(this);
                         return _getCellSet($table, row, column);
@@ -154,21 +154,21 @@
                         return isConfigMode($table);
                     },
 
-            'toggleConfig': function() 
+            'toggleConfig': function () 
                     {
                         var $table = $(this);
                         var $buttontable = $('#' + $table.CswAttrDom('id') + '_buttontbl');
                         _toggleConfig($table, $buttontable);
                     },
             
-            'ConfigOn': function() 
+            'ConfigOn': function () 
                     {
                         var $table = $(this);
                         var $buttontable = $('#' + $table.CswAttrDom('id') + '_buttontbl');
                         _configOn($table, $buttontable); 
                     },
             
-            'ConfigOff': function() 
+            'ConfigOff': function () 
                     {
                         var $table = $(this);
                         var $buttontable = $('#' + $table.CswAttrDom('id') + '_buttontbl');
@@ -332,15 +332,15 @@
                  .CswAttrNonDom('column', column)
                  .CswAttrNonDom('cellsetrow', cellsetrow)
                  .CswAttrNonDom('cellsetcolumn', cellsetcolumn)
-                 .click(function(ev, dd) { onClick(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
+                 .click(function (ev, dd) { onClick(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
                  .droppable({
                                 hoverClass: 'CswLayoutTable_hover',
-                                drop: function(ev, dd) { 
+                                drop: function (ev, dd) { 
                                     onDrop(ev, dd, $(this), $table, cellsetrows, cellsetcolumns); 
                                 }
                             })
-                 .hover(function(ev, dd) { onHoverIn(ev, dd, $table, $(this)); },
-                        function(ev, dd) { onHoverOut(ev, dd, $table, $(this)); } );
+                 .hover(function (ev, dd) { onHoverIn(ev, dd, $table, $(this)); },
+                        function (ev, dd) { onHoverOut(ev, dd, $table, $(this)); } );
 
             var $celldiv = $('<div class="CswLayoutTable_celldiv"></div>')
                     .appendTo($cell);
@@ -351,7 +351,7 @@
             $table.find('.CswLayoutTable_celldiv')
                     .draggable({
                         revert: "invalid",
-                        drag: function(ev, dd) { onDrag(ev, dd, $(this), $table); }
+                        drag: function (ev, dd) { onDrag(ev, dd, $(this), $table); }
                     });
         }
 
@@ -476,6 +476,6 @@
             $.error('Method ' + method + ' does not exist on ' + PluginName);
         }
 
-    }; // function(options) {
+    }; // function (options) {
 })(jQuery);
 

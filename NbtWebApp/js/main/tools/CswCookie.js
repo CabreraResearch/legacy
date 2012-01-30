@@ -9,14 +9,14 @@
 
     $.CswCookie = function (method) {
         var methods = {
-            'get': function(cookiename) 
+            'get': function (cookiename) 
                 {
                     var ret = $.cookie(cookiename);
                     if(ret == undefined)
                         ret = '';
                     return ret;
                 },
-            'set': function(cookiename, value) 
+            'set': function (cookiename, value) 
                 {
                     $.cookie(cookiename, value);
                 },
@@ -24,7 +24,7 @@
                 {
                     $.cookie(cookiename, '');
                 },
-            'clearAll': function() 
+            'clearAll': function () 
                 {
                     for(var CookieName in CswCookieName) 
                     {

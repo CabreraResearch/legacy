@@ -9,12 +9,12 @@
     var pluginName = 'CswQuotas';
 
     var methods = {
-        init: function(options) {
+        init: function (options) {
             var o = {
                 Url: '/NbtWebApp/wsNBT.asmx/getQuotas',
                 SaveUrl: '/NbtWebApp/wsNBT.asmx/saveQuotas',
                 ID: 'action_quotas',
-                onQuotaChange: null // function() { }
+                onQuotaChange: null // function () { }
             };
             if(options) $.extend(o, options);
 
@@ -41,27 +41,27 @@
                 row += 1;
 
                 // Quota table
-                CswAjaxJson({
+                Csw.ajax({
                     url: o.Url,
                     data: {},
-                    success: function(result) {
+                    success: function (result) {
                         quotaJson = result;
-                        var canedit = isTrue(quotaJson.canedit);
+                        var canedit = Csw.bool(quotaJson.canedit);
                     
-                        crawlObject(quotaJson.objectclasses, function (childObj) {
-                            if(tryParseNumber(childObj.nodetypecount) > 0) {
+                        Csw.crawlObject(quotaJson.objectclasses, function (childObj) {
+                            if(Csw.number(childObj.nodetypecount) > 0) {
 
                                 // one object class row                                
                                 makeQuotaRow($table, row, canedit, 'OC_' + childObj.objectclassid, childObj.objectclass, '', childObj.currentusage, childObj.quota);
                                 row += 1;
 
                                 // several nodetype rows
-                                crawlObject(childObj.nodetypes, function (childObj_nt) {
+                                Csw.crawlObject(childObj.nodetypes, function (childObj_nt) {
                                     makeQuotaRow($table, row, canedit, 'NT_' + childObj_nt.nodetypeid, '', childObj_nt.nodetypename, childObj_nt.currentusage, childObj_nt.quota);
                                     row += 1;
                                 }, false);
                             }
-                        }, false); // crawlObject()
+                        }, false); // Csw.crawlObject()
 
                         if(canedit) {
                             $Div.CswButton({
@@ -102,19 +102,19 @@
             } // makeQuotaRow()
 
             function handleSave() {
-                crawlObject(quotaJson.objectclasses, function (childObj) {
+                Csw.crawlObject(quotaJson.objectclasses, function (childObj) {
                     childObj.quota = $('#' + o.ID + '_OC_' + childObj.objectclassid + '_quota').val();
-                    crawlObject(childObj.nodetypes, function (childObj_nt) {
+                    Csw.crawlObject(childObj.nodetypes, function (childObj_nt) {
                         childObj_nt.quota = $('#' + o.ID + '_NT_' + childObj_nt.nodetypeid + '_quota').val();
                     }, false);
                 }, false);
 
-                CswAjaxJson({
+                Csw.ajax({
                     url: o.SaveUrl,
                     data: { Quotas: JSON.stringify(quotaJson) },
-                    success: function() {
+                    success: function () {
                         initTable();
-                        ChemSW.tools.tryExecMethod(o.onQuotaChange);
+                        Csw.tryExec(o.onQuotaChange);
                     }
                 });
             } // handleSave()

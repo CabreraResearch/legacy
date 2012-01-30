@@ -9,7 +9,7 @@
     var pluginName = 'CswSessions';
 
     var methods = {
-        init: function(options) {
+        init: function (options) {
             var o = {
                 Url: '/NbtWebApp/wsNBT.asmx/getSessions',
                 EndSessionUrl: '/NbtWebApp/wsNBT.asmx/endSession',
@@ -44,17 +44,17 @@
                 row += 1;
 
                 // Sessions table
-                CswAjaxJson({
+                Csw.ajax({
                     url: o.Url,
                     data: {},
-                    success: function(result) {
+                    success: function (result) {
 
-                        crawlObject(result, function (childObj) {
+                        Csw.crawlObject(result, function (childObj) {
                             $cell1 = $table.CswTable('cell', row, 1);
                             $cell1.CswImageButton({ ButtonType: CswImageButton_ButtonType.Fire,
                                                     AlternateText: 'Burn Session',
                                                     ID: o.ID + '_burn_' + childObj.sessionid,
-                                                    onClick: makeDelegate( function(sessionid) { handleBurn(sessionid); }, childObj.sessionid)
+                                                    onClick: Csw.makeDelegate( function (sessionid) { handleBurn(sessionid); }, childObj.sessionid)
                                                 });
 
                             $cell2 = $table.CswTable('cell', row, 2);
@@ -77,7 +77,7 @@
                             $cell6.append(childObj.sessionid);
 
                             row += 1;
-                        }, false); // crawlObject()
+                        }, false); // Csw.crawlObject()
 
                     } // success
                 }); // ajax()
@@ -85,10 +85,10 @@
 
             function handleBurn(sessionId)
             {
-                CswAjaxJson({
+                Csw.ajax({
                     url: o.EndSessionUrl,
                     data: { SessionId: sessionId },
-                    success: function() {
+                    success: function () {
                         initTable();
                     }
                 });

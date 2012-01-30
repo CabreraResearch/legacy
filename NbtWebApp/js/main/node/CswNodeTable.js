@@ -20,10 +20,10 @@
                 nodeid: '',
                 cswnbtnodekey: '',
                 EditMode: EditMode.Edit.name,
-                //onAddNode: function(nodeid,cswnbtnodekey){},
-                onEditNode: null, //function(nodeid,cswnbtnodekey){},
-                onDeleteNode: null, //function(nodeid,cswnbtnodekey){}
-                onSuccess: null, // function() {}
+                //onAddNode: function (nodeid,cswnbtnodekey){},
+                onEditNode: null, //function (nodeid,cswnbtnodekey){},
+                onDeleteNode: null, //function (nodeid,cswnbtnodekey){}
+                onSuccess: null, // function () {}
                 rowsize: 3
             };
             if (options) $.extend(o, options);
@@ -35,7 +35,7 @@
                                                     cellalign: 'center'
                                                 });
 
-            CswAjaxJson({
+            Csw.ajax({
                 url: o.TableUrl,
                 data: { 
                     ViewId: o.viewid, 
@@ -46,7 +46,7 @@
                     var r = 1;
                     var c = 1;
 
-                    crawlObject(data, function(nodeObj) {
+                    Csw.crawlObject(data, function (nodeObj) {
                         var cellset = $table.CswLayoutTable('cellset', r, c);
                         var $thumbnailcell = cellset[1][1]
                                                 .css({ 
@@ -56,7 +56,7 @@
                         var $textcell = cellset[2][1]
                                                 .css({ width: '33%' });
                         var name = '<b>' + nodeObj.nodename + '</b>';
-                        var locked = isTrue(nodeObj.locked);
+                        var locked = Csw.bool(nodeObj.locked);
 
                         $thumbnailcell.append('<img src="'+ nodeObj.thumbnailurl +'" style="max-width: 90%;"><br/>');
                         if(locked) {
@@ -64,7 +64,7 @@
                         }
                         $textcell.append(name + '<br/>');
                         
-                        crawlObject(nodeObj.props, function(propObj) {
+                        Csw.crawlObject(nodeObj.props, function (propObj) {
                             $textcell.append('' + propObj.propname + ': ' + propObj.gestalt + '<br/>');
                         });
             
@@ -73,7 +73,7 @@
                     });
 
 
-                    if (isFunction(o.onSuccess)) {
+                    if (Csw.isFunction(o.onSuccess)) {
                         o.onSuccess();
                     }
                 } // success{} 
@@ -81,7 +81,7 @@
         } // 'init'
     }; // methods
 
-    $.fn.CswNodeTable = function(method) {
+    $.fn.CswNodeTable = function (method) {
         // Method calling logic
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));

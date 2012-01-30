@@ -1,15 +1,12 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";        
     var pluginName = 'CswFieldTypeFile';
 
     var methods = {
-        init: function(o) { 
+        init: function (o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
@@ -20,8 +17,8 @@
 
                 var propVals = o.propData.values;
 
-                var href = tryParseString(propVals.href).trim();
-                var fileName = tryParseString(propVals.name).trim();
+                var href = Csw.string(propVals.href).trim();
+                var fileName = Csw.string(propVals.name).trim();
 
                 var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
                 var $cell11 = $table.CswTable('cell', 1, 1);
@@ -38,13 +35,13 @@
                                 ButtonType: CswImageButton_ButtonType.Edit,
                                 AlternateText: 'Edit',
                                 ID: o.ID + '_edit',
-                                onClick: function() {
+                                onClick: function () {
                                     $.CswDialog('FileUploadDialog', {
                                         url: '/NbtWebApp/wsNBT.asmx/fileForProp',
                                         params: {
                                             PropId: o.propData.id
                                         },
-                                        onSuccess: function() {
+                                        onSuccess: function () {
                                             o.onReload();
                                         }
                                     });
@@ -58,7 +55,7 @@
                                 ButtonType: CswImageButton_ButtonType.Clear,
                                 AlternateText: 'Clear',
                                 ID: o.ID + '_clr',
-                                onClick: function() {
+                                onClick: function () {
                                     /* remember: confirm is globally blocking call */
                                     if (confirm("Are you sure you want to clear this file?")) {
                                         var dataJson = {
@@ -66,10 +63,10 @@
                                             IncludeBlob: true
                                         };
 
-                                        CswAjaxJson({
+                                        Csw.ajax({
                                                 url: '/NbtWebApp/wsNBT.asmx/clearProp',
                                                 data: dataJson,
-                                                success: function() { o.onReload(); }
+                                                success: function () { o.onReload(); }
                                             });
                                     }
                                     return CswImageButton_ButtonType.None;
@@ -78,10 +75,8 @@
                 }
             }
         },
-        save: function(o) {
-//          var $TextBox = $propdiv.find('input');
-//          o.propData.children('barcode').text($TextBox.val());
-            preparePropJsonForSave(o.propData);
+        save: function (o) {
+            Csw.preparePropJsonForSave(o.propData);
         }
     };
     

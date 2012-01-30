@@ -35,7 +35,7 @@ var CswPrint = CswPrint || function (onSuccess) {
     */
     $styleDiv = $newBody.CswDiv();
         
-    if(isFunction(onSuccess)) {
+    if(Csw.isFunction(onSuccess)) {
         onSuccess($styleDiv);
     }
     

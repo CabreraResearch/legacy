@@ -1,21 +1,17 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswSelect.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";        
     var pluginName = 'CswFieldTypeMultiList';
     
     var methods = {
-        init: function(o) {
+        init: function (o) {
 
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var gestalt = tryParseString(o.propData.gestalt).trim();
+            var gestalt = Csw.string(o.propData.gestalt).trim();
             var options = propVals.options;
             
             if (o.ReadOnly) {
@@ -31,30 +27,30 @@
             }
 
         },
-        save: function(o) { //$propdiv, $xml
+        save: function (o) { //$propdiv, $xml
             
             var attributes = { value: null },
                 $multi = o.$propdiv.find('#' + o.ID),
                 cachedVals,
                 distinctVals = [];
             
-            if (false === isNullOrEmpty($multi)) {
+            if (false === Csw.isNullOrEmpty($multi)) {
                 attributes.value = $multi.CswMultiSelect('val');
             }
             
             //CswMultiSelect sorts the val for us, sort o.propData.values.value to make comparision work
-            if(false === isNullOrEmpty(o.propData.values.value)) {
+            if(false === Csw.isNullOrEmpty(o.propData.values.value)) {
                 cachedVals = o.propData.values.value.split(',');
-                each(cachedVals, function(value) {
+                Csw.each(cachedVals, function (value) {
                     //Guarantee the values are distinct locally
-                    if (false === contains(distinctVals, value)) {
+                    if (false === Csw.contains(distinctVals, value)) {
                         distinctVals.push(value);
                     }
                 });
             }
             o.propData.values.value = distinctVals.sort().join(',');
             
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

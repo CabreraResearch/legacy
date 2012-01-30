@@ -35,7 +35,7 @@
                                         })
                                         .appendTo($parent);
 
-            if (!isNullOrEmpty(o.cssclass)) {
+            if (!Csw.isNullOrEmpty(o.cssclass)) {
                 $button.addClass(o.cssclass);
             }
             
@@ -53,9 +53,9 @@
             }
             $button.button(buttonOpt);
             
-            if (isFunction(o.onclick)) {
-                $button.bind('click', function() {
-                    if (!ajaxInProgress()) {
+            if (Csw.isFunction(o.onclick)) {
+                $button.bind('click', function () {
+                    if (false === Csw.ajaxInProgress()) {
                         if (o.disableOnClick) disable($button);
                         o.onclick();
                     } 

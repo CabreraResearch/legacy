@@ -1,17 +1,12 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswGrid.js" />
-/// <reference path="../node/CswNodeGrid.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";        
     var pluginName = 'CswFieldTypeGrid';
    
     var methods = {
-        'init': function(o) { 
+        'init': function (o) { 
             /// <summary>
             ///   Initializes a jqGrid as an NbtNode Prop
             /// </summary>
@@ -25,16 +20,16 @@
                 $Div.append('[Grid display disabled]');
             } else {
 
-                var menuDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype_menu'});
+                var menuDivId = Csw.makeId({prefix: o.ID, ID: 'grid_as_fieldtype_menu'});
                 var $MenuDiv = $('<div id="' + menuDivId + '" name="' + menuDivId + '"></div>');
 
-                var searchDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype_search'});
+                var searchDivId = Csw.makeId({prefix: o.ID, ID: 'grid_as_fieldtype_search'});
                 var $SearchDiv = $('<div id="' + searchDivId + '" name="' + searchDivId + '"></div>');
 
-                var gridDivId = makeId({prefix: o.ID, ID: 'grid_as_fieldtype'});
+                var gridDivId = Csw.makeId({prefix: o.ID, ID: 'grid_as_fieldtype'});
                 var $GridDiv = $('<div id="' + gridDivId + '" name="' + gridDivId + '"></div>');
 
-                var viewid = tryParseString(propVals.viewid).trim();
+                var viewid = Csw.string(propVals.viewid).trim();
                 var gridOpts = {
                     ID: o.ID + '_fieldtypegrid',
                     viewid: viewid, 
@@ -43,15 +38,10 @@
                     readonly: o.ReadOnly,
                     reinit: false,
                     EditMode: o.EditMode,
-                    onEditNode: function() { 
-                        //refreshGrid(gridOpts, cswGrid);
+                    onEditNode: function () { 
                         o.onReload();
                     },
-    //                'onAddNode': function() { 
-    //                    refreshGrid(gridOpts);
-    //                },
-                    onDeleteNode: function() { 
-                        //refreshGrid(gridOpts, cswGrid);
+                    onDeleteNode: function () { 
                         o.onReload();
                     },
                     onSuccess: function (grid) {
@@ -63,23 +53,10 @@
                 $Div.append($MenuDiv, $('<br/>'), $SearchDiv, $('<br/>'), $GridDiv);
             } // if(o.EditMode !== EditMode.AuditHistoryInPopup.name)
         },
-        save: function(o) {
-//          var $TextBox = $propdiv.find('input');
-//          $xml.children('barcode').text($TextBox.val());
-            preparePropJsonForSave(o.propData);
+        save: function (o) {
+            Csw.preparePropJsonForSave(o.propData);
         }
     };
-    
-//    function refreshGrid(options, cswGrid) { 
-//		var g = {
-//			gridOpts: {
-//				reinit: true,
-//				multiselect: false
-//			}
-//		};
-//		if( options ) $.extend(options,g);
-//		cswGrid.changeGridOpts(g);
-//	};
     
     function makeGridMenu($MenuDiv, o, gridOpts, cswGrid, viewid, $SearchDiv) {
         //Case 21741
@@ -90,7 +67,6 @@
                     cswnbtnodekey: o.cswnbtnodekey,
                     propid: o.ID,
                     onAddNode: function () {
-                        //refreshGrid(gridOpts, cswGrid);
                         o.onReload();
                     },
                     onPrintView: function () {
@@ -107,14 +83,14 @@
                     },
                     onSearch: {
                         onViewSearch: function () {
-                            var onSearchSubmit = function(searchviewid) {
+                            var onSearchSubmit = function (searchviewid) {
                                 var s = {};
                                 $.extend(s,gridOpts);
                                 s.viewid = searchviewid;
                                 refreshGrid(s, cswGrid);
                             };
                                 
-                            var onClearSubmit = function(parentviewid) {
+                            var onClearSubmit = function (parentviewid) {
                                 var s = {};
                                 $.extend(s,gridOpts);
                                 s.viewid = parentviewid;
@@ -132,7 +108,7 @@
                         onGenericSearch: null /*not possible here*/
                     },
                     onEditView: function () {
-                        if(isFunction(o.onEditView))
+                        if(Csw.isFunction(o.onEditView))
                         {
                             o.onEditView(viewid);
                         }

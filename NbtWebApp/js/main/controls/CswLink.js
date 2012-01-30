@@ -9,7 +9,7 @@
 	
 	var methods = {
 	
-		init: function(options) 
+		init: function (options) 
 		{
 			var o = {
 				ID: '',
@@ -20,26 +20,26 @@
 			    title: '',
 				rel: '',
 				cssclass: '',
-				onClick: function() {}
+				onClick: function () {}
 			};
 			if (options) $.extend(o, options);
 			
 			var $parent = $(this);
 			var $link = $('<a></a>');
 			
-			var elementId = tryParseString(o.ID,'');
+			var elementId = Csw.string(o.ID,'');
 			if (elementId !== '' ) $link.CswAttrDom('id',elementId);
-			if (false === isNullOrEmpty(o.href)) $link.CswAttrDom('href', o.href);
-			if (false === isNullOrEmpty(o.value)) $link.text(o.value);
-			if (false === isNullOrEmpty(o.cssclass)) $link.addClass(o.cssclass);
-			if (false === isNullOrEmpty(o.type)) $link.CswAttrDom('type',o.type);
-		    if (false === isNullOrEmpty(o.title)) $link.CswAttrDom('title',o.title);
-			if (false === isNullOrEmpty(o.rel)) $link.CswAttrDom('rel',o.rel);
-			if (false === isNullOrEmpty(o.media)) $link.CswAttrDom('media',o.media);
-			if (false === isNullOrEmpty(o.target)) $link.CswAttrDom('target',o.target);
-			if (false === isNullOrEmpty(o.onClick)) 
+			if (false === Csw.isNullOrEmpty(o.href)) $link.CswAttrDom('href', o.href);
+			if (false === Csw.isNullOrEmpty(o.value)) $link.text(o.value);
+			if (false === Csw.isNullOrEmpty(o.cssclass)) $link.addClass(o.cssclass);
+			if (false === Csw.isNullOrEmpty(o.type)) $link.CswAttrDom('type',o.type);
+		    if (false === Csw.isNullOrEmpty(o.title)) $link.CswAttrDom('title',o.title);
+			if (false === Csw.isNullOrEmpty(o.rel)) $link.CswAttrDom('rel',o.rel);
+			if (false === Csw.isNullOrEmpty(o.media)) $link.CswAttrDom('media',o.media);
+			if (false === Csw.isNullOrEmpty(o.target)) $link.CswAttrDom('target',o.target);
+			if (false === Csw.isNullOrEmpty(o.onClick)) 
 			{
-				$link.click( function() {
+				$link.click( function () {
 							 o.onClick();
 				});
 			}

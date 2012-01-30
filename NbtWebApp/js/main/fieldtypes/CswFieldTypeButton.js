@@ -1,43 +1,39 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswButton.js" />
+﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";
     var pluginName = 'CswFieldTypeButton';
 
     var onButtonClick = function (propid, $button, o) {
-        var propAttr = tryParseString(propid),
+        var propAttr = Csw.string(propid),
             params;
 
         $button.CswButton('disable');
-        if (isNullOrEmpty(propAttr)) {
-            CswError(ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
+        if (Csw.isNullOrEmpty(propAttr)) {
+            Csw.error(ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
             $button.CswButton('enable');
         } else {
             params = {
                 NodeTypePropAttr: propAttr
             };
 
-            CswAjaxJson({
+            Csw.ajax({
                 url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
                 data: params,
                 success: function (data) {
                     $button.CswButton('enable');
-                    if (isTrue(data.success)) {
+                    if (Csw.bool(data.success)) {
                         switch (data.action) {
                             case ChemSW.enums.CswOnObjectClassClick.reauthenticate:
-                                if (manuallyCheckChanges()) // case 24669
+                                if (Csw.manuallyCheckChanges()) // case 24669
                                 {
                                     $.CswCookie('clearAll');
-                                    CswAjaxJson({
+                                    Csw.ajax({
                                         url: '/NbtWebApp/wsNBT.asmx/reauthenticate',
                                         data: { PropId: propAttr },
                                         success: function () {
-                                            unsetChanged();
+                                            Csw.unsetChanged();
                                             window.location = "Main.html";
                                         }
                                     });
@@ -66,8 +62,8 @@
             $Div.contents().remove();
 
             var propVals = o.propData.values,
-                value = tryParseString(propVals.text, o.propData.name),
-                mode = tryParseString(propVals.mode, 'button'),
+                value = Csw.string(propVals.text, o.propData.name),
+                mode = Csw.string(propVals.mode, 'button'),
                 $button;
 
             //Read-only doesn't make sense for buttons
@@ -99,7 +95,7 @@
             //}
         },
         save: function (o) {
-            preparePropJsonForSave(o.propData);
+            Csw.preparePropJsonForSave(o.propData);
         }
     };
 

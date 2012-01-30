@@ -8,7 +8,7 @@
     var pluginName = "CswWizard";
 
     var methods = {
-        'init': function(options) {
+        'init': function (options) {
             var o = {
                 ID: '',
                 Title: 'A Wizard',
@@ -17,12 +17,12 @@
                 StartingStep: 1,
                 SelectedStep: 1,
                 FinishText: 'Finish',
-                onNext: function() { },
-                onPrevious: function() { },
-                onBeforeNext: function() { return true; },
-                onBeforePrevious: function() { return true; },
-                onFinish: function() { },
-                onCancel: function() {},
+                onNext: function () { },
+                onPrevious: function () { },
+                onBeforeNext: function () { return true; },
+                onBeforePrevious: function () { return true; },
+                onFinish: function () { },
+                onCancel: function () {},
                 doNextOnInit: true
             };
             if (options) $.extend(o, options);
@@ -56,7 +56,7 @@
 //					$('<div class="CswWizard_StepLinkDiv" stepno="' + s + '"><a href="#">' + s + '.&nbsp;' + steptitle + '</a></div>')
 //										.appendTo($indexcell)
 //										.children('a')
-//										.click( function(stepno) { return function() { _selectStep($table, stepno); return false; }; }(s) );
+//										.click( function (stepno) { return function () { _selectStep($table, stepno); return false; }; }(s) );
                 $('<div class="CswWizard_StepLinkDiv" stepno="' + s + '">' + s + '.&nbsp;' + steptitle + '</div>')
                     .appendTo($indexcell);
 
@@ -76,7 +76,7 @@
             $bcell11.CswButton('init', { 'ID': o.ID + '_prev',
                 'enabledText': '< Previous',
                 'disableOnClick': false,
-                'onclick': function() {
+                'onclick': function () {
                     var currentStepNo = _getCurrentStepNo($table);
                     if (o.onBeforePrevious($table, currentStepNo))
                     {
@@ -89,7 +89,7 @@
             $bcell11.CswButton('init', { 'ID': o.ID + '_next',
                 'enabledText': 'Next >',
                 'disableOnClick': false,
-                'onclick': function() {
+                'onclick': function () {
                     var currentStepNo = _getCurrentStepNo($table);
                     if (o.onBeforeNext(currentStepNo))
                     {
@@ -101,29 +101,29 @@
             /* Finish Button */
             $bcell11.CswButton('init', { 'ID': o.ID + '_finish',
                 'enabledText': o.FinishText,
-                'onclick': function() { if (isFunction(o.onFinish)) o.onFinish($table); }
+                'onclick': function () { if (Csw.isFunction(o.onFinish)) o.onFinish($table); }
             });
             /* Cancel Button */
             $bcell12.CswButton('init', { 'ID': o.ID + '_cancel',
                 'enabledText': 'Cancel',
-                'onclick': function() { if (isFunction(o.onCancel)) o.onCancel($table); }
+                'onclick': function () { if (Csw.isFunction(o.onCancel)) o.onCancel($table); }
             });
 
             _selectStep($table, o.SelectedStep);
-            if (o.doNextOnInit && isFunction(o.onNext)) {
+            if (o.doNextOnInit && Csw.isFunction(o.onNext)) {
                 o.onNext($table, o.SelectedStep);
             }
 
             return $table;
         }, // init()
 
-        div: function(stepno) {
+        div: function (stepno) {
             var $table = $(this);
             return $table.find('.CswWizard_StepDiv[stepno=' + stepno + '] div');
         },
 
         // e.g. $wizard.CswWizard('button', 'next', 'disable');
-        button: function(button, action) {
+        button: function (button, action) {
             var $table = $(this);
             var ret;
             switch (button) {
@@ -140,7 +140,7 @@
                     ret = $('#' + $table.CswAttrDom('id') + '_cancel');
                     break;
             }
-            if (false === isNullOrEmpty(ret, true)) {
+            if (false === Csw.isNullOrEmpty(ret, true)) {
                 ret.CswButton(action);
             }
             return ret;

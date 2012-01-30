@@ -29,7 +29,7 @@
             //but it also screws up clicking.
 
             var $Div = $(this),
-                $ImageDiv = $('<div id="' + o.ID + '" class="divbutton ' + tryParseString(o.cssclass) + '" alt="' + o.AlternateText + '" />"')
+                $ImageDiv = $('<div id="' + o.ID + '" class="divbutton ' + Csw.string(o.cssclass) + '" alt="' + o.AlternateText + '" />"')
                     .css('display', 'inline-block');
 
             setButton(o.ButtonType, $ImageDiv);
@@ -43,12 +43,12 @@
         },
         reBindClick: function (newButtonType, id, onClickEvent) {
             var $this = $(this);
-            if (isNullOrEmpty($this, true)) {
+            if (Csw.isNullOrEmpty($this, true)) {
                 $this = $('#' + id);
             }
-            if (false === isNullOrEmpty($this, true)) {
+            if (false === Csw.isNullOrEmpty($this, true)) {
                 $this.click(function () {
-                    if (isFunction(onClickEvent)) {
+                    if (Csw.isFunction(onClickEvent)) {
                         onClickEvent();
                     }
                     return setButton(newButtonType, $this);
@@ -57,7 +57,7 @@
         },
         doClick: function (newButtonType, id) {
             var $this = $(this);
-            if (isNullOrEmpty($this, true)) {
+            if (Csw.isNullOrEmpty($this, true)) {
                 $this = $('#' + id);
             }
             return setButton(newButtonType, $this);
@@ -69,7 +69,7 @@
         //Case 24112: IE7 processes url() using https but randles the response as http--prompting the security dialog.
         var port = document.location.port;
         var prefix = document.location.protocol + "//" + document.location.hostname;
-        if (false === isNullOrEmpty(port) && port !== 80) {
+        if (false === Csw.isNullOrEmpty(port) && port !== 80) {
             prefix += ':' + port;
         }
         prefix += '/NbtWebApp';

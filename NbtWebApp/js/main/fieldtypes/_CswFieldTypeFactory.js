@@ -64,8 +64,8 @@ $.CswFieldTypeFactory = function (method) {
                 m = options;
             }
             m.ID = m.propData.id;
-            m.Required = isTrue(m.propData.required);
-            m.ReadOnly = isTrue(m.propData.readonly) || m.EditMode === EditMode.PrintReport.name;
+            m.Required = Csw.bool(m.propData.required);
+            m.ReadOnly = Csw.bool(m.propData.readonly) || m.EditMode === EditMode.PrintReport.name;
 
             switch (m.fieldtype) {
                 case "AuditHistoryGrid":
@@ -178,7 +178,7 @@ $.CswFieldTypeFactory = function (method) {
                     break;
                 default:
                     m.$propdiv.append(m.propData.gestalt);
-                    CswError({
+                    Csw.error({
                         'type': 'Error',
                         'message': 'Unrecognized Field Type',
                         'detail': 'CswFieldTypeFactory.make: Unrecognized Field Type: ' + m.fieldtype,
@@ -194,8 +194,8 @@ $.CswFieldTypeFactory = function (method) {
                 m = options;
             }
             m.ID = m.propData.id;
-            m.Required = isTrue(m.propData.required);
-            m.ReadOnly = isTrue(m.propData.readonly);
+            m.Required = Csw.bool(m.propData.required);
+            m.ReadOnly = Csw.bool(m.propData.readonly);
 
             switch (m.fieldtype) {
                 case "Barcode":
@@ -304,7 +304,7 @@ $.CswFieldTypeFactory = function (method) {
                     m.$propdiv.CswFieldTypeViewReference('save', m); //('save', $propdiv, propData);
                     break;
                 default:
-                    CswError({
+                    Csw.error({
                         'type': 'Error',
                         'message': 'Unrecognized Field Type',
                         'detail': 'CswFieldTypeFactory.save: Unrecognized Field Type: ' + m.fieldtype,

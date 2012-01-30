@@ -1,21 +1,18 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";        
     var pluginName = 'CswFieldTypeText';
 
     var methods = {
-        init: function(o) { 
+        init: function (o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? tryParseString(propVals.text).trim() : CswMultiEditDefaultValue;
-            var length = tryParseNumber( propVals.length, 14 );
+            var value = (false === o.Multi) ? Csw.string(propVals.text).trim() : CswMultiEditDefaultValue;
+            var length = Csw.number( propVals.length, 14 );
 
             if(o.ReadOnly) {
                 $Div.append(value);
@@ -35,15 +32,15 @@
                 $TextBox.clickOnEnter(o.$savebtn);
             }
         },
-        save: function(o) {
+        save: function (o) {
             var attributes = {
                 text: null
             };
             var $text = o.$propdiv.find('input');
-            if (false === isNullOrEmpty($text)) {
+            if (false === Csw.isNullOrEmpty($text)) {
                 attributes.text = $text.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

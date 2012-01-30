@@ -1,8 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../main/tools/CswPrint.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 function CswGrid(options, $parent) {
     ///<summary>Generates a grid</summary>
@@ -15,7 +12,7 @@ function CswGrid(options, $parent) {
         gridTableId, gridPagerId;
     //#region private
 
-    (function() {
+    (function () {
         var o = {
             canEdit: false,
             canDelete: false,
@@ -47,7 +44,7 @@ function CswGrid(options, $parent) {
                 caption: "Search...",
                 Find: "Find",
                 Reset: "Reset",
-                odata: ['equal', 'not equal', 'less', 'less or equal', 'greater', 'greater or equal', 'begins with', 'does not begin with', 'is in', 'is not in', 'ends with', 'does not end with', 'contains', 'does not contain'],
+                odata: ['equal', 'not equal', 'less', 'less or equal', 'greater', 'greater or equal', 'begins with', 'does not begin with', 'is in', 'is not in', 'ends with', 'does not end with', 'Csw.contains', 'does not contain'],
                 groupOps: [{ op: "AND", text: "all" }, { op: "OR", text: "any" }],
                 matchText: "match",
                 rulesText: "rules"
@@ -113,8 +110,8 @@ function CswGrid(options, $parent) {
                 break;
         }
 
-        gridPagerId = makeId({ ID: 'CswGridPager', prefix: o.ID });
-        gridTableId = makeId({ ID: 'CswGridTable', prefix: o.ID });
+        gridPagerId = Csw.makeId({ ID: 'CswGridPager', prefix: o.ID });
+        gridTableId = Csw.makeId({ ID: 'CswGridTable', prefix: o.ID });
 
         makeGrid(o);
     })();
@@ -136,8 +133,8 @@ function CswGrid(options, $parent) {
             cursor: '',
             id: gridPagerId + '_prevBtn'
         };
-        if (false === isNullOrEmpty(pagerDef) && isFunction(pagerDef.onPrevPageClick)) {
-            prevButton.onClickButton = function(eventObj) {
+        if (false === Csw.isNullOrEmpty(pagerDef) && Csw.isFunction(pagerDef.onPrevPageClick)) {
+            prevButton.onClickButton = function (eventObj) {
                 var nodes = $gridTable.jqGrid('getDataIDs'),
                     firstNodeId = nodes[0],
                     lastNodeId = nodes[nodes.length],
@@ -162,8 +159,8 @@ function CswGrid(options, $parent) {
             cursor: '',
             id: gridPagerId + '_nextBtn'
         };
-        if (false === isNullOrEmpty(pagerDef) && isFunction(pagerDef.onNextPageClick)) {
-            nextButton.onClickButton = function(eventObj) {
+        if (false === Csw.isNullOrEmpty(pagerDef) && Csw.isFunction(pagerDef.onNextPageClick)) {
+            nextButton.onClickButton = function (eventObj) {
                 var nodes = $gridTable.jqGrid('getDataIDs'),
                     firstNodeId = nodes[0],
                     lastNodeId = nodes[nodes.length - 1],
@@ -180,7 +177,7 @@ function CswGrid(options, $parent) {
 
     function makeGrid(o) {
         multiEdit = o.gridOpts.multiselect;
-        if (isNullOrEmpty($parent)) {
+        if (Csw.isNullOrEmpty($parent)) {
             $parent = $('<div id="' + gridTableId + '_parent"></div>');
         }
 
@@ -199,15 +196,15 @@ function CswGrid(options, $parent) {
 
         if (o.pagermode === 'default' || o.pagermode === 'custom') {
             try {
-                if(false === contains(o.gridOpts, 'colNames') ||
+                if(false === Csw.contains(o.gridOpts, 'colNames') ||
                     o.gridOpts.colNames.length === 0 ||
-                   (contains(o.gridOpts, 'colModel') && o.gridOpts.colNames.length !== o.gridOpts.colModel.length) ) {
+                   (Csw.contains(o.gridOpts, 'colModel') && o.gridOpts.colNames.length !== o.gridOpts.colModel.length) ) {
                     throw new Error('Cannot create a grid without at least one column defined.');
                 }
                 $gridTable.jqGrid(o.gridOpts)
                           .jqGrid('navGrid', '#' + gridPagerId, o.optNav, { }, { }, { }, { }, { }); //Case 24032: Removed jqGrid search
             } catch (e) {
-                CswError(ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, e.message));
+                Csw.error(ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, e.message));
             }
             if (o.pagermode === 'custom') {
                 makeCustomPager(o.customPager);
@@ -234,7 +231,7 @@ function CswGrid(options, $parent) {
 
     function getCell(rowid, key) {
         var ret = '';
-        if (false === isNullOrEmpty(rowid) && false === isNullOrEmpty(key)) {
+        if (false === Csw.isNullOrEmpty(rowid) && false === Csw.isNullOrEmpty(key)) {
             ret = $gridTable.jqGrid('getCell', rowid, key);
         }
         return ret;
@@ -271,7 +268,7 @@ function CswGrid(options, $parent) {
         ///<summary>Scrolls the grid to the specified rowid</summary>
         ///<param name="rowid" type="String">Optional. jqGrid rowid. If null, selected row is assumed.</param>
         ///<returns type="Void"></returns>
-        if (isNullOrEmpty(rowid)) {
+        if (Csw.isNullOrEmpty(rowid)) {
             rowid = getSelectedRowId();
         }
         var rowHeight = getGridRowHeight($gridTable) || 23; // Default height
@@ -286,8 +283,8 @@ function CswGrid(options, $parent) {
         ///<returns type="String">jqGrid row id.</returns>
         var pks = getColumn(column, true);
         var rowid = 0;
-        each(pks, function(obj) {
-            if (contains(obj, 'value') && tryParseString(obj.value) === tryParseString(value)) {
+        Csw.each(pks, function (obj) {
+            if (Csw.contains(obj, 'value') && Csw.string(obj.value) === Csw.string(value)) {
                 rowid = obj.id;
             }
         });
@@ -299,7 +296,7 @@ function CswGrid(options, $parent) {
         ///<param name="columnname" type="String">Grid column name.</param>
         ///<param name="rowid" type="String">Optional. If null, selected row is assumed.</param>
         ///<returns type="String">Value of the cell.</returns>
-        if (isNullOrEmpty(rowid)) {
+        if (Csw.isNullOrEmpty(rowid)) {
             rowid = getSelectedRowId();
         }
         var ret = getCell(rowid, columnname);
@@ -308,7 +305,7 @@ function CswGrid(options, $parent) {
 
     function setSelection(rowid) {
         ///<summary>Sets the selected row by jqGrid's rowid</summary>
-        if (false === isNullOrEmpty(rowid)) {
+        if (false === Csw.isNullOrEmpty(rowid)) {
             $gridTable.setSelection(rowid);
         }
     }
@@ -328,7 +325,7 @@ function CswGrid(options, $parent) {
         if (multiEdit) {
             rowids = getSelectedRowsIds();
         }
-        else if (false === isNullOrEmpty(rowid)) {
+        else if (false === Csw.isNullOrEmpty(rowid)) {
             rowids.push(rowid);
         } else {
             rowids.push(getSelectedRowId());
@@ -337,9 +334,9 @@ function CswGrid(options, $parent) {
         if (rowids.length > 0) {
             haveSelectedRows = true;
             for (var i = 0; i < rowids.length; i++) {
-                crawlObject(opts, function(prop, key, parent) {
-                    if (false === isFunction(parent[key])) {
-                        if (isArray(parent[key])) {
+                Csw.crawlObject(opts, function (prop, key, parent) {
+                    if (false === Csw.isFunction(parent[key])) {
+                        if (Csw.isArray(parent[key])) {
                             rowid = rowids[i];
                             parent[key].push(getValueForColumn(key, rowid));
                         } else {
@@ -352,30 +349,30 @@ function CswGrid(options, $parent) {
         }
 
         if (haveSelectedRows) {
-            if (isFunction(onSelect)) {
+            if (Csw.isFunction(onSelect)) {
                 opts.Multi = multiEdit;
                 ret = onSelect(opts);
             }
         }
-        else if (isFunction(onEmpty)) {
+        else if (Csw.isFunction(onEmpty)) {
             onEmpty(opts);
         }
         return ret;
     }
 
-    var getAllGridRows = function() {
+    var getAllGridRows = function () {
         return $gridTable.jqGrid('getRowData');
     };
     
-    var print = function() {
+    var print = function () {
         
         CswPrint(function ($printElement) {
             var printOpts = { },
                 currentOpts = $gridTable.data(gridTableId + '_data'),
-                printTableId = makeId({ prefix: gridTableId, ID: 'printTable' }),
+                printTableId = Csw.makeId({ prefix: gridTableId, ID: 'printTable' }),
                 grid, data, i;
 
-            var addRowsToGrid = function(rowData) {
+            var addRowsToGrid = function (rowData) {
                 if (rowData) {
                     /* Add the rows to the new grid */
                     for (i = 0; i <= rowData.length; i += 1) {
@@ -426,7 +423,7 @@ function CswGrid(options, $parent) {
             data = printOpts.gridOpts.data;
             delete printOpts.gridOpts.data;
 
-            each(printOpts.gridOpts.colModel, function(column) {
+            Csw.each(printOpts.gridOpts.colModel, function (column) {
                 /* This provides text wrapping in cells */
                 column.cellattr = function () { return 'style="white-space: normal;"'; };
             });
@@ -434,13 +431,13 @@ function CswGrid(options, $parent) {
             /* Get a new CswGrid */
             grid = CswGrid(printOpts, $printElement);
             
-            if(isNullOrEmpty(data) && false === isNullOrEmpty(printOpts.printUrl)) {
-                CswAjaxJsonGet({
+            if(Csw.isNullOrEmpty(data) && false === Csw.isNullOrEmpty(printOpts.printUrl)) {
+                Csw.ajax({
                     url: printOpts.printUrl,
                     success: function (rows) {
                         addRowsToGrid(rows.rows);    
                     }
-                });
+                }, 'json', 'GET');
             } else {
                 /* Get the data (rows) from the current grid */
                 addRowsToGrid(data);
@@ -466,7 +463,7 @@ function CswGrid(options, $parent) {
         changeGridOpts: changeGridOpts,
         opGridRows: opGridRows,
         print: print,
-        isMulti: function() { return multiEdit; }
+        isMulti: function () { return multiEdit; }
     };
     
     //#endregion public, priveleged

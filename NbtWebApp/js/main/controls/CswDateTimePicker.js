@@ -1,15 +1,12 @@
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="CswInput.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 ; (function ($) {
     "use strict";    
     var pluginName = 'CswDateTimePicker';
 
     var methods = {
-        init: function(options) {
+        init: function (options) {
             var o = {
                 ID: '',
                 Date: '',
@@ -46,46 +43,42 @@
                                                           value: o.Date,
                                                           onChange: o.OnChange,
                                                           width: '80px',
-                                                          cssclass: 'textinput' // date' date validation broken by alternative formats
+                                                          cssclass: 'textinput' 
                                                   }); 
-                    $DateBox.datepicker({ 'dateFormat': ServerDateFormatToJQuery(o.DateFormat) });
+                    $DateBox.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(o.DateFormat) });
                     if(o.Required) $DateBox.addClass("required");
                 }
 
                 if( o.DisplayMode === "Time" || o.DisplayMode === "DateTime" ) {
                     var $TimeBox = $Div.CswInput('init',{ ID: o.ID + "_time",
                                                           type: CswInput_Types.text,
-                                                          cssclass: 'textinput', // validateTime',
+                                                          cssclass: 'textinput', 
                                                           onChange: o.onchange,
                                                           value: o.Time,
                                                           width: '80px'
                                                      }); 
                     $Div.CswButton('init',{ 'ID': o.ID +'_now',
                                                             'disableOnClick': false,
-                                                            'onclick': function() { $TimeBox.val( getTimeString(new Date(), o.TimeFormat) ); },
+                                                            'onclick': function () { $TimeBox.val( Csw.getTimeString(new Date(), o.TimeFormat) ); },
                                                             'enabledText': 'Now'
                                                      }); 
                 
-    //				jQuery.validator.addMethod( "validateTime", function(value, element) { 
-    //                            return (this.optional(element) || validateTime($(element).val()));
-    //                        }, 'Enter a valid time (e.g. 12:30 PM)');
-
                     if(o.Required) $TimeBox.addClass("required");
                 }
             } // if-else(o.ReadOnly)
             return $Div;
         },
-        value: function(readOnly) {
+        value: function (readOnly) {
             var $Div = $(this),
                 id = this.prop('id'),
                 $DateBox = $Div.find( '#' + id + '_date'),
                 $TimeBox = $Div.find( '#' + id + '_time'),
                 ret = {};
             if ($DateBox.length > 0) {
-                ret.date = (false === isTrue(readOnly)) ? $DateBox.val() : $DateBox.text(); 
+                ret.date = (false === Csw.bool(readOnly)) ? $DateBox.val() : $DateBox.text(); 
             } 
             if ($TimeBox.length > 0) {
-                ret.time = (false === isTrue(readOnly)) ? $TimeBox.val() : $TimeBox.text();
+                ret.time = (false === Csw.bool(readOnly)) ? $TimeBox.val() : $TimeBox.text();
             }
             return ret;
         }

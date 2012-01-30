@@ -1,22 +1,18 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswInput.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";        
     var pluginName = 'CswFieldTypePassword';
 
     var methods = {
-        init: function(o) { 
+        init: function (o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var isExpired = (false === o.Multi) ? isTrue(propVals.isexpired) : null;
-            var isAdmin = (false === o.Multi) ? isTrue(propVals.isadmin) : null;
+            var isExpired = (false === o.Multi) ? Csw.bool(propVals.isexpired) : null;
+            var isAdmin = (false === o.Multi) ? Csw.bool(propVals.isadmin) : null;
 
             if(o.ReadOnly) {
                 // show nothing
@@ -59,32 +55,32 @@
                     $cell32.append('Expired');
                 }
                 
-                if (o.Required && isNullOrEmpty(propVals.password)) {
+                if (o.Required && Csw.isNullOrEmpty(propVals.password)) {
                     $TextBox1.addClass("required");
                 }
 
-                jQuery.validator.addMethod( "password2", function() { 
+                jQuery.validator.addMethod( "password2", function () { 
                             var pwd1 = $('#' + o.ID + '_pwd1').val();
                             var pwd2 = $('#' + o.ID + '_pwd2').val();
                             return ((pwd1 === '' && pwd2 === '') || pwd1 === pwd2);
                         }, 'Passwords do not match!');
             }
         },
-        save: function(o) { //$propdiv, $xml
+        save: function (o) { //$propdiv, $xml
             var attributes = {
                 isexpired: null,
                 newpassword: null
             };
             var $newpw = o.$propdiv.find('input#' + o.ID + '_pwd1');
-            if (false === isNullOrEmpty($newpw)) {
+            if (false === Csw.isNullOrEmpty($newpw)) {
                 attributes.newpassword = $newpw.val();
             }
             
             var $IsExpiredCheck = o.$propdiv.find('input#' + o.ID + '_exp');
-            if (false === isNullOrEmpty($IsExpiredCheck) && $IsExpiredCheck.length > 0) {
+            if (false === Csw.isNullOrEmpty($IsExpiredCheck) && $IsExpiredCheck.length > 0) {
                 attributes.isexpired = $IsExpiredCheck.is(':checked');    
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     
