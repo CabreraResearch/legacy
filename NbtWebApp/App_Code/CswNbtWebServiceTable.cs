@@ -14,66 +14,75 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
-	public class CswNbtWebServiceTable
-	{
-		private readonly CswNbtResources _CswNbtResources;
-		public CswNbtWebServiceTable( CswNbtResources CswNbtResources )
-		{
-			_CswNbtResources = CswNbtResources;
-		} //ctor
+    public class CswNbtWebServiceTable
+    {
+        private readonly CswNbtResources _CswNbtResources;
+        public CswNbtWebServiceTable( CswNbtResources CswNbtResources )
+        {
+            _CswNbtResources = CswNbtResources;
+        } //ctor
 
-		public JObject getTable( CswNbtView View, CswNbtNode SelectedNode )
-		{
-			JObject ret = new JObject();
-			ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
+        public JObject getTable( CswNbtView View, CswNbtNode SelectedNode )
+        {
+            JObject ret = new JObject();
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
 
-			XDocument XDoc = XDocument.Parse( Tree.getRawTreeXml().InnerXml );
-			foreach( XElement TreeElm in XDoc.Elements() )                        // NbtTree
-			{
-				foreach( XElement RootElm in TreeElm.Elements() )                 // NbtNode (root)
-				{
-					foreach( XElement NodeElm in RootElm.Elements() )             // NbtNode
-					{
-						CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeElm.Attribute( "nodeid" ).Value ) );
-						ret[NodeId.ToString()] = new JObject();
-						ret[NodeId.ToString()]["nodename"] = NodeElm.Attribute( "nodename" ).Value;
-						ret[NodeId.ToString()]["nodeid"] = NodeId.ToString();
-						ret[NodeId.ToString()]["nodekey"] = NodeElm.Attribute( "key" ).Value;
-						ret[NodeId.ToString()]["locked"] = NodeElm.Attribute( "locked" ).Value;
-						ret[NodeId.ToString()]["props"] = new JObject();
-						CswNbtMetaDataNodeType NodeType= _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32(NodeElm.Attribute("nodetypeid").Value));
-						if( NodeType != null )
-						{
-							// default image, overridden below
-							ret[NodeId.ToString()]["thumbnailurl"] = "Images/icons/" + NodeType.IconFileName;
-						}
+            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            {
+                Tree.goToNthChild( c );
+                ret[Tree.getNodeIdForCurrentPosition().ToString()] = _makeNodeObj( Tree );
+                Tree.goToParentNode();
+            }
 
-						foreach( XElement PropElm in NodeElm.Descendants( "NbtNodeProp" ) )
-						{
-							Int32 NodeTypePropId = CswConvert.ToInt32( PropElm.Attribute( "nodetypepropid" ).Value );
-							Int32 JctNodePropId = CswConvert.ToInt32( PropElm.Attribute( "jctnodepropid" ).Value );
-							CswPropIdAttr PropId = new CswPropIdAttr( NodeId, NodeTypePropId );
-							string FieldType = PropElm.Attribute( "fieldtype" ).Value;
+            if( Tree.getCurrentNodeChildrenTruncated() )
+            {
+                ret["truncated"] = new JObject(new JProperty("nodename", "Results Truncated"));
+            }
 
-							// Special case: Image becomes thumbnail
-							if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() )
-							{
-								ret[NodeId.ToString()]["thumbnailurl"] = CswNbtNodePropImage.makeImageUrl( JctNodePropId, NodeId, NodeTypePropId );
-							}
-							else
-							{
-								ret[NodeId.ToString()]["props"][PropId.ToString()] = new JObject();
-								ret[NodeId.ToString()]["props"][PropId.ToString()]["propname"] = PropElm.Attribute( "name" ).Value;
-								ret[NodeId.ToString()]["props"][PropId.ToString()]["gestalt"] = PropElm.Attribute( "gestalt" ).Value;
-							}
-						} // foreach( XElement PropElm in NodeElm.Elements() )
-					} // foreach( XElement NodeElm in RootElm.Elements() ) 
-				} // foreach( XElement RootElm in TreeElm.Elements() )
-			} // foreach( XElement TreeElm in XDoc.Elements() )  
+            return ret;
 
-			return ret;
+        } // getTable()
 
-		} // class CswNbtWebServiceTable
+        private JObject _makeNodeObj( ICswNbtTree Tree )
+        {
+            JObject ret = new JObject();
+            CswPrimaryKey NodeId = Tree.getNodeIdForCurrentPosition();
+            CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeKey.NodeTypeId );
 
-	} // namespace ChemSW.Nbt.WebServices
-}
+            ret = new JObject();
+            ret["nodename"] = Tree.getNodeNameForCurrentPosition();
+            ret["nodeid"] = NodeId.ToString();
+            ret["nodekey"] = NodeKey.ToString();
+            ret["locked"] = Tree.getNodeLockedForCurrentPosition().ToString().ToLower();
+            ret["props"] = new JObject();
+            if( NodeType != null )
+            {
+                // default image, overridden below
+                ret["thumbnailurl"] = "Images/icons/" + NodeType.IconFileName;
+            }
+
+            foreach( XElement PropElm in Tree.getChildNodePropsOfNode() )
+            {
+                Int32 NodeTypePropId = CswConvert.ToInt32( PropElm.Attribute( "nodetypepropid" ).Value );
+                Int32 JctNodePropId = CswConvert.ToInt32( PropElm.Attribute( "jctnodepropid" ).Value );
+                CswPropIdAttr PropId = new CswPropIdAttr( NodeId, NodeTypePropId );
+                string FieldType = PropElm.Attribute( "fieldtype" ).Value;
+
+                // Special case: Image becomes thumbnail
+                if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() )
+                {
+                    ret["thumbnailurl"] = CswNbtNodePropImage.makeImageUrl( JctNodePropId, NodeId, NodeTypePropId );
+                }
+                else
+                {
+                    ret["props"][PropId.ToString()] = new JObject();
+                    ret["props"][PropId.ToString()]["propname"] = PropElm.Attribute( "name" ).Value;
+                    ret["props"][PropId.ToString()]["gestalt"] = PropElm.Attribute( "gestalt" ).Value;
+                }
+            } // foreach( XElement PropElm in NodeElm.Elements() )
+            return ret;
+        } // _makeNodeObj()
+
+    } // class CswNbtWebServiceTable
+} // namespace ChemSW.Nbt.WebServices

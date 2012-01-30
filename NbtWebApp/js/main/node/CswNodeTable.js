@@ -47,6 +47,11 @@
                     var c = 1;
 
                     crawlObject(data, function(nodeObj) {
+                        if (nodeObj.nodename == "Results Truncated")
+                        {
+                            c = 1; 
+                            r+=1;
+                        }
                         var cellset = $table.CswLayoutTable('cellset', r, c);
                         var $thumbnailcell = cellset[1][1]
                                                 .css({ 
@@ -58,7 +63,12 @@
                         var name = '<b>' + nodeObj.nodename + '</b>';
                         var locked = isTrue(nodeObj.locked);
 
-                        $thumbnailcell.append('<img src="'+ nodeObj.thumbnailurl +'" style="max-width: 90%;"><br/>');
+                        if (false === isNullOrEmpty(nodeObj.thumbnailurl))
+                        {
+                            $thumbnailcell.append('<img src="' + nodeObj.thumbnailurl + '" style="max-width: 90%;">');
+                        }
+                        $thumbnailcell.append('<br/>');
+
                         if(locked) {
                             name += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
                         }
