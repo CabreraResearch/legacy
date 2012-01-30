@@ -109,35 +109,43 @@ namespace ChemSW.Nbt.WebServices
             // SEARCH
             if( _MenuItems.Contains( "Search" ) )
             {
-                Ret["Search"] = new JObject();
-                Ret["Search"]["haschildren"] = true;
-                // Generic search
+                JObject SearchObj = new JObject();
+                bool HasChildren = false;
                 if( View != null )
                 {
                     if( View.IsSearchable() )
                     {
                         View.SaveToCache( false );
-                        Ret["Search"]["This View"] = new JObject();
-                        Ret["Search"]["This View"]["text"] = "This View";
-                        Ret["Search"]["This View"]["nodeid"] = NodeId;
-                        Ret["Search"]["This View"]["nodetypeid"] = NodeTypeId;
-                        Ret["Search"]["This View"]["sessionviewid"] = View.SessionViewId.ToString();
-                        Ret["Search"]["This View"]["action"] = MenuActions.ViewSearch.ToString();
+                        SearchObj["This View"] = new JObject();
+                        SearchObj["This View"]["text"] = "This View";
+                        SearchObj["This View"]["nodeid"] = NodeId;
+                        SearchObj["This View"]["nodetypeid"] = NodeTypeId;
+                        SearchObj["This View"]["sessionviewid"] = View.SessionViewId.ToString();
+                        SearchObj["This View"]["action"] = MenuActions.ViewSearch.ToString();
+                        HasChildren = true;
                     }
                     if( View.Visibility != NbtViewVisibility.Property )
                     {
-                        Ret["Search"]["Generic Search"] = new JObject();
-                        Ret["Search"]["Generic Search"]["nodeid"] = NodeId;
-                        Ret["Search"]["Generic Search"]["nodetypeid"] = NodeTypeId;
-                        Ret["Search"]["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                        SearchObj["Generic Search"] = new JObject();
+                        SearchObj["Generic Search"]["nodeid"] = NodeId;
+                        SearchObj["Generic Search"]["nodetypeid"] = NodeTypeId;
+                        SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                        HasChildren = true;
                     }
                     /* Case 24744: No Generic Search on Grid Props */
                 }
                 else
                 {
-                    Ret["Search"]["Generic Search"] = new JObject();
-                    Ret["Search"]["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                    SearchObj["Generic Search"] = new JObject();
+                    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                    HasChildren = true;
                 }
+
+                if( HasChildren )
+                {
+                    Ret["Search"] = SearchObj;
+                }
+
             }
 
             if( View != null )
