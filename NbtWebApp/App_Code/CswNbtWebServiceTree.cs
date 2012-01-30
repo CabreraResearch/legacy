@@ -43,6 +43,16 @@ namespace ChemSW.Nbt.WebServices
                 }
                 Tree.goToParentNode();
             } // for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+
+            if( Tree.getCurrentNodeChildrenTruncated() )
+            {
+                JObject ThisTruncated = new JObject();
+                ThisTruncated["data"] = "Results Truncated";
+                ThisTruncated["icon"] = "Images/icons/truncated.gif";
+                ThisTruncated["state"] = "leaf";
+                GrandParentNode.Add( ThisTruncated );
+            }
+
         } // _runTreeNodesRecursive()
 
 
@@ -110,12 +120,12 @@ namespace ChemSW.Nbt.WebServices
                 ThisNodeObj["attr"]["parentkey"] = ParentKey.ToString();
             }
 
-            if( "leaf" != ThisNodeState && Tree.getChildNodeCount() > 0 )
-            {
-                ThisNodeObj["state"] = ThisNodeState;
-                ThisNodeObj["children"] = new JArray();
-                ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
-            }
+            //if( "leaf" != ThisNodeState && Tree.getChildNodeCount() > 0 )
+            //{
+            ThisNodeObj["state"] = ThisNodeState;
+            ThisNodeObj["children"] = new JArray();
+            ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
+            //}
             return ThisNodeObj;
         } // _treeNodeJObject()
 
