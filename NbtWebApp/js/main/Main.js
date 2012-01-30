@@ -579,11 +579,12 @@ window.initMain = window.initMain || function (undefined) {
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
             onSuccess: function () {
-                //				refreshMainMenu({ viewid: o.viewid,
-                //					viewmode: CswViewMode.table.name,
-                //					nodeid: o.nodeid,
-                //					cswnbtnodekey: o.cswnbtnodekey
-                //				});
+                refreshMainMenu({ 
+                    viewid: o.viewid,
+                    viewmode: CswViewMode.table.name//,
+//                    nodeid: o.nodeid,
+//                    cswnbtnodekey: o.cswnbtnodekey
+                });
             }
         });
     }
