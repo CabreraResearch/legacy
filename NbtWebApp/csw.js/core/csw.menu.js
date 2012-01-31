@@ -3,10 +3,11 @@
 
 (function CswMenu() {
     'use strict';
-
+    
     function goHome() {
-        clearCurrent();
-        window.location = homeUrl;
+        var clientState = Csw.clientState();
+        clientState.clearCurrent();
+        window.location = Csw.getGlobalProp('homeUrl');
     }
     Csw.register('goHome',goHome);
     Csw.goHome = Csw.goHome || goHome;
