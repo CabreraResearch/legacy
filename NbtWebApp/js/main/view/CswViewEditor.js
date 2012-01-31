@@ -82,7 +82,9 @@
         $div1_btntbl_cell12.CswAttrDom('align', 'right');
         var $allcheck_div = $('<div></div>').appendTo($div1_btntbl_cell12);
 
-        Csw.isAdministrator({
+        var clientSession = Csw.clientSession();
+
+        clientSession.isAdministrator({
                 'Yes': function () {
                     /* Show Other */
                     $allcheck_div.CswInput('init', {ID: o.ID + '_all',

@@ -4,6 +4,8 @@
 (function CswTBD() {
     'use strict';
 
+    var clientSession = Csw.clientSession();
+
     function jsTreeGetSelected($treediv) {
         var idPrefix = $treediv.CswAttrDom('id');
         var $SelectedItem = $treediv.jstree('get_selected');
@@ -24,7 +26,7 @@
         var $visroleselect;
         var $visuserselect;
 
-        Csw.isAdministrator({
+        clientSession.isAdministrator({
             'Yes': function () {
 
                 $table.CswTable('cell', rownum, 1).append(label);

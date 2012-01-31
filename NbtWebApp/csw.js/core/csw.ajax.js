@@ -19,7 +19,9 @@
     var onAfterAjax = null;   // function (succeeded) {}
     Csw.register('onAfterAjax', onAfterAjax);
     Csw.onAfterAjax = Csw.onAfterAjax || onAfterAjax;
-    
+
+    var clientSession = Csw.clientSession();
+
     var type = {
         POST: 'POST',
         GET: 'GET'
@@ -46,7 +48,7 @@
             url: '',
             data: {},
             onloginfail: function () {
-                Csw.finishLogout ();
+                clientSession.finishLogout ();
             },
             success: null, //function () { },
             error: null, //function () { },
@@ -94,13 +96,13 @@
 
                     var auth = Csw.string (result['AuthenticationStatus'], 'Unknown');
                     if (false === o.formobile) {
-                        Csw.setExpireTime(Csw.string (result.timeout, ''));
+                        clientSession.setExpireTime(Csw.string (result.timeout, ''));
                     }
 
                     delete result['AuthenticationStatus'];
                     delete result['timeout'];
 
-                    Csw.handleAuthenticationStatus ({
+                    clientSession.handleAuthenticationStatus ({
                         status: auth,
                         success: function () {
                             Csw.tryExec(o.success, result);
@@ -141,7 +143,7 @@
             url: '',
             data: {},
             onloginfail: function () {
-                Csw.finishLogout ();
+                clientSession.finishLogout ();
             },
             success: null, //function () { },
             error: null, //function () { },
@@ -226,7 +228,7 @@
             data: {},
             stringify: false, //in case we need to conditionally apply $.param() instead of JSON.stringify() (or both)
             onloginfail: function () {
-                Csw.finishLogout ();
+                clientSession.finishLogout ();
             },
             success: function () {
             },
@@ -277,11 +279,11 @@
                         o.error ();
                     } else {
                         var auth = Csw.string($realxml.CswAttrNonDom ('authenticationstatus'), 'Unknown');
-                        if (!o.formobile) {
-                            Csw.setExpireTime ($realxml.CswAttrNonDom ('timeout'));
+                        if (false === o.formobile) {
+                            clientSession.setExpireTime ($realxml.CswAttrNonDom ('timeout'));
                         }
 
-                        Csw.handleAuthenticationStatus ({
+                        clientSession.handleAuthenticationStatus ({
                             status: auth,
                             success: function () {
                                 o.success ($realxml);
