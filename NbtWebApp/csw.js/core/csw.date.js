@@ -8,6 +8,18 @@
     Csw.register('dateTimeMinValue', dateTimeMinValue);
     Csw.dateTimeMinValue = Csw.dateTimeMinValue || dateTimeMinValue;
     
+    function date(value) {
+        var retDate;
+        try {
+            retDate = new Date(value);
+        } catch(e) {
+            retDate = dateTimeMinValue;
+        }
+        return retDate;
+    }
+    Csw.register('date', date);
+    Csw.date = Csw.date || date;
+
     function serverDateFormatToJQuery(serverDateFormat) {
         var ret = serverDateFormat;
         ret = ret.replace( /M/g , 'm');

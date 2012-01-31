@@ -188,7 +188,7 @@
                 $.extend(o, options);
             }
 
-            cswAjax.post({
+            Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
                 success: function (data) {
                     if (data.Administrator === "true") {
