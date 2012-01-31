@@ -144,6 +144,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( HasChildren )
                 {
+                    SearchObj["haschildren"] = true;
                     Ret["Search"] = SearchObj;
                 }
 
