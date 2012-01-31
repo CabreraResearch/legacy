@@ -5,8 +5,7 @@
     'use strict';
     
     function goHome() {
-        var clientState = Csw.clientState();
-        clientState.clearCurrent();
+        Csw.clientState.clearCurrent();
         window.location = Csw.getGlobalProp('homeUrl');
     }
     Csw.register('goHome',goHome);

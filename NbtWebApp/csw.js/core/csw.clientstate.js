@@ -3,12 +3,12 @@
 
 (function CswClientState() {
     'use strict';
-    
-    function clientState() {
+
+    var clientState = (function clientStateP() {
         /// <summary> Instance a Csw State object.</summary>
         /// <returns type="Object">Collection of methods to manage state.</returns>
 
-        function clearCurrent() {
+        function clearCurrent () {
             /// <summary> Clear all current state cookies  </summary>
             /// <returns type="Boolean">Always true</returns>
             Csw.cookie.set(Csw.cookie.cookieNames.LastViewId, Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId));
@@ -24,8 +24,8 @@
             Csw.cookie.clear(Csw.cookie.cookieNames.CurrentReportId);
             return true;
         }
-        
-        function setCurrentView(viewid, viewmode) {
+
+        function setCurrentView (viewid, viewmode) {
             /// <summary> Store the current view in a cookie.</summary>
             /// <param name="viewid" type="String">An Nbt ViewId</param>
             /// <param name="viewmode" type="String">An Nbt ViewId</param>
@@ -38,7 +38,7 @@
             return true;
         }
 
-        function setCurrentAction(actionname, actionurl) {
+        function setCurrentAction (actionname, actionurl) {
             /// <summary> Store the current action in a cookie.</summary>
             /// <param name="actionname" type="String">An Nbt Action name</param>
             /// <param name="actionurl" type="String">An Nbt Action url</param>
@@ -49,7 +49,7 @@
             return true;
         }
 
-        function setCurrentReport(reportid) {
+        function setCurrentReport (reportid) {
             /// <summary> Store the current report in a cookie.</summary>
             /// <param name="reportid" type="String">An Nbt ReportId</param>
             /// <returns type="Boolean">Always true</returns>
@@ -58,7 +58,7 @@
             return true;
         }
 
-        function getCurrent() {
+        function getCurrent () {
             /// <summary> Get all current state data from the cookie.</summary>
             /// <returns type="Object">Views, actions and reports</returns>
             return {
@@ -70,7 +70,7 @@
             };
         }
 
-        function getLast() {
+        function getLast () {
             /// <summary> Get all current state data from the cookie.</summary>
             /// <returns type="Object">Views, actions and reports</returns>
             return {
@@ -81,8 +81,8 @@
                 reportid: Csw.cookie.get(Csw.cookie.cookieNames.LastReportId)
             };
         }
-        
-        function setCurrent(json) {
+
+        function setCurrent (json) {
             /// <summary> Get all current state data from the cookie.</summary>
             /// <returns type="Boolean">Always true.</returns>
             clearCurrent();
@@ -93,7 +93,7 @@
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentReportId, json.reportid);
             return true;
         }
-        
+
         return {
             clearCurrent: clearCurrent,
             setCurrentView: setCurrentView,
@@ -104,7 +104,7 @@
             setCurrent: setCurrent
         };
 
-    }
+    }());
     Csw.register('clientState', clientState);
     Csw.clientState = Csw.clientState || clientState;
     

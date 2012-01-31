@@ -14,7 +14,6 @@
             var viewId = Csw.string(propVals.viewid).trim();
             var viewMode = Csw.string(propVals.viewmode).trim().toLowerCase();
             /* var viewName = Csw.string(propVals.name).trim(); */
-            var state = Csw.clientState();
             var $table = $Div.CswTable('init', {'ID': o.ID + '_tbl'});
 
             if (o.EditMode !== EditMode.AddInPopup.name && false === o.Multi) {
@@ -29,12 +28,12 @@
                     AlternateText: 'View',
                     Required: o.Required,
                     onClick: function () {
-                        state.setCurrentView(viewId, viewMode);
-                        // case 20958 - so that it doesn't treat the view as a Grid Property view
+                        Csw.clientState.setCurrentView(viewId, viewMode);
+                        /* case 20958 - so that it doesn't treat the view as a Grid Property view */
                         Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeId);
                         Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeKey);
 
-                        window.location = "Main.html";
+                        window.location = Csw.getGlobalProp('homeUrl');
                         return CswImageButton_ButtonType.None;
                     }
                 });
@@ -50,14 +49,13 @@
                         }
                     });
                 }
-            } // if(o.EditMode != EditMode.AddInPopup.name)
+            } /* if(o.EditMode != EditMode.AddInPopup.name) */
         },
         save: function (o) {
             Csw.preparePropJsonForSave(o.propData);
         }
     };
     
-    // Method calling logic
     $.fn.CswFieldTypeViewReference = function (method) {
         
         if ( methods[method] ) {

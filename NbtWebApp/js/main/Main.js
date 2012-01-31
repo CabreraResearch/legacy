@@ -10,7 +10,6 @@ window.initMain = window.initMain || function (undefined) {
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
-    var cswState = Csw.clientState();
     
     Csw.onBeforeAjax = function (watchGlobal) {
         if (watchGlobal) {
@@ -28,13 +27,13 @@ window.initMain = window.initMain || function (undefined) {
     // handle querystring arguments
     var qs = $.CswQueryString();
     if (false == Csw.isNullOrEmpty(qs.viewid)) {
-        cswState.setCurrentView(qs.viewid, Csw.string(qs.viewmode, 'tree'));
+        Csw.clientState.setCurrentView(qs.viewid, Csw.string(qs.viewmode, 'tree'));
         window.location = "Main.html";
     } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
-        cswState.setCurrentReport(qs.reportid);
+        Csw.clientState.setCurrentReport(qs.reportid);
         window.location = "Main.html";
     } else if (false == Csw.isNullOrEmpty(qs.clear)) {
-        cswState.clearCurrent();
+        Csw.clientState.clearCurrent();
         window.location = "Main.html";
     } else {
         initAll();
@@ -66,7 +65,7 @@ window.initMain = window.initMain || function (undefined) {
                 
                 refreshViewSelect();
 
-                var current = cswState.getCurrent();
+                var current = Csw.clientState.getCurrent();
                 if (false === Csw.isNullOrEmpty(current.viewid)) {
                     handleItemSelect({
                         'type': 'view',
@@ -202,7 +201,7 @@ window.initMain = window.initMain || function (undefined) {
             clear({ all: true });
 
             if (false === Csw.isNullOrEmpty(o.viewid)) {
-                cswState.setCurrentView(o.viewid, o.viewmode);
+                Csw.clientState.setCurrentView(o.viewid, o.viewmode);
 
                 var linkOpt = {
                     showempty: false,
@@ -399,7 +398,7 @@ window.initMain = window.initMain || function (undefined) {
             if (viewMode === 'list') {
                 viewMode = 'tree';
             }
-            cswState.setCurrentView(searchviewid, viewMode);
+            Csw.clientState.setCurrentView(searchviewid, viewMode);
 
             refreshSelected({
                 viewmode: viewMode,
@@ -429,7 +428,7 @@ window.initMain = window.initMain || function (undefined) {
                     viewmode = (parentviewmode === 'list') ? 'tree' : parentviewmode;
                 }
 
-                cswState.setCurrentView(viewid, viewmode);
+                Csw.clientState.setCurrentView(viewid, viewmode);
 
                 refreshSelected({
                     viewmode: viewmode,
@@ -765,7 +764,7 @@ window.initMain = window.initMain || function (undefined) {
             'forsearch': o.forsearch,
             'IncludeNodeRequired': o.IncludeNodeRequired,
             'onViewChange': function (newviewid, newviewmode) {
-                cswState.setCurrentView(newviewid, newviewmode);
+                Csw.clientState.setCurrentView(newviewid, newviewmode);
             },
             'onSelectNode': function (optSelect) {
                 onSelectTreeNode({
@@ -791,7 +790,7 @@ window.initMain = window.initMain || function (undefined) {
             $.extend(o, options);
         }
 
-        cswState.setCurrentAction(o.actionname, o.actionurl);
+        Csw.clientState.setCurrentAction(o.actionname, o.actionurl);
 
         Csw.ajax.post({
             'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
@@ -823,7 +822,7 @@ window.initMain = window.initMain || function (undefined) {
                     viewmode: o.ActionOptions.viewmode,
                     onCancel: function () {
                         clear({ 'all': true });
-                        cswState.setCurrent(cswState.getLast());
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
                         refreshSelected();
                     },
                     onFinish: function (viewid) {
@@ -857,13 +856,13 @@ window.initMain = window.initMain || function (undefined) {
                     'viewmode': o.ActionOptions.viewmode,
                     'onCancel': function () {
                         clear({ 'all': true });
-                        cswState.setCurrent(cswState.getLast());
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
                         refreshSelected();
                     },
                     'onFinish': function (viewid, viewmode) {
                         clear({ 'all': true });
                         if (Csw.bool(o.ActionOptions.IgnoreReturn)) {
-                            cswState.setCurrent(cswState.getLast());
+                            Csw.clientState.setCurrent(Csw.clientState.getLast());
                             refreshSelected();
                         } else {
                             handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
@@ -907,7 +906,7 @@ window.initMain = window.initMain || function (undefined) {
                 var rulesOpt = {
                     exitFunc: function () {
                         clear({ 'all': true });
-                        cswState.setCurrent(cswState.getLast());
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
                         refreshSelected();
                     },
                     menuRefresh: refreshSelected
