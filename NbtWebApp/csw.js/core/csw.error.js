@@ -4,7 +4,7 @@
 (function () {
     'use strict';
 
-    var error = (function _error() {
+    var error = (function errorP() {
     
         function makeErrorObj(errorType, friendlyMsg, esotericMsg) {
             /// <summary>Generates a Csw Error object suitable for displaying a client-side error.</summary>
@@ -48,12 +48,12 @@
 
         function errorHandler(errorMsg, includeCallStack, includeLocalStorage, doAlert) {
             if (Csw.hasWebStorage() && includeLocalStorage) {
-                log(localStorage);
+                Csw.log(window.localStorage);
             }
             if (doAlert) {
                 $.CswDialog('ErrorDialog', errorMsg);
             } else {
-                log('Error: ' + errorMsg.message + ' (Code ' + errorMsg.code + ')', includeCallStack);
+                Csw.log('Error: ' + errorMsg.message + ' (Code ' + errorMsg.code + ')', includeCallStack);
             }
         }
 

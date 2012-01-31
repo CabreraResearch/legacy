@@ -74,7 +74,9 @@
             }
         }
         return isValid;
-    } // validateFloatMinValue()
+    } 
+    Csw.register('validateFloatMinValue', validateFloatMinValue);
+    Csw.validateFloatMinValue = Csw.validateFloatMinValue || validateFloatMinValue;
 
     function validateFloatMaxValue(value, maxvalue) {
         var nValue = parseFloat(value);
@@ -87,17 +89,19 @@
             }
         }
         return isValid;
-    } // validateFloatMaxValue()
+    } 
+    Csw.register('validateFloatMaxValue', validateFloatMaxValue);
+    Csw.validateFloatMaxValue = Csw.validateFloatMaxValue || validateFloatMaxValue;
 
     function validateFloatPrecision(value, precision) {
         var isValid = true;
 
         var regex;
         if (precision > 0) {
-            // Allow any valid number -- we'll round later
+            /* Allow any valid number -- we'll round later */
             regex = /^\-?\d*\.?\d*$/g ;
         } else {
-            // Integers Only
+            /* Integers Only */
             regex = /^\-?\d*$/g ;
         }
         if (isValid && !regex.test(value)) {
@@ -105,14 +109,16 @@
         }
 
         return isValid;
-    } // validateFloatPrecision()
+    } 
+    Csw.register('validateFloatPrecision', validateFloatPrecision);
+    Csw.validateFloatPrecision = Csw.validateFloatPrecision || validateFloatPrecision;
 
     function validateInteger(value) {
-        // Integers Only
         var regex = /^\-?\d*$/g ;
         return (regex.test(value));
-    } // validateInteger()
-    
+    }
+    Csw.register('validateInteger', validateInteger);
+    Csw.validateInteger = Csw.validateInteger || validateInteger;
 
     function getMaxValueForPrecision(precision, maxPrecision) {
         var i,
