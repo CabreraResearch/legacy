@@ -1,7 +1,7 @@
 use strict;
 
 my $dir = $ARGV[0];
-my $destfile = "$dir\\csw.js\\ChemSW.min.js";
+my $destfile = "$dir\\js\\ChemSW.min.js";
 
 unlink($destfile);
 

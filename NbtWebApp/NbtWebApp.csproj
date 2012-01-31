@@ -745,6 +745,7 @@
     <Content Include="crystal\urlreporting\appletviewer.js" />
     <Content Include="csw.js\ChemSW.js" />
     <Content Include="csw.js\ChemSW-vsdoc.js" />
+    <Content Include="js\ChemSW.min.js" />
     <Content Include="csw.js\core\csw.tbd.js" />
     <Content Include="csw.js\core\csw.menu.js" />
     <Content Include="csw.js\core\csw.clientchanges.js" />
