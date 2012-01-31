@@ -151,11 +151,11 @@
     Csw.register('foundMatch', foundMatch);
     Csw.foundMatch = Csw.foundMatch || foundMatch;
 
-    function objectHelper(obj) {
+    function object(obj) {
         /// <summary>Find an object in a JSON object.</summary>
         /// <param name="obj" type="Object"> Object to search </param>
-        /// <returns type="ObjectHelper"></returns>
-        var thisObj = obj;
+        /// <returns type="Object"></returns>
+        var thisObj = obj || {};
         var currentObj = null;
         var parentObj = thisObj;
         var currentKey;
@@ -212,8 +212,8 @@
         this.currentObj = currentObj;
         this.currentKey = currentObj;
     }
-    Csw.register('ObjectHelper', objectHelper);
-    Csw.ObjectHelper = Csw.ObjectHelper || objectHelper;
+    Csw.register('object', object);
+    Csw.object = Csw.object || object;
 
     function each(thisObj, onSuccess) {
         /// <summary>Iterates an Object or an Array and handles length property</summary>

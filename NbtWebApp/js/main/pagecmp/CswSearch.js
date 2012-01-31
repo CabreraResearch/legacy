@@ -236,7 +236,7 @@
                                 .change(function () {
                                     var $this = $(this),
                                         thisPropId = $this.val(),
-                                        newOh = new Csw.objectHelper(o.propsData.properties);
+                                        newOh = new Csw.object(o.propsData.properties);
                                     var r = {
                                         propertyid: thisPropId,
                                         selectedSubfieldVal: '',
@@ -261,7 +261,7 @@
             $propSelectCell.append($propSelect);
             
             o.propertyid = $propSelect.find(':selected').val();
-            var oH = new Csw.objectHelper(o.propsData.properties);
+            var oH = new Csw.object(o.propsData.properties);
             o.selectedPropData = oH.find('viewbuilderpropid', o.propertyid);
         
             o.$searchTable.CswViewPropFilter('init', {
