@@ -66,7 +66,6 @@
         var topspandivid = Csw.makeId({ID: 'search_criteria_div', prefix: o.ID});
         var $topspandiv = $topspan.CswDiv('init',{ID: topspandivid})
                             .addClass('CswSearch_Div');
-        var cswCookie = Csw.cookie();
         
         init();
 
@@ -458,7 +457,7 @@
                     
                     searchOpt = {
                         viewbuilderprops : props,
-                        parentviewid: cswCookie.get(cswCookie.cookieNames.CurrentViewId)
+                        parentviewid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
                     };
                     break;
                 case 'viewsearch':

@@ -56,8 +56,8 @@
                                                 });
 
                             $cell2 = $table.CswTable('cell', row, 2);
-                            var cswCookie = Csw.cookie();
-                            if(childObj.sessionid === cswCookie.get(cswCookie.cookieNames.SessionId)) {
+
+                            if(childObj.sessionid === Csw.cookie.get(Csw.cookie.cookieNames.SessionId)) {
                                 $cell2.append(childObj.username + "&nbsp;(you)");
                             } else {
                                 $cell2.append(childObj.username);

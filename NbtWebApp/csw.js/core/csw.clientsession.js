@@ -3,7 +3,6 @@
 
 (function CswClientSession() {
     'use strict';
-    var cswCookie = Csw.cookie();
 
     var _expiretime = '';
     var _expiretimeInterval;
@@ -168,8 +167,8 @@
         }
 
         function finishLogout () {
-            var logoutpath = cswCookie.get(cswCookie.cookieNames.LogoutPath);
-            cswCookie.clearAll();
+            var logoutpath = Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
+            Csw.cookie.clearAll();
             if (false === Csw.isNullOrEmpty(logoutpath)) {
                 window.location = logoutpath;
             } else {

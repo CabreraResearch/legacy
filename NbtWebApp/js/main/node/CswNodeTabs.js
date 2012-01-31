@@ -52,8 +52,6 @@
                         .appendTo($parent);
         var tabcnt = 0;
 
-        var cswCookie = Csw.cookie();
-
         getTabs(o);
 
         if (o.EditMode !== EditMode.PrintReport.name) {
@@ -616,7 +614,7 @@
                     TabId: tabid,
                     NodeTypeId: o.nodetypeid,
                     NewPropsJson: JSON.stringify(propsData),
-                    ViewId: cswCookie.get(cswCookie.cookieNames.CurrentViewId)
+                    ViewId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
                 };
 
                 Csw.ajax.post({

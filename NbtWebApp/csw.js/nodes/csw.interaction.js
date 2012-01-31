@@ -3,9 +3,7 @@
 
 (function () {
     'use strict';
-
-    var cswCookie = Csw.cookie();
-    
+   
     var copyNode = function (options) {
         var o = {
             'nodeid': '',
@@ -61,8 +59,8 @@
             data: jData,
             success: function () {
                 /* clear selected node cookies */
-                o.nodeid = cswCookie.clear(cswCookie.cookieNames.CurrentNodeId);
-                o.cswnbtnodekey = cswCookie.clear(cswCookie.cookieNames.CurrentNodeKey);
+                o.nodeid = Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeId);
+                o.cswnbtnodekey = Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeKey);
                 /* returning '' will reselect the first node in the tree */
                 Csw.tryExec(o.onSuccess, '', '');
             },
@@ -72,4 +70,5 @@
     Csw.register('deleteNodes', deleteNodes);
     Csw.deleteNodes = Csw.deleteNodes || deleteNodes;
 
+    
 }());
