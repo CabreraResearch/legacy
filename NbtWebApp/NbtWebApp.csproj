@@ -812,6 +812,8 @@
     <Content Include="MainIncludes.html" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Report.aspx" />
+    <Content Include="Scripts\es5-shim.js" />
+    <Content Include="Scripts\es5-shim.min.js" />
     <Content Include="Scripts\ES5.js" />
     <Content Include="Scripts\ES5.min.js" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
