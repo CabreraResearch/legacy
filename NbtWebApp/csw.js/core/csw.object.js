@@ -54,7 +54,7 @@
         /// <returns type="Boolean" />
         var ret = isNullOrUndefined(obj);
         if (false === ret && isGeneric(obj)) {
-            ret = ((Csw.trim(obj) === '') || (Csw.isDate(obj) && obj === Csw.dateTimeMinValue) || (Csw.isNumber(obj) && obj === Csw.int32MinVal));
+            ret = ((Csw.isString(obj) && obj.trim() === '') || (Csw.isDate(obj) && obj === Csw.dateTimeMinValue) || (Csw.isNumber(obj) && obj === Csw.int32MinVal));
         } else if (checkLength && hasLength(obj)) {
             ret = (obj.length === 0);
         }
