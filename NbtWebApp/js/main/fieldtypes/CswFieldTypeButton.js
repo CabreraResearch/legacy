@@ -23,18 +23,19 @@
                 data: params,
                 success: function (data) {
                     var cswCookie = Csw.cookie();
+                    var cswChanges = Csw.clientChanges();
                     $button.CswButton('enable');
                     if (Csw.bool(data.success)) {
                         switch (data.action) {
                             case ChemSW.enums.CswOnObjectClassClick.reauthenticate:
-                                if (Csw.manuallyCheckChanges()) {
+                                if (cswChanges.manuallyCheckChanges()) {
                                     // case 24669                                
                                     cswCookie.clearAll();
                                     Csw.ajax({
                                         url: '/NbtWebApp/wsNBT.asmx/reauthenticate',
                                         data: { PropId: propAttr },
                                         success: function () {
-                                            Csw.unsetChanged();
+                                            cswChanges.unsetChanged();
                                             window.location = "Main.html";
                                         }
                                     });

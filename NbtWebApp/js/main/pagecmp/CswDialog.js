@@ -5,6 +5,7 @@
     "use strict";
     var pluginName = 'CswDialog';
     var cswCookie = Csw.cookie();
+    var cswChanges = Csw.clientChanges();
     
     var methods = {
 
@@ -394,7 +395,7 @@
                         }
                     },
                     onSave: function (nodeids, nodekeys, tabcount) {
-                        Csw.unsetChanged();
+                        cswChanges.unsetChanged();
                         if (tabcount === 1 || o.Multi) {
                             $div.dialog('close');
                         }
@@ -404,13 +405,13 @@
                         }
                     },
                     onBeforeTabSelect: function () {
-                        return Csw.manuallyCheckChanges();
+                        return cswChanges.manuallyCheckChanges();
                     },
                     onTabSelect: function (tabid) {
                         cswCookie.set(cswCookie.cookieNames.CurrentTabId, tabid);
                     },
                     onPropertyChange: function () {
-                        Csw.setChanged();
+                        cswChanges.setChanged();
                     }
                 });
             } // _setupTabs()

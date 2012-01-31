@@ -10,10 +10,11 @@ window.initMain = window.initMain || function (undefined) {
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
-    var state = Csw.clientState();
-    var session = Csw.clientSession();
-    var cookie = Csw.cookie();
-    
+    var cswState = Csw.clientState();
+    var cswSession = Csw.clientSession();
+    var cswCookie = Csw.cookie();
+    var cswChanges = Csw.clientChanges();
+
     Csw.onBeforeAjax = function (watchGlobal) {
         if (watchGlobal) {
             $('#ajaxSpacer').hide();
@@ -30,13 +31,13 @@ window.initMain = window.initMain || function (undefined) {
     // handle querystring arguments
     var qs = $.CswQueryString();
     if (false == Csw.isNullOrEmpty(qs.viewid)) {
-        state.setCurrentView(qs.viewid, Csw.string(qs.viewmode, 'tree'));
+        cswState.setCurrentView(qs.viewid, Csw.string(qs.viewmode, 'tree'));
         window.location = "Main.html";
     } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
-        state.setCurrentReport(qs.reportid);
+        cswState.setCurrentReport(qs.reportid);
         window.location = "Main.html";
     } else if (false == Csw.isNullOrEmpty(qs.clear)) {
-        state.clearCurrent();
+        cswState.clearCurrent();
         window.location = "Main.html";
     } else {
         initAll();
@@ -49,14 +50,14 @@ window.initMain = window.initMain || function (undefined) {
         $('#CenterBottomDiv').CswLogin('init', {
             'onAuthenticate': function (u) {
                 $('#header_username').text(u)
-                     .hover(function () { $(this).CswAttrDom('title', session.getExpireTime()); });
+                     .hover(function () { $(this).CswAttrDom('title', cswSession.getExpireTime()); });
                 $('#header_dashboard').CswDashboard();
 
                 $('#header_quota').CswQuotaImage();
 
                 $('#header_menu').CswMenuHeader({
                     'onLogout': function () {
-                        session.logout();
+                        cswSession.logout();
                     },
                     'onQuotas': function () {
                         handleAction({ 'actionname': 'Quotas' });
@@ -68,7 +69,7 @@ window.initMain = window.initMain || function (undefined) {
                 
                 refreshViewSelect();
 
-                var current = state.getCurrent();
+                var current = cswState.getCurrent();
                 if (false === Csw.isNullOrEmpty(current.viewid)) {
                     handleItemSelect({
                         'type': 'view',
@@ -200,11 +201,11 @@ window.initMain = window.initMain || function (undefined) {
             return ret;
         }
 
-        if (Csw.manuallyCheckChanges() && itemIsSupported()) {
+        if (cswChanges.manuallyCheckChanges() && itemIsSupported()) {
             clear({ all: true });
 
             if (false === Csw.isNullOrEmpty(o.viewid)) {
-                state.setCurrentView(o.viewid, o.viewmode);
+                cswState.setCurrentView(o.viewid, o.viewmode);
 
                 var linkOpt = {
                     showempty: false,
@@ -401,7 +402,7 @@ window.initMain = window.initMain || function (undefined) {
             if (viewMode === 'list') {
                 viewMode = 'tree';
             }
-            state.setCurrentView(searchviewid, viewMode);
+            cswState.setCurrentView(searchviewid, viewMode);
 
             refreshSelected({
                 viewmode: viewMode,
@@ -431,7 +432,7 @@ window.initMain = window.initMain || function (undefined) {
                     viewmode = (parentviewmode === 'list') ? 'tree' : parentviewmode;
                 }
 
-                state.setCurrentView(viewid, viewmode);
+                cswState.setCurrentView(viewid, viewmode);
 
                 refreshSelected({
                     viewmode: viewmode,
@@ -578,7 +579,7 @@ window.initMain = window.initMain || function (undefined) {
     function onSelectTreeNode(options) {
         //if (debugOn()) Csw.log('Main.onSelectTreeNode()');
 
-        if (Csw.manuallyCheckChanges()) {
+        if (cswChanges.manuallyCheckChanges()) {
             var o = {
                 viewid: '',
                 nodeid: '',
@@ -622,23 +623,23 @@ window.initMain = window.initMain || function (undefined) {
             nodeids: [o.nodeid],
             nodekeys: [o.cswnbtnodekey],
             onSave: function () {
-                Csw.unsetChanged();
+                cswChanges.unsetChanged();
                 // case 24304
                 // refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
             },
             tabid: cswCookie.get(cswCookie.cookieNames.CurrentTabId),
             onBeforeTabSelect: function () {
-                return Csw.manuallyCheckChanges();
+                return cswChanges.manuallyCheckChanges();
             },
             Refresh: function (nodeid, nodekey) {
-                Csw.unsetChanged();
+                cswChanges.unsetChanged();
                 refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
             },
             onTabSelect: function (tabid) {
                 cswCookie.set(cswCookie.cookieNames.CurrentTabId, tabid);
             },
             onPropertyChange: function () {
-                Csw.setChanged();
+                cswChanges.setChanged();
             },
             onEditView: function (viewid) {
                 handleAction({
@@ -659,7 +660,7 @@ window.initMain = window.initMain || function (undefined) {
     function refreshSelected(options) {
         //if (debugOn()) Csw.log('Main.refreshSelected()');
 
-        if (Csw.manuallyCheckChanges()) {
+        if (cswChanges.manuallyCheckChanges()) {
             var o = {
                 nodeid: '',
                 cswnbtnodekey: '',
@@ -767,7 +768,7 @@ window.initMain = window.initMain || function (undefined) {
             'forsearch': o.forsearch,
             'IncludeNodeRequired': o.IncludeNodeRequired,
             'onViewChange': function (newviewid, newviewmode) {
-                state.setCurrentView(newviewid, newviewmode);
+                cswState.setCurrentView(newviewid, newviewmode);
             },
             'onSelectNode': function (optSelect) {
                 onSelectTreeNode({
@@ -793,7 +794,7 @@ window.initMain = window.initMain || function (undefined) {
             $.extend(o, options);
         }
 
-        state.setCurrentAction(o.actionname, o.actionurl);
+        cswState.setCurrentAction(o.actionname, o.actionurl);
 
         Csw.ajax({
             'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
@@ -825,7 +826,7 @@ window.initMain = window.initMain || function (undefined) {
                     viewmode: o.ActionOptions.viewmode,
                     onCancel: function () {
                         clear({ 'all': true });
-                        state.setCurrent(state.getLast());
+                        cswState.setCurrent(cswState.getLast());
                         refreshSelected();
                     },
                     onFinish: function (viewid) {
@@ -859,13 +860,13 @@ window.initMain = window.initMain || function (undefined) {
                     'viewmode': o.ActionOptions.viewmode,
                     'onCancel': function () {
                         clear({ 'all': true });
-                        state.setCurrent(state.getLast());
+                        cswState.setCurrent(cswState.getLast());
                         refreshSelected();
                     },
                     'onFinish': function (viewid, viewmode) {
                         clear({ 'all': true });
                         if (Csw.bool(o.ActionOptions.IgnoreReturn)) {
-                            state.setCurrent(state.getLast());
+                            cswState.setCurrent(cswState.getLast());
                             refreshSelected();
                         } else {
                             handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
@@ -909,7 +910,7 @@ window.initMain = window.initMain || function (undefined) {
                 var rulesOpt = {
                     exitFunc: function () {
                         clear({ 'all': true });
-                        state.setCurrent(state.getLast());
+                        cswState.setCurrent(cswState.getLast());
                         refreshSelected();
                     },
                     menuRefresh: refreshSelected
