@@ -9,6 +9,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Core;
 using Newtonsoft.Json.Linq;
 
@@ -30,20 +31,20 @@ namespace ChemSW.Nbt.WebServices
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 Tree.goToNthChild( c );
-                ret[Tree.getNodeIdForCurrentPosition().ToString()] = _makeNodeObj( Tree );
+                ret[Tree.getNodeIdForCurrentPosition().ToString()] = _makeNodeObj( View, Tree );
                 Tree.goToParentNode();
             }
 
             if( Tree.getCurrentNodeChildrenTruncated() )
             {
-                ret["truncated"] = new JObject(new JProperty("nodename", "Results Truncated"));
+                ret["truncated"] = new JObject( new JProperty( "nodename", "Results Truncated" ) );
             }
 
             return ret;
 
         } // getTable()
 
-        private JObject _makeNodeObj( ICswNbtTree Tree )
+        private JObject _makeNodeObj( CswNbtView View, ICswNbtTree Tree )
         {
             JObject ret = new JObject();
             CswPrimaryKey NodeId = Tree.getNodeIdForCurrentPosition();
@@ -55,6 +56,15 @@ namespace ChemSW.Nbt.WebServices
             ret["nodeid"] = NodeId.ToString();
             ret["nodekey"] = NodeKey.ToString();
             ret["locked"] = Tree.getNodeLockedForCurrentPosition().ToString().ToLower();
+
+            CswNbtViewRelationship ViewRel = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( NodeKey.ViewNodeUniqueId );
+            bool CanView = _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.View, NodeType );
+            bool CanEdit = _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType );
+            bool CanDelete = _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, NodeType );
+            ret["allowview"] = ( ViewRel.AllowView && CanView ).ToString().ToLower();
+            ret["allowedit"] = ( ViewRel.AllowEdit && CanEdit ).ToString().ToLower();
+            ret["allowdelete"] = ( ViewRel.AllowDelete && CanDelete ).ToString().ToLower();
+
             ret["props"] = new JObject();
             if( NodeType != null )
             {
