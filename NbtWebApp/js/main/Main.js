@@ -301,7 +301,7 @@ window.initMain = window.initMain || function (undefined) {
                         }
                         break;
                     default:
-                        Csw.error(Csw.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'View Printing is not enabled for views of type ' + o.viewmode));
+                        Csw.error.showError(Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'View Printing is not enabled for views of type ' + o.viewmode));
                         break;
                 }
             },

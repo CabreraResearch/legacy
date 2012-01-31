@@ -611,7 +611,7 @@ var CswTimeInterval = function (options) {
                 break;                
         }
         if (false === Csw.isNullOrEmpty(errorString)) {
-            retVal = ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, errorString);
+            retVal = Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, errorString);
         }
         return retVal;
     };

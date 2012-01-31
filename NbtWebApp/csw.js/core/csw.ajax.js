@@ -18,7 +18,7 @@
         };
        
         function _handleAjaxError (xmlHttpRequest, errorJson) {
-            Csw.error(errorJson);
+            Csw.error.showError(errorJson);
         } /* _handleAjaxError() */
         
         function _jsonPost (options) {

@@ -421,7 +421,7 @@
                 if(false === Csw.contains(jqGridOpts, 'data') || 
                    false === Csw.contains(jqGridOpts, 'colNames') || 
                    jqGridOpts.colNames.length === 0) {
-                    Csw.error(ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
+                    Csw.error.showError(Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
                     toggleButton(buttons.next, false);
                     toggleButton(buttons.prev, true, true);
                 } else {
@@ -559,7 +559,7 @@
                 if( Csw.trim(targetName).toLowerCase() != Csw.trim(selectedInspectionDesign.name).toLowerCase() ) {
                     ret = true;
                 } else {
-                    $.CswDialog('ErrorDialog', ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'An Inspection Design and an Inspection Target cannot have the same name.', 'Attempted to create Inspection Target ' + targetName + ' against Inspection Design ' + selectedInspectionDesign.name));
+                    $.CswDialog('ErrorDialog', Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'An Inspection Design and an Inspection Target cannot have the same name.', 'Attempted to create Inspection Target ' + targetName + ' against Inspection Design ' + selectedInspectionDesign.name));
                 }
                 return ret;
             },

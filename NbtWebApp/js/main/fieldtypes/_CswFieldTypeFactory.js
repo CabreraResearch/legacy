@@ -178,7 +178,7 @@ $.CswFieldTypeFactory = function (method) {
                     break;
                 default:
                     m.$propdiv.append(m.propData.gestalt);
-                    Csw.error({
+                    Csw.error.showError({
                         'type': 'Error',
                         'message': 'Unrecognized Field Type',
                         'detail': 'CswFieldTypeFactory.make: Unrecognized Field Type: ' + m.fieldtype,
@@ -304,7 +304,7 @@ $.CswFieldTypeFactory = function (method) {
                     m.$propdiv.CswFieldTypeViewReference('save', m); //('save', $propdiv, propData);
                     break;
                 default:
-                    Csw.error({
+                    Csw.error.showError({
                         'type': 'Error',
                         'message': 'Unrecognized Field Type',
                         'detail': 'CswFieldTypeFactory.save: Unrecognized Field Type: ' + m.fieldtype,
