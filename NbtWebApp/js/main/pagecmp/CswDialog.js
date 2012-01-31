@@ -4,7 +4,6 @@
 (function ($) { 
     "use strict";
     var pluginName = 'CswDialog';
-    var cswChanges = Csw.clientChanges();
     
     var methods = {
 
@@ -394,7 +393,7 @@
                         }
                     },
                     onSave: function (nodeids, nodekeys, tabcount) {
-                        cswChanges.unsetChanged();
+                        Csw.clientChanges.unsetChanged();
                         if (tabcount === 1 || o.Multi) {
                             $div.dialog('close');
                         }
@@ -404,13 +403,13 @@
                         }
                     },
                     onBeforeTabSelect: function () {
-                        return cswChanges.manuallyCheckChanges();
+                        return Csw.clientChanges.manuallyCheckChanges();
                     },
                     onTabSelect: function (tabid) {
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
                     },
                     onPropertyChange: function () {
-                        cswChanges.setChanged();
+                        Csw.clientChanges.setChanged();
                     }
                 });
             } // _setupTabs()

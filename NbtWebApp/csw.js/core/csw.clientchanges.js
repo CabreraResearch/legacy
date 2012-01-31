@@ -8,13 +8,13 @@
     var _changed = 0;
     var _attachedToWindow = false;
 
-    function clientChanges(setCheckChanges) {
+    var clientChanges = (function clientChangesP (setCheckChanges) {
         /// <summary>Csw Client Changes class.</summary>
         /// <returns type="Object">Returns an instance of the class with methods for setting and unsetting changes.</returns>
-        
+
         var checkChangesEnabled = (arguments.length === 0 || Csw.bool(setCheckChanges));
 
-        function _checkChanges() {
+        function _checkChanges () {
             /// <summary>Check if changes have been made.</summary>
             /// <returns type="String">Confirmation text if changes have been made.</returns>
             if (checkChangesEnabled && _changed === 1) {
@@ -42,8 +42,8 @@
                 };
             }
         }
-        
-        function setChanged() {
+
+        function setChanged () {
             /// <summary>Register a change.</summary>
             /// <returns type="Boolean">True if registered.</returns>
             if (checkChangesEnabled) {
@@ -52,7 +52,7 @@
             return checkChangesEnabled;
         }
 
-        function unsetChanged() {
+        function unsetChanged () {
             /// <summary>Unregister a change.</summary>
             /// <returns type="Boolean">True if unregistered.</returns>
             if (checkChangesEnabled) {
@@ -79,7 +79,7 @@
             return ret;
         }
 
-        if(false === _attachedToWindow) {
+        if (false === _attachedToWindow) {
             $(window).load(_initCheckChanges);
             _attachedToWindow = true;
         }
@@ -89,7 +89,7 @@
             unsetChanged: unsetChanged,
             setChanged: setChanged
         };
-    }
+    }());
     Csw.register('clientChanges', clientChanges);
     Csw.clientChanges = Csw.clientChanges || clientChanges;
     

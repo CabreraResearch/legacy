@@ -12,7 +12,6 @@ window.initMain = window.initMain || function (undefined) {
     var mainSearchId = 'CswSearchForm';
     var cswState = Csw.clientState();
     var cswSession = Csw.clientSession();
-    var cswChanges = Csw.clientChanges();
 
     Csw.onBeforeAjax = function (watchGlobal) {
         if (watchGlobal) {
@@ -200,7 +199,7 @@ window.initMain = window.initMain || function (undefined) {
             return ret;
         }
 
-        if (cswChanges.manuallyCheckChanges() && itemIsSupported()) {
+        if (Csw.clientChanges.manuallyCheckChanges() && itemIsSupported()) {
             clear({ all: true });
 
             if (false === Csw.isNullOrEmpty(o.viewid)) {
@@ -578,7 +577,7 @@ window.initMain = window.initMain || function (undefined) {
     function onSelectTreeNode(options) {
         //if (debugOn()) Csw.log('Main.onSelectTreeNode()');
 
-        if (cswChanges.manuallyCheckChanges()) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
             var o = {
                 viewid: '',
                 nodeid: '',
@@ -622,23 +621,23 @@ window.initMain = window.initMain || function (undefined) {
             nodeids: [o.nodeid],
             nodekeys: [o.cswnbtnodekey],
             onSave: function () {
-                cswChanges.unsetChanged();
+                Csw.clientChanges.unsetChanged();
                 // case 24304
                 // refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
             },
             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
             onBeforeTabSelect: function () {
-                return cswChanges.manuallyCheckChanges();
+                return Csw.clientChanges.manuallyCheckChanges();
             },
             Refresh: function (nodeid, nodekey) {
-                cswChanges.unsetChanged();
+                Csw.clientChanges.unsetChanged();
                 refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
             },
             onTabSelect: function (tabid) {
                 Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
             },
             onPropertyChange: function () {
-                cswChanges.setChanged();
+                Csw.clientChanges.setChanged();
             },
             onEditView: function (viewid) {
                 handleAction({
@@ -659,7 +658,7 @@ window.initMain = window.initMain || function (undefined) {
     function refreshSelected(options) {
         //if (debugOn()) Csw.log('Main.refreshSelected()');
 
-        if (cswChanges.manuallyCheckChanges()) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
             var o = {
                 nodeid: '',
                 cswnbtnodekey: '',
