@@ -3,13 +3,13 @@
 
 (function CswClientSession() {
     'use strict';
-    
-    function clientSession() {
+    var cswCookie = Csw.cookie();
 
-        var _expiretime = '';
-        var _expiretimeInterval;
-        var _expiredInterval;
-        var cswCookie = Csw.cookie();
+    var _expiretime = '';
+    var _expiretimeInterval;
+    var _expiredInterval;
+
+    function clientSession() {
 
         function _setExpireTimeInterval () {
             clearInterval(_expiretimeInterval);
@@ -37,7 +37,7 @@
                 clearInterval(_expiretimeInterval);
                 $.CswDialog('ExpireDialog', {
                     'onYes': function () {
-                        Csw.ajax({
+                        Csw.ajax.post({
                             'url': '/NbtWebApp/wsNBT.asmx/RenewSession',
                             'success': function () {
                             }
@@ -157,7 +157,7 @@
                 $.extend(o, options);
             }
 
-            Csw.ajax({
+            Csw.ajax.post({
                 url: o.DeauthenticateUrl,
                 data: {},
                 success: function () { 
@@ -188,7 +188,7 @@
                 $.extend(o, options);
             }
 
-            Csw.ajax({
+            cswAjax.post({
                 url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
                 success: function (data) {
                     if (data.Administrator === "true") {

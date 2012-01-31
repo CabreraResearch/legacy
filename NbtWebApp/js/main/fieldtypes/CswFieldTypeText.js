@@ -1,7 +1,7 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";        
     var pluginName = 'CswFieldTypeText';
 

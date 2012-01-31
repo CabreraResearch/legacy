@@ -3,7 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = "CswInput";
     
@@ -69,7 +69,7 @@
 
     };
         // Method calling logic
-    $.fn.CswInput = function (method) { /// <param name="$" type="jQuery" />
+    $.fn.CswInput = function (method) { 
         
         if ( methods[method] ) {
           return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));

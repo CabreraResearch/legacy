@@ -1,7 +1,7 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = 'CswDialog';
     var cswCookie = Csw.cookie();
@@ -104,7 +104,7 @@
                         createData.VisibilityUserId = "";
                     }
 
-                    Csw.ajax({
+                    Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/createView',
                         data: createData,
                         success: function (data) {
@@ -222,7 +222,7 @@
                 enabledText: 'Add',
                 onclick: function () {
                     var newNodeTypeName = $nodeType.val();
-                    Csw.ajax({
+                    Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
                         async: false,
                         data: { 'NodeTypeName': newNodeTypeName },
@@ -290,7 +290,7 @@
                         TabId: Csw.string(cswNodeTabOptions.tabid),
                         EditMode: $layoutSelect.val()
                     };
-                    Csw.ajax({
+                    Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout',
                         data: ajaxdata,
                         success: function () {
@@ -314,7 +314,7 @@
                     TabId: Csw.string(cswNodeTabOptions.tabid),
                     EditMode: $layoutSelect.val()
                 };
-                Csw.ajax({
+                Csw.ajax.post({
                     url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd',
                     data: ajaxdata,
                     success: function (data) {
@@ -535,7 +535,7 @@
         }, // DeleteNodeDialog
         AboutDialog: function () {
             var $div = $('<div></div>');
-            Csw.ajax({
+            Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/getAbout',
                 data: {},
                 success: function (data) {
@@ -645,7 +645,7 @@
                 enabledText: 'Save MOL Text',
                 disabledText: 'Saving MOL...',
                 onclick: function () {
-                    Csw.ajax({
+                    Csw.ajax.post({
                         url: o.TextUrl,
                         data: {
                             molData: $moltxtarea.val(),
@@ -679,7 +679,7 @@
                                     .appendTo($div);
             $div.append('<br/>');
 
-            Csw.ajax({
+            Csw.ajax.post({
                 url: o.GetLicenseUrl,
                 success: function (data) {
                     $licensetextarea.text(data.license);
@@ -691,7 +691,7 @@
                 enabledText: 'I Accept',
                 disabledText: 'Accepting...',
                 onclick: function () {
-                    Csw.ajax({
+                    Csw.ajax.post({
                         url: o.AcceptLicenseUrl,
                         success: function () {
                             $div.dialog('close');
@@ -734,7 +734,7 @@
             var $labelsel;
 
             var jData = { PropId: o.propid };
-            Csw.ajax({
+            Csw.ajax.post({
                 url: o.GetPrintLabelsUrl,
                 data: jData,
                 success: function (data) {
@@ -760,7 +760,7 @@
                 disableOnClick: false,
                 onclick: function () {
                     var jData2 = { PropId: o.propid, PrintLabelNodeId: $labelsel.val() };
-                    Csw.ajax({
+                    Csw.ajax.post({
                         url: o.GetEPLTextUrl,
                         data: jData2,
                         success: function (data) {

@@ -5,7 +5,7 @@
 
 //See http://www.erichynds.com/examples/jquery-ui-multiselect-widget/demos for fancy options
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = "CswMultiSelect";
     

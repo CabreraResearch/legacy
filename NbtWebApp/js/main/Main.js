@@ -796,7 +796,7 @@ window.initMain = window.initMain || function (undefined) {
 
         cswState.setCurrentAction(o.actionname, o.actionurl);
 
-        Csw.ajax({
+        Csw.ajax.post({
             'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
             'data': { 'ActionName': o.actionname }
         });

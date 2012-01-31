@@ -5,7 +5,7 @@
 /// <reference path="../controls/CswGrid.js" />
 /// <reference path="../pagecmp/CswDialog.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";    
     var pluginName = 'CswNodeTable';
     
@@ -35,7 +35,7 @@
                                                     cellalign: 'center'
                                                 });
 
-            Csw.ajax({
+            Csw.ajax.post({
                 url: o.TableUrl,
                 data: { 
                     ViewId: o.viewid, 

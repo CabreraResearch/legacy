@@ -10,7 +10,7 @@
 /// <reference path="../controls/CswTable.js" />
 /// <reference path="../controls/CswSelect.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     
     $.fn.CswScheduledRulesGrid = function (options) {
@@ -103,7 +103,7 @@
                                 }
                             });
                         
-                        Csw.ajax({
+                        Csw.ajax.post({
                             url: '/NbtWebApp/wsNBT.asmx/getActiveAccessIds',
                             success: function (data) {
                                 var values = data.customerids;
@@ -153,7 +153,7 @@
                         }
                     };
                     
-                    Csw.ajax({
+                    Csw.ajax.post({
                             url: '/NbtWebApp/wsNBT.asmx/getScheduledRulesGrid',
                             data: { AccessId: selectedCustomerId },
                             success: function (data) {
@@ -178,7 +178,7 @@
                         enabledText: 'Clear All Reprobates',
                         disabledText: 'Clearing...',
                         onclick: function () {
-                            Csw.ajax({
+                            Csw.ajax.post({
                                 url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
                                 data: {AccessId: selectedCustomerId, Action: 'ClearAllReprobates'},
                                 success: makeStepTwo

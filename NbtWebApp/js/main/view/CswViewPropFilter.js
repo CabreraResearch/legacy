@@ -4,7 +4,7 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="../controls/CswSelect.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = "CswViewPropFilter";
 
@@ -77,7 +77,7 @@
                     PropArbitraryId: o.proparbitraryid
                 };
 
-                Csw.ajax({
+                Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/getViewPropFilterUI',
                         async: false,
                         data: jsonData,
@@ -395,7 +395,7 @@
                 ViewJson: JSON.stringify(o.viewJson)
             };
 
-            Csw.ajax({
+            Csw.ajax.post({
                     url: '/NbtWebApp/wsNBT.asmx/makeViewPropFilter',
                     data: jsonData,
                     success: function (data) {

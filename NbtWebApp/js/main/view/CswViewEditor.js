@@ -1,7 +1,7 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.CswViewEditor = function (options) {
         var o = {
@@ -109,7 +109,7 @@
                             ViewId: viewid
                         };
 
-                        Csw.ajax({
+                        Csw.ajax.post({
                                 url: o.CopyViewUrl,
                                 data: dataJson,
                                 success: function (gridJson) {
@@ -137,7 +137,7 @@
                                 ViewId: viewid
                             };
 
-                            Csw.ajax({
+                            Csw.ajax.post({
                                     url: o.DeleteViewUrl,
                                     data: dataJson,
                                     success: function () {
@@ -261,7 +261,7 @@
                         ViewId: _getSelectedViewId()
                     };
 
-                    Csw.ajax({
+                    Csw.ajax.post({
                             url: o.ViewInfoUrl,
                             data: jsonData,
                             success: function (data) {
@@ -421,7 +421,7 @@
                     ViewJson: JSON.stringify(currentViewJson)
                 };
 
-                Csw.ajax({
+                Csw.ajax.post({
                         url: o.SaveViewUrl,
                         data: jsonData,
                         success: function () {
@@ -447,7 +447,7 @@
                 SelectedViewId: Csw.string(selectedviewid, '')
             };
 
-            Csw.ajax({
+            Csw.ajax.post({
                     url: o.ViewGridUrl,
                     data: dataJson,
                     success: function (gridJson) {
@@ -594,7 +594,7 @@
                     Type: viewnodejson.secondtype,
                     Id: viewnodejson.secondid
                 };
-                Csw.ajax({
+                Csw.ajax.post({
                         url: o.PropNamesUrl,
                         data: jsonData,
                         success: function (data) {
@@ -1088,7 +1088,7 @@
                     ViewJson: JSON.stringify(currentViewJson)
                 };
 
-                Csw.ajax({
+                Csw.ajax.post({
                         url: o.ChildOptionsUrl,
                         data: dataJson,
                         success: function (data)

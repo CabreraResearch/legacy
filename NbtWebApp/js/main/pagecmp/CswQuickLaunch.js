@@ -23,7 +23,7 @@
             UserId: ''
         };
 
-        Csw.ajax({
+        Csw.ajax.post({
             url: o.Url,
             data: dataXml,
             stringify: false,

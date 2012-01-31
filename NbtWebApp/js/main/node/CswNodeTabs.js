@@ -1,7 +1,7 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict"; 
     $.fn.CswNodeTabs = function (options) {
         "use strict"; 
@@ -108,7 +108,7 @@
                 var $tabcontentdiv = makeTabContentDiv($parent, tabid, false);
                 getProps($tabcontentdiv, tabid);
             } else {
-                Csw.ajax({
+                Csw.ajax.post({
                     watchGlobal: o.AjaxWatchGlobal,
                     url: o.TabsUrl,
                     data: jsonData,
@@ -167,7 +167,7 @@
         function getProps($tabcontentdiv, tabid) {
             if( o.EditMode === EditMode.AddInPopup.name && o.Config === false) {
                 // case 20970 - make sure there's room in the quota
-                Csw.ajax({
+                Csw.ajax.post({
                     watchGlobal: o.AjaxWatchGlobal,
                     url: o.QuotaUrl,
                     data: { NodeTypeId: o.nodetypeid },
@@ -201,7 +201,7 @@
                 filterToPropId: o.filterToPropId
             };
 
-            Csw.ajax({
+            Csw.ajax.post({
                 watchGlobal: o.AjaxWatchGlobal,
                 url: o.PropsUrl,
                 data: jsonData,
@@ -358,7 +358,7 @@
             var $propdiv = _getPropertyCell(onRemoveData.cellset).children('div').first();
             var propid = $propdiv.CswAttrNonDom('propid');
             
-            Csw.ajax({
+            Csw.ajax.post({
                 watchGlobal: o.AjaxWatchGlobal,
                 url: o.RemovePropUrl,
                 data: { PropId: propid, EditMode: o.EditMode },
@@ -387,7 +387,7 @@
                     EditMode: o.EditMode
                 };
 
-                Csw.ajax({
+                Csw.ajax.post({
                     watchGlobal: o.AjaxWatchGlobal,
                     url: o.MovePropUrl,
                     data: dataJson,
@@ -591,7 +591,7 @@
                         NewPropJson: JSON.stringify(propData)
                     };
 
-                    Csw.ajax({
+                    Csw.ajax.post({
                         watchGlobal: o.AjaxWatchGlobal,
                         url: o.SinglePropUrl,
                             data: jsonData,
@@ -619,7 +619,7 @@
                     ViewId: cswCookie.get(cswCookie.cookieNames.CurrentViewId)
                 };
 
-                Csw.ajax({
+                Csw.ajax.post({
                     watchGlobal: o.AjaxWatchGlobal,
                     url: o.SavePropUrl,
                     async: (false === o.Multi),
@@ -632,7 +632,7 @@
                             PropIds: []
                         };
                         function copyNodeProps(onSuccess) {
-                            Csw.ajax({
+                            Csw.ajax.post({
                                 watchGlobal: o.AjaxWatchGlobal,
                                 url: o.CopyPropValuesUrl,
                                 data: dataJson,

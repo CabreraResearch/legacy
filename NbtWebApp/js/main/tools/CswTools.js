@@ -5,7 +5,7 @@
 
 // adapted from http://plugins.jquery.com/project/SafeEnter
 // by teedyay
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.listenForEnter = function ()
     {

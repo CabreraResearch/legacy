@@ -432,12 +432,12 @@ function CswGrid(options, $parent) {
             grid = CswGrid(printOpts, $printElement);
             
             if(Csw.isNullOrEmpty(data) && false === Csw.isNullOrEmpty(printOpts.printUrl)) {
-                Csw.ajax({
+                Csw.ajax.get({
                     url: printOpts.printUrl,
                     success: function (rows) {
                         addRowsToGrid(rows.rows);    
                     }
-                }, 'json', 'GET');
+                });
             } else {
                 /* Get the data (rows) from the current grid */
                 addRowsToGrid(data);

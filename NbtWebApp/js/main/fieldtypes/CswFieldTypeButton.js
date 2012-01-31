@@ -1,7 +1,7 @@
 ﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = 'CswFieldTypeButton';
 
@@ -18,7 +18,7 @@
                 NodeTypePropAttr: propAttr
             };
 
-            Csw.ajax({
+            Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
                 data: params,
                 success: function (data) {
@@ -29,9 +29,9 @@
                         switch (data.action) {
                             case ChemSW.enums.CswOnObjectClassClick.reauthenticate:
                                 if (cswChanges.manuallyCheckChanges()) {
-                                    // case 24669                                
+                                    /* case 24669 */
                                     cswCookie.clearAll();
-                                    Csw.ajax({
+                                    Csw.ajax.post({
                                         url: '/NbtWebApp/wsNBT.asmx/reauthenticate',
                                         data: { PropId: propAttr },
                                         success: function () {
@@ -45,7 +45,7 @@
                                 o.onReload();
                                 break;
                             default:
-                                //Nada
+                                /* Nada */
                                 break;
                         }
                     }
@@ -58,7 +58,7 @@
     };
 
     var methods = {
-        init: function (o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function (o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
@@ -68,10 +68,6 @@
                 mode = Csw.string(propVals.mode, 'button'),
                 $button;
 
-            //Read-only doesn't make sense for buttons
-            //            if(o.ReadOnly) {
-            //                $Div.append(value);
-            //            } else {
             if (mode === 'button') {
                 $button = $Div.CswButton('init', {
                     ID: o.ID,
@@ -94,16 +90,13 @@
             if (o.Required) {
                 $button.addClass('required');
             }
-            //}
         },
         save: function (o) {
             Csw.preparePropJsonForSave(o.propData);
         }
     };
 
-    // Method calling logic
     $.fn.CswFieldTypeButton = function (method) {
-
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
         } else if (typeof method === 'object' || !method) {
@@ -111,6 +104,5 @@
         } else {
             $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
         }
-
     };
 })(jQuery);

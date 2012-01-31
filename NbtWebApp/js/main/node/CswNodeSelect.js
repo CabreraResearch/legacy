@@ -36,7 +36,7 @@
                 ObjectClass: o.objectclass
             };
 
-            Csw.ajax({
+            Csw.ajax.post({
                     url: o.NodesUrl,
                     data: jsonData,
                     success: function (data) {

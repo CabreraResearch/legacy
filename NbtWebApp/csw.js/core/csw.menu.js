@@ -12,7 +12,7 @@
     Csw.goHome = Csw.goHome || goHome;
 
     function handleMenuItem(options) {
-        /// <param name="$" type="jQuery" />
+        
         var o = {
             $ul: '',
             itemKey: '',

@@ -1,4 +1,4 @@
-    <!--#include file="MainIncludes.html" -->
+<!--#include file="MainIncludes.html" -->
 
 <html>
 <head>
@@ -32,7 +32,7 @@ function _execAction($table,testno, actname, actdata, resname, valStrIn, nextfun
     var propval = '';
     var ajaxStartTime = new Date();
 
-    Csw.ajax({
+    Csw.ajax.post({
         'url': '/NbtWebApp/wsNBT.asmx/' + actname,
         'data': actdata,
         showAuth: true,
@@ -56,18 +56,17 @@ function _execAction($table,testno, actname, actdata, resname, valStrIn, nextfun
             }
 
             showTestOutput($table, testno, actname, status, propval, ajaxStartTime, ajaxEndTime);
-            if (isFunction(nextfunc)) nextfunc();
+            Csw.tryExec(nextfunc);
         },
         error: function (outputdata) {
             log(outputdata.message);
             showTestOutput($table, testno, actname, 'ERROR', outputdata.message);
-            if (isFunction(nextfunc)) nextfunc();
+            Csw.tryExec(nextfunc);
         }
     });
 
 }
 
-/////////////////// TESTS begin ///////////////////
 function test_getQuickLaunchItems($table,testno,nextfunc) {
     _execAction($table,testno, 'getQuickLaunchItems', { "UserId": "" }, 'AuthenticationStatus', 'Authenticated',
          nextfunc);
@@ -78,7 +77,7 @@ function test_getMainMenu($table, testno, nextfunc) {
          nextfunc);
 }
 
-function test_getWelcomeItems($table, testno, nextfunc) { // \"viewid\": \"ViewId_176\"
+function test_getWelcomeItems($table, testno, nextfunc) { 
     _execAction($table, testno, 'getWelcomeItems', { "RoleId": "" }, 'viewmode', 'list',
          nextfunc);
 }
@@ -115,21 +114,15 @@ function test_getTabsForEquipNode($table, testno, nextfunc) { //22983
          nextfunc);
 }
 
-
-
-/////////////////// TESTS end ///////////////////
-
-
 function _beginTests(accessid,username,password) {
 
-    //authenticate or bust
     var $table = $('<table border="1" width="100%"/>').appendTo($('#div1'));
     $table.append('<tr><td>Elapsed (sec)</td><td>Ajax Time (sec)</td><td>Test#</td><td>ServiceName</td><td>Status</td><td>Details</td></tr>');
 
     var ajaxstart = new Date();
     var ajaxend;
 
-    Csw.ajax({
+    Csw.ajax.post({
         'url': '/NbtWebApp/wsNBT.asmx/authenticate',
         'data': { "AccessId": accessid, "UserName": username, "Password": password, "ForMobile": "false" },
         showAuth: true,
@@ -141,7 +134,6 @@ function _beginTests(accessid,username,password) {
             ajaxend = new Date();
             showTestOutput($table, 'BEGIN', 'authenticate', status, began.toString(), ajaxstart, ajaxend);
 
-            //test series here...
             test_getDashboard($table, 1, function () {
                 test_getHeaderMenu($table, 2, function () {
                     test_getViewTree($table, 3, function () {
@@ -172,8 +164,8 @@ function _endTests($table,errorstr) {
 
     var ajaxStart = new Date();
     var ajaxEnd;
-	//deauthenticate or bust
-    Csw.ajax({
+    //deauthenticate or bust
+    Csw.ajax.post({
         'url': '/NbtWebApp/wsNBT.asmx/deauthenticate',
         'data': {},
         success: function (outputdata) {
@@ -190,14 +182,13 @@ function _endTests($table,errorstr) {
 
 function _noAuthTests() {
 
-    //authenticate or bust
     var $table = $('<table border="1" width="100%"/>').appendTo($('#div1'));
     $table.append('<tr><td>Elapsed (sec)</td><td>Ajax Time (sec)</td><td>Test#</td><td>ServiceName</td><td>Status</td><td>Details</td></tr>');
 
     var ajaxstart = new Date();
     var ajaxend;
 
-    Csw.ajax({
+    Csw.ajax.post({
         'url': '/NbtWebApp/wsNBT.asmx/authenticate',
         'data': { "AccessId": 1, "UserName": 'bogus', "Password": 'junk876$', "ForMobile": "false" },
         showAuth: true,
@@ -215,33 +206,21 @@ function _noAuthTests() {
         }
     });
 
-    //test series here...
-    test_getDashboard($table, 1); //, function () {
-    test_getHeaderMenu($table, 2); //, function () {
-    test_getViewTree($table, 3); //, function () {
-    test_getWelcomeItems($table, 4); //, function () {
-    test_getMainMenu($table, 5); //, function () {
-    test_getQuickLaunchItems($table, 6); //, function () {
-    test_getTreeOfViewInit($table, 7); //, function () {
-    test_getTabsForEquipNode($table, 8); //, function () {
+    test_getDashboard($table, 1); 
+    test_getHeaderMenu($table, 2); 
+    test_getViewTree($table, 3); 
+    test_getWelcomeItems($table, 4);
+    test_getMainMenu($table, 5); 
+    test_getQuickLaunchItems($table, 6); 
+    test_getTreeOfViewInit($table, 7); 
+    test_getTabsForEquipNode($table, 8); 
     _endTests($table, 'Ended OK');
-    // });
-    // });
-    // });
-    // });
-    // });
-    //  });
-    // });
-    // });
-
-
 
 }
 
-//execution steps
+
 $(document).ready(function () {
 
-//    _beginTests();
 
 });
 

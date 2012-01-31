@@ -3,7 +3,7 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var authenticateUrl = '/NbtWebApp/wsNBT.asmx/authenticate';
     var cswCookie = Csw.cookie();
@@ -142,7 +142,7 @@
             LogoutPath: ''
         };
         if(loginopts) $.extend(l, loginopts);
-        Csw.ajax({
+        Csw.ajax.post({
                     url: authenticateUrl,
                     data: {
                             AccessId: l.AccessId, 

@@ -8,7 +8,7 @@
 /// <reference path="../controls/CswSelect.js" />
 /// <reference path="../controls/CswGrid.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
 
     // This was extracted from CswViewEditor
@@ -172,7 +172,7 @@
 
         var $tree = $(this);
 
-        Csw.ajax({
+        Csw.ajax.post({
             url: o.ViewInfoUrl,
             data: { ViewId: o.viewid },
             success: function (data) {

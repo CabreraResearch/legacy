@@ -5,7 +5,7 @@
     'use strict';
 
     var cswCookie = Csw.cookie();
-
+    
     var copyNode = function (options) {
         var o = {
             'nodeid': '',
@@ -23,7 +23,7 @@
             NodePk: o.nodeid
         };
 
-        Csw.ajax({
+        Csw.ajax.post({
             url: '/NbtWebApp/wsNBT.asmx/CopyNode',
             data: dataJson,
             success: function (result) {
@@ -37,18 +37,16 @@
 
     var deleteNodes = function (options) {
         var o = {
-            'nodeids': Csw.array(),
-            'nodekeys': Csw.array(),
-            'onSuccess': function () {
-            },
-            'onError': function () {
-            }
+            nodeids: Csw.array(),
+            nodekeys: Csw.array(),
+            onSuccess: null,
+            onError: null
         };
         if (options) {
             $.extend(o, options);
         }
 
-        if (false === Csw.isArray(o.nodeids)) {  // case 22722
+        if (false === Csw.isArray(o.nodeids)) {  /* case 22722 */
             o.nodeids = Csw.array(o.nodeids);
             o.nodekeys = Csw.array(o.nodekeys);
         }
@@ -58,15 +56,15 @@
             NodeKeys: o.nodekeys
         };
 
-        Csw.ajax({
+        Csw.ajax.post({
             url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',
             data: jData,
             success: function () {
-                // clear selected node cookies
+                /* clear selected node cookies */
                 o.nodeid = cswCookie.clear(cswCookie.cookieNames.CurrentNodeId);
                 o.cswnbtnodekey = cswCookie.clear(cswCookie.cookieNames.CurrentNodeKey);
-                // returning '' will reselect the first node in the tree
-                o.onSuccess('', '');
+                /* returning '' will reselect the first node in the tree */
+                Csw.tryExec(o.onSuccess, '', '');
             },
             error: o.onError
         });

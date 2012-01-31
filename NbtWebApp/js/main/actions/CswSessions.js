@@ -2,7 +2,7 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";        
     var pluginName = 'CswSessions';
 
@@ -42,7 +42,7 @@
                 row += 1;
 
                 // Sessions table
-                Csw.ajax({
+                Csw.ajax.post({
                     url: o.Url,
                     data: {},
                     success: function (result) {
@@ -84,7 +84,7 @@
 
             function handleBurn(sessionId)
             {
-                Csw.ajax({
+                Csw.ajax.post({
                     url: o.EndSessionUrl,
                     data: { SessionId: sessionId },
                     success: function () {

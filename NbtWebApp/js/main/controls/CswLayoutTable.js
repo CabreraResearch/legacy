@@ -1,7 +1,7 @@
 /// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     $.fn.CswLayoutTable = function (method) {
         "use strict";
         var PluginName = "CswLayoutTable";

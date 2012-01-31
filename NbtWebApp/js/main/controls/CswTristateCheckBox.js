@@ -4,7 +4,7 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="CswImageButton.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = 'CswTristateCheckBox';
 

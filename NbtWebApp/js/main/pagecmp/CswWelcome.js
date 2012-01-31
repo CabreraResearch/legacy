@@ -5,7 +5,7 @@
 /// <reference path="CswDialog.js" />
 
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = "CswWelcome";
 
@@ -31,7 +31,7 @@
                 RoleId: ''
             };
 
-            Csw.ajax({
+            Csw.ajax.post({
                 url: o.Url,
                 data: jsonData,
                 success: function (data) {
@@ -229,7 +229,7 @@
                 });
             });
 
-            Csw.ajax({
+            Csw.ajax.post({
                 'url': '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
                 'success': function (data) {
                     for (var icon in data) {
@@ -325,7 +325,7 @@
                     WelcomeId: welcomeid
                 };
 
-                Csw.ajax({
+                Csw.ajax.post({
                     url: r.RemoveWelcomeItemUrl,
                     data: dataJson,
                     success: function () {
@@ -362,7 +362,7 @@
             IconFileName: a.iconfilename
         };
 
-        Csw.ajax({
+        Csw.ajax.post({
             url: a.AddWelcomeItemUrl,
             data: dataJson,
             success: function () {
@@ -403,7 +403,7 @@
                     NewColumn: newcolumn
                 };
 
-                Csw.ajax({
+                Csw.ajax.post({
                     url: MoveWelcomeItemUrl,
                     data: dataJson
                 });

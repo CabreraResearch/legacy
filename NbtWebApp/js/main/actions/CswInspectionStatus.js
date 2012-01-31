@@ -1,10 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../controls/CswGrid.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.CswInspectionStatus = function (options) {
         var o = {
@@ -18,8 +15,7 @@
         var $div = $('<div></div>')
             .appendTo($parent);
 
-
-        Csw.ajax({
+        Csw.ajax.post({
                 url: o.Url,
                 data: { },
                 success: function (gridJson) {

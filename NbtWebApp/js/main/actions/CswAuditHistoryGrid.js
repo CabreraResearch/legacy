@@ -1,10 +1,10 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = 'CswAuditHistoryGrid';
-
+    
     var methods = {
         init: function (options) {
             var o = {
@@ -23,7 +23,7 @@
             var $Div = $(this);
             $Div.contents().remove();
 
-            Csw.ajax({
+            Csw.ajax.post({
                 url: o.Url,
                 data: {
                     NodeId: Csw.string(o.nodeid), 

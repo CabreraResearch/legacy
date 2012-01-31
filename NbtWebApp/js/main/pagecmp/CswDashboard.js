@@ -18,7 +18,7 @@
 
         var $DashDiv = $(this);
         
-        Csw.ajax({
+        Csw.ajax.post({
             url: o.Url,
             data: {},
             stringify: false,

@@ -19,7 +19,7 @@
 
         var $MenuDiv = $(this);
 
-        Csw.ajax({
+        Csw.ajax.post({
             url: o.Url,
             data: {},
             success: function (data) {

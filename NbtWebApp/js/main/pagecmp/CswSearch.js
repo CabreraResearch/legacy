@@ -5,7 +5,7 @@
 /// <reference path="../controls/CswSelect.js" />
 /// <reference path="../view/CswViewPropFilter.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.CswSearch = function (options) {
 
@@ -290,7 +290,7 @@
                 NodeKey: o.cswnbtnodekey
             };
 
-            Csw.ajax({ 
+            Csw.ajax.post({ 
                         url: o.getNewPropsUrl,
                         data: jsonData,
                         success: function (data) { 
@@ -374,7 +374,7 @@
                 NodeKey: o.cswnbtnodekey
             };
 
-            Csw.ajax({ 
+            Csw.ajax.post({ 
                 'url': o.getClientSearchXmlUrl,
                 'data':jsonData,
                 'success': function (data) { 
@@ -476,7 +476,7 @@
                 dataJson = {
                     SearchJson: searchOpt
                 };
-                Csw.ajax({ 
+                Csw.ajax.post({ 
                     url: searchUrl,
                     data: dataJson,
                     success: function (view) { 

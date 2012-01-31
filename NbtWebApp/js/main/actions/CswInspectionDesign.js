@@ -9,7 +9,7 @@
 /// <reference path="../controls/CswTimeInterval.js" />
 /// <reference path="../controls/CswTable.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.CswInspectionDesign = function (options) {
 
@@ -356,19 +356,15 @@
             }()),
 
             checkIsNodeTypeNameUnique = function (name, success, error) {
-                Csw.ajax({
+                Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
                         async: false,
                         data: { 'NodeTypeName': name },
                         success: function (data) {
-                            if (Csw.isFunction(success)) {
-                                success(data);
-                            }
+                            Csw.tryExec(success, data);
                         },
                         error: function (data) {
-                            if (Csw.isFunction(error)) {
-                                error(data);
-                            }
+                            Csw.tryExec(error, data);
                             toggleButton(buttons.next);
                             toggleButton(buttons.prev, true);
                         }
@@ -377,9 +373,7 @@
 
             //File upload onSuccess event to prep Step 4
             makeInspectionDesignGrid = function (jqGridOpts, onSuccess) {
-                if (Csw.isFunction(onSuccess)) {
-                    onSuccess();
-                }
+                Csw.tryExec(onSuccess);
                 gridIsPopulated = true;
                 
                 //This is ugly. Abstract the step div from this function.
@@ -731,7 +725,7 @@
                     Category: Csw.string(categoryName)
                 };
 
-                Csw.ajax({
+                Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/finalizeInspectionDesign',
                         data: jsonData,
                         success: function (data) {

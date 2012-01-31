@@ -1,7 +1,7 @@
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.CswAttrDom = function (name, value) {
         /// <summary>

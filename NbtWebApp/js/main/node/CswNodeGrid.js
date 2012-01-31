@@ -5,7 +5,7 @@
 /// <reference path="../controls/CswGrid.js" />
 /// <reference path="../pagecmp/CswDialog.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";    
     var pluginName = 'CswNodeGrid';
     
@@ -89,7 +89,7 @@
 
                 //Get the grid skeleton definition
                 (function () {
-                    Csw.ajax({
+                    Csw.ajax.post({
                         url: o.runGridUrl,
                         data: {
                             ViewId: o.viewid,
@@ -190,7 +190,7 @@
                     };
                     
                     if (false === doPaging) {
-                        Csw.ajax({
+                        Csw.ajax.post({
                             url: o.gridAllRowsUrl,
                             data: {
                                 ViewId: o.viewid,

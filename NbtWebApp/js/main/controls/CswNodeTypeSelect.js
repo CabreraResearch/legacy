@@ -1,7 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -14,8 +12,8 @@
                 NodeTypesUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
                 nodetypeid: '',
                 objectClassName: '',
-                onSelect: null, //function (nodetypeid) {},
-                onSuccess: null, //function () {}
+                onSelect: null, 
+                onSuccess: null, 
                 width: '',
                 addNewOption: false,
                 excludeNodeTypeIds: ''
@@ -33,7 +31,7 @@
 
             $select.change(function () { if (Csw.isFunction(o.onSelect)) o.onSelect( $select.val() ); });
 
-            Csw.ajax({
+            Csw.ajax.post({
                     url: o.NodeTypesUrl,
                     data: { ObjectClassName: Csw.string(o.objectClassName), ExcludeNodeTypeIds: o.excludeNodeTypeIds },
                     success: function (data) {
