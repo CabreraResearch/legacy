@@ -183,7 +183,7 @@
                             var thisnodeid = Csw.string($childObj.CswAttrNonDom('nodeid'), thisid.substring(idPrefix.length));
                             var thisrel = Csw.string($childObj.CswAttrNonDom('rel'));
                             var altName = Csw.string($childObj.find('a').first().text());
-                            var thisnodename = Csw.trim(Csw.string($childObj.CswAttrNonDom('nodename'), altName));
+                            var thisnodename = Csw.string($childObj.CswAttrNonDom('nodename'), altName).trim();
                             $('<input type="checkbox" class="' + idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '"></input>')
                                 .prependTo($childObj)
                                 .click(function () { return handleCheck($treediv, $(this)); });

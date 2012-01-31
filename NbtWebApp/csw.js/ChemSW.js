@@ -7,7 +7,7 @@ window.abandonHope = false;
     var document = window.document,
         navigator = window.navigator,
         location = window.location;
-   
+
     window.ChemSW = window.Csw = (function () {
 
         var cswUniverse = {
@@ -20,8 +20,8 @@ window.abandonHope = false;
 
         var methods = ['register'],
             protectedMethods = ['register', 'deregister', 'getGlobalProp', 'setGlobalProp'],
-            ret = { };
-       
+            ret = {};
+
         var register = function (name, obj, isProtected) {
             /// <summary>
             ///   Register an Object in the ChemSW namespace
@@ -51,9 +51,9 @@ window.abandonHope = false;
             /// <param name="name" type="String"> Name of the object.</param>
             /// <returns type="Boolean">True if the object was removed.</returns>
             var succeeded = false;
-            if (protectedMethods.indexOf (name) !== -1) {
-                if (methods.indexOf (name) !== -1) {
-                    methods.splice (name, 1);
+            if (protectedMethods.indexOf(name) !== -1) {
+                if (methods.indexOf(name) !== -1) {
+                    methods.splice(name, 1);
                 }
                 delete ret[name];
                 succeeded = true;
@@ -70,11 +70,11 @@ window.abandonHope = false;
             /// <param name="propName" type="String"> Name of the property </param>
             /// <returns type="Object">A clone of the property.</returns>
             var retVal;
-            if (propName && cswUniverse.hasOwnProperty (propName)) {
+            if (propName && cswUniverse.hasOwnProperty(propName)) {
                 retVal = cswUniverse[propName];
             } else {
                 retVal = {};
-                $.extend (retVal, cswUniverse);
+                $.extend(retVal, cswUniverse);
             }
             return retVal;
         };
@@ -88,7 +88,7 @@ window.abandonHope = false;
             /// <param name="name" type="String"> Name of the object </param>
             /// <returns type="Boolean">True if the property was updated.</returns>
             var success = false;
-            if (prop && val && cswUniverse.hasOwnProperty (prop)) {
+            if (prop && val && cswUniverse.hasOwnProperty(prop)) {
                 cswUniverse[prop] = val;
                 success = true;
             }
@@ -96,7 +96,7 @@ window.abandonHope = false;
         };
         register('setGlobalProp', setGlobalProp);
         ret.setGlobalProp = ret.setGlobalProp || setGlobalProp;
-        
+
         var addGlobalProp = function (propName, val) {
             /// <summary>
             ///   Add a property to the private universe collection
@@ -105,7 +105,7 @@ window.abandonHope = false;
             /// <param name="val" type="Object"> Value of the object </param>
             /// <returns type="Boolean">True if the property was added.</returns>
             var success = false;
-            if (propName && val && false == cswUniverse.hasOwnProperty (propName)) {
+            if (propName && val && false === cswUniverse.hasOwnProperty(propName)) {
                 cswUniverse[propName] = val;
                 success = true;
             }
@@ -119,13 +119,13 @@ window.abandonHope = false;
             ///   Fetch a dereferenced copy of the currently registered properties on the ChemSW namespace
             /// </summary>
             /// <returns type="Array">An array of property names.</returns>
-            var retMethods = methods.slice (0);
+            var retMethods = methods.slice(0);
             return retMethods;
         };
         register('getCswMethods', getCswMethods);
         ret.getCswMethods = ret.getCswMethods || getCswMethods;
 
         return ret;
-                       
-    }());                  
+
+    }());
 }(window, jQuery));

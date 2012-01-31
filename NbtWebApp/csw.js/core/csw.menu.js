@@ -45,7 +45,7 @@
         if (false === Csw.isNullOrEmpty(href)) {
             $li = $('<li><a href="' + href + '">' + text + '</a></li>')
                 .appendTo(o.$ul);
-        } else if (false == Csw.isNullOrEmpty(popup)) {
+        } else if (false === Csw.isNullOrEmpty(popup)) {
             $li = $('<li class="headermenu_dialog"><a href="' + popup + '" target="_blank">' + text + '</a></li>')
                 .appendTo(o.$ul);
         } else if (false === Csw.isNullOrEmpty(action)) {

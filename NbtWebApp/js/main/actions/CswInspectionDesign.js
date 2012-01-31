@@ -222,7 +222,7 @@
                         tempCategoryName = selectedInspectionTarget;
 
                     var makeInspectionDesignName = function (name) {
-                        var ret = Csw.trim(Csw.string(name));
+                        var ret = Csw.string(name).trim();
                         if(-1 === ret.indexOf('Inspection') && -1 === ret.indexOf('inspection')) {
                             ret += ' Inspection';
                         }
@@ -556,7 +556,7 @@
             checkTargetIsClientSideUnique = function (proposedTargetName) {
                 var ret = false,
                     targetName = proposedTargetName || selectedInspectionTarget;
-                if( Csw.trim(targetName).toLowerCase() != Csw.trim(selectedInspectionDesign.name).toLowerCase() ) {
+                if( Csw.string(targetName).trim().toLowerCase() != Csw.string(selectedInspectionDesign.name).trim().toLowerCase() ) {
                     ret = true;
                 } else {
                     $.CswDialog('ErrorDialog', Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'An Inspection Design and an Inspection Target cannot have the same name.', 'Attempted to create Inspection Target ' + targetName + ' against Inspection Design ' + selectedInspectionDesign.name));

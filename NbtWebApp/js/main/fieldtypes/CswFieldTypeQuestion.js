@@ -108,7 +108,7 @@
             if (selectedAnswer !== '' && correctiveAction === '') {
                 isCompliant = false;
                 for (var i = 0; i < splitCompliantAnswers.length; i++) {
-                    isCompliant = isCompliant || (Csw.trim(splitCompliantAnswers[i].toLowerCase()) === Csw.trim(selectedAnswer.toLowerCase())) ;
+                    isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
                 }
             }
             if (isCompliant) {

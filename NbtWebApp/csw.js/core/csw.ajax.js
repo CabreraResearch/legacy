@@ -17,7 +17,7 @@
             xml: 'xml'
         };
        
-        function _handleAjaxError (xmlHttpRequest, errorJson) {
+        function _handleAjaxError(errorJson) {
             Csw.error.showError(errorJson);
         } /* _handleAjaxError() */
         
@@ -62,7 +62,7 @@
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(o.data),
-                success: function (data, textStatus, xmlHttpRequest) {
+                success: function (data) {
                     if (o.watchGlobal) {
                         _ajaxCount -= 1;
                     }
@@ -70,7 +70,7 @@
 
                     if (result.error !== undefined) {
                         if (false === o.overrideError) {
-                            _handleAjaxError(xmlHttpRequest, {
+                            _handleAjaxError({
                                 'display': result.error.display,
                                 'type': result.error.type,
                                 'message': result.error.message,
@@ -80,13 +80,13 @@
                         Csw.tryExec(o.error, result.error);
                     } else {
 
-                        var auth = Csw.string(result['AuthenticationStatus'], 'Unknown');
+                        var auth = Csw.string(result.AuthenticationStatus, 'Unknown');
                         if (false === o.formobile) {
                             clientSession.setExpireTime(Csw.string(result.timeout, ''));
                         }
 
-                        delete result['AuthenticationStatus'];
-                        delete result['timeout'];
+                        delete result.AuthenticationStatus;
+                        delete result.timeout;
 
                         clientSession.handleAuthenticationStatus({
                             status: auth,
@@ -153,14 +153,14 @@
                 url: o.url,
                 dataType: 'json',
                 data: JSON.stringify(o.data),
-                success: function (result, textStatus, xmlHttpRequest) {
+                success: function (result) {
                     if (o.watchGlobal) {
                         _ajaxCount -= 1;
                     }
 
                     if (false === Csw.isNullOrEmpty(result.error)) {
                         if (false === o.overrideError) {
-                            _handleAjaxError(xmlHttpRequest, {
+                            _handleAjaxError({
                                 'display': result.error.display,
                                 'type': result.error.type,
                                 'message': result.error.message,
@@ -241,7 +241,7 @@
                         }
 
                         if ($realxml.first().get(0).nodeName === "error") {
-                            _handleAjaxError(xmlHttpRequest, {
+                            _handleAjaxError({
                                 'display': $realxml.CswAttrNonDom('display'),
                                 'type': $realxml.CswAttrNonDom('type'),
                                 'message': $realxml.CswAttrNonDom('message'),

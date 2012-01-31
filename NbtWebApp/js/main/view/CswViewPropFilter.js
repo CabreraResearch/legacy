@@ -209,7 +209,7 @@
                         filtValAry.push({ value: '', display: '' });
                         for (filt in filtValOpt) {
                             if (Csw.contains(filtValOpt, filt)) {
-                                filtValAry.push({ value: Csw.trim(filt), display: Csw.trim(filtValOpt[filt]) });
+                                filtValAry.push({ value: Csw.string(filt).trim(), display: Csw.string(filtValOpt[filt]).trim() });
                             }
                         }
                         $filtInput = $propFilterValueCell.CswSelect('init', { ID: filtValInputId,
@@ -376,7 +376,7 @@
                     relatedidtype: o.relatedidtype,
                     subfield: subFieldText,
                     filter: filterText,
-                    filtervalue: Csw.trim(filterValue)
+                    filtervalue: Csw.string(filterValue).trim()
                 };
 
             } // if(filterValue !== '')
