@@ -11,7 +11,9 @@ window.initMain = window.initMain || function (undefined) {
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
     var state = Csw.clientState();
-
+    var session = Csw.clientSession();
+    var cookie = Csw.cookie();
+    
     Csw.onBeforeAjax = function (watchGlobal) {
         if (watchGlobal) {
             $('#ajaxSpacer').hide();
@@ -47,14 +49,14 @@ window.initMain = window.initMain || function (undefined) {
         $('#CenterBottomDiv').CswLogin('init', {
             'onAuthenticate': function (u) {
                 $('#header_username').text(u)
-                     .hover(function () { $(this).CswAttrDom('title', Csw.getExpireTime()); });
+                     .hover(function () { $(this).CswAttrDom('title', session.getExpireTime()); });
                 $('#header_dashboard').CswDashboard();
 
                 $('#header_quota').CswQuotaImage();
 
                 $('#header_menu').CswMenuHeader({
                     'onLogout': function () {
-                        Csw.logout();
+                        session.logout();
                     },
                     'onQuotas': function () {
                         handleAction({ 'actionname': 'Quotas' });
@@ -330,13 +332,13 @@ window.initMain = window.initMain || function (undefined) {
                 handleAction({
                     'actionname': 'Edit_View',
                     'ActionOptions': {
-                        'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
-                        'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode)
+                        'viewid': cswCookie.get(cswCookie.cookieNames.CurrentViewId),
+                        'viewmode': cswCookie.get(cswCookie.cookieNames.CurrentViewMode)
                     }
                 });
             },
             'onSaveView': function (newviewid) {
-                handleItemSelect({ 'viewid': newviewid, 'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode) });
+                handleItemSelect({ 'viewid': newviewid, 'viewmode': cswCookie.get(cswCookie.cookieNames.CurrentViewMode) });
             },
             'Multi': multi,
             'NodeCheckTreeId': mainTreeId
@@ -415,7 +417,7 @@ window.initMain = window.initMain || function (undefined) {
 
             var viewid;
             if (Csw.isNullOrEmpty(parentviewid)) {
-                viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
+                viewid = cswCookie.get(cswCookie.cookieNames.CurrentViewId);
             } else {
                 viewid = parentviewid;
             }
@@ -424,7 +426,7 @@ window.initMain = window.initMain || function (undefined) {
                 clear({ right: true, centerbottom: true }); //wait to clear rest until we have a valid viewid
                 var viewmode;
                 if (Csw.isNullOrEmpty(parentviewmode)) {
-                    viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
+                    viewmode = cswCookie.get(cswCookie.cookieNames.CurrentViewMode);
                 } else {
                     viewmode = (parentviewmode === 'list') ? 'tree' : parentviewmode;
                 }
@@ -476,13 +478,13 @@ window.initMain = window.initMain || function (undefined) {
         // Defaults
         var getEmptyGrid = (Csw.bool(o.showempty));
         if (Csw.isNullOrEmpty(o.nodeid)) {
-            o.nodeid = $.CswCookie('get', CswCookieName.CurrentNodeId);
+            o.nodeid = cswCookie.get(cswCookie.cookieNames.CurrentNodeId);
         }
         if (Csw.isNullOrEmpty(o.cswnbtnodekey)) {
-            o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNodeKey);
+            o.cswnbtnodekey = cswCookie.get(cswCookie.cookieNames.CurrentNodeKey);
         }
         if (false === Csw.isNullOrEmpty(o.viewid)) {
-            $.CswCookie('get', CswCookieName.CurrentViewId);
+            cswCookie.get(cswCookie.cookieNames.CurrentViewId);
         }
 
         o.onEditNode = function () { getViewGrid(o); };
@@ -541,13 +543,13 @@ window.initMain = window.initMain || function (undefined) {
 
         // Defaults
         if (Csw.isNullOrEmpty(o.nodeid)) {
-            o.nodeid = $.CswCookie('get', CswCookieName.CurrentNodeId);
+            o.nodeid = cswCookie.get(cswCookie.cookieNames.CurrentNodeId);
         }
         if (Csw.isNullOrEmpty(o.cswnbtnodekey)) {
-            o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNodeKey);
+            o.cswnbtnodekey = cswCookie.get(cswCookie.cookieNames.CurrentNodeKey);
         }
         if (false === Csw.isNullOrEmpty(o.viewid)) {
-            $.CswCookie('get', CswCookieName.CurrentViewId);
+            cswCookie.get(cswCookie.cookieNames.CurrentViewId);
         }
 
         o.onEditNode = function () { getViewTable(o); };
@@ -588,8 +590,8 @@ window.initMain = window.initMain || function (undefined) {
                 $.extend(o, options);
             }
 
-            $.CswCookie('set', CswCookieName.CurrentNodeId, o.nodeid);
-            $.CswCookie('set', CswCookieName.CurrentNodeKey, o.cswnbtnodekey);
+            cswCookie.set(cswCookie.cookieNames.CurrentNodeId, o.nodeid);
+            cswCookie.set(cswCookie.cookieNames.CurrentNodeKey, o.cswnbtnodekey);
 
             if (o.nodeid !== '' && o.nodeid !== 'root') {
                 getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
@@ -624,7 +626,7 @@ window.initMain = window.initMain || function (undefined) {
                 // case 24304
                 // refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
             },
-            tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
+            tabid: cswCookie.get(cswCookie.cookieNames.CurrentTabId),
             onBeforeTabSelect: function () {
                 return Csw.manuallyCheckChanges();
             },
@@ -633,7 +635,7 @@ window.initMain = window.initMain || function (undefined) {
                 refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
             },
             onTabSelect: function (tabid) {
-                $.CswCookie('set', CswCookieName.CurrentTabId, tabid);
+                cswCookie.set(cswCookie.cookieNames.CurrentTabId, tabid);
             },
             onPropertyChange: function () {
                 Csw.setChanged();
@@ -674,10 +676,10 @@ window.initMain = window.initMain || function (undefined) {
             }
 
             if (Csw.isNullOrEmpty(o.viewid)) {
-                o.viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
+                o.viewid = cswCookie.get(cswCookie.cookieNames.CurrentViewId);
             }
             if (Csw.isNullOrEmpty(o.viewmode)) {
-                o.viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
+                o.viewmode = cswCookie.get(cswCookie.cookieNames.CurrentViewMode);
             }
 
             var viewMode = Csw.string(o.viewmode).toLowerCase();
@@ -743,13 +745,13 @@ window.initMain = window.initMain || function (undefined) {
 
         var getEmptyTree = (Csw.bool(o.showempty));
         if (Csw.isNullOrEmpty(o.nodeid)) {
-            o.nodeid = $.CswCookie('get', CswCookieName.CurrentNodeId);
+            o.nodeid = cswCookie.get(cswCookie.cookieNames.CurrentNodeId);
         }
         if (Csw.isNullOrEmpty(o.cswnbtnodekey)) {
-            o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNodeKey);
+            o.cswnbtnodekey = cswCookie.get(cswCookie.cookieNames.CurrentNodeKey);
         }
         if (Csw.isNullOrEmpty(o.viewid)) {
-            o.viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
+            o.viewid = cswCookie.get(cswCookie.cookieNames.CurrentViewId);
         }
 
         clear({ left: true });

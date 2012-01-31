@@ -4,7 +4,8 @@
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";
     var pluginName = 'CswDialog';
-
+    var cswCookie = Csw.cookie();
+    
     var methods = {
 
         //#region Specialized
@@ -384,7 +385,7 @@
                     Multi: o.Multi,
                     EditMode: myEditMode,
                     //title: o.title,
-                    tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
+                    tabid: cswCookie.get(cswCookie.cookieNames.CurrentTabId),
                     date: date,
                     onEditView: function (viewid) {
                         if (Csw.isFunction(o.onEditView)) {
@@ -406,7 +407,7 @@
                         return Csw.manuallyCheckChanges();
                     },
                     onTabSelect: function (tabid) {
-                        $.CswCookie('set', CswCookieName.CurrentTabId, tabid);
+                        cswCookie.set(cswCookie.cookieNames.CurrentTabId, tabid);
                     },
                     onPropertyChange: function () {
                         Csw.setChanged();

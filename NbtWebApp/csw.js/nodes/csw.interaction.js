@@ -4,6 +4,8 @@
 (function () {
     'use strict';
 
+    var cswCookie = Csw.cookie();
+
     var copyNode = function (options) {
         var o = {
             'nodeid': '',
@@ -35,8 +37,8 @@
 
     var deleteNodes = function (options) {
         var o = {
-            'nodeids': [],
-            'nodekeys': [],
+            'nodeids': Csw.array(),
+            'nodekeys': Csw.array(),
             'onSuccess': function () {
             },
             'onError': function () {
@@ -46,10 +48,9 @@
             $.extend(o, options);
         }
 
-        if (!isArray(o.nodeids))  // case 22722
-        {
-            o.nodeids = [o.nodeids];
-            o.nodekeys = [o.nodekeys];
+        if (false === Csw.isArray(o.nodeids)) {  // case 22722
+            o.nodeids = Csw.array(o.nodeids);
+            o.nodekeys = Csw.array(o.nodekeys);
         }
 
         var jData = {
@@ -62,8 +63,8 @@
             data: jData,
             success: function () {
                 // clear selected node cookies
-                o.nodeid = $.CswCookie('clear', CswCookieName.CurrentNodeId);
-                o.cswnbtnodekey = $.CswCookie('clear', CswCookieName.CurrentNodeKey);
+                o.nodeid = cswCookie.clear(cswCookie.cookieNames.CurrentNodeId);
+                o.cswnbtnodekey = cswCookie.clear(cswCookie.cookieNames.CurrentNodeKey);
                 // returning '' will reselect the first node in the tree
                 o.onSuccess('', '');
             },

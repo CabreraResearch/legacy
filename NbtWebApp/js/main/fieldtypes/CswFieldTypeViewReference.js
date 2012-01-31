@@ -30,10 +30,10 @@
                     Required: o.Required,
                     onClick: function () {
                         state.setCurrentView(viewId, viewMode);
-
+                        var cswCookie = Csw.cookie();
                         // case 20958 - so that it doesn't treat the view as a Grid Property view
-                        $.CswCookie('clear', CswCookieName.CurrentNodeId);
-                        $.CswCookie('clear', CswCookieName.CurrentNodeKey);
+                        cswCookie.clear(cswCookie.cookieNames.CurrentNodeId);
+                        cswCookie.clear(cswCookie.cookieNames.CurrentNodeKey);
 
                         window.location = "Main.html";
                         return CswImageButton_ButtonType.None;

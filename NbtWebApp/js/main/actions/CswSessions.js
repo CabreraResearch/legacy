@@ -1,8 +1,6 @@
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../controls/CswGrid.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+
 
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";        
@@ -58,7 +56,8 @@
                                                 });
 
                             $cell2 = $table.CswTable('cell', row, 2);
-                            if(childObj.sessionid === $.CswCookie('get', CswCookieName.SessionId)) {
+                            var cswCookie = Csw.cookie();
+                            if(childObj.sessionid === cswCookie.get(cswCookie.cookieNames.SessionId)) {
                                 $cell2.append(childObj.username + "&nbsp;(you)");
                             } else {
                                 $cell2.append(childObj.username);

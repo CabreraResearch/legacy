@@ -3,89 +3,99 @@
 
 (function CswClientState() {
     'use strict';
-
+    
     function clientState() {
+        /// <summary> Instance a Csw State object.</summary>
+        /// <returns type="Object">Collection of methods to manage state.</returns>
 
-        function clearCurrent () {
+        var cswCookie = Csw.cookie();
+
+        function clearCurrent() {
             /// <summary> Clear all current state cookies  </summary>
             /// <returns type="Boolean">Always true</returns>
-            $.CswCookie('set', CswCookieName.LastViewId, $.CswCookie('get', CswCookieName.CurrentViewId));
-            $.CswCookie('set', CswCookieName.LastViewMode, $.CswCookie('get', CswCookieName.CurrentViewMode));
-            $.CswCookie('set', CswCookieName.LastActionName, $.CswCookie('get', CswCookieName.CurrentActionName));
-            $.CswCookie('set', CswCookieName.LastActionUrl, $.CswCookie('get', CswCookieName.CurrentActionUrl));
-            $.CswCookie('set', CswCookieName.LastReportId, $.CswCookie('get', CswCookieName.CurrentReportId));
+            cswCookie.set(cswCookie.cookieNames.LastViewId, cswCookie.get(cswCookie.cookieNames.CurrentViewId));
+            cswCookie.set(cswCookie.cookieNames.LastViewMode, cswCookie.get(cswCookie.cookieNames.CurrentViewMode));
+            cswCookie.set(cswCookie.cookieNames.LastActionName, cswCookie.get(cswCookie.cookieNames.CurrentActionName));
+            cswCookie.set(cswCookie.cookieNames.LastActionUrl, cswCookie.get(cswCookie.cookieNames.CurrentActionUrl));
+            cswCookie.set(cswCookie.cookieNames.LastReportId, cswCookie.get(cswCookie.cookieNames.CurrentReportId));
 
-            $.CswCookie('clear', CswCookieName.CurrentViewId);
-            $.CswCookie('clear', CswCookieName.CurrentViewMode);
-            $.CswCookie('clear', CswCookieName.CurrentActionName);
-            $.CswCookie('clear', CswCookieName.CurrentActionUrl);
-            $.CswCookie('clear', CswCookieName.CurrentReportId);
+            cswCookie.clear(cswCookie.cookieNames.CurrentViewId);
+            cswCookie.clear(cswCookie.cookieNames.CurrentViewMode);
+            cswCookie.clear(cswCookie.cookieNames.CurrentActionName);
+            cswCookie.clear(cswCookie.cookieNames.CurrentActionUrl);
+            cswCookie.clear(cswCookie.cookieNames.CurrentReportId);
             return true;
         }
         
-        function setCurrentView (viewid, viewmode) {
+        function setCurrentView(viewid, viewmode) {
             /// <summary> Store the current view in a cookie.</summary>
+            /// <param name="viewid" type="String">An Nbt ViewId</param>
+            /// <param name="viewmode" type="String">An Nbt ViewId</param>
             /// <returns type="Boolean">Always true</returns>
             clearCurrent();
             if (false === Csw.isNullOrEmpty(viewid) && false === Csw.isNullOrEmpty(viewmode)) {
-                $.CswCookie('set', CswCookieName.CurrentViewId, viewid);
-                $.CswCookie('set', CswCookieName.CurrentViewMode, viewmode);
+                cswCookie.set(cswCookie.cookieNames.CurrentViewId, viewid);
+                cswCookie.set(cswCookie.cookieNames.CurrentViewMode, viewmode);
             }
             return true;
         }
 
-        function setCurrentAction (actionname, actionurl) {
+        function setCurrentAction(actionname, actionurl) {
             /// <summary> Store the current action in a cookie.</summary>
+            /// <param name="actionname" type="String">An Nbt Action name</param>
+            /// <param name="actionurl" type="String">An Nbt Action url</param>
             /// <returns type="Boolean">Always true</returns>
             clearCurrent();
-            $.CswCookie('set', CswCookieName.CurrentActionName, actionname);
-            $.CswCookie('set', CswCookieName.CurrentActionUrl, actionurl);
+            cswCookie.set(cswCookie.cookieNames.CurrentActionName, actionname);
+            cswCookie.set(cswCookie.cookieNames.CurrentActionUrl, actionurl);
             return true;
         }
 
-        function setCurrentReport (reportid) {
+        function setCurrentReport(reportid) {
             /// <summary> Store the current report in a cookie.</summary>
+            /// <param name="reportid" type="String">An Nbt ReportId</param>
             /// <returns type="Boolean">Always true</returns>
             clearCurrent();
-            $.CswCookie('set', CswCookieName.CurrentReportId, reportid);
+            cswCookie.set(cswCookie.cookieNames.CurrentReportId, reportid);
             return true;
         }
 
-        function getCurrent () {
+        function getCurrent() {
             /// <summary> Get all current state data from the cookie.</summary>
             /// <returns type="Object">Views, actions and reports</returns>
             return {
-                viewid: $.CswCookie('get', CswCookieName.CurrentViewId),
-                viewmode: $.CswCookie('get', CswCookieName.CurrentViewMode),
-                actionname: $.CswCookie('get', CswCookieName.CurrentActionName),
-                actionurl: $.CswCookie('get', CswCookieName.CurrentActionUrl),
-                reportid: $.CswCookie('get', CswCookieName.CurrentReportId)
+                viewid: cswCookie.get(cswCookie.cookieNames.CurrentViewId),
+                viewmode: cswCookie.get(cswCookie.cookieNames.CurrentViewMode),
+                actionname: cswCookie.get(cswCookie.cookieNames.CurrentActionName),
+                actionurl: cswCookie.get(cswCookie.cookieNames.CurrentActionUrl),
+                reportid: cswCookie.get(cswCookie.cookieNames.CurrentReportId)
             };
         }
 
-        function getLast () {
+        function getLast() {
             /// <summary> Get all current state data from the cookie.</summary>
             /// <returns type="Object">Views, actions and reports</returns>
             return {
-                viewid: $.CswCookie('get', CswCookieName.LastViewId),
-                viewmode: $.CswCookie('get', CswCookieName.LastViewMode),
-                actionname: $.CswCookie('get', CswCookieName.LastActionName),
-                actionurl: $.CswCookie('get', CswCookieName.LastActionUrl),
-                reportid: $.CswCookie('get', CswCookieName.LastReportId)
+                viewid: cswCookie.get(cswCookie.cookieNames.LastViewId),
+                viewmode: cswCookie.get(cswCookie.cookieNames.LastViewMode),
+                actionname: cswCookie.get(cswCookie.cookieNames.LastActionName),
+                actionurl: cswCookie.get(cswCookie.cookieNames.LastActionUrl),
+                reportid: cswCookie.get(cswCookie.cookieNames.LastReportId)
             };
         }
-
-        function setCurrent (json) {
-            
+        
+        function setCurrent(json) {
+            /// <summary> Get all current state data from the cookie.</summary>
+            /// <returns type="Boolean">Always true.</returns>
             clearCurrent();
-            $.CswCookie('set', CswCookieName.CurrentViewId, json.viewid);
-            $.CswCookie('set', CswCookieName.CurrentViewMode, json.viewmode);
-            $.CswCookie('set', CswCookieName.CurrentActionName, json.actionname);
-            $.CswCookie('set', CswCookieName.CurrentActionUrl, json.actionurl);
-            $.CswCookie('set', CswCookieName.CurrentReportId, json.reportid);
+            cswCookie.set(cswCookie.cookieNames.CurrentViewId, json.viewid);
+            cswCookie.set(cswCookie.cookieNames.CurrentViewMode, json.viewmode);
+            cswCookie.set(cswCookie.cookieNames.CurrentActionName, json.actionname);
+            cswCookie.set(cswCookie.cookieNames.CurrentActionUrl, json.actionurl);
+            cswCookie.set(cswCookie.cookieNames.CurrentReportId, json.reportid);
             return true;
         }
-
+        
         return {
             clearCurrent: clearCurrent,
             setCurrentView: setCurrentView,
@@ -98,13 +108,6 @@
 
     }
     Csw.register('clientState', clientState);
-    Csw.clientState = Csw.clientState || clientState;    
-    Csw.clientState.clearCurrent = Csw.clientState.clearCurrent || clientState.clearCurrent;
-    Csw.clientState.setCurrentView = Csw.clientState.setCurrentView || clientState.setCurrentView;
-    Csw.clientState.setCurrentAction = Csw.clientState.setCurrentAction || clientState.setCurrentAction;
-    Csw.clientState.setCurrentReport = Csw.clientState.setCurrentReport || clientState.setCurrentReport;
-    Csw.clientState.getCurrent = Csw.clientState.getCurrent || clientState.getCurrent;
-    Csw.clientState.getLast = Csw.clientState.getLast || clientState.getLast;
-    Csw.clientState.setCurrent = Csw.clientState.setCurrent || clientState.setCurrent;
+    Csw.clientState = Csw.clientState || clientState;
     
 }());

@@ -22,13 +22,14 @@
                 url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
                 data: params,
                 success: function (data) {
+                    var cswCookie = Csw.cookie();
                     $button.CswButton('enable');
                     if (Csw.bool(data.success)) {
                         switch (data.action) {
                             case ChemSW.enums.CswOnObjectClassClick.reauthenticate:
-                                if (Csw.manuallyCheckChanges()) // case 24669
-                                {
-                                    $.CswCookie('clearAll');
+                                if (Csw.manuallyCheckChanges()) {
+                                    // case 24669                                
+                                    cswCookie.clearAll();
                                     Csw.ajax({
                                         url: '/NbtWebApp/wsNBT.asmx/reauthenticate',
                                         data: { PropId: propAttr },

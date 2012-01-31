@@ -6,7 +6,7 @@
 (function ($) { /// <param name="$" type="jQuery" />
     "use strict";
     var authenticateUrl = '/NbtWebApp/wsNBT.asmx/authenticate';
-
+    var cswCookie = Csw.cookie();
     // Called with context
     $.fn.CswLogin = function (method) {
         var pluginName = 'CswLogin';
@@ -19,10 +19,10 @@
                 };
                 if (options) $.extend(o, options);
 
-                var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
+                var ThisSessionId = cswCookie.get(cswCookie.cookieNames.SessionId);
                 if( !Csw.isNullOrEmpty(ThisSessionId) )
                 {
-                    o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
+                    o.onAuthenticate( cswCookie.get(cswCookie.cookieNames.Username) );
                 }
                 else 
                 {
@@ -151,8 +151,8 @@
                             ForMobile: l.ForMobile
                         },
                     success: function () {
-                            $.CswCookie('set', CswCookieName.Username, l.UserName);
-                            $.CswCookie('set', CswCookieName.LogoutPath, l.LogoutPath);
+                            cswCookie.set(cswCookie.cookieNames.Username, l.UserName);
+                            cswCookie.set(cswCookie.cookieNames.LogoutPath, l.LogoutPath);
                             if(Csw.isFunction(l.onAuthenticate)) {
                                 l.onAuthenticate(l.UserName);
                             }
