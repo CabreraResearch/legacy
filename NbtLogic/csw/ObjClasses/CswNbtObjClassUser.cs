@@ -104,7 +104,10 @@ namespace ChemSW.Nbt.ObjClasses
                 //}
 
                 __RoleNode = _CswNbtResources.Nodes[RoleId];
-                __RoleNodeObjClass = CswNbtNodeCaster.AsRole( __RoleNode );
+                if( __RoleNode != null )
+                {
+                    __RoleNodeObjClass = CswNbtNodeCaster.AsRole( __RoleNode );
+                }
 
             } // if( Node.NodeId != null )
         } // _initRole()
