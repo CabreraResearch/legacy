@@ -32,13 +32,12 @@
     //#endregion Prototype Extension
 
     function string(inputStr, defaultStr) {
-
+        /// <summary> Get a valid string literal based on input</summary>
+        /// <param name="inputStr" type="String"> String to parse </param>
+        /// <param name="defaultStr" type="String"> Default value if null or empty </param>
+        /// <returns type="String">String literal value</returns>
         function tryParseString() {
-            /// <summary>
-            ///   Returns the inputStr if !isNullOrEmpty, else returns the defaultStr
-            /// </summary>
-            /// <param name="inputStr" type="String"> String to parse </param>
-            /// <param name="defaultStr" type="String"> Default value if null or empty </param>
+            /// <summary> Returns the inputStr if !isNullOrEmpty, else returns the defaultStr</summary>
             /// <returns type="String" />
             var ret = '';
             if (false === Csw.isPlainObject(inputStr) &&
@@ -55,19 +54,6 @@
 
         var retObj = tryParseString();
 
-        retObj.val = function () {
-            return inputStr;
-        };
-
-        retObj.trim = function () {
-            inputStr = $.trim(inputStr);
-            return inputStr;
-        };
-
-        retObj.contains = function (valTest) {
-            return inputStr.indexOf(valTest) !== -1;
-        };
-        
         return retObj;
 
     }
