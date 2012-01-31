@@ -767,7 +767,7 @@
     <Content Include="csw.js\nodes\csw.preview.js" />
     <Content Include="csw.js\props\csw.props.js" />
     <Content Include="csw.js\nodes\csw.interaction.js" />
-    <Content Include="csw.js\tools\CswCookie.js" />
+    <Content Include="csw.js\tools\csw.cookie.js" />
     <Content Include="ExternalLogin.aspx" />
     <Content Include="js\CswAll.min.css" />
     <Content Include="js\main\actions\CswScheduledRulesGrid.js" />
@@ -1364,7 +1364,6 @@
     <Content Include="js\main\controls\CswCheckBoxArray.js" />
     <Content Include="js\main\controls\CswComboBox.css" />
     <Content Include="js\main\controls\CswComboBox.js" />
-    <Content Include="js\main\tools\CswCookie.js" />
     <Content Include="js\main\pagecmp\CswDashboard.js" />
     <Content Include="js\main\pagecmp\CswDialog.js" />
     <Content Include="js\main\controls\CswDiv.js" />
