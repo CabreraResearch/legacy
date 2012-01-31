@@ -17,11 +17,9 @@
         function _checkChanges() {
             /// <summary>Check if changes have been made.</summary>
             /// <returns type="String">Confirmation text if changes have been made.</returns>
-            var ret = false;
             if (checkChangesEnabled && _changed === 1) {
-                ret = 'If you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.';
+                return 'If you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.';
             }
-            return ret;
         }
 
         function _initCheckChanges () {
@@ -43,7 +41,6 @@
                     return _checkChanges();
                 };
             }
-            return true;
         }
         
         function setChanged() {
