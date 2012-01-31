@@ -8,7 +8,7 @@
     var _expiretimeInterval;
     var _expiredInterval;
 
-    function clientSession() {
+    var clientSession = (function clientSessionP () {
 
         function _setExpireTimeInterval () {
             clearInterval(_expiretimeInterval);
@@ -49,12 +49,12 @@
         function getExpireTime () {
             return _expiretime;
         }
-        
+
         function setExpireTime (value) {
             _expiretime = value;
             _setExpireTimeInterval();
         }
-        
+
         function handleAuthenticationStatus (options) {
             var o = {
                 status: '',
@@ -159,10 +159,10 @@
             Csw.ajax.post({
                 url: o.DeauthenticateUrl,
                 data: {},
-                success: function () { 
+                success: function () {
                     finishLogout();
                     o.onDeauthenticate();
-                } 
+                }
             });
         }
 
@@ -208,7 +208,7 @@
             setExpireTime: setExpireTime
         };
 
-    }
+    }());
     Csw.register('clientSession', clientSession);
     Csw.clientSession = Csw.clientSession || clientSession;
 

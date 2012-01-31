@@ -11,8 +11,7 @@ window.initMain = window.initMain || function (undefined) {
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
     var cswState = Csw.clientState();
-    var cswSession = Csw.clientSession();
-
+    
     Csw.onBeforeAjax = function (watchGlobal) {
         if (watchGlobal) {
             $('#ajaxSpacer').hide();
@@ -48,14 +47,14 @@ window.initMain = window.initMain || function (undefined) {
         $('#CenterBottomDiv').CswLogin('init', {
             'onAuthenticate': function (u) {
                 $('#header_username').text(u)
-                     .hover(function () { $(this).CswAttrDom('title', cswSession.getExpireTime()); });
+                     .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 $('#header_dashboard').CswDashboard();
 
                 $('#header_quota').CswQuotaImage();
 
                 $('#header_menu').CswMenuHeader({
                     'onLogout': function () {
-                        cswSession.logout();
+                        Csw.clientSession.logout();
                     },
                     'onQuotas': function () {
                         handleAction({ 'actionname': 'Quotas' });
