@@ -78,6 +78,10 @@ namespace ChemSW.Nbt.Sched
                         {
                             DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateTimeValue.Date;
                             DateTime InitialDueDateValue = CurrentGenerator.DueDateInterval.getStartDate().Date;
+                            if( InitialDueDateValue == DateTime.MinValue )
+                            {
+                                InitialDueDateValue = ThisDueDateValue;
+                            }
                             DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateTimeValue.Date;
 
                             // BZ 7866
