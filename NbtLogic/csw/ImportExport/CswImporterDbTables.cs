@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.ImportExport
             }//if-else Nodes table is defined in db
 
             return ( ReturnVal );
-        }
+        }//_importTablesAreAbsent()
 
 
         /// <summary>
@@ -686,8 +686,8 @@ namespace ChemSW.Nbt.ImportExport
                                                     if( false == CurrentImportProprow.IsNull( _ColName_Props_ImportTargetNodeIdUnique ) ) //populate ImportNodeIdToNbtNodeId for relationships and locations
                                                     {
                                                         string CurrentImportTargetNodeId = CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
-                                                        CswNbtImportNodeId CswNbtImportTargetNodeId = new ImportExport.CswNbtImportNodeId( CurrentImportTargetNodeId );
-                                                        if( false == CswNbtImportTargetNodeId.IsNull )
+
+                                                        if( ( false == CurrentImportNodeId.Contains( "--" ) ) || 3 == CurrentImportNodeId.Split( new string[] { "--" }, StringSplitOptions.None ).Length  ) //IMCS import references must have all three components in order to be not null
                                                         {
 
                                                             string Query = "select " + Colname_NbtNodeId + " from " + _TblName_ImportNodes + " where " + _ColName_ImportNodeId + "='" + CurrentImportTargetNodeId + "'";
