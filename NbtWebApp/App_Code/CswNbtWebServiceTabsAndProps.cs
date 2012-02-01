@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode );
 
                 CswNbtNode Node = null;
-                if( EditMode == NodeEditMode.AddInPopup && NodeTypeId != Int32.MinValue )
+                if( EditMode == NodeEditMode.Add && NodeTypeId != Int32.MinValue )
                 {
                     Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                 }
@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.WebServices
 
             switch( EditMode )
             {
-                case NodeEditMode.AddInPopup:
+                case NodeEditMode.Add:
                     //Case 24023: Exclude buttons on Add
                     bool CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType );
                     RetShow = ( CanCreate &&
@@ -208,7 +208,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Ret = new JObject();
             JObject PropObj = new JObject();
             CswNbtNode Node = null;
-            Node = EditMode == NodeEditMode.AddInPopup && NodeTypeId != Int32.MinValue ?
+            Node = EditMode == NodeEditMode.Add && NodeTypeId != Int32.MinValue ?
                                     _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing ) :
                                     wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
 
@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.WebServices
 
         private void _addProp( JObject ParentObj, NodeEditMode EditMode, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
         {
-            if( EditMode == NodeEditMode.AddInPopup )
+            if( EditMode == NodeEditMode.Add )
             {
                 _makePropJson( EditMode, ParentObj, Node, Prop, Prop.AddLayout.DisplayRow, Prop.AddLayout.DisplayColumn );
             }
@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.WebServices
                 } // foreach( CswNbtMetaDataNodeTypeProp FilterProp in Tab.NodeTypePropsByDisplayOrder )
                 PropObj["hassubprops"] = HasSubProps;
 
-            } // if-else( EditMode == NodeEditMode.AddInPopup )
+            } // if-else( EditMode == NodeEditMode.Add )
         } // addProp()
 
 
@@ -375,7 +375,7 @@ namespace ChemSW.Nbt.WebServices
                 if( NodeTypePropId != Int32.MinValue )
                 {
                     CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                    if( EditMode == NodeEditMode.AddInPopup && Prop.IsRequired && false == Prop.HasDefaultValue() )
+                    if( EditMode == NodeEditMode.Add && Prop.IsRequired && false == Prop.HasDefaultValue() )
                     {
                         throw new CswDniException( ErrorType.Warning, Prop.PropName + " may not be removed", Prop.PropName + " is required and has no unique value, and therefore cannot be removed from 'Add' layouts" );
                     }
@@ -408,7 +408,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 switch( EditMode )
                 {
-                    case NodeEditMode.AddInPopup:
+                    case NodeEditMode.Add:
                         CswNbtWebServiceQuotas wsQ = new CswNbtWebServiceQuotas( _CswNbtResources );
                         if( wsQ.CheckQuota( NodeTypeId ) )
                         {
@@ -464,7 +464,7 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     string ErrString;
-                    if( EditMode == NodeEditMode.AddInPopup )
+                    if( EditMode == NodeEditMode.Add )
                     {
                         ErrString = "Attempt to Add failed.";
                     }

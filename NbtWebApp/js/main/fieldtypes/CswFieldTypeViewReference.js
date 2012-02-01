@@ -20,7 +20,7 @@
 
                 var $table = $Div.CswTable('init', { 'ID': o.ID + '_tbl' });
 
-                if(o.EditMode !== EditMode.AddInPopup.name && false === o.Multi)
+                if(o.EditMode !== EditMode.Add.name && false === o.Multi)
                 {
                     $table.CswTable('cell', 1, 1).CswViewContentTree({
                         viewid: viewId
@@ -56,7 +56,7 @@
                             }
                         });
                     }
-                } // if(o.EditMode != EditMode.AddInPopup.name)
+                } // if(o.EditMode != EditMode.Add.name)
             },
         save: function(o) {
             preparePropJsonForSave(o.propData);

@@ -150,7 +150,7 @@
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
                 relatednodetypeid: o.relatednodetypeid,
-                EditMode: EditMode.AddInPopup.name,
+                EditMode: EditMode.Add.name,
                 onSave: function (nodeid, cswnbtnodekey) {
                     $div.dialog('close');
                     o.onAddNode(nodeid, cswnbtnodekey);

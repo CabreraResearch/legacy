@@ -98,7 +98,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     break;
 
                 case CswNbtMetaDataFieldType.NbtFieldType.Grid:
-                    if( EditMode != NodeEditMode.AddInPopup && EditMode != NodeEditMode.Demo )
+                    if( EditMode != NodeEditMode.Add && EditMode != NodeEditMode.Demo )
                     {
                         Control = new CswGrid( CswNbtResources, MetaDataProp, EditMode );
                     }
@@ -241,7 +241,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                                      ( PropWrapper != null &&
                                        ( PropWrapper.ReadOnly ||
                                          PropWrapper.NodeTypeProp.ServerManaged ||
-                                         ( EditMode == NodeEditMode.AddInPopup &&
+                                         ( EditMode == NodeEditMode.Add &&
                                            !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, PropWrapper.NodeTypeProp.NodeType ) ) ||
                                          ( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) &&
                                            !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, PropWrapper.NodeTypeProp.NodeType, false, null, null, Node, PropWrapper.NodeTypeProp ) ) ) ) );

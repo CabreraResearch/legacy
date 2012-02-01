@@ -115,7 +115,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             _HrefBox.Attributes.Add( "onkeypress", "CswFieldTypeWebControl_onchange()" );
             _HrefBox.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange()" );
 
-            if( _EditMode == NodeEditMode.AddInPopup || ( Required && Prop != null && Prop.AsLink.Href == string.Empty ) )   // BZ 7959
+            if( _EditMode == NodeEditMode.Add || ( Required && Prop != null && Prop.AsLink.Href == string.Empty ) )   // BZ 7959
                 _HiddenTable.Expanded = true;
 
             if( ReadOnly || _EditMode == NodeEditMode.PrintReport )

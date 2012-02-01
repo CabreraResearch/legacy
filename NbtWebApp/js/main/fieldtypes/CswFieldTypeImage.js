@@ -48,7 +48,7 @@
                 }            
 
 
-                if (!o.ReadOnly && o.EditMode != EditMode.AddInPopup.name) {
+                if (!o.ReadOnly && o.EditMode != EditMode.Add.name) {
                     //Edit button
                     $('<div/>')
                         .appendTo($cell22)

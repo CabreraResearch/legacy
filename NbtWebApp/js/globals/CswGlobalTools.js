@@ -24,7 +24,7 @@ var ChemSW = ChemSW || (function(undefined) {
             },
             EditMode: {
                 Edit: 'Edit',
-                AddInPopup: 'AddInPopup',
+                Add: 'Add',
                 EditInPopup: 'EditInPopup',
                 Demo: 'Demo',
                 PrintReport: 'PrintReport',

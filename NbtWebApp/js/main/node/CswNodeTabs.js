@@ -29,7 +29,7 @@
             filterToPropId: '',
             title: '',
             date: '',      // for audit records
-            EditMode: EditMode.Edit.name, // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, NodePreview
+            EditMode: EditMode.Edit.name, // Edit, Add, EditInPopup, Demo, PrintReport, DefaultValue, NodePreview
             Multi: false,
             ReadOnly: false,
             onSave: null, // function (nodeid, cswnbtnodekey, tabcount) { },
@@ -104,7 +104,7 @@
             };
 
             // For performance, don't bother getting tabs if we're in Add or Preview
-            if (o.EditMode == EditMode.AddInPopup.name ||
+            if (o.EditMode == EditMode.Add.name ||
                 o.EditMode == EditMode.Preview.name ||
                 o.EditMode == EditMode.Table.name) {
                 var tabid = o.EditMode + "_tab";
@@ -168,7 +168,7 @@
         } // getTabs()
 
         function getProps($tabcontentdiv, tabid) {
-            if (o.EditMode === EditMode.AddInPopup.name && o.Config === false) {
+            if (o.EditMode === EditMode.Add.name && o.Config === false) {
                 // case 20970 - make sure there's room in the quota
                 CswAjaxJson({
                     watchGlobal: o.AjaxWatchGlobal,
@@ -339,7 +339,7 @@
                     }
 
                     /* case 8494 */
-                    if (!o.Config && !AtLeastOne.Saveable && o.EditMode == EditMode.AddInPopup.name) {
+                    if (!o.Config && !AtLeastOne.Saveable && o.EditMode == EditMode.Add.name) {
                         Save($form, $layouttable, data, $savetab, tabid);
                     }
                     else if (isFunction(o.onInitFinish)) {
@@ -461,7 +461,7 @@
             crawlObject(data, handleSuccess, false);
 
             if (false === isNullOrEmpty($savebtn, true)) {
-                if (o.Config || (AtLeastOne.Saveable === false && o.EditMode != EditMode.AddInPopup.name)) {
+                if (o.Config || (AtLeastOne.Saveable === false && o.EditMode != EditMode.Add.name)) {
                     $savebtn.hide();
                 } else {
                     $savebtn.show();

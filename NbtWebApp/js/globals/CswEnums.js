@@ -1,6 +1,6 @@
 var EditMode = {
     Edit: { name: 'Edit' },
-    AddInPopup: { name: 'AddInPopup' },
+    Add: { name: 'Add' },
     EditInPopup: { name: 'EditInPopup' },
     Demo: { name: 'Demo' },
     PrintReport: { name: 'PrintReport' },

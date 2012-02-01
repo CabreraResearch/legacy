@@ -20,7 +20,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Adding a new node in a popup
         /// </summary>
-        AddInPopup,
+        Add,
         /// <summary>
         /// Editing a node in a popup
         /// </summary>

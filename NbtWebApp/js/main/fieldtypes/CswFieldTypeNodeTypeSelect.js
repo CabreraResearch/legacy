@@ -23,7 +23,7 @@
 
                 /*
                 Case 24606: Once we can validate the control
-                if(editMode === ChemSW.enums.EditMode.AddInPopup) {
+                if(editMode === ChemSW.enums.EditMode.Add.name) {
                     each(propVals.options, function(option) {
                         if (contains(option, 'key')) {
                             

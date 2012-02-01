@@ -34,7 +34,7 @@
                 //$Div.css('z-index', '0'); //this doesn't prevent jmol overlapping dialog
             }
 
-            if (false === isTrue(o.ReadOnly) && o.EditMode !== EditMode.AddInPopup.name) {
+            if (false === isTrue(o.ReadOnly) && o.EditMode !== EditMode.Add.name) {
                 /* Edit Button */
                 $('<div/>')
                     .appendTo($cell22)
