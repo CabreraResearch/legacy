@@ -29,27 +29,28 @@
     Csw.log = Csw.log || log;
 
     function iterate(obj) {
-        var str = '';
-        for (var x in obj) {
+        var str = '',
+            x, popup;
+        for (x in obj) {
             str = str + x + "=" + obj[x] + "<br><br>";
         }
-        var popup = window.open("", "popup");
+        popup = window.open("", "popup");
         if (popup !== null) {
             popup.document.write(str);
         } else {
-            console.log("iterate() error: No popup!");
+            Csw.log("iterate() error: No popup!");
         }
-    };
+    }
     Csw.register('iterate', iterate);
     Csw.iterate = Csw.iterate || iterate;
 
     function doLogging(value) {
-        var ret = undefined;
+        var ret = false;
         if (Csw.hasWebStorage()) {
             if (arguments.length === 1) {
-                localStorage['doLogging'] = Csw.bool(value);
+                window.localStorage.doLogging = Csw.bool(value);
             }
-            ret = Csw.bool(localStorage['doLogging']);
+            ret = Csw.bool(window.localStorage.doLogging);
         }
         return ret;
     }
@@ -57,21 +58,21 @@
     Csw.doLogging = Csw.doLogging || doLogging;
     
     function debugOn(value) {
-        var ret = undefined;
+        var ret = false;
         if (Csw.hasWebStorage()) {
             if (arguments.length === 1) {
-                localStorage['debugOn'] = Csw.bool(value);
+                window.localStorage.debugOn = Csw.bool(value);
             }
-            ret = Csw.bool(localStorage['debugOn']);
+            ret = Csw.bool(window.localStorage.debugOn);
         }
         return ret;
-    };
+    }
     Csw.register('debugOn', debugOn);
     Csw.debugOn = Csw.debugOn || debugOn;
     
-    var cacheLogInfo = function (logger) {
+    function cacheLogInfo(logger) {
         if (doLogging()) {
-            if (hasWebStorage()) {
+            if (Csw.hasWebStorage()) {
                 if (undefined !== logger.setEnded) {
                     logger.setEnded();
                 }
@@ -87,7 +88,7 @@
     Csw.cacheLogInfo = Csw.cacheLogInfo || cacheLogInfo;
 
     function purgeLogInfo() {
-        if (hasWebStorage()) {
+        if (Csw.hasWebStorage()) {
             window.sessionStorage.clear();
         }
     }

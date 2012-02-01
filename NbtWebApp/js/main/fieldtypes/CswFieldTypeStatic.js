@@ -12,8 +12,8 @@
             $Div.contents().remove();
              var propVals = o.propData.values;
             var text = (false === o.Multi) ? Csw.string(propVals.text).trim() : CswMultiEditDefaultValue;
-            var columns = parseInt( propVals.columns);
-            var rows = parseInt( propVals.rows);
+            var columns = Csw.number(propVals.columns);
+            var rows = Csw.number(propVals.rows);
 
             var overflow = 'auto';
             var width = '';

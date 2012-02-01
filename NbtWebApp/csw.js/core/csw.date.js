@@ -31,7 +31,6 @@
     Csw.serverDateFormatToJQuery = Csw.serverDateFormatToJQuery || serverDateFormatToJQuery;
     
     function serverTimeFormatToJQuery(serverTimeFormat) {
-        "use strict";
         var ret = serverTimeFormat;
         return ret;
     }
@@ -55,8 +54,8 @@
         if (match === null) {
             isValid = false;
         } else {
-            var hour = parseInt(match[1]);
-            var minute = parseInt(match[2]);
+            var hour = Csw.number(match[1]);
+            var minute = Csw.number(match[2]);
             if (hour < 0 || hour >= 24 || minute < 0 || minute >= 60) {
                 isValid = false;
             }

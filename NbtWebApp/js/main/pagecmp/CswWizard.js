@@ -1,7 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -149,7 +147,7 @@
 
 
     function _getCurrentStepNo($table) {
-        return parseInt($table.find('.CswWizard_StepLinkDivSelected').CswAttrDom('stepno'));
+        return Csw.number($table.find('.CswWizard_StepLinkDivSelected').CswAttrDom('stepno'));
     }
     
     function _selectStep($table, stepno) {

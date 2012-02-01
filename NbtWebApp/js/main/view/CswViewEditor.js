@@ -544,7 +544,7 @@
                 $cell.empty();
                 //$cell.append('For ' + $a.text());
 
-                var objHelper = new Csw.object(currentViewJson);
+                var objHelper = Csw.object(currentViewJson);
                 var arbitraryId = $a.CswAttrDom('arbid');
                 var viewnodejson = objHelper.find('arbitraryid', arbitraryId);
 
@@ -642,7 +642,7 @@
                 $cell.empty();
 
                 if (viewmode === "Grid") {
-                    var objHelper = new Csw.object(currentViewJson);
+                    var objHelper = Csw.object(currentViewJson);
                     var arbitraryId = $a.CswAttrDom('arbid');
                     var viewNodeData = objHelper.find('arbitraryid', arbitraryId);
 
@@ -694,7 +694,7 @@
                 var $a = $(this);
                 $cell.empty();
                 //$cell.append('For ' + $a.text());
-                var objHelper = new Csw.object(currentViewJson);
+                var objHelper = Csw.object(currentViewJson);
                 var arbitraryId = $a.CswAttrDom('arbid');
                 var viewNodeData = objHelper.find('arbitraryid', arbitraryId);
 
@@ -759,7 +759,7 @@
                 var arbid = $span.CswAttrNonDom('arbid');
                 var $btn = $span.children('div').first();
                 $btn.bind('click', function () {
-                    var objUtil = new Csw.object(currentViewJson);
+                    var objUtil = Csw.object(currentViewJson);
                     objUtil.remove('arbitraryid', arbid);
                     _makeViewTree(stepno);
                     return CswImageButton_ButtonType.None;
@@ -776,7 +776,7 @@
                 $btn.bind('click', function () {
                     var $this = $(this);
                     $this.CswButton('disable');
-                    var objHelper = new Csw.object(currentViewJson);
+                    var objHelper = Csw.object(currentViewJson);
                 
                     var propJson = objHelper.find('arbitraryid', arbitraryId);
                     
@@ -1111,7 +1111,7 @@
                                 if (arbid === "root") {
                                     $.extend(currentViewJson.childrelationships, childJson);
                                 } else {
-                                    var objUtil = new Csw.object(currentViewJson);
+                                    var objUtil = Csw.object(currentViewJson);
                                     var parentObj = objUtil.find('arbitraryid', arbid);
                                     var collection = '';
                                     switch (stepno) {

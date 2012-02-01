@@ -10,7 +10,7 @@
         /// <returns type="Boolean" />
         var ret = ($.isArray(obj));
         return ret;
-    };
+    }
     Csw.register('isArray', isArray);
     Csw.isArray = Csw.isArray || isArray;
 
@@ -21,26 +21,26 @@
         }
         
         retArray.contains = retArray.contains || function (value) {
-            return retArray.indexOf(value) != -1;
+            return retArray.indexOf(value) !== -1;
         };
         
         return retArray;
-    };
+    }
     Csw.register('array', array);
     Csw.array = Csw.array || array;
     
     function makeSequentialArray(start, end) {
         var ret = array(),
-            i = +start;
+            i;
         end = +end;
         if (Csw.isNumber(start) &&
             Csw.isNumber(end)) {
-            for ( ; i <= end; i += 1) {
+            for (i = +start; i <= end; i += 1) {
                 ret.push(i);
             }
         }
         return ret;
-    };    
+    }    
     Csw.register('makeSequentialArray', makeSequentialArray);
     Csw.makeSequentialArray = Csw.makeSequentialArray || makeSequentialArray;
 

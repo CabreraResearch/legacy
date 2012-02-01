@@ -71,7 +71,7 @@
     Csw.register('cookie', cookie);
     Csw.cookie = Csw.cookie || cookie;
     
-})();
+}());
 
 
 

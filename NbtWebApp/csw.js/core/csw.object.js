@@ -205,12 +205,14 @@
             return crawlObject(thisObj, onSuccess, true);
         }
 
-        this.find = find;
-        this.remove = remove;
-        this.obj = thisObj;
-        this.parentObj = parentObj;
-        this.currentObj = currentObj;
-        this.currentKey = currentObj;
+        return {
+            find: find,
+            remove: remove,
+            obj: thisObj,
+            parentObj: parentObj,
+            currentObj: currentObj,
+            currentKey: currentObj
+        };
     }
     Csw.register('object', object);
     Csw.object = Csw.object || object;

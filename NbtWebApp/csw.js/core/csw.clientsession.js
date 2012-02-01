@@ -10,21 +10,31 @@
 
     var clientSession = (function clientSessionP () {
 
-        function _setExpireTimeInterval () {
-            clearInterval(_expiretimeInterval);
-            clearInterval(_expiredInterval);
-            _expiretimeInterval = setInterval(function () {
-                _checkExpireTime();
-            }, 60000);
-            _expiredInterval = setInterval(function () {
-                _checkExpired();
-            }, 60000);
+        function logout (options) {
+            var o = {
+                DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
+                onDeauthenticate: function () {
+                }
+            };
+
+            if (options) {
+                $.extend(o, options);
+            }
+
+            Csw.ajax.post({
+                url: o.DeauthenticateUrl,
+                data: {},
+                success: function () {
+                    finishLogout();
+                    o.onDeauthenticate();
+                }
+            });
         }
 
         function _checkExpired () {
             var now = new Date();
             if (Date.parse(_expiretime) - Date.parse(now) < 0) {
-                clearInterval(_expiredInterval);
+                window.clearInterval(_expiredInterval);
                 logout();
             }
         }
@@ -33,7 +43,7 @@
             var now = new Date();
             if (Date.parse(_expiretime) - Date.parse(now) < 180000)     	// 3 minutes until timeout
             {
-                clearInterval(_expiretimeInterval);
+                window.clearInterval(_expiretimeInterval);
                 $.CswDialog('ExpireDialog', {
                     'onYes': function () {
                         Csw.ajax.post({
@@ -44,6 +54,17 @@
                     }
                 });
             }
+        }
+
+        function _setExpireTimeInterval () {
+            window.clearInterval(_expiretimeInterval);
+            window.clearInterval(_expiredInterval);
+            _expiretimeInterval = setInterval(function () {
+                _checkExpireTime();
+            }, 60000);
+            _expiredInterval = setInterval(function () {
+                _checkExpired();
+            }, 60000);
         }
 
         function getExpireTime () {
@@ -143,27 +164,6 @@
             } else if (false === Csw.isNullOrEmpty(txt) && o.status !== 'Authenticated') {
                 o.failure(txt, o.status);
             }
-        }
-
-        function logout (options) {
-            var o = {
-                DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
-                onDeauthenticate: function () {
-                }
-            };
-
-            if (options) {
-                $.extend(o, options);
-            }
-
-            Csw.ajax.post({
-                url: o.DeauthenticateUrl,
-                data: {},
-                success: function () {
-                    finishLogout();
-                    o.onDeauthenticate();
-                }
-            });
         }
 
         function finishLogout () {

@@ -17,12 +17,20 @@
             /// <param name="defaultNum" type="Number"> Default value if not a number </param>
             /// <returns type="Number" />
             var ret = 0;
-            var tryRet = +inputNum;
+            
+            function makeNumber(value) {
+                var num = +value;
+                if(isNaN(tryRet)) {
+                    num = parseInt(value, 0);
+                }   
+                return num;
+            }
+            var tryRet = makeNumber(inputNum);
 
             if (false === isNaN(tryRet) && tryRet !== int32MinVal) {
                 ret = tryRet;
             } else {
-                tryRet = +defaultNum;
+                tryRet = makeNumber(defaultNum);
                 if (false === isNaN(tryRet) && tryRet !== int32MinVal) {
                     ret = tryRet;
                 }
