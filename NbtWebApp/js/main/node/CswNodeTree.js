@@ -173,7 +173,7 @@
                         Csw.nodeHoverOut();
                     });
 
-                    $treediv.jstree('select_node', tryParseElement(data.selectid));
+                    $treediv.jstree('select_node', Csw.tryParseElement(data.selectid));
                     //setTimeout(function () { Csw.log('select: #' + data.selectid);  }, 1000);
                     rootnode = $treediv.find('li').first();
 
