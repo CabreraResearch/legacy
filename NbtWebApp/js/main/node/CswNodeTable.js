@@ -33,7 +33,7 @@
 
             var $parent = $(this);
 
-            var $scrollingdiv = $parent.CswDiv({ ID: makeId({ id: o.ID, suffix: '_scrolldiv' }) })
+            var $scrollingdiv = $parent.CswDiv({ ID: Csw.makeId({ id: o.ID, suffix: '_scrolldiv' }) })
                                     .css({
                                         height: o.height + 'px',
                                         overflow: 'auto'
@@ -85,12 +85,12 @@
                             name = '<b>' + nodeObj.nodename + '</b>';
                         }
 
-                        if (false === isNullOrEmpty(nodeObj.thumbnailurl)) {
+                        if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                             $thumbnailcell.append('<img src="' + nodeObj.thumbnailurl + '" style="max-width: 90%;">');
                         }
                         $thumbnailcell.append('<br/>');
 
-                        if (locked) {
+                        if (Csw.bool(nodeObj.locked)) {
                             name += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
                         }
                         $textcell.append(name + '<br/>');
@@ -107,14 +107,14 @@
                         });
 
                         // Buttons
-                        var $btntable = $textcell.CswTable({ ID: makeId({ id: o.ID, suffix: nodeid + '_btntbl' }) });
+                        var $btntable = $textcell.CswTable({ ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_btntbl' }) });
                         if (nodeObj.allowview || nodeObj.allowedit) {
                             var btntext = "View";
                             if (nodeObj.allowedit) {
                                 btntext = "Edit";
                             }
                             $btntable.CswTable('cell', 1, 1).CswButton({
-                                ID: makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
+                                ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
                                 enabledText: btntext,
                                 disableOnClick: false,
                                 onclick: function () {
@@ -131,7 +131,7 @@
 
                         if (nodeObj.allowdelete) {
                             $btntable.CswTable('cell', 1, 2).CswButton({
-                                ID: makeId({ id: o.ID, suffix: nodeid + '_btn' }),
+                                ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_btn' }),
                                 enabledText: 'Delete',
                                 disableOnClick: false,
                                 onclick: function () {

@@ -24,7 +24,7 @@
         },
         EditMode: {
             Edit: 'Edit',
-            AddInPopup: 'AddInPopup',
+            Add: 'Add',
             EditInPopup: 'EditInPopup',
             Demo: 'Demo',
             PrintReport: 'PrintReport',
@@ -77,7 +77,7 @@
 
 var EditMode = {
     Edit: { name: 'Edit' },
-    AddInPopup: { name: 'AddInPopup' },
+    Add: { name: 'Add' },
     EditInPopup: { name: 'EditInPopup' },
     Demo: { name: 'Demo' },
     PrintReport: { name: 'PrintReport' },

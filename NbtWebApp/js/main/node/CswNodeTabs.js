@@ -101,9 +101,9 @@
             };
 
             // For performance, don't bother getting tabs if we're in Add or Preview
-            if (o.EditMode == EditMode.Add.name ||
-                o.EditMode == EditMode.Preview.name ||
-                o.EditMode == EditMode.Table.name) {
+            if (o.EditMode == Csw.enums.EditMode.Add ||
+                o.EditMode == Csw.enums.EditMode.Preview ||
+                o.EditMode == Csw.enums.EditMode.Table ) {
                 var tabid = o.EditMode + "_tab";
                 var $tabcontentdiv = makeTabContentDiv($parent, tabid, false);
                 getProps($tabcontentdiv, tabid);
