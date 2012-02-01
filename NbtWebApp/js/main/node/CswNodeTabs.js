@@ -2,9 +2,9 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) { 
-    "use strict"; 
+    "use strict";
     $.fn.CswNodeTabs = function (options) {
-        "use strict"; 
+        "use strict";
         var o = {
             ID: '',
             TabsUrl: '/NbtWebApp/wsNBT.asmx/getTabs',
@@ -21,13 +21,14 @@
             nodekeys: [],
             relatednodeid: '',
             relatednodetypeid: '',
-            tabid: '',                
-            nodetypeid: '',           
-            filterToPropId: '',       
+            tabid: '',
+            nodetypeid: '',
+            filterToPropId: '',
             title: '',
             date: '',      // for audit records
             EditMode: EditMode.Edit.name, // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, NodePreview
             Multi: false,
+            ReadOnly: false,
             onSave: null, // function (nodeid, cswnbtnodekey, tabcount) { },
             Refresh: null, // function (nodeid, cswnbtnodekey, tabcount) { },
             onBeforeTabSelect: null, // function (tabid) { return true; },
@@ -46,6 +47,7 @@
         if (options) {
             $.extend(o, options);
         }
+
         var $parent = $(this);
 
         var $outertabdiv = $('<div id="' + o.ID + '_tabdiv" />')
@@ -57,10 +59,10 @@
         if (o.EditMode !== EditMode.PrintReport.name) {
             var $linkdiv = $('<div id="' + o.ID + '_linkdiv" align="right"/>')
                             .appendTo($parent);
-            if(o.ShowAsReport && false === o.Multi) {
+            if (o.ShowAsReport && false === o.Multi) {
                 $('<a href="#">As Report</a>')
                     .appendTo($linkdiv)
-                    .click(function () { 
+                    .click(function() { 
                         Csw.openPopup('NodeReport.html?nodeid=' + Csw.tryParseObjByIdx(o.nodeids, 0) + '&cswnbtnodekey=' + Csw.tryParseObjByIdx(o.nodekeys, 0), 600, 800); 
                     });
             }
@@ -73,13 +75,13 @@
         function makeTabContentDiv($tabParent, tabid, canEditLayout) {
             var $tabcontentdiv = $('<div id="' + tabid + '"><form onsubmit="return false;" id="' + tabid + '_form" /></div>')
                                     .appendTo($tabParent);
-            
+
             var handle = function (eventObj) {
                 $tabParent.remove();
                 $.unsubscribe(ChemSW.enums.Events.CswNodeDelete, handle);
                 return false;
             };
-            
+
             if(false === Csw.isNullOrEmpty($tabParent.parent(), true)) {
                 $.subscribe(ChemSW.enums.Events.CswNodeDelete, handle);
             }
@@ -87,8 +89,7 @@
             return $tabcontentdiv;
         }
 
-        function getTabs()
-        {
+        function getTabs() {
             var jsonData = {
                 EditMode: o.EditMode,
                 NodeId: Csw.tryParseObjByIdx(o.nodeids, 0),
@@ -100,8 +101,8 @@
             };
 
             // For performance, don't bother getting tabs if we're in Add or Preview
-            if( o.EditMode == EditMode.AddInPopup.name || 
-                o.EditMode == EditMode.Preview.name ) {
+            if (o.EditMode == EditMode.AddInPopup.name ||
+                o.EditMode == EditMode.Preview.name) {
                 var tabid = o.EditMode + "_tab";
                 var $tabcontentdiv = makeTabContentDiv($parent, tabid, false);
                 getProps($tabcontentdiv, tabid);
@@ -130,7 +131,7 @@
                             }
                             tabno++;
                             return false;
-                        };  
+                        };
                         Csw.crawlObject(data, tabFunc, false);
 
                         tabcnt = tabno;
@@ -138,20 +139,20 @@
                         Csw.each(tabdivs, function ($tabdiv) {
                             //var $tabdiv = tabdivs[t];
                             $tabdiv.tabs({
-                                    selected: selectedtabno,
-                                    select: function (event, ui) {
-                                        var $selectTabcontentdiv = $($tabdiv.children('div')[ui.index]);
-                                        var selectTabid = $selectTabcontentdiv.CswAttrDom('id');
+                                selected: selectedtabno,
+                                    select: function(event, ui) {
+                                    var $selectTabcontentdiv = $($tabdiv.children('div')[ui.index]);
+                                    var selectTabid = $selectTabcontentdiv.CswAttrDom('id');
                                         if (Csw.isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(selectTabid)) {
-                                            getProps($selectTabcontentdiv, selectTabid);
+                                        getProps($selectTabcontentdiv, selectTabid);
                                             if (Csw.isFunction(o.onTabSelect)) {
-                                                o.onTabSelect(selectTabid);
-                                            }
-                                        } else {
-                                            return false;
+                                            o.onTabSelect(selectTabid);
                                         }
+                                    } else {
+                                        return false;
                                     }
-                                });
+                                }
+                            });
                             var $eachTabcontentdiv = $($tabdiv.children('div')[$tabdiv.tabs('option', 'selected')]);
                             var selectedtabid = $eachTabcontentdiv.CswAttrDom('id');
                             getProps($eachTabcontentdiv, selectedtabid);
@@ -163,7 +164,7 @@
         } // getTabs()
 
         function getProps($tabcontentdiv, tabid) {
-            if( o.EditMode === EditMode.AddInPopup.name && o.Config === false) {
+            if (o.EditMode === EditMode.AddInPopup.name && o.Config === false) {
                 // case 20970 - make sure there's room in the quota
                 Csw.ajax.post({
                     watchGlobal: o.AjaxWatchGlobal,
@@ -171,12 +172,10 @@
                     data: { NodeTypeId: o.nodetypeid },
                     success: function (data) {
                         if(Csw.bool(data.result))
-                        {
                             getPropsImpl($tabcontentdiv, tabid);
                         } else {
                             $tabcontentdiv.append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
                             if (Csw.isFunction(o.onInitFinish)) 
-                            {
                                 o.onInitFinish(false);
                             }
                         }
@@ -191,7 +190,7 @@
             var jsonData = {
                 EditMode: o.EditMode,
                 NodeId: Csw.tryParseObjByIdx(o.nodeids, 0),
-                TabId: tabid, 
+                TabId: tabid,
                 SafeNodeKey: Csw.tryParseObjByIdx(o.nodekeys, 0),
                 NodeTypeId: o.nodetypeid,
                 Date: o.date,
@@ -207,7 +206,7 @@
                     var $form = $tabcontentdiv.children('form');
                     $form.contents().remove();
 
-                    if(o.title !== '') {
+                    if (o.title !== '') {
                         $form.append(o.title);
                     }
 
@@ -219,13 +218,12 @@
                     var $layouttable = $formtblcell11.CswLayoutTable('init', {
                         ID: o.ID + '_props',
                         OddCellRightAlign: true,
-                        ReadOnly: (o.EditMode === EditMode.PrintReport.name),
+                        ReadOnly: (o.EditMode === EditMode.PrintReport.name || o.ReadOnly),
                         cellset: {
                             rows: 1,
                             columns: 2
                         },
-                        onSwap: function (e, onSwapData)
-                        {
+                        onSwap: function (e, onSwapData) {
                             onSwap(onSwapData);
                         },
                         showConfigButton: false, //o.Config,
@@ -237,7 +235,7 @@
                         onConfigOff: function () {
                             doUpdateSubProps(false);
                         }, // onConfigOff
-                        onRemove: function (event, onRemoveData) { 
+                        onRemove: function(event, onRemoveData) { 
                             onRemove(onRemoveData);
                         } // onRemove
                     }); // CswLayoutTable()
@@ -251,8 +249,7 @@
                                 var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrNonDom('row'), $parentcell.CswAttrNonDom('column'));
                                 var $propcell = _getPropertyCell($cellset);
 
-                                if ($subtable.length > 0)
-                                {
+                                if ($subtable.length > 0) {
                                     var fieldOpt = {
                                         fieldtype: thisProp.fieldtype,
                                         nodeid: Csw.tryParseObjByIdx(o.nodeids, 0),
@@ -276,28 +273,25 @@
                         Csw.crawlObject(data, updOnSuccess, false);
                     }
 
-                    if( o.EditMode !== EditMode.PrintReport.name)
-                    {
-                        $savetab = $formtblcell11.CswButton({ID: 'SaveTab', 
-                                                enabledText: 'Save Changes', 
-                                                disabledText: 'Saving...', 
-                                                onclick: function () { Save($form, $layouttable, data, $savetab, tabid); }
-                                                });
+                    if (o.EditMode !== EditMode.PrintReport.name) {
+                        $savetab = $formtblcell11.CswButton({ ID: 'SaveTab',
+                            enabledText: 'Save Changes',
+                            disabledText: 'Saving...',
+                            onclick: function () { Save($form, $layouttable, data, $savetab, tabid); }
+                        });
                     }
                     var AtLeastOne = _handleProperties($layouttable, data, $tabcontentdiv, tabid, false, $savetab);
 
                     // Validation
                     $form.validate({
-                        highlight: function (element)
-                        {
+                        highlight: function (element) {
                             var $elm = $(element);
                             $elm.CswAttrNonDom('csw_invalid', '1');
                             $elm.animate({ backgroundColor: '#ff6666' });
                         },
-                        unhighlight: function (element)
-                        {
+                        unhighlight: function (element) {
                             var $elm = $(element);
-                            if($elm.CswAttrNonDom('csw_invalid') === '1')  // only unhighlight where we highlighted
+                            if ($elm.CswAttrNonDom('csw_invalid') === '1')  // only unhighlight where we highlighted
                             {
                                 $elm.css('background-color', '#66ff66');
                                 $elm.CswAttrNonDom('csw_invalid', '0');
@@ -308,54 +302,53 @@
 
                     if(Csw.bool(o.Config)) {
                         $layouttable.CswLayoutTable('ConfigOn');
-                    } 
-                    else if(!o.Config && 
-                        Csw.isNullOrEmpty(o.date) && 
-                        o.filterToPropId === '' && 
-                        Csw.bool($tabcontentdiv.data('canEditLayout'))) {
-                            /* Case 24437 */
-                            var editLayoutOpt = {
-                                ID: o.ID,
-                                nodeids: o.nodeids,
-                                nodekeys: o.nodekeys,
-                                tabid: o.tabid,
-                                nodetypeid: o.nodetypeid,
-                                Refresh: function () {
-                                    Csw.tryExec(o.Refresh);
-                                    o.Config = false;
-                                    getTabs();
-                                }                                
-                            };
-                        
-                            /* Show the 'fake' config button to open the dialog */
-                            $formtblcell12.CswImageButton({
-                                                        ButtonType: CswImageButton_ButtonType.Configure,
-                                                        AlternateText: 'Configure',
-                                                        ID: o.ID + 'configbtn',
-                                                        onClick: function () { 
-                                                            clearTabs();
-                                                            $.CswDialog('EditLayoutDialog', editLayoutOpt);
-                                                            return CswImageButton_ButtonType.None; 
-                                                        }
-                                                    });
                     }
-                    
+                    else if (!o.Config &&
+                        Csw.isNullOrEmpty(o.date) && 
+                        o.filterToPropId === '' &&
+                        Csw.bool($tabcontentdiv.data('canEditLayout'))) {
+                        /* Case 24437 */
+                        var editLayoutOpt = {
+                            ID: o.ID,
+                            nodeids: o.nodeids,
+                            nodekeys: o.nodekeys,
+                            tabid: o.tabid,
+                            nodetypeid: o.nodetypeid,
+                            Refresh: function () {
+                                    Csw.tryExec(o.Refresh);
+                                o.Config = false;
+                                getTabs();
+                            }
+                        };
+
+                        /* Show the 'fake' config button to open the dialog */
+                        $formtblcell12.CswImageButton({
+                            ButtonType: CswImageButton_ButtonType.Configure,
+                            AlternateText: 'Configure',
+                            ID: o.ID + 'configbtn',
+                            onClick: function () {
+                                clearTabs();
+                                $.CswDialog('EditLayoutDialog', editLayoutOpt);
+                                return CswImageButton_ButtonType.None;
+                            }
+                        });
+                    }
+
                     /* case 8494 */
                     if (!o.Config && !AtLeastOne.Saveable && o.EditMode == EditMode.AddInPopup.name) {
                         Save($form, $layouttable, data, $savetab, tabid);
-                    } 
+                    }
                     else if (Csw.isFunction(o.onInitFinish)) {
                         o.onInitFinish(AtLeastOne.Property);
                     }
                 } // success{}
             }); // ajax
         } // getPropsImpl()
-       
-        function onRemove(onRemoveData)
-        {
+
+        function onRemove(onRemoveData) {
             var $propdiv = _getPropertyCell(onRemoveData.cellset).children('div').first();
             var propid = $propdiv.CswAttrNonDom('propid');
-            
+
             Csw.ajax.post({
                 watchGlobal: o.AjaxWatchGlobal,
                 url: o.RemovePropUrl,
@@ -366,22 +359,20 @@
             });
 
         } // onRemove()
-        
-        function onSwap(onSwapData)
-        {
+
+        function onSwap(onSwapData) {
             _moveProp(_getPropertyCell(onSwapData.cellset).children('div').first(), onSwapData.swaprow, onSwapData.swapcolumn);
             _moveProp(_getPropertyCell(onSwapData.swapcellset).children('div').first(), onSwapData.row, onSwapData.column);
         } // onSwap()
 
         function _moveProp($propdiv, newrow, newcolumn) {
-            if ($propdiv.length > 0)
-            {
+            if ($propdiv.length > 0) {
                 var propid = $propdiv.CswAttrNonDom('propid');
 
-                var dataJson = { 
-                    PropId: propid, 
-                    NewRow: newrow, 
-                    NewColumn: newcolumn, 
+                var dataJson = {
+                    PropId: propid,
+                    NewRow: newrow,
+                    NewColumn: newcolumn,
                     EditMode: o.EditMode
                 };
 
@@ -412,35 +403,32 @@
                 fieldtype !== CswSubFields_Map.Image.name &&
                     fieldtype !== CswSubFields_Map.Grid.name &&
                         fieldtype !== CswSubFields_Map.Button.name &&
-                            (o.filterToPropId === '' || o.filterToPropId === propid))
-            {
+                            (o.filterToPropId === '' || o.filterToPropId === propid)) {
                 var $labelcell = _getLabelCell($cellset);
                 $labelcell.addClass('propertylabel');
 
                 if (Csw.bool(thisProp.highlight))
-                {
                     $labelcell.addClass('ui-state-highlight');
                 }
 
                 var helpText = Csw.string(thisProp.helptext);
                 var propName = Csw.string(thisProp.name);
                 if (!Csw.isNullOrEmpty(helpText)) {
-                    $labelcell.CswLink('init', {href: '#', 
-                                                cssclass: 'cswprop_helplink', 
-                                                title: helpText, 
-                                                onclick: function () { return false; }, 
-                                                value: propName
-                                        });
-                                
+                    $labelcell.CswLink('init', { href: '#',
+                        cssclass: 'cswprop_helplink',
+                        title: helpText,
+                                                onclick: function() { return false; }, 
+                        value: propName
+                    });
+
                 } else {
                     $labelcell.append(propName);
                 }
 
-                if (!Csw.bool(thisProp.readonly))
-                {
+                if (false === Csw.bool(thisProp.readonly))
                     AtLeastOne.Saveable = true;
                     if (o.ShowCheckboxes && Csw.bool(thisProp.copyable)) {
-                        var $propcheck = $labelcell.CswInput('init', {ID: 'check_' + propid,
+                        var $propcheck = $labelcell.CswInput('init', { ID: 'check_' + propid,
                             type: CswInput_Types.checkbox,
                             value: false, // Value --not defined?,
                             cssclass: o.ID + '_check'
@@ -458,7 +446,7 @@
             }
             _makeProp($propcell, thisProp, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
         }
-        
+
         function _handleProperties($layouttable, data, $tabcontentdiv, tabid, configMode, $savebtn) {
             var AtLeastOne = { Property: false, Saveable: false };
             var handleSuccess = function (propObj) {
@@ -467,10 +455,9 @@
                 return false;
             };
             Csw.crawlObject(data, handleSuccess, false);
-            
+
             if(false === Csw.isNullOrEmpty($savebtn, true)) {
-                if (o.Config || (AtLeastOne.Saveable === false && o.EditMode != EditMode.AddInPopup.name))
-                {
+                if (o.Config || (AtLeastOne.Saveable === false && o.EditMode != EditMode.AddInPopup.name)) {
                     $savebtn.hide();
                 } else {
                     $savebtn.show();
@@ -486,7 +473,7 @@
 
                 var propId = propData.id;
                 var propName = propData.name;
-                
+
                 var fieldOpt = {
                     fieldtype: propData.fieldtype,
                     nodeid: Csw.tryParseObjByIdx(o.nodeids, 0),
@@ -510,15 +497,14 @@
 
                 fieldOpt.onchange = function () { if(Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName); };
                 if (Csw.bool(propData.hassubprops)) {
-                    fieldOpt.onchange = function ()
-                    {
+                    fieldOpt.onchange = function () {
                         _updateSubProps(fieldOpt, propId, propData, $propcell, $tabcontentdiv, tabid, false, $savebtn);
                         if(Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName);
                     };
                 } // if (Csw.bool(propData.hassubprops)) {
 
                 $.CswFieldTypeFactory('make', fieldOpt);
-                
+
                 if (propData.hasOwnProperty('subprops')) {
                     // recurse on sub-props
                     var subProps = propData.subprops;
@@ -526,7 +512,7 @@
                     var $subtable = $propcell.CswLayoutTable('init', {
                         ID: fieldOpt.propid + '_subproptable',
                         OddCellRightAlign: true,
-                        ReadOnly: (o.EditMode === 'PrintReport'),
+                        ReadOnly: (o.EditMode === 'PrintReport' || o.ReadOnly),
                         cellset: {
                             rows: 1,
                             columns: 2
@@ -538,7 +524,7 @@
                         showRowColButtons: false,
                         showRemoveButton: false
                     });
-                    
+
                     var subOnSuccess = function (subProp, key) {
                         subProp.propId = key;
                         if (Csw.bool(subProp.display) || configMode) {
@@ -567,12 +553,12 @@
             /// <param name="configMode" type="Boolean"> True if config mode </param>
             /// <param name="$savebtn" type="JQuery"> A save button </param>
             /// <returns type="void"></returns>
-            
+
             /*
-                Case 24449: 
-                $.CswFieldTypeFactory('save') depends on the result of the onChange event which triggers this method.
-                Normally, the page is ready when 'Save' is clicked; however, 
-                before we can evaluate subprop behavior, the governing controls must update with the result of their change event.
+            Case 24449: 
+            $.CswFieldTypeFactory('save') depends on the result of the onChange event which triggers this method.
+            Normally, the page is ready when 'Save' is clicked; however, 
+            before we can evaluate subprop behavior, the governing controls must update with the result of their change event.
             */
             setTimeout(function () {
                 // do a fake 'save' to update the json with the current value
@@ -592,20 +578,19 @@
                     Csw.ajax.post({
                         watchGlobal: o.AjaxWatchGlobal,
                         url: o.SinglePropUrl,
-                            data: jsonData,
-                            success: function (data) {
-                                var AtLeastOne = { };
-                                data.wasmodified = true; // keep the fact that the parent property was modified
-                                _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
-                            }
-                        });
+                        data: jsonData,
+                            success: function(data) {
+                            var AtLeastOne = {};
+                            data.wasmodified = true; // keep the fact that the parent property was modified
+                            _makeProp($propcell, data, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
+                        }
+                    });
                 }
             }, 150);
         } // _updateSubProps()
 
         function Save($form, $layouttable, propsData, $savebtn, tabid) {
-            if($form.valid())
-            {
+            if ($form.valid()) {
                 var propIds = _updatePropJsonFromForm($layouttable, propsData);
                 var data = {
                     EditMode: o.EditMode,
@@ -641,18 +626,18 @@
                                 }
                             }); // ajax						        
                         }
-                        if(o.ShowCheckboxes) {
+                        if (o.ShowCheckboxes) {
                             // apply the newly saved checked property values on this node to the checked nodes
                             var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
                             var $propchecks = $('.' + o.ID + '_check:checked');
-                            
-                            if($nodechecks.length > 0 && $propchecks.length > 0) {
-                                $nodechecks.each(function () { 
+
+                            if ($nodechecks.length > 0 && $propchecks.length > 0) {
+                                $nodechecks.each(function() { 
                                     var nodeid = $(this).CswAttrNonDom('nodeid');
-                                    dataJson.CopyNodeIds.push(nodeid); 
+                                    dataJson.CopyNodeIds.push(nodeid);
                                 });
 
-                                $propchecks.each(function () { 
+                                $propchecks.each(function() { 
                                     var propid = $(this).CswAttrNonDom('propid');
                                     dataJson.PropIds.push(propid);
                                 });
@@ -663,7 +648,7 @@
                                 $.CswDialog('AlertDialog', 'You have not selected any properties to save.');
                             }
                         } // if(o.ShowCheckboxes)
-                        else if(o.Multi) {
+                        else if (o.Multi) {
                             dataJson.CopyNodeIds = o.nodeids;
                             dataJson.PropIds = propIds;
                             copyNodeProps(function () { window.location.reload(); });

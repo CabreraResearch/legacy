@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.WebServices
                                                             "Multi-Edit"
                                                         };
 
-        private enum MenuActions
+        public enum MenuActions
         {
             Unknown,
             AddNode,
@@ -87,16 +87,15 @@ namespace ChemSW.Nbt.WebServices
 
             JObject Ret = new JObject();
 
-            string NodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
             string RelatedNodeId = string.Empty;
             string RelatedNodeTypeId = string.Empty;
             CswNbtNode Node = null;
             Int32 NodeTypeId = Int32.MinValue;
             Int32 NodeId = Int32.MinValue;
 
-            if( false == string.IsNullOrEmpty( NodeKey ) )
+            if( false == string.IsNullOrEmpty( SafeNodeKey ) )
             {
-                CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+                CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, SafeNodeKey );
                 Node = _CswNbtResources.Nodes[NbtNodeKey];
                 if( null != Node )
                 {
@@ -110,35 +109,44 @@ namespace ChemSW.Nbt.WebServices
             // SEARCH
             if( _MenuItems.Contains( "Search" ) )
             {
-                Ret["Search"] = new JObject();
-                Ret["Search"]["haschildren"] = true;
-                // Generic search
+                JObject SearchObj = new JObject();
+                bool HasChildren = false;
                 if( View != null )
                 {
                     if( View.IsSearchable() )
                     {
                         View.SaveToCache( false );
-                        Ret["Search"]["This View"] = new JObject();
-                        Ret["Search"]["This View"]["text"] = "This View";
-                        Ret["Search"]["This View"]["nodeid"] = NodeId;
-                        Ret["Search"]["This View"]["nodetypeid"] = NodeTypeId;
-                        Ret["Search"]["This View"]["sessionviewid"] = View.SessionViewId.ToString();
-                        Ret["Search"]["This View"]["action"] = MenuActions.ViewSearch.ToString();
+                        SearchObj["This View"] = new JObject();
+                        SearchObj["This View"]["text"] = "This View";
+                        SearchObj["This View"]["nodeid"] = NodeId;
+                        SearchObj["This View"]["nodetypeid"] = NodeTypeId;
+                        SearchObj["This View"]["sessionviewid"] = View.SessionViewId.ToString();
+                        SearchObj["This View"]["action"] = MenuActions.ViewSearch.ToString();
+                        HasChildren = true;
                     }
                     if( View.Visibility != NbtViewVisibility.Property )
                     {
-                        Ret["Search"]["Generic Search"] = new JObject();
-                        Ret["Search"]["Generic Search"]["nodeid"] = NodeId;
-                        Ret["Search"]["Generic Search"]["nodetypeid"] = NodeTypeId;
-                        Ret["Search"]["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                        SearchObj["Generic Search"] = new JObject();
+                        SearchObj["Generic Search"]["nodeid"] = NodeId;
+                        SearchObj["Generic Search"]["nodetypeid"] = NodeTypeId;
+                        SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                        HasChildren = true;
                     }
                     /* Case 24744: No Generic Search on Grid Props */
                 }
                 else
                 {
-                    Ret["Search"]["Generic Search"] = new JObject();
-                    Ret["Search"]["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                    SearchObj["Generic Search"] = new JObject();
+                    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                    HasChildren = true;
                 }
+
+                if( HasChildren )
+                {
+                    SearchObj["haschildren"] = true;
+                    Ret["Search"] = SearchObj;
+                }
+
             }
 
             if( View != null )
@@ -157,12 +165,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstGeneration )
                         .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
-                                                         new JObject(
-                                                             new JProperty( "text", Entry.NodeType.NodeTypeName ),
-                                                             new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
-                                                             new JProperty( "relatednodeid", RelatedNodeId ), //for Grid Props
-                                                             new JProperty( "relatednodetypeid", RelatedNodeTypeId ),
-                                                             new JProperty( "action", MenuActions.AddNode.ToString() ) ) ) ) )
+                                                         makeAddMenuItem( Entry, RelatedNodeId, RelatedNodeTypeId ) ) ) )
                     {
                         AddObj.Add( AddNodeType );
                     }
@@ -192,7 +195,7 @@ namespace ChemSW.Nbt.WebServices
 
                 // DELETE
                 if( _MenuItems.Contains( "Delete" ) &&
-                    false == string.IsNullOrEmpty( NodeKey ) &&
+                    false == string.IsNullOrEmpty( SafeNodeKey ) &&
                     null != Node &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
                     Node.NodeSpecies == NodeSpecies.Plain &&
@@ -218,7 +221,7 @@ namespace ChemSW.Nbt.WebServices
 
                 // PRINT LABEL
                 if( _MenuItems.Contains( "Print Label" ) &&
-                    false == string.IsNullOrEmpty( NodeKey ) &&
+                    false == string.IsNullOrEmpty( SafeNodeKey ) &&
                     null != Node &&
                     null != Node.NodeType )
                 {
@@ -310,5 +313,16 @@ namespace ChemSW.Nbt.WebServices
 
             return Ret;
         } // getMenu()
+
+        public static JObject makeAddMenuItem( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry, string RelatedNodeId, string RelatedNodeTypeId )
+        {
+            return new JObject( new JProperty( "text", Entry.NodeType.NodeTypeName ),
+                                new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
+                                new JProperty( "relatednodeid", RelatedNodeId ),  //for Grid Props
+                                new JProperty( "relatednodetypeid", RelatedNodeTypeId ),
+                                new JProperty( "action", CswNbtWebServiceMainMenu.MenuActions.AddNode.ToString() ) );
+        } // makeAddMenuItem()
+
+
     } // class CswNbtWebServiceMainMenu
 } // namespace ChemSW.Nbt.WebServices

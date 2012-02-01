@@ -779,6 +779,7 @@
     <Content Include="js\main\controls\CswTimeInterval.js" />
     <Content Include="js\main\controls\CswList.js" />
     <Content Include="js\main\Main.js" />
+    <Content Include="js\main\pagecmp\CswDefaultContent.js" />
     <Content Include="js\main\tools\CswPubSub.js" />
     <Content Include="js\main\tools\CswPrint.js" />
     <Content Include="js\main\view\CswViewContentTree.js" />

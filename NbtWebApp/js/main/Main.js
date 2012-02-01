@@ -563,11 +563,12 @@ window.initMain = window.initMain || function (undefined) {
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
             onSuccess: function () {
-                //				refreshMainMenu({ viewid: o.viewid,
-                //					viewmode: CswViewMode.table.name,
-                //					nodeid: o.nodeid,
-                //					cswnbtnodekey: o.cswnbtnodekey
-                //				});
+                refreshMainMenu({ 
+                    viewid: o.viewid,
+                    viewmode: CswViewMode.table.name//,
+//                    nodeid: o.nodeid,
+//                    cswnbtnodekey: o.cswnbtnodekey
+                });
             }
         });
     }
@@ -594,13 +595,18 @@ window.initMain = window.initMain || function (undefined) {
                 getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
                 refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
             } else {
-                clear({ 'right': true });
+                showDefaultContent({ viewid: o.viewid, viewmode: CswViewMode.tree.name });
                 refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
             }
         }
-    }
+    } // onSelectTreeNode()
 
-    // onSelectTreeNode()
+    function showDefaultContent(options) {
+
+        $('#RightDiv').CswDefaultContent(options);
+
+    } // showDefaultContent()
+
 
     function getTabs(options) {
         //if (debugOn()) Csw.log('Main.getTabs()');
@@ -609,9 +615,7 @@ window.initMain = window.initMain || function (undefined) {
             nodeid: '',
             cswnbtnodekey: ''
         };
-        if (options) {
-            $.extend(o, options);
-        }
+        if (options) $.extend(o, options);
 
         clear({ right: true });
         $('#RightDiv').CswNodeTabs({
@@ -808,11 +812,11 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         switch (o.actionname) {
-            //			case 'Assign_Inspection':         
-            //				break;         
-            //			case 'Assign_Tests':         
-            //				break;         
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin         
+            //			case 'Assign_Inspection':                
+            //				break;                
+            //			case 'Assign_Tests':                
+            //				break;                
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                
             case 'Create_Inspection':
                 clear({ 'all': true });
 
@@ -846,8 +850,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswInspectionDesign(designOpt);
 
                 break;
-            //			case 'Design':         
-            //				break;         
+            //			case 'Design':                
+            //				break;                
             case 'Edit_View':
                 clear({ 'all': true });
 
@@ -874,14 +878,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':         
-            //				break;         
-            //			case 'Future_Scheduling':         
-            //				break;         
-            //			case 'Import_Fire_Extinguisher_Data':         
-            //				break;         
-            //			case 'Inspection_Design':         
-            //				break;         
+            //			case 'Enter_Results':                
+            //				break;                
+            //			case 'Future_Scheduling':                
+            //				break;                
+            //			case 'Import_Fire_Extinguisher_Data':                
+            //				break;                
+            //			case 'Inspection_Design':                
+            //				break;                
             case 'OOC_Inspections':
                 setupOocInspections();
 
@@ -915,14 +919,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswScheduledRulesGrid(rulesOpt);
 
                 break;
-            //			case 'Load_Mobile_Data':         
-            //				break;         
-            //			case 'Receiving':         
-            //				break;         
-            //			case 'Split_Samples':         
-            //				break;         
-            //			case 'View_By_Location':         
-            //				break;         
+            //			case 'Load_Mobile_Data':                
+            //				break;                
+            //			case 'Receiving':                
+            //				break;                
+            //			case 'Split_Samples':                
+            //				break;                
+            //			case 'View_By_Location':                
+            //				break;                
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;

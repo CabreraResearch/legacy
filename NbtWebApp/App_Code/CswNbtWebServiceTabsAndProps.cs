@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.WebServices
                     //{
                     //    Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
                     //}
-                    Collection<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeType, CswConvert.ToInt32( TabId ), LayoutType );
+                    Collection<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType );
 
 
 
@@ -265,7 +265,7 @@ namespace ChemSW.Nbt.WebServices
                 JProperty SubPropsJProp = new JProperty( "subprops", SubPropsObj );
                 PropObj.Add( SubPropsJProp );
                 bool HasSubProps = false;
-                foreach( CswNbtMetaDataNodeTypeProp FilterProp in _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Prop.NodeType, Layout.TabId, LayoutType ) )
+                foreach( CswNbtMetaDataNodeTypeProp FilterProp in _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Prop.NodeTypeId, Layout.TabId, LayoutType ) )
                 {
                     if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                     {
@@ -452,7 +452,7 @@ namespace ChemSW.Nbt.WebServices
                 } //switch( EditMode )
                 if( AllSucceeded && null != RetNbtNodeKey )
                 {
-                    string RetNodeKey = wsTools.ToSafeJavaScriptParam( RetNbtNodeKey );
+                    string RetNodeKey = RetNbtNodeKey.ToString();
                     //string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
                     string RetNodeId = RetNbtNodeKey.NodeId.ToString();
 
@@ -739,6 +739,34 @@ namespace ChemSW.Nbt.WebServices
         {
             return ( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() );
         }
+
+        
+        /// <summary>
+        /// Default content to display when no node is selected, or the tree is empty
+        /// </summary>
+        public JObject getDefaultContent( CswNbtView View )
+        {
+            JObject ret = new JObject();
+            _getDefaultContentRecursive( ret, View.Root );
+            return ret;
+        }
+        private void _getDefaultContentRecursive( JObject ParentObj, CswNbtViewNode ViewNode )
+        {
+            ParentObj["entries"] = new JObject();
+            foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in ViewNode.AllowedChildNodeTypes( true ) )
+            {
+                ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, string.Empty, string.Empty );
+            }
+
+            JObject ChildObj = new JObject();
+            ParentObj["children"] = ChildObj;
+
+            // recurse
+            foreach( CswNbtViewRelationship ChildViewRel in ViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+            {
+                _getDefaultContentRecursive( ChildObj, ChildViewRel );
+            }
+        } // _getDefaultContentRecursive()
 
     } // class CswNbtWebServiceTabsAndProps
 
