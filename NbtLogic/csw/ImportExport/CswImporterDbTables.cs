@@ -687,7 +687,7 @@ namespace ChemSW.Nbt.ImportExport
                                                     {
                                                         string CurrentImportTargetNodeId = CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
 
-                                                        if( ( false == CurrentImportNodeId.Contains( "--" ) ) || 3 == CurrentImportNodeId.Split( new string[] { "--" }, StringSplitOptions.None ).Length  ) //IMCS import references must have all three components in order to be not null
+                                                        if( ( false == CurrentImportNodeId.Contains( "--" ) ) || 3 == CurrentImportNodeId.Split( new string[] { "--" }, StringSplitOptions.None ).Length ) //IMCS import references must have all three components in order to be not null
                                                         {
 
                                                             string Query = "select " + Colname_NbtNodeId + " from " + _TblName_ImportNodes + " where " + _ColName_ImportNodeId + "='" + CurrentImportTargetNodeId + "'";
@@ -698,16 +698,20 @@ namespace ChemSW.Nbt.ImportExport
                                                                 ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ) );
                                                                 RelationshipPropAddCounter++;
                                                             }
-                                                            else
+                                                            else //_ColName_ImportNodeId did not specify a row in the target schema that provides the nodeid of an imported node; so perhaps it specifies the nbtnodeid of a node that already exists in the schema
                                                             {
 
-                                                                Int32 ExistingNbtNodeId = _getNodeIdForNodeName( CurrentImportTargetNodeId );
-                                                                if( Int32.MinValue != ExistingNbtNodeId )
+                                                                CswTableSelect CswTableSelectFromNodes = _CswNbtResources.makeCswTableSelect( "rawselectfromnodes", "nodes" );
+                                                                DataTable ExistingNodeDataTable = CswTableSelectFromNodes.getTable( " where nodeid=" + CurrentImportTargetNodeId );
+
+                                                                if( ExistingNodeDataTable.Rows.Count > 0 ) //it _does_ exist in the target schema
                                                                 {
+                                                                    Int32 ExistingNbtNodeId = CswConvert.ToInt32( CurrentImportTargetNodeId ); 
+
                                                                     ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), ExistingNbtNodeId );
                                                                     RelationshipPropAddCounter++;
                                                                 }
-                                                                else
+                                                                else //it is neither in the import data nor in the target schema
                                                                 {
                                                                     //having eliminated null node IDs, this condition would be a true error
                                                                     //(as a opposed to a who-knew-from-null-nodeids error . . . 
@@ -1109,7 +1113,7 @@ namespace ChemSW.Nbt.ImportExport
                 {
                     if( SourceTable.Rows[CurrentRowIndex + 1][_ColName_ImportNodeId].ToString() == CurrentSourceRow[_ColName_ImportNodeId].ToString() )
                     {
-                        MoreOfSameRecordToImportIETheseArePropRecords_IAgreeThisIsAKludge_SoSueMe = true; 
+                        MoreOfSameRecordToImportIETheseArePropRecords_IAgreeThisIsAKludge_SoSueMe = true;
                     }
                 }
 
@@ -1148,26 +1152,7 @@ namespace ChemSW.Nbt.ImportExport
 
         }//_doesNodeNameAlreadyExist() 
 
-        /// <summary>
-        /// Return node id for a nodename iff the name is unique
-        /// </summary>
-        /// <param name="NodeName"></param>
-        /// <returns></returns>
-        private Int32 _getNodeIdForNodeName( string NodeName )
-        {
-            Int32 ReturnVal = Int32.MinValue;
 
-            CswTableSelect CswTableSelectFromNodes = _CswNbtResources.makeCswTableSelect( "rawselectfromnodes", "nodes" );
-            DataTable DataTable = CswTableSelectFromNodes.getTable( " where lower(nodename)='" + NodeName.ToLower() + "'" );
-
-            if( 1 == DataTable.Rows.Count )
-            {
-                ReturnVal = CswConvert.ToInt32( DataTable.Rows[0]["nodeid"] );
-            }
-
-            return ( ReturnVal );
-
-        }//_getNodeIdForNodeName() 
 
 
     } // class CswImporterExperimental
