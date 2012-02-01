@@ -105,19 +105,25 @@ namespace ChemSW.Nbt.MetaData
         public Collection<CswNbtMetaDataNodeTypeProp> DeleteObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, bool DeleteNodeTypeProps )
         {
             Collection<CswNbtMetaDataNodeTypeProp> Ret = new Collection<CswNbtMetaDataNodeTypeProp>();
+            Collection<CswNbtMetaDataNodeTypeProp> DoomedProps = new Collection<CswNbtMetaDataNodeTypeProp>();
 
             foreach( CswNbtMetaDataNodeTypeProp Prop in ObjectClassProp.NodeTypeProps )
             {
+                Prop._DataRow["objectclasspropid"] = DBNull.Value;
+                _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
                 if( DeleteNodeTypeProps )
                 {
-                    DeleteNodeTypeProp( Prop, true );
+                    DoomedProps.Add( Prop );
                 }
                 else
                 {
-                    Prop._DataRow["objectclasspropid"] = DBNull.Value;
-                    _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
                     Ret.Add( Prop );
                 }
+            }
+
+            foreach( CswNbtMetaDataNodeTypeProp Prop in DoomedProps )
+            {
+                DeleteNodeTypeProp( Prop );
             }
 
             // Update MetaData
@@ -182,7 +188,7 @@ namespace ChemSW.Nbt.MetaData
                     ObjectClassProp._DataRow[AttributeName] = DBValue;
                     if( Attribute == CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd )
                     {
-                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_col_add)] = DBNull.Value;
+                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_col_add )] = DBNull.Value;
                         ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_row_add )] = DBNull.Value;
                     }
                     _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );

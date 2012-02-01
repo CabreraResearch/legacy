@@ -187,40 +187,8 @@ foreach my $component (@components)
 
 &runCommand( "net start \"ChemSW Log Service\"");
 
-
 #---------------------------------------------------------------------------------
-# 4. back up existing schemata
-
-foreach my $schema (keys %schemata)
-{
-	my $password = $schemata{$schema};
-	&runCommand( "C:/app/client64/product/11.2.0/client_1/BIN/expdp.exe ". $schema ."/". $password ."\@". $orclserver ." DUMPFILE=". $schema ."_". $datestr .".". $increment .".dmp DIRECTORY=". $orcldumpdir );
-}
-
-#---------------------------------------------------------------------------------
-# 5. reset master schema
-
-my $masterpassword = $schemata{$masterschema};
-
-&runCommand( "echo exit | sqlplus ". $masterschema ."/". $masterpassword ."\@". $orclserver ." \@". $repopaths{"Nbt"} ."/Schema/nbt_nuke.sql" );
-
-&runCommand( "impdp.exe ". $masterschema ."/". $masterpassword ."@". $orclserver ." DUMPFILE=NBT_MASTER_11G.dmp DIRECTORY=". $masterdumpdir );
-
-&runCommand( "echo exit | sqlplus ". $masterschema ."/". $masterpassword ."\@". $orclserver ." \@". $repopaths{"Nbt"} ."/Schema/nbt_finalize_ora.sql" );
-
-#---------------------------------------------------------------------------------
-# 6. run command line schema updater
-
-&runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/Release/NbtUpdt.exe -all");
-
-
-#---------------------------------------------------------------------------------
-# 7. start schedule service
-
-&runCommand( "net start \"NbtSchedService\"");
-
-#---------------------------------------------------------------------------------
-# 8. tags
+# 4. tags
 
 foreach my $component (@components)
 {
@@ -276,3 +244,36 @@ sub runCommand
 	my $result = `$_[0]`;
 	printf $result;
 }
+
+
+#---------------------------------------------------------------------------------
+# 5. back up existing schemata
+
+foreach my $schema (keys %schemata)
+{
+	my $password = $schemata{$schema};
+	&runCommand( "C:/app/client64/product/11.2.0/client_1/BIN/expdp.exe ". $schema ."/". $password ."\@". $orclserver ." DUMPFILE=". $schema ."_". $datestr .".". $increment .".dmp DIRECTORY=". $orcldumpdir );
+}
+
+#---------------------------------------------------------------------------------
+# 6. reset master schema
+
+my $masterpassword = $schemata{$masterschema};
+
+&runCommand( "echo exit | sqlplus ". $masterschema ."/". $masterpassword ."\@". $orclserver ." \@". $repopaths{"Nbt"} ."/Schema/nbt_nuke.sql" );
+
+&runCommand( "impdp.exe ". $masterschema ."/". $masterpassword ."@". $orclserver ." DUMPFILE=NBT_MASTER_11G.dmp DIRECTORY=". $masterdumpdir );
+
+&runCommand( "echo exit | sqlplus ". $masterschema ."/". $masterpassword ."\@". $orclserver ." \@". $repopaths{"Nbt"} ."/Schema/nbt_finalize_ora.sql" );
+
+#---------------------------------------------------------------------------------
+# 7. run command line schema updater
+
+&runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/Release/NbtUpdt.exe -all");
+
+
+#---------------------------------------------------------------------------------
+# 8. start schedule service
+
+&runCommand( "net start \"NbtSchedService\"");
+
