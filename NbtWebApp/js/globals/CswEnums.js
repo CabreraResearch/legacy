@@ -6,7 +6,8 @@ var EditMode = {
     PrintReport: { name: 'PrintReport' },
     DefaultValue: { name: 'DefaultValue' },
     AuditHistoryInPopup: { name: 'AuditHistoryInPopup' },
-    Preview: { name: 'Preview' }
+    Preview: { name: 'Preview' },
+    Table: { name: 'Table' }
 };
 
 // for CswInput

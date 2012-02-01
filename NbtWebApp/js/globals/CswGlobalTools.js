@@ -30,7 +30,8 @@ var ChemSW = ChemSW || (function(undefined) {
                 PrintReport: 'PrintReport',
                 DefaultValue: 'DefaultValue',
                 AuditHistoryInPopup: 'AuditHistoryInPopup',
-                Preview: 'Preview' 
+                Preview: 'Preview',
+                Table: 'Table' 
             },
             ErrorType: {
                 warning: {

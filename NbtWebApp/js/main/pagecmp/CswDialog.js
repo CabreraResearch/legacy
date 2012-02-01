@@ -272,9 +272,11 @@
             var $layoutSelect = $cell11.CswSelect('init', {
                 ID: 'EditLayoutDialog_layoutselect',
                 selected: 'Edit',
-                values: [{ value: 'AddInPopup', display: 'Add' },
-                                                { value: 'Edit', display: 'Edit' },
-                                                { value: 'Preview', display: 'Preview'}],
+                values: [{ value: 'Add', display: 'Add' },
+                         { value: 'Edit', display: 'Edit' },
+                         { value: 'Preview', display: 'Preview' },
+                         { value: 'Table', display: 'Table' }
+                        ],
                 onChange: function () {
                     cswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
                     _resetLayout();
@@ -291,7 +293,7 @@
                     var ajaxdata = {
                         PropId: tryParseString($addSelect.val()),
                         TabId: tryParseString(cswNodeTabOptions.tabid),
-                        EditMode: $layoutSelect.val()
+                        LayoutType: $layoutSelect.val()
                     };
                     CswAjaxJson({
                         url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout',
@@ -315,7 +317,7 @@
                     NodeKey: tryParseString(cswNodeTabOptions.nodekeys[0]),
                     NodeTypeId: tryParseString(cswNodeTabOptions.nodetypeid),
                     TabId: tryParseString(cswNodeTabOptions.tabid),
-                    EditMode: $layoutSelect.val()
+                    LayoutType: $layoutSelect.val()
                 };
                 CswAjaxJson({
                     url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd',
