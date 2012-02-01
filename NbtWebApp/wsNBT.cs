@@ -811,6 +811,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            UseCompression();
             try
             {
                 _initResources();
