@@ -290,6 +290,7 @@
                     if (o.viewmode === CswViewMode.list.name) {
                         treeThemes = { "dots": false };
                     }
+
                     $treediv.jstree({
                         "json_data": {
                             "data": data.root
@@ -327,7 +328,8 @@
 
                     }).bind('hover_node.jstree', function (e, bindData) {
                         var $hoverLI = $(bindData.rslt.obj[0]);
-                        var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
+                        //var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
+                        var nodeid = $hoverLI.CswAttrNonDom('nodeid');
                         var cswnbtnodekey = $hoverLI.CswAttrNonDom('cswnbtnodekey');
                         nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
 
@@ -336,7 +338,7 @@
                         nodeHoverOut();
                     });
 
-                    $treediv.jstree('select_node', '#' + data.selectid);
+                    $treediv.jstree('select_node', tryParseElement(data.selectid));
                     //setTimeout(function () { log('select: #' + data.selectid);  }, 1000);
                     rootnode = $treediv.find('li').first();
 
@@ -391,7 +393,7 @@
             }
             var $treediv = $(this);
             var idPrefix = $treediv.CswAttrDom('id');
-            $treediv.jstree('select_node', '#' + idPrefix + o.newnodeid);
+            $treediv.jstree('select_node', '#' + idPrefix + o.newcswnbtnodekey);
         },
 
         'expandAll': function () {
@@ -444,7 +446,7 @@
 
         var selected = jsTreeGetSelected(m.$treediv);
         var optSelect = {
-            nodeid: selected.id,
+            nodeid: selected.$item.CswAttrNonDom('nodeid'),
             nodename: selected.text,
             iconurl: selected.iconurl,
             cswnbtnodekey: selected.$item.CswAttrNonDom('cswnbtnodekey'),

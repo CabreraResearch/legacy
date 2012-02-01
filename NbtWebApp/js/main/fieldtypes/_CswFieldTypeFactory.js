@@ -65,7 +65,7 @@ $.CswFieldTypeFactory = function (method) {
             }
             m.ID = m.propData.id;
             m.Required = isTrue(m.propData.required);
-            m.ReadOnly = isTrue(m.propData.readonly) || m.EditMode === EditMode.PrintReport.name;
+            m.ReadOnly = isTrue(m.propData.readonly) || m.EditMode === EditMode.PrintReport.name || m.ReadOnly;
 
             switch (m.fieldtype) {
                 case "AuditHistoryGrid":
@@ -161,9 +161,9 @@ $.CswFieldTypeFactory = function (method) {
                 case "Text":
                     m.$propdiv.CswFieldTypeText('init', m); //('init', nodeid, propData, onchange);
                     break;
-                //				case "Time":   
-                //					m.$propdiv.CswFieldTypeTime('init', m); //('init', nodeid, propData, onchange);   
-                //					break;   
+                //				case "Time":     
+                //					m.$propdiv.CswFieldTypeTime('init', m); //('init', nodeid, propData, onchange);     
+                //					break;     
                 case "TimeInterval":
                     m.$propdiv.CswFieldTypeTimeInterval('init', m); //('init', nodeid, propData, onchange);
                     break;
@@ -288,9 +288,9 @@ $.CswFieldTypeFactory = function (method) {
                 case "Text":
                     m.$propdiv.CswFieldTypeText('save', m); //('save', $propdiv, propData);
                     break;
-                //				case "Time":   
-                //					m.$propdiv.CswFieldTypeTime('save', m); //('save', $propdiv, propData);   
-                //					break;   
+                //				case "Time":     
+                //					m.$propdiv.CswFieldTypeTime('save', m); //('save', $propdiv, propData);     
+                //					break;     
                 case "TimeInterval":
                     m.$propdiv.CswFieldTypeTimeInterval('save', m); //('save', $propdiv, propData);
                     break;
@@ -324,4 +324,4 @@ $.CswFieldTypeFactory = function (method) {
     } else {
         $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
     }
-}      // $.CswFieldTypeFactory
+}        // $.CswFieldTypeFactory
