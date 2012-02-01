@@ -169,17 +169,15 @@
                 Csw.ajax.post({
                     watchGlobal: o.AjaxWatchGlobal,
                     url: o.QuotaUrl,
-                    data: { NodeTypeId: o.nodetypeid },
+                    data: {NodeTypeId: o.nodetypeid},
                     success: function (data) {
-                        if(Csw.bool(data.result))
+                        if (Csw.bool(data.result)) {
                             getPropsImpl($tabcontentdiv, tabid);
                         } else {
                             $tabcontentdiv.append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
-                            if (Csw.isFunction(o.onInitFinish)) 
-                                o.onInitFinish(false);
-                            }
+                            Csw.tryExec(o.onInitFinish, false);
                         }
-                    }
+                    }                
                 });
             } else {
                 getPropsImpl($tabcontentdiv, tabid);
@@ -407,36 +405,41 @@
                 var $labelcell = _getLabelCell($cellset);
                 $labelcell.addClass('propertylabel');
 
-                if (Csw.bool(thisProp.highlight))
+                if (Csw.bool(thisProp.highlight)) {
                     $labelcell.addClass('ui-state-highlight');
                 }
+            }
 
-                var helpText = Csw.string(thisProp.helptext);
-                var propName = Csw.string(thisProp.name);
-                if (!Csw.isNullOrEmpty(helpText)) {
-                    $labelcell.CswLink('init', { href: '#',
-                        cssclass: 'cswprop_helplink',
-                        title: helpText,
-                                                onclick: function() { return false; }, 
-                        value: propName
+            var helpText = Csw.string(thisProp.helptext);
+            var propName = Csw.string(thisProp.name);
+            if (!Csw.isNullOrEmpty(helpText)) {
+                $labelcell.CswLink('init', {
+                    href: '#',
+                    cssclass: 'cswprop_helplink',
+                    title: helpText,
+                    onclick: function () {
+                        return false;
+                    },
+                    value: propName
+                });
+
+            } else {
+                $labelcell.append(propName);
+            }
+
+            if (false === Csw.bool(thisProp.readonly)) {
+                AtLeastOne.Saveable = true;
+                if (o.ShowCheckboxes && Csw.bool(thisProp.copyable)) {
+                    var $propcheck = $labelcell.CswInput('init', {
+                        ID: 'check_' + propid,
+                        type: CswInput_Types.checkbox,
+                        value: false, // Value --not defined?,
+                        cssclass: o.ID + '_check'
                     });
-
-                } else {
-                    $labelcell.append(propName);
-                }
-
-                if (false === Csw.bool(thisProp.readonly))
-                    AtLeastOne.Saveable = true;
-                    if (o.ShowCheckboxes && Csw.bool(thisProp.copyable)) {
-                        var $propcheck = $labelcell.CswInput('init', { ID: 'check_' + propid,
-                            type: CswInput_Types.checkbox,
-                            value: false, // Value --not defined?,
-                            cssclass: o.ID + '_check'
-                        });
-                        $propcheck.CswAttrNonDom('propid', propid);
-                    }
+                    $propcheck.CswAttrNonDom('propid', propid);
                 }
             }
+
 
             var $propcell = _getPropertyCell($cellset);
             $propcell.addClass('propertyvaluecell');
