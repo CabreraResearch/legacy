@@ -3,13 +3,13 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/Global.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = "CswInput";
     
     var methods = {
     
-        'init': function(options) 
+        'init': function (options) 
         {
             var o = {
                 'ID': '',
@@ -22,12 +22,12 @@
                 'maxlength': '',
                 'autofocus': false,
                 'autocomplete': 'on',
-                'onChange': null //function() {}
+                'onChange': null //function () {}
             };
             if (options) $.extend(o, options);
 
-            o.name = tryParseString(o.name,o.ID);
-            o.ID = tryParseString(o.ID,o.name);
+            o.name = Csw.string(o.name,o.ID);
+            o.ID = Csw.string(o.ID,o.name);
 
             var $parent = $(this);
             var $input = $('<input />');
@@ -35,7 +35,7 @@
             $input.CswAttrDom('id',o.ID);
             $input.CswAttrDom('name',o.name);
             
-            if (false === isNullOrEmpty(o.type)) 
+            if (false === Csw.isNullOrEmpty(o.type)) 
             {
                 $input.CswAttrDom('type', o.type.name);
                 //cannot style placeholder across all browsers yet. Ignore for now.
@@ -48,20 +48,20 @@
                     $input.CswAttrDom('autocomplete','on');
                 }
                 
-                o.value = tryParseString(o.value, '');
-                if (isTrue(o.type.value.required) || ( !isNullOrEmpty( o.value )))
+                o.value = Csw.string(o.value, '');
+                if (Csw.bool(o.type.value.required) || ( !Csw.isNullOrEmpty( o.value )))
                 {
                     $input.val(o.value);
                 }
 
-                o.width = tryParseString(o.width, o.type.defaultwidth);
+                o.width = Csw.string(o.width, o.type.defaultwidth);
             }
 
-            if (!isNullOrEmpty(o.cssclass)) $input.addClass(o.cssclass);
-            if (!isNullOrEmpty(o.width)) $input.css('width', o.width);
-            if (isTrue(o.autofocus)) $input.CswAttrDom('autofocus', o.autofocus);
-            if (false === isNullOrEmpty(o.maxlength)) $input.CswAttrDom('maxlength', +o.maxlength);
-            if (isFunction(o.onChange)) $input.change( o.onChange );
+            if (!Csw.isNullOrEmpty(o.cssclass)) $input.addClass(o.cssclass);
+            if (!Csw.isNullOrEmpty(o.width)) $input.css('width', o.width);
+            if (Csw.bool(o.autofocus)) $input.CswAttrDom('autofocus', o.autofocus);
+            if (false === Csw.isNullOrEmpty(o.maxlength)) $input.CswAttrDom('maxlength', +o.maxlength);
+            if (Csw.isFunction(o.onChange)) $input.change( o.onChange );
                                 
             $parent.append($input);
             return $input;
@@ -69,7 +69,7 @@
 
     };
         // Method calling logic
-    $.fn.CswInput = function (method) { /// <param name="$" type="jQuery" />
+    $.fn.CswInput = function (method) { 
         
         if ( methods[method] ) {
           return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));

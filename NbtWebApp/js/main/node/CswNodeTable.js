@@ -5,7 +5,7 @@
 /// <reference path="../controls/CswGrid.js" />
 /// <reference path="../pagecmp/CswDialog.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = 'CswNodeTable';
 
@@ -20,10 +20,10 @@
                 nodeid: '',
                 cswnbtnodekey: '',
                 EditMode: EditMode.Edit.name,
-                //onAddNode: function(nodeid,cswnbtnodekey){},
-                onEditNode: null, //function(nodeid,cswnbtnodekey){},
-                onDeleteNode: null, //function(nodeid,cswnbtnodekey){}
-                onSuccess: null, // function() {}
+                //onAddNode: function (nodeid,cswnbtnodekey){},
+                onEditNode: null, //function (nodeid,cswnbtnodekey){},
+                onDeleteNode: null, //function (nodeid,cswnbtnodekey){}
+                onSuccess: null, // function () {}
                 columns: 3,      // number of columns to use
                 maxlength: 35,   // max length of node names and property values
                 rowpadding: 25,  // padding between table rows, in pixels
@@ -47,7 +47,7 @@
                 cellspacing: '5px'
             });
 
-            CswAjaxJson({
+            Csw.ajax.post({
                 url: o.TableUrl,
                 data: {
                     ViewId: o.viewid,
@@ -58,7 +58,7 @@
                     var r = 1;
                     var c = 1;
 
-                    crawlObject(data, function (nodeObj) {
+                    Csw.crawlObject(data, function (nodeObj) {
                         var nodeid = nodeObj.nodeid;
 
                         if (nodeObj.nodename == "Results Truncated") {
@@ -84,7 +84,6 @@
                         } else {
                             name = '<b>' + nodeObj.nodename + '</b>';
                         }
-                        var locked = isTrue(nodeObj.locked);
 
                         if (false === isNullOrEmpty(nodeObj.thumbnailurl)) {
                             $thumbnailcell.append('<img src="' + nodeObj.thumbnailurl + '" style="max-width: 90%;">');
@@ -97,7 +96,7 @@
                         $textcell.append(name + '<br/>');
 
                         // Props
-                        crawlObject(nodeObj.props, function (propObj) {
+                        Csw.crawlObject(nodeObj.props, function (propObj) {
                             $textcell.append('' + propObj.propname + ': ');
                             if (propObj.gestalt.length > o.maxlength) {
                                 $textcell.append(propObj.gestalt.substr(0, o.maxlength) + '...');
@@ -151,7 +150,7 @@
                     });
 
 
-                    if (isFunction(o.onSuccess)) {
+                    if (Csw.isFunction(o.onSuccess)) {
                         o.onSuccess();
                     }
                 } // success{} 

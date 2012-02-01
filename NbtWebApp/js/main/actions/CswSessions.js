@@ -1,15 +1,13 @@
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../controls/CswGrid.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+
+(function ($) { 
     "use strict";        
     var pluginName = 'CswSessions';
 
     var methods = {
-        init: function(options) {
+        init: function (options) {
             var o = {
                 Url: '/NbtWebApp/wsNBT.asmx/getSessions',
                 EndSessionUrl: '/NbtWebApp/wsNBT.asmx/endSession',
@@ -44,21 +42,22 @@
                 row += 1;
 
                 // Sessions table
-                CswAjaxJson({
+                Csw.ajax.post({
                     url: o.Url,
                     data: {},
-                    success: function(result) {
+                    success: function (result) {
 
-                        crawlObject(result, function (childObj) {
+                        Csw.crawlObject(result, function (childObj) {
                             $cell1 = $table.CswTable('cell', row, 1);
                             $cell1.CswImageButton({ ButtonType: CswImageButton_ButtonType.Fire,
                                                     AlternateText: 'Burn Session',
                                                     ID: o.ID + '_burn_' + childObj.sessionid,
-                                                    onClick: makeDelegate( function(sessionid) { handleBurn(sessionid); }, childObj.sessionid)
+                                                    onClick: Csw.makeDelegate( function (sessionid) { handleBurn(sessionid); }, childObj.sessionid)
                                                 });
 
                             $cell2 = $table.CswTable('cell', row, 2);
-                            if(childObj.sessionid === $.CswCookie('get', CswCookieName.SessionId)) {
+
+                            if(childObj.sessionid === Csw.cookie.get(Csw.cookie.cookieNames.SessionId)) {
                                 $cell2.append(childObj.username + "&nbsp;(you)");
                             } else {
                                 $cell2.append(childObj.username);
@@ -77,7 +76,7 @@
                             $cell6.append(childObj.sessionid);
 
                             row += 1;
-                        }, false); // crawlObject()
+                        }, false); // Csw.crawlObject()
 
                     } // success
                 }); // ajax()
@@ -85,10 +84,10 @@
 
             function handleBurn(sessionId)
             {
-                CswAjaxJson({
+                Csw.ajax.post({
                     url: o.EndSessionUrl,
                     data: { SessionId: sessionId },
-                    success: function() {
+                    success: function () {
                         initTable();
                     }
                 });

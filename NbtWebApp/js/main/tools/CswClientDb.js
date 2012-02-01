@@ -12,29 +12,29 @@ function CswClientDb() {
     /// <returns type="CswClientDb">Instance of itself. Must instance with 'new' keyword.</returns>
     
     //private
-    var memoryStorage = (function() {
+    var memoryStorage = (function () {
         var storage = { };
         var memKeys = [];
         var length = 0;
         return {
-            getItem: function(sKey) {
+            getItem: function (sKey) {
                 var ret = null;
-                if (false === isNullOrEmpty(sKey) && contains(storage, sKey)) {
+                if (false === Csw.isNullOrEmpty(sKey) && Csw.contains(storage, sKey)) {
                     ret = storage[sKey];
                 }
                 return ret;
             },
-            key: function(nKeyId) {
+            key: function (nKeyId) {
                 var ret = null;
-                if (contains(memKeys, nKeyId)) {
+                if (Csw.contains(memKeys, nKeyId)) {
                     ret = memKeys[nKeyId];
                 }
                 return ret;
             },
-            setItem: function(sKey, sValue) {
+            setItem: function (sKey, sValue) {
                 var ret = null;
-                if (false === isNullOrEmpty(sKey)) {
-                    if (false === contains(storage, sKey)) {
+                if (false === Csw.isNullOrEmpty(sKey)) {
+                    if (false === Csw.contains(storage, sKey)) {
                         memKeys.push(sKey);
                         length += 1;
                     }
@@ -43,9 +43,9 @@ function CswClientDb() {
                 return ret;
             },
             length: length,
-            removeItem: function(sKey) {
+            removeItem: function (sKey) {
                 var ret = false;
-                if (false === isNullOrEmpty(sKey) && contains(storage, sKey)) {
+                if (false === Csw.isNullOrEmpty(sKey) && Csw.contains(storage, sKey)) {
                     memKeys.splice(sKey, 1);
                     length -= 1;
                     delete storage[sKey];
@@ -53,7 +53,7 @@ function CswClientDb() {
                 }
                 return ret;
             },
-            clear: function() {
+            clear: function () {
                 storage = { };
                 memKeys = [];
                 length = 0;
@@ -61,8 +61,8 @@ function CswClientDb() {
             },
             keys: memKeys,
             valueOf: memKeys,
-            hasOwnProperty: function(sKey) {
-                return contains(storage, sKey);
+            hasOwnProperty: function (sKey) {
+                return Csw.contains(storage, sKey);
             }
         };
     }());
@@ -71,13 +71,13 @@ function CswClientDb() {
     var serializer = JSON;
     var serialize = serializer.stringify;
     var deserialize = $.parseJSON;
-    var hasLocalStorage = (window.Modernizr.localstorage && false === isNullOrEmpty(window.localStorage));
-    var hasSessionStorage = (window.Modernizr.sessionstorage && false === isNullOrEmpty(window.sessionStorage));
+    var hasLocalStorage = (window.Modernizr.localstorage && false === Csw.isNullOrEmpty(window.localStorage));
+    var hasSessionStorage = (window.Modernizr.sessionstorage && false === Csw.isNullOrEmpty(window.sessionStorage));
     
     //priveleged, public
 
     return {
-        clear: function() {
+        clear: function () {
             //nuke the entire storage collection
             if (hasLocalStorage) {
                 localStorage.clear();
@@ -89,17 +89,17 @@ function CswClientDb() {
             return this;
         },
 
-        getItem: function(key) {
+        getItem: function (key) {
             var ret = '';
-            if (false === isNullOrEmpty(key)) {
-                var value = tryParseString(localStorage.getItem(key));
-                if (isNullOrEmpty(value) || value === 'undefined') {
-                    value = tryParseString(sessionStorage.getItem(key));
+            if (false === Csw.isNullOrEmpty(key)) {
+                var value = Csw.string(localStorage.getItem(key));
+                if (Csw.isNullOrEmpty(value) || value === 'undefined') {
+                    value = Csw.string(sessionStorage.getItem(key));
                 }
-                if (isNullOrEmpty(value) || value === 'undefined') {
-                    value = tryParseString(memoryStorage.getItem(key));
+                if (Csw.isNullOrEmpty(value) || value === 'undefined') {
+                    value = Csw.string(memoryStorage.getItem(key));
                 }
-                if (!isNullOrEmpty(value) && value !== 'undefined') {
+                if (!Csw.isNullOrEmpty(value) && value !== 'undefined') {
                     try {
                         ret = deserialize(value);
                     } catch(e) {
@@ -110,9 +110,9 @@ function CswClientDb() {
             return ret;
         },
 
-        getKeys: function() {
+        getKeys: function () {
             var locKey, sesKey, memKey;
-            if (isNullOrEmpty(keys) && localStorage.length > 0) {
+            if (Csw.isNullOrEmpty(keys) && localStorage.length > 0) {
                 for (locKey in localStorage) {
                     keys.push(locKey);
                 }
@@ -128,19 +128,19 @@ function CswClientDb() {
             return keys;
         },
 
-        hasKey: function(key) {
-            var ret = contains(this.getKeys(), key);
+        hasKey: function (key) {
+            var ret = Csw.contains(this.getKeys(), key);
             return ret;
         },
 
-        removeItem: function(key) {
+        removeItem: function (key) {
             localStorage.removeItem(key);
             sessionStorage.removeItem(key);
             memoryStorage.removeItem(key);
             delete keys[key];
         },
 
-        setItem: function(key, value) {
+        setItem: function (key, value) {
             /// <summary>
             ///   Stores a key/value pair in localStorage. 
             ///   If localStorage is full, use sessionStorage. 
@@ -150,7 +150,7 @@ function CswClientDb() {
             /// <param name="value" type="String">The property value to store. If not a string, serializer will be called.</param>
             /// <returns type="Boolean">True if successful</returns>
             var ret = true;
-            if (false === isNullOrEmpty(key)) {
+            if (false === Csw.isNullOrEmpty(key)) {
                 if (false === this.hasKey(key)) {
                     keys.push(key);
                 }

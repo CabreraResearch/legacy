@@ -1,10 +1,5 @@
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswSelect.js" />
-/// <reference path="../tools/CswClientDb.js" />
-/// <reference path="CswDateTimePicker.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 var CswTimeInterval = function (options) {
     "use strict";
@@ -26,7 +21,7 @@ var CswTimeInterval = function (options) {
         nowString = (now.getMonth() + 1) + '/' + now.getDate() + '/' + now.getFullYear(),
         rateType, $WeeklyDiv, $MonthlyDiv, $YearlyDiv, dateFormat, rateInterval = {}, $pickerCell, $interval;
 
-    var saveRateInterval = function() {
+    var saveRateInterval = function () {
         clientDb.setItem(o.ID + '_rateIntervalSave', rateInterval);
     };
     
@@ -54,7 +49,7 @@ var CswTimeInterval = function (options) {
             }).CswAttrDom('checked', (rateType === CswRateIntervalTypes.YearlyByDate));
 
         function onChange() {
-            if (isFunction(o.onchange)) {
+            if (Csw.isFunction(o.onchange)) {
                 o.onchange();
             }
             toggleIntervalDiv(rateType, $weeklyradio, $monthlyradio, $yearlyradio);
@@ -96,13 +91,13 @@ var CswTimeInterval = function (options) {
             $monthlyradio.attr('checked', false);
             $yearlyradio.attr('checked', false);
         }
-        if (false === isNullOrEmpty($WeeklyDiv, true)) {
+        if (false === Csw.isNullOrEmpty($WeeklyDiv, true)) {
             $WeeklyDiv.hide();
         }
-        if (false === isNullOrEmpty($MonthlyDiv, true)) {
+        if (false === Csw.isNullOrEmpty($MonthlyDiv, true)) {
             $MonthlyDiv.hide();
         }
-        if (false === isNullOrEmpty($YearlyDiv, true)) {
+        if (false === Csw.isNullOrEmpty($YearlyDiv, true)) {
             $YearlyDiv.hide();
         }
         switch (interval) {
@@ -149,12 +144,12 @@ var CswTimeInterval = function (options) {
             return function ($parent, onchange, useRadio, elemId) {
                 function isChecked(day) {
                     var thisDay = weekDayDef[day - 1];
-                    return false === o.Multi && contains(weekdays, thisDay);
+                    return false === o.Multi && Csw.contains(weekdays, thisDay);
                 }
                 
                 function saveWeekInterval() {
                     if(isWeekly) {
-                        each(rateInterval, function(prop, key) {
+                        Csw.each(rateInterval, function (prop, key) {
                             if (key !== 'dateformat' && key !== 'ratetype' && key !== 'startingdate' && key !== 'weeklyday') {
                                 delete rateInterval[key];
                             }
@@ -178,7 +173,7 @@ var CswTimeInterval = function (options) {
                             FirstCellRightAlign: true
                         });
 
-                    weekdays = tryParseString(rateInterval[dayPropName]).split(',');
+                    weekdays = Csw.string(rateInterval[dayPropName]).split(',');
                     
                     $picker = $WeeklyTable.CswTable('cell', 1, 2);
                     $table = $picker.CswTable('init', {
@@ -204,8 +199,8 @@ var CswTimeInterval = function (options) {
                                 ID: id + '_' + i,
                                 name: id,
                                 type: type,
-                                onChange: function() {
-                                    if (isFunction(o.onchange)) {
+                                onChange: function () {
+                                    if (Csw.isFunction(o.onchange)) {
                                         o.onchange();
                                     }
                                     var $this = $(this),
@@ -214,11 +209,11 @@ var CswTimeInterval = function (options) {
                                         if (false === isWeekly) {
                                             weekdays = [];
                                         }
-                                        if (false === contains(weekdays, day)) {
+                                        if (false === Csw.contains(weekdays, day)) {
                                             weekdays.push(day);
                                         }
                                     } else {
-                                        weekdays.splice(cswIndexOf(weekdays, day), 1);
+                                        weekdays.splice(weekdays.indexOf(day), 1);
                                     }
                                     saveWeekInterval();
                                 },
@@ -230,10 +225,10 @@ var CswTimeInterval = function (options) {
                     
                     //Starting Date
                     if(isWeekly) {
-                        if (false === o.Multi && contains(rateInterval, 'startingdate')) {
-                            weeklyStartDate = tryParseString(rateInterval.startingdate.date);
+                        if (false === o.Multi && Csw.contains(rateInterval, 'startingdate')) {
+                            weeklyStartDate = Csw.string(rateInterval.startingdate.date);
                         } 
-                        if (isNullOrEmpty(weeklyStartDate)) {
+                        if (Csw.isNullOrEmpty(weeklyStartDate)) {
                             rateInterval.startingdate = { date: nowString, dateformat: dateFormat };
                             saveRateInterval();
                         }
@@ -248,8 +243,8 @@ var CswTimeInterval = function (options) {
                                 DisplayMode: 'Date',
                                 ReadOnly: o.ReadOnly,
                                 Required: o.Required,
-                                OnChange: function() {
-                                    if (isFunction(o.onchange)) {
+                                OnChange: function () {
+                                    if (Csw.isFunction(o.onchange)) {
                                         o.onchange();
                                     }
                                     saveWeekInterval();
@@ -277,11 +272,11 @@ var CswTimeInterval = function (options) {
 
         return function ($parent) {
             var $MonthlyRateSelect, $MonthlyDateSelect, $MonthlyWeekSelect, $startOnMonth, $startOnYear,
-                monthlyRadioId = makeId({ prefix: o.ID, ID: 'monthly' }),
-                monthlyDayPickerId = makeId({ prefix: o.ID, ID: 'monthly', suffix: 'day' });
+                monthlyRadioId = Csw.makeId({ prefix: o.ID, ID: 'monthly' }),
+                monthlyDayPickerId = Csw.makeId({ prefix: o.ID, ID: 'monthly', suffix: 'day' });
 
             function saveMonthInterval() {
-                each(rateInterval, function(prop, key) {
+                Csw.each(rateInterval, function (prop, key) {
                     if (key !== 'dateformat' && key !== 'ratetype' && key !== 'monthlyday' && key !== 'monthlydate' && key !== 'monthlyfrequency' && key !== 'startingmonth' && key !== 'startingyear') {
                         delete rateInterval[key];
                     }
@@ -307,20 +302,20 @@ var CswTimeInterval = function (options) {
                 var $byDate = $('<div />'),
                     daysInMonth = ChemSW.makeSequentialArray(1, 31), selectedDay = '';
 
-                if (isTrue(o.Multi)) {
+                if (Csw.bool(o.Multi)) {
                     selectedDay = CswMultiEditDefaultValue;
                     daysInMonth.unshift(CswMultiEditDefaultValue);
                 }
-                else if (contains(rateInterval, 'monthlydate')) {
-                    selectedDay = tryParseNumber(rateInterval.monthlydate, 1);
+                else if (Csw.contains(rateInterval, 'monthlydate')) {
+                    selectedDay = Csw.number(rateInterval.monthlydate, 1);
                 }
 
                 $byDate.CswInput('init', {
-                        ID: makeId({ prefix: o.ID, ID: 'monthly', suffix: 'by_date' }),
+                        ID: Csw.makeId({ prefix: o.ID, ID: 'monthly', suffix: 'by_date' }),
                         name: monthlyRadioId,
                         type: CswInput_Types.radio,
-                        onChange: function() {
-                            if (isFunction(o.onchange)) {
+                        onChange: function () {
+                            if (Csw.isFunction(o.onchange)) {
                                 o.onchange();
                             }
                             rateType = $ret.find('[name="' + monthlyRadioId + '"]:checked').val();
@@ -333,9 +328,9 @@ var CswTimeInterval = function (options) {
                 $byDate.append('On Day of Month:&nbsp;');
 
                 $MonthlyDateSelect = $byDate.CswSelect('init', {
-                    ID: makeId({ prefix: o.ID, ID: 'monthly', suffix: 'date' }),
-                    onChange: function() {
-                        if (isFunction(o.onchange)) {
+                    ID: Csw.makeId({ prefix: o.ID, ID: 'monthly', suffix: 'date' }),
+                    onChange: function () {
+                        if (Csw.isFunction(o.onchange)) {
                             o.onchange();
                         }
                         saveMonthInterval();
@@ -352,17 +347,17 @@ var CswTimeInterval = function (options) {
                     frequency = ChemSW.makeSequentialArray(1, 12),
                     selected;
 
-                if (isTrue(o.Multi)) {
+                if (Csw.bool(o.Multi)) {
                     frequency.unshift(CswMultiEditDefaultValue);
                     selected = CswMultiEditDefaultValue;
                 } else {
-                    selected = tryParseNumber(rateInterval.monthlyfrequency, 1);
+                    selected = Csw.number(rateInterval.monthlyfrequency, 1);
                 }
 
                 $MonthlyRateSelect = $every.CswSelect('init', {
-                    ID: makeId({ prefix: o.ID, ID: 'monthly', suffix: 'rate' }),
-                    onChange: function() {
-                        if (isFunction(o.onchange)) {
+                    ID: Csw.makeId({ prefix: o.ID, ID: 'monthly', suffix: 'rate' }),
+                    onChange: function () {
+                        if (Csw.isFunction(o.onchange)) {
                             o.onchange();
                         }
                         saveMonthInterval();
@@ -377,8 +372,8 @@ var CswTimeInterval = function (options) {
 
             function makeMonthlyByDayOfWeek() {
                 var $byDay = $('<div />'),
-                    monthlyWeekId = makeId({ prefix: o.ID, ID: 'monthly', suffix: 'week' }),
-                    monthlyByDayId = makeId({ prefix: o.ID, ID: 'monthly', suffix: 'by_day' }),
+                    monthlyWeekId = Csw.makeId({ prefix: o.ID, ID: 'monthly', suffix: 'week' }),
+                    monthlyByDayId = Csw.makeId({ prefix: o.ID, ID: 'monthly', suffix: 'by_day' }),
                     selected,
                     weeksInMonth = [
                         { value: 1, display: 'First:' },
@@ -391,8 +386,8 @@ var CswTimeInterval = function (options) {
                         ID: monthlyByDayId,
                         name: monthlyRadioId,
                         type: CswInput_Types.radio,
-                        onChange: function() {
-                            if (isFunction(o.onchange)) {
+                        onChange: function () {
+                            if (Csw.isFunction(o.onchange)) {
                                 o.onchange();
                             }
                             rateType = $ret.find('[name="' + monthlyRadioId + '"]:checked').val();
@@ -408,15 +403,15 @@ var CswTimeInterval = function (options) {
                     weeksInMonth.unshift({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
                     selected = CswMultiEditDefaultValue;
                 } else {
-                    selected = tryParseNumber(rateInterval.monthlyweek, 1);
+                    selected = Csw.number(rateInterval.monthlyweek, 1);
                 }
 
                 $MonthlyWeekSelect = $byDay.CswSelect('init', {
                     ID: monthlyWeekId,
                     values: weeksInMonth,
                     selected: selected,
-                    onChange: function() {
-                        if (isFunction(o.onchange)) {
+                    onChange: function () {
+                        if (Csw.isFunction(o.onchange)) {
                             o.onchange();
                         }
                         saveMonthInterval();
@@ -443,16 +438,16 @@ var CswTimeInterval = function (options) {
                     selectedMonth = CswMultiEditDefaultValue;
                     selectedYear = CswMultiEditDefaultValue;
                 } else {
-                    selectedMonth = tryParseNumber(rateInterval.startingmonth, (now.getMonth() + 1));
-                    selectedYear = tryParseNumber(rateInterval.startingyear, year);
+                    selectedMonth = Csw.number(rateInterval.startingmonth, (now.getMonth() + 1));
+                    selectedYear = Csw.number(rateInterval.startingyear, year);
                 }
 
                 $startOnMonth = $startOn.CswSelect('init', {
-                    ID: makeId({ prefix: o.ID, ID: 'monthly', suffix: 'startMonth' }),
+                    ID: Csw.makeId({ prefix: o.ID, ID: 'monthly', suffix: 'startMonth' }),
                     values: monthsInYear,
                     selected: selectedMonth,
-                    onChange: function() {
-                        if (isFunction(o.onchange)) {
+                    onChange: function () {
+                        if (Csw.isFunction(o.onchange)) {
                             o.onchange();
                         }
                         saveMonthInterval();
@@ -462,11 +457,11 @@ var CswTimeInterval = function (options) {
                 $startOn.append('/');
 
                 $startOnYear = $startOn.CswSelect('init', {
-                    ID: makeId({ prefix: o.ID, ID: 'monthly', suffix: 'startYear' }),
+                    ID: Csw.makeId({ prefix: o.ID, ID: 'monthly', suffix: 'startYear' }),
                     values: yearsToAllow,
                     selected: selectedYear,
-                    onChange: function() {
-                        if (isFunction(o.onchange)) {
+                    onChange: function () {
+                        if (Csw.isFunction(o.onchange)) {
                             o.onchange();
                         }
                         saveMonthInterval();
@@ -498,7 +493,7 @@ var CswTimeInterval = function (options) {
             $ret, $yearlyDate;
         return function ($parent) {
             function saveYearInterval() {
-                each(rateInterval, function(prop, key) {
+                Csw.each(rateInterval, function (prop, key) {
                     if (key !== 'dateformat' && key !== 'ratetype' && key !== 'yearlydate') {
                         delete rateInterval[key];
                     }
@@ -516,27 +511,27 @@ var CswTimeInterval = function (options) {
 
                 var yearlyStartDate = '';
 
-                if (isTrue(o.Multi)) {
+                if (Csw.bool(o.Multi)) {
                     yearlyStartDate = CswMultiEditDefaultValue;
                 }
-                else if (contains(rateInterval, 'yearlydate')) {
-                    yearlyStartDate = tryParseString(rateInterval.yearlydate.date);
+                else if (Csw.contains(rateInterval, 'yearlydate')) {
+                    yearlyStartDate = Csw.string(rateInterval.yearlydate.date);
                 }
-                if (isNullOrEmpty(yearlyStartDate)) {
+                if (Csw.isNullOrEmpty(yearlyStartDate)) {
                     rateInterval.yearlydate = { date: nowString, dateformat: dateFormat };
                 }
                 
                 $ret.append('Every Year, Starting On:<br/>');
 
                 $yearlyDate = $ret.CswDateTimePicker('init', {
-                    ID: makeId({ prefix: o.ID, ID: 'yearly', suffix: 'sd' }),
+                    ID: Csw.makeId({ prefix: o.ID, ID: 'yearly', suffix: 'sd' }),
                     Date: yearlyStartDate,
                     DateFormat: dateFormat,
                     DisplayMode: 'Date',
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
-                    OnChange: function() {
-                        if (isFunction(o.onchange)) {
+                    OnChange: function () {
+                        if (Csw.isFunction(o.onchange)) {
                             o.onchange();
                         }
                         saveYearInterval();
@@ -553,70 +548,70 @@ var CswTimeInterval = function (options) {
         };
     })();
 
-    var validateRateInterval = function() {
+    var validateRateInterval = function () {
         var retVal = false, errorString = '';
         switch (rateType) {
             case CswRateIntervalTypes.WeeklyByDay:
-                if (false === contains(rateInterval, 'startingdate') ||
-                        false === contains(rateInterval.startingdate, 'date') ||
-                        isNullOrEmpty(rateInterval.startingdate.date)) {
+                if (false === Csw.contains(rateInterval, 'startingdate') ||
+                        false === Csw.contains(rateInterval.startingdate, 'date') ||
+                        Csw.isNullOrEmpty(rateInterval.startingdate.date)) {
                     errorString += 'Cannot add a Weekly time interval without a starting date. ';
                 } 
-                if (false === contains(rateInterval, 'weeklyday') ||
-                        isNullOrEmpty(rateInterval.weeklyday)) {
+                if (false === Csw.contains(rateInterval, 'weeklyday') ||
+                        Csw.isNullOrEmpty(rateInterval.weeklyday)) {
                     errorString += 'Cannot add a Weekly time interval without at least one weekday selected. ';
                 }
                 break;
             case CswRateIntervalTypes.MonthlyByDate:
-                if (false === contains(rateInterval, 'monthlydate') || 
-                        isNullOrEmpty(rateInterval.monthlydate)) {
+                if (false === Csw.contains(rateInterval, 'monthlydate') || 
+                        Csw.isNullOrEmpty(rateInterval.monthlydate)) {
                     errorString += 'Cannot add a Monthly time interval without an \'On Day of Month\' selected. ';  
                 }
-                if (false === contains(rateInterval, 'monthlyfrequency') || 
-                        isNullOrEmpty(rateInterval.monthlyfrequency)) {
+                if (false === Csw.contains(rateInterval, 'monthlyfrequency') || 
+                        Csw.isNullOrEmpty(rateInterval.monthlyfrequency)) {
                     errorString += 'Cannot add a Monthly time interval without a frequency selected. ';  
                 }
-                if (false === contains(rateInterval, 'startingmonth') || 
-                        isNullOrEmpty(rateInterval.startingmonth)) {
+                if (false === Csw.contains(rateInterval, 'startingmonth') || 
+                        Csw.isNullOrEmpty(rateInterval.startingmonth)) {
                     errorString += 'Cannot add a Monthly time interval without a Starting Month selected. ';  
                 }
-                if (false === contains(rateInterval, 'startingyear') || 
-                        isNullOrEmpty(rateInterval.startingyear)) {
+                if (false === Csw.contains(rateInterval, 'startingyear') || 
+                        Csw.isNullOrEmpty(rateInterval.startingyear)) {
                     errorString += 'Cannot add a Monthly time interval without a Starting Year selected. ';  
                 }
                 break;
             case CswRateIntervalTypes.MonthlyByWeekAndDay:
-                if (false === contains(rateInterval, 'monthlyfrequency') || 
-                        isNullOrEmpty(rateInterval.monthlyfrequency)) {
+                if (false === Csw.contains(rateInterval, 'monthlyfrequency') || 
+                        Csw.isNullOrEmpty(rateInterval.monthlyfrequency)) {
                     errorString += 'Cannot add a Monthly time interval without a frequency selected. ';  
                 }
-                if (false === contains(rateInterval, 'monthlyday') || 
-                        isNullOrEmpty(rateInterval.monthlyday)) {
+                if (false === Csw.contains(rateInterval, 'monthlyday') || 
+                        Csw.isNullOrEmpty(rateInterval.monthlyday)) {
                     errorString += 'Cannot add a Monthly time interval without a Weekday selected. ';  
                 }
-                if (false === contains(rateInterval, 'monthlyweek') || 
-                        isNullOrEmpty(rateInterval.monthlyweek)) {
+                if (false === Csw.contains(rateInterval, 'monthlyweek') || 
+                        Csw.isNullOrEmpty(rateInterval.monthlyweek)) {
                     errorString += 'Cannot add a Monthly time interval without a Weekly frequency selected. ';  
                 }
-                if (false === contains(rateInterval, 'startingmonth') || 
-                        isNullOrEmpty(rateInterval.startingmonth)) {
+                if (false === Csw.contains(rateInterval, 'startingmonth') || 
+                        Csw.isNullOrEmpty(rateInterval.startingmonth)) {
                     errorString += 'Cannot add a Monthly time interval without a starting month selected. ';  
                 }
-                if (false === contains(rateInterval, 'startingyear') || 
-                        isNullOrEmpty(rateInterval.startingyear)) {
+                if (false === Csw.contains(rateInterval, 'startingyear') || 
+                        Csw.isNullOrEmpty(rateInterval.startingyear)) {
                     errorString += 'Cannot add a Monthly time interval without a starting year selected. ';  
                 }
                 break;
             case CswRateIntervalTypes.YearlyByDate:
-                if (false === contains(rateInterval, 'yearlydate') ||
-                        false === contains(rateInterval.yearlydate, 'date') ||
-                        isNullOrEmpty(rateInterval.yearlydate.date)) {
+                if (false === Csw.contains(rateInterval, 'yearlydate') ||
+                        false === Csw.contains(rateInterval.yearlydate, 'date') ||
+                        Csw.isNullOrEmpty(rateInterval.yearlydate.date)) {
                     errorString += 'Cannot addd a Yearly time interval without a starting date. ';
                 } 
                 break;                
         }
-        if (false === isNullOrEmpty(errorString)) {
-            retVal = ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, errorString);
+        if (false === Csw.isNullOrEmpty(errorString)) {
+            retVal = Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, errorString);
         }
         return retVal;
     };
@@ -634,11 +629,11 @@ var CswTimeInterval = function (options) {
             rateType = CswRateIntervalTypes.WeeklyByDay;
         } else {
             $.extend(true, rateInterval, propVals.Interval.rateintervalvalue);
-            textValue = tryParseString(propVals.Interval.text).trim();
+            textValue = Csw.string(propVals.Interval.text).trim();
             rateType = rateInterval.ratetype;
         }
-        dateFormat = tryParseString(rateInterval.dateformat, 'M/d/yyyy');
-        $interval = $('<div id="' + makeId({ ID: o.ID, suffix: '_cswTimeInterval' }) + '"></div>')
+        dateFormat = Csw.string(rateInterval.dateformat, 'M/d/yyyy');
+        $interval = $('<div id="' + Csw.makeId({ ID: o.ID, suffix: '_cswTimeInterval' }) + '"></div>')
                             .appendTo($Div);
 
         //Page Components
@@ -671,8 +666,8 @@ var CswTimeInterval = function (options) {
     
     var ret = {
         $interval: $interval,
-        rateType: function() { return rateType; },
-        rateInterval: function() { return rateInterval; },
+        rateType: function () { return rateType; },
+        rateInterval: function () { return rateInterval; },
         validateRateInterval: validateRateInterval
     };
 

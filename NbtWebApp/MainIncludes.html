@@ -5,6 +5,8 @@
 <link rel="stylesheet" type="text/css" href="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.css" />
 <link rel="stylesheet" type="text/css" href="js/thirdparty/jquery/plugins/multiselect/jquery.multiselect.filter.css" />
 
+<script src="Scripts/es5-shim.min.js" type="text/javascript"></script>
+
 <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="Scripts/jquery-ui-1.8.16.min.js"></script>
 <script type="text/javascript" src="Scripts/jquery.validate.min.js"></script>
@@ -28,12 +30,8 @@
             null === window.JSON || 
             false === window.JSON.hasOwnProperty('parse') || 
             false === window.JSON.hasOwnProperty('stringify')) {
-           
-           if(window.ChemSW) {
-               ChemSW.tools.loadResource('Scripts/json2.min.js', 'js');
-           } else {
+
                document.write('<script type="text/javascript" src="Scripts/json2.min.js"><\/script>');
-           }
         }
 
 

@@ -1,7 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     $.fn.CswLayoutTable = function (method) {
         "use strict";
         var PluginName = "CswLayoutTable";
@@ -11,17 +11,7 @@
                 var o = {
                     ID: '',
                     cellset: { rows: 1, columns: 1 },
-                    onSwap: function (event, onSwapData) {
-                        var s = {
-                            table: '',
-                            cellset: '',
-                            swapcellset: '',
-                            row: '',
-                            column: '',
-                            swaprow: '',
-                            swapcolumn: ''
-                        };
-                    },
+                            onSwap: function () { },
                     onAddClick: function () { },
                     onConfigOn: function () { },
                     onConfigOff: function () { },
@@ -165,8 +155,8 @@
         };
 
         function _getCellSet($table, row, column) {
-            var cellsetrows = parseInt($table.CswAttrNonDom('cellset_rows'));
-            var cellsetcolumns = parseInt($table.CswAttrNonDom('cellset_columns'));
+            var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
+            var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
             var cellset = new Array();
             for (var r = 1; r <= cellsetrows; r++) {
                 for (var c = 1; c <= cellsetcolumns; c++) {
@@ -234,8 +224,8 @@
             $buttontable.find('#' + $table.CswAttrDom('id') + 'addcolumnbtn').show();
             $buttontable.find('#' + $table.CswAttrDom('id') + 'addrowbtn').show();
 
-            //var cellsetrows = parseInt($table.CswAttrNonDom('cellset_rows'));
-            //var cellsetcolumns = parseInt($table.CswAttrNonDom('cellset_columns'));
+            //var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
+            //var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
 
             $table.CswTable('finish', null);
 
@@ -249,8 +239,8 @@
         } // _configOn()
 
         function _addRow($table) {
-            var cellsetrows = parseInt($table.CswAttrNonDom('cellset_rows'));
-            var cellsetcolumns = parseInt($table.CswAttrNonDom('cellset_columns'));
+            var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
+            var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
             var tablemaxrows = $table.CswTable('maxrows');
             var tablemaxcolumns = $table.CswTable('maxcolumns');
 
@@ -265,8 +255,8 @@
         } // _addRowAndColumn()
 
         function _addColumn($table) {
-            var cellsetrows = parseInt($table.CswAttrNonDom('cellset_rows'));
-            var cellsetcolumns = parseInt($table.CswAttrNonDom('cellset_columns'));
+            var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
+            var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
             var tablemaxrows = $table.CswTable('maxrows');
             var tablemaxcolumns = $table.CswTable('maxcolumns');
 
@@ -292,8 +282,8 @@
         function onCreateCell($table, $cell, realrow, realcolumn, cellsetrows, cellsetcolumns) {
             var row = Math.ceil(realrow / cellsetrows);
             var column = Math.ceil(realcolumn / cellsetcolumns);
-            var cellsetrow = parseInt(cellsetrows - realrow % cellsetrows);
-            var cellsetcolumn = parseInt(cellsetcolumns - realcolumn % cellsetcolumns);
+            var cellsetrow = Csw.number(cellsetrows - realrow % cellsetrows);
+            var cellsetcolumn = Csw.number(cellsetcolumns - realcolumn % cellsetcolumns);
 
             $cell.CswAttrNonDom('row', row)
                  .CswAttrNonDom('column', column)
@@ -428,6 +418,6 @@
             $.error('Method ' + method + ' does not exist on ' + PluginName);
         }
 
-    }; // function(options) {
+    }; // function (options) {
 })(jQuery);
 

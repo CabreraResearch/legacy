@@ -8,7 +8,7 @@
     var pluginName = "CswNodeSelect";
 
     var methods = {
-        'init': function(options) {
+        'init': function (options) {
             var o = {
                 ID: '',
                 NodesUrl: '/NbtWebApp/wsNBT.asmx/getNodes',
@@ -28,7 +28,7 @@
             var $select = $('<select id="' + o.ID + '_nodeselect" />')
                 .css('width', '100px');
                                 
-            $select.change(function() { if(isFunction(o.onSelect)) o.onSelect( $select.val() ); });
+            $select.change(function () { if(Csw.isFunction(o.onSelect)) o.onSelect( $select.val() ); });
 
             var jsonData = {
                 NodeTypeId: o.nodetypeid,
@@ -36,19 +36,19 @@
                 ObjectClass: o.objectclass
             };
 
-            CswAjaxJson({
+            Csw.ajax.post({
                     url: o.NodesUrl,
                     data: jsonData,
                     success: function (data) {
                         var nodeId, nodeName;
                         for (nodeId in data) {
-                            if (contains(data, nodeId)) {
+                            if (Csw.contains(data, nodeId)) {
                                 nodeName = data[nodeId];
                                 $select.append('<option value="' + nodeId + '">' + nodeName + '</option>');
                             }
                         }
                         $select.css('width', '');
-                        if (isFunction(o.onSuccess)) {
+                        if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess();
                         }
                     }
@@ -56,7 +56,7 @@
             $parent.append($select);
             return $select;
         },
-        'value': function()
+        'value': function ()
             {
                 var $select = $(this);
                 return $select.val();
