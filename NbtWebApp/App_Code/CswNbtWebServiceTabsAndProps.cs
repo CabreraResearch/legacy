@@ -585,8 +585,9 @@ namespace ChemSW.Nbt.WebServices
                 foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                 {
                     // case 24179
-                    if( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview ||
-                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid )
+                    if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ||
+                        ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview &&
+                          LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table ) )
                     {
                         ret["prop_" + Prop.PropId.ToString()] = new JObject();
                         ret["prop_" + Prop.PropId.ToString()]["propid"] = Prop.PropId.ToString();

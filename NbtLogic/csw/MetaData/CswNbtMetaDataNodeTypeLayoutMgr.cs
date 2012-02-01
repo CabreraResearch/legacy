@@ -24,7 +24,8 @@ namespace ChemSW.Nbt.MetaData
             Unknown,
             Add,
             Edit,
-            Preview
+            Preview,
+            Table
         }
 
         public LayoutType LayoutTypeForEditMode( string EditMode )
@@ -39,6 +40,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 case NodeEditMode.AddInPopup: LType = LayoutType.Add; break;
                 case NodeEditMode.Preview: LType = LayoutType.Preview; break;
+                case NodeEditMode.Table: LType = LayoutType.Table; break;
                 default: LType = LayoutType.Edit; break;
             }
             return LType;

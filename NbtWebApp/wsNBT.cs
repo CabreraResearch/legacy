@@ -2248,7 +2248,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, string EditMode )
+        public string getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, string LayoutType )
         {
             JObject ReturnVal = new JObject();
 
@@ -2260,16 +2260,10 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
-                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Unknown;
-                    switch( RealEditMode )
-                    {
-                        case NodeEditMode.AddInPopup: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add; break;
-                        case NodeEditMode.Preview: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview; break;
-                        default: LayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit; break;
-                    }
+                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType RealLayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Unknown;
+                    Enum.TryParse<CswNbtMetaDataNodeTypeLayoutMgr.LayoutType>( LayoutType, out RealLayoutType );
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                    ReturnVal = ws.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, LayoutType );
+                    ReturnVal = ws.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, RealLayoutType );
                 }
 
                 _deInitResources();
@@ -2287,7 +2281,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string addPropertyToLayout( string PropId, string TabId, string EditMode )
+        public string addPropertyToLayout( string PropId, string TabId, string LayoutType )
         {
             JObject ReturnVal = new JObject();
 
@@ -2299,10 +2293,11 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode );
+                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType RealLayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Unknown;
+                    Enum.TryParse<CswNbtMetaDataNodeTypeLayoutMgr.LayoutType>( LayoutType, out RealLayoutType );
 
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                    bool ret = ws.addPropertyToLayout( PropId, TabId, LayoutType );
+                    bool ret = ws.addPropertyToLayout( PropId, TabId, RealLayoutType );
                     ReturnVal.Add( new JProperty( "result", ret.ToString().ToLower() ) );
                 }
 

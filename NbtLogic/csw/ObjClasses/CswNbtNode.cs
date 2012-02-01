@@ -46,6 +46,10 @@ namespace ChemSW.Nbt
         /// </summary>
         Preview,
         /// <summary>
+        /// Properties of a node displayed in a Table Layout
+        /// </summary>
+        Table,
+        /// <summary>
         /// Unknown
         /// </summary>
         Unknown
