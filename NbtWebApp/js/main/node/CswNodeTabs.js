@@ -231,7 +231,8 @@
                             onSwap(onSwapData);
                         },
                         showConfigButton: false, //o.Config,
-                        showRowColButtons: o.Config,
+                        showExpandRowButton: o.Config,
+                        showExpandColButton: (o.Config && o.EditMode !== EditMode.Table.name),
                         showRemoveButton: o.Config,
                         onConfigOn: function () {
                             doUpdateSubProps(true);
@@ -525,7 +526,8 @@
                             onSwap(onSwapData);
                         },
                         showConfigButton: false,
-                        showRowColButtons: false,
+                        showExpandRowButton: false,
+                        showExpandColButton: false,
                         showRemoveButton: false
                     });
 

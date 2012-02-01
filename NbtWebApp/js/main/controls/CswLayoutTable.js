@@ -36,7 +36,8 @@
                     showConfigButton: false,
                     showAddButton: false,
                     showRemoveButton: false,
-                    showRowColButtons: false,
+                    showExpandRowButton: false,
+                    showExpandColButton: false,
                     OddCellRightAlign: false,
                     ReadOnly: false
                 };
@@ -97,7 +98,7 @@
                         }
                     }).hide();
                 }
-                if (o.showRowColButtons) {
+                if (o.showExpandColButton) {
                     $buttontable.CswTable('cell', 1, 3).CswImageButton({
                         ButtonType: CswImageButton_ButtonType.ArrowEast,
                         AlternateText: 'Add Column',
@@ -107,6 +108,8 @@
                             return CswImageButton_ButtonType.None;
                         }
                     }).hide();
+                }
+                if (o.showExpandRowButton) {
                     $buttontable.CswTable('cell', 1, 4).CswImageButton({
                         ButtonType: CswImageButton_ButtonType.ArrowSouth,
                         AlternateText: 'Add Row',
