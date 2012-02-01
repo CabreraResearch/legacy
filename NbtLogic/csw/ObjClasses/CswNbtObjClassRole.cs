@@ -164,28 +164,29 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public static string MakeNodeTypePermissionValue( CswNbtMetaDataNodeType NodeType, CswNbtPermit.NodeTypePermission Permission )
+        public static string MakeNodeTypePermissionValue( Int32 FirstVersionNodeTypeId, CswNbtPermit.NodeTypePermission Permission )
         {
-            return "nt_" + NodeType.FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
+            return "nt_" + FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
         }
-        public static string MakeNodeTypePermissionText( CswNbtMetaDataNodeType NodeType, CswNbtPermit.NodeTypePermission Permission )
+        public static string MakeNodeTypePermissionText( string LatestVersionNodeTypeName, CswNbtPermit.NodeTypePermission Permission )
         {
-            return NodeType.LatestVersionNodeType.NodeTypeName + ": " + Permission.ToString();
+            return LatestVersionNodeTypeName + ": " + Permission.ToString();
         }
-        public static string MakeNodeTypeTabPermissionValue( CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtPermit.NodeTypeTabPermission Permission )
+        public static string MakeNodeTypeTabPermissionValue( Int32 FirstVersionNodeTypeId, Int32 FirstTabVersionID, CswNbtPermit.NodeTypeTabPermission Permission )
         {
             return "nt_" +
-                    NodeTypeTab.NodeType.FirstVersionNodeTypeId.ToString() +
+                    FirstVersionNodeTypeId.ToString() +
                     "_tab_" +
-                    NodeTypeTab.FirstTabVersionId +
+                    FirstTabVersionID +
                     "_" +
                     Permission.ToString();
         }
-        public static string MakeNodeTypeTabPermissionText( CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtPermit.NodeTypeTabPermission Permission )
+        public static string MakeNodeTypeTabPermissionText( string LatestVersionNodeTypeName, string LatestVersionTabName, CswNbtPermit.NodeTypeTabPermission Permission )
         {
-            return NodeTypeTab.NodeType.LatestVersionNodeType.NodeTypeName +
+            return LatestVersionNodeTypeName +
                    ", " +
-                   NodeTypeTab.NodeType.LatestVersionNodeType.getNodeTypeTabByFirstVersionId( NodeTypeTab.FirstTabVersionId ).TabName +
+                   //NodeTypeTab.NodeType.LatestVersionNodeType.getNodeTypeTabByFirstVersionId( NodeTypeTab.FirstTabVersionId ).TabName +
+                   LatestVersionTabName +
                    ": " +
                    Permission.ToString();
         }
@@ -209,8 +210,8 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     foreach( CswNbtPermit.NodeTypePermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypePermission ) ) )
                     {
-                        string Key = MakeNodeTypePermissionValue( NodeType, Permission );
-                        string Value = MakeNodeTypePermissionText( NodeType, Permission );
+                        string Key = MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission );
+                        string Value = MakeNodeTypePermissionText( NodeType.NodeTypeName, Permission );
                         NodeTypeOptions.Add( Key, Value );
 
                     }
@@ -218,8 +219,8 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         foreach( CswNbtPermit.NodeTypeTabPermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypeTabPermission ) ) )
                         {
-                            string Key = MakeNodeTypeTabPermissionValue( Tab, Permission );
-                            string Value = MakeNodeTypeTabPermissionText( Tab, Permission );
+                            string Key = MakeNodeTypeTabPermissionValue( NodeType.FirstVersionNodeTypeId, Tab.FirstTabVersionId, Permission );
+                            string Value = MakeNodeTypeTabPermissionText( NodeType.NodeTypeName, Tab.TabName, Permission );
                             NodeTypeOptions.Add( Key, Value );
 
                         }
