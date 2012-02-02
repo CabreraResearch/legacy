@@ -10,6 +10,16 @@
 
     var clientSession = (function clientSessionP () {
 
+        function finishLogout () {
+            var logoutpath = Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
+            Csw.cookie.clearAll();
+            if (false === Csw.isNullOrEmpty(logoutpath)) {
+                window.location = logoutpath;
+            } else {
+                window.location = Csw.getGlobalProp('homeUrl');
+            }
+        }
+
         function logout (options) {
             var o = {
                 DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
@@ -165,17 +175,7 @@
                 o.failure(txt, o.status);
             }
         }
-
-        function finishLogout () {
-            var logoutpath = Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
-            Csw.cookie.clearAll();
-            if (false === Csw.isNullOrEmpty(logoutpath)) {
-                window.location = logoutpath;
-            } else {
-                window.location = Csw.getGlobalProp('homeUrl');
-            }
-        }
-
+        
         function isAdministrator (options) {
             var o = {
                 'Yes': function () {

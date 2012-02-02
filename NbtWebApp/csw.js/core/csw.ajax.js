@@ -306,9 +306,7 @@
         }
 
         function post(options, type) {
-            /// <summary>
-            ///   Executes Async webservice request for XML
-            /// </summary>
+            /// <summary> Executes Async webservice request. </summary>
             /// <param name="options" type="Object">
             /// <para>A JSON Object</para>
             /// <para>options.url: WebService URL</para>
