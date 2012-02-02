@@ -3,28 +3,31 @@
 
 (function CswAjax() {
     'use strict';
-    
-    var _ajaxCount = 0;
+
     var ajax = (function () {
         /// <summary> The Csw Ajax class for submitting aync webservice requests</summary>
         /// <returns> An instance of the class with get()/post()</returns>
-        var onBeforeAjax = null, 
-            onAfterAjax = null; 
-
-        var dataType = {
-            json: 'json',
-            xml: 'xml'
+        var external = {            
+            onBeforeAjax: null,
+            onAfterAjax: null
         };
-       
-        function _handleAjaxError(errorJson) {
+
+        var internal = {
+            ajaxCount: 0,
+            enums: {
+                dataType: {
+                    json: 'json',
+                    xml: 'xml'
+                }
+            }
+        };
+
+        internal.handleAjaxError = function (errorJson) {
             Csw.error.showError(errorJson);
-        } /* _handleAjaxError() */
-        
-        function _jsonPost (options) {
-            
-            /// <summary>
-            ///   Executes Async webservice request for JSON
-            /// </summary>
+        }; /* internal.handleAjaxError() */
+
+        internal.jsonPost = function (options) {
+            /// <summary>Executes Async webservice request for JSON</summary>
             /// <param name="options" type="Object">
             ///     A JSON Object
             ///     &#10;1 - options.url: WebService URL
@@ -38,8 +41,8 @@
                 onloginfail: function () {
                     Csw.clientSession.finishLogout();
                 },
-                success: null, 
-                error: null, 
+                success: null,
+                error: null,
                 overrideError: false,
                 formobile: false,
                 async: true,
@@ -50,9 +53,9 @@
             }
 
             if (o.watchGlobal) {
-                _ajaxCount += 1;
+                internal.ajaxCount += 1;
             }
-            Csw.tryExec(onBeforeAjax, o.watchGlobal);
+            Csw.tryExec(external.onBeforeAjax, o.watchGlobal);
 
             $.ajax({
                 type: 'POST',
@@ -63,13 +66,13 @@
                 data: JSON.stringify(o.data),
                 success: function (data) {
                     if (o.watchGlobal) {
-                        _ajaxCount -= 1;
+                        internal.ajaxCount -= 1;
                     }
                     var result = $.parseJSON(data.d);
 
                     if (result.error !== undefined) {
                         if (false === o.overrideError) {
-                            _handleAjaxError({
+                            internal.handleAjaxError({
                                 'display': result.error.display,
                                 'type': result.error.type,
                                 'message': result.error.message,
@@ -99,21 +102,21 @@
                             ForMobile: o.formobile
                         });
                     }
-                    Csw.tryExec(onAfterAjax, true);
+                    Csw.tryExec(external.onAfterAjax, true);
                 }, /* success{} */
                 error: function (xmlHttpRequest, textStatus) {
                     if (o.watchGlobal) {
-                        _ajaxCount -= 1;
+                        internal.ajaxCount -= 1;
                     }
                     Csw.log("Webservice Request (" + o.url + ") Failed: " + textStatus);
                     Csw.tryExec(o.error);
-                    Csw.tryExec(onAfterAjax, false);
+                    Csw.tryExec(external.onAfterAjax, false);
                 }
             }); /* $.ajax({ */
-        } /* _jsonPost */
-        
-        function _jsonGet (options) {
-            
+        }; /* internal.jsonPost */
+
+        internal.jsonGet = function (options) {
+
             /// <summary>
             ///   Executes Async webservice request for JSON
             /// </summary>
@@ -130,7 +133,7 @@
                 onloginfail: function () {
                     Csw.clientSession.finishLogout();
                 },
-                success: null, 
+                success: null,
                 error: null,
                 overrideError: false,
                 formobile: false,
@@ -142,9 +145,9 @@
             }
 
             if (o.watchGlobal) {
-                _ajaxCount += 1;
+                internal.ajaxCount += 1;
             }
-            Csw.tryExec(onBeforeAjax, o.watchGlobal);
+            Csw.tryExec(external.onBeforeAjax, o.watchGlobal);
 
             $.ajax({
                 type: 'GET',
@@ -154,12 +157,12 @@
                 data: JSON.stringify(o.data),
                 success: function (result) {
                     if (o.watchGlobal) {
-                        _ajaxCount -= 1;
+                        internal.ajaxCount -= 1;
                     }
 
                     if (false === Csw.isNullOrEmpty(result.error)) {
                         if (false === o.overrideError) {
-                            _handleAjaxError({
+                            internal.handleAjaxError({
                                 'display': result.error.display,
                                 'type': result.error.type,
                                 'message': result.error.message,
@@ -170,20 +173,20 @@
                     } else {
                         Csw.tryExec(o.success, result);
                     }
-                    Csw.tryExec(onAfterAjax, true);
+                    Csw.tryExec(external.onAfterAjax, true);
                 }, /* success{} */
                 error: function (xmlHttpRequest, textStatus) {
                     if (o.watchGlobal) {
-                        _ajaxCount -= 1;
+                        internal.ajaxCount -= 1;
                     }
                     Csw.log("Webservice Request (" + o.url + ") Failed: " + textStatus);
                     Csw.tryExec(o.error);
-                    Csw.tryExec(onAfterAjax, false);
+                    Csw.tryExec(external.onAfterAjax, false);
                 }
             }); /* $.ajax({ */
-        } /* _jsonGet() */
+        }; /* internal.jsonGet() */
 
-        function _xmlPost (options) {
+        internal.xmlPost = function (options) {
             /// <summary>
             ///   Executes Async webservice request for XML
             /// </summary>
@@ -218,7 +221,7 @@
 
             if (false === Csw.isNullOrEmpty(o.url)) {
                 if (o.watchGlobal) {
-                    _ajaxCount += 1;
+                    internal.ajaxCount += 1;
                 }
                 $.ajax({
                     type: 'POST',
@@ -228,7 +231,7 @@
                     data: $.param(o.data), 
                     success: function (data, textStatus, xmlHttpRequest) {
                         if (o.watchGlobal) {
-                            _ajaxCount -= 1;
+                            internal.ajaxCount -= 1;
                         }
                         
                         var $realxml;
@@ -240,7 +243,7 @@
                         }
 
                         if ($realxml.first().get(0).nodeName === "error") {
-                            _handleAjaxError({
+                            internal.handleAjaxError({
                                 'display': $realxml.CswAttrNonDom('display'),
                                 'type': $realxml.CswAttrNonDom('type'),
                                 'message': $realxml.CswAttrNonDom('message'),
@@ -269,21 +272,21 @@
                     }, /* success{} */
                     error: function (xmlHttpRequest, textStatus) {
                         if (o.watchGlobal) {
-                            _ajaxCount -= 1;
+                            internal.ajaxCount -= 1;
                         }
                         Csw.log("Webservice Request (" + o.url + ") Failed: " + textStatus);
                         Csw.tryExec(o.error);
                     }
                 }); /* $.ajax({ */
             } /* if(o.url != '') */
-        } /* _xmlPost() */
-        
-        function ajaxInProgress () {
+        }; /* internal.xmlPost() */
+
+        external.ajaxInProgress = function () {
             /// <summary> Evaluates whether a pending ajax request is still open. </summary>
-            return (_ajaxCount > 0);
-        }
-        
-        function get(options, type) {
+            return (internal.ajaxCount > 0);
+        };
+
+        external.get = function (options, type) {
             /// <summary>
             ///   Executes Async webservice request for XML
             /// </summary>
@@ -299,13 +302,13 @@
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
             var ret = {},
                 ajaxType = Csw.string(type);
-            if(ajaxType.toLowerCase() !== dataType.xml) {
-                ret = _jsonGet(options);
-            } 
+            if (ajaxType.toLowerCase() !== internal.enums.dataType.xml) {
+                ret = internal.jsonGet(options);
+            }
             return ret;
-        }
+        };
 
-        function post(options, type) {
+        external.post = function (options, type) {
             /// <summary> Executes Async webservice request. </summary>
             /// <param name="options" type="Object">
             /// <para>A JSON Object</para>
@@ -319,26 +322,17 @@
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
             var ret,
                 ajaxType = Csw.string(type);
-            if(ajaxType.toLowerCase() === dataType.xml) {
-                ret = _xmlPost(options);
+            if (ajaxType.toLowerCase() === internal.enums.dataType.xml) {
+                ret = internal.xmlPost(options);
             } else {
-                ret = _jsonPost(options);
+                ret = internal.jsonPost(options);
             }
             return ret;
-        }
-
-        return {
-            get: get,
-            post: post,
-            dataType: dataType,
-            ajaxInProgress: ajaxInProgress,
-            onBeforeAjax: function(func) {
-                onBeforeAjax = func;
-            },
-            onAfterAjax: function(func) {
-                onAfterAjax = func;
-            }
         };
+
+        external.dataType = internal.enums.dataType;
+
+        return external;
 
     }());    
     Csw.register('ajax', ajax);

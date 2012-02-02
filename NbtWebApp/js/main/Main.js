@@ -11,18 +11,18 @@ window.initMain = window.initMain || function (undefined) {
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
     
-    Csw.ajax.onBeforeAjax( function (watchGlobal) {
+    Csw.ajax.onBeforeAjax = function (watchGlobal) {
         if (watchGlobal) {
             $('#ajaxSpacer').hide();
             $('#ajaxImage').show();
         }
-    });
-    Csw.ajax.onAfterAjax( function () {
+    };
+    Csw.ajax.onAfterAjax = function () {
         if (false === Csw.ajax.ajaxInProgress()) {
             $('#ajaxImage').hide();
             $('#ajaxSpacer').show();
         }
-    });
+    };
 
     // handle querystring arguments
     var qs = $.CswQueryString();
