@@ -1,32 +1,21 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     $.fn.CswLayoutTable = function (method) {
         "use strict";
         var PluginName = "CswLayoutTable";
 
         var methods = {
-            'init': function(options) {
+            'init': function (options) {
                         var o = {
                             ID: '',
                             cellset: { rows: 1, columns: 1 },
-                            onSwap: function(event, onSwapData)
-                                { 
-                                    var s = { 
-                                        table: '',
-                                        cellset: '',
-                                        swapcellset: '',
-                                        row: '',
-                                        column: '',
-                                        swaprow: '',
-                                        swapcolumn: ''
-                                    };
-                                },
-                            onAddClick: function() { },
-                            onConfigOn: function() { },
-                            onConfigOff: function() { },
-                            onRemove: function() { },
+                            onSwap: function () { },
+                            onAddClick: function () { },
+                            onConfigOn: function () { },
+                            onConfigOff: function () { },
+                            onRemove: function () { },
                             TableCssClass: '',
                             CellCssClass: '',
                             cellalign: '',
@@ -62,7 +51,7 @@
                                                   'OddCellRightAlign': o.OddCellRightAlign,
                                                   'width': o.width,
                                                   'align': o.align,
-                                                  'onCreateCell': function(ev, $table, $newcell, realrow, realcolumn) { 
+                                                  'onCreateCell': function (ev, $table, $newcell, realrow, realcolumn) { 
                                                                     onCreateCell($table, $newcell, realrow, realcolumn, o.cellset.rows, o.cellset.columns);
                                                                   }
                                                 })
@@ -142,7 +131,7 @@
                         return $table;
                     },
 
-            'cellset': function(row, column) 
+            'cellset': function (row, column) 
                     {
                         var $table = $(this);
                         return _getCellSet($table, row, column);
@@ -154,21 +143,21 @@
                         return isConfigMode($table);
                     },
 
-            'toggleConfig': function() 
+            'toggleConfig': function () 
                     {
                         var $table = $(this);
                         var $buttontable = $('#' + $table.CswAttrDom('id') + '_buttontbl');
                         _toggleConfig($table, $buttontable);
                     },
             
-            'ConfigOn': function() 
+            'ConfigOn': function () 
                     {
                         var $table = $(this);
                         var $buttontable = $('#' + $table.CswAttrDom('id') + '_buttontbl');
                         _configOn($table, $buttontable); 
                     },
             
-            'ConfigOff': function() 
+            'ConfigOff': function () 
                     {
                         var $table = $(this);
                         var $buttontable = $('#' + $table.CswAttrDom('id') + '_buttontbl');
@@ -178,8 +167,8 @@
 
         function _getCellSet($table, row, column)
         {
-            var cellsetrows = parseInt($table.CswAttrNonDom('cellset_rows'));
-            var cellsetcolumns = parseInt($table.CswAttrNonDom('cellset_columns'));
+            var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
+            var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
             var cellset = new Array();
             for(var r = 1; r <= cellsetrows; r++)
             {
@@ -261,8 +250,8 @@
             $buttontable.find('#' + $table.CswAttrDom('id') + 'addcolumnbtn').show();
             $buttontable.find('#' + $table.CswAttrDom('id') + 'addrowbtn').show();
 
-            //var cellsetrows = parseInt($table.CswAttrNonDom('cellset_rows'));
-            //var cellsetcolumns = parseInt($table.CswAttrNonDom('cellset_columns'));
+            //var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
+            //var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
 
             $table.CswTable('finish', null);
 
@@ -277,8 +266,8 @@
 
         function _addRow($table)
         {
-            var cellsetrows = parseInt($table.CswAttrNonDom('cellset_rows'));
-            var cellsetcolumns = parseInt($table.CswAttrNonDom('cellset_columns'));
+            var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
+            var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
             var tablemaxrows = $table.CswTable('maxrows');
             var tablemaxcolumns = $table.CswTable('maxcolumns');
 
@@ -295,8 +284,8 @@
 
         function _addColumn($table)
         {
-            var cellsetrows = parseInt($table.CswAttrNonDom('cellset_rows'));
-            var cellsetcolumns = parseInt($table.CswAttrNonDom('cellset_columns'));
+            var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
+            var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
             var tablemaxrows = $table.CswTable('maxrows');
             var tablemaxcolumns = $table.CswTable('maxcolumns');
 
@@ -325,22 +314,22 @@
         {
             var row = Math.ceil(realrow / cellsetrows);
             var column = Math.ceil(realcolumn / cellsetcolumns);
-            var cellsetrow = parseInt(cellsetrows - realrow % cellsetrows);
-            var cellsetcolumn = parseInt(cellsetcolumns - realcolumn % cellsetcolumns);
+            var cellsetrow = Csw.number(cellsetrows - realrow % cellsetrows);
+            var cellsetcolumn = Csw.number(cellsetcolumns - realcolumn % cellsetcolumns);
 
             $cell.CswAttrNonDom('row', row)
                  .CswAttrNonDom('column', column)
                  .CswAttrNonDom('cellsetrow', cellsetrow)
                  .CswAttrNonDom('cellsetcolumn', cellsetcolumn)
-                 .click(function(ev, dd) { onClick(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
+                 .click(function (ev, dd) { onClick(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
                  .droppable({
                                 hoverClass: 'CswLayoutTable_hover',
-                                drop: function(ev, dd) { 
+                                drop: function (ev, dd) { 
                                     onDrop(ev, dd, $(this), $table, cellsetrows, cellsetcolumns); 
                                 }
                             })
-                 .hover(function(ev, dd) { onHoverIn(ev, dd, $table, $(this)); },
-                        function(ev, dd) { onHoverOut(ev, dd, $table, $(this)); } );
+                 .hover(function (ev, dd) { onHoverIn(ev, dd, $table, $(this)); },
+                        function (ev, dd) { onHoverOut(ev, dd, $table, $(this)); } );
 
             var $celldiv = $('<div class="CswLayoutTable_celldiv"></div>')
                     .appendTo($cell);
@@ -351,7 +340,7 @@
             $table.find('.CswLayoutTable_celldiv')
                     .draggable({
                         revert: "invalid",
-                        drag: function(ev, dd) { onDrag(ev, dd, $(this), $table); }
+                        drag: function (ev, dd) { onDrag(ev, dd, $(this), $table); }
                     });
         }
 
@@ -476,6 +465,6 @@
             $.error('Method ' + method + ' does not exist on ' + PluginName);
         }
 
-    }; // function(options) {
+    }; // function (options) {
 })(jQuery);
 

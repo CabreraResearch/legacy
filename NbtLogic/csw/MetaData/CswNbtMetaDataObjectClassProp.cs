@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -123,7 +124,7 @@ namespace ChemSW.Nbt.MetaData
             get { return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( CswConvert.ToInt32( _ObjectClassPropRow["fieldtypeid"] ) ); }
         }
 
-        public ICollection NodeTypeProps
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps
         {
             get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByObjectClassProp( PropId ); }
         }

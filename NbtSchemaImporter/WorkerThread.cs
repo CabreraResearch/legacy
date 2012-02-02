@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.Schema
         //}
 
 
-        public ICollection getNodeTypes()
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
         {
             return _CswNbtResources.MetaData.NodeTypes;
         }
@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.Schema
 
 
         public delegate void ExportHandler( string FilePath, ICollection SelectedNodeTypes, bool ExportViews, bool ExportNodes );
-        public void DoExport( string FilePath, ICollection SelectedNodeTypes, bool ExportViews, bool ExportNodes )
+        public void DoExport( string FilePath, IEnumerable<CswNbtMetaDataNodeType> SelectedNodeTypes, bool ExportViews, bool ExportNodes )
         {
             try
             {

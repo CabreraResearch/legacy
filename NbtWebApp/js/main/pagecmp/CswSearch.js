@@ -5,7 +5,7 @@
 /// <reference path="../controls/CswSelect.js" />
 /// <reference path="../view/CswViewPropFilter.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.CswSearch = function (options) {
 
@@ -40,8 +40,8 @@
             $nodeTypesSelect: '',
 
             onSearchSubmit: function () {},
-            onClearSubmit: function() {},
-            onSearchClose: function() {}, 
+            onClearSubmit: function () {},
+            onSearchClose: function () {}, 
 
             //For submit
             selectedPropVal: '',
@@ -63,9 +63,10 @@
         
         var $topspan = o.$searchTable.CswSpan('init');
 
-        var topspandivid = makeId({ID: 'search_criteria_div', prefix: o.ID});
+        var topspandivid = Csw.makeId({ID: 'search_criteria_div', prefix: o.ID});
         var $topspandiv = $topspan.CswDiv('init',{ID: topspandivid})
                             .addClass('CswSearch_Div');
+        
         init();
 
         function modAdvanced(modOptions) {
@@ -77,17 +78,17 @@
     
             if('Advanced' === a.$link.text() || ( a.advancedIsHidden ) )
             {   
-                $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function() { $(this).show(); });
-                $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).show(); });
-                $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).hide(); });
+                $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function () { $(this).show(); });
+                $('.' + ViewBuilder_CssClasses.filter_select.name).each(function () { $(this).show(); });
+                $('.' + ViewBuilder_CssClasses.default_filter.name).each(function () { $(this).hide(); });
                 a.$link.text('Simple');
                 a.advancedIsHidden = false;
             }
             else if('Simple' === a.$link.text() || ( !a.advancedIsHidden ) )
             {
-                $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function() { $(this).hide(); });
-                $('.' + ViewBuilder_CssClasses.filter_select.name).each(function() { $(this).hide(); });
-                $('.' + ViewBuilder_CssClasses.default_filter.name).each(function() { $(this).show(); });
+                $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function () { $(this).hide(); });
+                $('.' + ViewBuilder_CssClasses.filter_select.name).each(function () { $(this).hide(); });
+                $('.' + ViewBuilder_CssClasses.default_filter.name).each(function () { $(this).show(); });
                 a.$link.text('Advanced');
                 a.advancedIsHidden = true;
             }
@@ -113,10 +114,10 @@
             }
         
             for (prop in properties) {
-                if (contains(properties, prop)) {
+                if (Csw.contains(properties, prop)) {
                     thisProp = properties[prop];
                     $nodeTypeCell = o.$searchTable.CswTable('cell', propRow, 2);
-                    nodeTypeId = makeId({ ID: 'viewbuilderpropid', suffix: thisProp.viewbuilderpropid, prefix: o.ID });
+                    nodeTypeId = Csw.makeId({ ID: 'viewbuilderpropid', suffix: thisProp.viewbuilderpropid, prefix: o.ID });
                     //node type
                     $nodeTypeCell.CswSpan('init', { ID: nodeTypeId,
                         value: thisProp.metadatatypename,
@@ -153,19 +154,19 @@
             function makeOptions(optionGroup) {
                 var opt, option, value, optionCol = '';
                 for (opt in optionGroup) {
-                    if (contains(optionGroup, opt)) {
+                    if (Csw.contains(optionGroup, opt)) {
                         option = optionGroup[opt];
-                        value = tryParseString(option.value, option.id);
-                        if(contains(option,'name') && false === isNullOrEmpty(value)) {
+                        value = Csw.string(option.value, option.id);
+                        if(Csw.contains(option,'name') && false === Csw.isNullOrEmpty(value)) {
                             optionCol += '<option id="' + option.id + '" type="' + option.type + '" value="' + value + '" ';
-                            if((isTrue(option.selected))) {
+                            if((Csw.bool(option.selected))) {
                                 optionCol += 'selected="selected" ';    
                             }
                             optionCol += '>' + option.name + '</option>';
                         }
                     }
                 }
-                if (false === isNullOrEmpty(optionCol)) {
+                if (false === Csw.isNullOrEmpty(optionCol)) {
                     $select.append('<optgroup label="' + optionGroup.label + '">' + optionCol + '</optgroup>');
                 }    
             }
@@ -176,9 +177,9 @@
         }
         
         function renderNodeTypeSearchContent() {
-            //Row 1, Column 1: empty (contains 'and' for View search)
+            //Row 1, Column 1: empty (Csw.contains 'and' for View search)
             //Row 1, Column 2: nodetypeselect picklist
-            var nodeTypeSelectId = makeId({ID: 'nodetype_select',prefix: o.ID}),
+            var nodeTypeSelectId = Csw.makeId({ID: 'nodetype_select',prefix: o.ID}),
                 $typeSelectCell, $select;
             
             $typeSelectCell = o.$searchTable.CswTable('cell', 2, 2) //1
@@ -189,7 +190,7 @@
                                     .CswAttrDom('id', nodeTypeSelectId)
                                     .CswAttrDom('name', nodeTypeSelectId)
                                     .addClass(CswSearch_CssClasses.nodetype_select.name)
-                                    .change( function() {
+                                    .change( function () {
                                            var $thisSelect = $(this);
                                            var r = {
                                                 nodetypeorobjectclassid: $thisSelect.val(),
@@ -204,7 +205,7 @@
                                     });
             o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrNonDom('type');
             
-            if (false === isNullOrEmpty(o.nodetypeorobjectclassid)) {
+            if (false === Csw.isNullOrEmpty(o.nodetypeorobjectclassid)) {
                 o.$nodeTypesSelect.find('option[id="' + o.optionId + '"]').CswAttrDom('selected',true);
             }
             $typeSelectCell.append(o.$nodeTypesSelect);
@@ -215,7 +216,7 @@
             //Row propRow, Column 3: properties 
             var $propSelectCell = o.$searchTable.CswTable('cell', propRow, 3)
                                     .empty();
-            var propSelectId = makeId({ID: 'property_select', prefix: o.ID});
+            var propSelectId = Csw.makeId({ID: 'property_select', prefix: o.ID});
 
 //            ocpSelect = o.propsData.select['Generic Properties'];
 //            
@@ -235,7 +236,7 @@
                                 .change(function () {
                                     var $this = $(this),
                                         thisPropId = $this.val(),
-                                        newOh = new ObjectHelper(o.propsData.properties);
+                                        newOh = Csw.object(o.propsData.properties);
                                     var r = {
                                         propertyid: thisPropId,
                                         selectedSubfieldVal: '',
@@ -254,13 +255,13 @@
                                             }); 
                                 });
                                 
-            if (false === isNullOrEmpty(o.propertyid)) {
+            if (false === Csw.isNullOrEmpty(o.propertyid)) {
                 $propSelect.val(o.propertyid).CswAttrDom('selected',true);
             }
             $propSelectCell.append($propSelect);
             
             o.propertyid = $propSelect.find(':selected').val();
-            var oH = new ObjectHelper(o.propsData.properties);
+            var oH = Csw.object(o.propsData.properties);
             o.selectedPropData = oH.find('viewbuilderpropid', o.propertyid);
         
             o.$searchTable.CswViewPropFilter('init', {
@@ -288,10 +289,10 @@
                 NodeKey: o.cswnbtnodekey
             };
 
-            CswAjaxJson({ 
+            Csw.ajax.post({ 
                         url: o.getNewPropsUrl,
                         data: jsonData,
-                        success: function(data) { 
+                        success: function (data) { 
                             o.propsData = data;
                             renderNodeTypeSearchContent();
                         }
@@ -308,7 +309,7 @@
                 //Row i, Column 1: cell for clear/advanced                                            
                 var $splitCell = o.$searchTable.CswTable('cell', o.bottomRow, o.bottomCell)
                                     .empty();
-                var splitCellTableId = makeId({prefix: o.ID, ID: 'split_cell_table'});
+                var splitCellTableId = Csw.makeId({prefix: o.ID, ID: 'split_cell_table'});
                 var $splitCellTable = $splitCell.CswTable('init',{ID: splitCellTableId, 
                                                                     cellpadding: 1,
                                                                     cellspacing: 1,
@@ -324,13 +325,13 @@
             //Row i, Column 1 (1/1): clear button
             var $clearButtonCell = $clearPosition.CswTable('cell', cellRow, clearCellNumber)
                                     .empty();
-            var clearButtonId = makeId({ID: 'clear_button', prefix: o.ID});
+            var clearButtonId = Csw.makeId({ID: 'clear_button', prefix: o.ID});
             //clear btn
             $clearButtonCell.CswButton({ID: clearButtonId,
                                         enabledText: 'Reset', //case 22756: this is more accurate name-to-behavior.
                                         disabledText: 'Reset',
                                         disableOnClick: false, 
-                                        onclick: function() 
+                                        onclick: function () 
                                         {
                                             o.onClearSubmit(o.parentviewid,o.viewmode);
                                         }
@@ -339,12 +340,12 @@
             //Row i, Column 1 (1/2): advanced link
             var $advancedLinkCell = $clearPosition.CswTable('cell', cellRow, advancedCellNumber)
                                     .empty();
-            var advancedLinkId = makeId({ID: 'advanced_options', prefix: o.ID});
+            var advancedLinkId = Csw.makeId({ID: 'advanced_options', prefix: o.ID});
             var $advancedLink = $advancedLinkCell.CswLink('init',{
                                                         ID: advancedLinkId,
                                                         href: 'javascript:void(0)',
                                                         value: (o.advancedIsHidden) ? 'Advanced' : 'Simple' })
-                                                    .click(function() {
+                                                    .click(function () {
                                                             o.advancedIsHidden = modAdvanced({'$link': $advancedLink, advancedIsHidden: o.advancedIsHidden });
                                                             return false;
                                                     });  
@@ -354,17 +355,17 @@
                                     .CswAttrDom({align: 'right'})
                                     .css({'text-align': 'right'})
                                     .empty();
-            var searchButtonId = makeId({ID: 'search_button', prefix: o.ID});
+            var searchButtonId = Csw.makeId({ID: 'search_button', prefix: o.ID});
             var $searchButton = $searchButtonCell.CswButton({ID: searchButtonId, 
                                                             enabledText: 'Search', 
                                                             disabledText: 'Searching', 
-                                                            onclick: function() { doSearch(); }
+                                                            onclick: function () { doSearch(); }
                                                   });
            $searchButton.CswViewPropFilter('bindToButton');
         } // renderSearchButtons()
 
         function init() {
-            var thisViewId = (false === isNullOrEmpty(o.searchviewid)) ? o.searchviewid : o.parentviewid; 
+            var thisViewId = (false === Csw.isNullOrEmpty(o.searchviewid)) ? o.searchviewid : o.parentviewid; 
             var jsonData = {
                 ViewId: thisViewId, 
                 SelectedNodeTypeIdNum: o.nodetypeorobjectclassid, 
@@ -372,13 +373,13 @@
                 NodeKey: o.cswnbtnodekey
             };
 
-            CswAjaxJson({ 
+            Csw.ajax.post({ 
                 'url': o.getClientSearchXmlUrl,
                 'data':jsonData,
-                'success': function(data) { 
+                'success': function (data) { 
                     $topspandiv.empty();
                     o.searchtype = data.searchtype;
-                    var searchTableId = makeId({prefix: o.ID, ID: 'search_tbl'});
+                    var searchTableId = Csw.makeId({prefix: o.ID, ID: 'search_tbl'});
                     o.$searchTable = $topspandiv.CswTable('init', { 
                                         ID: searchTableId, 
                                         cellpadding: 1,
@@ -395,7 +396,7 @@
                                    .CswImageButton({
                                         ButtonType: CswImageButton_ButtonType.Delete,
                                         AlternateText: 'Close',
-                                        ID: makeId({ 'prefix': o.ID, 'id': 'closebtn' }),
+                                        ID: Csw.makeId({ 'prefix': o.ID, 'id': 'closebtn' }),
                                         onClick: function () { 
                                             o.onSearchClose();
                                             return CswImageButton_ButtonType.None; 
@@ -415,7 +416,7 @@
                             break;
                     }
                 } // success
-            }); // CswAjaxJson
+            }); // Csw.ajax
         } // init()
 
         function doSearch() {
@@ -425,11 +426,11 @@
                 dataJson;
 
             function collectPropFilters() {
-                $('.' + ViewBuilder_CssClasses.filter_value.name).each(function() {
+                $('.' + ViewBuilder_CssClasses.filter_value.name).each(function () {
                     var $thisProp = $(this),
                         propsData = $thisProp.data('propsData'),
                         thisNodeProp = $thisProp.parent()
-                                                .parent() //we need the <tr> which contains the context for the whole prop
+                                                .parent() //we need the <tr> which Csw.contains the context for the whole prop
                                                 .CswViewPropFilter('getFilterJson',{
                                                     nodetypeorobjectclassid: o.nodetypeorobjectclassid,
                                                     relatedidtype: propsData.relatedidtype,  
@@ -456,7 +457,7 @@
                     
                     searchOpt = {
                         viewbuilderprops : props,
-                        parentviewid: $.CswCookie('get', CswCookieName.CurrentViewId)
+                        parentviewid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
                     };
                     break;
                 case 'viewsearch':
@@ -470,14 +471,14 @@
                     break;
             }
 
-            if (false === isNullOrEmpty(searchOpt)) {
+            if (false === Csw.isNullOrEmpty(searchOpt)) {
                 dataJson = {
                     SearchJson: searchOpt
                 };
-                CswAjaxJson({ 
+                Csw.ajax.post({ 
                     url: searchUrl,
                     data: dataJson,
-                    success: function(view) { 
+                    success: function (view) { 
                         o.searchviewid = view.searchviewid;
                         o.parentviewid = view.parentviewid;
                         o.viewmode = view.viewmode;

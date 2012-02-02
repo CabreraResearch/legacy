@@ -1,16 +1,12 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../pagecmp/CswDialog.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";        
     var pluginName = 'CswFieldTypeImage';
 
     var methods = {
-        init: function(o) { 
+        init: function (o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
@@ -21,16 +17,16 @@
 
                 var propVals = o.propData.values,
                     width, 
-                    href = '/NbtWebApp/wsNBT.asmx/' + tryParseString(propVals.href);
+                    href = '/NbtWebApp/wsNBT.asmx/' + Csw.string(propVals.href);
 
-                if(false === isNullOrEmpty(propVals.width) && 
-                   isNumeric(propVals.width)) {
-                    width = Math.abs(tryParseNumber(propVals.width, 100) - 36);
+                if(false === Csw.isNullOrEmpty(propVals.width) && 
+                   Csw.isNumeric(propVals.width)) {
+                    width = Math.abs(Csw.number(propVals.width, 100) - 36);
                 } else {
                     width = '';
                 }
                 
-                var fileName = tryParseString(propVals.name).trim();
+                var fileName = Csw.string(propVals.name).trim();
 
                 var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
                 var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
@@ -38,7 +34,7 @@
                 var $cell22 = $table.CswTable('cell', 2, 2).CswAttrDom('align', 'right');
                 var $cell23 = $table.CswTable('cell', 2, 3).CswAttrDom('align', 'right');
 
-                if ( false === isNullOrEmpty(fileName) ) {
+                if ( false === Csw.isNullOrEmpty(fileName) ) {
                     //Case 24389: IE interprets height and width absolutely, better not to use them at all.
                     $('<a href="' + href + '" target="_blank"><img src="' + href + '" alt="' + fileName + '"/></a>')
                         .appendTo($cell11);
@@ -56,20 +52,20 @@
                                 ButtonType: CswImageButton_ButtonType.Edit,
                                 AlternateText: 'Edit',
                                 ID: o.ID + '_edit',
-                                onClick: function() {
+                                onClick: function () {
                                     $.CswDialog('FileUploadDialog', {
                                         url: '/NbtWebApp/wsNBT.asmx/fileForProp',
                                         params: {
                                             PropId: o.propData.id
                                         },
-                                        onSuccess: function() {
+                                        onSuccess: function () {
                                             o.onReload();
                                         }
                                     });
                                     return CswImageButton_ButtonType.None;
                                 }
                             });
-                    if( false === isNullOrEmpty(fileName) ) {
+                    if( false === Csw.isNullOrEmpty(fileName) ) {
                         //Clear button
                         $('<div/>')
                             .appendTo($cell23)
@@ -77,7 +73,7 @@
                                     ButtonType: CswImageButton_ButtonType.Clear,
                                     AlternateText: 'Clear',
                                     ID: o.ID + '_clr',
-                                    onClick: function() {
+                                    onClick: function () {
                                         /* remember: confirm is globally blocking call */
                                         if (confirm("Are you sure you want to clear this image?")) {
                                             var dataJson = {
@@ -85,10 +81,10 @@
                                                 IncludeBlob: true
                                             };
 
-                                            CswAjaxJson({
+                                            Csw.ajax.post({
                                                     url: '/NbtWebApp/wsNBT.asmx/clearProp',
                                                     data: dataJson,
-                                                    success: function() { o.onReload(); }
+                                                    success: function () { o.onReload(); }
                                                 });
                                         }
                                         return CswImageButton_ButtonType.None;
@@ -98,8 +94,8 @@
                 }
             }
         },
-        save: function(o) { 
-            preparePropJsonForSave(o.propData);
+        save: function (o) { 
+            Csw.preparePropJsonForSave(o.propData);
         }
     };
     

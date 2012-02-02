@@ -1,26 +1,23 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";        
     var pluginName = 'CswFieldTypeScientific';
 
     var methods = {
-        init: function(o) { 
+        init: function (o) { 
 
             var $Div = $(this);
             var propVals = o.propData.values;
-            if (isTrue(o.ReadOnly)) {
+            if (Csw.bool(o.ReadOnly)) {
                 $Div.append(propVals.gestalt);
             } 
             else 
             {
                 var $ValueNTB = $Div.CswNumberTextBox({
                     ID: o.ID + '_val',
-                    Value: (false === o.Multi) ? tryParseString(propVals.base).trim() : CswMultiEditDefaultValue,
+                    Value: (false === o.Multi) ? Csw.string(propVals.base).trim() : CswMultiEditDefaultValue,
                     MaxValue: 999999999,
                     Precision: 0,
                     ReadOnly: o.ReadOnly,
@@ -31,7 +28,7 @@
                 $Div.append('E');
                 var $ExponentNTB = $Div.CswNumberTextBox({
                     ID:  o.ID + '_exp',
-                    Value: (false === o.Multi) ? tryParseString(propVals.exponent).trim() : CswMultiEditDefaultValue,
+                    Value: (false === o.Multi) ? Csw.string(propVals.exponent).trim() : CswMultiEditDefaultValue,
                     MaxValue: 999999,
                     Precision: 0,
                     ReadOnly: o.ReadOnly,
@@ -40,20 +37,20 @@
                     width: '40px'
                 });
 
-                if (!isNullOrEmpty($ValueNTB) && $ValueNTB.length > 0) {
+                if (!Csw.isNullOrEmpty($ValueNTB) && $ValueNTB.length > 0) {
                     $ValueNTB.clickOnEnter(o.$savebtn);
                 }
-                if (!isNullOrEmpty($ExponentNTB) && $ExponentNTB.length > 0) {
+                if (!Csw.isNullOrEmpty($ExponentNTB) && $ExponentNTB.length > 0) {
                     $ExponentNTB.clickOnEnter(o.$savebtn);
                 }
             }
         },
-        save: function(o) { //$propdiv, $xml
+        save: function (o) { //$propdiv, $xml
             var attributes = {
                 base: o.$propdiv.CswNumberTextBox('value', o.ID + '_val'),
                 exponent: o.$propdiv.CswNumberTextBox('value', o.ID + '_exp')
             };
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

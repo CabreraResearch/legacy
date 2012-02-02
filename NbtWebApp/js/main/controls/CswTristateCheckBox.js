@@ -4,7 +4,7 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="CswImageButton.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = 'CswTristateCheckBox';
 
@@ -18,13 +18,13 @@
                 Required: false,
                 Multi: false,
                 cssclass: 'CswTristateCheckBox',
-                onchange: function() { }
+                onchange: function () { }
             };
             if(options) $.extend(o, options);
 
             var $parent = $(this).empty(),
-                elementId = makeId({ prefix: o.prefix, ID: o.ID }),
-                tristateVal = tryParseString(o.Checked, 'null').toLowerCase(), //Case 21769
+                elementId = Csw.makeId({ prefix: o.prefix, ID: o.ID }),
+                tristateVal = Csw.string(o.Checked, 'null').toLowerCase(), //Case 21769
                 ret = $parent;
             
             if(o.ReadOnly) {
@@ -41,7 +41,7 @@
                                         ButtonType: getButtonType(tristateVal), 
                                         AlternateText: tristateVal,
                                         cssclass: o.cssclass,
-                                        onClick: function($ImageDiv) {
+                                        onClick: function ($ImageDiv) {
                                             o.onchange($ImageDiv); 
                                             return onClick($ImageDiv, o.Required);
                                         }
@@ -57,14 +57,14 @@
         reBindClick: function (id, required, onClickEvent) {
             var $this = $(this),
                 buttonType;   
-            if (isNullOrEmpty($this, true)) {
+            if (Csw.isNullOrEmpty($this, true)) {
                 $this = $('#' + id); 
             }
-            if (false === isNullOrEmpty($this, true)) {
-                $this.bind('click', function() {
+            if (false === Csw.isNullOrEmpty($this, true)) {
+                $this.bind('click', function () {
                     buttonType = onClick($this, required);
                     $this.CswImageButton('doClick', buttonType);
-                    if (isFunction(onClickEvent)) {
+                    if (Csw.isFunction(onClickEvent)) {
                         onClickEvent();
                     }
                     return false;
@@ -90,7 +90,7 @@
             newValue = CswImageButton_ButtonType.CheckboxTrue;
             newAltText = "true";
         } else if ( currentValue === "false") {
-            if ( isTrue(required) ) {
+            if ( Csw.bool(required) ) {
                 newValue = CswImageButton_ButtonType.CheckboxTrue;
                 newAltText = "true";
             } else {

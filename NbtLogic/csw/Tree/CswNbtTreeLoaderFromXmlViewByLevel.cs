@@ -88,7 +88,6 @@ namespace ChemSW.Nbt
                 _CswNbtResources.logMessage( "Tree View SQL required longer than 2 seconds to run: " + Sql );
             }
 
-
             Int32 PriorNodeId = Int32.MinValue;
             Collection<CswNbtNodeKey> NewNodeKeys = null;
             CswNbtNodeKey ParentNodeKey = null;
@@ -169,14 +168,35 @@ namespace ChemSW.Nbt
                 } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
 
             } // foreach(DataRow NodesRow in NodesTable.Rows)
-            
 
             // Recurse
             foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
             {
                 loadRelationshipRecursive( ChildRelationship );
             }
-            
+
+            // case 24678 - Mark truncated results
+            if( NodesTable.Rows.Count == thisResultLimit )
+            {
+                if( ParentNodeKey != null )
+                {
+                    // assume truncation on every potential parent
+                    _CswNbtTree.makeNodeCurrent( ParentNodeKey );
+                    _CswNbtTree.goToParentNode();
+                    for( Int32 c = 0; c < _CswNbtTree.getChildNodeCount(); c++ )
+                    {
+                        _CswNbtTree.goToNthChild( c );
+                        _CswNbtTree.setCurrentNodeChildrenTruncated( true );
+                        _CswNbtTree.goToParentNode();
+                    }
+                }
+                else
+                {
+                    _CswNbtTree.goToRoot();
+                    _CswNbtTree.setCurrentNodeChildrenTruncated( true );
+                }
+            }
+
             _CswNbtTree.makeNodeCurrent( PriorCurrentNodeKey );
 
         } // loadRelationshipRecursive()

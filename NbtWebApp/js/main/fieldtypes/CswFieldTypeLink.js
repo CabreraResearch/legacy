@@ -1,22 +1,19 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";        
     var pluginName = 'CswFieldTypeLink';
 
     var methods = {
-        init: function(o) { 
+        init: function (o) { 
 
             var $Div = $(this);
             $Div.contents().remove();
 
             var propVals = o.propData.values;
-            var text = (false === o.Multi) ? tryParseString(propVals.text).trim() : CswMultiEditDefaultValue;
-            var href = (false === o.Multi) ? tryParseString(propVals.href).trim() : CswMultiEditDefaultValue;
+            var text = (false === o.Multi) ? Csw.string(propVals.text).trim() : CswMultiEditDefaultValue;
+            var href = (false === o.Multi) ? Csw.string(propVals.href).trim() : CswMultiEditDefaultValue;
 
             var $Link = $('<a href="' + href + '" target="_blank">' + text + '</a>&nbsp;&nbsp;');
 
@@ -72,20 +69,20 @@
                 $edithref.clickOnEnter(o.$savebtn);
             }
         },
-        save: function(o) {
+        save: function (o) {
             var attributes = {
                 text: null,
                 href: null
             };
             var $edittext = o.$propdiv.find('#' + o.ID + '_text');
-            if (false === isNullOrEmpty($edittext)) {
+            if (false === Csw.isNullOrEmpty($edittext)) {
                 attributes.text = $edittext.val();
             }
             var $edithref = o.$propdiv.find('#' + o.ID + '_href');
-            if (false === isNullOrEmpty($edithref)) {
+            if (false === Csw.isNullOrEmpty($edithref)) {
                 attributes.href = $edithref.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

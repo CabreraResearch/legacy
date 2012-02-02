@@ -87,16 +87,15 @@ namespace ChemSW.Nbt.WebServices
 
             JObject Ret = new JObject();
 
-            string NodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
             string RelatedNodeId = string.Empty;
             string RelatedNodeTypeId = string.Empty;
             CswNbtNode Node = null;
             Int32 NodeTypeId = Int32.MinValue;
             Int32 NodeId = Int32.MinValue;
 
-            if( false == string.IsNullOrEmpty( NodeKey ) )
+            if( false == string.IsNullOrEmpty( SafeNodeKey ) )
             {
-                CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+                CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, SafeNodeKey );
                 Node = _CswNbtResources.Nodes[NbtNodeKey];
                 if( null != Node )
                 {
@@ -144,6 +143,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( HasChildren )
                 {
+                    SearchObj["haschildren"] = true;
                     Ret["Search"] = SearchObj;
                 }
 
@@ -195,7 +195,7 @@ namespace ChemSW.Nbt.WebServices
 
                 // DELETE
                 if( _MenuItems.Contains( "Delete" ) &&
-                    false == string.IsNullOrEmpty( NodeKey ) &&
+                    false == string.IsNullOrEmpty( SafeNodeKey ) &&
                     null != Node &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
                     Node.NodeSpecies == NodeSpecies.Plain &&
@@ -221,7 +221,7 @@ namespace ChemSW.Nbt.WebServices
 
                 // PRINT LABEL
                 if( _MenuItems.Contains( "Print Label" ) &&
-                    false == string.IsNullOrEmpty( NodeKey ) &&
+                    false == string.IsNullOrEmpty( SafeNodeKey ) &&
                     null != Node &&
                     null != Node.NodeType )
                 {

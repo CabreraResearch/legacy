@@ -1,20 +1,17 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";    
     var pluginName = 'CswFieldTypeDateTime';
 
     var methods = {
-        init: function(o) {
+        init: function (o) {
 
             var $Div = $(this);
             var propVals = o.propData.values;
-            var date = (false === o.Multi) ? tryParseString(propVals.value.date).trim() : CswMultiEditDefaultValue;
-            var time = (false === o.Multi) ? tryParseString(propVals.value.time).trim() : CswMultiEditDefaultValue;
+            var date = (false === o.Multi) ? Csw.string(propVals.value.date).trim() : CswMultiEditDefaultValue;
+            var time = (false === o.Multi) ? Csw.string(propVals.value.time).trim() : CswMultiEditDefaultValue;
             
             if(o.ReadOnly) {
                 $Div.append(o.propData.gestalt);    
@@ -23,8 +20,8 @@
                     ID: o.ID,
                     Date: date,
                     Time: time,
-                    DateFormat: ServerDateFormatToJQuery(propVals.value.dateformat),
-                    TimeFormat: ServerTimeFormatToJQuery(propVals.value.timeformat),
+                    DateFormat: Csw.serverDateFormatToJQuery(propVals.value.dateformat),
+                    TimeFormat: Csw.serverTimeFormatToJQuery(propVals.value.timeformat),
                     DisplayMode: propVals.displaymode,
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
@@ -34,7 +31,7 @@
                 $DTPickerDiv.find('input').clickOnEnter(o.$savebtn);
             }
         },
-        save: function(o) { //$propdiv, $xml
+        save: function (o) { //$propdiv, $xml
             var attributes, $DTPickerDiv, dateVal;
             attributes = { 
                 value: {
@@ -43,12 +40,12 @@
                 } 
             };
             $DTPickerDiv = o.$propdiv.find('#' + o.ID);
-            if (false === isNullOrEmpty($DTPickerDiv)) {
+            if (false === Csw.isNullOrEmpty($DTPickerDiv)) {
                 dateVal = $DTPickerDiv.CswDateTimePicker('value', o.propData.readonly);
                 attributes.value.date = dateVal.date;
                 attributes.value.time = dateVal.time;
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

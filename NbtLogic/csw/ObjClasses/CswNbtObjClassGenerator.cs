@@ -158,6 +158,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 bool SetDefaultParentType = ( ( false == ParentType.WasModified ||
                                                 ParentType.SelectedNodeTypeIds.Count == 0 ) &&
+                                                null != OwnerNode &&
                                                 OwnerNode.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass &&
                                                 ParentType.SelectMode != PropertySelectMode.Blank );
                 if( SetDefaultParentType )
@@ -200,11 +201,15 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         foreach( Int32 InspectionTargetNodeTypeId in TargetType.SelectedNodeTypeIds.ToIntCollection() )
                         {
-                            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetNodeTypeId ).LatestVersionNodeType;
-                            if( InspectionTargetNt.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass &&
-                                false == MatchingInspectionTargetNts.Contains( InspectionTargetNt ) )
+                            CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetNodeTypeId );
+                            if( null != InspectionTargetNt )
                             {
-                                MatchingInspectionTargetNts.Add( InspectionTargetNt );
+                                CswNbtMetaDataNodeType LatestInspectionTargetNt = InspectionTargetNt.LatestVersionNodeType;
+                                if( LatestInspectionTargetNt.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass &&
+                                    false == MatchingInspectionTargetNts.Contains( LatestInspectionTargetNt ) )
+                                {
+                                    MatchingInspectionTargetNts.Add( LatestInspectionTargetNt );
+                                }
                             }
                         }
                     }

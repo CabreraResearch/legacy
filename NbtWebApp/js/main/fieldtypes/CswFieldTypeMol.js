@@ -1,11 +1,7 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../thirdparty/js/jmol/Jmol.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = 'CswFieldTypeMol';
 
@@ -15,8 +11,8 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var width = 100; //tryParseString(propVals.width);
-            var mol = tryParseString(propVals.mol).trim();
+            var width = 100; //Csw.string(propVals.width);
+            var mol = Csw.string(propVals.mol).trim();
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
@@ -24,7 +20,7 @@
             var $cell22 = $table.CswTable('cell', 2, 2).css('textAlign', 'right');
             var $cell23 = $table.CswTable('cell', 2, 3).css('textAlign', 'right');
 
-            if (false === isNullOrEmpty(mol)) {
+            if (false === Csw.isNullOrEmpty(mol)) {
                 jmolInitialize('./js/thirdparty/js/jmol/', 'JmolApplet.jar');
                 jmolSetDocument(false);
                 var myApplet = jmolAppletInline('300px', mol);
@@ -34,7 +30,7 @@
                 //$Div.css('z-index', '0'); //this doesn't prevent jmol overlapping dialog
             }
 
-            if (false === isTrue(o.ReadOnly) && o.EditMode !== EditMode.AddInPopup.name) {
+            if (false === Csw.bool(o.ReadOnly) && o.EditMode !== EditMode.AddInPopup.name) {
                 /* Edit Button */
                 $('<div/>')
                     .appendTo($cell22)
@@ -70,7 +66,7 @@
                                     IncludeBlob: true
                                 };
 
-                                CswAjaxJson({
+                                Csw.ajax.post({
                                     url: '/NbtWebApp/wsNBT.asmx/clearProp',
                                     data: dataJson,
                                     success: function () { o.onReload(); }
@@ -83,7 +79,7 @@
 
         },
         save: function (o) { //$propdiv, o.propData
-            preparePropJsonForSave(o.propData);
+            Csw.preparePropJsonForSave(o.propData);
         }
     };
 
