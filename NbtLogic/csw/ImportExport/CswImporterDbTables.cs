@@ -736,6 +736,10 @@ namespace ChemSW.Nbt.ImportExport
                                                     CurrentImportProprow.Table.Columns[_ColName_Props_ImportTargetNodeIdUnique].ColumnName = _ColName_Props_ImportTargetNodeIdOriginal;
                                                     try
                                                     {
+
+                                                        //CHECK TARGET NODEYTPE HERE!!!
+                                                        //CurrentNodeTypeProp.FKType.
+                                                        //CurrentNodeTypeProp.FKValue
                                                         CurrentNbtNode.Properties[CurrentNodeTypeProp].ReadDataRow( CurrentImportProprow, ImportNodeIdToNbtNodeId, null );
                                                         PropAddCounter++;
                                                     }
