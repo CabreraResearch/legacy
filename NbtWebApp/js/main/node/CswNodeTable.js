@@ -34,7 +34,7 @@
 
             var $scrollingdiv = $parent.CswDiv({ ID: Csw.makeId({ id: o.ID, suffix: '_scrolldiv' }) })
                                     .css({
-                                        height: o.height + 'px',
+                                        height: o.maxheight + 'px',
                                         overflow: 'auto'
                                     });
 
