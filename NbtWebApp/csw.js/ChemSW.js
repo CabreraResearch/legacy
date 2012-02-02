@@ -31,10 +31,10 @@ window.abandonHope = false;
             /// <param name="isProtected" type="Boolean"> If true, the object cannot be removed from the namespace </param>
             /// <returns type="Boolean">True if the object name did not already exist in the namespace.</returns>
             var succeeded = false;
-            if (internal.methods.indexOf(name) !== -1) {
+            if (internal.methods.indexOf(name) === -1) {
                 internal.methods.push(name);
                 obj[name] = true; //for shimming our own instanceof
-                if (isProtected && internal.protectedmethods.indexOf(name) !== -1) {
+                if (isProtected && internal.protectedmethods.indexOf(name) === -1) {
                     internal.protectedmethods.push(name);
                 }
                 external[name] = obj;
@@ -50,7 +50,7 @@ window.abandonHope = false;
             /// <param name="name" type="String"> Name of the object.</param>
             /// <returns type="Boolean">True if the object was removed.</returns>
             var succeeded = false;
-            if (internal.protectedmethods.indexOf(name) !== -1) {
+            if (internal.protectedmethods.indexOf(name) === -1) {
                 if (internal.methods.indexOf(name) !== -1) {
                     internal.methods.splice(name, 1);
                 }

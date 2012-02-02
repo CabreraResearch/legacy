@@ -465,7 +465,7 @@
                             }
                         };
                         $.extend(g.gridOpts, gridJson);
-                        cswViewGrid = CswGrid(g, $viewgrid);
+                        cswViewGrid = Csw.grid(g, $viewgrid);
                         cswViewGrid.$gridPager.css({width: '100%', height: '20px'});
 
                         cswViewGrid.hideColumn(o.ColumnFullViewId);

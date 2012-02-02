@@ -11,15 +11,14 @@
             o.propVals = o.propData.values;
             o.$parent = $Div;
             if (false === Csw.bool(o.ReadOnly)) {
-                CswTimeInterval(o);
+                Csw.timeInterval(o);
             } else {
                 $Div.append(o.propData.gestalt);
             }
         },
         save: function (o) {
-            var clientDb = cswClientDb();
             //Case 20939: if your prop isn't saving, check for duplicate IDs
-            var intervalData = clientDb.getItem(o.ID + '_rateIntervalSave');
+            var intervalData = Csw.clientDb.getItem(o.ID + '_rateIntervalSave');
             var $this = $(this);
             
             try {

@@ -1,9 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../controls/CswGrid.js" />
-/// <reference path="../pagecmp/CswDialog.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function ($) { 
     "use strict";    
@@ -182,7 +178,7 @@
 
                         cswGridOpts.printUrl = getGridRowsUrl(true);
 
-                        ret = CswGrid(cswGridOpts, $parent);
+                        ret = Csw.grid(cswGridOpts, $parent);
 
                         if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);

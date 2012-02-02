@@ -1,14 +1,5 @@
-﻿/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../controls/CswNodeTypeSelect.js" />
-/// <reference path="../pagecmp/CswWizard.js" />
-/// <reference path="../controls/CswGrid.js" />
-/// <reference path="../pagecmp/CswDialog.js" />
-/// <reference path="../controls/CswTimeInterval.js" />
-/// <reference path="../controls/CswTable.js" />
-/// <reference path="../controls/CswSelect.js" />
+﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function ($) { 
     "use strict";
@@ -158,7 +149,7 @@
                             data: { AccessId: selectedCustomerId },
                             success: function (data) {
                                 $.extend(gridOptions.gridOpts, data);
-                                scheduledRulesGrid = CswGrid(gridOptions, $rulesGrid);
+                                scheduledRulesGrid = Csw.grid(gridOptions, $rulesGrid);
                             }
                         });
                 };

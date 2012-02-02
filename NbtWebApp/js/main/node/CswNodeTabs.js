@@ -393,16 +393,17 @@
         }
 
         function handleProp($layouttable, thisProp, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne) {
-            var propid = thisProp.id;
-            var fieldtype = thisProp.fieldtype;
-            var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
+            var propid = thisProp.id,
+                fieldtype = thisProp.fieldtype,
+                $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol),
+                $labelcell;
 
             if ((Csw.bool(thisProp.display, true) || configMode) &&
                 fieldtype !== Csw.enums.subFieldsMap.Image.name &&
                     fieldtype !== Csw.enums.subFieldsMap.Grid.name &&
                         fieldtype !== Csw.enums.subFieldsMap.Button.name &&
                             (o.filterToPropId === '' || o.filterToPropId === propid)) {
-                var $labelcell = _getLabelCell($cellset);
+                $labelcell = _getLabelCell($cellset);
                 $labelcell.addClass('propertylabel');
 
                 if (Csw.bool(thisProp.highlight)) {
@@ -412,21 +413,22 @@
 
             var helpText = Csw.string(thisProp.helptext);
             var propName = Csw.string(thisProp.name);
-            if (!Csw.isNullOrEmpty(helpText)) {
-                $labelcell.CswLink('init', {
-                    href: '#',
-                    cssclass: 'cswprop_helplink',
-                    title: helpText,
-                    onclick: function () {
-                        return false;
-                    },
-                    value: propName
-                });
+            if(false === Csw.isNullOrEmpty($labelcell)) {
+                if (false === Csw.isNullOrEmpty(helpText)) {
+                    $labelcell.CswLink('init', {
+                        href: '#',
+                        cssclass: 'cswprop_helplink',
+                        title: helpText,
+                        onclick: function () {
+                            return false;
+                        },
+                        value: propName
+                    });
 
-            } else {
-                $labelcell.append(propName);
+                } else {
+                    $labelcell.append(propName);
+                }
             }
-
             if (false === Csw.bool(thisProp.readonly)) {
                 AtLeastOne.Saveable = true;
                 if (o.ShowCheckboxes && Csw.bool(thisProp.copyable)) {

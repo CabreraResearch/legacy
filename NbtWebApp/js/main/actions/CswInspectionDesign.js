@@ -1,13 +1,5 @@
-﻿/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../controls/CswNodeTypeSelect.js" />
-/// <reference path="../pagecmp/CswWizard.js" />
-/// <reference path="../controls/CswGrid.js" />
-/// <reference path="../pagecmp/CswDialog.js" />
-/// <reference path="../controls/CswTimeInterval.js" />
-/// <reference path="../controls/CswTable.js" />
+﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function ($) { 
     "use strict";
@@ -427,7 +419,7 @@
                 } else {
                     $.extend(gridOptions.gridOpts, jqGridOpts);
                 }
-                inspectionGrid = CswGrid(gridOptions, $previewGrid);
+                inspectionGrid = Csw.grid(gridOptions, $previewGrid);
             },
 
             //File upload button for Step 3
@@ -615,7 +607,7 @@
                                 value: 'Creating a new Inspection Design <b>' + selectedInspectionDesign.name + '</b>.'
                             });
 
-                            CswGrid(confirmGridOptions, $confirmationDesign);
+                            Csw.grid(confirmGridOptions, $confirmationDesign);
                         } else {
                             $confirmationList.CswList('addItem', {
                                 value: 'Assigning Inspection Design <b>' + selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + selectedInspectionTarget + '</b>.'

@@ -78,8 +78,7 @@
                 if (undefined !== logger.setEnded) {
                     logger.setEnded();
                 }
-                var logStorage = cswClientDb();
-                var log = logStorage.getItem('debuglog');
+                var log = Csw.clientDb.getItem('debuglog');
                 log += logger.toHtml();
 
                 logStorage.setItem('debuglog', log);

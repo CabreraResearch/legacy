@@ -1,12 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../pagecmp/CswWizard.js" />
-/// <reference path="CswViewPropFilter.js" />
-/// <reference path="../controls/CswButton.js" />
-/// <reference path="../controls/CswSelect.js" />
-/// <reference path="../controls/CswGrid.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function ($) { 
     "use strict";

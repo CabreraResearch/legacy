@@ -1,9 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../controls/CswGrid.js" />
-/// <reference path="../pagecmp/CswDialog.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function ($) { 
     "use strict";
@@ -20,10 +16,9 @@
                 nodeid: '',
                 cswnbtnodekey: '',
                 EditMode: Csw.enums.editMode.Edit,
-                //onAddNode: function (nodeid,cswnbtnodekey){},
-                onEditNode: null, //function (nodeid,cswnbtnodekey){},
-                onDeleteNode: null, //function (nodeid,cswnbtnodekey){}
-                onSuccess: null, // function () {}
+                onEditNode: null, 
+                onDeleteNode: null,
+                onSuccess: null, 
                 columns: 3,      // number of columns to use
                 maxlength: 35,   // max length of node names and property values
                 rowpadding: 25,  // padding between table rows, in pixels
