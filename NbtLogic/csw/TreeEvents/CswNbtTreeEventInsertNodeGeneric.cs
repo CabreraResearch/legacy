@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Data;
-using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
 //using ChemSW.Nbt.PropTypes;
 

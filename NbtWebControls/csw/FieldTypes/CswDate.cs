@@ -1,10 +1,9 @@
 using System;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using Telerik.Web.UI;
+using ChemSW.CswWebControls;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
-using ChemSW.CswWebControls;
+using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {

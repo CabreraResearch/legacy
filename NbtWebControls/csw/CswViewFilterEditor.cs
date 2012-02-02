@@ -1,19 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Collections.ObjectModel;
-using System.Collections;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using Telerik.Web.UI;
-using ChemSW.CswWebControls;
 
 namespace ChemSW.NbtWebControls
 {

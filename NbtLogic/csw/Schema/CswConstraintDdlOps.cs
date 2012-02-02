@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using ChemSW.Core;
-using ChemSW.RscAdo;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 

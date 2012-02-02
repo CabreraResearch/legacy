@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
+using System.Reflection;
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
-using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 

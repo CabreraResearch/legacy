@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
-using System.Linq;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using ChemSW.Core;
 using ChemSW.Exceptions;

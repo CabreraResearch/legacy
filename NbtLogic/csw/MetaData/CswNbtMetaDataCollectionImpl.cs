@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using ChemSW.DB;
 using ChemSW.Core;
-using ChemSW.Exceptions;
+using ChemSW.DB;
 
 namespace ChemSW.Nbt.MetaData
 {
