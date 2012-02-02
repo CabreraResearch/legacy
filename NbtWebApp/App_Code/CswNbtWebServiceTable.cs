@@ -16,6 +16,8 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceTable
     {
+        Int32 MaxLength = 35;
+        
         private readonly CswNbtResources _CswNbtResources;
         public CswNbtWebServiceTable( CswNbtResources CswNbtResources )
         {
@@ -71,6 +73,16 @@ namespace ChemSW.Nbt.WebServices
 
         } // getTable()
 
+        private string _Truncate( string InStr )
+        {
+            string OutStr = InStr;
+            if( OutStr.Length > MaxLength )
+            {
+                OutStr = OutStr.Substring( 0, MaxLength ) + "...";
+            }
+            return OutStr;
+        } // _Truncate()
+
         private JObject _makeNodeObj( CswNbtView View, ICswNbtTree Tree )
         {
             JObject ret = new JObject();
@@ -78,7 +90,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeKey.NodeTypeId );
 
-            ret["nodename"] = Tree.getNodeNameForCurrentPosition();
+            ret["nodename"] = _Truncate( Tree.getNodeNameForCurrentPosition() );
             ret["nodeid"] = NodeId.ToString();
             ret["nodekey"] = NodeKey.ToString();
             ret["locked"] = Tree.getNodeLockedForCurrentPosition().ToString().ToLower();
@@ -137,7 +149,7 @@ namespace ChemSW.Nbt.WebServices
                     JObject ThisProp = new JObject();
                     ThisProp["propid"] = PropId.ToString();
                     ThisProp["propname"] = PropName;
-                    ThisProp["gestalt"] = Gestalt;
+                    ThisProp["gestalt"] = _Truncate( Gestalt );
                     
                     PropObjs.Add(OrderMap[NodeTypePropId], ThisProp);
                 }

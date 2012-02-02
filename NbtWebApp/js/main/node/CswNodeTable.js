@@ -25,7 +25,6 @@
                 onDeleteNode: null, //function (nodeid,cswnbtnodekey){}
                 onSuccess: null, // function () {}
                 columns: 3,      // number of columns to use
-                maxlength: 35,   // max length of node names and property values
                 rowpadding: 25,  // padding between table rows, in pixels
                 maxheight: 600   // maximum display height of table, in pixels
             };
@@ -78,12 +77,7 @@
                                                     width: width
                                                 });
                         // Name
-                        var name;
-                        if (nodeObj.nodename.length > o.maxlength) {
-                            name = '<b>' + nodeObj.nodename.substr(0, o.maxlength) + '...</b>';
-                        } else {
-                            name = '<b>' + nodeObj.nodename + '</b>';
-                        }
+                        var name = '<b>' + nodeObj.nodename + '</b>';
 
                         if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                             $thumbnailcell.append('<img src="' + nodeObj.thumbnailurl + '" style="max-width: 90%;">');
@@ -98,11 +92,7 @@
                         // Props
                         Csw.crawlObject(nodeObj.props, function (propObj) {
                             $textcell.append('' + propObj.propname + ': ');
-                            if (propObj.gestalt.length > o.maxlength) {
-                                $textcell.append(propObj.gestalt.substr(0, o.maxlength) + '...');
-                            } else {
-                                $textcell.append(propObj.gestalt);
-                            }
+                            $textcell.append(propObj.gestalt);
                             $textcell.append('<br/>');
                         });
 
