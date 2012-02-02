@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
 
             // Add 'default' Table layout elements for the nodetype to the view for efficiency
-            Int32 Order = 10;
+            Int32 Order = -1000;
             foreach( CswNbtViewRelationship ViewRel in View.Root.ChildRelationships )
             {
                 if( ViewRel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
@@ -78,7 +78,6 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeKey.NodeTypeId );
 
-            ret = new JObject();
             ret["nodename"] = Tree.getNodeNameForCurrentPosition();
             ret["nodeid"] = NodeId.ToString();
             ret["nodekey"] = NodeKey.ToString();
@@ -92,29 +91,33 @@ namespace ChemSW.Nbt.WebServices
             ret["allowedit"] = ( ViewRel.AllowEdit && CanEdit ).ToString().ToLower();
             ret["allowdelete"] = ( ViewRel.AllowDelete && CanDelete ).ToString().ToLower();
 
-            JArray PropsArray = new JArray();
             if( NodeType != null )
             {
                 // default image, overridden below
                 ret["thumbnailurl"] = "Images/icons/" + NodeType.IconFileName;
             }
 
-            //// Props in the Table Layout of the node
-            //// This is gonna be expensive.
-            //foreach( CswNbtMetaDataNodeTypeProp Prop in  )
-            //{
-            //    CswPropIdAttr PropId = new CswPropIdAttr( NodeId, Prop.PropId );
-            //    CswNbtNode CurrentNode = Tree.getNodeForCurrentPosition();
-            //    CswNbtNodePropWrapper PropWrapper = CurrentNode.Properties[Prop];
-            //    _handleProp( ret,
-            //                 PropId,
-            //                 Prop.FieldType.FieldType.ToString(),
-            //                 Prop.PropName,
-            //                 PropWrapper.Gestalt,
-            //                 PropWrapper.JctNodePropId );
-            //}
+            // Map property order to insert position
+            Dictionary<Int32, Int32> OrderMap = new Dictionary<Int32, Int32>();
+            foreach( CswNbtViewProperty ViewProp in ViewRel.Properties )
+            {
+                Int32 ThisOrder = 0;
+                foreach( CswNbtViewProperty OtherViewProp in ViewRel.Properties )
+                {
+                    if( OtherViewProp.Order < ViewProp.Order || ViewProp.Order == Int32.MinValue )
+                    {
+                        ThisOrder++;
+                    }
+                }
+                while( OrderMap.ContainsValue( ThisOrder ) )
+                {
+                    ThisOrder++;
+                }
+                OrderMap.Add( ViewProp.NodeTypePropId, ThisOrder );
+            } // foreach( CswNbtViewProperty ViewProp in ViewRel.Properties )
 
             // Props in the View
+            SortedList<Int32, JObject> PropObjs = new SortedList<Int32, JObject>();
             foreach( XElement PropElm in Tree.getChildNodePropsOfNode() )
             {
                 Int32 NodeTypePropId = CswConvert.ToInt32( PropElm.Attribute( "nodetypepropid" ).Value );
@@ -135,9 +138,17 @@ namespace ChemSW.Nbt.WebServices
                     ThisProp["propid"] = PropId.ToString();
                     ThisProp["propname"] = PropName;
                     ThisProp["gestalt"] = Gestalt;
-                    PropsArray.Add( ThisProp );
+                    
+                    PropObjs.Add(OrderMap[NodeTypePropId], ThisProp);
                 }
             } // foreach( XElement PropElm in NodeElm.Elements() )
+
+            // insert in order
+            JArray PropsArray = new JArray();
+            foreach( JObject PropObj in PropObjs.Values )
+            {
+                PropsArray.Add( PropObj );
+            }
             ret["props"] = PropsArray;
 
             return ret;
