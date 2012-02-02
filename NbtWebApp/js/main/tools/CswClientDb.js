@@ -4,7 +4,7 @@
 /// <reference path="../../globals/CswPrototypeExtensions.js" />
 
 //#region CswClientDb
-function CswClientDb() {
+function cswClientDb() {
     
     /// <summary>
     ///   Client db class to encapsulate get/set/update and delete methods against the localStorage object.

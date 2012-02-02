@@ -45,6 +45,7 @@
         ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
         /// </param>
         /// <returns type="String">A concatenated string of provided values</returns>
+        var elementId;
         var o = {
             ID: '',
             prefix: Csw.string(prefix),
@@ -57,7 +58,7 @@
             o.ID = Csw.string(options);
         }
         
-        var elementId = o.ID;
+        elementId = o.ID;
         if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
             elementId = o.prefix + o.Delimiter + elementId;
         }
@@ -79,6 +80,7 @@
         ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
         /// </param>
         /// <returns type="String">A concatenated string of provided values</returns>
+        var elementId, i, toReplace;
         var o = {
             ID: '',
             prefix: Csw.string(prefix),
@@ -91,15 +93,15 @@
             o.ID = Csw.string(options);
         }
         
-        var elementId = o.ID;
-        var toReplace = [ /'/gi , / /gi , /\//g ];
+        elementId = o.ID;
+        toReplace = [ /'/gi , / /gi , /\//g ];
         if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
             elementId = o.prefix + o.Delimiter + elementId;
         }
         if (false === Csw.isNullOrEmpty(o.suffix) && false === Csw.isNullOrEmpty(elementId)) {
             elementId += o.Delimiter + o.suffix;
         }
-        for (var i = 0; i < toReplace.length; i++) {
+        for (i = 0; i < toReplace.length; i+=1) {
             if (Csw.contains(toReplace, i)) {
                 if (false === Csw.isNullOrEmpty(elementId)) {
                     elementId = elementId.replace(toReplace[i], '');

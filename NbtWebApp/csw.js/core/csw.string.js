@@ -78,7 +78,7 @@
             }
         }
         return ret;
-    };
+    }
     Csw.register('getTimeString', getTimeString);
     Csw.getTimeString = Csw.getTimeString || getTimeString;
 

@@ -1,5 +1,5 @@
 ﻿(function CswWindow() {
-
+    'use strict';
     //#region Window
 
     //Case 24114: IE7 doesn't support web storage

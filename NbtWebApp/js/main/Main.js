@@ -38,8 +38,7 @@ window.initMain = window.initMain || function (undefined) {
     } else {
         initAll();
     }
-
-
+    
     function initAll() {
         //if (debugOn()) Csw.log('Main.initAll()');
 
