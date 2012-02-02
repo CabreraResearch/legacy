@@ -333,10 +333,10 @@
             dataType: dataType,
             ajaxInProgress: ajaxInProgress,
             onBeforeAjax: function(func) {
-                onBeforeAjax = func
+                onBeforeAjax = func;
             },
             onAfterAjax: function(func) {
-                onAfterAjax = func
+                onAfterAjax = func;
             }
         };
 
