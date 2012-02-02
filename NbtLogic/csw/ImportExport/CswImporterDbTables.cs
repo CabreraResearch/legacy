@@ -740,6 +740,16 @@ namespace ChemSW.Nbt.ImportExport
                                                         //CHECK TARGET NODEYTPE HERE!!!
                                                         //CurrentNodeTypeProp.FKType.
                                                         //CurrentNodeTypeProp.FKValue
+
+                                                        if( CurrentNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                                                        {
+                                                            CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( CurrentNodeTypeProp.FKValue );
+                                                        }
+                                                        else if( CurrentNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+                                                        {
+                                                            CswNbtMetaDataObjectClass RelatedObjectClass = _CswNbtResources.MetaData.getObjectClass( CurrentNodeTypeProp.FKValue );
+                                                        }
+
                                                         CurrentNbtNode.Properties[CurrentNodeTypeProp].ReadDataRow( CurrentImportProprow, ImportNodeIdToNbtNodeId, null );
                                                         PropAddCounter++;
                                                     }
