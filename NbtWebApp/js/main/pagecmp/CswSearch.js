@@ -78,17 +78,17 @@
     
             if('Advanced' === a.$link.text() || ( a.advancedIsHidden ) )
             {   
-                $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function () { $(this).show(); });
-                $('.' + ViewBuilder_CssClasses.filter_select.name).each(function () { $(this).show(); });
-                $('.' + ViewBuilder_CssClasses.default_filter.name).each(function () { $(this).hide(); });
+                $('.' + Csw.enums.cssClasses_ViewBuilder.subfield_select.name).each(function () { $(this).show(); });
+                $('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name).each(function () { $(this).show(); });
+                $('.' + Csw.enums.cssClasses_ViewBuilder.default_filter.name).each(function () { $(this).hide(); });
                 a.$link.text('Simple');
                 a.advancedIsHidden = false;
             }
             else if('Simple' === a.$link.text() || ( !a.advancedIsHidden ) )
             {
-                $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function () { $(this).hide(); });
-                $('.' + ViewBuilder_CssClasses.filter_select.name).each(function () { $(this).hide(); });
-                $('.' + ViewBuilder_CssClasses.default_filter.name).each(function () { $(this).show(); });
+                $('.' + Csw.enums.cssClasses_ViewBuilder.subfield_select.name).each(function () { $(this).hide(); });
+                $('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name).each(function () { $(this).hide(); });
+                $('.' + Csw.enums.cssClasses_ViewBuilder.default_filter.name).each(function () { $(this).show(); });
                 a.$link.text('Advanced');
                 a.advancedIsHidden = true;
             }
@@ -121,7 +121,7 @@
                     //node type
                     $nodeTypeCell.CswSpan('init', { ID: nodeTypeId,
                         value: thisProp.metadatatypename,
-                        cssclass: ViewBuilder_CssClasses.metadatatype_static.name})
+                        cssclass: Csw.enums.cssClasses_ViewBuilder.metadatatype_static.name})
                         .CswAttrNonDom('relatedidtype', thisProp.relatedidtype);
                     o.selectedSubfieldVal = '';
                     o.selectedFilterVal = '';
@@ -189,7 +189,7 @@
             o.$nodeTypesSelect = $select
                                     .CswAttrDom('id', nodeTypeSelectId)
                                     .CswAttrDom('name', nodeTypeSelectId)
-                                    .addClass(CswSearch_CssClasses.nodetype_select.name)
+                                    .addClass(Csw.enums.searchCssClasses.nodetype_select.name)
                                     .change( function () {
                                            var $thisSelect = $(this);
                                            var r = {
@@ -232,7 +232,7 @@
             specProps.label = 'Specific Properties';
             var $propSelect = makeSelect(genProps, specProps)
                                 .CswAttrDom('id', propSelectId)
-                                .addClass(CswSearch_CssClasses.property_select.name)
+                                .addClass(Csw.enums.searchCssClasses.property_select.name)
                                 .change(function () {
                                     var $this = $(this),
                                         thisPropId = $this.val(),
@@ -394,12 +394,12 @@
                                    .CswAttrDom({align: 'right'})
                                    .css({'text-align': 'right'})
                                    .CswImageButton({
-                                        ButtonType: CswImageButton_ButtonType.Delete,
+                                        ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                                         AlternateText: 'Close',
                                         ID: Csw.makeId({ 'prefix': o.ID, 'id': 'closebtn' }),
                                         onClick: function () { 
                                             o.onSearchClose();
-                                            return CswImageButton_ButtonType.None; 
+                                            return Csw.enums.imageButton_ButtonType.None; 
                                         }
                                     });
                     
@@ -426,7 +426,7 @@
                 dataJson;
 
             function collectPropFilters() {
-                $('.' + ViewBuilder_CssClasses.filter_value.name).each(function () {
+                $('.' + Csw.enums.cssClasses_ViewBuilder.filter_value.name).each(function () {
                     var $thisProp = $(this),
                         propsData = $thisProp.data('propsData'),
                         thisNodeProp = $thisProp.parent()

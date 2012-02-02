@@ -11,13 +11,13 @@
 
         init: function (options) {
             var o = {
-                ButtonType: CswImageButton_ButtonType.None,
+                ButtonType: Csw.enums.imageButton_ButtonType.None,
                 Active: false,
                 AlternateText: '',
                 ID: '',
                 cssclass: '',
                 Required: false,
-                onClick: function () { return CswImageButton_ButtonType.None; }
+                onClick: function () { return Csw.enums.imageButton_ButtonType.None; }
             };
 
             if (options) {
@@ -73,7 +73,7 @@
             prefix += ':' + port;
         }
         prefix += '/NbtWebApp';
-        if (newButtonType !== undefined && newButtonType !== CswImageButton_ButtonType.None) {
+        if (newButtonType !== undefined && newButtonType !== Csw.enums.imageButton_ButtonType.None) {
             $ImageDiv.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') 0px ' + newButtonType * multiplier + 'px no-repeat';
             $ImageDiv.unbind('mouseover');
             $ImageDiv.unbind('mouseout');

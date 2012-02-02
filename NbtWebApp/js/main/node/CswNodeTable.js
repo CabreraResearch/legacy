@@ -19,7 +19,7 @@
                 ID: '',
                 nodeid: '',
                 cswnbtnodekey: '',
-                EditMode: EditMode.Edit.name,
+                EditMode: Csw.enums.editMode.Edit,
                 //onAddNode: function (nodeid,cswnbtnodekey){},
                 onEditNode: null, //function (nodeid,cswnbtnodekey){},
                 onDeleteNode: null, //function (nodeid,cswnbtnodekey){}

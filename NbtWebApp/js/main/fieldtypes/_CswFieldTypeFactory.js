@@ -52,7 +52,7 @@ $.CswFieldTypeFactory = function (method) {
         ID: '',
         Required: '',
         ReadOnly: '',
-        EditMode: EditMode.Edit.name,
+        EditMode: Csw.enums.editMode.Edit,
         Multi: false,
         onEditView: function () { }
     };
@@ -65,7 +65,7 @@ $.CswFieldTypeFactory = function (method) {
             }
             m.ID = m.propData.id;
             m.Required = Csw.bool(m.propData.required);
-            m.ReadOnly = Csw.bool(m.propData.readonly) || m.EditMode === EditMode.PrintReport.name;
+            m.ReadOnly = Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
 
             switch (m.fieldtype) {
                 case "AuditHistoryGrid":

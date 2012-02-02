@@ -35,12 +35,12 @@
             var name = itemJson.viewname;
             var rel = 'root';
             types.root = { icon: { image: Csw.string(itemJson.iconfilename)} };
-            var linkclass = viewEditClasses.vieweditor_viewrootlink.name;
+            var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrootlink.name;
 
-            var $ret = makeViewListItem(arbid, linkclass, name, false, childPropNames.root, rel);
+            var $ret = makeViewListItem(arbid, linkclass, name, false, Csw.enums.viewChildPropNames.root, rel);
 
-            if (itemJson.hasOwnProperty(childPropNames.childrelationships.name)) {
-                var rootRelationships = itemJson[childPropNames.childrelationships.name];
+            if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.childrelationships.name)) {
+                var rootRelationships = itemJson[Csw.enums.viewChildPropNames.childrelationships.name];
                 makeViewRelationshipsRecursive(rootRelationships, types, $ret);
             }
 
@@ -59,13 +59,13 @@
                 }
             }
             var rel = Csw.string(itemJson.secondtype) + '_' + Csw.string(itemJson.secondid);
-            var linkclass = viewEditClasses.vieweditor_viewrellink.name;
+            var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrellink.name;
             types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename)} };
 
-            var $ret = makeViewListItem(arbid, linkclass, name, childPropNames.childrelationships, rel);
+            var $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.childrelationships, rel);
 
-            if (itemJson.hasOwnProperty(childPropNames.properties.name)) {
-                var propJson = itemJson[childPropNames.properties.name];
+            if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.properties.name)) {
+                var propJson = itemJson[Csw.enums.viewChildPropNames.properties.name];
                 if (!Csw.isNullOrEmpty(propJson)) {
                     var $propUl = $('<ul></ul>');
                     for (var prop in propJson) {
@@ -97,8 +97,8 @@
                         if (false === Csw.isNullOrEmpty($rel)) {
                             $ul.append($rel);
                         }
-                        if (thisRelationship.hasOwnProperty(childPropNames.childrelationships.name)) {
-                            var childRelationships = thisRelationship[childPropNames.childrelationships.name];
+                        if (thisRelationship.hasOwnProperty(Csw.enums.viewChildPropNames.childrelationships.name)) {
+                            var childRelationships = thisRelationship[Csw.enums.viewChildPropNames.childrelationships.name];
                             makeViewRelationshipsRecursive(childRelationships, types, $rel);
                         }
                     }
@@ -114,14 +114,14 @@
             var arbid = itemJson.arbitraryid;
             var name = itemJson.name;
             var rel = 'property';
-            var linkclass = viewEditClasses.vieweditor_viewproplink.name;
+            var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewproplink.name;
             if (false === Csw.isNullOrEmpty(name)) {
-                $ret = makeViewListItem(arbid, linkclass, name, childPropNames.properties, rel);
+                $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.properties, rel);
             }
             if (!Csw.isNullOrEmpty($ret)) {
                 var $filtUl = $('<ul></ul>');
-                if (itemJson.hasOwnProperty(childPropNames.propfilters.name)) {
-                    var filterJson = itemJson[childPropNames.propfilters.name];
+                if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
+                    var filterJson = itemJson[Csw.enums.viewChildPropNames.propfilters.name];
                     if (!Csw.isNullOrEmpty(filterJson)) {
                         for (var filter in filterJson) {
                             if (filterJson.hasOwnProperty(filter)) {
@@ -154,7 +154,7 @@
                 var selectedFilterMode = Csw.string(itemJson.filtermode);
                 var filterValue = Csw.string(itemJson.value);
                 var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
-                var $filtLink = makeViewListItem(filtArbitraryId, viewEditClasses.vieweditor_viewfilterlink.name, name, false, childPropNames.filters, rel);
+                var $filtLink = makeViewListItem(filtArbitraryId, Csw.enums.cssClasses_ViewEdit.vieweditor_viewfilterlink.name, name, false, Csw.enums.viewChildPropNames.filters, rel);
                 if (false === Csw.isNullOrEmpty($filtLink)) {
                     $ret = $filtLink;
                 }

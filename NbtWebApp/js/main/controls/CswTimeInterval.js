@@ -30,23 +30,23 @@ var CswTimeInterval = function (options) {
             $weeklyradio = $weeklyradiocell.CswInput('init', {
                 ID: o.ID + '_type_weekly',
                 name: o.ID + '_type',
-                type: CswInput_Types.radio,
+                type: Csw.enums.inputTypes.radio,
                 value: 'weekly'
-            }).CswAttrDom('checked', (rateType === CswRateIntervalTypes.WeeklyByDay)),
+            }).CswAttrDom('checked', (rateType === Csw.enums.rateIntervalTypes.WeeklyByDay)),
             $monthlyradiocell = $table.CswTable('cell', 2, 1),
             $monthlyradio = $monthlyradiocell.CswInput('init', {
                 ID: o.ID + '_type_monthly',
                 name: o.ID + '_type',
-                type: CswInput_Types.radio,
+                type: Csw.enums.inputTypes.radio,
                 value: 'monthly'
-            }).CswAttrDom('checked', (rateType === CswRateIntervalTypes.MonthlyByDate || rateType === CswRateIntervalTypes.MonthlyByWeekAndDay)),
+            }).CswAttrDom('checked', (rateType === Csw.enums.rateIntervalTypes.MonthlyByDate || rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay)),
             $yearlyradiocell = $table.CswTable('cell', 3, 1),
             $yearlyradio = $yearlyradiocell.CswInput('init', {
                 ID: o.ID + '_type_yearly',
                 name: o.ID + '_type',
-                type: CswInput_Types.radio,
+                type: Csw.enums.inputTypes.radio,
                 value: 'yearly'
-            }).CswAttrDom('checked', (rateType === CswRateIntervalTypes.YearlyByDate));
+            }).CswAttrDom('checked', (rateType === Csw.enums.rateIntervalTypes.YearlyByDate));
 
         function onChange() {
             if (Csw.isFunction(o.onchange)) {
@@ -59,7 +59,7 @@ var CswTimeInterval = function (options) {
         //Weekly
         $table.CswTable('cell', 1, 2).append('<span>&nbsp;Weekly</span>');
         $weeklyradio.click(function () {
-            rateType = CswRateIntervalTypes.WeeklyByDay;
+            rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
             rateInterval.ratetype = rateType;
             $WeeklyDiv = $WeeklyDiv || weeklyWeekPicker($pickerCell, o.onchange, false);
             onChange();
@@ -68,7 +68,7 @@ var CswTimeInterval = function (options) {
         //Monthly
         $table.CswTable('cell', 2, 2).append('<span>&nbsp;Monthly</span>');
         $monthlyradio.click(function () {
-            rateType = CswRateIntervalTypes.MonthlyByDate;
+            rateType = Csw.enums.rateIntervalTypes.MonthlyByDate;
             rateInterval.ratetype = rateType;
             $MonthlyDiv = $MonthlyDiv || makeMonthlyPicker($pickerCell);
             onChange();
@@ -77,7 +77,7 @@ var CswTimeInterval = function (options) {
         //Yearly
         $table.CswTable('cell', 3, 2).append('<span>&nbsp;Yearly</span>');
         $yearlyradio.click(function () {
-            rateType = CswRateIntervalTypes.YearlyByDate;
+            rateType = Csw.enums.rateIntervalTypes.YearlyByDate;
             rateInterval.ratetype = rateType;
             $YearlyDiv = $YearlyDiv || makeYearlyDatePicker($pickerCell);
             onChange();
@@ -101,25 +101,25 @@ var CswTimeInterval = function (options) {
             $YearlyDiv.hide();
         }
         switch (interval) {
-            case CswRateIntervalTypes.WeeklyByDay:
+            case Csw.enums.rateIntervalTypes.WeeklyByDay:
                 $WeeklyDiv.show();
                 if (abandonHope) {
                     $weeklyradio.attr('checked', true);
                 }
                 break;
-            case CswRateIntervalTypes.MonthlyByDate:
+            case Csw.enums.rateIntervalTypes.MonthlyByDate:
                 $MonthlyDiv.show();
                 if (abandonHope) {
                     $monthlyradio.attr('checked', true);
                 }
                 break;
-            case CswRateIntervalTypes.MonthlyByWeekAndDay:
+            case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
                 $MonthlyDiv.show();
                 if (abandonHope) {
                     $monthlyradio.attr('checked', true);
                 }
                 break;
-            case CswRateIntervalTypes.YearlyByDate:
+            case Csw.enums.rateIntervalTypes.YearlyByDate:
                 $YearlyDiv.show();
                 if (abandonHope) {
                     $yearlyradio.attr('checked', true);
@@ -134,7 +134,7 @@ var CswTimeInterval = function (options) {
         //return (function () {
             var weeklyDayPickerComplete = false,
                 $ret, weekdays, $startingDate,
-                isWeekly = (thisRateType === CswRateIntervalTypes.WeeklyByDay),
+                isWeekly = (thisRateType === Csw.enums.rateIntervalTypes.WeeklyByDay),
                 dayPropName = 'weeklyday';
             
             if(false === isWeekly) {
@@ -190,9 +190,9 @@ var CswTimeInterval = function (options) {
                     $table.CswTable('cell', 1, 7).append('Sa');
                     
                     for (i = 1; i <= 7; i += 1) {
-                        type = CswInput_Types.checkbox;
+                        type = Csw.enums.inputTypes.checkbox;
                         if (useRadio) {
-                            type = CswInput_Types.radio;
+                            type = Csw.enums.inputTypes.radio;
                         }
                         $pickercell = $table.CswTable('cell', 2, i);
                         $pickercell.CswInput('init', {
@@ -263,8 +263,8 @@ var CswTimeInterval = function (options) {
        // } ()); // makeWeekDayPicker()
     };
 
-    var weeklyWeekPicker = makeWeekDayPicker(CswRateIntervalTypes.WeeklyByDay),
-        monthlyWeekPicker = makeWeekDayPicker(CswRateIntervalTypes.MonthlyByWeekAndDay);
+    var weeklyWeekPicker = makeWeekDayPicker(Csw.enums.rateIntervalTypes.WeeklyByDay),
+        monthlyWeekPicker = makeWeekDayPicker(Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay);
 
     var makeMonthlyPicker = (function () {
         var monthlyPickerComplete = false,
@@ -281,7 +281,7 @@ var CswTimeInterval = function (options) {
                         delete rateInterval[key];
                     }
                 });
-                if(rateType === CswRateIntervalTypes.MonthlyByDate) {
+                if(rateType === Csw.enums.rateIntervalTypes.MonthlyByDate) {
                     delete rateInterval.monthlyday;
                     delete rateInterval.monthlyweek;
                     rateInterval.monthlydate = $MonthlyDateSelect.find(':selected').val();
@@ -303,8 +303,8 @@ var CswTimeInterval = function (options) {
                     daysInMonth = ChemSW.makeSequentialArray(1, 31), selectedDay = '';
 
                 if (Csw.bool(o.Multi)) {
-                    selectedDay = CswMultiEditDefaultValue;
-                    daysInMonth.unshift(CswMultiEditDefaultValue);
+                    selectedDay = Csw.enums.multiEditDefaultValue;
+                    daysInMonth.unshift(Csw.enums.multiEditDefaultValue);
                 }
                 else if (Csw.contains(rateInterval, 'monthlydate')) {
                     selectedDay = Csw.number(rateInterval.monthlydate, 1);
@@ -313,7 +313,7 @@ var CswTimeInterval = function (options) {
                 $byDate.CswInput('init', {
                         ID: Csw.makeId({ prefix: o.ID, ID: 'monthly', suffix: 'by_date' }),
                         name: monthlyRadioId,
-                        type: CswInput_Types.radio,
+                        type: Csw.enums.inputTypes.radio,
                         onChange: function () {
                             if (Csw.isFunction(o.onchange)) {
                                 o.onchange();
@@ -321,9 +321,9 @@ var CswTimeInterval = function (options) {
                             rateType = $ret.find('[name="' + monthlyRadioId + '"]:checked').val();
                             saveMonthInterval();
                         },
-                        value: CswRateIntervalTypes.MonthlyByDate
+                        value: Csw.enums.rateIntervalTypes.MonthlyByDate
                     })
-                    .CswAttrDom('checked', (rateType === CswRateIntervalTypes.MonthlyByDate));
+                    .CswAttrDom('checked', (rateType === Csw.enums.rateIntervalTypes.MonthlyByDate));
 
                 $byDate.append('On Day of Month:&nbsp;');
 
@@ -348,8 +348,8 @@ var CswTimeInterval = function (options) {
                     selected;
 
                 if (Csw.bool(o.Multi)) {
-                    frequency.unshift(CswMultiEditDefaultValue);
-                    selected = CswMultiEditDefaultValue;
+                    frequency.unshift(Csw.enums.multiEditDefaultValue);
+                    selected = Csw.enums.multiEditDefaultValue;
                 } else {
                     selected = Csw.number(rateInterval.monthlyfrequency, 1);
                 }
@@ -385,7 +385,7 @@ var CswTimeInterval = function (options) {
                 $byDay.CswInput('init', {
                         ID: monthlyByDayId,
                         name: monthlyRadioId,
-                        type: CswInput_Types.radio,
+                        type: Csw.enums.inputTypes.radio,
                         onChange: function () {
                             if (Csw.isFunction(o.onchange)) {
                                 o.onchange();
@@ -393,15 +393,15 @@ var CswTimeInterval = function (options) {
                             rateType = $ret.find('[name="' + monthlyRadioId + '"]:checked').val();
                             saveMonthInterval();
                         },
-                        value: CswRateIntervalTypes.MonthlyByWeekAndDay
+                        value: Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay
                     })
-                    .CswAttrDom('checked', (rateType === CswRateIntervalTypes.MonthlyByWeekAndDay));
+                    .CswAttrDom('checked', (rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay));
 
                 $byDay.append('Every&nbsp;');
 
                 if (o.Multi) {
-                    weeksInMonth.unshift({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
-                    selected = CswMultiEditDefaultValue;
+                    weeksInMonth.unshift({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
+                    selected = Csw.enums.multiEditDefaultValue;
                 } else {
                     selected = Csw.number(rateInterval.monthlyweek, 1);
                 }
@@ -433,10 +433,10 @@ var CswTimeInterval = function (options) {
                 $startOn.append('<br/>Starting On:&nbsp;');
 
                 if (o.Multi) {
-                    monthsInYear.unshift(CswMultiEditDefaultValue);
-                    yearsToAllow.unshift(CswMultiEditDefaultValue);
-                    selectedMonth = CswMultiEditDefaultValue;
-                    selectedYear = CswMultiEditDefaultValue;
+                    monthsInYear.unshift(Csw.enums.multiEditDefaultValue);
+                    yearsToAllow.unshift(Csw.enums.multiEditDefaultValue);
+                    selectedMonth = Csw.enums.multiEditDefaultValue;
+                    selectedYear = Csw.enums.multiEditDefaultValue;
                 } else {
                     selectedMonth = Csw.number(rateInterval.startingmonth, (now.getMonth() + 1));
                     selectedYear = Csw.number(rateInterval.startingyear, year);
@@ -512,7 +512,7 @@ var CswTimeInterval = function (options) {
                 var yearlyStartDate = '';
 
                 if (Csw.bool(o.Multi)) {
-                    yearlyStartDate = CswMultiEditDefaultValue;
+                    yearlyStartDate = Csw.enums.multiEditDefaultValue;
                 }
                 else if (Csw.contains(rateInterval, 'yearlydate')) {
                     yearlyStartDate = Csw.string(rateInterval.yearlydate.date);
@@ -551,7 +551,7 @@ var CswTimeInterval = function (options) {
     var validateRateInterval = function () {
         var retVal = false, errorString = '';
         switch (rateType) {
-            case CswRateIntervalTypes.WeeklyByDay:
+            case Csw.enums.rateIntervalTypes.WeeklyByDay:
                 if (false === Csw.contains(rateInterval, 'startingdate') ||
                         false === Csw.contains(rateInterval.startingdate, 'date') ||
                         Csw.isNullOrEmpty(rateInterval.startingdate.date)) {
@@ -562,7 +562,7 @@ var CswTimeInterval = function (options) {
                     errorString += 'Cannot add a Weekly time interval without at least one weekday selected. ';
                 }
                 break;
-            case CswRateIntervalTypes.MonthlyByDate:
+            case Csw.enums.rateIntervalTypes.MonthlyByDate:
                 if (false === Csw.contains(rateInterval, 'monthlydate') || 
                         Csw.isNullOrEmpty(rateInterval.monthlydate)) {
                     errorString += 'Cannot add a Monthly time interval without an \'On Day of Month\' selected. ';  
@@ -580,7 +580,7 @@ var CswTimeInterval = function (options) {
                     errorString += 'Cannot add a Monthly time interval without a Starting Year selected. ';  
                 }
                 break;
-            case CswRateIntervalTypes.MonthlyByWeekAndDay:
+            case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
                 if (false === Csw.contains(rateInterval, 'monthlyfrequency') || 
                         Csw.isNullOrEmpty(rateInterval.monthlyfrequency)) {
                     errorString += 'Cannot add a Monthly time interval without a frequency selected. ';  
@@ -602,7 +602,7 @@ var CswTimeInterval = function (options) {
                     errorString += 'Cannot add a Monthly time interval without a starting year selected. ';  
                 }
                 break;
-            case CswRateIntervalTypes.YearlyByDate:
+            case Csw.enums.rateIntervalTypes.YearlyByDate:
                 if (false === Csw.contains(rateInterval, 'yearlydate') ||
                         false === Csw.contains(rateInterval.yearlydate, 'date') ||
                         Csw.isNullOrEmpty(rateInterval.yearlydate.date)) {
@@ -611,7 +611,7 @@ var CswTimeInterval = function (options) {
                 break;                
         }
         if (false === Csw.isNullOrEmpty(errorString)) {
-            retVal = Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, errorString);
+            retVal = Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, errorString);
         }
         return retVal;
     };
@@ -624,9 +624,9 @@ var CswTimeInterval = function (options) {
 
         //globals
         if (o.Multi) {
-            //rateInterval = CswMultiEditDefaultValue;
-            textValue = CswMultiEditDefaultValue;
-            rateType = CswRateIntervalTypes.WeeklyByDay;
+            //rateInterval = Csw.enums.multiEditDefaultValue;
+            textValue = Csw.enums.multiEditDefaultValue;
+            rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
         } else {
             $.extend(true, rateInterval, propVals.Interval.rateintervalvalue);
             textValue = Csw.string(propVals.Interval.text).trim();
@@ -647,16 +647,16 @@ var CswTimeInterval = function (options) {
 
         // Set selected values
         switch (rateType) {
-            case CswRateIntervalTypes.WeeklyByDay:
+            case Csw.enums.rateIntervalTypes.WeeklyByDay:
                 $WeeklyDiv = weeklyWeekPicker($pickerCell, o.onchange, false);
                 break;
-            case CswRateIntervalTypes.MonthlyByDate:
+            case Csw.enums.rateIntervalTypes.MonthlyByDate:
                 $MonthlyDiv = makeMonthlyPicker($pickerCell);
                 break;
-            case CswRateIntervalTypes.MonthlyByWeekAndDay:
+            case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
                 $MonthlyDiv = makeMonthlyPicker($pickerCell);
                 break;
-            case CswRateIntervalTypes.YearlyByDate:
+            case Csw.enums.rateIntervalTypes.YearlyByDate:
                 $YearlyDiv = makeYearlyDatePicker($pickerCell);
                 break;
         } // switch(RateType)

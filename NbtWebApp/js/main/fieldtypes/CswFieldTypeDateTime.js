@@ -10,8 +10,8 @@
 
             var $Div = $(this);
             var propVals = o.propData.values;
-            var date = (false === o.Multi) ? Csw.string(propVals.value.date).trim() : CswMultiEditDefaultValue;
-            var time = (false === o.Multi) ? Csw.string(propVals.value.time).trim() : CswMultiEditDefaultValue;
+            var date = (false === o.Multi) ? Csw.string(propVals.value.date).trim() : Csw.enums.multiEditDefaultValue;
+            var time = (false === o.Multi) ? Csw.string(propVals.value.time).trim() : Csw.enums.multiEditDefaultValue;
             
             if(o.ReadOnly) {
                 $Div.append(o.propData.gestalt);    

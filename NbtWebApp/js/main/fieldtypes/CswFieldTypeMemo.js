@@ -13,7 +13,7 @@
 
             //var Value = extractCDataValue($xml.children('text'));
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? Csw.string(propVals.text).trim() : CswMultiEditDefaultValue;
+            var value = (false === o.Multi) ? Csw.string(propVals.text).trim() : Csw.enums.multiEditDefaultValue;
             var rows = Csw.string(propVals.rows);
             var columns = Csw.string(propVals.columns);
 

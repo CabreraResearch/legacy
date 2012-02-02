@@ -11,14 +11,14 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? Csw.string(propVals.text).trim() : CswMultiEditDefaultValue;
+            var value = (false === o.Multi) ? Csw.string(propVals.text).trim() : Csw.enums.multiEditDefaultValue;
             var length = Csw.number( propVals.length, 14 );
 
             if(o.ReadOnly) {
                 $Div.append(value);
             } else {
                 var $TextBox = $Div.CswInput('init', {ID: o.ID,
-                                                        type: CswInput_Types.text,
+                                                        type: Csw.enums.inputTypes.text,
                                                         value: value,
                                                         cssclass: 'textinput',
                                                         width: length * 7,

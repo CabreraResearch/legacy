@@ -54,14 +54,14 @@
         $cell21.hide();
 
         $cell12.CswImageButton({
-                ButtonType: CswImageButton_ButtonType.Delete,
+                ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                 AlternateText: 'Hide',
                 ID: Csw.makeId({ 'prefix': id, 'id': 'hidebtn' }),
                 onClick: function () {
                     $errordiv.remove();
                     if ($parentdiv.children().length === 0)
                         $parentdiv.hide();
-                    return CswImageButton_ButtonType.None;
+                    return Csw.enums.imageButton_ButtonType.None;
                 }
             });
         $('html, body').animate({ scrollTop: 0 }, 0);

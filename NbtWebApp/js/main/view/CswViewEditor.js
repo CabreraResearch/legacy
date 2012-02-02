@@ -26,8 +26,8 @@
         };
         if (options) $.extend(o, options);
 
-        var WizardStepArray = [CswViewEditor_WizardSteps.viewselect, CswViewEditor_WizardSteps.attributes, CswViewEditor_WizardSteps.relationships,
-            CswViewEditor_WizardSteps.properties, CswViewEditor_WizardSteps.filters, CswViewEditor_WizardSteps.tuning];
+        var WizardStepArray = [Csw.enums.wizardSteps_ViewEditor.viewselect, Csw.enums.wizardSteps_ViewEditor.attributes, Csw.enums.wizardSteps_ViewEditor.relationships,
+            Csw.enums.wizardSteps_ViewEditor.properties, Csw.enums.wizardSteps_ViewEditor.filters, Csw.enums.wizardSteps_ViewEditor.tuning];
         var WizardSteps = {};
         for (var i = 1; i <= WizardStepArray.length; i++) {
             WizardSteps[i] = WizardStepArray[i - 1].description;
@@ -58,7 +58,7 @@
             $wizard.CswWizard('button', 'finish', 'disable');
 
         // Step 1 - Choose a View
-        var $div1 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.viewselect.step);
+        var $div1 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.viewselect.step);
         var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  " +
             "Views are useful for defining a user's workflow or for creating elaborate search criteria. " +
                 "This wizard will take you step by step through the process of creating a new View or " +
@@ -85,7 +85,7 @@
                 'Yes': function () {
                 /* Show Other */
                 $allcheck_div.CswInput('init', { ID: o.ID + '_all',
-                    type: CswInput_Types.checkbox,
+                    type: Csw.enums.inputTypes.checkbox,
                         onChange: function () {
                         _getViewsGrid();
                     }
@@ -169,7 +169,7 @@
         //$wizard.CswWizard('button', 'next', 'disable');
 
         // Step 2 - Edit View Attributes
-        var $div2 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.attributes.step);
+        var $div2 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.attributes.step);
         var $table2 = $div2.CswTable({
             'ID': o.ID + '_tbl2',
             'FirstCellRightAlign': true
@@ -178,13 +178,13 @@
         $table2.CswTable('cell', 1, 1).append('View Name:');
         var $viewnametextcell = $table2.CswTable('cell', 1, 2);
         var $viewnametextbox = $viewnametextcell.CswInput('init', { ID: o.ID + '_viewname',
-            type: CswInput_Types.text
+            type: Csw.enums.inputTypes.text
         });
 
         $table2.CswTable('cell', 2, 1).append('Category:');
         var $categorytextcell = $table2.CswTable('cell', 2, 2);
         var $categorytextbox = $categorytextcell.CswInput('init', { ID: o.ID + '_category',
-            type: CswInput_Types.text
+            type: Csw.enums.inputTypes.text
         });
 
         var v;
@@ -197,7 +197,7 @@
         $table2.CswTable('cell', 4, 1).append('For Mobile:');
         var $formobilecheckcell = $table2.CswTable('cell', 4, 2);
         var $formobilecheckbox = $formobilecheckcell.CswInput('init', { ID: o.ID + '_formobile',
-            type: CswInput_Types.checkbox
+            type: Csw.enums.inputTypes.checkbox
         });
 
         $table2.CswTable('cell', 5, 1).append('Display Mode:');
@@ -216,22 +216,22 @@
         });
 
         // Step 3 - Add Relationships
-        var $div3 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.relationships.step);
+        var $div3 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.relationships.step);
         $div3.append('Add relationships from the select boxes below:<br/><br/>');
-        var $treediv3 = $('<div id="' + CswViewEditor_WizardSteps.relationships.divId + '"><div/>').appendTo($div3);
+        var $treediv3 = $('<div id="' + Csw.enums.wizardSteps_ViewEditor.relationships.divId + '"><div/>').appendTo($div3);
 
         // Step 4 - Select Properties
-        var $div4 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.properties.step);
+        var $div4 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.properties.step);
         $div4.append('Add properties from the select boxes below:<br/><br/>');
-        var $treediv4 = $('<div id="' + CswViewEditor_WizardSteps.properties.divId + '"><div/>').appendTo($div4);
+        var $treediv4 = $('<div id="' + Csw.enums.wizardSteps_ViewEditor.properties.divId + '"><div/>').appendTo($div4);
 
         // Step 5 - Set Filters
-        var $div5 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.filters.step);
+        var $div5 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.filters.step);
         $div5.append('Add filters by selecting properties from the tree:<br/><br/>');
-        var $treediv5 = $('<div id="' + CswViewEditor_WizardSteps.filters.divId + '"><div/>').appendTo($div5);
+        var $treediv5 = $('<div id="' + Csw.enums.wizardSteps_ViewEditor.filters.divId + '"><div/>').appendTo($div5);
 
         // Step 6 - Fine Tuning
-        var $div6 = $wizard.CswWizard('div', CswViewEditor_WizardSteps.tuning.step);
+        var $div6 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.tuning.step);
         $div6.append('Select what you want to edit from the tree:<br/><br/>');
         var $table6 = $div6.CswTable({ 'ID': o.ID + '_6_tbl' });
 
@@ -239,15 +239,15 @@
 
         function _onBeforePrevious($prevWizard, stepno) {
             /* remember: confirm is globally blocking call */
-            return (stepno !== CswViewEditor_WizardSteps.attributes.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?"));
+            return (stepno !== Csw.enums.wizardSteps_ViewEditor.attributes.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?"));
         }
 
         function _handleNext($nextWizard, newstepno) {
             CurrentStep = newstepno;
             switch (newstepno) {
-                case CswViewEditor_WizardSteps.viewselect.step:
+                case Csw.enums.wizardSteps_ViewEditor.viewselect.step:
                     break;
-                case CswViewEditor_WizardSteps.attributes.step:
+                case Csw.enums.wizardSteps_ViewEditor.attributes.step:
                     $nextWizard.CswWizard('button', 'finish', 'enable');
                     $nextWizard.CswWizard('button', 'next', 'disable');
 
@@ -290,23 +290,23 @@
                         } // success
                     }); // ajax
                     break;
-                case CswViewEditor_WizardSteps.relationships.step:
+                case Csw.enums.wizardSteps_ViewEditor.relationships.step:
                     // save step 2 content to currentviewjson
                     if (currentViewJson !== undefined) {
                         cacheStepTwo();
                     } // if(currentViewJson !== undefined)
 
                     // make step 3 tree
-                    _makeViewTree(CswViewEditor_WizardSteps.relationships.step, $treediv3);
+                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.relationships.step, $treediv3);
                     break;
-                case CswViewEditor_WizardSteps.properties.step:
-                    _makeViewTree(CswViewEditor_WizardSteps.properties.step, $treediv4);
+                case Csw.enums.wizardSteps_ViewEditor.properties.step:
+                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.properties.step, $treediv4);
                     break;
-                case CswViewEditor_WizardSteps.filters.step:
-                    _makeViewTree(CswViewEditor_WizardSteps.filters.step, $treediv5);
+                case Csw.enums.wizardSteps_ViewEditor.filters.step:
+                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.filters.step, $treediv5);
                     break;
-                case CswViewEditor_WizardSteps.tuning.step:
-                    _makeViewTree(CswViewEditor_WizardSteps.tuning.step, $table6.CswTable('cell', 1, 1));
+                case Csw.enums.wizardSteps_ViewEditor.tuning.step:
+                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.tuning.step, $table6.CswTable('cell', 1, 1));
                     break;
             } // switch(newstepno)
         } // _handleNext()
@@ -349,21 +349,21 @@
 
             CurrentStep = newstepno;
             switch (newstepno) {
-                case CswViewEditor_WizardSteps.viewselect.step:
+                case Csw.enums.wizardSteps_ViewEditor.viewselect.step:
                     break;
-                case CswViewEditor_WizardSteps.attributes.step:
+                case Csw.enums.wizardSteps_ViewEditor.attributes.step:
                     break;
-                case CswViewEditor_WizardSteps.relationships.step:
-                    _makeViewTree(CswViewEditor_WizardSteps.relationships.step, $treediv3);
+                case Csw.enums.wizardSteps_ViewEditor.relationships.step:
+                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.relationships.step, $treediv3);
                     break;
-                case CswViewEditor_WizardSteps.properties.step:
-                    _makeViewTree(CswViewEditor_WizardSteps.properties.step, $treediv4);
+                case Csw.enums.wizardSteps_ViewEditor.properties.step:
+                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.properties.step, $treediv4);
                     break;
-                case CswViewEditor_WizardSteps.filters.step:
-                    _makeViewTree(CswViewEditor_WizardSteps.filters.step, $treediv5);
+                case Csw.enums.wizardSteps_ViewEditor.filters.step:
+                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.filters.step, $treediv5);
                     break;
-                case CswViewEditor_WizardSteps.tuning.step:
-                    _makeViewTree(CswViewEditor_WizardSteps.tuning.step, $table6.CswTable('cell', 1, 1));
+                case Csw.enums.wizardSteps_ViewEditor.tuning.step:
+                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.tuning.step, $table6.CswTable('cell', 1, 1));
                     break;
             }
         }
@@ -393,7 +393,7 @@
             var processView = true;
 
             if (!Csw.isNullOrEmpty(currentViewJson)) {
-                if (CurrentStep === CswViewEditor_WizardSteps.attributes.step) {
+                if (CurrentStep === Csw.enums.wizardSteps_ViewEditor.attributes.step) {
                     cacheStepTwo();
                 }
 
@@ -514,12 +514,12 @@
             var viewmode = _getSelectedViewMode();
 
             // Root
-            $content.find('.' + viewEditClasses.vieweditor_viewrootlink.name).click(function () {
+            $content.find('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_viewrootlink.name).click(function () {
                 $cell.empty();
             });
 
             // Relationship
-            $content.find('.' + viewEditClasses.vieweditor_viewrellink.name).click(function () {
+            $content.find('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_viewrellink.name).click(function () {
                 var row = 1;
                 var $a = $(this);
                 $cell.empty();
@@ -539,7 +539,7 @@
                     var $allowcell = $table.CswTable('cell', row, 2);
                     var $allowcheck = $allowcell.CswInput('init', {
                         ID: o.ID + '_adcb',
-                        type: CswInput_Types.checkbox,
+                        type: Csw.enums.inputTypes.checkbox,
                                                                   onChange: function() {
                             var $this = $(this);
                             if (isFunction(onchange)) {
@@ -621,7 +621,7 @@
                     var $showtreecheckcell = $table.CswTable('cell', row, 2);
                     $showtreecheck = $showtreecheckcell.CswInput('init',
                                                             { ID: o.ID + '_stcb',
-                                                                type: CswInput_Types.checkbox,
+                                                                type: Csw.enums.inputTypes.checkbox,
                                                                 onChange: function () {
                                                                     var $this = $(this);
                                                                     viewnodejson.showintree = $this.is(':checked');
@@ -636,7 +636,7 @@
             }); // $content.find('.vieweditor_viewrellink').click(function () {
 
             // Property
-            $content.find('.' + viewEditClasses.vieweditor_viewproplink.name).click(function () {
+            $content.find('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_viewproplink.name).click(function () {
                 var $a = $(this);
                 $cell.empty();
 
@@ -652,7 +652,7 @@
                     var $sortbycheckcell = $table.CswTable('cell', 1, 2);
                     var $sortbycheck = $sortbycheckcell.CswInput('init',
                                                             { ID: o.ID + '_sortcb',
-                                                                type: CswInput_Types.checkbox,
+                                                                type: Csw.enums.inputTypes.checkbox,
                                                                 onChange: function () {
                                                                     var $this = $(this);
                                                                     viewNodeData.sortby = $this.is(':checked');
@@ -666,7 +666,7 @@
                     var $colordertextcell = $table.CswTable('cell', 2, 2);
                     var $colordertextbox = $colordertextcell.CswInput('init',
                                                                 { ID: o.ID + '_gcotb',
-                                                                    type: CswInput_Types.text,
+                                                                    type: Csw.enums.inputTypes.text,
                                                                     onChange: function () {
                                                                         var $this = $(this);
                                                                         viewNodeData.order = $this.val();
@@ -678,7 +678,7 @@
                     var $colwidthtextcell = $table.CswTable('cell', 3, 2);
                     var $colwidthtextbox = $colwidthtextcell.CswInput('init',
                                                                 { ID: o.ID + '_gcwtb',
-                                                                    type: CswInput_Types.text,
+                                                                    type: Csw.enums.inputTypes.text,
                                                                     onChange: function () {
                                                                         var $this = $(this);
                                                                         viewNodeData.width = $this.val();
@@ -689,7 +689,7 @@
             });
 
             // Filter
-            $content.find('.' + viewEditClasses.vieweditor_viewfilterlink.name).click(function () {
+            $content.find('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_viewfilterlink.name).click(function () {
                 var $a = $(this);
                 $cell.empty();
                 //$cell.append('For ' + $a.text());
@@ -702,7 +702,7 @@
                 var $casecheck = $table.CswTable('cell', 1, 2)
                                        .CswInput('init',
                                             { ID: o.ID + '_casecb',
-                                                type: CswInput_Types.checkbox,
+                                                type: Csw.enums.inputTypes.checkbox,
                                                 onChange: function () {
                                                     var $this = $(this);
                                                     viewNodeData.casesensitive = $this.is(':checked');
@@ -738,22 +738,22 @@
                 "plugins": ["themes", "html_data", "ui", "types", "crrm"]
             }); // tree
 
-            if (stepno >= CswViewEditor_WizardSteps.relationships.step && stepno <= CswViewEditor_WizardSteps.filters.step) {
+            if (stepno >= Csw.enums.wizardSteps_ViewEditor.relationships.step && stepno <= Csw.enums.wizardSteps_ViewEditor.filters.step) {
                 bindDeleteBtns(stepno);
             }
 
-            if (stepno === CswViewEditor_WizardSteps.filters.step) {
+            if (stepno === Csw.enums.wizardSteps_ViewEditor.filters.step) {
                 bindViewPropFilterBtns(stepno);
             }
 
-            if (stepno === CswViewEditor_WizardSteps.tuning.step) {
+            if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
                 makeTuningStep($tree);
             }
             return $tree;
         } // _makeViewTree()
 
         function bindDeleteBtns(stepno) {
-            $('.' + viewEditClasses.vieweditor_deletespan.name).each(function () {
+            $('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_deletespan.name).each(function () {
                 var $span = $(this);
                 var arbid = $span.CswAttrNonDom('arbid');
                 var $btn = $span.children('div').first();
@@ -761,13 +761,13 @@
                     var objUtil = Csw.object(currentViewJson);
                     objUtil.remove('arbitraryid', arbid);
                     _makeViewTree(stepno);
-                    return CswImageButton_ButtonType.None;
+                    return Csw.enums.imageButton_ButtonType.None;
                 });
             });
         }
 
         function bindViewPropFilterBtns(stepno) {
-            $('.' + viewEditClasses.vieweditor_addfilter.name).each(function () {
+            $('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name).each(function () {
                 var $span = $(this);
                 var arbitraryId = $span.CswAttrNonDom('arbid');
 
@@ -792,10 +792,10 @@
                         viewJson: currentViewJson,
                         filtJson: newFiltJson,
                         onSuccess: function (newPropJson) {
-                            if (false === propJson.hasOwnProperty(childPropNames.propfilters.name)) {
-                                propJson[childPropNames.propfilters.name] = {};
+                            if (false === propJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
+                                propJson[Csw.enums.viewChildPropNames.propfilters.name] = {};
                             }
-                            $.extend(propJson[childPropNames.propfilters.name], newPropJson);
+                            $.extend(propJson[Csw.enums.viewChildPropNames.propfilters.name], newPropJson);
                             _makeViewTree(stepno);
                         } // onSuccess
                     }); // CswViewPropFilter
@@ -824,16 +824,16 @@
             var name = itemJson.viewname;
             var rel = 'root';
             types.root = { icon: { image: Csw.string(itemJson.iconfilename) } };
-            var linkclass = viewEditClasses.vieweditor_viewrootlink.name;
+            var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrootlink.name;
 
-            var $ret = makeViewListItem(arbid, linkclass, name, false, stepno, childPropNames.root, rel);
+            var $ret = makeViewListItem(arbid, linkclass, name, false, stepno, Csw.enums.viewChildPropNames.root, rel);
 
-            if (itemJson.hasOwnProperty(childPropNames.childrelationships.name)) {
-                var rootRelationships = itemJson[childPropNames.childrelationships.name];
+            if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.childrelationships.name)) {
+                var rootRelationships = itemJson[Csw.enums.viewChildPropNames.childrelationships.name];
                 makeViewRelationshipsRecursive(stepno, rootRelationships, types, $ret);
             }
 
-            var $selectLi = makeChildSelect(stepno, arbid, childPropNames.childrelationships);
+            var $selectLi = makeChildSelect(stepno, arbid, Csw.enums.viewChildPropNames.childrelationships);
             if (false === Csw.isNullOrEmpty($selectLi)) {
                 $ret.append($selectLi);
             }
@@ -854,16 +854,16 @@
                 }
             }
             var rel = Csw.string(itemJson.secondtype) + '_' + Csw.string(itemJson.secondid);
-            var skipchildoptions = (stepno <= CswViewEditor_WizardSteps.relationships.step);
-            var linkclass = viewEditClasses.vieweditor_viewrellink.name;
-            var showDelete = (stepno === CswViewEditor_WizardSteps.relationships.step);
+            var skipchildoptions = (stepno <= Csw.enums.wizardSteps_ViewEditor.relationships.step);
+            var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrellink.name;
+            var showDelete = (stepno === Csw.enums.wizardSteps_ViewEditor.relationships.step);
             types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename) } };
 
-            var $ret = makeViewListItem(arbid, linkclass, name, showDelete, stepno, childPropNames.childrelationships, rel);
+            var $ret = makeViewListItem(arbid, linkclass, name, showDelete, stepno, Csw.enums.viewChildPropNames.childrelationships, rel);
 
             if (!skipchildoptions) {
-                if (itemJson.hasOwnProperty(childPropNames.properties.name)) {
-                    var propJson = itemJson[childPropNames.properties.name];
+                if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.properties.name)) {
+                    var propJson = itemJson[Csw.enums.viewChildPropNames.properties.name];
                     if (!Csw.isNullOrEmpty(propJson)) {
                         var $propUl = $('<ul></ul>');
                         for (var prop in propJson) {
@@ -882,7 +882,7 @@
                         }
                     }
                 }
-                var $selectLi = makeChildSelect(stepno, arbid, childPropNames.properties);
+                var $selectLi = makeChildSelect(stepno, arbid, Csw.enums.viewChildPropNames.properties);
                 if (false === Csw.isNullOrEmpty($selectLi)) {
                     $ret.append($selectLi);
                 }
@@ -900,12 +900,12 @@
                         if (false === Csw.isNullOrEmpty($rel)) {
                             $ul.append($rel);
                         }
-                        if (thisRelationship.hasOwnProperty(childPropNames.childrelationships.name)) {
-                            var childRelationships = thisRelationship[childPropNames.childrelationships.name];
+                        if (thisRelationship.hasOwnProperty(Csw.enums.viewChildPropNames.childrelationships.name)) {
+                            var childRelationships = thisRelationship[Csw.enums.viewChildPropNames.childrelationships.name];
                             makeViewRelationshipsRecursive(stepno, childRelationships, types, $rel);
                         }
-                        if (stepno === CswViewEditor_WizardSteps.relationships.step) {
-                            var $selectLi = makeChildSelect(stepno, thisRelationship.arbitraryid, childPropNames.childrelationships);
+                        if (stepno === Csw.enums.wizardSteps_ViewEditor.relationships.step) {
+                            var $selectLi = makeChildSelect(stepno, thisRelationship.arbitraryid, Csw.enums.viewChildPropNames.childrelationships);
                             if (false === Csw.isNullOrEmpty($selectLi)) {
                                 $rel.append($selectLi);
                             }
@@ -924,17 +924,17 @@
             //var nodename = itemJson.nodename;
             var name = itemJson.name;
             var rel = 'property';
-            var skipme = (stepno <= CswViewEditor_WizardSteps.relationships.step);
-            var skipchildoptions = (stepno <= CswViewEditor_WizardSteps.properties.step);
-            var linkclass = viewEditClasses.vieweditor_viewproplink.name;
-            var showDelete = (stepno === CswViewEditor_WizardSteps.properties.step);
+            var skipme = (stepno <= Csw.enums.wizardSteps_ViewEditor.relationships.step);
+            var skipchildoptions = (stepno <= Csw.enums.wizardSteps_ViewEditor.properties.step);
+            var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewproplink.name;
+            var showDelete = (stepno === Csw.enums.wizardSteps_ViewEditor.properties.step);
             if (false === Csw.isNullOrEmpty(name) && false === skipme) {
-                $ret = makeViewListItem(arbid, linkclass, name, showDelete, stepno, childPropNames.properties, rel);
+                $ret = makeViewListItem(arbid, linkclass, name, showDelete, stepno, Csw.enums.viewChildPropNames.properties, rel);
             }
             if (!Csw.isNullOrEmpty($ret) && !skipchildoptions) {
                 var $filtUl = $('<ul></ul>');
-                if (itemJson.hasOwnProperty(childPropNames.propfilters.name)) {
-                    var filterJson = itemJson[childPropNames.propfilters.name];
+                if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
+                    var filterJson = itemJson[Csw.enums.viewChildPropNames.propfilters.name];
                     if (!Csw.isNullOrEmpty(filterJson)) {
                         for (var filter in filterJson) {
                             if (filterJson.hasOwnProperty(filter)) {
@@ -949,7 +949,7 @@
                         }
                     }
                 }
-                if (stepno !== CswViewEditor_WizardSteps.tuning.step) {
+                if (stepno !== Csw.enums.wizardSteps_ViewEditor.tuning.step) {
                     var $filtBuilderLi = makeViewPropertyFilterHtml(null, stepno, types, arbid);
                     if (false === Csw.isNullOrEmpty($filtBuilderLi)) {
                         $filtUl.append($filtBuilderLi);
@@ -965,17 +965,17 @@
 
         function makeViewPropertyFilterHtml(itemJson, stepno, types, propArbId) {
             var $ret = null;
-            if (stepno >= CswViewEditor_WizardSteps.filters.step) {
+            if (stepno >= Csw.enums.wizardSteps_ViewEditor.filters.step) {
                 $ret = $('<li></li>');
                 var rel = 'filter';
                 if (!Csw.isNullOrEmpty(itemJson)) {
                     var filtArbitraryId = Csw.string(itemJson.arbitraryid);
-                    if (stepno === CswViewEditor_WizardSteps.tuning.step) {
+                    if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
                         var selectedSubfield = Csw.string(itemJson.subfield, itemJson.subfieldname);
                         var selectedFilterMode = Csw.string(itemJson.filtermode);
                         var filterValue = Csw.string(itemJson.value);
                         var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
-                        var $filtLink = makeViewListItem(filtArbitraryId, viewEditClasses.vieweditor_viewfilterlink.name, name, false, stepno, childPropNames.filters, rel);
+                        var $filtLink = makeViewListItem(filtArbitraryId, Csw.enums.cssClasses_ViewEdit.vieweditor_viewfilterlink.name, name, false, stepno, Csw.enums.viewChildPropNames.filters, rel);
                         if (false === Csw.isNullOrEmpty($filtLink)) {
                             $ret = $filtLink;
                         }
@@ -992,7 +992,7 @@
         }
 
         function makeViewPropFilterStaticSpan(propArbId, filterJson, filtArbitraryId) {
-            var $span = $('<span class="' + viewEditClasses.vieweditor_addfilter.name + '" arbid="' + filtArbitraryId + '"></span>');
+            var $span = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + filtArbitraryId + '"></span>');
             var $tbl = $span.CswTable({ 'ID': o.ID + '_' + filtArbitraryId + '_propfilttbl' });
             $tbl.css('display', 'inline-table');
 
@@ -1011,7 +1011,7 @@
         }
 
         function makeViewPropFilterAddSpan(propArbId) {
-            var $span = $('<span class="' + viewEditClasses.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
+            var $span = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
             var $tbl = $span.CswTable({ 'ID': o.ID + '_' + propArbId + '_propfilttbl' });
             $tbl.css('display', 'inline-table');
             $tbl.CswViewPropFilter('init', {
@@ -1044,9 +1044,9 @@
         }
 
         function makeDeleteSpan(arbid) {
-            var $td = $('<span style="" class="' + viewEditClasses.vieweditor_deletespan.name + '" arbid="' + arbid + '"></span>');
+            var $td = $('<span style="" class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_deletespan.name + '" arbid="' + arbid + '"></span>');
             $td.CswImageButton({
-                ButtonType: CswImageButton_ButtonType.Delete,
+                ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                 AlternateText: 'Delete',
                 ID: arbid + '_delete'
             });
@@ -1056,16 +1056,16 @@
         function getTreeDiv(stepno) {
             var ret = '';
             switch (stepno) {
-                case CswViewEditor_WizardSteps.relationships.step:
-                    ret = $('#' + CswViewEditor_WizardSteps.relationships.divId);
+                case Csw.enums.wizardSteps_ViewEditor.relationships.step:
+                    ret = $('#' + Csw.enums.wizardSteps_ViewEditor.relationships.divId);
                     break;
-                case CswViewEditor_WizardSteps.properties.step:
-                    ret = $('#' + CswViewEditor_WizardSteps.properties.divId);
+                case Csw.enums.wizardSteps_ViewEditor.properties.step:
+                    ret = $('#' + Csw.enums.wizardSteps_ViewEditor.properties.divId);
                     break;
-                case CswViewEditor_WizardSteps.filters.step:
-                    ret = $('#' + CswViewEditor_WizardSteps.filters.divId);
+                case Csw.enums.wizardSteps_ViewEditor.filters.step:
+                    ret = $('#' + Csw.enums.wizardSteps_ViewEditor.filters.divId);
                     break;
-                case CswViewEditor_WizardSteps.tuning.step:
+                case Csw.enums.wizardSteps_ViewEditor.tuning.step:
                     ret = $('#' + o.ID);
                     break;
             }
@@ -1076,7 +1076,7 @@
             var $select = '';
 
             if (canAddChildSelect(stepno, propName, arbid)) {
-                $select = $('<ul><li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="' + viewEditClasses.vieweditor_childselect.name + '"></select></li></ul>');
+                $select = $('<ul><li><select id="' + stepno + '_' + arbid + '_child" arbid="' + arbid + '" class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_childselect.name + '"></select></li></ul>');
 
                 var dataJson = {
                     StepNo: stepno,
@@ -1112,11 +1112,11 @@
                                 var parentObj = objUtil.find('arbitraryid', arbid);
                                 var collection = '';
                                 switch (stepno) {
-                                    case CswViewEditor_WizardSteps.relationships.step:
-                                        collection = childPropNames.childrelationships.name;
+                                    case Csw.enums.wizardSteps_ViewEditor.relationships.step:
+                                        collection = Csw.enums.viewChildPropNames.childrelationships.name;
                                         break;
-                                    case CswViewEditor_WizardSteps.properties.step:
-                                        collection = childPropNames.properties.name;
+                                    case Csw.enums.wizardSteps_ViewEditor.properties.step:
+                                        collection = Csw.enums.viewChildPropNames.properties.name;
                                         break;
                                 }
                                 var objCollection = parentObj[collection];
@@ -1139,18 +1139,18 @@
             var ret = false;
 
             switch (stepno) {
-                case CswViewEditor_WizardSteps.relationships.step:
-                    if (propName === childPropNames.childrelationships || propName === childPropNames.root) {
+                case Csw.enums.wizardSteps_ViewEditor.relationships.step:
+                    if (propName === Csw.enums.viewChildPropNames.childrelationships || propName === Csw.enums.viewChildPropNames.root) {
                         ret = true;
                     }
                     break;
-                case CswViewEditor_WizardSteps.properties.step:
-                    if (propName === childPropNames.properties && arbid !== 'root') {
+                case Csw.enums.wizardSteps_ViewEditor.properties.step:
+                    if (propName === Csw.enums.viewChildPropNames.properties && arbid !== 'root') {
                         ret = true;
                     }
                     break;
-                case CswViewEditor_WizardSteps.filters.step:
-                    if (propName === childPropNames.propfilters && arbid !== 'root') {
+                case Csw.enums.wizardSteps_ViewEditor.filters.step:
+                    if (propName === Csw.enums.viewChildPropNames.propfilters && arbid !== 'root') {
                         ret = true;
                     }
                     break;

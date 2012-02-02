@@ -11,13 +11,13 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? Csw.string(propVals.sequence).trim() : CswMultiEditDefaultValue;
+            var value = (false === o.Multi) ? Csw.string(propVals.sequence).trim() : Csw.enums.multiEditDefaultValue;
 
             if (o.ReadOnly || o.Multi) {
                 $Div.append(value);
             } else {
                 var $TextBox = $Div.CswInput('init',{ID: o.ID,
-                                                      type: CswInput_Types.text,
+                                                      type: Csw.enums.inputTypes.text,
                                                       cssclass: 'textinput',
                                                       onChange: o.onchange,
                                                       value: value

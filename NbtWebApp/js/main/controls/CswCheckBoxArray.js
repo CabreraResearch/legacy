@@ -64,9 +64,9 @@
                 }
                 o.MultiIsUnchanged = o.Multi;
 
-                var checkType = CswInput_Types.checkbox.name;
+                var checkType = Csw.enums.inputTypes.checkbox.name;
                 if(o.UseRadios) {
-                    checkType = CswInput_Types.radio.name;
+                    checkType = Csw.enums.inputTypes.radio.name;
                 }
                 
                 var $OuterDiv = $('<div id="' + storeDataId + '"/>');

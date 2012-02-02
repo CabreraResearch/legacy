@@ -1,4 +1,4 @@
-﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function() {
@@ -27,7 +27,7 @@
     }
     Csw.register('log', log);
     Csw.log = Csw.log || log;
-
+    
     function iterate(obj) {
         var str = '',
             x, popup;

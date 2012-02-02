@@ -271,7 +271,7 @@ window.initMain = window.initMain || function (undefined) {
             },
             'onMultiEdit': function () {
                 switch (o.viewmode) {
-                    case CswViewMode.grid.name:
+                    case Csw.enums.viewMode.grid.name:
                         multi = (false === o.grid.isMulti());
                         var g = {
                             gridOpts: {
@@ -289,14 +289,14 @@ window.initMain = window.initMain || function (undefined) {
             },
             'onPrintView': function () {
                 switch (o.viewmode) {
-                    case CswViewMode.grid.name:
+                    case Csw.enums.viewMode.grid.name:
                         if (Csw.contains(o, 'grid') &&
                              false == Csw.isNullOrEmpty(o.grid)) {
                             o.grid.print();
                         }
                         break;
                     default:
-                        Csw.error.showError(Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'View Printing is not enabled for views of type ' + o.viewmode));
+                        Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'View Printing is not enabled for views of type ' + o.viewmode));
                         break;
                 }
             },
@@ -501,7 +501,7 @@ window.initMain = window.initMain || function (undefined) {
                 if (o.doMenuRefresh) {
                     refreshMainMenu({
                         viewid: o.viewid,
-                        viewmode: CswViewMode.grid.name,
+                        viewmode: Csw.enums.viewMode.grid.name,
                         grid: grid,
                         nodeid: o.nodeid,
                         cswnbtnodekey: o.cswnbtnodekey
@@ -513,7 +513,7 @@ window.initMain = window.initMain || function (undefined) {
                     'actionname': 'Edit_View',
                     'ActionOptions': {
                         viewid: viewid,
-                        viewmode: CswViewMode.grid.name,
+                        viewmode: Csw.enums.viewMode.grid.name,
                         startingStep: 2,
                         IgnoreReturn: true
                     }
@@ -564,7 +564,7 @@ window.initMain = window.initMain || function (undefined) {
             onSuccess: function () {
                 refreshMainMenu({ 
                     viewid: o.viewid,
-                    viewmode: CswViewMode.table.name//,
+                    viewmode: Csw.enums.viewMode.table.name//,
 //                    nodeid: o.nodeid,
 //                    cswnbtnodekey: o.cswnbtnodekey
                 });
@@ -592,10 +592,10 @@ window.initMain = window.initMain || function (undefined) {
 
             if (o.nodeid !== '' && o.nodeid !== 'root') {
                 getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-                refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
+                refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
             } else {
-                showDefaultContent({ viewid: o.viewid, viewmode: CswViewMode.tree.name });
-                refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
+                showDefaultContent({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name });
+                refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
             }
         }
     } // onSelectTreeNode()
@@ -645,7 +645,7 @@ window.initMain = window.initMain || function (undefined) {
                     'actionname': 'Edit_View',
                     'ActionOptions': {
                         viewid: viewid,
-                        viewmode: CswViewMode.grid.name,
+                        viewmode: Csw.enums.viewMode.grid.name,
                         startingStep: 2,
                         IgnoreReturn: true
                     }

@@ -12,8 +12,8 @@
 
                 var $Div = $(this),
                     propVals = o.propData.values,
-                    selectedNodeId = (false === o.Multi) ? Csw.string(propVals.nodeid).trim() : CswMultiEditDefaultValue,
-                    selectedName = (false === o.Multi) ? Csw.string(propVals.name).trim() : CswMultiEditDefaultValue,
+                    selectedNodeId = (false === o.Multi) ? Csw.string(propVals.nodeid).trim() : Csw.enums.multiEditDefaultValue,
+                    selectedName = (false === o.Multi) ? Csw.string(propVals.name).trim() : Csw.enums.multiEditDefaultValue,
                     nodeTypeId = Csw.string(propVals.nodetypeid).trim(),
                     allowAdd = Csw.bool(propVals.allowadd),
                     options = propVals.options,
@@ -24,7 +24,7 @@
                 }
 
                 if (o.Multi) {
-                    relationships.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
+                    relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                 }
                 Csw.crawlObject(options, function (relatedObj) {
                     relationships.push({ value: relatedObj.id, display: relatedObj.value });
@@ -49,14 +49,14 @@
                     if (false === Csw.isNullOrEmpty(nodeTypeId) && allowAdd) {
                         var $addcell = $table.CswTable('cell', 1, 2);
                         var $AddButton = $('<div />').appendTo($addcell);
-                        $AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
+                        $AddButton.CswImageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Add,
                             AlternateText: "Add New",
                             onClick: function () {
                                 $.CswDialog('AddNodeDialog', {
                                     'nodetypeid': nodeTypeId,
                                     'onAddNode': function () { o.onReload(); }
                                 });
-                                return CswImageButton_ButtonType.None;
+                                return Csw.enums.imageButton_ButtonType.None;
                             }
                         });
                     }

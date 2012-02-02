@@ -1,4 +1,4 @@
-﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function CswObject() {
@@ -7,8 +7,8 @@
      function isPlainObject(obj) {
         /// <summary>
         ///    Returns true if the object is a JavaScript object.
-        ///     &#10; isPlainObject(CswInput_Types) === true
-        ///     &#10; isPlainObject('CswInput_Types') === false
+        ///     &#10; isPlainObject(Csw.enums.inputTypes) === true
+        ///     &#10; isPlainObject('Csw.enums.inputTypes') === false
         /// </summary>
         /// <param name="obj" type="Object"> Object to test</param>
         /// <returns type="Boolean" />

@@ -11,11 +11,11 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var answer = (false === o.Multi) ? Csw.string(propVals.answer).trim() : CswMultiEditDefaultValue;
+            var answer = (false === o.Multi) ? Csw.string(propVals.answer).trim() : Csw.enums.multiEditDefaultValue;
             var allowedAnswers = Csw.string(propVals.allowedanswers).trim();
             var compliantAnswers = Csw.string(propVals.compliantanswers).trim();
-            var comments =  (false === o.Multi) ? Csw.string(propVals.comments).trim() : CswMultiEditDefaultValue;
-            var correctiveAction = (false === o.Multi) ? Csw.string(propVals.correctiveaction).trim() : CswMultiEditDefaultValue;
+            var comments =  (false === o.Multi) ? Csw.string(propVals.comments).trim() : Csw.enums.multiEditDefaultValue;
+            var correctiveAction = (false === o.Multi) ? Csw.string(propVals.correctiveaction).trim() : Csw.enums.multiEditDefaultValue;
             multi = o.Multi;
             
             var dateAnswered =  (false === o.Multi) ? Csw.string(propVals.dateanswered.date).trim() : ''; 
@@ -42,7 +42,7 @@
                 $table.CswTable('cell', 1, 1).append('Answer');
                 var splitAnswers = allowedAnswers.split(',');
                 if (o.Multi) {
-                    splitAnswers.push(CswMultiEditDefaultValue);
+                    splitAnswers.push(Csw.enums.multiEditDefaultValue);
                 } else {
                     splitAnswers.push('');
                 }

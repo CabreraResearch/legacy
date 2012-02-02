@@ -59,7 +59,7 @@
                 nodeid: '',
                 cswnbtnodekey: '',
                 reinit: false,
-                EditMode: EditMode.Edit.name,
+                EditMode: Csw.enums.editMode.Edit,
                 onEditNode: null, 
                 onDeleteNode: null, 
                 onSuccess: null,
@@ -81,7 +81,7 @@
 
             if (o.reinit) $parent.empty();
 
-            var forReporting = (o.EditMode === EditMode.PrintReport.name),
+            var forReporting = (o.EditMode === Csw.enums.editMode.PrintReport),
                 ret, doPaging = false;
 
             /* fetchGridSkeleton */

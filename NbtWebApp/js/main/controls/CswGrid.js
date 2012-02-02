@@ -204,7 +204,7 @@ function CswGrid(options, $parent) {
                 $gridTable.jqGrid(o.gridOpts)
                           .jqGrid('navGrid', '#' + gridPagerId, o.optNav, { }, { }, { }, { }, { }); //Case 24032: Removed jqGrid search
             } catch (e) {
-                Csw.error.showError(Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, e.message));
+                Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, e.message));
             }
             if (o.pagermode === 'custom') {
                 makeCustomPager(o.customPager);

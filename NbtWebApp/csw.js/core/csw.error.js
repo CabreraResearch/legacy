@@ -1,4 +1,4 @@
-﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function() {
@@ -13,7 +13,7 @@
             /// <param name="esotericMsg" type="String"> (Optional) Error message with Developer context. </param>
             /// <returns type="Object"> The error object. </returns>
             return {
-                type: Csw.string(errorType, Csw.enums.ErrorType.warning.name),
+                type: Csw.string(errorType, Csw.enums.errorType.warning.name),
                 message: Csw.string(friendlyMsg),
                 detail: Csw.string(esotericMsg)
             };

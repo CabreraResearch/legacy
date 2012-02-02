@@ -49,7 +49,7 @@
 
                         Csw.crawlObject(result, function (childObj) {
                             $cell1 = $table.CswTable('cell', row, 1);
-                            $cell1.CswImageButton({ ButtonType: CswImageButton_ButtonType.Fire,
+                            $cell1.CswImageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Fire,
                                                     AlternateText: 'Burn Session',
                                                     ID: o.ID + '_burn_' + childObj.sessionid,
                                                     onClick: Csw.makeDelegate( function (sessionid) { handleBurn(sessionid); }, childObj.sessionid)

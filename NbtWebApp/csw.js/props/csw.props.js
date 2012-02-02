@@ -1,4 +1,4 @@
-﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function() {
@@ -19,7 +19,7 @@
                     if (Csw.isPlainObject(attr)) {
                         wasModified = preparePropJsonForSaveRecursive(isMulti, propVals[key], attr) || wasModified;
                     } else if ((false === isMulti && propVals[key] !== attr) ||
-                        (isMulti && false === Csw.isNullOrUndefined(attr) && attr !== CswMultiEditDefaultValue)) {
+                        (isMulti && false === Csw.isNullOrUndefined(attr) && attr !== Csw.enums.multiEditDefaultValue)) {
                         wasModified = true;
                         propVals[key] = attr;
                     }

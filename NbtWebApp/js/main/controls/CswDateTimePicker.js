@@ -39,7 +39,7 @@
             } else {
                 if( o.DisplayMode === "Date" || o.DisplayMode === "DateTime" ) {
                     var $DateBox = $Div.CswInput('init',{ ID: o.ID + "_date",
-                                                          type: CswInput_Types.text,
+                                                          type: Csw.enums.inputTypes.text,
                                                           value: o.Date,
                                                           onChange: o.OnChange,
                                                           width: '80px',
@@ -51,7 +51,7 @@
 
                 if( o.DisplayMode === "Time" || o.DisplayMode === "DateTime" ) {
                     var $TimeBox = $Div.CswInput('init',{ ID: o.ID + "_time",
-                                                          type: CswInput_Types.text,
+                                                          type: Csw.enums.inputTypes.text,
                                                           cssclass: 'textinput', 
                                                           onChange: o.onchange,
                                                           value: o.Time,

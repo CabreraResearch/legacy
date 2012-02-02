@@ -25,22 +25,22 @@
             nodetypeid: '',
             filterToPropId: '',
             title: '',
-            date: '',      // for audit records
-            EditMode: EditMode.Edit.name, // Edit, AddInPopup, EditInPopup, Demo, PrintReport, DefaultValue, NodePreview
+            date: '',      
+            EditMode: Csw.enums.editMode.Edit,
             Multi: false,
             ReadOnly: false,
-            onSave: null, // function (nodeid, cswnbtnodekey, tabcount) { },
-            Refresh: null, // function (nodeid, cswnbtnodekey, tabcount) { },
-            onBeforeTabSelect: null, // function (tabid) { return true; },
-            onTabSelect: null, // function (tabid) { },
-            onPropertyChange: null, // function (propid, propname) { },
-            onPropertyRemove: null, // function (propid) { },
-            onInitFinish: null, // function (AtLeastOneProp) { },
+            onSave: null, 
+            Refresh: null, 
+            onBeforeTabSelect: null,
+            onTabSelect: null, 
+            onPropertyChange: null,
+            onPropertyRemove: null,
+            onInitFinish: null, 
             ShowCheckboxes: false,
             ShowAsReport: true,
             AjaxWatchGlobal: true,
             NodeCheckTreeId: '',
-            onEditView: null, // function (viewid) { }
+            onEditView: null, 
             Config: false
         };
 
@@ -56,7 +56,7 @@
 
         getTabs(o);
 
-        if (o.EditMode !== EditMode.PrintReport.name) {
+        if (o.EditMode !== Csw.enums.editMode.PrintReport) {
             var $linkdiv = $('<div id="' + o.ID + '_linkdiv" align="right"/>')
                             .appendTo($parent);
             if (o.ShowAsReport && false === o.Multi) {
@@ -78,12 +78,12 @@
 
             var handle = function (eventObj) {
                 $tabParent.remove();
-                $.unsubscribe(ChemSW.enums.Events.CswNodeDelete, handle);
+                $.unsubscribe(Csw.enums.events.CswNodeDelete, handle);
                 return false;
             };
 
             if(false === Csw.isNullOrEmpty($tabParent.parent(), true)) {
-                $.subscribe(ChemSW.enums.Events.CswNodeDelete, handle);
+                $.subscribe(Csw.enums.events.CswNodeDelete, handle);
             }
             $tabcontentdiv.data('canEditLayout', canEditLayout);
             return $tabcontentdiv;
@@ -101,8 +101,8 @@
             };
 
             // For performance, don't bother getting tabs if we're in Add or Preview
-            if (o.EditMode == EditMode.AddInPopup.name ||
-                o.EditMode == EditMode.Preview.name) {
+            if (o.EditMode == Csw.enums.editMode.AddInPopup ||
+                o.EditMode == Csw.enums.editMode.Preview) {
                 var tabid = o.EditMode + "_tab";
                 var $tabcontentdiv = makeTabContentDiv($parent, tabid, false);
                 getProps($tabcontentdiv, tabid);
@@ -119,7 +119,7 @@
 
                         var tabFunc = function (thisTab) {
                             var thisTabId = thisTab.id;
-                            if (o.EditMode === 'PrintReport' || tabdivs.length === 0) {
+                            if (o.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
                                 // For PrintReports, we're going to make a separate tabstrip for each tab
                                 tabdivs[tabdivs.length] = $("<div><ul></ul></div>").appendTo($outertabdiv);
                             }
@@ -164,7 +164,7 @@
         } // getTabs()
 
         function getProps($tabcontentdiv, tabid) {
-            if (o.EditMode === EditMode.AddInPopup.name && o.Config === false) {
+            if (o.EditMode === Csw.enums.editMode.AddInPopup && o.Config === false) {
                 // case 20970 - make sure there's room in the quota
                 Csw.ajax.post({
                     watchGlobal: o.AjaxWatchGlobal,
@@ -216,7 +216,7 @@
                     var $layouttable = $formtblcell11.CswLayoutTable('init', {
                         ID: o.ID + '_props',
                         OddCellRightAlign: true,
-                        ReadOnly: (o.EditMode === EditMode.PrintReport.name || o.ReadOnly),
+                        ReadOnly: (o.EditMode === Csw.enums.editMode.PrintReport || o.ReadOnly),
                         cellset: {
                             rows: 1,
                             columns: 2
@@ -271,7 +271,7 @@
                         Csw.crawlObject(data, updOnSuccess, false);
                     }
 
-                    if (o.EditMode !== EditMode.PrintReport.name) {
+                    if (o.EditMode !== Csw.enums.editMode.PrintReport) {
                         $savetab = $formtblcell11.CswButton({ ID: 'SaveTab',
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',
@@ -321,19 +321,19 @@
 
                         /* Show the 'fake' config button to open the dialog */
                         $formtblcell12.CswImageButton({
-                            ButtonType: CswImageButton_ButtonType.Configure,
+                            ButtonType: Csw.enums.imageButton_ButtonType.Configure,
                             AlternateText: 'Configure',
                             ID: o.ID + 'configbtn',
                             onClick: function () {
                                 clearTabs();
                                 $.CswDialog('EditLayoutDialog', editLayoutOpt);
-                                return CswImageButton_ButtonType.None;
+                                return Csw.enums.imageButton_ButtonType.None;
                             }
                         });
                     }
 
                     /* case 8494 */
-                    if (!o.Config && !AtLeastOne.Saveable && o.EditMode == EditMode.AddInPopup.name) {
+                    if (!o.Config && !AtLeastOne.Saveable && o.EditMode == Csw.enums.editMode.AddInPopup) {
                         Save($form, $layouttable, data, $savetab, tabid);
                     }
                     else if (Csw.isFunction(o.onInitFinish)) {
@@ -398,9 +398,9 @@
             var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
 
             if ((Csw.bool(thisProp.display, true) || configMode) &&
-                fieldtype !== CswSubFields_Map.Image.name &&
-                    fieldtype !== CswSubFields_Map.Grid.name &&
-                        fieldtype !== CswSubFields_Map.Button.name &&
+                fieldtype !== Csw.enums.subFieldsMap.Image.name &&
+                    fieldtype !== Csw.enums.subFieldsMap.Grid.name &&
+                        fieldtype !== Csw.enums.subFieldsMap.Button.name &&
                             (o.filterToPropId === '' || o.filterToPropId === propid)) {
                 var $labelcell = _getLabelCell($cellset);
                 $labelcell.addClass('propertylabel');
@@ -432,7 +432,7 @@
                 if (o.ShowCheckboxes && Csw.bool(thisProp.copyable)) {
                     var $propcheck = $labelcell.CswInput('init', {
                         ID: 'check_' + propid,
-                        type: CswInput_Types.checkbox,
+                        type: Csw.enums.inputTypes.checkbox,
                         value: false, // Value --not defined?,
                         cssclass: o.ID + '_check'
                     });
@@ -460,7 +460,7 @@
             Csw.crawlObject(data, handleSuccess, false);
 
             if(false === Csw.isNullOrEmpty($savebtn, true)) {
-                if (o.Config || (AtLeastOne.Saveable === false && o.EditMode != EditMode.AddInPopup.name)) {
+                if (o.Config || (AtLeastOne.Saveable === false && o.EditMode != Csw.enums.editMode.AddInPopup)) {
                     $savebtn.hide();
                 } else {
                     $savebtn.show();
@@ -515,7 +515,7 @@
                     var $subtable = $propcell.CswLayoutTable('init', {
                         ID: fieldOpt.propid + '_subproptable',
                         OddCellRightAlign: true,
-                        ReadOnly: (o.EditMode === 'PrintReport' || o.ReadOnly),
+                        ReadOnly: (o.EditMode === Csw.enums.editMode.PrintReport || o.ReadOnly),
                         cellset: {
                             rows: 1,
                             columns: 2

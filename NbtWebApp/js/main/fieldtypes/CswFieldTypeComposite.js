@@ -11,7 +11,7 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : CswMultiEditDefaultValue;
+            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
             $Div.append(value);
 
         },
