@@ -1,4 +1,4 @@
-﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function CswTools() {
@@ -57,7 +57,7 @@
         } else {
             o.ID = Csw.string(options);
         }
-        
+
         elementId = o.ID;
         if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
             elementId = o.prefix + o.Delimiter + elementId;
@@ -69,7 +69,7 @@
     }
     Csw.register('makeId', makeId);
     Csw.makeId = Csw.makeId || makeId;
-    
+
     function makeSafeId(options, prefix, suffix, delimiter) {
         /// <summary>   Generates a "safe" ID for DOM assignment </summary>
         /// <param name="options" type="Object">
@@ -92,16 +92,16 @@
         } else {
             o.ID = Csw.string(options);
         }
-        
+
         elementId = o.ID;
-        toReplace = [ /'/gi , / /gi , /\//g ];
+        toReplace = [/'/gi , / /gi , /\//g];
         if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
             elementId = o.prefix + o.Delimiter + elementId;
         }
         if (false === Csw.isNullOrEmpty(o.suffix) && false === Csw.isNullOrEmpty(elementId)) {
             elementId += o.Delimiter + o.suffix;
         }
-        for (i = 0; i < toReplace.length; i+=1) {
+        for (i = 0; i < toReplace.length; i += 1) {
             if (Csw.contains(toReplace, i)) {
                 if (false === Csw.isNullOrEmpty(elementId)) {
                     elementId = elementId.replace(toReplace[i], '');
@@ -119,7 +119,7 @@
     }
     Csw.register('hasWebStorage', hasWebStorage);
     Csw.hasWebStorage = Csw.hasWebStorage || hasWebStorage;
-    
+
     function tryParseElement(elementId, $context) {
         /// <summary>Attempts to fetch an element from the DOM first through jQuery, then through JavaScript.</summary>
         /// <param name="elementId" type="String"> ElementId to find </param>
@@ -144,5 +144,5 @@
     }
     Csw.register('tryParseElement', tryParseElement);
     Csw.tryParseElement = Csw.tryParseElement || tryParseElement;
-    
+
 }());

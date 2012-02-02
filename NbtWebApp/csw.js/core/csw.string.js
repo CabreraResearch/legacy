@@ -1,9 +1,9 @@
-﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function () {
+(function() {
     'use strict';
-    
+
     function string(inputStr, defaultStr) {
         /// <summary> Get a valid string literal based on input</summary>
         /// <param name="inputStr" type="String"> String to parse </param>
@@ -32,7 +32,7 @@
     }
     Csw.register('string', string);
     Csw.string = Csw.string || string;
-    
+
     function isString(obj) {
         /// <summary> Returns true if the object is a String object. </summary>
         /// <param name="obj" type="Object"> Object to test</param>
@@ -42,16 +42,16 @@
     }
     Csw.register('isString', isString);
     Csw.isString = Csw.isString || isString;
-    
+
     function startsWith(source, search) {
         return (source.substr(0, search.length) === search);
     }
     Csw.register('startsWith', startsWith);
     Csw.startsWith = Csw.startsWith || startsWith;
-    
+
     function getTimeString(date, timeformat) {
         var militaryTime = false;
-        if (false === Csw.isNullOrEmpty(timeformat) && timeformat === "H:mm:ss") {
+        if (false === Csw.isNullOrEmpty(timeformat) && timeformat === 'H:mm:ss') {
             militaryTime = true;
         }
 
@@ -61,20 +61,20 @@
         var seconds = date.getSeconds();
 
         if (minutes < 10) {
-            minutes = "0" + minutes;
+            minutes = '0' + minutes;
         }
         if (seconds < 10) {
-            seconds = "0" + seconds;
+            seconds = '0' + seconds;
         }
 
         if (militaryTime) {
-            ret = hours + ":" + minutes + ":" + seconds;
+            ret = hours + ':' + minutes + ':' + seconds;
         } else {
-            ret = (hours % 12) + ":" + minutes + ":" + seconds + " ";
+            ret = (hours % 12) + ':' + minutes + ':' + seconds + ' ';
             if (hours > 11) {
-                ret += "PM";
+                ret += 'PM';
             } else {
-                ret += "AM";
+                ret += 'AM';
             }
         }
         return ret;

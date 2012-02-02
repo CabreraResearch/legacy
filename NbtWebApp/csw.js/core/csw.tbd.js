@@ -1,4 +1,4 @@
-﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function CswTBD() {
@@ -26,7 +26,7 @@
         var $visuserselect;
 
         Csw.clientSession.isAdministrator({
-            'Yes': function () {
+            'Yes': function() {
 
                 $table.CswTable('cell', rownum, 1).append(label);
                 var $parent = $table.CswTable('cell', rownum, 2);
@@ -47,7 +47,7 @@
                     'objectclass': 'UserClass'
                 });
 
-                $visibilityselect.change(function () {
+                $visibilityselect.change(function() {
                     var val = $visibilityselect.val();
                     if (val === 'Role') {
                         $visroleselect.show();
@@ -64,13 +64,13 @@
         }); // IsAdministrator
 
         return {
-            'getvisibilityselect': function () {
+            'getvisibilityselect': function() {
                 return $visibilityselect;
             },
-            'getvisroleselect': function () {
+            'getvisroleselect': function() {
                 return $visroleselect;
             },
-            'getvisuserselect': function () {
+            'getvisuserselect': function() {
                 return $visuserselect;
             }
         };

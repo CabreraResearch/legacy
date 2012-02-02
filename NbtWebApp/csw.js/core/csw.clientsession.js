@@ -1,4 +1,4 @@
-﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function CswClientSession() {
@@ -8,9 +8,9 @@
     var _expiretimeInterval;
     var _expiredInterval;
 
-    var clientSession = (function clientSessionP () {
+    var clientSession = (function clientSessionP() {
 
-        function finishLogout () {
+        function finishLogout() {
             var logoutpath = Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
             Csw.cookie.clearAll();
             if (false === Csw.isNullOrEmpty(logoutpath)) {
@@ -20,10 +20,10 @@
             }
         }
 
-        function logout (options) {
+        function logout(options) {
             var o = {
                 DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
-                onDeauthenticate: function () {
+                onDeauthenticate: function() {
                 }
             };
 
@@ -34,14 +34,14 @@
             Csw.ajax.post({
                 url: o.DeauthenticateUrl,
                 data: {},
-                success: function () {
+                success: function() {
                     finishLogout();
                     o.onDeauthenticate();
                 }
             });
         }
 
-        function _checkExpired () {
+        function _checkExpired() {
             var now = new Date();
             if (Date.parse(_expiretime) - Date.parse(now) < 0) {
                 window.clearInterval(_expiredInterval);
@@ -49,15 +49,15 @@
             }
         }
 
-        function _checkExpireTime () {
+        function _checkExpireTime() {
             var now = new Date();
             if (Date.parse(_expiretime) - Date.parse(now) < 180000) { // 3 minutes until timeout
                 window.clearInterval(_expiretimeInterval);
                 $.CswDialog('ExpireDialog', {
-                    'onYes': function () {
+                    'onYes': function() {
                         Csw.ajax.post({
                             'url': '/NbtWebApp/wsNBT.asmx/RenewSession',
-                            'success': function () {
+                            'success': function() {
                             }
                         });
                     }
@@ -65,32 +65,32 @@
             }
         }
 
-        function _setExpireTimeInterval () {
+        function _setExpireTimeInterval() {
             window.clearInterval(_expiretimeInterval);
             window.clearInterval(_expiredInterval);
-            _expiretimeInterval = setInterval(function () {
+            _expiretimeInterval = setInterval(function() {
                 _checkExpireTime();
             }, 60000);
-            _expiredInterval = setInterval(function () {
+            _expiredInterval = setInterval(function() {
                 _checkExpired();
             }, 60000);
         }
 
-        function getExpireTime () {
+        function getExpireTime() {
             return _expiretime;
         }
 
-        function setExpireTime (value) {
+        function setExpireTime(value) {
             _expiretime = value;
             _setExpireTimeInterval();
         }
 
-        function handleAuthenticationStatus (options) {
+        function handleAuthenticationStatus(options) {
             var o = {
                 status: '',
-                success: function () {
+                success: function() {
                 },
-                failure: function () {
+                failure: function() {
                 },
                 usernodeid: '',
                 usernodekey: '',
@@ -111,32 +111,32 @@
                     o.success(); // yes, o.success() is intentional here.
                     break;
                 case 'Failed':
-                    txt = "Invalid login.";
+                    txt = 'Invalid login.';
                     break;
                 case 'Locked':
-                    txt = "Your account is locked.  Please see your account administrator.";
+                    txt = 'Your account is locked.  Please see your account administrator.';
                     break;
                 case 'Deactivated':
-                    txt = "Your account is deactivated.  Please see your account administrator.";
+                    txt = 'Your account is deactivated.  Please see your account administrator.';
                     break;
                 case 'ModuleNotEnabled':
-                    txt = "This feature is not enabled.  Please see your account administrator.";
+                    txt = 'This feature is not enabled.  Please see your account administrator.';
                     break;
                 case 'TooManyUsers':
-                    txt = "Too many users are currently connected.  Try again later.";
+                    txt = 'Too many users are currently connected.  Try again later.';
                     break;
                 case 'NonExistentAccessId':
-                    txt = "Invalid login.";
+                    txt = 'Invalid login.';
                     break;
                 case 'NonExistentSession':
-                    txt = "Your session has timed out.  Please login again.";
+                    txt = 'Your session has timed out.  Please login again.';
                     break;
                 case 'Unknown':
-                    txt = "An Unknown Error Occurred";
+                    txt = 'An Unknown Error Occurred';
                     break;
                 case 'TimedOut':
                     goodEnoughForMobile = true;
-                    txt = "Your session has timed out.  Please login again.";
+                    txt = 'Your session has timed out.  Please login again.';
                     break;
                 case 'ExpiredPassword':
                     goodEnoughForMobile = true;
@@ -146,7 +146,7 @@
                             nodekeys: [o.usernodekey],
                             filterToPropId: o.passwordpropid,
                             title: 'Your password has expired.  Please change it now:',
-                            onEditNode: function () {
+                            onEditNode: function() {
                                 o.success();
                             }
                         });
@@ -156,10 +156,10 @@
                     goodEnoughForMobile = true;
                     if (!o.ForMobile) {
                         $.CswDialog('ShowLicenseDialog', {
-                            'onAccept': function () {
+                            'onAccept': function() {
                                 o.success();
                             },
-                            'onDecline': function () {
+                            'onDecline': function() {
                                 o.failure('You must accept the license agreement to use this application');
                             }
                         });
@@ -174,12 +174,12 @@
                 o.failure(txt, o.status);
             }
         }
-        
-        function isAdministrator (options) {
+
+        function isAdministrator(options) {
             var o = {
-                'Yes': function () {
+                'Yes': function() {
                 },
-                'No': function () {
+                'No': function() {
                 }
             };
             if (options) {
@@ -188,8 +188,8 @@
 
             Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
-                success: function (data) {
-                    if (data.Administrator === "true") {
+                success: function(data) {
+                    if (data.Administrator === 'true') {
                         o.Yes();
                     } else {
                         o.No();

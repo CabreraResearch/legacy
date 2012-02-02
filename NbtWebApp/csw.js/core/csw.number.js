@@ -1,4 +1,4 @@
-﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function CswNumber() {
@@ -17,12 +17,12 @@
             /// <param name="defaultNum" type="Number"> Default value if not a number </param>
             /// <returns type="Number" />
             var ret = 0;
-            
+
             function makeNumber(value) {
                 var num = +value;
-                if(isNaN(num)) {
+                if (isNaN(num)) {
                     num = parseInt(value, 0);
-                }   
+                }
                 return num;
             }
             var tryRet = makeNumber(inputNum);
@@ -44,7 +44,7 @@
     }
     Csw.register('number', number);
     Csw.number = Csw.number || number;
-    
+
     function isNumber(obj) {
         /// <summary> Returns true if the object is typeof number</summary>
         /// <param name="obj" type="Object"> Object to test</param>
@@ -55,7 +55,7 @@
     Csw.register('isNumber', isNumber);
     Csw.isNumber = Csw.isNumber || isNumber;
 
-    var isNumeric = function (obj) {
+    var isNumeric = function(obj) {
         /// <summary> Returns true if the input can be parsed as a Number </summary>
         /// <param name="str" type="Object"> String or object to test </param>
         /// <returns type="Boolean" />
@@ -82,7 +82,7 @@
             }
         }
         return isValid;
-    } 
+    }
     Csw.register('validateFloatMinValue', validateFloatMinValue);
     Csw.validateFloatMinValue = Csw.validateFloatMinValue || validateFloatMinValue;
 
@@ -97,7 +97,7 @@
             }
         }
         return isValid;
-    } 
+    }
     Csw.register('validateFloatMaxValue', validateFloatMaxValue);
     Csw.validateFloatMaxValue = Csw.validateFloatMaxValue || validateFloatMaxValue;
 
@@ -107,22 +107,22 @@
         var regex;
         if (precision > 0) {
             /* Allow any valid number -- we'll round later */
-            regex = /^\-?\d*\.?\d*$/g ;
+            regex = /^\-?\d*\.?\d*$/g;
         } else {
             /* Integers Only */
-            regex = /^\-?\d*$/g ;
+            regex = /^\-?\d*$/g;
         }
         if (isValid && !regex.test(value)) {
             isValid = false;
         }
 
         return isValid;
-    } 
+    }
     Csw.register('validateFloatPrecision', validateFloatPrecision);
     Csw.validateFloatPrecision = Csw.validateFloatPrecision || validateFloatPrecision;
 
     function validateInteger(value) {
-        var regex = /^\-?\d*$/g ;
+        var regex = /^\-?\d*$/g;
         return (regex.test(value));
     }
     Csw.register('validateInteger', validateInteger);

@@ -1,13 +1,13 @@
-﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function CswObject() {
     'use strict';
-    
+
      function isPlainObject(obj) {
-        /// <summary> 
+        /// <summary>
         ///    Returns true if the object is a JavaScript object.
-        ///     &#10; isPlainObject(CswInput_Types) === true 
+        ///     &#10; isPlainObject(CswInput_Types) === true
         ///     &#10; isPlainObject('CswInput_Types') === false
         /// </summary>
         /// <param name="obj" type="Object"> Object to test</param>
@@ -27,7 +27,7 @@
     }
     Csw.register('isJQuery', isJQuery);
     Csw.isJQuery = Csw.isJQuery || isJQuery;
-    
+
     function hasLength(obj) {
         /// <summary> Returns true if the object is an Array or jQuery</summary>
         /// <param name="obj" type="Object"> Object to test</param>
@@ -37,7 +37,7 @@
     }
     Csw.register('hasLength', hasLength);
     Csw.hasLength = Csw.hasLength || hasLength;
-    
+
     function isGeneric(obj) {
         /// <summary> Returns true if the object is not a function, array, jQuery or JSON object</summary>
         /// <param name="obj" type="Object"> Object to test</param>
@@ -82,7 +82,7 @@
     Csw.register('isInstanceOf', isInstanceOf);
     Csw.isInstanceOf = Csw.isInstanceOf || isInstanceOf;
 
-    
+
 
     function tryParseObjByIdx(object, index, defaultStr) {
         /// <summary> Attempts to fetch the value at an array index. Null-safe.</summary>
@@ -122,7 +122,7 @@
     }
     Csw.register('contains', contains);
     Csw.contains = Csw.contains || contains;
-    
+
     function renameProperty(obj, oldName, newName) {
         /// <summary>Renames a property on a Object literal</summary>
         /// <param name="obj" type="Object"> Object containing property </param>
@@ -152,7 +152,7 @@
     }
     Csw.register('foundMatch', foundMatch);
     Csw.foundMatch = Csw.foundMatch || foundMatch;
-    
+
     function each(thisObj, onSuccess) {
         /// <summary>Iterates an Object or an Array and handles length property</summary>
         /// <param name="thisObj" type="Object"> An object to crawl </param>
@@ -163,7 +163,7 @@
             childKey, obj, childObj;
         if (Csw.isFunction(onSuccess)) {
             if (Csw.isArray(thisObj) || (Csw.isPlainObject(thisObj) && false === contains(thisObj, 'length'))) {
-                $.each(thisObj, function (key, value) {
+                $.each(thisObj, function(key, value) {
                     obj = thisObj[key];
                     ret = onSuccess(obj, key, thisObj, value);
                     return !ret; //false signals break
@@ -193,7 +193,7 @@
         /// <returns type="Object">Returns the return of onSuccess</returns>
         //borrowed from http://code.google.com/p/shadejs
         var stopCrawling = false;
-        var onEach = function (childObj, childKey, parentObj, value) {
+        var onEach = function(childObj, childKey, parentObj, value) {
             if (false === stopCrawling) {
                 stopCrawling = Csw.bool(onSuccess(childObj, childKey, parentObj, value));
             }
@@ -207,7 +207,7 @@
     }
     Csw.register('crawlObject', crawlObject);
     Csw.crawlObject = Csw.crawlObject || crawlObject;
-    
+
     function object(obj) {
         /// <summary>Find an object in a JSON object.</summary>
         /// <param name="obj" type="Object"> Object to search </param>
@@ -231,7 +231,7 @@
                 currentKey = key;
             }
             if (false === ret) {
-                var onSuccess = function (childObj, childKey, parObj) {
+                var onSuccess = function(childObj, childKey, parObj) {
                     var found = false;
                     if (foundMatch(childObj, key, value)) {
                         ret = childObj;
@@ -248,7 +248,7 @@
         }
 
         function remove(key, value) {
-            var onSuccess = function (childObj, childKey, parObj) {
+            var onSuccess = function(childObj, childKey, parObj) {
                 var deleted = false;
                 if (foundMatch(childObj, key, value)) {
                     deleted = true;

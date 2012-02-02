@@ -1,13 +1,13 @@
-﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function CswAjax() {
     'use strict';
 
-    var ajax = (function () {
+    var ajax = (function() {
         /// <summary> The Csw Ajax class for submitting aync webservice requests</summary>
         /// <returns> An instance of the class with get()/post()</returns>
-        var external = {            
+        var external = {
             onBeforeAjax: null,
             onAfterAjax: null
         };
@@ -22,11 +22,11 @@
             }
         };
 
-        internal.handleAjaxError = function (errorJson) {
+        internal.handleAjaxError = function(errorJson) {
             Csw.error.showError(errorJson);
         }; /* internal.handleAjaxError() */
 
-        internal.jsonPost = function (options) {
+        internal.jsonPost = function(options) {
             /// <summary>Executes Async webservice request for JSON</summary>
             /// <param name="options" type="Object">
             ///     A JSON Object
@@ -38,7 +38,7 @@
             var o = {
                 url: '',
                 data: {},
-                onloginfail: function () {
+                onloginfail: function() {
                     Csw.clientSession.finishLogout();
                 },
                 success: null,
@@ -61,10 +61,10 @@
                 type: 'POST',
                 async: o.async,
                 url: o.url,
-                dataType: "json",
+                dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(o.data),
-                success: function (data) {
+                success: function(data) {
                     if (o.watchGlobal) {
                         internal.ajaxCount -= 1;
                     }
@@ -92,7 +92,7 @@
 
                         Csw.clientSession.handleAuthenticationStatus({
                             status: auth,
-                            success: function () {
+                            success: function() {
                                 Csw.tryExec(o.success, result);
                             },
                             failure: o.onloginfail,
@@ -104,18 +104,18 @@
                     }
                     Csw.tryExec(external.onAfterAjax, true);
                 }, /* success{} */
-                error: function (xmlHttpRequest, textStatus) {
+                error: function(xmlHttpRequest, textStatus) {
                     if (o.watchGlobal) {
                         internal.ajaxCount -= 1;
                     }
-                    Csw.log("Webservice Request (" + o.url + ") Failed: " + textStatus);
+                    Csw.log('Webservice Request (' + o.url + ') Failed: ' + textStatus);
                     Csw.tryExec(o.error);
                     Csw.tryExec(external.onAfterAjax, false);
                 }
             }); /* $.ajax({ */
         }; /* internal.jsonPost */
 
-        internal.jsonGet = function (options) {
+        internal.jsonGet = function(options) {
 
             /// <summary>
             ///   Executes Async webservice request for JSON
@@ -130,7 +130,7 @@
             var o = {
                 url: '',
                 data: {},
-                onloginfail: function () {
+                onloginfail: function() {
                     Csw.clientSession.finishLogout();
                 },
                 success: null,
@@ -155,7 +155,7 @@
                 url: o.url,
                 dataType: 'json',
                 data: JSON.stringify(o.data),
-                success: function (result) {
+                success: function(result) {
                     if (o.watchGlobal) {
                         internal.ajaxCount -= 1;
                     }
@@ -175,18 +175,18 @@
                     }
                     Csw.tryExec(external.onAfterAjax, true);
                 }, /* success{} */
-                error: function (xmlHttpRequest, textStatus) {
+                error: function(xmlHttpRequest, textStatus) {
                     if (o.watchGlobal) {
                         internal.ajaxCount -= 1;
                     }
-                    Csw.log("Webservice Request (" + o.url + ") Failed: " + textStatus);
+                    Csw.log('Webservice Request (' + o.url + ') Failed: ' + textStatus);
                     Csw.tryExec(o.error);
                     Csw.tryExec(external.onAfterAjax, false);
                 }
             }); /* $.ajax({ */
         }; /* internal.jsonGet() */
 
-        internal.xmlPost = function (options) {
+        internal.xmlPost = function(options) {
             /// <summary>
             ///   Executes Async webservice request for XML
             /// </summary>
@@ -203,12 +203,12 @@
                 url: '',
                 data: {},
                 stringify: false, /* in case we need to conditionally apply $.param() instead of JSON.stringify() (or both) */
-                onloginfail: function () {
+                onloginfail: function() {
                     Csw.clientSession.finishLogout();
                 },
-                success: function () {
+                success: function() {
                 },
-                error: function () {
+                error: function() {
                 },
                 formobile: false,
                 async: true,
@@ -227,13 +227,13 @@
                     type: 'POST',
                     async: o.async,
                     url: o.url,
-                    dataType: "text",
-                    data: $.param(o.data), 
-                    success: function (data, textStatus, xmlHttpRequest) {
+                    dataType: 'text',
+                    data: $.param(o.data),
+                    success: function(data, textStatus, xmlHttpRequest) {
                         if (o.watchGlobal) {
                             internal.ajaxCount -= 1;
                         }
-                        
+
                         var $realxml;
                         if ($.browser.msie) {
                             /* We have to use third-party jquery.xml.js for Internet Explorer to handle non-DOM XML content */
@@ -242,7 +242,7 @@
                             $realxml = $(xmlHttpRequest.responseXML).children().first();
                         }
 
-                        if ($realxml.first().get(0).nodeName === "error") {
+                        if ($realxml.first().get(0).nodeName === 'error') {
                             internal.handleAjaxError({
                                 'display': $realxml.CswAttrNonDom('display'),
                                 'type': $realxml.CswAttrNonDom('type'),
@@ -258,7 +258,7 @@
 
                             Csw.clientSession.handleAuthenticationStatus({
                                 status: auth,
-                                success: function () {
+                                success: function() {
                                     Csw.tryExec(o.success, $realxml);
                                 },
                                 failure: o.onloginfail,
@@ -270,23 +270,23 @@
                         }
 
                     }, /* success{} */
-                    error: function (xmlHttpRequest, textStatus) {
+                    error: function(xmlHttpRequest, textStatus) {
                         if (o.watchGlobal) {
                             internal.ajaxCount -= 1;
                         }
-                        Csw.log("Webservice Request (" + o.url + ") Failed: " + textStatus);
+                        Csw.log('Webservice Request (' + o.url + ') Failed: ' + textStatus);
                         Csw.tryExec(o.error);
                     }
                 }); /* $.ajax({ */
             } /* if(o.url != '') */
         }; /* internal.xmlPost() */
 
-        external.ajaxInProgress = function () {
+        external.ajaxInProgress = function() {
             /// <summary> Evaluates whether a pending ajax request is still open. </summary>
             return (internal.ajaxCount > 0);
         };
 
-        external.get = function (options, type) {
+        external.get = function(options, type) {
             /// <summary>
             ///   Executes Async webservice request for XML
             /// </summary>
@@ -308,7 +308,7 @@
             return ret;
         };
 
-        external.post = function (options, type) {
+        external.post = function(options, type) {
             /// <summary> Executes Async webservice request. </summary>
             /// <param name="options" type="Object">
             /// <para>A JSON Object</para>
@@ -334,7 +334,7 @@
 
         return external;
 
-    }());    
+    }());
     Csw.register('ajax', ajax);
     Csw.ajax = Csw.ajax || ajax;
 }());

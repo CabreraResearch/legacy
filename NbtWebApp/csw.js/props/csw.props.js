@@ -1,10 +1,10 @@
-﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function () {
+(function() {
     'use strict';
 
-    var preparePropJsonForSaveRecursive = function (isMulti, propVals, attributes) {
+    var preparePropJsonForSaveRecursive = function(isMulti, propVals, attributes) {
         ///<summary>Recurses over the subfields and sub-subfields of a property to update its JSON.</summary>
         ///<param name="isMulti" type="Boolean">True if this is Multi-Edit</param>
         ///<param name="propVals" type="Object">Likely an o.propData.values object. This contains the cached prop JSON.</param>
@@ -12,7 +12,7 @@
         ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
         var wasModified = false;
         if (false === Csw.isNullOrEmpty(propVals)) {
-            Csw.crawlObject(propVals, function (prop, key) {
+            Csw.crawlObject(propVals, function(prop, key) {
                 if (Csw.contains(attributes, key)) {
                     var attr = attributes[key];
                     //don't bother sending this to server unless it's changed
@@ -25,11 +25,11 @@
                     }
                 }
             }, false);
-        } 
+        }
         return wasModified;
     };
 
-    var preparePropJsonForSave = function (isMulti, propData, attributes) {
+    var preparePropJsonForSave = function(isMulti, propData, attributes) {
         ///<summary>Takes property JSON from the form and modifies it in order to send back to the server.</summary>
         ///<param name="isMulti" type="Boolean">True if this is Multi-Edit</param>
         ///<param name="propVals" type="Object">Likely an o.propData.values object. This contains the cached prop JSON.</param>

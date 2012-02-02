@@ -1,21 +1,21 @@
-﻿(function () {
+﻿(function() {
     'use strict';
 
     var constants = {
         unknownEnum: 'unknown'
     };
-    Csw.register ('constants', constants);
+    Csw.register('constants', constants);
     Csw.constants = Csw.constants || constants;
 
     var enums = {
-        tryParse: function (cswEnum, enumMember, caseSensitive) {
+        tryParse: function(cswEnum, enumMember, caseSensitive) {
             var ret = ChemSW.constants.unknownEnum;
-            if (Csw.contains (cswEnum, enumMember)) {
+            if (Csw.contains(cswEnum, enumMember)) {
                 ret = cswEnum[enumMember];
             } else if (false === caseSensitive) {
-                Csw.each (cswEnum, function (member) {
-                    if (Csw.contains (cswEnum, member) &&
-                        Csw.string (member).toLowerCase () === Csw.string (enumMember).toLowerCase ()) {
+                Csw.each(cswEnum, function(member) {
+                    if (Csw.contains(cswEnum, member) &&
+                        Csw.string(member).toLowerCase() === Csw.string(enumMember).toLowerCase()) {
                         ret = member;
                     }
                 });
@@ -70,9 +70,9 @@
             url: 'url'
         }
     };
-    Csw.register ('enums', enums);
+    Csw.register('enums', enums);
     Csw.enums = Csw.enums || enums;
-    
+
 } ());
 
 var EditMode = {
@@ -130,7 +130,7 @@ var CswRateIntervalTypes = {
 var CswMultiEditDefaultValue = '[Unchanged]';
 
 var CswAppMode = {
-    mode: 'full'     
+    mode: 'full'
 };
 
 // For CswImageButton
@@ -210,7 +210,7 @@ var CswNodeSpecies = {
 };
 
 var CswSubField_Names = {
-    Unknown: { name: 'unknown' }, 
+    Unknown: { name: 'unknown' },
     AllowedAnswers: { name: 'allowedanswers' },
     Answer: { name: 'answer' },
     Barcode: { name: 'barcode' },
@@ -249,12 +249,12 @@ var CswSubField_Names = {
 
 var CswSubFields_Map = {
     AuditHistoryGrid: { name: 'AuditHistoryGrid', subfields: { } },
-    Barcode: { 
-        name: 'Barcode', 
+    Barcode: {
+        name: 'Barcode',
         subfields: {
             Barcode: CswSubField_Names.Barcode,
             Sequence: CswSubField_Names.Number
-        } 
+        }
     },
     Button: {
         name: 'Button',
@@ -264,7 +264,7 @@ var CswSubFields_Map = {
     },
     Composite: { name: 'Composite', subfields: { } },
     DateTime: {
-         name: 'DateTime', 
+         name: 'DateTime',
          subfields: {
             Value: {
                 Date: { name: 'date' },
@@ -276,66 +276,66 @@ var CswSubFields_Map = {
                 Date: { name: 'Date' },
                 Time: { name: 'Time' },
                 DateTime: { name: 'DateTime' }
-            } 
-        } 
+            }
+        }
     },
     File: { name: 'File', subfields: { } },
     Grid: { name: 'Grid', subfields: { } },
     Image: { name: 'Image', subfields: { } },
     Link: {
-         name: 'Link', 
+         name: 'Link',
          subfields: {
             Text: CswSubField_Names.Text,
             Href: CswSubField_Names.Href
-        } 
+        }
     },
     List: {
-         name: 'List', 
+         name: 'List',
          subfields: {
             Value: CswSubField_Names.Value
-        } 
+        }
     },
     Location: { name: 'Location', subfields: { } },
     LocationContents: { name: 'LocationContents', subfields: { } },
     Logical: {
-         name: 'Logical', 
+         name: 'Logical',
          subfields: {
             Checked: CswSubField_Names.Checked
-        } 
+        }
     },
     LogicalSet: { name: 'LogicalSet', subfields: { } },
     Memo: {
-         name: 'Memo', 
+         name: 'Memo',
          subfields: {
             Text: CswSubField_Names.Text
-        } 
+        }
     },
     MTBF: { name: 'MTBF', subfields: { } },
     MultiList: { name: 'MultiList', subfields: { } },
     NodeTypeSelect: { name: 'NodeTypeSelect', subfields: { } },
     Number: {
-         name: 'Number', 
+         name: 'Number',
          subfields: {
             Value: CswSubField_Names.Value
-        } 
+        }
     },
     Password: {
-         name: 'Password', 
+         name: 'Password',
          subfields: {
             Password: CswSubField_Names.Password,
             ChangedDate: CswSubField_Names.ChangedDate
-        } 
+        }
     },
     PropertyReference: { name: 'PropertyReference', subfields: { } },
     Quantity: {
-         name: 'Quantity', 
+         name: 'Quantity',
          subfields: {
             Value: CswSubField_Names.Value,
             Units: CswSubField_Names.Number
-        } 
+        }
     },
     Question: {
-         name: 'Question', 
+         name: 'Question',
          subfields: {
             Answer: CswSubField_Names.Answer,
             CorrectiveAction: CswSubField_Names.CorrectiveAction,
@@ -343,22 +343,22 @@ var CswSubFields_Map = {
             Comments: CswSubField_Names.Comments,
             DateAnswered: CswSubField_Names.DateAnswered,
             DateCorrected: CswSubField_Names.DateCorrected
-        } 
+        }
     },
     Relationship: { name: 'Relationship', subfields: { } },
     Scientific: { name: 'Scientific', subfields: { } },
     Sequence: { name: 'Sequence', subfields: { } },
     Static: {
-         name: 'Static', 
+         name: 'Static',
          subfields: {
             Text: CswSubField_Names.Text
-        } 
+        }
     },
     Text: {
-         name: 'Text', 
+         name: 'Text',
          subfields: {
             Text: CswSubField_Names.Text
-        } 
+        }
     },
     TimeInterval: { name: 'TimeInterval', subfields: { } },
     UserSelect: { name: 'UserSelect', subfields: { } },

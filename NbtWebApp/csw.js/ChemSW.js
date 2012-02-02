@@ -1,14 +1,14 @@
-﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+﻿;/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 window.abandonHope = false;
-(function (window, $, undefined) {
+(function(window, $, undefined) {
     'use strict';
     var document = window.document,
         navigator = window.navigator,
         location = window.location;
 
-    window.ChemSW = window.Csw = (function () {
+    window.ChemSW = window.Csw = (function() {
 
         var cswUniverse = {
             document: document,
@@ -22,7 +22,7 @@ window.abandonHope = false;
             protectedMethods = ['register', 'deregister', 'getGlobalProp', 'setGlobalProp'],
             ret = {};
 
-        var register = function (name, obj, isProtected) {
+        var register = function(name, obj, isProtected) {
             /// <summary>
             ///   Register an Object in the ChemSW namespace
             /// </summary>
@@ -33,7 +33,7 @@ window.abandonHope = false;
             var succeeded = false;
             if (methods.indexOf(name) !== -1) {
                 methods.push(name);
-                obj[name] = true; //for shimming our own instanceof 
+                obj[name] = true; //for shimming our own instanceof
                 if (isProtected && protectedMethods.indexOf(name) !== -1) {
                     protectedMethods.push(name);
                 }
@@ -44,7 +44,7 @@ window.abandonHope = false;
         };
         ret.register = register;
 
-        var deregister = function (name) {
+        var deregister = function(name) {
             /// <summary>
             ///   Deregister an Object from the ChemSW namespace
             /// </summary>
@@ -63,7 +63,7 @@ window.abandonHope = false;
         register('deregister', deregister);
         ret.deregister = ret.deregister || deregister;
 
-        var getGlobalProp = function (propName) {
+        var getGlobalProp = function(propName) {
             /// <summary>
             ///   Fetch a dereferenced copy of a property from the private universe collection
             /// </summary>
@@ -81,7 +81,7 @@ window.abandonHope = false;
         register('getGlobalProp', getGlobalProp);
         ret.getGlobalProp = ret.getGlobalProp || getGlobalProp;
 
-        var setGlobalProp = function (prop, val) {
+        var setGlobalProp = function(prop, val) {
             /// <summary>
             ///   Change the value of a property in the private universe collection
             /// </summary>
@@ -97,7 +97,7 @@ window.abandonHope = false;
         register('setGlobalProp', setGlobalProp);
         ret.setGlobalProp = ret.setGlobalProp || setGlobalProp;
 
-        var addGlobalProp = function (propName, val) {
+        var addGlobalProp = function(propName, val) {
             /// <summary>
             ///   Add a property to the private universe collection
             /// </summary>
@@ -114,7 +114,7 @@ window.abandonHope = false;
         register('addGlobalProp', addGlobalProp);
         ret.addGlobalProp = ret.addGlobalProp || addGlobalProp;
 
-        var getCswMethods = function () {
+        var getCswMethods = function() {
             /// <summary>
             ///   Fetch a dereferenced copy of the currently registered properties on the ChemSW namespace
             /// </summary>

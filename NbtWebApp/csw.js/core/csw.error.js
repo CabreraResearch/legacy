@@ -1,11 +1,11 @@
-﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function () {
+(function() {
     'use strict';
 
     var error = (function errorP() {
-    
+
         function makeErrorObj(errorType, friendlyMsg, esotericMsg) {
             /// <summary>Generates a Csw Error object suitable for displaying a client-side error.</summary>
             /// <param name="errorType" type="Enum"> Error type: Error or Warning </param>
@@ -32,7 +32,7 @@
             if (errorJson) {
                 $.extend(e, errorJson);
             }
-        
+
             var $errorsdiv = $('#DialogErrorDiv');
             if ($errorsdiv.length <= 0) {
                 $errorsdiv = $('#ErrorDiv');
@@ -44,7 +44,7 @@
                 Csw.log(e.message + '; ' + e.detail);
             }
             return true;
-        } 
+        }
 
         function errorHandler(errorMsg, includeCallStack, includeLocalStorage, doAlert) {
             if (Csw.hasWebStorage() && includeLocalStorage) {

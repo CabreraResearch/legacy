@@ -8,21 +8,21 @@
             var keys = [];
             var length = 0;
             return {
-                getItem: function (sKey) {
+                getItem: function(sKey) {
                     var ret = null;
                     if (sKey && storage.hasOwnProperty(sKey)) {
                         ret = storage[sKey];
                     }
                     return ret;
                 },
-                key: function (nKeyId) {
+                key: function(nKeyId) {
                     var ret = null;
                     if (keys.hasOwnProperty(nKeyId)) {
                         ret = keys[nKeyId];
                     }
                     return ret;
                 },
-                setItem: function (sKey, sValue) {
+                setItem: function(sKey, sValue) {
                     var ret = null;
                     if (sKey) {
                         if (false === storage.hasOwnProperty(sKey)) {
@@ -34,7 +34,7 @@
                     return ret;
                 },
                 length: length,
-                removeItem: function (sKey) {
+                removeItem: function(sKey) {
                     var ret = false;
                     if (sKey && storage.hasOwnProperty(sKey)) {
                         keys.splice(sKey, 1);
@@ -44,18 +44,18 @@
                     }
                     return ret;
                 },
-                clear: function () {
+                clear: function() {
                     storage = { };
                     keys = [];
                     length = 0;
                     return true;
                 },
-                hasOwnProperty: function (sKey) {
+                hasOwnProperty: function(sKey) {
                     return storage.hasOwnProperty(sKey);
                 }
             };
         }());
-        
+
     if (false === window.Modernizr.localstorage) {
         window.localStorage = newLocalStorage;
     }

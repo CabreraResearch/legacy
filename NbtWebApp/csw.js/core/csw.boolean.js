@@ -1,4 +1,4 @@
-﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+﻿;/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function CswBoolean() {
@@ -32,7 +32,7 @@
         }
 
         retBool = toBool();
-        
+
         return retBool;
     }
 
