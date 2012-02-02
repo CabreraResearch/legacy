@@ -1,7 +1,6 @@
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.MetaData

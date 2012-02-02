@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Data;
-using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.MetaData

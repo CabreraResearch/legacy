@@ -11,14 +11,14 @@ window.initMain = window.initMain || function (undefined) {
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
     
-    Csw.onBeforeAjax = function (watchGlobal) {
+    Csw.ajax.onBeforeAjax = function (watchGlobal) {
         if (watchGlobal) {
             $('#ajaxSpacer').hide();
             $('#ajaxImage').show();
         }
     };
-    Csw.onAfterAjax = function () {
-        if (false === Csw.ajaxInProgress()) {
+    Csw.ajax.onAfterAjax = function () {
+        if (false === Csw.ajax.ajaxInProgress()) {
             $('#ajaxImage').hide();
             $('#ajaxSpacer').show();
         }
@@ -38,8 +38,7 @@ window.initMain = window.initMain || function (undefined) {
     } else {
         initAll();
     }
-
-
+    
     function initAll() {
         //if (debugOn()) Csw.log('Main.initAll()');
 

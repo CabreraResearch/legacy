@@ -4,7 +4,7 @@
 (function () {
     'use strict';
 
-    var $nodepreview = undefined;
+    var $nodepreview;
     var nodeHoverIn = function (event, nodeid, cswnbtnodekey) {
         $nodepreview = $.CswNodePreview('open', {
             ID: nodeid + "_preview",

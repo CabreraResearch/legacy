@@ -10,11 +10,11 @@
     var enums = {
         tryParse: function (cswEnum, enumMember, caseSensitive) {
             var ret = ChemSW.constants.unknownEnum;
-            if (contains (cswEnum, enumMember)) {
+            if (Csw.contains (cswEnum, enumMember)) {
                 ret = cswEnum[enumMember];
             } else if (false === caseSensitive) {
-                each (cswEnum, function (member) {
-                    if (contains (cswEnum, member) &&
+                Csw.each (cswEnum, function (member) {
+                    if (Csw.contains (cswEnum, member) &&
                         Csw.string (member).toLowerCase () === Csw.string (enumMember).toLowerCase ()) {
                         ret = member;
                     }

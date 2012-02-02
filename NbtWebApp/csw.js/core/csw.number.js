@@ -20,7 +20,7 @@
             
             function makeNumber(value) {
                 var num = +value;
-                if(isNaN(tryRet)) {
+                if(isNaN(num)) {
                     num = parseInt(value, 0);
                 }   
                 return num;
@@ -41,7 +41,7 @@
         var retVal = tryParseNumber();
 
         return retVal;
-    };
+    }
     Csw.register('number', number);
     Csw.number = Csw.number || number;
     
@@ -51,7 +51,7 @@
         /// <returns type="Boolean" />
         var ret = (typeof obj === 'number');
         return ret;
-    };
+    }
     Csw.register('isNumber', isNumber);
     Csw.isNumber = Csw.isNumber || isNumber;
 

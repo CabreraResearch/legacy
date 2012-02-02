@@ -17,7 +17,7 @@
             }
         },
         save: function (o) {
-            var clientDb = CswClientDb();
+            var clientDb = cswClientDb();
             //Case 20939: if your prop isn't saving, check for duplicate IDs
             var intervalData = clientDb.getItem(o.ID + '_rateIntervalSave');
             var $this = $(this);

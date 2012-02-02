@@ -32,7 +32,9 @@
         var str = '',
             x, popup;
         for (x in obj) {
-            str = str + x + "=" + obj[x] + "<br><br>";
+            if(Csw.contains(obj, x)) {
+                str = str + x + "=" + obj[x] + "<br><br>";
+            }
         }
         popup = window.open("", "popup");
         if (popup !== null) {
@@ -76,7 +78,7 @@
                 if (undefined !== logger.setEnded) {
                     logger.setEnded();
                 }
-                var logStorage = CswClientDb();
+                var logStorage = cswClientDb();
                 var log = logStorage.getItem('debuglog');
                 log += logger.toHtml();
 

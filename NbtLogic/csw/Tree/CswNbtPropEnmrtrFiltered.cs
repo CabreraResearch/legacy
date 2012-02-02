@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt
 {

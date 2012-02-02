@@ -15,7 +15,7 @@
             '$item': $SelectedItem
         };
         return ret;
-    };
+    }
     Csw.register('jsTreeGetSelected', jsTreeGetSelected);
     Csw.jsTreeGetSelected = Csw.jsTreeGetSelected || jsTreeGetSelected;
 
@@ -75,7 +75,7 @@
             }
         };
 
-    }; // makeViewVisibilitySelect()
+    } // makeViewVisibilitySelect()
     Csw.register('makeViewVisibilitySelect', makeViewVisibilitySelect);
     Csw.makeViewVisibilitySelect = Csw.makeViewVisibilitySelect || makeViewVisibilitySelect;
 
@@ -83,7 +83,7 @@
         var popup = window.open(url, null, 'height=' + height + ', width=' + width + ', status=no, resizable=yes, scrollbars=yes, toolbar=yes, location=no, menubar=yes');
         popup.focus();
         return popup;
-    };
+    }
     Csw.register('openPopup', openPopup);
     Csw.openPopup = Csw.openPopup || openPopup;
 

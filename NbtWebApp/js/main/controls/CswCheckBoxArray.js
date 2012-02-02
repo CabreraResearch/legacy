@@ -46,7 +46,7 @@
                 var storeDataId = Csw.makeId({ID: o.ID, suffix: storedDataSuffix});
                 cbaPrevSelected = Csw.makeId({ ID: storeDataId, suffix: cbaPrevSelectedSuffix });
                 
-                var clientDb = CswClientDb();
+                var clientDb = cswClientDb();
                 clientDb.removeItem(storeDataId);
                 clientDb.removeItem(cbaPrevSelected);
                 
@@ -223,7 +223,7 @@
                     $.extend(o, options);
                 }
                 var storeDataId = Csw.makeId({ID: o.ID, suffix: storedDataSuffix});
-                var clientDb = CswClientDb();
+                var clientDb = cswClientDb();
                 var data = clientDb.getItem(storeDataId);
                 return data;
             }
@@ -286,7 +286,7 @@
 
                 dataStore.cols = cols;
                 dataStore.data = data;
-                var clientDb = CswClientDb();
+                var clientDb = cswClientDb();
                 clientDb.setItem(o.storeDataId, dataStore);
             }
             return dataStore;

@@ -14,7 +14,7 @@
         /// <returns type="Boolean" />
         var ret = ($.isPlainObject(obj));
         return ret;
-    };
+    }
     Csw.register('isPlainObject', isPlainObject);
     Csw.isPlainObject = Csw.isPlainObject || isPlainObject;
 
@@ -24,7 +24,7 @@
         /// <returns type="Boolean" />
         var ret = (obj instanceof jQuery);
         return ret;
-    };
+    }
     Csw.register('isJQuery', isJQuery);
     Csw.isJQuery = Csw.isJQuery || isJQuery;
     
@@ -34,7 +34,7 @@
         /// <returns type="Boolean" />
         var ret = (Csw.isArray(obj) || isJQuery(obj));
         return ret;
-    };
+    }
     Csw.register('hasLength', hasLength);
     Csw.hasLength = Csw.hasLength || hasLength;
     
@@ -47,6 +47,19 @@
     }
     Csw.register('isGeneric', isGeneric);
     Csw.isGeneric = Csw.isGeneric || isGeneric;
+
+    function isNullOrUndefined(obj) {
+        /// <summary> Returns true if the input is null or undefined</summary>
+        /// <param name="obj" type="Object"> Object to test</param>
+        /// <returns type="Boolean" />
+        var ret = false;
+        if (false === Csw.isFunction(obj)) {
+            ret = obj === null || obj === undefined || ($.isPlainObject(obj) && $.isEmptyObject(obj));
+        }
+        return ret;
+    }
+    Csw.register('isNullOrUndefined', isNullOrUndefined);
+    Csw.isNullOrUndefined = Csw.isNullOrUndefined || isNullOrUndefined;
 
     function isNullOrEmpty(obj, checkLength) {
         /// <summary> Returns true if the input is null, undefined, or ''</summary>
@@ -69,18 +82,7 @@
     Csw.register('isInstanceOf', isInstanceOf);
     Csw.isInstanceOf = Csw.isInstanceOf || isInstanceOf;
 
-    function isNullOrUndefined(obj) {
-        /// <summary> Returns true if the input is null or undefined</summary>
-        /// <param name="obj" type="Object"> Object to test</param>
-        /// <returns type="Boolean" />
-        var ret = false;
-        if (false === Csw.isFunction(obj)) {
-            ret = obj === null || obj === undefined || ($.isPlainObject(obj) && $.isEmptyObject(obj));
-        }
-        return ret;
-    }
-    Csw.register('isNullOrUndefined', isNullOrUndefined);
-    Csw.isNullOrUndefined = Csw.isNullOrUndefined || isNullOrUndefined;
+    
 
     function tryParseObjByIdx(object, index, defaultStr) {
         /// <summary> Attempts to fetch the value at an array index. Null-safe.</summary>
@@ -150,7 +152,62 @@
     }
     Csw.register('foundMatch', foundMatch);
     Csw.foundMatch = Csw.foundMatch || foundMatch;
+    
+    function each(thisObj, onSuccess) {
+        /// <summary>Iterates an Object or an Array and handles length property</summary>
+        /// <param name="thisObj" type="Object"> An object to crawl </param>
+        /// <param name="onSuccess" type="Function"> A function to execute on finding a property, which should return true to stop.</param>
+        /// <returns type="Object">Returns the return of onSuccess</returns>
+        //http://stackoverflow.com/questions/7356835/jquery-each-fumbles-if-non-array-object-has-length-property
+        var ret = false,
+            childKey, obj, childObj;
+        if (Csw.isFunction(onSuccess)) {
+            if (Csw.isArray(thisObj) || (Csw.isPlainObject(thisObj) && false === contains(thisObj, 'length'))) {
+                $.each(thisObj, function (key, value) {
+                    obj = thisObj[key];
+                    ret = onSuccess(obj, key, thisObj, value);
+                    return !ret; //false signals break
+                });
+            } else if (Csw.isPlainObject(thisObj)) {
+                for (childKey in thisObj) {
+                    if (contains(thisObj, childKey)) {
+                        childObj = thisObj[childKey];
+                        ret = onSuccess(childObj, childKey, thisObj);
+                        if (ret) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return ret;
+    } // each()
+    Csw.register('each', each);
+    Csw.each = Csw.each || each;
 
+    function crawlObject(thisObj, onSuccess, doRecursion) {
+        /// <summary>Iterates (optionally recursively) an object and executes a function on each of its properties.</summary>
+        /// <param name="thisObj" type="Object"> An object to crawl </param>
+        /// <param name="onSuccess" type="Function"> A function to execute on finding a property. To force iteration to stop, onSuccess should return false. </param>
+        /// <param name="doRecursion" type="Boolean"> If true, recurse on all properties. Recursion will stop if onSuccess returns false. </param>
+        /// <returns type="Object">Returns the return of onSuccess</returns>
+        //borrowed from http://code.google.com/p/shadejs
+        var stopCrawling = false;
+        var onEach = function (childObj, childKey, parentObj, value) {
+            if (false === stopCrawling) {
+                stopCrawling = Csw.bool(onSuccess(childObj, childKey, parentObj, value));
+            }
+            if (false === stopCrawling && doRecursion) {
+                stopCrawling = Csw.bool(crawlObject(childObj, onSuccess, doRecursion));
+            }
+            return stopCrawling;
+        };
+        stopCrawling = each(thisObj, onEach);
+        return stopCrawling;
+    }
+    Csw.register('crawlObject', crawlObject);
+    Csw.crawlObject = Csw.crawlObject || crawlObject;
+    
     function object(obj) {
         /// <summary>Find an object in a JSON object.</summary>
         /// <param name="obj" type="Object"> Object to search </param>
@@ -198,7 +255,7 @@
                     delete parObj[childKey];
                     currentKey = null;
                     currentObj = null;
-                    parentObj = parentObj;
+                    //parentObj = parentObj;
                 }
                 return deleted;
             };
@@ -217,58 +274,5 @@
     Csw.register('object', object);
     Csw.object = Csw.object || object;
 
-    function each(thisObj, onSuccess) {
-        /// <summary>Iterates an Object or an Array and handles length property</summary>
-        /// <param name="thisObj" type="Object"> An object to crawl </param>
-        /// <param name="onSuccess" type="Function"> A function to execute on finding a property, which should return true to stop.</param>
-        /// <returns type="Object">Returns the return of onSuccess</returns>
-        //http://stackoverflow.com/questions/7356835/jquery-each-fumbles-if-non-array-object-has-length-property
-        var ret = false;
-        if (Csw.isFunction(onSuccess)) {
-            if (Csw.isArray(thisObj) || (Csw.isPlainObject(thisObj) && false === contains(thisObj, 'length'))) {
-                $.each(thisObj, function (key, value) {
-                    var obj = thisObj[key];
-                    ret = onSuccess(obj, key, thisObj, value);
-                    return !ret; //false signals break
-                });
-            } else if (Csw.isPlainObject(thisObj)) {
-                for (var childKey in thisObj) {
-                    if (contains(thisObj, childKey)) {
-                        var childObj = thisObj[childKey];
-                        ret = onSuccess(childObj, childKey, thisObj);
-                        if (ret) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return ret;
-    }; // each()
-    Csw.register('each', each);
-    Csw.each = Csw.each || each;
-
-    function crawlObject(thisObj, onSuccess, doRecursion) {
-        /// <summary>Iterates (optionally recursively) an object and executes a function on each of its properties.</summary>
-        /// <param name="thisObj" type="Object"> An object to crawl </param>
-        /// <param name="onSuccess" type="Function"> A function to execute on finding a property. To force iteration to stop, onSuccess should return false. </param>
-        /// <param name="doRecursion" type="Boolean"> If true, recurse on all properties. Recursion will stop if onSuccess returns false. </param>
-        /// <returns type="Object">Returns the return of onSuccess</returns>
-        //borrowed from http://code.google.com/p/shadejs
-        var stopCrawling = false;
-        var onEach = function (childObj, childKey, parentObj, value) {
-            if (false === stopCrawling) {
-                stopCrawling = Csw.bool(onSuccess(childObj, childKey, parentObj, value));
-            }
-            if (false === stopCrawling && doRecursion) {
-                stopCrawling = Csw.bool(crawlObject(childObj, onSuccess, doRecursion));
-            }
-            return stopCrawling;
-        };
-        stopCrawling = each(thisObj, onEach);
-        return stopCrawling;
-    };
-    Csw.register('crawlObject', crawlObject);
-    Csw.crawlObject = Csw.crawlObject || crawlObject;
 
 }());

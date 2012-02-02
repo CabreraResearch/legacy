@@ -5,17 +5,17 @@
     'use strict';
 
     function bool(str, isTrueIfNull) {
-
+        /// <summary>
+        ///   Returns true if the input is true, 'true', '1' or 1.
+        ///   &#10;1 Returns false if the input is false, 'false', '0' or 0.
+        ///   &#10;2 Otherwise returns false.
+        /// </summary>
+        /// <param name="str" type="Object">String or object to test</param>
+        /// <param name="isTrueIfNull" type="Boolean">If true, null will evaluate to true.</param>
+        /// <returns type="Bool" />
         var retBool;
-        function isTrue () {
-            /// <summary>
-            ///   Returns true if the input is true, 'true', '1' or 1.
-            ///   &#10;1 Returns false if the input is false, 'false', '0' or 0.
-            ///   &#10;2 Otherwise returns false and (if debug) writes an error to the log.
-            /// </summary>
-            /// <param name="str" type="Object">
-            ///     String or object to test
-            /// </param>
+        function toBool() {
+            /// <summary>Converts the input to a boolean.</summary>
             /// <returns type="Bool" />
             var ret;
             var truthy = Csw.string(str).toLowerCase().trim();
@@ -31,7 +31,7 @@
             return ret;
         }
 
-        retBool = isTrue();
+        retBool = toBool();
         
         return retBool;
     }
