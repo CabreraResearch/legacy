@@ -51,8 +51,7 @@
 
         function _checkExpireTime () {
             var now = new Date();
-            if (Date.parse(_expiretime) - Date.parse(now) < 180000)     	// 3 minutes until timeout
-            {
+            if (Date.parse(_expiretime) - Date.parse(now) < 180000) { // 3 minutes until timeout
                 window.clearInterval(_expiretimeInterval);
                 $.CswDialog('ExpireDialog', {
                     'onYes': function () {

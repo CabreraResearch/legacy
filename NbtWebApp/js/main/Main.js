@@ -18,7 +18,7 @@ window.initMain = window.initMain || function (undefined) {
         }
     });
     Csw.ajax.onAfterAjax( function () {
-        if (false === Csw.ajaxInProgress()) {
+        if (false === Csw.ajax.ajaxInProgress()) {
             $('#ajaxImage').hide();
             $('#ajaxSpacer').show();
         }
