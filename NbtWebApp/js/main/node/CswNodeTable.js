@@ -5,7 +5,7 @@
 /// <reference path="../controls/CswGrid.js" />
 /// <reference path="../pagecmp/CswDialog.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     var pluginName = 'CswNodeTable';
 
@@ -91,8 +91,22 @@
 
                         // Props
                         Csw.crawlObject(nodeObj.props, function (propObj) {
-                            $textcell.append('' + propObj.propname + ': ');
-                            $textcell.append(propObj.gestalt);
+                            if (propObj.fieldtype == "Button") {
+                            
+                                var $propdiv = $textcell.CswDiv({});
+                                $.CswFieldTypeFactory('make', {
+                                    nodeid: nodeid,
+                                    fieldtype: propObj.fieldtype,
+                                    $propdiv: $propdiv,
+                                    propData: propObj.propData,
+                                    ID: Csw.makeId({ ID: o.ID, suffix: propObj.id }),
+                                    EditMode: Csw.enums.EditMode.Table
+                                });
+                            
+                            } else {
+                                $textcell.append('' + propObj.propname + ': ');
+                                $textcell.append(propObj.gestalt);
+                            }
                             $textcell.append('<br/>');
                         });
 

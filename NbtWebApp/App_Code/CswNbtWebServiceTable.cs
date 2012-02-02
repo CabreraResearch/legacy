@@ -111,7 +111,8 @@ namespace ChemSW.Nbt.WebServices
                 Int32 ThisOrder = 0;
                 foreach( CswNbtViewProperty OtherViewProp in ViewRel.Properties )
                 {
-                    if( OtherViewProp.Order < ViewProp.Order || ViewProp.Order == Int32.MinValue )
+                    if( ( OtherViewProp.Order != Int32.MinValue && OtherViewProp.Order < ViewProp.Order ) || 
+                        ViewProp.Order == Int32.MinValue )
                     {
                         ThisOrder++;
                     }
@@ -139,14 +140,34 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ret["thumbnailurl"] = CswNbtNodePropImage.makeImageUrl( JctNodePropId, NodeId, NodeTypePropId );
                 }
-                else
+                else 
                 {
                     JObject ThisProp = new JObject();
                     ThisProp["propid"] = PropId.ToString();
                     ThisProp["propname"] = PropName;
                     ThisProp["gestalt"] = _Truncate( Gestalt );
-                    
-                    PropObjs.Add(OrderMap[NodeTypePropId], ThisProp);
+                    ThisProp["fieldtype"] = FieldType;
+
+                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button.ToString() )
+                    {
+                        // Include full info for rendering the button
+                        // This was done in such a way as to prevent instancing the CswNbtNode object, 
+                        // which we don't need for Buttons.
+                        CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+
+                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                        JProperty JpPropData = ws.makePropJson( NodeEditMode.Table, NodeId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue );
+                        JObject PropData = (JObject) JpPropData.Value;
+
+                        JObject PropValues = new JObject();
+                        CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues );
+                        PropData["values"] = PropValues;
+
+                        ThisProp["propData"] = PropData;
+                    }
+                    //if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Link.ToString() )
+
+                    PropObjs.Add( OrderMap[NodeTypePropId], ThisProp );
                 }
             } // foreach( XElement PropElm in NodeElm.Elements() )
 
