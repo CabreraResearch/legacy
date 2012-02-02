@@ -332,8 +332,12 @@
             post: post,
             dataType: dataType,
             ajaxInProgress: ajaxInProgress,
-            onBeforeAjax: onBeforeAjax,
-            onAfterAjax: onAfterAjax
+            onBeforeAjax: function(func) {
+                onBeforeAjax = func
+            },
+            onAfterAjax: function(func) {
+                onAfterAjax = func
+            }
         };
 
     }());    
