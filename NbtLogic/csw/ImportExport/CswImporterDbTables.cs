@@ -741,17 +741,36 @@ namespace ChemSW.Nbt.ImportExport
                                                         //CurrentNodeTypeProp.FKType.
                                                         //CurrentNodeTypeProp.FKValue
 
+                                                        //What I've got here is wrong!
+                                                        //What I need to do is retrieve the _destination_ node using the nodeid in ImportNodeIdToNbtNodeId
+                                                        //It is the nodetype or object class of _that_ node that must match the retrieved node id. 
+
+                                                        //_CswNbtResources.Nodes[CurrentNbtPrimeKey]
+
+                                                        bool DestinationTypeMatchesSourcesType = true; 
                                                         if( CurrentNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
                                                         {
                                                             CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( CurrentNodeTypeProp.FKValue );
+
+                                                            if( RelatedNodeType.NodeTypeName != CurrentNodeTypeProp.NodeType.NodeTypeName )
+                                                            {
+                                                                CurrentRowError += "Unable to import the " + CurrentNodeTypePropname + ": the destination " ;
+                                                                CurrentErrorStatus = ImportProcessStati.Error;
+                                                            } 
                                                         }
                                                         else if( CurrentNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
                                                         {
                                                             CswNbtMetaDataObjectClass RelatedObjectClass = _CswNbtResources.MetaData.getObjectClass( CurrentNodeTypeProp.FKValue );
                                                         }
 
-                                                        CurrentNbtNode.Properties[CurrentNodeTypeProp].ReadDataRow( CurrentImportProprow, ImportNodeIdToNbtNodeId, null );
-                                                        PropAddCounter++;
+                                                        if( DestinationTypeMatchesSourcesType )
+                                                        {
+                                                            CurrentNbtNode.Properties[CurrentNodeTypeProp].ReadDataRow( CurrentImportProprow, ImportNodeIdToNbtNodeId, null );
+                                                            PropAddCounter++;
+                                                        }
+                                                        else
+                                                        {
+                                                        }
                                                     }
 
                                                     finally
