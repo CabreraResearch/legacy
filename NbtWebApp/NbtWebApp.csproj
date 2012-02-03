@@ -1353,7 +1353,7 @@
     <Content Include="js\main\pagecmp\CswSearch.js" />
     <Content Include="js\main\controls\CswSelect.js" />
     <Content Include="js\main\controls\CswSpan.js" />
-    <Content Include="js\main\controls\CswTable.js" />
+    <Content Include="js\main\controls\csw.table.js" />
     <Content Include="js\main\tools\CswTools.js" />
     <Content Include="js\main\controls\CswTristateCheckBox.js" />
     <Content Include="js\main\view\CswViewEditor.css" />
