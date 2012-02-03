@@ -26,7 +26,7 @@
             filterToPropId: '',
             title: '',
             date: '',      
-            EditMode: Csw.enums.EditMode.Edit,
+            EditMode: Csw.enums.editMode.Edit,
             Multi: false,
             ReadOnly: false,
             onSave: null, 
@@ -101,13 +101,16 @@
             };
 
             // For performance, don't bother getting tabs if we're in Add or Preview
-            if (o.EditMode == Csw.enums.EditMode.Add ||
-                o.EditMode == Csw.enums.EditMode.Preview) {
-                o.EditMode == Csw.enums.EditMode.Table) {
+            if (o.EditMode == Csw.enums.editMode.Add ||
+                o.EditMode == Csw.enums.editMode.Preview ||
+                o.EditMode == Csw.enums.editMode.Table) {
+
                 var tabid = o.EditMode + "_tab";
                 var $tabcontentdiv = makeTabContentDiv($parent, tabid, false);
                 getProps($tabcontentdiv, tabid);
+
             } else {
+
                 Csw.ajax.post({
                     watchGlobal: o.AjaxWatchGlobal,
                     url: o.TabsUrl,
@@ -165,7 +168,7 @@
         } // getTabs()
 
         function getProps($tabcontentdiv, tabid) {
-            if (o.EditMode === Csw.enums.EditMode.Add && o.Config === false) {
+            if (o.EditMode === Csw.enums.editMode.Add && o.Config === false) {
                 // case 20970 - make sure there's room in the quota
                 Csw.ajax.post({
                     watchGlobal: o.AjaxWatchGlobal,
@@ -227,7 +230,7 @@
                         },
                         showConfigButton: false, //o.Config,
                         showExpandRowButton: o.Config,
-                        showExpandColButton: (o.Config && o.EditMode !== EditMode.Table.name),
+                        showExpandColButton: (o.Config && o.EditMode !== Csw.enums.editMode.Table),
                         showRemoveButton: o.Config,
                         onConfigOn: function () {
                             doUpdateSubProps(true);
@@ -335,7 +338,7 @@
                     }
 
                     /* case 8494 */
-                    if (!o.Config && !AtLeastOne.Saveable && o.EditMode == Csw.enums.EditMode.Add) {
+                    if (!o.Config && !AtLeastOne.Saveable && o.EditMode == Csw.enums.editMode.Add) {
                         Save($form, $layouttable, data, $savetab, tabid);
                     }
                     else if (Csw.isFunction(o.onInitFinish)) {
@@ -398,8 +401,8 @@
             var propid = thisProp.id,
                 fieldtype = thisProp.fieldtype,
                 $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol),
-            var helpText = Csw.string(thisProp.helptext);
-            var propName = Csw.string(thisProp.name);
+                helpText = Csw.string(thisProp.helptext),
+                propName = Csw.string(thisProp.name);
 
             if ((Csw.bool(thisProp.display, true) || configMode) &&
                  fieldtype !== Csw.enums.subFieldsMap.Image.name &&
@@ -408,8 +411,8 @@
                  (o.filterToPropId === '' || o.filterToPropId === propid)) {
 
                 var $labelcell = _getLabelCell($cellset);
+                
                 $labelcell.addClass('propertylabel');
-
                 if (Csw.bool(thisProp.highlight)) {
                     $labelcell.addClass('ui-state-highlight');
                 }

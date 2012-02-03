@@ -26,13 +26,14 @@
         };
         internal.editMode = {
             Edit: 'Edit',
-            AddInPopup: 'AddInPopup',
+            Add: 'Add',
             EditInPopup: 'EditInPopup',
             Demo: 'Demo',
             PrintReport: 'PrintReport',
             DefaultValue: 'DefaultValue',
             AuditHistoryInPopup: 'AuditHistoryInPopup',
-            Preview: 'Preview'
+            Preview: 'Preview',
+            Table: 'Table'
         };
         internal.errorType = {
             warning: {

@@ -19,7 +19,7 @@
 
                 /*
                 Case 24606: Once we can validate the control
-                if(editMode === Csw.enums.EditMode.Add) {
+                if(editMode === Csw.enums.editMode.Add) {
                     Csw.each(propVals.options, function (option) {
                         if (Csw.contains(option, 'key')) {
                             
