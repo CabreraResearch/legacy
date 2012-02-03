@@ -695,8 +695,29 @@ namespace ChemSW.Nbt.ImportExport
                                                             DataTable DataTable = CswArbitrarySelect.getTable();
                                                             if( ( DataTable.Rows.Count > 0 ) && ( false == DataTable.Rows[0].IsNull( Colname_NbtNodeId ) ) )
                                                             {
-                                                                ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ) );
-                                                                RelationshipPropAddCounter++;
+
+                                                                Int32 NodeIdOfDestinationNode = CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] );
+                                                                if( Int32.MinValue != NodeIdOfDestinationNode )
+                                                                {
+                                                                    string CandidateValidationErrorMessage = string.Empty;
+                                                                    if( _validateTargetNodeType( CurrentNodeTypeProp, NodeIdOfDestinationNode, ref CandidateValidationErrorMessage ) )
+                                                                    {
+                                                                        ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ) );
+                                                                        RelationshipPropAddCounter++;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        CurrentRowError += "Unable to set the " + CurrentNodeTypePropname + " property of the node with import node id " + CurrentImportNodeId + "): " + CandidateValidationErrorMessage;
+                                                                        CurrentErrorStatus = ImportProcessStati.Error;
+
+                                                                    }//if-else
+                                                                }
+                                                                else
+                                                                {
+                                                                    CurrentRowError += "The would-be destination node id (" + DataTable.Rows[0][Colname_NbtNodeId].ToString() + ") for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ") cannot be converted to an integer";
+                                                                    CurrentErrorStatus = ImportProcessStati.Error;
+
+                                                                }
                                                             }
                                                             else //_ColName_ImportNodeId did not specify a row in the target schema that provides the nodeid of an imported node; so perhaps it specifies the nbtnodeid of a node that already exists in the schema
                                                             {
@@ -706,10 +727,28 @@ namespace ChemSW.Nbt.ImportExport
 
                                                                 if( ExistingNodeDataTable.Rows.Count > 0 ) //it _does_ exist in the target schema
                                                                 {
-                                                                    Int32 ExistingNbtNodeId = CswConvert.ToInt32( CurrentImportTargetNodeId ); 
+                                                                    Int32 ExistingNbtNodeId = CswConvert.ToInt32( CurrentImportTargetNodeId );
+                                                                    if( Int32.MinValue != ExistingNbtNodeId )
+                                                                    {
 
-                                                                    ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), ExistingNbtNodeId );
-                                                                    RelationshipPropAddCounter++;
+                                                                        string CandidateValidationErrorMessage = string.Empty;
+                                                                        if( _validateTargetNodeType( CurrentNodeTypeProp, ExistingNbtNodeId, ref CandidateValidationErrorMessage ) )
+                                                                        {
+
+                                                                            ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), ExistingNbtNodeId );
+                                                                            RelationshipPropAddCounter++;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            CurrentRowError += "Unable to set the " + CurrentNodeTypePropname + " property of the node with import node id " + CurrentImportNodeId + "): " + CandidateValidationErrorMessage;
+                                                                            CurrentErrorStatus = ImportProcessStati.Error;
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        CurrentRowError += "The would-be destination node id (" + DataTable.Rows[0][Colname_NbtNodeId].ToString() + ") for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ") cannot be converted to an integer";
+                                                                        CurrentErrorStatus = ImportProcessStati.Error;
+                                                                    }
                                                                 }
                                                                 else //it is neither in the import data nor in the target schema
                                                                 {
@@ -733,50 +772,21 @@ namespace ChemSW.Nbt.ImportExport
                                                     //and then we need to change it back; 
                                                     //this is major kludgedelia
                                                     //Need a mechanism for dynamically changing the column names that ReadDataRow expects
-                                                    CurrentImportProprow.Table.Columns[_ColName_Props_ImportTargetNodeIdUnique].ColumnName = _ColName_Props_ImportTargetNodeIdOriginal;
-                                                    try
+                                                    if( ImportProcessStati.Error != CurrentErrorStatus )
                                                     {
-
-                                                        //CHECK TARGET NODEYTPE HERE!!!
-                                                        //CurrentNodeTypeProp.FKType.
-                                                        //CurrentNodeTypeProp.FKValue
-
-                                                        //What I've got here is wrong!
-                                                        //What I need to do is retrieve the _destination_ node using the nodeid in ImportNodeIdToNbtNodeId
-                                                        //It is the nodetype or object class of _that_ node that must match the retrieved node id. 
-
-                                                        //_CswNbtResources.Nodes[CurrentNbtPrimeKey]
-
-                                                        bool DestinationTypeMatchesSourcesType = true; 
-                                                        if( CurrentNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                                                        CurrentImportProprow.Table.Columns[_ColName_Props_ImportTargetNodeIdUnique].ColumnName = _ColName_Props_ImportTargetNodeIdOriginal;
+                                                        try
                                                         {
-                                                            CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( CurrentNodeTypeProp.FKValue );
 
-                                                            if( RelatedNodeType.NodeTypeName != CurrentNodeTypeProp.NodeType.NodeTypeName )
-                                                            {
-                                                                CurrentRowError += "Unable to import the " + CurrentNodeTypePropname + ": the destination " ;
-                                                                CurrentErrorStatus = ImportProcessStati.Error;
-                                                            } 
-                                                        }
-                                                        else if( CurrentNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
-                                                        {
-                                                            CswNbtMetaDataObjectClass RelatedObjectClass = _CswNbtResources.MetaData.getObjectClass( CurrentNodeTypeProp.FKValue );
-                                                        }
-
-                                                        if( DestinationTypeMatchesSourcesType )
-                                                        {
                                                             CurrentNbtNode.Properties[CurrentNodeTypeProp].ReadDataRow( CurrentImportProprow, ImportNodeIdToNbtNodeId, null );
                                                             PropAddCounter++;
                                                         }
-                                                        else
-                                                        {
-                                                        }
-                                                    }
 
-                                                    finally
-                                                    {
-                                                        CurrentImportProprow.Table.Columns[_ColName_Props_ImportTargetNodeIdOriginal].ColumnName = _ColName_Props_ImportTargetNodeIdUnique;
-                                                    }
+                                                        finally
+                                                        {
+                                                            CurrentImportProprow.Table.Columns[_ColName_Props_ImportTargetNodeIdOriginal].ColumnName = _ColName_Props_ImportTargetNodeIdUnique;
+                                                        }
+                                                    }//if we have not encountered any errors so far
 
                                                 }
                                                 else
@@ -1185,8 +1195,52 @@ namespace ChemSW.Nbt.ImportExport
 
         }//_doesNodeNameAlreadyExist() 
 
+        private bool _validateTargetNodeType( CswNbtMetaDataNodeTypeProp SourceNodeTypeProp, Int32 DestinationNodeId, ref string ErrorMessage )
+        {
+            bool DestinationTypeMatchesSourcesType = true;
+
+            CswNbtNode DestinationNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", DestinationNodeId )];
+
+            if( null == DestinationNode )
+            {
 
 
+                if( SourceNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                {
+                    CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( SourceNodeTypeProp.FKValue );
+
+                    if( RelatedNodeType.NodeTypeName != DestinationNode.NodeType.NodeTypeName )
+                    {
+                        DestinationTypeMatchesSourcesType = false;
+                        ErrorMessage = " the node type of the destination node " + DestinationNode.NodeName + " is " + DestinationNode.NodeType.NodeTypeName + " but the " + SourceNodeTypeProp.PropName + " must reference a node of node type " + RelatedNodeType.NodeTypeName;
+                    }
+
+                }
+                else if( SourceNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+                {
+                    CswNbtMetaDataObjectClass RelatedObjectClass = _CswNbtResources.MetaData.getObjectClass( SourceNodeTypeProp.FKValue );
+                    if( RelatedObjectClass.ObjectClass != DestinationNode.ObjectClass.ObjectClass )
+                    {
+                        DestinationTypeMatchesSourcesType = false;
+                        ErrorMessage = " object class of the destination node " + DestinationNode.NodeName + " is " + DestinationNode.ObjectClass.ObjectClass.ToString() + " but the " + SourceNodeTypeProp.PropName + " must reference a node of object class " + RelatedObjectClass.ObjectClass.ToString();
+                    }
+                }
+                else
+                {
+                    DestinationTypeMatchesSourcesType = false;
+                    ErrorMessage = " The FK Type of the node type prop" + SourceNodeTypeProp.PropName + " cannot be determined";
+
+                }
+            }
+            else
+            {
+                DestinationTypeMatchesSourcesType = false;
+                ErrorMessage = "The target node ID " + DestinationNodeId.ToString() + " does not resolve to a known node";
+            }//if-else the destnation node id is for real
+
+            return ( DestinationTypeMatchesSourcesType );
+
+        }//_validateTargetNodeType()
 
     } // class CswImporterExperimental
 
