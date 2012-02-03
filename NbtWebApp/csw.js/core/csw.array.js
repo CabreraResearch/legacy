@@ -13,7 +13,7 @@
     }
     Csw.register('isArray', isArray);
     Csw.isArray = Csw.isArray || isArray;
-
+    
     function array() {
         var retArray = [];
         if (arguments.length > 0) {

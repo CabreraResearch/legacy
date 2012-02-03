@@ -1,7 +1,7 @@
 ﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function CswObject() {
+(function _cswObject() {
     'use strict';
 
      function isPlainObject(obj) {

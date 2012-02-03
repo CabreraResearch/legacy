@@ -1824,6 +1824,7 @@
   <ItemGroup>
     <None Include="crystal\crsmarttag.jsp" />
     <None Include="crystal\preview.jsp" />
+    <None Include="csw.js\make_vsdoc.bat" />
     <None Include="csw.js\_compile.pl" />
     <None Include="etc\CswNbtData.xsd">
       <SubType>Designer</SubType>

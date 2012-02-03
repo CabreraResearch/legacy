@@ -1,7 +1,7 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function CswGrid() {
+(function _cswGrid() {
     'use strict';
     function grid(options, $parent) {
         ///<summary>Generates a grid</summary>
