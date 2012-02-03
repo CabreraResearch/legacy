@@ -145,7 +145,7 @@
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
                 relatednodetypeid: o.relatednodetypeid,
-                EditMode: Csw.enums.editMode.AddInPopup,
+                EditMode: Csw.enums.editMode.Add,
                 onSave: function (nodeid, cswnbtnodekey) {
                     $div.dialog('close');
                     o.onAddNode(nodeid, cswnbtnodekey);
@@ -267,9 +267,11 @@
             var $layoutSelect = $cell11.CswSelect('init', {
                 ID: 'EditLayoutDialog_layoutselect',
                 selected: 'Edit',
-                values: [{ value: 'AddInPopup', display: 'Add' },
-                                                { value: 'Edit', display: 'Edit' },
-                                                { value: 'Preview', display: 'Preview'}],
+                values: [{ value: 'Add', display: 'Add' },
+                         { value: 'Edit', display: 'Edit' },
+                         { value: 'Preview', display: 'Preview' },
+                         { value: 'Table', display: 'Table' }
+                        ],
                 onChange: function () {
                     cswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
                     _resetLayout();
@@ -286,7 +288,7 @@
                     var ajaxdata = {
                         PropId: Csw.string($addSelect.val()),
                         TabId: Csw.string(cswNodeTabOptions.tabid),
-                        EditMode: $layoutSelect.val()
+                        LayoutType: $layoutSelect.val()
                     };
                     Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout',
@@ -310,7 +312,7 @@
                     NodeKey: Csw.string(cswNodeTabOptions.nodekeys[0]),
                     NodeTypeId: Csw.string(cswNodeTabOptions.nodetypeid),
                     TabId: Csw.string(cswNodeTabOptions.tabid),
-                    EditMode: $layoutSelect.val()
+                    LayoutType: $layoutSelect.val()
                 };
                 Csw.ajax.post({
                     url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd',

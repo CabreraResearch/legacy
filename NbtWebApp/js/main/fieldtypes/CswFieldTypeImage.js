@@ -44,7 +44,7 @@
                 }            
 
 
-                if (!o.ReadOnly && o.EditMode != Csw.enums.editMode.AddInPopup) {
+                if (!o.ReadOnly && o.EditMode != Csw.enums.editMode.Add) {
                     //Edit button
                     $('<div/>')
                         .appendTo($cell22)

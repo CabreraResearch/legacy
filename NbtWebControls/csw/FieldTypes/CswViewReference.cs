@@ -21,7 +21,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         private void CswViewReference_DataBinding( object sender, EventArgs e )
         {
-            _AllowEditValue = !( _EditMode == NodeEditMode.AddInPopup ||
+            _AllowEditValue = !( _EditMode == NodeEditMode.Add ||
                                  _EditMode == NodeEditMode.EditInPopup ||
                                  _EditMode == NodeEditMode.Demo ||
                                  _EditMode == NodeEditMode.PrintReport ||

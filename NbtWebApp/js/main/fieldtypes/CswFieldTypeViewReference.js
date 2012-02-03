@@ -16,7 +16,7 @@
             /* var viewName = Csw.string(propVals.name).trim(); */
             var $table = $Div.CswTable('init', {'ID': o.ID + '_tbl'});
 
-            if (o.EditMode !== Csw.enums.editMode.AddInPopup && false === o.Multi) {
+            if (o.EditMode !== Csw.enums.EditMode.Add && false === o.Multi) {
                 $table.CswTable('cell', 1, 1).CswViewContentTree({
                     viewid: viewId
                 });
@@ -49,7 +49,7 @@
                         }
                     });
                 }
-            } /* if(o.EditMode != Csw.enums.editMode.AddInPopup) */
+            } /* if(o.EditMode != Csw.enums.EditMode.Add) */
         },
         save: function (o) {
             Csw.preparePropJsonForSave(o.propData);

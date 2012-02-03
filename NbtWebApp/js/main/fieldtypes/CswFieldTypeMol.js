@@ -30,7 +30,7 @@
                 //$Div.css('z-index', '0'); //this doesn't prevent jmol overlapping dialog
             }
 
-            if (false === Csw.bool(o.ReadOnly) && o.EditMode !== Csw.enums.AddInPopup.name) {
+            if (false === Csw.bool(o.ReadOnly) && o.EditMode !== Csw.enums.EditMode.Add) {
                 /* Edit Button */
                 $('<div/>')
                     .appendTo($cell22)

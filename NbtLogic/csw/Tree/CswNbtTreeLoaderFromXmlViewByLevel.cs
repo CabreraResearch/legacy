@@ -144,14 +144,14 @@ namespace ChemSW.Nbt
                 // It also assumes that loadNodeAsChildFromRow() made the node current
                 if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
                 {
-                    Int32 ThisJctNodePropId = CswConvert.ToInt32( NodesRow["jctnodepropid"] );
-                    if( ThisJctNodePropId != Int32.MinValue )
-                    {
+                    //Int32 ThisJctNodePropId = CswConvert.ToInt32( NodesRow["jctnodepropid"] );
+                    //if( ThisJctNodePropId != Int32.MinValue )
+                    //{
                         foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                         {
                             _CswNbtTree.makeNodeCurrent( NewNodeKey );
                             _CswNbtTree.addProperty( CswConvert.ToInt32( NodesRow["nodetypepropid"] ),
-                                                     ThisJctNodePropId,
+                                                     CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
                                                      NodesRow["propname"].ToString(),
                                                      NodesRow["gestalt"].ToString(),
                                                      _CswNbtResources.MetaData.getFieldType( CswConvert.ToInt32( NodesRow["fieldtypeid"] ) ) );
@@ -164,7 +164,7 @@ namespace ChemSW.Nbt
                         {
                             _CswNbtTree.goToRoot();
                         }
-                    } // if( ThisJctNodePropId != Int32.MinValue )
+                    //} // if( ThisJctNodePropId != Int32.MinValue )
                 } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
 
             } // foreach(DataRow NodesRow in NodesTable.Rows)
@@ -392,15 +392,15 @@ namespace ChemSW.Nbt
                 // This will multiplex the results by the number of properties!
                 if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
                 {
-                    Select += @" ,props.nodetypepropid, props.propname, props.jctnodepropid, props.gestalt, props.fieldtypeid ";
+                    // Properties
+                    Select += @" ,props.nodetypepropid, props.propname, props.fieldtypeid ";
 
                     From += @"  left outer join ( ";
                     if( NTPropsInClause.Count > 0 )
                     {
-                        From += @"  select p2.nodetypepropid, p2.propname, j.jctnodepropid, j.gestalt, p2.fieldtypeid, j.nodeid
+                        From += @"  select p2.nodetypepropid, p2.propname, p2.fieldtypeid
                                   from nodetype_props p1
                                   join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid)
-                                  join jct_nodes_props j on (p2.nodetypepropid = j.nodetypepropid)
                                  where p1.nodetypepropid in (" + NTPropsInClause.ToString() + @")";
                         if( OCPropsInClause.Count > 0 )
                         {
@@ -409,13 +409,17 @@ namespace ChemSW.Nbt
                     }
                     if( OCPropsInClause.Count > 0 )
                     {
-                        From += @" select ntp.nodetypepropid, ntp.propname, j.jctnodepropid, j.gestalt, ntp.fieldtypeid, j.nodeid
+                        From += @" select ntp.nodetypepropid, ntp.propname, ntp.fieldtypeid
                                   from object_class_props op
                                   join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid)
-                                  join jct_nodes_props j on (ntp.nodetypepropid = j.nodetypepropid)
                                  where op.objectclasspropid in (" + OCPropsInClause.ToString() + @")";
                     }
-                    From += @"   ) props on (props.nodeid = n.nodeid)";
+                    From += @"   ) props on (1=1)";  // intentional multiplexing
+
+                    // Property Values
+                    Select += @" ,propval.jctnodepropid, propval.gestalt ";
+                    From += @"  left outer join jct_nodes_props propval on (props.nodetypepropid = propval.nodetypepropid and propval.nodeid = n.nodeid) ";
+
                 } // if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
             } // if(Relationship.Properties.Count > 0)
 
