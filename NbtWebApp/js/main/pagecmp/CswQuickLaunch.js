@@ -9,9 +9,9 @@
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getQuickLaunchItems',
-            onViewClick: function() { },
-            onActionClick: function() { },
-            onSuccess: function() { }
+            onViewClick: function () { },
+            onActionClick: function () { },
+            onSuccess: function () { }
         };
 
         if (options) {
@@ -23,7 +23,7 @@
             UserId: ''
         };
 
-        CswAjaxJson({
+        Csw.ajax.post({
             url: o.Url,
             data: dataXml,
             stringify: false,
@@ -34,12 +34,12 @@
                 for (var item in data) {
                     if (data.hasOwnProperty(item)) {
                         var qlItem = data[item];
-                        var launchtype = tryParseString(qlItem.launchtype);
-                        var viewmode = tryParseString(qlItem.viewmode);
-                        var text = tryParseString(qlItem.text);
-                        var viewid = tryParseString(qlItem.itemid); //actions provide their own links. itemid will only be used as viewid.
-                        var actionname = tryParseString(qlItem.actionname);
-                        var actionurl = tryParseString(qlItem.actionurl);
+                        var launchtype = Csw.string(qlItem.launchtype);
+                        var viewmode = Csw.string(qlItem.viewmode);
+                        var text = Csw.string(qlItem.text);
+                        var viewid = Csw.string(qlItem.itemid); //actions provide their own links. itemid will only be used as viewid.
+                        var actionname = Csw.string(qlItem.actionname);
+                        var actionurl = Csw.string(qlItem.actionurl);
 
                         var $li = $('<li></li>')
                             .appendTo($list);
@@ -49,16 +49,16 @@
                             case 'view':
                                 $('<a href="#' + text + '_' + launchtype + '_' + viewmode + '_' + viewid + '">' + text + '</a>')
                                     .appendTo($li)
-                                    //.click(function() { o.onViewClick(viewid, viewmode); return false; });
-                                    .click(makeDelegate(function(x) { o.onViewClick(x.viewid, x.viewmode); return false; }, 
+                                    //.click(function () { o.onViewClick(viewid, viewmode); return false; });
+                                    .click(Csw.makeDelegate(function (x) { o.onViewClick(x.viewid, x.viewmode); return false; }, 
                                                         { viewid: viewid, viewmode: viewmode }));
                                 break;
                             case 'action':
                                 text = text.replace('_', ' ');
                                 $('<a href="#">' + text + '</a>')
                                     .appendTo($li)
-                                    //.click(function() { o.onActionClick(actionname, actionurl); return false; });
-                                    .click(makeDelegate(function(x) { o.onActionClick(x.actionname, x.actionurl); return false; }, 
+                                    //.click(function () { o.onActionClick(actionname, actionurl); return false; });
+                                    .click(Csw.makeDelegate(function (x) { o.onActionClick(x.actionname, x.actionurl); return false; }, 
                                                         { actionname: actionname, actionurl: actionurl }));
                                 break;
                         }
@@ -73,7 +73,7 @@
         // For proper chaining support
         return this;
 
-    }; // function(options) {
+    }; // function (options) {
 })(jQuery);
 
 

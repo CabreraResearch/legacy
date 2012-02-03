@@ -1,11 +1,5 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswSelect.js" />
-/// <reference path="../controls/CswTimeInterval.js" />
-/// <reference path="../tools/CswClientDb.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -16,16 +10,15 @@
             var $Div = $(this);
             o.propVals = o.propData.values;
             o.$parent = $Div;
-            if (false === isTrue(o.ReadOnly)) {
-                CswTimeInterval(o);
+            if (false === Csw.bool(o.ReadOnly)) {
+                Csw.timeInterval(o);
             } else {
                 $Div.append(o.propData.gestalt);
             }
         },
         save: function (o) {
-            var clientDb = CswClientDb();
             //Case 20939: if your prop isn't saving, check for duplicate IDs
-            var intervalData = clientDb.getItem(o.ID + '_rateIntervalSave');
+            var intervalData = Csw.clientDb.getItem(o.ID + '_rateIntervalSave');
             var $this = $(this);
             
             try {
@@ -52,61 +45,61 @@
                 };
                 
                 var newInterval = attributes.Interval.rateintervalvalue;
-                if (false === o.Multi || $this.find('#' + o.ID + '_textvalue').text() !== CswMultiEditDefaultValue) {
+                if (false === o.Multi || $this.find('#' + o.ID + '_textvalue').text() !== Csw.enums.multiEditDefaultValue) {
                     $.extend(true, newInterval, intervalData);
                 }
                 var oldInterval = o.propData.values.Interval.rateintervalvalue;
                 switch (attributes.Interval.rateintervalvalue.ratetype) {
-                    case CswRateIntervalTypes.WeeklyByDay:
-                        if(false === contains(oldInterval, 'startingdate')) {
+                    case Csw.enums.rateIntervalTypes.WeeklyByDay:
+                        if(false === Csw.contains(oldInterval, 'startingdate')) {
                             oldInterval.startingdate = { date: '', dateformat: '' };
                         }
-                        if(false === contains(oldInterval, 'weeklyday')) {
+                        if(false === Csw.contains(oldInterval, 'weeklyday')) {
                             oldInterval.weeklyday = '';
                         }
                         break;
-                    case CswRateIntervalTypes.MonthlyByDate:
-                        if(false === contains(oldInterval, 'monthlydate')) {
+                    case Csw.enums.rateIntervalTypes.MonthlyByDate:
+                        if(false === Csw.contains(oldInterval, 'monthlydate')) {
                             oldInterval.monthlydate = { date: '', dateformat: '' };
                         }
-                        if(false === contains(oldInterval, 'monthlyfrequency')) {
+                        if(false === Csw.contains(oldInterval, 'monthlyfrequency')) {
                             oldInterval.monthlyfrequency = '';
                         }
-                        if(false === contains(oldInterval,  'startingmonth')) {
+                        if(false === Csw.contains(oldInterval,  'startingmonth')) {
                             oldInterval.startingmonth = '';
                         }
-                        if(false === contains(oldInterval, 'startingyear')) {
+                        if(false === Csw.contains(oldInterval, 'startingyear')) {
                             oldInterval.startingyear = '';
                         }
                         break;
-                    case CswRateIntervalTypes.MonthlyByWeekAndDay:
-                        if(false === contains(oldInterval, 'monthlyweek')) {
+                    case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
+                        if(false === Csw.contains(oldInterval, 'monthlyweek')) {
                             oldInterval.monthlyweek = '';
                         }
-                        if(false === contains(oldInterval, 'monthlyday')) {
+                        if(false === Csw.contains(oldInterval, 'monthlyday')) {
                             oldInterval.monthlyday = '';
                         }
-                        if(false === contains(oldInterval, 'monthlyfrequency')) {
+                        if(false === Csw.contains(oldInterval, 'monthlyfrequency')) {
                             oldInterval.monthlyfrequency = '';
                         }
-                        if(false === contains(oldInterval,  'startingmonth')) {
+                        if(false === Csw.contains(oldInterval,  'startingmonth')) {
                             oldInterval.startingmonth = '';
                         }
-                        if(false === contains(oldInterval, 'startingyear')) {
+                        if(false === Csw.contains(oldInterval, 'startingyear')) {
                             oldInterval.startingyear = '';
                         }
                         break;
-                    case CswRateIntervalTypes.YearlyByDate:
-                        if(false === contains(oldInterval, 'yearlydate')) {
+                    case Csw.enums.rateIntervalTypes.YearlyByDate:
+                        if(false === Csw.contains(oldInterval, 'yearlydate')) {
                             oldInterval.yearlydate = { date: '', dateformat: ''};
                         }
                         break;
                 }
                 
-                preparePropJsonForSave(o.Multi, o.propData, attributes);
+                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             } catch (e) {
-                if (debugOn()) {
-                    log('Error updating propData: ' + e);
+                if (Csw.debugOn()) {
+                    Csw.log('Error updating propData: ' + e);
                 }
             }
         } // save

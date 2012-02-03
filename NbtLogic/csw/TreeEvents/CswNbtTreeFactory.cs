@@ -1,10 +1,3 @@
-using System;
-using System.Data;
-using System.Collections;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using ChemSW.Core;
-using ChemSW.Nbt;
 using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.TreeEvents

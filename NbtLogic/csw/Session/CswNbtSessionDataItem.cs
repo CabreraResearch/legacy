@@ -1,15 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
-using System.Xml;
 using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt

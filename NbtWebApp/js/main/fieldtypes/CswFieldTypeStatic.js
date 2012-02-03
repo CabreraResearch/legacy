@@ -1,22 +1,19 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";        
     var pluginName = 'CswFieldTypeStatic';
 
     var methods = {
-        init: function(o) {
+        init: function (o) {
                 
             var $Div = $(this);
             $Div.contents().remove();
              var propVals = o.propData.values;
-            var text = (false === o.Multi) ? tryParseString(propVals.text).trim() : CswMultiEditDefaultValue;
-            var columns = parseInt( propVals.columns);
-            var rows = parseInt( propVals.rows);
+            var text = (false === o.Multi) ? Csw.string(propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+            var columns = Csw.number(propVals.columns);
+            var rows = Csw.number(propVals.rows);
 
             var overflow = 'auto';
             var width = '';
@@ -36,8 +33,8 @@
             $('<div class="staticvalue" style="overflow: '+ overflow +'; width: '+ width +'; height: '+ height +';">' + text + '</div>' )
                             .appendTo($Div); 
         },
-        save: function(o) {
-            preparePropJsonForSave(o.propData);
+        save: function (o) {
+            Csw.preparePropJsonForSave(o.propData);
         }
     };
     

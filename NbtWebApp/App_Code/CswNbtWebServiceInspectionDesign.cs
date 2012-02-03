@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -164,7 +165,7 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtMetaDataNodeTypeTab ThisTab = NodeType.getNodeTypeTab( TabName );
                         if( null == ThisTab )
                         {
-                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.NodeTypeTabs.Count );
+                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.NodeTypeTabs.Count() );
                         }
                         RetDict.Add( TabName, ThisTab );
                     }
@@ -382,7 +383,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataNodeTypeTab SectionOneTab = InspectionDesignNt.getNodeTypeTab( "Section 1" );
             if( null != SectionOneTab )
             {
-                if( SectionOneTab.NodeTypeProps.Count > 0 )
+                if( SectionOneTab.NodeTypeProps.Count() > 0 )
                 {
                     SectionOneTab.TabName = "Questions";
                 }

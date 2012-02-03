@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using ChemSW.MtSched.Core;
-using ChemSW.Nbt;
 using ChemSW.Nbt.Sched;
 
 namespace SchedulerGuiTestMt
@@ -18,7 +11,7 @@ namespace SchedulerGuiTestMt
         {
             InitializeComponent();
 
-            tmr_Seconds.Interval = 1000; 
+            tmr_Seconds.Interval = 1000;
         }
 
         private CswScheduleService _CswScheduleService = null;
@@ -47,11 +40,11 @@ namespace SchedulerGuiTestMt
             Int32 TotalSecs = Int32.MinValue;
             if( string.Empty != tbx_Secs.Text )
             {
-                TotalSecs = Convert.ToInt32(tbx_Secs.Text);
+                TotalSecs = Convert.ToInt32( tbx_Secs.Text );
             }
             else
             {
-                TotalSecs = 0; 
+                TotalSecs = 0;
             }
 
             TotalSecs++;

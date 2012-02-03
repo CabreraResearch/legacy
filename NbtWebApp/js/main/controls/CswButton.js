@@ -1,9 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = "CswButton";
 
@@ -17,12 +15,11 @@
                 cssclass: '',
                 hasText: true,
                 disableOnClick: true,
-                inputType: CswInput_Types.button.name,
+                inputType: Csw.enums.inputTypes.button.name,
                 primaryicon: '',
                 secondaryicon: '',
                 ReadOnly: false,
-                //'Required': false,
-                onclick: null //function () { }
+                onclick: null 
             };
             if (options) $.extend(o, options);
 
@@ -35,7 +32,7 @@
                                         })
                                         .appendTo($parent);
 
-            if (!isNullOrEmpty(o.cssclass)) {
+            if (!Csw.isNullOrEmpty(o.cssclass)) {
                 $button.addClass(o.cssclass);
             }
             
@@ -53,9 +50,9 @@
             }
             $button.button(buttonOpt);
             
-            if (isFunction(o.onclick)) {
-                $button.bind('click', function() {
-                    if (!ajaxInProgress()) {
+            if (Csw.isFunction(o.onclick)) {
+                $button.bind('click', function () {
+                    if (false === Csw.ajax.ajaxInProgress()) {
                         if (o.disableOnClick) disable($button);
                         o.onclick();
                     } 
@@ -93,7 +90,7 @@
     }
 
     // Method calling logic
-    $.fn.CswButton = function (method) { /// <param name="$" type="jQuery" />
+    $.fn.CswButton = function (method) { 
 
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));

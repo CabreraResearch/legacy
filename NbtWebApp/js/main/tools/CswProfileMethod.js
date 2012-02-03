@@ -10,22 +10,22 @@ function CswProfileMethod(methodName) {
         ajaxSuccess = Date();
 
     return {
-        setAjaxSuccess: function() {
+        setAjaxSuccess: function () {
             ajaxSuccess = Date();
             return ajaxSuccess;
         },
-        setEnded: function() {
+        setEnded: function () {
             ended = Date();
             return ended;
         },
-        toString: function() {
+        toString: function () {
             var $stats = $('<' + name + '></' + name + '>');
             $stats.append('<started>' + started + '</started>');
             $stats.append('<ajaxsuccess>' + ajaxSuccess + '</ajaxsuccess>');
             $stats.append('<ended>' + ended + '</ended>');
             return $stats.html();
         },
-        toHtml: function() {
+        toHtml: function () {
             var $stats = $('<div>' + name + '</div>');
             $stats.append('<p>started: ' + started + '</p>');
             $stats.append('<p>ajaxsuccess: ' + ajaxSuccess + '</p>');

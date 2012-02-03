@@ -1,23 +1,20 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";        
     var pluginName = 'CswFieldTypeImageList';
 
     var methods = {
-        init: function(o) {
+        init: function (o) {
             
             var $Div = $(this);
             var propVals = o.propData.values;
 
-            var value = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue;
+            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
             var options = propVals.options;
-            var width = tryParseString(propVals.width);
-            var height = tryParseString(propVals.height);
+            var width = Csw.string(propVals.width);
+            var height = Csw.string(propVals.height);
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var currCol = 1;
 
@@ -27,11 +24,11 @@
                                 .append('<option value="">Select...</option>')
                                 .appendTo($Div);
                 if (o.Multi) {
-                    $select.append('<option value="' + CswMultiEditDefaultValue + ' selected="selected">' + CswMultiEditDefaultValue + '</option>');
+                    $select.append('<option value="' + Csw.enums.multiEditDefaultValue + ' selected="selected">' + Csw.enums.multiEditDefaultValue + '</option>');
                 }
                 var $HiddenValue = $('<textarea style="display: none;" name="' + o.ID + '_value" id="' + o.ID + '_value">'+ value +'</textarea>')
                                     .appendTo($Div);
-                $select.change(function() { 
+                $select.change(function () { 
                     var $selected = $select.children(':selected');
                     addImage($selected.text(), $selected.CswAttrDom('value'), true);
                     addValue($selected.CswAttrDom('value'));
@@ -39,9 +36,9 @@
                     o.onchange();
                 });
                 
-                crawlObject(options, 
-                    function(thisOpt) {
-                        if (isTrue(thisOpt.selected)) {
+                Csw.crawlObject(options, 
+                    function (thisOpt) {
+                        if (Csw.bool(thisOpt.selected)) {
                             addImage(thisOpt.text, thisOpt.value, false);
                         } else {
                             if (false === o.ReadOnly) {			
@@ -72,9 +69,9 @@
                 }
                 if (false === o.ReadOnly) {
                     $namecell.CswImageButton({
-                        ButtonType: CswImageButton_ButtonType.Delete,
+                        ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
-                        ID: makeId({ 'prefix': 'image_' + currCol, 'id': 'rembtn' }),
+                        ID: Csw.makeId({ 'prefix': 'image_' + currCol, 'id': 'rembtn' }),
                         onClick: function () {
                             $namecell.fadeOut('fast');
                             $imagecell.fadeOut('fast');
@@ -83,7 +80,7 @@
                             $select.append('<option value="'+ href +'">'+ name +'</option>');
 
                             o.onchange();
-                            return CswImageButton_ButtonType.None; 
+                            return Csw.enums.imageButton_ButtonType.None; 
                         } // onClick
                     }); // CswImageButton
                 } // if(!o.ReadOnly)
@@ -97,7 +94,7 @@
 
             function addValue(valueToAdd) {
                 var currentvalue = $HiddenValue.val();
-                if(!isNullOrEmpty(currentvalue)) currentvalue += '\n';
+                if(!Csw.isNullOrEmpty(currentvalue)) currentvalue += '\n';
                 $HiddenValue.text(currentvalue + valueToAdd);
             }
             
@@ -107,7 +104,7 @@
                 var newvalue = '';
                 for(var i = 0; i < splitvalue.length; i++) {
                     if(splitvalue[i] != valueToRemove) {
-                        if(!isNullOrEmpty(newvalue)) newvalue += '\n';
+                        if(!Csw.isNullOrEmpty(newvalue)) newvalue += '\n';
                         newvalue += splitvalue[i];
                     }
                 }
@@ -115,14 +112,14 @@
             }
 
         },
-        save: function(o) {
+        save: function (o) {
             var imageList = null;
             var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
-            if (false === isNullOrEmpty($HiddenValue)) {
+            if (false === Csw.isNullOrEmpty($HiddenValue)) {
                 imageList = $HiddenValue.text();
             }
             var attributes = { value: imageList };
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

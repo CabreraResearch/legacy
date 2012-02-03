@@ -6,7 +6,6 @@ my $destfile = "$dir\\js\\CswAll.min.css";
 unlink($destfile);
 
 my $param = "";
-$param .= extract("$dir\\js\\globals");
 $param .= extract("$dir\\js");
 $param .= extract("$dir\\js\\main");
 $param .= extract("$dir\\js\\main\\actions");

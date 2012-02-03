@@ -1,14 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.DB;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -185,17 +179,21 @@ namespace ChemSW.Nbt.MetaData
             return MaxRow;
         } // getCurrentMaxDisplayRow()
 
-        public Collection<CswNbtMetaDataNodeTypeProp> getPropsInLayout( CswNbtMetaDataNodeType NodeType, Int32 TabId, LayoutType LayoutType )
+        public Collection<CswNbtMetaDataNodeTypeProp> getPropsInLayout( Int32 NodeTypeId, Int32 TabId, LayoutType LayoutType )
         {
             Collection<CswNbtMetaDataNodeTypeProp> ret = new Collection<CswNbtMetaDataNodeTypeProp>();
 
             CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropsInLayout_Select", "nodetype_layout" );
-            string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeType.NodeTypeId.ToString();
+            string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeTypeId.ToString();
             if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
             {
                 WhereClause += "and nodetypetabsetid = " + TabId.ToString();
             }
-            DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
+            Collection<OrderByClause> OrderBy = new Collection<OrderByClause>() { 
+                new OrderByClause( "display_row", OrderByType.Ascending ),
+                new OrderByClause( "display_column", OrderByType.Ascending )
+            };
+            DataTable LayoutTable = LayoutSelect.getTable( WhereClause, OrderBy );
             foreach( DataRow Row in LayoutTable.Rows )
             {
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( CswConvert.ToInt32( Row["nodetypepropid"] ) );

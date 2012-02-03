@@ -1,8 +1,8 @@
 using System;
 using System.Data;
-using ChemSW.Exceptions;
-using ChemSW.DB;
 using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt
