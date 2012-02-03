@@ -2,123 +2,17 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function CswGrid() {
-
+    'use strict';
     function grid(options, $parent) {
         ///<summary>Generates a grid</summary>
         ///<param name="options" type="Object">Object defining paramaters for jqGrid construction</param>
         ///<param name="$parent" type="JQuery">Parent element to attach grid to.</param>
         ///<returns type="Object">Object representing a CswGrid</returns>
-        "use strict";
         var $gridTable, $gridPager, $topPager,
             multiEdit = false,
             gridTableId, gridPagerId;
-        //#region private
 
         var external = {};
-        
-        (function () {
-            var o = {
-                canEdit: false,
-                canDelete: false,
-                pagermode: 'default',
-                ID: '',
-                gridOpts: {
-                    autoencode: true,
-                    //autowidth: true,
-                    altRows: false,
-                    caption: '',
-                    datatype: 'local',
-                    emptyrecords: 'No Results',
-                    height: '300',
-                    loadtext: 'Loading...',
-                    multiselect: false,
-                    pager: $gridPager,
-                    toppager: false,
-                    shrinkToFit: true,
-                    sortname: '',
-                    sortorder: 'asc',
-                    width: '600px',
-                    rowNum: 10,
-                    rowList: [10, 25, 50],        //page size dropdown
-                    pgbuttons: true,     //page control like next, back button
-                    //pgtext: null,         //pager text like 'Page 0 of 10'
-                    viewrecords: true    //current view record text like 'View 1-10 of 100'
-                },
-                optSearch: {
-                    caption: "Search...",
-                    Find: "Find",
-                    Reset: "Reset",
-                    odata: ['equal', 'not equal', 'less', 'less or equal', 'greater', 'greater or equal', 'begins with', 'does not begin with', 'is in', 'is not in', 'ends with', 'does not end with', 'Csw.contains', 'does not contain'],
-                    groupOps: [{op: "AND", text: "all"}, {op: "OR", text: "any"}],
-                    matchText: "match",
-                    rulesText: "rules"
-                },
-                optNavEdit: {
-                    edit: true,
-                    edittext: "",
-                    edittitle: "Edit row",
-                    editfunc: null
-                },
-                optNavDelete: {
-                    del: true,
-                    deltext: "",
-                    deltitle: "Delete row",
-                    delfunc: null
-                },
-                optNav: {
-                    cloneToTop: false,
-
-                    add: false,
-                    del: false,
-                    edit: false,
-
-                    //search
-                    search: false,
-                    searchtext: "",
-                    searchtitle: "Find records",
-
-                    //refresh
-                    refreshtext: "",
-                    refreshtitle: "Reload Grid",
-                    alertcap: "Warning",
-                    alerttext: "Please, select row",
-
-                    //view
-                    view: true,
-                    viewtext: "",
-                    viewtitle: "View row"
-                //viewfunc: none--use jqGrid built-in function for read-only
-                }
-            };
-
-            $.extend(true, o, options);
-
-            switch (o.pagermode) {
-                case 'none':
-                    delete o.gridOpts.pager;
-                    delete o.gridOpts.rowNum;
-                    delete o.gridOpts.rowList;
-                    delete o.gridOpts.pgbuttons;
-                    delete o.gridOpts.viewrecords;
-                    delete o.gridOpts.pgtext;
-                    break;
-                case 'default':
-                //accept defaults
-                    break;
-                case 'custom':
-                    o.gridOpts.rowNum = null;
-                    o.gridOpts.rowList = [];
-                    o.gridOpts.pgbuttons = false;
-                    o.gridOpts.viewrecords = false;
-                    o.gridOpts.pgtext = null;
-                    break;
-            }
-
-            gridPagerId = Csw.makeId({ID: 'cswGridPager', prefix: o.ID});
-            gridTableId = Csw.makeId({ID: 'cswGridTable', prefix: o.ID});
-
-            makeGrid(o);
-        })();
 
         function insertWhiteSpace (num) {
             var ret = '', i;
@@ -127,7 +21,7 @@
             }
             return ret;
         }
-
+        
         function makeCustomPager (pagerDef) {
             var prevButton = {
                 caption: insertWhiteSpace(2),
@@ -218,6 +112,124 @@
             }
             $gridTable.data(gridTableId + '_data', o);
         }
+
+        /* "Constuctor" */
+        (function () {
+            var o = {
+                canEdit: false,
+                canDelete: false,
+                pagermode: 'default',
+                ID: '',
+                gridOpts: {
+                    autoencode: true,
+                    //autowidth: true,
+                    altRows: false,
+                    caption: '',
+                    datatype: 'local',
+                    emptyrecords: 'No Results',
+                    height: '300',
+                    loadtext: 'Loading...',
+                    multiselect: false,
+                    pager: $gridPager,
+                    toppager: false,
+                    shrinkToFit: true,
+                    sortname: '',
+                    sortorder: 'asc',
+                    width: '600px',
+                    rowNum: 10,
+                    rowList: [10, 25, 50],        /* page size dropdown */
+                    pgbuttons: true,     /* page control like next, back button */
+                    /*pgtext: null,         pager text like 'Page 0 of 10' */
+                    viewrecords: true    /* current view record text like 'View 1-10 of 100' */
+                },
+                optSearch: {
+                    caption: "Search...",
+                    Find: "Find",
+                    Reset: "Reset",
+                    odata: ['equal', 
+                            'not equal', 
+                            'less', 
+                            'less or equal', 
+                            'greater', 
+                            'greater or equal', 
+                            'begins with', 
+                            'does not begin with', 
+                            'is in', 
+                            'is not in', 
+                            'ends with', 
+                            'does not end with', 
+                            'contains', 
+                            'does not contain'],
+                    groupOps: [{op: "AND", text: "all"}, {op: "OR", text: "any"}],
+                    matchText: "match",
+                    rulesText: "rules"
+                },
+                optNavEdit: {
+                    edit: true,
+                    edittext: "",
+                    edittitle: "Edit row",
+                    editfunc: null
+                },
+                optNavDelete: {
+                    del: true,
+                    deltext: "",
+                    deltitle: "Delete row",
+                    delfunc: null
+                },
+                optNav: {
+                    cloneToTop: false,
+
+                    add: false,
+                    del: false,
+                    edit: false,
+
+                    //search
+                    search: false,
+                    searchtext: "",
+                    searchtitle: "Find records",
+
+                    //refresh
+                    refreshtext: "",
+                    refreshtitle: "Reload Grid",
+                    alertcap: "Warning",
+                    alerttext: "Please, select row",
+
+                    //view
+                    view: true,
+                    viewtext: "",
+                    viewtitle: "View row"
+                //viewfunc: none--use jqGrid built-in function for read-only
+                }
+            };
+
+            $.extend(true, o, options);
+
+            switch (o.pagermode) {
+                case 'none':
+                    delete o.gridOpts.pager;
+                    delete o.gridOpts.rowNum;
+                    delete o.gridOpts.rowList;
+                    delete o.gridOpts.pgbuttons;
+                    delete o.gridOpts.viewrecords;
+                    delete o.gridOpts.pgtext;
+                    break;
+                case 'default':
+                //accept defaults
+                    break;
+                case 'custom':
+                    o.gridOpts.rowNum = null;
+                    o.gridOpts.rowList = [];
+                    o.gridOpts.pgbuttons = false;
+                    o.gridOpts.viewrecords = false;
+                    o.gridOpts.pgtext = null;
+                    break;
+            }
+
+            gridPagerId = Csw.makeId({ID: 'cswGridPager', prefix: o.ID});
+            gridTableId = Csw.makeId({ID: 'cswGridTable', prefix: o.ID});
+
+            makeGrid(o);
+        }());
 
         // Row scrolling adapted from 
         // http://stackoverflow.com/questions/2549466/is-there-a-way-to-make-jqgrid-scroll-to-the-bottom-when-a-new-row-is-added/2549654#2549654
@@ -323,9 +335,23 @@
 
         function opGridRows (opts, rowid, onSelect, onEmpty) {
             var ret = false;
-            var haveSelectedRows = false;
+            var haveSelectedRows = false,
+                i;
 
             var rowids = [];
+            
+            function onEachGridRow(prop, key, parent) {
+                if (false === Csw.isFunction(parent[key])) {
+                    if (Csw.isArray(parent[key])) {
+                        rowid = rowids[i];
+                        parent[key].push(getValueForColumn(key, rowid));
+                    } else {
+                        parent[key] = getValueForColumn(key, rowid);
+                    }
+                }
+                return false;
+            }
+
             if (multiEdit) {
                 rowids = getSelectedRowsIds();
             } else if (false === Csw.isNullOrEmpty(rowid)) {
@@ -336,18 +362,8 @@
 
             if (rowids.length > 0) {
                 haveSelectedRows = true;
-                for (var i = 0; i < rowids.length; i++) {
-                    Csw.crawlObject(opts, function (prop, key, parent) {
-                        if (false === Csw.isFunction(parent[key])) {
-                            if (Csw.isArray(parent[key])) {
-                                rowid = rowids[i];
-                                parent[key].push(getValueForColumn(key, rowid));
-                            } else {
-                                parent[key] = getValueForColumn(key, rowid);
-                            }
-                        }
-                        return false;
-                    }, false);
+                for (i = 0; i < rowids.length; i+=1) {
+                    Csw.crawlObject(opts, onEachGridRow, false);
                 }
             }
 
@@ -452,44 +468,24 @@
         };
 
 
-//        external.$gridTable = $gridTable;
-//        external.$gridPager = $gridPager;
-//        external.$topPager = $topPager || null;
-//        external.getAllGridRows = getAllGridRows;
-//        external.getGridRowHeight = getGridRowHeight;
-//        external.scrollToRow = scrollToRow;
-//        external.hideColumn = hideColumn;
-//        external.getRowIdForVal = getRowIdForVal;
-//        external.setSelection = setSelection;
-//        external.getValueForColumn = getValueForColumn;
-//        external.changeGridOpts = changeGridOpts;
-//        external.opGridRows = opGridRows;
-//        external.print = print;
-//        external.isMulti = function () {
-//            return multiEdit;
-//        };
-
-//        return external;
-
-        return {
-            $gridTable: $gridTable,
-            $gridPager: $gridPager,
-            $topPager: $topPager || null,
-            getAllGridRows: getAllGridRows,
-            getGridRowHeight: getGridRowHeight,
-            scrollToRow: scrollToRow,
-            hideColumn: hideColumn,
-            getRowIdForVal: getRowIdForVal,
-            setSelection: setSelection,
-            getValueForColumn: getValueForColumn,
-            changeGridOpts: changeGridOpts,
-            opGridRows: opGridRows,
-            print: print,
-            isMulti: function () {
-                return multiEdit;
-            }                  
+        external.$gridTable = $gridTable;
+        external.$gridPager = $gridPager;
+        external.$topPager = $topPager || null;
+        external.getAllGridRows = getAllGridRows;
+        external.getGridRowHeight = getGridRowHeight;
+        external.scrollToRow = scrollToRow;
+        external.hideColumn = hideColumn;
+        external.getRowIdForVal = getRowIdForVal;
+        external.setSelection = setSelection;
+        external.getValueForColumn = getValueForColumn;
+        external.changeGridOpts = changeGridOpts;
+        external.opGridRows = opGridRows;
+        external.print = print;
+        external.isMulti = function () {
+            return multiEdit;
         };
 
+        return external;
     }
 
     Csw.register('grid', grid);
