@@ -5,7 +5,7 @@
 /// <reference path="CswDialog.js" />
 
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = "CswWelcome";
 
@@ -16,10 +16,10 @@
                 Url: '/NbtWebApp/wsNBT.asmx/getWelcomeItems',
                 MoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/moveWelcomeItems',
                 RemoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/deleteWelcomeItem',
-                onLinkClick: null, //function(optSelect) { }, //viewid, actionid, reportid
-                onSearchClick: null, //function(optSelect) { }, //viewid
-                onAddClick: null, //function(nodetypeid) { },
-                onAddComponent: null //function() { }
+                onLinkClick: null, //function (optSelect) { }, //viewid, actionid, reportid
+                onSearchClick: null, //function (optSelect) { }, //viewid
+                onAddClick: null, //function (nodetypeid) { },
+                onAddComponent: null //function () { }
             };
 
             if (options) {
@@ -31,7 +31,7 @@
                 RoleId: ''
             };
 
-            CswAjaxJson({
+            Csw.ajax.post({
                 url: o.Url,
                 data: jsonData,
                 success: function (data) {
@@ -58,7 +58,8 @@
                             });
                         },
                         'showConfigButton': true,
-                        'showRowColButtons': true,
+                        showExpandRowButton: true,
+                        showExpandColButton: true,
                         'showAddButton': true,
                         'showRemoveButton': true,
                         'onAddClick': function () { $.CswDialog('AddWelcomeItemDialog', { 'onAdd': o.onAddComponent }); },
@@ -73,14 +74,14 @@
                     });
 
                     for (var welcomeId in data) {
-                        if (contains(data, welcomeId)) {
+                        if (Csw.contains(data, welcomeId)) {
                             var thisItem = data[welcomeId];
-                            if (false === isNullOrEmpty(thisItem)) {
+                            if (false === Csw.isNullOrEmpty(thisItem)) {
                                 var $cellset = $table.CswLayoutTable('cellset', thisItem.displayrow, thisItem.displaycol);
                                 var $imagecell = $cellset[1][1].children('div');
                                 var $textcell = $cellset[2][1].children('div');
 
-                                if (false === isNullOrEmpty(thisItem.buttonicon))
+                                if (false === Csw.isNullOrEmpty(thisItem.buttonicon))
                                     $imagecell.append($('<a href="javascript:void(0);"><img border="0" src="' + thisItem.buttonicon + '"/></a>'));
 
                                 var clickopts = {
@@ -91,24 +92,24 @@
                                     onSearchClick: o.onSearchClick
                                 };
 
-                                if (tryParseString(thisItem.linktype).toLowerCase() === 'text') {
+                                if (Csw.string(thisItem.linktype).toLowerCase() === 'text') {
                                     $textcell.append('<span>' + thisItem.text + '</span>');
                                 } else {
-                                    var onClick = makeDelegate(_clickItem, clickopts);
+                                    var onClick = Csw.makeDelegate(_clickItem, clickopts);
                                     $textcell.append($('<a href="javascript:void(0);">' + thisItem.text + '</a>'));
                                     $textcell.find('a').click(onClick);
                                     $imagecell.find('a').click(onClick);
                                 }
 
                                 var $welcomehidden = $textcell.CswInput('init', { ID: welcomeId,
-                                    type: CswInput_Types.hidden
+                                    type: Csw.enums.inputTypes.hidden
                                 });
                                 $welcomehidden.CswAttrNonDom('welcomeid', welcomeId);
                             }
                         }
                     }
                 } // success{}
-            }); // CswAjaxJson
+            }); // Csw.ajax
         }, // initTable
 
         'getAddItemForm': function (options) {
@@ -139,7 +140,7 @@
             var $viewselect = $viewselectcell.CswTable('cell', 1, 1).CswViewSelect({
                 'ID': 'welcome_viewsel'
                 //'viewid': '',
-                //'onSelect': function(optSelect) { },
+                //'onSelect': function (optSelect) { },
             })
                                         .hide();
 
@@ -161,7 +162,7 @@
             $('<span>Text:</span>').appendTo($table.CswTable('cell', 4, 1));
             var $welcometextcell = $table.CswTable('cell', 4, 2);
             var $welcometext = $welcometextcell.CswInput('init', { ID: 'welcome_text',
-                type: CswInput_Types.text
+                type: Csw.enums.inputTypes.text
             });
             var $buttonsel_label = $('<span>Use Button:</span>')
                                         .appendTo($table.CswTable('cell', 5, 1));
@@ -229,7 +230,7 @@
                 });
             });
 
-            CswAjaxJson({
+            Csw.ajax.post({
                 'url': '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
                 'success': function (data) {
                     for (var icon in data) {
@@ -240,7 +241,7 @@
                         $buttonsel.css('width', '');
                     } // each
                 } // success
-            }); // CswAjaxJson
+            }); // Csw.ajax
         } // getAddItemForm
 
     };
@@ -288,13 +289,13 @@
         {
             switch (optSelect.linktype.toLowerCase()) {
                 case 'add':
-                    if (isFunction(c.onAddClick)) { c.onAddClick(c.itemData.nodetypeid); }
+                    if (Csw.isFunction(c.onAddClick)) { c.onAddClick(c.itemData.nodetypeid); }
                     break;
                 case 'link':
-                    if (isFunction(c.onLinkClick)) { c.onLinkClick(optSelect); }
+                    if (Csw.isFunction(c.onLinkClick)) { c.onLinkClick(optSelect); }
                     break;
                 case 'search':
-                    if (isFunction(c.onSearchClick)) { c.onSearchClick(optSelect); }
+                    if (Csw.isFunction(c.onSearchClick)) { c.onSearchClick(optSelect); }
                     break;
                 case 'text':
                     break;
@@ -325,10 +326,10 @@
                     WelcomeId: welcomeid
                 };
 
-                CswAjaxJson({
+                Csw.ajax.post({
                     url: r.RemoveWelcomeItemUrl,
                     data: dataJson,
-                    success: function() {
+                    success: function () {
                         r.onSuccess();
                     }
                 });
@@ -362,7 +363,7 @@
             IconFileName: a.iconfilename
         };
 
-        CswAjaxJson({
+        Csw.ajax.post({
             url: a.AddWelcomeItemUrl,
             data: dataJson,
             success: function () {
@@ -395,7 +396,7 @@
         var $textcell = $(cellset[2][1]);
         if ($textcell.length > 0) {
             var welcomeid = $textcell.find('input').CswAttrNonDom('welcomeid');
-            if (false === isNullOrEmpty(welcomeid)) {
+            if (false === Csw.isNullOrEmpty(welcomeid)) {
                 var dataJson = {
                     RoleId: '',
                     WelcomeId: welcomeid,
@@ -403,7 +404,7 @@
                     NewColumn: newcolumn
                 };
 
-                CswAjaxJson({
+                Csw.ajax.post({
                     url: MoveWelcomeItemUrl,
                     data: dataJson
                 });

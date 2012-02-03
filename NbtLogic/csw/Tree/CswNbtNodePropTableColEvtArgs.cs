@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using ChemSW.Nbt;
 
 namespace ChemSW.Nbt
 {

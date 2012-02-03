@@ -1,29 +1,25 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswSelect.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";        
     var pluginName = 'CswFieldTypeQuestion';
     var multi = false;
     var methods = {
-        init: function(o) {
+        init: function (o) {
 
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var answer = (false === o.Multi) ? tryParseString(propVals.answer).trim() : CswMultiEditDefaultValue;
-            var allowedAnswers = tryParseString(propVals.allowedanswers).trim();
-            var compliantAnswers = tryParseString(propVals.compliantanswers).trim();
-            var comments =  (false === o.Multi) ? tryParseString(propVals.comments).trim() : CswMultiEditDefaultValue;
-            var correctiveAction = (false === o.Multi) ? tryParseString(propVals.correctiveaction).trim() : CswMultiEditDefaultValue;
+            var answer = (false === o.Multi) ? Csw.string(propVals.answer).trim() : Csw.enums.multiEditDefaultValue;
+            var allowedAnswers = Csw.string(propVals.allowedanswers).trim();
+            var compliantAnswers = Csw.string(propVals.compliantanswers).trim();
+            var comments =  (false === o.Multi) ? Csw.string(propVals.comments).trim() : Csw.enums.multiEditDefaultValue;
+            var correctiveAction = (false === o.Multi) ? Csw.string(propVals.correctiveaction).trim() : Csw.enums.multiEditDefaultValue;
             multi = o.Multi;
             
-            var dateAnswered =  (false === o.Multi) ? tryParseString(propVals.dateanswered.date).trim() : ''; 
-            var dateCorrected =  (false === o.Multi) ? tryParseString(propVals.datecorrected.date).trim() : '';
+            var dateAnswered =  (false === o.Multi) ? Csw.string(propVals.dateanswered.date).trim() : ''; 
+            var dateCorrected =  (false === o.Multi) ? Csw.string(propVals.datecorrected.date).trim() : '';
 
             if(o.ReadOnly) {
                 $Div.append('Answer: ' + answer);
@@ -46,14 +42,14 @@
                 $table.CswTable('cell', 1, 1).append('Answer');
                 var splitAnswers = allowedAnswers.split(',');
                 if (o.Multi) {
-                    splitAnswers.push(CswMultiEditDefaultValue);
+                    splitAnswers.push(Csw.enums.multiEditDefaultValue);
                 } else {
                     splitAnswers.push('');
                 }
                 var $AnswerSel = $table.CswTable('cell', 1, 2)
                                        .CswSelect('init', {
                                            ID: o.ID + '_ans',
-                                           onChange: function() {
+                                           onChange: function () {
                                                checkCompliance(compliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
                                                o.onchange();
                                            },
@@ -65,7 +61,7 @@
                 var $CorrectiveActionTextBox = $('<textarea id="'+ o.ID +'_cor" />')
                                     .appendTo($table.CswTable('cell', 2, 2))
                                     .text(correctiveAction)
-                                    .change(function() { 
+                                    .change(function () { 
                                         checkCompliance(compliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
                                         o.onchange();
                                     });
@@ -79,25 +75,25 @@
                 checkCompliance(compliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
             }
         },
-        save: function(o) {
+        save: function (o) {
             var attributes = {
                 answer: null,
                 correctiveaction: null,
                 comments: null
             };
             var $answer = o.$propdiv.find('#' + o.ID + '_ans');
-            if (false === isNullOrEmpty($answer, true)) {
+            if (false === Csw.isNullOrEmpty($answer, true)) {
                 attributes.answer = $answer.val();
             }
             var $correct = o.$propdiv.find('#' + o.ID + '_cor');
-            if (false === isNullOrEmpty($correct, true)) {
+            if (false === Csw.isNullOrEmpty($correct, true)) {
                 attributes.correctiveaction = $correct.val();
             }
             var $comments = o.$propdiv.find('#' + o.ID + '_com');
-            if (false === isNullOrEmpty($comments, true)) {
+            if (false === Csw.isNullOrEmpty($comments, true)) {
                 attributes.comments = $comments.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     
@@ -112,7 +108,7 @@
             if (selectedAnswer !== '' && correctiveAction === '') {
                 isCompliant = false;
                 for (var i = 0; i < splitCompliantAnswers.length; i++) {
-                    isCompliant = isCompliant || (trim(splitCompliantAnswers[i].toLowerCase()) === trim(selectedAnswer.toLowerCase())) ;
+                    isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
                 }
             }
             if (isCompliant) {

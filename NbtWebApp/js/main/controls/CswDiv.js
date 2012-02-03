@@ -3,13 +3,13 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = "CswDiv";
     
     var methods = {
     
-        'init': function(options) {
+        'init': function (options) {
             var o = {
                 'ID': '',
                 'value': '',
@@ -20,13 +20,13 @@
             var $parent = $(this);
             
             var $div = $('<div></div>');
-            var elementId = tryParseString(o.ID,'');
+            var elementId = Csw.string(o.ID,'');
             
             $div.CswAttrDom('id',elementId);
             $div.CswAttrDom('name',elementId);
             
-            if( !isNullOrEmpty( o.cssclass ) ) $div.addClass(o.cssclass);
-            if( !isNullOrEmpty( o.value ) ) $div.text( o.value );
+            if( !Csw.isNullOrEmpty( o.cssclass ) ) $div.addClass(o.cssclass);
+            if( !Csw.isNullOrEmpty( o.value ) ) $div.text( o.value );
                     
             $parent.append($div);
             return $div;

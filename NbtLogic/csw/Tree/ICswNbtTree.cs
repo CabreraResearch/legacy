@@ -323,10 +323,10 @@ namespace ChemSW.Nbt
         /// Sets a given node to be the currently indexed node in the tree, by node key
         /// </summary>
         void makeNodeCurrent( CswNbtNodeKey CswNbtNodeKey );
-        /// <summary>
-        /// Sets a given node to be the currently indexed node in the tree, by path
-        /// </summary>
-        void makeNodeCurrent( CswDelimitedString TreePath );
+        ///// <summary>
+        ///// Sets a given node to be the currently indexed node in the tree, by path
+        ///// </summary>
+        //void makeNodeCurrent( CswDelimitedString TreePath );
 
 
         /// <summary>
@@ -388,6 +388,18 @@ namespace ChemSW.Nbt
         /// Sets the client-side expandmode of the current node
         /// </summary>
         void setCurrentNodeExpandMode( string ExpandMode );
+
+
+        /// <summary>
+        /// Sets whether the current node's children are truncated
+        /// </summary>
+        void setCurrentNodeChildrenTruncated( bool Truncated );
+        
+        /// <summary>
+        /// True if the current node's children are truncated
+        /// </summary>
+        /// <returns></returns>
+        bool getCurrentNodeChildrenTruncated();
 
         /// <summary>
         /// Adds a Property value to a node.  This is the uncommon way to fill property data in for nodes.

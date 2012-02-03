@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Xml;
@@ -73,9 +73,8 @@ namespace ChemSW.Nbt.MetaData
 
                     _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
 
-                    _CswNbtMetaDataResources.NodeTypesCollection.Deregister( this );
                     _NodeTypeRow["nodetypename"] = value;
-                    _CswNbtMetaDataResources.NodeTypesCollection.RegisterExisting( this );
+                    _CswNbtMetaDataResources.NodeTypesCollection.clearCache();
 
                     if( _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypeName != null )
                         _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypeName( this );
@@ -194,9 +193,8 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToInt32( _NodeTypeRow["versionno"] ); }
             set
             {
-                _CswNbtMetaDataResources.NodeTypesCollection.Deregister( this );
                 _NodeTypeRow["versionno"] = CswConvert.ToDbVal( value );
-                _CswNbtMetaDataResources.NodeTypesCollection.RegisterExisting( this );
+                _CswNbtMetaDataResources.NodeTypesCollection.clearCache();
             }
         }
         public bool IsLocked
@@ -280,10 +278,10 @@ namespace ChemSW.Nbt.MetaData
         }
 
 
-        public ICollection NodeTypeTabIds { get { return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabIds( NodeTypeId ); } }
-        public ICollection NodeTypeTabs { get { return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabs( NodeTypeId ); } }
-        public ICollection NodeTypePropIds { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIds( NodeTypeId ); } }
-        public ICollection NodeTypeProps { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId ); } }
+        public Collection<Int32> NodeTypeTabIds { get { return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabIds( NodeTypeId ); } }
+        public IEnumerable<CswNbtMetaDataNodeTypeTab> NodeTypeTabs { get { return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabs( NodeTypeId ); } }
+        public Collection<Int32> NodeTypePropIds { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIds( NodeTypeId ); } }
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId ); } }
 
         public CswNbtMetaDataNodeTypeTab getFirstNodeTypeTab()
         {
