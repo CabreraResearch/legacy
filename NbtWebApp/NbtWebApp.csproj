@@ -944,7 +944,6 @@
     <Content Include="csw.js\tools\csw.clientdb.js" />
     <Content Include="js\main\tools\CswProfileMethod.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeMultiList.js" />
-    <Content Include="js\main\tools\CswString.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeScientific.js" />
     <Content Include="Images\favicon.ico" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.js" />
