@@ -11,7 +11,7 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : CswMultiEditDefaultValue;
+            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
             var options = Csw.string(propVals.options).trim();
 
             if(o.ReadOnly) {
@@ -19,7 +19,7 @@
             } else {
                 var values = options.split(',');
                 if (o.Multi) {
-                    values.push(CswMultiEditDefaultValue);
+                    values.push(Csw.enums.multiEditDefaultValue);
                 }
                 var $SelectBox = $Div.CswSelect('init', { ID: o.ID, 
                                                           cssclass: 'selectinput', 

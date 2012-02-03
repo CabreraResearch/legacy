@@ -89,7 +89,7 @@
                     $cell4.CswInput({	
                         ID: o.ID + '_' + id + '_quota',
                         name: o.ID + '_' + id + '_quota',
-                        type: CswInput_Types.text,
+                        type: Csw.enums.inputTypes.text,
                         value: quota,
                         width: '50px'
                     });

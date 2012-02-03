@@ -14,7 +14,7 @@
             var o = {
                 'ID': '',
                 'name': '',
-                'type': CswInput_Types.text,
+                'type': Csw.enums.inputTypes.text,
                 'placeholder': '',
                 'cssclass': '',
                 'value': '',

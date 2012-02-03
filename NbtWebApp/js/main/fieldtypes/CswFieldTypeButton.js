@@ -11,7 +11,7 @@
 
         $button.CswButton('disable');
         if (Csw.isNullOrEmpty(propAttr)) {
-            Csw.error.showError(Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
+            Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
             $button.CswButton('enable');
         } else {
             params = {
@@ -25,7 +25,7 @@
                     $button.CswButton('enable');
                     if (Csw.bool(data.success)) {
                         switch (data.action) {
-                            case ChemSW.enums.CswOnObjectClassClick.reauthenticate:
+                            case Csw.enums.onObjectClassClick.reauthenticate:
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
                                     /* case 24669 */
                                     Csw.cookie.clearAll();
@@ -39,7 +39,7 @@
                                     });
                                 }
                                 break;
-                            case ChemSW.enums.CswOnObjectClassClick.refresh:
+                            case Csw.enums.onObjectClassClick.refresh:
                                 o.onReload();
                                 break;
                             default:

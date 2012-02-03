@@ -29,7 +29,7 @@
             
             if(o.ReadOnly) {
                 if(o.Multi) {
-                    $parent.append(CswMultiEditDefaultValue);
+                    $parent.append(Csw.enums.multiEditDefaultValue);
                 } else {
                     switch (tristateVal) {
                         case 'true': $parent.append('Yes'); break;
@@ -74,31 +74,31 @@
     };
 
     function getButtonType(val) {
-        var ret = CswImageButton_ButtonType.CheckboxNull;
+        var ret = Csw.enums.imageButton_ButtonType.CheckboxNull;
         switch(val) {
-            case 'true': ret = CswImageButton_ButtonType.CheckboxTrue; break;
-            case 'false': ret = CswImageButton_ButtonType.CheckboxFalse; break;
+            case 'true': ret = Csw.enums.imageButton_ButtonType.CheckboxTrue; break;
+            case 'false': ret = Csw.enums.imageButton_ButtonType.CheckboxFalse; break;
         }
         return ret;
     }
     
     function onClick($ImageDiv, required) {
         var currentValue = $ImageDiv.CswAttrDom('alt');
-        var newValue = CswImageButton_ButtonType.CheckboxNull;
+        var newValue = Csw.enums.imageButton_ButtonType.CheckboxNull;
         var newAltText = "null";
         if (currentValue === "null") {
-            newValue = CswImageButton_ButtonType.CheckboxTrue;
+            newValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
             newAltText = "true";
         } else if ( currentValue === "false") {
             if ( Csw.bool(required) ) {
-                newValue = CswImageButton_ButtonType.CheckboxTrue;
+                newValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
                 newAltText = "true";
             } else {
-                newValue = CswImageButton_ButtonType.CheckboxNull;
+                newValue = Csw.enums.imageButton_ButtonType.CheckboxNull;
                 newAltText = "null";
             }
         } else if (currentValue === "true") {
-            newValue = CswImageButton_ButtonType.CheckboxFalse;
+            newValue = Csw.enums.imageButton_ButtonType.CheckboxFalse;
             newAltText = "false";
         }
         $ImageDiv.CswAttrDom('alt', newAltText);

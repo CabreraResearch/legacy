@@ -17,7 +17,7 @@
             {
                 var $ValueNTB = $Div.CswNumberTextBox({
                     ID: o.ID + '_val',
-                    Value: (false === o.Multi) ? Csw.string(propVals.base).trim() : CswMultiEditDefaultValue,
+                    Value: (false === o.Multi) ? Csw.string(propVals.base).trim() : Csw.enums.multiEditDefaultValue,
                     MaxValue: 999999999,
                     Precision: 0,
                     ReadOnly: o.ReadOnly,
@@ -28,7 +28,7 @@
                 $Div.append('E');
                 var $ExponentNTB = $Div.CswNumberTextBox({
                     ID:  o.ID + '_exp',
-                    Value: (false === o.Multi) ? Csw.string(propVals.exponent).trim() : CswMultiEditDefaultValue,
+                    Value: (false === o.Multi) ? Csw.string(propVals.exponent).trim() : Csw.enums.multiEditDefaultValue,
                     MaxValue: 999999,
                     Precision: 0,
                     ReadOnly: o.ReadOnly,

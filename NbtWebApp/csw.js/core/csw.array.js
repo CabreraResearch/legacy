@@ -1,9 +1,9 @@
 ﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function () {
+(function() {
     'use strict';
-    
+
     function isArray(obj) {
         /// <summary> Returns true if the object is an array</summary>
         /// <param name="obj" type="Object"> Object to test</param>
@@ -15,20 +15,20 @@
     Csw.isArray = Csw.isArray || isArray;
 
     function array() {
-        var retArray = []; 
-        if(arguments.length > 0) {
+        var retArray = [];
+        if (arguments.length > 0) {
             retArray = Array.prototype.slice.call(arguments, 0);
         }
-        
-        retArray.contains = retArray.contains || function (value) {
+
+        retArray.contains = retArray.contains || function(value) {
             return retArray.indexOf(value) !== -1;
         };
-        
+
         return retArray;
     }
     Csw.register('array', array);
     Csw.array = Csw.array || array;
-    
+
     function makeSequentialArray(start, end) {
         var ret = array(),
             i;
@@ -40,7 +40,7 @@
             }
         }
         return ret;
-    }    
+    }
     Csw.register('makeSequentialArray', makeSequentialArray);
     Csw.makeSequentialArray = Csw.makeSequentialArray || makeSequentialArray;
 

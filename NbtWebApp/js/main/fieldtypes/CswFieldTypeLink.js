@@ -12,8 +12,8 @@
             $Div.contents().remove();
 
             var propVals = o.propData.values;
-            var text = (false === o.Multi) ? Csw.string(propVals.text).trim() : CswMultiEditDefaultValue;
-            var href = (false === o.Multi) ? Csw.string(propVals.href).trim() : CswMultiEditDefaultValue;
+            var text = (false === o.Multi) ? Csw.string(propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+            var href = (false === o.Multi) ? Csw.string(propVals.href).trim() : Csw.enums.multiEditDefaultValue;
 
             var $Link = $('<a href="' + href + '" target="_blank">' + text + '</a>&nbsp;&nbsp;');
 
@@ -27,13 +27,13 @@
                 $('<div/>')
                     .appendTo($table.CswTable('cell', 1, 2))
                     .CswImageButton({
-                        ButtonType: CswImageButton_ButtonType.Edit,
+                        ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',
                         Required: o.Required,
                         onClick: function () { 
                                 $edittable.show();
-                                return CswImageButton_ButtonType.None; 
+                                return Csw.enums.imageButton_ButtonType.None; 
                             }
                     });
 
@@ -45,7 +45,7 @@
                 
                 var $edittextcell = $edittable.CswTable('cell', 1, 2);
                 var $edittext = $edittextcell.CswInput('init',{ID: o.ID + '_text',
-                                                                type: CswInput_Types.text,
+                                                                type: Csw.enums.inputTypes.text,
                                                                 value: text,
                                                                 onChange: o.onchange
                                                                 }); 
@@ -55,7 +55,7 @@
                 
                 var $edithrefcell = $edittable.CswTable('cell', 2, 2);
                 var $edithref = $edithrefcell.CswInput('init',{ID: o.ID + '_href',
-                                                               type: CswInput_Types.text,
+                                                               type: Csw.enums.inputTypes.text,
                                                                value: href,
                                                                onChange: o.onchange
                                                        }); 

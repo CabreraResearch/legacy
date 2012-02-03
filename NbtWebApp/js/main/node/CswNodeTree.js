@@ -53,7 +53,7 @@
                 ShowToggleLink: true,
                 IncludeInQuickLaunch: true,
                 //Delay: 250,
-                DefaultSelect: CswNodeTree_DefaultSelect.firstchild.name
+                DefaultSelect: Csw.enums.nodeTree_DefaultSelect.firstchild.name
             };
             if (options) $.extend(o, options);
 
@@ -122,7 +122,7 @@
                     }
 
                     var treeThemes = { "dots": true };
-                    if (o.viewmode === CswViewMode.list.name) {
+                    if (o.viewmode === Csw.enums.viewMode.list.name) {
                         treeThemes = { "dots": false };
                     }
 

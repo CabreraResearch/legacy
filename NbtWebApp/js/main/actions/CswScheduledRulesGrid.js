@@ -1,14 +1,5 @@
-﻿/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../controls/CswNodeTypeSelect.js" />
-/// <reference path="../pagecmp/CswWizard.js" />
-/// <reference path="../controls/CswGrid.js" />
-/// <reference path="../pagecmp/CswDialog.js" />
-/// <reference path="../controls/CswTimeInterval.js" />
-/// <reference path="../controls/CswTable.js" />
-/// <reference path="../controls/CswSelect.js" />
+﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function ($) { 
     "use strict";
@@ -24,8 +15,8 @@
         if (options) $.extend(o, options);
 
         var wizardSteps = {
-            1: ChemSW.enums.CswScheduledRulesGrid_WizardSteps.step1.description,
-            2: ChemSW.enums.CswScheduledRulesGrid_WizardSteps.step2.description
+            1: Csw.enums.wizardSteps_ScheduleRulesGrid.step1.description,
+            2: Csw.enums.wizardSteps_ScheduleRulesGrid.step2.description
         };
 
         var $parent = $(this),
@@ -78,7 +69,7 @@
                     toggleButton(buttons.next, nextBtnEnabled());
                     
                     if (false === stepOneComplete) {
-                        $divStep1 = $wizard.CswWizard('div', ChemSW.enums.CswScheduledRulesGrid_WizardSteps.step1.step);
+                        $divStep1 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ScheduleRulesGrid.step1.step);
                         $divStep1.append('<br />');
 
                         $customerIdTable = $divStep1.CswTable('init', {
@@ -158,12 +149,12 @@
                             data: { AccessId: selectedCustomerId },
                             success: function (data) {
                                 $.extend(gridOptions.gridOpts, data);
-                                scheduledRulesGrid = CswGrid(gridOptions, $rulesGrid);
+                                scheduledRulesGrid = Csw.grid(gridOptions, $rulesGrid);
                             }
                         });
                 };
                 
-                $divStep2 = $divStep2 || $wizard.CswWizard('div', ChemSW.enums.CswScheduledRulesGrid_WizardSteps.step2.step);
+                $divStep2 = $divStep2 || $wizard.CswWizard('div', Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step);
                 $divStep2.empty();
                 
                 toggleButton(buttons.next, false);
@@ -194,7 +185,7 @@
             handleNext = function ($wizardTable, newStepNo) {
                 currentStepNo = newStepNo;
                 switch (newStepNo) {
-                    case ChemSW.enums.CswScheduledRulesGrid_WizardSteps.step2.step:
+                    case Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step:
                         makeStepTwo(); 
                         break;
                 } // switch(newstepno)
@@ -203,7 +194,7 @@
             handlePrevious = function (newStepNo) {
                 currentStepNo = newStepNo;
                 switch (newStepNo) {
-                    case ChemSW.enums.CswScheduledRulesGrid_WizardSteps.step1.step:
+                    case Csw.enums.wizardSteps_ScheduleRulesGrid.step1.step:
                         makeStepOne();
                         break;
                 }
@@ -215,7 +206,7 @@
         $wizard = $div.CswWizard('init', {
             ID: Csw.makeId({ ID: o.ID, suffix: 'wizard' }),
             Title: 'View Nbt Scheduler Rules by Schema',
-            StepCount: ChemSW.enums.CswScheduledRulesGrid_WizardSteps.stepcount,
+            StepCount: Csw.enums.wizardSteps_ScheduleRulesGrid.stepcount,
             Steps: wizardSteps,
             StartingStep: o.startingStep,
             FinishText: 'Finish',
@@ -230,5 +221,5 @@
         //#endregion Execution
 
         return $div;
-    }; // $.fn.ChemSW.enums.CswScheduledRulesGrid_WizardSteps
+    }; // $.fn.Csw.enums.wizardSteps_ScheduleRulesGrid
 })(jQuery);

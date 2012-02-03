@@ -15,7 +15,7 @@
                 cssclass: '',
                 hasText: true,
                 disableOnClick: true,
-                inputType: CswInput_Types.button.name,
+                inputType: Csw.enums.inputTypes.button.name,
                 primaryicon: '',
                 secondaryicon: '',
                 ReadOnly: false,

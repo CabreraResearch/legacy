@@ -32,7 +32,7 @@
         }
 
         retBool = toBool();
-        
+
         return retBool;
     }
 

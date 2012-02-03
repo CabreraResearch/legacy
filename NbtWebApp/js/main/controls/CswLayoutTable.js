@@ -68,62 +68,62 @@
                         if(o.showAddButton)
                         {
                             $buttontable.CswTable('cell', 1, 1).CswImageButton({
-                                                    ButtonType: CswImageButton_ButtonType.Add,
+                                                    ButtonType: Csw.enums.imageButton_ButtonType.Add,
                                                     AlternateText: 'Add',
                                                     ID: o.ID + 'addbtn',
                                                     onClick: function ($ImageDiv)
                                                     {
                                                         o.onAddClick();
-                                                        return CswImageButton_ButtonType.None;
+                                                        return Csw.enums.imageButton_ButtonType.None;
                                                     }
                                                 }).hide();
                         }
                         if(o.showRemoveButton)
                         {
                             $buttontable.CswTable('cell', 1, 2).CswImageButton({
-                                                    ButtonType: CswImageButton_ButtonType.Delete,
+                                                    ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                                                     AlternateText: 'Remove',
                                                     ID: o.ID + 'rembtn',
                                                     onClick: function ($ImageDiv)
                                                     {
                                                         _toggleRemove($table, $ImageDiv);
-                                                        return CswImageButton_ButtonType.None;
+                                                        return Csw.enums.imageButton_ButtonType.None;
                                                     }
                                                 }).hide();
                         }
                         if (o.showRowColButtons)
                         {
                             $buttontable.CswTable('cell', 1, 3).CswImageButton({
-                                                    ButtonType: CswImageButton_ButtonType.ArrowEast,
+                                                    ButtonType: Csw.enums.imageButton_ButtonType.ArrowEast,
                                                     AlternateText: 'Add Column',
                                                     ID: o.ID + 'addcolumnbtn',
                                                     onClick: function ($ImageDiv) 
                                                     { 
                                                         _addColumn($table);
-                                                        return CswImageButton_ButtonType.None; 
+                                                        return Csw.enums.imageButton_ButtonType.None; 
                                                     }
                                                 }).hide();
                             $buttontable.CswTable('cell', 1, 4).CswImageButton({
-                                                    ButtonType: CswImageButton_ButtonType.ArrowSouth,
+                                                    ButtonType: Csw.enums.imageButton_ButtonType.ArrowSouth,
                                                     AlternateText: 'Add Row',
                                                     ID: o.ID + 'addrowbtn',
                                                     onClick: function ($ImageDiv) 
                                                     { 
                                                         _addRow($table);
-                                                        return CswImageButton_ButtonType.None; 
+                                                        return Csw.enums.imageButton_ButtonType.None; 
                                                     }
                                                 }).hide();
                         }
                         if (o.showConfigButton)
                         {
                             $buttontable.CswTable('cell', 1, 5).CswImageButton({
-                                                    ButtonType: CswImageButton_ButtonType.Configure,
+                                                    ButtonType: Csw.enums.imageButton_ButtonType.Configure,
                                                     AlternateText: 'Configure',
                                                     ID: o.ID + 'configbtn',
                                                     onClick: function ($ImageDiv) 
                                                     { 
                                                         _toggleConfig($table, $buttontable);
-                                                        return CswImageButton_ButtonType.None; 
+                                                        return Csw.enums.imageButton_ButtonType.None; 
                                                     }
                                                 });
                         }

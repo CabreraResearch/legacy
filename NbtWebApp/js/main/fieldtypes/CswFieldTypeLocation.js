@@ -15,8 +15,8 @@
                 var propVals = o.propData.values;
                 var nodeId = (false === o.Multi) ? Csw.string(propVals.nodeid).trim() : '';
                 var nodeKey = (false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
-                var name = (false === o.Multi) ? Csw.string(propVals.name).trim() : CswMultiEditDefaultValue;
-                var path = (false === o.Multi) ? Csw.string(propVals.path).trim() : CswMultiEditDefaultValue;
+                var name = (false === o.Multi) ? Csw.string(propVals.name).trim() : Csw.enums.multiEditDefaultValue;
+                var path = (false === o.Multi) ? Csw.string(propVals.path).trim() : Csw.enums.multiEditDefaultValue;
                 var viewId = Csw.string(propVals.viewid).trim();
 
                 if(o.ReadOnly) {
@@ -50,7 +50,7 @@
                                                 UseScrollbars: false,
                                                 IncludeInQuickLaunch: false,
                                                 ShowToggleLink: false,
-                                                DefaultSelect: CswNodeTree_DefaultSelect.root.name
+                                                DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
                                             });
     
                     $selectdiv.CswComboBox( 'init', {	'ID': o.ID + '_combo', 

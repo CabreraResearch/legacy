@@ -11,21 +11,21 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var startDate = (false === o.Multi) ? Csw.string(propVals.startdatetime.date) : CswMultiEditDefaultValue; 
+            var startDate = (false === o.Multi) ? Csw.string(propVals.startdatetime.date) : Csw.enums.multiEditDefaultValue; 
             var dateFormat = Csw.serverDateFormatToJQuery(propVals.startdatetime.dateformat);
 
-            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : CswMultiEditDefaultValue; 
-            var units = (false === o.Multi) ? Csw.string(propVals.units).trim() : CswMultiEditDefaultValue; 
+            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue; 
+            var units = (false === o.Multi) ? Csw.string(propVals.units).trim() : Csw.enums.multiEditDefaultValue; 
 
             var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
             var $cell11 = $table.CswTable('cell', 1, 1);
             var $cell12 = $table.CswTable('cell', 1, 2);
 
-            var mtbfStatic = (units !== CswMultiEditDefaultValue) ? value + '&nbsp;' + units : value;
+            var mtbfStatic = (units !== Csw.enums.multiEditDefaultValue) ? value + '&nbsp;' + units : value;
             $cell11.append(mtbfStatic);
             if(!o.ReadOnly) {
                 $cell12.CswImageButton({
-                            ButtonType: CswImageButton_ButtonType.Edit,
+                            ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                             AlternateText: 'Edit',
                             'ID': o.ID,
                             onClick: function () { 
@@ -48,7 +48,7 @@
                                 });
 
 //                var $StartDateBox = $StartDateBoxCell.CswInput('init',{ID: o.ID + '_sd',
-//                                                                  type: CswInput_Types.text,
+//                                                                  type: Csw.enums.inputTypes.text,
 //                                                                  cssclass: 'textinput date',
 //                                                                  value: startDate,
 //                                                                  onChange: o.onchange
@@ -63,7 +63,7 @@
                 $edittable.CswTable('cell', 3, 1).append('Units');
                 var unitVals = ['hours', 'days'];
                 if (o.Multi) {
-                    unitVals.push(CswMultiEditDefaultValue);
+                    unitVals.push(Csw.enums.multiEditDefaultValue);
                 }
                 $edittable.CswTable('cell', 3, 2)
                           .CswSelect('init', {

@@ -46,9 +46,8 @@
                 var storeDataId = Csw.makeId({ID: o.ID, suffix: storedDataSuffix});
                 cbaPrevSelected = Csw.makeId({ ID: storeDataId, suffix: cbaPrevSelectedSuffix });
                 
-                var clientDb = cswClientDb();
-                clientDb.removeItem(storeDataId);
-                clientDb.removeItem(cbaPrevSelected);
+                Csw.clientDb.removeItem(storeDataId);
+                Csw.clientDb.removeItem(cbaPrevSelected);
                 
                 var $Div = $(this);
                 var cbaData = transmogrify({ 
@@ -64,14 +63,14 @@
                 }
                 o.MultiIsUnchanged = o.Multi;
 
-                var checkType = CswInput_Types.checkbox.name;
+                var checkType = Csw.enums.inputTypes.checkbox.name;
                 if(o.UseRadios) {
-                    checkType = CswInput_Types.radio.name;
+                    checkType = Csw.enums.inputTypes.radio.name;
                 }
                 
                 var $OuterDiv = $('<div id="' + storeDataId + '"/>');
 
-                clientDb.setItem(storeDataId, {columns: o.cols, data: o.data});
+                Csw.clientDb.setItem(storeDataId, {columns: o.cols, data: o.data});
                 
                 if (o.ReadOnly) {
                     for (var r = 0; r < o.data.length; r++) {
@@ -150,21 +149,21 @@
                         //var cB = this;
                         var col = cB.attributes['col'].value;
                         var row = cB.attributes['row'].value;
-                        var cache = clientDb.getItem(storeDataId);
+                        var cache = Csw.clientDb.getItem(storeDataId);
                         cache.MultiIsUnchanged = false;
                         if (Csw.contains(cache.data, row) && Csw.contains(cache.data[row],'values')) {
                             cache.data[row].values[col] = cB.checked;
                         }
                         if(o.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
-                            var data = clientDb.getItem(cbaPrevSelected);
+                            var data = Csw.clientDb.getItem(cbaPrevSelected);
                             if(Csw.contains(data,'row') && Csw.contains(data,'col')) {
                                 if(Csw.contains(cache.data, data.row) && Csw.contains(cache.data[data.row],'values')) {
                                     cache.data[data.row].values[data.col] = false;
                                 }
                             }
-                            clientDb.setItem(cbaPrevSelected, {row: row, col: col});
+                            Csw.clientDb.setItem(cbaPrevSelected, {row: row, col: col});
                         }      
-                        clientDb.setItem(storeDataId, cache);
+                        Csw.clientDb.setItem(storeDataId, cache);
                     };
                     
                     // Data
@@ -188,7 +187,7 @@
 
                             if(sRow.values[f]) {
                                 if(o.UseRadios) {
-                                    clientDb.setItem(cbaPrevSelected, { col: f, row: s });
+                                    Csw.clientDb.setItem(cbaPrevSelected, { col: f, row: s });
                                 }
                                 $fCheck.CswAttrDom('checked', 'true');
                             }
@@ -223,8 +222,7 @@
                     $.extend(o, options);
                 }
                 var storeDataId = Csw.makeId({ID: o.ID, suffix: storedDataSuffix});
-                var clientDb = cswClientDb();
-                var data = clientDb.getItem(storeDataId);
+                var data = Csw.clientDb.getItem(storeDataId);
                 return data;
             }
         };
@@ -286,8 +284,7 @@
 
                 dataStore.cols = cols;
                 dataStore.data = data;
-                var clientDb = cswClientDb();
-                clientDb.setItem(o.storeDataId, dataStore);
+                Csw.clientDb.setItem(o.storeDataId, dataStore);
             }
             return dataStore;
         }

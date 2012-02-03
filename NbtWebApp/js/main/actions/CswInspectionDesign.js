@@ -1,13 +1,5 @@
-﻿/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../controls/CswNodeTypeSelect.js" />
-/// <reference path="../pagecmp/CswWizard.js" />
-/// <reference path="../controls/CswGrid.js" />
-/// <reference path="../pagecmp/CswDialog.js" />
-/// <reference path="../controls/CswTimeInterval.js" />
-/// <reference path="../controls/CswTable.js" />
+﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function ($) { 
     "use strict";
@@ -23,11 +15,11 @@
         if (options) $.extend(o, options);
 
         var wizardSteps = {
-            1: ChemSW.enums.CswInspectionDesign_WizardSteps.step1.description,
-            2: ChemSW.enums.CswInspectionDesign_WizardSteps.step2.description,
-            3: ChemSW.enums.CswInspectionDesign_WizardSteps.step3.description,
-            4: ChemSW.enums.CswInspectionDesign_WizardSteps.step4.description,
-            5: ChemSW.enums.CswInspectionDesign_WizardSteps.step5.description
+            1: Csw.enums.wizardSteps_InspectionDesign.step1.description,
+            2: Csw.enums.wizardSteps_InspectionDesign.step2.description,
+            3: Csw.enums.wizardSteps_InspectionDesign.step3.description,
+            4: Csw.enums.wizardSteps_InspectionDesign.step4.description,
+            5: Csw.enums.wizardSteps_InspectionDesign.step5.description
         };
 
         var $parent = $(this),
@@ -187,7 +179,7 @@
                     };
                     
                     if (false === stepOneComplete) {
-                        $divStep1 = $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step1.step);
+                        $divStep1 = $wizard.CswWizard('div', Csw.enums.wizardSteps_InspectionDesign.step1.step);
                         $divStep1.append('<br />');
 
                         $inspectionTable = $divStep1.CswTable('init', {
@@ -258,7 +250,7 @@
                     toggleButton(buttons.next, nextBtnEnabled());
                     
                     if (false === stepTwoComplete) {
-                        $divStep2 = $divStep2 || $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step);
+                        $divStep2 = $divStep2 || $wizard.CswWizard('div', Csw.enums.wizardSteps_InspectionDesign.step2.step);
                         $divStep2.empty();
                         $divStep2.append('<br />');
 
@@ -309,7 +301,7 @@
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .CswInput('init', {
                                 ID: o.ID + '_newDesignName',
-                                type: CswInput_Types.text,
+                                type: Csw.enums.inputTypes.text,
                                 cssclass: 'required',
                                 maxlength: 50,
                                 width: (50 * 7) + 'px',
@@ -341,7 +333,7 @@
                                                                         .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                                                         .CswInput('init', {
                                                                             ID: o.ID + '_newDesignCategory',
-                                                                            type: CswInput_Types.text,
+                                                                            type: Csw.enums.inputTypes.text,
                                                                             value: tempCategoryName,
                                                                             maxlength: 40,
                                                                             width: (40 * 7) + 'px'
@@ -421,13 +413,13 @@
                 if(false === Csw.contains(jqGridOpts, 'data') || 
                    false === Csw.contains(jqGridOpts, 'colNames') || 
                    jqGridOpts.colNames.length === 0) {
-                    Csw.error.showError(Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
+                    Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
                     toggleButton(buttons.next, false);
                     toggleButton(buttons.prev, true, true);
                 } else {
                     $.extend(gridOptions.gridOpts, jqGridOpts);
                 }
-                inspectionGrid = CswGrid(gridOptions, $previewGrid);
+                inspectionGrid = Csw.grid(gridOptions, $previewGrid);
             },
 
             //File upload button for Step 3
@@ -437,7 +429,7 @@
                     onSuccess: function () {
                         $wizard.CswWizard('button', 'next', 'enable').click();
                     },
-                    stepNo: ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step,
+                    stepNo: Csw.enums.wizardSteps_InspectionDesign.step3.step,
                     uploadName: 'design'
                 };
                
@@ -481,7 +473,7 @@
                                     .append($templateLink)));
                         };
                         if (false === stepThreeComplete) {
-                            $divStep3 = $divStep3 || $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step);
+                            $divStep3 = $divStep3 || $wizard.CswWizard('div', Csw.enums.wizardSteps_InspectionDesign.step3.step);
                             $divStep3.empty();
                             
                             //Ordered instructions
@@ -547,7 +539,7 @@
                     
                     if (false === stepFourComplete &&
                             false === skipStepFour) {
-                        $divStep4 = $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step);
+                        $divStep4 = $wizard.CswWizard('div', Csw.enums.wizardSteps_InspectionDesign.step4.step);
                         stepFourComplete = true;
                     }
                 };
@@ -559,7 +551,7 @@
                 if( Csw.string(targetName).trim().toLowerCase() != Csw.string(selectedInspectionDesign.name).trim().toLowerCase() ) {
                     ret = true;
                 } else {
-                    $.CswDialog('ErrorDialog', Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'An Inspection Design and an Inspection Target cannot have the same name.', 'Attempted to create Inspection Target ' + targetName + ' against Inspection Design ' + selectedInspectionDesign.name));
+                    $.CswDialog('ErrorDialog', Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'An Inspection Design and an Inspection Target cannot have the same name.', 'Attempted to create Inspection Target ' + targetName + ' against Inspection Design ' + selectedInspectionDesign.name));
                 }
                 return ret;
             },
@@ -577,7 +569,7 @@
 
                         categoryName = $categoryName.val();
 
-                        $divStep5 = $divStep5 || $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step);
+                        $divStep5 = $divStep5 || $wizard.CswWizard('div', Csw.enums.wizardSteps_InspectionDesign.step5.step);
                         $divStep5.empty();
 
                         $divStep5.append('<p>You are about to create the following items. Click Finish to create the design.</p>');
@@ -615,7 +607,7 @@
                                 value: 'Creating a new Inspection Design <b>' + selectedInspectionDesign.name + '</b>.'
                             });
 
-                            CswGrid(confirmGridOptions, $confirmationDesign);
+                            Csw.grid(confirmGridOptions, $confirmationDesign);
                         } else {
                             $confirmationList.CswList('addItem', {
                                 value: 'Assigning Inspection Design <b>' + selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + selectedInspectionTarget + '</b>.'
@@ -671,16 +663,16 @@
             handleNext = function ($wizardTable, newStepNo) {
                 currentStepNo = newStepNo;
                 switch (newStepNo) {
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step2.step:
                         makeStepTwo(); 
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step3.step:
                         makeStepThree(true); //we're moving forward
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step4.step:
                         makeStepFour(true); //we're moving forward
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step5.step:
                         makeStepFive();
                         break;
                 } // switch(newstepno)
@@ -689,16 +681,16 @@
             handlePrevious = function (newStepNo) {
                 currentStepNo = newStepNo;
                 switch (newStepNo) {
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step1.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step1.step:
                         makeStepOne();
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step2.step:
                         makeStepTwo(); //we're moving backward
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step3.step:
                         makeStepThree(false); //we're moving backward
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step4.step:
                         makeStepFour(false); 
                         break;
                 }
@@ -771,7 +763,7 @@
         $wizard = $div.CswWizard('init', {
             ID: Csw.makeId({ ID: o.ID, suffix: 'wizard' }),
             Title: 'Create New Inspection',
-            StepCount: ChemSW.enums.CswInspectionDesign_WizardSteps.stepcount,
+            StepCount: Csw.enums.wizardSteps_InspectionDesign.stepcount,
             Steps: wizardSteps,
             StartingStep: o.startingStep,
             FinishText: 'Finish',
@@ -786,7 +778,7 @@
         //#endregion Execution
 
         return $div;
-    }; // $.fn.ChemSW.enums.CswInspectionDesign_WizardSteps
+    }; // $.fn.Csw.enums.wizardSteps_InspectionDesign
 })(jQuery);
 
 //#endregion Archive

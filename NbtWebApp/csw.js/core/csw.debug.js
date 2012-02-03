@@ -1,7 +1,7 @@
 ﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function () {
+(function() {
     'use strict';
     // because IE 8 doesn't support console.log unless the console is open (*duh*)
     function log(s, includeCallStack) {
@@ -27,20 +27,20 @@
     }
     Csw.register('log', log);
     Csw.log = Csw.log || log;
-
+    
     function iterate(obj) {
         var str = '',
             x, popup;
         for (x in obj) {
-            if(Csw.contains(obj, x)) {
-                str = str + x + "=" + obj[x] + "<br><br>";
+            if (Csw.contains(obj, x)) {
+                str = str + x + '=' + obj[x] + '<br><br>';
             }
         }
-        popup = window.open("", "popup");
+        popup = window.open('', 'popup');
         if (popup !== null) {
             popup.document.write(str);
         } else {
-            Csw.log("iterate() error: No popup!");
+            Csw.log('iterate() error: No popup!');
         }
     }
     Csw.register('iterate', iterate);
@@ -58,7 +58,7 @@
     }
     Csw.register('doLogging', doLogging);
     Csw.doLogging = Csw.doLogging || doLogging;
-    
+
     function debugOn(value) {
         var ret = false;
         if (Csw.hasWebStorage()) {
@@ -71,15 +71,14 @@
     }
     Csw.register('debugOn', debugOn);
     Csw.debugOn = Csw.debugOn || debugOn;
-    
+
     function cacheLogInfo(logger) {
         if (doLogging()) {
             if (Csw.hasWebStorage()) {
                 if (undefined !== logger.setEnded) {
                     logger.setEnded();
                 }
-                var logStorage = cswClientDb();
-                var log = logStorage.getItem('debuglog');
+                var log = Csw.clientDb.getItem('debuglog');
                 log += logger.toHtml();
 
                 logStorage.setItem('debuglog', log);
@@ -96,5 +95,5 @@
     }
     Csw.register('purgeLogInfo', purgeLogInfo);
     Csw.purgeLogInfo = Csw.purgeLogInfo || purgeLogInfo;
-    
+
 }());

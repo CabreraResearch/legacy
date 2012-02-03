@@ -16,7 +16,7 @@
             var $Div = $(this);
             $Div.empty();
             var propVals = o.propData.values;
-            if (o.EditMode === EditMode.AuditHistoryInPopup.name || o.Multi) {
+            if (o.EditMode === Csw.enums.editMode.AuditHistoryInPopup || o.Multi) {
                 $Div.append('[Grid display disabled]');
             } else {
 
@@ -51,7 +51,7 @@
                 $GridDiv.CswNodeGrid('init', gridOpts);
                 
                 $Div.append($MenuDiv, $('<br/>'), $SearchDiv, $('<br/>'), $GridDiv);
-            } // if(o.EditMode !== EditMode.AuditHistoryInPopup.name)
+            } // if(o.EditMode !== Csw.enums.editMode.AuditHistoryInPopup)
         },
         save: function (o) {
             Csw.preparePropJsonForSave(o.propData);
@@ -60,7 +60,7 @@
     
     function makeGridMenu($MenuDiv, o, gridOpts, cswGrid, viewid, $SearchDiv) {
         //Case 21741
-        if (o.EditMode !== EditMode.PrintReport.name) {
+        if (o.EditMode !== Csw.enums.editMode.PrintReport) {
             $MenuDiv.CswMenuMain({
                     viewid: viewid,
                     nodeid: o.nodeid,
@@ -114,7 +114,7 @@
                         }
                     }
             }); // CswMenuMain
-        } // if( o.EditMode !== EditMode.PrintReport.name )
+        } // if( o.EditMode !== Csw.enums.editMode.PrintReport )
     }
     
     

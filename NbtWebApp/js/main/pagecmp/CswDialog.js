@@ -64,7 +64,7 @@
             $table.CswTable('cell', 1, 1).append('Name:');
             var $nametextcell = $table.CswTable('cell', 1, 2);
             var $nametextbox = $nametextcell.CswInput('init', { ID: o.ID + '_nametb',
-                type: CswInput_Types.text,
+                type: Csw.enums.inputTypes.text,
                 cssclass: 'textinput'
             });
             var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />');
@@ -145,7 +145,7 @@
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
                 relatednodetypeid: o.relatednodetypeid,
-                EditMode: EditMode.AddInPopup.name,
+                EditMode: Csw.enums.editMode.AddInPopup,
                 onSave: function (nodeid, cswnbtnodekey) {
                     $div.dialog('close');
                     o.onAddNode(nodeid, cswnbtnodekey);
@@ -173,7 +173,7 @@
                 $newNode;
 
             $div.append('New ' + o.nodetypename + ': ');
-            $newNode = $div.CswInput('init', { ID: o.ID + '_newNode', type: CswInput_Types.text });
+            $newNode = $div.CswInput('init', { ID: o.ID + '_newNode', type: Csw.enums.inputTypes.text });
 
             $div.CswButton({
                 ID: o.objectClassId + '_add',
@@ -208,11 +208,11 @@
                 category = Csw.string(o.category);
 
             $div.append('New ' + o.nodeTypeDescriptor + ': ');
-            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text, value: o.nodetypename, maxlength: o.maxlength });
+            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: Csw.enums.inputTypes.text, value: o.nodetypename, maxlength: o.maxlength });
             $div.append('<br />');
             if (Csw.isNullOrEmpty(category)) {
                 $div.append('Category Name: ');
-                $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: CswInput_Types.text });
+                $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: Csw.enums.inputTypes.text });
                 $div.append('<br />');
             }
             $addBtn = $div.CswButton({
@@ -356,10 +356,10 @@
 
             var $div = $('<div></div>');
 
-            var myEditMode = EditMode.EditInPopup.name;
+            var myEditMode = Csw.enums.editMode.EditInPopup;
             var $table = $div.CswTable();
             if (false === Csw.isNullOrEmpty(o.date) && false === o.Multi) {
-                myEditMode = EditMode.AuditHistoryInPopup.name;
+                myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
                 $table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
                     ID: o.nodeids[0] + '_history',
                     nodeid: o.nodeids[0],
@@ -514,7 +514,7 @@
                                 o.onDeleteNode(nodeid, nodekey);
                             }
                             if (Csw.bool(o.publishDeleteEvent)) {
-                                $.publish(ChemSW.enums.Events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
+                                $.publish(Csw.enums.events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
                             }
                         },
                         onError: function () {
@@ -803,7 +803,7 @@
                 ID: '',
                 title: 'Select from the following options',
                 navigationText: 'Click OK to continue',
-                buttons: ChemSW.enums.CswDialogButtons["1"],
+                buttons: Csw.enums.dialogButtons["1"],
                 values: [],
                 onOkClick: null,
                 onCancelClick: null

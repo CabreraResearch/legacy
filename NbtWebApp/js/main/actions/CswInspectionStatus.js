@@ -61,7 +61,7 @@
 
                     $.extend(g.gridOpts, gridJson);
 
-                    var grid = CswGrid(g, $inspGrid);
+                    var grid = Csw.grid(g, $inspGrid);
                     grid.hideColumn('NODEID');
                     grid.hideColumn('NODEPK');
 

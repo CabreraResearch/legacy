@@ -15,11 +15,11 @@
                 var propVals = o.propData.values;
                 var optData = propVals.options;
                 var selectMode = propVals.selectmode; // Single, Multiple, Blank
-                var editMode = ChemSW.enums.tryParse(ChemSW.enums.EditMode, o.EditMode);
+                var editMode = Csw.enums.tryParse(Csw.enums.editMode, o.EditMode);
 
                 /*
                 Case 24606: Once we can validate the control
-                if(editMode === ChemSW.enums.EditMode.AddInPopup) {
+                if(editMode === Csw.enums.editMode.AddInPopup) {
                     Csw.each(propVals.options, function (option) {
                         if (Csw.contains(option, 'key')) {
                             

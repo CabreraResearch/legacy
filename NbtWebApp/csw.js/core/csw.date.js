@@ -1,18 +1,18 @@
 ﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function () {
+(function() {
     'use strict';
 
     var dateTimeMinValue = new Date('1/1/0001 12:00:00 AM');
     Csw.register('dateTimeMinValue', dateTimeMinValue);
     Csw.dateTimeMinValue = Csw.dateTimeMinValue || dateTimeMinValue;
-    
+
     function date(value) {
         var retDate;
         try {
             retDate = new Date(value);
-        } catch(e) {
+        } catch (e) {
             retDate = dateTimeMinValue;
         }
         return retDate;
@@ -22,14 +22,14 @@
 
     function serverDateFormatToJQuery(serverDateFormat) {
         var ret = serverDateFormat;
-        ret = ret.replace( /M/g , 'm');
-        ret = ret.replace( /mmm/g , 'M');
-        ret = ret.replace( /yyyy/g , 'yy');
+        ret = ret.replace(/M/g , 'm');
+        ret = ret.replace(/mmm/g , 'M');
+        ret = ret.replace(/yyyy/g , 'yy');
         return ret;
     }
     Csw.register('serverDateFormatToJQuery', serverDateFormatToJQuery);
     Csw.serverDateFormatToJQuery = Csw.serverDateFormatToJQuery || serverDateFormatToJQuery;
-    
+
     function serverTimeFormatToJQuery(serverTimeFormat) {
         var ret = serverTimeFormat;
         return ret;
@@ -49,7 +49,7 @@
 
     function validateTime(value) {
         var isValid = true;
-        var regex = /^(\d?\d):(\d\d)\s?([APap][Mm])?$/g ;
+        var regex = /^(\d?\d):(\d\d)\s?([APap][Mm])?$/g;
         var match = regex.exec(value);
         if (match === null) {
             isValid = false;
