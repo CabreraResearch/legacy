@@ -4,14 +4,14 @@
 (function _cswEnums() {
     'use strict';
     
-    var enums = (function _enum () {
+    var enums = (function _enums() {
 
-        var internal = {
+        var external = {
             constants: {unknownEnum: 'unknown'}
         };
-        internal.tryParse = function (cswEnum, enumMember, caseSensitive) {
+        external.tryParse = function (cswEnum, enumMember, caseSensitive) {
             /// <summary>   Try to fetch an enum based on a string value. </summary>
-            var ret = internal.constants.unknownEnum;
+            var ret = external.constants.unknownEnum;
             if (Csw.contains(cswEnum, enumMember)) {
                 ret = cswEnum[enumMember];
             } else if (false === caseSensitive) {
@@ -24,7 +24,7 @@
             }
             return ret;
         };
-        internal.editMode = {
+        external.editMode = {
             Edit: 'Edit',
             AddInPopup: 'AddInPopup',
             EditInPopup: 'EditInPopup',
@@ -34,7 +34,7 @@
             AuditHistoryInPopup: 'AuditHistoryInPopup',
             Preview: 'Preview'
         };
-        internal.errorType = {
+        external.errorType = {
             warning: {
                 name: 'warning',
                 cssclass: 'CswErrorMessage_Warning'
@@ -44,10 +44,10 @@
                 cssclass: 'CswErrorMessage_Error'
             }
         };
-        internal.events = {
+        external.events = {
             CswNodeDelete: 'CswNodeDelete'
         };
-        internal.wizardSteps_InspectionDesign = {
+        external.wizardSteps_InspectionDesign = {
             step1: {step: 1, description: 'Select an Inspection Target'},
             step2: {step: 2, description: 'Select an Inspection Design'},
             step3: {step: 3, description: 'Upload Template'},
@@ -55,23 +55,23 @@
             step5: {step: 5, description: 'Finish'},
             stepcount: 5
         };
-        internal.wizardSteps_ScheduleRulesGrid = {
+        external.wizardSteps_ScheduleRulesGrid = {
             step1: {step: 1, description: 'Select a Customer ID'},
             step2: {step: 2, description: 'Review the Scheduled Rules'},
             stepcount: 2
         };
-        internal.dialogButtons = {
+        external.dialogButtons = {
             1: 'ok',
             2: 'ok/cancel',
             3: 'yes/no'
         };
-        internal.onObjectClassClick = {
+        external.onObjectClassClick = {
             reauthenticate: 'reauthenticate',
             home: 'home',
             refresh: 'refresh',
             url: 'url'
         };
-        internal.inputTypes = {
+        external.inputTypes = {
             button: {id: 0, name: 'button', placeholder: false, autocomplete: false, value: {required: false, allowed: true}, defaultwidth: ''},
             checkbox: {id: 1, name: 'checkbox', placeholder: false, autocomplete: false, value: {required: true, allowed: true}, defaultwidth: ''},
             color: {id: 2, name: 'color', placeholder: false, autocomplete: true, value: {required: false, allowed: true}, defaultwidth: ''},
@@ -96,21 +96,21 @@
             url: {id: 21, name: 'url', placeholder: true, autocomplete: true, value: {required: false, allowed: true}, defaultwidth: '200px'},
             week: {id: 22, name: 'week', placeholder: false, autocomplete: false, value: {required: false, allowed: true}, defaultwidth: ''}
         };
-        internal.viewMode = {
+        external.viewMode = {
             grid: {name: 'Grid'},
             tree: {name: 'Tree'},
             list: {name: 'List'},
             table: {name: 'Table'}
         };
-        internal.rateIntervalTypes = {
+        external.rateIntervalTypes = {
             WeeklyByDay: 'WeeklyByDay',
             MonthlyByDate: 'MonthlyByDate',
             MonthlyByWeekAndDay: 'MonthlyByWeekAndDay',
             YearlyByDate: 'YearlyByDate'
         };
-        internal.multiEditDefaultValue = '[Unchanged]';
+        external.multiEditDefaultValue = '[Unchanged]';
 
-        internal.imageButton_ButtonType = {
+        external.imageButton_ButtonType = {
             None: -1,
             Add: 27,
             ArrowNorth: 28,
@@ -143,16 +143,16 @@
             View: 8
         };
 
-        internal.searchCssClasses = {
+        external.searchCssClasses = {
             nodetype_select: {name: 'csw_search_nodetype_select'},
             property_select: {name: 'csw_search_property_select'}
         };
 
-        internal.appMode = {
+        external.appMode = {
             mode: 'full'
         };
 
-        internal.wizardSteps_ViewEditor = {
+        external.wizardSteps_ViewEditor = {
             viewselect: {step: 1, description: 'Choose a View', divId: 'step1_viewselect'},
             attributes: {step: 2, description: 'Edit View Attributes', divId: 'step2_attributes'},
             relationships: {step: 3, description: 'Add Relationships', divId: 'step3_relationships'},
@@ -161,7 +161,7 @@
             tuning: {step: 6, description: 'Fine Tuning', divId: 'step6_tuning'}
         };
 
-        internal.cssClasses_ViewBuilder = {
+        external.cssClasses_ViewBuilder = {
             subfield_select: {name: 'csw_viewbuilder_subfield_select'},
             filter_select: {name: 'csw_viewbuilder_filter_select'},
             default_filter: {name: 'csw_viewbuilder_default_filter'},
@@ -169,24 +169,24 @@
             metadatatype_static: {name: 'csw_viewbuilder_metadatatype_static'}
         };
 
-        internal.domElementEvent = {
+        external.domElementEvent = {
             click: {name: 'click'},
             change: {name: 'change'},
             vclick: {name: 'vclick'},
             tap: {name: 'tap'}
         };
 
-        internal.objectClasses = {
+        external.objectClasses = {
             GenericClass: 'GenericClass',
             InspectionDesignClass: 'InspectionDesignClass'
         };
 
-        internal.nodeSpecies = {
+        external.nodeSpecies = {
             Plain: 'Plain',
             More: 'More'
         };
 
-        internal.subFieldNames = {
+        external.subFieldNames = {
             Unknown: {name: 'unknown'},
             AllowedAnswers: {name: 'allowedanswers'},
             Answer: {name: 'answer'},
@@ -224,19 +224,19 @@
             Exponent: {name: 'exponent'}
         };
 
-        internal.subFieldsMap = {
+        external.subFieldsMap = {
             AuditHistoryGrid: {name: 'AuditHistoryGrid', subfields: {}},
             Barcode: {
                 name: 'Barcode',
                 subfields: {
-                    Barcode: internal.subFieldNames.Barcode,
-                    Sequence: internal.subFieldNames.Number
+                    Barcode: external.subFieldNames.Barcode,
+                    Sequence: external.subFieldNames.Number
                 }
             },
             Button: {
                 name: 'Button',
                 subfields: {
-                    Text: internal.subFieldNames.Text
+                    Text: external.subFieldNames.Text
                 }
             },
             Composite: {name: 'Composite', subfields: {}},
@@ -262,14 +262,14 @@
             Link: {
                 name: 'Link',
                 subfields: {
-                    Text: internal.subFieldNames.Text,
-                    Href: internal.subFieldNames.Href
+                    Text: external.subFieldNames.Text,
+                    Href: external.subFieldNames.Href
                 }
             },
             List: {
                 name: 'List',
                 subfields: {
-                    Value: internal.subFieldNames.Value
+                    Value: external.subFieldNames.Value
                 }
             },
             Location: {name: 'Location', subfields: {}},
@@ -277,14 +277,14 @@
             Logical: {
                 name: 'Logical',
                 subfields: {
-                    Checked: internal.subFieldNames.Checked
+                    Checked: external.subFieldNames.Checked
                 }
             },
             LogicalSet: {name: 'LogicalSet', subfields: {}},
             Memo: {
                 name: 'Memo',
                 subfields: {
-                    Text: internal.subFieldNames.Text
+                    Text: external.subFieldNames.Text
                 }
             },
             MTBF: {name: 'MTBF', subfields: {}},
@@ -293,33 +293,33 @@
             Number: {
                 name: 'Number',
                 subfields: {
-                    Value: internal.subFieldNames.Value
+                    Value: external.subFieldNames.Value
                 }
             },
             Password: {
                 name: 'Password',
                 subfields: {
-                    Password: internal.subFieldNames.Password,
-                    ChangedDate: internal.subFieldNames.ChangedDate
+                    Password: external.subFieldNames.Password,
+                    ChangedDate: external.subFieldNames.ChangedDate
                 }
             },
             PropertyReference: {name: 'PropertyReference', subfields: {}},
             Quantity: {
                 name: 'Quantity',
                 subfields: {
-                    Value: internal.subFieldNames.Value,
-                    Units: internal.subFieldNames.Number
+                    Value: external.subFieldNames.Value,
+                    Units: external.subFieldNames.Number
                 }
             },
             Question: {
                 name: 'Question',
                 subfields: {
-                    Answer: internal.subFieldNames.Answer,
-                    CorrectiveAction: internal.subFieldNames.CorrectiveAction,
-                    IsCompliant: internal.subFieldNames.IsCompliant,
-                    Comments: internal.subFieldNames.Comments,
-                    DateAnswered: internal.subFieldNames.DateAnswered,
-                    DateCorrected: internal.subFieldNames.DateCorrected
+                    Answer: external.subFieldNames.Answer,
+                    CorrectiveAction: external.subFieldNames.CorrectiveAction,
+                    IsCompliant: external.subFieldNames.IsCompliant,
+                    Comments: external.subFieldNames.Comments,
+                    DateAnswered: external.subFieldNames.DateAnswered,
+                    DateCorrected: external.subFieldNames.DateCorrected
                 }
             },
             Relationship: {name: 'Relationship', subfields: {}},
@@ -328,13 +328,13 @@
             Static: {
                 name: 'Static',
                 subfields: {
-                    Text: internal.subFieldNames.Text
+                    Text: external.subFieldNames.Text
                 }
             },
             Text: {
                 name: 'Text',
                 subfields: {
-                    Text: internal.subFieldNames.Text
+                    Text: external.subFieldNames.Text
                 }
             },
             TimeInterval: {name: 'TimeInterval', subfields: {}},
@@ -343,7 +343,7 @@
             ViewReference: {name: 'ViewReference', subfields: {}}
         };
 
-        internal.cssClasses_ViewEdit = {
+        external.cssClasses_ViewEdit = {
             vieweditor_viewrootlink: {name: 'vieweditor_viewrootlink'},
             vieweditor_viewrellink: {name: 'vieweditor_viewrellink'},
             vieweditor_viewproplink: {name: 'vieweditor_viewproplink'},
@@ -353,7 +353,7 @@
             vieweditor_childselect: {name: 'vieweditor_childselect'}
         };
 
-        internal.viewChildPropNames = {
+        external.viewChildPropNames = {
             root: {name: 'root'},
             childrelationships: {name: 'childrelationships'},
             properties: {name: 'properties'},
@@ -362,14 +362,12 @@
             filtermodes: {name: 'filtermodes'}
         };
 
-        internal.nodeTree_DefaultSelect = {
+        external.nodeTree_DefaultSelect = {
             root: {name: 'root'},
             firstchild: {name: 'firstchild'},
             none: {name: 'none'}
         };
 
-        var external = {};
-        $.extend(external, internal);
         return external;
     }());
     Csw.register('enum', enums);
