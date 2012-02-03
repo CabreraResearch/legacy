@@ -46,6 +46,9 @@ namespace ChemSW.Nbt.PropTypes
                 case CswNbtMetaDataFieldType.NbtFieldType.Button:
                     InnerProperty = new CswNbtNodePropButton( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;
+                case CswNbtMetaDataFieldType.NbtFieldType.Comments:
+                    InnerProperty = new CswNbtNodePropComments( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
+                    break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Composite:
                     InnerProperty = new CswNbtNodePropComposite( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;

@@ -1230,3 +1230,10 @@ body a
     padding: 10px;
     font-size: 1.2em;
 }
+.scrollingdiv
+{
+	padding: 5px 0px 5px 0px;
+	width: 270px;
+	height: 115px;
+	overflow: auto;
+}

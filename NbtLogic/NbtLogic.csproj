@@ -95,6 +95,7 @@
     <Compile Include="csw\MetaData\CswNbtPropFilterSql.cs" />
     <Compile Include="csw\MetaData\CswNbtSubField.cs" />
     <Compile Include="csw\MetaData\CswNbtSubFieldColl.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleComments.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleButton.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNFPA.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleImageList.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="csw\PropertySets\CswNbtPropertySetSchedulerImpl.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetGeneratorTarget.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetScheduler.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropComments.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropButton.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropNFPA.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropImageList.cs" />
