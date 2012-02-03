@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using ChemSW.RscAdo;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -453,6 +454,9 @@ namespace ChemSW.Nbt.MetaData
             if( OnMakeNewNodeType != null )
                 OnMakeNewNodeType( NewNodeType, false );
 
+            //refresh auto-views
+            RefreshNodetypeViews( NewNodeType.ObjectClass.ObjectClassId, NewNodeType.ObjectClass.ObjectClass, NewNodeType.NodeTypeId, NewNodeType.NodeTypeName );
+
             return NewNodeType;
         } // makeNewNodeType()
 
@@ -707,6 +711,9 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeType.NodeTypeId, NewProp.PropId, Tab.TabId, Int32.MinValue, Int32.MinValue );
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeType.NodeTypeId, NewProp.PropId, Int32.MinValue, Int32.MinValue, Int32.MinValue );
             }
+
+            //refresh auto-views
+            RefreshNodetypeViews( NewProp.NodeType.ObjectClass.ObjectClassId, NewProp.NodeType.ObjectClass.ObjectClass, NewProp.NodeType.NodeTypeId, NewProp.NodeType.NodeTypeName );
 
             return NewProp;
 
@@ -987,7 +994,21 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-
+        //uses the oracle-specific CreateNTview() and CreateOBJview() procedures
+        protected void RefreshNodetypeViews( int objectclassid, string objectclassname, int nodetypeid, string nodetypename )
+        {
+            //ALWAYS do nodetype views first, then objectclass views second
+            //nodetype
+            List<CswStoredProcParam> myParams = new List<CswStoredProcParam> ();
+            myParams.Add(new CswStoredProcParam("ntid",nodetypeid,DataDictionaryPortableDataType.Long);
+            myParams.Add(new CswStoredProcParam("viewname",nodetypename,DataDictionaryPortableDataType.String);
+            _CswNbtMetaDataResources.CswNbtResources.execStoredProc("CreateNTview",myParams);
+            //objectclass
+            List<CswStoredProcParam> myParams2 = new List<CswStoredProcParam> ();
+            myParams2.Add(new CswStoredProcParam("objid",objectclassid,DataDictionaryPortableDataType.Long);
+            myParams2.Add(new CswStoredProcParam("viewname",objectclassname,DataDictionaryPortableDataType.String);
+            _CswNbtMetaDataResources.CswNbtResources.execStoredProc("CreateOBJview",myParams2);
+        }
 
         #endregion Mutators
 
