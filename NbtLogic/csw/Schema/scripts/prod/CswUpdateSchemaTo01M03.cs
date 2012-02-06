@@ -12,12 +12,12 @@ namespace ChemSW.Nbt.Schema
         public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'M', 03 ); } }
         public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
 
-        private void AddRow( DataTable dt, int ft, string subfieldname, string subfieldalias, string reportable, string is_default )
+        private void AddRow( DataTable dt, int ft, string propcolname, string subfieldname, string reportable, string is_default )
         {
             DataRow dr = dt.NewRow();
             dr["fieldtypeid"] = ft;
+            dr["propcolnamename"] = propcolname;
             dr["subfieldname"] = subfieldname;
-            dr["subfieldalias"] = subfieldalias;
             dr["reportable"] = reportable;
             dr["is_default"] = is_default;
             dt.Rows.Add( dr );

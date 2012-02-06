@@ -171,19 +171,22 @@ commit;
 
 
 
-create or replace procedure createNTview(ntid in number,viewname in varchar2) is
+create or replace procedure createNTview(ntid in number) is
   cursor props is
-  select v.*,s.subfieldname,s.is_default,s.subfieldalias from vwNtPropDefs v
+  select v.*,s.propcolname subfieldname,s.is_default,s.subfieldname subfieldalias from vwNtPropDefs v
     join field_types_subfields s on s.fieldtypeid=v.fieldtypeid and s.reportable='1'
     where v.nodetypeid=ntid order by lower(propname);
   var_sql varchar2(32000);
   var_line varchar(2000);
   pname varchar2(200);
   pcount number;
+  viewname varchar2(30);
 begin
   dbms_output.enable(32000);
 
-  var_line:='create or replace view ' || OraColLen('',alnumonly(viewname,''),'NT') || ' as select n.nodeid ';
+  select nodetypename into viewname from nodetypes where nodetypeid=ntid;
+
+  var_line:='create or replace view ' || OraColLen('NT',alnumonly(viewname,''),'') || ' as select n.nodeid ';
   --dbms_output.put_line(var_line);
   var_sql := var_sql || var_line;
   pcount:=0;
@@ -238,7 +241,7 @@ commit;
 
 
 
-create or replace procedure createOBJview(objid in number,viewname in varchar2) is
+create or replace procedure createOCview(objid in number) is
   cursor props is 
   select v.* from vwObjProps v 
     where v.objectclassid=objid order by lower(propname);
@@ -246,10 +249,12 @@ create or replace procedure createOBJview(objid in number,viewname in varchar2) 
   aline varchar(2000);
   pcount number;
   pname varchar2(200);
+  viewname varchar(30);
 begin
   --dbms_output.enable(21000);
-  
-  var_sql:='create or replace view ' || OraColLen('',alnumonly(viewname,''),'') || ' as select n.nodeid ';
+  select objectclass into viewname from object_class where objectclassid=objid;  
+
+  var_sql:='create or replace view ' || OraColLen('OC',alnumonly(viewname,''),'') || ' as select n.nodeid ';
   --dbms_output.put_line(var_sql);
   pcount:=0;
   
@@ -269,7 +274,7 @@ begin
     commit;
   end if;
 
-end createOBJview;
+end createOCview;
 /
 
 commit;
@@ -281,7 +286,7 @@ create or replace procedure CreateAllNtViews is
 begin
   for rec in nts loop
     --dbms_output.put_line('createntview(' || to_char(rec.nodetypeid) || ',' || rec.nodetypename || ')');
-    CreateNtView(rec.nodetypeid,rec.nodetypename);
+    CreateNtView(rec.nodetypeid);
   end loop;
 end CreateAllNtViews;
 /
@@ -294,7 +299,7 @@ create or replace procedure CreateAllObjViews is
 begin
   for rec in objs loop
     --dbms_output.put_line('createobjview(' || to_char(rec.objectclassid) || ',' || rec.objectclass || ')');
-    CreateObjView(rec.objectclassid,rec.objectclass);
+    CreateOCView(rec.objectclassid);
   end loop;
 end CreateAllObjViews;
 /
