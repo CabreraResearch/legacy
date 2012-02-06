@@ -187,12 +187,12 @@ namespace ChemSW.Nbt.MetaData
                 if( CswConvert.ToDouble( _NodeTypePropRow[FieldName] ) != (double) value )
                 {
                     _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType );
-                    if( ReRegister )
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( this );
                     _NodeTypePropRow[FieldName] = CswConvert.ToDbVal( (double) value );
                     ret = true;
                     if( ReRegister )
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting( this );
+                    {
+                        _CswNbtMetaDataResources.NodeTypePropsCollection.clearCache();
+                    }
                 }
             }
             else if( value is Int32 )
@@ -200,12 +200,12 @@ namespace ChemSW.Nbt.MetaData
                 if( CswConvert.ToInt32( _NodeTypePropRow[FieldName] ) != (Int32) value )
                 {
                     _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType );
-                    if( ReRegister )
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( this );
                     _NodeTypePropRow[FieldName] = CswConvert.ToDbVal( (Int32) value );
                     ret = true;
                     if( ReRegister )
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting( this );
+                    {
+                        _CswNbtMetaDataResources.NodeTypePropsCollection.clearCache();
+                    }
                 }
             }
             else if( value is bool )
@@ -213,12 +213,12 @@ namespace ChemSW.Nbt.MetaData
                 if( CswConvert.ToBoolean( _NodeTypePropRow[FieldName] ) != (bool) value )
                 {
                     _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType );
-                    if( ReRegister )
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( this );
                     _NodeTypePropRow[FieldName] = CswConvert.ToDbVal( (bool) value );
                     ret = true;
                     if( ReRegister )
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting( this );
+                    {
+                        _CswNbtMetaDataResources.NodeTypePropsCollection.clearCache();
+                    }
                 }
             }
             else if( value is string )
@@ -226,12 +226,12 @@ namespace ChemSW.Nbt.MetaData
                 if( _NodeTypePropRow[FieldName].ToString() != (string) value )
                 {
                     _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType );
-                    if( ReRegister )
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( this );
                     _NodeTypePropRow[FieldName] = (string) value;
                     ret = true;
                     if( ReRegister )
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting( this );
+                    {
+                        _CswNbtMetaDataResources.NodeTypePropsCollection.clearCache();
+                    }
                 }
             }
             else if( value is DBNull )
@@ -239,12 +239,12 @@ namespace ChemSW.Nbt.MetaData
                 if( _NodeTypePropRow[FieldName].ToString() != string.Empty )
                 {
                     _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType );
-                    if( ReRegister )
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.Deregister( this );
                     _NodeTypePropRow[FieldName] = value;
                     ret = true;
                     if( ReRegister )
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterExisting( this );
+                    {
+                        _CswNbtMetaDataResources.NodeTypePropsCollection.clearCache();
+                    }
                 }
             }
             else
@@ -710,6 +710,10 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( CswConvert.ToInt32( _NodeTypePropRow["nodetypeid"].ToString() ) ); }
         }
+        public Int32 NodeTypeId
+        {
+            get { return CswConvert.ToInt32( _NodeTypePropRow["nodetypeid"].ToString() ); }
+        }
         public Int32 ObjectClassPropId
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["objectclasspropid"] ); }
@@ -1173,7 +1177,7 @@ namespace ChemSW.Nbt.MetaData
         public static string _Attribute_NodeTypePropId = "nodetypepropid";
         public static string _Attribute_JctNodePropId = "jctnodepropid";
         public static string _Attribute_NodeTypePropName = "nodetypepropname";
-        public static string _Attribute_order = "order";
+        //public static string _Attribute_order = "order";
         public static string _Attribute_nodetypeid = "nodetypeid";
         public static string _Attribute_nodetypetabid = "nodetypetabid";
         public static string _Attribute_usenumbering = "usenumbering";
@@ -1217,10 +1221,10 @@ namespace ChemSW.Nbt.MetaData
                 NameAttr.Value = PropName;
             PropNode.Attributes.Append( NameAttr );
 
-            XmlAttribute OrderAttr = XmlDoc.CreateAttribute( _Attribute_order );
-            CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
-            OrderAttr.Value = Tab.GetPropDisplayOrder( this ).ToString();
-            PropNode.Attributes.Append( OrderAttr );
+            //XmlAttribute OrderAttr = XmlDoc.CreateAttribute( _Attribute_order );
+            //CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+            //OrderAttr.Value = Tab.GetPropDisplayOrder( this ).ToString();
+            //PropNode.Attributes.Append( OrderAttr );
 
             //XmlAttribute DisplayRowAttr = XmlDoc.CreateAttribute( _Attribute_displayrow );
             //DisplayRowAttr.Value = DisplayRow.ToString();

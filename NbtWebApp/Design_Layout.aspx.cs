@@ -1,22 +1,14 @@
 ﻿using System;
 using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
+using System.Collections.Generic;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using ChemSW.Nbt;
 using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
-using ChemSW.NbtWebControls;
-using Telerik.Web.UI;
 using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.NbtWebControls;
+using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -108,7 +100,7 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 FakeNode = Master.CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                FakeNodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, string.Empty, FakeNode.NodeId, NodeSpecies.Plain, NodeType.NodeTypeId, NodeType.ObjectClass.ObjectClassId, string.Empty, string.Empty );
+                FakeNodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, FakeNode.NodeId, NodeSpecies.Plain, NodeType.NodeTypeId, NodeType.ObjectClass.ObjectClassId, string.Empty, string.Empty );
 
                 PropertyTable = new CswPropertyTable( Master.CswNbtResources, Master.AjaxManager );
                 PropertyTable.EnableViewState = false;
@@ -116,7 +108,7 @@ namespace ChemSW.Nbt.WebPages
                 PropertyTable.ID = "exampletable";
                 //PropertyTable.SelectedNodeTypeId = NodeType.NodeTypeId;
                 if( _Mode == LayoutMode.Add )
-                    PropertyTable.EditMode = NodeEditMode.AddInPopup;
+                    PropertyTable.EditMode = NodeEditMode.Add;
                 else if( _Mode == LayoutMode.Edit || _Mode == LayoutMode.Inspection )
                     PropertyTable.EditMode = NodeEditMode.Demo;
                 //PropertyTable.SelectedNodeKey = FakeNodeKey;
@@ -229,7 +221,7 @@ namespace ChemSW.Nbt.WebPages
 
             // Data
 
-            ICollection Props = null;
+            IEnumerable<CswNbtMetaDataNodeTypeProp> Props = null;
             if( _Mode == LayoutMode.Add )
                 Props = NodeType.NodeTypeProps;
             else

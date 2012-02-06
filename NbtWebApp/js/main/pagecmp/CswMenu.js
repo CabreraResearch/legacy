@@ -3,7 +3,7 @@
 
 /* Adapted from http://www.noupe.com/tutorial/drop-down-menu-jquery-css.html */
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.CswMenu = function (options) {
 
@@ -53,5 +53,5 @@
         // For proper chaining support
         return this;
 
-    }; // function(options) {
+    }; // function (options) {
 })(jQuery);

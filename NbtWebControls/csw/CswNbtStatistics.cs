@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using ChemSW.Core;
 using ChemSW.Session;
 
 

@@ -1,73 +1,81 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using ChemSW.Exceptions;
+using System.Linq;
 
 namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataCollectionNodeType : ICswNbtMetaDataObjectCollection
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
-
-        private Collection<ICswNbtMetaDataObject> _AllNodeTypes;
-        private Hashtable _ById;
-        private Hashtable _ByObjectClass;
-        private Hashtable _LatestVersionByFirstVersion;
-        private SortedList _ByVersion;
+        private CswNbtMetaDataCollectionImpl _CollImpl;
 
         public CswNbtMetaDataCollectionNodeType( CswNbtMetaDataResources CswNbtMetaDataResources )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
-
-            _AllNodeTypes = new Collection<ICswNbtMetaDataObject>();
-            _ById = new Hashtable();
-            _LatestVersionByFirstVersion = new Hashtable();
-            _ByVersion = new SortedList();
-            _ByObjectClass = new Hashtable();
+            _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
+                                                          "nodetypeid",
+                                                          _CswNbtMetaDataResources.NodeTypeTableUpdate,
+                                                          makeNodeType );
         }
 
-        public Collection<ICswNbtMetaDataObject> All { get { return _AllNodeTypes; } }
-
-        public ICollection getNodeTypeIds()
+        public void clearCache()
         {
-            return _ById.Keys;
-        }
-        public ICollection getNodeTypes()
-        {
-            return _ByVersion.Values;
-        }
-        public ICollection getNodeTypes( Int32 ObjectClassId )
-        {
-            ICollection ret;
-            if( _ByObjectClass.ContainsKey( ObjectClassId ) )
-                ret = ( (ObjectClassHashEntry) _ByObjectClass[ObjectClassId] )._ById.Values;
-            else
-                ret = new ArrayList();
-            return ret;
+            _CollImpl.clearCache();
         }
 
-        public ICollection getLatestVersionNodeTypes()
+        public CswNbtMetaDataNodeType makeNodeType( CswNbtMetaDataResources Resources, DataRow Row )
         {
-            SortedList SortedLVNT = new SortedList();
-            foreach( CswNbtMetaDataNodeType NodeType in _LatestVersionByFirstVersion.Values )
+            return new CswNbtMetaDataNodeType( Resources, Row );
+        }
+
+        public Collection<Int32> getNodeTypeIds()
+        {
+            return _CollImpl.getPks();
+        }
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
+        {
+            return _CollImpl.getAll().Cast<CswNbtMetaDataNodeType>();
+        }
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes( Int32 ObjectClassId )
+        {
+            return _CollImpl.getWhere( "where objectclassid = " + ObjectClassId.ToString() ).Cast<CswNbtMetaDataNodeType>();
+        }
+
+        public IEnumerable<CswNbtMetaDataNodeType> getLatestVersionNodeTypes()
+        {
+            Dictionary<Int32, CswNbtMetaDataNodeType> Dict = new Dictionary<Int32, CswNbtMetaDataNodeType>();
+            foreach( CswNbtMetaDataNodeType NT in _CollImpl.getAll().Cast<CswNbtMetaDataNodeType>() )
             {
-                SortedLVNT.Add( NodeType.NodeTypeName, NodeType );
+                if( false == Dict.ContainsKey(NT.FirstVersionNodeTypeId) || 
+                    Dict[NT.FirstVersionNodeTypeId] == null || 
+                    Dict[NT.FirstVersionNodeTypeId].NodeTypeId < NT.NodeTypeId )
+                {
+                    Dict[NT.FirstVersionNodeTypeId] = NT;
+                }
             }
-            return SortedLVNT.Values;
+            return Dict.Values;
         }
 
         public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId )
         {
-            CswNbtMetaDataNodeType ret = null;
-            if( _ById.Contains( NodeTypeId ) )
-                ret = _ById[NodeTypeId] as CswNbtMetaDataNodeType;
-            return ret;
+            return (CswNbtMetaDataNodeType) _CollImpl.getByPk( NodeTypeId );
         }
 
         public CswNbtMetaDataNodeType getLatestVersionNodeType( CswNbtMetaDataNodeType NodeType )
         {
-            return _LatestVersionByFirstVersion[NodeType.FirstVersionNodeType] as CswNbtMetaDataNodeType;
+            IEnumerable<CswNbtMetaDataNodeType> AllVersions = _CollImpl.getWhere( "where firstversionid = " + NodeType.FirstVersionNodeTypeId.ToString() ).Cast<CswNbtMetaDataNodeType>();
+            CswNbtMetaDataNodeType MaxNT = null;
+            foreach( CswNbtMetaDataNodeType NT in AllVersions )
+            {
+                if( MaxNT == null || MaxNT.NodeTypeId < NT.NodeTypeId )
+                {
+                    MaxNT = NT;
+                }
+            }
+            return MaxNT;
         }
 
         public CswNbtMetaDataNodeType getLatestVersionNodeType( string NodeTypeName )
@@ -75,129 +83,129 @@ namespace ChemSW.Nbt.MetaData
             // Get any nodetype matching by name 
             // (which is guaranteed to have the same version history as any other nodetype matching by name)
             // Then fetch the latest version of that nodetype
-            CswNbtMetaDataNodeType ret = null;
-            foreach( CswNbtMetaDataNodeType ThisNT in _ById.Values )
+            IEnumerable<CswNbtMetaDataNodeType> AllVersions = _CollImpl.getWhere( "where firstversionid in (select firstversionid from nodetypes where lower(nodetypename) = '" + NodeTypeName.ToLower() + "')" ).Cast<CswNbtMetaDataNodeType>();
+            CswNbtMetaDataNodeType MaxNT = null;
+            foreach( CswNbtMetaDataNodeType NT in AllVersions )
             {
-                if( ThisNT.NodeTypeName.ToLower() == NodeTypeName.ToLower() )
+                if( MaxNT == null || MaxNT.NodeTypeId < NT.NodeTypeId )
                 {
-                    ret = getLatestVersionNodeType( ThisNT );
-                    break;
+                    MaxNT = NT;
                 }
             }
-            return ret;
+            return MaxNT;
         }
 
-        public void ClearKeys()
-        {
-            _ById.Clear();
-            _LatestVersionByFirstVersion.Clear();
-            _ByVersion.Clear();
-            _ByObjectClass.Clear();
-        }
+        //public void ClearKeys()
+        //{
+        //    _ById.Clear();
+        //    _LatestVersionByFirstVersion.Clear();
+        //    _ByVersion.Clear();
+        //    _ByObjectClass.Clear();
+        //}
 
-        public ICswNbtMetaDataObject RegisterNew( DataRow Row )
-        {
-            return RegisterNew( Row, Int32.MinValue );
-        }
-        public ICswNbtMetaDataObject RegisterNew( DataRow Row, Int32 PkToOverride )
-        {
-            CswNbtMetaDataNodeType NodeType = null;
-            if( PkToOverride != Int32.MinValue )
-            {
-                // This allows existing objects to always point to the latest version of a field type in the collection
-                NodeType = getNodeType( PkToOverride );
-                Deregister( NodeType );
+        //public ICswNbtMetaDataObject RegisterNew( DataRow Row )
+        //{
+        //    return RegisterNew( Row, Int32.MinValue );
+        //}
+        //public ICswNbtMetaDataObject RegisterNew( DataRow Row, Int32 PkToOverride )
+        //{
+        //    CswNbtMetaDataNodeType NodeType = null;
+        //    if( PkToOverride != Int32.MinValue )
+        //    {
+        //        // This allows existing objects to always point to the latest version of a field type in the collection
+        //        NodeType = getNodeType( PkToOverride );
+        //        Deregister( NodeType );
 
-                CswNbtMetaDataNodeType OldNodeType = new CswNbtMetaDataNodeType( _CswNbtMetaDataResources, NodeType._DataRow );
-                _AllNodeTypes.Add( OldNodeType );
+        //        CswNbtMetaDataNodeType OldNodeType = new CswNbtMetaDataNodeType( _CswNbtMetaDataResources, NodeType._DataRow );
+        //        _AllNodeTypes.Add( OldNodeType );
 
-                NodeType.Reassign( Row );
+        //        NodeType.Reassign( Row );
 
-                RegisterExisting( OldNodeType );
-                RegisterExisting( NodeType );
-            }
-            else
-            {
-                NodeType = new CswNbtMetaDataNodeType( _CswNbtMetaDataResources, Row );
-                _AllNodeTypes.Add( NodeType );
+        //        RegisterExisting( OldNodeType );
+        //        RegisterExisting( NodeType );
+        //    }
+        //    else
+        //    {
+        //        NodeType = new CswNbtMetaDataNodeType( _CswNbtMetaDataResources, Row );
+        //        _AllNodeTypes.Add( NodeType );
 
-                RegisterExisting( NodeType );
-            }
-            return NodeType;
-        }
+        //        RegisterExisting( NodeType );
+        //    }
+        //    return NodeType;
+        //}
 
-        public void RegisterExisting( ICswNbtMetaDataObject Object )
-        {
-            if( !( Object is CswNbtMetaDataNodeType ) )
-                throw new CswDniException( "CswNbtMetaDataCollectionNodeType.Register got an invalid Object as a parameter" );
-            CswNbtMetaDataNodeType NodeType = Object as CswNbtMetaDataNodeType;
+        //public void RegisterExisting( ICswNbtMetaDataObject Object )
+        //{
+        //    if( !( Object is CswNbtMetaDataNodeType ) )
+        //        throw new CswDniException( "CswNbtMetaDataCollectionNodeType.Register got an invalid Object as a parameter" );
+        //    CswNbtMetaDataNodeType NodeType = Object as CswNbtMetaDataNodeType;
 
-            _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeType, NodeType, _ByVersion, "NodeType", NodeType.NodeTypeId, NodeType.NodeTypeName );
-            _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeType.NodeTypeId, NodeType, _ById, "NodeType", NodeType.NodeTypeId, NodeType.NodeTypeName );
+        //    _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeType, NodeType, _ByVersion, "NodeType", NodeType.NodeTypeId, NodeType.NodeTypeName );
+        //    _CswNbtMetaDataResources.tryAddToMetaDataCollection( NodeType.NodeTypeId, NodeType, _ById, "NodeType", NodeType.NodeTypeId, NodeType.NodeTypeName );
 
-            // Handle index of latest version by first version
-            if( _LatestVersionByFirstVersion.ContainsKey( NodeType.FirstVersionNodeType ) )
-            {
-                CswNbtMetaDataNodeType LatestVersionNodeType = (CswNbtMetaDataNodeType) _LatestVersionByFirstVersion[NodeType.FirstVersionNodeType];
-                if( LatestVersionNodeType.VersionNo < NodeType.VersionNo )
-                {
-                    _LatestVersionByFirstVersion[NodeType.FirstVersionNodeType] = NodeType;
-                }
-            }
-            else
-            {
-                _LatestVersionByFirstVersion.Add( NodeType.FirstVersionNodeType, NodeType );
-            }
+        //    // Handle index of latest version by first version
+        //    if( _LatestVersionByFirstVersion.ContainsKey( NodeType.FirstVersionNodeType ) )
+        //    {
+        //        CswNbtMetaDataNodeType LatestVersionNodeType = (CswNbtMetaDataNodeType) _LatestVersionByFirstVersion[NodeType.FirstVersionNodeType];
+        //        if( LatestVersionNodeType.VersionNo < NodeType.VersionNo )
+        //        {
+        //            _LatestVersionByFirstVersion[NodeType.FirstVersionNodeType] = NodeType;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        _LatestVersionByFirstVersion.Add( NodeType.FirstVersionNodeType, NodeType );
+        //    }
 
-            if( false == _ByObjectClass.ContainsKey( NodeType.ObjectClass.ObjectClassId ) )
-            {
-                _ByObjectClass.Add( NodeType.ObjectClass.ObjectClassId, new ObjectClassHashEntry() );
-            }
-            ( (ObjectClassHashEntry) _ByObjectClass[NodeType.ObjectClass.ObjectClassId] )._ById.Add( NodeType.NodeTypeId, NodeType );
+        //    if( false == _ByObjectClass.ContainsKey( NodeType.ObjectClass.ObjectClassId ) )
+        //    {
+        //        _ByObjectClass.Add( NodeType.ObjectClass.ObjectClassId, new ObjectClassHashEntry() );
+        //    }
+        //    ( (ObjectClassHashEntry) _ByObjectClass[NodeType.ObjectClass.ObjectClassId] )._ById.Add( NodeType.NodeTypeId, NodeType );
 
-        }
+        //}
 
-        public void Deregister( ICswNbtMetaDataObject Object )
-        {
-            if( !( Object is CswNbtMetaDataNodeType ) )
-                throw new CswDniException( "CswNbtMetaDataCollectionNodeType.Deregister got an invalid Object as a parameter" );
-            CswNbtMetaDataNodeType NodeType = Object as CswNbtMetaDataNodeType;
+        //public void Deregister( ICswNbtMetaDataObject Object )
+        //{
+        //    if( !( Object is CswNbtMetaDataNodeType ) )
+        //        throw new CswDniException( "CswNbtMetaDataCollectionNodeType.Deregister got an invalid Object as a parameter" );
+        //    CswNbtMetaDataNodeType NodeType = Object as CswNbtMetaDataNodeType;
 
-            _ByVersion.Remove( NodeType );
-            _ById.Remove( NodeType.NodeTypeId );
+        //    _ByVersion.Remove( NodeType );
+        //    _ById.Remove( NodeType.NodeTypeId );
 
-            if( ( (CswNbtMetaDataNodeType) _LatestVersionByFirstVersion[NodeType.FirstVersionNodeType] ) == NodeType )
-            {
-                // This is the latest version
-                if( NodeType.PriorVersionNodeType != null )
-                    _LatestVersionByFirstVersion[NodeType.FirstVersionNodeType] = NodeType.PriorVersionNodeType;
-                else
-                    _LatestVersionByFirstVersion.Remove( NodeType.FirstVersionNodeType );
-            }
-            else
-            {
-                throw new CswDniException( ErrorType.Warning, "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
-            }
+        //    if( ( (CswNbtMetaDataNodeType) _LatestVersionByFirstVersion[NodeType.FirstVersionNodeType] ) == NodeType )
+        //    {
+        //        // This is the latest version
+        //        if( NodeType.PriorVersionNodeType != null )
+        //            _LatestVersionByFirstVersion[NodeType.FirstVersionNodeType] = NodeType.PriorVersionNodeType;
+        //        else
+        //            _LatestVersionByFirstVersion.Remove( NodeType.FirstVersionNodeType );
+        //    }
+        //    else
+        //    {
+        //        throw new CswDniException( ErrorType.Warning, "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
+        //    }
 
-            if( _ByObjectClass.ContainsKey( NodeType.ObjectClass.ObjectClassId ) )
-            {
-                ( (ObjectClassHashEntry) _ByObjectClass[NodeType.ObjectClass.ObjectClassId] )._ById.Remove( NodeType.NodeTypeId );
-            }
-        }
+        //    if( _ByObjectClass.ContainsKey( NodeType.ObjectClass.ObjectClassId ) )
+        //    {
+        //        ( (ObjectClassHashEntry) _ByObjectClass[NodeType.ObjectClass.ObjectClassId] )._ById.Remove( NodeType.NodeTypeId );
+        //    }
+        //}
 
-        public void Remove( ICswNbtMetaDataObject Object )
-        {
-            if( !( Object is CswNbtMetaDataNodeType ) )
-                throw new CswDniException( "CswNbtMetaDataCollectionNodeType.Deregister got an invalid Object as a parameter" );
-            CswNbtMetaDataNodeType NodeType = Object as CswNbtMetaDataNodeType;
+        //public void Remove( ICswNbtMetaDataObject Object )
+        //{
+        //    if( !( Object is CswNbtMetaDataNodeType ) )
+        //        throw new CswDniException( "CswNbtMetaDataCollectionNodeType.Deregister got an invalid Object as a parameter" );
+        //    CswNbtMetaDataNodeType NodeType = Object as CswNbtMetaDataNodeType;
 
-            _AllNodeTypes.Remove( NodeType );
-        }
+        //    _AllNodeTypes.Remove( NodeType );
+        //}
 
 
-        private class ObjectClassHashEntry
-        {
-            public Hashtable _ById = new Hashtable();
-        }
+        //private class ObjectClassHashEntry
+        //{
+        //    public Hashtable _ById = new Hashtable();
+        //}
     }
 }

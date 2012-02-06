@@ -1,33 +1,29 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswTristateCheckBox.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";    
     var pluginName = 'CswFieldTypeLogical';
 
     var methods = {
-        init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
             var $Div = $(this);
             var propVals = o.propData.values;
             var checkOpt = {
-                    Checked: (false === o.Multi) ? tryParseString(propVals.checked).trim() : null,
-                    Required: isTrue(o.Required),
-                    ReadOnly: isTrue(o.ReadOnly),
+                    Checked: (false === o.Multi) ? Csw.string(propVals.checked).trim() : null,
+                    Required: Csw.bool(o.Required),
+                    ReadOnly: Csw.bool(o.ReadOnly),
                     Multi: o.Multi,
                     onchange: o.onchange
             };
 
             $Div.CswTristateCheckBox('init',checkOpt);
         },
-        save: function(o) { 
+        save: function (o) { 
             var $Div = o.$propdiv.find('div');
             var attributes = { checked: $Div.CswTristateCheckBox('value') };
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

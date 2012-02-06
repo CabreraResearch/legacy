@@ -1,24 +1,21 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";    
     var pluginName = 'CswFieldTypeMemo';
 
     var methods = {
-        init: function(o) {
+        init: function (o) {
         
             var $Div = $(this);
             $Div.contents().remove();
 
             //var Value = extractCDataValue($xml.children('text'));
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? tryParseString(propVals.text).trim() : CswMultiEditDefaultValue;
-            var rows = tryParseString(propVals.rows);
-            var columns = tryParseString(propVals.columns);
+            var value = (false === o.Multi) ? Csw.string(propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+            var rows = Csw.string(propVals.rows);
+            var columns = Csw.string(propVals.columns);
 
             if(o.ReadOnly) {
                 $Div.append(value);
@@ -32,13 +29,13 @@
                 }
             }
         },
-        save: function(o) { //$propdiv, $xml
+        save: function (o) { //$propdiv, $xml
             var attributes = { text: null };
             var $TextArea = o.$propdiv.find('textarea');
-            if (false === isNullOrEmpty($TextArea)) {
+            if (false === Csw.isNullOrEmpty($TextArea)) {
                 attributes.text = $TextArea.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

@@ -1,28 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.Xml;
-using System.Windows.Forms;
-using System.Collections.ObjectModel;
 using System.IO;
-using Microsoft.VisualBasic.FileIO;
-using ChemSW.Core;
-using ChemSW.Nbt.Config;
+using System.Xml;
+using ChemSW.Config;
 using ChemSW.DB;
 using ChemSW.Log;
-using ChemSW.Config;
-using ChemSW.Security;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.TreeEvents;
 using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -159,7 +147,7 @@ namespace ChemSW.Nbt.Schema
         //}
 
 
-        public ICollection getNodeTypes()
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
         {
             return _CswNbtResources.MetaData.NodeTypes;
         }
@@ -297,7 +285,7 @@ namespace ChemSW.Nbt.Schema
 
 
         public delegate void ExportHandler( string FilePath, ICollection SelectedNodeTypes, bool ExportViews, bool ExportNodes );
-        public void DoExport( string FilePath, ICollection SelectedNodeTypes, bool ExportViews, bool ExportNodes )
+        public void DoExport( string FilePath, IEnumerable<CswNbtMetaDataNodeType> SelectedNodeTypes, bool ExportViews, bool ExportNodes )
         {
             try
             {

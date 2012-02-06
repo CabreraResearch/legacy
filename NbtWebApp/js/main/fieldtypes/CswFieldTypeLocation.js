@@ -1,8 +1,5 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";        
@@ -11,20 +8,20 @@
         var pluginName = 'CswFieldTypeLocation';
 
         var methods = {
-            init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+            init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
             
                 var $Div = $(this);
                 $Div.contents().remove();
                 var propVals = o.propData.values;
-                var nodeId = (false === o.Multi) ? tryParseString(propVals.nodeid).trim() : '';
-                var nodeKey = (false === o.Multi) ? tryParseString(propVals.nodekey).trim() : '';
-                var name = (false === o.Multi) ? tryParseString(propVals.name).trim() : CswMultiEditDefaultValue;
-                var path = (false === o.Multi) ? tryParseString(propVals.path).trim() : CswMultiEditDefaultValue;
-                var viewId = tryParseString(propVals.viewid).trim();
+                var nodeId = (false === o.Multi) ? Csw.string(propVals.nodeid).trim() : '';
+                var nodeKey = (false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
+                var name = (false === o.Multi) ? Csw.string(propVals.name).trim() : Csw.enums.multiEditDefaultValue;
+                var path = (false === o.Multi) ? Csw.string(propVals.path).trim() : Csw.enums.multiEditDefaultValue;
+                var viewId = Csw.string(propVals.viewid).trim();
 
                 if(o.ReadOnly) {
                     $Div.append(path);
-                    $Div.hover(function(event) { nodeHoverIn(event, nodeId); }, nodeHoverOut);
+                    $Div.hover(function (event) { Csw.nodeHoverIn(event, nodeId); }, Csw.nodeHoverOut);
                 } else {
                     var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
@@ -45,15 +42,15 @@
                                                 onSelectNode: function (optSelect) {
                                                     onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onchange);
                                                 },
-                                                onInitialSelectNode: function(optSelect) {
-                                                    onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function() {}); 
+                                                onInitialSelectNode: function (optSelect) {
+                                                    onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () {}); 
                                                 }, 
                                                 //SelectFirstChild: false,
                                                 //UsePaging: false,
                                                 UseScrollbars: false,
                                                 IncludeInQuickLaunch: false,
                                                 ShowToggleLink: false,
-                                                DefaultSelect: CswNodeTree_DefaultSelect.root.name
+                                                DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
                                             });
     
                     $selectdiv.CswComboBox( 'init', {	'ID': o.ID + '_combo', 
@@ -62,7 +59,7 @@
                                                         'Width': '290px',
                                                         onClick: function () {
                                                                     var first = true;
-                                                                    return function() { 
+                                                                    return function () { 
                                                                         // only do this once
                                                                         if(first) {
                                                                             $locationtree.CswNodeTree('expandAll');
@@ -72,30 +69,16 @@
                                                                 }()
                                                     });
 
-//					var $addcell = $table.CswTable('cell', 2, 2);
-//					var $AddButton = $('<div />').appendTo($addcell);
-//					$AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
-//												AlternateText: "Add New",
-//												onClick: function($ImageDiv) { 
-//														onAdd();
-//														return CswImageButton_ButtonType.None;
-//													}
-//												});
-
-//                        if(o.Required)
-//                        {
-//                            $SelectBox.addClass("required");
-//                        }
-                    $Div.hover(function(event) { nodeHoverIn(event, $selectdiv.val()); }, nodeHoverOut);
+                    $Div.hover(function (event) { Csw.nodeHoverIn(event, $selectdiv.val()); }, Csw.nodeHoverOut);
                 }
             },
-            save: function(o) { //($propdiv, $xml
+            save: function (o) { //($propdiv, $xml
                 var attributes = { nodeid: null };
                 var $selectdiv = o.$propdiv.find('.locationselect');
-                if (false === isNullOrEmpty($selectdiv)) {
+                if (false === Csw.isNullOrEmpty($selectdiv)) {
                     attributes.nodeid = $selectdiv.val();
                 }
-                preparePropJsonForSave(o.Multi, o.propData, attributes);
+                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             }
         };
     
@@ -109,14 +92,9 @@
                 $selectdiv.val(itemid);
                 onchange();
             }
-            setTimeout(function() { $selectdiv.CswComboBox( 'close'); }, 300);
+            setTimeout(function () { $selectdiv.CswComboBox( 'close'); }, 300);
         }
         
-//		function onAdd()
-//		{
-//			alert('This function has not been implemented yet.');
-//		}
-
         // Method calling logic
         if ( methods[method] ) {
             return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));

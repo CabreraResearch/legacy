@@ -33,7 +33,7 @@
         }
 
         var $tbl = $errordiv.CswTable('init', {
-                                                'id': makeId({ 
+                                                'id': Csw.makeId({ 
                                                         'prefix': id, 
                                                         'id': 'tbl' 
                                                     }), 
@@ -47,21 +47,21 @@
         /* Image Link */
         $('<a href="#">' + o.message + '</a>')
                         .appendTo($cell11)
-                        .click(function() { 
+                        .click(function () { 
                             $cell21.toggle();
                         });
         $cell21.append(o.detail);
         $cell21.hide();
 
         $cell12.CswImageButton({
-                ButtonType: CswImageButton_ButtonType.Delete,
+                ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                 AlternateText: 'Hide',
-                ID: makeId({ 'prefix': id, 'id': 'hidebtn' }),
-                onClick: function() {
+                ID: Csw.makeId({ 'prefix': id, 'id': 'hidebtn' }),
+                onClick: function () {
                     $errordiv.remove();
                     if ($parentdiv.children().length === 0)
                         $parentdiv.hide();
-                    return CswImageButton_ButtonType.None;
+                    return Csw.enums.imageButton_ButtonType.None;
                 }
             });
         $('html, body').animate({ scrollTop: 0 }, 0);
@@ -72,5 +72,5 @@
         }
         return $errordiv;
 
-    }; // function(options) {
+    }; // function (options) {
 })(jQuery);

@@ -2,7 +2,7 @@
 /// <reference path="../../globals/Global.js" />
 
 //#region CswString
-var CswString = function(string) {
+var CswString = function (string) {
     "use strict";
     var value = string;
     return {
