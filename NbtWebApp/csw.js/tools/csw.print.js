@@ -1,9 +1,9 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function CswPrint() {
+(function _cswPrint() {
     'use strict';
-
+    
     function doPrint(onSuccess) {
         var printWindow, printDoc, $styleDiv, $newBody;
 
@@ -18,7 +18,7 @@
         printDoc.write('<link rel="stylesheet" type="text/css" href="js/thirdparty/jquery/themes/theme-aristo/css/Aristo/Aristo.css" />');
         printDoc.write('<link rel="stylesheet" type="text/css" href="Content/jquery.jqGrid/ui.jqgrid.css" />');
         printDoc.write('<title>');
-        printDoc.write(document.title);
+        printDoc.write(printDoc.title);
         printDoc.write('</title>');
         printDoc.write('</head>');
         printDoc.write('<body></body>');

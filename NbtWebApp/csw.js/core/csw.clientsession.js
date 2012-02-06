@@ -1,7 +1,7 @@
 ﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function CswClientSession() {
+(function _cswClientSession() {
     'use strict';
 
     var _expiretime = '';

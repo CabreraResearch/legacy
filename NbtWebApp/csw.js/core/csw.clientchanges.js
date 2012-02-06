@@ -1,7 +1,7 @@
 ﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function CswClientChanges() {
+(function _cswClientChanges() {
     'use strict';
 
     /* The class can be instanced many times, but this will be available to all instances through the outer closure. */
