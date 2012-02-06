@@ -27,9 +27,15 @@ namespace ChemSW.Nbt.Sched
             foreach( DataRow CurrentRow in DataTable.Rows )
             {
                 Int32 NodeId = CswConvert.ToInt32( CurrentRow["nodeid"] );
-                CswNbtNode CswNbtNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", NodeId )];
-                ReturnVal.Add( CswNbtNode );
-
+                if( Int32.MinValue != NodeId )
+                {
+                    CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", NodeId );
+                    CswNbtNode CswNbtNode = _CswNbtResources.Nodes.GetNode( NodePk );
+                    if( null != CswNbtNode )
+                    {
+                        ReturnVal.Add( CswNbtNode );
+                    }
+                }
             }
 
             return ( ReturnVal );
