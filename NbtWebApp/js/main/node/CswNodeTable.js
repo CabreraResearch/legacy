@@ -57,7 +57,7 @@
                     if (results === 0) {
                         Csw.tryExec(o.onNoResults, { viewid: o.viewid, viewmode: Csw.enums.viewMode.table.name });
                     } else {
-                        Csw.crawlObject(data, function (nodeObj) {
+                        Csw.crawlObject(data.nodes, function (nodeObj) {
                             var nodeid = nodeObj.nodeid;
 
                             if (nodeObj.nodename == "Results Truncated") {
