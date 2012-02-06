@@ -54,112 +54,111 @@
                     var c = 1;
                     var results = Csw.number(data.results, -1);
 
-                        function _makeNodeCell(nodeObj) {
-                            var nodeid = nodeObj.nodeid;
+                    function _makeNodeCell(nodeObj) {
+                        var nodeid = nodeObj.nodeid;
 
-                            if (nodeObj.nodename == "Results Truncated") {
-                                c = 1;
-                                r += 1;
-                            }
-                            var cellset = $table.CswLayoutTable('cellset', r, c);
-                            var width = (1 / o.columns * 100) + '%';
-                            var $thumbnailcell = cellset[1][1]
+                        if (nodeObj.nodename == "Results Truncated") {
+                            c = 1;
+                            r += 1;
+                        }
+                        var cellset = $table.CswLayoutTable('cellset', r, c);
+                        var width = (1 / o.columns * 100) + '%';
+                        var $thumbnailcell = cellset[1][1]
                                                 .css({
                                                     paddingTop: o.rowpadding + 'px',
                                                     width: width,
                                                     verticalAlign: 'bottom'
                                                 });
-                            var $textcell = cellset[2][1]
+                        var $textcell = cellset[2][1]
                                                 .css({
                                                     width: width
                                                 });
 
-                            $thumbnailcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
-                            $textcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+                        $thumbnailcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+                        $textcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
 
-                            // Name
-                            var name = '<b>' + nodeObj.nodename + '</b>';
+                        // Name
+                        var name = '<b>' + nodeObj.nodename + '</b>';
 
-                            if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
-                                $thumbnailcell.append('<img src="' + nodeObj.thumbnailurl + '" style="max-width: 90%;">');
-                            }
-                            $thumbnailcell.append('<br/>');
-
-                            if (Csw.bool(nodeObj.locked)) {
-                                name += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
-                            }
-                            $textcell.append(name + '<br/>');
-
-                            // Props
-                            Csw.crawlObject(nodeObj.props, function (propObj) {
-                                if (propObj.fieldtype == "Button") {
-
-                                    var $propdiv = $textcell.CswDiv({});
-                                    $.CswFieldTypeFactory('make', {
-                                        nodeid: nodeid,
-                                        fieldtype: propObj.fieldtype,
-                                        $propdiv: $propdiv,
-                                        propData: propObj.propData,
-                                        ID: Csw.makeId({ ID: o.ID, suffix: propObj.id }),
-                                        EditMode: Csw.enums.EditMode.Table
-                                    });
-
-                                } else {
-                                    $textcell.append('' + propObj.propname + ': ');
-                                    $textcell.append(propObj.gestalt);
-                                }
-                                $textcell.append('<br/>');
-                            });
-
-                            // Buttons
-                            var $btntable = $textcell.CswTable({ ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_btntbl' }) });
-                            if (nodeObj.allowview || nodeObj.allowedit) {
-                                var btntext = "View";
-                                if (nodeObj.allowedit) {
-                                    btntext = "Edit";
-                                }
-                                $btntable.CswTable('cell', 1, 1).CswButton({
-                                    ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
-                                    enabledText: btntext,
-                                    disableOnClick: false,
-                                    onclick: function () {
-                                        $.CswDialog('EditNodeDialog', {
-                                            nodeids: [nodeid],
-                                            nodekeys: [nodeObj.nodekey],
-                                            nodenames: [nodeObj.nodename],
-                                            ReadOnly: (false === nodeObj.allowedit),
-                                            onEditNode: o.onEditNode
-                                        }); // CswDialog
-                                    } // onclick
-                                }); // CswButton
-                            } // if (nodeObj.allowview || nodeObj.allowedit) 
-
-                            if (nodeObj.allowdelete) {
-                                $btntable.CswTable('cell', 1, 2).CswButton({
-                                    ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_btn' }),
-                                    enabledText: 'Delete',
-                                    disableOnClick: false,
-                                    onclick: function () {
-                                        $.CswDialog('DeleteNodeDialog', {
-                                            nodenames: [nodeObj.nodename],
-                                            nodeids: [nodeid],
-                                            cswnbtnodekeys: [nodeObj.nodekey],
-                                            onDeleteNode: o.onDeleteNode
-                                        }); // CswDialog
-                                    } // onclick
-                                }); // CswButton
-                            } // if (nodeObj.allowdelete)
-
-                            c += 1;
-                            if (c > o.columns) { c = 1; r += 1; }
+                        if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
+                            $thumbnailcell.append('<img src="' + nodeObj.thumbnailurl + '" style="max-width: 90%;">');
                         }
+                        $thumbnailcell.append('<br/>');
 
-                        if (results === 0) {
-                            Csw.tryExec(o.onNoResults, { viewid: o.viewid, viewmode: Csw.enums.viewMode.table.name });
-                        } else {
-                            Csw.crawlObject(data.nodes, _makeNodeCell);
+                        if (Csw.bool(nodeObj.locked)) {
+                            name += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
                         }
-                    } // if-else (results === 0) {
+                        $textcell.append(name + '<br/>');
+
+                        // Props
+                        Csw.crawlObject(nodeObj.props, function (propObj) {
+                            if (propObj.fieldtype == "Button") {
+
+                                var $propdiv = $textcell.CswDiv({});
+                                $.CswFieldTypeFactory('make', {
+                                    nodeid: nodeid,
+                                    fieldtype: propObj.fieldtype,
+                                    $propdiv: $propdiv,
+                                    propData: propObj.propData,
+                                    ID: Csw.makeId({ ID: o.ID, suffix: propObj.id }),
+                                    EditMode: Csw.enums.EditMode.Table
+                                });
+
+                            } else {
+                                $textcell.append('' + propObj.propname + ': ');
+                                $textcell.append(propObj.gestalt);
+                            }
+                            $textcell.append('<br/>');
+                        });
+
+                        // Buttons
+                        var $btntable = $textcell.CswTable({ ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_btntbl' }) });
+                        if (nodeObj.allowview || nodeObj.allowedit) {
+                            var btntext = "View";
+                            if (nodeObj.allowedit) {
+                                btntext = "Edit";
+                            }
+                            $btntable.CswTable('cell', 1, 1).CswButton({
+                                ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
+                                enabledText: btntext,
+                                disableOnClick: false,
+                                onclick: function () {
+                                    $.CswDialog('EditNodeDialog', {
+                                        nodeids: [nodeid],
+                                        nodekeys: [nodeObj.nodekey],
+                                        nodenames: [nodeObj.nodename],
+                                        ReadOnly: (false === nodeObj.allowedit),
+                                        onEditNode: o.onEditNode
+                                    }); // CswDialog
+                                } // onclick
+                            }); // CswButton
+                        } // if (nodeObj.allowview || nodeObj.allowedit) 
+
+                        if (nodeObj.allowdelete) {
+                            $btntable.CswTable('cell', 1, 2).CswButton({
+                                ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_btn' }),
+                                enabledText: 'Delete',
+                                disableOnClick: false,
+                                onclick: function () {
+                                    $.CswDialog('DeleteNodeDialog', {
+                                        nodenames: [nodeObj.nodename],
+                                        nodeids: [nodeid],
+                                        cswnbtnodekeys: [nodeObj.nodekey],
+                                        onDeleteNode: o.onDeleteNode
+                                    }); // CswDialog
+                                } // onclick
+                            }); // CswButton
+                        } // if (nodeObj.allowdelete)
+
+                        c += 1;
+                        if (c > o.columns) { c = 1; r += 1; }
+                    }
+
+                    if (results === 0) {
+                        Csw.tryExec(o.onNoResults, { viewid: o.viewid, viewmode: Csw.enums.viewMode.table.name });
+                    } else {
+                        Csw.crawlObject(data.nodes, _makeNodeCell);
+                    }
 
                     Csw.tryExec(o.onSuccess);
 
