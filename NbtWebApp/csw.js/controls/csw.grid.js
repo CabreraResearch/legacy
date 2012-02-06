@@ -8,36 +8,33 @@
         ///<param name="options" type="Object">Object defining paramaters for jqGrid construction</param>
         ///<param name="$parent" type="JQuery">Parent element to attach grid to.</param>
         ///<returns type="Object">Object representing a CswGrid</returns>
-        var $gridTable, $gridPager, $topPager,
-            multiEdit = false,
-            gridTableId, gridPagerId;
-
+        var internal = {};
         var external = {};
 
-        function insertWhiteSpace (num) {
+        internal.insertWhiteSpace = function (num) {
             var ret = '', i;
             for (i = 0; i < num; i += 1) {
                 ret += '&nbsp;';
             }
             return ret;
-        }
-        
-        function makeCustomPager (pagerDef) {
+        };
+
+        internal.makeCustomPager = function (pagerDef) {
             var prevButton = {
-                caption: insertWhiteSpace(2),
+                caption: internal.insertWhiteSpace(2),
                 buttonicon: 'ui-icon-seek-prev',
                 position: 'last',
                 title: '',
                 cursor: '',
-                id: gridPagerId + '_prevBtn'
+                id: internal.gridPagerId + '_prevBtn'
             };
             if (false === Csw.isNullOrEmpty(pagerDef) && Csw.isFunction(pagerDef.onPrevPageClick)) {
                 prevButton.onClickButton = function (eventObj) {
-                    var nodes = $gridTable.jqGrid('getDataIDs'),
+                    var nodes = external.$gridTable.jqGrid('getDataIDs'),
                         firstNodeId = nodes[0],
                         lastNodeId = nodes[nodes.length],
-                        firstRow = $gridTable.jqGrid('getRowData', firstNodeId),
-                        lastRow = $gridTable.jqGrid('getRowData', lastNodeId);
+                        firstRow = external.$gridTable.jqGrid('getRowData', firstNodeId),
+                        lastRow = external.$gridTable.jqGrid('getRowData', lastNodeId);
 
                     pagerDef.onPrevPageClick(eventObj, firstRow, lastRow);
                 };
@@ -45,45 +42,45 @@
 
             var spacer = {
                 sepclass: 'ui-separator',
-                sepcontent: insertWhiteSpace(24)
+                sepcontent: internal.insertWhiteSpace(24)
             };
 
             var nextButton = {
-                caption: insertWhiteSpace(2),
+                caption: internal.insertWhiteSpace(2),
                 buttonicon: 'ui-icon-seek-next',
                 onClickButton: '',
                 position: 'last',
                 title: 'Next',
                 cursor: '',
-                id: gridPagerId + '_nextBtn'
+                id: internal.gridPagerId + '_nextBtn'
             };
             if (false === Csw.isNullOrEmpty(pagerDef) && Csw.isFunction(pagerDef.onNextPageClick)) {
                 nextButton.onClickButton = function (eventObj) {
-                    var nodes = $gridTable.jqGrid('getDataIDs'),
+                    var nodes = external.$gridTable.jqGrid('getDataIDs'),
                         firstNodeId = nodes[0],
                         lastNodeId = nodes[nodes.length - 1],
-                        firstRow = $gridTable.jqGrid('getRowData', firstNodeId),
-                        lastRow = $gridTable.jqGrid('getRowData', lastNodeId);
+                        firstRow = external.$gridTable.jqGrid('getRowData', firstNodeId),
+                        lastRow = external.$gridTable.jqGrid('getRowData', lastNodeId);
 
                     pagerDef.onNextPageClick(eventObj, firstRow, lastRow);
                 };
             }
-            $gridTable.jqGrid('navSeparatorAdd', '#' + gridPagerId, spacer)
-                .jqGrid('navButtonAdd', '#' + gridPagerId, prevButton)
-                .jqGrid('navButtonAdd', '#' + gridPagerId, nextButton);
-        }
+            external.$gridTable.jqGrid('navSeparatorAdd', '#' + internal.gridPagerId, spacer)
+                .jqGrid('navButtonAdd', '#' + internal.gridPagerId, prevButton)
+                .jqGrid('navButtonAdd', '#' + internal.gridPagerId, nextButton);
+        };
 
-        function makeGrid (o) {
-            multiEdit = o.gridOpts.multiselect;
+        internal.makeGrid = function (o) {
+            internal.multiEdit = o.gridOpts.multiselect;
             if (Csw.isNullOrEmpty($parent)) {
-                $parent = $('<div id="' + gridTableId + '_parent"></div>');
+                $parent = $('<div id="' + internal.gridTableId + '_parent"></div>');
             }
 
-            $gridTable = $parent.CswTable('init', {ID: gridTableId});
+            external.$gridTable = $parent.CswTable('init', {ID: internal.gridTableId});
 
 
-            $gridPager = $parent.CswDiv('init', {ID: gridPagerId});
-            o.gridOpts.pager = $gridPager;
+            external.$gridPager = $parent.CswDiv('init', {ID: internal.gridPagerId});
+            o.gridOpts.pager = external.$gridPager;
 
             if (o.canEdit) {
                 $.extend(true, o.optNav, o.optNavEdit);
@@ -99,19 +96,19 @@
                             (Csw.contains(o.gridOpts, 'colModel') && o.gridOpts.colNames.length !== o.gridOpts.colModel.length)) {
                         throw new Error('Cannot create a grid without at least one column defined.');
                     }
-                    $gridTable.jqGrid(o.gridOpts)
-                        .jqGrid('navGrid', '#' + gridPagerId, o.optNav, {}, {}, {}, {}, {}); //Case 24032: Removed jqGrid search
+                    external.$gridTable.jqGrid(o.gridOpts)
+                        .jqGrid('navGrid', '#' + internal.gridPagerId, o.optNav, {}, {}, {}, {}, {}); //Case 24032: Removed jqGrid search
                 } catch (e) {
                     Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, e.message));
                 }
                 if (o.pagermode === 'custom') {
-                    makeCustomPager(o.customPager);
+                    internal.makeCustomPager(o.customPager);
                 }
             } else {
-                $gridTable.jqGrid(o.gridOpts);
+                external.$gridTable.jqGrid(o.gridOpts);
             }
-            $gridTable.data(gridTableId + '_data', o);
-        }
+            external.$gridTable.data(internal.gridTableId + '_data', o);
+        };
 
         /* "Constuctor" */
         (function () {
@@ -130,7 +127,7 @@
                     height: '300',
                     loadtext: 'Loading...',
                     multiselect: false,
-                    pager: $gridPager,
+                    pager: external.$gridPager,
                     toppager: false,
                     shrinkToFit: true,
                     sortname: '',
@@ -225,79 +222,61 @@
                     break;
             }
 
-            gridPagerId = Csw.makeId({ID: 'cswGridPager', prefix: o.ID});
-            gridTableId = Csw.makeId({ID: 'cswGridTable', prefix: o.ID});
+            internal.gridPagerId = Csw.makeId({ID: 'cswGridPager', prefix: o.ID});
+            internal.gridTableId = Csw.makeId({ID: 'cswGridTable', prefix: o.ID});
 
-            makeGrid(o);
+            internal.makeGrid(o);
         }());
 
-        // Row scrolling adapted from 
-        // http://stackoverflow.com/questions/2549466/is-there-a-way-to-make-jqgrid-scroll-to-the-bottom-when-a-new-row-is-added/2549654#2549654
-
-        function getGridRowHeight () {
-
-            var height = null; // Default
-            try {
-                height = $gridTable.find('tbody').find('tr:first').outerHeight();
-            } catch (e) {
-                //catch and just suppress error
-            }
-            return height;
-        }
-
-        function getCell (rowid, key) {
+        internal.getCell = function (rowid, key) {
             var ret = '';
             if (false === Csw.isNullOrEmpty(rowid) && false === Csw.isNullOrEmpty(key)) {
-                ret = $gridTable.jqGrid('getCell', rowid, key);
+                ret = external.$gridTable.jqGrid('getCell', rowid, key);
             }
             return ret;
-        }
+        };
 
-        function getSelectedRowId () {
-            var rowid = $gridTable.jqGrid('getGridParam', 'selrow');
+        internal.getSelectedRowId = function () {
+            var rowid = external.$gridTable.jqGrid('getGridParam', 'selrow');
             return rowid;
-        }
+        };
 
-        function getSelectedRowsIds () {
-            var rowid = $gridTable.jqGrid('getGridParam', 'selarrrow');
+        internal.getSelectedRowsIds = function () {
+            var rowid = external.$gridTable.jqGrid('getGridParam', 'selarrrow');
             return rowid;
-        }
+        };
 
-        function getColumn (column, returnType) {
+        internal.getColumn = function (column, returnType) {
             ///<summary>Gets the contents of a jqGrid column</summary>
             ///<param name="column" type="String">Column name</param>
             ///<param name="returnType" type="Boolean">If false, returns a simple array of values. If true, returns an array [{id: id, value: value},{...}]</param>
             ///<returns type="Array">An array of the columns values</returns>
-            var ret = $gridTable.jqGrid('getCol', column, returnType);
+            var ret = external.$gridTable.jqGrid('getCol', column, returnType);
             return ret;
-        }
+        };
 
-        //#region private
+        external.hideColumn = function (id) {
+            external.$gridTable.jqGrid('hideCol', id);
+        };
 
-        //#region public, priveleged
-
-        function hideColumn (id) {
-            $gridTable.jqGrid('hideCol', id);
-        }
-
-        function scrollToRow (rowid) {
+        external.scrollToRow = function (rowid) {
             ///<summary>Scrolls the grid to the specified rowid</summary>
             ///<param name="rowid" type="String">Optional. jqGrid rowid. If null, selected row is assumed.</param>
             ///<returns type="Void"></returns>
             if (Csw.isNullOrEmpty(rowid)) {
-                rowid = getSelectedRowId();
+                rowid = internal.getSelectedRowId();
             }
-            var rowHeight = getGridRowHeight($gridTable) || 23; // Default height
-            var index = $gridTable.getInd(rowid);
-            $gridTable.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
-        }
+            var rowHeight = external.getGridRowHeight(external.$gridTable) || 23; // Default height
+            var index = external.$gridTable.getInd(rowid);
+            external.$gridTable.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
+        };
 
-        function getRowIdForVal (value, column) {
+        external.getRowIdForVal = function(value, column) {
             ///<summary>Gets a jqGrid rowid by column name and value.</summary>
             ///<param name="value" type="String">Cell value</param>
             ///<param name="column" type="String">Column name</param>
             ///<returns type="String">jqGrid row id.</returns>
-            var pks = getColumn(column, true);
+            var pks = internal.getColumn(column, true);
             var rowid = 0;
             Csw.each(pks, function (obj) {
                 if (Csw.contains(obj, 'value') && Csw.string(obj.value) === Csw.string(value)) {
@@ -307,94 +286,94 @@
             return rowid;
         }
 
-        function getValueForColumn (columnname, rowid) {
+        external.getValueForColumn = function (columnname, rowid) {
             ///<summary>Gets a cell value by column name.</summary>
             ///<param name="columnname" type="String">Grid column name.</param>
             ///<param name="rowid" type="String">Optional. If null, selected row is assumed.</param>
             ///<returns type="String">Value of the cell.</returns>
             if (Csw.isNullOrEmpty(rowid)) {
-                rowid = getSelectedRowId();
+                rowid = internal.getSelectedRowId();
             }
-            var ret = getCell(rowid, columnname);
+            var ret = internal.getCell(rowid, columnname);
             return ret;
-        }
+        };
 
-        function setSelection (rowid) {
+        external.setSelection = function (rowid) {
             ///<summary>Sets the selected row by jqGrid's rowid</summary>
             if (false === Csw.isNullOrEmpty(rowid)) {
-                $gridTable.setSelection(rowid);
+                external.$gridTable.setSelection(rowid);
             }
-        }
+        };
 
-        function changeGridOpts (opts) {
-            var currentOpts = $gridTable.data(gridTableId + '_data');
+        external.changeGridOpts = function (opts) {
+            var currentOpts = external.$gridTable.data(internal.gridTableId + '_data');
             $.extend(true, currentOpts, opts);
             $parent.empty();
-            makeGrid(currentOpts);
-        }
+            internal.makeGrid(currentOpts);
+        };
 
-        function opGridRows (opts, rowid, onSelect, onEmpty) {
+        external.opGridRows = function (opts, rowid, onSelect, onEmpty) {
             var ret = false;
             var haveSelectedRows = false,
                 i;
 
             var rowids = [];
-            
-            function onEachGridRow(prop, key, parent) {
+
+            function onEachGridRow (prop, key, parent) {
                 if (false === Csw.isFunction(parent[key])) {
                     if (Csw.isArray(parent[key])) {
                         rowid = rowids[i];
-                        parent[key].push(getValueForColumn(key, rowid));
+                        parent[key].push(external.getValueForColumn(key, rowid));
                     } else {
-                        parent[key] = getValueForColumn(key, rowid);
+                        parent[key] = external.getValueForColumn(key, rowid);
                     }
                 }
                 return false;
             }
 
-            if (multiEdit) {
-                rowids = getSelectedRowsIds();
+            if (internal.multiEdit) {
+                rowids = internal.getSelectedRowsIds();
             } else if (false === Csw.isNullOrEmpty(rowid)) {
                 rowids.push(rowid);
             } else {
-                rowids.push(getSelectedRowId());
+                rowids.push(internal.getSelectedRowId());
             }
 
             if (rowids.length > 0) {
                 haveSelectedRows = true;
-                for (i = 0; i < rowids.length; i+=1) {
+                for (i = 0; i < rowids.length; i += 1) {
                     Csw.crawlObject(opts, onEachGridRow, false);
                 }
             }
 
             if (haveSelectedRows) {
                 if (Csw.isFunction(onSelect)) {
-                    opts.Multi = multiEdit;
+                    opts.Multi = internal.multiEdit;
                     ret = onSelect(opts);
                 }
             } else if (Csw.isFunction(onEmpty)) {
                 onEmpty(opts);
             }
             return ret;
-        }
-
-        var getAllGridRows = function () {
-            return $gridTable.jqGrid('getRowData');
         };
 
-        var print = function () {
+        external.getAllGridRows = function () {
+            return external.$gridTable.jqGrid('getRowData');
+        };
+
+        external.print = function () {
 
             Csw.print(function ($printElement) {
                 var printOpts = {},
-                    currentOpts = $gridTable.data(gridTableId + '_data'),
-                    printTableId = Csw.makeId({prefix: gridTableId, ID: 'printTable'}),
+                    currentOpts = external.$gridTable.data(internal.gridTableId + '_data'),
+                    printTableId = Csw.makeId({prefix: internal.gridTableId, ID: 'printTable'}),
                     newGrid, data, i;
 
                 var addRowsToGrid = function (rowData) {
                     if (rowData) {
                         /* Add the rows to the new newGrid */
                         for (i = 0; i <= rowData.length; i += 1) {
-                            newGrid.$gridTable.jqGrid('addRowData', i + 1, rowData[i]);
+                            newGrid.external.$gridTable.jqGrid('addRowData', i + 1, rowData[i]);
                         }
                     }
                 };
@@ -467,22 +446,21 @@
 
         };
 
+        // Row scrolling adapted from 
+        // http://stackoverflow.com/questions/2549466/is-there-a-way-to-make-jqgrid-scroll-to-the-bottom-when-a-new-row-is-added/2549654#2549654
+        external.getGridRowHeight = function () {
 
-        external.$gridTable = $gridTable;
-        external.$gridPager = $gridPager;
-        external.$topPager = $topPager || null;
-        external.getAllGridRows = getAllGridRows;
-        external.getGridRowHeight = getGridRowHeight;
-        external.scrollToRow = scrollToRow;
-        external.hideColumn = hideColumn;
-        external.getRowIdForVal = getRowIdForVal;
-        external.setSelection = setSelection;
-        external.getValueForColumn = getValueForColumn;
-        external.changeGridOpts = changeGridOpts;
-        external.opGridRows = opGridRows;
-        external.print = print;
+            var height = null; // Default
+            try {
+                height = external.$gridTable.find('tbody').find('tr:first').outerHeight();
+            } catch (e) {
+                //catch and just suppress error
+            }
+            return height;
+        };
+
         external.isMulti = function () {
-            return multiEdit;
+            return internal.multiEdit;
         };
 
         return external;
