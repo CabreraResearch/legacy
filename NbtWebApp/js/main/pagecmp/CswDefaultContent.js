@@ -14,14 +14,13 @@
         if (options) $.extend(o, options);
 
         var $this = $(this);
-        $this.contents().remove();
 
         Csw.ajax.post({
             url: o.Url,
             data: { ViewId: o.viewid },
             success: function (data) {
                 
-                var $addDiv = $this.CswDiv({ ID: makeId({ id: o.ID, suffix: 'adddiv' }), cssclass: 'adddiv' });
+                var $addDiv = $this.CswDiv({ ID: Csw.makeId({ id: o.ID, suffix: 'adddiv' }), cssclass: 'adddiv' });
                 $addDiv.append('Add New:');
 
                 function _makeAddLinksRecursive(addObj, $parent) {
@@ -34,8 +33,8 @@
                         }).appendTo($ul);
                     }
 
-                    if (contains(addObj, 'entries')) {
-                        each(addObj.entries, onEach);
+                    if (Csw.contains(addObj, 'entries')) {
+                        Csw.each(addObj.entries, onEach);
                         if ($ul.children().length > 0) {
                             $ul.appendTo($parent);
                             _makeAddLinksRecursive(addObj.children, $ul);

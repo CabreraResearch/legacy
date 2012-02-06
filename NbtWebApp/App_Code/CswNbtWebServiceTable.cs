@@ -52,6 +52,7 @@ namespace ChemSW.Nbt.WebServices
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
 
+            ret["results"] = Tree.getChildNodeCount().ToString();
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 Tree.goToNthChild( c );
