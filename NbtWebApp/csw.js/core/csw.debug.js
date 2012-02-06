@@ -81,7 +81,7 @@
                 var log = Csw.clientDb.getItem('debuglog');
                 log += logger.toHtml();
 
-                logStorage.setItem('debuglog', log);
+                Csw.clientDb.setItem('debuglog', log);
             }
         }
     }

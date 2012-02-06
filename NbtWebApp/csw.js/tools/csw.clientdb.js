@@ -1,7 +1,7 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function cswClientDb () {
+(function _cswClientDb () {
     'use strict';
     var clientDb = (function () {
 
@@ -107,11 +107,11 @@
         };
         external.getKeys = function () {
             var locKey, sesKey, memKey;
-            if (Csw.isNullOrEmpty(keys) && localStorage.length > 0) {
+            if (Csw.isNullOrEmpty(keys) && window.localStorage.length > 0) {
                 for (locKey in window.localStorage) {
                     keys.push(locKey);
                 }
-                if (sessionStorage.length > 0) {
+                if (window.sessionStorage.length > 0) {
                     for (sesKey in window.sessionStorage) {
                         keys.push(sesKey);
                     }

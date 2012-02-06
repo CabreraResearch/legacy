@@ -1,7 +1,7 @@
 ﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function CswCookie() {
+(function _cswCookie() {
     'use strict';
 
     var cookie = (function() {

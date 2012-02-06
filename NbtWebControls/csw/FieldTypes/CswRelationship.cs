@@ -193,7 +193,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             {
                 _ValueList.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange()" );
 
-                if( _EditMode != NodeEditMode.AddInPopup &&
+                if( _EditMode != NodeEditMode.Add &&
                     _EditMode != NodeEditMode.EditInPopup &&
                     _EditMode != NodeEditMode.Demo &&
                     !ReadOnly &&

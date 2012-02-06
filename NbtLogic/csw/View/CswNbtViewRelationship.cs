@@ -293,6 +293,20 @@ namespace ChemSW.Nbt
             set { _Properties = value; }
         }
 
+        public CswNbtViewProperty findProperty( Int32 NodeTypePropId )
+        {
+            CswNbtViewProperty ret = null;
+            foreach( CswNbtViewProperty ViewProp in Properties )
+            {
+                if( ViewProp.NodeTypePropId == NodeTypePropId )
+                {
+                    ret = ViewProp;
+                    break;
+                }
+            }
+            return ret;
+        } // findProperty()
+
         #endregion For the View
 
 

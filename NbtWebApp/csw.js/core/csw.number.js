@@ -1,7 +1,7 @@
 ﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function CswNumber() {
+(function _cswNumber() {
     'use strict';
 
     var int32MinVal = -2147483648;

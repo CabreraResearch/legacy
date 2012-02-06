@@ -395,7 +395,8 @@ namespace ChemSW.Nbt.WebServices
                             foreach( CswNbtMetaDataNodeTypeProp ThisProp in PropsCollection )
                             {
                                 // BZs 7085, 6651, 6644, 7092
-                                if( ThisProp.FieldTypeRule.SearchAllowed )
+                                if( ThisProp.FieldTypeRule.SearchAllowed ||
+                                    ThisProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
                                 {
                                     CswNbtViewProperty ViewProp = View.AddViewProperty( null, (CswNbtMetaDataNodeTypeProp) ThisProp );
                                     if( !CurrentRelationship.Properties.Contains( ViewProp ) )

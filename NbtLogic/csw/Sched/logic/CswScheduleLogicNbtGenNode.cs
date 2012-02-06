@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.Sched
                                     ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
                                 }
 
-                                Int32 WarnDays = (Int32) CurrentGenerator.WarningDays.Value;
+                                Int32 WarnDays = CswConvert.ToInt32( CurrentGenerator.WarningDays.Value );
                                 if( WarnDays > 0 )
                                 {
                                     TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );

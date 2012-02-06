@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassPropName( Int32 NodeTypeId, string ObjectClassPropName )
         {
-            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_prop where lower(propname) = '" + ObjectClassPropName.ToLower() + "')" );
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + ObjectClassPropName.ToLower() + "')" );
         }
 
         //public void ClearKeys()

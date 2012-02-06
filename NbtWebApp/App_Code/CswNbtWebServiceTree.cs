@@ -196,12 +196,22 @@ namespace ChemSW.Nbt.WebServices
                                 break;
                             case "firstchild":
                                 Tree.goToRoot();
-                                Tree.goToNthChild( 0 );
-                                //ReturnObj["selectid"] = _IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
-                                ReturnObj["selectid"] = _IdPrefix + Tree.getNodeKeyForCurrentPosition().ToString();
+                                CswNbtNodeKey CurrentKey = Tree.getNodeKeyForCurrentPosition();
+                                while( CurrentKey != null &&
+                                       CurrentKey.NodeSpecies != NodeSpecies.Plain &&
+                                       Tree.getChildNodeCount() > 0 )
+                                {
+                                    Tree.goToNthChild( 0 );
+                                    CurrentKey = Tree.getNodeKeyForCurrentPosition();
+                                }
+                                if( CurrentKey != null && CurrentKey.NodeSpecies == NodeSpecies.Plain )
+                                {
+                                    // ReturnObj["selectid"] = _IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
+                                    ReturnObj["selectid"] = _IdPrefix + CurrentKey.ToString();
+                                }
                                 break;
-                        }
-                    }
+                        } // switch( DefaultSelect )
+                    } // if( ReturnObj["selectid"] == null )
                 } // if( HasResults )
                 else
                 {

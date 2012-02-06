@@ -27,7 +27,7 @@
 
                 $cell11.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');
 
-                if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.AddInPopup) {
+                if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
                     //Edit button
                     $('<div/>')
                         .appendTo($cell12)

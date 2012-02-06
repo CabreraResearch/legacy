@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.WebPages
                 PropertyTable.ID = "exampletable";
                 //PropertyTable.SelectedNodeTypeId = NodeType.NodeTypeId;
                 if( _Mode == LayoutMode.Add )
-                    PropertyTable.EditMode = NodeEditMode.AddInPopup;
+                    PropertyTable.EditMode = NodeEditMode.Add;
                 else if( _Mode == LayoutMode.Edit || _Mode == LayoutMode.Inspection )
                     PropertyTable.EditMode = NodeEditMode.Demo;
                 //PropertyTable.SelectedNodeKey = FakeNodeKey;
