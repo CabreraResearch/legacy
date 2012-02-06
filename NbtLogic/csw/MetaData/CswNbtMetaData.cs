@@ -8,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -198,6 +199,11 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassProp( ObjectClassPropId );
         }
 
+
+        public ICswNbtFieldTypeRule getFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        {
+            return _CswNbtMetaDataResources.makeFieldTypeRule( FieldType );
+        }
 
         #endregion Selectors
 

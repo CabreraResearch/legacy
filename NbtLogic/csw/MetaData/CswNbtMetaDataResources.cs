@@ -429,9 +429,9 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public ICswNbtFieldTypeRule makeFieldTypeRule( ICswNbtMetaDataProp MetaDataProp )
+        public ICswNbtFieldTypeRule makeFieldTypeRule(CswNbtMetaDataFieldType.NbtFieldType FieldType)
         {
-            return CswNbtFieldTypeRuleFactory.makeRule( CswNbtFieldResources, MetaDataProp );
+            return CswNbtFieldTypeRuleFactory.makeRule( CswNbtFieldResources, FieldType );
         }
     }
 }

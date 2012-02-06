@@ -13,6 +13,20 @@ body a
 	font-family: verdana;
 	font-size:12px;
 }
+
+/* This keeps bullets aligned with list items */
+ul {
+    margin:auto;
+}
+ul li {
+    list-style-position:inside;
+}
+ul li div {
+    display:inline;
+}
+
+
+
 .OuterDiv
 {
 	text-align: center;

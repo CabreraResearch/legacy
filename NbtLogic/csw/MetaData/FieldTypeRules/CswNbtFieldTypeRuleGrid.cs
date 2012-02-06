@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
 
-        public CswNbtFieldTypeRuleGrid( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRuleGrid( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );

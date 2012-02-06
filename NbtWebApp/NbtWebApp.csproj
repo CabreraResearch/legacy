@@ -705,7 +705,7 @@
     <Content Include="crystal\urlreporting\appletviewer.js" />
     <Content Include="csw.js\ChemSW.js" />
     <Content Include="csw.js\ChemSW-vsdoc.js" />
-    <Content Include="csw.js\core\csw.enum.js" />
+    <Content Include="csw.js\core\csw.enums.js" />
     <Content Include="js\ChemSW.min.js" />
     <Content Include="csw.js\core\csw.tbd.js" />
     <Content Include="csw.js\core\csw.menu.js" />
@@ -738,6 +738,7 @@
     <Content Include="js\main\controls\CswMultiSelect.js" />
     <Content Include="csw.js\controls\csw.timeinterval.js" />
     <Content Include="js\main\controls\CswList.js" />
+    <Content Include="js\main\controls\CswTable.js" />
     <Content Include="js\main\Main.js" />
     <Content Include="js\main\pagecmp\CswDefaultContent.js" />
     <Content Include="js\main\tools\CswPubSub.js" />

@@ -13,12 +13,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
 
-        public CswNbtFieldTypeRuleMTBF( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRuleMTBF( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            StartDateTimeSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.StartDateTime );
+            StartDateTimeSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.StartDateTime );
             StartDateTimeSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                                 CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
                                                 CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals |
@@ -29,14 +29,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                                 CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( StartDateTimeSubField );
 
-            UnitsSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Units );
+            UnitsSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Units );
             UnitsSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                         CswNbtPropFilterSql.PropertyFilterMode.Contains |
                                         CswNbtPropFilterSql.PropertyFilterMode.Begins |
                                         CswNbtPropFilterSql.PropertyFilterMode.Ends;
             SubFields.add( UnitsSubField );
 
-            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1_Numeric, CswNbtSubField.SubFieldName.Value );
+            ValueSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_Numeric, CswNbtSubField.SubFieldName.Value );
             ValueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                         CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
                                         CswNbtPropFilterSql.PropertyFilterMode.LessThan |
