@@ -696,7 +696,7 @@ namespace ChemSW.Nbt.ImportExport
                                                             if( ( DataTable.Rows.Count > 0 ) && ( false == DataTable.Rows[0].IsNull( Colname_NbtNodeId ) ) )
                                                             {
 
-                                                                Int32 NodeIdOfDestinationNode = CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] );
+                                                                Int32 NodeIdOfDestinationNode = CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ); 
                                                                 if( Int32.MinValue != NodeIdOfDestinationNode )
                                                                 {
                                                                     string CandidateValidationErrorMessage = string.Empty;
@@ -727,7 +727,7 @@ namespace ChemSW.Nbt.ImportExport
 
                                                                 if( ExistingNodeDataTable.Rows.Count > 0 ) //it _does_ exist in the target schema
                                                                 {
-                                                                    Int32 ExistingNbtNodeId = CswConvert.ToInt32( CurrentImportTargetNodeId );
+                                                                    Int32 ExistingNbtNodeId = CswConvert.ToInt32( CurrentImportTargetNodeId ); //review 24884
                                                                     if( Int32.MinValue != ExistingNbtNodeId )
                                                                     {
 
