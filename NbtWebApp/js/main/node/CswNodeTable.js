@@ -53,11 +53,8 @@
                     var r = 1;
                     var c = 1;
                     var results = Csw.number(data.results, -1);
-                    
-                    if (results === 0) {
-                        Csw.tryExec(o.onNoResults, { viewid: o.viewid, viewmode: Csw.enums.viewMode.table.name });
-                    } else {
-                        Csw.crawlObject(data.nodes, function (nodeObj) {
+
+                        function _makeNodeCell(nodeObj) {
                             var nodeid = nodeObj.nodeid;
 
                             if (nodeObj.nodename == "Results Truncated") {
@@ -155,7 +152,13 @@
 
                             c += 1;
                             if (c > o.columns) { c = 1; r += 1; }
-                        });
+                        }
+
+                        if (results === 0) {
+                            Csw.tryExec(o.onNoResults, { viewid: o.viewid, viewmode: Csw.enums.viewMode.table.name });
+                        } else {
+                            Csw.crawlObject(data.nodes, _makeNodeCell);
+                        }
                     } // if-else (results === 0) {
 
                     Csw.tryExec(o.onSuccess);
