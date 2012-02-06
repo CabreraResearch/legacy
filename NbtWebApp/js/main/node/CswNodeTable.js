@@ -71,6 +71,10 @@
                                                 .css({
                                                     width: width
                                                 });
+
+                        $thumbnailcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+                        $textcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+
                         // Name
                         var name = '<b>' + nodeObj.nodename + '</b>';
 
