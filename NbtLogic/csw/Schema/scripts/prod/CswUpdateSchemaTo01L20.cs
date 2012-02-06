@@ -1,5 +1,5 @@
 ﻿using System;
-using ChemSW.Core;
+using System.Collections.Generic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -25,7 +25,14 @@ namespace ChemSW.Nbt.Schema
                 if( NodeAsMailReport.ReportView.SelectedViewIds.Count > 1 )
                 {
                     Int32 ValidViewId = Int32.MinValue;
-                    foreach( Int32 Vid in NodeAsMailReport.ReportView.SelectedViewIds.ToIntCollection() )
+
+                    List<Int32> SelectedIds = new List<Int32>();
+                    foreach( Int32 Id in NodeAsMailReport.ReportView.SelectedViewIds.ToIntCollection() )
+                    {
+                        SelectedIds.Add( Id );
+                    }
+                    SelectedIds.Reverse();
+                    foreach( Int32 Vid in SelectedIds )
                     {
                         if( Int32.MinValue != Vid )
                         {
@@ -55,7 +62,13 @@ namespace ChemSW.Nbt.Schema
                 if( NodeAsGenerator.ParentType.SelectedNodeTypeIds.Count > 1 )
                 {
                     Int32 ValidNodeTypeId = Int32.MinValue;
-                    foreach( Int32 Nid in NodeAsGenerator.ParentType.SelectedNodeTypeIds.ToIntCollection() )
+                    List<Int32> SelectedIds = new List<Int32>();
+                    foreach( Int32 Id in NodeAsGenerator.ParentType.SelectedNodeTypeIds.ToIntCollection() )
+                    {
+                        SelectedIds.Add( Id );
+                    }
+                    SelectedIds.Reverse();
+                    foreach( Int32 Nid in SelectedIds )
                     {
                         if( Int32.MinValue != Nid )
                         {
@@ -78,7 +91,13 @@ namespace ChemSW.Nbt.Schema
                 if( NodeAsGenerator.TargetType.SelectedNodeTypeIds.Count > 1 )
                 {
                     Int32 ValidNodeTypeId = Int32.MinValue;
-                    foreach( Int32 Nid in NodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection() )
+                    List<Int32> SelectedIds = new List<Int32>();
+                    foreach( Int32 Id in NodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection() )
+                    {
+                        SelectedIds.Add( Id );
+                    }
+                    SelectedIds.Reverse();
+                    foreach( Int32 Nid in SelectedIds )
                     {
                         if( Int32.MinValue != Nid )
                         {
