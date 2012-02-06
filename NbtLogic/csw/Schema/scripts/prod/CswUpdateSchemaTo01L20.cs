@@ -1,4 +1,5 @@
 ﻿using System;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -43,7 +44,60 @@ namespace ChemSW.Nbt.Schema
                     {
                         NodeAsMailReport.ReportView.SelectedViewIds.Add( ValidViewId.ToString() );
                     }
+                    ReportNode.postChanges( true );
                 }
+            }
+
+            CswNbtMetaDataObjectClass GeneratorOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            foreach( CswNbtNode GeneratorNode in GeneratorOc.getNodes( true, false ) )
+            {
+                CswNbtObjClassGenerator NodeAsGenerator = CswNbtNodeCaster.AsGenerator( GeneratorNode );
+                if( NodeAsGenerator.ParentType.SelectedNodeTypeIds.Count > 1 )
+                {
+                    Int32 ValidNodeTypeId = Int32.MinValue;
+                    foreach( Int32 Nid in NodeAsGenerator.ParentType.SelectedNodeTypeIds.ToIntCollection() )
+                    {
+                        if( Int32.MinValue != Nid )
+                        {
+                            CswNbtMetaDataNodeType NodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( Nid );
+                            if( null != NodeType )
+                            {
+                                ValidNodeTypeId = Nid;
+                                break;
+                            }
+                        }
+                    }
+                    NodeAsGenerator.ParentType.SelectedNodeTypeIds.Clear();
+                    if( Int32.MinValue != ValidNodeTypeId )
+                    {
+                        NodeAsGenerator.ParentType.SelectedNodeTypeIds.Add( ValidNodeTypeId.ToString() );
+                    }
+                    GeneratorNode.postChanges( true );
+                }
+
+                if( NodeAsGenerator.TargetType.SelectedNodeTypeIds.Count > 1 )
+                {
+                    Int32 ValidNodeTypeId = Int32.MinValue;
+                    foreach( Int32 Nid in NodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection() )
+                    {
+                        if( Int32.MinValue != Nid )
+                        {
+                            CswNbtMetaDataNodeType NodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( Nid );
+                            if( null != NodeType )
+                            {
+                                ValidNodeTypeId = Nid;
+                                break;
+                            }
+                        }
+                    }
+                    NodeAsGenerator.TargetType.SelectedNodeTypeIds.Clear();
+                    if( Int32.MinValue != ValidNodeTypeId )
+                    {
+                        NodeAsGenerator.TargetType.SelectedNodeTypeIds.Add( ValidNodeTypeId.ToString() );
+                    }
+                    GeneratorNode.postChanges( true );
+                }
+
             }
 
             #endregion Case 24929
