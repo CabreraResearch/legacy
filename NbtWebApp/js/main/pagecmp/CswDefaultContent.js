@@ -1,9 +1,5 @@
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../controls/CswDiv.js" />
-/// <reference path="../controls/CswLink.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -20,7 +16,7 @@
         var $this = $(this);
         $this.contents().remove();
 
-        CswAjaxJson({
+        Csw.ajax.post({
             url: o.Url,
             data: { ViewId: o.viewid },
             success: function (data) {
@@ -29,18 +25,17 @@
                 $addDiv.append('Add New:');
 
                 function _makeAddLinksRecursive(addObj, $parent) {
+                    var $ul = $('<ul></ul>');
+                    function onEach(entryObj) {
+                        var $li = Csw.handleMenuItem({
+                            $ul: $ul,
+                            itemKey: entryObj.text,
+                            itemJson: entryObj
+                        }).appendTo($ul);
+                    }
+
                     if (contains(addObj, 'entries')) {
-
-                        var $ul = $('<ul></ul>');
-
-                        each(addObj.entries, function (entryObj) {
-                            var $li = HandleMenuItem({
-                                $ul: $ul,
-                                itemKey: entryObj.text,
-                                itemJson: entryObj
-                            }).appendTo($ul);
-                        });
-                        
+                        each(addObj.entries, onEach);
                         if ($ul.children().length > 0) {
                             $ul.appendTo($parent);
                             _makeAddLinksRecursive(addObj.children, $ul);

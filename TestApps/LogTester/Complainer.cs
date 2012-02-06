@@ -1,19 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ChemSW.Log;
-using ChemSW.Core;
-using ChemSW.Nbt;
 using ChemSW.Config;
-using ChemSW.Nbt.Config;
-
-using System.Threading;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Diagnostics;
-using System.Runtime.Serialization.Formatters.Binary;
+using ChemSW.Log;
+using ChemSW.Nbt;
 
 namespace ChemSW.LogTester
 {

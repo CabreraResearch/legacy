@@ -312,8 +312,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtViewRelationship.RelatedIdType Relationship = CswNbtViewRelationship.RelatedIdType.Unknown;
                 if( string.IsNullOrEmpty( NodeTypeOrObjectClassId ) && !string.IsNullOrEmpty( NodeKey ) )
                 {
-                    string ParsedNodeKey = wsTools.FromSafeJavaScriptParam( NodeKey );
-                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, ParsedNodeKey );
+                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
                     CswNbtNode Node = _CswNbtResources.Nodes[NbtNodeKey];
                     if( null != Node.NodeType )
                     {

@@ -1,21 +1,19 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function ($) {
     "use strict";
     var pluginName = "CswNodeTypeSelect";
 
     var methods = {
-        'init': function(options) {
+        'init': function (options) {
             var o = {
                 ID: '',
                 NodeTypesUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
                 nodetypeid: '',
                 objectClassName: '',
-                onSelect: null, //function (nodetypeid) {},
-                onSuccess: null, //function () {}
+                onSelect: null, 
+                onSuccess: null, 
                 width: '',
                 addNewOption: false,
                 excludeNodeTypeIds: ''
@@ -27,22 +25,22 @@
             var $parent = $(this),
                 $select = $('<select id="'+ o.ID +'_sel" />').css('width', '200px');
             
-            if(isTrue(o.addNewOption)) {
+            if(Csw.bool(o.addNewOption)) {
                 $select.append('<option value="[Create New]">[Create New]</option>');
             }
 
-            $select.change(function() { if (isFunction(o.onSelect)) o.onSelect( $select.val() ); });
+            $select.change(function () { if (Csw.isFunction(o.onSelect)) o.onSelect( $select.val() ); });
 
-            CswAjaxJson({
+            Csw.ajax.post({
                     url: o.NodeTypesUrl,
-                    data: { ObjectClassName: tryParseString(o.objectClassName), ExcludeNodeTypeIds: o.excludeNodeTypeIds },
+                    data: { ObjectClassName: Csw.string(o.objectClassName), ExcludeNodeTypeIds: o.excludeNodeTypeIds },
                     success: function (data) {
                         var ret = data;
                         ret.nodetypecount = 0;
                         //Case 24155
-                        each(ret, function(thisNodeType) {
-                            if(contains(thisNodeType, 'id') &&
-                                    contains(thisNodeType, 'name')) {
+                        Csw.each(ret, function (thisNodeType) {
+                            if(Csw.contains(thisNodeType, 'id') &&
+                                    Csw.contains(thisNodeType, 'name')) {
                                 var id = thisNodeType.id,
                                     name = thisNodeType.name,
                                     $thisOpt;
@@ -52,17 +50,17 @@
                                 ret.nodetypecount += 1;
 
                                 $thisOpt = $('<option value="' + id + '">' + name + '</option>');
-                                each(thisNodeType, function(value, key) {
+                                Csw.each(thisNodeType, function (value, key) {
                                     $thisOpt.CswAttrNonDom(key, value);
                                 });
                                 $select.append($thisOpt);
                             }
                         });
                         
-                        if (isFunction(o.onSuccess)) {
+                        if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);
                         }
-                        $select.css('width', tryParseString(o.width));    
+                        $select.css('width', Csw.string(o.width));    
                     }
             });
             //Case 23986: Wait until options collection is built before appending
@@ -70,7 +68,7 @@
             $parent.append($select);
             return $select;
         },
-        'value': function() {
+        'value': function () {
             var $select = $(this);
             return $select.val();
         }

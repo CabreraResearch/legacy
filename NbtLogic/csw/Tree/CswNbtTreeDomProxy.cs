@@ -545,13 +545,13 @@ namespace ChemSW.Nbt
             _CswNbtTreeNodes.makeNodeCurrent( CswNbtNodeKey );
         }//makeNodeCurrent() 
 
-        /// <summary>
-        /// Sets a given node to be the currently indexed node in the tree, by path
-        /// </summary>
-        public void makeNodeCurrent( CswDelimitedString TreePath )
-        {
-            _CswNbtTreeNodes.makeNodeCurrent( TreePath );
-        }//makeNodeCurrent() 
+        ///// <summary>
+        ///// Sets a given node to be the currently indexed node in the tree, by path
+        ///// </summary>
+        //public void makeNodeCurrent( CswDelimitedString TreePath )
+        //{
+        //    _CswNbtTreeNodes.makeNodeCurrent( TreePath );
+        //}//makeNodeCurrent() 
 
         /// <summary>
         /// Returns true if there is a currently indexed node 
@@ -800,6 +800,16 @@ namespace ChemSW.Nbt
                                                        Selectable, ShowInTree, AddChildren, RowCount,
                                                        IconFileName, NameTemplate, NodeId, NodeName, NodeTypeId,
                                                        NodeTypeName, ObjectClassId, ObjectClassName, Locked );
+        }
+
+
+        public void setCurrentNodeChildrenTruncated( bool Truncated )
+        {
+            _CswNbtTreeNodes.setCurrentNodeChildrenTruncated( Truncated );
+        }
+        public bool getCurrentNodeChildrenTruncated()
+        {
+            return _CswNbtTreeNodes.getCurrentNodeChildrenTruncated();
         }
 
         #endregion //Modification******************************

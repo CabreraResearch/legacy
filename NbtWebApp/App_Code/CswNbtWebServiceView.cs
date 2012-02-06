@@ -188,22 +188,11 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Selectable = false;
                 }
-                ReturnObj.Add( new JProperty( type,
-                                              JObject.Parse( "{ \"icon\": { \"image\": \"Images/view/" + type + ".gif\" }, " +
-                                                             "\"hover_node\": " + Selectable.ToString().ToLower() + ", " +
-                                                             "\"select_node\": " + Selectable.ToString().ToLower() + " } }" ) ) );
-                // this puts quotes around the boolean values
-                //new JObject( 
-                //    new JProperty( "icon", 
-                //        new JObject( 
-                //            new JProperty( "image", "Images/view/" + type + @".gif" ) 
-                //        ) 
-                //    ),
-                //    new JProperty( "hover_node", Selectable.ToString().ToLower() )
-                //    new JProperty( "select_node", Selectable.ToString().ToLower() )
-                //) 
-                //    )
-                //);
+                ReturnObj[type] = new JObject();
+                ReturnObj[type]["icon"] = new JObject();
+                ReturnObj[type]["icon"]["image"] = "Images/view/" + type + ".gif";
+                ReturnObj[type]["hover_mode"] = Selectable;
+                ReturnObj[type]["select_mode"] = Selectable;
             }
             return ReturnObj;
         }
@@ -406,7 +395,8 @@ namespace ChemSW.Nbt.WebServices
                             foreach( CswNbtMetaDataNodeTypeProp ThisProp in PropsCollection )
                             {
                                 // BZs 7085, 6651, 6644, 7092
-                                if( ThisProp.FieldTypeRule.SearchAllowed )
+                                if( ThisProp.FieldTypeRule.SearchAllowed ||
+                                    ThisProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
                                 {
                                     CswNbtViewProperty ViewProp = View.AddViewProperty( null, (CswNbtMetaDataNodeTypeProp) ThisProp );
                                     if( !CurrentRelationship.Properties.Contains( ViewProp ) )

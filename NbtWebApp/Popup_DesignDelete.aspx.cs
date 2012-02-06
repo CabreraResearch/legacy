@@ -1,21 +1,13 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections.Specialized;
 using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
+using System.Data;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using Telerik.Web.UI;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-using ChemSW.DB;
-using ChemSW.CswWebControls;
 using ChemSW.Core;
+using ChemSW.CswWebControls;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
+using ChemSW.NbtWebControls;
+using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
 {

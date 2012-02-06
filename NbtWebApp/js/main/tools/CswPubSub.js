@@ -1,19 +1,19 @@
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
 
-(function($) {
+(function ($) {
     "use strict"; 
     var o = $({});
 
-    $.subscribe = function() {
+    $.subscribe = function () {
         o.on.apply(o, arguments);
     };
 
-    $.unsubscribe = function() {
+    $.unsubscribe = function () {
         o.off.apply(o, arguments);
     };
 
-    $.publish = function() {
+    $.publish = function () {
         o.trigger.apply(o, arguments);
     };
 

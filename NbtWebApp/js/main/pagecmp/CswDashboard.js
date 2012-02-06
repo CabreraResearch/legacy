@@ -9,7 +9,7 @@
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getDashboard',
-            onSuccess: function() { }
+            onSuccess: function () { }
         };
 
         if (options) {
@@ -18,7 +18,7 @@
 
         var $DashDiv = $(this);
         
-        CswAjaxJson({
+        Csw.ajax.post({
             url: o.Url,
             data: {},
             stringify: false,
@@ -32,7 +32,7 @@
                     if (data.hasOwnProperty(dashId)) {
                         var thisIcon = data[dashId];
                         var cellcontent;
-                        if (false === isNullOrEmpty( thisIcon.href )) {
+                        if (false === Csw.isNullOrEmpty( thisIcon.href )) {
                             cellcontent = '<td class="DashboardCell">' +
                                 '  <a target="_blank" href="' + thisIcon.href + '">' +
                                     '    <div title="' + thisIcon.text + '" id="' + dashId + '" class="' + dashId + '" />' +
@@ -54,7 +54,7 @@
         // For proper chaining support
         return this;
 
-    }; // function(options) {
+    }; // function (options) {
 })(jQuery);
 
 

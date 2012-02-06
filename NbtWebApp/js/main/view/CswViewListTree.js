@@ -1,9 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.CswViewListTree = function (options) { 
 
@@ -13,7 +11,7 @@
             issearchable: false,
             usesession: true,
             onSelect: function () { },
-            onSuccess: null //function() { }
+            onSuccess: null //function () { }
         };
 
         if (options) {
@@ -27,7 +25,7 @@
             UseSession: o.usesession
         };
                         
-        CswAjaxJson({
+        Csw.ajax.post({
                 url: o.ViewUrl,
                 data: jsonData,
                 stringify: false,
@@ -51,15 +49,15 @@
                         "plugins": ["themes", "json_data", "ui", "types"]
                     }).bind('select_node.jstree', 
                                 function () {
-                                    var selected = jsTreeGetSelected($viewsdiv);
+                                    var selected = Csw.jsTreeGetSelected($viewsdiv);
                                     var $item = selected.$item;
-                                    var isLeaf = isTrue($item.CswAttrNonDom('isleaf'));
+                                    var isLeaf = Csw.bool($item.CswAttrNonDom('isleaf'));
                                     if (false === isLeaf) {
                                         var $node = $(this);
                                         $viewsdiv.jstree('close_all');
                                         $node.jstree('toggle_node');    
                                     }
-                                    else if (isFunction(o.onSelect)) {
+                                    else if (Csw.isFunction(o.onSelect)) {
                                         var optSelect = {
                                             $item: $item,
                                             iconurl: selected.iconurl,
@@ -76,7 +74,7 @@
                                     }
                                 });
 
-                    if (isFunction(o.onSuccess)) {
+                    if (Csw.isFunction(o.onSuccess)) {
                         o.onSuccess();  
                     } 
 
@@ -86,5 +84,5 @@
         // For proper chaining support
         return this;
 
-    }; // function(options) {
+    }; // function (options) {
 })(jQuery);

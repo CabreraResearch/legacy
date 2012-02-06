@@ -13,7 +13,7 @@
             init: function (options) {
 
                 function handleClick() {
-                    if (isFunction(o.onClick)) {
+                    if (Csw.isFunction(o.onClick)) {
                         o.onClick();
                     }
                     toggle($TopDiv, $ChildDiv);
@@ -24,7 +24,7 @@
                     TopContent: '',
                     SelectContent: 'This ComboBox Is Empty!',
                     Width: '180px',
-                    onClick: null // function() { }
+                    onClick: null // function () { }
                 };
 
                 if (options) {
@@ -57,7 +57,7 @@
 
                 $cell1.click(handleClick);
 
-                $cell2.CswImageButton({ 'ButtonType': CswImageButton_ButtonType.Select,
+                $cell2.CswImageButton({ 'ButtonType': Csw.enums.imageButton_ButtonType.Select,
                     'ID': o.ID + '_top_img',
                     'AlternateText': '',
                     'onClick': handleClick

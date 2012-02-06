@@ -2,7 +2,6 @@ using System;
 using System.Web;
 using ChemSW.Config;
 using ChemSW.Nbt.Config;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
 using ChemSW.Security;

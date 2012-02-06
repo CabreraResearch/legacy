@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Data;
-using System.Threading;
-using System.Reflection;
-using System.Text;
-using System.Linq;
 using System.Collections.Generic;
-using ChemSW.Exceptions;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Nbt.Config;
-using ChemSW.Nbt.Schema;
-using ChemSW.Nbt;
-using ChemSW.DB;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 
