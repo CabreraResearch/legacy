@@ -82,7 +82,8 @@ namespace ChemSW.Nbt.MetaData
         public string RelationalColumn = string.Empty;
         private CswNbtFieldResources _CswNbtFieldResources;
 
-        public CswNbtSubField( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp, PropColumn DefaultColumn, SubFieldName SubFieldName )
+        //public CswNbtSubField( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp, PropColumn DefaultColumn, SubFieldName SubFieldName )
+        public CswNbtSubField( CswNbtFieldResources CswNbtFieldResources, PropColumn DefaultColumn, SubFieldName SubFieldName )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             Name = SubFieldName;

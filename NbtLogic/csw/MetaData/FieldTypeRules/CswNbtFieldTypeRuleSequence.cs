@@ -13,12 +13,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
-        public CswNbtFieldTypeRuleSequence( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRuleSequence( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            SequenceSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Sequence );
+            SequenceSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Sequence );
             SequenceSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
                                            CswNbtPropFilterSql.PropertyFilterMode.Contains |
                                            CswNbtPropFilterSql.PropertyFilterMode.Ends |
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                            CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( SequenceSubField );
 
-            SequenceNumberSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, SequenceNumberColumn, CswNbtSubField.SubFieldName.Number );
+            SequenceNumberSubField = new CswNbtSubField( _CswNbtFieldResources,  SequenceNumberColumn, CswNbtSubField.SubFieldName.Number );
             SequenceNumberSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
                                           CswNbtPropFilterSql.PropertyFilterMode.Contains |
                                           CswNbtPropFilterSql.PropertyFilterMode.Ends |
