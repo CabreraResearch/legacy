@@ -1201,9 +1201,8 @@ namespace ChemSW.Nbt.ImportExport
 
             CswNbtNode DestinationNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", DestinationNodeId )];
 
-            if( null == DestinationNode )
+            if( null != DestinationNode )
             {
-
 
                 if( SourceNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
                 {
@@ -1212,7 +1211,7 @@ namespace ChemSW.Nbt.ImportExport
                     if( RelatedNodeType.NodeTypeName != DestinationNode.NodeType.NodeTypeName )
                     {
                         DestinationTypeMatchesSourcesType = false;
-                        ErrorMessage = " the node type of the destination node " + DestinationNode.NodeName + " is " + DestinationNode.NodeType.NodeTypeName + " but the " + SourceNodeTypeProp.PropName + " must reference a node of node type " + RelatedNodeType.NodeTypeName;
+                        ErrorMessage = " the node type of the destination node " + DestinationNode.NodeId.ToString() + " named " + DestinationNode.NodeName + " is " + DestinationNode.NodeType.NodeTypeName + " but the " + SourceNodeTypeProp.PropName + " must reference a node of node type " + RelatedNodeType.NodeTypeName;
                     }
 
                 }
@@ -1222,14 +1221,13 @@ namespace ChemSW.Nbt.ImportExport
                     if( RelatedObjectClass.ObjectClass != DestinationNode.ObjectClass.ObjectClass )
                     {
                         DestinationTypeMatchesSourcesType = false;
-                        ErrorMessage = " object class of the destination node " + DestinationNode.NodeName + " is " + DestinationNode.ObjectClass.ObjectClass.ToString() + " but the " + SourceNodeTypeProp.PropName + " must reference a node of object class " + RelatedObjectClass.ObjectClass.ToString();
+                        ErrorMessage = " object class of the destination node " + DestinationNode.NodeId.ToString() + " named " + DestinationNode.NodeName + " is " + DestinationNode.ObjectClass.ObjectClass.ToString() + " but the " + SourceNodeTypeProp.PropName + " must reference a node of object class " + RelatedObjectClass.ObjectClass.ToString();
                     }
                 }
                 else
                 {
                     DestinationTypeMatchesSourcesType = false;
                     ErrorMessage = " The FK Type of the node type prop" + SourceNodeTypeProp.PropName + " cannot be determined";
-
                 }
             }
             else
@@ -1247,71 +1245,3 @@ namespace ChemSW.Nbt.ImportExport
 } // namespace ChemSW.Nbt
 
 
-//foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
-//{
-//    CswNbtSubField.PropColumn.Field1
-
-//    CurrentSubField.Column
-//    CurrentNbtNode.Properties[CurrentNodeTypeProp].Field1 = "foo"; 
-//}
-
-//switch( CurrentNodeTypeProp.FieldType.FieldType )
-//{
-//    case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
-//        string foo = string.Empty;
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Button:
-//        foo = string.Empty;
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Link:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.List:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Location:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Memo:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Number:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Password:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.PropertyReference:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Text:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.TimeInterval:
-//        break;
-
-//    default:
-//        CurrentRowError += "Unhandled field type for property " + CurrentNodeTypePropname + ": " + CurrentNodeTypeProp.FieldType.FieldType.ToString();
-//        break;
-
-//}//deal with each field type
