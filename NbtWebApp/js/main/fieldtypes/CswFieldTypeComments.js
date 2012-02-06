@@ -18,7 +18,6 @@
 
             //var Value = extractCDataValue($xml.children('text'));
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? tryParseString(propVals.text).trim() : CswMultiEditDefaultValue;
             var rows = tryParseString(propVals.rows);
             var columns = tryParseString(propVals.columns);
 
@@ -66,9 +65,7 @@
                 $cell3.addClass(bgclass);
                 $cell3.append(acomment.message);
             });
-            if (o.ReadOnly) {
-                $Div.append(value);
-            } else {
+            if (false === o.ReadOnly) {
                 var $TextArea = $('<textarea id="' + o.ID + '" name="' + o.ID + '" rows="' + rows + '" cols="' + columns + '"></textarea>')
                                     .appendTo($Div)
                                     .change(o.onchange);
