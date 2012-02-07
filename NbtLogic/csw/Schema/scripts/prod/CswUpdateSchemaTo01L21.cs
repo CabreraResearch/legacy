@@ -34,6 +34,27 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Case 24938
 
+            #region Case 24943
+
+
+            CswNbtMetaDataObjectClass GeneratorOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClassProp OwnerOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName );
+
+            foreach( CswNbtNode GeneratorNode in GeneratorOc.getNodes( true, false ) )
+            {
+                CswNbtObjClassGenerator NodeAsGenerator = CswNbtNodeCaster.AsGenerator( GeneratorNode );
+                if( null == NodeAsGenerator.Owner ||
+                    null == NodeAsGenerator.Owner.RelatedNodeId ||
+                    null == _CswNbtSchemaModTrnsctn.Nodes.GetNode( NodeAsGenerator.Owner.RelatedNodeId ) )
+                {
+                    NodeAsGenerator.Enabled.Checked = Tristate.False;
+                    GeneratorNode.postChanges( true );
+                }
+            }
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( OwnerOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+
+            #endregion Case 24943
 
         }//Update()
 
