@@ -38,34 +38,33 @@
             if (options) {
                 $.extend(internal, options);
             }
-            var o = internal;
 
-            external.id = o.ID;
+            external.id = internal.ID;
             external.$ = $('<table id="' + external.id + '"></table>');
             
-            external.addClass(external.$, o.TableCssClass);
+            external.addClass(external.$, internal.TableCssClass);
             external.prop(external.$, {
-                'width': o.width,
-                'align': o.align,
-                'cellpadding': o.cellpadding,
-                'cellspacing': o.cellspacing,
-                'border': o.border,
-                'cellalign': o.cellalign,
-                'cellvalign': o.cellvalign,
-                'cellcssclass': o.CellCssClass
+                'width': internal.width,
+                'align': internal.align,
+                'cellpadding': internal.cellpadding,
+                'cellspacing': internal.cellspacing,
+                'border': internal.border,
+                'cellalign': internal.cellalign,
+                'cellvalign': internal.cellvalign,
+                'cellcssclass': internal.CellCssClass
             });
             external.attr(external.$, {
-                'FirstCellRightAlign': o.FirstCellRightAlign,
-                'OddCellRightAlign': o.OddCellRightAlign
+                'FirstCellRightAlign': internal.FirstCellRightAlign,
+                'OddCellRightAlign': internal.OddCellRightAlign
             });
 
             external.$.bind('CswTable_onCreateCell', function (e, $eTable, $cell, row, column) {
-                o.onCreateCell(e, $eTable, $cell, row, column);
+                internal.onCreateCell(e, $eTable, $cell, row, column);
                 e.stopPropagation(); // prevents events from triggering in nested tables
             });
             external.$.trigger('CswTable_onCreateCell', [external.$, external.$.find('td'), 1, 1]);
 
-            o.$parent.append(external.$);
+            internal.$parent.append(external.$);
 
         }());
 
