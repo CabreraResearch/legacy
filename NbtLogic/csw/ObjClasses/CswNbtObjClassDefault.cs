@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtResources.Trees.clear();
 
             // BZ 10094 - Notification event
-            _CswNbtResources.runNotification( this.NodeTypeId, CswNbtObjClassNotification.EventOption.Create, _CswNbtNode, string.Empty, string.Empty );
+            _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Create, _CswNbtNode, string.Empty, string.Empty );
 
         } // afterCreateNode()
 
@@ -142,14 +142,14 @@ namespace ChemSW.Nbt.ObjClasses
                 if( CurrentProp.WasModified )
                 {
                     // Prop-specific notifications  
-                    _CswNbtResources.runNotification( this.NodeTypeId, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, CurrentProp.PropName, string.Empty );
-                    _CswNbtResources.runNotification( this.NodeTypeId, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, CurrentProp.PropName, CurrentProp.Gestalt );
+                    _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, CurrentProp.PropName, string.Empty );
+                    _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, CurrentProp.PropName, CurrentProp.Gestalt );
                     SomethingModified = true;
                 }
             }
             // Generic edit notifications  
             if( SomethingModified )
-                _CswNbtResources.runNotification( this.NodeTypeId, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, string.Empty, string.Empty );
+                _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, string.Empty, string.Empty );
 
         }//afterWriteNode()
 
@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtResources.Trees.clear();
 
             // BZ 10094 - Notification event
-            _CswNbtResources.runNotification( this.NodeTypeId, CswNbtObjClassNotification.EventOption.Delete, _CswNbtNode, string.Empty, string.Empty );
+            _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Delete, _CswNbtNode, string.Empty, string.Empty );
         }
 
 

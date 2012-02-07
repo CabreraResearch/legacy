@@ -1,9 +1,9 @@
 ﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
-    
+
     $.fn.CswScheduledRulesGrid = function (options) {
 
         //#region Variable Declaration
@@ -34,10 +34,10 @@
             $divStep1, selectedCustomerId = '',
         // Step 2 - Review Scheduled Rules
             $divStep2, scheduledRulesGrid, gridOptions,
-            
+
             toggleButton = function (button, isEnabled, doClick) {
                 var $btn;
-                if(Csw.bool(isEnabled)) {
+                if (Csw.bool(isEnabled)) {
                     $btn = $wizard.CswWizard('button', button, 'enable');
                     if (Csw.bool(doClick)) {
                         $btn.click();
@@ -47,13 +47,13 @@
                 }
                 return false;
             },
-            
+
             makeStepId = function (suffix, stepNo) {
                 var step = stepNo || currentStepNo;
                 return Csw.makeId({ prefix: 'step_' + step, ID: o.ID, suffix: suffix });
             },
-            
-            //Step 1. Select a Customer ID
+
+        //Step 1. Select a Customer ID
             makeStepOne = (function () {
                 var stepOneComplete = false;
 
@@ -61,39 +61,39 @@
                     var nextBtnEnabled = function () {
                         return (false === Csw.isNullOrEmpty(selectedCustomerId));
                     };
-                    var $customerIdTable, $customerIdSelect;
+                    var customerIdTable, $customerIdSelect;
 
                     toggleButton(buttons.prev, false);
                     toggleButton(buttons.cancel, true);
                     toggleButton(buttons.finish, false);
                     toggleButton(buttons.next, nextBtnEnabled());
-                    
+
                     if (false === stepOneComplete) {
                         $divStep1 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ScheduleRulesGrid.step1.step);
                         $divStep1.append('<br />');
 
-                        $customerIdTable = $divStep1.CswTable('init', {
+                        customerIdTable = Csw.controls.table({
+                            $parent: $divStep1,
                             ID: makeStepId('inspectionTable'),
                             FirstCellRightAlign: true
                         });
 
-                        $customerIdTable.CswTable('cell', 1, 1)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .append('<span>Select a Customer ID&nbsp</span>');
-                        
-                        $customerIdSelect = $customerIdTable.CswTable('cell', 1, 2)
+                        customerIdTable.add(1, 1, '<span>Select a Customer ID&nbsp</span>')
+                                        .css({'padding': '1px', 'vertical-align': 'middle'});
+
+                        $customerIdSelect = customerIdTable.cell(1, 2)
                             .CswDiv('init')
                             .CswSelect('init', {
                                 ID: Csw.makeSafeId('customerIdSelect'),
                                 selected: '',
-                                values: [{value: '', display: ''}],
+                                values: [{ value: '', display: ''}],
                                 onChange: function () {
                                     var $selected = $customerIdSelect.find(':selected');
                                     selectedCustomerId = $selected.val();
                                     toggleButton(buttons.next, (false === Csw.isNullOrEmpty(selectedCustomerId)));
                                 }
                             });
-                        
+
                         Csw.ajax.post({
                             url: '/NbtWebApp/wsNBT.asmx/getActiveAccessIds',
                             success: function (data) {
@@ -102,22 +102,22 @@
                                 selectedCustomerId = $customerIdSelect.find(':selected').val();
                             }
                         });
-                        
+
                         selectedCustomerId = $customerIdSelect.find(':selected').val();
                     }
                     stepOneComplete = true;
                 };
-            }()),
+            } ()),
 
-            //Step 2: Review Scheduled Rules
+        //Step 2: Review Scheduled Rules
             makeStepTwo = function () {
-                var rulesGridId = makeStepId('previewGrid_outer', 3), 
-                    $rulesGrid, $headerTable;
+                var rulesGridId = makeStepId('previewGrid_outer', 3),
+                    $rulesGrid, headerTable;
 
                 var makeRulesGrid = function () {
                     $rulesGrid = $rulesGrid || $('<div id="' + rulesGridId + '"></div>').appendTo($divStep2);
                     $rulesGrid.empty();
-                    
+
                     gridOptions = {
                         ID: makeStepId('rulesGrid'),
                         pagermode: 'default',
@@ -132,7 +132,7 @@
                             view: false,
                             editfunc: function (rowid) {
                                 var onEdit = {
-                                    url: '/NbtWebApp/wsNBT.asmx/updateScheduledRule', 
+                                    url: '/NbtWebApp/wsNBT.asmx/updateScheduledRule',
                                     editData: { AccessId: selectedCustomerId },
                                     reloadAfterSubmit: false,
                                     checkOnSubmit: true,
@@ -143,50 +143,53 @@
                             }
                         }
                     };
-                    
+
                     Csw.ajax.post({
-                            url: '/NbtWebApp/wsNBT.asmx/getScheduledRulesGrid',
-                            data: { AccessId: selectedCustomerId },
-                            success: function (data) {
-                                $.extend(gridOptions.gridOpts, data);
-                                scheduledRulesGrid = Csw.grid(gridOptions, $rulesGrid);
-                            }
-                        });
+                        url: '/NbtWebApp/wsNBT.asmx/getScheduledRulesGrid',
+                        data: { AccessId: selectedCustomerId },
+                        success: function (data) {
+                            $.extend(gridOptions.gridOpts, data);
+                            scheduledRulesGrid = Csw.controls.grid(gridOptions, $rulesGrid);
+                        }
+                    });
                 };
-                
+
                 $divStep2 = $divStep2 || $wizard.CswWizard('div', Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step);
                 $divStep2.empty();
-                
+
                 toggleButton(buttons.next, false);
                 toggleButton(buttons.cancel, false);
                 toggleButton(buttons.finish, true);
                 toggleButton(buttons.prev, true);
 
-                $headerTable = $divStep2.CswTable('init', { ID: makeStepId('headerTable') });
-                $headerTable.CswTable('cell', 1, 1).append('<span>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</span>');
-                $headerTable.CswTable('cell', 1, 2).CswButton('init', {
-                        ID: Csw.makeSafeId('clearAll'),
-                        enabledText: 'Clear All Reprobates',
-                        disabledText: 'Clearing...',
-                        onclick: function () {
-                            Csw.ajax.post({
-                                url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
-                                data: {AccessId: selectedCustomerId, Action: 'ClearAllReprobates'},
-                                success: makeStepTwo
-                            });
-                        }
-                    });
+                headerTable = Csw.controls.table({
+                    $parent: $divStep2,
+                    ID: makeStepId('headerTable')
+                });
+                headerTable.CswTable('cell', 1, 1).append('<span>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</span>');
+                headerTable.CswTable('cell', 1, 2).CswButton('init', {
+                    ID: Csw.makeSafeId('clearAll'),
+                    enabledText: 'Clear All Reprobates',
+                    disabledText: 'Clearing...',
+                    onclick: function () {
+                        Csw.ajax.post({
+                            url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
+                            data: { AccessId: selectedCustomerId, Action: 'ClearAllReprobates' },
+                            success: makeStepTwo
+                        });
+                    }
+                });
                 $divStep2.append('<br/>');
-                
+
                 makeRulesGrid();
-                
+
             },
 
             handleNext = function ($wizardTable, newStepNo) {
                 currentStepNo = newStepNo;
                 switch (newStepNo) {
                     case Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step:
-                        makeStepTwo(); 
+                        makeStepTwo();
                         break;
                 } // switch(newstepno)
             }, // handleNext()
@@ -213,7 +216,7 @@
             onNext: handleNext,
             onPrevious: handlePrevious,
             onCancel: o.exitFunc, //There is nothing to finish or cancel, just exixt the wizard
-            onFinish: o.exitFunc, 
+            onFinish: o.exitFunc,
             doNextOnInit: false
         });
 

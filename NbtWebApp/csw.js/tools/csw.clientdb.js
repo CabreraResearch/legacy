@@ -174,5 +174,6 @@
 
     }());
     Csw.register('clientDb', clientDb);
+    Csw.clientDb = Csw.clientDb || clientDb;
     
 }());

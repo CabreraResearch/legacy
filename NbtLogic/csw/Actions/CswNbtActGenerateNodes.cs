@@ -133,11 +133,12 @@ namespace ChemSW.Nbt.Actions
 
             bool GeneratorBaseIsProperlyConfigured = ( null != GeneratorNodeAsGenerator.Owner &&
                                                    null != GeneratorNodeAsGenerator.Owner.RelatedNodeId &&
+                                                   null != _CswNbtResources.Nodes.GetNode( GeneratorNodeAsGenerator.Owner.RelatedNodeId ) &&
                                                    GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.Count > 0 );
 
             if( false == GeneratorBaseIsProperlyConfigured )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot execute generater task if the generator is not fully configured.", "Generator node did not define both an Owner and a Target Type." );
+                throw new CswDniException( ErrorType.Error, "Cannot execute generator task if the generator does not have an owner and a target type.", "Generator node did not define both an Owner and a Target Type." );
             }
             Collection<CswPrimaryKey> Parents = new Collection<CswPrimaryKey>();
 

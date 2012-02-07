@@ -45,5 +45,6 @@
         return false;
     }
     Csw.register('print', doPrint);
+    Csw.print = Csw.print || doPrint;
     
 }());

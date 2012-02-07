@@ -1,0 +1,219 @@
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+
+(function () { 
+    'use strict';
+
+    var dom = (function _dom () {
+        var internal = {};
+        var external = {};
+
+        internal.doProp = function ($Dom, name, value) {
+            var ret = '';
+
+            try {
+                if (arguments.length === 2) {
+                    ret = $Dom.prop(name);
+                } else {
+                    ret = $Dom.prop(name, value);
+                }
+
+                // special cases
+                if (ret === undefined ||
+                    name === 'href' ||
+                        name === 'cellpadding' ||
+                            name === 'cellspacing' ||
+                                name === 'rowspan' ||
+                                    name === 'colspan') {
+                    if (arguments.length === 2) {
+                        ret = $Dom.attr(name);
+                    } else {
+                        ret = $Dom.attr(name, value);
+                    }
+                }
+            } catch (e) {
+                //We're in IE hell. Do nothing.
+            }
+
+            return ret;
+        };
+
+        internal.doAttr = function ($this, name, value) {
+            var ret = $this;
+
+            try {
+                switch (arguments.length) {
+                    case 2:
+                        ret = $this.attr(name);
+                        break;
+                    case 3:
+                        ret = $this.attr(name, value);
+                        break;
+                }
+            } catch (e) {
+                //We're in IE hell. Do nothing.
+            }
+            // For proper chaining support
+            return ret;
+        };
+
+        external.prop = function ($Dom, name, value) {
+            /// <summary>
+            ///   Gets or sets a DOM property
+            /// </summary>
+            /// <param name="name" type="String">The name of the attribute</param>
+            /// <param name="value" type="String">The value of the attribute</param>
+            /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
+            var ret = $Dom,
+                prop;
+        
+            try {
+                if (typeof name === "object") {
+                    for (prop in name) {
+                        internal.doProp($Dom, prop, name[prop]);
+                    }
+                } else {
+                    ret = internal.doProp($Dom, name, value);
+                }
+            } catch (e) {
+                //We're in IE hell. Do nothing.
+            }
+            return ret;
+        };
+
+        external.attr = function ($this, name, value) {
+            /// <summary>
+            ///   Gets or sets an Non-Dom attribute
+            /// </summary>
+            /// <param name="name" type="String">The name of the attribute</param>
+            /// <param name="value" type="String">The value of the attribute</param>
+            /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
+            var ret = $this,
+                prop;
+            try {
+                if (typeof name === "object") {
+                    for (prop in name) {
+                        internal.doAttr($this, prop, name[prop]);
+                    }
+                } else {
+                    ret = internal.doAttr($this, name, value);
+                }
+                // For proper chaining support
+            } catch (e) {
+                //We're in IE hell. Do nothing.
+            }
+            return ret;
+        };
+
+        external.makeId = function (options, prefix, suffix, delimiter) {
+            /// <summary>
+            ///   Generates an ID for DOM assignment
+            /// </summary>
+            /// <param name="options" type="Object">
+            ///     A JSON Object
+            ///     &#10;1 - options.ID: Base ID string
+            ///     &#10;2 - options.prefix: String prefix to prepend
+            ///     &#10;3 - options.suffix: String suffix to append
+            ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
+            /// </param>
+            /// <returns type="String">A concatenated string of provided values</returns>
+            var elementId;
+            var o = {
+                ID: '',
+                prefix: Csw.string(prefix),
+                suffix: Csw.string(suffix),
+                Delimiter: Csw.string(delimiter, '_')
+            };
+            if (Csw.isPlainObject(options)) {
+                $.extend(o, options);
+            } else {
+                o.ID = Csw.string(options);
+            }
+
+            elementId = o.ID;
+            if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
+                elementId = o.prefix + o.Delimiter + elementId;
+            }
+            if (false === Csw.isNullOrEmpty(o.suffix) && false === Csw.isNullOrEmpty(elementId)) {
+                elementId += o.Delimiter + o.suffix;
+            }
+            return elementId;
+        };
+
+        external.makeSafeId = function (options, prefix, suffix, delimiter) {
+            /// <summary>   Generates a "safe" ID for DOM assignment </summary>
+            /// <param name="options" type="Object">
+            ///     A JSON Object
+            ///     &#10;1 - options.ID: Base ID string
+            ///     &#10;2 - options.prefix: String prefix to prepend
+            ///     &#10;3 - options.suffix: String suffix to append
+            ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
+            /// </param>
+            /// <returns type="String">A concatenated string of provided values</returns>
+            var elementId, i, toReplace;
+            var o = {
+                ID: '',
+                prefix: Csw.string(prefix),
+                suffix: Csw.string(suffix),
+                Delimiter: Csw.string(delimiter, '_')
+            };
+            if (Csw.isPlainObject(options)) {
+                $.extend(o, options);
+            } else {
+                o.ID = Csw.string(options);
+            }
+
+            elementId = o.ID;
+            toReplace = [ /'/gi , / /gi , /\//g ];
+            if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
+                elementId = o.prefix + o.Delimiter + elementId;
+            }
+            if (false === Csw.isNullOrEmpty(o.suffix) && false === Csw.isNullOrEmpty(elementId)) {
+                elementId += o.Delimiter + o.suffix;
+            }
+            for (i = 0; i < toReplace.length; i += 1) {
+                if (Csw.contains(toReplace, i)) {
+                    if (false === Csw.isNullOrEmpty(elementId)) {
+                        elementId = elementId.replace(toReplace[i], '');
+                    }
+                }
+            }
+            return elementId;
+        };
+
+        external.tryParseElement = function (elementId, $context) {
+            /// <summary>Attempts to fetch an element from the DOM first through jQuery, then through JavaScript.</summary>
+            /// <param name="elementId" type="String"> ElementId to find </param>
+            /// <param name="$context" type="jQuery"> Optional context to limit the search </param>
+            /// <returns type="jQuery">jQuery object, empty if no match found.</returns>
+            var $ret = $('');
+            var document = Csw.getGlobalProp('document');
+            if (false === Csw.isNullOrEmpty(elementId)) {
+                if (arguments.length === 2 && false === Csw.isNullOrEmpty($context)) {
+                    $ret = $('#' + elementId, $context);
+                } else {
+                    $ret = $('#' + elementId);
+                }
+                if ($ret.length === 0) {
+                    $ret = $(document.getElementById(elementId));
+                }
+                if ($ret.length === 0) {
+                    $ret = $(document.getElementsByName(elementId));
+                }
+            }
+            return $ret;
+        };
+
+        external.addClass = function ($el, name) {
+            $el.addClass(name);
+        };
+
+        return external;
+    }());
+
+    Csw.controls.register('dom', dom);
+    Csw.controls.dom = Csw.controls.dom || dom;
+
+}());
+
+

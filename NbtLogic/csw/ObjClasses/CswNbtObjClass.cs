@@ -49,6 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
 
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }
+        public CswNbtMetaDataNodeType NodeType { get { return _CswNbtResources.MetaData.getNodeType( _CswNbtNode.NodeTypeId ); } }
         public CswPrimaryKey NodeId { get { return _CswNbtNode.NodeId; } }
         public CswNbtNode Node { get { return _CswNbtNode; } }
 

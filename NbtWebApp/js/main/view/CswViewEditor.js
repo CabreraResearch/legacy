@@ -170,42 +170,42 @@
 
         // Step 2 - Edit View Attributes
         var $div2 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.attributes.step);
-        var $table2 = $div2.CswTable({
-            'ID': o.ID + '_tbl2',
-            'FirstCellRightAlign': true
+        var table2 = Csw.controls.table({
+            $parent: $div2,
+            ID: o.ID + '_tbl2',
+            FirstCellRightAlign: true
         });
 
-        $table2.CswTable('cell', 1, 1).append('View Name:');
-        var $viewnametextcell = $table2.CswTable('cell', 1, 2);
+        table2.add(1, 1, 'View Name:');
+        var $viewnametextcell = table2.cell(1, 2);
         var $viewnametextbox = $viewnametextcell.CswInput('init', { ID: o.ID + '_viewname',
             type: Csw.enums.inputTypes.text
         });
 
-        $table2.CswTable('cell', 2, 1).append('Category:');
-        var $categorytextcell = $table2.CswTable('cell', 2, 2);
+        table2.add(2, 1, 'Category:');
+        var $categorytextcell = table2.cell(2, 2);
         var $categorytextbox = $categorytextcell.CswInput('init', { ID: o.ID + '_category',
             type: Csw.enums.inputTypes.text
         });
 
-        var v;
+        var visSelect;
         // we don't have json to see whether this is a Property view or not yet,
         // so checking startingStep will have to suffice
         if (o.startingStep === 1) {
-            v = Csw.makeViewVisibilitySelect($table2, 3, 'View Visibility:');
+            visSelect = Csw.makeViewVisibilitySelect(table2, 3, 'View Visibility:');
         }
 
-        $table2.CswTable('cell', 4, 1).append('For Mobile:');
-        var $formobilecheckcell = $table2.CswTable('cell', 4, 2);
+        table2.add(4, 1, 'For Mobile:');
+        var $formobilecheckcell = table2.cell(4, 2);
         var $formobilecheckbox = $formobilecheckcell.CswInput('init', { ID: o.ID + '_formobile',
             type: Csw.enums.inputTypes.checkbox
         });
 
-        $table2.CswTable('cell', 5, 1).append('Display Mode:');
-        var $displaymodespan = $table2.CswTable('cell', 5, 2).append('<span id="' + o.ID + '_displaymode"></span>');
+        table2.add(5, 1, 'Display Mode:');
+        var $displaymodespan = table2.add(5, 2, '<span id="' + o.ID + '_displaymode"></span>');
 
-        var $gridwidthlabelcell = $table2.CswTable('cell', 6, 1)
-            .append('Grid Width (in characters):');
-        var $gridwidthtextboxcell = $table2.CswTable('cell', 6, 2);
+        var $gridwidthlabelcell = table2.add(6, 1, 'Grid Width (in characters):');
+        var $gridwidthtextboxcell = table2.cell(6, 2);
         $gridwidthtextboxcell.CswNumberTextBox('init', {
             'ID': o.ID + '_gridwidth',
             'Value': '',
@@ -265,10 +265,10 @@
                             $categorytextbox.val(currentViewJson.category);
                                 var visibility = Csw.string(currentViewJson.visibility);
                             if (visibility !== 'Property') {
-                                if (v.getvisibilityselect() !== undefined) {
-                                    v.getvisibilityselect().val(visibility).trigger('change');
-                                    v.getvisroleselect().val('nodes_' + currentViewJson.visibilityroleid);
-                                    v.getvisuserselect().val('nodes_' + currentViewJson.visibilityuserid);
+                                if (visSelect.$visibilityselect !== undefined) {
+                                    visSelect.$visibilityselect.val(visibility).trigger('change');
+                                    visSelect.$visroleselect.val('nodes_' + currentViewJson.visibilityroleid);
+                                    visSelect.$visuserselect.val('nodes_' + currentViewJson.visibilityuserid);
                                 }
                             }
 
@@ -315,13 +315,13 @@
             currentViewJson.viewname = $viewnametextbox.val();
             currentViewJson.category = $categorytextbox.val();
             if (currentViewJson.visibility !== 'Property') {
-                if (v.getvisibilityselect() !== undefined) {
-                    var visibility = v.getvisibilityselect().val();
+                if (visSelect.$visibilityselect !== undefined) {
+                    var visibility = visSelect.$visibilityselect.val();
                     currentViewJson.visibility = visibility;
 
                     var rolenodeid = '';
                     if (visibility === 'Role') {
-                        rolenodeid = v.getvisroleselect().val();
+                        rolenodeid = visSelect.$visroleselect.val();
                         if (!Csw.isNullOrEmpty(rolenodeid)) {
                             rolenodeid = rolenodeid.substr('nodes_'.length);
                         }
@@ -330,7 +330,7 @@
 
                     var usernodeid = '';
                     if (visibility === 'User') {
-                        usernodeid = v.getvisuserselect().val();
+                        usernodeid = visSelect.$visuserselect.val();
                         if (!Csw.isNullOrEmpty(usernodeid)) {
                             usernodeid = usernodeid.substr('nodes_'.length);
                         }
@@ -465,7 +465,7 @@
                             }
                         };
                         $.extend(g.gridOpts, gridJson);
-                        cswViewGrid = Csw.grid(g, $viewgrid);
+                        cswViewGrid = Csw.controls.grid(g, $viewgrid);
                         cswViewGrid.$gridPager.css({width: '100%', height: '20px'});
 
                         cswViewGrid.hideColumn(o.ColumnFullViewId);

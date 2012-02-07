@@ -178,7 +178,7 @@
 
                         cswGridOpts.printUrl = getGridRowsUrl(true);
 
-                        ret = Csw.grid(cswGridOpts, $parent);
+                        ret = Csw.controls.grid(cswGridOpts, $parent);
 
                         if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);
