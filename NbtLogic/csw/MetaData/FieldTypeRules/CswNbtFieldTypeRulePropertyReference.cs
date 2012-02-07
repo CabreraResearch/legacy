@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     if( false == RetIsInvalid )
                     {
                         CswNbtMetaDataNodeTypeProp ValueNtp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( inValuePropId );
-                        RetIsInvalid = ( null == ValueNtp || ( ValueNtp.NodeType.FirstVersionNodeType != FkRelationshipTargetNt.FirstVersionNodeType ) );
+                        RetIsInvalid = ( null == ValueNtp || ( ValueNtp.NodeType.getFirstVersionNodeType() != FkRelationshipTargetNt.getFirstVersionNodeType() ) );
                     }
                     break;
                 case CswNbtViewRelationship.RelatedIdType.ObjectClassId:

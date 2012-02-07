@@ -134,9 +134,9 @@ namespace ChemSW.Nbt.PropTypes
                 //}
 
                 bool first = true;
-                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getLatestVersionNodeTypes() )
                 {
-                    if( ConstrainObjectClassId == Int32.MinValue || NodeType.ObjectClass.ObjectClassId == ConstrainObjectClassId )
+                    if( ConstrainObjectClassId == Int32.MinValue || NodeType.ObjectClassId == ConstrainObjectClassId )
                     {
                         DataRow NTRow = Data.NewRow();
                         NTRow[NameColumn] = NodeType.NodeTypeName;          // latest name

@@ -205,8 +205,9 @@ namespace ChemSW.Nbt.ObjClasses
             if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
             {
                 // set NodeType Permissions options
+                // Could be a performance problem!!!
                 Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
-                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getLatestVersionNodeTypes() )
                 {
                     foreach( CswNbtPermit.NodeTypePermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypePermission ) ) )
                     {

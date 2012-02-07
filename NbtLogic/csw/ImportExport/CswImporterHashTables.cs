@@ -230,10 +230,10 @@ namespace ChemSW.Nbt.ImportExport
                     //if( IMode == ImportMode.CopyOverwrite )
                     //{
                     // Source Name and Source ObjectClass have to match in order to use an existing nodetype
-                    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
+                    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
                     {
                         if( NodeType.NodeTypeName.ToLower() == SourceNodeTypeName.ToLower() &&
-                            NodeType.ObjectClass.ObjectClassId == SourceObjectClassId )
+                            NodeType.ObjectClassId == SourceObjectClassId )
                         {
                             DestNodeType = NodeType;
                             break;
@@ -413,12 +413,12 @@ namespace ChemSW.Nbt.ImportExport
             _StatusUpdate( "Fixing Relationship References" );
 
             // Fix relationship references
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
-            {
-                foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
+            //foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
+            //{
+                foreach( CswNbtMetaDataNodeTypeProp Prop in _CswNbtResources.MetaData.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Relationship ) )
                 {
-                    if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
-                    {
+                    //if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                    //{
                         if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
                         {
                             if( NodeTypeMap.ContainsKey( Prop.FKValue ) )
@@ -426,9 +426,9 @@ namespace ChemSW.Nbt.ImportExport
                                 Prop.SetFK( Prop.FKType, NodeTypeMap[Prop.FKValue], Prop.ValuePropType, Prop.ValuePropId );
                             }
                         } // if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
-                    } // if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                    //} // if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                 } // foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
-            } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
+            //} // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
 
             _StatusUpdate( "Done Fixing Relationship References" );
 

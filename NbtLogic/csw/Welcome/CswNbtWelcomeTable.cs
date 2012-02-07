@@ -77,16 +77,26 @@ namespace ChemSW.Nbt.Welcome
             Int32 TaskNodeTypeId = Int32.MinValue;
             Int32 ScheduleNodeTypeId = Int32.MinValue;
             Int32 EquipmentNodeTypeId = Int32.MinValue;
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getLatestVersionNodeTypes() )
             {
-                if( NodeType.NodeTypeName == "Equipment Problem" )
-                    ProblemNodeTypeId = NodeType.FirstVersionNodeTypeId;
-                if( NodeType.NodeTypeName == "Equipment Task" )
-                    TaskNodeTypeId = NodeType.FirstVersionNodeTypeId;
-                if( NodeType.NodeTypeName == "Equipment Schedule" )
-                    ScheduleNodeTypeId = NodeType.FirstVersionNodeTypeId;
-                if( NodeType.NodeTypeName == "Equipment" )
-                    EquipmentNodeTypeId = NodeType.FirstVersionNodeTypeId;
+                string NodeTypeName = NodeType.NodeTypeName;
+                Int32 FirstVersionNTId = NodeType.FirstVersionNodeTypeId;
+                if( NodeTypeName == "Equipment Problem" )
+                {
+                    ProblemNodeTypeId = FirstVersionNTId;
+                }
+                else if( NodeTypeName == "Equipment Task" )
+                {
+                    TaskNodeTypeId = FirstVersionNTId;
+                }
+                else if( NodeTypeName == "Equipment Schedule" )
+                {
+                    ScheduleNodeTypeId = FirstVersionNTId;
+                }
+                else if( NodeTypeName == "Equipment" )
+                {
+                    EquipmentNodeTypeId = FirstVersionNTId;
+                }
             }
 
             // Equipment

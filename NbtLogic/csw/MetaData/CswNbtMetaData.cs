@@ -65,26 +65,36 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Node Type primary keys (Int32)
         /// </summary>
-        public Collection<Int32> NodeTypeIds { get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds(); } }
+        public Collection<Int32> getNodeTypeIds()
+        {
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds();
+        }
+
         /// <summary>
         /// Collection of CswNbtMetaDataNodeType objects
         /// </summary>
-        public IEnumerable<CswNbtMetaDataNodeType> NodeTypes { get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes(); } }
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
+        {
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes();
+        }
+        
 
         /// <summary>
         /// Collection of CswNbtMetaDataNodeType objects that have the provided object class
         /// </summary>
-        public Collection<CswNbtMetaDataNodeType> NodeTypesByObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
+        public Collection<CswNbtMetaDataNodeType> getNodeTypesByObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
         {
-            Collection<CswNbtMetaDataNodeType> MatchingNodeTypes = new Collection<CswNbtMetaDataNodeType>();
-            foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
-            {
-                if( NodeType.ObjectClass.ObjectClass == ObjectClass )
-                {
-                    MatchingNodeTypes.Add( NodeType );
-                }
-            }
-            return MatchingNodeTypes;
+            //Collection<CswNbtMetaDataNodeType> MatchingNodeTypes = new Collection<CswNbtMetaDataNodeType>();
+            //foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
+            //{
+            //    if( NodeType.ObjectClass.ObjectClass == ObjectClass )
+            //    {
+            //        MatchingNodeTypes.Add( NodeType );
+            //    }
+            //}
+            //return MatchingNodeTypes;
+            CswNbtMetaDataObjectClass ObjectClass = this.getObjectClass( ObjectClass );
+            return ObjectClass.NodeTypes;
         }
 
 
@@ -93,30 +103,42 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
 
 
-        public IEnumerable<CswNbtMetaDataNodeType> LatestVersionNodeTypes
+        public IEnumerable<CswNbtMetaDataNodeType> getLatestVersionNodeTypes()
         {
-            get
-            {
-                return _CswNbtMetaDataResources.NodeTypesCollection.getLatestVersionNodeTypes();
-            }
+            return _CswNbtMetaDataResources.NodeTypesCollection.getLatestVersionNodeTypes();
         }
 
         /// <summary>
         /// Collection of Object Class primary keys (Int32)
         /// </summary>
-        public Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32> ObjectClassIds { get { return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds(); } }
+        public Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32> getObjectClassIds()
+        {
+            return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds();
+        }
+
         /// <summary>
         /// Collection of CswNbtMetaDataObjectClass objects
         /// </summary>
-        public IEnumerable<CswNbtMetaDataObjectClass> ObjectClasses { get { return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClasses(); } }
+        public IEnumerable<CswNbtMetaDataObjectClass> getObjectClasses()
+        {
+            return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClasses();
+        }
+
         /// <summary>
         /// Collection of Field Type primary keys
         /// </summary>
-        public Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> FieldTypeIds { get { return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeIds(); } }
+        public Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> getFieldTypeIds()
+        {
+            return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeIds();
+        }
+
         /// <summary>
         /// Collection of CswNbtMetaDataFieldType objects
         /// </summary>
-        public IEnumerable<CswNbtMetaDataFieldType> FieldTypes { get { return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypes(); } }
+        public IEnumerable<CswNbtMetaDataFieldType> getFieldTypes()
+        {
+            return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypes();
+        }
 
         /// <summary>
         /// Returns a CswNbtMetaDataObjectClass based on the given NbtObjectClass parameter
@@ -198,10 +220,34 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassProp( ObjectClassPropId );
         }
 
-
         public ICswNbtFieldTypeRule getFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
             return _CswNbtMetaDataResources.makeFieldTypeRule( FieldType );
+        }
+
+        public Collection<Int32> getNodeTypeTabIds( Int32 NodeTypeId )
+        {
+            return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabIds( NodeTypeId );
+        }
+
+        public IEnumerable<CswNbtMetaDataNodeTypeTab> getNodeTypeTabs( Int32 NodeTypeId )
+        {
+            return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabs( NodeTypeId );
+        }
+
+        public Collection<Int32> getNodeTypePropIds( Int32 NodeTypeId )
+        {
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIds( NodeTypeId );
+        }
+
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId )
+        {
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId );
+        }
+
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        {
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( FieldType );
         }
 
         #endregion Selectors
