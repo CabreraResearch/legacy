@@ -1598,6 +1598,26 @@ namespace ChemSW.Nbt.WebPages
                             ButtonModeRow.Cells[1].Controls.Add( ButtonModeValue );
                             break;
 
+                        case CswNbtMetaDataFieldType.NbtFieldType.Comments:
+                            TableRow RowsRowComm = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) RowsRowComm.Cells[0].Controls[0] ).Text = "Rows:";
+                            TextBox RowsValueComm = new TextBox();
+                            RowsValueComm.CssClass = "textinput";
+                            RowsValueComm.ID = "EditProp_RowsValue" + SelectedNodeTypeProp.PropId.ToString();
+                            if( SelectedNodeTypeProp.TextAreaRows != Int32.MinValue )
+                                RowsValueComm.Text = SelectedNodeTypeProp.TextAreaRows.ToString();
+                            RowsRowComm.Cells[1].Controls.Add( RowsValueComm );
+
+                            TableRow ColsRowComm = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) ColsRowComm.Cells[0].Controls[0] ).Text = "Columns:";
+                            TextBox ColsValueComm = new TextBox();
+                            ColsValueComm.CssClass = "textinput";
+                            ColsValueComm.ID = "EditProp_ColsValue" + SelectedNodeTypeProp.PropId.ToString();
+                            if( SelectedNodeTypeProp.TextAreaColumns != Int32.MinValue )
+                                ColsValueComm.Text = SelectedNodeTypeProp.TextAreaColumns.ToString();
+                            ColsRowComm.Cells[1].Controls.Add( ColsValueComm );
+                            break;
+
 
                         case CswNbtMetaDataFieldType.NbtFieldType.Composite:
                             TableRow TemplateRow = makeEditPropTableRow( EditPropPlaceHolder );

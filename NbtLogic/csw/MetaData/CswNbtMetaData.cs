@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using ChemSW.RscAdo;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -22,6 +23,8 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeTypeLayoutMgr NodeTypeLayout;
 
         protected bool _ExcludeDisabledModules = true;
+        public Collection <Int32> _RefreshViewForNodetypeId = new Collection<Int32>();
+        protected bool _ResetAllViews = false;
 
         #region Initialization
 
@@ -459,6 +462,9 @@ namespace ChemSW.Nbt.MetaData
             if( OnMakeNewNodeType != null )
                 OnMakeNewNodeType( NewNodeType, false );
 
+            //will need to refresh auto-views
+            _RefreshViewForNodetypeId.Add(NodeTypeId);
+
             return NewNodeType;
         } // makeNewNodeType()
 
@@ -619,7 +625,8 @@ namespace ChemSW.Nbt.MetaData
             DataRow InsertedRow = NodeTypePropsTable.NewRow();
 
             //Apply parameter values
-            InsertedRow["nodetypeid"] = CswConvert.ToDbVal( NodeType.NodeTypeId );
+            Int32 NodeTypeId = NodeType.NodeTypeId;
+            InsertedRow["nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
             InsertedRow["fieldtypeid"] = CswConvert.ToDbVal( FieldTypeId );
 
             //InsertedRow["nodetypetabsetid"] = CswConvert.ToDbVal(Tab.TabId);
@@ -713,6 +720,9 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeType.NodeTypeId, NewProp.PropId, Tab.TabId, Int32.MinValue, Int32.MinValue );
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeType.NodeTypeId, NewProp.PropId, Int32.MinValue, Int32.MinValue, Int32.MinValue );
             }
+
+            //will need to refresh auto-views
+            _RefreshViewForNodetypeId.Add( NodeTypeId );
 
             return NewProp;
 
@@ -993,6 +1003,23 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        //uses the oracle-specific CreateNTview() and CreateOBJview() procedures
+        protected void RefreshNodetypeView(  int nodetypeid)
+        {
+            //ALWAYS do nodetype views first, then objectclass views second
+            //nodetype
+            List<CswStoredProcParam> myParams = new List<CswStoredProcParam> ();
+            myParams.Add(new CswStoredProcParam("ntid",nodetypeid,DataDictionaryPortableDataType.Long));
+            _CswNbtMetaDataResources.CswNbtResources.execStoredProc("CreateNTview",myParams);
+        }
+
+        protected void RefreshAllNodetypeViews( )
+        {
+            //ALWAYS do nodetype views first, then objectclass views second
+            //nodetype
+            List<CswStoredProcParam> myParams = new List<CswStoredProcParam> ();
+            _CswNbtMetaDataResources.CswNbtResources.execStoredProc("CreateNTview",myParams);
+        }
 
 
         #endregion Mutators
@@ -1056,6 +1083,8 @@ namespace ChemSW.Nbt.MetaData
             // Delete the NodeType
             NodeType._DataRow.Delete();
             _CswNbtMetaDataResources.NodeTypeTableUpdate.update( NodeType._DataRow.Table );
+
+            _ResetAllViews = true;
 
         }//DeleteNodeType()
 
@@ -1168,6 +1197,9 @@ namespace ChemSW.Nbt.MetaData
             if( !Internal )
                 _CswNbtMetaDataResources.RecalculateQuestionNumbers( ret.NodeType );
 
+            //refresh the views
+            _RefreshViewForNodetypeId.Add( UpdateNodeType.NodeTypeId );
+
             return ret;
         } // DeleteNodeTypeProp()
 
@@ -1236,6 +1268,22 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataResources.finalize();
         }
 
+        public void afterFinalize()
+        {
+            if( _ResetAllViews )
+            {
+                RefreshAllNodetypeViews();
+                _ResetAllViews = false;
+            }
+            else
+            {
+                foreach( Int32 ntid in _RefreshViewForNodetypeId )
+                {
+                    RefreshNodetypeView( ntid );
+                }
+                _RefreshViewForNodetypeId.Clear();
+            }
+        }
 
 
         #region Templates (Node name, Composite)
