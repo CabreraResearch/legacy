@@ -1,14 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using ChemSW.Nbt;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropertySets;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Actions

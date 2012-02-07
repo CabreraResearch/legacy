@@ -1,16 +1,10 @@
-using System;
-using System.Text.RegularExpressions;
-using System.Collections;
-using System.Collections.Generic;
 //using System.Web.UI;
 
 //using System.Data;
 //using System.Configuration;
 //using System.Web;
 //using System.Web.Security;
-using System.Web.UI;
 //using System.Web.SessionState;
-using ChemSW.Session;
 /*
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;

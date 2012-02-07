@@ -1,6 +1,6 @@
 using System;
-using ChemSW.Exceptions;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
 using Telerik.Web.UI;
 

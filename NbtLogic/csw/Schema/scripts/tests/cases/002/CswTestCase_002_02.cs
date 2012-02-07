@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Exceptions;
-//using ChemSW.RscAdo;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.Schema;
+﻿//using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema
 {

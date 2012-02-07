@@ -13,13 +13,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
-        public CswNbtFieldTypeRuleViewPickList( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRuleViewPickList( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
 
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Gestalt, CswNbtSubField.SubFieldName.Name );
+            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Gestalt, CswNbtSubField.SubFieldName.Name );
             CachedViewNameSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                                  CswNbtPropFilterSql.PropertyFilterMode.NotNull |
                                                  CswNbtPropFilterSql.PropertyFilterMode.Null |
@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                                  CswNbtPropFilterSql.PropertyFilterMode.NotEquals;
             SubFields.add( CachedViewNameSubField );
 
-            SelectedViewIdsSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.ViewID );
+            SelectedViewIdsSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.ViewID );
             SelectedViewIdsSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                                   CswNbtPropFilterSql.PropertyFilterMode.NotNull |
                                                   CswNbtPropFilterSql.PropertyFilterMode.Null;

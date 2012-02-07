@@ -1,0 +1,36 @@
+use strict;
+
+my $dir = $ARGV[0];
+my $destfile = "$dir\\js\\ChemSW.min.js";
+
+unlink($destfile);
+
+my $param = "";
+$param .= extract("$dir\\csw.js");
+$param .= extract("$dir\\csw.js\\core");
+$param .= extract("$dir\\csw.js\\nodes");
+$param .= extract("$dir\\csw.js\\props");
+$param .= extract("$dir\\csw.js\\tools");
+$param .= extract("$dir\\csw.js\\controls");
+
+`java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
+
+sub extract
+{
+	my $filelist = "";
+	my $path = $_[0];
+	opendir(JSDIR, $path) or die("Cannot open js directory: $path ; $!");
+	while((my $filename = readdir(JSDIR)))
+	{
+		if($filename =~ /.*\.js$/ &&
+		   $filename !~ /-vsdoc/) 
+		{
+			printf("Compiling: $path\\$filename\n");
+			$filelist .= "--js $path\\$filename ";
+		}
+	}
+	closedir(JSDIR);
+	return $filelist;
+}
+
+printf("Finished compiling csw.js javascript\n");

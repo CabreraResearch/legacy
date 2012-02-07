@@ -1,14 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml;
-using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.ImportExport
 {

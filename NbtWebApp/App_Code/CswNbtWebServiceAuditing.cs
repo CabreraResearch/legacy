@@ -1,19 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Reflection;
-using ChemSW.Core;
-using ChemSW.Exceptions;
-using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ObjClasses;
+﻿using System.Data;
 using ChemSW.DB;
-using Newtonsoft.Json;
+using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices

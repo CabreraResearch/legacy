@@ -1,20 +1,17 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";        
     var pluginName = 'CswFieldTypeLocationContents';
 
     var methods = {
-        init: function(o) { // nodepk, $xml, onchange
+        init: function (o) { // nodepk, $xml, onchange
 
                 var $Div = $(this);
                 $Div.contents().remove();
 
-//                var value = tryParseString(o.propData.value).trim();
+//                var value = Csw.string(o.propData.value).trim();
 
                 $Div.append('[Not Implemented Yet]');
 //                if(o.ReadOnly)
@@ -26,10 +23,10 @@
 //                    
 //                }
             },
-        save: function(o) {
+        save: function (o) {
 //          var $TextBox = $propdiv.find('input');
 //          $xml.children('barcode').text($TextBox.val());
-            preparePropJsonForSave(o.propData);
+            Csw.preparePropJsonForSave(o.propData);
         }
     };
     

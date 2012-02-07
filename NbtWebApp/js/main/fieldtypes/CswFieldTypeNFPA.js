@@ -1,22 +1,19 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";        
     var pluginName = 'CswFieldTypeNFPA';
 
     var methods = {
-        init: function(o) {
+        init: function (o) {
 
             var $Div = $(this);
             var propVals = o.propData.values;
-            var red = (false === o.Multi) ? propVals.flammability : CswMultiEditDefaultValue;
-            var yellow = (false === o.Multi) ? propVals.reactivity : CswMultiEditDefaultValue;
-            var blue = (false === o.Multi) ? propVals.health : CswMultiEditDefaultValue;
-            var white = (false === o.Multi) ? propVals.special : CswMultiEditDefaultValue;
+            var red = (false === o.Multi) ? propVals.flammability : Csw.enums.multiEditDefaultValue;
+            var yellow = (false === o.Multi) ? propVals.reactivity : Csw.enums.multiEditDefaultValue;
+            var blue = (false === o.Multi) ? propVals.health : Csw.enums.multiEditDefaultValue;
+            var white = (false === o.Multi) ? propVals.special : Csw.enums.multiEditDefaultValue;
 
             var $outertable = $Div.CswTable('init', { ID: o.ID + '_tbl' });
 
@@ -57,7 +54,7 @@
             function makeSelect($cell, id, selected, $div)
             {
                 var $sel = $cell.CswSelect({
-                                        'ID': makeId({ ID: o.ID, suffix: id }),
+                                        'ID': Csw.makeId({ ID: o.ID, suffix: id }),
                                         'selected': selected,
                                         'values': selVals,
                                         'cssclass': '',
@@ -85,7 +82,7 @@
                     { value: '4', display: '4' }
                 ];
                 if (o.Multi) {
-                    selVals.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
+                    selVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                 }
                 
                 $edittable.CswTable('cell', 1, 1).append('Flammability');
@@ -109,11 +106,11 @@
                     { value: 'RAD', display: 'RAD' },
                     { value: 'W', display: 'W' }];
                 if (o.Multi) {
-                    whiteVals.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
+                    whiteVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                 }
                 var $whitesel = $edittable.CswTable('cell', 4, 2)
                                           .CswSelect({
-                                             'ID': makeId({ ID: o.ID, suffix: 'white' }),
+                                             'ID': Csw.makeId({ ID: o.ID, suffix: 'white' }),
                                              'selected': white,
                                              'values': whiteVals,
                                              'cssclass': '',
@@ -124,7 +121,7 @@
 
             } // if(!o.ReadOnly)
         },
-        save: function(o) {
+        save: function (o) {
             var attributes = {
                 flammability: null,
                 reactivity: null,
@@ -132,22 +129,22 @@
                 special: null
             };
             var $red = o.$propdiv.find('#' + o.ID + '_red');
-            if (false === isNullOrEmpty($red)) {
+            if (false === Csw.isNullOrEmpty($red)) {
                 attributes.flammability = $red.val();
             }
             var $yellow = o.$propdiv.find('#' + o.ID + '_yellow');
-            if (false === isNullOrEmpty($yellow)) {
+            if (false === Csw.isNullOrEmpty($yellow)) {
                 attributes.reactivity = $yellow.val();
             }
             var $blue = o.$propdiv.find('#' + o.ID + '_blue');
-            if (false === isNullOrEmpty($blue)) {
+            if (false === Csw.isNullOrEmpty($blue)) {
                 attributes.health = $blue.val();
             }
             var $white = o.$propdiv.find('#' + o.ID + '_white');
-            if (false === isNullOrEmpty($white)) {
+            if (false === Csw.isNullOrEmpty($white)) {
                 attributes.special = $white.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     
