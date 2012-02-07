@@ -2,8 +2,8 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 
-(function ($) { 
-    "use strict";        
+(function ($) {
+    "use strict";
     var pluginName = 'CswSessions';
 
     var methods = {
@@ -13,32 +13,29 @@
                 EndSessionUrl: '/NbtWebApp/wsNBT.asmx/endSession',
                 ID: 'action_sessions'
             };
-            if(options) $.extend(o, options);
+            if (options) $.extend(o, options);
 
             var $Div = $(this);
-            var $table;
+            var table;
             var row;
-            var $cell1, $cell2, $cell3, $cell4, $cell5, $cell6;
-
-            function initTable()
-            {
+            
+            function initTable() {
                 $Div.contents().remove();
-                $table = $Div.CswTable('init', { ID: o.ID + '_tbl', border: 1, cellpadding: 5 });
+                table = Csw.controls.table({
+                    $parent: $Div,
+                    ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+                    border: 1,
+                    cellpadding: 5
+                });
                 row = 1;
 
                 // Header row
-                $cell1 = $table.CswTable('cell', row, 1);
-                $cell1.append('<b>End</b>');
-                $cell2 = $table.CswTable('cell', row, 2);
-                $cell2.append('<b>Username</b>');
-                $cell3 = $table.CswTable('cell', row, 3);
-                $cell3.append('<b>Login Date</b>');
-                $cell4 = $table.CswTable('cell', row, 4);
-                $cell4.append('<b>Timeout Date</b>');
-                $cell5 = $table.CswTable('cell', row, 5);
-                $cell5.append('<b>Access ID</b>');
-                $cell6 = $table.CswTable('cell', row, 6);
-                $cell6.append('<b>Session ID</b>');
+                table.add(row, 1, '<b>End</b>');
+                table.add(row, 2, '<b>Username</b>');
+                table.add(row, 3, '<b>Login Date</b>');
+                table.add(row, 4, '<b>Timeout Date</b>');
+                table.add(row, 5, '<b>Access ID</b>');
+                table.add(row, 6, '<b>Session ID</b>');
                 row += 1;
 
                 // Sessions table
@@ -48,32 +45,22 @@
                     success: function (result) {
 
                         Csw.crawlObject(result, function (childObj) {
-                            $cell1 = $table.CswTable('cell', row, 1);
+                            var cell2name = childObj.username;
+                            var $cell1 = table.cell(row, 1);
                             $cell1.CswImageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Fire,
-                                                    AlternateText: 'Burn Session',
-                                                    ID: o.ID + '_burn_' + childObj.sessionid,
-                                                    onClick: Csw.makeDelegate( function (sessionid) { handleBurn(sessionid); }, childObj.sessionid)
-                                                });
-
-                            $cell2 = $table.CswTable('cell', row, 2);
-
-                            if(childObj.sessionid === Csw.cookie.get(Csw.cookie.cookieNames.SessionId)) {
-                                $cell2.append(childObj.username + "&nbsp;(you)");
-                            } else {
-                                $cell2.append(childObj.username);
-                            }
-
-                            $cell3 = $table.CswTable('cell', row, 3);
-                            $cell3.append(childObj.logindate);
-
-                            $cell4 = $table.CswTable('cell', row, 4);
-                            $cell4.append(childObj.timeoutdate);
-
-                            $cell5 = $table.CswTable('cell', row, 5);
-                            $cell5.append(childObj.accessid);
-
-                            $cell6 = $table.CswTable('cell', row, 6);
-                            $cell6.append(childObj.sessionid);
+                                AlternateText: 'Burn Session',
+                                ID: o.ID + '_burn_' + childObj.sessionid,
+                                onClick: Csw.makeDelegate(function (sessionid) { handleBurn(sessionid); }, childObj.sessionid)
+                            });
+                            
+                            if (childObj.sessionid === Csw.cookie.get(Csw.cookie.cookieNames.SessionId)) {
+                                cell2name += "&nbsp;(you)";
+                            } 
+                            table.add(row, 2, cell2name);
+                            table.add(row, 3, childObj.logindate);
+                            table.add(row, 4, childObj.timeoutdate);
+                            table.add(row, 5, childObj.accessid);
+                            table.add(row, 6, childObj.sessionid);
 
                             row += 1;
                         }, false); // Csw.crawlObject()
@@ -82,8 +69,7 @@
                 }); // ajax()
             } // initTable()
 
-            function handleBurn(sessionId)
-            {
+            function handleBurn(sessionId) {
                 Csw.ajax.post({
                     url: o.EndSessionUrl,
                     data: { SessionId: sessionId },
@@ -98,17 +84,17 @@
         } // init
     }; // methods
 
-    
+
     // Method calling logic
     $.fn.CswSessions = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
+
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
+
     };
 })(jQuery);

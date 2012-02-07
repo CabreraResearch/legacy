@@ -166,8 +166,8 @@
                     $parent: $divStep2,
                     ID: makeStepId('headerTable')
                 });
-                headerTable.CswTable('cell', 1, 1).append('<span>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</span>');
-                headerTable.CswTable('cell', 1, 2).CswButton('init', {
+                headerTable.add(1, 1, '<span>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</span>');
+                headerTable.cell(1, 2).CswButton('init', {
                     ID: Csw.makeSafeId('clearAll'),
                     enabledText: 'Clear All Reprobates',
                     disabledText: 'Clearing...',
