@@ -1,6 +1,11 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
+
 
 namespace ChemSW.Nbt.Schema
 {
@@ -12,14 +17,14 @@ namespace ChemSW.Nbt.Schema
         public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'M', 03 ); } }
         public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
 
-        private void AddRow( DataTable dt, int ft, string propcolname, string subfieldname, string reportable, string is_default )
+        private void AddRow( DataTable dt, int ft, string propcolname, string subfieldname, bool reportable, bool is_default )
         {
             DataRow dr = dt.NewRow();
-            dr["fieldtypeid"] = ft;
-            dr["propcolnamename"] = propcolname;
+            dr["fieldtypeid"] = CswConvert.ToDbVal(ft);
+            dr["propcolname"] = propcolname;
             dr["subfieldname"] = subfieldname;
-            dr["reportable"] = reportable;
-            dr["is_default"] = is_default;
+            dr["reportable"] = CswConvert.ToDbVal(reportable);
+            dr["is_default"] = CswConvert.ToDbVal(is_default);
             dt.Rows.Add( dr );
         }
 
@@ -33,54 +38,57 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate ftsTbl = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "field_types_subfields_upd", "field_types_subfields" );
             DataTable ftsDataTbl = ftsTbl.getTable();
 
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Barcode ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Composite ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.DateTime ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.DateTime ).FieldTypeId, "field1_date", "date", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.File ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Link ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.List ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Location ).FieldTypeId, "field1_fk", "FK", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Location ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.LocationContents ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Logical ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.LogicalSet ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Memo ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.MOL ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.MTBF ).FieldTypeId, "field1", "startdate", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.MTBF ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.MTBF ).FieldTypeId, "field2", "units", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.MTBF ).FieldTypeId, "field1_numeric", "value", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.MultiList ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.NFPA ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.NFPA ).FieldTypeId, "field1", "flammability", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.NFPA ).FieldTypeId, "field2", "reactivity", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.NFPA ).FieldTypeId, "field3", "health", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.NFPA ).FieldTypeId, "field4", "special", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Number ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Number ).FieldTypeId, "field1_numeric", "number", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.PropertyReference ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Quantity ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Quantity ).FieldTypeId, "field2", "units", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Quantity ).FieldTypeId, "field1_numeric", "quantity", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Question ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Question ).FieldTypeId, "field1", "answer", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Question ).FieldTypeId, "field2", "correctiveaction", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Question ).FieldTypeId, "field1_date", "date_answered", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Question ).FieldTypeId, "field2_date", "date_corrected", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Question ).FieldTypeId, "field3", "iscompliant", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Question ).FieldTypeId, "clobdata", "comments", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Relationship ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Relationship ).FieldTypeId, "field1_fk", "FK", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Scientific ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Scientific ).FieldTypeId, "field1_numeric", "base", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Scientific ).FieldTypeId, "field2_numeric", "exponent", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Sequence ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Static ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Text ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.TimeInterval ).FieldTypeId, "gestalt", "", "1", "1" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.TimeInterval ).FieldTypeId, "field1", "interval", "1", "0" );
-            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.TimeInterval ).FieldTypeId, "field1_date", "startdatetime", "1", "0" );
+            Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> FieldTypeIds = _CswNbtSchemaModTrnsctn.MetaData.FieldTypeIds;
+            foreach( CswNbtMetaDataFieldType.NbtFieldType FieldType in _CswNbtSchemaModTrnsctn.MetaData.FieldTypeIds.Keys )
+            {
+                ICswNbtFieldTypeRule Rule = _CswNbtSchemaModTrnsctn.MetaData.getFieldTypeRule( FieldType );
+                bool reportable = false;
+                if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Composite
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.DateTime
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.File
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Link
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.List
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.LocationContents
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.LogicalSet
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Memo
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.MTBF
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.NFPA
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Number
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.PropertyReference
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Quantity
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Scientific
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Static
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.Text
+                    || FieldType == CswNbtMetaDataFieldType.NbtFieldType.TimeInterval
+                    )
+                {
+                    reportable = true;
+                }
+                //add gestalt row, because it is not a subfield
+                AddRow( ftsDataTbl, FieldTypeIds[FieldType], "gestalt", "", reportable, true );
+
+                foreach( CswNbtSubField SubField in Rule.SubFields )
+                {
+                    bool is_default = false;
+                    string subfname = SubField.Name.ToString().ToLower();
+                    if( SubField.RelationalColumn.ToLower() == "gestalt" )
+                    {
+                        is_default = true;
+                        subfname="";
+                    }
+                    AddRow(ftsDataTbl,FieldTypeIds[FieldType],SubField.Column.ToString(),subfname,SubField.isReportable,is_default);
+                }
+
+            }
+            ftsTbl.update( ftsDataTbl );
 
 
             #endregion

@@ -137,6 +137,25 @@ end OraColLen;
 commit;
 
 
+create or replace view vwAutoViewColNames as 
+select n.nodetypename,p.propname,'NT' || upper(n.nodetypename) viewname, 
+case
+ when s.subfieldname is null then 'P' || to_char(p.firstpropversionid) 
+ when s.subfieldname is not null and fktype='ObjectClassId' then 'P' || to_char(p.firstpropversionid) || '_' || alnumonly(ocfk.objectclass,'') || '_OCFK'
+ when s.subfieldname is not null and fktype='NodeTypeId' then 'P' || to_char(p.firstpropversionid) || '_' || alnumonly(ntfk.nodetypename,'') || '_NTFK'
+ else 'P' || to_char(p.firstpropversionid) || '_' || s.subfieldname
+end colname
+from nodetype_props p
+ join nodetypes n on n.nodetypeid=p.nodetypeid
+ join object_class c on c.objectclassid=n.objectclassid
+ join field_types f on f.fieldtypeid=p.fieldtypeid
+ join field_types_subfields s on s.fieldtypeid=f.fieldtypeid and s.reportable='1'
+ left outer join nodetypes ntfk on ntfk.nodetypeid=p.fkvalue and p.fktype='NodeTypeId'
+ left outer join object_class ocfk on ocfk.objectclassid=p.fkvalue and p.fktype='ObjectClassId' 
+order by n.nodetypename,p.propname,s.subfieldname;
+/
+commit;
+
 create or replace view vwntpropdefs as
 select ntp.nodetypeid,ntp.propname,ntp.firstpropversionid nodetypepropid,ft.fieldtype,ft.fieldtypeid,ntp.fktype,ntp.fkvalue,
   t.taborder,ntp.questionno,nt.nodetypename,oc.objectclass 
@@ -181,10 +200,11 @@ create or replace procedure createNTview(ntid in number) is
   pname varchar2(200);
   pcount number;
   viewname varchar2(30);
+  objid number;
 begin
   dbms_output.enable(32000);
 
-  select nodetypename into viewname from nodetypes where nodetypeid=ntid;
+  select nodetypename,objectclassid into viewname,objid from nodetypes where nodetypeid=ntid;
 
   var_line:='create or replace view ' || OraColLen('NT',alnumonly(viewname,''),'') || ' as select n.nodeid ';
   --dbms_output.put_line(var_line);
@@ -199,27 +219,28 @@ begin
       else
           pname:=rec.propname;
       end if;
+      pname := to_char(rec.nodetypepropid);
       if(rec.is_default='1') then
         var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
-        var_line := var_line || ')' || OraColLen('P' || trim(to_char(pcount,'00')) || '_',alnumonly(upper(pname),''),'');
+        var_line := var_line || ')' || OraColLen('P',alnumonly(upper(pname),''),'');
         --dbms_output.put_line(var_line);
         var_sql := var_sql || var_line;
       else
         if(rec.fieldtype='Relationship' or rec.fieldtype='Location') then
           if(rec.fktype='NodeTypeId') then
             var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid) || ') ';
-            var_line := var_line  || OraColLen('P' || trim(to_char(pcount,'00')) || '_',alnumonly(upper(pname || '_' || rec.nodetypename),''),'_NTFK');
+            var_line := var_line  || OraColLen('P',alnumonly(upper(pname || '_' || rec.nodetypename),''),'_NTFK');
           --  dbms_output.put_line(var_line);
             var_sql := var_sql || var_line;
           else
             var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid) || ') ';
-            var_line:=var_line || OraColLen('P' || trim(to_char(pcount,'00')) || '_',alnumonly(upper(pname || rec.objectclass),''),'_OBJFK');
+            var_line:=var_line || OraColLen('P',alnumonly(upper(pname || rec.objectclass),''),'_OCFK');
           --  dbms_output.put_line(var_line);
             var_sql := var_sql || var_line;
           end if;
         else
           var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid) || ') ';
-          var_line:=var_line || OraColLen('P' || trim(to_char(pcount,'00')) || '_',alnumonly(upper(pname || '_' || rec.subfieldalias),''),'');
+          var_line:=var_line || OraColLen('P',alnumonly(upper(pname || '_' || rec.subfieldalias),''),'');
           --dbms_output.put_line(var_line);
           var_sql := var_sql || var_line;
         end if;
@@ -232,6 +253,7 @@ begin
     var_sql := var_sql || var_line;
     execute immediate (var_sql);
     commit;
+    createOCview(objid);
   end if;
 
 end createNTview;
@@ -282,8 +304,17 @@ commit;
 create or replace procedure CreateAllNtViews is
   cursor nts is
         select nodetypeid,nodetypename,firstversionid from nodetypes 
-        where firstversionid=nodetypeid order by lower(nodetypename);  
+        where firstversionid=nodetypeid order by lower(nodetypename);
+  cursor ntsdel is
+	select object_name from user_objects where object_type='VIEW' and object_name like 'NT%' or object_name like 'OC%';
+  var_sql varchar2(200);	  
 begin
+  for delrec in ntsdel loop
+	var_sql := 'drop view ' || delrec.object_name;
+	execute immediate (var_sql);	
+  end loop;
+  commit;
+
   for rec in nts loop
     --dbms_output.put_line('createntview(' || to_char(rec.nodetypeid) || ',' || rec.nodetypename || ')');
     CreateNtView(rec.nodetypeid);
@@ -292,26 +323,11 @@ end CreateAllNtViews;
 /
 commit;
 
-create or replace procedure CreateAllObjViews is
-  cursor objs is
-  select objectclass, objectclassid from object_class order by lower(objectclass);
-  
-begin
-  for rec in objs loop
-    --dbms_output.put_line('createobjview(' || to_char(rec.objectclassid) || ',' || rec.objectclass || ')');
-    CreateOCView(rec.objectclassid);
-  end loop;
-end CreateAllObjViews;
-/
-
-commit;
 
 --
 --TEST: begin creation of views...
 --
 --set serveroutput on;
-
-exec CreateAllObjViews();
 
 exec CreateAllNtViews();
 

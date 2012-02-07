@@ -23,6 +23,8 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeTypeLayoutMgr NodeTypeLayout;
 
         protected bool _ExcludeDisabledModules = true;
+        public Collection <Int32> _RefreshViewForNodetypeId = new Collection<Int32>();
+        protected bool _ResetAllViews = false;
 
         #region Initialization
 
@@ -105,7 +107,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Object Class primary keys (Int32)
         /// </summary>
-        public Collection<Int32> ObjectClassIds { get { return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds(); } }
+        public Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass,Int32> ObjectClassIds { get { return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds(); } }
         /// <summary>
         /// Collection of CswNbtMetaDataObjectClass objects
         /// </summary>
@@ -113,7 +115,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Field Type primary keys
         /// </summary>
-        public Collection<Int32> FieldTypeIds { get { return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeIds(); } }
+        public Dictionary<CswNbtMetaDataFieldType.NbtFieldType,Int32> FieldTypeIds { get { return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeIds(); } }
         /// <summary>
         /// Collection of CswNbtMetaDataFieldType objects
         /// </summary>
@@ -460,8 +462,8 @@ namespace ChemSW.Nbt.MetaData
             if( OnMakeNewNodeType != null )
                 OnMakeNewNodeType( NewNodeType, false );
 
-            //refresh auto-views
-            RefreshNodetypeViews( NewNodeType.ObjectClass.ObjectClassId, NewNodeType.ObjectClass.ObjectClass, NewNodeType.NodeTypeId, NewNodeType.NodeTypeName );
+            //will need to refresh auto-views
+            _RefreshViewForNodetypeId.Add(NodeTypeId);
 
             return NewNodeType;
         } // makeNewNodeType()
@@ -623,7 +625,8 @@ namespace ChemSW.Nbt.MetaData
             DataRow InsertedRow = NodeTypePropsTable.NewRow();
 
             //Apply parameter values
-            InsertedRow["nodetypeid"] = CswConvert.ToDbVal( NodeType.NodeTypeId );
+            Int32 NodeTypeId = NodeType.NodeTypeId;
+            InsertedRow["nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
             InsertedRow["fieldtypeid"] = CswConvert.ToDbVal( FieldTypeId );
 
             //InsertedRow["nodetypetabsetid"] = CswConvert.ToDbVal(Tab.TabId);
@@ -718,8 +721,8 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeType.NodeTypeId, NewProp.PropId, Int32.MinValue, Int32.MinValue, Int32.MinValue );
             }
 
-            //refresh auto-views
-            RefreshNodetypeViews( NewProp.NodeType.ObjectClass.ObjectClassId, NewProp.NodeType.ObjectClass.ObjectClass, NewProp.NodeType.NodeTypeId, NewProp.NodeType.NodeTypeName );
+            //will need to refresh auto-views
+            _RefreshViewForNodetypeId.Add( NodeTypeId );
 
             return NewProp;
 
@@ -1001,20 +1004,23 @@ namespace ChemSW.Nbt.MetaData
         }
 
         //uses the oracle-specific CreateNTview() and CreateOBJview() procedures
-        protected void RefreshNodetypeViews( int objectclassid, string objectclassname, int nodetypeid, string nodetypename )
+        protected void RefreshNodetypeView(  int nodetypeid)
         {
             //ALWAYS do nodetype views first, then objectclass views second
             //nodetype
             List<CswStoredProcParam> myParams = new List<CswStoredProcParam> ();
-            myParams.Add(new CswStoredProcParam("ntid",nodetypeid,DataDictionaryPortableDataType.Long);
-            myParams.Add(new CswStoredProcParam("viewname",nodetypename,DataDictionaryPortableDataType.String);
+            myParams.Add(new CswStoredProcParam("ntid",nodetypeid,DataDictionaryPortableDataType.Long));
             _CswNbtMetaDataResources.CswNbtResources.execStoredProc("CreateNTview",myParams);
-            //objectclass
-            List<CswStoredProcParam> myParams2 = new List<CswStoredProcParam> ();
-            myParams2.Add(new CswStoredProcParam("objid",objectclassid,DataDictionaryPortableDataType.Long);
-            myParams2.Add(new CswStoredProcParam("viewname",objectclassname,DataDictionaryPortableDataType.String);
-            _CswNbtMetaDataResources.CswNbtResources.execStoredProc("CreateOBJview",myParams2);
         }
+
+        protected void RefreshAllNodetypeViews( )
+        {
+            //ALWAYS do nodetype views first, then objectclass views second
+            //nodetype
+            List<CswStoredProcParam> myParams = new List<CswStoredProcParam> ();
+            _CswNbtMetaDataResources.CswNbtResources.execStoredProc("CreateNTview",myParams);
+        }
+
 
         #endregion Mutators
 
@@ -1077,6 +1083,8 @@ namespace ChemSW.Nbt.MetaData
             // Delete the NodeType
             NodeType._DataRow.Delete();
             _CswNbtMetaDataResources.NodeTypeTableUpdate.update( NodeType._DataRow.Table );
+
+            _ResetAllViews = true;
 
         }//DeleteNodeType()
 
@@ -1189,6 +1197,9 @@ namespace ChemSW.Nbt.MetaData
             if( !Internal )
                 _CswNbtMetaDataResources.RecalculateQuestionNumbers( ret.NodeType );
 
+            //refresh the views
+            _RefreshViewForNodetypeId.Add( UpdateNodeType.NodeTypeId );
+
             return ret;
         } // DeleteNodeTypeProp()
 
@@ -1255,6 +1266,20 @@ namespace ChemSW.Nbt.MetaData
         public void finalize()
         {
             _CswNbtMetaDataResources.finalize();
+            if( _ResetAllViews )
+            {
+                RefreshAllNodetypeViews();
+                _ResetAllViews = false;
+            }
+            else
+            {
+                foreach( Int32 ntid in _RefreshViewForNodetypeId )
+                {
+                    RefreshNodetypeView( ntid );
+                }
+                _RefreshViewForNodetypeId.Clear();
+            }
+
         }
 
 
