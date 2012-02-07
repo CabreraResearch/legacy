@@ -725,6 +725,7 @@ namespace ChemSW.Nbt.ImportExport
                                                                 CswTableSelect CswTableSelectFromNodes = _CswNbtResources.makeCswTableSelect( "rawselectfromnodes", "nodes" );
                                                                 DataTable ExistingNodeDataTable = CswTableSelectFromNodes.getTable( " where nodeid=" + CurrentImportTargetNodeId );
 
+              
                                                                 if( ExistingNodeDataTable.Rows.Count > 0 ) //it _does_ exist in the target schema
                                                                 {
                                                                     Int32 ExistingNbtNodeId = CswConvert.ToInt32( CurrentImportTargetNodeId ); //review 24884
@@ -991,7 +992,6 @@ namespace ChemSW.Nbt.ImportExport
                                 CurrentRowError += "Unable to retrieve NBT node with " + _ColName_ImportNodeId + " of " + CurrentImportNodeId + " and NodeId of " + CurrentNbtNode.ToString();
                             }//if-else we were able to retrieve the node
 
-                            TotalNodesProcesssedSoFar++;
 
 
                             DataTable DataTableCurrentNodeTable = CswTableUpdateNodes.getTable( " where " + _ColName_ImportNodeId + "='" + CurrentImportNodeId + "'" );
@@ -1010,11 +1010,12 @@ namespace ChemSW.Nbt.ImportExport
                                 }//if else there was an error on the current row
 
                                 CurrentRowError = string.Empty;
-                                TotalNodesProcesssedSoFar++;
                                 CswTableUpdateNodes.update( DataTableCurrentNodeTable );
 
                             }//for some reason, it _can_ happen that this row is empty
 
+
+                            TotalNodesProcesssedSoFar++;
 
                         }//iterate node records
 
