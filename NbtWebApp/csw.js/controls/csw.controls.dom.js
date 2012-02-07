@@ -1,10 +1,10 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function () { 
+(function () {
     'use strict';
 
-    var dom = (function _dom () {
+    var dom = (function _dom() {
         var internal = {};
         var external = {};
 
@@ -66,7 +66,7 @@
             /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
             var ret = $Dom,
                 prop;
-        
+
             try {
                 if (typeof name === "object") {
                     for (prop in name) {
@@ -164,7 +164,7 @@
             }
 
             elementId = o.ID;
-            toReplace = [ /'/gi , / /gi , /\//g ];
+            toReplace = [/'/gi, / /gi, /\//g];
             if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
                 elementId = o.prefix + o.Delimiter + elementId;
             }
@@ -205,15 +205,80 @@
         };
 
         external.addClass = function ($el, name) {
-            $el.addClass(name);
+            /// <summary>Add a CSS class to an element.</summary>
+            /// <param name="$el" type="jQuery">An element to attach to.</param>
+            /// <param name="value" type="String">The value of the attribute</param>
+            /// <returns type="Object">The jQuery element (for chaining)</returns> 
+            return $el.addClass(name);
+        };
+
+        external.bind = function ($el, eventName, event) {
+            /// <summary>Bind an action to a jQuery element's event.</summary>
+            /// <param name="$el" type="jQuery">A jQuery element</param>
+            /// <param name="eventName" type="String">The name of the event</param>
+            /// <param name="event" type="Function">A function to execute when the event fires</param>
+            /// <returns type="Object">The jQuery element (for chaining)</returns> 
+            return $el.bind(eventName, event);
+        };
+
+        external.trigger = function ($el, eventName, eventOpts) {
+            /// <summary>Trigger an event bound to a jQuery element.</summary>
+            /// <param name="$el" type="jQuery">A jQuery element</param>
+            /// <param name="eventName" type="String">The name of the event</param>
+            /// <param name="eventOpts" type="Object">Options collection to pass to the event handler.</param>
+            /// <returns type="Object">The jQuery element (for chaining)</returns> 
+            return $el.trigger(eventName, eventOpts);
         };
 
         return external;
-    }());
-
+    } ());
     Csw.controls.register('dom', dom);
     Csw.controls.dom = Csw.controls.dom || dom;
 
-}());
+    function domExtend($element, options) {
+        /// <summary>Extends a Csw Control class with basic DOM methods.</summary>
+        /// <param name="$element" type="jQuery">An element to bind to.</param>
+        /// <param name="options" type="Object">An options collection to extend.</param>
+        /// <returns type="Object">The options object with DOM methods attached.</returns> 
+        options.propDom = function (name, value) {
+            /// <summary>Gets or sets a DOM property</summary>
+            /// <param name="name" type="String">The name of the attribute</param>
+            /// <param name="value" type="String">The value of the attribute</param>
+            /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
+            return Csw.controls.dom.propDom($element, name, value);
+        };
+        options.propNonDom = function (name, value) {
+            /// <summary> Gets or sets an Non-Dom attribute</summary>
+            /// <param name="name" type="String">The name of the attribute</param>
+            /// <param name="value" type="String">The value of the attribute</param>
+            /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
+            return Csw.controls.dom.propNonDom($element, name, value);
+        };
+        options.addClass = function (name) {
+            /// <summary>Add a CSS class to an element.</summary>
+            /// <param name="value" type="String">The value of the attribute</param>
+            /// <returns type="Object">The jQuery element (for chaining)</returns> 
+            return Csw.controls.dom.addClass($element, name);
+        };
+        options.bind = function (eventName, event) {
+            /// <summary>Bind an action to a jQuery element's event.</summary>
+            /// <param name="eventName" type="String">The name of the event</param>
+            /// <param name="event" type="Function">A function to execute when the event fires</param>
+            /// <returns type="Object">The jQuery element (for chaining)</returns> 
+            return Csw.controls.dom.bind($element, eventName, event);
+        };
+        options.trigger = function (eventName, eventOpts) {
+            /// <summary>Trigger an event bound to a jQuery element.</summary>
+            /// <param name="eventName" type="String">The name of the event</param>
+            /// <param name="eventOpts" type="Object">Options collection to pass to the event handler.</param>
+            /// <returns type="Object">The jQuery element (for chaining)</returns> 
+            return Csw.controls.dom.trigger($element, eventName, eventOpts);
+        };
+        return options;
+    }
+    Csw.controls.register('domExtend', domExtend);
+    Csw.controls.domExtend = Csw.controls.domExtend || domExtend;
+
+} ());
 
 

@@ -40,7 +40,7 @@
                     $parent: $TopDiv,
                     ID: Csw.controls.dom.makeId(o.ID, 'tbl')
                 });
-                table.propDom(table.$, 'width', '100%');
+                table.propDom('width', '100%');
 
                 var $cell1 = table.add(1, 1, o.TopContent);
                 Csw.controls.dom.propDom($cell1, 'width', '100%');

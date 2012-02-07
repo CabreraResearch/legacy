@@ -2,8 +2,8 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function _cswTable() {
-    'use strict'; 
-    
+    'use strict';
+
     function table(options) {
         /// <summary>Create an HTML table and return a Csw.table object</summary>
         /// <param name="options" type="Object">
@@ -14,68 +14,71 @@
         /// <para>options.width: Table width</para>
         /// </param>
         /// <returns type="Object">A table object</returns>
-        var internal = {},
-            external = $.extend({}, Csw.controls.dom);
+        var internal = {
+            $parent: '',
+            ID: '',
+            TableCssClass: '',
+            CellCssClass: '',
+            cellpadding: 0,
+            cellspacing: 0,
+            align: '',
+            width: '',
+            cellalign: 'top',
+            cellvalign: 'top',
+            onCreateCell: function () {
+            },
+            FirstCellRightAlign: false,
+            OddCellRightAlign: false,
+            border: 0
+        };
+        var external = {
+            $: ''
+        };
 
         (function () {
-            internal = {
-                $parent: '',
-                ID: '',
-                TableCssClass: '',
-                CellCssClass: '',
-                cellpadding: 0,
-                cellspacing: 0,
-                align: '',
-                width: '',
-                cellalign: 'top',
-                cellvalign: 'top',
-                onCreateCell: function () {
-                },
-                FirstCellRightAlign: false,
-                OddCellRightAlign: false,
-                border: 0
-            };
             if (options) {
                 $.extend(internal, options);
             }
 
             external.id = internal.ID;
             external.$ = $('<table id="' + external.id + '"></table>');
-            
-            external.addClass(external.$, internal.TableCssClass);
-            external.propDom(external.$, {
-                'width': internal.width,
-                'align': internal.align,
-                'cellpadding': internal.cellpadding,
-                'cellspacing': internal.cellspacing,
-                'border': internal.border,
-                'cellalign': internal.cellalign,
-                'cellvalign': internal.cellvalign,
-                'cellcssclass': internal.CellCssClass
+
+            Csw.controls.domExtend(external.$, external);
+            debugger;
+            external.addClass(internal.TableCssClass);
+            external.propDom({
+                width: internal.width,
+                align: internal.align,
+                cellpadding: internal.cellpadding,
+                cellspacing: internal.cellspacing,
+                border: internal.border,
+                cellalign: internal.cellalign,
+                cellvalign: internal.cellvalign,
+                cellcssclass: internal.CellCssClass
             });
-            external.propNonDom(external.$, {
-                'FirstCellRightAlign': internal.FirstCellRightAlign,
-                'OddCellRightAlign': internal.OddCellRightAlign
+            external.propNonDom({
+                FirstCellRightAlign: internal.FirstCellRightAlign,
+                OddCellRightAlign: internal.OddCellRightAlign
             });
 
-            external.$.bind('CswTable_onCreateCell', function (e, $eTable, $cell, row, column) {
-                internal.onCreateCell(e, $eTable, $cell, row, column);
+            external.bind('CswTable_onCreateCell', function (e, $eTable, $cell, row, column) {
+                Csw.tryExec(internal.onCreateCell(e, $eTable, $cell, row, column));
                 e.stopPropagation(); // prevents events from triggering in nested tables
             });
-            external.$.trigger('CswTable_onCreateCell', [external.$, external.$.find('td'), 1, 1]);
+            external.trigger('CswTable_onCreateCell', [external.$, external.$.find('td'), 1, 1]);
 
             internal.$parent.append(external.$);
 
-        }());
+        } ());
 
-        external.cell = function(row, col) {
+        external.cell = function (row, col) {
             /// <summary>Get a cell from the table</summary>
             /// <param name="row" type="Number">Row number</param>
             /// <param name="col" type="Number">Column number</param>
             /// <returns type="jQuery">The requested cell.</returns>
             var $cell = null,
                 $row, align, $newcell;
-            
+
             if (external.$.length > 0 &&
                 false === Csw.isNullOrEmpty(row) &&
                 false === Csw.isNullOrEmpty(col)) {
@@ -118,20 +121,20 @@
             return $cell;
         };
 
-        external.maxrows = function() {
+        external.maxrows = function () {
             /// <summary>Get the maximum table row number</summary>
             /// <returns type="Number">Number of rows</returns>
             var $rows = external.$.children('tbody').children('tr');
             return $rows.length;
         };
 
-        external.maxcolumns = function() {
+        external.maxcolumns = function () {
             /// <summary>Get the maximum table column number</summary>
             /// <returns type="Number">Number of columns</returns>
             var $rows = external.$.children('tbody').children('tr'),
                 maxcolumns = 0,
                 r, $columns;
-            for (r = 0; r < $rows.length; r+=1) {
+            for (r = 0; r < $rows.length; r += 1) {
                 $columns = $($rows[r]).children('td');
                 if ($columns.length > maxcolumns) {
                     maxcolumns = $columns.length;
@@ -161,7 +164,7 @@
                 }
             }
         };
-            
+
         // These are safe for nested tables, since using $.find() is not
         external.findRow = function (criteria) {
             /// <summary>Find a row by jQuery search criteria</summary>
@@ -206,6 +209,6 @@
     }
     Csw.controls.register('table', table);
     Csw.controls.table = Csw.controls.table || table;
-    
-}());
+
+} ());
 
