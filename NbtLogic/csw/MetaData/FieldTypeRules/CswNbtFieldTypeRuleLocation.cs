@@ -12,13 +12,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
-        public CswNbtFieldTypeRuleLocation( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRuleLocation( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            NameSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Name );
+            NameSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Name );
             NameSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
                                        CswNbtPropFilterSql.PropertyFilterMode.Contains |
                                        CswNbtPropFilterSql.PropertyFilterMode.Ends |
@@ -28,14 +28,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                        CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( NameSubField, true );
 
-            NodeIdSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1_FK, CswNbtSubField.SubFieldName.NodeID );
+            NodeIdSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_FK, CswNbtSubField.SubFieldName.NodeID );
             NodeIdSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                          CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
                                          CswNbtPropFilterSql.PropertyFilterMode.NotNull |
                                          CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( NodeIdSubField );
 
-            RowSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Row );
+            RowSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Row );
             RowSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                       CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
                                       CswNbtPropFilterSql.PropertyFilterMode.LessThan |
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                       CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( RowSubField );
 
-            ColumnSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field3, CswNbtSubField.SubFieldName.Column );
+            ColumnSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field3, CswNbtSubField.SubFieldName.Column );
             ColumnSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                          CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
                                          CswNbtPropFilterSql.PropertyFilterMode.LessThan |
@@ -53,14 +53,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                          CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( ColumnSubField );
 
-            PathSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field4, CswNbtSubField.SubFieldName.Path );
+            PathSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field4, CswNbtSubField.SubFieldName.Path );
             PathSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Contains |
                                        CswNbtPropFilterSql.PropertyFilterMode.NotNull |
                                        CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( PathSubField );
 
 
-            BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field5, CswNbtSubField.SubFieldName.Barcode );
+            BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field5, CswNbtSubField.SubFieldName.Barcode );
             BarcodeSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
                                           CswNbtPropFilterSql.PropertyFilterMode.Contains |
                                           CswNbtPropFilterSql.PropertyFilterMode.Ends |

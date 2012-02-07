@@ -260,7 +260,7 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 if( _FieldTypeRule == null )
-                    _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this );
+                    _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this.FieldType.FieldType );
                 return _FieldTypeRule;
             }
         }

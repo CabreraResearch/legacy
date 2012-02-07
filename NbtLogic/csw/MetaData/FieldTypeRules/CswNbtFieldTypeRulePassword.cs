@@ -11,18 +11,18 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
-        public CswNbtFieldTypeRulePassword( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRulePassword( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            EncryptedPasswordSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Password );
+            EncryptedPasswordSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Password );
             //// BZ 8638
             //EncryptedPasswordSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.NotNull |
             //                                        CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( EncryptedPasswordSubField );
 
-            ChangedDateSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1_Date, CswNbtSubField.SubFieldName.ChangedDate );
+            ChangedDateSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_Date, CswNbtSubField.SubFieldName.ChangedDate );
             SubFields.add( ChangedDateSubField );
         }//ctor
 

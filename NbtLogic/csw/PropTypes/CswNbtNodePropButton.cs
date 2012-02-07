@@ -72,8 +72,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public static void AsJSON( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ParentObject )
         {
-            ParentObject.Add( new JProperty( "text", NodeTypeProp.StaticText.ToString() ) );
-            ParentObject.Add( new JProperty( "mode", NodeTypeProp.Extended.ToString().ToLower() ) );
+            ParentObject["text"] = NodeTypeProp.StaticText.ToString();
+            ParentObject["mode"] = NodeTypeProp.Extended.ToString().ToLower();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

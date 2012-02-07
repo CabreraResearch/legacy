@@ -12,18 +12,21 @@ namespace ChemSW.Nbt.MetaData
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private CswTableUpdate _TableUpdate;
         private string _PkColumnName;
+        private string _NameColumnName;
 
         public delegate ICswNbtMetaDataObject MakeMetaDataObjectHandler( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row );
         private MakeMetaDataObjectHandler _MetaDataObjectMaker = null;
 
         public CswNbtMetaDataCollectionImpl( CswNbtMetaDataResources CswNbtMetaDataResources,
                                              string PkColumnName,
+                                             string NameColumnName,
                                              CswTableUpdate TableUpdate,
                                              MakeMetaDataObjectHandler MetaDataObjectMaker )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
             _TableUpdate = TableUpdate;
             _PkColumnName = PkColumnName;
+            _NameColumnName = NameColumnName;
             _MetaDataObjectMaker = MetaDataObjectMaker;
         } // constructor
 
@@ -61,8 +64,8 @@ namespace ChemSW.Nbt.MetaData
             return _Pks;
         } // getPks()
 
-        private Dictionary<string,Collection<Int32>> _PksWhere = null;
-        public Collection<Int32> getPks(string Where)
+        private Dictionary<string, Collection<Int32>> _PksWhere = null;
+        public Collection<Int32> getPks( string Where )
         {
             if( _PksWhere == null )
             {
@@ -84,12 +87,47 @@ namespace ChemSW.Nbt.MetaData
             return _PksWhere[Where];
         } // getPks(Where)
 
+
+        private Dictionary<string, Int32> _PkDict = null;
+        public Dictionary<string, Int32> getPkDict()
+        {
+            if( _PkDict == null )
+            {
+                _PkDict = getPkDict( string.Empty );
+            }
+            return _PkDict;
+        } // getPkDict()
+
+        private Dictionary<string, Dictionary<string, Int32>> _PkDictsWhere = null;
+        public Dictionary<string, Int32> getPkDict( string Where )
+        {
+            if( _PkDictsWhere == null )
+            {
+                _PkDictsWhere = new Dictionary<string, Dictionary<string, Int32>>();
+            }
+            if( false == _PkDictsWhere.ContainsKey( Where ) )
+            {
+                CswCommaDelimitedString Select = new CswCommaDelimitedString();
+                Select.Add( _PkColumnName );
+                Select.Add( _NameColumnName );
+                DataTable Table = _TableUpdate.getTable( Select, string.Empty, Int32.MinValue, Where, false );
+
+                Dictionary<string, Int32> Coll = new Dictionary<string, Int32>();
+                foreach( DataRow Row in Table.Rows )
+                {
+                    Coll.Add( CswConvert.ToString( Row[_NameColumnName] ), CswConvert.ToInt32( Row[_PkColumnName] ) );
+                }
+                _PkDictsWhere[Where] = Coll;
+            }
+            return _PkDictsWhere[Where];
+        } // _PkDictsWhere(Where)
+
         private Dictionary<Int32, ICswNbtMetaDataObject> _ByPk = null;
         public ICswNbtMetaDataObject getByPk( Int32 Pk )
         {
             if( _ByPk == null )
             {
-                _ByPk = new Dictionary<Int32,ICswNbtMetaDataObject>();
+                _ByPk = new Dictionary<Int32, ICswNbtMetaDataObject>();
             }
             if( false == _ByPk.ContainsKey( Pk ) )
             {
@@ -97,7 +135,9 @@ namespace ChemSW.Nbt.MetaData
                 if( Table.Rows.Count > 0 )
                 {
                     _ByPk[Pk] = _MetaDataObjectMaker( _CswNbtMetaDataResources, Table.Rows[0] );
-                } else {
+                }
+                else
+                {
                     _ByPk[Pk] = null;
                 }
             }

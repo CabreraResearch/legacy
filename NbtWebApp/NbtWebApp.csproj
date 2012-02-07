@@ -739,6 +739,7 @@
     <Content Include="js\main\controls\CswMultiSelect.js" />
     <Content Include="csw.js\controls\csw.timeinterval.js" />
     <Content Include="js\main\controls\CswList.js" />
+    <Content Include="js\main\controls\CswTable.js" />
     <Content Include="js\main\Main.js" />
     <Content Include="js\main\pagecmp\CswDefaultContent.js" />
     <Content Include="js\main\tools\CswPubSub.js" />
