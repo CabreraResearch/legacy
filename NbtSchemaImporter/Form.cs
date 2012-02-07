@@ -1,28 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Xml;
 using System.Windows.Forms;
-using System.Collections.ObjectModel;
-using System.IO;
-using Microsoft.VisualBasic.FileIO;
-using ChemSW.Core;
-using ChemSW.Nbt.Config;
-using ChemSW.DB;
-using ChemSW.Log;
-using ChemSW.Config;
-using ChemSW.Security;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.TreeEvents;
 using ChemSW.Nbt.ImportExport;
-using ChemSW.Nbt.Security;
+using Microsoft.VisualBasic.FileIO;
 
 namespace ChemSW.Nbt.Schema
 {

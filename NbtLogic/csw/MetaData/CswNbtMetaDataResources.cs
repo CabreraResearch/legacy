@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Data;
-using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.MetaData
@@ -433,9 +429,9 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public ICswNbtFieldTypeRule makeFieldTypeRule( ICswNbtMetaDataProp MetaDataProp )
+        public ICswNbtFieldTypeRule makeFieldTypeRule(CswNbtMetaDataFieldType.NbtFieldType FieldType)
         {
-            return CswNbtFieldTypeRuleFactory.makeRule( CswNbtFieldResources, MetaDataProp );
+            return CswNbtFieldTypeRuleFactory.makeRule( CswNbtFieldResources, FieldType );
         }
     }
 }

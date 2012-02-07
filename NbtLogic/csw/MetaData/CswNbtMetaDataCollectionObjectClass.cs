@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using ChemSW.Core;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -19,6 +16,7 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "objectclassid",
+                                                          "objectclass",
                                                           _CswNbtMetaDataResources.ObjectClassTableUpdate,
                                                           makeObjectClass );
         }
@@ -33,9 +31,20 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataObjectClass( Resources, Row );
         }
 
-        public Collection<Int32> getObjectClassIds()
+        public Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass,Int32> getObjectClassIds()
         {
-            return _CollImpl.getPks();
+            Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32> ret = new Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32>();
+            Dictionary<string, Int32> OCDict = _CollImpl.getPkDict();
+            CswNbtMetaDataObjectClass.NbtObjectClass OCKey = CswNbtMetaDataObjectClass.NbtObjectClass.Unknown;
+            foreach( string Key in OCDict.Keys )
+            {
+                Enum.TryParse<CswNbtMetaDataObjectClass.NbtObjectClass>( Key, out OCKey );
+                if( false == ret.ContainsKey( OCKey ) )
+                {
+                    ret.Add( OCKey, OCDict[Key] );
+                }
+            }
+            return ret;
         }
         public IEnumerable<CswNbtMetaDataObjectClass> getObjectClasses()
         {

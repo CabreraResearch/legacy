@@ -11,15 +11,14 @@
             o.propVals = o.propData.values;
             o.$parent = $Div;
             if (false === Csw.bool(o.ReadOnly)) {
-                CswTimeInterval(o);
+                Csw.controls.timeInterval(o);
             } else {
                 $Div.append(o.propData.gestalt);
             }
         },
         save: function (o) {
-            var clientDb = CswClientDb();
             //Case 20939: if your prop isn't saving, check for duplicate IDs
-            var intervalData = clientDb.getItem(o.ID + '_rateIntervalSave');
+            var intervalData = Csw.clientDb.getItem(o.ID + '_rateIntervalSave');
             var $this = $(this);
             
             try {
@@ -46,12 +45,12 @@
                 };
                 
                 var newInterval = attributes.Interval.rateintervalvalue;
-                if (false === o.Multi || $this.find('#' + o.ID + '_textvalue').text() !== CswMultiEditDefaultValue) {
+                if (false === o.Multi || $this.find('#' + o.ID + '_textvalue').text() !== Csw.enums.multiEditDefaultValue) {
                     $.extend(true, newInterval, intervalData);
                 }
                 var oldInterval = o.propData.values.Interval.rateintervalvalue;
                 switch (attributes.Interval.rateintervalvalue.ratetype) {
-                    case CswRateIntervalTypes.WeeklyByDay:
+                    case Csw.enums.rateIntervalTypes.WeeklyByDay:
                         if(false === Csw.contains(oldInterval, 'startingdate')) {
                             oldInterval.startingdate = { date: '', dateformat: '' };
                         }
@@ -59,7 +58,7 @@
                             oldInterval.weeklyday = '';
                         }
                         break;
-                    case CswRateIntervalTypes.MonthlyByDate:
+                    case Csw.enums.rateIntervalTypes.MonthlyByDate:
                         if(false === Csw.contains(oldInterval, 'monthlydate')) {
                             oldInterval.monthlydate = { date: '', dateformat: '' };
                         }
@@ -73,7 +72,7 @@
                             oldInterval.startingyear = '';
                         }
                         break;
-                    case CswRateIntervalTypes.MonthlyByWeekAndDay:
+                    case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
                         if(false === Csw.contains(oldInterval, 'monthlyweek')) {
                             oldInterval.monthlyweek = '';
                         }
@@ -90,7 +89,7 @@
                             oldInterval.startingyear = '';
                         }
                         break;
-                    case CswRateIntervalTypes.YearlyByDate:
+                    case Csw.enums.rateIntervalTypes.YearlyByDate:
                         if(false === Csw.contains(oldInterval, 'yearlydate')) {
                             oldInterval.yearlydate = { date: '', dateformat: ''};
                         }

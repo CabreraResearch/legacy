@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -97,9 +98,6 @@ namespace ChemSW.Nbt.WebServices
                                 new JProperty( "Current User List", new JObject(
                                     new JProperty( "action", "Sessions" )
                                 ) ),
-                                new JProperty( "View Log", new JObject(
-                                    new JProperty( "href", "DisplayLog.aspx" )
-                                ) ),
                                 new JProperty( "Edit Config Vars", new JObject(
                                     new JProperty( "href", "ConfigVars.aspx" )
                                 ) ),
@@ -110,6 +108,10 @@ namespace ChemSW.Nbt.WebServices
                                     new JProperty( "action", "Quotas" )
                                 ) )
                         );
+                if( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
+                {
+                    Ret["Admin"]["View Log"] = new JObject( new JProperty( "href", "DisplayLog.aspx" ) );
+                }
             }
             Ret["Preferences"] = new JObject(
                                     new JProperty( "haschildren", true ),

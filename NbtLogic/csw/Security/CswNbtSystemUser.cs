@@ -1,7 +1,5 @@
 ﻿using System;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 

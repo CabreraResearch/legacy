@@ -15,7 +15,7 @@
             
             var $NumberTextBox = $Div.CswNumberTextBox({
                 ID: o.ID,
-                Value: (false === o.Multi) ? Csw.string(propVals.value).trim() : CswMultiEditDefaultValue,
+                Value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                 MinValue: Csw.number(propVals.minvalue),
                 MaxValue: Csw.number(propVals.maxvalue),
                 ceilingVal: ceilingVal,

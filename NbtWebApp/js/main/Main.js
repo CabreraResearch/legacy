@@ -10,15 +10,15 @@ window.initMain = window.initMain || function (undefined) {
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
-    
-    Csw.onBeforeAjax = function (watchGlobal) {
+
+    Csw.ajax.onBeforeAjax = function (watchGlobal) {
         if (watchGlobal) {
             $('#ajaxSpacer').hide();
             $('#ajaxImage').show();
         }
     };
-    Csw.onAfterAjax = function () {
-        if (false === Csw.ajaxInProgress()) {
+    Csw.ajax.onAfterAjax = function () {
+        if (false === Csw.ajax.ajaxInProgress()) {
             $('#ajaxImage').hide();
             $('#ajaxSpacer').show();
         }
@@ -38,7 +38,6 @@ window.initMain = window.initMain || function (undefined) {
     } else {
         initAll();
     }
-
 
     function initAll() {
         //if (debugOn()) Csw.log('Main.initAll()');
@@ -62,7 +61,7 @@ window.initMain = window.initMain || function (undefined) {
                         handleAction({ 'actionname': 'Sessions' });
                     }
                 }); // CswMenuHeader
-                
+
                 refreshViewSelect();
 
                 var current = Csw.clientState.getCurrent();
@@ -272,7 +271,7 @@ window.initMain = window.initMain || function (undefined) {
             },
             'onMultiEdit': function () {
                 switch (o.viewmode) {
-                    case CswViewMode.grid.name:
+                    case Csw.enums.viewMode.grid.name:
                         multi = (false === o.grid.isMulti());
                         var g = {
                             gridOpts: {
@@ -290,14 +289,14 @@ window.initMain = window.initMain || function (undefined) {
             },
             'onPrintView': function () {
                 switch (o.viewmode) {
-                    case CswViewMode.grid.name:
+                    case Csw.enums.viewMode.grid.name:
                         if (Csw.contains(o, 'grid') &&
                              false == Csw.isNullOrEmpty(o.grid)) {
                             o.grid.print();
                         }
                         break;
                     default:
-                        Csw.error.showError(Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'View Printing is not enabled for views of type ' + o.viewmode));
+                        Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'View Printing is not enabled for views of type ' + o.viewmode));
                         break;
                 }
             },
@@ -502,7 +501,7 @@ window.initMain = window.initMain || function (undefined) {
                 if (o.doMenuRefresh) {
                     refreshMainMenu({
                         viewid: o.viewid,
-                        viewmode: CswViewMode.grid.name,
+                        viewmode: Csw.enums.viewMode.grid.name,
                         grid: grid,
                         nodeid: o.nodeid,
                         cswnbtnodekey: o.cswnbtnodekey
@@ -514,7 +513,7 @@ window.initMain = window.initMain || function (undefined) {
                     'actionname': 'Edit_View',
                     'ActionOptions': {
                         viewid: viewid,
-                        viewmode: CswViewMode.grid.name,
+                        viewmode: Csw.enums.viewMode.grid.name,
                         startingStep: 2,
                         IgnoreReturn: true
                     }
@@ -563,13 +562,14 @@ window.initMain = window.initMain || function (undefined) {
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
             onSuccess: function () {
-                refreshMainMenu({ 
+                refreshMainMenu({
                     viewid: o.viewid,
-                    viewmode: CswViewMode.table.name//,
-//                    nodeid: o.nodeid,
-//                    cswnbtnodekey: o.cswnbtnodekey
+                    viewmode: Csw.enums.viewMode.table.name//,
+                    //                    nodeid: o.nodeid,
+                    //                    cswnbtnodekey: o.cswnbtnodekey
                 });
-            }
+            },
+            onNoResults: showDefaultContentTable
         });
     }
 
@@ -593,20 +593,39 @@ window.initMain = window.initMain || function (undefined) {
 
             if (o.nodeid !== '' && o.nodeid !== 'root') {
                 getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-                refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
+                refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
             } else {
-                showDefaultContent({ viewid: o.viewid, viewmode: CswViewMode.tree.name });
-                refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
+                showDefaultContentTree({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name });
+                refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
             }
         }
     } // onSelectTreeNode()
 
-    function showDefaultContent(options) {
+    function showDefaultContentTree(viewopts) {
+        var v = {
+            viewid: '',
+            viewmode: ''
+        };
+        if (viewopts) $.extend(v, viewopts);
+        clear({ centerbottom: true });
+        $('#RightDiv').CswDefaultContent(viewopts);
 
-        $('#RightDiv').CswDefaultContent(options);
+    } // showDefaultContentTree()
 
-    } // showDefaultContent()
+    function showDefaultContentTable(viewopts) {
+        var v = {
+            viewid: '',
+            viewmode: ''
+        };
+        if (viewopts) $.extend(v, viewopts);
+        clear({ centerbottom: true });
+        var $div = $('#CenterBottomDiv').CswDiv({ ID: 'deftbldiv' });
+        $div.CswAttrDom('align', 'center');
+        $div.css({ textAlign: 'center' });
+        $div.append('No Results.<BR/><BR/>');
+        $div.CswDefaultContent(viewopts);
 
+    } // showDefaultContentTable()
 
     function getTabs(options) {
         //if (debugOn()) Csw.log('Main.getTabs()');
@@ -646,7 +665,7 @@ window.initMain = window.initMain || function (undefined) {
                     'actionname': 'Edit_View',
                     'ActionOptions': {
                         viewid: viewid,
-                        viewmode: CswViewMode.grid.name,
+                        viewmode: Csw.enums.viewMode.grid.name,
                         startingStep: 2,
                         IgnoreReturn: true
                     }
@@ -812,11 +831,11 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                
-            //				break;                
-            //			case 'Assign_Tests':                
-            //				break;                
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                
+            //			case 'Assign_Inspection':                       
+            //				break;                       
+            //			case 'Assign_Tests':                       
+            //				break;                       
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                       
             case 'Create_Inspection':
                 clear({ 'all': true });
 
@@ -850,8 +869,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswInspectionDesign(designOpt);
 
                 break;
-            //			case 'Design':                
-            //				break;                
+            //			case 'Design':                       
+            //				break;                       
             case 'Edit_View':
                 clear({ 'all': true });
 
@@ -878,14 +897,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                
-            //				break;                
-            //			case 'Future_Scheduling':                
-            //				break;                
-            //			case 'Import_Fire_Extinguisher_Data':                
-            //				break;                
-            //			case 'Inspection_Design':                
-            //				break;                
+            //			case 'Enter_Results':                       
+            //				break;                       
+            //			case 'Future_Scheduling':                       
+            //				break;                       
+            //			case 'Import_Fire_Extinguisher_Data':                       
+            //				break;                       
+            //			case 'Inspection_Design':                       
+            //				break;                       
             case 'OOC_Inspections':
                 setupOocInspections();
 
@@ -919,14 +938,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswScheduledRulesGrid(rulesOpt);
 
                 break;
-            //			case 'Load_Mobile_Data':                
-            //				break;                
-            //			case 'Receiving':                
-            //				break;                
-            //			case 'Split_Samples':                
-            //				break;                
-            //			case 'View_By_Location':                
-            //				break;                
+            //			case 'Load_Mobile_Data':                       
+            //				break;                       
+            //			case 'Receiving':                       
+            //				break;                       
+            //			case 'Split_Samples':                       
+            //				break;                       
+            //			case 'View_By_Location':                       
+            //				break;                       
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;

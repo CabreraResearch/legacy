@@ -1,11 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../controls/CswGrid.js" />
-/// <reference path="../pagecmp/CswDialog.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     var pluginName = 'CswNodeTable';
 
@@ -19,13 +15,12 @@
                 ID: '',
                 nodeid: '',
                 cswnbtnodekey: '',
-                EditMode: EditMode.Edit.name,
-                //onAddNode: function (nodeid,cswnbtnodekey){},
-                onEditNode: null, //function (nodeid,cswnbtnodekey){},
-                onDeleteNode: null, //function (nodeid,cswnbtnodekey){}
-                onSuccess: null, // function () {}
+                EditMode: Csw.enums.editMode.Edit,
+                onEditNode: null,
+                onDeleteNode: null,
+                onSuccess: null,
+                onNoResults: null,  // function({viewid, viewmode})
                 columns: 3,      // number of columns to use
-                maxlength: 35,   // max length of node names and property values
                 rowpadding: 25,  // padding between table rows, in pixels
                 maxheight: 600   // maximum display height of table, in pixels
             };
@@ -33,9 +28,9 @@
 
             var $parent = $(this);
 
-            var $scrollingdiv = $parent.CswDiv({ ID: makeId({ id: o.ID, suffix: '_scrolldiv' }) })
+            var $scrollingdiv = $parent.CswDiv({ ID: Csw.makeId({ id: o.ID, suffix: '_scrolldiv' }) })
                                     .css({
-                                        height: o.height + 'px',
+                                        height: o.maxheight + 'px',
                                         overflow: 'auto'
                                     });
 
@@ -57,8 +52,9 @@
                 success: function (data) {
                     var r = 1;
                     var c = 1;
+                    var results = Csw.number(data.results, -1);
 
-                    Csw.crawlObject(data, function (nodeObj) {
+                    function _makeNodeCell(nodeObj) {
                         var nodeid = nodeObj.nodeid;
 
                         if (nodeObj.nodename == "Results Truncated") {
@@ -77,44 +73,53 @@
                                                 .css({
                                                     width: width
                                                 });
-                        // Name
-                        var name;
-                        if (nodeObj.nodename.length > o.maxlength) {
-                            name = '<b>' + nodeObj.nodename.substr(0, o.maxlength) + '...</b>';
-                        } else {
-                            name = '<b>' + nodeObj.nodename + '</b>';
-                        }
 
-                        if (false === isNullOrEmpty(nodeObj.thumbnailurl)) {
+                        $thumbnailcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+                        $textcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+
+                        // Name
+                        var name = '<b>' + nodeObj.nodename + '</b>';
+
+                        if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                             $thumbnailcell.append('<img src="' + nodeObj.thumbnailurl + '" style="max-width: 90%;">');
                         }
                         $thumbnailcell.append('<br/>');
 
-                        if (locked) {
+                        if (Csw.bool(nodeObj.locked)) {
                             name += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
                         }
                         $textcell.append(name + '<br/>');
 
                         // Props
                         Csw.crawlObject(nodeObj.props, function (propObj) {
-                            $textcell.append('' + propObj.propname + ': ');
-                            if (propObj.gestalt.length > o.maxlength) {
-                                $textcell.append(propObj.gestalt.substr(0, o.maxlength) + '...');
+                            if (propObj.fieldtype == "Button") {
+
+                                var $propdiv = $textcell.CswDiv({});
+                                $.CswFieldTypeFactory('make', {
+                                    nodeid: nodeid,
+                                    fieldtype: propObj.fieldtype,
+                                    $propdiv: $propdiv,
+                                    propData: propObj.propData,
+                                    ID: Csw.makeId({ ID: o.ID, suffix: propObj.id }),
+                                    EditMode: Csw.enums.EditMode.Table
+                                });
+
                             } else {
+                                $textcell.append('' + propObj.propname + ': ');
                                 $textcell.append(propObj.gestalt);
                             }
                             $textcell.append('<br/>');
                         });
 
                         // Buttons
-                        var $btntable = $textcell.CswTable({ ID: makeId({ id: o.ID, suffix: nodeid + '_btntbl' }) });
+                        var $btntable = $textcell.CswTable({ ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_btntbl' }) });
                         if (nodeObj.allowview || nodeObj.allowedit) {
                             var btntext = "View";
                             if (nodeObj.allowedit) {
                                 btntext = "Edit";
                             }
                             $btntable.CswTable('cell', 1, 1).CswButton({
-                                ID: makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
+                                ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
                                 enabledText: btntext,
                                 disableOnClick: false,
                                 onclick: function () {
@@ -131,7 +136,7 @@
 
                         if (nodeObj.allowdelete) {
                             $btntable.CswTable('cell', 1, 2).CswButton({
-                                ID: makeId({ id: o.ID, suffix: nodeid + '_btn' }),
+                                ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_btn' }),
                                 enabledText: 'Delete',
                                 disableOnClick: false,
                                 onclick: function () {
@@ -147,12 +152,16 @@
 
                         c += 1;
                         if (c > o.columns) { c = 1; r += 1; }
-                    });
-
-
-                    if (Csw.isFunction(o.onSuccess)) {
-                        o.onSuccess();
                     }
+
+                    if (results === 0) {
+                        Csw.tryExec(o.onNoResults, { viewid: o.viewid, viewmode: Csw.enums.viewMode.table.name });
+                    } else {
+                        Csw.crawlObject(data.nodes, _makeNodeCell);
+                    }
+
+                    Csw.tryExec(o.onSuccess);
+
                 } // success{} 
             }); // ajax
         } // 'init'

@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
-using System.Text;
 using System.Data;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.PropTypes
 {

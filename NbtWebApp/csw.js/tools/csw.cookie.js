@@ -1,10 +1,10 @@
 ﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function CswCookie() { 
+(function _cswCookie() {
     'use strict';
 
-    var cookie = (function () {
+    var cookie = (function() {
 
         var cookieNames = {
             SessionId: 'CswSessionId',
@@ -25,7 +25,7 @@
             LastReportId: 'csw_lastreportid'
         };
 
-        function get (cookiename) {
+        function get(cookiename) {
             /// <summary> Get the current value of a cookie by name.</summary>
             /// <param name="cookiename" type="String">A Csw cookie() cookieName</param>
             /// <returns type="Object">Cookie value</returns>
@@ -33,7 +33,7 @@
             return ret;
         }
 
-        function set (cookiename, value) {
+        function set(cookiename, value) {
             /// <summary> Get the current value of a cookie by name.</summary>
             /// <param name="cookiename" type="String">A Csw cookie() cookieName</param>
             /// <param name="value" type="String">Value to assign to cookie</param>
@@ -41,14 +41,14 @@
             return $.cookie(cookiename, value);
         }
 
-        function clear (cookiename) {
+        function clear(cookiename) {
             /// <summary> Clear the current value of a cookie by name.</summary>
             /// <param name="cookiename" type="String">A Csw cookie() cookieName</param>
             /// <returns type="Object">Cookie value</returns>
             return $.cookie(cookiename, '');
         }
 
-        function clearAll () {
+        function clearAll() {
             /// <summary> Clear the current value of all Csw cookies.</summary>
             /// <returns type="Boolean">Always true.</returns>
             var cookieName;
@@ -70,7 +70,7 @@
     }());
     Csw.register('cookie', cookie);
     Csw.cookie = Csw.cookie || cookie;
-    
+
 }());
 
 

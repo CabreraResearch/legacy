@@ -1,15 +1,7 @@
-﻿/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../controls/CswNodeTypeSelect.js" />
-/// <reference path="../pagecmp/CswWizard.js" />
-/// <reference path="../controls/CswGrid.js" />
-/// <reference path="../pagecmp/CswDialog.js" />
-/// <reference path="../controls/CswTimeInterval.js" />
-/// <reference path="../controls/CswTable.js" />
+﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     $.fn.CswInspectionDesign = function (options) {
 
@@ -23,11 +15,11 @@
         if (options) $.extend(o, options);
 
         var wizardSteps = {
-            1: ChemSW.enums.CswInspectionDesign_WizardSteps.step1.description,
-            2: ChemSW.enums.CswInspectionDesign_WizardSteps.step2.description,
-            3: ChemSW.enums.CswInspectionDesign_WizardSteps.step3.description,
-            4: ChemSW.enums.CswInspectionDesign_WizardSteps.step4.description,
-            5: ChemSW.enums.CswInspectionDesign_WizardSteps.step5.description
+            1: Csw.enums.wizardSteps_InspectionDesign.step1.description,
+            2: Csw.enums.wizardSteps_InspectionDesign.step2.description,
+            3: Csw.enums.wizardSteps_InspectionDesign.step3.description,
+            4: Csw.enums.wizardSteps_InspectionDesign.step4.description,
+            5: Csw.enums.wizardSteps_InspectionDesign.step5.description
         };
 
         var $parent = $(this),
@@ -45,19 +37,19 @@
             $divStep1, selectedInspectionTarget, $inspectionTarget, $addNewTarget, $categoryName,
         // Step 2 - Select or Create Inspection Design
             selectedInspectionDesign = { id: '[Create New]', name: '[Create New]' },
-            $divStep2, categoryName, $inspectionDesignSelect, $newDesignName, 
+            $divStep2, categoryName, $inspectionDesignSelect, $newDesignName,
         // Step 3 - Upload Inspection Design
             $divStep3, gridIsPopulated = false,
         // Step 4 - Review and Revise Inspection Design
             $divStep4, inspectionGrid, gridOptions,
-        
+
         // Step 5 - Review and Finish
             $divStep5, //inspectionTargetGroups = { }, newSchedules = { }, $scheduleList,
 
             isNewInspectionDesign = function () {
                 return ('[Create New]' === selectedInspectionDesign.id);
             },
-            
+
             isNewTarget = (function () {
                 var ret = false;
                 return function (isNew) {
@@ -65,9 +57,9 @@
                         ret = Csw.bool(isNew);
                     }
                     return ret;
-                };    
-            }()),
-            
+                };
+            } ()),
+
             createInspectionEvents = {
                 targetNameChanged: 'targetNameChanged',
                 designNameChanged: 'designNameChanged'
@@ -75,7 +67,7 @@
 
             toggleButton = function (button, isEnabled, doClick) {
                 var $btn;
-                if(Csw.bool(isEnabled)) {
+                if (Csw.bool(isEnabled)) {
                     $btn = $wizard.CswWizard('button', button, 'enable');
                     if (Csw.bool(doClick)) {
                         $btn.click();
@@ -83,30 +75,30 @@
                 } else {
                     $wizard.CswWizard('button', button, 'disable');
                 }
-                if(button !== buttons.finish) {
+                if (button !== buttons.finish) {
                     toggleButton(buttons.finish, (currentStepNo === 5));
                 }
 
                 return false;
             },
-            
+
             makeStepId = function (suffix, stepNo) {
                 var step = stepNo || currentStepNo;
                 return Csw.makeId({ prefix: 'step_' + step, ID: o.ID, suffix: suffix });
             },
-            
-            //Step 1. Select an Inspection Target.
+
+        //Step 1. Select an Inspection Target.
             makeStepOne = (function () {
                 var stepOneComplete = false,
-                    $inspectionTable, $addBtn, $rowOneTable;
+                    inspectionTable, $addBtn, rowOneTable;
                 return function () {
-                    
+
                     var onNodeTypeSelectSuccess = function (data) {
                         //If the picklist is empty, we have to add a new Target
-                        if (data.nodetypecount === 0) { 
+                        if (data.nodetypecount === 0) {
                             $inspectionTarget.hide();
                             isNewTarget(true);
-                            $addNewTarget = $rowOneTable.CswTable('cell', 2, 2)
+                            $addNewTarget = rowOneTable.cell(2, 2)
                                 .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                 .CswInput('init', {
                                     ID: o.ID + '_newTargetName',
@@ -126,7 +118,7 @@
                             selectedInspectionTarget = $inspectionTarget.find(':selected').text();
                             $wizard.CswWizard('button', 'next', 'enable');
 
-                            $addBtn = $addBtn || $rowOneTable.CswTable('cell', 2, 3)
+                            $addBtn = $addBtn || rowOneTable.cell(2, 3)
                                                                 .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                                                 .CswDiv('init')
                                                                 .CswButton('init', {
@@ -143,7 +135,7 @@
                                                                             maxlength: 40,
                                                                             onSuccess: function (newData) {
                                                                                 var proposedInspectionTarget = newData.nodetypename;
-                                                                                if( checkTargetIsClientSideUnique(proposedInspectionTarget) ) {
+                                                                                if (checkTargetIsClientSideUnique(proposedInspectionTarget)) {
                                                                                     selectedInspectionTarget = proposedInspectionTarget;
                                                                                     isNewTarget(true);
                                                                                     $wizard.CswWizard('button', 'next', 'enable');
@@ -159,15 +151,15 @@
                                                                 });
                         } // else
                     };
-                    
+
                     var makeTargetSelect = function () {
                         //Normally this would be written as $inspectionTarget = $inspectionTarget || ...
                         //However, the variable assignment is sufficiently complex that this deviation is justified.
-                        if(false === Csw.isNullOrEmpty($inspectionTarget, true)) {
+                        if (false === Csw.isNullOrEmpty($inspectionTarget, true)) {
                             $inspectionTarget.remove();
                         }
 
-                        $inspectionTarget = $rowOneTable.CswTable('cell', 2, 1)
+                        $inspectionTarget = rowOneTable.cell(2, 1)
                                                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                                             .CswDiv('init')
                                                             .CswNodeTypeSelect('init', {
@@ -183,47 +175,47 @@
                                                                     onNodeTypeSelectSuccess(data);
                                                                     selectedInspectionTarget = $inspectionTarget.find(':selected').text();
                                                                 }
-                        });
+                                                            });
                     };
-                    
+
                     if (false === stepOneComplete) {
-                        $divStep1 = $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step1.step);
+                        $divStep1 = $wizard.CswWizard('div', Csw.enums.wizardSteps_InspectionDesign.step1.step);
                         $divStep1.append('<br />');
 
-                        $inspectionTable = $divStep1.CswTable('init', {
+                        inspectionTable = Csw.controls.table({
+                            $parent: $divStep1,
                             ID: makeStepId('setInspectionTargetTable')
                         });
 
-                        $rowOneTable = $inspectionTable.CswTable('cell', 1, 1)
-                                                        .CswTable({
-                                                            FirstCellRightAlign: true
-                                                        });
-                        
-                        $rowOneTable.CswTable('cell', 1, 1)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .append('<span>What do you want to inspect?</span>');
-        
+                        rowOneTable = Csw.controls.table({
+                            $parent: inspectionTable.cell(1, 1),
+                            FirstCellRightAlign: true
+                        });
+
+                        rowOneTable.add(1, 1, '<span>What do you want to inspect?</span>')
+                                   .css({ 'padding': '1px', 'vertical-align': 'middle' });
+
                         makeTargetSelect();
                         stepOneComplete = true;
                     } // if (false === stepOneComplete)
-                    
+
                     toggleButton(buttons.prev, false);
                     toggleButton(buttons.next, (false === Csw.isNullOrEmpty(selectedInspectionTarget)));
                 };
-            }()),
+            } ()),
 
-            //Step 2. Select an Inspection Design Design.
+        //Step 2. Select an Inspection Design Design.
             makeStepTwo = (function () {
                 var stepTwoComplete = false;
 
                 return function () {
-                    var $inspectionTable, $newDesignLabel, $newDesignNameDisplay,
+                    var inspectionTable, $newDesignLabel, $newDesignNameDisplay,
                         tempInspectionName = selectedInspectionTarget + ' Inspection',
                         tempCategoryName = selectedInspectionTarget;
 
                     var makeInspectionDesignName = function (name) {
                         var ret = Csw.string(name).trim();
-                        if(-1 === ret.indexOf('Inspection') && -1 === ret.indexOf('inspection')) {
+                        if (-1 === ret.indexOf('Inspection') && -1 === ret.indexOf('inspection')) {
                             ret += ' Inspection';
                         }
                         return ret;
@@ -248,33 +240,33 @@
                         $newDesignName.val(selectedInspectionTarget + ' Inspection');
                         $newDesignNameDisplay.text(selectedInspectionTarget + ' Inspection');
                         $categoryName.val(selectedInspectionTarget);
-                        if(isNewInspectionDesign()) {
+                        if (isNewInspectionDesign()) {
                             selectedInspectionDesign.name = selectedInspectionTarget + ' Inspection';
                         }
                         $.publish(createInspectionEvents.designNameChanged);
                     };
-                    
+
                     toggleButton(buttons.prev, true);
                     toggleButton(buttons.next, nextBtnEnabled());
-                    
+
                     if (false === stepTwoComplete) {
-                        $divStep2 = $divStep2 || $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step);
+                        $divStep2 = $divStep2 || $wizard.CswWizard('div', Csw.enums.wizardSteps_InspectionDesign.step2.step);
                         $divStep2.empty();
                         $divStep2.append('<br />');
 
                         $.subscribe(createInspectionEvents.targetNameChanged, targetChangedHandle);
 
-                        $inspectionTable = $divStep2.CswTable('init', {
-                            ID: Csw.makeSafeId('inspectionTable'),
+                        inspectionTable = Csw.controls.table({
+                            $parent: $divStep2,
+                            ID: makeStepId('inspectionTable'),
                             FirstCellRightAlign: true
                         });
 
                         //1. Copy from Inspection Design
-                        $inspectionTable.CswTable('cell', 1, 1)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .append('<span>Select an Inspection Design&nbsp</span>');
+                        inspectionTable.add(1, 1, '<span>Select an Inspection Design&nbsp</span>')
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' });
 
-                        $inspectionDesignSelect = $inspectionTable.CswTable('cell', 1, 2)
+                        $inspectionDesignSelect = inspectionTable.cell(1, 2)
                             .CswDiv('init')
                             .CswNodeTypeSelect('init', {
                                 ID: Csw.makeSafeId('nodeTypeSelect'),
@@ -284,7 +276,7 @@
                             .change(function () {
                                 var $selected = $inspectionDesignSelect.find(':selected');
                                 selectedInspectionDesign.id = $selected.val();
-                                if(isNewInspectionDesign() && $newDesignName && false === Csw.isNullOrEmpty($newDesignName.val())) {
+                                if (isNewInspectionDesign() && $newDesignName && false === Csw.isNullOrEmpty($newDesignName.val())) {
                                     selectedInspectionDesign.name = $newDesignName.val();
                                 } else {
                                     selectedInspectionDesign.name = $selected.text();
@@ -297,19 +289,18 @@
                         //Create New is selected by default
                         selectedInspectionDesign.id = $inspectionDesignSelect.find(':selected').val();
                         selectedInspectionDesign.name = makeInspectionDesignName(selectedInspectionTarget);
-                        
-                        $inspectionTable.CswTable('cell', 2, 1).append('<br />');
+
+                        inspectionTable.add(2, 1, '<br />');
 
                         //2. New Inspection Design Name
-                        $newDesignLabel = $('<span class="required">New Inspection Design Name&nbsp</span>')
-                                                .appendTo($inspectionTable.CswTable('cell', 3, 1))
-                                                .css({ 'padding': '1px', 'vertical-align': 'middle' });
+                        $newDesignLabel = inspectionTable.add(3, 1, '<span class="required">New Inspection Design Name&nbsp</span>')
+                                                         .css({ 'padding': '1px', 'vertical-align': 'middle' });
 
-                        $newDesignName = $inspectionTable.CswTable('cell', 3, 2)
+                        $newDesignName = inspectionTable.cell(3, 2)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .CswInput('init', {
                                 ID: o.ID + '_newDesignName',
-                                type: CswInput_Types.text,
+                                type: Csw.enums.inputTypes.text,
                                 cssclass: 'required',
                                 maxlength: 50,
                                 width: (50 * 7) + 'px',
@@ -325,69 +316,67 @@
                                     $.publish(createInspectionEvents.designNameChanged);
                                 }, 10);
                             });
-                        
-                        $newDesignNameDisplay = $('<span>' + tempInspectionName + '</span>').appendTo( 
-                                                                $inspectionTable.CswTable('cell', 4, 2)
-                                                                                .css({ 'padding': '1px', 'vertical-align': 'middle' }));
 
-                        $inspectionTable.CswTable('cell', 5, 1).append('<br />');
+                        $newDesignNameDisplay = inspectionTable.add(4, 2, '<span>' + tempInspectionName + '</span>')
+                                                               .css({ 'padding': '1px', 'vertical-align': 'middle' });
 
-                         //2. Category Name
-                        $inspectionTable.CswTable('cell', 6, 1)
-                                        .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                                        .append('<span>Category Name&nbsp</span>');
+                        inspectionTable.add(5, 1, '<br />');
 
-                        $categoryName = $categoryName || $inspectionTable.CswTable('cell', 6, 2)
+                        //2. Category Name
+                        inspectionTable.add(6, 1, '<span>Category Name&nbsp</span>')
+                                        .css({'padding': '1px', 'vertical-align': 'middle'});
+
+                        $categoryName = $categoryName || inspectionTable.cell(6, 2)
                                                                         .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                                                         .CswInput('init', {
                                                                             ID: o.ID + '_newDesignCategory',
-                                                                            type: CswInput_Types.text,
+                                                                            type: Csw.enums.inputTypes.text,
                                                                             value: tempCategoryName,
                                                                             maxlength: 40,
                                                                             width: (40 * 7) + 'px'
                                                                         });
 
                         toggleNewDesignName();
-                        
-                        $inspectionTable.CswTable('cell', 6, 1).append('<br />');
+
+                        inspectionTable.add(6, 1, '<br />');
                     }
                     stepTwoComplete = true;
                 };
-            }()),
+            } ()),
 
             checkIsNodeTypeNameUnique = function (name, success, error) {
                 Csw.ajax.post({
-                        url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
-                        async: false,
-                        data: { 'NodeTypeName': name },
-                        success: function (data) {
-                            Csw.tryExec(success, data);
-                        },
-                        error: function (data) {
-                            Csw.tryExec(error, data);
-                            toggleButton(buttons.next);
-                            toggleButton(buttons.prev, true);
-                        }
-                    });
+                    url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
+                    async: false,
+                    data: { 'NodeTypeName': name },
+                    success: function (data) {
+                        Csw.tryExec(success, data);
+                    },
+                    error: function (data) {
+                        Csw.tryExec(error, data);
+                        toggleButton(buttons.next);
+                        toggleButton(buttons.prev, true);
+                    }
+                });
             },
 
-            //File upload onSuccess event to prep Step 4
+        //File upload onSuccess event to prep Step 4
             makeInspectionDesignGrid = function (jqGridOpts, onSuccess) {
                 Csw.tryExec(onSuccess);
                 gridIsPopulated = true;
-                
+
                 //This is ugly. Abstract the step div from this function.
                 $divStep4.empty();
                 var previewGridId = makeStepId('previewGrid_outer', 4),
                     $previewGrid = $divStep4.find('#' + previewGridId);
                 var $helpText = $('<p>Review the <b>' + selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.</p>')
                                     .appendTo($divStep4);
-                
+
                 var designChangeHandle = function () {
                     $helpText.html('<p>Review the <b>' + selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.</p>');
                 }
                 $.subscribe(createInspectionEvents.designNameChanged, designChangeHandle);
-                
+
                 if (Csw.isNullOrEmpty($previewGrid) || $previewGrid.length === 0) {
                     $previewGrid = $('<div id="' + previewGridId + '"></div>').appendTo($divStep4);
                 } else {
@@ -418,29 +407,29 @@
                     }
                 };
 
-                if(false === Csw.contains(jqGridOpts, 'data') || 
-                   false === Csw.contains(jqGridOpts, 'colNames') || 
+                if (false === Csw.contains(jqGridOpts, 'data') ||
+                   false === Csw.contains(jqGridOpts, 'colNames') ||
                    jqGridOpts.colNames.length === 0) {
-                    Csw.error.showError(Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
+                    Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
                     toggleButton(buttons.next, false);
                     toggleButton(buttons.prev, true, true);
                 } else {
                     $.extend(gridOptions.gridOpts, jqGridOpts);
                 }
-                inspectionGrid = CswGrid(gridOptions, $previewGrid);
+                inspectionGrid = Csw.controls.grid(gridOptions, $previewGrid);
             },
 
-            //File upload button for Step 3
+        //File upload button for Step 3
             makeInspectionDesignUpload = function ($control) {
                 var f = {
                     url: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
                     onSuccess: function () {
                         $wizard.CswWizard('button', 'next', 'enable').click();
                     },
-                    stepNo: ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step,
+                    stepNo: Csw.enums.wizardSteps_InspectionDesign.step3.step,
                     uploadName: 'design'
                 };
-               
+
                 $control.fileupload({
                     datatype: 'json',
                     dataType: 'json',
@@ -448,7 +437,7 @@
                     paramName: 'fileupload',
                     done: function (e, ret) {
                         var gridData = {};
-                        if(Csw.contains(ret, 'result') && Csw.contains(ret.result, 'jqGridOpt')) {
+                        if (Csw.contains(ret, 'result') && Csw.contains(ret.result, 'jqGridOpt')) {
                             gridData = ret.result.jqGridOpt;
                             makeInspectionDesignGrid(gridData, f.onSuccess);
                         }
@@ -456,7 +445,7 @@
                 });
             },
 
-            //If this is a new Design, upload the template. Otherwise skip to step 5.
+        //If this is a new Design, upload the template. Otherwise skip to step 5.
             makeStepThree = (function () {
                 var stepThreeComplete = false;
 
@@ -471,7 +460,7 @@
                     var doPrevClick = function () {
                         return false === isNewInspectionDesign() && false === Csw.bool(forward);
                     };
-                   
+
                     var doStepThree = function () {
                         var $step3List, $templateLink, $uploadP, $helpText;
                         var designChangeHandle = function () {
@@ -481,15 +470,15 @@
                                     .append($templateLink)));
                         };
                         if (false === stepThreeComplete) {
-                            $divStep3 = $divStep3 || $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step);
+                            $divStep3 = $divStep3 || $wizard.CswWizard('div', Csw.enums.wizardSteps_InspectionDesign.step3.step);
                             $divStep3.empty();
-                            
+
                             //Ordered instructions
                             $step3List = $divStep3.CswList('init', {
                                 ID: makeStepId('uploadTemplateList'),
                                 ordered: true
                             });
-                            
+
                             //1. Download template
                             $templateLink = $('<a href=\"/NbtWebApp/etc/InspectionDesign.xls\">Download Template</a>').button();
                             $helpText = $('<span>Create a new <b>' + selectedInspectionDesign.name + '</b> Design using the Excel template.</span>')
@@ -518,16 +507,16 @@
                         }
                     }; //doStepTwo
 
-                    if(isNewInspectionDesign()) {
+                    if (isNewInspectionDesign()) {
                         //selectedInspectionDesign.name = $newDesignName.val();
                         checkIsNodeTypeNameUnique(selectedInspectionDesign.name, doStepThree);
                     }
                     toggleButton(buttons.next, nextIsEnabled(), doNextClick());
                     toggleButton(buttons.prev, true, doPrevClick());
                 };
-            }()),
+            } ()),
 
-            //Step 4. Review the Design grid.
+        //Step 4. Review the Design grid.
             makeStepFour = (function () {
                 var stepFourComplete = false;
                 //We populate this step as the result of the async design upload. Improve the readability of this code when you next visit.
@@ -544,40 +533,40 @@
 
                     toggleButton(buttons.next, true, doNextClick());
                     toggleButton(buttons.prev, true, doPrevClick());
-                    
+
                     if (false === stepFourComplete &&
                             false === skipStepFour) {
-                        $divStep4 = $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step);
+                        $divStep4 = $wizard.CswWizard('div', Csw.enums.wizardSteps_InspectionDesign.step4.step);
                         stepFourComplete = true;
                     }
                 };
-            }()),
+            } ()),
 
             checkTargetIsClientSideUnique = function (proposedTargetName) {
                 var ret = false,
                     targetName = proposedTargetName || selectedInspectionTarget;
-                if( Csw.string(targetName).trim().toLowerCase() != Csw.string(selectedInspectionDesign.name).trim().toLowerCase() ) {
+                if (Csw.string(targetName).trim().toLowerCase() != Csw.string(selectedInspectionDesign.name).trim().toLowerCase()) {
                     ret = true;
                 } else {
-                    $.CswDialog('ErrorDialog', Csw.error.makeErrorObj(ChemSW.enums.ErrorType.warning.name, 'An Inspection Design and an Inspection Target cannot have the same name.', 'Attempted to create Inspection Target ' + targetName + ' against Inspection Design ' + selectedInspectionDesign.name));
+                    $.CswDialog('ErrorDialog', Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'An Inspection Design and an Inspection Target cannot have the same name.', 'Attempted to create Inspection Target ' + targetName + ' against Inspection Design ' + selectedInspectionDesign.name));
                 }
                 return ret;
             },
 
-            //Step 5. Preview and Finish.
+        //Step 5. Preview and Finish.
             makeStepFive = (function () {
 
                 return function () {
-                    var $confirmationList, $confirmTypesList, $confirmViewsList, $confirmationDesign, confirmGridOptions = { };
+                    var $confirmationList, $confirmTypesList, $confirmViewsList, $confirmationDesign, confirmGridOptions = {};
 
-                    if(checkTargetIsClientSideUnique()) {
+                    if (checkTargetIsClientSideUnique()) {
 
                         toggleButton(buttons.prev, true);
                         toggleButton(buttons.next, false);
 
                         categoryName = $categoryName.val();
 
-                        $divStep5 = $divStep5 || $wizard.CswWizard('div', ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step);
+                        $divStep5 = $divStep5 || $wizard.CswWizard('div', Csw.enums.wizardSteps_InspectionDesign.step5.step);
                         $divStep5.empty();
 
                         $divStep5.append('<p>You are about to create the following items. Click Finish to create the design.</p>');
@@ -615,7 +604,7 @@
                                 value: 'Creating a new Inspection Design <b>' + selectedInspectionDesign.name + '</b>.'
                             });
 
-                            CswGrid(confirmGridOptions, $confirmationDesign);
+                            Csw.controls.grid(confirmGridOptions, $confirmationDesign);
                         } else {
                             $confirmationList.CswList('addItem', {
                                 value: 'Assigning Inspection Design <b>' + selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + selectedInspectionTarget + '</b>.'
@@ -666,21 +655,21 @@
                         toggleButton(buttons.prev, true, true);
                     }
                 };
-            }()),
+            } ()),
 
             handleNext = function ($wizardTable, newStepNo) {
                 currentStepNo = newStepNo;
                 switch (newStepNo) {
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step:
-                        makeStepTwo(); 
+                    case Csw.enums.wizardSteps_InspectionDesign.step2.step:
+                        makeStepTwo();
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step3.step:
                         makeStepThree(true); //we're moving forward
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step4.step:
                         makeStepFour(true); //we're moving forward
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step5.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step5.step:
                         makeStepFive();
                         break;
                 } // switch(newstepno)
@@ -689,17 +678,17 @@
             handlePrevious = function (newStepNo) {
                 currentStepNo = newStepNo;
                 switch (newStepNo) {
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step1.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step1.step:
                         makeStepOne();
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step2.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step2.step:
                         makeStepTwo(); //we're moving backward
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step3.step:
+                    case Csw.enums.wizardSteps_InspectionDesign.step3.step:
                         makeStepThree(false); //we're moving backward
                         break;
-                    case ChemSW.enums.CswInspectionDesign_WizardSteps.step4.step:
-                        makeStepFour(false); 
+                    case Csw.enums.wizardSteps_InspectionDesign.step4.step:
+                        makeStepFour(false);
                         break;
                 }
             },
@@ -711,7 +700,7 @@
                 toggleButton(buttons.next, false);
                 toggleButton(buttons.finish, false);
                 toggleButton(buttons.cancel, false);
-                
+
                 if (false === Csw.isNullOrEmpty(inspectionGrid)) {
                     designGrid = JSON.stringify(inspectionGrid.getAllGridRows());
                 }
@@ -726,43 +715,43 @@
                 };
 
                 Csw.ajax.post({
-                        url: '/NbtWebApp/wsNBT.asmx/finalizeInspectionDesign',
-                        data: jsonData,
-                        success: function (data) {
-                            //Come back and hammer this out
-                            var views = data.views,
+                    url: '/NbtWebApp/wsNBT.asmx/finalizeInspectionDesign',
+                    data: jsonData,
+                    success: function (data) {
+                        //Come back and hammer this out
+                        var views = data.views,
                                 values = [];
 
-                            Csw.each(views, function (thisView) {
-                                if(Csw.contains(thisView, 'viewid') && 
-                                        Csw.contains(thisView,'viewname')) {
-                                    values.push({
-                                            value: thisView.viewid,
-                                            display: thisView.viewname
-                                        });
-                                }
-                            });
-                            
-                            $.CswDialog('NavigationSelectDialog', {
-                                ID: Csw.makeSafeId('FinishDialog'),
-                                title: 'The Inspection Design Wizard Completed Successfully',
-                                navigationText: 'Please select from the following views. Click OK to continue.',
-                                values: values,
-                                onOkClick: function (selectedView) {
-                                    var $selectedView = $(selectedView),
+                        Csw.each(views, function (thisView) {
+                            if (Csw.contains(thisView, 'viewid') &&
+                                        Csw.contains(thisView, 'viewname')) {
+                                values.push({
+                                    value: thisView.viewid,
+                                    display: thisView.viewname
+                                });
+                            }
+                        });
+
+                        $.CswDialog('NavigationSelectDialog', {
+                            ID: Csw.makeSafeId('FinishDialog'),
+                            title: 'The Inspection Design Wizard Completed Successfully',
+                            navigationText: 'Please select from the following views. Click OK to continue.',
+                            values: values,
+                            onOkClick: function (selectedView) {
+                                var $selectedView = $(selectedView),
                                         viewId = $selectedView.val();
-                                    if(Csw.isFunction(o.onFinish)) {
-                                        o.onFinish(viewId);
-                                    }
+                                if (Csw.isFunction(o.onFinish)) {
+                                    o.onFinish(viewId);
                                 }
-                            });
-                            
-                        },
-                        error: function () {
-                            toggleButton(buttons.cancel, true);
-                            toggleButton(buttons.prev, true);
-                        }
-                    });
+                            }
+                        });
+
+                    },
+                    error: function () {
+                        toggleButton(buttons.cancel, true);
+                        toggleButton(buttons.prev, true);
+                    }
+                });
             };
 
         //#endregion Variable Declaration
@@ -771,7 +760,7 @@
         $wizard = $div.CswWizard('init', {
             ID: Csw.makeId({ ID: o.ID, suffix: 'wizard' }),
             Title: 'Create New Inspection',
-            StepCount: ChemSW.enums.CswInspectionDesign_WizardSteps.stepcount,
+            StepCount: Csw.enums.wizardSteps_InspectionDesign.stepcount,
             Steps: wizardSteps,
             StartingStep: o.startingStep,
             FinishText: 'Finish',
@@ -786,7 +775,7 @@
         //#endregion Execution
 
         return $div;
-    }; // $.fn.ChemSW.enums.CswInspectionDesign_WizardSteps
+    }; // $.fn.Csw.enums.wizardSteps_InspectionDesign
 })(jQuery);
 
 //#endregion Archive

@@ -30,16 +30,16 @@
 
                 $cell11.append('Set New');
                 var $TextBox1 = $cell12.CswInput('init',{ID: o.ID + '_pwd1',
-                                                         type: CswInput_Types.password,
+                                                         type: Csw.enums.inputTypes.password,
                                                          cssclass: 'textinput',
-                                                         value: (false === o.Multi) ? '' : CswMultiEditDefaultValue,
+                                                         value: (false === o.Multi) ? '' : Csw.enums.multiEditDefaultValue,
                                                          onChange: o.onchange
                                                  }); 
                 $cell21.append('Confirm');
                 /* Text Box 2 */
                 $cell22.CswInput('init',{ID: o.ID + '_pwd2',
-                                                         type: CswInput_Types.password,
-                                                         value: (false === o.Multi) ? '' : CswMultiEditDefaultValue,
+                                                         type: Csw.enums.inputTypes.password,
+                                                         value: (false === o.Multi) ? '' : Csw.enums.multiEditDefaultValue,
                                                          cssclass: 'textinput password2',
                                                          onChange: o.onchange
                                                  }); 
@@ -47,7 +47,7 @@
                     var $IsExpiredCheck = $cell31.CswInput({ 
                             'id': o.ID + '_exp',
                             'name': o.ID + '_exp',
-                            'type': CswInput_Types.checkbox
+                            'type': Csw.enums.inputTypes.checkbox
                         });
                     if(isExpired) {
                         $IsExpiredCheck.CswAttrDom('checked', 'true');

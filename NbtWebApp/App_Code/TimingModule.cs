@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Web;
 using System.Web.UI;
-using System.IO;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Log;
-using ChemSW.Config;
 using ChemSW.Nbt.Config;
 
 namespace ChemSW.HTTPModules

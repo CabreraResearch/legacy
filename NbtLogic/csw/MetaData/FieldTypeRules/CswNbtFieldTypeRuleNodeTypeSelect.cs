@@ -14,13 +14,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
 
-        public CswNbtFieldTypeRuleNodeTypeSelect( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRuleNodeTypeSelect( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            SelectedNodeTypeIdsSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.NodeType );
+            SelectedNodeTypeIdsSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.NodeType );
             SelectedNodeTypeIdsSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Contains |
                                                       CswNbtPropFilterSql.PropertyFilterMode.NotNull |
                                                       CswNbtPropFilterSql.PropertyFilterMode.Null;

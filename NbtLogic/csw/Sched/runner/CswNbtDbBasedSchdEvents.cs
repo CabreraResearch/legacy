@@ -1,16 +1,6 @@
 using System;
-using System.Collections;
-using System.Text;
-using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.TreeEvents;
-using ChemSW.Core;
-using ChemSW.Log;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropertySets;
-using ChemSW.TblDn;
 
 
 namespace ChemSW.Nbt.Sched

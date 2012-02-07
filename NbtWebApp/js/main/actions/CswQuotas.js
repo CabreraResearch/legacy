@@ -16,25 +16,26 @@
             if(options) $.extend(o, options);
 
             var $Div = $(this);
-            var $table;
+            var table;
             var row;
             var $cell1, $cell2, $cell3, $cell4;
             var quotaJson;
 
             function initTable() {
                 $Div.contents().remove();
-                $table = $Div.CswTable('init', { ID: o.ID + '_tbl', border: 1, cellpadding: 5 });
+                table = Csw.controls.table({
+                    $parent: $Div,
+                    ID: Csw.controls.dom.makeId(o.ID, 'tbl'), 
+                    border: 1, 
+                    cellpadding: 5
+                });
                 row = 1;
 
                 // Header row
-                $cell1 = $table.CswTable('cell', row, 1);
-                $cell1.append('<b>Object Class</b>');
-                $cell2 = $table.CswTable('cell', row, 2);
-                $cell2.append('<b>Node Types</b>');
-                $cell3 = $table.CswTable('cell', row, 3);
-                $cell3.append('<b>Current Usage</b>');
-                $cell4 = $table.CswTable('cell', row, 4);
-                $cell4.append('<b>Quota</b>');
+                $cell1 = table.add(row, 1, '<b>Object Class</b>');
+                $cell2 = table.add(row, 2, '<b>Node Types</b>');
+                $cell3 = table.add(row, 3, '<b>Current Usage</b>');
+                $cell4 = table.add(row, 4, '<b>Quota</b>');
                 row += 1;
 
                 // Quota table
@@ -49,12 +50,12 @@
                             if(Csw.number(childObj.nodetypecount) > 0) {
 
                                 // one object class row                                
-                                makeQuotaRow($table, row, canedit, 'OC_' + childObj.objectclassid, childObj.objectclass, '', childObj.currentusage, childObj.quota);
+                                makeQuotaRow(row, canedit, 'OC_' + childObj.objectclassid, childObj.objectclass, '', childObj.currentusage, childObj.quota);
                                 row += 1;
 
                                 // several nodetype rows
                                 Csw.crawlObject(childObj.nodetypes, function (childObj_nt) {
-                                    makeQuotaRow($table, row, canedit, 'NT_' + childObj_nt.nodetypeid, '', childObj_nt.nodetypename, childObj_nt.currentusage, childObj_nt.quota);
+                                    makeQuotaRow(row, canedit, 'NT_' + childObj_nt.nodetypeid, '', childObj_nt.nodetypename, childObj_nt.currentusage, childObj_nt.quota);
                                     row += 1;
                                 }, false);
                             }
@@ -72,24 +73,20 @@
                 }); // ajax()
             } // initTable()
 
-            function makeQuotaRow($table, row, canedit, id, objectclass, nodetype, currentusage, quota)
-            {
+            function makeQuotaRow(row, canedit, id, objectclass, nodetype, currentusage, quota) {
                 // one object class row                                
-                $cell1 = $table.CswTable('cell', row, 1);
-                $cell1.append(objectclass);
+                $cell1 = table.add(row, 1, objectclass);
 
-                $cell2 = $table.CswTable('cell', row, 2);
-                $cell2.append(nodetype);
+                $cell2 = table.add(row, 2, nodetype);
 
-                $cell3 = $table.CswTable('cell', row, 3);
-                $cell3.append(currentusage);
+                $cell3 = table.add(row, 3, currentusage);
                                 
-                $cell4 = $table.CswTable('cell', row, 4);
+                $cell4 = table.cell(row, 4);
                 if(canedit) {
                     $cell4.CswInput({	
                         ID: o.ID + '_' + id + '_quota',
                         name: o.ID + '_' + id + '_quota',
-                        type: CswInput_Types.text,
+                        type: Csw.enums.inputTypes.text,
                         value: quota,
                         width: '50px'
                     });

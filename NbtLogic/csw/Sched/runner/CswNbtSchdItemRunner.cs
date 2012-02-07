@@ -1,25 +1,19 @@
 using System;
-using System.Windows.Forms;
 using System.Collections;
-using System.Collections.ObjectModel;
 using System.Data;
-using System.Text;
 using System.Threading;
-using ChemSW.Nbt;
-using ChemSW.Nbt.TreeEvents;
+using System.Windows.Forms;
+using ChemSW.Config;
 //using ChemSW.Nbt.TableEvents;
-using ChemSW.Audit;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Log;
 using ChemSW.Nbt.Config;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropertySets;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.TreeEvents;
 using ChemSW.Security;
-using ChemSW.Config;
-using ChemSW.DB;
 
 namespace ChemSW.Nbt.Sched
 {

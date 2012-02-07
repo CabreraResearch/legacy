@@ -1,22 +1,18 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
-using ChemSW.Core;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceTable
     {
+        Int32 MaxLength = 35;
+
         private readonly CswNbtResources _CswNbtResources;
         public CswNbtWebServiceTable( CswNbtResources CswNbtResources )
         {
@@ -26,23 +22,64 @@ namespace ChemSW.Nbt.WebServices
         public JObject getTable( CswNbtView View, CswNbtNode SelectedNode )
         {
             JObject ret = new JObject();
+
+            // Add 'default' Table layout elements for the nodetype to the view for efficiency
+            Int32 Order = -1000;
+            foreach( CswNbtViewRelationship ViewRel in View.Root.ChildRelationships )
+            {
+                if( ViewRel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                {
+                    foreach( CswNbtMetaDataNodeTypeProp NTProp in _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table ) )
+                    {
+                        bool AlreadyExists = false;
+                        foreach( CswNbtViewProperty ViewProp in ViewRel.Properties )
+                        {
+                            if( ViewProp.NodeTypePropId == NTProp.PropId )
+                            {
+                                AlreadyExists = true;
+                            }
+                        }
+
+                        if( false == AlreadyExists )
+                        {
+                            CswNbtViewProperty NewViewProp = View.AddViewProperty( ViewRel, NTProp );
+                            NewViewProp.Order = Order;
+                            Order++;
+                        }
+                    } // foreach( CswNbtMetaDataNodeTypeProp NTProp in _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table ) )
+                } // if( ViewRel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+            } // foreach( CswNbtViewRelationship ViewRel in View.Root.ChildRelationships )
+
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
 
+            ret["results"] = Tree.getChildNodeCount().ToString();
+            JArray NodesArray = new JArray();
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 Tree.goToNthChild( c );
-                ret[Tree.getNodeIdForCurrentPosition().ToString()] = _makeNodeObj( View, Tree );
+                NodesArray.Add( _makeNodeObj( View, Tree ) );
                 Tree.goToParentNode();
             }
 
             if( Tree.getCurrentNodeChildrenTruncated() )
             {
-                ret["truncated"] = new JObject( new JProperty( "nodename", "Results Truncated" ) );
+                NodesArray.Add( new JObject( new JProperty( "nodename", "Results Truncated" ) ) );
             }
+            ret["nodes"] = NodesArray;
 
             return ret;
 
         } // getTable()
+
+        private string _Truncate( string InStr )
+        {
+            string OutStr = InStr;
+            if( OutStr.Length > MaxLength )
+            {
+                OutStr = OutStr.Substring( 0, MaxLength ) + "...";
+            }
+            return OutStr;
+        } // _Truncate()
 
         private JObject _makeNodeObj( CswNbtView View, ICswNbtTree Tree )
         {
@@ -51,8 +88,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeKey.NodeTypeId );
 
-            ret = new JObject();
-            ret["nodename"] = Tree.getNodeNameForCurrentPosition();
+            ret["nodename"] = _Truncate( Tree.getNodeNameForCurrentPosition() );
             ret["nodeid"] = NodeId.ToString();
             ret["nodekey"] = NodeKey.ToString();
             ret["locked"] = Tree.getNodeLockedForCurrentPosition().ToString().ToLower();
@@ -65,19 +101,42 @@ namespace ChemSW.Nbt.WebServices
             ret["allowedit"] = ( ViewRel.AllowEdit && CanEdit ).ToString().ToLower();
             ret["allowdelete"] = ( ViewRel.AllowDelete && CanDelete ).ToString().ToLower();
 
-            ret["props"] = new JObject();
             if( NodeType != null )
             {
                 // default image, overridden below
                 ret["thumbnailurl"] = "Images/icons/" + NodeType.IconFileName;
             }
 
+            // Map property order to insert position
+            Dictionary<Int32, Int32> OrderMap = new Dictionary<Int32, Int32>();
+            foreach( CswNbtViewProperty ViewProp in ViewRel.Properties )
+            {
+                Int32 ThisOrder = 0;
+                foreach( CswNbtViewProperty OtherViewProp in ViewRel.Properties )
+                {
+                    if( ( OtherViewProp.Order != Int32.MinValue && OtherViewProp.Order < ViewProp.Order ) ||
+                        ViewProp.Order == Int32.MinValue )
+                    {
+                        ThisOrder++;
+                    }
+                }
+                while( OrderMap.ContainsValue( ThisOrder ) )
+                {
+                    ThisOrder++;
+                }
+                OrderMap.Add( ViewProp.NodeTypePropId, ThisOrder );
+            } // foreach( CswNbtViewProperty ViewProp in ViewRel.Properties )
+
+            // Props in the View
+            SortedList<Int32, JObject> PropObjs = new SortedList<Int32, JObject>();
             foreach( XElement PropElm in Tree.getChildNodePropsOfNode() )
             {
                 Int32 NodeTypePropId = CswConvert.ToInt32( PropElm.Attribute( "nodetypepropid" ).Value );
-                Int32 JctNodePropId = CswConvert.ToInt32( PropElm.Attribute( "jctnodepropid" ).Value );
                 CswPropIdAttr PropId = new CswPropIdAttr( NodeId, NodeTypePropId );
                 string FieldType = PropElm.Attribute( "fieldtype" ).Value;
+                string PropName = PropElm.Attribute( "name" ).Value;
+                string Gestalt = PropElm.Attribute( "gestalt" ).Value;
+                Int32 JctNodePropId = CswConvert.ToInt32( PropElm.Attribute( "jctnodepropid" ).Value );
 
                 // Special case: Image becomes thumbnail
                 if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() )
@@ -86,13 +145,46 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    ret["props"][PropId.ToString()] = new JObject();
-                    ret["props"][PropId.ToString()]["propname"] = PropElm.Attribute( "name" ).Value;
-                    ret["props"][PropId.ToString()]["gestalt"] = PropElm.Attribute( "gestalt" ).Value;
+                    JObject ThisProp = new JObject();
+                    ThisProp["propid"] = PropId.ToString();
+                    ThisProp["propname"] = PropName;
+                    ThisProp["gestalt"] = _Truncate( Gestalt );
+                    ThisProp["fieldtype"] = FieldType;
+
+                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button.ToString() )
+                    {
+                        // Include full info for rendering the button
+                        // This was done in such a way as to prevent instancing the CswNbtNode object, 
+                        // which we don't need for Buttons.
+                        CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+
+                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                        JProperty JpPropData = ws.makePropJson( NodeEditMode.Table, NodeId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue );
+                        JObject PropData = (JObject) JpPropData.Value;
+
+                        JObject PropValues = new JObject();
+                        CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues );
+                        PropData["values"] = PropValues;
+
+                        ThisProp["propData"] = PropData;
+                    }
+                    //if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Link.ToString() )
+
+                    PropObjs.Add( OrderMap[NodeTypePropId], ThisProp );
                 }
             } // foreach( XElement PropElm in NodeElm.Elements() )
+
+            // insert in order
+            JArray PropsArray = new JArray();
+            foreach( JObject PropObj in PropObjs.Values )
+            {
+                PropsArray.Add( PropObj );
+            }
+            ret["props"] = PropsArray;
+
             return ret;
         } // _makeNodeObj()
+
 
     } // class CswNbtWebServiceTable
 } // namespace ChemSW.Nbt.WebServices

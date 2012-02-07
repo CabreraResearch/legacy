@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Text;
-using System.Data;
 
 namespace ChemSW.Nbt.PropTypes
 {

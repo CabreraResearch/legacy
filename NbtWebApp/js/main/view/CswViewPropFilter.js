@@ -135,7 +135,7 @@
                 $defaultSubField = $subfieldCell.CswSpan('init', {
                     ID: defaultSubFieldId,
                     value: defaultSubfieldVal,
-                    cssclass: ViewBuilder_CssClasses.default_filter.name
+                    cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
                     .css({ 'text-align': "center" });
                 if (false === filtOpt.advancedIsHidden) {
@@ -163,7 +163,7 @@
                 $subfieldsList = $subfieldCell.CswSelect('init', { ID: subfieldOptionsId,
                     values: subFieldVals,
                     selected: defaultSubfieldVal,
-                    cssclass: ViewBuilder_CssClasses.subfield_select.name,
+                    cssclass: Csw.enums.cssClasses_ViewBuilder.subfield_select.name,
                     onChange: function ($this) {
                         var r = {
                             selectedSubfieldVal: $this.val(),
@@ -183,7 +183,7 @@
                 $filterModesList = $filterModesCell.CswSelect('init', { ID: filterModesId,
                     values: filterModeVals,
                     selected: defaultFilterModeVal,
-                    cssclass: ViewBuilder_CssClasses.filter_select.name,
+                    cssclass: Csw.enums.cssClasses_ViewBuilder.filter_select.name,
                     onChange: function ($this) {
                         var r = {
                             selectedSubfieldVal: $subfieldsList.val(),
@@ -204,7 +204,7 @@
                 }
 
                 //Filter input (value)
-                if (fieldtype === CswSubFields_Map.List.name) {
+                if (fieldtype === Csw.enums.subFieldsMap.List.name) {
                     if (Csw.contains(propsData, 'filtersoptions')) {
                         filtValAry.push({ value: '', display: '' });
                         for (filt in filtValOpt) {
@@ -215,14 +215,14 @@
                         $filtInput = $propFilterValueCell.CswSelect('init', { ID: filtValInputId,
                             values: filtValAry,
                             selected: filtSelected,
-                            cssclass: ViewBuilder_CssClasses.filter_value.name
+                            cssclass: Csw.enums.cssClasses_ViewBuilder.filter_value.name
                         });
                     }
                 }
-                else if (fieldtype === CswSubFields_Map.Logical.name) {
+                else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
                     $filtInput = $propFilterValueCell.CswTristateCheckBox('init', { ID: filtValInputId,
                         Checked: (defaultSubfieldVal === 'checked') ? 'true' : 'false',
-                        cssclass: 'ViewPropFilterLogical ' + ViewBuilder_CssClasses.filter_value.name
+                        cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
                     });
                 } else {
                     if (Csw.isNullOrEmpty(defaultSubfieldVal)) {
@@ -233,8 +233,8 @@
                     }
                     $filtInput = $propFilterValueCell.CswInput('init', {
                         ID: filtValInputId,
-                        type: CswInput_Types.text,
-                        cssclass: ViewBuilder_CssClasses.filter_value.name,
+                        type: Csw.enums.inputTypes.text,
+                        cssclass: Csw.enums.cssClasses_ViewBuilder.filter_value.name,
                         value: '',
                         placeholder: placeholder,
                         width: "200px",
@@ -309,21 +309,21 @@
                 $subfieldCell.CswSpan('init', {
                     ID: defaultSubFieldId,
                     value: selectedSubfield,
-                    cssclass: ViewBuilder_CssClasses.default_filter.name
+                    cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
                     .css({ 'text-align': "center" });
                 //Selected Filter
                 $filtersCell.CswSpan('init', {
                     ID: filtersOptionsId,
                     value: selectedFilterMode,
-                    cssclass: ViewBuilder_CssClasses.filter_select.name
+                    cssclass: Csw.enums.cssClasses_ViewBuilder.filter_select.name
                 })
                     .css({ 'text-align': "center" });
                 //Filter Input
                 $propFilterValueCell.CswSpan('init', {
                     ID: filtValInputId,
                     value: filterValue,
-                    cssclass: ViewBuilder_CssClasses.default_filter.name
+                    cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
                     .css({ 'text-align': "center" })
                     .data('propsData', filtOpt.propsData);
@@ -340,15 +340,15 @@
 
             var $thisProp = $(this),
                 retJson = { },
-                $filtInput = $thisProp.find('.' + ViewBuilder_CssClasses.filter_value.name),
+                $filtInput = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.filter_value.name),
                 fieldtype = Csw.string(o.filtJson.fieldtype, o.fieldtype),
                 filterValue, $subField, subFieldText, $filter, filterText, nodetypeorobjectclassid;
 
             switch (fieldtype) {
-                case CswSubFields_Map.Logical.name:
+                case Csw.enums.subFieldsMap.Logical.name:
                     filterValue = $filtInput.CswTristateCheckBox('value');
                     break;
-                case CswSubFields_Map.List.name:
+                case Csw.enums.subFieldsMap.List.name:
                     filterValue = $filtInput.find(':selected').val();
                     break;
                 default:
@@ -357,10 +357,10 @@
             }
 
             if (false === Csw.isNullOrEmpty(filterValue) || o.allowNullFilterValue) {
-                $subField = $thisProp.find('.' + ViewBuilder_CssClasses.subfield_select.name);
+                $subField = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.subfield_select.name);
                 subFieldText = $subField.find(':selected').text();
 
-                $filter = $thisProp.find('.' + ViewBuilder_CssClasses.filter_select.name);
+                $filter = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name);
                 filterText = $filter.find(':selected').val();
                 nodetypeorobjectclassid = (o.filtJson.nodetypepropid === Int32MinVal) ? o.filtJson.objectclasspropid : o.filtJson.nodetypepropid;
                 if (Csw.isNullOrEmpty(nodetypeorobjectclassid)) {
@@ -409,19 +409,19 @@
             var $button = $(this);
 
             if (!Csw.isNullOrEmpty($button)) {
-                $('.' + ViewBuilder_CssClasses.subfield_select.name).each(function () {
+                $('.' + Csw.enums.cssClasses_ViewBuilder.subfield_select.name).each(function () {
                     var $input = $(this);
                     $input.clickOnEnter($button);
                 });
-                $('.' + ViewBuilder_CssClasses.filter_select.name).each(function () {
+                $('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name).each(function () {
                     var $input = $(this);
                     $input.clickOnEnter($button);
                 });
-                $('.' + ViewBuilder_CssClasses.default_filter.name).each(function () {
+                $('.' + Csw.enums.cssClasses_ViewBuilder.default_filter.name).each(function () {
                     var $input = $(this);
                     $input.clickOnEnter($button);
                 });
-                $('.' + ViewBuilder_CssClasses.filter_value.name).each(function () {
+                $('.' + Csw.enums.cssClasses_ViewBuilder.filter_value.name).each(function () {
                     var $input = $(this);
                     $input.clickOnEnter($button);
                 });

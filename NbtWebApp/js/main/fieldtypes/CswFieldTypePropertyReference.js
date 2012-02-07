@@ -12,7 +12,7 @@
             $Div.contents().remove();
                 
             var propVals = o.propData.values;
-            var text = (false === o.Multi) ? Csw.string(propVals.value).trim() : CswMultiEditDefaultValue;
+            var text = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
             text += '&nbsp;';
 
             /* Static Div */

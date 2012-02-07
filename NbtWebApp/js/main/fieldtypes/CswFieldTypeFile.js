@@ -12,7 +12,7 @@
             $Div.contents().remove();
 
             if(o.Multi) {
-                $Div.append(CswMultiEditDefaultValue);
+                $Div.append(Csw.enums.multiEditDefaultValue);
             } else {
 
                 var propVals = o.propData.values;
@@ -27,12 +27,12 @@
 
                 $cell11.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');
 
-                if (false === o.ReadOnly && o.EditMode !== EditMode.AddInPopup.name) {
+                if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
                     //Edit button
                     $('<div/>')
                         .appendTo($cell12)
                         .CswImageButton({
-                                ButtonType: CswImageButton_ButtonType.Edit,
+                                ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                                 AlternateText: 'Edit',
                                 ID: o.ID + '_edit',
                                 onClick: function () {
@@ -45,14 +45,14 @@
                                             o.onReload();
                                         }
                                     });
-                                    return CswImageButton_ButtonType.None;
+                                    return Csw.enums.imageButton_ButtonType.None;
                                 }
                             });
                     //Clear button
                     $('<div/>')
                         .appendTo($cell13)
                         .CswImageButton({
-                                ButtonType: CswImageButton_ButtonType.Clear,
+                                ButtonType: Csw.enums.imageButton_ButtonType.Clear,
                                 AlternateText: 'Clear',
                                 ID: o.ID + '_clr',
                                 onClick: function () {
@@ -69,7 +69,7 @@
                                                 success: function () { o.onReload(); }
                                             });
                                     }
-                                    return CswImageButton_ButtonType.None;
+                                    return Csw.enums.imageButton_ButtonType.None;
                                 }
                             });
                 }

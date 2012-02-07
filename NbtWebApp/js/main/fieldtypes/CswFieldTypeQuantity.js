@@ -16,7 +16,7 @@
             
             var $NumberTextBox = $Div.CswNumberTextBox({
                 ID: o.ID + '_qty',
-                Value: (false === o.Multi) ? Csw.string(propVals.value).trim() : CswMultiEditDefaultValue,
+                Value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                 MinValue: Csw.number(propVals.minvalue),
                 MaxValue: Csw.number(propVals.maxvalue),
                 ceilingVal: +ceilingVal,
@@ -34,8 +34,8 @@
             var units = propVals.units;
             var selectedUnit = units[0];
             if (o.Multi) {
-                units.push(CswMultiEditDefaultValue);
-                selectedUnit = CswMultiEditDefaultValue;
+                units.push(Csw.enums.multiEditDefaultValue);
+                selectedUnit = Csw.enums.multiEditDefaultValue;
             }
             
             $Div.CswSelect('init', {

@@ -58,7 +58,8 @@
                             });
                         },
                         'showConfigButton': true,
-                        'showRowColButtons': true,
+                        showExpandRowButton: true,
+                        showExpandColButton: true,
                         'showAddButton': true,
                         'showRemoveButton': true,
                         'onAddClick': function () { $.CswDialog('AddWelcomeItemDialog', { 'onAdd': o.onAddComponent }); },
@@ -101,7 +102,7 @@
                                 }
 
                                 var $welcomehidden = $textcell.CswInput('init', { ID: welcomeId,
-                                    type: CswInput_Types.hidden
+                                    type: Csw.enums.inputTypes.hidden
                                 });
                                 $welcomehidden.CswAttrNonDom('welcomeid', welcomeId);
                             }
@@ -161,7 +162,7 @@
             $('<span>Text:</span>').appendTo($table.CswTable('cell', 4, 1));
             var $welcometextcell = $table.CswTable('cell', 4, 2);
             var $welcometext = $welcometextcell.CswInput('init', { ID: 'welcome_text',
-                type: CswInput_Types.text
+                type: Csw.enums.inputTypes.text
             });
             var $buttonsel_label = $('<span>Use Button:</span>')
                                         .appendTo($table.CswTable('cell', 5, 1));

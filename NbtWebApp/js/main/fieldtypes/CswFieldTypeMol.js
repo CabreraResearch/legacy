@@ -30,12 +30,12 @@
                 //$Div.css('z-index', '0'); //this doesn't prevent jmol overlapping dialog
             }
 
-            if (false === Csw.bool(o.ReadOnly) && o.EditMode !== EditMode.AddInPopup.name) {
+            if (false === Csw.bool(o.ReadOnly) && o.EditMode !== Csw.enums.editMode.Add) {
                 /* Edit Button */
                 $('<div/>')
                     .appendTo($cell22)
                     .CswImageButton({
-                        ButtonType: CswImageButton_ButtonType.Edit,
+                        ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',
                         onClick: function () {
@@ -48,14 +48,14 @@
                                     o.onReload();
                                 }
                             });
-                            return CswImageButton_ButtonType.None;
+                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
                 /* Clear Button */
                 $('<div/>')
                     .appendTo($cell23)
                     .CswImageButton({
-                        ButtonType: CswImageButton_ButtonType.Clear,
+                        ButtonType: Csw.enums.imageButton_ButtonType.Clear,
                         AlternateText: 'Clear',
                         ID: o.ID + '_clr',
                         onClick: function () {
@@ -72,7 +72,7 @@
                                     success: function () { o.onReload(); }
                                 });
                             }
-                            return CswImageButton_ButtonType.None;
+                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
             }

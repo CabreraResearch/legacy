@@ -47,7 +47,7 @@
                 width = o.width || (maxLength * 8) + 'px';
 
                 $TextBox = $Div.CswInput('init',{ID: o.ID,
-                                                        type: CswInput_Types.text,
+                                                        type: Csw.enums.inputTypes.text,
                                                         value: o.Value,
                                                         cssclass: 'textinput number',
                                                         onChange: o.onchange,

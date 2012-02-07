@@ -11,7 +11,7 @@
                 Url: '/NbtWebApp/wsNBT.asmx/getAuditHistoryGrid',
                 ID: '',
                 nodeid: '',
-                EditMode: EditMode.Edit.name,
+                EditMode: Csw.enums.editMode.Edit,
                 JustDateColumn: false,
                 onEditRow: null, //function (date) {},
                 onSelectRow: null, //function (date) {},
@@ -69,7 +69,7 @@
 
                         $.extend(g.gridOpts, gridJson.jqGridOpt);
 
-                        if (o.EditMode === EditMode.PrintReport.name) {
+                        if (o.EditMode === Csw.enums.editMode.PrintReport) {
                             g.gridOpts.caption = '';
                             g.hasPager = false;
                         }
@@ -88,7 +88,7 @@
                             };
                         }
 
-                        var grid = CswGrid(g, $auditGrid);
+                        var grid = Csw.controls.grid(g, $auditGrid);
                         grid.$gridPager.css({ width: '100%', height: '20px' });
 
                         // set selected row by date

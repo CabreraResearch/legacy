@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Web.UI.WebControls;
+using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {

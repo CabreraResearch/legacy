@@ -11,7 +11,7 @@
             var $Div = $(this);
             var propVals = o.propData.values;
 
-            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : CswMultiEditDefaultValue;
+            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
             var options = propVals.options;
             var width = Csw.string(propVals.width);
             var height = Csw.string(propVals.height);
@@ -24,7 +24,7 @@
                                 .append('<option value="">Select...</option>')
                                 .appendTo($Div);
                 if (o.Multi) {
-                    $select.append('<option value="' + CswMultiEditDefaultValue + ' selected="selected">' + CswMultiEditDefaultValue + '</option>');
+                    $select.append('<option value="' + Csw.enums.multiEditDefaultValue + ' selected="selected">' + Csw.enums.multiEditDefaultValue + '</option>');
                 }
                 var $HiddenValue = $('<textarea style="display: none;" name="' + o.ID + '_value" id="' + o.ID + '_value">'+ value +'</textarea>')
                                     .appendTo($Div);
@@ -69,7 +69,7 @@
                 }
                 if (false === o.ReadOnly) {
                     $namecell.CswImageButton({
-                        ButtonType: CswImageButton_ButtonType.Delete,
+                        ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
                         ID: Csw.makeId({ 'prefix': 'image_' + currCol, 'id': 'rembtn' }),
                         onClick: function () {
@@ -80,7 +80,7 @@
                             $select.append('<option value="'+ href +'">'+ name +'</option>');
 
                             o.onchange();
-                            return CswImageButton_ButtonType.None; 
+                            return Csw.enums.imageButton_ButtonType.None; 
                         } // onClick
                     }); // CswImageButton
                 } // if(!o.ReadOnly)

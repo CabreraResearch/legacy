@@ -1,14 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.DB;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -24,7 +18,8 @@ namespace ChemSW.Nbt.MetaData
             Unknown,
             Add,
             Edit,
-            Preview
+            Preview,
+            Table
         }
 
         public LayoutType LayoutTypeForEditMode( string EditMode )
@@ -37,8 +32,9 @@ namespace ChemSW.Nbt.MetaData
             LayoutType LType = LayoutType.Unknown;
             switch( EditMode )
             {
-                case NodeEditMode.AddInPopup: LType = LayoutType.Add; break;
+                case NodeEditMode.Add: LType = LayoutType.Add; break;
                 case NodeEditMode.Preview: LType = LayoutType.Preview; break;
+                case NodeEditMode.Table: LType = LayoutType.Table; break;
                 default: LType = LayoutType.Edit; break;
             }
             return LType;

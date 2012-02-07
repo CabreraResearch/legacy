@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using ChemSW.Core;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -19,6 +17,7 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "nodetypeid",
+                                                          "nodetypename",
                                                           _CswNbtMetaDataResources.NodeTypeTableUpdate,
                                                           makeNodeType );
         }

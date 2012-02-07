@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using ChemSW.Core;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -18,7 +15,8 @@ namespace ChemSW.Nbt.MetaData
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
-                                                          "fieldtypeid",
+                                                          "fieldtypeid", 
+                                                          "fieldtype",
                                                           _CswNbtMetaDataResources.FieldTypeTableUpdate,
                                                           makeFieldType );
         }
@@ -33,10 +31,21 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataFieldType( Resources, Row );
         }
 
-        public Collection<Int32> getFieldTypeIds()
+        public Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> getFieldTypeIds()
         {
-            return _CollImpl.getPks();
-        }
+            Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> ret = new Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32>();
+            Dictionary<string, Int32> FTDict = _CollImpl.getPkDict();
+            CswNbtMetaDataFieldType.NbtFieldType FTKey = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+            foreach( string Key in FTDict.Keys )
+            {
+                Enum.TryParse<CswNbtMetaDataFieldType.NbtFieldType>( Key, out FTKey );
+                if( false == ret.ContainsKey( FTKey ) )
+                {
+                    ret.Add( FTKey, FTDict[Key] );
+                }
+            }
+            return ret;
+        } // getFieldTypeIds()
 
         public IEnumerable<CswNbtMetaDataFieldType> getFieldTypes()
         {

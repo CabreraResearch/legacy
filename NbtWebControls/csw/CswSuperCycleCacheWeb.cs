@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Web;
-using System.Web.Caching;
 using System.Threading;
-using ChemSW.Config;
+using System.Web.Caching;
 using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Log;
-using ChemSW.RscAdo;
-using ChemSW.Security;
 
 namespace ChemSW.Nbt
 {

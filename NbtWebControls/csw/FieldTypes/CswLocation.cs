@@ -1,12 +1,12 @@
 using System;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
-using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
-using Telerik.Web.UI;
 using ChemSW.CswWebControls;
+using ChemSW.Exceptions;
+using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
+using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {

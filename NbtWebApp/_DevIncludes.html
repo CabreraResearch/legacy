@@ -1,35 +1,28 @@
 <!-- ChemSW 
  Globals: load first (because order matters) -->
 <script src="csw.js/ChemSW.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.zdoomed.js"  type="text/javascript"></script>
-
+<script src="csw.js/core/csw.core.enums.js" type="text/javascript"></script>
 <script src="csw.js/tools/csw.cookie.js" type="text/javascript"></script>
 
-<script src="csw.js/core/csw.clientchanges.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.clientsession.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.clientstate.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.window.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.ajax.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.array.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.boolean.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.date.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.debug.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.error.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.events.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.function.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.menu.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.number.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.object.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.string.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.tbd.js"  type="text/javascript"></script>
-<script src="csw.js/core/csw.tools.js"  type="text/javascript"></script>
+<script src="csw.js/core/csw.core.clientchanges.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.core.clientsession.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.core.clientstate.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.type.window.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.type.object.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.type.string.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.type.array.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.type.boolean.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.type.date.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.type.function.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.type.number.js" type="text/javascript"></script>
 
-<script src="csw.js/nodes/csw.interaction.js" type="text/javascript"></script>
-<script src="csw.js/nodes/csw.preview.js" type="text/javascript"></script>
-
-<script src="csw.js/props/csw.props.js" type="text/javascript"></script>
-
-
+<script src="csw.js/core/csw.core.ajax.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.core.debug.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.core.error.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.core.events.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.core.menu.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.core.tbd.js" type="text/javascript"></script>
+<script src="csw.js/core/csw.core.tools.js" type="text/javascript"></script>
 
 <!-- Actions -->
 <script type="text/javascript" src="js/main/actions/CswAuditHistoryGrid.js"></script>
@@ -41,9 +34,13 @@
 <script type="text/javascript" src="js/main/actions/CswSessions.js"></script>
 
 <!-- Controls -->
+<script type="text/javascript" src="csw.js/controls/csw.controls.dom.js"></script>
+
 <script type="text/javascript" src="js/main/controls/CswDateTimePicker.js"></script>
 <script type="text/javascript" src="js/main/controls/CswDiv.js"></script>
-<script type="text/javascript" src="js/main/controls/CswGrid.js"></script>
+
+<script src="csw.js/controls/csw.controls.grid.js" type="text/javascript"></script>
+
 <script type="text/javascript" src="js/main/controls/CswInput.js"></script>
 <script type="text/javascript" src="js/main/controls/CswLink.js"></script>
 <script type="text/javascript" src="js/main/controls/CswMultiSelect.js"></script>
@@ -57,17 +54,21 @@
 <script type="text/javascript" src="js/main/controls/CswImageButton.js"></script>
 <script type="text/javascript" src="js/main/controls/CswNodeTypeSelect.js"></script>
 <script type="text/javascript" src="js/main/controls/CswNumberTextBox.js"></script>
-<script type="text/javascript" src="js/main/controls/CswTimeInterval.js"></script>
+
+<script src="csw.js/controls/csw.controls.timeinterval.js" type="text/javascript"></script>
+<script src="csw.js/controls/csw.controls.table.js" type="text/javascript"></script>
 <script type="text/javascript" src="js/main/controls/CswTable.js"></script>
 <script type="text/javascript" src="js/main/controls/CswTristateCheckBox.js"></script>
+<script src="csw.js/controls/csw.view.visibilityselect.js" type="text/javascript"></script>
 
 <!-- Tools -->
 <script type="text/javascript" src="js/main/tools/CswAttr.js"></script>
 <script type="text/javascript" src="js/main/tools/CswTools.js"></script>
 <script type="text/javascript" src="js/main/tools/CswQueryString.js"></script>
-<script type="text/javascript" src="js/main/tools/CswString.js"></script>
-<script type="text/javascript" src="js/main/tools/CswPrint.js"></script>
-<script type="text/javascript" src="js/main/tools/CswClientDb.js"></script>
+
+<script src="csw.js/tools/csw.clientdb.js" type="text/javascript"></script>
+<script src="csw.js/tools/csw.print.js" type="text/javascript"></script>
+
 <script type="text/javascript" src="js/main/tools/CswProfileMethod.js"></script>
 <script type="text/javascript" src="js/main/tools/CswPubSub.js"></script>
 
@@ -86,6 +87,11 @@
 <script type="text/javascript" src="js/main/pagecmp/CswWizard.js"></script>
 
 <!-- Node -->
+
+<script src="csw.js/props/csw.props.js" type="text/javascript"></script>
+<script src="csw.js/nodes/csw.interaction.js" type="text/javascript"></script>
+<script src="csw.js/nodes/csw.preview.js" type="text/javascript"></script>
+
 <script type="text/javascript" src="js/main/node/CswNodeGrid.js"></script>
 <script type="text/javascript" src="js/main/node/CswNodePreview.js"></script>
 <script type="text/javascript" src="js/main/node/CswNodeSelect.js"></script>

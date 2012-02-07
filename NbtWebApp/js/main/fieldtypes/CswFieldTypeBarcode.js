@@ -11,7 +11,7 @@
             var $Div = $(this);
             $Div.contents().remove();
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? Csw.string(propVals.barcode).trim() : CswMultiEditDefaultValue;
+            var value = (false === o.Multi) ? Csw.string(propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
 
             if(o.ReadOnly)
             {
@@ -23,7 +23,7 @@
 
                 var $cell1 = $table.CswTable('cell', 1, 1);
                 var $TextBox = $cell1.CswInput('init',{ID: o.ID,
-                                                       type: CswInput_Types.text,
+                                                       type: Csw.enums.inputTypes.text,
                                                        cssclass: 'textinput',
                                                        onChange: o.onchange,
                                                        value: value
@@ -32,12 +32,12 @@
                     var $cell2 = $table.CswTable('cell', 1, 2);
                     $('<div/>')
                         .appendTo($cell2)
-                        .CswImageButton({  ButtonType: CswImageButton_ButtonType.Print,
+                        .CswImageButton({  ButtonType: Csw.enums.imageButton_ButtonType.Print,
                                 AlternateText: '',
                                 ID: o.ID + '_print',
                                 onClick: function () {
                                     $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.ID });
-                                    return CswImageButton_ButtonType.None;
+                                    return Csw.enums.imageButton_ButtonType.None;
                                 }
                             });
                 }

@@ -1,10 +1,10 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     var pluginName = 'CswDialog';
-    
+
     var methods = {
 
         //#region Specialized
@@ -59,25 +59,31 @@
             if (options) $.extend(o, options);
 
             var $div = $('<div></div>');
-            var $table = $div.CswTable('init', { 'ID': o.ID + '_tbl', 'FirstCellRightAlign': true });
+            //var $table = $div.CswTable('init', { 'ID': o.ID + '_tbl', 'FirstCellRightAlign': true });
+            var table = Csw.controls.table({
+                $parent: $div,
+                ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+                FirstCellRightAlign: true
+            });
 
-            $table.CswTable('cell', 1, 1).append('Name:');
-            var $nametextcell = $table.CswTable('cell', 1, 2);
+            table.add(1, 1, 'Name:');
+
+            var $nametextcell = table.cell(1, 2);
             var $nametextbox = $nametextcell.CswInput('init', { ID: o.ID + '_nametb',
-                type: CswInput_Types.text,
+                type: Csw.enums.inputTypes.text,
                 cssclass: 'textinput'
             });
             var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />');
             if (Csw.isNullOrEmpty(o.viewid)) {
-                $table.CswTable('cell', 2, 1).append('Display Mode:');
+                table.add(2, 1, 'Display Mode:');
                 $displaymodeselect.append('<option value="Grid">Grid</option>');
                 $displaymodeselect.append('<option value="List" selected>List</option>');
                 $displaymodeselect.append('<option value="Table">Table</option>');
                 $displaymodeselect.append('<option value="Tree">Tree</option>');
-                $displaymodeselect.appendTo($table.CswTable('cell', 2, 2));
+                $displaymodeselect.appendTo(table.cell(2, 2));
             }
 
-            var v = Csw.makeViewVisibilitySelect($table, 3, 'Available to:');
+            var visSelect = Csw.controls.makeViewVisibilitySelect(table, 3, 'Available to:');
             var $savebtn = $div.CswButton({
                 ID: o.ID + '_submit',
                 enabledText: 'Create View',
@@ -92,10 +98,10 @@
                     } else {
                         createData.ViewMode = o.viewmode;
                     }
-                    if (!Csw.isNullOrEmpty(v.getvisibilityselect())) {
-                        createData.Visibility = v.getvisibilityselect().val();
-                        createData.VisibilityRoleId = v.getvisroleselect().val();
-                        createData.VisibilityUserId = v.getvisuserselect().val();
+                    if (!Csw.isNullOrEmpty(visSelect.$visibilityselect)) {
+                        createData.Visibility = visSelect.$visibilityselect.val();
+                        createData.VisibilityRoleId = visSelect.$visroleselect.val();
+                        createData.VisibilityUserId = visSelect.$visuserselect.val();
                     } else {
                         createData.Visibility = "";
                         createData.VisibilityRoleId = "";
@@ -145,7 +151,7 @@
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
                 relatednodetypeid: o.relatednodetypeid,
-                EditMode: EditMode.AddInPopup.name,
+                EditMode: Csw.enums.editMode.Add,
                 onSave: function (nodeid, cswnbtnodekey) {
                     $div.dialog('close');
                     o.onAddNode(nodeid, cswnbtnodekey);
@@ -173,7 +179,7 @@
                 $newNode;
 
             $div.append('New ' + o.nodetypename + ': ');
-            $newNode = $div.CswInput('init', { ID: o.ID + '_newNode', type: CswInput_Types.text });
+            $newNode = $div.CswInput('init', { ID: o.ID + '_newNode', type: Csw.enums.inputTypes.text });
 
             $div.CswButton({
                 ID: o.objectClassId + '_add',
@@ -208,11 +214,11 @@
                 category = Csw.string(o.category);
 
             $div.append('New ' + o.nodeTypeDescriptor + ': ');
-            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text, value: o.nodetypename, maxlength: o.maxlength });
+            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: Csw.enums.inputTypes.text, value: o.nodetypename, maxlength: o.maxlength });
             $div.append('<br />');
             if (Csw.isNullOrEmpty(category)) {
                 $div.append('Category Name: ');
-                $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: CswInput_Types.text });
+                $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: Csw.enums.inputTypes.text });
                 $div.append('<br />');
             }
             $addBtn = $div.CswButton({
@@ -267,9 +273,11 @@
             var $layoutSelect = $cell11.CswSelect('init', {
                 ID: 'EditLayoutDialog_layoutselect',
                 selected: 'Edit',
-                values: [{ value: 'AddInPopup', display: 'Add' },
-                                                { value: 'Edit', display: 'Edit' },
-                                                { value: 'Preview', display: 'Preview'}],
+                values: [{ value: 'Add', display: 'Add' },
+                         { value: 'Edit', display: 'Edit' },
+                         { value: 'Preview', display: 'Preview' },
+                         { value: 'Table', display: 'Table' }
+                        ],
                 onChange: function () {
                     cswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
                     _resetLayout();
@@ -286,7 +294,7 @@
                     var ajaxdata = {
                         PropId: Csw.string($addSelect.val()),
                         TabId: Csw.string(cswNodeTabOptions.tabid),
-                        EditMode: $layoutSelect.val()
+                        LayoutType: $layoutSelect.val()
                     };
                     Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout',
@@ -310,7 +318,7 @@
                     NodeKey: Csw.string(cswNodeTabOptions.nodekeys[0]),
                     NodeTypeId: Csw.string(cswNodeTabOptions.nodetypeid),
                     TabId: Csw.string(cswNodeTabOptions.tabid),
-                    EditMode: $layoutSelect.val()
+                    LayoutType: $layoutSelect.val()
                 };
                 Csw.ajax.post({
                     url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd',
@@ -356,10 +364,10 @@
 
             var $div = $('<div></div>');
 
-            var myEditMode = EditMode.EditInPopup.name;
+            var myEditMode = Csw.enums.editMode.EditInPopup;
             var $table = $div.CswTable();
             if (false === Csw.isNullOrEmpty(o.date) && false === o.Multi) {
-                myEditMode = EditMode.AuditHistoryInPopup.name;
+                myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
                 $table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
                     ID: o.nodeids[0] + '_history',
                     nodeid: o.nodeids[0],
@@ -514,7 +522,7 @@
                                 o.onDeleteNode(nodeid, nodekey);
                             }
                             if (Csw.bool(o.publishDeleteEvent)) {
-                                $.publish(ChemSW.enums.Events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
+                                $.publish(Csw.enums.events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
                             }
                         },
                         onError: function () {
@@ -803,7 +811,7 @@
                 ID: '',
                 title: 'Select from the following options',
                 navigationText: 'Click OK to continue',
-                buttons: ChemSW.enums.CswDialogButtons["1"],
+                buttons: Csw.enums.dialogButtons["1"],
                 values: [],
                 onOkClick: null,
                 onCancelClick: null

@@ -1,20 +1,4 @@
 ﻿using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Text;
-using System.Diagnostics;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Exceptions;
-using ChemSW.DB;
-using ChemSW.Nbt.Schema;
-using ChemSW.Core;
-using ChemSW.Log;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.ObjClasses;
 
 
 namespace ChemSW.Nbt.Schema
