@@ -11,6 +11,7 @@ namespace ChemSW.Nbt.MetaData
             Unknown,
             Barcode,
             Button,
+            Comments,
             Composite,
             DateTime,
             External,
@@ -169,7 +170,8 @@ namespace ChemSW.Nbt.MetaData
             return ( !IsDisplayType() &&
                      FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewPickList &&
                      FieldType != CswNbtMetaDataFieldType.NbtFieldType.File &&
-                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.Image );
+                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.Image &&
+                     FieldType != NbtFieldType.Comments);
         }
 
         /// <summary>

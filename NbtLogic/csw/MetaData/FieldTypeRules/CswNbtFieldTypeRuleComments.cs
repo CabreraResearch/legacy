@@ -5,31 +5,28 @@ using ChemSW.Nbt.Security;
 namespace ChemSW.Nbt.MetaData.FieldTypeRules
 {
 
-    public class CswNbtFieldTypeRuleNumber : ICswNbtFieldTypeRule
+    public class CswNbtFieldTypeRuleComments : ICswNbtFieldTypeRule
     {
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
-        public CswNbtFieldTypeRuleNumber( CswNbtFieldResources CswNbtFieldResources )
+
+        public CswNbtFieldTypeRuleComments( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            ValueSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_Numeric, CswNbtSubField.SubFieldName.Value,true );
-            ValueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                        CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                        CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals |
-                                        CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                        CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                        CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals |
-                                        CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                        CswNbtPropFilterSql.PropertyFilterMode.Null;
-            SubFields.add( ValueSubField );
+
+            CommentSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Comments );   //bz # 6628: Gestalt instead of Field1
+            CommentSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Contains |
+                                       CswNbtPropFilterSql.PropertyFilterMode.NotNull |
+                                       CswNbtPropFilterSql.PropertyFilterMode.Null;
+            SubFields.add( CommentSubField );
 
         }//ctor
 
-        public CswNbtSubField ValueSubField;
+        public CswNbtSubField CommentSubField;
 
         public CswNbtSubFieldColl SubFields
         {
@@ -39,14 +36,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }//get
         }
 
-
-
         public bool SearchAllowed { get { return ( _CswNbtFieldTypeRuleDefault.SearchAllowed ); } }
 
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
         {
-            return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn, true ) );
+            return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn ) );
         }//makeWhereClause()
+
 
         public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
         {

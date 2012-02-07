@@ -81,14 +81,16 @@ namespace ChemSW.Nbt.MetaData
         public string RelationalTable = string.Empty;
         public string RelationalColumn = string.Empty;
         private CswNbtFieldResources _CswNbtFieldResources;
+        public bool isReportable;
 
         //public CswNbtSubField( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp, PropColumn DefaultColumn, SubFieldName SubFieldName )
-        public CswNbtSubField( CswNbtFieldResources CswNbtFieldResources, PropColumn DefaultColumn, SubFieldName SubFieldName )
+        public CswNbtSubField( CswNbtFieldResources CswNbtFieldResources, PropColumn DefaultColumn, SubFieldName SubFieldName, bool Reportable = false  )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             Name = SubFieldName;
             Table = "jct_nodes_props";  // default
             Column = DefaultColumn;
+            isReportable = Reportable;
 
             //BZ 9139 - CswNbtMetaDataResources handles this now
             //if( MetaDataProp is CswNbtMetaDataNodeTypeProp )

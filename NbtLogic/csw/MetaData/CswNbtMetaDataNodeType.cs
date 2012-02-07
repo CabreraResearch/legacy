@@ -78,6 +78,9 @@ namespace ChemSW.Nbt.MetaData
 
                     if( _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypeName != null )
                         _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypeName( this );
+
+                    //refresh view
+                    _CswNbtMetaDataResources.CswNbtMetaData._RefreshViewForNodetypeId.Add(this.NodeTypeId);
                 }
             }
         }

@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            BaseSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_Numeric, CswNbtSubField.SubFieldName.Base );
+            BaseSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_Numeric, CswNbtSubField.SubFieldName.Base,true );
             BaseSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                         CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
                                         CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals |
@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                         CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( BaseSubField );
 
-            ExponentSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field2_Numeric, CswNbtSubField.SubFieldName.Exponent );
+            ExponentSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field2_Numeric, CswNbtSubField.SubFieldName.Exponent,true );
             ExponentSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                         CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
                                         CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals |
