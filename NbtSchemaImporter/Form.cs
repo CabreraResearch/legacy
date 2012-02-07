@@ -61,36 +61,65 @@ namespace ChemSW.Nbt.Schema
         }//ctor
 
 
-        private void _refreshStatus()
+        private void _refreshStatus( bool End = false )
         {
 
             PhaseTextBox.Text = string.Empty;
             PhaseTextBox.AppendText( "Last Status: " + _CswNbtImportStatus.CompletedPhaseDescription );
 
-
-            if( _CswNbtImportStatus.CompletedProcessPhase == ImportProcessPhase.NothingDoneYet )
+            if( false == End )
             {
-                ImportButton.Text = ImportButtonState.Start.ToString();
-                ImportButton.Enabled = true;
 
+                if( ImportProcessPhase.NothingDoneYet == _CswNbtImportStatus.CompletedProcessPhase )
+                {
+                    ImportButton.Text = ImportButtonState.Start.ToString();
+                    ImportButton.Enabled = true;
+
+                }
+                else if( ImportProcessPhase.NothingDoneYet < _CswNbtImportStatus.CompletedProcessPhase &&
+                         ImportProcessPhase.PopulatingNbtNodes > _CswNbtImportStatus.CompletedProcessPhase )
+                {
+                    ImportButton.Text = ImportButtonState.Stop.ToString();
+                    ImportButton.Enabled = false;
+                }
+                else if( ImportProcessPhase.Completed == _CswNbtImportStatus.CompletedProcessPhase ) 
+                {
+                    ImportButton.Text = ImportButtonState.Start.ToString();
+                    ImportButton.Enabled = true;
+
+                }
             }
             else
             {
-                PhaseTextBox.Text = string.Empty;
-                PhaseTextBox.AppendText( "Last Status: " + _CswNbtImportStatus.CompletedPhaseDescription );
+                ImportButton.Text = ImportButtonState.Start.ToString();
+                ImportButton.Enabled = true;
+            }//if-else the import process completed
 
-                if( _CswNbtImportStatus.CompletedProcessPhase != ImportProcessPhase.Completed )
+
+
+                /*
+                if( _CswNbtImportStatus.CompletedProcessPhase < ImportProcessPhase.PostProcessingNbtNodes )
                 {
-                    ImportButton.Text = ImportButtonState.Resume.ToString();
-                    ImportButton.Enabled = true;
+                    ImportButton.Text = ImportButtonState.Stop.ToString();
+                    ImportButton.Enabled = false;
 
                 }
                 else
                 {
-                    ImportButton.Text = ImportButtonState.Start.ToString();
-                    ImportButton.Enabled = false;
+
+                    if( _CswNbtImportStatus.CompletedProcessPhase != ImportProcessPhase.Completed )
+                    {
+                        ImportButton.Text = ImportButtonState.Stop.ToString();
+                        ImportButton.Enabled = true;
+
+                    }
+                    else
+                    {
+                        ImportButton.Text = ImportButtonState.Resume.ToString();
+                        ImportButton.Enabled = false;
+                    }
                 }
-            }
+                 */
 
         }//_refreshStatus() 
 
@@ -102,6 +131,7 @@ namespace ChemSW.Nbt.Schema
             if( null != CswNbtImportStatus )
             {
                 PhaseTextBox.BeginInvoke( new AddImportStatusHandler( _AddImportStatus ), new object[] { CswNbtImportStatus } );
+
             }
         }//_WorkerThread_OnImportPhaseChange
 
@@ -121,8 +151,10 @@ namespace ChemSW.Nbt.Schema
         private void _addTimerTicToPhaseStatus()
         {
             //PhaseTextBox.Text += " .";
-
-            PhaseTextBox.Lines[1] += " ."; ;
+            if( PhaseTextBox.Lines.Length >= 2 )
+            {
+                PhaseTextBox.Lines[1] += " ."; ;
+            }
         }//_addTimerTicToPhaseStatus() 
 
         private void _AddImportStatus( CswNbtImportStatus CswNbtImportStatus )
@@ -152,6 +184,7 @@ namespace ChemSW.Nbt.Schema
             PhaseTextBox.Clear();
             PhaseTextBox.AppendText( "Current Phase " + ": " + CswNbtImportStatus.TargetPhaseDescription + "\r\n" );
             PhaseTextBox.AppendText( "Status " + ": " + CswNbtImportStatus.PhaseStatus + "\r\n" );
+
         }
 
 
@@ -207,15 +240,7 @@ namespace ChemSW.Nbt.Schema
 
                     if( _DataFilePath != string.Empty )
                     {
-                        //ImportButton.Enabled = false;
                         ImportButton.Text = ImportButtonState.Stop.ToString();
-
-
-                        //ImportInProgressLabel.Visible = true;
-                        //ImportInProgressLabel.Refresh();
-
-                        //string DataFileName = DataFileSelectBox.SelectedText;
-                        //bool ClearExisting = ClearExistingCheckBox.Checked;
                         ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
 
                         WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
@@ -227,42 +252,29 @@ namespace ChemSW.Nbt.Schema
                     }
                 }//if the user took responsibility for his actions
             }
-            else if( ImportButtonState.Resume.ToString() == ImportButton.Text )
-            {
-                if( MessageBox.Show( "You are about resume importing data into schema " + InitSchemaSelectBox.Text + "; it would not hurt to make another schema backup, separate from the original backup. What you are about to do is irreversable!!! Proceed? ", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
-                {
-                    ImportButton.Text = ImportButtonState.Stop.ToString();
-                    ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
-
-                    WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
-                    ImportHandler.BeginInvoke( _DataFilePath, Mode, true, new AsyncCallback( ImportButton_Callback ), null );
-                }
-            }
             else if( ImportButtonState.Stop.ToString() == ImportButton.Text )
             {
-                if( _CswNbtImportStatus.CompletedProcessPhase >= ImportProcessPhase.PopulatingTempTableProps )
-                {
-
-                    if( MessageBox.Show( "You are about to halt the import process. If you remove or alter the temporary import tables, you will be unable to resume later", "Do Import", MessageBoxButtons.YesNo ) == DialogResult.Yes )
-                    {
-                        _WorkerThread.stopImport();
-                    }
-                }
-                else
+                if( _CswNbtImportStatus.CompletedProcessPhase < ImportProcessPhase.PopulatingTempTableProps )
                 {
                     MessageBox.Show( "You cannot halt the import process until after temporary tables are created", "Do Import", MessageBoxButtons.OK );
                 }
+                else
+                {
+                    _WorkerThread.stopImport(); 
+                }
             }//if-else-if on importbutton state
+
 
 
         } // ImportButton_Click()
 
         private void ImportButton_Callback( IAsyncResult Result )
         {
-            //ImportInProgressLabel.BeginInvoke( new MethodInvoker( _EndImport ), null );
+            ImportButton.BeginInvoke( new MethodInvoker( _EndImport ), null );
         }
         private void _EndImport()
         {
+            _refreshStatus( true );
             //ImportInProgressLabel.Visible = false;
             //ImportInProgressLabel.Refresh();
             //ImportCompleteLabel.Visible = true;
@@ -333,7 +345,7 @@ namespace ChemSW.Nbt.Schema
 
         private void btn_Types_Click( object sender, EventArgs e )
         {
-            _WorkerThread.writeNodeTypesAsXml(); 
+            _WorkerThread.writeNodeTypesAsXml();
         } // FileTypeSelectBox_OnChange
 
 
