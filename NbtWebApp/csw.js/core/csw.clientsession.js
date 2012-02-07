@@ -68,10 +68,10 @@
         function _setExpireTimeInterval() {
             window.clearInterval(_expiretimeInterval);
             window.clearInterval(_expiredInterval);
-            _expiretimeInterval = setInterval(function() {
+            _expiretimeInterval = window.setInterval(function() {
                 _checkExpireTime();
             }, 60000);
-            _expiredInterval = setInterval(function() {
+            _expiredInterval = window.setInterval(function() {
                 _checkExpired();
             }, 60000);
         }

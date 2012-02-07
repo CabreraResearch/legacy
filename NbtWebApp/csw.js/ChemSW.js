@@ -2,7 +2,7 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 window.abandonHope = false;
-(function(window, $) {
+(function(window) {
     'use strict';
     var document = window.document,
         navigator = window.navigator,
@@ -119,7 +119,10 @@ window.abandonHope = false;
         };
         external.register('getCswInternalMethods', external.getCswInternalMethods);
 
+        external.controls = $.extend({}, external);
+        external.register('controls', external.controls);
+        
         return external;
 
     }());
-}(window, jQuery));
+}(window));

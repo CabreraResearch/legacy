@@ -11,7 +11,7 @@
             o.propVals = o.propData.values;
             o.$parent = $Div;
             if (false === Csw.bool(o.ReadOnly)) {
-                Csw.timeInterval(o);
+                Csw.controls.timeInterval(o);
             } else {
                 $Div.append(o.propData.gestalt);
             }

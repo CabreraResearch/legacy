@@ -71,14 +71,17 @@
         };
 
         internal.makeGrid = function (o) {
+            var table;
             internal.multiEdit = o.gridOpts.multiselect;
             if (Csw.isNullOrEmpty($parent)) {
                 $parent = $('<div id="' + internal.gridTableId + '_parent"></div>');
             }
-
-            external.$gridTable = $parent.CswTable('init', {ID: internal.gridTableId});
-
-
+            table = Csw.controls.table({
+                ID: internal.gridTableId,
+                $parent: $parent
+            });
+            external.$gridTable = table.$;
+            
             external.$gridPager = $parent.CswDiv('init', {ID: internal.gridPagerId});
             o.gridOpts.pager = external.$gridPager;
 
@@ -271,7 +274,7 @@
             external.$gridTable.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
         };
 
-        external.getRowIdForVal = function(value, column) {
+        external.getRowIdForVal = function (value, column) {
             ///<summary>Gets a jqGrid rowid by column name and value.</summary>
             ///<param name="value" type="String">Cell value</param>
             ///<param name="column" type="String">Column name</param>
@@ -284,7 +287,7 @@
                 }
             });
             return rowid;
-        }
+        };
 
         external.getValueForColumn = function (columnname, rowid) {
             ///<summary>Gets a cell value by column name.</summary>
@@ -467,6 +470,6 @@
     }
 
     Csw.register('grid', grid);
-    Csw.grid = Csw.grid || grid;
+    Csw.controls.grid = Csw.controls.grid || grid;
     
 }());
