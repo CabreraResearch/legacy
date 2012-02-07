@@ -1,7 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -38,14 +36,16 @@
                             .appendTo($Div)
                             .css('width', o.Width);
 
-                var $table = $TopDiv.CswTable('init', { ID: o.ID + '_tbl' });
-                $table.CswAttrDom('width', '100%');
+                var table = Csw.controls.table({
+                    $parent: $TopDiv,
+                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                });
+                table.propDom(table.$, 'width', '100%');
 
-                var $cell1 = $table.CswTable('cell', 1, 1);
-                $cell1.CswAttrDom('width', '100%');
-                $cell1.append(o.TopContent);
-
-                var $cell2 = $table.CswTable('cell', 1, 2);
+                var $cell1 = table.add(1, 1, o.TopContent);
+                Csw.controls.dom.propDom($cell1, 'width', '100%');
+                
+                var $cell2 = table.cell(1, 2);
                 $cell2.addClass("CswComboBox_ImageCell");
 
                 var hideTo;
@@ -68,6 +68,7 @@
                 var $Div = $(this);
                 var $TopDiv = $Div.children('.CswComboBox_TopDiv');
                 var $table = $TopDiv.children('table');
+                /* Case 24440. We'll come back to this when we refactor this class. CswTable here. */
                 var $cell1 = $table.CswTable('cell', 1, 1);
                 $cell1.text('');
                 $cell1.contents().remove();
