@@ -1,10 +1,9 @@
 using System;
-using System.Web.UI.WebControls;
 using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.CswWebControls;
+using ChemSW.Exceptions;
+using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {

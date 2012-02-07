@@ -3,13 +3,13 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = "CswSpan";
     
     var methods = {
     
-        'init': function(options) 
+        'init': function (options) 
         {
             var o = {
                 'ID': '',
@@ -20,14 +20,14 @@
 
             var $parent = $(this);
             var $span = $('<span></span>');
-            var elementId = tryParseString(o.ID,'');
+            var elementId = Csw.string(o.ID,'');
             if( elementId !== '' ) 
             {
                 $span.CswAttrDom('id',elementId);
                 $span.CswAttrDom('name',elementId);
             }
-            if( !isNullOrEmpty( o.cssclass ) ) $span.addClass(o.cssclass);
-            if( !isNullOrEmpty( o.value ) ) $span.text( o.value );
+            if( !Csw.isNullOrEmpty( o.cssclass ) ) $span.addClass(o.cssclass);
+            if( !Csw.isNullOrEmpty( o.value ) ) $span.text( o.value );
             $parent.append($span);
             return $span;
         }

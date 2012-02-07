@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Data;
 using ChemSW.Config;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.Config
 {

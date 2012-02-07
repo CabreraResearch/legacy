@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToInt32( _ObjectClassRow["quota"] ); }
         }
 
-        public ICollection NodeTypes
+        public IEnumerable<CswNbtMetaDataNodeType> NodeTypes
         {
             get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes( ObjectClassId ); }
         }
@@ -156,14 +156,14 @@ namespace ChemSW.Nbt.MetaData
         //}
 
 
-        public ICollection ObjectClassPropIds
+        public Collection<Int32> ObjectClassPropIds
         {
             get
             {
                 return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropIdsByObjectClass( ObjectClassId );
             }
         }
-        public ICollection ObjectClassProps
+        public IEnumerable<CswNbtMetaDataObjectClassProp> ObjectClassProps
         {
             get
             {

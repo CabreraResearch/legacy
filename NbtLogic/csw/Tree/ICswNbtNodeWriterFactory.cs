@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ChemSW.Exceptions;
-using ChemSW.Nbt;
 
 namespace ChemSW.Nbt
 {

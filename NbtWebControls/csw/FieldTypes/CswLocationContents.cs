@@ -1,6 +1,6 @@
 using System;
-using ChemSW.Nbt;
 using ChemSW.Exceptions;
+using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.NbtWebControls.FieldTypes

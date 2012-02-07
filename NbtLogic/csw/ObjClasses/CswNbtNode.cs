@@ -20,7 +20,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Adding a new node in a popup
         /// </summary>
-        AddInPopup,
+        Add,
         /// <summary>
         /// Editing a node in a popup
         /// </summary>
@@ -45,6 +45,10 @@ namespace ChemSW.Nbt
         /// A preview of the node, displayed when hovering
         /// </summary>
         Preview,
+        /// <summary>
+        /// Properties of a node displayed in a Table Layout
+        /// </summary>
+        Table,
         /// <summary>
         /// Unknown
         /// </summary>

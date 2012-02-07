@@ -1,14 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Text;
-using System.Reflection;
-using ChemSW.Nbt;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Mail;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Sched
 {

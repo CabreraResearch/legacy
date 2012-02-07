@@ -1,24 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Data;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
-
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.NbtWebControls.FieldTypes;
-using ChemSW.CswWebControls;
 using ChemSW.Core;
+using ChemSW.CswWebControls;
 using ChemSW.DB;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebPages
 {

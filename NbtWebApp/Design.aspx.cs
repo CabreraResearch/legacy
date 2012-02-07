@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Web;
 using System.Web.UI;
@@ -2074,7 +2075,7 @@ namespace ChemSW.Nbt.WebPages
                                 RelatedPropType.ID = "EditProp_RelatedPropType" + SelectedNodeTypeProp.PropId.ToString();
                                 RelatedPropRow.Cells[1].Controls.Add( RelatedPropType );
 
-                                ICollection RelatedProps = null;
+                                IEnumerable<ICswNbtMetaDataProp> RelatedProps = null;
                                 if( RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
                                 {
                                     CswNbtMetaDataNodeType RelatedNodeType = Master.CswNbtResources.MetaData.getNodeType( RelationshipProp.FKValue );

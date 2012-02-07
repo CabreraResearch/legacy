@@ -6,7 +6,9 @@
     <meta http-equiv="Cache-Control" content="no-cache">
     <title>NBT</title>
     <!--#include file="MainIncludes.html" -->
-    <script type="text/javascript" src="js/CswAll.min.js"></script>
+    <!--#include file="_DevIncludes.html" -->
+    <!-- <script type="text/javascript" src="js/CswAll.min.js"></script> -->
+    <!-- <script type="text/javascript" src="js/ChemSW.min.js"></script> -->
     <style type="text/css">
         
         .propertylabel
@@ -29,7 +31,7 @@
                         ID: 'nodereporttabs',
                         nodeids: [qs.nodeid],
                         nodekeys: [qs.cswnbtnodekey],
-                        EditMode: EditMode.PrintReport.name
+                        EditMode: Csw.enums.editMode.PrintReport
                     });
                 } 
             };

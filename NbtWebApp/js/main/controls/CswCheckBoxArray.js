@@ -1,10 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../tools/CswClientDb.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.CswCheckBoxArray = function (method) {
     
@@ -14,7 +11,7 @@
             cbaPrevSelectedSuffix = 'cswCba_prevSelected';
         
         var methods = {
-            init: function(options) {
+            init: function (options) {
                 var o = {
                     ID: '',
                     cols: [], //['col1', 'col2', 'col3'],
@@ -34,7 +31,7 @@
                     ReadOnly: false,
                     Multi: false,
                     MultiIsUnchanged: true,
-                    onchange: null, //function() { }
+                    onchange: null, //function () { }
                     dataAry: [],
                     nameCol: '',
                     keyCol: '',
@@ -46,12 +43,11 @@
                     $.extend(o, options);
                 }
                 
-                var storeDataId = makeId({ID: o.ID, suffix: storedDataSuffix});
-                cbaPrevSelected = makeId({ ID: storeDataId, suffix: cbaPrevSelectedSuffix });
+                var storeDataId = Csw.makeId({ID: o.ID, suffix: storedDataSuffix});
+                cbaPrevSelected = Csw.makeId({ ID: storeDataId, suffix: cbaPrevSelectedSuffix });
                 
-                var clientDb = CswClientDb();
-                clientDb.removeItem(storeDataId);
-                clientDb.removeItem(cbaPrevSelected);
+                Csw.clientDb.removeItem(storeDataId);
+                Csw.clientDb.removeItem(cbaPrevSelected);
                 
                 var $Div = $(this);
                 var cbaData = transmogrify({ 
@@ -62,19 +58,19 @@
                                     valCol: o.valCol,
                                     cols: o.cols
                                 });
-                if (false === isNullOrEmpty(cbaData)) {
+                if (false === Csw.isNullOrEmpty(cbaData)) {
                     $.extend(o, cbaData);
                 }
                 o.MultiIsUnchanged = o.Multi;
 
-                var checkType = CswInput_Types.checkbox.name;
+                var checkType = Csw.enums.inputTypes.checkbox.name;
                 if(o.UseRadios) {
-                    checkType = CswInput_Types.radio.name;
+                    checkType = Csw.enums.inputTypes.radio.name;
                 }
                 
                 var $OuterDiv = $('<div id="' + storeDataId + '"/>');
 
-                clientDb.setItem(storeDataId, {columns: o.cols, data: o.data});
+                Csw.clientDb.setItem(storeDataId, {columns: o.cols, data: o.data});
                 
                 if (o.ReadOnly) {
                     for (var r = 0; r < o.data.length; r++) {
@@ -82,7 +78,7 @@
                         var rowlabeled = false;
                         var first = true;
                         for (var c = 0; c < o.cols.length; c++) {
-                            if (isTrue(rRow.values[c])) {
+                            if (Csw.bool(rRow.values[c])) {
                                 if (false === o.Multi) {
                                     if (false === rowlabeled) {
                                         $OuterDiv.append(rRow.label + ": ");
@@ -115,7 +111,7 @@
                         var $dCell = $table.CswTable('cell', tablerow, d+2);
                         $dCell.addClass('cbarraycell');
                         var colName = o.cols[d];
-                        if (colName === o.valCol && false === isNullOrEmpty(o.valColName)) {
+                        if (colName === o.valCol && false === Csw.isNullOrEmpty(o.valColName)) {
                             colName = o.valColName;
                         }
                         if ((colName !== o.keyCol && colName !== o.nameCol)) {
@@ -136,12 +132,12 @@
                             var eCheckid = o.ID + '_none';
                             var $eCheck = $('<input type="'+ checkType +'" class="CBACheckBox_'+ o.ID +'" id="'+ eCheckid + '" name="' + o.ID + '" />')
                                            .appendTo($eCell)
-                                           .click(function() {
+                                           .click(function () {
                                                o.MultiIsUnchanged = false;
                                                o.onchange();
                                            })
                                            .CswAttrNonDom({'key': '', rowlabel: '[none]', collabel: o.cols[e], row: -1, col: e })
-                                           .bind('change', function() { onChange(this); });
+                                           .bind('change', function () { onChange(this); });
                             if (false === o.Multi) {
                                 $eCheck.CswAttrDom('checked', 'true'); // the browser will override this if another one is checked
                             }
@@ -149,25 +145,25 @@
                     } // if(o.UseRadios && ! o.Required)
                     tablerow++;
 
-                    var onChange = function(cB) {
+                    var onChange = function (cB) {
                         //var cB = this;
                         var col = cB.attributes['col'].value;
                         var row = cB.attributes['row'].value;
-                        var cache = clientDb.getItem(storeDataId);
+                        var cache = Csw.clientDb.getItem(storeDataId);
                         cache.MultiIsUnchanged = false;
-                        if (contains(cache.data, row) && contains(cache.data[row],'values')) {
+                        if (Csw.contains(cache.data, row) && Csw.contains(cache.data[row],'values')) {
                             cache.data[row].values[col] = cB.checked;
                         }
                         if(o.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
-                            var data = clientDb.getItem(cbaPrevSelected);
-                            if(contains(data,'row') && contains(data,'col')) {
-                                if(contains(cache.data, data.row) && contains(cache.data[data.row],'values')) {
+                            var data = Csw.clientDb.getItem(cbaPrevSelected);
+                            if(Csw.contains(data,'row') && Csw.contains(data,'col')) {
+                                if(Csw.contains(cache.data, data.row) && Csw.contains(cache.data[data.row],'values')) {
                                     cache.data[data.row].values[data.col] = false;
                                 }
                             }
-                            clientDb.setItem(cbaPrevSelected, {row: row, col: col});
+                            Csw.clientDb.setItem(cbaPrevSelected, {row: row, col: col});
                         }      
-                        clientDb.setItem(storeDataId, cache);
+                        Csw.clientDb.setItem(storeDataId, cache);
                     };
                     
                     // Data
@@ -186,12 +182,12 @@
                                            .appendTo($fCell)
                                            .bind('click', o.onchange)
                                            .CswAttrNonDom({key: sRow.key, rowlabel: sRow.label, collabel: o.cols[f], row: s, col: f })
-                                           .bind('change', function() { onChange(this); });
+                                           .bind('change', function () { onChange(this); });
                             $.data($fCheck, 'thisRow', sRow);
 
                             if(sRow.values[f]) {
                                 if(o.UseRadios) {
-                                    clientDb.setItem(cbaPrevSelected, { col: f, row: s });
+                                    Csw.clientDb.setItem(cbaPrevSelected, { col: f, row: s });
                                 }
                                 $fCheck.CswAttrDom('checked', 'true');
                             }
@@ -206,7 +202,7 @@
                         var $checkalldiv = $('<div style="text-align: right"><a href="#">'+ checkAllLinkText +'</a></div>')
                                              .appendTo($Div);
                         var $checkalllink = $checkalldiv.children('a');
-                        $checkalllink.click(function() { toggleCheckAll($checkalllink, o.ID); return false; });
+                        $checkalllink.click(function () { toggleCheckAll($checkalllink, o.ID); return false; });
                     }
 
                 } // if-else(o.ReadOnly)
@@ -225,9 +221,8 @@
                 if (options) {
                     $.extend(o, options);
                 }
-                var storeDataId = makeId({ID: o.ID, suffix: storedDataSuffix});
-                var clientDb = CswClientDb();
-                var data = clientDb.getItem(storeDataId);
+                var storeDataId = Csw.makeId({ID: o.ID, suffix: storedDataSuffix});
+                var data = Csw.clientDb.getItem(storeDataId);
                 return data;
             }
         };
@@ -247,14 +242,14 @@
             };
             if(options) $.extend(o, options);
             
-            if (false === isNullOrEmpty(o.dataAry) && o.dataAry.length > 0) {
+            if (false === Csw.isNullOrEmpty(o.dataAry) && o.dataAry.length > 0) {
                 // get columns
                 var cols = o.cols;
-                if (hasLength(cols) && cols.length === 0) {
+                if (Csw.hasLength(cols) && cols.length === 0) {
                     var firstProp = o.dataAry[0];
                     for (var column in firstProp) {
 
-                        if (contains(firstProp, column)) {
+                        if (Csw.contains(firstProp, column)) {
                             var fieldname = column;
                             if (fieldname !== o.nameCol && fieldname !== o.keyCol)
                             {
@@ -263,7 +258,7 @@
                         }
                     }
                 }
-                if (false === isNullOrEmpty(o.valCol) && false === contains(cols,o.valCol)) {
+                if (false === Csw.isNullOrEmpty(o.valCol) && false === Csw.contains(cols,o.valCol)) {
                     cols.push(o.valCol);
                 }
 
@@ -273,11 +268,11 @@
                 for (var i = 0; i < o.dataAry.length; i++) {
                     var thisSet = o.dataAry[i];
 
-                    if (contains(thisSet, o.keyCol) && contains(thisSet, o.nameCol)) {
+                    if (Csw.contains(thisSet, o.keyCol) && Csw.contains(thisSet, o.nameCol)) {
                         var values = [];
                         for (var v = 0; v < cols.length; v++) {
-                            if (contains(thisSet, cols[v])) {
-                                values.push(isTrue(thisSet[cols[v]]));
+                            if (Csw.contains(thisSet, cols[v])) {
+                                values.push(Csw.bool(thisSet[cols[v]]));
                             }
                         }
                         var dataOpts = { 'label': thisSet[o.nameCol],
@@ -289,8 +284,7 @@
 
                 dataStore.cols = cols;
                 dataStore.data = data;
-                var clientDb = CswClientDb();
-                clientDb.setItem(o.storeDataId, dataStore);
+                Csw.clientDb.setItem(o.storeDataId, dataStore);
             }
             return dataStore;
         }

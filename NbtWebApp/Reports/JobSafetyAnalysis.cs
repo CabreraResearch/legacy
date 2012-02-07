@@ -11,9 +11,9 @@
 namespace NbtWebApp.Reports {
     using System;
     using System.ComponentModel;
-    using CrystalDecisions.Shared;
-    using CrystalDecisions.ReportSource;
     using CrystalDecisions.CrystalReports.Engine;
+    using CrystalDecisions.ReportSource;
+    using CrystalDecisions.Shared;
     
     
     public class JobSafetyAnalysis : ReportClass {

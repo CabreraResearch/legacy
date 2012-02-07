@@ -1,15 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Text;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Exceptions;
-using ChemSW.DB;
-using ChemSW.Nbt.Schema;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.Schema
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.TblDn;
+﻿using ChemSW.Nbt.PropTypes;
 
 
 namespace ChemSW.Nbt.PropertySets
