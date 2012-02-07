@@ -16,6 +16,7 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "objectclasspropid",
+                                                          "propname",
                                                           _CswNbtMetaDataResources.ObjectClassPropTableUpdate,
                                                           makeObjectClassProp );
         }

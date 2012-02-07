@@ -16,9 +16,10 @@
                 nodeid: '',
                 cswnbtnodekey: '',
                 EditMode: Csw.enums.editMode.Edit,
-                onEditNode: null, 
+                onEditNode: null,
                 onDeleteNode: null,
-                onSuccess: null, 
+                onSuccess: null,
+                onNoResults: null,  // function({viewid, viewmode})
                 columns: 3,      // number of columns to use
                 rowpadding: 25,  // padding between table rows, in pixels
                 maxheight: 600   // maximum display height of table, in pixels
@@ -51,8 +52,9 @@
                 success: function (data) {
                     var r = 1;
                     var c = 1;
+                    var results = Csw.number(data.results, -1);
 
-                    Csw.crawlObject(data, function (nodeObj) {
+                    function _makeNodeCell(nodeObj) {
                         var nodeid = nodeObj.nodeid;
 
                         if (nodeObj.nodename == "Results Truncated") {
@@ -71,6 +73,10 @@
                                                 .css({
                                                     width: width
                                                 });
+
+                        $thumbnailcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+                        $textcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+
                         // Name
                         var name = '<b>' + nodeObj.nodename + '</b>';
 
@@ -87,7 +93,7 @@
                         // Props
                         Csw.crawlObject(nodeObj.props, function (propObj) {
                             if (propObj.fieldtype == "Button") {
-                            
+
                                 var $propdiv = $textcell.CswDiv({});
                                 $.CswFieldTypeFactory('make', {
                                     nodeid: nodeid,
@@ -97,7 +103,7 @@
                                     ID: Csw.makeId({ ID: o.ID, suffix: propObj.id }),
                                     EditMode: Csw.enums.EditMode.Table
                                 });
-                            
+
                             } else {
                                 $textcell.append('' + propObj.propname + ': ');
                                 $textcell.append(propObj.gestalt);
@@ -146,12 +152,16 @@
 
                         c += 1;
                         if (c > o.columns) { c = 1; r += 1; }
-                    });
-
-
-                    if (Csw.isFunction(o.onSuccess)) {
-                        o.onSuccess();
                     }
+
+                    if (results === 0) {
+                        Csw.tryExec(o.onNoResults, { viewid: o.viewid, viewmode: Csw.enums.viewMode.table.name });
+                    } else {
+                        Csw.crawlObject(data.nodes, _makeNodeCell);
+                    }
+
+                    Csw.tryExec(o.onSuccess);
+
                 } // success{} 
             }); // ajax
         } // 'init'

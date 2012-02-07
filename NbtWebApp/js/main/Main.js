@@ -10,7 +10,7 @@ window.initMain = window.initMain || function (undefined) {
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
-    
+
     Csw.ajax.onBeforeAjax = function (watchGlobal) {
         if (watchGlobal) {
             $('#ajaxSpacer').hide();
@@ -38,7 +38,7 @@ window.initMain = window.initMain || function (undefined) {
     } else {
         initAll();
     }
-    
+
     function initAll() {
         //if (debugOn()) Csw.log('Main.initAll()');
 
@@ -61,7 +61,7 @@ window.initMain = window.initMain || function (undefined) {
                         handleAction({ 'actionname': 'Sessions' });
                     }
                 }); // CswMenuHeader
-                
+
                 refreshViewSelect();
 
                 var current = Csw.clientState.getCurrent();
@@ -562,13 +562,14 @@ window.initMain = window.initMain || function (undefined) {
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
             onSuccess: function () {
-                refreshMainMenu({ 
+                refreshMainMenu({
                     viewid: o.viewid,
                     viewmode: Csw.enums.viewMode.table.name//,
-//                    nodeid: o.nodeid,
-//                    cswnbtnodekey: o.cswnbtnodekey
+                    //                    nodeid: o.nodeid,
+                    //                    cswnbtnodekey: o.cswnbtnodekey
                 });
-            }
+            },
+            onNoResults: showDefaultContentTable
         });
     }
 
@@ -594,18 +595,37 @@ window.initMain = window.initMain || function (undefined) {
                 getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
                 refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
             } else {
-                showDefaultContent({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name });
+                showDefaultContentTree({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name });
                 refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
             }
         }
     } // onSelectTreeNode()
 
-    function showDefaultContent(options) {
+    function showDefaultContentTree(viewopts) {
+        var v = {
+            viewid: '',
+            viewmode: ''
+        };
+        if (viewopts) $.extend(v, viewopts);
+        clear({ centerbottom: true });
+        $('#RightDiv').CswDefaultContent(viewopts);
 
-        $('#RightDiv').CswDefaultContent(options);
+    } // showDefaultContentTree()
 
-    } // showDefaultContent()
+    function showDefaultContentTable(viewopts) {
+        var v = {
+            viewid: '',
+            viewmode: ''
+        };
+        if (viewopts) $.extend(v, viewopts);
+        clear({ centerbottom: true });
+        var $div = $('#CenterBottomDiv').CswDiv({ ID: 'deftbldiv' });
+        $div.CswAttrDom('align', 'center');
+        $div.css({ textAlign: 'center' });
+        $div.append('No Results.<BR/><BR/>');
+        $div.CswDefaultContent(viewopts);
 
+    } // showDefaultContentTable()
 
     function getTabs(options) {
         //if (debugOn()) Csw.log('Main.getTabs()');
@@ -811,11 +831,11 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                
-            //				break;                
-            //			case 'Assign_Tests':                
-            //				break;                
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                
+            //			case 'Assign_Inspection':                       
+            //				break;                       
+            //			case 'Assign_Tests':                       
+            //				break;                       
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                       
             case 'Create_Inspection':
                 clear({ 'all': true });
 
@@ -849,8 +869,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswInspectionDesign(designOpt);
 
                 break;
-            //			case 'Design':                
-            //				break;                
+            //			case 'Design':                       
+            //				break;                       
             case 'Edit_View':
                 clear({ 'all': true });
 
@@ -877,14 +897,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                
-            //				break;                
-            //			case 'Future_Scheduling':                
-            //				break;                
-            //			case 'Import_Fire_Extinguisher_Data':                
-            //				break;                
-            //			case 'Inspection_Design':                
-            //				break;                
+            //			case 'Enter_Results':                       
+            //				break;                       
+            //			case 'Future_Scheduling':                       
+            //				break;                       
+            //			case 'Import_Fire_Extinguisher_Data':                       
+            //				break;                       
+            //			case 'Inspection_Design':                       
+            //				break;                       
             case 'OOC_Inspections':
                 setupOocInspections();
 
@@ -918,14 +938,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswScheduledRulesGrid(rulesOpt);
 
                 break;
-            //			case 'Load_Mobile_Data':                
-            //				break;                
-            //			case 'Receiving':                
-            //				break;                
-            //			case 'Split_Samples':                
-            //				break;                
-            //			case 'View_By_Location':                
-            //				break;                
+            //			case 'Load_Mobile_Data':                       
+            //				break;                       
+            //			case 'Receiving':                       
+            //				break;                       
+            //			case 'Split_Samples':                       
+            //				break;                       
+            //			case 'View_By_Location':                       
+            //				break;                       
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;

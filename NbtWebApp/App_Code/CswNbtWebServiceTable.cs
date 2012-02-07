@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.WebServices
     public class CswNbtWebServiceTable
     {
         Int32 MaxLength = 35;
-        
+
         private readonly CswNbtResources _CswNbtResources;
         public CswNbtWebServiceTable( CswNbtResources CswNbtResources )
         {
@@ -52,17 +52,20 @@ namespace ChemSW.Nbt.WebServices
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
 
+            ret["results"] = Tree.getChildNodeCount().ToString();
+            JArray NodesArray = new JArray();
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 Tree.goToNthChild( c );
-                ret[Tree.getNodeIdForCurrentPosition().ToString()] = _makeNodeObj( View, Tree );
+                NodesArray.Add( _makeNodeObj( View, Tree ) );
                 Tree.goToParentNode();
             }
 
             if( Tree.getCurrentNodeChildrenTruncated() )
             {
-                ret["truncated"] = new JObject( new JProperty( "nodename", "Results Truncated" ) );
+                NodesArray.Add( new JObject( new JProperty( "nodename", "Results Truncated" ) ) );
             }
+            ret["nodes"] = NodesArray;
 
             return ret;
 
@@ -111,7 +114,7 @@ namespace ChemSW.Nbt.WebServices
                 Int32 ThisOrder = 0;
                 foreach( CswNbtViewProperty OtherViewProp in ViewRel.Properties )
                 {
-                    if( ( OtherViewProp.Order != Int32.MinValue && OtherViewProp.Order < ViewProp.Order ) || 
+                    if( ( OtherViewProp.Order != Int32.MinValue && OtherViewProp.Order < ViewProp.Order ) ||
                         ViewProp.Order == Int32.MinValue )
                     {
                         ThisOrder++;
@@ -140,7 +143,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ret["thumbnailurl"] = CswNbtNodePropImage.makeImageUrl( JctNodePropId, NodeId, NodeTypePropId );
                 }
-                else 
+                else
                 {
                     JObject ThisProp = new JObject();
                     ThisProp["propid"] = PropId.ToString();
