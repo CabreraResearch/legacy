@@ -627,6 +627,8 @@ namespace ChemSW.Nbt
 
             _CswResources.finalize( Commit );
 
+            if( null != _CswNbtMetaData )
+                _CswNbtMetaData.afterFinalize();
         }//finalize()
 
         /// <summary>

@@ -1266,6 +1266,10 @@ namespace ChemSW.Nbt.MetaData
         public void finalize()
         {
             _CswNbtMetaDataResources.finalize();
+        }
+
+        public void afterFinalize()
+        {
             if( _ResetAllViews )
             {
                 RefreshAllNodetypeViews();
@@ -1279,9 +1283,7 @@ namespace ChemSW.Nbt.MetaData
                 }
                 _RefreshViewForNodetypeId.Clear();
             }
-
         }
-
 
 
         #region Templates (Node name, Composite)
