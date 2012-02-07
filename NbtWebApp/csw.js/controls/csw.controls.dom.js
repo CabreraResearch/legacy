@@ -57,7 +57,7 @@
             return ret;
         };
 
-        external.prop = function ($Dom, name, value) {
+        external.propDom = function ($Dom, name, value) {
             /// <summary>
             ///   Gets or sets a DOM property
             /// </summary>
@@ -81,7 +81,7 @@
             return ret;
         };
 
-        external.attr = function ($this, name, value) {
+        external.propNonDom = function ($this, name, value) {
             /// <summary>
             ///   Gets or sets an Non-Dom attribute
             /// </summary>

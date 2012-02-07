@@ -99,16 +99,19 @@
                         }
                     }
                 } else {
-                    var $table = $OuterDiv.CswTable('init', { ID: o.ID + '_tbl' });
+                    var table = Csw.controls.table({
+                        $parent: $OuterDiv,
+                        ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                    });
 
                     $OuterDiv.css('height', (25 * o.HeightInRows) + 'px');
                     $OuterDiv.addClass('cbarraydiv');
-                    $table.addClass('cbarraytable');
+                    table.addClass(table.$, 'cbarraytable');
 
                     // Header
                     var tablerow = 1;
                     for(var d = 0; d < o.cols.length; d++) {
-                        var $dCell = $table.CswTable('cell', tablerow, d+2);
+                        var $dCell = table.cell(tablerow, d+2);
                         $dCell.addClass('cbarraycell');
                         var colName = o.cols[d];
                         if (colName === o.valCol && false === Csw.isNullOrEmpty(o.valColName)) {
@@ -118,16 +121,16 @@
                             $dCell.append(colName);
                         }
                     }
-                    tablerow++;
+                    tablerow += 1;
 
                     //[none] row
                     if(o.UseRadios && false === o.Required) {
                         // Row label
-                        var $labelcell = $table.CswTable('cell', tablerow, 1);
+                        var $labelcell = table.cell(tablerow, 1);
                         $labelcell.addClass('cbarraycell');
                         $labelcell.append('[none]');
                         for(var e = 0; e < o.cols.length; e++) {
-                            var $eCell = $table.CswTable('cell', tablerow, e+2);
+                            var $eCell = table.cell(tablerow, e+2);
                             $eCell.addClass('cbarraycell');
                             var eCheckid = o.ID + '_none';
                             var $eCheck = $('<input type="'+ checkType +'" class="CBACheckBox_'+ o.ID +'" id="'+ eCheckid + '" name="' + o.ID + '" />')
@@ -170,12 +173,11 @@
                     for(var s = 0; s < o.data.length; s++) {
                         var sRow = o.data[s];
                         // Row label
-                        var $sLabelcell = $table.CswTable('cell', tablerow + s, 1);
+                        var $sLabelcell = table.add(tablerow + s, 1, sRow.label);
                         $sLabelcell.addClass('cbarraycell');
-                        $sLabelcell.append(sRow.label);
                         
                         for(var f = 0; f < o.cols.length; f++) {
-                            var $fCell = $table.CswTable('cell', tablerow + s, f+2);
+                            var $fCell = table.cell(tablerow + s, f+2);
                             $fCell.addClass('cbarraycell');
                             var fCheckid = o.ID + '_' + s + '_' + f;
                             var $fCheck = $('<input type="'+ checkType +'" class="CBACheckBox_'+ o.ID +'" id="'+ fCheckid + '" name="' + o.ID + '" />')

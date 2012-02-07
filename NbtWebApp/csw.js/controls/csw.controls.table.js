@@ -43,7 +43,7 @@
             external.$ = $('<table id="' + external.id + '"></table>');
             
             external.addClass(external.$, internal.TableCssClass);
-            external.prop(external.$, {
+            external.propDom(external.$, {
                 'width': internal.width,
                 'align': internal.align,
                 'cellpadding': internal.cellpadding,
@@ -53,7 +53,7 @@
                 'cellvalign': internal.cellvalign,
                 'cellcssclass': internal.CellCssClass
             });
-            external.attr(external.$, {
+            external.propNonDom(external.$, {
                 'FirstCellRightAlign': internal.FirstCellRightAlign,
                 'OddCellRightAlign': internal.OddCellRightAlign
             });
