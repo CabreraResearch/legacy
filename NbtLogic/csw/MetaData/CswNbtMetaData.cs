@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Object Class primary keys (Int32)
         /// </summary>
-        public Collection<Int32> ObjectClassIds { get { return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds(); } }
+        public Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32> ObjectClassIds { get { return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds(); } }
         /// <summary>
         /// Collection of CswNbtMetaDataObjectClass objects
         /// </summary>
@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Field Type primary keys
         /// </summary>
-        public Collection<Int32> FieldTypeIds { get { return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeIds(); } }
+        public Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> FieldTypeIds { get { return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeIds(); } }
         /// <summary>
         /// Collection of CswNbtMetaDataFieldType objects
         /// </summary>
@@ -306,8 +306,8 @@ namespace ChemSW.Nbt.MetaData
 
             return RetFieldType;
         }//makeNewTab()
-        
-        
+
+
         /// <summary>
         /// Creates a brand new NodeType in the database and in the MetaData collection
         /// </summary>
