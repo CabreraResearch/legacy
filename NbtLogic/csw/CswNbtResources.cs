@@ -717,10 +717,11 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Generate a notification based on a node event
         /// </summary>
-        public void runNotification( Int32 NodeTypeId, CswNbtObjClassNotification.EventOption EventOpt, CswNbtNode TargetNode, string PropName, string NewValue )
+        public void runNotification( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassNotification.EventOption EventOpt, CswNbtNode TargetNode, string PropName, string NewValue )
         {
             _initNotifications( false );
-            CswNbtNotificationKey NKey = new CswNbtNotificationKey( NodeTypeId, EventOpt, PropName, NewValue );
+            // case 
+            CswNbtNotificationKey NKey = new CswNbtNotificationKey( TargetNodeType.FirstVersionNodeTypeId, EventOpt, PropName, NewValue );
             if( _Notifs.ContainsKey( NKey ) )
             {
                 Collection<CswMailMessage> MailMessages = new Collection<CswMailMessage>();
@@ -731,7 +732,7 @@ namespace ChemSW.Nbt
                 string Subject = NotifNode.Subject.Text;
                 string Message = NotifNode.Message.Text;
 
-                CswNbtMetaDataNodeType TargetNodeType = this.MetaData.getNodeType( NodeTypeId );
+                //CswNbtMetaDataNodeType TargetNodeType = this.MetaData.getNodeType( NodeTypeId );
                 CswNbtMetaDataNodeTypeProp TargetProp = TargetNodeType.getNodeTypeProp( PropName );
 
                 Message = Message.Replace( CswNbtObjClassNotification.MessageNodeNameReplacement, TargetNode.NodeName );
