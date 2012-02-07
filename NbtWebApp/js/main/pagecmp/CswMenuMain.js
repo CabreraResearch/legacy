@@ -1,9 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.CswMenuMain = function (options) {
     /// <summary>
@@ -14,10 +12,10 @@
     ///     &#10;1 - options.viewid: a viewid
     ///     &#10;2 - options.nodeid: nodeid
     ///     &#10;3 - options.cswnbtnodekey: a node key
-    ///     &#10;4 - options.onAddNode: function() {}
-    ///     &#10;5 - options.onMultiEdit: function() {}
-    ///     &#10;6 - options.onSearch: { onViewSearch: function() {}, onGenericSearch: function() {} }
-    ///     &#10;7 - options.onEditView: function() {}
+    ///     &#10;4 - options.onAddNode: function () {}
+    ///     &#10;5 - options.onMultiEdit: function () {}
+    ///     &#10;6 - options.onSearch: { onViewSearch: function () {}, onGenericSearch: function () {} }
+    ///     &#10;7 - options.onEditView: function () {}
     /// </param>
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getMainMenu',
@@ -25,14 +23,14 @@
             nodeid: '',
             cswnbtnodekey: '',
             propid: '',
-            onAddNode: null, // function(nodeid, cswnbtnodekey) { },
-            onMultiEdit: null, // function() { },
+            onAddNode: null, // function (nodeid, cswnbtnodekey) { },
+            onMultiEdit: null, // function () { },
             onSearch: {
-                 onViewSearch: null, // function() {}, 
-                 onGenericSearch: null // function() {}
+                 onViewSearch: null, // function () {}, 
+                 onGenericSearch: null // function () {}
             },
-            onEditView: null, // function(viewid) { },
-            onSaveView: null, // function(newviewid) { },
+            onEditView: null, // function (viewid) { },
+            onSaveView: null, // function (newviewid) { },
             Multi: false,
             NodeCheckTreeId: '',
             limitMenuTo: ''
@@ -48,7 +46,7 @@
             LimitMenuTo: o.limitMenuTo
         };
 
-        CswAjaxJson({
+        Csw.ajax.post({
             url: o.Url,
             data: jsonData,
             stringify: false,
@@ -62,7 +60,7 @@
                     if (data.hasOwnProperty(itemKey)) {
 
                         var menuItem = data[itemKey];
-                        if (!isNullOrEmpty(itemKey))
+                        if (!Csw.isNullOrEmpty(itemKey))
                         {
                             var menuItemOpts = {
                                 $ul: $ul,
@@ -77,9 +75,9 @@
                                 Multi: o.Multi,
                                 NodeCheckTreeId: o.NodeCheckTreeId
                             };
-                            var $li = HandleMenuItem(menuItemOpts);
+                            var $li = Csw.handleMenuItem(menuItemOpts);
 
-                            if (isTrue(menuItem.haschildren)) {
+                            if (Csw.bool(menuItem.haschildren)) {
                                 delete menuItem.haschildren;
                                 var $subul = $('<ul class="subnav"></ul>')
                                     .appendTo($li);
@@ -92,7 +90,7 @@
                                             itemJson: thisChild
                                         };
                                         $.extend(menuItemOpts, subMenuItemOpts);
-                                        HandleMenuItem(menuItemOpts);
+                                        Csw.handleMenuItem(menuItemOpts);
                                     }
                                 }
                             }
@@ -108,6 +106,6 @@
         // For proper chaining support
         return this;
 
-    }; // function(options) {
+    }; // function (options) {
 })(jQuery);
 

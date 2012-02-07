@@ -1,40 +1,37 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";        
     var pluginName = 'CswFieldTypeNumber';
 
     var methods = {
-        init: function(o) {
+        init: function (o) {
 
             var $Div = $(this),
                 propVals = o.propData.values,
-                precision = tryParseNumber(propVals.precision, 6),
-                ceilingVal = '999999999' + ChemSW.tools.getMaxValueForPrecision(precision);
+                precision = Csw.number(propVals.precision, 6),
+                ceilingVal = '999999999' + Csw.getMaxValueForPrecision(precision);
             
             var $NumberTextBox = $Div.CswNumberTextBox({
                 ID: o.ID,
-                Value: (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue,
-                MinValue: tryParseNumber(propVals.minvalue),
-                MaxValue: tryParseNumber(propVals.maxvalue),
+                Value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                MinValue: Csw.number(propVals.minvalue),
+                MaxValue: Csw.number(propVals.maxvalue),
                 ceilingVal: ceilingVal,
                 Precision: precision,
-                ReadOnly: isTrue(o.ReadOnly),
-                Required: isTrue(o.Required),
+                ReadOnly: Csw.bool(o.ReadOnly),
+                Required: Csw.bool(o.Required),
                 onchange: o.onchange
             });
 
-            if(!isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0) {
+            if(!Csw.isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0) {
                 $NumberTextBox.clickOnEnter(o.$savebtn);
             }
         },
-        save: function(o) { //$propdiv, $xml
+        save: function (o) { //$propdiv, $xml
             var attributes = { value: o.$propdiv.CswNumberTextBox('value', o.ID) };
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

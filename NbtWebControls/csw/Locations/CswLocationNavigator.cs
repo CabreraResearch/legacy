@@ -1,20 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
+using ChemSW.Core;
+using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
 using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.MetaData;
-using ChemSW.CswWebControls;
-using ChemSW.Core;
 
 namespace ChemSW.NbtWebControls
 {

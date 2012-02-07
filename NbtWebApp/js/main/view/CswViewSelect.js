@@ -10,14 +10,14 @@
     var pluginName = "CswViewSelect";
 
     var methods = {
-        'init': function(options) 
+        'init': function (options) 
             {
 
                 var o = {
                     ID: '',
                     //viewid: '',
                     onSelect: null,
-//				        function() { 
+//				        function () { 
 //						var x = {
 //									iconurl: '',
 //									type: '',
@@ -30,7 +30,7 @@
 //									reportid: ''
 //								};
 //					},
-                    onSuccess: null, //function() {},
+                    onSuccess: null, //function () {},
                     ClickDelay: 300,
                     issearchable: false,
                     usesession: true
@@ -49,7 +49,7 @@
                                                  Width: '266px' });
 
                 $viewtreediv.CswViewListTree({ 
-                                            onSelect: function(optSelect) 
+                                            onSelect: function (optSelect) 
                                                 { 
                                                     _onTreeSelect({
                                                                     ID: o.ID,
@@ -75,7 +75,7 @@
                 return $selectdiv;
             },
 
-        'value': function() 
+        'value': function () 
             {
                 var $selectdiv = $(this);
                 return {
@@ -144,8 +144,8 @@
                 break;
         }
 
-        setTimeout(function() { x.$selectdiv.CswComboBox( 'toggle'); }, x.ClickDelay);
-        if(isFunction(x.onSelect)) {
+        setTimeout(function () { x.$selectdiv.CswComboBox( 'toggle'); }, x.ClickDelay);
+        if(Csw.isFunction(x.onSelect)) {
             x.onSelect({
                         iconurl: x.iconurl,
                         type: x.type,

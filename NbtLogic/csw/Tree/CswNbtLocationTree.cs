@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using System.Xml;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {

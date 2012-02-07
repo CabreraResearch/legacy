@@ -88,8 +88,8 @@ namespace ChemSW.Nbt.WebServices
             JObject NodeTypeSelObj = new JObject();
             NodeTypeSelObj["label"] = "Specific Types";
 
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes.Cast<CswNbtMetaDataNodeType>()
-                                                        .Where( NodeType => ( NodeType.NodeTypeProps.Count > 0 ) ) )
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes
+                                                        .Where( NodeType => ( NodeType.NodeTypeProps.Count() > 0 ) ) )
             {
                 string OptionId = "option_" + NodeType.FirstVersionNodeTypeId;
                 NodeTypeSelObj[OptionId] = new JObject();
@@ -113,8 +113,8 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses.Cast<CswNbtMetaDataObjectClass>()
                                                               .Where( ObjectClass => CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass != ObjectClass.ObjectClass &&
-                                                                      ( ObjectClass.ObjectClassProps.Count > 0 &&
-                                                                        ObjectClass.NodeTypes.Count > 0 ) ) )
+                                                                      ( ObjectClass.ObjectClassProps.Count() > 0 &&
+                                                                        ObjectClass.NodeTypes.Count() > 0 ) ) )
             {
                 string OptionId = "option_" + ObjectClass.ObjectClassId;
                 ObjectClassSelObj[OptionId] = new JObject();

@@ -120,7 +120,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 }
             }
 
-            if( ReadOnly || _EditMode == NodeEditMode.AddInPopup ||
+            if( ReadOnly || _EditMode == NodeEditMode.Add ||
                             _EditMode == NodeEditMode.EditInPopup ||
                             _EditMode == NodeEditMode.Demo ||
                             _EditMode == NodeEditMode.PrintReport )

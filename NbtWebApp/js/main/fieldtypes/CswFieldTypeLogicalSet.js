@@ -1,9 +1,5 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswCheckBoxArray.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";        
@@ -12,7 +8,7 @@
     var keyCol = 'key';
   
     var methods = {
-        init: function(o) { 
+        init: function (o) { 
 
             var $Div = $(this),
                 propVals = o.propData.values,
@@ -34,7 +30,7 @@
             $Div.append($cbaDiv);
             return $Div;
         },
-        save: function(o) { //$propdiv, $xml
+        save: function (o) { //$propdiv, $xml
             var $CBADiv = o.$propdiv.children('div').first();
             var attributes = { logicalsetjson: null };
             var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
@@ -42,7 +38,7 @@
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.logicalsetjson = formdata;
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             return $(this);
         } // save()
     };

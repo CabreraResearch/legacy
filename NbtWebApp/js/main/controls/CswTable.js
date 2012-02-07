@@ -40,7 +40,7 @@
                     if (options) {
                         $.extend(o, options);
                     }
-                    var elementId = makeId({ID: o.ID, prefix: o.prefix, suffix: o.suffix});
+                    var elementId = Csw.makeId({ID: o.ID, prefix: o.prefix, suffix: o.suffix});
                     var $table = $('<table id="'+ elementId +'"></table>');
                     $table.addClass(o.TableCssClass);
                     $table.CswAttrDom('width', o.width);
@@ -54,7 +54,7 @@
                     $table.CswAttrNonDom('FirstCellRightAlign', o.FirstCellRightAlign);
                     $table.CswAttrNonDom('OddCellRightAlign', o.OddCellRightAlign);
 
-                    $table.bind('CswTable_onCreateCell', function(e, $eTable, $cell, row, column) { 
+                    $table.bind('CswTable_onCreateCell', function (e, $eTable, $cell, row, column) { 
                                                             o.onCreateCell(e, $eTable, $cell, row, column); 
                                                             e.stopPropagation();  // prevents events from triggering in nested tables
                                                             });
@@ -71,15 +71,15 @@
                     return getCell($table, row, col);
                 },
 
-        maxrows: function() {
+        maxrows: function () {
                     return getMaxRows($(this));
                 },
 
-        maxcolumns: function() {
+        maxcolumns: function () {
                     return getMaxColumns($(this));
                 },
 
-        finish: function(onEmptyCell) {
+        finish: function (onEmptyCell) {
                     var $table = $(this);
 
                     // find maximum dimensions
@@ -105,7 +105,7 @@
         findRow: function (criteria) {
             var $table = $(this);
             var $rows = $table.children('tbody').children('tr');
-            if (false === isNullOrEmpty(criteria)) {
+            if (false === Csw.isNullOrEmpty(criteria)) {
                 $rows = $rows.filter(criteria);
             }
             return $rows;
@@ -114,12 +114,12 @@
             var $table = $(this),
                 $retCell;
             
-            if(contains(criteria, 'row') &&
-               contains(criteria, 'column')) {
+            if(Csw.contains(criteria, 'row') &&
+               Csw.contains(criteria, 'column')) {
                 $retCell = $( $table[0].rows[criteria.row].cells[criteria.column] );
             } else {
                 var $cells = $table.children('tbody').children('tr').children('td');
-                if (false === isNullOrEmpty(criteria)) {
+                if (false === Csw.isNullOrEmpty(criteria)) {
                     $retCell = $cells.filter(criteria);
                 }
             }
@@ -128,7 +128,7 @@
         rowFindCell: function ($row, criteria) {
             //var $table = $(this);
             var $cells = $row.children('td');
-            if (false === isNullOrEmpty(criteria)) {
+            if (false === Csw.isNullOrEmpty(criteria)) {
                 $cells = $cells.filter(criteria);
             }
             return $cells;
@@ -163,11 +163,11 @@
             col !== undefined && col !== '') 
         {
             if (row <= 0) {
-                log("error: row must be greater than 1, got: " + row);
+                Csw.log("error: row must be greater than 1, got: " + row);
                 row = 1;
             }
             if (col <= 0) {
-                log("error: col must be greater than 1, got: " + col);
+                Csw.log("error: col must be greater than 1, got: " + col);
                 col = 1;
             }
 
@@ -179,8 +179,8 @@
             while (col > $row.children('td').length) 
             {
                 var align = $table.CswAttrDom('cellalign');
-                if(($row.children('td').length === 0 && isTrue($table.CswAttrNonDom('FirstCellRightAlign'))) ||
-                    ($row.children('td').length % 2 === 0 && isTrue($table.CswAttrNonDom('OddCellRightAlign'))))
+                if(($row.children('td').length === 0 && Csw.bool($table.CswAttrNonDom('FirstCellRightAlign'))) ||
+                    ($row.children('td').length % 2 === 0 && Csw.bool($table.CswAttrNonDom('OddCellRightAlign'))))
                 {
                     align = 'right';
                 }
@@ -203,6 +203,6 @@
             $.error('Method ' + method + ' does not exist on ' + pluginName);
         }
        return this;
-    }; // function(method) {
+    }; // function (method) {
 })(jQuery);
 

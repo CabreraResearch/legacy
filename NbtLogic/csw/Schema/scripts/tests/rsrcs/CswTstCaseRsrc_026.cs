@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections;
 using System.Data;
-using System.Text;
+using ChemSW.Audit;
 using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 using ChemSW.DB;
-using ChemSW.Nbt.Schema;
-using ChemSW.Audit;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema

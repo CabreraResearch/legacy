@@ -1,17 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Text;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using ChemSW.Exceptions;
-using ChemSW.Nbt;
-using ChemSW.DB;
-using System.Web.UI.HtmlControls;
 using System.IO;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
 using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt;
 
 namespace ChemSW.NbtWebControls
 {

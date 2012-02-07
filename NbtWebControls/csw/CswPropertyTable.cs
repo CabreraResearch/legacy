@@ -269,7 +269,7 @@ namespace ChemSW.NbtWebControls
 
                 // LayoutComponentId == PropId (set in addPropertyToTable below)
                 CswNbtMetaDataNodeTypeProp MovedProp = _CswNbtResources.MetaData.getNodeTypeProp( LayoutComponentId );
-                if( EditMode == NodeEditMode.AddInPopup )
+                if( EditMode == NodeEditMode.Add )
                 {
                     //MovedProp.DisplayRowAdd = NewDisplayRow;
                     //MovedProp.DisplayColAdd = NewDisplayColumn;
@@ -481,7 +481,7 @@ namespace ChemSW.NbtWebControls
             EnsureChildControls();
             TabStrip.Tabs.Clear();
 
-            if( EditMode == NodeEditMode.AddInPopup && SelectedNodeTypeId > 0 )
+            if( EditMode == NodeEditMode.Add && SelectedNodeTypeId > 0 )
             {
                 // Adding new node in popup - Single Placeholder Tab
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
@@ -569,7 +569,7 @@ namespace ChemSW.NbtWebControls
                 SelectedNode.postChanges( false );
             }
 
-            if( ( EditMode != NodeEditMode.AddInPopup && SelectedNodeSpecies == NodeSpecies.Plain ) ||
+            if( ( EditMode != NodeEditMode.Add && SelectedNodeSpecies == NodeSpecies.Plain ) ||
                 ( EditMode == NodeEditMode.Demo && SelectedNodeTypeId > 0 ) )
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
@@ -671,7 +671,7 @@ namespace ChemSW.NbtWebControls
 
 
             }
-            else if( EditMode == NodeEditMode.AddInPopup && _SelectedNodeTypeId > 0 )
+            else if( EditMode == NodeEditMode.Add && _SelectedNodeTypeId > 0 )
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
                 foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
@@ -797,7 +797,7 @@ namespace ChemSW.NbtWebControls
                     throw new CswDniException( ErrorType.Error, "Invalid Property", "CswPropertyTable.addPropertyToTable requires either a valid NodeKey or a valid PropWrapper" );
 
                 CswLayoutTable.LayoutComponent ThisComponent = null;
-                if( EditMode == NodeEditMode.AddInPopup )
+                if( EditMode == NodeEditMode.Add )
                     ThisComponent = new CswLayoutTable.LayoutComponent( MetaDataProp.PropId, MetaDataProp.AddLayout.DisplayRow, MetaDataProp.AddLayout.DisplayColumn, PropLabel, PropControl, false ); //MetaDataProp.IsDeletable() );
                 else
                     ThisComponent = new CswLayoutTable.LayoutComponent( MetaDataProp.PropId, MetaDataProp.EditLayout.DisplayRow, MetaDataProp.EditLayout.DisplayColumn, PropLabel, PropControl, false ); //MetaDataProp.IsDeletable() );

@@ -1,9 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var authenticateUrl = '/NbtWebApp/wsNBT.asmx/authenticate';
 
@@ -14,15 +12,15 @@
         var methods = {
             'init': function (options) {
                 var o = {
-                    onAuthenticate: null, //function(Username) {}
-                    onFail: null // function(errormessage) {}
+                    onAuthenticate: null, //function (Username) {}
+                    onFail: null // function (errormessage) {}
                 };
                 if (options) $.extend(o, options);
 
-                var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
-                if( !isNullOrEmpty(ThisSessionId) )
+                var ThisSessionId = Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
+                if( !Csw.isNullOrEmpty(ThisSessionId) )
                 {
-                    o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
+                    o.onAuthenticate( Csw.cookie.get(Csw.cookie.cookieNames.Username) );
                 }
                 else 
                 {
@@ -69,7 +67,7 @@
                                                 ID: 'login_button', 
                                                 enabledText: 'Login', 
                                                 disabledText: 'Logging in...', 
-                                                onclick: function() {
+                                                onclick: function () {
                                                     $('#loginmsg').hide()
                                                             .children().remove();
 
@@ -80,7 +78,7 @@
                                                         ForMobile: false, 
                                                         onAuthenticate: function (UserName) {
                                                             $LoginDiv.remove();
-                                                            if(isFunction(o.onAuthenticate)) {
+                                                            if(Csw.isFunction(o.onAuthenticate)) {
                                                                 o.onAuthenticate(UserName);
                                                             }
                                                         }, 
@@ -88,7 +86,7 @@
                                                             $('#loginmsg').CswErrorMessage({'type': 'Warning', 'message': txt });
                                                             $('#login_password').val('');   // case 21303
                                                             $loginbutton.CswButton('enable');
-                                                            if(isFunction(o.onFail)) {
+                                                            if(Csw.isFunction(o.onFail)) {
                                                                 o.onFail(txt);
                                                             }
                                                         }
@@ -113,7 +111,7 @@
             $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
         }    
 
-    }; // function(options) {
+    }; // function (options) {
 
 
     // Called without context
@@ -123,8 +121,8 @@
             UserName: '',
             Password: '',
             ForMobile: false,
-            onAuthenticate: null, // function(UserName) {} 
-            onFail: null, // function(errormessage) {} 
+            onAuthenticate: null, // function (UserName) {} 
+            onFail: null, // function (errormessage) {} 
             LogoutPath: ''
         };
         if(options) $.extend(o, options);
@@ -137,12 +135,12 @@
             UserName: '',
             Password: '',
             ForMobile: false,
-            onAuthenticate: null, // function(UserName) {} 
-            onFail: null, // function(errormessage) {} 
+            onAuthenticate: null, // function (UserName) {} 
+            onFail: null, // function (errormessage) {} 
             LogoutPath: ''
         };
         if(loginopts) $.extend(l, loginopts);
-        CswAjaxJson({
+        Csw.ajax.post({
                     url: authenticateUrl,
                     data: {
                             AccessId: l.AccessId, 
@@ -151,19 +149,19 @@
                             ForMobile: l.ForMobile
                         },
                     success: function () {
-                            $.CswCookie('set', CswCookieName.Username, l.UserName);
-                            $.CswCookie('set', CswCookieName.LogoutPath, l.LogoutPath);
-                            if(isFunction(l.onAuthenticate)) {
+                            Csw.cookie.set(Csw.cookie.cookieNames.Username, l.UserName);
+                            Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, l.LogoutPath);
+                            if(Csw.isFunction(l.onAuthenticate)) {
                                 l.onAuthenticate(l.UserName);
                             }
                         },
-                    onloginfail: function(txt) {
-                            if(isFunction(l.onFail)) {
+                    onloginfail: function (txt) {
+                            if(Csw.isFunction(l.onFail)) {
                                 l.onFail(txt);
                             }
                         },
-                    error: function() {
-                            if(isFunction(l.onFail)) {
+                    error: function () {
+                            if(Csw.isFunction(l.onFail)) {
                                 l.onFail('Webservice Error');
                             }
                         }

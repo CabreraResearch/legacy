@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using ChemSW.Core;
-using ChemSW;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema

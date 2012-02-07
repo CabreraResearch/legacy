@@ -1,17 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
 using System.Data;
-using System.Configuration;
 using ChemSW.Core;
-using ChemSW.Encryption;
-using ChemSW.Exceptions;
-using ChemSW.Session;
-using System.Text.RegularExpressions;
-using ChemSW.Security;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.DB;
 
 namespace ChemSW.Nbt.Statistics

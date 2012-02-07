@@ -3,7 +3,7 @@
 /// <reference path="../../globals/CswEnums.js" />
 /// <reference path="../../globals/CswGlobalTools.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = 'CswImageButton';
 
@@ -11,13 +11,13 @@
 
         init: function (options) {
             var o = {
-                ButtonType: CswImageButton_ButtonType.None,
+                ButtonType: Csw.enums.imageButton_ButtonType.None,
                 Active: false,
                 AlternateText: '',
                 ID: '',
                 cssclass: '',
                 Required: false,
-                onClick: function () { return CswImageButton_ButtonType.None; }
+                onClick: function () { return Csw.enums.imageButton_ButtonType.None; }
             };
 
             if (options) {
@@ -29,7 +29,7 @@
             //but it also screws up clicking.
 
             var $Div = $(this),
-                $ImageDiv = $('<div id="' + o.ID + '" class="divbutton ' + tryParseString(o.cssclass) + '" alt="' + o.AlternateText + '" />"')
+                $ImageDiv = $('<div id="' + o.ID + '" class="divbutton ' + Csw.string(o.cssclass) + '" alt="' + o.AlternateText + '" />"')
                     .css('display', 'inline-block');
 
             setButton(o.ButtonType, $ImageDiv);
@@ -43,12 +43,12 @@
         },
         reBindClick: function (newButtonType, id, onClickEvent) {
             var $this = $(this);
-            if (isNullOrEmpty($this, true)) {
+            if (Csw.isNullOrEmpty($this, true)) {
                 $this = $('#' + id);
             }
-            if (false === isNullOrEmpty($this, true)) {
+            if (false === Csw.isNullOrEmpty($this, true)) {
                 $this.click(function () {
-                    if (isFunction(onClickEvent)) {
+                    if (Csw.isFunction(onClickEvent)) {
                         onClickEvent();
                     }
                     return setButton(newButtonType, $this);
@@ -57,7 +57,7 @@
         },
         doClick: function (newButtonType, id) {
             var $this = $(this);
-            if (isNullOrEmpty($this, true)) {
+            if (Csw.isNullOrEmpty($this, true)) {
                 $this = $('#' + id);
             }
             return setButton(newButtonType, $this);
@@ -69,11 +69,11 @@
         //Case 24112: IE7 processes url() using https but randles the response as http--prompting the security dialog.
         var port = document.location.port;
         var prefix = document.location.protocol + "//" + document.location.hostname;
-        if (false === isNullOrEmpty(port) && port !== 80) {
+        if (false === Csw.isNullOrEmpty(port) && port !== 80) {
             prefix += ':' + port;
         }
         prefix += '/NbtWebApp';
-        if (newButtonType !== undefined && newButtonType !== CswImageButton_ButtonType.None) {
+        if (newButtonType !== undefined && newButtonType !== Csw.enums.imageButton_ButtonType.None) {
             $ImageDiv.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') 0px ' + newButtonType * multiplier + 'px no-repeat';
             $ImageDiv.unbind('mouseover');
             $ImageDiv.unbind('mouseout');
