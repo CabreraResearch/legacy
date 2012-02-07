@@ -159,11 +159,11 @@ namespace ChemSW.Nbt.MetaData
 			else if( EditedProp.NodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass )
 			{
 				CswNbtMetaDataNodeType AssemblyNodeType = EditedProp.NodeType;
-
-				foreach( CswNbtMetaDataNodeType EquipmentNodeType in _CswNbtResources.MetaData.NodeTypes )
+                CswNbtMetaDataObjectClass EquipmentOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
+                foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.NodeTypes )
 				{
-					if( EquipmentNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
-					{
+                    //if( EquipmentNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+                    //{
 						//CswNbtObjClassRuleEquipment EquipmentRule = new CswNbtObjClassRuleEquipment(); 
 						CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassEquipment.AssemblyPropertyName );
 						if( RelationshipProp != null )
@@ -209,10 +209,10 @@ namespace ChemSW.Nbt.MetaData
 							//    NodesTableCaddy.update( NodesTable );
 							//    //}
 							//}
-						}
-					}
-				}
-			}
+                        } // if( RelationshipProp != null )
+					// }
+				} // foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.NodeTypes )
+            } // else if( EditedProp.NodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass )
 		} // UpdateEquipmentAssemblyMatchingProperties()
 
 		public void OnMakeNewInspectionDesignNodeType( CswNbtMetaDataNodeType NewNodeType, bool IsCopy )

@@ -348,7 +348,7 @@ namespace ChemSW.Nbt.Actions
                 }
             } // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
 
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
             {
                 if( NodeType.Quota > 0 )
                 {

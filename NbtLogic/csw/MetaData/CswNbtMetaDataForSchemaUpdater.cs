@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.MetaData
             // We need to prevent versioning.  Furthermore, even though we theoretically prevent any changes to locked NodeTypes, 
             // we have to apply these changes to prior versions for compatibility.
 
-            foreach( CswNbtMetaDataNodeType NodeType in this.NodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in this.NodeTypesByObjectClass )
             {
                 foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in NodeType.ObjectClass.ObjectClassProps )
                 {

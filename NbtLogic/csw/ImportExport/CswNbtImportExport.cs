@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.ImportExport
         public XmlDocument ExportAll( bool DoNodeTypes, bool DoViews, bool DoNodes )
         {
             if( DoNodeTypes )
-                return ExportAll( _CswNbtResources.MetaData.NodeTypes, DoViews, DoNodes );
+                return ExportAll( _CswNbtResources.MetaData.getNodeTypes(), DoViews, DoNodes );
             else
                 return ExportAll( new Collection<CswNbtMetaDataNodeType>(), DoViews, DoNodes );
         }

@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     // BZ 7938
                     // We store the nodetypes by ID, but users will search by name.  So we have to decode.
                     Collection<CswNbtMetaDataNodeType> MatchingNodeTypes = new Collection<CswNbtMetaDataNodeType>();
-                    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtFieldResources.CswNbtResources.MetaData.NodeTypes )
+                    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypes() )
                     {
                         if( NodeType.NodeTypeName.ToLower().IndexOf( CswNbtViewPropertyFilterIn.Value.ToLower() ) > -1 )
                         {
