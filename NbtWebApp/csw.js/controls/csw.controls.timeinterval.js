@@ -148,7 +148,6 @@
                         ID: Csw.controls.dom.makeId(id, 'weeklytblpicker'),
                         cellalign: 'center'
                     });
-                    console.log(weeklyTable.$);
 
                     pickerTable.add(1, 1, 'Su');
                     pickerTable.add(1, 2, 'M');
