@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                        CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( NameSubField, true );
 
-            NodeIdSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_FK, CswNbtSubField.SubFieldName.NodeID );
+            NodeIdSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_FK, CswNbtSubField.SubFieldName.NodeID,true );
             NodeIdSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                          CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
                                          CswNbtPropFilterSql.PropertyFilterMode.NotNull |

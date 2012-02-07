@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            DateValueSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_Date, CswNbtSubField.SubFieldName.Value );
+            DateValueSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_Date, CswNbtSubField.SubFieldName.Value,true );
             DateValueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                             CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
                                             CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals |
