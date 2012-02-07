@@ -79,12 +79,10 @@ namespace ChemSW.Nbt.Schema
                 {
                     bool is_default = false;
                     string subfname = SubField.Name.ToString().ToLower();
-                    if( SubField.RelationalColumn.ToLower() == "gestalt" )
+                    if( SubField.Column.ToLower() != "gestalt" )
                     {
-                        is_default = true;
-                        subfname="";
+                        AddRow( ftsDataTbl, FieldTypeIds[FieldType], SubField.Column.ToString(), subfname, SubField.isReportable, is_default );
                     }
-                    AddRow(ftsDataTbl,FieldTypeIds[FieldType],SubField.Column.ToString(),subfname,SubField.isReportable,is_default);
                 }
 
             }
