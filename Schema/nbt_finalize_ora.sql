@@ -158,10 +158,9 @@ commit;
 
 create or replace view vwntpropdefs as
 select ntp.nodetypeid,ntp.propname,ntp.firstpropversionid nodetypepropid,ft.fieldtype,ft.fieldtypeid,ntp.fktype,ntp.fkvalue,
-  t.taborder,ntp.questionno,nt.nodetypename,oc.objectclass 
+  nt.nodetypename,oc.objectclass 
  from nodetype_props ntp
  join field_types ft on ft.fieldtypeid=ntp.fieldtypeid and ft.deleted='0'
- join nodetype_tabset t on t.nodetypetabsetid=ntp.nodetypetabsetid
  left outer join nodetypes nt on nt.nodetypeid=ntp.fkvalue and ntp.fktype='NodeTypeId'
  left outer join object_class oc on oc.objectclassid=ntp.fkvalue and ntp.fktype='ObjectClassId';
 / 
@@ -214,11 +213,6 @@ begin
   for rec in props loop
       pcount:=pcount+1;
       --dbms_output.put_line(to_char(pcount) || '|' || rec.propname || '|' || rec.subfieldname || '|' || rec.fieldtype || '|' || rec.objectclass || '|' || rec.nodetypename);
-      if(rec.fieldtype='Question') then
-          pname:='Q' || to_char(rec.taborder) || '.' || to_char(rec.questionno);
-      else
-          pname:=rec.propname;
-      end if;
       pname := to_char(rec.nodetypepropid);
       if(rec.is_default='1') then
         var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
