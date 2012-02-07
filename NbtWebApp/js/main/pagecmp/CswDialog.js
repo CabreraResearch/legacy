@@ -1,10 +1,10 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     var pluginName = 'CswDialog';
-    
+
     var methods = {
 
         //#region Specialized
@@ -59,25 +59,31 @@
             if (options) $.extend(o, options);
 
             var $div = $('<div></div>');
-            var $table = $div.CswTable('init', { 'ID': o.ID + '_tbl', 'FirstCellRightAlign': true });
+            //var $table = $div.CswTable('init', { 'ID': o.ID + '_tbl', 'FirstCellRightAlign': true });
+            var table = Csw.controls.table({
+                $parent: $div,
+                ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+                FirstCellRightAlign: true
+            });
 
-            $table.CswTable('cell', 1, 1).append('Name:');
-            var $nametextcell = $table.CswTable('cell', 1, 2);
+            table.add(1, 1, 'Name:');
+
+            var $nametextcell = table.cell(1, 2);
             var $nametextbox = $nametextcell.CswInput('init', { ID: o.ID + '_nametb',
                 type: Csw.enums.inputTypes.text,
                 cssclass: 'textinput'
             });
             var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />');
             if (Csw.isNullOrEmpty(o.viewid)) {
-                $table.CswTable('cell', 2, 1).append('Display Mode:');
+                table.add(2, 1, 'Display Mode:');
                 $displaymodeselect.append('<option value="Grid">Grid</option>');
                 $displaymodeselect.append('<option value="List" selected>List</option>');
                 $displaymodeselect.append('<option value="Table">Table</option>');
                 $displaymodeselect.append('<option value="Tree">Tree</option>');
-                $displaymodeselect.appendTo($table.CswTable('cell', 2, 2));
+                $displaymodeselect.appendTo(table.cell(2, 2));
             }
 
-            var v = Csw.makeViewVisibilitySelect($table, 3, 'Available to:');
+            var visSelect = Csw.controls.makeViewVisibilitySelect(table, 3, 'Available to:');
             var $savebtn = $div.CswButton({
                 ID: o.ID + '_submit',
                 enabledText: 'Create View',
@@ -92,10 +98,10 @@
                     } else {
                         createData.ViewMode = o.viewmode;
                     }
-                    if (!Csw.isNullOrEmpty(v.getvisibilityselect())) {
-                        createData.Visibility = v.getvisibilityselect().val();
-                        createData.VisibilityRoleId = v.getvisroleselect().val();
-                        createData.VisibilityUserId = v.getvisuserselect().val();
+                    if (!Csw.isNullOrEmpty(visSelect.$visibilityselect)) {
+                        createData.Visibility = visSelect.$visibilityselect.val();
+                        createData.VisibilityRoleId = visSelect.$visroleselect.val();
+                        createData.VisibilityUserId = visSelect.$visuserselect.val();
                     } else {
                         createData.Visibility = "";
                         createData.VisibilityRoleId = "";
