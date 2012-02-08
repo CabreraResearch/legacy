@@ -77,7 +77,7 @@
     <Content Include="js\main\actions\CswSessions.js" />
     <Content Include="js\main\controls\CswButton.js" />
     <Content Include="js\main\controls\CswCheckBoxArray.js" />
-    <Content Include="js\main\controls\CswComboBox.css" />
+    <Content Include="csw.css\CswComboBox.css" />
     <Content Include="js\main\controls\CswComboBox.js" />
     <Content Include="js\main\controls\CswDateTimePicker.js" />
     <Content Include="js\main\controls\CswDiv.js" />
@@ -130,7 +130,7 @@
     <Content Include="js\main\fieldtypes\CswFieldTypeViewPickList.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeViewReference.js" />
     <Content Include="js\main\fieldtypes\_CswFieldTypeFactory.js" />
-    <Content Include="js\main\fieldtypes\_CswFieldTypes.css" />
+    <Content Include="csw.css\CswFieldTypes.css" />
     <Content Include="js\main\Main.js" />
     <Content Include="js\main\node\CswNodeGrid.js" />
     <Content Include="js\main\node\CswNodePreview.js" />
@@ -141,18 +141,18 @@
     <Content Include="js\main\pagecmp\CswDashboard.js" />
     <Content Include="js\main\pagecmp\CswDefaultContent.js" />
     <Content Include="js\main\pagecmp\CswDialog.js" />
-    <Content Include="js\main\pagecmp\CswErrorMessage.css" />
+    <Content Include="csw.css\CswErrorMessage.css" />
     <Content Include="js\main\pagecmp\CswErrorMessage.js" />
     <Content Include="js\main\pagecmp\CswLogin.js" />
-    <Content Include="js\main\pagecmp\CswMenu.css" />
+    <Content Include="csw.css\CswMenu.css" />
     <Content Include="js\main\pagecmp\CswMenu.js" />
     <Content Include="js\main\pagecmp\CswMenuHeader.js" />
     <Content Include="js\main\pagecmp\CswMenuMain.js" />
     <Content Include="js\main\pagecmp\CswQuickLaunch.js" />
-    <Content Include="js\main\pagecmp\CswSearch.css" />
+    <Content Include="csw.css\CswSearch.css" />
     <Content Include="js\main\pagecmp\CswSearch.js" />
     <Content Include="js\main\pagecmp\CswWelcome.js" />
-    <Content Include="js\main\pagecmp\CswWizard.css" />
+    <Content Include="csw.css\CswWizard.css" />
     <Content Include="js\main\pagecmp\CswWizard.js" />
     <Content Include="js\main\tools\CswAttr.js" />
     <Content Include="js\main\tools\CswProfileMethod.js" />
@@ -160,7 +160,7 @@
     <Content Include="js\main\tools\CswQueryString.js" />
     <Content Include="js\main\tools\CswTools.js" />
     <Content Include="js\main\view\CswViewContentTree.js" />
-    <Content Include="js\main\view\CswViewEditor.css" />
+    <Content Include="csw.css\CswViewEditor.css" />
     <Content Include="js\main\view\CswViewEditor.js" />
     <Content Include="js\main\view\CswViewListTree.js" />
     <Content Include="js\main\view\CswViewPropFilter.js" />
@@ -204,7 +204,7 @@
     <Content Include="js\mobile\pages\CswMobilePageViews.js" />
     <Content Include="js\mobile\sync\CswMobileBackgroundTask.js" />
     <Content Include="js\mobile\sync\CswMobileSync.js" />
-    <Content Include="js\style.css" />
+    <Content Include="csw.css\csw.style.css" />
     <Content Include="Main.html" />
     <Content Include="MainFooter.html" />
     <Content Include="MainHeader.html" />
@@ -226,14 +226,12 @@
     <None Include="csw.js\_compile.pl" />
     <None Include="js\_compile.pl" />
     <None Include="js\_compileMobile.pl" />
-    <None Include="js\_compressor.pl" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="csw.js\prototype\" />
-    <Folder Include="js\actions\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -248,9 +246,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>call $(ProjectDir)csw.js\_compile.pl $(ProjectDir)
+call $(ProjectDir)csw.css\_compressor.pl $(ProjectDir)
 call $(ProjectDir)js\_compile.pl $(ProjectDir)
-call $(ProjectDir)js\_compileMobile.pl $(ProjectDir)
-call $(ProjectDir)js\_compressor.pl $(ProjectDir)
 CD $(ProjectDir)csw.js
 CALL make_vsdoc.bat</PreBuildEvent>
   </PropertyGroup>
