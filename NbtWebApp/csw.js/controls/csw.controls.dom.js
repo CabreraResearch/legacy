@@ -240,6 +240,9 @@
         /// <param name="$element" type="jQuery">An element to bind to.</param>
         /// <param name="options" type="Object">An options collection to extend.</param>
         /// <returns type="Object">The options object with DOM methods attached.</returns> 
+        
+        options.$ = $element;
+        
         options.propDom = function (name, value) {
             /// <summary>Gets or sets a DOM property</summary>
             /// <param name="name" type="String">The name of the attribute</param>

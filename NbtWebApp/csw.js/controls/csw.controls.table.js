@@ -31,9 +31,7 @@
             OddCellRightAlign: false,
             border: 0
         };
-        var external = {
-            $: ''
-        };
+        var external = { };
 
         (function () {
             if (options) {
@@ -41,10 +39,8 @@
             }
 
             external.id = internal.ID;
-            external.$ = $('<table id="' + external.id + '"></table>');
+            Csw.controls.domExtend($('<table id="' + external.id + '"></table>'), external);
 
-            Csw.controls.domExtend(external.$, external);
-            debugger;
             external.addClass(internal.TableCssClass);
             external.propDom({
                 width: internal.width,
