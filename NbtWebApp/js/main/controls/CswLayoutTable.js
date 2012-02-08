@@ -1,8 +1,11 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
+    /* stop-gap until we refactor this class */
+    var table, buttontable;
     $.fn.CswLayoutTable = function (method) {
+        
         "use strict";
         var PluginName = "CswLayoutTable";
 
@@ -11,7 +14,7 @@
                 var o = {
                     ID: '',
                     cellset: { rows: 1, columns: 1 },
-                            onSwap: function () { },
+                    onSwap: function () { },
                     onAddClick: function () { },
                     onConfigOn: function () { },
                     onConfigOff: function () { },
@@ -42,319 +45,318 @@
 
                 if (o.ReadOnly) $buttondiv.hide();
 
-                var $table = $parent.CswTable('init', {
-                    'ID': o.ID,
-                    'TableCssClass': o.TableCssClass + ' CswLayoutTable_table',
-                    'CellCssClass': o.CellCssClass + ' CswLayoutTable_cell',
-                    'cellpadding': o.cellpadding,
-                    'cellspacing': o.cellspacing,
-                    'cellalign': o.cellalign,
-                    'OddCellRightAlign': o.OddCellRightAlign,
-                    'width': o.width,
-                    'align': o.align,
-                    'onCreateCell': function (ev, $table, $newcell, realrow, realcolumn) {
-                        onCreateCell($table, $newcell, realrow, realcolumn, o.cellset.rows, o.cellset.columns);
+                table = Csw.controls.table({
+                    $parent: $parent,
+                    ID: o.ID,
+                    TableCssClass: o.TableCssClass + ' CswLayoutTable_table',
+                    CellCssClass: o.CellCssClass + ' CswLayoutTable_cell',
+                    cellpadding: o.cellpadding,
+                    cellspacing: o.cellspacing,
+                    cellalign: o.cellalign,
+                    OddCellRightAlign: o.OddCellRightAlign,
+                    width: o.width,
+                    align: o.align,
+                    onCreateCell: function (ev, $newcell, realrow, realcolumn) {
+                        onCreateCell($newcell, realrow, realcolumn, o.cellset.rows, o.cellset.columns);
                     }
-                })
-                    .CswAttrNonDom('cellset_rows', o.cellset.rows)
-                    .CswAttrNonDom('cellset_columns', o.cellset.columns);
+                });
+                table.propNonDom({
+                    'cellset_rows': o.cellset.rows,
+                    'cellset_columns': o.cellset.columns
+                });
 
-                setConfigMode($table, 'false');
-                $table.bind(o.ID + 'CswLayoutTable_onSwap', o.onSwap);
-                $table.bind(o.ID + 'CswLayoutTable_onRemove', o.onRemove);
-                $table.bind(o.ID + 'CswLayoutTable_onConfigOn', o.onConfigOn);
-                $table.bind(o.ID + 'CswLayoutTable_onConfigOff', o.onConfigOff);
+                setConfigMode(table, 'false');
+                table.bind(o.ID + 'CswLayoutTable_onSwap', o.onSwap);
+                table.bind(o.ID + 'CswLayoutTable_onRemove', o.onRemove);
+                table.bind(o.ID + 'CswLayoutTable_onConfigOn', o.onConfigOn);
+                table.bind(o.ID + 'CswLayoutTable_onConfigOff', o.onConfigOff);
 
-                var $buttontable = $buttondiv.CswTable('init', { ID: o.ID + '_buttontbl' });
+                buttontable = Csw.controls.table({
+                    $parent: $buttondiv,
+                    ID: Csw.controls.dom.makeId(o.ID, 'buttontbl')
+                });
                 if (o.showAddButton) {
-                    $buttontable.CswTable('cell', 1, 1).CswImageButton({
-                                                    ButtonType: Csw.enums.imageButton_ButtonType.Add,
+                    buttontable.cell(1, 1).CswImageButton({
+                        ButtonType: Csw.enums.imageButton_ButtonType.Add,
                         AlternateText: 'Add',
                         ID: o.ID + 'addbtn',
-                        onClick: function ($ImageDiv) {
+                        onClick: function () {
                             o.onAddClick();
-                                                        return Csw.enums.imageButton_ButtonType.None;
+                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     }).hide();
                 }
                 if (o.showRemoveButton) {
-                    $buttontable.CswTable('cell', 1, 2).CswImageButton({
-                                                    ButtonType: Csw.enums.imageButton_ButtonType.Delete,
+                    buttontable.cell(1, 2).CswImageButton({
+                        ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
                         ID: o.ID + 'rembtn',
                         onClick: function ($ImageDiv) {
-                            _toggleRemove($table, $ImageDiv);
-                                                        return Csw.enums.imageButton_ButtonType.None;
+                            _toggleRemove($ImageDiv);
+                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     }).hide();
                 }
                 if (o.showExpandColButton) {
-                    $buttontable.CswTable('cell', 1, 3).CswImageButton({
-                                                    ButtonType: Csw.enums.imageButton_ButtonType.ArrowEast,
+                    buttontable.cell(1, 3).CswImageButton({
+                        ButtonType: Csw.enums.imageButton_ButtonType.ArrowEast,
                         AlternateText: 'Add Column',
                         ID: o.ID + 'addcolumnbtn',
-                        onClick: function ($ImageDiv) {
-                            _addColumn($table);
-                                                        return Csw.enums.imageButton_ButtonType.None; 
+                        onClick: function () {
+                            _addColumn();
+                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     }).hide();
                 }
                 if (o.showExpandRowButton) {
-                    $buttontable.CswTable('cell', 1, 4).CswImageButton({
-                                                    ButtonType: Csw.enums.imageButton_ButtonType.ArrowSouth,
+                    buttontable.cell(1, 4).CswImageButton({
+                        ButtonType: Csw.enums.imageButton_ButtonType.ArrowSouth,
                         AlternateText: 'Add Row',
                         ID: o.ID + 'addrowbtn',
-                        onClick: function ($ImageDiv) {
-                            _addRow($table);
-                                                        return Csw.enums.imageButton_ButtonType.None; 
+                        onClick: function () {
+                            _addRow();
+                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     }).hide();
                 }
                 if (o.showConfigButton) {
-                    $buttontable.CswTable('cell', 1, 5).CswImageButton({
-                                                    ButtonType: Csw.enums.imageButton_ButtonType.Configure,
+                    buttontable.cell(1, 5).CswImageButton({
+                        ButtonType: Csw.enums.imageButton_ButtonType.Configure,
                         AlternateText: 'Configure',
                         ID: o.ID + 'configbtn',
-                        onClick: function ($ImageDiv) {
-                            _toggleConfig($table, $buttontable);
-                                                        return Csw.enums.imageButton_ButtonType.None; 
+                        onClick: function () {
+                            _toggleConfig();
+                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
                 }
 
-                return $table;
+                return table;
             },
 
             'cellset': function (row, column) {
-                var $table = $(this);
-                return _getCellSet($table, row, column);
+                return _getCellSet(row, column);
             },
 
             'isConfig': function () {
-                var $table = $(this);
-                return isConfigMode($table);
+                return isConfigMode();
             },
 
             'toggleConfig': function () {
-                var $table = $(this);
-                var $buttontable = $('#' + $table.CswAttrDom('id') + '_buttontbl');
-                _toggleConfig($table, $buttontable);
+                _toggleConfig();
             },
 
             'ConfigOn': function () {
-                var $table = $(this);
-                var $buttontable = $('#' + $table.CswAttrDom('id') + '_buttontbl');
-                _configOn($table, $buttontable);
+                _configOn();
             },
 
             'ConfigOff': function () {
-                var $table = $(this);
-                var $buttontable = $('#' + $table.CswAttrDom('id') + '_buttontbl');
-                _configOff($table, $buttontable);
+                _configOff();
             }
         };
 
-        function _getCellSet($table, row, column) {
-            var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
-            var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
+        function _getCellSet(row, column) {
+            var cellsetrows = Csw.number(table.propNonDom('cellset_rows'));
+            var cellsetcolumns = Csw.number(table.propNonDom('cellset_columns'));
             var cellset = new Array();
             for (var r = 1; r <= cellsetrows; r++) {
                 for (var c = 1; c <= cellsetcolumns; c++) {
                     if (cellset[r] === undefined) {
                         cellset[r] = new Array();
                     }
-                    cellset[r][c] = getCell($table, row, column, r, c, cellsetrows, cellsetcolumns);
+                    cellset[r][c] = getCell(row, column, r, c, cellsetrows, cellsetcolumns);
                 }
             }
             return cellset;
         }
 
-        function isRemoveMode($table) {
-            return ($table.CswAttrNonDom('removemode') === "true");
+        function isRemoveMode() {
+            return (table.propNonDom('removemode') === "true");
         }
-        function isConfigMode($table) {
-            return ($table.CswAttrNonDom('configmode') === "true");
-        }
-
-        function setConfigMode($table, mode) {
-            $table.CswAttrNonDom('configmode', mode);
+        function isConfigMode() {
+            return (table.propNonDom('configmode') === "true");
         }
 
-        function _toggleRemove($table, $rembtn) {
-            if (isRemoveMode($table)) {
-                _removeOff($table, $rembtn);
+        function setConfigMode(mode) {
+            table.propNonDom('configmode', mode);
+        }
+
+        function _toggleRemove($rembtn) {
+            if (isRemoveMode(table)) {
+                _removeOff(table, $rembtn);
             }
             else {
-                $table.CswAttrNonDom('removemode', 'true');
+                table.propNonDom('removemode', 'true');
                 $rembtn.addClass('CswLayoutTable_removeEnabled');
             }
         }
-        function _removeOff($table, $rembtn) {
-            $table.CswAttrNonDom('removemode', 'false');
+        function _removeOff($rembtn) {
+            table.propNonDom('removemode', 'false');
             $rembtn.removeClass('CswLayoutTable_removeEnabled');
         }
-        function _toggleConfig($table, $buttontable) {
-            if (isConfigMode($table)) {
-                _configOff($table, $buttontable);
+        function _toggleConfig() {
+            if (isConfigMode(table)) {
+                _configOff();
             } else {
-                _configOn($table, $buttontable);
+                _configOn();
             }
         }
 
-        function _configOff($table, $buttontable) {
-            $buttontable.find('#' + $table.CswAttrDom('id') + 'addbtn').hide();
-            var $rembtn = $buttontable.find('#' + $table.CswAttrDom('id') + 'rembtn');
+        function _configOff() {
+            buttontable.$.find('#' + table.id + 'addbtn').hide();
+            var $rembtn = buttontable.$.find('#' + table.id + 'rembtn');
             $rembtn.hide();
-            $buttontable.find('#' + $table.CswAttrDom('id') + 'addcolumnbtn').hide();
-            $buttontable.find('#' + $table.CswAttrDom('id') + 'addrowbtn').hide();
+            buttontable.$.find('#' + table.id + 'addcolumnbtn').hide();
+            buttontable.$.find('#' + table.id + 'addrowbtn').hide();
 
-            $table.CswTable('findCell', '.CswLayoutTable_cell')
+            table.findCell('.CswLayoutTable_cell')
                 .removeClass('CswLayoutTable_configcell');
 
-            disableDrag($table);
+            disableDrag();
 
-            setConfigMode($table, 'false');
-            $table.trigger($table.CswAttrDom('id') + 'CswLayoutTable_onConfigOff', $buttontable);
-            _removeOff($table, $rembtn);
+            setConfigMode('false');
+            table.trigger(table.id + 'CswLayoutTable_onConfigOff');
+            _removeOff($rembtn);
         } // _configOff()
 
-        function _configOn($table, $buttontable) {
-            $buttontable.find('#' + $table.CswAttrDom('id') + 'addbtn').show();
-            $buttontable.find('#' + $table.CswAttrDom('id') + 'rembtn').show();
-            $buttontable.find('#' + $table.CswAttrDom('id') + 'addcolumnbtn').show();
-            $buttontable.find('#' + $table.CswAttrDom('id') + 'addrowbtn').show();
+        function _configOn() {
+            buttontable.$.find('#' + table.id + 'addbtn').show();
+            buttontable.$.find('#' + table.id + 'rembtn').show();
+            buttontable.$.find('#' + table.id + 'addcolumnbtn').show();
+            buttontable.$.find('#' + table.id + 'addrowbtn').show();
 
-            //var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
-            //var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
+            //var cellsetrows = Csw.number(table.propNonDom('cellset_rows'));
+            //var cellsetcolumns = Csw.number(table.propNonDom('cellset_columns'));
 
-            $table.CswTable('finish', null);
+            table.finish(null);
 
-            $table.CswTable('findCell', '.CswLayoutTable_cell')
+            table.findCell('.CswLayoutTable_cell')
                 .addClass('CswLayoutTable_configcell');
 
-            enableDrag($table);
+            enableDrag();
 
-            setConfigMode($table, 'true');
-            $table.trigger($table.CswAttrDom('id') + 'CswLayoutTable_onConfigOn', $buttontable);
+            setConfigMode('true');
+            table.trigger(table.id + 'CswLayoutTable_onConfigOn');
         } // _configOn()
 
-        function _addRow($table) {
-            var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
-            var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
-            var tablemaxrows = $table.CswTable('maxrows');
-            var tablemaxcolumns = $table.CswTable('maxcolumns');
+        function _addRow() {
+            var cellsetrows = Csw.number(table.propNonDom('cellset_rows'));
+            var cellsetcolumns = Csw.number(table.propNonDom('cellset_columns'));
+            var tablemaxrows = table.maxrows();
+            var tablemaxcolumns = table.maxcolumns();
 
             // add a row and column
-            getCell($table, (tablemaxrows / cellsetrows) + 1, (tablemaxcolumns / cellsetcolumns), cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
-            $table.CswTable('finish', null);
+            getCell(table, (tablemaxrows / cellsetrows) + 1, (tablemaxcolumns / cellsetcolumns), cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
+            table.finish(null);
 
-            if (isConfigMode($table)) {
-                $table.CswTable('findCell', '.CswLayoutTable_cell')
+            if (isConfigMode()) {
+                table.findCell('.CswLayoutTable_cell')
                     .addClass('CswLayoutTable_configcell');
             }
         } // _addRowAndColumn()
 
-        function _addColumn($table) {
-            var cellsetrows = Csw.number($table.CswAttrNonDom('cellset_rows'));
-            var cellsetcolumns = Csw.number($table.CswAttrNonDom('cellset_columns'));
-            var tablemaxrows = $table.CswTable('maxrows');
-            var tablemaxcolumns = $table.CswTable('maxcolumns');
+        function _addColumn() {
+            var cellsetrows = Csw.number(table.propNonDom('cellset_rows'));
+            var cellsetcolumns = Csw.number(table.propNonDom('cellset_columns'));
+            var tablemaxrows = table.maxrows();
+            var tablemaxcolumns = table.maxcolumns();
 
             // add a row and column
-            getCell($table, (tablemaxrows / cellsetrows), (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
-            $table.CswTable('finish', null);
+            getCell(table, (tablemaxrows / cellsetrows), (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
+            table.finish(null);
 
-            if (isConfigMode($table)) {
-                $table.CswTable('findCell', '.CswLayoutTable_cell')
+            if (isConfigMode()) {
+                table.findCell('.CswLayoutTable_cell')
                     .addClass('CswLayoutTable_configcell');
             }
         } // _addRowAndColumn()
 
-        function getCell($table, row, column, cellsetrow, cellsetcolumn, cellsetrows, cellsetcolumns) {
+        function getCell(row, column, cellsetrow, cellsetcolumn, cellsetrows, cellsetcolumns) {
             if (row < 1) row = 1;
             if (column < 1) column = 1;
             var realrow = ((row - 1) * cellsetrows) + cellsetrow;
             var realcolumn = ((column - 1) * cellsetcolumns) + cellsetcolumn;
-            var $cell = $table.CswTable('cell', realrow, realcolumn);
+            var $cell = table.cell(realrow, realcolumn);
             return $cell;
         }
 
-        function onCreateCell($table, $cell, realrow, realcolumn, cellsetrows, cellsetcolumns) {
+        function onCreateCell($cell, realrow, realcolumn, cellsetrows, cellsetcolumns) {
             var row = Math.ceil(realrow / cellsetrows);
             var column = Math.ceil(realcolumn / cellsetcolumns);
             var cellsetrow = Csw.number(cellsetrows - realrow % cellsetrows);
             var cellsetcolumn = Csw.number(cellsetcolumns - realcolumn % cellsetcolumns);
 
-            $cell.CswAttrNonDom('row', row)
-                 .CswAttrNonDom('column', column)
-                 .CswAttrNonDom('cellsetrow', cellsetrow)
-                 .CswAttrNonDom('cellsetcolumn', cellsetcolumn)
-                 .click(function (ev, dd) { onClick(ev, dd, $table, row, column, cellsetrows, cellsetcolumns); })
+            $cell.CswAttrNonDom({
+                row: row,
+                column: column,
+                cellsetrow: cellsetrow,
+                cellsetcolumn: cellsetcolumn
+            })
+                 .click(function (ev, dd) { onClick(ev, dd, row, column, cellsetrows, cellsetcolumns); })
                  .droppable({
                      hoverClass: 'CswLayoutTable_hover',
                      drop: function (ev, dd) {
-                         onDrop(ev, dd, $(this), $table, cellsetrows, cellsetcolumns);
+                         onDrop(ev, dd, $(this), cellsetrows, cellsetcolumns);
                      }
                  })
-                 .hover(function (ev, dd) { onHoverIn(ev, dd, $table, $(this)); },
-                        function (ev, dd) { onHoverOut(ev, dd, $table, $(this)); });
+                 .hover(function (ev, dd) { onHoverIn(ev, dd, $(this)); },
+                        function (ev, dd) { onHoverOut(ev, dd, $(this)); });
 
-            var $celldiv = $('<div class="CswLayoutTable_celldiv"></div>')
-                    .appendTo($cell);
+            $('<div class="CswLayoutTable_celldiv"></div>').appendTo($cell);
         }
 
-        function enableDrag($table) {
-            $table.find('.CswLayoutTable_celldiv')
+        function enableDrag() {
+            table.$.find('.CswLayoutTable_celldiv')
                     .draggable({
                         revert: "invalid",
-                        drag: function (ev, dd) { onDrag(ev, dd, $(this), $table); }
+                        drag: function (ev, dd) { onDrag(ev, dd, $(this)); }
                     });
         }
 
-        function disableDrag($table) {
-            $table.find('.CswLayoutTable_celldiv')
+        function disableDrag() {
+            table.$.find('.CswLayoutTable_celldiv')
                     .draggable('destroy');
         }
 
-        function onHoverIn(ev, dd, $table, $cell) {
-            if (isRemoveMode($table)) {
-                var $cellset = $table.CswTable('findCell', '[row="' + $cell.CswAttrNonDom('row') + '"][column="' + $cell.CswAttrNonDom('column') + '"]');
+        function onHoverIn(ev, dd, $cell) {
+            if (isRemoveMode()) {
+                var $cellset = table.findCell('[row="' + $cell.CswAttrNonDom('row') + '"][column="' + $cell.CswAttrNonDom('column') + '"]');
                 $cellset.addClass('CswLayoutTable_remove');
             }
         } // onHoverIn()
 
-        function onHoverOut(ev, dd, $table, $cell) {
-            if (isRemoveMode($table)) {
-                var $cellset = $table.CswTable('findCell', '[row="' + $cell.CswAttrNonDom('row') + '"][column="' + $cell.CswAttrNonDom('column') + '"]');
+        function onHoverOut(ev, dd, $cell) {
+            if (isRemoveMode()) {
+                var $cellset = table.findCell('[row="' + $cell.CswAttrNonDom('row') + '"][column="' + $cell.CswAttrNonDom('column') + '"]');
                 $cellset.removeClass('CswLayoutTable_remove');
             }
         } // onHoverOut()
 
-        function onDrag(ev, dd, $dragdiv, $table) {
-            if (isConfigMode($table)) {
+        function onDrag(ev, dd, $dragdiv) {
+            if (isConfigMode(table)) {
                 var $dragcell = $dragdiv.parent();
 
-                var $cells = $table.CswTable('findCell', '[row="' + $dragcell.CswAttrNonDom('row') + '"][column="' + $dragcell.CswAttrNonDom('column') + '"]');
+                var $cells = table.findCell('[row="' + $dragcell.CswAttrNonDom('row') + '"][column="' + $dragcell.CswAttrNonDom('column') + '"]');
                 $cells.addClass('CswLayoutTable_dragcell');
             }
         } // onDrag
 
-        function onDrop(ev, dd, $dropcell, $table, cellsetrows, cellsetcolumns) {
-            if (isConfigMode($table)) {
+        function onDrop(ev, dd, $dropcell, cellsetrows, cellsetcolumns) {
+            if (isConfigMode(table)) {
                 //var $dropdiv = $dropcell.children('div');
                 var $dragdiv = dd.draggable;
                 var $dragcell = $dragdiv.parent();
 
-                var $dragcells = $table.CswTable('findCell', '[row="' + $dragcell.CswAttrNonDom('row') + '"][column="' + $dragcell.CswAttrNonDom('column') + '"]');
-                var $dropcells = $table.CswTable('findCell', '[row="' + $dropcell.CswAttrNonDom('row') + '"][column="' + $dropcell.CswAttrNonDom('column') + '"]');
+                var $dragcells = table.findCell('[row="' + $dragcell.CswAttrNonDom('row') + '"][column="' + $dragcell.CswAttrNonDom('column') + '"]');
+                var $dropcells = table.findCell('[row="' + $dropcell.CswAttrNonDom('row') + '"][column="' + $dropcell.CswAttrNonDom('column') + '"]');
 
                 $dragcells.removeClass('CswLayoutTable_dragcell');
 
                 // This must happen BEFORE we do the swap, in case the caller relies on the contents of the div being where it was
-                $table.trigger($table.CswAttrNonDom('id') + 'CswLayoutTable_onSwap', {
-                    table: $table,
-                    cellset: _getCellSet($table, $dragcell.CswAttrNonDom('row'), $dragcell.CswAttrNonDom('column')),
-                    swapcellset: _getCellSet($table, $dropcells.first().CswAttrNonDom('row'), $dropcells.first().CswAttrNonDom('column')),
+                table.trigger(table.id + 'CswLayoutTable_onSwap', {
+                    table: table,
+                    cellset: _getCellSet(table, $dragcell.CswAttrNonDom('row'), $dragcell.CswAttrNonDom('column')),
+                    swapcellset: _getCellSet(table, $dropcells.first().CswAttrNonDom('row'), $dropcells.first().CswAttrNonDom('column')),
                     row: $dragcell.CswAttrNonDom('row'),
                     column: $dragcell.CswAttrNonDom('column'),
                     swaprow: $dropcells.first().CswAttrNonDom('row'),
@@ -375,14 +377,14 @@
                             my: "left top",
                             at: "left top",
                             of: $thisdropcell,
-                            offset: $table.CswAttrNonDom('cellpadding')
+                            offset: table.propNonDom('cellpadding')
                         });
 
                         $thisdropdiv.position({
                             my: "left top",
                             at: "left top",
                             of: $thisdragcell,
-                            offset: $table.CswAttrNonDom('cellpadding')
+                            offset: table.propNonDom('cellpadding')
                         });
 
                     } // for(c = 1; c <= cellsetcolumns; c++)
@@ -390,13 +392,13 @@
             } // if(isConfigMode($table))
         } // onDrop()
 
-        function onClick(ev, dd, $table, row, column, cellsetrows, cellsetcolumns) {
-            if (isRemoveMode($table)) {
-                var $removecells = $table.find('.CswLayoutTable_remove');
+        function onClick(ev, dd, row, column) {
+            if (isRemoveMode(table)) {
+                var $removecells = table.$.find('.CswLayoutTable_remove');
                 if ($removecells.length > 0) {
-                    $table.trigger($table.CswAttrDom('id') + 'CswLayoutTable_onRemove', {
-                        table: $table,
-                        cellset: _getCellSet($table, row, column),
+                    table.trigger(table.id + 'CswLayoutTable_onRemove', {
+                        table: table,
+                        cellset: _getCellSet(table, row, column),
                         row: $removecells.CswAttrNonDom('row'),
                         column: $removecells.CswAttrNonDom('column')
                     });
@@ -415,9 +417,9 @@
         } else if (typeof method === 'object' || !method) {
             return methods.init.apply(this, arguments);
         } else {
-            $.error('Method ' + method + ' does not exist on ' + PluginName);
+            $.error('Method ' + method + ' does not exist on ' + PluginName); return false;
         }
 
     }; // function (options) {
-})(jQuery);
+} (jQuery));
 
