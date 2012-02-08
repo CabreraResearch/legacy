@@ -27,7 +27,7 @@
             /// <returns type="Boolean">Always true</returns>
             // Assign the checkchanges event to happen onbeforeunload
             if (false === Csw.isNullOrEmpty(window.onbeforeunload)) {
-                window.onbeforeunload = function() {
+                window.onbeforeunload = function () {
                     var f = window.onbeforeunload;
                     var ret = f();
                     if (ret) {
@@ -37,7 +37,7 @@
                     }
                 };
             } else {
-                window.onbeforeunload = function() {
+                window.onbeforeunload = function () {
                     return _checkChanges();
                 };
             }
@@ -64,10 +64,15 @@
         function manuallyCheckChanges() {
             /// <summary>Manually check for changes.</summary>
             /// <returns type="Boolean">True if no changes are registered or the user clicks OK.</returns>
-            var ret = true;
+            var ret = true,
+                confirmString = '';
             if (checkChangesEnabled && _changed === 1) {
                 /* remember: confirm is globally blocking call */
-                ret = confirm('Are you sure you want to navigate away from this page?\n\nIf you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.\n\nPress OK to continue, or Cancel to stay on the current page.');
+                confirmString += 'Are you sure you want to navigate away from this page?\n\n';
+                confirmString += 'If you continue, you will lose any changes made on this page.  ';
+                confirmString += 'To save your changes, click Cancel and then click the Save button.\n\n';
+                confirmString += 'Press OK to continue, or Cancel to stay on the current page.';
+                ret = confirm(confirmString);
 
                 // this serves several purposes:
                 // 1. after you've been prompted to lose this change, you won't be prompted again for the same change later
@@ -89,8 +94,8 @@
             unsetChanged: unsetChanged,
             setChanged: setChanged
         };
-    }());
+    } ());
     Csw.register('clientChanges', clientChanges);
     Csw.clientChanges = Csw.clientChanges || clientChanges;
 
-}());
+} ());
